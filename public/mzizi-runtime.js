@@ -1,0 +1,795 @@
+/* ============ PROJECTION: whole continent ============ */
+const K = 36;
+const X = lon => (lon + 20) * K;
+const Y = lat => (40 - lat) * K;
+const P = pts => pts.map(p => X(p[0]).toFixed(1) + ',' + Y(p[1]).toFixed(1)).join(' ');
+const yr = y => y < 0 ? Math.abs(y) + ' BCE' : y + ' CE';
+const span = (a,b) => yr(a) + ' – ' + yr(b);
+const LVL = {attested:'#6B7A4B', inferred:'#C68A2E', open:'#B4542F'};
+
+const AFRICA = [
+ [-5.9,35.8],[-7.6,33.6],[-9.6,30.4],[-11.4,28.0],[-13.2,27.7],[-14.5,26.1],[-16.0,23.7],[-17.0,21.0],
+ [-16.5,19.0],[-16.0,16.5],[-17.5,14.7],[-16.7,13.5],[-16.0,12.4],[-15.5,11.5],[-13.6,9.5],[-11.5,7.7],
+ [-9.0,6.5],[-7.5,4.4],[-4.0,5.2],[0.0,5.6],[2.5,6.3],[4.0,6.4],[5.5,5.4],[7.0,4.3],[8.5,4.5],[9.5,3.9],
+ [9.3,2.0],[9.8,0.3],[8.8,-0.7],[9.5,-2.0],[11.9,-4.8],[13.2,-8.8],[13.4,-12.6],[12.2,-15.2],[14.5,-22.9],
+ [15.2,-27.0],[16.5,-28.6],[17.9,-31.5],[18.4,-34.4],[20.0,-34.8],[22.5,-34.0],[25.6,-34.0],[27.9,-33.0],
+ [31.0,-29.9],[32.6,-28.5],[32.6,-25.9],[34.8,-24.8],[34.9,-19.8],[36.9,-17.9],[40.4,-16.0],[40.7,-14.9],
+ [40.5,-12.5],[39.7,-10.0],[39.3,-6.8],[39.1,-5.1],[39.7,-4.0],[40.1,-3.2],[40.9,-2.3],[42.5,-0.4],[45.3,2.0],
+ [48.0,5.0],[51.3,10.4],[51.4,11.8],[45.0,10.4],[43.5,11.5],[42.7,13.0],[39.5,15.6],[37.2,18.7],[35.5,23.0],
+ [33.8,27.2],[32.5,29.9],[32.3,31.3],[29.9,31.2],[25.0,31.5],[23.9,32.1],[20.1,32.1],[16.6,31.2],[13.2,32.9],
+ [10.1,33.9],[10.2,37.0],[7.8,36.9],[3.1,36.8],[-0.6,35.7]
+];
+const MADAGASCAR = [[49.4,-12.3],[50.5,-15.5],[49.8,-17.0],[48.8,-20.0],[47.1,-24.9],[45.2,-25.6],[43.3,-22.3],[43.5,-19.0],[44.4,-16.2],[46.3,-15.7],[47.5,-13.4]];
+
+const RIVERS = {
+ niger:[[-10.9,10.5],[-9,11.4],[-8,12.6],[-6.5,13.5],[-5,14.2],[-4.2,15],[-3,16.8],[-1,16.9],[0.05,16.3],[1.5,15],[2.1,13.5],[2.6,12],[3.5,11.4],[4.5,10.5],[5.5,9.3],[6.5,8],[6.7,6.5],[6.4,5.4]],
+ senegal:[[-11.3,12.4],[-12.5,14],[-14,15.2],[-15.5,16],[-16.5,16.1]],
+ nile:[[31,31.4],[31.2,30],[32.6,25.7],[32.9,24.1],[31.3,21.8],[30.5,19.2],[33.3,19.5],[33.9,17.7],[32.5,15.6],[31.6,9.5],[31.5,3.5],[32.5,0.5]],
+ bluenile:[[32.5,15.6],[34.5,13.5],[36.5,12.4],[37.3,12.0]],
+ congo:[[12.4,-6.1],[13.8,-5.5],[15.3,-4.3],[16.5,-3],[17.7,-1],[18.3,0.05],[20.5,1.5],[22.5,2],[24,1.5],[25.2,0.5]],
+ zambezi:[[23,-17.5],[25.85,-17.9],[28.8,-16],[32.7,-16],[35,-17.5],[36.3,-18.5]],
+ limpopo:[[27,-24.5],[29.5,-22.5],[32,-24.5],[33.6,-25.2]],
+ orange:[[28,-30],[24,-29],[20,-28.6],[16.5,-28.6]]
+};
+const LAKES = [
+ {n:'Chad',x:14.2,y:13.2,rx:1.1,ry:.85},{n:'Victoria',x:33.0,y:-1.0,rx:1.5,ry:1.9},
+ {n:'Tanganyika',x:29.8,y:-6.5,rx:.5,ry:3.3},{n:'Malawi',x:34.5,y:-12.0,rx:.55,ry:2.6},
+ {n:'Turkana',x:36.1,y:3.5,rx:.4,ry:1.5},{n:'Tana',x:37.3,y:12.0,rx:.5,ry:.45}
+];
+
+/* ============ REGIONS ============ */
+const REGIONS = [
+ {id:'west', name:'West Africa & the Sahel', bbox:[-18,3,18,29], blurb:'Sahel empires, the Niger bend, forest kingdoms and the desert crossing.'},
+ {id:'north',name:'North Africa & the Sahara', bbox:[-11,17,26,38], blurb:'Maghrebi dynasties, oasis towns and the northern ends of every desert road.'},
+ {id:'nile', name:'Nile Valley & the Horn', bbox:[27,3,52,25], blurb:'Kerma, Kush, the Nubian kingdoms, Aksum and the Ethiopian highlands.'},
+ {id:'east', name:'East African coast', bbox:[31,-23,53,6], blurb:'Swahili stone towns, the monsoon and the Indian Ocean world.'},
+ {id:'central',name:'Central Africa & the Great Lakes', bbox:[9,-13,34,7], blurb:'Kongo, the Upemba sequence, the copperbelt and interlacustrine earthworks.'},
+ {id:'south',name:'Southern Africa', bbox:[16,-35,38,-14], blurb:'Mapungubwe, the Zimbabwe plateau, Mutapa and highland terrace farming.'}
+];
+
+/* ============ SITES ============ */
+const S=(r,id,name,lon,lat,from,to,w,claims,sources,debates,alt)=>({r,id,name,lon,lat,from,to,w,claims,sources,debates,alt});
+const SITES=[
+/* --- WEST --- */
+S('west','timbuktu','Timbuktu',-3.0,16.77,1100,1800,3,
+ [['Occupied continuously from the 12th century','attested','Ceramic sequence from the site and surrounding dunes, anchored by radiocarbon.'],
+  ['A terminus of trans-Saharan exchange','attested','Named in Arabic geographies from the 14th century; imported goods in the deposits.'],
+  ['A centre of manuscript learning and copying','attested','Surviving private libraries and colophons naming local scribes.'],
+  ['Population at its height','open','Estimates run from about 10,000 to 50,000. No census, no full excavation, and the higher figures come from chroniclers with reason to enlarge the city.'],
+  ['Street plan before the 16th century','open','The modern town sits on the old one. Recovering the earlier layout would mean excavating a living city.']],
+ [['manuscript','Tarikh al-Sudan (17th c.)','Written locally, generations after the earliest events it covers.'],
+  ['external','Ibn Battuta, Rihla (1350s)','Eyewitness, but brief here and dismissive in tone.'],
+  ['external','Leo Africanus (1526)','Written in Italy from memory; his figures are not reliable.'],
+  ['archaeology','Survey and sondages, 1980s–2000s','Small exposures; the modern town constrains access.']],
+ [['How old is the city?','Some read the lowest levels as an 11th-century seasonal camp that only later became urban. Others place a permanent settlement earlier. The dispute turns on a thin, disturbed stratum.']],'Tinbuktu'),
+S('west','gao','Gao and Gao-Saney',0.05,16.27,700,1800,3,
+ [['Urban occupation by the 8th or 9th century','attested','Excavated sequences with imported glass and glazed wares.'],
+  ['Links reaching North Africa and beyond','attested','Imported glass, carnelian, and marble funerary stelae made in al-Andalus.'],
+  ['Capital of Songhai in the 15th and 16th centuries','attested','Chronicles corroborated by monumental remains.'],
+  ['Which mound held the royal seat','inferred','Two mounds four kilometres apart, read as a court and a merchant town — but which is which has moved with each excavation season.']],
+ [['archaeology','Gao Ancien and Gao-Saney excavations','Multi-team over decades; publication uneven across seasons.'],
+  ['manuscript','Tarikh al-Fattash','A composite text with later insertions. Use it claim by claim.']],
+ [['Which mound was the royal seat?','The stelae at Saney carry royal titles, arguing for a court there. Gao Ancien has the deeper urban sequence. Both readings remain live.']],'Kawkaw'),
+S('west','djenne','Djenné-Djenno',-4.58,13.87,-250,1400,3,
+ [['Urban settlement from about 250 BCE','attested','A long radiocarbon series on stratified deposits — the best-dated urban sequence in the Middle Niger.'],
+  ['Grew without an obvious ruling elite','inferred','No palace, no royal burials, no fortification of the usual kind. Read by many as a clustered, heterarchical city — an argument in which absence does real work.'],
+  ['Iron working and rice farming on site early','attested','Slag, furnace remains and carbonised African rice.'],
+  ['Why it was abandoned around 1400','open','A move to the present town, a change in the flood regime and religious reorganisation have all been proposed.']],
+ [['archaeology','McIntosh excavations, 1977 onward','Systematic and well published.'],
+  ['oral','Djenné foundation traditions','Recorded in the 20th century; they concern the later town.']],
+ [['A city without kings?','The heterarchy reading rests on what has not been found in a fraction of a very large mound. Critics argue elite quarters may lie outside the trenches.']],'Jenne-jeno'),
+S('west','koumbi','Koumbi Saleh',-7.97,15.77,700,1300,2.4,
+ [['A large stone-built town with a congregational mosque','attested','Excavated stone architecture and dense occupation debris.'],
+  ['This is the capital al-Bakri described','inferred','Widely accepted and widely repeated, but resting on geography and description rather than anything naming the place.'],
+  ['A separate royal town six miles away','open','Al-Bakri describes two towns. One has been excavated. The other has never been found.']],
+ [['external','Al-Bakri (1068)','Compiled in Córdoba from traders\u2019 accounts; he never travelled there.'],
+  ['archaeology','Excavations 1913–1980s','Early seasons poorly recorded by modern standards.']],
+ [['Is this really Ghana\u2019s capital?','A durable identification on thin direct proof. Labelling it "Ghana" imports al-Bakri\u2019s framing into the archaeology.']],'Ghana'),
+S('west','niani','Niani',-8.4,11.4,1200,1600,2.2,
+ [['An occupied settlement of the right period on the upper Niger','attested','Excavated occupation levels and imported goods.'],
+  ['This is the capital of Mali','open','Long asserted, now widely doubted. The excavated scale looks small for an imperial capital, and Arabic sources describe a court that may have moved with the ruler.']],
+ [['oral','Mande griot traditions','Rich, structured, performed — and shaped by the occasion and lineage of each telling.'],
+  ['archaeology','Guinean–Polish excavations, 1960s–70s','Modest exposures.']],
+ [['Where was the capital of Mali?','Niani, a mobile court, and several other sites are all argued. This map shows a marker, not an answer.']],null),
+S('west','ife','Ile-Ife',4.56,7.47,1000,1500,2.6,
+ [['A major urban centre with pavements, walls and workshops','attested','Excavated potsherd pavements, bead-workshop debris and earthworks.'],
+  ['Copper-alloy and terracotta heads made here, 12th–15th centuries','attested','Thermoluminescence dates and stratified finds; workshop waste confirms local production.'],
+  ['Glass made here, not only imported','attested','Glass-making with a distinct local chemistry identified at Igbo Olokun.'],
+  ['Political reach beyond the city','inferred','Ritual primacy in later Yoruba tradition is well attested. How far that translated into 14th-century political control is not.']],
+ [['archaeology','Igbo Olokun and Ita Yemoo excavations','Early work poorly recorded; recent programmes far stronger.'],
+  ['oral','Yoruba dynastic traditions','Recorded late and entangled with later politics of precedence.']],
+ [['Were the heads portraits?','Portraits of named rulers, idealised ancestors and ritual objects have all been argued. The archaeology does not settle it.']],'Ife'),
+S('west','benin','Benin City',5.62,6.34,1200,1800,2.4,
+ [['A vast system of earthworks around the city and its district','attested','Mapped and sectioned ramparts running thousands of kilometres in total.'],
+  ['Court art in brass from at least the 15th century','attested','Dated plaques and heads; Portuguese figures appear in the corpus from the late 15th century.'],
+  ['Casting guilds organised under royal control','inferred','Described in later sources and oral tradition, then projected backward.']],
+ [['archaeology','Earthworks survey','Extensive mapping; dating still coarse in places.'],
+  ['external','Portuguese and Dutch accounts','Admiring descriptions, written by people trading in enslaved people.']],[],'Edo'),
+S('west','igboukwu','Igbo-Ukwu',7.02,6.02,800,1000,2,
+ [['Elaborate 9th–10th century bronzes cast locally by lost wax','attested','Three excavated deposits; alloy composition and technique studied in detail.'],
+  ['Long-distance links shown by imported beads','attested','Tens of thousands of beads with non-local chemistry.'],
+  ['Where the copper came from','open','Local ores and Saharan trade are both argued from isotope work with overlapping ranges.']],
+ [['archaeology','Shaw excavations, 1959–64','Well published. The radiocarbon dates were contested for decades and have largely held.']],
+ [['A ninth-century date?','The early dates were resisted for years, partly on assumptions about what West African metallurgy could achieve. That resistance is part of the historiography.']],null),
+S('west','kano','Kano',8.52,12.0,900,1800,2.4,
+ [['Settlement at Dala Hill from the first millennium','attested','Excavation at Dala with iron-working evidence.'],
+  ['A walled city with dyeing and textile industry','attested','Standing walls, dye pits still in use, and trade records.'],
+  ['A ruler list running from the 10th century','inferred','The Kano Chronicle gives a continuous sequence, but its early portion was compiled much later and may compress reigns.']],
+ [['manuscript','Kano Chronicle','Survives in 19th-century copies.'],['archaeology','Dala Hill excavations','Limited by the living city above.']],[],null),
+S('west','tichitt','Dhar Tichitt',-9.4,18.4,-1800,-300,2,
+ [['Hundreds of dry-stone settlements along a former lakeshore','attested','Extensive survey and mapping of stone compounds.'],
+  ['Among the earliest agro-pastoral village systems in West Africa','attested','Domesticated pearl millet impressions in pottery, dated to the second millennium BCE.'],
+  ['Abandoned as the Sahara dried','inferred','Palaeoclimate curves and the settlement sequence move together. That is a correlation carefully argued, not a mechanism observed.'],
+  ['Direct continuity with later Ghana','open','A popular narrative link on thin support. Shown as open on purpose.']],
+ [['archaeology','Dhar Tichitt and Dhar Nema surveys','Strong survey coverage, less excavation.'],
+  ['environmental','Lake cores and palaeoclimate records','Regional resolution, hard to map onto one village.']],[],null),
+S('west','tadmekka','Tadmekka (Essouk)',0.9,18.5,800,1400,1.8,
+ [['A Saharan town with rock inscriptions in place','attested','Excavation plus a corpus of Arabic and Tifinagh inscriptions in situ.'],
+  ['Gold coin blanks produced on site','attested','Coin moulds recovered in excavation — rare, direct evidence of monetary production.']],
+ [['archaeology','Essouk-Tadmekka excavations, 2005','Focused and well published.'],
+  ['manuscript','Rock inscriptions','Dated by palaeography, with a wide error range.']],[],null),
+S('west','njimi','Njimi',15.0,14.4,1100,1400,1.6,
+ [['Capital of Kanem, named repeatedly in Arabic sources','attested','Named by external geographers across three centuries.'],
+  ['Its location','open','No securely identified site. Candidates exist; none is agreed. The marker here is a source-derived approximation and the record says so.']],
+ [['external','Arabic geographers, 12th–14th c.','Second-hand throughout.'],['manuscript','Girgam king list','Preserved in later copies.']],
+ [['A capital with no site','Njimi is the clearest case on this map of a place that is historically certain and archaeologically missing.']],null),
+
+/* --- NORTH --- */
+S('north','sijilmasa','Sijilmasa',-4.28,31.28,758,1400,2.6,
+ [['A walled caravan city on the northern edge of the desert crossing','attested','Excavated urban fabric, mosque remains and a long occupation sequence.'],
+  ['The northern terminus for West African gold','attested','Minted gold coinage and Arabic accounts of the trade.'],
+  ['Its exact extent at any one period','inferred','The site is large, reused and eroded by the river; phasing is coarse.']],
+ [['archaeology','Moroccan–American excavations, 1988–98','Good stratigraphy in limited areas.'],
+  ['external','Al-Bakri, al-Idrisi','Describe the trade rather than the town plan.']],[],null),
+S('north','fez','Fez',-5.0,34.03,789,1800,2.6,
+ [['Founded in the late 8th century as twin settlements','attested','Standing architecture, coinage and continuous documentation.'],
+  ['A teaching mosque functioning from the 9th century','attested','The Qarawiyyin foundation and its endowment records.'],
+  ['Population figures before the 16th century','open','Repeated estimates trace back to a small number of travellers, copied forward.']],
+ [['manuscript','Rawd al-Qirtas and later chronicles','Dynastic and celebratory.'],
+  ['archaeology','Standing-building survey','The living city limits excavation.']],[],'Fas'),
+S('north','marrakesh','Marrakesh',-8.0,31.63,1070,1800,2.4,
+ [['Founded by the Almoravids in the 11th century','attested','Foundation described in contemporary sources; earliest structures survive.'],
+  ['A hydraulic system of khettara channels supplying the city','attested','Surveyed underground channels still traceable.'],
+  ['Its role as a southern staging point for the desert trade','inferred','Consistent with position and later records; direct 11th-century evidence is thin.']],
+ [['archaeology','Standing monuments and channel survey','Uneven publication.'],['manuscript','Almohad and Marinid chronicles','Court-produced.']],[],null),
+S('north','kairouan','Kairouan',10.1,35.68,670,1800,2.4,
+ [['A garrison foundation of the 7th century that became a major city','attested','Standing Great Mosque, dated inscriptions and continuous records.'],
+  ['A centre of legal scholarship for the western Islamic world','attested','Surviving manuscript corpus and named jurists.'],
+  ['Its links southward across the desert','inferred','Argued from goods and from later routes rather than early documentation.']],
+ [['manuscript','Ifriqiyan legal and biographical texts','Rich, but concerned with scholars more than economies.'],
+  ['archaeology','Mosque and Raqqada excavations','Focused on monumental structures.']],[],null),
+S('north','germa','Garama (Germa)',13.2,26.55,-400,700,2.2,
+ [['Capital of the Garamantes in the Fezzan','attested','Excavated urban centre with mudbrick and stone architecture.'],
+  ['A desert state sustained by foggara irrigation tunnels','attested','Hundreds of kilometres of surveyed underground channels.'],
+  ['Its role in early trans-Saharan contact','inferred','Imports show contact. Whether the Garamantes ran regular routes south is argued.'],
+  ['Why the system collapsed','open','Aquifer exhaustion, labour supply and political change are all proposed and hard to separate.']],
+ [['archaeology','Fezzan Project survey and excavation','Strong recent work; wide areas unsurveyed.'],
+  ['external','Herodotus, Pliny','Distant, brief and partly fabulous.']],
+ [['Did they run the desert trade?','Some argue the Garamantes made regular crossings centuries before the camel caravans of the Islamic period. Others read the same imports as down-the-line exchange.']],null),
+S('north','ghadames','Ghadames',9.5,30.13,-100,1800,1.9,
+ [['An oasis town occupied for two millennia','attested','Roman-period remains beneath a continuously inhabited settlement.'],
+  ['A hub linking Tripoli, the Fezzan and the Sahel','attested','Merchant family records and repeated mention in itineraries.']],
+ [['manuscript','Ghadamsi merchant correspondence','Survives mostly for later centuries.'],
+  ['archaeology','Limited excavation','The living town constrains work.']],[],null),
+S('north','volubilis','Volubilis',-5.55,34.07,-300,1000,1.9,
+ [['A pre-Roman Mauretanian settlement before it became a Roman town','attested','Stratified levels beneath the Roman city with local material culture.'],
+  ['Continued occupation after Roman withdrawal','attested','Later Islamic-period occupation identified on site.'],
+  ['Its size and character in the Mauretanian phase','open','The Roman city sits directly on top of the earlier one.']],
+ [['archaeology','Long excavation history','Early work prioritised the Roman phase and damaged earlier levels.']],[],'Walili'),
+S('north','fustat','Fustat',31.23,30.05,641,1800,2.6,
+ [['A garrison foundation that grew into a major manufacturing city','attested','Extensive excavation with dense workshop and housing evidence.'],
+  ['A document trove preserving everyday commercial life','attested','The Geniza documents, unusually detailed on trade, letters and household accounts.'],
+  ['Its trading reach down the Red Sea and into the Indian Ocean','attested','Named partners and shipments in the Geniza letters.']],
+ [['manuscript','Cairo Geniza documents','Exceptionally rich, but a single community\u2019s window on a much larger economy.'],
+  ['archaeology','Fustat excavations','Long history; early seasons poorly recorded.']],[],null),
+S('north','awjila','Awjila',21.3,29.1,-500,1800,1.7,
+ [['An oasis on the route between Egypt and the Fezzan','attested','Named in classical and Arabic itineraries; continuous occupation.'],
+  ['A Berber-speaking community persisting in an Arabic-speaking region','attested','Awjila Berber recorded by linguists in the 20th century.']],
+ [['linguistic','Awjila Berber wordlists','Late recordings of a language now severely endangered.'],
+  ['external','Herodotus and Arabic itineraries','Brief mentions.']],[],null),
+
+/* --- NILE & HORN --- */
+S('nile','kerma','Kerma',30.4,19.6,-2500,-1450,2.6,
+ [['A major Nubian urban centre with monumental mudbrick architecture','attested','Excavated town, the Western Deffufa and a vast cemetery.'],
+  ['A state powerful enough to campaign against Egypt','attested','Egyptian records of conflict plus fortress-building in response.'],
+  ['Its internal political structure','inferred','Read from burial scale and layout; no local written records survive.']],
+ [['archaeology','Swiss excavations at Kerma','Sustained, well published.'],
+  ['external','Egyptian inscriptions','Written by an enemy state.']],
+ [['Whose story is it told in?','Almost every written source for Kerma is Egyptian. The archaeology and the texts describe the same polity from opposite sides.']],null),
+S('nile','napata','Napata / Jebel Barkal',31.83,18.53,-800,-300,2.3,
+ [['A royal and religious centre of the Kushite kingdom','attested','Temples, royal pyramids and inscriptions in situ.'],
+  ['Kushite kings ruled Egypt as its 25th Dynasty','attested','Egyptian and Kushite monuments and king lists agree.']],
+ [['archaeology','Jebel Barkal excavations','Long-running.'],['manuscript','Kushite royal stelae','Royal self-presentation.']],[],null),
+S('nile','meroe','Meroë',33.75,16.93,-300,350,2.7,
+ [['A capital with royal pyramids, temples and industrial iron production','attested','Excavated city, pyramid fields and extensive slag heaps.'],
+  ['A written language, Meroitic, using its own script','attested','A substantial corpus of inscriptions.'],
+  ['What most Meroitic texts actually say','open','The script is read but the language is only partly understood. Names and formulae are clear; continuous prose is not.'],
+  ['Why the kingdom declined','open','Aksumite pressure, environmental strain and trade shifts are all proposed.']],
+ [['archaeology','Meroë excavations and pyramid survey','Extensive; iron production long over-emphasised in popular accounts.'],
+  ['manuscript','Meroitic inscriptions','Legible script, imperfectly understood language.']],
+ [['The "Birmingham of Africa"?','A 1960s phrase built on the slag heaps. Later work suggests iron production was real but not the engine of the state it was made out to be.']],null),
+S('nile','dongola','Old Dongola',30.75,18.22,500,1400,2.3,
+ [['Capital of the Christian kingdom of Makuria','attested','Excavated churches, a throne hall and cemeteries.'],
+  ['A treaty regulating relations with Egypt for centuries','attested','The baqt, described in Arabic sources over a long period.'],
+  ['How the treaty actually worked in practice','inferred','Terms are described differently by different writers, all Egyptian.']],
+ [['archaeology','Polish excavations at Old Dongola','Sustained and well published.'],
+  ['external','Arabic accounts of the baqt','From one side of the agreement.']],[],null),
+S('nile','soba','Soba',32.7,15.5,500,1500,2,
+ [['Capital of the kingdom of Alodia','attested','Excavated churches and elite burials.'],
+  ['Its end in the 16th century','inferred','Later accounts describe collapse; the archaeological horizon is imprecise.']],
+ [['archaeology','Soba excavations','Partial; much of the site is under modern Khartoum.']],[],'Alwa'),
+S('nile','aksum','Aksum',38.72,14.13,-100,700,2.8,
+ [['A kingdom minting its own gold, silver and bronze coinage','attested','Coin series with royal names, found as far as India.'],
+  ['Monumental carved stelae marking elite burials','attested','Standing and fallen stelae, excavated tomb chambers.'],
+  ['Adoption of Christianity in the 4th century','attested','Coinage changes symbol, corroborated by contemporary references.'],
+  ['Population and territorial extent','inferred','Extrapolated from settlement survey over a limited area.']],
+ [['archaeology','Aksum excavations and survey','Strong for elite contexts, thinner for rural settlement.'],
+  ['manuscript','Ge\u2019ez royal inscriptions','Royal self-presentation, but contemporary and local.']],[],'Aksum'),
+S('nile','adulis','Adulis',39.65,15.26,-100,700,2.1,
+ [['The Red Sea port serving Aksum','attested','Excavated port town with Mediterranean and Indian Ocean imports.'],
+  ['Named in a first-century Greek merchant guide','attested','The Periplus of the Erythraean Sea describes its trade.']],
+ [['external','Periplus of the Erythraean Sea','A working merchant\u2019s guide — practical, partial.'],
+  ['archaeology','Adulis excavations','Renewed work in recent decades.']],[],null),
+S('nile','lalibela','Lalibela',39.04,12.03,1150,1300,2.4,
+ [['Eleven churches cut down into living rock','attested','The structures themselves, with associated occupation.'],
+  ['Carved under the Zagwe dynasty in the 12th–13th centuries','inferred','Traditional attribution supported by some dating work; individual churches may span several phases.'],
+  ['That they were built in a single reign','open','Tradition says so. The construction evidence suggests a longer, staged process.']],
+ [['oral','Ethiopian church tradition','Custodial, continuous, and theological in purpose.'],
+  ['archaeology','Rock-cut phasing studies','Difficult: subtractive architecture leaves little stratigraphy.']],
+ [['One reign or three centuries?','Dating subtractive architecture is unusually hard. Nothing was deposited to date — only rock removed.']],'Roha'),
+S('nile','harar','Harar',42.13,9.31,1200,1800,2.1,
+ [['A walled city and a centre of Islamic scholarship in the Horn','attested','Standing walls, mosques, shrines and manuscript collections.'],
+  ['A hub linking the highlands to the Red Sea and the coast','attested','Trade records and its own coinage.']],
+ [['manuscript','Harari chronicles and shrine records','Locally produced.'],['archaeology','Limited excavation','A living walled city.']],[],'Gey'),
+
+/* --- EAST --- */
+S('east','kilwa','Kilwa Kisiwani',39.5,-8.96,800,1500,2.9,
+ [['A stone town with a great mosque and a palace complex','attested','Standing Husuni Kubwa and mosque remains, with excavated sequences.'],
+  ['Locally minted copper coinage naming its sultans','attested','Large coin finds with legible rulers\u2019 names.'],
+  ['Control of the gold trade coming north from Sofala','inferred','Described in Arabic accounts and consistent with the material. Direct evidence of control, as opposed to participation, is thinner.'],
+  ['Continuous occupation from an earlier village phase','attested','Excavation shows pre-stone-town timber and daub occupation beneath.']],
+ [['archaeology','Chittick excavations and later work','Foundational; some early interpretations since revised.'],
+  ['manuscript','Kilwa Chronicle','Composed to legitimate a dynasty; its origin story deserves suspicion.'],
+  ['external','Ibn Battuta (1331)','Visited and admired the town.']],
+ [['Where did the stone towns come from?','A long colonial-era literature attributed them to foreign settlers. Excavation showed continuous local development from earlier coastal villages — a correction that changed the whole field.']],null),
+S('east','ungujaukuu','Unguja Ukuu',39.32,-6.35,550,1000,2.2,
+ [['One of the earliest known trading settlements on the Swahili coast','attested','Excavation with 6th–7th century imports and local ware.'],
+  ['Imports from the Persian Gulf, India and further east','attested','Glazed pottery, glass and beads with identified origins.'],
+  ['Its relationship to later stone towns','inferred','Continuity of pottery traditions argues for it; the settlement itself declined early.']],
+ [['archaeology','Zanzibar excavations','Well dated for the earliest phases.']],[],null),
+S('east','shanga','Shanga',41.0,-2.1,760,1450,2.2,
+ [['A sequence of successive mosques rebuilt on the same spot','attested','Excavated superimposed timber and stone mosque phases from the 8th century.'],
+  ['Locally minted silver coinage','attested','A hoard of locally struck coins.'],
+  ['Gradual, local adoption of Islam rather than a single conversion event','inferred','Read from the rebuilding sequence — small timber structure to stone congregational mosque.']],
+ [['archaeology','Horton excavations at Shanga','A benchmark stratigraphic sequence for the coast.']],[],null),
+S('east','gedi','Gedi',40.02,-3.31,1100,1650,2.2,
+ [['A stone town with mosques, houses, wells and a palace','attested','Standing ruins, extensively excavated.'],
+  ['Abandoned in the 17th century','attested','Occupation ends in the archaeological record.'],
+  ['Why it was abandoned','open','Oromo pressure, a falling water table and shifting trade have all been argued.']],
+ [['archaeology','Gedi excavations','Extensive standing remains.'],
+  ['oral','Local traditions','Recorded after the abandonment.']],[],null),
+S('east','mombasa','Mombasa',39.67,-4.05,1100,1800,2.4,
+ [['A major port town described by travellers from the 12th century','attested','Repeated mention plus excavated deposits.'],
+  ['Contested and repeatedly attacked from the 16th century','attested','Portuguese, Omani and local records agree on the sequence.']],
+ [['external','Arabic and Portuguese accounts','Two hostile perspectives on the same town.'],
+  ['archaeology','Excavation in the old town','Constrained by continuous occupation.']],[],'Mvita'),
+S('east','mogadishu','Mogadishu',45.34,2.04,900,1800,2.3,
+ [['A major coastal trading city from at least the 10th century','attested','Standing early mosques with dated inscriptions.'],
+  ['A textile industry exporting cloth regionally','attested','Named in external accounts as a cloth source.'],
+  ['Its political organisation before the 16th century','open','Described variously as a sultanate and as a confederation of families.']],
+ [['external','Ibn Battuta and Arabic geographers','Visited; describe hospitality customs in detail.'],
+  ['archaeology','Very limited modern excavation','Decades of conflict have made fieldwork largely impossible.']],[],null),
+S('east','dembeni','Dembeni',45.15,-12.85,850,1200,1.8,
+ [['An early trading settlement in the Comoros','attested','Excavated site with imported ceramics and local ware.'],
+  ['A staging point between the mainland coast and Madagascar','inferred','Position and shared pottery traditions argue for it.']],
+ [['archaeology','Comoros excavations','A small number of sites carry the sequence.']],[],null),
+S('east','sofala','Sofala',34.73,-20.17,900,1600,2.1,
+ [['The port through which plateau gold reached the coast','attested','Named consistently in Arabic and Portuguese sources as the gold outlet.'],
+  ['Its precise location','open','Coastal change has moved the shoreline; the medieval town has not been securely located.']],
+ [['external','Al-Masudi, Portuguese records','Describe the trade, not the town.'],
+  ['archaeology','Little excavated','The site may be under water or silt.']],
+ [['A port with no site','Sofala is named more often than almost any other place on this coast and remains archaeologically elusive.']],null),
+S('east','chibuene','Chibuene',35.3,-22.2,600,1200,1.9,
+ [['A southern coastal trading site with early Indian Ocean imports','attested','Excavated glass beads and imported ceramics from the 8th century.'],
+  ['A supply point feeding beads inland toward the plateau','inferred','Bead chemistry links coastal finds with interior sites including Mapungubwe.']],
+ [['archaeology','Chibuene excavations and bead chemistry','Small site, disproportionately important.']],[],null),
+
+/* --- CENTRAL --- */
+S('central','mbanzakongo','Mbanza Kongo',14.25,-6.27,1300,1800,2.5,
+ [['Capital of the kingdom of Kongo','attested','Excavated elite burials and structures; continuous documentation from 1483.'],
+  ['A literate court corresponding with Lisbon and Rome in Kikongo and Portuguese','attested','Surviving letters written by Kongo kings and officials.'],
+  ['Its extent and organisation before European contact','inferred','Reconstructed backward from later records and oral tradition.']],
+ [['manuscript','Kongo royal correspondence','Written by Kongo rulers themselves — rare and invaluable, but diplomatic in purpose.'],
+  ['archaeology','Recent excavations at Mbanza Kongo','Work under a living city; early results only.']],[],'Kongo dia Ntotila'),
+S('central','sanga','Sanga & the Upemba depression',26.5,-8.6,700,1600,2.4,
+ [['A continuous cemetery sequence spanning nearly a millennium','attested','Thousands of excavated burials with a well-defined ceramic and metal sequence.'],
+  ['Growing social differentiation visible in grave goods','attested','Copper crosses and ornaments concentrate in some burials over time.'],
+  ['That this sequence represents the emergence of the Luba state','inferred','A widely repeated link between the cemeteries and later Luba kingship, argued from continuity rather than demonstrated.']],
+ [['archaeology','Upemba excavations','One of the best cemetery sequences in Central Africa.'],
+  ['oral','Luba genesis traditions','Politically charged; used to authorise later rule.']],
+ [['Cemeteries into kingdoms?','The sequence shows increasing inequality. Whether it shows the specific institution later called Luba kingship is a separate and unsettled question.']],null),
+S('central','loango','Loango',11.83,-4.65,1400,1800,2),
+S('central','ntusi','Ntusi',31.2,0.05,1000,1500,2.1,
+ [['A large settlement with earthworks and enormous cattle-dung deposits','attested','Excavated middens, basins and occupation debris.'],
+  ['A cattle-centred economy supporting concentrated settlement','attested','Faunal remains dominated by cattle.'],
+  ['Its relationship to later interlacustrine kingdoms','open','Often linked to the traditions of Bunyoro and Buganda; the link is asserted more often than demonstrated.']],
+ [['archaeology','Ntusi excavations','Good sequence, limited area.'],
+  ['oral','Interlacustrine dynastic traditions','Recorded in the colonial period, when they were also being reshaped.']],[],null),
+S('central','bigo','Bigo bya Mugenyi',31.4,0.4,1300,1500,2.1,
+ [['Ten kilometres of ditches cut into rock and soil','attested','Surveyed and sectioned earthwork system.'],
+  ['Built and used over a relatively short period','inferred','Radiocarbon clusters, but sampling is limited.'],
+  ['What it was for','open','A royal capital, a cattle enclosure and a defensive work have all been proposed. The interior has produced surprisingly little occupation debris.']],
+ [['archaeology','Bigo excavations and survey','Extensive earthworks, thin occupation evidence.']],
+ [['A capital with no city?','The scale of labour is undeniable. The absence of dense occupation inside is the problem every interpretation has to explain.']],null),
+S('central','kibiro','Kibiro',31.0,1.7,1200,1800,1.8,
+ [['Salt production on the lake shore, continuous for centuries','attested','Deep stratified salt-working deposits.'],
+  ['Salt traded widely into the interlacustrine region','inferred','Argued from demand and distribution rather than traced by chemistry.']],
+ [['archaeology','Kibiro excavations','Unusually deep and continuous deposits.']],[],null),
+
+/* --- SOUTH --- */
+S('south','mapungubwe','Mapungubwe',29.39,-22.2,1000,1300,2.6,
+ [['A hilltop elite settlement above a larger town','attested','Excavated hill and terrace occupation with clear spatial separation.'],
+  ['Gold burials including a gold-foil rhinoceros','attested','Excavated grave goods, securely provenanced.'],
+  ['A society with rulers physically and ritually set apart','inferred','Read from the separation of hilltop and valley; the specific political institutions are reconstructed.'],
+  ['Why it declined around 1300','open','Climate shift and the rise of Great Zimbabwe are both proposed; they may be the same story.']],
+ [['archaeology','Mapungubwe excavations, 1930s onward','Early work was shaped by a state that denied the site\u2019s significance.']],
+ [['A politicised excavation','Findings were downplayed for decades under apartheid because they contradicted official history. The historiography is part of the record.']],null),
+S('south','greatzimbabwe','Great Zimbabwe',30.93,-20.27,1100,1500,3,
+ [['Monumental dry-stone architecture built without mortar','attested','The standing walls, enclosures and tower.'],
+  ['Built by the local ancestral Shona-speaking population','attested','Continuous local material culture through the sequence; no foreign building tradition present.'],
+  ['Involvement in Indian Ocean trade','attested','Imported Chinese and Persian ceramics, glass beads and coastal goods on site.'],
+  ['Peak population','inferred','Estimates cluster around 10,000–18,000, extrapolated from enclosed area and household density.'],
+  ['What the enclosures were for','open','Royal residence, ritual space and status display are all argued, often for the same walls.']],
+ [['archaeology','Excavations from 1905 onward','Early treasure-hunting destroyed stratigraphy that can never be recovered.'],
+  ['oral','Shona traditions','Recorded late, after major disruption.']],
+ [['A century of denial','Colonial authorities insisted the site was foreign-built, and suppressed archaeologists who said otherwise. The evidence for local construction was clear from 1905 and refused for seventy years.']],null),
+S('south','khami','Khami',28.38,-20.15,1450,1650,2.3,
+ [['A stone-built capital succeeding Great Zimbabwe','attested','Standing decorated walling and excavated elite platforms.'],
+  ['Distinctive checkerboard and herringbone wall decoration','attested','The walls themselves.'],
+  ['Direct dynastic continuity from Great Zimbabwe','inferred','Argued from material and architectural continuity.']],
+ [['archaeology','Khami excavations','Good structural record.']],[],null),
+S('south','thulamela','Thulamela',31.2,-22.4,1250,1650,2),
+S('south','ingombe','Ingombe Ilede',28.6,-16.3,900,1500,2.1,
+ [['Rich burials with gold, copper crosses and imported glass beads','attested','Excavated graves with well-preserved goods.'],
+  ['A trading node linking the Zambezi to the coast','inferred','Read from the mix of local and imported goods.']],
+ [['archaeology','Ingombe Ilede excavations','Small excavated area, exceptional finds.']],[],null),
+S('south','toutswe','Toutswemogala',27.1,-22.9,700,1200,1.9,
+ [['A hilltop settlement above satellite villages','attested','Excavated occupation with a clear site hierarchy across the region.'],
+  ['Wealth organised around cattle herds','attested','Enormous vitrified dung deposits.'],
+  ['A three-tier settlement system implying centralised control','inferred','The hierarchy is measured; the political reading is added.']],
+ [['archaeology','Toutswe survey and excavation','Good regional coverage.']],[],null),
+S('south','bokoni','Bokoni terraces',30.7,-25.2,1500,1820,2),
+S('south','manyikeni','Manyikeni',34.2,-22.0,1150,1450,1.9,
+ [['A stone enclosure of Zimbabwe tradition far to the east','attested','Excavated stone walling and occupation.'],
+  ['A link between the plateau states and the coast at Sofala','inferred','Position and imports argue for it.']],
+ [['archaeology','Manyikeni excavations','Mozambican–Scandinavian programme.']],[],null)
+];
+
+/* minimal records for a few sites declared without full data */
+SITES.forEach(s=>{
+  if(!s.claims){
+    s.claims=[['Occupation of this site in the stated period','attested','Survey and excavation establish presence and rough date.'],
+              ['Its wider political role','inferred','Read from position and regional parallels rather than direct evidence.'],
+              ['Detailed internal chronology','open','Too little fieldwork has been published to phase the site.']];
+    s.sources=[['archaeology','Regional survey reports','Preliminary; full publication pending.']];
+    s.debates=[]; s.alt=null;
+  }
+});
+
+/* ============ POLITIES ============ */
+const POL=(r,name,from,to,ring)=>({r,name,from,to,ring});
+const POLITIES=[
+ POL('west','Tichitt tradition',-1600,-300,[[-10.5,19.2],[-8,19.4],[-7.4,17.9],[-9.8,17.5]]),
+ POL('west','Nok zone',-900,300,[[7.4,10.8],[9.7,10.5],[9.9,8.9],[7.7,8.7]]),
+ POL('west','Wagadu (Ghana)',700,1230,[[-12.2,18],[-8.2,18.6],[-5.2,17.6],[-4.6,15.4],[-6.6,13.5],[-10.2,13.8],[-12.6,15.6]]),
+ POL('west','Kanem',1100,1380,[[12,16.6],[16.2,16],[17.6,14],[15.4,11.8],[12.9,11.5],[11.7,13.6]]),
+ POL('west','Mali',1230,1450,[[-13.2,15.6],[-9,17.3],[-4,17.5],[-0.4,16.6],[0.6,14.4],[-2,12],[-6.2,9.4],[-10.6,9.9],[-13.6,12.6]]),
+ POL('west','Hausa city-states',1300,1800,[[6.1,13.7],[9.6,13.5],[10.1,11.3],[7.4,10.5],[5.9,11.9]]),
+ POL('west','Benin',1200,1800,[[4.5,7.5],[6.3,7.1],[6.7,5.9],[5.5,5.2],[4.6,6.1]]),
+ POL('west','Songhai',1460,1591,[[-9.2,17.9],[-4,18.5],[1.2,18.7],[3.2,16],[2,13.4],[-2,12.4],[-6.2,12.8],[-9.6,14.6]]),
+ POL('west','Bornu',1400,1800,[[10.4,14.6],[14,15.6],[16.6,14.2],[16,11.4],[12.4,10.7],[10.1,12.2]]),
+ POL('north','Garamantes',-400,700,[[10.5,28],[15.5,27.5],[16.5,25],[13,24],[10,26]]),
+ POL('north','Fatimid Ifriqiya',909,1050,[[7,37],[13,33.5],[11,31],[8,32],[5,35.5]]),
+ POL('north','Almoravid',1050,1147,[[-9.5,33],[-2,33.5],[0,31],[-5,28.5],[-10,29.5]]),
+ POL('north','Almohad',1147,1250,[[-9.5,34],[2,36],[9,34],[8,31],[-2,29],[-9.5,30]]),
+ POL('north','Marinid',1250,1465,[[-9.5,34.5],[-2,35],[-0.5,32.5],[-6,30],[-9.8,31.5]]),
+ POL('north','Hafsid',1229,1574,[[7,37],[11,34],[15,31.5],[11,30],[7,32.5],[5.5,35]]),
+ POL('nile','Kerma',-2500,-1450,[[29.8,20.6],[31.4,20.2],[31.6,18.4],[30,18.6]]),
+ POL('nile','Kush (Napatan–Meroitic)',-800,350,[[30.5,21],[34.5,19],[34.8,15],[32,13.5],[30.2,17]]),
+ POL('nile','Aksum',-50,700,[[37,16.5],[40,15.5],[40.5,12.5],[38,11.5],[36.6,14]]),
+ POL('nile','Makuria',550,1400,[[30,22.5],[33,20],[33.5,16],[30.8,16.5],[29.6,19.5]]),
+ POL('nile','Alodia',550,1500,[[31.5,16],[34.5,15],[34.8,11.5],[31.8,12]]),
+ POL('nile','Zagwe',1137,1270,[[38,13.5],[40,12.5],[39.8,10.8],[38,11]]),
+ POL('nile','Ethiopian highland kingdom',1270,1800,[[36.8,15],[40.5,13],[41,9],[37.5,7.5],[36,11]]),
+ POL('nile','Adal',1415,1577,[[41.5,11.5],[44.5,10.5],[44,8],[41.6,9]]),
+ POL('east','Swahili coastal towns',900,1500,[[40.5,-2],[41.5,-3],[40.5,-8],[39.4,-9.5],[38.5,-8],[39.5,-4.5],[39.8,-1.5]]),
+ POL('east','Kilwa sultanate',1100,1500,[[39.2,-8.2],[40.2,-9],[39.6,-10.4],[38.8,-9.4]]),
+ POL('east','Ajuran',1300,1650,[[43,4],[46.5,3],[46,0],[42.8,1]]),
+ POL('central','Kongo',1390,1800,[[12.5,-5],[16.5,-5.5],[17,-8],[13.5,-9],[12.2,-6.5]]),
+ POL('central','Luba',1500,1800,[[25.5,-6.5],[28.5,-7],[28.8,-10],[25.8,-9.5]]),
+ POL('central','Lunda',1600,1800,[[21.5,-8],[25,-8.5],[25.2,-11.5],[21.8,-11]]),
+ POL('central','Buganda / Bunyoro sphere',1400,1800,[[30.5,1.5],[33,0.8],[32.6,-1],[30.4,-0.5]]),
+ POL('south','Mapungubwe polity',1000,1300,[[28.4,-21.5],[30.4,-21.6],[30.6,-23],[28.6,-23]]),
+ POL('south','Zimbabwe state',1100,1500,[[29,-18.5],[32.5,-18.8],[32.6,-21.5],[29.2,-21.3]]),
+ POL('south','Mutapa',1450,1750,[[29.5,-15.5],[33.5,-16],[33.6,-19],[29.8,-18.6]]),
+ POL('south','Torwa / Butua',1450,1680,[[27.5,-19],[29.8,-19.4],[29.9,-21.4],[27.7,-21]])
+];
+
+/* ============ ROUTES ============ */
+const RT=(r,name,from,to,c,path)=>({r,name,from,to,c,path});
+const ROUTES=[
+ RT(['west','north'],'Sijilmasa – Taghaza – Awdaghust',750,1250,'attested',[[-4.28,31.28],[-4.6,29.5],[-5,26],[-5,23.5],[-7,21],[-9.2,19.2],[-10.4,17.4],[-8,15.8]]),
+ RT(['west','north'],'Taghaza salt road',1100,1800,'attested',[[-5,23.5],[-4.4,21],[-3.6,19],[-3,16.8]]),
+ RT(['west','north'],'Ifriqiya – Tadmekka – Gao',800,1500,'attested',[[10.1,35.68],[8,32],[5,28],[2.5,23],[1.4,20.5],[0.9,18.5],[0.05,16.3]]),
+ RT(['west','north'],'Tripoli – Fezzan – Bilma – Kanem',900,1700,'attested',[[13.2,32.9],[13.2,29],[13.2,26.55],[12.9,22],[12.9,18.7],[14,16],[15,14.4]]),
+ RT(['west'],'Niger river corridor',800,1800,'attested',[[-4.5,13.9],[-4.2,15],[-3,16.8],[-1,16.9],[0.05,16.3]]),
+ RT(['west'],'Gold road: Bure – Niani – Jenne',1100,1600,'inferred',[[-9.5,11.3],[-8.4,11.4],[-6.6,12.8],[-4.6,13.9]]),
+ RT(['west'],'Kola and cloth: Hausa – forest',1400,1800,'inferred',[[8.5,12],[5.5,11.5],[2.5,10.5],[-0.8,9.6],[-2.5,8],[-4,6.5]]),
+ RT(['north'],'Egypt – Awjila – Fezzan',600,1500,'attested',[[31.23,30.05],[27,29.5],[23,29.3],[21.3,29.1],[17,28],[13.2,26.55]]),
+ RT(['north','nile'],'Nile corridor: Fustat – Aswan – Dongola',600,1500,'attested',[[31.23,30.05],[32.9,24.1],[31.3,21.8],[30.75,18.22]]),
+ RT(['nile'],'Darb al-Arbain: Darfur – Asyut',900,1800,'attested',[[24,13],[26,17],[28,21],[30.8,26],[31.2,27.2]]),
+ RT(['nile','east'],'Red Sea: Adulis – Aden – Aydhab',-100,1500,'attested',[[39.65,15.26],[38,18],[36,21],[34.5,23.5]]),
+ RT(['nile'],'Highland salt and ivory road',800,1700,'inferred',[[42.13,9.31],[40.5,10.5],[39.04,12.03],[38.72,14.13]]),
+ RT(['east'],'Monsoon crossing: Kilwa – the Gulf and India',800,1500,'attested',[[39.5,-8.96],[43,-4],[47,2],[51,8],[53,12]]),
+ RT(['east'],'Coastal shipping: Mogadishu – Kilwa – Sofala',900,1600,'attested',[[45.34,2.04],[42.5,-0.4],[40.1,-3.2],[39.3,-6.8],[39.5,-8.96],[39.7,-10],[36.9,-17.9],[34.73,-20.17]]),
+ RT(['east','south'],'Sofala gold road to the plateau',1000,1600,'inferred',[[34.73,-20.17],[33,-20.5],[31.5,-20.4],[30.93,-20.27]]),
+ RT(['east'],'Comoros and Madagascar crossing',700,1500,'inferred',[[39.7,-10],[43,-12],[45.15,-12.85],[47.5,-13.4]]),
+ RT(['south'],'Zambezi corridor',900,1700,'attested',[[36.3,-18.5],[35,-17.5],[32.7,-16],[28.8,-16],[28.6,-16.3]]),
+ RT(['south','central'],'Copperbelt exchange',900,1700,'inferred',[[26.5,-11],[27.5,-13],[28.6,-16.3],[29.5,-18]]),
+ RT(['central'],'Kongo – Malebo Pool – interior',1400,1800,'attested',[[13.2,-8.8],[14.25,-6.27],[15.3,-4.3],[17.7,-1]]),
+ RT(['central'],'Great Lakes salt and iron circuit',1200,1800,'inferred',[[31,1.7],[31.4,0.4],[31.2,0.05],[32.5,-1.5],[30.5,-2.5]])
+];
+
+/* ============ RESOURCES ============ */
+const RES=(r,id,name,lon,lat,type,from,to,note)=>({r,id,name,lon,lat,type,from,to,note});
+const RESOURCES=[
+ RES('west','taghaza','Taghaza',-5,23.5,'Salt',1000,1600,'Rock-salt quarry worked with enslaved labour; travellers describe buildings made of salt slabs.'),
+ RES('west','bilma','Bilma',12.9,18.7,'Salt',900,1800,'Evaporation salt supplying the central Sudan and the Kanem corridor.'),
+ RES('west','bure','Bure goldfield',-9.5,11.3,'Gold',1000,1800,'Alluvial gold worked seasonally. Producers, not rulers, controlled extraction — a point the written sources consistently obscure.'),
+ RES('west','bambuk','Bambuk goldfield',-11.9,13.4,'Gold',700,1600,'The earlier of the two great western goldfields; it supplied Wagadu-era exchange.'),
+ RES('west','akjoujt','Akjoujt',-14.4,19.7,'Copper',-800,-100,'Copper ore worked in the first millennium BCE. Artefact chemistry links it to sites hundreds of kilometres away.'),
+ RES('north','tafilalt','Tafilalt oases',-4.2,31.5,'Dates',800,1800,'Date production feeding the caravan economy — the fuel of the crossing, rarely counted as trade goods.'),
+ RES('nile','wadiallaqi','Wadi Allaqi',33.5,22.5,'Gold',-2000,1200,'Desert gold mines east of the Nile, worked from pharaonic times into the Islamic period.'),
+ RES('nile','frankincense','Incense coast',48,10.5,'Incense',-1000,1600,'Frankincense and myrrh from the Horn, traded north for millennia and named in Egyptian records.'),
+ RES('east','zanjbeads','Bead entrepots',39.5,-6.5,'Glass beads',700,1500,'Imported beads redistributed inland. Their chemistry is now the sharpest tracer of interior trade.'),
+ RES('south','plateaugold','Zimbabwe plateau gold',30,-19,'Gold',1000,1700,'Shallow reef and alluvial workings across the plateau, feeding the coast through Sofala.'),
+ RES('south','ivory','Ivory hinterland',32,-21.5,'Ivory',900,1700,'The commodity that appears at every coastal site and almost never in the interior record, because it left.'),
+ RES('central','katanga','Katanga copperbelt',26.5,-11,'Copper',700,1800,'Copper cast into standardised crosses that functioned as currency across a very wide region.')
+];
+
+/* ============ LANGUAGE FAMILIES ============ */
+const LANGS=[
+ {r:['west','central','south'],name:'Niger-Congo (Atlantic-Congo)',col:'#2F4C6E',from:-2000,to:1800,
+  ring:[[-17,14],[-8,15],[0,14],[8,12],[14,9],[20,5],[27,3],[31,-1],[33,-8],[32,-16],[30,-25],[26,-30],[20,-28],[16,-20],[13,-10],[10,-2],[6,4],[-2,5],[-10,7],[-16,9]],
+  note:'Includes the Bantu languages. Around 1,500 languages, and the largest single question in African historical linguistics.'},
+ {r:['north','nile'],name:'Afroasiatic',col:'#B4542F',from:-2000,to:1800,
+  ring:[[-11,36],[10,37],[25,32],[33,31],[38,22],[43,13],[51,11],[47,4],[41,7],[36,12],[30,20],[20,26],[8,30],[-6,32],[-10,32]],
+  note:'Berber, Egyptian, Semitic, Cushitic, Chadic and Omotic. The deepest documented history of any African family, thanks to Egyptian.'},
+ {r:['west','nile','central'],name:'Nilo-Saharan (proposed)',col:'#C68A2E',from:-2000,to:1800,dash:1,
+  ring:[[3,17],[12,16],[20,16],[28,14],[34,12],[36,5],[33,2],[28,6],[22,10],[14,12],[6,13]],
+  note:'A proposed grouping, not an agreed one. Drawn dashed here because its internal unity is still argued.'},
+ {r:['south'],name:'Khoe-Kwadi, Tuu and Kx\u2019a',col:'#6B7A4B',from:-2000,to:1800,
+  ring:[[16,-20],[22,-19],[26,-21],[26,-28],[22,-31],[18,-30],[15,-25]],
+  note:'Southern African families, spoken long before the Bantu-speaking expansion reached the region, and severely reduced since.'},
+ {r:['east'],name:'Austronesian (Malagasy)',col:'#7A5AA0',from:400,to:1800,
+  ring:[[49.4,-12.3],[50.5,-15.5],[48.8,-20],[47.1,-24.9],[45.2,-25.6],[43.3,-22.3],[43.5,-19],[44.4,-16.2],[46.3,-15.7],[47.5,-13.4]],
+  note:'Malagasy is closest to a language of southeast Borneo. The settlement of Madagascar is the longest sea crossing in the pre-modern record.'}
+];
+const EXPANSION=[
+ {name:'Bantu expansion — western stream',from:-1500,to:500,path:[[11,7],[13,3],[15,-1],[16.5,-5],[15,-9],[17,-13],[20,-17]]},
+ {name:'Bantu expansion — eastern stream',from:-1000,to:800,path:[[13,4],[18,2],[24,0],[29,-3],[32,-7],[33,-12],[31,-17],[30,-21]]}
+];
+
+/* ============ OBJECTS, CULTURE, ARTWORK ============ */
+const ART={
+ calabash:`<path d="M46 12 q16 -3 18 6 q1 6 -8 10 q25 12 28 39 q6 41 -25 55 q-19 8 -38 0 q-31 -14 -25 -55 q4 -27 28 -39 q-8 -4 -7 -10 q2 -9 29 -6 z" fill="#D9A94F" stroke="#2B231C" stroke-width="3"/><path d="M14 74 q36 10 72 0M17 90 q34 9 66 0" fill="none" stroke="#2B231C" stroke-width="1.6" opacity=".45"/>`,
+ pot:`<path d="M32 14 q18 -2 24 5 q-6 5 -11 7 q17 13 18 38 q1 32 -23 40 q-15 5 -28 -1 q-21 -11 -18 -40 q2 -25 18 -37 q-6 -2 -11 -7 q7 -6 31 -5 z" fill="#C4794A" stroke="#2B231C" stroke-width="3"/><path d="M12 66 q26 8 50 0M14 80 q24 8 46 0" fill="none" stroke="#2B231C" stroke-width="1.6" opacity=".45"/>`,
+ basket:`<path d="M6 74 q44 -58 88 0" fill="#EBDCBB" stroke="#2B231C" stroke-width="3"/><path d="M6 74 q44 22 88 0" fill="#E0CEA6" stroke="#2B231C" stroke-width="3"/><path d="M14 64 q36 -40 72 0M22 54 q28 -30 56 0M32 44 q18 -20 36 0" fill="none" stroke="#B4542F" stroke-width="2.2" opacity=".7"/>`,
+ beads:`<path d="M12 26 q38 78 76 0" fill="none" stroke="#2B231C" stroke-width="2" opacity=".5"/><g stroke="#2B231C" stroke-width="2"><circle cx="14" cy="30" r="7" fill="#2F4C6E"/><circle cx="26" cy="52" r="7" fill="#B4542F"/><circle cx="40" cy="66" r="7" fill="#D9A94F"/><circle cx="56" cy="68" r="7" fill="#2F4C6E"/><circle cx="72" cy="56" r="7" fill="#6B7A4B"/><circle cx="84" cy="34" r="7" fill="#B4542F"/></g>`,
+ head:`<path d="M50 8 q26 0 30 30 q4 34 -8 52 q-8 12 -22 12 q-14 0 -22 -12 q-12 -18 -8 -52 q4 -30 30 -30 z" fill="#C4794A" stroke="#2B231C" stroke-width="3"/><g stroke="#2B231C" stroke-width="1.5" opacity=".55" fill="none"><path d="M32 36 v54M40 32 v58M50 30 v60M60 32 v58M68 36 v54"/></g>`,
+ cowrie:`<ellipse cx="50" cy="56" rx="30" ry="20" transform="rotate(-18 50 56)" fill="#F0E7D3" stroke="#2B231C" stroke-width="3"/><path d="M28 62 q22 -14 44 -12" fill="none" stroke="#2B231C" stroke-width="2.4"/><g stroke="#2B231C" stroke-width="1.6" opacity=".6"><path d="M32 58 l-3 6M40 55 l-3 6M48 53 l-3 6M56 52 l-3 6M64 52 l-3 6"/></g>`,
+ hoe:`<path d="M28 84 q22 8 44 -6 q6 -20 -12 -26 q-24 -6 -34 12 q-4 12 2 20 z" fill="#8A8B84" stroke="#2B231C" stroke-width="3"/><path d="M34 56 l14 -34" stroke="#7A5A34" stroke-width="8" stroke-linecap="round"/>`,
+ loom:`<rect x="16" y="20" width="68" height="66" rx="8" fill="#EFE3C9" stroke="#2B231C" stroke-width="3"/><g stroke="#2F4C6E" stroke-width="4" opacity=".8"><path d="M26 20 v66M40 20 v66M54 20 v66M68 20 v66"/></g><g stroke="#B4542F" stroke-width="4" opacity=".75"><path d="M16 34 h68M16 52 h68M16 70 h68"/></g>`,
+ cross:`<path d="M44 14 h12 v26 h26 v12 h-26 v26 h-12 v-26 h-26 v-12 h26 z" transform="rotate(45 50 56)" fill="#B87333" stroke="#2B231C" stroke-width="3"/>`,
+ coin:`<circle cx="50" cy="56" r="30" fill="#D9A94F" stroke="#2B231C" stroke-width="3"/><circle cx="50" cy="56" r="21" fill="none" stroke="#2B231C" stroke-width="1.6" opacity=".5"/><path d="M38 50 q12 -6 24 0M38 60 q12 -6 24 0M42 68 q8 -4 16 0" fill="none" stroke="#2B231C" stroke-width="2" opacity=".7"/>`,
+ porcelain:`<path d="M24 44 q26 -14 52 0 q-4 34 -26 44 q-22 -10 -26 -44 z" fill="#EDF1F3" stroke="#2B231C" stroke-width="3"/><path d="M34 52 q16 -8 32 0M38 64 q12 -6 24 0" fill="none" stroke="#2F4C6E" stroke-width="2.4"/><path d="M42 76 q8 -4 16 0" fill="none" stroke="#2F4C6E" stroke-width="2.4"/>`,
+ bird:`<path d="M50 18 q14 0 16 14 q2 12 -6 18 q10 8 8 22 q-2 16 -18 16 q-16 0 -18 -16 q-2 -14 8 -22 q-8 -6 -6 -18 q2 -14 16 -14 z" fill="#9AA08E" stroke="#2B231C" stroke-width="3"/><path d="M50 18 q8 -8 14 -6 q-4 6 -10 8" fill="#9AA08E" stroke="#2B231C" stroke-width="2.4"/><rect x="36" y="88" width="28" height="8" rx="3" fill="#9AA08E" stroke="#2B231C" stroke-width="2.6"/>`,
+ lukasa:`<rect x="20" y="26" width="60" height="62" rx="14" fill="#B07A45" stroke="#2B231C" stroke-width="3"/><g fill="#2B231C"><circle cx="36" cy="42" r="3.4"/><circle cx="52" cy="38" r="3.4"/><circle cx="66" cy="46" r="3.4"/><circle cx="40" cy="58" r="3.4"/><circle cx="58" cy="60" r="3.4"/><circle cx="34" cy="74" r="3.4"/><circle cx="52" cy="76" r="3.4"/><circle cx="68" cy="68" r="3.4"/></g><path d="M36 42 L52 38 L66 46M40 58 L58 60M34 74 L52 76 L68 68" fill="none" stroke="#F2ECE0" stroke-width="1.8" opacity=".8"/>`,
+ manuscript:`<rect x="18" y="24" width="64" height="66" rx="6" fill="#F3EAD6" stroke="#2B231C" stroke-width="3"/><g stroke="#2B231C" stroke-width="2" opacity=".6"><path d="M28 40 h44M28 50 h44M28 60 h30"/></g><g stroke="#B4542F" stroke-width="2.4"><path d="M28 72 h30M28 80 h20"/></g>`
+};
+
+const OBJECTS=[
+ {art:'pot',name:'Cooking pot, Djenné-Djenno',where:'Middle Niger · c. 300–800 CE',pct:88,lvl:'attested',note:'Stratified, dated, made locally. The everyday object that carries the region\u2019s firmest chronology.'},
+ {art:'coin',name:'Kilwa copper coin',where:'Swahili coast · 11th–15th century',pct:91,lvl:'attested',note:'Struck locally and naming its sultans. Coins found as far as northern Australia have started arguments that are not over.'},
+ {art:'bird',name:'Soapstone bird',where:'Great Zimbabwe · 13th–15th century',pct:58,lvl:'inferred',note:'Eight carved birds on monoliths. Their meaning is reconstructed from later Shona practice, which is a long reach backward.'},
+ {art:'cross',name:'Copper cross ingot',where:'Katanga · c. 800–1700',pct:84,lvl:'attested',note:'Cast to standard weights and used as currency. The clearest evidence of a monetary system deep in the interior.'},
+ {art:'beads',name:'Glass beads, Igbo Olokun',where:'Ile-Ife · c. 1000–1400',pct:79,lvl:'attested',note:'Chemistry showed these were made at Ife rather than imported — a finding that rewrote the region\u2019s place in world trade.'},
+ {art:'porcelain',name:'Chinese porcelain sherd',where:'Kilwa, Gedi, Great Zimbabwe · 13th c. onward',pct:86,lvl:'attested',note:'Datable to the decade at the kiln end. It gives coastal and inland sites a chronology their own pottery cannot.'},
+ {art:'head',name:'Terracotta head',where:'Ile-Ife · 12th–15th century',pct:62,lvl:'inferred',note:'Dated with confidence. What it depicts — a named ruler, an ancestor, a ritual figure — is still argued.'},
+ {art:'manuscript',name:'Ge\u2019ez gospel manuscript',where:'Ethiopian highlands · 14th c. onward',pct:77,lvl:'attested',note:'Parchment, pigments and colophons all datable. Monastery libraries hold thousands still uncatalogued.'},
+ {art:'lukasa',name:'Lukasa memory board',where:'Luba, Central Africa · form recorded 19th c.',pct:39,lvl:'open',note:'A beaded device read by trained specialists to recite history. How far back the practice runs is genuinely unknown.'},
+ {art:'cowrie',name:'Cowrie shells',where:'Maldives to the Sahel · 14th c. onward',pct:81,lvl:'attested',note:'An Indian Ocean shell used as currency deep inland. Their spread maps a monetary system across half a continent.'},
+ {art:'calabash',name:'Calabash vessel',where:'Continental · undated tradition',pct:34,lvl:'open',note:'Gourd containers barely survive in the ground. Almost everything we say about them is drawn from later practice and from the pots that imitate their shapes.'},
+ {art:'loom',name:'Strip-woven cloth',where:'Tellem caves, Bandiagara · 11th c. onward',pct:69,lvl:'attested',note:'Textiles survive only where it is dry enough. A handful of cave sites carry an entire regional record.'},
+ {art:'hoe',name:'Iron hoe blade',where:'Middle Niger · first millennium CE',pct:73,lvl:'attested',note:'Smelting slag and furnace bases put ironworking on site early. Yields and field systems remain out of reach.'},
+ {art:'basket',name:'Coiled basket',where:'Sahel · known from impressions',pct:41,lvl:'inferred',note:'Known mostly from its imprint in fired clay. The weave survives as a negative, the object almost never.'}
+];
+
+const CULTURE=[
+ {ico:'lukasa',name:'Memory specialists',reg:'Luba, Mande, Great Lakes',how:['Oral tradition','Ethnography','Iconography'],
+  txt:'Trained reciters holding genealogies, land claims and law. Griots and lukasa readers are performers of a record, not folklore — and the record was maintained by rules about who could speak.'},
+ {ico:'loom',name:'Strip weaving and indigo',reg:'West Africa, Sahel',how:['Archaeology','Textile finds','Continuity'],
+  txt:'Narrow-strip looms produce cloth sewn edge to edge. Dye pits at Kano have been worked continuously for centuries — one of the few crafts where the physical installation survives in use.'},
+ {ico:'pot',name:'Iron smelting as ritual',reg:'Continental',how:['Archaeology','Ethnography','Furnace remains'],
+  txt:'Smelting was frequently organised around secrecy, gendered prohibitions and furnace symbolism. Excavated furnaces give the technique; the ritual frame is reconstructed from much later observation and should be held loosely.'},
+ {ico:'beads',name:'Divination systems',reg:'Yoruba Ifá, Malagasy sikidy, Swahili ramli',how:['Oral tradition','Comparative study','Manuscripts'],
+  txt:'Formal systems generating binary figures interpreted through a memorised corpus. Their family resemblance across the Indian Ocean is one of the strongest cases for long-distance intellectual exchange.'},
+ {ico:'basket',name:'Mancala and board games',reg:'Continental',how:['Archaeology','Rock-cut boards','Ethnography'],
+  txt:'Rows of pits cut into rock at sites from Aksum to the Zimbabwe plateau. Boards are common and confidently identified; the rules played on any given board are not recoverable.'},
+ {ico:'manuscript',name:'Manuscript scholarship',reg:'Timbuktu, Harar, Ethiopia, Swahili coast',how:['Manuscripts','Colophons','Library records'],
+  txt:'Ajami, Arabic and Ge\u2019ez traditions with copying, commentary and teaching lineages. Colophons date the object and name the copyist, which makes these among the best-anchored cultural evidence on the continent.'},
+ {ico:'cross',name:'Currencies before coinage',reg:'Central, Southern, West',how:['Archaeology','Metrology','External accounts'],
+  txt:'Copper crosses, cloth strips, salt bars, cowries and iron blades all functioned as money. Standardised weights are measurable; exchange rates between them mostly are not.'},
+ {ico:'head',name:'Building in earth',reg:'Sahel, Nile, Great Lakes',how:['Standing structures','Excavation','Masons\u2019 guilds'],
+  txt:'Mudbrick and rammed earth maintained by hereditary masons, with annual replastering as a communal event. The technique is continuous and observable; the medieval elevations above waist height rarely are.'}
+];
+
+/* ============ RENDER ============ */
+document.getElementById('rail').innerHTML = OBJECTS.map(o=>`
+ <article class="obj" tabindex="0">
+  <div class="obj-art"><svg viewBox="0 0 100 110" aria-hidden="true">${ART[o.art]}</svg></div>
+  <h3>${o.name}</h3><p class="where">${o.where}</p><p class="note">${o.note}</p>
+  <div class="meter"><div class="track"><i data-w="${o.pct}" style="background:${LVL[o.lvl]}"></i></div><span class="val">${o.pct}%</span></div>
+ </article>`).join('');
+
+document.getElementById('cultureGrid').innerHTML = CULTURE.map(c=>`
+ <article class="prac">
+  <div class="ico"><svg viewBox="0 0 100 110" aria-hidden="true">${ART[c.ico]}</svg></div>
+  <h3>${c.name}</h3><span class="reg">${c.reg}</span><p>${c.txt}</p>
+  <div class="howwe">${c.how.map(h=>`<span>${h}</span>`).join('')}</div>
+ </article>`).join('');
+
+document.getElementById('famlist').innerHTML = `<h3 style="font-size:20px;margin-bottom:6px">Families on the map</h3>
+ <p style="font-size:13px;color:var(--ink-soft);margin:0 0 6px">Distributions are reconstructed for roughly 1500 CE and are zones of speech, not territories.</p>`
+ + LANGS.map(l=>`<div class="fam"><span class="sw" style="background:${l.col}"></span>
+   <div><h3>${l.name}</h3><p>${l.note}</p></div></div>`).join('')
+ + `<div class="fam"><span class="sw" style="background:#B4542F;opacity:.5"></span><div><h3>Bantu expansion routes</h3>
+   <p>Two broad streams out of the Nigeria–Cameroon borderland, spread across roughly two thousand years. Shown on the map as animated arrows when the language layer is on and the year is early enough.</p></div></div>`;
+
+document.getElementById('regiongrid').innerHTML = REGIONS.map(r=>{
+  const n = SITES.filter(s=>s.r===r.id).length;
+  return `<article class="region"><h3>${r.name}</h3><p>${r.blurb}</p>
+    <span class="status live">${n} records</span></article>`;
+}).join('');
+document.getElementById('ncount').textContent = SITES.length;
+
+/* ============ MAP ============ */
+const map = document.getElementById('map');
+const conf = s => Math.round(s.claims.filter(c=>c[1]==='attested').length / s.claims.length * 100);
+let year = 1350, selected = 'kilwa', region = REGIONS[0], mk = 1;
+const layers = {poly:true, route:true, res:true, lang:false};
+const inRegion = f => Array.isArray(f.r) ? f.r.includes(region.id) : f.r===region.id;
+
+function potPath(){return 'M-6,-13 q6,-2 12,0 q-2,3 -4,4 q9,6 9,14 q0,10 -11,10 q-11,0 -11,-10 q0,-8 9,-14 q-2,-1 -4,-4 z';}
+
+function buildMap(){
+  let g=`<defs>
+    <pattern id="mhatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#C68A2E" stroke-width="2" opacity=".5"/></pattern>
+    <linearGradient id="dune" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E6D8B6"/><stop offset="45%" stop-color="#EADFC6"/><stop offset="100%" stop-color="#E4DCC2"/></linearGradient>
+    <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#B4542F"/></marker>
+  </defs>`;
+  g+=`<rect x="0" y="0" width="${X(60)}" height="${Y(-40)}" fill="#D9E1DC"/>`;
+  g+=`<polygon points="${P(AFRICA)}" fill="url(#dune)" stroke="#A8B3A6" stroke-width="3"/>`;
+  g+=`<polygon points="${P(MADAGASCAR)}" fill="url(#dune)" stroke="#A8B3A6" stroke-width="3"/>`;
+  Object.values(RIVERS).forEach(rv=>{g+=`<polyline points="${P(rv)}" fill="none" stroke="#8FAAB6" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>`;});
+  LAKES.forEach(l=>{g+=`<ellipse cx="${X(l.x)}" cy="${Y(l.y)}" rx="${l.rx*K}" ry="${l.ry*K}" fill="#8FAAB6"/>`;});
+  g+=`<text x="${X(3)}" y="${Y(24)}" fill="#BCA579" font-family="ui-monospace,monospace" font-size="34" letter-spacing="22">SAHARA</text>`;
+
+  LANGS.forEach((l,i)=>{
+    const c=l.ring.reduce((a,b)=>[a[0]+b[0]/l.ring.length,a[1]+b[1]/l.ring.length],[0,0]);
+    g+=`<g class="m-lang" data-kind="lang" data-i="${i}">
+      <polygon points="${P(l.ring)}" fill="${l.col}" fill-opacity=".14" stroke="${l.col}" stroke-width="3" ${l.dash?'stroke-dasharray="14 10"':''}/>
+      <text class="lbl" x="${X(c[0])}" y="${Y(c[1])}" text-anchor="middle" fill="${l.col}" font-family="Georgia,serif" font-style="italic" font-size="30">${l.name}</text></g>`;
+  });
+  EXPANSION.forEach((e,i)=>{
+    g+=`<polyline class="m-lang m-arrow" data-kind="exp" data-i="${i}" points="${P(e.path)}" fill="none" stroke="#B4542F" stroke-width="5"
+      stroke-dasharray="18 14" stroke-linecap="round" marker-end="url(#arrowhead)" opacity=".85"><title>${e.name}</title></polyline>`;
+  });
+  POLITIES.forEach((p,i)=>{
+    const c=p.ring.reduce((a,b)=>[a[0]+b[0]/p.ring.length,a[1]+b[1]/p.ring.length],[0,0]);
+    g+=`<g class="m-poly" data-kind="poly" data-i="${i}">
+      <polygon points="${P(p.ring)}" fill="url(#mhatch)" stroke="#C68A2E" stroke-width="3" stroke-dasharray="12 9"/>
+      <text class="lbl" x="${X(c[0])}" y="${Y(c[1])}" text-anchor="middle" fill="#96702A" font-family="Georgia,serif" font-style="italic" font-size="26">${p.name}</text></g>`;
+  });
+  ROUTES.forEach((r,i)=>{
+    const dash = r.c==='attested'?'':r.c==='inferred'?'20 13':'4 15';
+    g+=`<polyline class="m-route" data-kind="route" data-i="${i}" data-dash="${dash}" points="${P(r.path)}" fill="none"
+      stroke="#B4542F" stroke-width="5" stroke-linecap="round" opacity=".8"
+      style="stroke-dasharray:${dash||'2600'}"><title>${r.name} — ${r.c}</title></polyline>`;
+  });
+  RESOURCES.forEach((r,i)=>{
+    const col = r.type==='Gold'?'#C68A2E':r.type==='Salt'?'#8895A3':r.type==='Copper'?'#B87333':'#6B7A4B';
+    g+=`<g class="m-res" data-kind="res" data-i="${i}" data-x="${X(r.lon)}" data-y="${Y(r.lat)}">
+      <rect x="-8" y="-8" width="16" height="16" rx="5" transform="rotate(45)" fill="${col}" stroke="#2B231C" stroke-width="2.4"/>
+      <text y="-17" text-anchor="middle" fill="#7A6B5C" font-family="ui-monospace,monospace" font-size="12" letter-spacing="1">${r.name.toUpperCase()}</text></g>`;
+  });
+  SITES.forEach((s,i)=>{
+    const c=conf(s), fillCol = c>=70?'#6B7A4B':c>=40?'#C68A2E':'#B4542F';
+    const top = 11 - 24*(c/100);
+    g+=`<g class="m-site" data-kind="site" data-i="${i}" data-id="${s.id}" data-x="${X(s.lon)}" data-y="${Y(s.lat)}" tabindex="0" role="button" aria-label="${s.name}">
+      <clipPath id="cp-${s.id}"><path d="${potPath()}"/></clipPath>
+      <circle class="halo" r="26" fill="#B4542F"/>
+      <path d="${potPath()}" fill="#FBF7EF" stroke="#2B231C" stroke-width="2"/>
+      <rect clip-path="url(#cp-${s.id})" x="-14" y="${top}" width="28" height="30" fill="${fillCol}" opacity=".9"/>
+      <path d="${potPath()}" fill="none" stroke="#2B231C" stroke-width="2"/>
+      <text x="16" y="7" fill="#2B231C" font-family="Georgia,serif" font-size="${13+s.w*1.7}" font-weight="${s.w>2.3?600:400}">${s.name}</text>
+    </g>`;
+  });
+  map.innerHTML=g;
+
+  map.querySelectorAll('.m-site').forEach(el=>{
+    const s=SITES[+el.dataset.i];
+    const open=()=>{selected=s.id;showRecord(s);update();};
+    el.addEventListener('click',open);
+    el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+  });
+  map.querySelectorAll('.m-res').forEach(el=>{
+    el.addEventListener('click',()=>{selected=null;showResource(RESOURCES[+el.dataset.i]);update();});
+  });
+}
+
+function update(){
+  map.querySelectorAll('[data-kind]').forEach(el=>{
+    const k=el.dataset.kind, i=+el.dataset.i;
+    const src = k==='poly'?POLITIES[i]:k==='route'?ROUTES[i]:k==='res'?RESOURCES[i]:k==='lang'?LANGS[i]:k==='exp'?EXPANSION[i]:SITES[i];
+    const timeOk = year>=src.from && year<=src.to;
+    const layerOk = k==='site' ? true : k==='lang'||k==='exp' ? layers.lang : layers[k];
+    const regionOk = k==='exp' ? true : inRegion(src);
+    el.classList.toggle('on', timeOk && layerOk && regionOk);
+    if(k==='site') el.classList.toggle('sel', el.dataset.id===selected);
+  });
+  document.getElementById('yearBig').textContent = yr(year);
+  document.querySelectorAll('.era').forEach(e=>e.setAttribute('aria-current', +e.dataset.y===year));
+}
+
+/* marker + label rescaling so things look the same size at every zoom */
+function rescale(){
+  map.querySelectorAll('.m-site, .m-res').forEach(el=>{
+    el.setAttribute('transform',`translate(${el.dataset.x},${el.dataset.y}) scale(${mk})`);
+  });
+  map.querySelectorAll('.m-route').forEach(el=>{
+    el.setAttribute('stroke-width', 5*mk);
+    const d = el.dataset.dash;
+    el.style.strokeDasharray = d ? d.split(' ').map(v=>+v*mk).join(' ') : (2600*mk);
+    el.style.strokeDashoffset = el.classList.contains('on') ? 0 : 2600*mk;
+  });
+  map.querySelectorAll('.m-poly polygon, .m-lang polygon').forEach(el=>{
+    el.setAttribute('stroke-width', 3*mk);
+    const d=el.getAttribute('stroke-dasharray');
+    if(d) el.setAttribute('stroke-dasharray', d.split(' ').map(v=>+v*mk).join(' '));
+  });
+  map.querySelectorAll('.lbl').forEach(el=>{
+    el.setAttribute('font-size', (el.closest('.m-lang')?30:26)*mk);
+  });
+  map.querySelectorAll('.m-arrow').forEach(el=>{
+    el.setAttribute('stroke-width', 5*mk);
+    el.style.strokeDasharray = (18*mk)+' '+(14*mk);
+  });
+}
+
+/* animated viewBox flight */
+let vb=null, anim=null;
+function bboxToVB(b){
+  const [w,s,e,n]=b;
+  const x=X(w), y=Y(n), width=X(e)-X(w), height=Y(s)-Y(n);
+  return [x,y,width,height];
+}
+function setRegion(r, instant){
+  region=r;
+  document.getElementById('regionChip').textContent=r.name;
+  document.querySelectorAll('.rtab').forEach(t=>t.setAttribute('aria-current', t.dataset.id===r.id));
+  const target=bboxToVB(r.bbox);
+  mk = target[2]/1500;
+  if(!vb || instant){ vb=target; map.setAttribute('viewBox',vb.join(' ')); rescale(); update(); return; }
+  const start=vb.slice(), t0=performance.now(), dur=850;
+  cancelAnimationFrame(anim);
+  const step=now=>{
+    const p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,3);
+    vb = start.map((v,i)=>v+(target[i]-v)*e);
+    map.setAttribute('viewBox',vb.join(' '));
+    if(p<1) anim=requestAnimationFrame(step); else {vb=target;rescale();}
+  };
+  rescale(); update();
+  anim=requestAnimationFrame(step);
+}
+
+/* ============ RECORD ============ */
+const record=document.getElementById('record');
+function vessel(pct){
+  const col=pct>=70?'#6B7A4B':pct>=40?'#C68A2E':'#B4542F', top=46-38*(pct/100);
+  const d='M14 6 h12 q1 5 -4 8 q14 7 15 20 q1 14 -13 14 q-14 0 -13 -14 q1 -13 15 -20 q-5 -3 -4 -8 z';
+  return `<svg viewBox="0 0 40 50" aria-hidden="true"><defs><clipPath id="vc${pct}"><path d="${d}"/></clipPath></defs>
+   <path d="${d}" fill="#FBF7EF" stroke="#2B231C" stroke-width="2"/>
+   <rect clip-path="url(#vc${pct})" x="0" y="${top}" width="40" height="50" fill="${col}" opacity=".9"/>
+   <path d="${d}" fill="none" stroke="#2B231C" stroke-width="2"/></svg>`;
+}
+function showRecord(s){
+  const c=conf(s), reg=REGIONS.find(r=>r.id===s.r);
+  record.innerHTML=`
+   <span class="eyebrow">${reg.name}</span>
+   <h3>${s.name}</h3>
+   ${s.alt?`<p class="rec-alt">also recorded as ${s.alt}</p>`:''}
+   <div class="rec-meta">
+     <span class="tag">${span(s.from,s.to)}</span>
+     <span class="tag">${Math.abs(s.lat).toFixed(2)}°${s.lat<0?'S':'N'} ${Math.abs(s.lon).toFixed(2)}°${s.lon<0?'W':'E'}</span>
+     <span class="tag">${s.claims.length} claims</span>
+   </div>
+   <div class="vessel-row">${vessel(c)}<div><div class="n">${c}%</div><p>of the claims in this record are directly attested</p></div></div>
+   ${s.claims.map(cl=>`<div class="claim"><span class="lbl" style="background:${LVL[cl[1]]}1F;color:${LVL[cl[1]]}">${cl[1]}</span>
+     <p>${cl[0]}</p><p class="basis">${cl[2]}</p></div>`).join('')}
+   <h4 class="sub">Sources, with their limits</h4>
+   ${s.sources.map(x=>`<div class="src"><span class="st">${x[0]}</span><div>${x[1]}<em>${x[2]}</em></div></div>`).join('')}
+   ${s.debates.length?`<h4 class="sub">Where specialists disagree</h4>
+     ${s.debates.map(d=>`<div class="debate"><b>${d[0]}</b><p>${d[1]}</p></div>`).join('')}`:''}`;
+  record.scrollTop=0;
+}
+function showResource(r){
+  record.innerHTML=`<span class="eyebrow">Resource source</span><h3>${r.name}</h3>
+   <div class="rec-meta"><span class="tag">${r.type}</span><span class="tag">${span(r.from,r.to)}</span></div>
+   <p style="font-size:14.5px;line-height:1.6;margin:0 0 20px">${r.note}</p>
+   <h4 class="sub">How a source becomes a route</h4>
+   ${['Ore, deposit or grove','Extraction site','Artefact chemistry','Corridor','Consuming settlement','Wider network']
+     .map((t,i)=>`<div style="display:flex;gap:12px;align-items:center;padding:9px 0">
+       <span style="width:10px;height:10px;border-radius:99px;background:${i===0?'#C68A2E':'#6B7A4B'};flex:0 0 auto"></span>
+       <span style="font-size:14px">${t}</span></div>`).join('')}
+   <div class="debate" style="margin-top:12px"><b>Easy to overstate</b><p>Sourcing links are the strongest way to reconstruct trade without a written record, and the easiest to push too far. Isotope ranges overlap. One matching signature is a hypothesis, not a route.</p></div>`;
+  record.scrollTop=0;
+}
+
+/* ============ CONTROLS ============ */
+document.getElementById('regionbar').innerHTML = REGIONS.map(r=>
+  `<button class="rtab" data-id="${r.id}" aria-current="${r.id==='west'}">${r.name}</button>`).join('');
+document.querySelectorAll('.rtab').forEach(b=>b.addEventListener('click',()=>{
+  const r=REGIONS.find(x=>x.id===b.dataset.id);
+  setRegion(r);
+  const first=SITES.find(s=>s.r===r.id && year>=s.from && year<=s.to) || SITES.find(s=>s.r===r.id);
+  if(first){selected=first.id;showRecord(first);update();}
+}));
+
+const yearInput=document.getElementById('year');
+const ERAS=[[-1500,'Kerma'],[-300,'Meroë'],[500,'Aksum'],[900,'Wagadu'],[1350,'Mali & Kilwa'],[1500,'Songhai & Mutapa'],[1700,'Bornu & Kongo']];
+document.getElementById('eras').innerHTML=ERAS.map(([y,l])=>`<button class="era" data-y="${y}">${l}</button>`).join('');
+document.querySelectorAll('.era').forEach(b=>b.addEventListener('click',()=>{year=+b.dataset.y;yearInput.value=year;update();}));
+yearInput.addEventListener('input',e=>{year=+e.target.value;update();});
+document.querySelectorAll('.fchip').forEach(b=>b.addEventListener('click',()=>{
+  const k=b.dataset.layer; layers[k]=!layers[k]; b.setAttribute('aria-pressed',layers[k]); update();
+}));
+
+/* ============ MOTION ============ */
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting) return;
+  e.target.classList.add('in');
+  e.target.querySelectorAll?.('.track i').forEach(i=>i.style.width=i.dataset.w+'%');
+  io.unobserve(e.target);
+}),{threshold:.12});
+document.querySelectorAll('.rise').forEach((el,i)=>{el.style.transitionDelay=(i%4)*70+'ms';io.observe(el);});
+document.querySelectorAll('.obj').forEach(el=>io.observe(el));
+
+function fillHero(){
+  const target=conf(SITES.find(s=>s.id==='kilwa'));
+  const rect=document.getElementById('heroFillRect'), out=document.getElementById('heroPct');
+  const top=380-300*(target/100);
+  if(reduce){rect.setAttribute('y',top);out.textContent=target;return;}
+  let t=0;
+  const tick=()=>{t+=1/70;const e=t<1?1-Math.pow(1-t,3):1;
+    rect.setAttribute('y',380-(380-top)*e);out.textContent=Math.round(target*e);
+    if(t<1) requestAnimationFrame(tick);};
+  setTimeout(()=>requestAnimationFrame(tick),450);
+}
+
+buildMap();
+setRegion(REGIONS[0], true);
+showRecord(SITES.find(s=>s.id==='timbuktu'));
+selected='timbuktu'; update();
+fillHero();
