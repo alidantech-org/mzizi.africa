@@ -9,6 +9,7 @@ An evidence-first digital atlas and public record for pre-colonial African histo
 - TypeScript
 - Tailwind CSS 4
 - shadcn/ui-compatible component setup (`base-nova`)
+- Bun package manager
 - `src/` application layout
 
 ## Landing page
@@ -17,14 +18,26 @@ The initial landing page is a parity port of the supplied `mzizi-africa.html` de
 
 The source prototype is retained at `public/reference/mzizi-africa.html` for visual comparison.
 
-## Run locally
+## Run locally with Bun
+
+Install Bun if it is not already available, then from the repository root run:
 
 ```bash
-npm install
-npm run dev
+bun install
+bun dev
 ```
 
 Open `http://localhost:3000`.
+
+Useful commands:
+
+```bash
+bun run typecheck
+bun run build
+bun start
+```
+
+The repository declares Bun in `package.json`. The first `bun install` will generate `bun.lock`; commit that lockfile so installs remain reproducible.
 
 ## Structure
 
