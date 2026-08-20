@@ -23,7 +23,7 @@ That fragmentation makes it difficult to answer connected questions such as:
 
 Mzizi exists to research and structure this information cleanly so that history, heritage and the current world can be explored as one connected, evidence-backed system.
 
-Read [.docs/WHY.md](.docs/WHY.md) and [.docs/STORY.md](.docs/STORY.md) first.
+Read [.docs/WHY.md](.docs/WHY.md), [.docs/GOALS.md](.docs/GOALS.md) and [.docs/STORY.md](.docs/STORY.md) first.
 
 ## Product surfaces
 
@@ -40,6 +40,23 @@ mzizi.africa/
 ```
 
 The current repository is consolidated, but the target service architecture is intentionally broader than the code that exists today.
+
+## Target repository shape
+
+```text
+mzizi.africa/
+├── apps/
+│   ├── www/
+│   └── dashboard/
+├── services/
+│   ├── files/          Evidence artifact lifecycle
+│   ├── data-engine/    Discovery, extraction and parsing
+│   ├── intelligence/   AI/tool classification, cleaning and evaluation
+│   ├── db-engine/      Migrations, seeds, validation and promotion
+│   └── api/            Future NestJS product API
+├── packages/           Shared contracts/taxonomies when justified
+└── .docs/
+```
 
 ## Target system layers
 
@@ -148,10 +165,12 @@ Start with:
 
 - [.docs/README.md](.docs/README.md) — documentation map
 - [.docs/WHY.md](.docs/WHY.md) — common purpose and reasons
+- [.docs/GOALS.md](.docs/GOALS.md) — goals, success conditions and non-goals
 - [.docs/STORY.md](.docs/STORY.md) — product story and user journey
+- [.docs/DOMAINS.md](.docs/DOMAINS.md) — knowledge domains and why they matter
+- [.docs/SYSTEM.md](.docs/SYSTEM.md) — system responsibilities and invariants
 - [.docs/ARCHITECTURE.md](.docs/ARCHITECTURE.md) — target technical architecture
 - [.docs/DATA_LIFECYCLE.md](.docs/DATA_LIFECYCLE.md) — evidence-to-canonical-data pipeline
-- [.docs/DOMAINS.md](.docs/DOMAINS.md) — knowledge domains and why they matter
 - [.docs/MIGRATION.md](.docs/MIGRATION.md) — transition from the consolidated legacy code
 - [.docs/ROADMAP.md](.docs/ROADMAP.md) — build sequence
 
