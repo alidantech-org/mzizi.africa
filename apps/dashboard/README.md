@@ -1,132 +1,98 @@
-# Katiba Book- Political Finance & Risk Intelligence Platform
+# Mzizi Research & Stewardship Dashboard
 
-A comprehensive platform for tracking and analyzing political campaign finance, government budgets, and political risk in Kenya. Built with Next.js and FastAPI.
+`apps/dashboard` is the internal/research application for Mzizi Africa.
 
-## 🌐 Live Demo
+The current codebase was inherited from the earlier **Katiba Book / Political Finance & Risk Intelligence** project. That work is still valuable, especially for governance, elections, political finance and geographic analysis, but it no longer defines the full product scope.
 
-**Frontend:** [https://polifin.vercel.app](https://polifin.vercel.app)
+The target role of this app is a **research, curation, review and data-stewardship workbench** for all Mzizi domains.
 
-## 📋 Overview
+## Target responsibilities
 
-Katiba Book(Political Finance & Risk Intelligence) is a data-driven platform that provides transparency and insights into:
+The dashboard should eventually support:
 
-- **Political Campaign Finance** - Track party funding, candidate expenditures, and campaign contributions
-- **Government Budgets & Tenders** - Monitor government spending and procurement processes
-- **Political Data** - Comprehensive database of politicians, parties, elections, and elective positions
-- **Demographic Insights** - Population, education, income, and development indicators
-- **Geographic Data** - Administrative divisions (counties, constituencies, wards)
-- **Risk Analysis** - Assess political and financial risks across different regions
+- source registration and discovery review;
+- evidence artifact inspection;
+- extraction job monitoring;
+- extracted text/table review;
+- AI classification review;
+- OCR-cleaning review;
+- entity resolution and alias matching;
+- historical geography/boundary review;
+- relationship suggestions;
+- contradiction/disagreement review;
+- candidate-record queues;
+- data-quality evaluation;
+- confidence/dispute management;
+- canonical approval/publishing;
+- correction and supersession workflows;
+- version/history inspection;
+- research coverage and gap analysis;
+- governance/election/finance research views.
 
-## 🚀 Getting Started
+## What the dashboard is not
 
-### Prerequisites
+It is not only a CRUD admin panel and it is not only a political-finance dashboard.
 
-- Node.js 18+ and npm/yarn/pnpm
-- Python 3.11+ (for backend)
-- PostgreSQL database
+Its central purpose is to support the controlled transformation:
 
-### Frontend Development
-
-```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
+```text
+source evidence
+  -> extraction
+  -> AI/tool suggestions
+  -> candidate records
+  -> validation/review
+  -> canonical versioned knowledge
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+## Valuable inherited capabilities
 
-### Backend Setup
+The existing Katiba Book work provides useful starting material for:
 
-The backend API is built with FastAPI and provides RESTful endpoints for all data operations.
+- political campaign finance;
+- government budgets and tenders;
+- politicians and political parties;
+- elections and elective positions;
+- demographic/geographic analysis;
+- charts, search and filters;
+- operational dashboard patterns.
 
-```bash
-# Navigate to backend directory
-cd ../backend
+These should be preserved selectively and integrated into the wider Mzizi research model rather than discarded.
 
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+## Architecture boundary
 
-# Install dependencies
-pip install -r requirements.txt
+The dashboard consumes service/API contracts. It must not become the hidden owner of:
 
-# Run database migrations
-python scripts/database_cli.py --create-tables
+- canonical domain rules;
+- database migrations;
+- source scraping;
+- file storage;
+- AI execution lineage;
+- direct uncontrolled canonical DB writes.
 
-# Seed database with sample data
-python scripts/database_cli.py --seed --all
+Research actions should go through explicit workflows and the future NestJS API.
 
-# Start API server
-uvicorn app.main:app --reload
-```
+## Current stack
 
-## 🏗️ Tech Stack
+The inherited application is a Next.js/TypeScript dashboard using Tailwind/shadcn-style components. Existing package/configuration files remain authoritative for the current implementation until the dashboard is modernized.
 
-### Frontend
+## Migration direction
 
-- **Framework:** Next.js 14 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **UI Components:** shadcn/ui
-- **Icons:** Lucide React
-- **State Management:** React Hooks
-- **Data Fetching:** Fetch API / Axios
+The recommended sequence is:
 
-### Backend
+1. preserve working inherited screens;
+2. inventory which data/API dependencies they use;
+3. introduce source/evidence and candidate-review workflows;
+4. connect those workflows to the new service contracts;
+5. migrate governance/political-finance views to the future NestJS API;
+6. remove stale Katiba Book naming and assumptions as corresponding functionality is migrated.
 
-- **Framework:** FastAPI (Python)
-- **Database:** PostgreSQL
-- **ORM:** SQLAlchemy
-- **Authentication:** JWT tokens
-- **API Documentation:** OpenAPI/Swagger
+Do not rewrite the whole dashboard before the underlying evidence/data contracts exist.
 
-## 📁 Project Structure
+## Read first
 
-```
-frontend/
-├── app/              # Next.js app directory
-├── components/       # React components
-├── lib/             # Utility functions
-├── public/          # Static assets
-└── styles/          # Global styles
-
-backend/
-├── app/
-│   ├── routes/      # API endpoints
-│   ├── models/      # Database models
-│   ├── services/    # Business logic
-│   └── config/      # Configuration
-├── seeds/           # Database seed data
-└── scripts/         # CLI tools
-```
-
-## 🔑 Key Features
-
-- **Real-time Data Visualization** - Interactive charts and graphs
-- **Advanced Search & Filtering** - Find specific politicians, parties, or financial records
-- **Comprehensive Reporting** - Generate detailed reports on political finance
-- **Geographic Analysis** - Visualize data across counties and constituencies
-- **Responsive Design** - Works seamlessly on desktop and mobile devices
-- **API-First Architecture** - RESTful API for third-party integrations
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 👥 Team
-
-Built during a hackathon to promote transparency in political finance and governance.
-
-link to the deployed project: https://polifin.vercel.app
+- [`../../.docs/WHY.md`](../../.docs/WHY.md)
+- [`../../.docs/GOALS.md`](../../.docs/GOALS.md)
+- [`../../.docs/STORY.md`](../../.docs/STORY.md)
+- [`../../.docs/SYSTEM.md`](../../.docs/SYSTEM.md)
+- [`../../.docs/DATA_LIFECYCLE.md`](../../.docs/DATA_LIFECYCLE.md)
+- [`../../.docs/MIGRATION.md`](../../.docs/MIGRATION.md)
