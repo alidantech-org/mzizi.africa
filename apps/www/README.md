@@ -1,8 +1,29 @@
-# mzizi.africa
+# Mzizi Africa Public Application
 
-An evidence-first digital atlas and public record for pre-colonial African history.
+`apps/www` is the public-facing Mzizi Africa experience: an evidence-first African historical atlas, digital heritage museum and public knowledge explorer.
 
-## Stack
+The current implementation began as a pre-colonial African history landing experience. Its long-term scope is broader and follows the repository-level Mzizi architecture.
+
+## Product role
+
+The public application should make structured Mzizi knowledge understandable through:
+
+- interactive historical maps;
+- timelines;
+- places and historical polities;
+- heritage and cultural collections;
+- languages and linguistic relationships;
+- migration and settlement;
+- trade networks and resources;
+- colonial transformation;
+- independence and institutional change;
+- constitutions/governance/politics;
+- evidence, citations, confidence and uncertainty;
+- present-day relevance where the historical connection is supported.
+
+This application **presents and explores canonical knowledge**. It does not own source extraction, AI classification, migrations or canonical data rules.
+
+## Current stack
 
 - Next.js 16 App Router
 - React 19
@@ -12,15 +33,40 @@ An evidence-first digital atlas and public record for pre-colonial African histo
 - Bun package manager
 - `src/` application layout
 
-## Landing page
+## Current landing page
 
 The initial landing page is a parity port of the supplied `mzizi-africa.html` design. Its original visual contract and interactive map/runtime are preserved while living inside a standard Next.js application architecture.
 
 The source prototype is retained at `public/reference/mzizi-africa.html` for visual comparison.
 
+## Existing design principles worth preserving
+
+- warm oat / cream / clay / calabash / raffia / indigo palette;
+- evidence confidence represented visually;
+- claim-level provenance and uncertainty;
+- interactive regional map and timeline;
+- polity, trade, resource and language overlays;
+- culture, historical linguistics, methodology and coverage sections.
+
+## Target routes
+
+The public product should progressively grow into routes such as:
+
+```text
+/explore              map + timeline exploration
+/places/[slug]        places, polities and historical geography
+/stories               curated research narratives
+/sources               evidence catalogue and methodology
+/heritage              museum/heritage collections
+/languages             language and linguistic exploration
+/governance            modern governance/political context
+```
+
+The exact information architecture can evolve with research and canonical API contracts.
+
 ## Run locally with Bun
 
-Install Bun if it is not already available, then from the repository root run:
+From this app directory:
 
 ```bash
 bun install
@@ -37,9 +83,7 @@ bun run build
 bun start
 ```
 
-The repository declares Bun in `package.json`. The first `bun install` will generate `bun.lock`; commit that lockfile so installs remain reproducible.
-
-## Structure
+## Current structure
 
 ```text
 src/
@@ -63,15 +107,14 @@ public/
     └── mzizi-africa.html
 ```
 
-## Design principles carried from the prototype
+## Architecture rule
 
-- Warm oat / cream / clay / calabash / raffia / indigo palette
-- Evidence confidence represented as filled vessels
-- Claim-level provenance and uncertainty
-- Interactive regional map and timeline
-- Polity, trade, resource, and language overlays
-- Culture, historical linguistics, methodology, and coverage sections
+As real data is introduced, consume stable contracts from the future NestJS API rather than defining canonical historical/domain logic inside React components.
 
-## Next steps
+Read:
 
-The parity landing page can now be progressively decomposed into typed React components without changing the visual result, while new routes such as `/explore`, `/places/[slug]`, `/stories`, and `/sources` can use regular shadcn/Tailwind components.
+- [`../../.docs/WHY.md`](../../.docs/WHY.md)
+- [`../../.docs/STORY.md`](../../.docs/STORY.md)
+- [`../../.docs/DOMAINS.md`](../../.docs/DOMAINS.md)
+- [`../../.docs/ARCHITECTURE.md`](../../.docs/ARCHITECTURE.md)
+- [`../../.docs/ROADMAP.md`](../../.docs/ROADMAP.md)
