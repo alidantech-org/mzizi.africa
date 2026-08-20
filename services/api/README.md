@@ -1,143 +1,108 @@
-Here is a **clear domain map** of what you’ve built vs what remains.
+# Legacy Python Backend — Migration Source
 
----
+> **Status:** transitional. This Python FastAPI service is **not** the target Mzizi product API.
 
-# ✅ **WHAT YOU HAVE BUILT**
+The code in this directory was consolidated from the earlier political-governance backend because it contains valuable domain and database work. It should be mined carefully for reusable design, data and behavior while Mzizi moves to the architecture defined in the repository root documentation.
 
-## 1. Geo Domain
+The target public/product API will be implemented in **NestJS** after canonical contracts and database boundaries are established.
 
-- Geographic hierarchy (geo units)
-- Geo levels
-- Boundaries (implicitly modeled)
-- Geo statistics (indicators, periods, values)
+## Why this code is being preserved
 
----
+This service contains useful work for areas such as:
 
-## 2. Constitution Domain
+- geographic hierarchy and relationships;
+- constitutions and legal sections;
+- governance structures;
+- offices and office holders;
+- people;
+- political parties;
+- elections, candidates, results and manifestos;
+- finance;
+- debt;
+- procurement;
+- statistics/events;
+- file handling;
+- web/document extraction utilities;
+- SQLAlchemy models;
+- Alembic migrations;
+- seed/research data.
 
-- Constitution
-- Articles + sections (chapters, clauses, sub-clauses)
-- Temporal versioning
-- Amendments
-- Lineage (previous versions)
+Those concepts should not be lost merely because the service boundary is changing.
 
----
+## What must not happen
 
-## 3. Laws / Legal Domain
+Do not continue turning this service into the long-term monolithic backend.
 
-- Laws / Acts
-- Law versions (temporal)
-- Link laws → constitution sections
-- Legal authority mapping
+In particular, do not add new platform responsibilities here by default for:
 
-👉 This is the **bridge between constitution and real governance**
+- large-scale source discovery;
+- scraping/OCR/document extraction;
+- AI classification/cleaning/evaluation;
+- platform file custody;
+- new database lifecycle orchestration;
+- long-term public API modules.
 
----
+## Target decomposition
 
-## 4. Governance / Political Structure
-
-- Government offices
-- Office hierarchy
-- Powers / responsibilities
-- Office holders (people in office)
-
-👉 Defines **who has authority**
-
----
-
-## 5. Elections Domain
-
-- Elections (events)
-- Electoral positions (seats)
-- Candidates
-- Results
-
-👉 Defines **how people get into power**
-
----
-
-## 6. People Domain
-
-- People (citizens, officials)
-- Identity + status
-- Life-cycle (alive/deceased)
-
-👉 The **human layer**
-
----
-
-## 7. Political Parties Domain
-
-- Parties
-- Party membership
-- Party ideology / structure
-
-👉 Political organization layer
-
----
-
-## 8. Finance (later)
-
-- Budget
-- Expenditure
-- Revenue
-- Public spending
-
----
-
-## 9. Tenders / Procurement (later)
-
-- Tenders
-- Bids
-- Contracts
-
----
-
-# 🟡 **WHAT YOU SHOULD BUILD NEXT (CRITICAL DOMAINS)**
-
-## 10. Public Participation / Civic Layer
-
-- Petitions
-- Feedback
-- Citizen engagement
-
----
-
-## 11. Transparency / Audit Layer
-
-- Audit logs
-- Change tracking across all domains
-- Verification systems
-
----
-
-# 🧠 **MASTER STRUCTURE (HOW IT ALL CONNECTS)**
-
-```text id="full"
-Constitution
-   ↓
-Laws
-   ↓
-Offices
-   ↓
-People
-   ↓
-Elections / Appointments
-   ↓
-Actions (later: finance, governance decisions)
+```text
+Current Python service
+        │
+        ├── extraction/scraping ──────> ../data-engine
+        ├── file/artifact behavior ───> ../files
+        ├── AI/intelligence behavior ─> ../intelligence
+        ├── models/migrations/seeds ───> ../db-engine + canonical schema design
+        └── product endpoints ────────> future NestJS API
 ```
 
----
+## Database-design extraction
 
-NB: RULES: never add a field id or foreign key id, the strong codes system will handle relationships:
-The Universal URI-Safe Hierarchy Standard requires lowercase, alphanumeric codes utilizing hyphens for spaces 
-and slashes for nesting, while omitting redundant descriptors and numeric IDs. The hierarchy follows 
-a parent/child pattern, exemplified by structures like ke/uasin-gishu/kapseret/langas.
+Before replacing the Python ORM/migrations, inventory the existing design.
 
-ENUM FORMATTING RULES:
-- Use UPPER_SNAKE_CASE for enum class names
-- Use LOWER_SNAKE_CASE for enum values
-- Keep enum values short and descriptive
-- Group related enum values logically
-- Add docstring with examples for each enum
-- Import enums explicitly where used
+For each model/table record:
+
+- business purpose;
+- schema/table name;
+- fields;
+- indexes;
+- constraints;
+- identifiers/codes;
+- relationships;
+- temporal behavior;
+- source/provenance behavior;
+- seed dependencies;
+- API dependencies;
+- known inconsistencies.
+
+Do not copy old tables blindly. The existing code contains valuable domain ideas but also inherited architectural assumptions that need review.
+
+## Historical identity and codes
+
+The old system contains a strong code/hierarchy concept for geographic and domain references. Preserve the intent during inventory, but do not treat every old implementation detail as immutable.
+
+The new canonical identity model must be chosen explicitly after reviewing:
+
+- stable internal identity;
+- human/business codes;
+- URI-safe hierarchical codes where useful;
+- aliases and renamed entities;
+- temporal identity/versioning;
+- external/source identifiers.
+
+## Working rule
+
+Until a responsibility has a verified replacement, preserve working legacy behavior.
+
+But new architecture work should follow:
+
+- [`../../.docs/WHY.md`](../../.docs/WHY.md)
+- [`../../.docs/GOALS.md`](../../.docs/GOALS.md)
+- [`../../.docs/ARCHITECTURE.md`](../../.docs/ARCHITECTURE.md)
+- [`../../.docs/DATA_LIFECYCLE.md`](../../.docs/DATA_LIFECYCLE.md)
+- [`../../.docs/MIGRATION.md`](../../.docs/MIGRATION.md)
+- [`../README.md`](../README.md)
+
+## Retirement condition
+
+This Python API shell is retired only after its useful responsibilities have been inventoried, migrated or intentionally rejected and the applications no longer depend on FastAPI.
+
+Git history remains the archive for the previous README and implementation evolution.
