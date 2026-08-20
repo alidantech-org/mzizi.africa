@@ -1,0 +1,10 @@
+election_code,name,election_type,planned_date,actual_date,election_status,geo_unit_code,institution_code
+ke/2010-constitution-referendum,2010 Constitution Referendum,referendum,2010-08-04,2010-08-04,completed,ke,ke/independent-electoral-and-boundaries-commission
+ke/2013-general-election,2013 General Election,general,2013-03-04,2013-03-04,completed,ke,ke/independent-electoral-and-boundaries-commission
+ke/2017-general-election,2017 General Election,general,2017-08-08,2017-08-08,completed,ke,ke/independent-electoral-and-boundaries-commission
+ke/2017-presidential-runoff,2017 Presidential Runoff,runoff,2017-10-26,2017-10-26,completed,ke,ke/independent-electoral-and-boundaries-commission
+ke/2022-general-election,2022 General Election,general,2022-08-09,2022-08-09,completed,ke,ke/independent-electoral-and-boundaries-commission
+ke/nairobi/2023-senate-by-election,2023 Nairobi Senate By-Election,by-election,2023-02-18,2023-02-18,completed,ke/nairobi,ke/independent-electoral-and-boundaries-commission
+ke/kitui-rural/2023-mp-by-election,2023 Kitui Rural MP By-Election,by-election,2023-07-08,2023-07-08,completed,ke/kitui-rural,ke/independent-electoral-and-boundaries-commission
+ke/2027-general-election,2027 General Election,general,2027-08-10,,planned,ke,ke/independent-electoral-and-boundaries-commission
+ke/nairobi/2024-governor-by-election,2024 Nairobi Governor By-Election,by-election,2024-03-15,,planned,ke/nairobi,ke/independent-electoral-and-boundaries-commission

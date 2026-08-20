@@ -1,0 +1,11 @@
+loan_code,borrower_entity_code,lender_name,lender_code,principal_amount,currency_code,interest_rate,start_date,end_date,status,status_code
+ke/world-bank-infrastructure-2024,ke/national-treasury,World Bank,world-bank,500000000.00,USD,3.5,2024-01-15,2034-01-15,active,active
+ke/imf-health-2024,ke/ministry-of-health,International Monetary Fund,imf,250000000.00,USD,2.8,2024-03-01,2029-03-01,active,active
+ke/african-development-roads-2024,ke/nairobi-county,African Development Bank,afdb,150000000.00,USD,4.2,2024-02-20,2034-02-20,active,active
+ke/china-exim-mombasa-port-2023,ke/national-treasury,China Exim Bank,china-exim,800000000.00,USD,5.5,2023-11-10,2043-11-10,active,active
+ke/kcb-county-health-2024,ke/kisumu-county,KCB Group,kcb-group,50000000.00,KES,12.0,2024-04-01,2027-04-01,active,active
+ke/equity-infrastructure-2024,ke/mombasa-county,Equity Group,equity-group,75000000.00,KES,11.5,2024-05-15,2029-05-15,active,active
+ke/jica-education-2023,ke/ministry-of-education,Japan International Cooperation Agency,jica,300000000.00,USD,1.8,2023-09-01,2033-09-01,active,active
+ke/safaricom-digital-2024,ke/national-treasury/safaricom-project,Safaricom PLC,safaricom,25000000.00,KES,8.0,2024-06-01,2026-06-01,active,active
+ke/world-bank-water-2022,ke/nairobi-county,World Bank,world-bank,100000000.00,USD,3.2,2022-07-15,2032-07-15,closed,closed
+ke/afdb-renewable-energy-2021,ke/national-treasury,African Development Bank,afdb,200000000.00,USD,4.0,2021-05-20,2031-05-20,closed,closed

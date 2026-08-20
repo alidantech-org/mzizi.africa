@@ -1,0 +1,11 @@
+office_code,selection_method_code,appointing_institution_code,appointing_office_code,is_ex_officio,description,is_active
+ke/executive-office-president/president,ke/election,ke/independent-electoral-and-boundaries-commission,,false,President is elected by the public in a general election per Article 136.,true
+ke/cabinet/cabinet-secretary,ke/appointment,ke/cabinet,ke/executive-office-president/president,false,Cabinet Secretaries are appointed by the President with National Assembly approval per Article 152.,true
+ke/national-assembly/member-of-parliament,ke/election,ke/independent-electoral-and-boundaries-commission,,false,Constituency MPs are elected by registered voters per Article 97(1)(a).,true
+ke/national-assembly/nominated-member-of-parliament,ke/nomination,ke/parliament,,false,Nominated by political parties based on seat proportion per Article 97(1)(c).,true
+ke/supreme-court/supreme-court-judge,ke/appointment,ke/judicial-service-commission,ke/executive-office-president/president,false,Appointed by the President on the recommendation of the JSC per Article 166.,true
+ke/attorney-general/attorney-general,ke/appointment,ke/attorney-general,ke/executive-office-president/president,true,Appointed by President; sits in Cabinet as an ex-officio member per Article 152.,true
+ke/county-government/governor,ke/election,ke/independent-electoral-and-boundaries-commission,,false,County Governors are elected by voters in the respective county per Article 180.,true
+ke/county-government/executive-committee-member,ke/appointment,ke/county-government,ke/county-government/governor,false,CECMs are appointed by the Governor with County Assembly approval per Article 179.,true
+ke/executive-office-president/principal-secretary,ke/competitive-recruitment,ke/public-service-commission,ke/executive-office-president/president,false,Nominated by PSC and appointed by the President per Article 155.,true
+ke/senate/senate-speaker,ke/election,ke/senate,,true,Elected by Senators from among persons who are not members of the Senate per Article 106.,true

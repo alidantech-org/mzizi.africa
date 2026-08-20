@@ -1,0 +1,45 @@
+name,code,mime_type,extension,category,is_previewable,max_size_mb,allowed_extensions,processing_strategy,description
+PDF,pdf,application/pdf,.pdf,document,true,100,.pdf,pdf_extract,Portable Document Format
+Microsoft Word,docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx,document,false,50,".docx,.doc",word_extract,Microsoft Word Document
+Microsoft Excel,xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx,document,false,50,".xlsx,.xls",excel_extract,Microsoft Excel Spreadsheet
+Microsoft PowerPoint,pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation,.pptx,document,false,100,".pptx,.ppt",office_extract,Microsoft PowerPoint Presentation
+Plain Text,txt,text/plain,.txt,document,true,10,".txt,.text,.log",text_extract,Plain Text Document
+Rich Text Format,rtf,application/rtf,.rtf,document,false,20,.rtf,text_extract,Rich Text Format Document
+OpenDocument Text,odt,application/vnd.oasis.opendocument.text,.odt,document,false,50,.odt,word_extract,OpenDocument Text Document
+OpenDocument Spreadsheet,ods,application/vnd.oasis.opendocument.spreadsheet,.ods,document,false,50,.ods,excel_extract,OpenDocument Spreadsheet
+Markdown,md,text/markdown,.md,document,true,10,".md,.markdown,.mdown",text_extract,Markdown Document
+JSON Data,json,application/json,.json,data,true,50,.json,json_extract,JavaScript Object Notation
+GeoJSON Data,geojson,application/geo+json,.geojson,data,true,100,.geojson,json_extract,Geographic JSON Format
+CSV Data,csv,text/csv,.csv,data,true,100,.csv,csv_extract,Comma-Separated Values
+DBF Database,dbf,application/x-dbf,.dbf,data,false,100,.dbf,dbf_extract,dBASE Database File
+XML Data,xml,application/xml,.xml,data,true,50,".xml,.xsl,.xsd",xml_extract,eXtensible Markup Language
+YAML Data,yaml,application/x-yaml,.yaml,data,true,10,".yaml,.yml",yaml_extract,YAML Data Format
+TOML Data,toml,application/toml,.toml,data,true,10,.toml,text_extract,TOML Configuration Format
+INI Config,ini,text/x-ini,.ini,data,true,5,".ini,.cfg,.conf",text_extract,INI Configuration File
+JPEG Image,jpeg,image/jpeg,.jpg,image,true,50,".jpg,.jpeg,.jfif",image_process,JPEG Image Format
+PNG Image,png,image/png,.png,image,true,50,.png,image_process,Portable Network Graphics
+GIF Image,gif,image/gif,.gif,image,true,20,.gif,image_process,Graphics Interchange Format
+WebP Image,webp,image/webp,.webp,image,true,50,.webp,image_process,WebP Image Format
+SVG Image,svg,image/svg+xml,.svg,image,true,10,.svg,image_process,Scalable Vector Graphics
+Bitmap Image,bmp,image/bmp,.bmp,image,true,50,".bmp,.dib",image_process,Bitmap Image Format
+TIFF Image,tiff,image/tiff,.tiff,image,true,100,".tiff,.tif",image_process,Tagged Image File Format
+ICO Icon,ico,image/x-icon,.ico,image,true,5,.ico,image_process,Windows Icon Format
+MP3 Audio,mp3,audio/mpeg,.mp3,audio,false,100,.mp3,audio_process,MPEG Audio Layer 3
+WAV Audio,wav,audio/wav,.wav,audio,false,500,".wav,.wave",audio_process,Waveform Audio File Format
+FLAC Audio,flac,audio/flac,.flac,audio,false,200,.flac,audio_process,Free Lossless Audio Codec
+AAC Audio,aac,audio/aac,.aac,audio,false,100,".aac,.m4a",audio_process,Advanced Audio Coding
+OGG Audio,ogg,audio/ogg,.ogg,audio,false,100,".ogg,.oga",audio_process,OGG Audio Format
+MP4 Video,mp4,video/mp4,.mp4,video,false,1000,".mp4,.m4v",video_process,MPEG-4 Video Format
+AVI Video,avi,video/x-msvideo,.avi,video,false,2000,.avi,video_process,Audio Video Interleave
+MOV Video,mov,video/quicktime,.mov,video,false,1000,".mov,.qt",video_process,QuickTime Video Format
+WMV Video,wmv,video/x-ms-wmv,.wmv,video,false,1000,.wmv,video_process,Windows Media Video
+WebM Video,webm,video/webm,.webm,video,false,1000,.webm,video_process,WebM Video Format
+MKV Video,mkv,video/x-matroska,.mkv,video,false,2000,.mkv,video_process,Matroska Video Format
+ZIP Archive,zip,application/zip,.zip,archive,false,500,.zip,archive_extract,ZIP Compressed Archive
+RAR Archive,rar,application/x-rar-compressed,.rar,archive,false,500,.rar,archive_extract,RAR Compressed Archive
+7Z Archive,7z,application/x-7z-compressed,.7z,archive,false,500,.7z,archive_extract,7-Zip Compressed Archive
+TAR Archive,tar,application/x-tar,.tar,archive,false,1000,".tar,.gz,.bz2,.xz",archive_extract,TAR Archive
+PDF Form,pdf_form,application/x-pdf-form,.pdf,form,true,50,.pdf,pdf_extract,PDF Form Document
+E-book,epub,application/epub+zip,.epub,ebook,false,100,.epub,ebook_extract,Electronic Publication Format
+Shapefile,shp,application/x-shapefile,.shp,geospatial,false,200,".shp,.shx,.dbf,.prj",geospatial_extract,ESRI Shapefile
+KML Geographic,kml,application/vnd.google-earth.kml+xml,.kml,geospatial,true,50,".kml,.kmz",xml_extract,Keyhole Markup Language

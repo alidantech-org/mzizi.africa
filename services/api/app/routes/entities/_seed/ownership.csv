@@ -1,0 +1,5 @@
+entity_code,person_code,ownership_percentage,position,start_date,end_date
+ke/private/equity-group-holdings,ke/nairobi/uhuru-muigai-kenyatta-uk,15,shareholder,2000-01-01,
+ke/private/seven-seas-technologies,ke/nairobi/johnson-arthur-sakaja-super-senator,25,director,2013-05-15,2022-08-01
+ke/state-corp/kcb-group,ke/vihiga/wycliffe-musalia-mudavadi-mudavadi,10,shareholder,1995-01-01,
+ke/private/safaricom-plc,ke/nairobi/uhuru-muigai-kenyatta-uk,5,shareholder,2008-01-01,

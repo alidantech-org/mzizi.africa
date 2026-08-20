@@ -1,0 +1,44 @@
+parent_geo_code,child_geo_code,relation_type,valid_from,valid_to,notes
+ke,ke/nairobi,contains,2010-08-27,,Kenya contains Nairobi County
+ke/nairobi,ke/nairobi-westlands,contains,2013-03-04,,Nairobi County contains Westlands Constituency
+ke/nairobi,ke/nairobi-kasarani,contains,2013-03-04,,Nairobi County contains Kasarani Constituency
+ke/nairobi,ke/nairobi-starehe,contains,2013-03-04,,Nairobi County contains Starehe Constituency
+ke/nairobi,ke/nairobi-langata,contains,2013-03-04,,Nairobi County contains Langata Constituency
+ke/nairobi,ke/nairobi-kamukunji,contains,2013-03-04,,Nairobi County contains Kamukunji Constituency
+ke/nairobi,ke/nairobi-embakasi-west,contains,2013-03-04,,Nairobi County contains Embakasi West Constituency
+ke/nairobi,ke/nairobi-embakasi-east,contains,2013-03-04,,Nairobi County contains Embakasi East Constituency
+ke/nairobi,ke/nairobi-embakasi-central,contains,2013-03-04,,Nairobi County contains Embakasi Central Constituency
+ke/nairobi,ke/nairobi-embakasi-north,contains,2013-03-04,,Nairobi County contains Embakasi North Constituency
+ke/nairobi,ke/nairobi-embakasi-south,contains,2013-03-04,,Nairobi County contains Embakasi South Constituency
+ke/nairobi,ke/nairobi-dagoretti-north,contains,2013-03-04,,Nairobi County contains Dagoretti North Constituency
+ke/nairobi,ke/nairobi-dagoretti-south,contains,2013-03-04,,Nairobi County contains Dagoretti South Constituency
+ke/nairobi,ke/nairobi-makadara,contains,2013-03-04,,Nairobi County contains Makadara Constituency
+ke/nairobi,ke/nairobi-mathare,contains,2013-03-04,,Nairobi County contains Mathare Constituency
+ke/nairobi,ke/nairobi-roysambu,contains,2013-03-04,,Nairobi County contains Roysambu Constituency
+ke/nairobi,ke/nairobi-kibra,contains,2013-03-04,,Nairobi County contains Kibra Constituency
+ke/nairobi-westlands,ke/nairobi-westlands-muthangari,contains,2013-03-04,,Westlands Constituency contains Muthangari Ward
+ke/nairobi-westlands,ke/nairobi-westlands-parklands,contains,2013-03-04,,Westlands Constituency contains Parklands Ward
+ke/nairobi-westlands,ke/nairobi-westlands-kangemi,contains,2013-03-04,,Westlands Constituency contains Kangemi Ward
+ke/nairobi-westlands,ke/nairobi-westlands-westlands,contains,2013-03-04,,Westlands Constituency contains Westlands Ward
+ke/nairobi-kasarani,ke/nairobi-kasarani-clay-city,contains,2013-03-04,,Kasarani Constituency contains Clay City Ward
+ke/nairobi-kasarani,ke/nairobi-kasarani-githurai,contains,2013-03-04,,Kasarani Constituency contains Githurai Ward
+ke/nairobi-kasarani,ke/nairobi-kasarani-kasarani,contains,2013-03-04,,Kasarani Constituency contains Kasarani Ward
+ke/nairobi-kasarani,ke/nairobi-kasarani-mwiki,contains,2013-03-04,,Kasarani Constituency contains Mwiki Ward
+ke/nairobi-kasarani,ke/nairobi-kasarani-ruai,contains,2013-03-04,,Kasarani Constituency contains Ruai Ward
+ke/nairobi-kasarani,ke/nairobi-kasarani-zimmerman,contains,2013-03-04,,Kasarani Constituency contains Zimmerman Ward
+ke/nairobi-westlands,ke/nairobi-westlands-subcounty,part_of,2013-03-04,,Westlands is part of Westlands Sub-county
+ke/nairobi-kasarani,ke/nairobi-kasarani-subcounty,part_of,2013-03-04,,Kasarani is part of Kasarani Sub-county
+ke/nairobi-starehe,ke/nairobi-starehe-subcounty,part_of,2013-03-04,,Starehe is part of Starehe Sub-county
+ke/nairobi-langata,ke/nairobi-langata-subcounty,part_of,2013-03-04,,Langata is part of Langata Sub-county
+ke/nairobi-kamukunji,ke/nairobi-kamukunji-subcounty,part_of,2013-03-04,,Kamukunji is part of Kamukunji Sub-county
+ke/nairobi-embakasi-west,ke/nairobi-embakasi-west-subcounty,part_of,2013-03-04,,Embakasi West is part of Embakasi West Sub-county
+ke/nairobi-embakasi-east,ke/nairobi-embakasi-east-subcounty,part_of,2013-03-04,,Embakasi East is part of Embakasi East Sub-county
+ke/nairobi-embakasi-central,ke/nairobi-embakasi-central-subcounty,part_of,2013-03-04,,Embakasi Central is part of Embakasi Central Sub-county
+ke/nairobi-embakasi-north,ke/nairobi-embakasi-north-subcounty,part_of,2013-03-04,,Embakasi North is part of Embakasi North Sub-county
+ke/nairobi-embakasi-south,ke/nairobi-embakasi-south-subcounty,part_of,2013-03-04,,Embakasi South is part of Embakasi South Sub-county
+ke/nairobi-dagoretti-north,ke/nairobi-dagoretti-north-subcounty,part_of,2013-03-04,,Dagoretti North is part of Dagoretti North Sub-county
+ke/nairobi-dagoretti-south,ke/nairobi-dagoretti-south-subcounty,part_of,2013-03-04,,Dagoretti South is part of Dagoretti South Sub-county
+ke/nairobi-makadara,ke/nairobi-makadara-subcounty,part_of,2013-03-04,,Makadara is part of Makadara Sub-county
+ke/nairobi-mathare,ke/nairobi-mathare-subcounty,part_of,2013-03-04,,Mathare is part of Mathare Sub-county
+ke/nairobi-roysambu,ke/nairobi-roysambu-subcounty,part_of,2013-03-04,,Roysambu is part of Roysambu Sub-county
+ke/nairobi-kibra,ke/nairobi-kibra-subcounty,part_of,2013-03-04,,Kibra is part of Kibra Sub-county

@@ -1,0 +1,16 @@
+name,entity_code,level_code,level_order,institution_code,parent_code,legal_entity_code,geo_unit_code
+National Treasury,ke/national-treasury,national,1,ke/ministry-finance,,,ke
+Ministry of Health,ke/ministry-of-health,national,2,ke/ministry-health,,,ke
+Ministry of Interior,ke/ministry-of-interior,national,3,ke/ministry-interior,,,ke
+Nairobi County Government,ke/nairobi-county,county,1,ke/county-government,,,ke/nairobi
+Mombasa County Government,ke/mombasa-county,county,2,ke/county-government,,,ke/mombasa
+Kisumu County Government,ke/kisumu-county,county,3,ke/county-government,,,ke/kisumu
+Nairobi County - Health Department,ke/nairobi/health-department,department,1,ke/county-government,ke/nairobi-county,,ke/nairobi
+Nairobi County - Interior Department,ke/nairobi/interior-department,department,2,ke/county-government,ke/nairobi-county,,ke/nairobi
+Mombasa County - Health Department,ke/mombasa/health-department,department,1,ke/county-government,ke/mombasa-county,,ke/mombasa
+MoH - National HIV Program,ke/ministry-of-health/hiv-program,program,1,ke/ministry-health,ke/ministry-of-health,,ke/nairobi/westlands
+MoH - National Malaria Program,ke/ministry-of-health/malaria-program,program,2,ke/ministry-health,ke/ministry-of-health,,ke/nairobi/langata
+MoH - Nairobi HIV Program,ke/nairobi/health-department/hiv-program,program,1,ke/county-government,ke/nairobi/health-department,,ke/nairobi/westlands
+Kisumu County - Health Department,ke/kisumu/health-department,department,1,ke/county-government,ke/kisumu-county,,ke/kisumu
+National Treasury - Safaricom Project,ke/national-treasury/safaricom-project,program,1,ke/ministry-finance,ke/national-treasury,ke/private/safaricom-plc,ke/nairobi
+KCB Group - County Banking Program,ke/kcb-group/county-banking,program,1,ke/ministry-finance,ke/state-corp/kcb-group,ke/state-corp/kcb-group,ke/nairobi

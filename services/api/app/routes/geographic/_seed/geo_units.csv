@@ -1,0 +1,551 @@
+geo_unit_code,name,geo_code,geo_level_code,parent_geo_code,is_active
+ke,Kenya,001,national,,true
+ke/nairobi,Nairobi,001-047,county,001,true
+ke/nairobi/westlands,Westlands,001-047-001,constituency,001-047,true
+ke/nairobi/dagoretti-north,Dagoretti North,001-047-002,constituency,001-047,true
+ke/nairobi/dagoretti-south,Dagoretti South,001-047-003,constituency,001-047,true
+ke/nairobi/langata,Langata,001-047-004,constituency,001-047,true
+ke/nairobi/kamukunji,Kamukunji,001-047-005,constituency,001-047,true
+ke/nairobi/starehe,Starehe,001-047-006,constituency,001-047,true
+ke/nairobi/makadara,Makadara,001-047-007,constituency,001-047,true
+ke/nairobi/embakasi-west,Embakasi West,001-047-008,constituency,001-047,true
+ke/nairobi/embakasi-east,Embakasi East,001-047-009,constituency,001-047,true
+ke/nairobi/embakasi-north,Embakasi North,001-047-010,constituency,001-047,true
+ke/nairobi/embakasi-south,Embakasi South,001-047-011,constituency,001-047,true
+ke/nairobi/embakasi-central,Embakasi Central,001-047-012,constituency,001-047,true
+ke/nairobi/kibra,Kibra,001-047-013,constituency,001-047,true
+ke/nairobi/roysambu,Roysambu,001-047-014,constituency,001-047,true
+ke/nairobi/kasarani,Kasarani,001-047-015,constituency,001-047,true
+ke/nairobi/mathare,Mathare,001-047-016,constituency,001-047,true
+ke/nairobi-westlands,Westlands Sub-county,001-047-001-sub,sub-county,001-047,true
+ke/nairobi-dagoretti,Dagoretti Sub-county,001-047-002-sub,sub-county,001-047,true
+ke/nairobi-langata,Langata Sub-county,001-047-003-sub,sub-county,001-047,true
+ke/nairobi-kamukunji,Kamukunji Sub-county,001-047-004-sub,sub-county,001-047,true
+ke/nairobi-starehe,Starehe Sub-county,001-047-005-sub,sub-county,001-047,true
+ke/nairobi-makadara,Makadara Sub-county,001-047-006-sub,sub-county,001-047,true
+ke/nairobi-embakasi,Embakasi Sub-county,001-047-007-sub,sub-county,001-047,true
+ke/nairobi-kasarani,Kasarani Sub-county,001-047-008-sub,sub-county,001-047,true
+ke/nairobi-roysambu,Roysambu Sub-county,001-047-009-sub,sub-county,001-047,true
+ke/nairobi-mathare,Mathare Sub-county,001-047-010-sub,sub-county,001-047,true
+ke/mombasa,Mombasa,001-001,county,001,true
+ke/mombasa/mvita,Mvita,001-001-001,constituency,001-001,true
+ke/mombasa/nyali,Nyali,001-001-002,constituency,001-001,true
+ke/mombasa/changamwe,Changamwe,001-001-003,constituency,001-001,true
+ke/mombasa/jomvu,Jomvu,001-001-004,constituency,001-001,true
+ke/mombasa/kisauni,Kisauni,001-001-005,constituency,001-001,true
+ke/mombasa/liwatoni,Liwatoni,001-001-006,constituency,001-001,true
+ke/mombasa-tudor,Tudor Sub-county,001-001-001-sub,sub-county,001-001,true
+ke/mombasa-nyali,Nyali Sub-county,001-001-002-sub,sub-county,001-001,true
+ke/mombasa-changamwe,Changamwe Sub-county,001-001-003-sub,sub-county,001-001,true
+ke/mombasa-jomvu,Jomvu Sub-county,001-001-004-sub,sub-county,001-001,true
+ke/mombasa-kisauni,Kisauni Sub-county,001-001-005-sub,sub-county,001-001,true
+ke/mombasa-liwatoni,Liwatoni Sub-county,001-001-006-sub,sub-county,001-001,true
+ke/kisumu,Kisumu,001-042,county,001,true
+ke/kisumu-central,Kisumu Central,001-042-001,constituency,001-042,true
+ke/kisumu-east,Kisumu East,001-042-002,constituency,001-042,true
+ke/kisumu-west,Kisumu West,001-042-003,constituency,001-042,true
+ke/kisumu-north,Kisumu North,001-042-004,constituency,001-042,true
+ke/kisumu-sudi,Kisumu Sudi,001-042-005,constituency,001-042,true
+ke/kisumu-central,Kisumu Central Sub-county,001-042-001-sub,sub-county,001-042,true
+ke/kisumu-east,Kisumu East Sub-county,001-042-002-sub,sub-county,001-042,true
+ke/kisumu-west,Kisumu West Sub-county,001-042-003-sub,sub-county,001-042,true
+ke/kisumu-north,Kisumu North Sub-county,001-042-004-sub,sub-county,001-042,true
+ke/kisumu-sudi,Kisumu Sudi Sub-county,001-042-005-sub,sub-county,001-042,true
+ke/kiambu,Kiambu,001-022,county,001,true
+ke/kiambu/kikuyu,Kikuyu,001-022-001,constituency,001-022,true
+ke/kiambu/limuru,Limuru,001-022-002,constituency,001-022,true
+ke/kiambu/kiambaa,Kiambaa,001-022-003,constituency,001-022,true
+ke/kiambu/kiambu-town,Kiambu Town,001-022-004,constituency,001-022,true
+ke/kiambu/juja,Juja,001-022-005,constituency,001-022,true
+ke/kiambu/thika-town,Thika Town,001-022-006,constituency,001-022,true
+ke/kiambu/gatundu-south,Gatundu South,001-022-007,constituency,001-022,true
+ke/kiambu/gatundu-north,Gatundu North,001-022-008,constituency,001-022,true
+ke/kiambu/ruiru,Ruiru,001-022-009,constituency,001-022,true
+ke/kiambu/githunguri,Githunguri,001-022-010,constituency,001-022,true
+ke/kiambu/kikuyu,Kikuyu Sub-county,001-022-001-sub,sub-county,001-022,true
+ke/kiambu-limuru,Limuru Sub-county,001-022-002-sub,sub-county,001-022,true
+ke/kiambu-kiambaa,Kiambaa Sub-county,001-022-003-sub,sub-county,001-022,true
+ke/kiambu-town,Kiambu Town Sub-county,001-022-004-sub,sub-county,001-022,true
+ke/kiambu-juja,Juja Sub-county,001-022-005-sub,sub-county,001-022,true
+ke/kiambu-thika,Thika Town Sub-county,001-022-006-sub,sub-county,001-022,true
+ke/homa-bay,Homa Bay,001-043,county,001,true
+ke/homa-bay/homa-bay-town,Homa Bay Town,001-043-001,constituency,001-043,true
+ke/homa-bay/rangwe,Rangwe,001-043-002,constituency,001-043,true
+ke/homa-bay/karachuonyo,Karachuonyo,001-043-003,constituency,001-043,true
+ke/homa-bay/mbita,Mbita,001-043-004,constituency,001-043,true
+ke/homa-bay/ndhiwa,Ndhiwa,001-043-005,constituency,001-043,true
+ke/homa-bay/kabondo,Kabondo,001-043-006,constituency,001-043,true
+ke/homa-bay/kasipul,Kasipul,001-043-007,constituency,001-043,true
+ke/homa-bay/kwanyange,Kwanyange,001-043-008,constituency,001-043,true
+ke/homa-bay-town,Homa Bay Town Sub-county,001-043-001-sub,sub-county,001-043,true
+ke/homa-bay-rangwe,Rangwe Sub-county,001-043-002-sub,sub-county,001-043,true
+ke/homa-bay-karachuonyo,Karachuonyo Sub-county,001-043-003-sub,sub-county,001-043,true
+ke/homa-bay-mbita,Mbita Sub-county,001-043-004-sub,sub-county,001-043,true
+ke/homa-bay-ndhiwa,Ndhiwa Sub-county,001-043-005-sub,sub-county,001-043,true
+ke/homa-bay-kabondo,Kabondo Sub-county,001-043-006-sub,sub-county,001-043,true
+ke/kirinyaga,Kirinyaga,001-020,county,001,true
+ke/kirinyaga/gichugu,Gichugu,001-020-001,constituency,001-020,true
+ke/kirinyaga/ndia,Ndia,001-020-002,constituency,001-020,true
+ke/kirinyaga/mwea,Mwea,001-020-003,constituency,001-020,true
+ke/kirinyaga/kerugoya,Kerugoya,001-020-004,constituency,001-020,true
+ke/kirinyaga-gichugu,Gichugu Sub-county,001-020-001-sub,sub-county,001-020,true
+ke/kirinyaga-ndia,Ndia Sub-county,001-020-002-sub,sub-county,001-020,true
+ke/kirinyaga-mwea,Mwea Sub-county,001-020-003-sub,sub-county,001-020,true
+ke/kirinyaga-kerugoya,Kerugoya Sub-county,001-020-004-sub,sub-county,001-020,true
+ke/garissa,Garissa,001-007,county,001,true
+ke/garissa/garissa-town,Garissa Town,001-007-001,constituency,001-007,true
+ke/garissa/dadaab,Dadaab,001-007-002,constituency,001-007,true
+ke/garissa/fafi,Fafi,001-007-003,constituency,001-007,true
+ke/garissa/lagdera,Lagdera,001-007-004,constituency,001-007,true
+ke/garissa/balambala,Balambala,001-007-005,constituency,001-007,true
+ke/garissa-ijara,Ijara Sub-county,001-007-001-sub,sub-county,001-007,true
+ke/garissa-dadaab,Dadaab Sub-county,001-007-002-sub,sub-county,001-007,true
+ke/garissa-fafi,Fafi Sub-county,001-007-003-sub,sub-county,001-007,true
+ke/garissa-lagdera,Lagdera Sub-county,001-007-004-sub,sub-county,001-007,true
+ke/garissa-balambala,Balambala Sub-county,001-007-005-sub,sub-county,001-007,true
+ke/nakuru,Nakuru,001-028,county,001,true
+ke/nakuru-town,Nakuru Town,001-028-001,constituency,001-028,true
+ke/nakuru-rongai,Rongai,001-028-002,constituency,001-028,true
+ke/nakuru-naivasha,Naivasha,001-028-003,constituency,001-028,true
+ke/nakuru/gilgil,Gilgil,001-028-004,constituency,001-028,true
+ke/nakuru/molo,Molo,001-028-005,constituency,001-028,true
+ke/nakuru/kiambogo,Kiambogo,001-028-006,constituency,001-028,true
+ke/nakuru/kuresoi-north,Kuresoi North,001-028-007,constituency,001-028,true
+ke/nakuru/kuresoi-south,Kuresoi South,001-028-008,constituency,001-028,true
+ke/nakuru/njoro,Njoro,001-028-009,constituency,001-028,true
+ke/nakuru-eldama,Eldama Ravine Sub-county,001-028-001-sub,sub-county,001-028,true
+ke/nakuru-gilgil,Gilgil Sub-county,001-028-002-sub,sub-county,001-028,true
+ke/nakuru-naivasha,Naivasha Sub-county,001-028-003-sub,sub-county,001-028,true
+ke/nakuru-molo,Molo Sub-county,001-028-004-sub,sub-county,001-028,true
+ke/nakuru-kiambogo,Kiambogo Sub-county,001-028-005-sub,sub-county,001-028,true
+ke/nakuru-kuresoi,Kuresoi Sub-county,001-028-006-sub,sub-county,001-028,true
+ke/nakuru-njoro,Njoro Sub-county,001-028-007-sub,sub-county,001-028,true
+ke/eldoret,Eldoret,001-032,county,001,true
+ke/eldoret/turbo,Turbo,001-032-001,constituency,001-032,true
+ke/eldoret/ainabkoi,Ainabkoi,001-032-002,constituency,001-032,true
+ke/eldoret/kapseret,Kapseret,001-032-003,constituency,001-032,true
+ke/eldoret/kesses,Kesses,001-032-004,constituency,001-032,true
+ke/eldoret/marakwet-west,Marakwet West,001-032-005,constituency,001-032,true
+ke/eldoret/marakwet-east,Marakwet East,001-032-006,constituency,001-032,true
+ke/eldoret/keiyo-south,Keiyo South,001-032-007,constituency,001-032,true
+ke/eldoret/keiyo-north,Keiyo North,001-032-008,constituency,001-032,true
+ke/eldoret-turbo,Turbo Sub-county,001-032-001-sub,sub-county,001-032,true
+ke/eldoret-ainabkoi,Ainabkoi Sub-county,001-032-002-sub,sub-county,001-032,true
+ke/eldoret-kapseret,Kapseret Sub-county,001-032-003-sub,sub-county,001-032,true
+ke/eldoret-kesses,Kesses Sub-county,001-032-004-sub,sub-county,001-032,true
+ke/eldoret-marakwet,Marakwet Sub-county,001-032-005-sub,sub-county,001-032,true
+ke/eldoret-keiyo,Keiyo Sub-county,001-032-006-sub,sub-county,001-032,true
+ke/kakamega,Kakamega,001-037,county,001,true
+ke/kakamega-town,Kakamega Town,001-037-001,constituency,001-037,true
+ke/kakamega/malava,Malava,001-037-002,constituency,001-037,true
+ke/kakamega/lurambi,Lurambi,001-037-003,constituency,001-037,true
+ke/kakamega/shinyalu,Shinyalu,001-037-004,constituency,001-037,true
+ke/kakamega/ikolomani,Ikolomani,001-037-005,constituency,001-037,true
+ke/kakamega/shirere,Shirere,001-037-006,constituency,001-037,true
+ke/kakamega/khwisero,Khwisero,001-037-007,constituency,001-037,true
+ke/kakamega/mumias-west,Mumias West,001-037-008,constituency,001-037,true
+ke/kakamega/mumias-east,Mumias East,001-037-009,constituency,001-037,true
+ke/kakamega/matungulu,Matungulu,001-037-010,constituency,001-037,true
+ke/kakamega/butere,Butere,001-037-011,constituency,001-037,true
+ke/kakamega/khwisero,Khwisero Sub-county,001-037-001-sub,sub-county,001-037,true
+ke/kakamega-mumias,Mumias Sub-county,001-037-002-sub,sub-county,001-037,true
+ke/kakamega-matungulu,Matungulu Sub-county,001-037-003-sub,sub-county,001-037,true
+ke/kakamega-butere,Butere Sub-county,001-037-004-sub,sub-county,001-037,true
+ke/kakamega-shinyalu,Shinyalu Sub-county,001-037-005-sub,sub-county,001-037,true
+ke/kakamega-ikolomani,Ikolomani Sub-county,001-037-006-sub,sub-county,001-037,true
+ke/kakamega-lurambi,Lurambi Sub-county,001-037-007-sub,sub-county,001-037,true
+ke/kakamega-shirere,Shirere Sub-county,001-037-008-sub,sub-county,001-037,true
+ke/kakamega-malava,Malava Sub-county,001-037-009-sub,sub-county,001-037,true
+ke/kakamega-town,Kakamega Town Sub-county,001-037-010-sub,sub-county,001-037,true
+ke/nyeri,Nyeri,001-026,county,001,true
+ke/nyeri-town,Nyeri Town,001-026-001,constituency,001-026,true
+ke/nyeri-mathira,Mathira,001-026-002,constituency,001-026,true
+ke/nyeri-othaya,Othaya,001-026-003,constituency,001-026,true
+ke/nyeri-mukurweini,Mukurweini,001-026-004,constituency,001-026,true
+ke/nyeri-kieni,Kieni,001-026-005,constituency,001-026,true
+ke/nyeri-nyeri,Nyeri Sub-county,001-026-001-sub,sub-county,001-026,true
+ke/nyeri-mathira,Mathira Sub-county,001-026-002-sub,sub-county,001-026,true
+ke/nyeri-othaya,Othaya Sub-county,001-026-003-sub,sub-county,001-026,true
+ke/nyeri-mukurweini,Mukurweini Sub-county,001-026-004-sub,sub-county,001-026,true
+ke/nyeri-kieni,Kieni Sub-county,001-026-005-sub,sub-county,001-026,true
+ke/meru,Meru,001-008,county,001,true
+ke/meru-town,Meru Town,001-008-001,constituency,001-008,true
+ke/meru-ntimana,Ntimama,001-008-002,constituency,001-008,true
+ke/meru-iguara,Iguara,001-008-003,constituency,001-008,true
+ke/meru-tigania-east,Tigania East,001-008-004,constituency,001-008,true
+ke/meru-tigania-west,Tigania West,001-008-005,constituency,001-008,true
+ke/meru-ntimana,Ntimana Sub-county,001-008-001-sub,sub-county,001-008,true
+ke/meru-iguara,Iguara Sub-county,001-008-002-sub,sub-county,001-008,true
+ke/meru-tigania,Tigania Sub-county,001-008-003-sub,sub-county,001-008,true
+ke/meru-meru,Meru Sub-county,001-008-004-sub,sub-county,001-008,true
+ke/kilifi,Kilifi,001-004,county,001,true
+ke/kilifi-town,Kilifi Town,001-004-001,constituency,001-004,true
+ke/kilifi/rabai,Rabai,001-004-002,constituency,001-004,true
+ke/kilifi/kaloleni,Kaloleni,001-004-003,constituency,001-004,true
+ke/kilifi/ganze,Ganze,001-004-004,constituency,001-004,true
+ke/kilifi/malindi,Malindi,001-004-005,constituency,001-004,true
+ke/kilifi/magarini,Magarini,001-004-006,constituency,001-004,true
+ke/kilifi-changamwe,Changamwe Sub-county,001-004-001-sub,sub-county,001-004,true
+ke/kilifi-kaloleni,Kaloleni Sub-county,001-004-002-sub,sub-county,001-004,true
+ke/kilifi-ganze,Ganze Sub-county,001-004-003-sub,sub-county,001-004,true
+ke/kilifi-malindi,Malindi Sub-county,001-004-004-sub,sub-county,001-004,true
+ke/kilifi-magarini,Magarini Sub-county,001-004-005-sub,sub-county,001-004,true
+ke/kilifi-rabai,Rabai Sub-county,001-004-006-sub,sub-county,001-004,true
+ke/kilifi-town,Kilifi Town Sub-county,001-004-007-sub,sub-county,001-004,true
+ke/bungoma,Bungoma,001-039,county,001,true
+ke/bungoma-town,Bungoma Town,001-039-001,constituency,001-039,true
+ke/bungoma/kanduyi,Kanduyi,001-039-002,constituency,001-039,true
+ke/bungoma/webuye-west,Webuye West,001-039-003,constituency,001-039,true
+ke/bungoma/webuye-east,Webuye East,001-039-004,constituency,001-039,true
+ke/bungoma/kiminini,Kiminini,001-039-005,constituency,001-039,true
+ke/bungoma/tongaren,Tongaren,001-039-006,constituency,001-039,true
+ke/bungoma/sirisia,Sirisia,001-039-007,constituency,001-039,true
+ke/bungoma/kaptama,Kaptama,001-039-008,constituency,001-039,true
+ke/bungoma/mt-elgon,Mount Elgon,001-039-009,constituency,001-039,true
+ke/bungoma-town,Bungoma Town Sub-county,001-039-001-sub,sub-county,001-039,true
+ke/bungoma-kanduyi,Kanduyi Sub-county,001-039-002-sub,sub-county,001-039,true
+ke/bungoma-webuye,Webuye Sub-county,001-039-003-sub,sub-county,001-039,true
+ke/bungoma-kiminini,Kiminini Sub-county,001-039-004-sub,sub-county,001-039,true
+ke/bungoma-tongaren,Tongaren Sub-county,001-039-005-sub,sub-county,001-039,true
+ke/bungoma-sirisia,Sirisia Sub-county,001-039-006-sub,sub-county,001-039,true
+ke/bungoma-mt-elgon,Mount Elgon Sub-county,001-039-007-sub,sub-county,001-039,true
+ke/vihiga,Vihiga,001-045,county,001,true
+ke/vihiga/sabatia,Sabatia,001-045-001,constituency,001-045,true
+ke/vihiga-hamisi,Hamisi,001-045-002,constituency,001-045,true
+ke/vihiga/luanda,Luanda,001-045-003,constituency,001-045,true
+ke/vihiga/emuhaya,Emuhaya,001-045-004,constituency,001-045,true
+ke/vihiga/shirere,Shirere,001-045-005,constituency,001-045,true
+ke/vihiga-sabatia,Sabatia Sub-county,001-045-001-sub,sub-county,001-045,true
+ke/vihiga-hamisi,Hamisi Sub-county,001-045-002-sub,sub-county,001-045,true
+ke/vihiga-luanda,Luanda Sub-county,001-045-003-sub,sub-county,001-045,true
+ke/vihiga-emuhaya,Emuhaya Sub-county,001-045-004-sub,sub-county,001-045,true
+ke/vihiga-shirere,Shirere Sub-county,001-045-005-sub,sub-county,001-045,true
+ke/machakos,Machakos,001-016,county,001,true
+ke/machakos-town,Machakos Town,001-016-001,constituency,001-016,true
+ke/machakos/masinga,Masinga,001-016-002,constituency,001-016,true
+ke/machakos/yatta,Yatta,001-016-003,constituency,001-016,true
+ke/machakos/kangundo,Kangundo,001-016-004,constituency,001-016,true
+ke/machakos/kathiani,Kathiani,001-016-005,constituency,001-016,true
+ke/machakos/mwala,Mwala,001-016-006,constituency,001-016,true
+ke/machakos-masinga,Masinga Sub-county,001-016-001-sub,sub-county,001-016,true
+ke/machakos-yatta,Yatta Sub-county,001-016-002-sub,sub-county,001-016,true
+ke/machakos-kangundo,Kangundo Sub-county,001-016-003-sub,sub-county,001-016,true
+ke/machakos-kathiani,Kathiani Sub-county,001-016-004-sub,sub-county,001-016,true
+ke/machakos-mwala,Mwala Sub-county,001-016-005-sub,sub-county,001-016,true
+ke/machakos-town,Machakos Town Sub-county,001-016-006-sub,sub-county,001-016,true
+ke/kitui,Kitui,001-015,county,001,true
+ke/kitui-central,Kitui Central,001-015-001,constituency,001-015,true
+ke/kitui-west,Kitui West,001-015-002,constituency,001-015,true
+ke/kitui-east,Kitui East,001-015-003,constituency,001-015,true
+ke/kitui-south,Kitui South,001-015-004,constituency,001-015,true
+ke/kitui-north,Kitui North,001-015-005,constituency,001-015,true
+ke/kitui-mwingi,Mwingi,001-015-006,constituency,001-015,true
+ke/kitui-mwingi-west,Mwingi West,001-015-007,constituency,001-015,true
+ke/kitui-mwingi-north,Mwingi North,001-015-008,constituency,001-015,true
+ke/kitui-central,Kitui Central Sub-county,001-015-001-sub,sub-county,001-015,true
+ke/kitui-west,Kitui West Sub-county,001-015-002-sub,sub-county,001-015,true
+ke/kitui-east,Kitui East Sub-county,001-015-003-sub,sub-county,001-015,true
+ke/kitui-south,Kitui South Sub-county,001-015-004-sub,sub-county,001-015,true
+ke/kitui-north,Kitui North Sub-county,001-015-005-sub,sub-county,001-015,true
+ke/kitui-mwingi,Mwingi Sub-county,001-015-006-sub,sub-county,001-015,true
+ke/makueni,Makueni,001-017,county,001,true
+ke/makueni-town,Makueni Town,001-017-001,constituency,001-017,true
+ke/makueni/kibwezi,Kibwezi,001-017-002,constituency,001-017,true
+ke/makueni/kaiti,Kaiti,001-017-003,constituency,001-017,true
+ke/makueni/kilome,Kilome,001-017-004,constituency,001-017,true
+ke/makueni/mbooni,Mbooni,001-017-005,constituency,001-017,true
+ke/makueni/kibwezi,Kibwezi Sub-county,001-017-001-sub,sub-county,001-017,true
+ke/makueni-kaiti,Kaiti Sub-county,001-017-002-sub,sub-county,001-017,true
+ke/makueni-kilome,Kilome Sub-county,001-017-003-sub,sub-county,001-017,true
+ke/makueni-mbooni,Mbooni Sub-county,001-017-004-sub,sub-county,001-017,true
+ke/makueni-town,Makueni Town Sub-county,001-017-005-sub,sub-county,001-017,true
+ke/turkana,Turkana,001-023,county,001,true
+ke/turkana-central,Turkana Central,001-023-001,constituency,001-023,true
+ke/turkana-north,Turkana North,001-023-002,constituency,001-023,true
+ke/turkana-south,Turkana South,001-023-003,constituency,001-023,true
+ke/turkana-east,Turkana East,001-023-004,constituency,001-023,true
+ke/turkana-west,Turkana West,001-023-005,constituency,001-023,true
+ke/turkana-central,Turkana Central Sub-county,001-023-001-sub,sub-county,001-023,true
+ke/turkana-north,Turkana North Sub-county,001-023-002-sub,sub-county,001-023,true
+ke/turkana-south,Turkana South Sub-county,001-023-003-sub,sub-county,001-023,true
+ke/turkana-east,Turkana East Sub-county,001-023-004-sub,sub-county,001-023,true
+ke/turkana-west,Turkana West Sub-county,001-023-005-sub,sub-county,001-023,true
+ke/wajir,Wajir,001-040,county,001,true
+ke/wajir-east,Wajir East,001-040-001,constituency,001-040,true
+ke/wajir-west,Wajir West,001-040-002,constituency,001-040,true
+ke/wajir-north,Wajir North,001-040-003,constituency,001-040,true
+ke/wajir-south,Wajir South,001-040-004,constituency,001-040,true
+ke/wajir-tarbaj,Tarbaj,001-040-005,constituency,001-040,true
+ke/wajir-east,Wajir East Sub-county,001-040-001-sub,sub-county,001-040,true
+ke/wajir-west,Wajir West Sub-county,001-040-002-sub,sub-county,001-040,true
+ke/wajir-north,Wajir North Sub-county,001-040-003-sub,sub-county,001-040,true
+ke/wajir-south,Wajir South Sub-county,001-040-004-sub,sub-county,001-040,true
+ke/wajir-tarbaj,Tarbaj Sub-county,001-040-005-sub,sub-county,001-040,true
+ke/mandera,Mandera,001-014,county,001,true
+ke/mandera-north,Mandera North,001-014-001,constituency,001-014,true
+ke/mandera-south,Mandera South,001-014-002,constituency,001-014,true
+ke/mandera-east,Mandera East,001-014-003,constituency,001-014,true
+ke/mandera-west,Mandera West,001-014-004,constituency,001-014,true
+ke/mandera-central,Mandera Central,001-014-005,constituency,001-014,true
+ke/mandera-banisa,Banisa,001-014-006,constituency,001-014,true
+ke/mandera-north,Mandera North Sub-county,001-014-001-sub,sub-county,001-014,true
+ke/mandera-south,Mandera South Sub-county,001-014-002-sub,sub-county,001-014,true
+ke/mandera-east,Mandera East Sub-county,001-014-003-sub,sub-county,001-014,true
+ke/mandera-west,Mandera West Sub-county,001-014-004-sub,sub-county,001-014,true
+ke/mandera-central,Mandera Central Sub-county,001-014-005-sub,sub-county,001-014,true
+ke/mandera-banisa,Banisa Sub-county,001-014-006-sub,sub-county,001-014,true
+ke/marsabit,Marsabit,001-010,county,001,true
+ke/marsabit-central,Marsabit Central,001-010-001,constituency,001-010,true
+ke/marsabit-north,Marsabit North,001-010-002,constituency,001-010,true
+ke/marsabit-south,Marsabit South,001-010-003,constituency,001-010,true
+ke/marsabit-east,Marsabit East,001-010-004,constituency,001-010,true
+ke/marsabit-laisamis,Laisamis,001-010-005,constituency,001-010,true
+ke/marsabit-saku,Saku,001-010-006,constituency,001-010,true
+ke/marsabit-central,Marsabit Central Sub-county,001-010-001-sub,sub-county,001-010,true
+ke/marsabit-north,Marsabit North Sub-county,001-010-002-sub,sub-county,001-010,true
+ke/marsabit-south,Marsabit South Sub-county,001-010-003-sub,sub-county,001-010,true
+ke/marsabit-east,Marsabit East Sub-county,001-010-004-sub,sub-county,001-010,true
+ke/marsabit-laisamis,Laisamis Sub-county,001-010-005-sub,sub-county,001-010,true
+ke/marsabit-saku,Saku Sub-county,001-010-006-sub,sub-county,001-010,true
+ke/isiolo,Isiolo,001-009,county,001,true
+ke/isiolo-central,Isiolo Central,001-009-001,constituency,001-009,true
+ke/isiolo-north,Isiolo North,001-009-002,constituency,001-009,true
+ke/isiolo-south,Isiolo South,001-009-003,constituency,001-009,true
+ke/isiolo-central,Isiolo Central Sub-county,001-009-001-sub,sub-county,001-009,true
+ke/isiolo-north,Isiolo North Sub-county,001-009-002-sub,sub-county,001-009,true
+ke/isiolo-south,Isiolo South Sub-county,001-009-003-sub,sub-county,001-009,true
+ke/samburu,Samburu,001-035,county,001,true
+ke/samburu-central,Samburu Central,001-035-001,constituency,001-035,true
+ke/samburu-north,Samburu North,001-035-002,constituency,001-035,true
+ke/samburu-east,Samburu East,001-035-003,constituency,001-035,true
+ke/samburu-west,Samburu West,001-035-004,constituency,001-035,true
+ke/samburu-central,Samburu Central Sub-county,001-035-001-sub,sub-county,001-035,true
+ke/samburu-north,Samburu North Sub-county,001-035-002-sub,sub-county,001-035,true
+ke/samburu-east,Samburu East Sub-county,001-035-003-sub,sub-county,001-035,true
+ke/samburu-west,Samburu West Sub-county,001-035-004-sub,sub-county,001-035,true
+ke/trans-nzoia,Trans Nzoia,001-038,county,001,true
+ke/trans-nzoia-east,Trans Nzoia East,001-038-001,constituency,001-038,true
+ke/trans-nzoia-west,Trans Nzoia West,001-038-002,constituency,001-038,true
+ke/trans-nzoia-saboti,Saboti,001-038-003,constituency,001-038,true
+ke/trans-nzoia-kwanza,Kwanza,001-038-004,constituency,001-038,true
+ke/trans-nzoia-cherangany,Cherangany,001-038-005,constituency,001-038,true
+ke/trans-nzoia-east,Trans Nzoia East Sub-county,001-038-001-sub,sub-county,001-038,true
+ke/trans-nzoia-west,Trans Nzoia West Sub-county,001-038-002-sub,sub-county,001-038,true
+ke/trans-nzoia-saboti,Saboti Sub-county,001-038-003-sub,sub-county,001-038,true
+ke/trans-nzoia-kwanza,Kwanza Sub-county,001-038-004-sub,sub-county,001-038,true
+ke/trans-nzoia-cherangany,Cherangany Sub-county,001-038-005-sub,sub-county,001-038,true
+ke/baringo,Baringo,001-002,county,001,true
+ke/baringo-central,Baringo Central,001-002-001,constituency,001-002,true
+ke/baringo-north,Baringo North,001-002-002,constituency,001-002,true
+ke/baringo-south,Baringo South,001-002-003,constituency,001-002,true
+ke/baringo-tiaty,Tiaty,001-002-004,constituency,001-002,true
+ke/baringo-eldama,Eldama Ravine,001-002-005,constituency,001-002,true
+ke/baringo-central,Baringo Central Sub-county,001-002-001-sub,sub-county,001-002,true
+ke/baringo-north,Baringo North Sub-county,001-002-002-sub,sub-county,001-002,true
+ke/baringo-south,Baringo South Sub-county,001-002-003-sub,sub-county,001-002,true
+ke/baringo-tiaty,Tiaty Sub-county,001-002-004-sub,sub-county,001-002,true
+ke/baringo-eldama,Eldama Ravine Sub-county,001-002-005-sub,sub-county,001-002,true
+ke/laikipia,Laikipia,001-012,county,001,true
+ke/laikipia-east,Laikipia East,001-012-001,constituency,001-012,true
+ke/laikipia-west,Laikipia West,001-012-002,constituency,001-012,true
+ke/laikipia-north,Laikipia North,001-012-003,constituency,001-012,true
+ke/laikipia-east,Laikipia East Sub-county,001-012-001-sub,sub-county,001-012,true
+ke/laikipia-west,Laikipia West Sub-county,001-012-002-sub,sub-county,001-012,true
+ke/laikipia-north,Laikipia North Sub-county,001-012-003-sub,sub-county,001-012,true
+ke/narok,Narok,001-027,county,001,true
+ke/narok-north,Narok North,001-027-001,constituency,001-027,true
+ke/narok-south,Narok South,001-027-002,constituency,001-027,true
+ke/narok-east,Narok East,001-027-003,constituency,001-027,true
+ke/narok-west,Narok West,001-027-004,constituency,001-027,true
+ke/narok-kilgoris,Kilgoris,001-027-005,constituency,001-027,true
+ke/narok-north,Narok North Sub-county,001-027-001-sub,sub-county,001-027,true
+ke/narok-south,Narok South Sub-county,001-027-002-sub,sub-county,001-027,true
+ke/narok-east,Narok East Sub-county,001-027-003-sub,sub-county,001-027,true
+ke/narok-west,Narok West Sub-county,001-027-004-sub,sub-county,001-027,true
+ke/narok-kilgoris,Kilgoris Sub-county,001-027-005-sub,sub-county,001-027,true
+ke/kajiado,Kajiado,001-011,county,001,true
+ke/kajiado-north,Kajiado North,001-011-001,constituency,001-011,true
+ke/kajiado-central,Kajiado Central,001-011-002,constituency,001-011,true
+ke/kajiado-south,Kajiado South,001-011-003,constituency,001-011,true
+ke/kajiado-east,Kajiado East,001-011-004,constituency,001-011,true
+ke/kajiado-west,Kajiado West,001-011-005,constituency,001-011,true
+ke/kajiado-north,Kajiado North Sub-county,001-011-001-sub,sub-county,001-011,true
+ke/kajiado-central,Kajiado Central Sub-county,001-011-002-sub,sub-county,001-011,true
+ke/kajiado-south,Kajiado South Sub-county,001-011-003-sub,sub-county,001-011,true
+ke/kajiado-east,Kajiado East Sub-county,001-011-004-sub,sub-county,001-011,true
+ke/kajiado-west,Kajiado West Sub-county,001-011-005-sub,sub-county,001-011,true
+ke/taita-taveta,Taita Taveta,001-036,county,001,true
+ke/taita-taveta,Taita Taveta,001-036-001,constituency,001-036,true
+ke/taveta,Taveta,001-036-002,constituency,001-036,true
+ke/wundanyi,Wundanyi,001-036-003,constituency,001-036,true
+ke/mwatate,Mwatate,001-036-004,constituency,001-036,true
+ke/taita-taveta,Taita Taveta Sub-county,001-036-001-sub,sub-county,001-036,true
+ke/taveta,Taveta Sub-county,001-036-002-sub,sub-county,001-036,true
+ke/wundanyi,Wundanyi Sub-county,001-036-003-sub,sub-county,001-036,true
+ke/mwatate,Mwatate Sub-county,001-036-004-sub,sub-county,001-036,true
+ke/kwale,Kwale,001-013,county,001,true
+ke/kwale-msambweni,Msambweni,001-013-001,constituency,001-013,true
+ke/kwale-lungalunga,Lungalunga,001-013-002,constituency,001-013,true
+ke/kwale-matuga,Matuga,001-013-003,constituency,001-013,true
+ke/kwale-kinango,Kinango,001-013-004,constituency,001-013,true
+ke/kwale-msambweni,Msambweni Sub-county,001-013-001-sub,sub-county,001-013,true
+ke/kwale-lungalunga,Lungalunga Sub-county,001-013-002-sub,sub-county,001-013,true
+ke/kwale-matuga,Matuga Sub-county,001-013-003-sub,sub-county,001-013,true
+ke/kwale-kinango,Kinango Sub-county,001-013-004-sub,sub-county,001-013,true
+ke/lamu,Lamu,001-019,county,001,true
+ke/lamu-east,Lamu East,001-019-001,constituency,001-019,true
+ke/lamu-west,Lamu West,001-019-002,constituency,001-019,true
+ke/lamu-faza,Faza,001-019-003,constituency,001-019,true
+ke/lamu-amu,Amu,001-019-004,constituency,001-019,true
+ke/lamu-east,Lamu East Sub-county,001-019-001-sub,sub-county,001-019,true
+ke/lamu-west,Lamu West Sub-county,001-019-002-sub,sub-county,001-019,true
+ke/lamu-faza,Faza Sub-county,001-019-003-sub,sub-county,001-019,true
+ke/lamu-amu,Amu Sub-county,001-019-004-sub,sub-county,001-019,true
+ke/tana-river,Tana River,001-033,county,001,true
+ke/tana-river,Garsen,001-033-001,constituency,001-033,true
+ke/tana-river-galole,Galole,001-033-002,constituency,001-033,true
+ke/tana-river-bura,Bura,001-033-003,constituency,001-033,true
+ke/tana-river-wenje,Wenje,001-033-004,constituency,001-033,true
+ke/tana-river,Garsen Sub-county,001-033-001-sub,sub-county,001-033,true
+ke/tana-river-galole,Galole Sub-county,001-033-002-sub,sub-county,001-033,true
+ke/tana-river-bura,Bura Sub-county,001-033-003-sub,sub-county,001-033,true
+ke/tana-river-wenje,Wenje Sub-county,001-033-004-sub,sub-county,001-033,true
+ke/pokot,Pokot,001-024,county,001,true
+ke/pokot-central,Pokot Central,001-024-001,constituency,001-024,true
+ke/pokot-north,Pokot North,001-024-002,constituency,001-024,true
+ke/pokot-south,Pokot South,001-024-003,constituency,001-024,true
+ke/pokot-central,Pokot Central Sub-county,001-024-001-sub,sub-county,001-024,true
+ke/pokot-north,Pokot North Sub-county,001-024-002-sub,sub-county,001-024,true
+ke/pokot-south,Pokot South Sub-county,001-024-003-sub,sub-county,001-024,true
+ke/siaya,Siaya,001-034,county,001,true
+ke/siaya-ugaro,Ugenya,001-034-001,constituency,001-034,true
+ke/siaya/uganda,Ugunja,001-034-002,constituency,001-034,true
+ke/siaya-alego,Alego,001-034-003,constituency,001-034,true
+ke/siaya-bondo,Bondo,001-034-004,constituency,001-034,true
+ke/siaya-rarieda,Rarieda,001-034-005,constituency,001-034,true
+ke/siaya-gem,Gem,001-034-006,constituency,001-034,true
+ke/siaya-ugaro,Ugenya Sub-county,001-034-001-sub,sub-county,001-034,true
+ke/siaya/uganda,Ugunja Sub-county,001-034-002-sub,sub-county,001-034,true
+ke/siaya-alego,Alego Sub-county,001-034-003-sub,sub-county,001-034,true
+ke/siaya-bondo,Bondo Sub-county,001-034-004-sub,sub-county,001-034,true
+ke/siaya-rarieda,Rarieda Sub-county,001-034-005-sub,sub-county,001-034,true
+ke/siaya-gem,Gem Sub-county,001-034-006-sub,sub-county,001-034,true
+ke/busia,Busia,001-003,county,001,true
+ke/busia-teso,Teso,001-003-001,constituency,001-003,true
+ke/busia-north,North,001-003-002,constituency,001-003,true
+ke/busia-south,South,001-003-003,constituency,001-003,true
+ke/busia-bunyala,Bunyala,001-003-004,constituency,001-003,true
+ke/busia-matayos,Matayos,001-003-005,constituency,001-003,true
+ke/busia-nambale,Nambale,001-003-006,constituency,001-003,true
+ke/busia-samia,Samia,001-003-007,constituency,001-003,true
+ke/busia-teso,Teso Sub-county,001-003-001-sub,sub-county,001-003,true
+ke/busia-north,North Sub-county,001-003-002-sub,sub-county,001-003,true
+ke/busia-south,South Sub-county,001-003-003-sub,sub-county,001-003,true
+ke/busia-bunyala,Bunyala Sub-county,001-003-004-sub,sub-county,001-003,true
+ke/busia-matayos,Matayos Sub-county,001-003-005-sub,sub-county,001-003,true
+ke/busia-nambale,Nambale Sub-county,001-003-006-sub,sub-county,001-003,true
+ke/busia-samia,Samia Sub-county,001-003-007-sub,sub-county,001-003,true
+ke/homa-bay,Homa Bay,001-043,county,001,true
+ke/homa-bay/homa-bay-town,Homa Bay Town,001-043-001,constituency,001-043,true
+ke/homa-bay/rangwe,Rangwe,001-043-002,constituency,001-043,true
+ke/homa-bay/karachuonyo,Karachuonyo,001-043-003,constituency,001-043,true
+ke/homa-bay/mbita,Mbita,001-043-004,constituency,001-043,true
+ke/homa-bay/ndhiwa,Ndhiwa,001-043-005,constituency,001-043,true
+ke/homa-bay/kabondo,Kabondo,001-043-006,constituency,001-043,true
+ke/homa-bay/kasipul,Kasipul,001-043-007,constituency,001-043,true
+ke/homa-bay/kwanyange,Kwanyange,001-043-008,constituency,001-043,true
+ke/homa-bay-town,Homa Bay Town Sub-county,001-043-001-sub,sub-county,001-043,true
+ke/homa-bay-rangwe,Rangwe Sub-county,001-043-002-sub,sub-county,001-043,true
+ke/homa-bay-karachuonyo,Karachuonyo Sub-county,001-043-003-sub,sub-county,001-043,true
+ke/homa-bay-mbita,Mbita Sub-county,001-043-004-sub,sub-county,001-043,true
+ke/homa-bay-ndhiwa,Ndhiwa Sub-county,001-043-005-sub,sub-county,001-043,true
+ke/homa-bay-kabondo,Kabondo Sub-county,001-043-006-sub,sub-county,001-043,true
+ke/migori,Migori,001-025,county,001,true
+ke/migori-town,Migori Town,001-025-001,constituency,001-025,true
+ke/migori/nyatike,Nyatike,001-025-002,constituency,001-025,true
+ke/migori-uriri,Uriri,001-025-003,constituency,001-025,true
+ke/migori-kuria-west,Kuria West,001-025-004,constituency,001-025,true
+ke/migori-kuria-east,Kuria East,001-025-005,constituency,001-025,true
+ke/migori/rapogi,Rapogi,001-025-006,constituency,001-025,true
+ke/migori-awendo,Awendo,001-025-007,constituency,001-025,true
+ke/migori-town,Migori Town Sub-county,001-025-001-sub,sub-county,001-025,true
+ke/migori-nyatike,Nyatike Sub-county,001-025-002-sub,sub-county,001-025,true
+ke/migori-uriri,Uriri Sub-county,001-025-003-sub,sub-county,001-025,true
+ke/migori-kuria-west,Kuria West Sub-county,001-025-004-sub,sub-county,001-025,true
+ke/migori-kuria-east,Kuria East Sub-county,001-025-005-sub,sub-county,001-025,true
+ke/migori-awendo,Awendo Sub-county,001-025-006-sub,sub-county,001-025,true
+ke/migori-rapogi,Rapogi Sub-county,001-025-007-sub,sub-county,001-025,true
+ke/kisii,Kisii,001-018,county,001,true
+ke/kisii-central,Kisii Central,001-018-001,constituency,001-018,true
+ke/kisii-south,Kisii South,001-018-002,constituency,001-018,true
+ke/kisii-north,Kisii North,001-018-003,constituency,001-018,true
+ke/kisii/bobasi,Bobasi,001-018-004,constituency,001-018,true
+ke/kisii/bonchari,Bonchari,001-018-005,constituency,001-018,true
+ke/kisii-kitutu-chache,Kitutu Chache,001-018-006,constituency,001-018,true
+ke/kisii-kitutu-masaba,Kitutu Masaba,001-018-007,constituency,001-018,true
+ke/kisii-sameta,Sameta,001-018-008,constituency,001-018,true
+ke/kisii-central,Kisii Central Sub-county,001-018-001-sub,sub-county,001-018,true
+ke/kisii-south,Kisii South Sub-county,001-018-002-sub,sub-county,001-018,true
+ke/kisii-north,Kisii North Sub-county,001-018-003-sub,sub-county,001-018,true
+ke/kisii-bobasi,Bobasi Sub-county,001-018-004-sub,sub-county,001-018,true
+ke/kisii-bonchari,Bonchari Sub-county,001-018-005-sub,sub-county,001-018,true
+ke/kisii-kitutu-chache,Kitutu Chache Sub-county,001-018-006-sub,sub-county,001-018,true
+ke/kisii-kitutu-masaba,Kitutu Masaba Sub-county,001-018-007-sub,sub-county,001-018,true
+ke/kisii-sameta,Sameta Sub-county,001-018-008-sub,sub-county,001-018,true
+ke/nyamira,Nyamira,001-029,county,001,true
+ke/nyamira-kitutu-masaba,Kitutu Masaba,001-029-001,constituency,001-029,true
+ke/nyamira-west,North Mugirango,001-029-002,constituency,001-029,true
+ke/nyamira-south,South Mugirango,001-029-003,constituency,001-029,true
+ke/nyamira-borabu,Borabu,001-029-004,constituency,001-029,true
+ke/nyamira-north,North Mugirango Sub-county,001-029-001-sub,sub-county,001-029,true
+ke/nyamira-south,South Mugirango Sub-county,001-029-002-sub,sub-county,001-029,true
+ke/nyamira-borabu,Borabu Sub-county,001-029-003-sub,sub-county,001-029,true
+ke/nyamira-kitutu-masaba,Kitutu Masaba Sub-county,001-029-004-sub,sub-county,001-029,true
+ke/nandi,Nandi,001-030,county,001,true
+ke/nandi-aldai,Aldai,001-030-001,constituency,001-030,true
+ke/nandi-chesumei,Chesumei,001-030-002,constituency,001-030,true
+ke/nandi-emgwen,Emgwen,001-030-003,constituency,001-030,true
+ke/nandi-mosop,Mosop,001-030-004,constituency,001-030,true
+ke/nandi-tindiret,Tindiret,001-030-005,constituency,001-030,true
+ke/nandi-nandi-hills,Nandi Hills,001-030-006,constituency,001-030,true
+ke/nandi-aldai,Aldai Sub-county,001-030-001-sub,sub-county,001-030,true
+ke/nandi-chesumei,Chesumei Sub-county,001-030-002-sub,sub-county,001-030,true
+ke/nandi-emgwen,Emgwen Sub-county,001-030-003-sub,sub-county,001-030,true
+ke/nandi-mosop,Mosop Sub-county,001-030-004-sub,sub-county,001-030,true
+ke/nandi-tindiret,Tindiret Sub-county,001-030-005-sub,sub-county,001-030,true
+ke/nandi-nandi-hills,Nandi Hills Sub-county,001-030-006-sub,sub-county,001-030,true
+ke/kericho,Kericho,001-021,county,001,true
+ke/kericho-town,Kericho Town,001-021-001,constituency,001-021,true
+ke/kericho-ainamoi,Ainamoi,001-021-002,constituency,001-021,true
+ke/kericho/belgut,Belgut,001-021-003,constituency,001-021,true
+ke/kericho/kipkelion-east,Kipkelion East,001-021-004,constituency,001-021,true
+ke/kericho/kipkelion-west,Kipkelion West,001-021-005,constituency,001-021,true
+ke/kericho-bureti,Bureti,001-021-006,constituency,001-021,true
+ke/kericho-town,Kericho Town Sub-county,001-021-001-sub,sub-county,001-021,true
+ke/kericho-ainamoi,Ainamoi Sub-county,001-021-002-sub,sub-county,001-021,true
+ke/kericho/belgut,Belgut Sub-county,001-021-003-sub,sub-county,001-021,true
+ke/kericho-kipkelion-east,Kipkelion East Sub-county,001-021-004-sub,sub-county,001-021,true
+ke/kericho-kipkelion-west,Kipkelion West Sub-county,001-021-005-sub,sub-county,001-021,true
+ke/kericho-bureti,Bureti Sub-county,001-021-006-sub,sub-county,001-021,true
+ke/bomet,Bomet,001-005,county,001,true
+ke/bomet-central,Bomet Central,001-005-001,constituency,001-005,true
+ke/bomet-south,Bomet South,001-005-002,constituency,001-005,true
+ke/bomet-chepalungu,Chepalungu,001-005-003,constituency,001-005,true
+ke/bomet-sotik,Sotik,001-005-004,constituency,001-005,true
+ke/bomet-konoin,Konoin,001-005-005,constituency,001-005,true
+ke/bomet-central,Bomet Central Sub-county,001-005-001-sub,sub-county,001-005,true
+ke/bomet-south,Bomet South Sub-county,001-005-002-sub,sub-county,001-005,true
+ke/bomet-chepalungu,Chepalungu Sub-county,001-005-003-sub,sub-county,001-005,true
+ke/bomet-sotik,Sotik Sub-county,001-005-004-sub,sub-county,001-005,true
+ke/bomet-konoin,Konoin Sub-county,001-005-005-sub,sub-county,001-005,true
+ke/narok,Narok,001-027,county,001,true
+ke/narok-north,Narok North,001-027-001,constituency,001-027,true
+ke/narok-south,Narok South,001-027-002,constituency,001-027,true
+ke/narok-east,Narok East,001-027-003,constituency,001-027,true
+ke/narok-west,Narok West,001-027-004,constituency,001-027,true
+ke/narok-kilgoris,Kilgoris,001-027-005,constituency,001-027,true
+ke/narok-north,Narok North Sub-county,001-027-001-sub,sub-county,001-027,true
+ke/narok-south,Narok South Sub-county,001-027-002-sub,sub-county,001-027,true
+ke/narok-east,Narok East Sub-county,001-027-003-sub,sub-county,001-027,true
+ke/narok-west,Narok West Sub-county,001-027-004-sub,sub-county,001-027,true
+ke/narok-kilgoris,Kilgoris Sub-county,001-027-005-sub,sub-county,001-027,true

@@ -1,0 +1,6 @@
+level_code,level_name,level_order,description,is_active,geo_level_code
+national,National Level,1,"National government entities and ministries",true,national
+county,County Level,2,"County government entities",true,county
+department,Department Level,3,"Department-level entities within ministries or counties",true,
+program,Program Level,4,"Specific programs within departments",true,constituency
+sub-program,Sub-Program Level,5,"Sub-programs and initiatives within programs",true,ward

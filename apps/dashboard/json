@@ -1,0 +1,1300 @@
+{
+"openapi": "3.1.0",
+"info": {
+"title": "Political Finance Risk Intelligence API",
+"description": "AI-powered corruption detection and political finance analysis platform",
+"version": "1.0.0"
+},
+"paths": {
+"/auth/login": {
+"post": {
+"tags": [
+"authentication"
+],
+"summary": "Login Json",
+"description": "Authenticate user and return access token (JSON)",
+"operationId": "login_json_auth_login_post",
+"requestBody": {
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/LoginRequest"
+}
+}
+},
+"required": true
+},
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/Token"
+}
+}
+}
+},
+"422": {
+"description": "Validation Error",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/HTTPValidationError"
+}
+}
+}
+}
+}
+}
+},
+"/auth/login-form": {
+"post": {
+"tags": [
+"authentication"
+],
+"summary": "Login Form",
+"description": "Authenticate user and return access token (Form)",
+"operationId": "login_form_auth_login_form_post",
+"requestBody": {
+"content": {
+"application/x-www-form-urlencoded": {
+"schema": {
+"$ref": "#/components/schemas/Body_login_form_auth_login_form_post"
+}
+}
+},
+"required": true
+},
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/Token"
+}
+}
+}
+},
+"422": {
+"description": "Validation Error",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/HTTPValidationError"
+}
+}
+}
+}
+}
+}
+},
+"/auth/me": {
+"get": {
+"tags": [
+"authentication"
+],
+"summary": "Get Current User",
+"description": "Get current user information",
+"operationId": "get_current_user_auth_me_get",
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/User"
+}
+}
+}
+}
+},
+"security": [
+{
+"HTTPBearer": []
+}
+]
+}
+},
+"/auth/logout": {
+"post": {
+"tags": [
+"authentication"
+],
+"summary": "Logout",
+"description": "Logout user (clears cookie)",
+"operationId": "logout_auth_logout_post",
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/AuthResponse"
+}
+}
+}
+}
+},
+"security": [
+{
+"HTTPBearer": []
+}
+]
+}
+},
+"/auth/verify": {
+"get": {
+"tags": [
+"authentication"
+],
+"summary": "Verify Token",
+"description": "Verify current token is valid",
+"operationId": "verify_token_auth_verify_get",
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/VerifyTokenResponse"
+}
+}
+}
+}
+},
+"security": [
+{
+"HTTPBearer": []
+}
+]
+}
+},
+"/auth/audit-logs": {
+"get": {
+"tags": [
+"authentication"
+],
+"summary": "Get Audit Logs",
+"description": "Get audit logs (admin only)",
+"operationId": "get_audit_logs_auth_audit_logs_get",
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {}
+}
+}
+}
+},
+"security": [
+{
+"HTTPBearer": []
+}
+]
+}
+},
+"/auth/create-user": {
+"post": {
+"tags": [
+"authentication"
+],
+"summary": "Create User",
+"description": "Create a new user in the database",
+"operationId": "create_user_auth_create_user_post",
+"requestBody": {
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/UserCreate"
+}
+}
+},
+"required": true
+},
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/AuthResponse"
+}
+}
+}
+},
+"422": {
+"description": "Validation Error",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/HTTPValidationError"
+}
+}
+}
+}
+}
+}
+},
+"/auth/test-hash": {
+"post": {
+"tags": [
+"authentication"
+],
+"summary": "Test Password Hash",
+"description": "Test password hashing and verification",
+"operationId": "test_password_hash_auth_test_hash_post",
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {}
+}
+}
+}
+}
+}
+},
+"/documents/upload": {
+"post": {
+"tags": [
+"documents",
+"Documents"
+],
+"summary": "Upload Document",
+"description": "Upload a new document",
+"operationId": "upload_document_documents_upload_post",
+"requestBody": {
+"content": {
+"multipart/form-data": {
+"schema": {
+"$ref": "#/components/schemas/Body_upload_document_documents_upload_post"
+}
+}
+},
+"required": true
+},
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/DocumentUploadResponse"
+}
+}
+}
+},
+"422": {
+"description": "Validation Error",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/HTTPValidationError"
+}
+}
+}
+}
+}
+}
+},
+"/documents/": {
+"get": {
+"tags": [
+"documents",
+"Documents"
+],
+"summary": "List Documents",
+"description": "List documents with optional filters",
+"operationId": "list_documents_documents__get",
+"parameters": [
+{
+"name": "skip",
+"in": "query",
+"required": false,
+"schema": {
+"type": "integer",
+"minimum": 0,
+"default": 0,
+"title": "Skip"
+}
+},
+{
+"name": "limit",
+"in": "query",
+"required": false,
+"schema": {
+"type": "integer",
+"maximum": 1000,
+"minimum": 1,
+"default": 100,
+"title": "Limit"
+}
+},
+{
+"name": "status",
+"in": "query",
+"required": false,
+"schema": {
+"anyOf": [
+{
+"$ref": "#/components/schemas/ExtractionStatus"
+},
+{
+"type": "null"
+}
+],
+"description": "Filter by extraction status",
+"title": "Status"
+},
+"description": "Filter by extraction status"
+},
+{
+"name": "public_only",
+"in": "query",
+"required": false,
+"schema": {
+"type": "boolean",
+"description": "Show only public documents",
+"default": false,
+"title": "Public Only"
+},
+"description": "Show only public documents"
+}
+],
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/DocumentListResponse"
+}
+}
+}
+},
+"422": {
+"description": "Validation Error",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/HTTPValidationError"
+}
+}
+}
+}
+}
+}
+},
+"/documents/{document_id}": {
+"get": {
+"tags": [
+"documents",
+"Documents"
+],
+"summary": "Get Document",
+"description": "Get document by ID",
+"operationId": "get_document_documents__document_id__get",
+"parameters": [
+{
+"name": "document_id",
+"in": "path",
+"required": true,
+"schema": {
+"type": "integer",
+"minimum": 1,
+"title": "Document Id"
+}
+}
+],
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/DocumentResponse"
+}
+}
+}
+},
+"422": {
+"description": "Validation Error",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/HTTPValidationError"
+}
+}
+}
+}
+}
+},
+"delete": {
+"tags": [
+"documents",
+"Documents"
+],
+"summary": "Delete Document",
+"description": "Delete document",
+"operationId": "delete_document_documents__document_id__delete",
+"parameters": [
+{
+"name": "document_id",
+"in": "path",
+"required": true,
+"schema": {
+"type": "integer",
+"minimum": 1,
+"title": "Document Id"
+}
+}
+],
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/DocumentDeleteResponse"
+}
+}
+}
+},
+"422": {
+"description": "Validation Error",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/HTTPValidationError"
+}
+}
+}
+}
+}
+}
+},
+"/documents/search/query": {
+"get": {
+"tags": [
+"documents",
+"Documents"
+],
+"summary": "Search Documents",
+"description": "Search documents by filename or description",
+"operationId": "search_documents_documents_search_query_get",
+"parameters": [
+{
+"name": "q",
+"in": "query",
+"required": true,
+"schema": {
+"type": "string",
+"minLength": 2,
+"description": "Search query",
+"title": "Q"
+},
+"description": "Search query"
+},
+{
+"name": "skip",
+"in": "query",
+"required": false,
+"schema": {
+"type": "integer",
+"minimum": 0,
+"default": 0,
+"title": "Skip"
+}
+},
+{
+"name": "limit",
+"in": "query",
+"required": false,
+"schema": {
+"type": "integer",
+"maximum": 1000,
+"minimum": 1,
+"default": 100,
+"title": "Limit"
+}
+}
+],
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/DocumentListResponse"
+}
+}
+}
+},
+"422": {
+"description": "Validation Error",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/HTTPValidationError"
+}
+}
+}
+}
+}
+}
+},
+"/documents/statistics/summary": {
+"get": {
+"tags": [
+"documents",
+"Documents"
+],
+"summary": "Get Statistics",
+"description": "Get extraction statistics",
+"operationId": "get_statistics_documents_statistics_summary_get",
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {
+"$ref": "#/components/schemas/ExtractionSummary"
+}
+}
+}
+}
+}
+}
+},
+"/": {
+"get": {
+"summary": "Root",
+"description": "Root endpoint - API information",
+"operationId": "root__get",
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {}
+}
+}
+}
+}
+}
+},
+"/health": {
+"get": {
+"summary": "Health Check",
+"description": "Health check endpoint\nReturns service and database status",
+"operationId": "health_check_health_get",
+"responses": {
+"200": {
+"description": "Successful Response",
+"content": {
+"application/json": {
+"schema": {}
+}
+}
+}
+}
+}
+}
+},
+"components": {
+"schemas": {
+"AuthResponse": {
+"properties": {
+"message": {
+"type": "string",
+"title": "Message"
+},
+"success": {
+"type": "boolean",
+"title": "Success"
+},
+"data": {
+"anyOf": [
+{
+"additionalProperties": true,
+"type": "object"
+},
+{
+"type": "null"
+}
+],
+"title": "Data"
+}
+},
+"type": "object",
+"required": [
+"message",
+"success"
+],
+"title": "AuthResponse"
+},
+"Body_login_form_auth_login_form_post": {
+"properties": {
+"grant_type": {
+"anyOf": [
+{
+"type": "string",
+"pattern": "^password$"
+},
+{
+"type": "null"
+}
+],
+"title": "Grant Type"
+},
+"username": {
+"type": "string",
+"title": "Username"
+},
+"password": {
+"type": "string",
+"format": "password",
+"title": "Password"
+},
+"scope": {
+"type": "string",
+"title": "Scope",
+"default": ""
+},
+"client_id": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Client Id"
+},
+"client_secret": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"format": "password",
+"title": "Client Secret"
+}
+},
+"type": "object",
+"required": [
+"username",
+"password"
+],
+"title": "Body_login_form_auth_login_form_post"
+},
+"Body_upload_document_documents_upload_post": {
+"properties": {
+"file": {
+"type": "string",
+"contentMediaType": "application/octet-stream",
+"title": "File",
+"description": "PDF file to upload"
+},
+"purpose": {
+"$ref": "#/components/schemas/DocumentPurpose",
+"default": "other"
+},
+"description": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Description"
+},
+"extraction_method": {
+"$ref": "#/components/schemas/ExtractionMethod",
+"default": "auto"
+},
+"is_public": {
+"type": "boolean",
+"title": "Is Public",
+"default": false
+}
+},
+"type": "object",
+"required": [
+"file"
+],
+"title": "Body_upload_document_documents_upload_post"
+},
+"DocumentDeleteResponse": {
+"properties": {
+"success": {
+"type": "boolean",
+"title": "Success"
+},
+"message": {
+"type": "string",
+"title": "Message"
+}
+},
+"type": "object",
+"required": [
+"success",
+"message"
+],
+"title": "DocumentDeleteResponse",
+"description": "Document delete response"
+},
+"DocumentListResponse": {
+"properties": {
+"success": {
+"type": "boolean",
+"title": "Success",
+"default": true
+},
+"message": {
+"type": "string",
+"title": "Message",
+"default": "Documents retrieved successfully"
+},
+"documents": {
+"items": {
+"$ref": "#/components/schemas/DocumentResponse"
+},
+"type": "array",
+"title": "Documents"
+},
+"total": {
+"type": "integer",
+"title": "Total"
+}
+},
+"type": "object",
+"required": [
+"documents",
+"total"
+],
+"title": "DocumentListResponse",
+"description": "Document list response"
+},
+"DocumentPurpose": {
+"type": "string",
+"enum": [
+"financial_reports",
+"county_data",
+"candidate_data",
+"party_data",
+"other"
+],
+"title": "DocumentPurpose",
+"description": "Purpose of the document upload"
+},
+"DocumentResponse": {
+"properties": {
+"filename": {
+"type": "string",
+"title": "Filename",
+"description": "Generated filename"
+},
+"original_filename": {
+"type": "string",
+"title": "Original Filename",
+"description": "Original uploaded filename"
+},
+"file_size": {
+"type": "integer",
+"title": "File Size",
+"description": "File size in bytes"
+},
+"purpose": {
+"$ref": "#/components/schemas/DocumentPurpose",
+"description": "Purpose of the document"
+},
+"description": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Description",
+"description": "Description of the document content"
+},
+"extraction_method": {
+"$ref": "#/components/schemas/ExtractionMethod",
+"description": "Preferred extraction method",
+"default": "auto"
+},
+"is_public": {
+"type": "boolean",
+"title": "Is Public",
+"description": "Whether the document is publicly accessible",
+"default": false
+},
+"id": {
+"type": "integer",
+"title": "Id"
+},
+"user_id": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"title": "User Id"
+},
+"upload_ip": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Upload Ip"
+},
+"extraction_status": {
+"$ref": "#/components/schemas/ExtractionStatus"
+},
+"extraction_started_at": {
+"anyOf": [
+{
+"type": "string",
+"format": "date-time"
+},
+{
+"type": "null"
+}
+],
+"title": "Extraction Started At"
+},
+"extraction_completed_at": {
+"anyOf": [
+{
+"type": "string",
+"format": "date-time"
+},
+{
+"type": "null"
+}
+],
+"title": "Extraction Completed At"
+},
+"extraction_output_path": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Extraction Output Path"
+},
+"extraction_error": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Extraction Error"
+},
+"created_at": {
+"type": "string",
+"format": "date-time",
+"title": "Created At"
+},
+"updated_at": {
+"anyOf": [
+{
+"type": "string",
+"format": "date-time"
+},
+{
+"type": "null"
+}
+],
+"title": "Updated At"
+},
+"extracted_tables": {
+"anyOf": [
+{
+"items": {
+"additionalProperties": true,
+"type": "object"
+},
+"type": "array"
+},
+{
+"type": "null"
+}
+],
+"title": "Extracted Tables",
+"description": "List of extracted tables",
+"default": []
+}
+},
+"type": "object",
+"required": [
+"filename",
+"original_filename",
+"file_size",
+"purpose",
+"id",
+"extraction_status",
+"created_at"
+],
+"title": "DocumentResponse",
+"description": "Document response schema"
+},
+"DocumentUploadResponse": {
+"properties": {
+"success": {
+"type": "boolean",
+"title": "Success",
+"description": "Upload success status"
+},
+"message": {
+"type": "string",
+"title": "Message",
+"description": "Response message"
+},
+"document": {
+"anyOf": [
+{
+"$ref": "#/components/schemas/DocumentResponse"
+},
+{
+"type": "null"
+}
+],
+"description": "Uploaded document details"
+},
+"extraction_task_id": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Extraction Task Id",
+"description": "Background extraction task ID"
+}
+},
+"type": "object",
+"required": [
+"success",
+"message"
+],
+"title": "DocumentUploadResponse",
+"description": "Document upload response"
+},
+"ExtractionMethod": {
+"type": "string",
+"enum": [
+"auto",
+"tables_only",
+"text_only",
+"comprehensive"
+],
+"title": "ExtractionMethod",
+"description": "Extraction method preferences"
+},
+"ExtractionStatus": {
+"type": "string",
+"enum": [
+"pending",
+"processing",
+"completed",
+"failed"
+],
+"title": "ExtractionStatus",
+"description": "Extraction status"
+},
+"ExtractionSummary": {
+"properties": {
+"total_documents": {
+"type": "integer",
+"title": "Total Documents"
+},
+"completed": {
+"type": "integer",
+"title": "Completed"
+},
+"failed": {
+"type": "integer",
+"title": "Failed"
+},
+"processing": {
+"type": "integer",
+"title": "Processing"
+},
+"pending": {
+"type": "integer",
+"title": "Pending"
+},
+"average_extraction_time": {
+"anyOf": [
+{
+"type": "number"
+},
+{
+"type": "null"
+}
+],
+"title": "Average Extraction Time"
+}
+},
+"type": "object",
+"required": [
+"total_documents",
+"completed",
+"failed",
+"processing",
+"pending"
+],
+"title": "ExtractionSummary",
+"description": "Extraction summary"
+},
+"HTTPValidationError": {
+"properties": {
+"detail": {
+"items": {
+"$ref": "#/components/schemas/ValidationError"
+},
+"type": "array",
+"title": "Detail"
+}
+},
+"type": "object",
+"title": "HTTPValidationError"
+},
+"LoginRequest": {
+"properties": {
+"username": {
+"type": "string",
+"title": "Username"
+},
+"password": {
+"type": "string",
+"title": "Password"
+}
+},
+"type": "object",
+"required": [
+"username",
+"password"
+],
+"title": "LoginRequest"
+},
+"Token": {
+"properties": {
+"access_token": {
+"type": "string",
+"title": "Access Token"
+},
+"token_type": {
+"type": "string",
+"title": "Token Type"
+}
+},
+"type": "object",
+"required": [
+"access_token",
+"token_type"
+],
+"title": "Token"
+},
+"User": {
+"properties": {
+"username": {
+"type": "string",
+"title": "Username"
+},
+"email": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Email"
+},
+"role": {
+"type": "string",
+"title": "Role"
+},
+"permissions": {
+"items": {
+"type": "string"
+},
+"type": "array",
+"title": "Permissions"
+}
+},
+"type": "object",
+"required": [
+"username",
+"role",
+"permissions"
+],
+"title": "User"
+},
+"UserCreate": {
+"properties": {
+"username": {
+"type": "string",
+"title": "Username"
+},
+"email": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Email"
+},
+"password": {
+"type": "string",
+"title": "Password"
+},
+"role": {
+"type": "string",
+"title": "Role",
+"default": "viewer"
+},
+"full_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Full Name"
+},
+"phone_number": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"title": "Phone Number"
+}
+},
+"type": "object",
+"required": [
+"username",
+"password"
+],
+"title": "UserCreate"
+},
+"ValidationError": {
+"properties": {
+"loc": {
+"items": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "integer"
+}
+]
+},
+"type": "array",
+"title": "Location"
+},
+"msg": {
+"type": "string",
+"title": "Message"
+},
+"type": {
+"type": "string",
+"title": "Error Type"
+},
+"input": {
+"title": "Input"
+},
+"ctx": {
+"type": "object",
+"title": "Context"
+}
+},
+"type": "object",
+"required": [
+"loc",
+"msg",
+"type"
+],
+"title": "ValidationError"
+},
+"VerifyTokenResponse": {
+"properties": {
+"valid": {
+"type": "boolean",
+"title": "Valid"
+},
+"user": {
+"type": "string",
+"title": "User"
+},
+"role": {
+"type": "string",
+"title": "Role"
+},
+"permissions": {
+"items": {
+"type": "string"
+},
+"type": "array",
+"title": "Permissions"
+}
+},
+"type": "object",
+"required": [
+"valid",
+"user",
+"role",
+"permissions"
+],
+"title": "VerifyTokenResponse"
+}
+},
+"securitySchemes": {
+"HTTPBearer": {
+"type": "http",
+"scheme": "bearer"
+}
+}
+}
+}

@@ -1,0 +1,14 @@
+id,name,path,depth,description,file_count,total_size_bytes,last_file_at,is_active
+550e8400-e29b-41d4-a716-446655440002,input,input,0,"Input files for processing",0,0,,true
+550e8400-e29b-41d4-a716-446655440003,extracted,input/extracted,1,"Extracted data from documents",0,0,,true
+550e8400-e29b-41d4-a716-446655440004,uploads,input/uploads,1,"User uploaded files",0,0,,true
+550e8400-e29b-41d4-a716-446655440005,output,output,0,"Processed output files",0,0,,true
+550e8400-e29b-41d4-a716-446655440006,processed,output/processed,1,"Processed data results",0,0,,true
+550e8400-e29b-41d4-a716-446655440007,exports,output/exports,1,"Generated export files",0,0,,true
+550e8400-e29b-41d4-a716-446655440008,assets,assets,0,"Public assets served to clients",0,0,,true
+550e8400-e29b-41d4-a716-446655440009,static,assets/static,1,"Static public files",0,0,,true
+550e8400-e29b-41d4-a716-446655440010,media,assets/media,1,"Public media files",0,0,,true
+550e8400-e29b-41d4-a716-446655440011,system,system,0,"System internal files",0,0,,true
+550e8400-e29b-41d4-a716-446655440012,temp,system/temp,1,"Temporary files",0,0,,true
+550e8400-e29b-41d4-a716-446655440013,cache,system/cache,1,"Cached files",0,0,,true
+550e8400-e29b-41d4-a716-446655440014,logs,system/logs,1,"System log files",0,0,,true

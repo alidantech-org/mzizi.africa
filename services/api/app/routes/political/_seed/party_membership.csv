@@ -1,0 +1,16 @@
+person_code,party_code,membership_type,role_title,valid_from,valid_to,is_active
+ke/kisumu/raila-amolo-odinga-baba,ke/odm,leader,"Party Leader",2005-08-30,,true
+ke/eldoret/william-samoei-ruto,ke/uda,leader,"Party Leader",2020-06-25,,true
+ke/nairobi/uhuru-muigai-kenyatta-uk,ke/jubilee,leader,"Party Leader",2016-09-08,2022-09-08,false
+ke/makueni/kalonzo-musyoka,ke/wiper,leader,"Party Leader",2005-07-31,,true
+ke/vihiga/wycliffe-musalia-mudavadi-mudavadi,ke/anc,leader,"Party Leader",2015-01-16,,true
+ke/bungoma/moses-masika-wetangula-weta,ke/ford-kenya,leader,"Party Leader",2008-12-08,,true
+ke/kirinyaga/anne-mumbi-waiguru-minji-minji,ke/narc,leader,"Party Leader",2022-07-22,,true
+ke/nairobi/edwin-sifuna,ke/odm,official,"Secretary General",2018-02-24,,true
+ke/kakamega/cleophas-malala,ke/uda,official,"Secretary General",2023-03-17,,true
+ke/kiambu/jeremiah-nyagah,ke/jubilee,official,"Secretary General",2020-11-25,,true
+ke/kitui/simon-muriungi,ke/wiper,official,"Secretary General",2020-03-10,,true
+ke/machakos/justus-mulinge,ke/anc,member,"Party Member",2015-01-16,,true
+ke/turkana/john-munyes,ke/dp,leader,"Party Leader",2016-06-11,,true
+ke/machakos/muthama-kitili,ke/odm,member,"Party Member",2005-08-30,2013-12-20,false
+ke/garissa/adan-duale,ke/uda,member,"Party Member",2020-06-25,,true

@@ -1,0 +1,4 @@
+arm_code,name,description,is_active
+ke/executive-arm,executive arm,Executive arm of government responsible for implementing and enforcing laws,true
+ke/legislative-arm,legislative arm,Legislative arm of government responsible for making laws,true
+ke/judicial-arm,judicial arm,Judicial arm of government responsible for interpreting laws and administering justice,true

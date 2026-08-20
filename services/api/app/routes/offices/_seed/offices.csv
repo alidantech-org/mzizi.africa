@@ -1,0 +1,13 @@
+office_code,title,institution_code,parent_office_code,is_singleton,max_terms,term_duration_years,retirement_age,description
+ke/executive-office-president/president,President,ke/executive-office-president,,true,2,5,,Head of State and Government of the Republic of Kenya as per Article 131.
+ke/executive-office-president/deputy-president,Deputy President,ke/executive-office-president,ke/executive-office-president/president,true,2,5,,Principal assistant to the President as per Article 147.
+ke/cabinet/cabinet-secretary,Cabinet Secretary,ke/cabinet,ke/executive-office-president/president,false,,5,,Member of the Cabinet responsible for a specific ministry as per Article 152.
+ke/attorney-general/attorney-general,Attorney General,ke/attorney-general,ke/executive-office-president/president,true,,5,,Principal legal adviser to the Government as per Article 156.
+ke/national-assembly/national-assembly-speaker,Speaker of the National Assembly,ke/national-assembly,,true,,5,,Presiding officer of the National Assembly as per Article 106.
+ke/senate/senate-speaker,Speaker of the Senate,ke/senate,,true,,5,,Presiding officer of the Senate as per Article 106.
+ke/judiciary/chief-justice,Chief Justice,ke/judiciary,,true,1,10,70,Head of the Judiciary and President of the Supreme Court as per Article 161.
+ke/supreme-court/supreme-court-judge,Judge of the Supreme Court,ke/supreme-court,ke/judiciary/chief-justice,false,,10,70,Member of the highest court in Kenya as per Article 163.
+ke/county-government/governor,Governor,ke/county-government,,true,2,5,,Chief Executive of a County Government as per Article 179.
+ke/county-government/deputy-governor,Deputy Governor,ke/county-government,ke/county-government/governor,true,2,5,,Assistant to the County Governor as per Article 180.
+ke/national-assembly/member-of-parliament,Member of Parliament,ke/national-assembly,,false,,5,,Elected representative of a constituency as per Article 97.
+ke/senate/senator,Senator,ke/senate,,false,,5,,Representative of a county in the Senate as per Article 98.

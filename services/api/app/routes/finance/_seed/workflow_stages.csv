@@ -1,0 +1,5 @@
+stage_code,stage_name,stage_order,description,is_active
+requisition,Requisition Stage,1,"Initial spending request and approval",true
+commitment,Commitment Stage,2,"Financial commitment and obligation",true
+verification,Verification Stage,3,"Verification of goods/services delivered",true
+payment,Payment Stage,4,"Final payment processing and disbursement",true

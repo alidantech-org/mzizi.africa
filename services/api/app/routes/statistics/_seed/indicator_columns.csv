@@ -1,0 +1,75 @@
+column_code,label,description,indicator_code,data_type,sort_order
+total,"Total","Complete total count or sum",demographic/population,numeric,1
+male,"Male","Male population or count",demographic/population,numeric,2
+female,"Female","Female population or count",demographic/population,numeric,3
+urban,"Urban","Urban population or count",demographic/population,numeric,4
+rural,"Rural","Rural population or count",demographic/population,numeric,5
+youth,"Youth","Youth population (15-35 years)",demographic/population,numeric,6
+elderly,"Elderly","Elderly population (65+ years)",demographic/population,numeric,7
+density-per-sq-km,"Density per Sq Km","Population density per square kilometer",demographic/density,numeric,1
+urban-density,"Urban Density","Urban population density per square kilometer",demographic/density,numeric,2
+rural-density,"Rural Density","Rural population density per square kilometer",demographic/density,numeric,3
+in-migration,"In-Migration","People moving into the area",demographic/migration,numeric,1
+out-migration,"Out-Migration","People moving out of the area",demographic/migration,numeric,2
+net-migration,"Net Migration","Net population change due to migration",demographic/migration,numeric,3
+total-households,"Total Households","Total number of households",demographic/households,numeric,1
+average-household-size,"Average Household Size","Average number of people per household",demographic/households,numeric,2
+birth-rate,"Birth Rate","Number of births per 1,000 population",demographic/fertility,numeric,1
+fertility-rate,"Fertility Rate","Average number of children per woman",demographic/fertility,numeric,2
+death-rate,"Death Rate","Number of deaths per 1,000 population",demographic/mortality,numeric,1
+infant-mortality-rate,"Infant Mortality Rate","Deaths of infants under 1 year per 1,000 live births",demographic/mortality,numeric,2
+maternal-mortality-rate,"Maternal Mortality Rate","Maternal deaths per 100,000 live births",demographic/mortality,numeric,3
+age-0-14,"Population Age 0-14","Population aged 0-14 years",demographic/age,numeric,1
+age-15-24,"Population Age 15-24","Population aged 15-24 years",demographic/age,numeric,2
+age-25-54,"Population Age 25-54","Population aged 25-54 years",demographic/age,numeric,3
+age-55-64,"Population Age 55-64","Population aged 55-64 years",demographic/age,numeric,4
+age-65-plus,"Population Age 65+","Population aged 65 years and above",demographic/age,numeric,5
+christianity,"Christianity","People identifying as Christian",religion/affiliation,numeric,1
+islam,"Islam","People identifying as Muslim",religion/affiliation,numeric,2
+hinduism,"Hinduism","People identifying as Hindu",religion/affiliation,numeric,3
+traditional-beliefs,"Traditional Beliefs","People following traditional beliefs",religion/affiliation,numeric,4
+other-religions,"Other Religions","People identifying with other religions",religion/affiliation,numeric,5
+no-religion,"No Religion","People with no religious affiliation",religion/affiliation,numeric,6
+gdp-total,"GDP Total","Total Gross Domestic Product",economic/gdp,numeric,1
+gdp-per-capita,"GDP Per Capita","GDP per person",economic/gdp,numeric,2
+gdp-growth-rate,"GDP Growth Rate","Annual GDP growth percentage",economic/gdp,percentage,3
+agricultural-gdp,"Agricultural GDP","GDP from agriculture sector",economic/gdp,numeric,4
+industrial-gdp,"Industrial GDP","GDP from industrial sector",economic/gdp,numeric,5
+services-gdp,"Services GDP","GDP from services sector",economic/gdp,numeric,6
+consumer-price-index,"Consumer Price Index","Consumer price index level",economic/inflation,index,1
+inflation-rate,"Inflation Rate","Annual inflation percentage",economic/inflation,percentage,2
+employed,"Employed Persons","Number of employed persons",economic/employment,numeric,1
+unemployed,"Unemployed Persons","Number of unemployed persons",economic/employment,numeric,2
+unemployment-rate,"Unemployment Rate","Percentage of labor force unemployed",economic/employment,percentage,3
+labor-force,"Labor Force","Total labor force population",economic/employment,numeric,4
+labor-participation-rate,"Labor Force Participation","Labor force participation rate",economic/employment,percentage,5
+pre-primary-enrollment,"Pre-Primary Enrollment","Students in pre-primary education",education/enrollment,numeric,1
+primary-enrollment,"Primary Enrollment","Students in primary education",education/enrollment,numeric,2
+secondary-enrollment,"Secondary Enrollment","Students in secondary education",education/enrollment,numeric,3
+tertiary-enrollment,"Tertiary Enrollment","Students in tertiary education",education/enrollment,numeric,4
+adult-literacy-rate,"Adult Literacy Rate","Percentage of adult population that can read and write",education/literacy,percentage,1
+youth-literacy-rate,"Youth Literacy Rate","Percentage of youth population that can read and write",education/literacy,percentage,2
+primary-schools,"Primary Schools","Number of primary schools",education/facilities,numeric,1
+secondary-schools,"Secondary Schools","Number of secondary schools",education/facilities,numeric,2
+tertiary-institutions,"Tertiary Institutions","Number of universities and colleges",education/facilities,numeric,3
+infant-mortality-rate,"Infant Mortality Rate","Deaths of infants under 1 year per 1,000 live births",health/mortality,numeric,1
+under-five-mortality-rate,"Under-Five Mortality Rate","Deaths of children under 5 per 1,000 live births",health/mortality,numeric,2
+maternal-mortality-rate,"Maternal Mortality Rate","Maternal deaths per 100,000 live births",health/mortality,numeric,3
+hospitals,"Hospitals","Number of hospitals",health/facilities,numeric,1
+health-centers,"Health Centers","Number of health centers",health/facilities,numeric,2
+dispensaries,"Dispensaries","Number of dispensaries",health/facilities,numeric,3
+doctors,"Doctors","Number of medical doctors",health/personnel,numeric,1
+nurses,"Nurses","Number of nurses and midwives",health/personnel,numeric,2
+clinical-officers,"Clinical Officers","Number of clinical officers",health/personnel,numeric,3
+average-mean-temperature,"Average Mean Temperature","Mean annual temperature",climate/temperature,numeric,1
+average-max-temperature,"Average Maximum Temperature","Mean annual maximum temperature",climate/temperature,numeric,2
+average-min-temperature,"Average Minimum Temperature","Mean annual minimum temperature",climate/temperature,numeric,3
+annual-rainfall,"Annual Rainfall","Total annual rainfall",climate/rainfall,numeric,1
+average-monthly-rainfall,"Average Monthly Rainfall","Mean monthly rainfall",climate/rainfall,numeric,2
+total-road-length,"Total Road Length","Total length of roads",infrastructure/roads,numeric,1
+paved-roads,"Paved Roads","Length of paved roads",infrastructure/roads,numeric,2
+unpaved-roads,"Unpaved Roads","Length of unpaved roads",infrastructure/roads,numeric,3
+electricity-access-rate,"Electricity Access Rate","Percentage of population with electricity access",infrastructure/electricity,percentage,1
+electricity-connections,"Electricity Connections","Number of electricity connections",infrastructure/electricity,numeric,2
+water-access-rate,"Water Access Rate","Percentage of population with safe water access",infrastructure/water,percentage,1
+water-connections,"Water Connections","Number of water connections",infrastructure/water,numeric,2

@@ -1,0 +1,97 @@
+indicator_code,name,description,indicator_category_code,parent_indicator_code,unit,is_comparable,is_aggregatable
+demographic/population,"Population","Total population statistics",demographic,,people,true,true
+demographic/population/total,"Total Population","Total number of people residing in an area",demographic,demographic/population,people,true,true
+demographic/population/male,"Male Population","Total number of males residing in an area",demographic,demographic/population,people,true,true
+demographic/population/female,"Female Population","Total number of females residing in an area",demographic,demographic/population,people,true,true
+demographic/population/urban,"Urban Population","Population living in urban areas",demographic,demographic/population,people,true,true
+demographic/population/rural,"Rural Population","Population living in rural areas",demographic,demographic/population,people,true,true
+demographic/population/youth,"Youth Population","Population aged 15-35 years",demographic,demographic/population,people,true,true
+demographic/population/elderly,"Elderly Population","Population aged 65+ years",demographic,demographic/population,people,true,true
+demographic/density,"Population Density","Population per square kilometer",demographic,,people/sq-km,true,true
+demographic/density/total,"Total Population Density","Total population per square kilometer",demographic,demographic/density,people/sq-km,true,true
+demographic/density/urban,"Urban Population Density","Urban population per square kilometer",demographic,demographic/density,people/sq-km,true,true
+demographic/density/rural,"Rural Population Density","Rural population per square kilometer",demographic,demographic/density,people/sq-km,true,true
+demographic/migration,"Migration Statistics","Population movement and migration",demographic,,people,true,true
+demographic/migration/in-migration,"In-Migration","People moving into the area",demographic,demographic/migration,people,true,true
+demographic/migration/out-migration,"Out-Migration","People moving out of the area",demographic,demographic/migration,people,true,true
+demographic/migration/net-migration,"Net Migration","Net population change due to migration",demographic,demographic/migration,people,true,true
+demographic/households,"Household Statistics","Household composition and size",demographic,,households,true,true
+demographic/households/total,"Total Households","Total number of households",demographic,demographic/households,households,true,true
+demographic/households/average-size,"Average Household Size","Average number of people per household",demographic,demographic/households,people/household,true,true
+demographic/fertility,"Fertility Statistics","Birth rates and fertility patterns",demographic,,births/woman,true,false
+demographic/fertility/birth-rate,"Crude Birth Rate","Number of births per 1,000 population",demographic,demographic/fertility,births/1000-people,true,true
+demographic/fertility/fertility-rate,"Total Fertility Rate","Average number of children per woman",demographic,demographic/fertility,children/woman,true,false
+demographic/mortality,"Mortality Statistics","Death rates and mortality patterns",demographic,,deaths/1000-people,true,true
+demographic/mortality/death-rate,"Crude Death Rate","Number of deaths per 1,000 population",demographic,demographic/mortality,deaths/1000-people,true,true
+demographic/mortality/infant-mortality,"Infant Mortality Rate","Deaths of infants under 1 year per 1,000 live births",demographic,demographic/mortality,deaths/1000-live-births,true,true
+demographic/mortality/maternal-mortality,"Maternal Mortality Rate","Maternal deaths per 100,000 live births",demographic,demographic/mortality,deaths/100000-live-births,true,true
+demographic/age,"Age Distribution","Population by age groups",demographic,,people,true,true
+demographic/age/0-14,"Population Age 0-14","Population aged 0-14 years",demographic,demographic/age,people,true,true
+demographic/age/15-24,"Population Age 15-24","Population aged 15-24 years",demographic,demographic/age,people,true,true
+demographic/age/25-54,"Population Age 25-54","Population aged 25-54 years",demographic,demographic/age,people,true,true
+demographic/age/55-64,"Population Age 55-64","Population aged 55-64 years",demographic,demographic/age,people,true,true
+demographic/age/65+,"Population Age 65+","Population aged 65 years and above",demographic,demographic/age,people,true,true
+religion/affiliation,"Religious Affiliation","Population by religious affiliation",religion,,people,true,true
+religion/affiliation/christianity,"Christianity Adherents","Number of people identifying as Christian",religion,religion/affiliation,people,true,true
+religion/affiliation/islam,"Islam Adherents","Number of people identifying as Muslim",religion,religion/affiliation,people,true,true
+religion/affiliation/hinduism,"Hinduism Adherents","Number of people identifying as Hindu",religion,religion/affiliation,people,true,true
+religion/affiliation/traditional,"Traditional Beliefs","Number of people following traditional beliefs",religion,religion/affiliation,people,true,true
+religion/affiliation/other-religions,"Other Religions","Number of people identifying with other religions",religion,religion/affiliation,people,true,true
+religion/affiliation/no-religion,"No Religion","Number of people with no religious affiliation",religion,religion/affiliation,people,true,true
+economic/gdp,"Gross Domestic Product","Economic output and GDP indicators",economic,,KES,true,true
+economic/gdp/total,"GDP Total","Total Gross Domestic Product",economic,economic/gdp,KES,true,true
+economic/gdp/per-capita,"GDP Per Capita","GDP per person",economic,economic/gdp,KES/person,true,true
+economic/gdp/growth-rate,"GDP Growth Rate","Annual GDP growth percentage",economic,economic/gdp,%,true,true
+economic/gdp/sector-agriculture,"Agricultural GDP","GDP from agriculture sector",economic,economic/gdp,KES,true,true
+economic/gdp/sector-industrial,"Industrial GDP","GDP from industrial sector",economic,economic/gdp,KES,true,true
+economic/gdp/sector-services,"Services GDP","GDP from services sector",economic,economic/gdp,KES,true,true
+economic/inflation,"Inflation Statistics","Price level changes and inflation",economic,,%,true,false
+economic/inflation/cpi,"Consumer Price Index","Consumer price index level",economic,economic/inflation,index,true,false
+economic/inflation/inflation-rate,"Inflation Rate","Annual inflation percentage",economic,economic/inflation,%,true,true
+economic/employment,"Employment Statistics","Employment and labor market indicators",economic,,people,true,true
+economic/employment/employed,"Employed Persons","Number of employed persons",economic,economic/employment,people,true,true
+economic/employment/unemployed,"Unemployed Persons","Number of unemployed persons",economic,economic/employment,people,true,true
+economic/employment/unemployment-rate,"Unemployment Rate","Percentage of labor force unemployed",economic,economic/employment,%,true,true
+economic/employment/labor-force,"Labor Force","Total working age population",economic,economic/employment,people,true,true
+economic/employment/labor-participation-rate,"Labor Participation Rate","Percentage of working age population in labor force",economic,economic/employment,%,true,true
+education/enrollment,"Education Enrollment","School enrollment statistics",education,,students,true,true
+education/enrollment/pre-primary-enrollment,"Pre-primary Enrollment","Students in pre-primary education",education,education/enrollment,students,true,true
+education/enrollment/primary-enrollment,"Primary Enrollment","Students in primary education",education,education/enrollment,students,true,true
+education/enrollment/secondary-enrollment,"Secondary Enrollment","Students in secondary education",education,education/enrollment,students,true,true
+education/enrollment/tertiary-enrollment,"Tertiary Enrollment","Students in tertiary education",education,education/enrollment,students,true,true
+education/literacy,"Literacy Rates","Adult and youth literacy statistics",education,%,true,true
+education/literacy/adult-literacy-rate,"Adult Literacy Rate","Percentage of adult population that can read and write",education,education/literacy,%,true,true
+education/literacy/youth-literacy-rate,"Youth Literacy Rate","Percentage of youth population that can read and write",education,education/literacy,%,true,true
+education/facilities,"Education Facilities","Schools and learning institutions",education,,institutions,true,true
+education/facilities/primary-schools,"Primary Schools","Number of primary schools",education,education/facilities,institutions,true,true
+education/facilities/secondary-schools,"Secondary Schools","Number of secondary schools",education,education/facilities,institutions,true,true
+education/facilities/tertiary-institutions,"Tertiary Institutions","Number of universities and colleges",education,education/facilities,institutions,true,true
+health/facilities,"Health Facilities","Healthcare institutions and facilities",health,,institutions,true,true
+health/facilities/hospitals,"Hospitals","Number of hospitals",health,health/facilities,institutions,true,true
+health/facilities/health-centers,"Health Centers","Number of health centers",health,health/facilities,institutions,true,true
+health/facilities/dispensaries,"Dispensaries","Number of dispensaries",health,health/facilities,institutions,true,true
+health/personnel,"Health Personnel","Healthcare workers and staff",health,,people,true,true
+health/personnel/doctors,"Doctors","Number of medical doctors",health,health/personnel,people,true,true
+health/personnel/nurses,"Nurses","Number of nursing staff",health,health/personnel,people,true,true
+health/personnel/clinical-officers,"Clinical Officers","Number of clinical officers",health,health/personnel,people,true,true
+health/mortality,"Health Mortality","Health-related mortality indicators",health,,deaths/1000-people,true,true
+health/mortality/infant-mortality-rate,"Infant Mortality Rate","Deaths of infants under 1 year per 1,000 live births",health,health/mortality,deaths/1000-live-births,true,true
+health/mortality/under-five-mortality-rate,"Under-Five Mortality Rate","Deaths of children under 5 years per 1,000 live births",health,health/mortality,deaths/1000-live-births,true,true
+health/mortality/maternal-mortality-rate,"Maternal Mortality Rate","Maternal deaths per 100,000 live births",health,health/mortality,deaths/100000-live-births,true,true
+climate/temperature,"Temperature Statistics","Temperature and climate indicators",climate,,°C,true,true
+climate/temperature/average-mean,"Average Mean Temperature","Mean annual temperature",climate,climate/temperature,°C,true,true
+climate/temperature/average-max,"Average Maximum Temperature","Mean annual maximum temperature",climate,climate/temperature,°C,true,true
+climate/temperature/average-min,"Average Minimum Temperature","Mean annual minimum temperature",climate,climate/temperature,°C,true,true
+climate/rainfall,"Rainfall Statistics","Precipitation and rainfall indicators",climate,,mm,true,true
+climate/rainfall/annual-rainfall,"Annual Rainfall","Total annual rainfall",climate,climate/rainfall,mm,true,true
+climate/rainfall/average-monthly,"Average Monthly Rainfall","Mean monthly rainfall",climate,climate/rainfall,mm,true,true
+infrastructure/roads,"Road Infrastructure","Road network and transportation",infrastructure,,km,true,true
+infrastructure/roads/total-length,"Total Road Length","Total length of roads",infrastructure,infrastructure/roads,km,true,true
+infrastructure/roads/paved-roads,"Paved Roads","Length of paved roads",infrastructure,infrastructure/roads,km,true,true
+infrastructure/roads/unpaved-roads,"Unpaved Roads","Length of unpaved roads",infrastructure,infrastructure/roads,km,true,true
+infrastructure/electricity,"Electricity Access","Power infrastructure and electrification",infrastructure,%,true,true
+infrastructure/electricity/access-rate,"Electricity Access Rate","Percentage of population with electricity access",infrastructure,infrastructure/electricity,%,true,true
+infrastructure/electricity/connections,"Electricity Connections","Number of electricity connections",infrastructure,infrastructure/electricity,connections,true,true
+infrastructure/water,"Water Access","Water infrastructure and access",infrastructure,%,true,true
+infrastructure/water/access-rate,"Water Access Rate","Percentage of population with safe water access",infrastructure,infrastructure/water,%,true,true
+infrastructure/water/connections,"Water Connections","Number of water connections",infrastructure,infrastructure/water,connections,true,true

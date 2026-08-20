@@ -1,0 +1,9 @@
+geo_level_code,level_name,level_order,parent_geo_level_code,description
+national,country,1,,republic of kenya
+county,county,2,national,devolved units of kenya
+constituency,constituency,3,county,electoral areas for national assembly representation
+sub-county,sub-county,3,county,administrative units below the county level
+ward,ward,4,constituency,lowest unit for county assembly representation
+ward,ward,4,sub-county,lowest unit for county assembly representation
+location,location,5,ward,administrative units under a chief
+sub-location,sub-location,6,location,smallest administrative units under a sub-chief

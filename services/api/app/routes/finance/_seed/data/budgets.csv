@@ -1,0 +1,6 @@
+entity_code,fiscal_year_code,budget_code,program_code,approved_amount
+ke/national-treasury,ke/2024-2025,ke/national-treasury/2024-2025,ke/nat-001,100000000.00
+ke/nairobi,ke/2024-2025,ke/nairobi/2024-2025,ke/nai-001,50000000.00
+ke/mombasa,ke/2024-2025,ke/mombasa/2024-2025,ke/mom-001,40000000.00
+ke/ministry-of-health,ke/2024-2025,ke/ministry-of-health/2024-2025,ke/moh-001,30000000.00
+ke/ministry-of-education,ke/2024-2025,ke/ministry-of-education/2024-2025,ke/moe-001,25000000.00

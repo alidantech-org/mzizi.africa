@@ -1,0 +1,11 @@
+entity_code,budget_code,stage_code,stage_order,amount,approver_id
+ke/nairobi,ke/nairobi/2024-2025,ke/workflow/requisition,1,5000000.00,ke/001
+ke/nairobi,ke/nairobi/2024-2025,ke/workflow/commitment,2,5000000.00,ke/002
+ke/nairobi,ke/nairobi/2024-2025,ke/workflow/verification,3,5000000.00,ke/003
+ke/nairobi,ke/nairobi/2024-2025,ke/workflow/payment,4,5000000.00,ke/004
+ke/mombasa,ke/mombasa/2024-2025,ke/workflow/requisition,1,3000000.00,ke/005
+ke/mombasa,ke/mombasa/2024-2025,ke/workflow/commitment,2,3000000.00,ke/006
+ke/ministry-of-health,ke/ministry-of-health/2024-2025,ke/workflow/requisition,1,2000000.00,ke/007
+ke/ministry-of-health,ke/ministry-of-health/2024-2025,ke/workflow/commitment,2,2000000.00,ke/008
+ke/ministry-of-education,ke/ministry-of-education/2024-2025,ke/workflow/requisition,1,1500000.00,ke/009
+ke/ministry-of-education,ke/ministry-of-education/2024-2025,ke/workflow/verification,3,1500000.00,ke/010

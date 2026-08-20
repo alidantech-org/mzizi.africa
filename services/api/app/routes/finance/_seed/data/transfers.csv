@@ -1,0 +1,6 @@
+from_entity_code,to_entity_code,fiscal_year_code,transfer_type,amount,fund_restriction
+ke/national-treasury,ke/nairobi,ke/2024-2025,equitable-share,20000000.00,general
+ke/national-treasury,ke/mombasa,ke/2024-2025,equitable-share,15000000.00,general
+ke/national-treasury,ke/ministry-of-health,ke/2024-2025,conditional-grant,10000000.00,earmarked
+ke/national-treasury,ke/ministry-of-education,ke/2024-2025,conditional-grant,8000000.00,earmarked
+ke/nairobi,ke/ministry-of-health,ke/2024-2025,allocation,5000000.00,general

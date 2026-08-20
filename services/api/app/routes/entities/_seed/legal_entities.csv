@@ -1,0 +1,6 @@
+entity_code,official_name,registration_number,tax_pin,entity_type,registration_date,is_active,is_verified,parent_entity_code
+ke/private/safaricom-plc,Safaricom PLC,C.42/2000,P051068671Z,public_limited,2000-04-03,true,true,
+ke/private/equity-group-holdings,Equity Group Holdings PLC,C.112108,P051131100L,public_limited,1984-12-31,true,true,
+ke/state-corp/kengen,Kenya Electricity Generating Company PLC,C.10/1954,P000605151X,state_corporation,1954-02-01,true,true,
+ke/state-corp/kcb-group,KCB Group PLC,C.7/1970,P051070650P,public_limited,1970-01-01,true,true,
+ke/private/seven-seas-technologies,Seven Seas Technologies Limited,C.88562,P051144662T,private_limited,1999-10-21,true,true,

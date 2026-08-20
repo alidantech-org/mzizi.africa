@@ -1,0 +1,6 @@
+selection_method_code,name,description,is_active
+ke/election,Election,Voted by the public through universal suffrage. See Article 137 (President) and Article 180 (Governor) at www.klrc.go.ke,true
+ke/nomination,Nomination,Appointed by political parties to represent special interests (gender youth PWDs) as per Article 97 and Article 98 at www.klrc.go.ke,true
+ke/appointment,Appointment,Direct selection by a high-ranking state officer or commission (Cabinet Secretaries Judges) as per Article 152 and Article 166 at www.klrc.go.ke,true
+ke/ex-officio,Ex-Officio,Holding office by virtue of holding another office (Speakers Attorney General in Cabinet) as per Article 152 at www.klrc.go.ke,true
+ke/competitive-recruitment,Competitive Recruitment,Selected through a formal interview process by a commission (Principal Secretaries Commissioners) as per Article 155 and Article 250 at www.klrc.go.ke,true

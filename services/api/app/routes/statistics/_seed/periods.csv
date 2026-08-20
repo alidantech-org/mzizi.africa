@@ -1,0 +1,86 @@
+period_code,label,start_date,end_date,granularity,description,is_active
+decade/2010-2019,Decade 2010-2019,2010-01-01,2019-12-31,decade,Decade from 2010 to 2019,true
+year/2009,Year 2009,2009-01-01,2009-12-31,year,Calendar year 2009,true
+year/2010,Year 2010,2010-01-01,2010-12-31,year,Calendar year 2010,true
+year/2011,Year 2011,2011-01-01,2011-12-31,year,Calendar year 2011,true
+year/2012,Year 2012,2012-01-01,2012-12-31,year,Calendar year 2012,true
+year/2013,Year 2013,2013-01-01,2013-12-31,year,Calendar year 2013,true
+year/2014,Year 2014,2014-01-01,2014-12-31,year,Calendar year 2014,true
+year/2015,Year 2015,2015-01-01,2015-12-31,year,Calendar year 2015,true
+year/2016,Year 2016,2016-01-01,2016-12-31,year,Calendar year 2016,true
+year/2017,Year 2017,2017-01-01,2017-12-31,year,Calendar year 2017,true
+year/2018,Year 2018,2018-01-01,2018-12-31,year,Calendar year 2018,true
+year/2019,Year 2019,2019-01-01,2019-12-31,year,Calendar year 2019,true
+year/2020,Year 2020,2020-01-01,2020-12-31,year,Calendar year 2020,true
+year/2021,Year 2021,2021-01-01,2021-12-31,year,Calendar year 2021,true
+year/2022,Year 2022,2022-01-01,2022-12-31,year,Calendar year 2022,true
+year/2023,Year 2023,2023-01-01,2023-12-31,year,Calendar year 2023,true
+year/2024,Year 2024,2024-01-01,2024-12-31,year,Calendar year 2024,true
+year/2025,Year 2025,2025-01-01,2025-12-31,year,Calendar year 2025,true
+year/2026,Year 2026,2026-01-01,2026-12-31,year,Calendar year 2026,true
+year/2027,Year 2027,2027-01-01,2027-12-31,year,Calendar year 2027,true
+year/2028,Year 2028,2028-01-01,2028-12-31,year,Calendar year 2028,true
+year/2029,Year 2029,2029-01-01,2029-12-31,year,Calendar year 2029,true
+year/2030,Year 2030,2030-01-01,2030-12-31,year,Calendar year 2030,true
+decade/2020-2029,Decade 2020-2029,2020-01-01,2029-12-31,decade,Decade from 2020 to 2029,true
+quarter/q1-2019,Q1 2019,2019-01-01,2019-03-31,quarter,First quarter of 2019,true
+quarter/q2-2019,Q2 2019,2019-04-01,2019-06-30,quarter,Second quarter of 2019,true
+quarter/q3-2019,Q3 2019,2019-07-01,2019-09-30,quarter,Third quarter of 2019,true
+quarter/q4-2019,Q4 2019,2019-10-01,2019-12-31,quarter,Fourth quarter of 2019,true
+quarter/q1-2020,Q1 2020,2020-01-01,2020-03-31,quarter,First quarter of 2020,true
+quarter/q2-2020,Q2 2020,2020-04-01,2020-06-30,quarter,Second quarter of 2020,true
+quarter/q3-2020,Q3 2020,2020-07-01,2020-09-30,quarter,Third quarter of 2020,true
+quarter/q4-2020,Q4 2020,2020-10-01,2020-12-31,quarter,Fourth quarter of 2020,true
+quarter/q1-2021,Q1 2021,2021-01-01,2021-03-31,quarter,First quarter of 2021,true
+quarter/q2-2021,Q2 2021,2021-04-01,2021-06-30,quarter,Second quarter of 2021,true
+quarter/q3-2021,Q3 2021,2021-07-01,2021-09-30,quarter,Third quarter of 2021,true
+quarter/q4-2021,Q4 2021,2021-10-01,2021-12-31,quarter,Fourth quarter of 2021,true
+quarter/q1-2022,Q1 2022,2022-01-01,2022-03-31,quarter,First quarter of 2022,true
+quarter/q2-2022,Q2 2022,2022-04-01,2022-06-30,quarter,Second quarter of 2022,true
+quarter/q3-2022,Q3 2022,2022-07-01,2022-09-30,quarter,Third quarter of 2022,true
+quarter/q4-2022,Q4 2022,2022-10-01,2022-12-31,quarter,Fourth quarter of 2022,true
+quarter/q1-2023,Q1 2023,2023-01-01,2023-03-31,quarter,First quarter of 2023,true
+quarter/q2-2023,Q2 2023,2023-04-01,2023-06-30,quarter,Second quarter of 2023,true
+quarter/q3-2023,Q3 2023,2023-07-01,2023-09-30,quarter,Third quarter of 2023,true
+quarter/q4-2023,Q4 2023,2023-10-01,2023-12-31,quarter,Fourth quarter of 2023,true
+quarter/q1-2024,Q1 2024,2024-01-01,2024-03-31,quarter,First quarter of 2024,true
+quarter/q2-2024,Q2 2024,2024-04-01,2024-06-30,quarter,Second quarter of 2024,true
+quarter/q3-2024,Q3 2024,2024-07-01,2024-09-30,quarter,Third quarter of 2024,true
+quarter/q4-2024,Q4 2024,2024-10-01,2024-12-31,quarter,Fourth quarter of 2024,true
+quarter/q1-2025,Q1 2025,2025-01-01,2025-03-31,quarter,First quarter of 2025,true
+quarter/q2-2025,Q2 2025,2025-04-01,2025-06-30,quarter,Second quarter of 2025,true
+quarter/q3-2025,Q3 2025,2025-07-01,2025-09-30,quarter,Third quarter of 2025,true
+quarter/q4-2025,Q4 2025,2025-10-01,2025-12-31,quarter,Fourth quarter of 2025,true
+month/jan-2019,January 2019,2019-01-01,2019-01-31,month,January 2019,true
+month/feb-2019,February 2019,2019-02-01,2019-02-28,month,February 2019,true
+month/mar-2019,March 2019,2019-03-01,2019-03-31,month,March 2019,true
+month/apr-2019,April 2019,2019-04-01,2019-04-30,month,April 2019,true
+month/may-2019,May 2019,2019-05-01,2019-05-31,month,May 2019,true
+month/jun-2019,June 2019,2019-06-01,2019-06-30,month,June 2019,true
+month/jul-2019,July 2019,2019-07-01,2019-07-31,month,July 2019,true
+month/aug-2019,August 2019,2019-08-01,2019-08-31,month,August 2019,true
+month/sep-2019,September 2019,2019-09-01,2019-09-30,month,September 2019,true
+month/oct-2019,October 2019,2019-10-01,2019-10-31,month,October 2019,true
+month/nov-2019,November 2019,2019-11-01,2019-11-30,month,November 2019,true
+month/dec-2019,December 2019,2019-12-01,2019-12-31,month,December 2019,true
+month/jan-2020,January 2020,2020-01-01,2020-01-31,month,January 2020,true
+month/feb-2020,February 2020,2020-02-01,2020-02-29,month,February 2020,true
+month/mar-2020,March 2020,2020-03-01,2020-03-31,month,March 2020,true
+month/apr-2020,April 2020,2020-04-01,2020-04-30,month,April 2020,true
+month/may-2020,May 2020,2020-05-01,2020-05-31,month,May 2020,true
+month/jun-2020,June 2020,2020-06-01,2020-06-30,month,June 2020,true
+month/jul-2020,July 2020,2020-07-01,2020-07-31,month,July 2020,true
+month/aug-2020,August 2020,2020-08-01,2020-08-31,month,August 2020,true
+month/sep-2020,September 2020,2020-09-01,2020-09-30,month,September 2020,true
+month/oct-2020,October 2020,2020-10-01,2020-10-31,month,October 2020,true
+month/nov-2020,November 2020,2020-11-01,2020-11-30,month,November 2020,true
+month/dec-2020,December 2020,2020-12-01,2020-12-31,month,December 2020,true
+census-2019,Census 2019,2019-01-01,2019-12-31,custom,Kenya Population and Housing Census 2019,true
+census-2009,Census 2009,2009-01-01,2009-12-31,custom,Kenya Population and Housing Census 2009,true
+census-1999,Census 1999,1999-01-01,1999-12-31,custom,Kenya Population and Housing Census 1999,true
+census-1989,Census 1989,1989-01-01,1989-12-31,custom,Kenya Population and Housing Census 1989,true
+census-1979,Census 1979,1979-01-01,1979-12-31,custom,Kenya Population and Housing Census 1979,true
+census-1969,Census 1969,1969-01-01,1969-12-31,custom,Kenya Population and Housing Census 1969,true
+census-1962,Census 1962,1962-01-01,1962-12-31,custom,Kenya Population and Housing Census 1962,true
+census-1957,Census 1957,1957-01-01,1957-12-31,custom,Kenya Population and Housing Census 1957,true
+census-1948,Census 1948,1948-01-01,1948-12-31,custom,Kenya Population and Housing Census 1948,true

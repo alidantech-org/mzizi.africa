@@ -1,0 +1,24 @@
+bid_code,tender_code,tender_id,bidder_entity_code,bidder_entity_id,bidder_name,bid_amount,currency_code,submission_date,status,status_code,is_compliant
+ke/2026/02/001-medical-kits-kcb,ke/2026/01/medical-kits-nairobi,,ke/state-corp/kcb-group,,KCB Group PLC,14500000.00,KES,2026-02-15,submitted,submitted,true
+ke/2026/02/002-medical-kits-equity,ke/2026/01/medical-kits-nairobi,,ke/private/equity-group-holdings,,Equity Group Holdings PLC,14800000.00,KES,2026-02-18,under_evaluation,under_evaluation,true
+ke/2026/02/003-medical-kits-kengen,ke/2026/01/medical-kits-nairobi,,ke/state-corp/kengen,,Kenya Electricity Generating Company PLC,14200000.00,KES,2026-02-20,qualified,qualified,true
+ke/2026/02/004-medical-kits-seven-seas,ke/2026/01/medical-kits-nairobi,,ke/private/seven-seas-technologies,,Seven Seas Technologies Limited,15100000.00,KES,2026-02-22,disqualified,disqualified,false
+ke/2026/03/001-road-construction-kengen,ke/2026/01/road-construction-westlands-cbd,,ke/state-corp/kengen,,Kenya Electricity Generating Company PLC,82000000.00,KES,2026-03-01,submitted,submitted,true
+ke/2026/03/002-road-construction-safaricom,ke/2026/01/road-construction-westlands-cbd,,ke/private/safaricom-plc,,Safaricom PLC,83500000.00,KES,2026-03-05,under_evaluation,under_evaluation,true
+ke/2026/03/003-road-construction-kcb,ke/2026/01/road-construction-westlands-cbd,,ke/state-corp/kcb-group,,KCB Group PLC,84500000.00,KES,2026-03-08,submitted,submitted,true
+ke/2026/03/001-it-infrastructure-seven-seas,ke/2026/02/it-infrastructure-ministry-health,,ke/private/seven-seas-technologies,,Seven Seas Technologies Limited,24500000.00,KES,2026-03-10,winning,winning,true
+ke/2026/03/002-it-infrastructure-equity,ke/2026/02/it-infrastructure-ministry-health,,ke/private/equity-group-holdings,,Equity Group Holdings PLC,24800000.00,KES,2026-03-12,rejected,rejected,true
+ke/2026/03/001-medical-equipment-kengen,ke/2026/02/medical-equipment-mombasa,,ke/state-corp/kengen,,Kenya Electricity Generating Company PLC,11800000.00,KES,2026-03-15,submitted,submitted,true
+ke/2026/03/002-medical-equipment-safaricom,ke/2026/02/medical-equipment-mombasa,,ke/private/safaricom-plc,,Safaricom PLC,11500000.00,KES,2026-03-18,under_evaluation,under_evaluation,true
+ke/2026/03/003-medical-equipment-kcb,ke/2026/02/medical-equipment-mombasa,,ke/state-corp/kcb-group,,KCB Group PLC,11950000.00,KES,2026-03-20,submitted,submitted,true
+ke/2026/03/001-agricultural-equity,ke/2026/02/agricultural-extension-kisumu,,ke/private/equity-group-holdings,,Equity Group Holdings PLC,4800000.00,KES,2026-03-05,qualified,qualified,true
+ke/2026/03/002-agricultural-seven-seas,ke/2026/02/agricultural-extension-kisumu,,ke/private/seven-seas-technologies,,Seven Seas Technologies Limited,4900000.00,KES,2026-03-08,qualified,qualified,true
+ke/2026/02/001-office-furniture-kcb,ke/2026/01/office-furniture-treasury,,ke/state-corp/kcb-group,,KCB Group PLC,7800000.00,KES,2026-02-28,winning,winning,true
+ke/2026/03/002-office-furniture-safaricom,ke/2026/01/office-furniture-treasury,,ke/private/safaricom-plc,,Safaricom PLC,7950000.00,KES,2026-03-02,rejected,rejected,true
+ke/2026/03/001-security-kengen,ke/2026/02/security-ministry-interior,,ke/state-corp/kengen,,Kenya Electricity Generating Company PLC,17500000.00,KES,2026-03-25,submitted,submitted,true
+ke/2026/03/002-security-equity,ke/2026/02/security-ministry-interior,,ke/private/equity-group-holdings,,Equity Group Holdings PLC,17800000.00,KES,2026-03-28,under_evaluation,under_evaluation,true
+ke/2026/02/001-financial-audit-seven-seas,ke/2026/01/financial-audit-nairobi,,ke/private/seven-seas-technologies,,Seven Seas Technologies Limited,3400000.00,KES,2026-02-25,winning,winning,true
+ke/2026/04/001-vehicle-procurement-kengen,ke/2026/02/vehicle-procurement-health,,ke/state-corp/kengen,,Kenya Electricity Generating Company PLC,44000000.00,KES,2026-04-01,submitted,submitted,true
+ke/2026/04/002-vehicle-procurement-safaricom,ke/2026/02/vehicle-procurement-health,,ke/private/safaricom-plc,,Safaricom PLC,44500000.00,KES,2026-04-05,under_evaluation,under_evaluation,true
+ke/2026/04/001-waste-management-kcb,ke/2026/02/waste-management-mombasa,,ke/state-corp/kcb-group,,KCB Group PLC,21500000.00,KES,2026-04-08,submitted,submitted,true
+ke/2026/04/002-waste-management-equity,ke/2026/02/waste-management-mombasa,,ke/private/equity-group-holdings,,Equity Group Holdings PLC,21800000.00,KES,2026-04-10,under_evaluation,under_evaluation,true

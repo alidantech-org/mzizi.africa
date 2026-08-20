@@ -1,0 +1,22 @@
+parent_institution_code,child_institution_code,relationship_type,description,start_date,end_date,is_active
+ke/parliament,ke/national-assembly,has_component,National Assembly is a component of Parliament,2010-08-27,,true
+ke/parliament,ke/senate,has_component,Senate is a component of Parliament,2010-08-27,,true
+ke/judiciary,ke/supreme-court,has_component,Supreme Court is part of the Judiciary,2010-08-27,,true
+ke/judiciary,ke/court-of-appeal,has_component,Court of Appeal is part of the Judiciary,2010-08-27,,true
+ke/judiciary,ke/high-court,has_component,High Court is part of the Judiciary,2010-08-27,,true
+ke/judiciary,ke/magistrates-courts,has_component,Magistrates Courts are part of the Judiciary,2010-08-27,,true
+ke/judiciary,ke/kadhis-courts,has_component,Kadhis Courts are part of the Judiciary,2010-08-27,,true
+ke/executive-office-president,ke/cabinet,has_component,Cabinet operates under the Executive Office of the President,2010-08-27,,true
+ke/executive-office-president,ke/office-prime-cabinet-secretary,has_component,Prime Cabinet Secretary operates under the President,2010-08-27,,true
+ke/executive-office-president,ke/attorney-general,has_component,Attorney General operates under the Executive,2010-08-27,,true
+ke/cabinet,ke/ministry-interior,has_component,Ministry of Interior is part of Cabinet structure,2010-08-27,,true
+ke/cabinet,ke/ministry-finance,has_component,Ministry of Finance is part of Cabinet structure,2010-08-27,,true
+ke/cabinet,ke/ministry-health,has_component,Ministry of Health is part of Cabinet structure,2010-08-27,,true
+ke/executive-office-president,ke/national-police-service,has_agency,National Police Service operates under the Executive,2010-08-27,,true
+ke/national-police-service,ke/directorate-criminal-investigations,has_agency,Directorate of Criminal Investigations operates under National Police Service,2010-08-27,,true
+ke/independent-electoral-and-boundaries-commission,ke/independent-electoral-and-boundaries-commission,has_component,Independent electoral body operates independently,2010-08-27,,true
+ke/ethics-and-anti-corruption-commission,ke/ethics-and-anti-corruption-commission,has_component,Anti-corruption commission operates independently,2010-08-27,,true
+ke/commission-on-revenue-allocation,ke/commission-on-revenue-allocation,has_component,Revenue allocation commission operates independently,2010-08-27,,true
+ke/public-service-commission,ke/public-service-commission,has_component,Public service commission operates independently,2010-08-27,,true
+ke/independent-policing-oversight-authority,ke/independent-policing-oversight-authority,has_component,Police oversight authority operates independently,2010-08-27,,true
+ke/county-government,ke/county-assembly,has_component,County Assembly is part of county governance structure,2010-08-27,,true

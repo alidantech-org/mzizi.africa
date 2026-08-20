@@ -1,0 +1,8 @@
+entity_code,geo_unit_code,location_name,location_type,is_main_office,physical_address,contact_info,is_active
+ke/private/safaricom-plc,ke/nairobi/westlands,Safaricom House HQ,head_office,true,"Waiyaki Way, Westlands","{""phone"": ""+254722211111"", ""email"": ""nairobi@safaricom.co.ke""}",true
+ke/private/safaricom-plc,ke/mombasa/mvita,Mombasa Regional Office,branch,false,"Treasury Square, Mombasa","{""phone"": ""+254722211112"", ""email"": ""mombasa@safaricom.co.ke""}",true
+ke/private/equity-group-holdings,ke/nairobi,Equity Centre,head_office,true,"Hospital Road, Upper Hill","{""phone"": ""+254767861000"", ""email"": ""info@equitybank.co.ke""}",true
+ke/state-corp/kengen,ke/nairobi,Stima Plaza Office,head_office,true,"Kolobot Road, Nairobi","{""phone"": ""+254702041000"", ""email"": ""info@kengen.co.ke""}",true
+ke/state-corp/kengen,ke/nakuru/naivasha,Olkaria Geothermal Plant,operational_site,false,"Olkaria, Naivasha","{""phone"": ""+254702041001"", ""email"": ""olkaria@kengen.co.ke""}",true
+ke/state-corp/kcb-group,ke/nairobi,Kencom House HQ,head_office,true,"Moi Avenue, CBD","{""phone"": ""+254722211000"", ""email"": ""info@kcb.co.ke""}",true
+ke/state-corp/kcb-group,ke/kisumu-central,Kisumu Main Branch,branch,false,"Jomo Kenyatta Highway","{""phone"": ""+254722211003"", ""email"": ""kisumu@kcb.co.ke""}",true

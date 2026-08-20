@@ -1,0 +1,7 @@
+entity_code,fiscal_year_code,category_code,amount,fund_restriction,received_date
+ke/national-treasury,ke/2024-2025,tax,50000000.00,general,2024-07-15
+ke/national-treasury,ke/2024-2025,grants,25000000.00,earmarked,2024-08-01
+ke/nairobi,ke/2024-2025,tax,15000000.00,general,2024-07-20
+ke/nairobi,ke/2024-2025,fees,5000000.00,general,2024-09-10
+ke/mombasa,ke/2024-2025,tax,12000000.00,general,2024-07-25
+ke/mombasa,ke/2024-2025,loan-interest,500000.00,general,2024-10-15

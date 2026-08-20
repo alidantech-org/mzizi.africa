@@ -1,0 +1,41 @@
+institution_code,name,description,arm_code,institution_type,sub_type,geo_level_code,is_active
+ke/executive-office-president,executive office of the president,office responsible for executive leadership and national administration,ke/executive-arm,ke/constitutional-office,,ke/national,true
+ke/office-prime-cabinet-secretary,office of the prime cabinet secretary,coordinates government functions and inter-ministerial operations,ke/executive-arm,ke/constitutional-office,,ke/national,true
+ke/parliament,parliament of kenya,bicameral legislative body responsible for law-making,ke/legislative-arm,ke/parliament,,ke/national,true
+ke/national-assembly,national assembly,lower house of parliament,ke/legislative-arm,ke/parliament,ke/lower-house,ke/national,true
+ke/senate,senate,upper house of parliament,ke/legislative-arm,ke/parliament,ke/upper-house,ke/national,true
+ke/judiciary,judiciary,independent arm responsible for interpretation of law and administration of justice,ke/judicial-arm,ke/court,,ke/national,true
+ke/supreme-court,supreme court,highest court in the judicial system,ke/judicial-arm,ke/court,ke/highest-court,ke/national,true
+ke/high-court,high court,handles constitutional and civil matters,ke/judicial-arm,ke/court,ke/high-court,ke/national,true
+ke/independent-electoral-and-boundaries-commission,independent electoral and boundaries commission,manages elections and electoral boundaries,,ke/independent-body,,ke/national,true
+ke/national-police-service,national police service,law enforcement institution under executive authority,ke/executive-arm,ke/agency,ke/security,ke/national,true
+ke/directorate-criminal-investigations,directorate of criminal investigations,investigative arm of the national police service,ke/executive-arm,ke/agency,ke/investigative,ke/national,true
+ke/county-government,county government,county level executive government institution responsible for devolved governance,ke/executive-arm,ke/county-government,,ke/county,true
+ke/cabinet,cabinet,collective body of the president and cabinet secretaries,ke/executive-arm,ke/executive-body,,ke/national,true
+ke/ministry-interior,ministry of interior and national administration,responsible for internal security and administration,ke/executive-arm,ke/ministry,,ke/national,true
+ke/ministry-finance,ministry of finance and economic planning,responsible for public finance and economic policy,ke/executive-arm,ke/ministry,,ke/national,true
+ke/ministry-health,ministry of health,responsible for national health policy and services,ke/executive-arm,ke/ministry,,ke/national,true
+ke/attorney-general,office of the attorney general,principal legal advisor to the government,ke/executive-arm,ke/constitutional-office,,ke/national,true
+ke/court-of-appeal,court of appeal,appellate court below the supreme court,ke/judicial-arm,ke/court,ke/appellate-court,ke/national,true
+ke/magistrates-courts,magistrates courts,subordinate courts handling lower level cases,ke/judicial-arm,ke/court,ke/subordinate-courts,ke/national,true
+ke/kadhis-courts,kadhis courts,courts handling matters of islamic law,ke/judicial-arm,ke/court,ke/specialized-courts,ke/national,true
+ke/ethics-and-anti-corruption-commission,ethics and anti corruption commission,oversight body for corruption prevention,,ke/commission,,ke/national,true
+ke/commission-on-revenue-allocation,commission on revenue allocation,recommends revenue sharing between national and county governments,,ke/commission,,ke/national,true
+ke/public-service-commission,public service commission,manages public service human resources,ke/executive-arm,ke/commission,,ke/national,true
+ke/independent-policing-oversight-authority,independent policing oversight authority,oversees police conduct,,ke/commission,,ke/national,true
+ke/county-assembly,county assembly,legislative body at the county level,ke/legislative-arm,ke/county-assembly,,ke/county,true
+ke/office-of-the-auditor-general,office of the auditor general,independent office responsible for auditing public accounts,,ke/independent-office,,ke/national,true
+ke/office-of-the-controller-of-budget,office of the controller of budget,independent office overseeing implementation of the national and county budgets,,ke/independent-office,,ke/national,true
+ke/office-of-the-director-of-public-prosecutions,office of the director of public prosecutions,responsible for instituting and undertaking criminal proceedings,ke/executive-arm,ke/constitutional-office,,ke/national,true
+ke/teachers-service-commission,teachers service commission,manages human resources for the teaching service in public schools,ke/executive-arm,ke/commission,,ke/national,true
+ke/judicial-service-commission,judicial service commission,responsible for judicial appointments and independence,ke/judicial-arm,ke/commission,,ke/national,true
+ke/salaries-and-remuneration-commission,salaries and remuneration commission,sets and reviews remuneration for state and public officers,,ke/commission,,ke/national,true
+ke/office-of-the-registrar-of-political-parties,office of the registrar of political parties,regulates the registration and funding of political parties,,ke/independent-body,,ke/national,true
+ke/national-land-commission,national land commission,manages public land on behalf of the national and county governments,,ke/commission,,ke/national,true
+ke/kenya-national-commission-on-human-rights,kenya national commission on human rights,independent commission for the protection of human rights,,ke/commission,,ke/national,true
+ke/parliamentary-service-commission,parliamentary service commission,manages the welfare and human resources of the legislature,ke/legislative-arm,ke/commission,,ke/national,true
+ke/council-of-governors,council of governors,consultative body for the 47 county governors,ke/executive-arm,ke/inter-governmental-body,,ke/national,true
+ke/national-intelligence-service,national intelligence service,responsible for national security and foreign intelligence,ke/executive-arm,ke/agency,ke/security,ke/national,true
+ke/kenya-defence-forces,kenya defence forces,national military forces responsible for defence and sovereignty,ke/executive-arm,ke/military,,ke/national,true
+ke/commission-on-administrative-justice,commission on administrative justice,the office of the ombudsman responsible for public complaints,,ke/commission,,ke/national,true
+ke/gender-and-equality-commission,national gender and equality commission,responsible for gender equality and freedom from discrimination,,ke/commission,,ke/national,true
