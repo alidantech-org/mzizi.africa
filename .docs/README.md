@@ -48,9 +48,10 @@ How the current consolidated code should be decomposed without losing useful wor
 
 A build sequence that prioritizes platform foundations before product surface expansion.
 
-### Governance capability audit
+### Governance model research and capability audit
 
-[Polifin API Governance Capability Audit](audits/POLIFIN_API_GOVERNANCE_CAPABILITY_AUDIT.md) records a preliminary, source-tree-only review of seven Kenyan governance questions, what the inherited backend appears to support, evidence and schema risks to verify, and recommended follow-up steps. It is not a runtime or deployed-database validation.
+- [Country-Neutral Governance Model — Comparative Research and Polifin Design Review](audits/COUNTRY_NEUTRAL_GOVERNANCE_MODEL_RESEARCH.md) records the Mzizi vision for a universal governance core with complete Kenya support, comparative stress tests across Africa, Asia, Europe and the Americas, source-level Polifin model assumptions, a preliminary model disposition, an auditability contract and a phased design/migration plan. It is a research/design proposal, not an approved implementation or migration.
+- [Polifin API Governance Capability Audit](audits/POLIFIN_API_GOVERNANCE_CAPABILITY_AUDIT.md) records a preliminary, source-tree-only review of seven Kenyan governance questions, what the inherited backend appears to support, evidence and schema risks to verify, and recommended follow-up steps. It is not a runtime or deployed-database validation.
 
 ## Documentation principles
 
