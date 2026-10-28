@@ -48,6 +48,10 @@ How the current consolidated code should be decomposed without losing useful wor
 
 A build sequence that prioritizes platform foundations before product surface expansion.
 
+### Governance capability audit
+
+[Polifin API Governance Capability Audit](audits/POLIFIN_API_GOVERNANCE_CAPABILITY_AUDIT.md) records a preliminary, source-tree-only review of seven Kenyan governance questions, what the inherited backend appears to support, evidence and schema risks to verify, and recommended follow-up steps. It is not a runtime or deployed-database validation.
+
 ## Documentation principles
 
 ### Purpose before implementation
