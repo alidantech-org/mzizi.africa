@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="color-scheme" content="dark" />
+    <title>Mzizi Globe</title>
+    <link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/Widgets/widgets.css" />
+    <style>
+      html, body, #globe { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #071612; }
+      .cesium-viewer, .cesium-viewer-cesiumWidgetContainer, .cesium-widget { width: 100%; height: 100%; }
+      .cesium-viewer-bottom { left: 8px !important; bottom: 5px !important; }
+      .cesium-viewer .cesium-widget-credits { opacity: .85; }
+      #state { position: absolute; top: 10px; left: 10px; z-index: 5; color: #e9f3ed; font: 12px system-ui, sans-serif; background: #102b25cc; border: 1px solid #ffffff22; border-radius: 9px; padding: 7px 10px; pointer-events: none; }
+      #state:empty { display: none; }
+      #imagery-source { position: absolute; left: 10px; bottom: 7px; z-index: 5; color: #f0f3ed; font: 10px system-ui, sans-serif; text-shadow: 0 1px 3px #000; pointer-events: none; }
+    </style>
+    <script>window.CESIUM_BASE_URL = 'https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/';</script>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/Cesium.js"></script>
+  </head>
+  <body>
+    <div id="globe" aria-label="Interactive 3D globe"></div>
+    <div id="state" role="status">Loading globe…</div>
+    <div id="imagery-source">Imagery: NASA GIBS · Blue Marble</div>
+    <script src="globe.js"></script>
+  </body>
+</html>
