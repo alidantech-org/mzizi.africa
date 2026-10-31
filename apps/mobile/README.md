@@ -1,17 +1,24 @@
-# mzizi_mobile
+# Mzizi Mobile
 
-A new Flutter project.
+The Explore map uses the versioned geography API contract in
+[`apps/docs/geography-api-contract.md`](../docs/geography-api-contract.md).
+The Flutter app does not contain authoritative boundaries or governance data.
 
-## Getting Started
+Run against a Mzizi API origin:
 
-This project is a starting point for a Flutter application.
+```sh
+flutter run \
+  --dart-define=MZIZI_API_BASE_URL=https://api.example.org \
+  --dart-define=CESIUM_ION_TOKEN=YOUR_RESTRICTED_PUBLIC_TOKEN
+```
 
-A few resources to get you started if this is your first Flutter project:
+The Ion token is optional. Country scope, initial boundary level and camera
+center default to Kenya/county/Nairobi and can be set with
+`MZIZI_DEFAULT_COUNTRY`, `MZIZI_DEFAULT_BOUNDARY_LEVEL`, and
+`MZIZI_MAP_INITIAL_LONGITUDE`, `MZIZI_MAP_INITIAL_LATITUDE`, and
+`MZIZI_MAP_INITIAL_HEIGHT` defines.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The API exposes only geometry recorded as current and verified in the
+geography boundary version table. An empty boundary response is expected until
+verified, licensed source data has been loaded. The client will not draw a
+substitute boundary.

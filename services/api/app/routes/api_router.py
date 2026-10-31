@@ -8,6 +8,7 @@ from app.routes.__root__.root import router as root_router
 from .files.files_controller import router as files_router
 
 # from .scraper.scraper_controller import router as scraper_router
+from .geographic.geographic_controller import mobile_router as mobile_geography_router
 from .geographic.geographic_controller import router as geographic_router
 from .legal.legal_controller import router as legal_router
 
@@ -30,6 +31,9 @@ api_v1_router.include_router(files_router, prefix="/files", tags=["Files"])
 # GEOGRAPHIC DOMAIN - Geographic data and administrative units
 # ============================================================================
 api_v1_router.include_router(geographic_router, tags=["Geographic"])
+api_v1_router.include_router(
+    mobile_geography_router, prefix="/v1/geography", tags=["Geography API"]
+)
 
 
 # ============================================================================

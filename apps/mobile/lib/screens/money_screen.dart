@@ -25,13 +25,13 @@ class _MoneyScreenState extends State<MoneyScreen> {
   void openSheet(String title, String body, {List<String> options = const []}) {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (sheetContext) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+          padding: EdgeInsets.fromLTRB(20, 18, 20, 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,32 +41,36 @@ class _MoneyScreenState extends State<MoneyScreen> {
                   width: 36,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: line,
+                    color: context.colors.outlineVariant,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
+              SizedBox(height: 18),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22.5,
                   fontWeight: FontWeight.w800,
-                  color: ink,
+                  color: context.colors.onSurface,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 body,
-                style: const TextStyle(fontSize: 17, height: 1.4, color: muted),
+                style: TextStyle(
+                  fontSize: 17,
+                  height: 1.4,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
               ...options.map(
                 (option) => ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.account_balance_outlined,
-                    color: forest,
+                    color: context.colors.primary,
                   ),
                   title: Text(option),
                   onTap: () {
@@ -76,12 +80,12 @@ class _MoneyScreenState extends State<MoneyScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () => Navigator.pop(sheetContext),
-                  child: const Text('Close'),
+                  child: Text('Close'),
                 ),
               ),
             ],
@@ -93,7 +97,7 @@ class _MoneyScreenState extends State<MoneyScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xFFF4F9F3),
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     body: SafeArea(
       bottom: false,
       child: Column(
@@ -103,23 +107,23 @@ class _MoneyScreenState extends State<MoneyScreen> {
             child: CustomScrollView(
               slivers: [
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(9, 8, 9, 15),
+                  padding: EdgeInsets.fromLTRB(9, 8, 9, 15),
                   sliver: SliverList.list(
                     children: [
                       _intro(),
-                      const SizedBox(height: 9),
+                      SizedBox(height: 9),
                       _searchBar(),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       _fiscalCard(),
-                      const SizedBox(height: 9),
+                      SizedBox(height: 9),
                       _architecture(),
-                      const SizedBox(height: 11),
+                      SizedBox(height: 11),
                       _portals(),
-                      const SizedBox(height: 11),
+                      SizedBox(height: 11),
                       _evidenceDeepDive(),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       _wardInspections(),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       _gazetteRecords(),
                     ],
                   ),
@@ -134,10 +138,10 @@ class _MoneyScreenState extends State<MoneyScreen> {
   );
 
   Widget _header() => Container(
-    padding: const EdgeInsets.fromLTRB(10, 7, 10, 7),
-    decoration: const BoxDecoration(
-      color: Color(0xFFF8FBF7),
-      border: Border(bottom: BorderSide(color: line)),
+    padding: EdgeInsets.fromLTRB(10, 7, 10, 7),
+    decoration: BoxDecoration(
+      color: context.colors.surfaceContainerLow,
+      border: Border(bottom: BorderSide(color: context.colors.outlineVariant)),
     ),
     child: Row(
       children: [
@@ -145,31 +149,35 @@ class _MoneyScreenState extends State<MoneyScreen> {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: const Color(0xFFE4ECE5),
+            color: context.colors.secondaryContainer,
             borderRadius: BorderRadius.circular(6),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.account_balance_outlined,
             size: 15,
-            color: forest,
+            color: context.colors.primary,
           ),
         ),
-        const SizedBox(width: 6),
-        const Expanded(
+        SizedBox(width: 6),
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Mzizi Africa',
                 style: TextStyle(
+                  fontFamily: 'serif',
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
-                  color: deepGreen,
+                  color: context.colors.primary,
                 ),
               ),
               Text(
                 'KENYA PUBLIC EVIDENCE',
-                style: TextStyle(fontSize: 10.5, color: muted),
+                style: TextStyle(
+                  fontSize: 10.5,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -177,12 +185,12 @@ class _MoneyScreenState extends State<MoneyScreen> {
         IconButton(
           onPressed: () => searchFocus.requestFocus(),
           visualDensity: VisualDensity.compact,
-          icon: const Icon(Icons.search, size: 18, color: ink),
+          icon: Icon(Icons.search, size: 18, color: context.colors.onSurface),
         ),
-        const CircleAvatar(
+        CircleAvatar(
           radius: 12,
-          backgroundColor: Color(0xFFBCCFC1),
-          child: Icon(Icons.person, size: 15, color: deepGreen),
+          backgroundColor: context.colors.outlineVariant,
+          child: Icon(Icons.person, size: 15, color: context.colors.primary),
         ),
       ],
     ),
@@ -191,61 +199,69 @@ class _MoneyScreenState extends State<MoneyScreen> {
   Widget _intro() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Row(
+      Row(
         children: [
-          Icon(Icons.account_balance, size: 12, color: forest),
+          Icon(Icons.account_balance, size: 12, color: context.colors.primary),
           SizedBox(width: 4),
           Text(
             'CIVIC FISCAL OVERSIGHT',
             style: TextStyle(
               fontSize: 11.5,
               letterSpacing: .45,
-              color: forest,
+              color: context.colors.primary,
               fontWeight: FontWeight.w800,
             ),
           ),
         ],
       ),
-      const SizedBox(height: 4),
-      const Text(
+      SizedBox(height: 4),
+      Text(
         'Public Money & Accountability',
         style: TextStyle(
+          fontFamily: 'serif',
           fontSize: 21.5,
           height: 1.1,
-          color: ink,
+          color: context.colors.onSurface,
           fontWeight: FontWeight.w800,
         ),
       ),
-      const SizedBox(height: 3),
-      const Text(
+      SizedBox(height: 3),
+      Text(
         'Follow the journey of public funds in Kenya — from parliamentary approval to local ward delivery.',
-        style: TextStyle(fontSize: 14, color: muted, height: 1.3),
+        style: TextStyle(
+          fontSize: 14,
+          color: context.colors.onSurfaceVariant,
+          height: 1.3,
+        ),
       ),
     ],
   );
 
   Widget _searchBar() => Container(
     height: 32,
-    padding: const EdgeInsets.symmetric(horizontal: 9),
+    padding: EdgeInsets.symmetric(horizontal: 9),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: const Color(0xFFEAF0EA)),
+      border: Border.all(color: context.colors.outlineVariant),
     ),
     child: Row(
       children: [
-        const Icon(Icons.search, size: 14, color: forest),
-        const SizedBox(width: 5),
+        Icon(Icons.search, size: 14, color: context.colors.primary),
+        SizedBox(width: 5),
         Expanded(
           child: TextField(
             controller: search,
             focusNode: searchFocus,
-            style: const TextStyle(fontSize: 11.5),
-            decoration: const InputDecoration(
+            style: TextStyle(fontSize: 11.5),
+            decoration: InputDecoration(
               border: InputBorder.none,
               isDense: true,
               hintText: 'Search tenders, contractors, budgets by key…',
-              hintStyle: TextStyle(fontSize: 11.5, color: muted),
+              hintStyle: TextStyle(
+                fontSize: 11.5,
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
             onSubmitted: (value) => openSheet(
               'Fiscal search',
@@ -263,16 +279,20 @@ class _MoneyScreenState extends State<MoneyScreen> {
               'Status: Audited',
             ],
           ),
-          child: const Icon(Icons.tune, size: 13, color: muted),
+          child: Icon(
+            Icons.tune,
+            size: 13,
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       ],
     ),
   );
 
   Widget _fiscalCard() => Container(
-    padding: const EdgeInsets.all(8),
+    padding: EdgeInsets.all(8),
     decoration: BoxDecoration(
-      color: const Color(0xFFEDF4EE),
+      color: context.colors.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(10),
     ),
     child: Column(
@@ -280,13 +300,21 @@ class _MoneyScreenState extends State<MoneyScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.calendar_today_outlined, size: 10, color: muted),
-            const SizedBox(width: 5),
-            const Text(
-              'FISCAL SCOPE',
-              style: TextStyle(fontSize: 10.5, color: muted, letterSpacing: .3),
+            Icon(
+              Icons.calendar_today_outlined,
+              size: 10,
+              color: context.colors.onSurfaceVariant,
             ),
-            const Spacer(),
+            SizedBox(width: 5),
+            Text(
+              'FISCAL SCOPE',
+              style: TextStyle(
+                fontSize: 10.5,
+                color: context.colors.onSurfaceVariant,
+                letterSpacing: .3,
+              ),
+            ),
+            Spacer(),
             InkWell(
               onTap: () => openSheet(
                 'Fiscal scope',
@@ -294,25 +322,25 @@ class _MoneyScreenState extends State<MoneyScreen> {
                 options: ['FY 2024/25 (Current)', 'FY 2023/24', 'FY 2022/23'],
               ),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: 7, vertical: 4),
                 decoration: BoxDecoration(
-                  color: deepGreen,
+                  color: context.colors.primary,
                   borderRadius: BorderRadius.circular(13),
                 ),
                 child: Row(
                   children: [
                     Text(
                       fiscalYear,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color: Colors.white,
+                        color: context.colors.onPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.keyboard_arrow_down,
                       size: 12,
-                      color: Colors.white,
+                      color: context.colors.onPrimary,
                     ),
                   ],
                 ),
@@ -320,33 +348,37 @@ class _MoneyScreenState extends State<MoneyScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         Row(
           children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'NATIONAL BUDGET ENVELOPE',
                     style: TextStyle(
                       fontSize: 10.5,
-                      color: muted,
+                      color: context.colors.onSurfaceVariant,
                       letterSpacing: .25,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'KES 3.99 Trillion',
                     style: TextStyle(
                       fontSize: 16,
-                      color: ink,
+                      color: context.colors.onSurface,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                 ],
               ),
             ),
-            _pill('◉ Enacted • CRA', const Color(0xFFC5F1D9), forest),
+            _pill(
+              '◉ Enacted • CRA',
+              context.colors.secondaryContainer,
+              context.colors.primary,
+            ),
           ],
         ),
       ],
@@ -354,11 +386,11 @@ class _MoneyScreenState extends State<MoneyScreen> {
   );
 
   Widget _architecture() => Container(
-    padding: const EdgeInsets.all(8),
+    padding: EdgeInsets.all(8),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: BorderRadius.circular(11),
-      border: Border.all(color: const Color(0xFFE9EFEA)),
+      border: Border.all(color: context.colors.secondaryContainer),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,20 +401,20 @@ class _MoneyScreenState extends State<MoneyScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'INTERACTIVE ARCHITECTURE',
                     style: TextStyle(
                       fontSize: 10.5,
                       letterSpacing: .3,
-                      color: forest,
+                      color: context.colors.primary,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'The Public Money Cycle in Kenya',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: ink,
+                      color: context.colors.onSurface,
                     ),
                   ),
                 ],
@@ -393,16 +425,24 @@ class _MoneyScreenState extends State<MoneyScreen> {
                 'Public money cycle',
                 'Explore the constitutional flow of public funds through allocation, procurement, execution, and audit.',
               ),
-              child: const Icon(Icons.swap_horiz, size: 15, color: muted),
+              child: Icon(
+                Icons.swap_horiz,
+                size: 15,
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 4),
-        const Text(
+        SizedBox(height: 4),
+        Text(
           'Tap each milestone to trace institutional accountability gates established by the Constitution.',
-          style: TextStyle(fontSize: 11, color: muted, height: 1.25),
+          style: TextStyle(
+            fontSize: 11,
+            color: context.colors.onSurfaceVariant,
+            height: 1.25,
+          ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         _cycleStep(
           1,
           'Budget & Allocation',
@@ -446,7 +486,7 @@ class _MoneyScreenState extends State<MoneyScreen> {
   }) => InkWell(
     onTap: () => openSheet(title, '$institution. $detail'),
     child: Padding(
-      padding: const EdgeInsets.only(top: 4),
+      padding: EdgeInsets.only(top: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -457,13 +497,15 @@ class _MoneyScreenState extends State<MoneyScreen> {
                 CircleAvatar(
                   radius: 8.5,
                   backgroundColor: number == 1
-                      ? deepGreen
-                      : const Color(0xFFE3EAE4),
+                      ? context.colors.primary
+                      : context.colors.secondaryContainer,
                   child: Text(
                     '$number',
                     style: TextStyle(
                       fontSize: 11.5,
-                      color: number == 1 ? Colors.white : ink,
+                      color: number == 1
+                          ? context.colors.onPrimary
+                          : context.colors.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -472,18 +514,18 @@ class _MoneyScreenState extends State<MoneyScreen> {
                   Container(
                     width: 1,
                     height: 35,
-                    color: const Color(0xFFC8D7CC),
+                    color: context.colors.outline,
                   ),
               ],
             ),
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Expanded(
             child: Container(
-              margin: const EdgeInsets.only(bottom: 3),
-              padding: const EdgeInsets.all(5),
+              margin: EdgeInsets.only(bottom: 3),
+              padding: EdgeInsets.all(5),
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F5F0),
+                color: context.colors.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(7),
               ),
               child: Column(
@@ -494,21 +536,25 @@ class _MoneyScreenState extends State<MoneyScreen> {
                       Expanded(
                         child: Text(
                           '$number. $title',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: ink,
+                            color: context.colors.onSurface,
                           ),
                         ),
                       ),
-                      _pill(phase, const Color(0xFFE3E9E4), muted),
+                      _pill(
+                        phase,
+                        context.colors.secondaryContainer,
+                        context.colors.onSurfaceVariant,
+                      ),
                     ],
                   ),
                   Text(
                     institution,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10.5,
-                      color: forest,
+                      color: context.colors.primary,
                       height: 1.2,
                     ),
                   ),
@@ -516,10 +562,10 @@ class _MoneyScreenState extends State<MoneyScreen> {
                     detail,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10.5,
                       height: 1.18,
-                      color: muted,
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -540,28 +586,28 @@ class _MoneyScreenState extends State<MoneyScreen> {
         'National & County Budgets',
         'Equitable Share allocations, Division of Revenue, and quarterly Controller of Budget expenditure reviews.',
         '47 Counties   •   National MDAs',
-        const Color(0xFFE1F1E6),
+        context.colors.secondaryContainer,
       ),
       _portal(
         Icons.gavel_outlined,
         'Procurement & Contracts',
         'Search 12,400+ public tenders, awarded suppliers, contract valuations, and corporate beneficial owners.',
         '12,420 Active Bids   •   PPIP Live',
-        const Color(0xFFDDF4E8),
+        context.colors.secondaryContainer,
       ),
       _portal(
         Icons.fact_check_outlined,
         'Public Projects Tracker',
         'Ward-level audits of health dispensaries, bypass roads, boreholes, and school facilities with geotagged citation.',
         '4,810 Geotagged   •   Photo Verified',
-        const Color(0xFFE7F1E8),
+        context.colors.secondaryContainer,
       ),
       _portal(
         Icons.verified_user_outlined,
         'Auditor-General Reports',
         'Explore qualified audit opinions, unvouched expenditure, annual appropriation backlogs, and county pending bills.',
         'KES 16.2B Flagged   •   OAG Digest',
-        const Color(0xFFE6F0E6),
+        context.colors.secondaryContainer,
       ),
     ],
   );
@@ -579,12 +625,12 @@ class _MoneyScreenState extends State<MoneyScreen> {
       options: [metadata, 'Open source directory'],
     ),
     child: Container(
-      margin: const EdgeInsets.only(bottom: 5),
-      padding: const EdgeInsets.all(7),
+      margin: EdgeInsets.only(bottom: 5),
+      padding: EdgeInsets.all(7),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(9),
-        border: Border.all(color: const Color(0xFFE8EEE9)),
+        border: Border.all(color: context.colors.outlineVariant),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -596,9 +642,9 @@ class _MoneyScreenState extends State<MoneyScreen> {
               color: iconBg,
               borderRadius: BorderRadius.circular(7),
             ),
-            child: Icon(icon, size: 15, color: forest),
+            child: Icon(icon, size: 15, color: context.colors.primary),
           ),
-          const SizedBox(width: 7),
+          SizedBox(width: 7),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -608,28 +654,36 @@ class _MoneyScreenState extends State<MoneyScreen> {
                     Expanded(
                       child: Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: ink,
+                          color: context.colors.onSurface,
                         ),
                       ),
                     ),
-                    const Icon(Icons.chevron_right, size: 12, color: muted),
+                    Icon(
+                      Icons.chevron_right,
+                      size: 12,
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ],
                 ),
                 Text(
                   description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10.5,
                     height: 1.2,
-                    color: muted,
+                    color: context.colors.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 3),
-                _pill(metadata, const Color(0xFFEAF0EA), forest),
+                SizedBox(height: 3),
+                _pill(
+                  metadata,
+                  context.colors.outlineVariant,
+                  context.colors.primary,
+                ),
               ],
             ),
           ),
@@ -639,10 +693,10 @@ class _MoneyScreenState extends State<MoneyScreen> {
   );
 
   Widget _evidenceDeepDive() => Container(
-    padding: const EdgeInsets.all(8),
+    padding: EdgeInsets.all(8),
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: const Color(0xFFE6EEE7)),
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border.all(color: context.colors.outlineVariant),
       borderRadius: BorderRadius.circular(10),
     ),
     child: Column(
@@ -654,20 +708,20 @@ class _MoneyScreenState extends State<MoneyScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'PUBLIC EVIDENCE DEEP DIVE',
                     style: TextStyle(
                       fontSize: 10.5,
-                      color: forest,
+                      color: context.colors.primary,
                       letterSpacing: .3,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Where Does Kenya’s Tax Revenue Go?',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: ink,
+                      color: context.colors.onSurface,
                     ),
                   ),
                 ],
@@ -678,31 +732,35 @@ class _MoneyScreenState extends State<MoneyScreen> {
                 'Revenue allocation',
                 'Illustrative revenue distribution based on public budget categories.',
               ),
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 10,
-                backgroundColor: Color(0xFFC5F1D9),
-                child: Icon(Icons.refresh, size: 12, color: forest),
+                backgroundColor: context.colors.secondaryContainer,
+                child: Icon(
+                  Icons.refresh,
+                  size: 12,
+                  color: context.colors.primary,
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         ClipRRect(
           borderRadius: BorderRadius.circular(6),
-          child: const LinearProgressIndicator(
+          child: LinearProgressIndicator(
             value: .72,
             minHeight: 8,
-            backgroundColor: Color(0xFFE5F2E8),
-            color: Color(0xFF75E0AA),
+            backgroundColor: context.colors.secondaryContainer,
+            color: context.colors.primary,
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         Row(
           children: [
             Expanded(
               child: _revenueStat('Debt Servicing', '41%', 'KES 1.63 Trillion'),
             ),
-            const SizedBox(width: 5),
+            SizedBox(width: 5),
             Expanded(
               child: _revenueStat(
                 'Recurrent Ops',
@@ -712,7 +770,7 @@ class _MoneyScreenState extends State<MoneyScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         Row(
           children: [
             Expanded(
@@ -722,21 +780,28 @@ class _MoneyScreenState extends State<MoneyScreen> {
                 'Infrastructure & Capital',
               ),
             ),
-            const SizedBox(width: 5),
+            SizedBox(width: 5),
             Expanded(
               child: _revenueStat('County Transfers', '11%', 'Equitable Share'),
             ),
           ],
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         Row(
           children: [
-            const Icon(Icons.info_outline, size: 10, color: muted),
-            const SizedBox(width: 4),
-            const Expanded(
+            Icon(
+              Icons.info_outline,
+              size: 10,
+              color: context.colors.onSurfaceVariant,
+            ),
+            SizedBox(width: 4),
+            Expanded(
               child: Text(
                 'Source: Controller of Budget BIR 2023/24',
-                style: TextStyle(fontSize: 10.5, color: muted),
+                style: TextStyle(
+                  fontSize: 10.5,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ),
             InkWell(
@@ -745,11 +810,11 @@ class _MoneyScreenState extends State<MoneyScreen> {
                 'Illustrative source card for the Controller of Budget Budget Implementation Report.',
                 options: ['Full Dataset'],
               ),
-              child: const Text(
+              child: Text(
                 'Full Dataset ↗',
                 style: TextStyle(
                   fontSize: 10.5,
-                  color: forest,
+                  color: context.colors.primary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -761,9 +826,9 @@ class _MoneyScreenState extends State<MoneyScreen> {
   );
 
   Widget _revenueStat(String title, String value, String detail) => Container(
-    padding: const EdgeInsets.all(6),
+    padding: EdgeInsets.all(6),
     decoration: BoxDecoration(
-      color: const Color(0xFFF0F5F0),
+      color: context.colors.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(7),
     ),
     child: Column(
@@ -771,24 +836,30 @@ class _MoneyScreenState extends State<MoneyScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.circle, size: 5, color: forest),
-            const SizedBox(width: 4),
-            Text(title, style: const TextStyle(fontSize: 10.5, color: ink)),
+            Icon(Icons.circle, size: 5, color: context.colors.primary),
+            SizedBox(width: 4),
+            Text(
+              title,
+              style: TextStyle(fontSize: 10.5, color: context.colors.onSurface),
+            ),
           ],
         ),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w800,
-            color: forest,
+            color: context.colors.primary,
           ),
         ),
         Text(
           detail,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 10.5, color: muted),
+          style: TextStyle(
+            fontSize: 10.5,
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       ],
     ),
@@ -798,11 +869,11 @@ class _MoneyScreenState extends State<MoneyScreen> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       _sectionTitle('Ward Ground Inspections', ''),
-      const Text(
+      Text(
         'Direct photographic testimony logged by citizen observers.',
-        style: TextStyle(fontSize: 11, color: muted),
+        style: TextStyle(fontSize: 11, color: context.colors.onSurfaceVariant),
       ),
-      const SizedBox(height: 5),
+      SizedBox(height: 5),
       Row(
         children: [
           Expanded(
@@ -811,17 +882,17 @@ class _MoneyScreenState extends State<MoneyScreen> {
               'Kithimani Clinic',
               'KES 14.2M Complete',
               Icons.local_hospital_outlined,
-              const Color(0xFFE8EEDF),
+              context.colors.secondaryContainer,
             ),
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: 6),
           Expanded(
             child: _inspection(
               'Kilibi South',
               'Bofa Link Road',
               'Stalled at 60%',
               Icons.add_road,
-              const Color(0xFFEDE7D8),
+              context.warningColor,
             ),
           ),
         ],
@@ -842,8 +913,8 @@ class _MoneyScreenState extends State<MoneyScreen> {
     ),
     child: Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE5ECE6)),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border.all(color: context.colors.outlineVariant),
         borderRadius: BorderRadius.circular(9),
       ),
       clipBehavior: Clip.antiAlias,
@@ -861,7 +932,7 @@ class _MoneyScreenState extends State<MoneyScreen> {
                     child: Icon(
                       icon,
                       size: 32,
-                      color: forest.withValues(alpha: .72),
+                      color: context.colors.primary.withValues(alpha: .72),
                     ),
                   ),
                 ),
@@ -871,34 +942,34 @@ class _MoneyScreenState extends State<MoneyScreen> {
                   child: _pill(
                     ward,
                     ward == 'Kilibi South'
-                        ? const Color(0xFFC94A45)
-                        : deepGreen,
-                    Colors.white,
+                        ? context.colors.error
+                        : context.colors.primary,
+                    Theme.of(context).scaffoldBackgroundColor,
                   ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(5),
+            padding: EdgeInsets.all(5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
                 ),
                 Row(
                   children: [
-                    const Icon(Icons.circle, size: 5, color: forest),
-                    const SizedBox(width: 3),
+                    Icon(Icons.circle, size: 5, color: context.colors.primary),
+                    SizedBox(width: 3),
                     Expanded(
                       child: Text(
                         state,
-                        style: const TextStyle(fontSize: 10.5, color: muted),
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          color: context.colors.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ],
@@ -924,7 +995,7 @@ class _MoneyScreenState extends State<MoneyScreen> {
         'Parliamentary Press',
         false,
       ),
-      const SizedBox(height: 5),
+      SizedBox(height: 5),
       _notice(
         'Special Audit Report',
         'June 29, 2024',
@@ -948,10 +1019,10 @@ class _MoneyScreenState extends State<MoneyScreen> {
   ) => InkWell(
     onTap: () => openSheet(title, detail, options: [source, action]),
     child: Container(
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE7EEE8)),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border.all(color: context.colors.outlineVariant),
         borderRadius: BorderRadius.circular(9),
       ),
       child: Column(
@@ -961,44 +1032,62 @@ class _MoneyScreenState extends State<MoneyScreen> {
             children: [
               _pill(
                 badge,
-                red ? const Color(0xFFFBE9E8) : const Color(0xFFEAF0EA),
-                red ? const Color(0xFFC94A45) : muted,
+                red ? context.colors.error : context.colors.outlineVariant,
+                red ? context.colors.error : context.colors.onSurfaceVariant,
               ),
-              const Spacer(),
-              Text(date, style: const TextStyle(fontSize: 10.5, color: muted)),
+              Spacer(),
+              Text(
+                date,
+                style: TextStyle(
+                  fontSize: 10.5,
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: ink,
+              color: context.colors.onSurface,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: 2),
           Text(
             detail,
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 10.5, height: 1.2, color: muted),
+            style: TextStyle(
+              fontSize: 10.5,
+              height: 1.2,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: 5),
+          SizedBox(height: 5),
           Row(
             children: [
-              const Icon(Icons.download_outlined, size: 10, color: forest),
-              const SizedBox(width: 3),
+              Icon(
+                Icons.download_outlined,
+                size: 10,
+                color: context.colors.primary,
+              ),
+              SizedBox(width: 3),
               Text(
                 action,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10.5,
-                  color: forest,
+                  color: context.colors.primary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const Spacer(),
-              _pill(source, const Color(0xFFEAF0EA), ink),
+              Spacer(),
+              _pill(
+                source,
+                context.colors.outlineVariant,
+                context.colors.onSurface,
+              ),
             ],
           ),
         ],
@@ -1007,25 +1096,31 @@ class _MoneyScreenState extends State<MoneyScreen> {
   );
 
   Widget _sectionTitle(String title, String right) => Padding(
-    padding: const EdgeInsets.only(bottom: 5),
+    padding: EdgeInsets.only(bottom: 5),
     child: Row(
       children: [
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: ink,
+              color: context.colors.onSurface,
             ),
           ),
         ),
-        Text(right, style: const TextStyle(fontSize: 10.5, color: muted)),
+        Text(
+          right,
+          style: TextStyle(
+            fontSize: 10.5,
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
       ],
     ),
   );
   Widget _pill(String text, Color bg, Color fg) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
     decoration: BoxDecoration(
       color: bg,
       borderRadius: BorderRadius.circular(12),
@@ -1039,9 +1134,9 @@ class _MoneyScreenState extends State<MoneyScreen> {
   );
 
   Widget _bottomNav() => Container(
-    decoration: const BoxDecoration(
-      color: Color(0xFFFAFCFA),
-      border: Border(top: BorderSide(color: line)),
+    decoration: BoxDecoration(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border(top: BorderSide(color: context.colors.outlineVariant)),
     ),
     padding: EdgeInsets.only(
       top: 5,
@@ -1071,13 +1166,21 @@ class _MoneyScreenState extends State<MoneyScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 17, color: index == 2 ? forest : muted),
-          const SizedBox(height: 2),
+          Icon(
+            icon,
+            size: 17,
+            color: index == 2
+                ? context.colors.primary
+                : context.colors.onSurfaceVariant,
+          ),
+          SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
               fontSize: 10.5,
-              color: index == 2 ? forest : muted,
+              color: index == 2
+                  ? context.colors.primary
+                  : context.colors.onSurfaceVariant,
               fontWeight: index == 2 ? FontWeight.w700 : FontWeight.w400,
             ),
           ),

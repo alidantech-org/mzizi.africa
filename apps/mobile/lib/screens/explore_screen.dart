@@ -91,6 +91,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
     }
   }
 
+  Future<void> _selectAncestor(GeographyAncestor ancestor) async {
+    try {
+      final entity = await GeographyApiClient.instance.entity(ancestor.id);
+      if (mounted) await _select(entity);
+    } catch (error) {
+      if (mounted) {
+        setState(
+          () => _searchError = error.toString().replaceFirst('Exception: ', ''),
+        );
+      }
+    }
+  }
+
   void _reset() {
     setState(() {
       _selected = null;
@@ -106,12 +119,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget build(BuildContext context) {
     final wide = MediaQuery.sizeOf(context).width >= 900;
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F7F3),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       bottomNavigationBar: _bottomNav(),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1480),
+            constraints: BoxConstraints(maxWidth: 1480),
             child: Padding(
               padding: EdgeInsets.fromLTRB(
                 wide ? 28 : 16,
@@ -123,15 +136,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _header(wide),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   _searchBox(),
                   if (_results.isNotEmpty || _searchError != null || _searching)
                     _searchFeedback(),
                   if (_selected != null) ...[
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     _breadcrumbs(),
                   ],
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Expanded(
                     child: wide
                         ? Row(
@@ -141,19 +154,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 flex: 7,
                                 child: _mapPanel(double.infinity),
                               ),
-                              const SizedBox(width: 16),
+                              SizedBox(width: 16),
                               SizedBox(width: 330, child: _detailsPanel()),
                             ],
                           )
                         : Column(
                             children: [
                               Expanded(child: _mapPanel(double.infinity)),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12),
                               SizedBox(height: 210, child: _detailsPanel()),
                             ],
                           ),
                   ),
-                  const SizedBox(height: 9),
+                  SizedBox(height: 9),
                   _attribution(),
                 ],
               ),
@@ -170,32 +183,36 @@ class _ExploreScreenState extends State<ExploreScreen> {
         width: 42,
         height: 42,
         decoration: BoxDecoration(
-          color: forest,
+          color: context.colors.primary,
           borderRadius: BorderRadius.circular(13),
         ),
-        child: const Icon(Icons.public, color: Colors.white, size: 23),
+        child: Icon(Icons.public, color: context.colors.onPrimary, size: 23),
       ),
-      const SizedBox(width: 11),
+      SizedBox(width: 11),
       Expanded(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'MZIZI AFRICA  /  ${wide ? 'GEOGRAPHY EXPLORER' : 'EXPLORE'}',
-              style: const TextStyle(
-                color: forest,
+              style: TextStyle(
+                color: context.colors.primary,
                 fontSize: 13,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: 2),
             Text(
-              _selected?.name ?? 'Explore Kenya',
+              _selected?.name ??
+                  (GeographyApiClient.defaultCountry == 'KE'
+                      ? 'Explore Kenya'
+                      : 'Explore geography'),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: ink,
+              style: TextStyle(
+                fontFamily: 'serif',
+                color: context.colors.onSurface,
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
               ),
@@ -206,15 +223,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
       if (wide && _selected != null)
         OutlinedButton.icon(
           onPressed: _reset,
-          icon: const Icon(Icons.public, size: 17),
-          label: const Text('Reset globe'),
+          icon: Icon(Icons.public, size: 17),
+          label: Text('Reset globe'),
         ),
     ],
   );
 
   Widget _searchBox() => Material(
     elevation: 1,
-    shadowColor: Colors.black12,
+    shadowColor: context.colors.shadow.withValues(alpha: .12),
     borderRadius: BorderRadius.circular(13),
     child: TextField(
       controller: _search,
@@ -232,15 +249,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
           });
           return;
         }
-        _searchDebounce = Timer(const Duration(milliseconds: 350), () {
+        _searchDebounce = Timer(Duration(milliseconds: 350), () {
           if (mounted) _searchPlaces(value);
         });
       },
       decoration: InputDecoration(
         hintText: 'Search a place or administrative area',
-        prefixIcon: const Icon(Icons.search, color: forest),
+        prefixIcon: Icon(Icons.search, color: context.colors.primary),
         suffixIcon: _searching
-            ? const Padding(
+            ? Padding(
                 padding: EdgeInsets.all(14),
                 child: SizedBox(
                   width: 17,
@@ -251,29 +268,29 @@ class _ExploreScreenState extends State<ExploreScreen> {
             : IconButton(
                 tooltip: 'Search geography',
                 onPressed: _searchPlaces,
-                icon: const Icon(Icons.arrow_forward, color: forest),
+                icon: Icon(Icons.arrow_forward, color: context.colors.primary),
               ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Theme.of(context).scaffoldBackgroundColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(13),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 14),
+        contentPadding: EdgeInsets.symmetric(vertical: 14),
       ),
     ),
   );
 
   Widget _searchFeedback() => Container(
-    constraints: const BoxConstraints(maxHeight: 230),
-    margin: const EdgeInsets.only(top: 7),
+    constraints: BoxConstraints(maxHeight: 230),
+    margin: EdgeInsets.only(top: 7),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: line),
+      border: Border.all(color: context.colors.outlineVariant),
     ),
     child: _searching
-        ? const ListTile(
+        ? ListTile(
             leading: SizedBox(
               width: 18,
               height: 18,
@@ -285,12 +302,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
         ? ListView.separated(
             shrinkWrap: true,
             itemCount: _results.length,
-            separatorBuilder: (_, _) => const Divider(height: 1),
+            separatorBuilder: (_, _) => Divider(height: 1),
             itemBuilder: (context, index) {
               final place = _results[index];
               return ListTile(
                 dense: true,
-                leading: const Icon(Icons.place_outlined, color: forest),
+                leading: Icon(
+                  Icons.place_outlined,
+                  color: context.colors.primary,
+                ),
                 title: Text(
                   place.name,
                   maxLines: 1,
@@ -305,55 +325,69 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 trailing: place.boundaryVerified
-                    ? const Icon(
+                    ? Icon(
                         Icons.verified_outlined,
-                        color: forest,
+                        color: context.colors.primary,
                         size: 18,
                       )
-                    : const Icon(Icons.info_outline, color: muted, size: 18),
+                    : Icon(
+                        Icons.info_outline,
+                        color: context.colors.onSurfaceVariant,
+                        size: 18,
+                      ),
                 onTap: () => _select(place),
               );
             },
           )
         : ListTile(
-            leading: const Icon(Icons.info_outline, color: muted),
+            leading: Icon(
+              Icons.info_outline,
+              color: context.colors.onSurfaceVariant,
+            ),
             title: Text(
               _searchError ?? 'No matching areas were found.',
-              style: const TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16),
             ),
           ),
   );
 
   Widget _breadcrumbs() {
-    final path = [..._selected!.ancestors, _selected!];
+    final ancestors = _selected!.ancestors;
     return SizedBox(
       height: 34,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: path.length + 1,
-        separatorBuilder: (_, _) =>
-            const Icon(Icons.chevron_right, size: 16, color: muted),
+        itemCount: ancestors.length + 2,
+        separatorBuilder: (_, _) => Icon(
+          Icons.chevron_right,
+          size: 16,
+          color: context.colors.onSurfaceVariant,
+        ),
         itemBuilder: (context, index) {
           if (index == 0) {
             return TextButton.icon(
               onPressed: _goToParent,
-              icon: const Icon(Icons.arrow_back, size: 15),
-              label: const Text('Parent'),
+              icon: Icon(Icons.arrow_back, size: 15),
+              label: Text('Parent'),
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 7),
+                padding: EdgeInsets.symmetric(horizontal: 7),
               ),
             );
           }
-          final place = path[index - 1];
-          final current = index == path.length;
+          final current = index == ancestors.length + 1;
+          final name = current ? _selected!.name : ancestors[index - 1].name;
           return Center(
             child: InkWell(
-              onTap: current ? null : () => _select(place),
+              onTap: current
+                  ? null
+                  : () => _selectAncestor(ancestors[index - 1]),
               child: Text(
-                place.name,
+                name,
                 style: TextStyle(
                   fontSize: 14.5,
-                  color: current ? forest : muted,
+                  color: current
+                      ? context.colors.primary
+                      : context.colors.onSurfaceVariant,
                   fontWeight: current ? FontWeight.w800 : FontWeight.w500,
                 ),
               ),
@@ -375,11 +409,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
   );
 
   Widget _detailsPanel() => Container(
-    padding: const EdgeInsets.all(15),
+    padding: EdgeInsets.all(15),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: BorderRadius.circular(15),
-      border: Border.all(color: line),
+      border: Border.all(color: context.colors.outlineVariant),
     ),
     child: _selected == null ? _emptyDetails() : _selectedDetails(),
   );
@@ -387,22 +421,26 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget _emptyDetails() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Text(
+      Text(
         'Navigate by geography',
         style: TextStyle(
-          color: ink,
+          color: context.colors.onSurface,
           fontSize: 19.5,
           fontWeight: FontWeight.w800,
         ),
       ),
-      const SizedBox(height: 8),
-      const Text(
-        'Search for a Kenyan place, or rotate and zoom the map. Tap a verified area to explore its local areas.',
-        style: TextStyle(color: muted, fontSize: 16, height: 1.45),
+      SizedBox(height: 8),
+      Text(
+        'Search for a place, or rotate and zoom the map. Tap a verified area to explore its local areas.',
+        style: TextStyle(
+          color: context.colors.onSurfaceVariant,
+          fontSize: 16,
+          height: 1.45,
+        ),
       ),
-      const Spacer(),
+      Spacer(),
       _metadataLine(Icons.touch_app_outlined, 'Drag to rotate · pinch to zoom'),
-      const SizedBox(height: 7),
+      SizedBox(height: 7),
       _metadataLine(
         Icons.account_tree_outlined,
         'Follow the administrative hierarchy provided by Mzizi geography',
@@ -420,14 +458,18 @@ class _ExploreScreenState extends State<ExploreScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.location_on_outlined, size: 18, color: forest),
-            const SizedBox(width: 6),
+            Icon(
+              Icons.location_on_outlined,
+              size: 18,
+              color: context.colors.primary,
+            ),
+            SizedBox(width: 6),
             Expanded(
               child: Text(
                 place.level.isEmpty ? 'Geographic area' : place.level,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
-                  color: muted,
+                  color: context.colors.onSurfaceVariant,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -436,7 +478,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               IconButton(
                 tooltip: 'Go to parent area',
                 onPressed: _goToParent,
-                icon: const Icon(Icons.north_west, size: 17),
+                icon: Icon(Icons.north_west, size: 17),
                 visualDensity: VisualDensity.compact,
               ),
           ],
@@ -445,21 +487,24 @@ class _ExploreScreenState extends State<ExploreScreen> {
           place.name,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22.5,
             height: 1.1,
-            color: ink,
+            color: context.colors.onSurface,
             fontWeight: FontWeight.w800,
           ),
         ),
         if (place.parentName != null) ...[
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             'Within ${place.parentName}',
-            style: const TextStyle(fontSize: 14.5, color: muted),
+            style: TextStyle(
+              fontSize: 14.5,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ],
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         _metadataLine(
           place.boundaryVerified
               ? Icons.verified_outlined
@@ -467,34 +512,39 @@ class _ExploreScreenState extends State<ExploreScreen> {
           boundaryVerified
               ? 'Verified boundary${place.boundaryYear == null ? '' : ' · ${place.boundaryYear}'}'
               : 'No verified boundary available',
-          color: boundaryVerified ? forest : const Color(0xFF9A5C08),
+          color: boundaryVerified
+              ? context.colors.primary
+              : context.warningColor,
         ),
         if (place.boundarySource != null) ...[
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           _metadataLine(Icons.source_outlined, place.boundarySource!),
         ],
         if (place.boundaryLicense != null) ...[
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           _metadataLine(Icons.policy_outlined, place.boundaryLicense!),
         ],
-        const Divider(height: 20),
-        const Text(
+        Divider(height: 20),
+        Text(
           'GOVERNANCE INFORMATION',
           style: TextStyle(
             fontSize: 12.5,
             letterSpacing: 1,
-            color: muted,
+            color: context.colors.onSurfaceVariant,
             fontWeight: FontWeight.w800,
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         Expanded(
           child: _mapLoading
-              ? const Align(
+              ? Align(
                   alignment: Alignment.topLeft,
                   child: Text(
                     'Loading area details…',
-                    style: TextStyle(fontSize: 14.5, color: muted),
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                 )
               : _governance(scene?.governance),
@@ -503,55 +553,57 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  Widget _governance(Map<String, dynamic>? data) {
-    final sections = data?['sections'];
-    if (sections is! List || sections.isEmpty) {
-      return const Align(
+  Widget _governance(GeographyGovernance? data) {
+    final sections = data?.sections;
+    if (sections == null || sections.isEmpty) {
+      return Align(
         alignment: Alignment.topLeft,
         child: Text(
           'No linked governance records were returned by the API.',
-          style: TextStyle(fontSize: 14.5, color: muted, height: 1.4),
+          style: TextStyle(
+            fontSize: 14.5,
+            color: context.colors.onSurfaceVariant,
+            height: 1.4,
+          ),
         ),
       );
     }
     return ListView(
       padding: EdgeInsets.zero,
       children: [
-        for (final section in sections.whereType<Map<String, dynamic>>()) ...[
+        for (final section in sections) ...[
           Padding(
-            padding: const EdgeInsets.only(top: 6, bottom: 3),
+            padding: EdgeInsets.only(top: 6, bottom: 3),
             child: Text(
-              (section['title'] ?? section['name'] ?? 'Records').toString(),
-              style: const TextStyle(
+              section.title,
+              style: TextStyle(
                 fontSize: 14.5,
                 fontWeight: FontWeight.w800,
-                color: ink,
+                color: context.colors.onSurface,
               ),
             ),
           ),
-          if (section['records'] is List)
-            for (final record
-                in (section['records'] as List)
-                    .whereType<Map<String, dynamic>>())
+          if (section.records.isNotEmpty)
+            for (final record in section.records)
               ListTile(
                 dense: true,
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(
+                leading: Icon(
                   Icons.article_outlined,
                   size: 15,
-                  color: forest,
+                  color: context.colors.primary,
                 ),
                 title: Text(
-                  (record['title'] ?? record['name'] ?? 'Record').toString(),
+                  record.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 14.5),
+                  style: TextStyle(fontSize: 14.5),
                 ),
                 subtitle: Text(
-                  (record['summary'] ?? record['description'] ?? '').toString(),
+                  record.summary ?? '',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 13),
+                  style: TextStyle(fontSize: 13),
                 ),
               ),
         ],
@@ -559,29 +611,35 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  Widget _metadataLine(IconData icon, String text, {Color color = muted}) =>
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(fontSize: 13, color: color, height: 1.3),
-            ),
-          ),
-        ],
-      );
-
-  Widget _attribution() => const Row(
+  Widget _metadataLine(IconData icon, String text, {Color? color}) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Icon(Icons.public, size: 13, color: muted),
+      Icon(icon, size: 14, color: color ?? context.colors.onSurfaceVariant),
+      SizedBox(width: 6),
+      Expanded(
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 13,
+            color: color ?? context.colors.onSurfaceVariant,
+            height: 1.3,
+          ),
+        ),
+      ),
+    ],
+  );
+
+  Widget _attribution() => Row(
+    children: [
+      Icon(Icons.public, size: 13, color: context.colors.onSurfaceVariant),
       SizedBox(width: 6),
       Expanded(
         child: Text(
           'Globe imagery: NASA Global Imagery Browse Services (GIBS) · Boundaries and attribution are provided by Mzizi geography services.',
-          style: TextStyle(fontSize: 12.5, color: muted),
+          style: TextStyle(
+            fontSize: 12.5,
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       ),
     ],
@@ -590,11 +648,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget _bottomNav() => SafeArea(
     top: false,
     child: Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFFFAFCFA),
-        border: Border(top: BorderSide(color: line)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border(top: BorderSide(color: context.colors.outlineVariant)),
       ),
-      padding: const EdgeInsets.only(top: 7, bottom: 8),
+      padding: EdgeInsets.only(top: 7, bottom: 8),
       child: Row(
         children: [
           _navItem(0, Icons.home_outlined, 'Home'),
@@ -617,13 +675,21 @@ class _ExploreScreenState extends State<ExploreScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 19, color: index == 1 ? forest : muted),
-            const SizedBox(height: 3),
+            Icon(
+              icon,
+              size: 19,
+              color: index == 1
+                  ? context.colors.primary
+                  : context.colors.onSurfaceVariant,
+            ),
+            SizedBox(height: 3),
             Text(
               label,
               style: TextStyle(
                 fontSize: 13,
-                color: index == 1 ? forest : muted,
+                color: index == 1
+                    ? context.colors.primary
+                    : context.colors.onSurfaceVariant,
                 fontWeight: index == 1 ? FontWeight.w700 : FontWeight.w400,
               ),
             ),

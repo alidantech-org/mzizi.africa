@@ -5,7 +5,7 @@ import 'screens/home_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/money_screen.dart';
 import 'screens/saved_screen.dart';
-import 'theme/app_colors.dart';
+import 'theme/app_theme.dart';
 
 void main() => runApp(const MziziApp());
 
@@ -16,16 +16,9 @@ class MziziApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
     title: 'Mzizi Africa',
     debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: page,
-      colorScheme: ColorScheme.fromSeed(seedColor: forest, surface: page),
-      fontFamily: 'Roboto',
-      textTheme: const TextTheme(
-        bodyMedium: TextStyle(color: ink),
-        bodySmall: TextStyle(color: muted),
-      ),
-    ),
+    theme: AppTheme.light,
+    darkTheme: AppTheme.dark,
+    themeMode: ThemeMode.light,
     home: const AppShell(),
   );
 }

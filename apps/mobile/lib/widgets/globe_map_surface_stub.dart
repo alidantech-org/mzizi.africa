@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
 import 'globe_map_surface.dart';
 
 GlobeMapSurface createGlobeMapSurface({
@@ -11,11 +12,11 @@ GlobeMapSurface createGlobeMapSurface({
 class _UnsupportedGlobeSurface implements GlobeMapSurface {
   @override
   Widget build() => const ColoredBox(
-    color: Color(0xFF071612),
+    color: AppColors.lightBackground,
     child: Center(
       child: Text(
         '3D globe is not available on this platform.',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: AppColors.lightForeground),
       ),
     ),
   );

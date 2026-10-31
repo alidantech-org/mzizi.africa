@@ -48,6 +48,17 @@ Those are different states and must not be collapsed.
 
 Every major step should produce its own identity, timestamps, method/version metadata and lineage.
 
+## Geography boundary publication
+
+Administrative boundary geometry is a derived representation tied to a stable
+`GeoUnits.id`. Keep each boundary version with its source reference, license,
+retrieval time, reference year, validity dates, verification state and optional
+backend-provided label point. A new boundary version does not replace the raw
+source artifact or change the geography entity ID. Historical names and
+rename/split/merge links are separate temporal records and require source
+references. Public map endpoints expose only records marked verified and
+current; missing geometry stays unavailable instead of being inferred.
+
 ---
 
 # 1. Source discovery

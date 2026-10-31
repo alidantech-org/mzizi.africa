@@ -16,42 +16,42 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String era = 'All Eras';
   String county = 'Nakuru County';
   static const events = [
-    _HistoryEvent(
+    const _HistoryEvent(
       '1895',
       'Protectorate administration begins',
       'The British East Africa Protectorate is established. The region that later becomes Kenya is administered as a protectorate.',
       'COLONIAL PERIOD',
       'East Africa Protectorate records',
     ),
-    _HistoryEvent(
+    const _HistoryEvent(
       '1920',
       'Kenya Colony proclaimed',
       'The territory is formally designated the Kenya Colony, with changing administrative districts and boundaries.',
       'COLONIAL PERIOD',
       'Kenya Colony Gazette notices',
     ),
-    _HistoryEvent(
+    const _HistoryEvent(
       '1963',
       'Independence and self-government',
       'Kenya attains independence. Provincial and district administration continues through the early republic.',
       'REPUBLIC',
       'Independence instruments • Kenya National Archives',
     ),
-    _HistoryEvent(
+    const _HistoryEvent(
       '2010',
       'Constitution establishes 47 counties',
       'The Constitution introduces devolved government and lists the county boundaries and names in the First Schedule.',
       'DEVOLUTION',
       'Constitution of Kenya • First Schedule',
     ),
-    _HistoryEvent(
+    const _HistoryEvent(
       '2013',
       'County governments take office',
       'The first county administrations are established following the March 2013 general election.',
       'DEVOLUTION',
       'Transition Authority • County handover reports',
     ),
-    _HistoryEvent(
+    const _HistoryEvent(
       '2023–27',
       'Nakuru County development plan',
       'The County Integrated Development Plan sets the county planning framework and priority programmes for the period.',
@@ -67,84 +67,92 @@ class _HistoryScreenState extends State<HistoryScreen> {
     super.dispose();
   }
 
-  void detail(
-    String title,
-    String body,
-    String source,
-  ) => showModalBottomSheet<void>(
-    context: context,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (ctx) => SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: line,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-            ),
-            const SizedBox(height: 17),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 22.5,
-                fontWeight: FontWeight.w800,
-                color: ink,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              body,
-              style: const TextStyle(fontSize: 17, height: 1.4, color: muted),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEEF4EF),
-                borderRadius: BorderRadius.circular(9),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.source_outlined, size: 16, color: forest),
-                  const SizedBox(width: 7),
-                  Expanded(
-                    child: Text(
-                      source,
-                      style: const TextStyle(fontSize: 14.5, color: ink),
+  void detail(String title, String body, String source) =>
+      showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (ctx) => SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(18, 18, 18, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: context.colors.outlineVariant,
+                      borderRadius: BorderRadius.circular(5),
                     ),
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: 17),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 22.5,
+                    fontWeight: FontWeight.w800,
+                    color: context.colors.onSurface,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  body,
+                  style: TextStyle(
+                    fontSize: 17,
+                    height: 1.4,
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+                SizedBox(height: 12),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: context.colors.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.source_outlined,
+                        size: 16,
+                        color: context.colors.primary,
+                      ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: Text(
+                          source,
+                          style: TextStyle(
+                            fontSize: 14.5,
+                            color: context.colors.onSurface,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: Text('Close'),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Close'),
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xFFF4F9F3),
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     body: SafeArea(
       bottom: false,
       child: Column(
@@ -154,23 +162,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
             child: CustomScrollView(
               slivers: [
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(12, 11, 12, 18),
+                  padding: EdgeInsets.fromLTRB(12, 11, 12, 18),
                   sliver: SliverList.list(
                     children: [
                       _intro(),
-                      const SizedBox(height: 11),
+                      SizedBox(height: 11),
                       _searchBar(),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                       _countyCard(),
-                      const SizedBox(height: 11),
+                      SizedBox(height: 11),
                       _eraFilters(),
-                      const SizedBox(height: 13),
+                      SizedBox(height: 13),
                       _timeline(),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       _boundaryCard(),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       _recordSection(),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       _sourceNote(),
                     ],
                   ),
@@ -185,30 +193,34 @@ class _HistoryScreenState extends State<HistoryScreen> {
   );
 
   Widget _header() => Container(
-    padding: const EdgeInsets.fromLTRB(12, 7, 12, 7),
-    decoration: const BoxDecoration(
-      color: Color(0xFFF8FBF7),
-      border: Border(bottom: BorderSide(color: line)),
+    padding: EdgeInsets.fromLTRB(12, 7, 12, 7),
+    decoration: BoxDecoration(
+      color: context.colors.surfaceContainerLow,
+      border: Border(bottom: BorderSide(color: context.colors.outlineVariant)),
     ),
     child: Row(
       children: [
-        const Icon(Icons.history_edu, size: 20, color: forest),
-        const SizedBox(width: 7),
-        const Expanded(
+        Icon(Icons.history_edu, size: 20, color: context.colors.primary),
+        SizedBox(width: 7),
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Mzizi Africa',
                 style: TextStyle(
+                  fontFamily: 'serif',
                   fontSize: 14.5,
                   fontWeight: FontWeight.w800,
-                  color: deepGreen,
+                  color: context.colors.primary,
                 ),
               ),
               Text(
                 'KENYA PUBLIC EVIDENCE',
-                style: TextStyle(fontSize: 10.5, color: muted),
+                style: TextStyle(
+                  fontSize: 10.5,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -241,21 +253,31 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
           child: Row(
             children: [
-              const Icon(Icons.location_on_outlined, size: 12, color: forest),
-              Text(county, style: const TextStyle(fontSize: 11.5, color: ink)),
-              const Icon(Icons.keyboard_arrow_down, size: 13),
+              Icon(
+                Icons.location_on_outlined,
+                size: 12,
+                color: context.colors.primary,
+              ),
+              Text(
+                county,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  color: context.colors.onSurface,
+                ),
+              ),
+              Icon(Icons.keyboard_arrow_down, size: 13),
             ],
           ),
         ),
         IconButton(
           onPressed: searchFocus.requestFocus,
-          icon: const Icon(Icons.search, size: 18),
+          icon: Icon(Icons.search, size: 18),
           visualDensity: VisualDensity.compact,
         ),
-        const CircleAvatar(
+        CircleAvatar(
           radius: 12,
-          backgroundColor: Color(0xFFBFD1C3),
-          child: Icon(Icons.person, size: 14, color: deepGreen),
+          backgroundColor: context.colors.outline,
+          child: Icon(Icons.person, size: 14, color: context.colors.primary),
         ),
       ],
     ),
@@ -264,62 +286,74 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget _intro() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Row(
+      Row(
         children: [
-          Icon(Icons.account_balance_outlined, size: 12, color: forest),
+          Icon(
+            Icons.account_balance_outlined,
+            size: 12,
+            color: context.colors.primary,
+          ),
           SizedBox(width: 5),
           Text(
             'CIVIC HISTORY & ARCHIVES',
             style: TextStyle(
               fontSize: 11.5,
               letterSpacing: .4,
-              color: forest,
+              color: context.colors.primary,
               fontWeight: FontWeight.w800,
             ),
           ),
         ],
       ),
-      const SizedBox(height: 4),
-      const Text(
+      SizedBox(height: 4),
+      Text(
         'Kenya’s Civic Timeline',
         style: TextStyle(
+          fontFamily: 'serif',
           fontSize: 23.5,
           height: 1.1,
-          color: deepGreen,
+          color: context.colors.primary,
           fontWeight: FontWeight.w800,
         ),
       ),
-      const SizedBox(height: 3),
+      SizedBox(height: 3),
       Text(
         'Explore constitutional milestones, county boundaries, and public records for $county.',
-        style: const TextStyle(fontSize: 14, color: muted, height: 1.3),
+        style: TextStyle(
+          fontSize: 14,
+          color: context.colors.onSurfaceVariant,
+          height: 1.3,
+        ),
       ),
     ],
   );
 
   Widget _searchBar() => Container(
     height: 34,
-    padding: const EdgeInsets.symmetric(horizontal: 9),
+    padding: EdgeInsets.symmetric(horizontal: 9),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: line),
+      border: Border.all(color: context.colors.outlineVariant),
     ),
     child: Row(
       children: [
-        const Icon(Icons.search, size: 14, color: forest),
-        const SizedBox(width: 5),
+        Icon(Icons.search, size: 14, color: context.colors.primary),
+        SizedBox(width: 5),
         Expanded(
           child: TextField(
             controller: search,
             focusNode: searchFocus,
             onChanged: (_) => setState(() {}),
-            style: const TextStyle(fontSize: 12.5),
-            decoration: const InputDecoration(
+            style: TextStyle(fontSize: 12.5),
+            decoration: InputDecoration(
               border: InputBorder.none,
               isDense: true,
               hintText: 'Search historical records, dates, or institutions…',
-              hintStyle: TextStyle(fontSize: 12.5, color: muted),
+              hintStyle: TextStyle(
+                fontSize: 12.5,
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ),
         ),
@@ -329,16 +363,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
               search.clear();
               setState(() {});
             },
-            child: const Icon(Icons.cancel_outlined, size: 14, color: muted),
+            child: Icon(
+              Icons.cancel_outlined,
+              size: 14,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
       ],
     ),
   );
 
   Widget _countyCard() => Container(
-    padding: const EdgeInsets.all(10),
+    padding: EdgeInsets.all(10),
     decoration: BoxDecoration(
-      color: const Color(0xFFEAF3EC),
+      color: context.colors.secondaryContainer,
       borderRadius: BorderRadius.circular(12),
     ),
     child: Row(
@@ -347,37 +385,51 @@ class _HistoryScreenState extends State<HistoryScreen> {
           width: 35,
           height: 35,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(9),
           ),
-          child: const Icon(Icons.location_city, color: forest, size: 19),
+          child: Icon(
+            Icons.location_city,
+            color: context.colors.primary,
+            size: 19,
+          ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 county.toUpperCase(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10.5,
                   letterSpacing: .3,
-                  color: forest,
+                  color: context.colors.primary,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const Text(
+              Text(
                 'County code 032 • Rift Valley Region',
-                style: TextStyle(fontSize: 12.5, color: ink),
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: context.colors.onSurface,
+                ),
               ),
-              const Text(
+              Text(
                 'Boundary record follows the 2010 Constitution',
-                style: TextStyle(fontSize: 11, color: muted),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
         ),
-        _pill('47 Counties', const Color(0xFFD6F3E2), forest),
+        _pill(
+          '47 Counties',
+          context.colors.secondaryContainer,
+          context.colors.primary,
+        ),
       ],
     ),
   );
@@ -406,13 +458,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     ? 'COUNTY RECORD'
                     : 'All Eras');
             return Padding(
-              padding: const EdgeInsets.only(right: 5),
+              padding: EdgeInsets.only(right: 5),
               child: ChoiceChip(
                 label: Text(
                   item,
                   style: TextStyle(
                     fontSize: 11.5,
-                    color: selected ? Colors.white : ink,
+                    color: selected
+                        ? context.colors.onPrimary
+                        : context.colors.onSurface,
                   ),
                 ),
                 selected: selected,
@@ -427,12 +481,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       ? 'COUNTY RECORD'
                       : 'All Eras',
                 ),
-                selectedColor: deepGreen,
-                backgroundColor: const Color(0xFFE7EEE8),
+                selectedColor: context.colors.primary,
+                backgroundColor: context.colors.outlineVariant,
                 side: BorderSide.none,
                 showCheckmark: false,
                 visualDensity: VisualDensity.compact,
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 0),
               ),
             );
           }).toList(),
@@ -455,24 +509,27 @@ class _HistoryScreenState extends State<HistoryScreen> {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
                 'HISTORICAL MILESTONES',
                 style: TextStyle(
                   fontSize: 11.5,
                   letterSpacing: .3,
-                  color: muted,
+                  color: context.colors.onSurfaceVariant,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ),
             Text(
               '${filtered.length} records',
-              style: const TextStyle(fontSize: 11, color: muted),
+              style: TextStyle(
+                fontSize: 11,
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 7),
+        SizedBox(height: 7),
         if (filtered.isEmpty)
           _empty('No timeline records match this search.')
         else
@@ -497,11 +554,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
             children: [
               Container(
                 width: 47,
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: EdgeInsets.symmetric(vertical: 5),
                 decoration: BoxDecoration(
                   color: event.category == 'DEVOLUTION'
-                      ? deepGreen
-                      : const Color(0xFFE0EBE2),
+                      ? context.colors.primary
+                      : context.colors.secondaryContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -510,25 +567,29 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   style: TextStyle(
                     fontSize: 11.5,
                     color: event.category == 'DEVOLUTION'
-                        ? Colors.white
-                        : deepGreen,
+                        ? context.colors.onPrimary
+                        : context.colors.primary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
               if (!last)
-                Container(width: 1, height: 73, color: const Color(0xFFC8D8CC)),
+                Container(
+                  width: 1,
+                  height: 73,
+                  color: context.colors.outlineVariant,
+                ),
             ],
           ),
         ),
-        const SizedBox(width: 5),
+        SizedBox(width: 5),
         Expanded(
           child: Container(
-            margin: const EdgeInsets.only(bottom: 7),
-            padding: const EdgeInsets.all(9),
+            margin: EdgeInsets.only(bottom: 7),
+            padding: EdgeInsets.all(9),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: const Color(0xFFE5ECE6)),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              border: Border.all(color: context.colors.outlineVariant),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -536,47 +597,58 @@ class _HistoryScreenState extends State<HistoryScreen> {
               children: [
                 Text(
                   event.category,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10.5,
                     letterSpacing: .35,
-                    color: forest,
+                    color: context.colors.primary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   event.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
-                    color: ink,
+                    color: context.colors.onSurface,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 Text(
                   event.description,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: muted,
+                    color: context.colors.onSurfaceVariant,
                     height: 1.25,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.source_outlined, size: 9, color: forest),
-                    const SizedBox(width: 3),
+                    Icon(
+                      Icons.source_outlined,
+                      size: 9,
+                      color: context.colors.primary,
+                    ),
+                    SizedBox(width: 3),
                     Expanded(
                       child: Text(
                         event.source,
-                        style: const TextStyle(fontSize: 10.5, color: forest),
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          color: context.colors.primary,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const Icon(Icons.chevron_right, size: 13, color: muted),
+                    Icon(
+                      Icons.chevron_right,
+                      size: 13,
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ],
                 ),
               ],
@@ -588,10 +660,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
   );
 
   Widget _boundaryCard() => Container(
-    padding: const EdgeInsets.all(10),
+    padding: EdgeInsets.all(10),
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: const Color(0xFFE5ECE6)),
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border.all(color: context.colors.outlineVariant),
       borderRadius: BorderRadius.circular(11),
     ),
     child: Column(
@@ -599,48 +671,56 @@ class _HistoryScreenState extends State<HistoryScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.map_outlined, size: 15, color: forest),
-            const SizedBox(width: 5),
-            const Expanded(
+            Icon(Icons.map_outlined, size: 15, color: context.colors.primary),
+            SizedBox(width: 5),
+            Expanded(
               child: Text(
                 'County Boundaries & Devolution',
                 style: TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w700,
-                  color: ink,
+                  color: context.colors.onSurface,
                 ),
               ),
             ),
-            _pill('2010 →', const Color(0xFFE4F0E7), forest),
+            _pill(
+              '2010 →',
+              context.colors.secondaryContainer,
+              context.colors.primary,
+            ),
           ],
         ),
-        const SizedBox(height: 5),
-        const Text(
+        SizedBox(height: 5),
+        Text(
           'The First Schedule to the Constitution lists Kenya’s 47 counties. Nakuru County (032) is part of the former Rift Valley Province.',
-          style: TextStyle(fontSize: 11, color: muted, height: 1.3),
+          style: TextStyle(
+            fontSize: 11,
+            color: context.colors.onSurfaceVariant,
+            height: 1.3,
+          ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         Row(
           children: [
             Expanded(child: _stat('47', 'Constitutional counties')),
-            const SizedBox(width: 5),
+            SizedBox(width: 5),
             Expanded(child: _stat('032', 'Nakuru county code')),
-            const SizedBox(width: 5),
+            SizedBox(width: 5),
             Expanded(child: _stat('2013', 'First county government')),
           ],
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         InkWell(
           onTap: () => detail(
             'County boundary record',
             'Nakuru County is identified as county number 032 in the First Schedule to the Constitution of Kenya.',
             'Constitution of Kenya (2010), First Schedule',
           ),
-          child: const Text(
+          child: Text(
             'Open boundary references  ↗',
             style: TextStyle(
               fontSize: 11,
-              color: forest,
+              color: context.colors.primary,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -652,16 +732,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget _recordSection() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Text(
+      Text(
         'OFFICIAL RECORDS & CITATIONS',
         style: TextStyle(
           fontSize: 11.5,
           letterSpacing: .35,
-          color: forest,
+          color: context.colors.primary,
           fontWeight: FontWeight.w700,
         ),
       ),
-      const SizedBox(height: 5),
+      SizedBox(height: 5),
       _record(
         Icons.description_outlined,
         'Constitution of Kenya (2010)',
@@ -691,11 +771,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
   ) => InkWell(
     onTap: () => detail(title, detailText, source),
     child: Container(
-      margin: const EdgeInsets.only(bottom: 5),
-      padding: const EdgeInsets.all(8),
+      margin: EdgeInsets.only(bottom: 5),
+      padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE5ECE6)),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border.all(color: context.colors.outlineVariant),
         borderRadius: BorderRadius.circular(9),
       ),
       child: Row(
@@ -704,60 +784,71 @@ class _HistoryScreenState extends State<HistoryScreen> {
             width: 27,
             height: 27,
             decoration: BoxDecoration(
-              color: const Color(0xFFEAF2EB),
+              color: context.colors.secondaryContainer,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(icon, size: 15, color: forest),
+            child: Icon(icon, size: 15, color: context.colors.primary),
           ),
-          const SizedBox(width: 7),
+          SizedBox(width: 7),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: ink,
+                    color: context.colors.onSurface,
                   ),
                 ),
                 Text(
                   detailText,
-                  style: const TextStyle(fontSize: 10.5, color: muted),
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
                 Text(
                   source,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10.5,
-                    color: forest,
+                    color: context.colors.primary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.open_in_new, size: 12, color: muted),
+          Icon(
+            Icons.open_in_new,
+            size: 12,
+            color: context.colors.onSurfaceVariant,
+          ),
         ],
       ),
     ),
   );
 
   Widget _sourceNote() => Container(
-    padding: const EdgeInsets.all(9),
+    padding: EdgeInsets.all(9),
     decoration: BoxDecoration(
-      color: const Color(0xFFE9F0EA),
+      color: context.colors.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(10),
     ),
-    child: const Row(
+    child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.verified_outlined, size: 14, color: forest),
+        Icon(Icons.verified_outlined, size: 14, color: context.colors.primary),
         SizedBox(width: 6),
         Expanded(
           child: Text(
             'Historical summaries are editorial guides. Confirm dates and legal effect in the cited gazette, archive, or statute.',
-            style: TextStyle(fontSize: 11, color: muted, height: 1.3),
+            style: TextStyle(
+              fontSize: 11,
+              color: context.colors.onSurfaceVariant,
+              height: 1.3,
+            ),
           ),
         ),
       ],
@@ -765,9 +856,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
   );
 
   Widget _stat(String value, String label) => Container(
-    padding: const EdgeInsets.all(6),
+    padding: EdgeInsets.all(6),
     decoration: BoxDecoration(
-      color: const Color(0xFFF0F5F0),
+      color: context.colors.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(7),
     ),
     child: Column(
@@ -775,18 +866,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
       children: [
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14.5,
-            color: forest,
+            color: context.colors.primary,
             fontWeight: FontWeight.w800,
           ),
         ),
-        Text(label, style: const TextStyle(fontSize: 10.5, color: muted)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10.5,
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
       ],
     ),
   );
   Widget _pill(String text, Color bg, Color fg) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
     decoration: BoxDecoration(
       color: bg,
       borderRadius: BorderRadius.circular(12),
@@ -797,18 +894,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
     ),
   );
   Widget _empty(String text) => Container(
-    padding: const EdgeInsets.all(15),
+    padding: EdgeInsets.all(15),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: BorderRadius.circular(10),
     ),
-    child: Text(text, style: const TextStyle(fontSize: 12.5, color: muted)),
+    child: Text(
+      text,
+      style: TextStyle(fontSize: 12.5, color: context.colors.onSurfaceVariant),
+    ),
   );
 
   Widget _bottomNav() => Container(
-    decoration: const BoxDecoration(
-      color: Color(0xFFFAFCFA),
-      border: Border(top: BorderSide(color: line)),
+    decoration: BoxDecoration(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border(top: BorderSide(color: context.colors.outlineVariant)),
     ),
     padding: EdgeInsets.only(
       top: 5,
@@ -837,13 +937,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 17, color: i == 3 ? forest : muted),
-          const SizedBox(height: 2),
+          Icon(
+            icon,
+            size: 17,
+            color: i == 3
+                ? context.colors.primary
+                : context.colors.onSurfaceVariant,
+          ),
+          SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
               fontSize: 10.5,
-              color: i == 3 ? forest : muted,
+              color: i == 3
+                  ? context.colors.primary
+                  : context.colors.onSurfaceVariant,
               fontWeight: i == 3 ? FontWeight.w700 : FontWeight.w400,
             ),
           ),

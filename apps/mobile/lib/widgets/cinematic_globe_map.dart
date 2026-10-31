@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../data/geography_api.dart';
+import '../theme/app_colors.dart';
 import 'globe_map_surface.dart';
 import 'globe_map_surface_stub.dart'
     if (dart.library.io) 'globe_map_surface_mobile.dart'
@@ -32,7 +33,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
   bool _pageReady = false;
   bool _loading = false;
   bool _configSent = false;
-  bool _countyBoundariesRequested = false;
+  bool _initialBoundariesRequested = false;
   String? _error;
   String? _warning;
   int _selectionGeneration = 0;
@@ -41,6 +42,15 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
   GeographyScene? _scene;
 
   static const _ionToken = String.fromEnvironment('CESIUM_ION_TOKEN');
+  static final _initialLongitude =
+      double.tryParse(String.fromEnvironment('MZIZI_MAP_INITIAL_LONGITUDE')) ??
+      37.9;
+  static final _initialLatitude =
+      double.tryParse(String.fromEnvironment('MZIZI_MAP_INITIAL_LATITUDE')) ??
+      -0.3;
+  static final _initialHeight =
+      double.tryParse(String.fromEnvironment('MZIZI_MAP_INITIAL_HEIGHT')) ??
+      1450000;
 
   @override
   void initState() {
@@ -56,7 +66,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
     if (!mounted) return;
     setState(() => _pageReady = true);
     _sendConfig();
-    _loadKenyanCounties();
+    _loadInitialBoundaries();
     if (_scene != null) {
       _pushScene(_scene!);
     } else {
@@ -64,26 +74,28 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
     }
   }
 
-  Future<void> _loadKenyanCounties() async {
-    if (!_pageReady || _countyBoundariesRequested) return;
-    _countyBoundariesRequested = true;
+  Future<void> _loadInitialBoundaries({bool retry = false}) async {
+    if (!_pageReady || (_initialBoundariesRequested && !retry)) return;
+    _initialBoundariesRequested = true;
     if (!GeographyApiClient.instance.isConfigured) {
       if (mounted) {
         setState(() {
-          _warning = 'Connect MZIZI_API_BASE_URL to load verified Kenya county boundaries.';
+          _warning = 'Set MZIZI_API_BASE_URL to load verified map boundaries.';
         });
       }
       return;
     }
     try {
-      final boundaries = await GeographyApiClient.instance
-          .kenyanCountyBoundaries();
+      final boundaries = await GeographyApiClient.instance.initialBoundaries();
       if (!mounted || !_pageReady) return;
-      await _surface.invoke('setKenyanCounties', {'boundaries': boundaries});
+      await _surface.invoke('setInitialBoundaries', {
+        'boundaries': boundaries.toJson(),
+      });
       if (mounted) setState(() => _warning = null);
     } catch (error) {
       if (mounted) {
         setState(() {
+          _initialBoundariesRequested = false;
           _warning = error.toString().replaceFirst('Exception: ', '');
         });
       }
@@ -105,7 +117,14 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
   Future<void> _sendConfig() async {
     if (!_pageReady || _configSent) return;
     _configSent = true;
-    await _surface.invoke('configure', {'ionToken': _ionToken});
+    await _surface.invoke('configure', {
+      'ionToken': _ionToken,
+      'initialView': {
+        'longitude': _initialLongitude,
+        'latitude': _initialLatitude,
+        'height': _initialHeight,
+      },
+    });
   }
 
   Future<void> _syncRequestedPlace() async {
@@ -118,7 +137,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
     await _loadScene(place.id);
   }
 
-  Future<void> _loadScene(String id) async {
+  Future<void> _loadScene(String id, {bool forceRefresh = false}) async {
     final generation = ++_selectionGeneration;
     _requestedId = id;
     _scene = null;
@@ -133,7 +152,10 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
     }
     if (!mounted || generation != _selectionGeneration) return;
     try {
-      final scene = await GeographyApiClient.instance.sceneFor(id);
+      final scene = await GeographyApiClient.instance.sceneFor(
+        id,
+        forceRefresh: forceRefresh,
+      );
       if (!mounted || generation != _selectionGeneration) return;
       _scene = scene;
       _loadedId = id;
@@ -156,10 +178,10 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
     final payload = {
       'selectedId': scene.entity.id,
       'selectedLevel': scene.entity.level,
-      'focusFeature': scene.focusFeature,
-      'parentBoundary': scene.parentBoundary,
-      'siblingBoundaries': scene.siblingBoundaries,
-      'childBoundaries': scene.childBoundaries,
+      'focusFeature': scene.focusFeature?.toJson(),
+      'parentBoundary': scene.parentBoundary?.toJson(),
+      'siblingBoundaries': scene.siblingBoundaries?.toJson(),
+      'childBoundaries': scene.childBoundaries?.toJson(),
       'loadingLabel': scene.hasVerifiedGeometry
           ? ''
           : 'No verified boundary is available for this area',
@@ -173,6 +195,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
     _requestedId = null;
     _scene = null;
     _error = null;
+    _loading = false;
     widget.onSceneChanged?.call(null);
     widget.onPlaceSelected?.call(null);
     if (_pageReady) {
@@ -186,7 +209,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
       final data = jsonDecode(message) as Map<String, dynamic>;
       switch (data['type']) {
         case 'mapReady':
-          _loadKenyanCounties();
+          _loadInitialBoundaries();
           break;
         case 'boundarySelected':
           final id = data['id']?.toString();
@@ -207,6 +230,12 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
   Future<void> _resolvePickedEntity(String id) => _loadScene(id);
 
   @override
+  void dispose() {
+    _surface.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => SizedBox(
     height: widget.height.isFinite ? widget.height : null,
     child: ClipRRect(
@@ -221,9 +250,9 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
             child: Column(
               children: [
                 _button(Icons.public, 'Reset to globe', _resetGlobe),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 _button(Icons.add, 'Zoom in', () => _runMapAction('zoomIn')),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 _button(
                   Icons.remove,
                   'Zoom out',
@@ -233,7 +262,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
             ),
           ),
           if (_loading)
-            const Positioned(
+            Positioned(
               top: 10,
               left: 10,
               child: _MapStatus(
@@ -252,7 +281,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
                 text: _error!,
                 onRetry: _requestedId == null
                     ? null
-                    : () => _loadScene(_requestedId!),
+                    : () => _loadScene(_requestedId!, forceRefresh: true),
               ),
             ),
           if (_warning != null)
@@ -260,13 +289,17 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
               left: 10,
               right: 58,
               bottom: 8,
-              child: _MapStatus(icon: Icons.info_outline, text: _warning!),
+              child: _MapStatus(
+                icon: Icons.info_outline,
+                text: _warning!,
+                onRetry: () => _loadInitialBoundaries(retry: true),
+              ),
             ),
           if (!_pageReady)
-            const ColoredBox(
-              color: Color(0xFF071612),
+            ColoredBox(
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: Center(
-                child: CircularProgressIndicator(color: Color(0xFF76C99A)),
+                child: CircularProgressIndicator(color: context.colors.primary),
               ),
             ),
         ],
@@ -277,15 +310,15 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
   Widget _button(IconData icon, String label, VoidCallback action) => Tooltip(
     message: label,
     child: Material(
-      color: const Color(0xE6102A24),
-      shape: const CircleBorder(),
+      color: context.mapOverlay,
+      shape: CircleBorder(),
       child: InkWell(
         onTap: action,
-        customBorder: const CircleBorder(),
+        customBorder: CircleBorder(),
         child: SizedBox(
           width: 42,
           height: 42,
-          child: Icon(icon, color: Colors.white, size: 20),
+          child: Icon(icon, color: context.mapOverlayText, size: 20),
         ),
       ),
     ),
@@ -295,12 +328,6 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
     if (_pageReady) {
       _surface.invoke(action);
     }
-  }
-
-  @override
-  void dispose() {
-    _surface.dispose();
-    super.dispose();
   }
 }
 
@@ -319,44 +346,44 @@ class _MapStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-    color: const Color(0xF2102A24),
+    color: context.mapOverlay,
     borderRadius: BorderRadius.circular(10),
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (busy)
-            const SizedBox(
+            SizedBox(
               width: 14,
               height: 14,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Color(0xFFB3E0C3),
+                color: context.colors.onSurface,
               ),
             )
           else
-            Icon(icon, size: 15, color: const Color(0xFFB3E0C3)),
-          const SizedBox(width: 7),
+            Icon(icon, size: 15, color: context.colors.onSurface),
+          SizedBox(width: 7),
           Flexible(
             child: Text(
               text,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: TextStyle(color: context.mapOverlayText, fontSize: 15),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),
           if (onRetry != null) ...[
-            const SizedBox(width: 5),
+            SizedBox(width: 5),
             TextButton(
               onPressed: onRetry,
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFFB3E0C3),
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                minimumSize: const Size(42, 28),
+                foregroundColor: context.colors.onSurface,
+                padding: EdgeInsets.symmetric(horizontal: 5),
+                minimumSize: Size(42, 28),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text('Retry'),
+              child: Text('Retry'),
             ),
           ],
         ],

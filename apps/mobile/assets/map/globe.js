@@ -30,6 +30,7 @@
   }
 
   const Cesium = window.Cesium;
+  let initialView = { longitude: 37.9, latitude: -0.3, height: 1450000 };
   const viewer = new Cesium.Viewer('globe', {
     animation: false,
     baseLayerPicker: false,
@@ -57,7 +58,7 @@
   viewer.scene.screenSpaceCameraController.inertiaSpin = 0.82;
   viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.82;
   viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(37.9, -0.3, 1450000),
+    destination: Cesium.Cartesian3.fromDegrees(initialView.longitude, initialView.latitude, initialView.height),
     orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
   });
 
@@ -75,12 +76,21 @@
   viewer.imageryLayers.addImageryProvider(imagery);
 
   let focusSource;
-  let countySource;
+  let initialBoundarySource;
   let parentSource;
   let siblingSource;
   let childSource;
   let selectedId = null;
+  let sceneGeneration = 0;
   const clickHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+  function flyToInitial(duration = 1.5) {
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(initialView.longitude, initialView.latitude, initialView.height),
+      orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
+      duration,
+    });
+  }
 
   function featureId(entity) {
     const properties = entity && entity.properties;
@@ -93,7 +103,11 @@
     const picked = viewer.scene.pick(event.position);
     const id = picked && picked.id;
     const geographyId = featureId(id);
-    if (geographyId) post('boundarySelected', { id: geographyId });
+    const verified = id && id.properties && id.properties.boundary_verified;
+    const isVerified = verified && verified.getValue
+      ? verified.getValue(Cesium.JulianDate.now()) === true
+      : verified === true;
+    if (geographyId && isVerified) post('boundarySelected', { id: geographyId });
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
   function styleChildren(source) {
@@ -125,7 +139,7 @@
     });
   }
 
-  function styleCounties(source, hiddenId = null) {
+  function styleInitialBoundaries(source, hiddenId = null) {
     source.entities.values.forEach((entity) => {
       if (!entity.polygon) return;
       entity.show = featureId(entity) !== hiddenId;
@@ -202,89 +216,76 @@
 
   window.MziziMap = {
     async configure(config) {
+      const requestedView = config && config.initialView;
+      if (requestedView &&
+          Number.isFinite(Number(requestedView.longitude)) &&
+          Number.isFinite(Number(requestedView.latitude)) &&
+          Number.isFinite(Number(requestedView.height)) &&
+          Math.abs(Number(requestedView.longitude)) <= 180 &&
+          Math.abs(Number(requestedView.latitude)) <= 90 &&
+          Number(requestedView.height) > 0) {
+        initialView = {
+          longitude: Number(requestedView.longitude),
+          latitude: Number(requestedView.latitude),
+          height: Number(requestedView.height),
+        };
+        flyToInitial(0.8);
+      }
       if (config && config.ionToken) {
         Cesium.Ion.defaultAccessToken = config.ionToken;
         try {
-          const terrain = Cesium.Terrain.fromWorldTerrain();
+          const terrain = await Cesium.Terrain.fromWorldTerrain();
           viewer.scene.setTerrain(terrain);
         } catch (error) {
           post('mapWarning', { message: 'Terrain is unavailable; using the globe surface.' });
         }
       }
     },
-    async setKenyanCounties(payload) {
+    async setInitialBoundaries(payload) {
       if (!payload || !payload.boundaries) return;
       try {
-        if (countySource) viewer.dataSources.remove(countySource, true);
-        countySource = await Cesium.GeoJsonDataSource.load(payload.boundaries, {
+        if (initialBoundarySource) viewer.dataSources.remove(initialBoundarySource, true);
+        initialBoundarySource = await Cesium.GeoJsonDataSource.load(payload.boundaries, {
           clampToGround: false,
           stroke: Cesium.Color.WHITE.withAlpha(0.92),
           strokeWidth: 1.8,
           fill: Cesium.Color.fromCssColorString('#123d32').withAlpha(0.14),
         });
-        viewer.dataSources.add(countySource);
-        styleCounties(countySource, selectedId);
+        viewer.dataSources.add(initialBoundarySource);
+        styleInitialBoundaries(initialBoundarySource, selectedId);
         state.textContent = '';
         viewer.scene.requestRender();
       } catch (error) {
-        post('mapWarning', { message: 'Verified Kenya county boundaries could not be displayed.' });
+          post('mapWarning', { message: 'Verified initial geography boundaries could not be displayed.' });
       }
     },
     async setScene(scene) {
+      const generation = ++sceneGeneration;
       state.textContent = scene && scene.loadingLabel ? scene.loadingLabel : '';
       selectedId = scene ? scene.selectedId : null;
       this.selectedLevel = scene ? scene.selectedLevel : '';
-      if (countySource) {
-        styleCounties(countySource, selectedId);
+      if (initialBoundarySource) {
+        styleInitialBoundaries(initialBoundarySource, selectedId);
       }
       await clearSources();
+      if (generation !== sceneGeneration) return;
       if (!scene || !scene.focusFeature) {
         if (scene && scene.reset) {
-          viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(37.9, -0.3, 1450000),
-            orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
-            duration: 1.6,
-          });
+          flyToInitial(1.6);
           state.textContent = '';
-        } else if (scene) {
-          viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(37.9, -0.3, 1450000),
-            orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
-            duration: 1.4,
-          });
         }
+        if (scene) await addSceneContext(scene, generation);
         viewer.scene.requestRender();
         return;
       }
       try {
-        if (scene.parentBoundary) {
-          parentSource = await addFeature(scene.parentBoundary, false, true);
+        await addSceneContext(scene, generation);
+        if (generation !== sceneGeneration) return;
+        focusSource = await addFeature(scene.focusFeature, true, false, false);
+        if (generation !== sceneGeneration) {
+          if (focusSource) viewer.dataSources.remove(focusSource, true);
+          return;
         }
-        if (scene.siblingBoundaries && Array.isArray(scene.siblingBoundaries.features)) {
-          siblingSource = await Cesium.GeoJsonDataSource.load(scene.siblingBoundaries, {
-            clampToGround: false,
-            stroke: Cesium.Color.fromCssColorString('#b9dec7').withAlpha(0.6),
-            strokeWidth: 1,
-            fill: Cesium.Color.fromCssColorString('#69c69a').withAlpha(0.035),
-          });
-          viewer.dataSources.add(siblingSource);
-          styleSiblings(siblingSource);
-        }
-        if (scene.childBoundaries && Array.isArray(scene.childBoundaries.features)) {
-          childSource = await Cesium.GeoJsonDataSource.load(scene.childBoundaries, {
-            clampToGround: false,
-            stroke: Cesium.Color.fromCssColorString('#c8f1d6').withAlpha(0.9),
-            strokeWidth: 1.35,
-            fill: Cesium.Color.fromCssColorString('#69c69a').withAlpha(0.12),
-          });
-          viewer.dataSources.add(childSource);
-          styleChildren(childSource);
-        }
-        const countryLevel = /country|nation/i.test(scene.selectedLevel || '');
-        const featureProperties = scene.focusFeature.properties || {};
-        const featureName = featureProperties.name || featureProperties.display_name || '';
-        const highlightRed = countryLevel || /kenya/i.test(String(featureName));
-        focusSource = await addFeature(scene.focusFeature, true, false, highlightRed);
         const focusIds = focusSource ? focusSource.entities.values : [];
         if (focusIds.length) {
           await viewer.flyTo(focusSource, { duration: 1.8, maximumHeight: 24000000 });
@@ -292,8 +293,9 @@
         state.textContent = '';
         viewer.scene.requestRender();
       } catch (error) {
+        if (generation !== sceneGeneration) return;
         state.textContent = 'Verified boundary could not be displayed';
-        post('mapError', { message: 'Verified boundary could not be rendered.' });
+        post('mapError', { message: `Verified boundary rendering failed: ${String(error && error.message ? error.message : error)}` });
       }
     },
     reset() {
@@ -308,6 +310,53 @@
       viewer.camera.zoomOut(Math.max(height * 0.4, 100));
     },
   };
+
+  async function addSceneContext(scene, generation) {
+    if (scene.parentBoundary) {
+      const source = await addFeature(scene.parentBoundary, false, true);
+      if (generation !== sceneGeneration) {
+        if (source) viewer.dataSources.remove(source, true);
+        return;
+      }
+      parentSource = source;
+    }
+    if (scene.siblingBoundaries && Array.isArray(scene.siblingBoundaries.features)) {
+      const source = await Cesium.GeoJsonDataSource.load(scene.siblingBoundaries, {
+        clampToGround: false,
+        stroke: Cesium.Color.fromCssColorString('#b9dec7').withAlpha(0.6),
+        strokeWidth: 1,
+        fill: Cesium.Color.fromCssColorString('#69c69a').withAlpha(0.035),
+      });
+      viewer.dataSources.add(source);
+      if (generation !== sceneGeneration) {
+        viewer.dataSources.remove(source, true);
+        return;
+      }
+      siblingSource = source;
+      styleSiblings(source);
+    }
+    if (scene.childBoundaries && Array.isArray(scene.childBoundaries.features)) {
+      const source = await Cesium.GeoJsonDataSource.load(scene.childBoundaries, {
+        clampToGround: false,
+        stroke: Cesium.Color.fromCssColorString('#c8f1d6').withAlpha(0.9),
+        strokeWidth: 1.35,
+        fill: Cesium.Color.fromCssColorString('#69c69a').withAlpha(0.12),
+      });
+      viewer.dataSources.add(source);
+      if (generation !== sceneGeneration) {
+        viewer.dataSources.remove(source, true);
+        return;
+      }
+      childSource = source;
+      styleChildren(source);
+    }
+    if (!scene.focusFeature) {
+      const framingSource = childSource || siblingSource || parentSource;
+      if (framingSource && generation === sceneGeneration) {
+        await viewer.flyTo(framingSource, { duration: 1.5, maximumHeight: 24000000 });
+      }
+    }
+  }
 
   imagery.errorEvent.addEventListener(() => {
     if (!focusSource && !childSource) state.textContent = 'Imagery is unavailable; interactive globe remains available';

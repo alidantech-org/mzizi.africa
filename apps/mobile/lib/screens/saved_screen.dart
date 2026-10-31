@@ -24,13 +24,13 @@ class _SavedScreenState extends State<SavedScreen> {
 
   void detail(SavedEntry entry) => showModalBottomSheet<void>(
     context: context,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (ctx) => SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 24),
+        padding: EdgeInsets.fromLTRB(18, 18, 18, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,37 +40,45 @@ class _SavedScreenState extends State<SavedScreen> {
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: line,
+                  color: context.colors.outlineVariant,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
-            const SizedBox(height: 17),
-            _pill(entry.type.toUpperCase(), const Color(0xFFE3F0E6), forest),
-            const SizedBox(height: 8),
+            SizedBox(height: 17),
+            _pill(
+              entry.type.toUpperCase(),
+              context.colors.secondaryContainer,
+              context.colors.primary,
+            ),
+            SizedBox(height: 8),
             Text(
               entry.title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 21.5,
                 fontWeight: FontWeight.w800,
-                color: ink,
+                color: context.colors.onSurface,
               ),
             ),
-            const SizedBox(height: 7),
+            SizedBox(height: 7),
             Text(
               entry.description,
-              style: const TextStyle(fontSize: 16, height: 1.4, color: muted),
+              style: TextStyle(
+                fontSize: 16,
+                height: 1.4,
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Text(
               entry.reference,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: forest,
+                color: context.colors.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 13),
+            SizedBox(height: 13),
             Row(
               children: [
                 Expanded(
@@ -79,19 +87,19 @@ class _SavedScreenState extends State<SavedScreen> {
                       SavedLibrary.instance.remove(entry.id);
                       Navigator.pop(ctx);
                     },
-                    icon: const Icon(Icons.bookmark_remove_outlined, size: 16),
-                    label: const Text('Remove saved'),
+                    icon: Icon(Icons.bookmark_remove_outlined, size: 16),
+                    label: Text('Remove saved'),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(ctx),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: deepGreen,
-                      foregroundColor: Colors.white,
+                      backgroundColor: context.colors.primary,
+                      foregroundColor: context.colors.onPrimary,
                     ),
-                    child: const Text('Done'),
+                    child: Text('Done'),
                   ),
                 ),
               ],
@@ -104,7 +112,7 @@ class _SavedScreenState extends State<SavedScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xFFF4F9F3),
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     body: SafeArea(
       bottom: false,
       child: Column(
@@ -116,19 +124,19 @@ class _SavedScreenState extends State<SavedScreen> {
               builder: (context, _) => CustomScrollView(
                 slivers: [
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(13, 12, 13, 18),
+                    padding: EdgeInsets.fromLTRB(13, 12, 13, 18),
                     sliver: SliverList.list(
                       children: [
                         _intro(),
-                        const SizedBox(height: 11),
+                        SizedBox(height: 11),
                         _searchBar(),
-                        const SizedBox(height: 9),
+                        SizedBox(height: 9),
                         _filterChips(),
-                        const SizedBox(height: 11),
+                        SizedBox(height: 11),
                         _summary(),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10),
                         _savedItems(),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         _privacyNote(),
                       ],
                     ),
@@ -144,48 +152,52 @@ class _SavedScreenState extends State<SavedScreen> {
   );
 
   Widget _header() => Container(
-    padding: const EdgeInsets.fromLTRB(12, 7, 12, 7),
-    decoration: const BoxDecoration(
-      color: Color(0xFFF8FBF7),
-      border: Border(bottom: BorderSide(color: line)),
+    padding: EdgeInsets.fromLTRB(12, 7, 12, 7),
+    decoration: BoxDecoration(
+      color: context.colors.surfaceContainerLow,
+      border: Border(bottom: BorderSide(color: context.colors.outlineVariant)),
     ),
     child: Row(
       children: [
-        const Icon(Icons.bookmark_outline, size: 19, color: forest),
-        const SizedBox(width: 7),
-        const Expanded(
+        Icon(Icons.bookmark_outline, size: 19, color: context.colors.primary),
+        SizedBox(width: 7),
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Mzizi Africa',
                 style: TextStyle(
+                  fontFamily: 'serif',
                   fontSize: 14.5,
                   fontWeight: FontWeight.w800,
-                  color: deepGreen,
+                  color: context.colors.primary,
                 ),
               ),
               Text(
                 'KENYA PUBLIC EVIDENCE',
-                style: TextStyle(fontSize: 10.5, color: muted),
+                style: TextStyle(
+                  fontSize: 10.5,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
         ),
-        const Text(
+        Text(
           'MY LIBRARY',
           style: TextStyle(
             fontSize: 10.5,
             letterSpacing: .4,
-            color: muted,
+            color: context.colors.onSurfaceVariant,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(width: 7),
-        const CircleAvatar(
+        SizedBox(width: 7),
+        CircleAvatar(
           radius: 12,
-          backgroundColor: Color(0xFFBFD1C3),
-          child: Icon(Icons.person, size: 14, color: deepGreen),
+          backgroundColor: context.colors.outline,
+          child: Icon(Icons.person, size: 14, color: context.colors.primary),
         ),
       ],
     ),
@@ -194,61 +206,73 @@ class _SavedScreenState extends State<SavedScreen> {
   Widget _intro() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Row(
+      Row(
         children: [
-          Icon(Icons.collections_bookmark_outlined, size: 13, color: forest),
+          Icon(
+            Icons.collections_bookmark_outlined,
+            size: 13,
+            color: context.colors.primary,
+          ),
           SizedBox(width: 5),
           Text(
             'YOUR CIVIC RESEARCH LIBRARY',
             style: TextStyle(
               fontSize: 11.5,
               letterSpacing: .4,
-              color: forest,
+              color: context.colors.primary,
               fontWeight: FontWeight.w800,
             ),
           ),
         ],
       ),
-      const SizedBox(height: 4),
-      const Text(
+      SizedBox(height: 4),
+      Text(
         'Saved Evidence',
         style: TextStyle(
+          fontFamily: 'serif',
           fontSize: 24.5,
           height: 1.1,
-          color: deepGreen,
+          color: context.colors.primary,
           fontWeight: FontWeight.w800,
         ),
       ),
-      const SizedBox(height: 3),
-      const Text(
+      SizedBox(height: 3),
+      Text(
         'Keep useful explainers, records, and public projects together for later review.',
-        style: TextStyle(fontSize: 14, height: 1.3, color: muted),
+        style: TextStyle(
+          fontSize: 14,
+          height: 1.3,
+          color: context.colors.onSurfaceVariant,
+        ),
       ),
     ],
   );
 
   Widget _searchBar() => Container(
     height: 35,
-    padding: const EdgeInsets.symmetric(horizontal: 9),
+    padding: EdgeInsets.symmetric(horizontal: 9),
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: line),
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border.all(color: context.colors.outlineVariant),
       borderRadius: BorderRadius.circular(18),
     ),
     child: Row(
       children: [
-        const Icon(Icons.search, size: 14, color: forest),
-        const SizedBox(width: 5),
+        Icon(Icons.search, size: 14, color: context.colors.primary),
+        SizedBox(width: 5),
         Expanded(
           child: TextField(
             controller: search,
             onChanged: (_) => setState(() {}),
-            style: const TextStyle(fontSize: 12.5),
-            decoration: const InputDecoration(
+            style: TextStyle(fontSize: 12.5),
+            decoration: InputDecoration(
               border: InputBorder.none,
               isDense: true,
               hintText: 'Search your saved evidence…',
-              hintStyle: TextStyle(fontSize: 12.5, color: muted),
+              hintStyle: TextStyle(
+                fontSize: 12.5,
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ),
         ),
@@ -258,7 +282,11 @@ class _SavedScreenState extends State<SavedScreen> {
               search.clear();
               setState(() {});
             },
-            child: const Icon(Icons.cancel_outlined, size: 14, color: muted),
+            child: Icon(
+              Icons.cancel_outlined,
+              size: 14,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
       ],
     ),
@@ -271,23 +299,25 @@ class _SavedScreenState extends State<SavedScreen> {
       children: filters
           .map(
             (item) => Padding(
-              padding: const EdgeInsets.only(right: 5),
+              padding: EdgeInsets.only(right: 5),
               child: ChoiceChip(
                 label: Text(
                   item,
                   style: TextStyle(
                     fontSize: 12,
-                    color: filter == item ? Colors.white : ink,
+                    color: filter == item
+                        ? context.colors.onPrimary
+                        : context.colors.onSurface,
                   ),
                 ),
                 selected: filter == item,
                 onSelected: (_) => setState(() => filter = item),
-                selectedColor: deepGreen,
-                backgroundColor: const Color(0xFFE7EEE8),
+                selectedColor: context.colors.primary,
+                backgroundColor: context.colors.outlineVariant,
                 side: BorderSide.none,
                 showCheckmark: false,
                 visualDensity: VisualDensity.compact,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
               ),
             ),
           )
@@ -298,9 +328,9 @@ class _SavedScreenState extends State<SavedScreen> {
   Widget _summary() {
     final items = SavedLibrary.instance.entries;
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color(0xFFEAF3EC),
+        color: context.colors.secondaryContainer,
         borderRadius: BorderRadius.circular(11),
       ),
       child: Row(
@@ -309,36 +339,43 @@ class _SavedScreenState extends State<SavedScreen> {
             width: 31,
             height: 31,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.bookmarks_outlined,
               size: 17,
-              color: forest,
+              color: context.colors.primary,
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '${items.length} saved ${items.length == 1 ? 'item' : 'items'}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
-                    color: deepGreen,
+                    color: context.colors.primary,
                   ),
                 ),
-                const Text(
+                Text(
                   'Available in this app session',
-                  style: TextStyle(fontSize: 11, color: muted),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
           ),
-          _pill('${items.length}', const Color(0xFFD3F2DE), forest),
+          _pill(
+            '${items.length}',
+            context.colors.secondaryContainer,
+            context.colors.primary,
+          ),
         ],
       ),
     );
@@ -360,10 +397,10 @@ class _SavedScreenState extends State<SavedScreen> {
     if (entries.isEmpty) {
       final hasSaved = SavedLibrary.instance.entries.isNotEmpty;
       return Container(
-        padding: const EdgeInsets.fromLTRB(17, 23, 17, 20),
+        padding: EdgeInsets.fromLTRB(17, 23, 17, 20),
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: const Color(0xFFE6ECE7)),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          border: Border.all(color: context.colors.outlineVariant),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
@@ -371,41 +408,45 @@ class _SavedScreenState extends State<SavedScreen> {
             Container(
               width: 48,
               height: 48,
-              decoration: const BoxDecoration(
-                color: Color(0xFFEAF2EB),
+              decoration: BoxDecoration(
+                color: context.colors.secondaryContainer,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.bookmark_add_outlined,
-                color: forest,
+                color: context.colors.primary,
                 size: 23,
               ),
             ),
-            const SizedBox(height: 9),
+            SizedBox(height: 9),
             Text(
               hasSaved
                   ? 'No ${filter.toLowerCase()} found'
                   : 'Your library is ready',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: ink,
+                color: context.colors.onSurface,
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               hasSaved ? 'Try another category or search term.' : 'Tap a bookmark on a briefing to keep it here. Your saved items will appear in this list.',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, height: 1.35, color: muted),
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.35,
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             OutlinedButton.icon(
               onPressed: () => widget.onNavigate?.call(1),
-              icon: const Icon(Icons.explore_outlined, size: 15),
-              label: const Text('Explore civic evidence'),
+              icon: Icon(Icons.explore_outlined, size: 15),
+              label: Text('Explore civic evidence'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: forest,
-                side: const BorderSide(color: line),
+                foregroundColor: context.colors.primary,
+                side: BorderSide(color: context.colors.outlineVariant),
               ),
             ),
           ],
@@ -417,12 +458,12 @@ class _SavedScreenState extends State<SavedScreen> {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
                 'SAVED ITEMS',
                 style: TextStyle(
                   fontSize: 11.5,
-                  color: muted,
+                  color: context.colors.onSurfaceVariant,
                   fontWeight: FontWeight.w700,
                   letterSpacing: .3,
                 ),
@@ -430,11 +471,14 @@ class _SavedScreenState extends State<SavedScreen> {
             ),
             Text(
               '${entries.length} items',
-              style: const TextStyle(fontSize: 11, color: muted),
+              style: TextStyle(
+                fontSize: 11,
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         ...entries.map(_savedCard),
       ],
     );
@@ -443,11 +487,11 @@ class _SavedScreenState extends State<SavedScreen> {
   Widget _savedCard(SavedEntry entry) => InkWell(
     onTap: () => detail(entry),
     child: Container(
-      margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.all(9),
+      margin: EdgeInsets.only(bottom: 6),
+      padding: EdgeInsets.all(9),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE5ECE6)),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border.all(color: context.colors.outlineVariant),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -457,7 +501,7 @@ class _SavedScreenState extends State<SavedScreen> {
             width: 31,
             height: 31,
             decoration: BoxDecoration(
-              color: const Color(0xFFEAF2EB),
+              color: context.colors.secondaryContainer,
               borderRadius: BorderRadius.circular(7),
             ),
             child: Icon(
@@ -465,45 +509,45 @@ class _SavedScreenState extends State<SavedScreen> {
                   ? Icons.article_outlined
                   : Icons.description_outlined,
               size: 16,
-              color: forest,
+              color: context.colors.primary,
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _pill(
                   entry.type.toUpperCase(),
-                  const Color(0xFFE7F1E8),
-                  forest,
+                  context.colors.secondaryContainer,
+                  context.colors.primary,
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   entry.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: ink,
+                    color: context.colors.onSurface,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   entry.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     height: 1.2,
-                    color: muted,
+                    color: context.colors.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   entry.reference,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10.5,
-                    color: forest,
+                    color: context.colors.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -512,7 +556,7 @@ class _SavedScreenState extends State<SavedScreen> {
           ),
           IconButton(
             onPressed: () => SavedLibrary.instance.remove(entry.id),
-            icon: const Icon(Icons.bookmark, size: 17, color: forest),
+            icon: Icon(Icons.bookmark, size: 17, color: context.colors.primary),
             visualDensity: VisualDensity.compact,
             tooltip: 'Remove saved item',
           ),
@@ -522,20 +566,24 @@ class _SavedScreenState extends State<SavedScreen> {
   );
 
   Widget _privacyNote() => Container(
-    padding: const EdgeInsets.all(9),
+    padding: EdgeInsets.all(9),
     decoration: BoxDecoration(
-      color: const Color(0xFFE9F0EA),
+      color: context.colors.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(9),
     ),
-    child: const Row(
+    child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.info_outline, size: 13, color: forest),
+        Icon(Icons.info_outline, size: 13, color: context.colors.primary),
         SizedBox(width: 6),
         Expanded(
           child: Text(
             'Bookmarks are held locally for this app session. Verify all public records against the original source before relying on them.',
-            style: TextStyle(fontSize: 11, height: 1.3, color: muted),
+            style: TextStyle(
+              fontSize: 11,
+              height: 1.3,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ),
       ],
@@ -543,7 +591,7 @@ class _SavedScreenState extends State<SavedScreen> {
   );
 
   Widget _pill(String text, Color bg, Color fg) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
     decoration: BoxDecoration(
       color: bg,
       borderRadius: BorderRadius.circular(12),
@@ -555,9 +603,9 @@ class _SavedScreenState extends State<SavedScreen> {
   );
 
   Widget _bottomNav() => Container(
-    decoration: const BoxDecoration(
-      color: Color(0xFFFAFCFA),
-      border: Border(top: BorderSide(color: line)),
+    decoration: BoxDecoration(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border(top: BorderSide(color: context.colors.outlineVariant)),
     ),
     padding: EdgeInsets.only(
       top: 5,
@@ -581,13 +629,21 @@ class _SavedScreenState extends State<SavedScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 17, color: i == 4 ? forest : muted),
-          const SizedBox(height: 2),
+          Icon(
+            icon,
+            size: 17,
+            color: i == 4
+                ? context.colors.primary
+                : context.colors.onSurfaceVariant,
+          ),
+          SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
               fontSize: 10.5,
-              color: i == 4 ? forest : muted,
+              color: i == 4
+                  ? context.colors.primary
+                  : context.colors.onSurfaceVariant,
               fontWeight: i == 4 ? FontWeight.w700 : FontWeight.w400,
             ),
           ),

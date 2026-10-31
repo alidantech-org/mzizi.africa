@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:async';
+
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -66,6 +69,36 @@ void main() {
       expect(entity.validTo, '1992-01-01');
       expect(entity.datasetVersion, 'v3');
     });
+
+    test('parses sourced historical names and identity relationships', () {
+      final entity = GeographyEntity.fromJson({
+        'id': 'geo-stable',
+        'name': 'Current name',
+        'historical_names': [
+          {
+            'name': 'Former name',
+            'valid_from': '1900-01-01',
+            'valid_to': '1963-12-11',
+          },
+        ],
+        'historical_relationships': [
+          {
+            'related_entity_id': 'geo-successor',
+            'relation_type': 'continued_as',
+            'valid_from': '1963-12-12',
+          },
+        ],
+      });
+      expect(entity.historicalNames.single.name, 'Former name');
+      expect(
+        entity.historicalRelationships.single.relatedEntityId,
+        'geo-successor',
+      );
+      expect(
+        entity.historicalRelationships.single.relationType,
+        'continued_as',
+      );
+    });
   });
 
   group('county boundary validation', () {
@@ -73,47 +106,58 @@ void main() {
       String? id = 'geo-county-1',
       bool verified = true,
       String? source = 'Survey dataset',
+      String? sourceReference = 'https://example.org/source',
       String? license = 'CC BY 4.0',
-    }) => {
-      'type': 'Feature',
-      'properties': {
-        if (id != null) 'geography_id': id,
-        'boundary_verified': verified,
-        if (source != null) 'boundary_source': source,
-        if (license != null) 'boundary_license': license,
-      },
-      'geometry': {
-        'type': 'MultiPolygon',
-        // Two polygons, each with an outer ring and an interior hole.
-        'coordinates': [
-          [
+    }) {
+      final properties = <String, Object?>{'boundary_verified': verified};
+      if (id != null) {
+        properties['geography_id'] = id;
+      }
+      if (source != null) {
+        properties['boundary_source'] = source;
+      }
+      if (sourceReference != null) {
+        properties['boundary_source_reference'] = sourceReference;
+      }
+      if (license != null) {
+        properties['boundary_license'] = license;
+      }
+      return {
+        'type': 'Feature',
+        'properties': properties,
+        'geometry': {
+          'type': 'MultiPolygon',
+          // Two polygons, each with an outer ring and an interior hole.
+          'coordinates': [
             [
-              [0, 0],
-              [4, 0],
-              [4, 4],
-              [0, 4],
-              [0, 0],
+              [
+                [0, 0],
+                [4, 0],
+                [4, 4],
+                [0, 4],
+                [0, 0],
+              ],
+              [
+                [1, 1],
+                [2, 1],
+                [2, 2],
+                [1, 2],
+                [1, 1],
+              ],
             ],
             [
-              [1, 1],
-              [2, 1],
-              [2, 2],
-              [1, 2],
-              [1, 1],
+              [
+                [8, 8],
+                [9, 8],
+                [9, 9],
+                [8, 9],
+                [8, 8],
+              ],
             ],
           ],
-          [
-            [
-              [8, 8],
-              [9, 8],
-              [9, 9],
-              [8, 9],
-              [8, 8],
-            ],
-          ],
-        ],
-      },
-    };
+        },
+      };
+    }
 
     test(
       'accepts verified MultiPolygon geometry and permits an empty layer',
@@ -146,6 +190,7 @@ void main() {
       for (final badFeature in [
         feature(verified: false),
         feature(source: null),
+        feature(sourceReference: null),
         feature(license: null),
       ]) {
         expect(
@@ -157,6 +202,64 @@ void main() {
         );
       }
     });
+
+    test(
+      'shared validation rejects unverified context and permits empty children',
+      () {
+        GeographyApiClient.validateVerifiedCollection({
+          'type': 'FeatureCollection',
+          'features': const [],
+        });
+        expect(
+          () => GeographyApiClient.validateVerifiedCollection({
+            'type': 'FeatureCollection',
+            'features': [feature(verified: false)],
+          }),
+          throwsFormatException,
+        );
+      },
+    );
+  });
+
+  test('typed governance model parses sections and records', () {
+    final data = GeographyGovernance.fromJson({
+      'sections': [
+        {
+          'title': 'Offices',
+          'records': [
+            {'title': 'Governor', 'summary': 'Sourced record'},
+          ],
+        },
+      ],
+    });
+    expect(data.sections.single.title, 'Offices');
+    expect(data.sections.single.records.single.title, 'Governor');
+    expect(data.sections.single.records.single.summary, 'Sourced record');
+  });
+
+  test('malformed governance and open polygon rings are rejected', () {
+    expect(
+      () => GeographyGovernance.fromJson({'sections': 'invalid'}),
+      throwsFormatException,
+    );
+    expect(
+      () => GeographyFeature.fromJson({
+        'type': 'Feature',
+        'properties': {'id': 'geo-1', 'boundary_verified': true},
+        'geometry': {
+          'type': 'Polygon',
+          'coordinates': [
+            [
+              [0, 0],
+              [1, 0],
+              [1, 1],
+              [0, 1],
+            ],
+          ],
+        },
+      }),
+      throwsFormatException,
+    );
   });
 
   group('GeographyApiClient', () {
@@ -202,7 +305,40 @@ void main() {
       await client.entity('geo-1');
       await client.entity('geo-1');
       expect(requests, 1);
+      client.clearCache(entityId: 'geo-1');
+      await client.entity('geo-1');
+      expect(requests, 2);
     });
+
+    test(
+      'a late search response cannot replace a newer query result',
+      () async {
+        final firstResponse = Completer<http.Response>();
+        final client = GeographyApiClient(
+          baseUrl: 'https://api.example.org',
+          client: MockClient((request) async {
+            if (request.url.queryParameters['q'] == 'old') {
+              return firstResponse.future;
+            }
+            return http.Response(
+              '{"results":[{"id":"new-id","name":"New result"}]}',
+              200,
+            );
+          }),
+        );
+        final oldSearch = client.search('old');
+        final newResults = await client.search('new');
+        firstResponse.complete(
+          http.Response(
+            '{"results":[{"id":"old-id","name":"Old result"}]}',
+            200,
+          ),
+        );
+        final oldResults = await oldSearch;
+        expect(newResults.single.id, 'new-id');
+        expect(oldResults, isEmpty);
+      },
+    );
 
     test('surfaces non-success HTTP responses', () async {
       final client = GeographyApiClient(
@@ -211,5 +347,90 @@ void main() {
       );
       await expectLater(client.entity('missing'), throwsException);
     });
+
+    test(
+      'keeps verified context and children when selected geometry is absent',
+      () async {
+        final requests = <String>[];
+        final client = GeographyApiClient(
+          baseUrl: 'https://api.example.org',
+          client: MockClient((request) async {
+            requests.add(request.url.path);
+            if (request.url.path.endsWith('/entities/selected')) {
+              return http.Response(
+                '{"id":"selected","name":"Selected","level":"local area","parent_id":"parent","boundary_verified":false}',
+                200,
+              );
+            }
+            if (request.url.path.endsWith('/entities/selected/boundary')) {
+              return http.Response('unexpected boundary request', 500);
+            }
+            if (request.url.path.endsWith('/children/boundaries')) {
+              return http.Response(
+                jsonEncode({
+                  'type': 'FeatureCollection',
+                  'features': [_verifiedFeature('child')],
+                }),
+                200,
+              );
+            }
+            if (request.url.path.endsWith('/map-context')) {
+              return http.Response(
+                jsonEncode({
+                  'parent_boundary': _verifiedFeature('parent'),
+                  'sibling_boundaries': {
+                    'type': 'FeatureCollection',
+                    'features': [_verifiedFeature('sibling')],
+                  },
+                }),
+                200,
+              );
+            }
+            if (request.url.path.endsWith('/governance')) {
+              return http.Response('Not found', 404);
+            }
+            return http.Response('Unexpected endpoint', 500);
+          }),
+        );
+
+        final scene = await client.sceneFor('selected');
+        expect(scene.focusFeature, isNull);
+        expect(scene.parentBoundary?.properties.geographyId, 'parent');
+        expect(
+          scene.siblingBoundaries?.features.single.properties.geographyId,
+          'sibling',
+        );
+        expect(
+          scene.childBoundaries?.features.single.properties.geographyId,
+          'child',
+        );
+        expect(scene.governance, isNull);
+        expect(requests.any((path) => path.endsWith('/boundary')), isFalse);
+      },
+    );
   });
 }
+
+Map<String, Object?> _verifiedFeature(String id) => {
+  'type': 'Feature',
+  'properties': {
+    'geography_id': id,
+    'name': id,
+    'level': 'area',
+    'boundary_verified': true,
+    'boundary_source': 'Survey dataset',
+    'boundary_source_reference': 'https://example.org/source',
+    'boundary_license': 'CC BY 4.0',
+  },
+  'geometry': {
+    'type': 'Polygon',
+    'coordinates': [
+      [
+        [0, 0],
+        [2, 0],
+        [2, 2],
+        [0, 0],
+      ],
+    ],
+  },
+};

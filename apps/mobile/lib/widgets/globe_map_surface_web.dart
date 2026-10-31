@@ -18,10 +18,9 @@ GlobeMapSurface createGlobeMapSurface({
 class _WebGlobeMapSurface implements GlobeMapSurface {
   _WebGlobeMapSurface({
     required GlobeMessageCallback onMessage,
-    required GlobeLoadCallback onLoad,
-    required GlobeErrorCallback onError,
-  }) : _onLoad = onLoad,
-       _onError = onError {
+    required this._onLoad,
+    required this._onError,
+  }) {
     _viewType = 'mzizi-cesium-globe-${_nextViewId++}';
     _messageSubscription = web.window.onMessage.listen((event) {
       final frame = _frame;

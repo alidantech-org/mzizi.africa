@@ -10,15 +10,89 @@ from .geographic_service import GeoService
 from .geographic_interface import GeographicInterface
 from .helpers.global_response import GlobalResponse, ResponseMetadata
 from app.config.database import get_db
+from .mobile_geography_service import MobileGeographyService
+from .models.mobile_api import (
+    GeographyEntityResponse,
+    GeographyFeature,
+    GeographyFeatureCollection,
+    GeographyGovernanceResponse,
+    GeographyMapContextResponse,
+    GeographySearchResponse,
+)
 
 
 router = APIRouter()
+mobile_router = APIRouter()
 
 
 # Dependency injection
 def get_geo_service(db: Session = Depends(get_db)) -> GeographicInterface:
     """Get geographic service instance"""
     return GeoService(db)
+
+
+def get_mobile_geography_service(db: Session = Depends(get_db)) -> MobileGeographyService:
+    return MobileGeographyService(db)
+
+
+@mobile_router.get("/search", response_model=GeographySearchResponse)
+async def mobile_geography_search(
+    q: str = Query(..., min_length=1, max_length=200),
+    country: Optional[str] = Query(None, min_length=2, max_length=3),
+    limit: int = Query(12, ge=1, le=100),
+    level: Optional[str] = Query(None, min_length=1, max_length=100),
+    service: MobileGeographyService = Depends(get_mobile_geography_service),
+) -> GeographySearchResponse:
+    return service.search(q, country, level, limit)
+
+
+@mobile_router.get("/boundaries", response_model=GeographyFeatureCollection)
+async def mobile_country_boundaries(
+    country: str = Query(..., min_length=2, max_length=3),
+    level: str = Query(..., min_length=1, max_length=100),
+    service: MobileGeographyService = Depends(get_mobile_geography_service),
+) -> GeographyFeatureCollection:
+    return service.country_boundaries(country, level)
+
+
+@mobile_router.get("/entities/{entity_id}", response_model=GeographyEntityResponse)
+async def mobile_geography_entity(
+    entity_id: str,
+    service: MobileGeographyService = Depends(get_mobile_geography_service),
+) -> GeographyEntityResponse:
+    return service.entity_by_id(entity_id)
+
+
+@mobile_router.get("/entities/{entity_id}/boundary", response_model=GeographyFeature)
+async def mobile_geography_boundary(
+    entity_id: str,
+    service: MobileGeographyService = Depends(get_mobile_geography_service),
+) -> GeographyFeature:
+    return service.boundary(entity_id)
+
+
+@mobile_router.get("/entities/{entity_id}/children/boundaries", response_model=GeographyFeatureCollection)
+async def mobile_geography_children(
+    entity_id: str,
+    service: MobileGeographyService = Depends(get_mobile_geography_service),
+) -> GeographyFeatureCollection:
+    return service.child_boundaries(entity_id)
+
+
+@mobile_router.get("/entities/{entity_id}/map-context", response_model=GeographyMapContextResponse)
+async def mobile_geography_context(
+    entity_id: str,
+    service: MobileGeographyService = Depends(get_mobile_geography_service),
+) -> GeographyMapContextResponse:
+    return service.map_context(entity_id)
+
+
+@mobile_router.get("/entities/{entity_id}/governance", response_model=GeographyGovernanceResponse)
+async def mobile_geography_governance(
+    entity_id: str,
+    service: MobileGeographyService = Depends(get_mobile_geography_service),
+) -> GeographyGovernanceResponse:
+    return service.governance(entity_id)
 
 
 @router.get("/levels", response_model=Dict[str, Any])

@@ -44,8 +44,15 @@ wards.
   "ancestors": [],
   "boundary_verified": true,
   "boundary_source": "source organization and dataset",
+  "boundary_source_reference": "stable source or artifact reference",
   "boundary_license": "license identifier and attribution terms",
-  "boundary_year": "2024"
+  "boundary_year": "2024",
+  "boundary_retrieved_at": "2025-01-14T10:00:00Z",
+  "boundary_version": 1,
+  "valid_from": "2013-03-04",
+  "valid_to": null,
+  "historical_names": [],
+  "historical_relationships": []
 }
 ```
 
@@ -71,8 +78,9 @@ in this collection. Empty `features` is a valid response.
 
 `/boundaries?country=KE&level=county` returns a GeoJSON `FeatureCollection`
 containing only verified Kenyan county geometries. Every feature must include a
-stable canonical geography ID, `boundary_verified: true`, source and license
-metadata, and a `label_point` when a county label is available. This endpoint
+stable canonical geography ID, `boundary_verified: true`, source, source
+reference and license metadata, and a `label_point` when a county label is
+available. This endpoint
 is required for direct county selection. The mobile client rejects the entire collection if a feature
 is missing an ID or is not marked verified.
 
@@ -106,6 +114,9 @@ or other governance facts.
   dates, and verification status in the entity/feature metadata.
 - Keep historical geometry versioned and queryable by canonical ID and valid
   time range. Avoid replacing an entity ID after a rename, split, or merge.
+- Historical boundary/name/identity records must be sourced; the mobile API
+  returns only current verified boundaries until an explicit historical-time
+  query is added to this contract.
 - The map imagery is NASA GIBS. If Cesium ion terrain is enabled, build with a
   restricted public token using
   `--dart-define=CESIUM_ION_TOKEN=...`. Do not embed backend secrets in the app.

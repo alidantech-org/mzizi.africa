@@ -22,13 +22,13 @@ class _HomeScreenState extends State<HomeScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
       builder: (ctx) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 26),
+          padding: EdgeInsets.fromLTRB(20, 18, 20, 26),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,46 +38,49 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 36,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: line,
+                    color: context.colors.outlineVariant,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
+              SizedBox(height: 18),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22.5,
                   fontWeight: FontWeight.w800,
-                  color: ink,
+                  color: context.colors.onSurface,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 body,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 17,
                   height: 1.45,
-                  color: muted,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
               if (options.isNotEmpty) ...[
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 ...options.map(
                   (o) => ListTile(
                     dense: true,
-                    leading: const Icon(Icons.layers_outlined, color: forest),
+                    leading: Icon(
+                      Icons.layers_outlined,
+                      color: context.colors.primary,
+                    ),
                     title: Text(o),
                     onTap: () => Navigator.pop(ctx),
                   ),
                 ),
               ],
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Close'),
+                  child: Text('Close'),
                 ),
               ),
             ],
@@ -106,19 +109,19 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Find a county, constituency, or ward',
+                Text(
+                  'Find a place or administrative area',
                   style: TextStyle(fontWeight: FontWeight.w800, fontSize: 21.5),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 TextField(
                   controller: queryController,
                   autofocus: true,
                   textInputAction: TextInputAction.search,
                   decoration: InputDecoration(
-                    hintText: 'Country, county, constituency, or ward',
+                    hintText: 'Search by place name',
                     suffixIcon: loading
-                        ? const Padding(
+                        ? Padding(
                             padding: EdgeInsets.all(12),
                             child: SizedBox(
                               width: 16,
@@ -127,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           )
                         : IconButton(
-                            icon: const Icon(Icons.search),
+                            icon: Icon(Icons.search),
                             onPressed: () async {
                               setSheetState(() => loading = true);
                               try {
@@ -161,9 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: results
                           .map(
                             (place) => ListTile(
-                              leading: const Icon(
+                              leading: Icon(
                                 Icons.place_outlined,
-                                color: forest,
+                                color: context.colors.primary,
                               ),
                               title: Text(place.name),
                               subtitle: Text(
@@ -185,11 +188,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (!loading &&
                     results.isEmpty &&
                     queryController.text.isNotEmpty)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(10),
                     child: Text(
                       'No matches yet. Submit a place name to search.',
-                      style: TextStyle(color: muted, fontSize: 16),
+                      style: TextStyle(
+                        color: context.colors.onSurfaceVariant,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
               ],
@@ -215,23 +221,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverToBoxAdapter(child: _search()),
                 SliverToBoxAdapter(child: _filters()),
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 16),
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 16),
                   sliver: SliverList.list(
                     children: [
                       _mapCard(),
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14),
                       _architecture(),
-                      const SizedBox(height: 15),
+                      SizedBox(height: 15),
                       _briefings(),
-                      const SizedBox(height: 15),
+                      SizedBox(height: 15),
                       _records(),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       _continueCard(),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       _sources(),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       _footer(),
-                      const SizedBox(height: 18),
+                      SizedBox(height: 18),
                     ],
                   ),
                 ),
@@ -245,10 +251,10 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   Widget _header() => Container(
-    padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-    decoration: const BoxDecoration(
-      color: Color(0xFFF6FAF6),
-      border: Border(bottom: BorderSide(color: line)),
+    padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
+    decoration: BoxDecoration(
+      color: context.colors.surfaceContainerLow,
+      border: Border(bottom: BorderSide(color: context.colors.outlineVariant)),
     ),
     child: Row(
       children: [
@@ -256,32 +262,37 @@ class _HomeScreenState extends State<HomeScreen> {
           width: 29,
           height: 29,
           decoration: BoxDecoration(
-            color: pale,
+            color: context.colors.secondaryContainer,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.account_balance_outlined,
-            color: forest,
+            color: context.colors.primary,
             size: 18,
           ),
         ),
-        const SizedBox(width: 7),
-        const Expanded(
+        SizedBox(width: 7),
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Mzizi Africa',
                 style: TextStyle(
+                  fontFamily: 'serif',
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: deepGreen,
+                  color: context.colors.primary,
                   height: 1.1,
                 ),
               ),
               Text(
                 'KENYA PUBLIC EVIDENCE',
-                style: TextStyle(fontSize: 11, letterSpacing: .3, color: muted),
+                style: TextStyle(
+                  fontSize: 11,
+                  letterSpacing: .3,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -289,15 +300,19 @@ class _HomeScreenState extends State<HomeScreen> {
         InkWell(
           onTap: chooseLocation,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 7, vertical: 5),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: line),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              border: Border.all(color: context.colors.outlineVariant),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
-                Icon(Icons.location_on, size: 11, color: forest),
+                Icon(
+                  Icons.location_on,
+                  size: 11,
+                  color: context.colors.primary,
+                ),
                 SizedBox(width: 3),
                 Text(
                   selectedPlace?.name ?? 'Choose location',
@@ -313,45 +328,48 @@ class _HomeScreenState extends State<HomeScreen> {
             'Search Mzizi',
             'Search counties, public projects, budgets, and official records.',
           ),
-          icon: const Icon(Icons.search, size: 20),
+          icon: Icon(Icons.search, size: 20),
           visualDensity: VisualDensity.compact,
         ),
         Container(
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: const Color(0xFFB7CFBF),
+            color: context.colors.outline,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Icon(Icons.person, size: 16, color: deepGreen),
+          child: Icon(Icons.person, size: 16, color: context.colors.primary),
         ),
       ],
     ),
   );
   Widget _search() => Padding(
-    padding: const EdgeInsets.fromLTRB(10, 7, 10, 3),
+    padding: EdgeInsets.fromLTRB(10, 7, 10, 3),
     child: Row(
       children: [
         Expanded(
           child: Container(
             height: 31,
-            padding: const EdgeInsets.symmetric(horizontal: 9),
+            padding: EdgeInsets.symmetric(horizontal: 9),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: line),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              border: Border.all(color: context.colors.outlineVariant),
               borderRadius: BorderRadius.circular(9),
             ),
             child: Row(
               children: [
-                const Icon(Icons.search, size: 16, color: forest),
-                const SizedBox(width: 6),
+                Icon(Icons.search, size: 16, color: context.colors.primary),
+                SizedBox(width: 6),
                 Expanded(
                   child: TextField(
                     controller: searchController,
-                    style: const TextStyle(fontSize: 13),
-                    decoration: const InputDecoration(
+                    style: TextStyle(fontSize: 13),
+                    decoration: InputDecoration(
                       hintText: 'Search Kilimani projects, Nairobi budget…',
-                      hintStyle: TextStyle(fontSize: 13, color: muted),
+                      hintStyle: TextStyle(
+                        fontSize: 13,
+                        color: context.colors.onSurfaceVariant,
+                      ),
                       border: InputBorder.none,
                       isDense: true,
                     ),
@@ -371,23 +389,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         : 'Illustrative results for “${searchController.text}”.',
                   ),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 3,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                     decoration: BoxDecoration(
-                      color: pale,
+                      color: context.colors.secondaryContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.touch_app, size: 10, color: forest),
+                        Icon(
+                          Icons.touch_app,
+                          size: 10,
+                          color: context.colors.primary,
+                        ),
                         Text(
                           ' Tap',
                           style: TextStyle(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w700,
-                            color: forest,
+                            color: context.colors.primary,
                           ),
                         ),
                       ],
@@ -405,7 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
     height: 29,
     child: ListView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       children: [
         _chip('● VERIFIED LOCAL EVIDENCE', active: true),
         _chip('⌖ NAIROBI 047'),
@@ -416,16 +435,20 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
   Widget _chip(String label, {bool active = false}) => Container(
-    margin: const EdgeInsets.only(right: 5),
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    margin: EdgeInsets.only(right: 5),
+    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     decoration: BoxDecoration(
-      color: active ? forest : const Color(0xFFEAF1EB),
+      color: active
+          ? context.colors.primary
+          : context.colors.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(16),
     ),
     child: Text(
       label,
       style: TextStyle(
-        color: active ? Colors.white : muted,
+        color: active
+            ? context.colors.onPrimary
+            : context.colors.onSurfaceVariant,
         fontSize: 11.5,
         fontWeight: FontWeight.w700,
       ),
@@ -434,8 +457,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _mapCard() => Container(
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: line),
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border.all(color: context.colors.outlineVariant),
       borderRadius: BorderRadius.circular(12),
     ),
     clipBehavior: Clip.antiAlias,
@@ -443,30 +466,37 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          color: const Color(0xFFF1F7F2),
-          padding: const EdgeInsets.fromLTRB(10, 9, 10, 7),
+          color: context.colors.surfaceContainerLow,
+          padding: EdgeInsets.fromLTRB(10, 9, 10, 7),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.map_outlined, color: forest, size: 14),
-                  const SizedBox(width: 5),
-                  const Expanded(
+                  Icon(
+                    Icons.map_outlined,
+                    color: context.colors.primary,
+                    size: 14,
+                  ),
+                  SizedBox(width: 5),
+                  Expanded(
                     child: Text(
-                      'KENYA LOCATIONS MAP',
+                      'GEOGRAPHY MAP',
                       style: TextStyle(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w800,
-                        color: forest,
+                        color: context.colors.primary,
                         letterSpacing: .3,
                       ),
                     ),
                   ),
-                  _badge('3D political globe', bg: pale),
+                  _badge(
+                    '3D political globe',
+                    bg: context.colors.secondaryContainer,
+                  ),
                 ],
               ),
-              const SizedBox(height: 7),
+              SizedBox(height: 7),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -476,18 +506,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           selectedPlace?.name ?? 'Select a location',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
-                            color: ink,
+                            color: context.colors.onSurface,
                           ),
                         ),
                         Text(
                           selectedPlace?.displayName ??
-                              'Search for a place in Kenya.',
+                              'Search for a place in ${GeographyApiClient.defaultCountry == 'KE' ? 'Kenya' : 'the selected country'}.',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12.5, color: ink),
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            color: context.colors.onSurface,
+                          ),
                         ),
                       ],
                     ),
@@ -499,9 +532,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       minimumSize: Size(48, 22),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Change⌄',
-                      style: TextStyle(fontSize: 12.5, color: forest),
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: context.colors.primary,
+                      ),
                     ),
                   ),
                 ],
@@ -518,34 +554,34 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(7, 0, 7, 5),
+          padding: EdgeInsets.fromLTRB(7, 0, 7, 5),
           child: Row(
             children: [
               _badge(
                 '● ${selectedPlace?.name ?? 'No location selected'}',
-                bg: pale,
-                color: forest,
+                bg: context.colors.secondaryContainer,
+                color: context.colors.primary,
               ),
             ],
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(9, 3, 9, 4),
+          padding: EdgeInsets.fromLTRB(9, 3, 9, 4),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'SELECT WARD TO INSPECT:',
                   style: TextStyle(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w700,
-                    color: muted,
+                    color: context.colors.onSurfaceVariant,
                   ),
                 ),
               ),
               TextButton(
                 onPressed: chooseLocation,
-                child: const Text(
+                child: Text(
                   'Search locations',
                   style: TextStyle(fontSize: 12.5),
                 ),
@@ -557,21 +593,21 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 36,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: EdgeInsets.symmetric(horizontal: 8),
             children: [
               ActionChip(
                 label: Text(
                   selectedPlace?.name ?? 'Find a place',
-                  style: const TextStyle(fontSize: 12.5),
+                  style: TextStyle(fontSize: 12.5),
                 ),
-                avatar: const Icon(Icons.search, size: 13),
+                avatar: Icon(Icons.search, size: 13),
                 onPressed: chooseLocation,
               ),
             ],
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+          padding: EdgeInsets.fromLTRB(8, 4, 8, 8),
           child: Row(
             children: [
               Expanded(
@@ -586,23 +622,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Audits',
                     ],
                   ),
-                  icon: const Icon(Icons.layers_outlined, size: 13),
-                  label: const Text(
+                  icon: Icon(Icons.layers_outlined, size: 13),
+                  label: Text(
                     'Explore Map Layers',
                     style: TextStyle(fontSize: 12.5),
                   ),
                   style: _primaryButton(),
                 ),
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: 6),
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () => notice(
                     'NG-CDF Ledger',
                     'Illustrative NG-CDF allocations and project records for Dagoretti North.',
                   ),
-                  icon: const Icon(Icons.description_outlined, size: 13),
-                  label: const Text(
+                  icon: Icon(Icons.description_outlined, size: 13),
+                  label: Text(
                     'NG-CDF Ledger',
                     style: TextStyle(fontSize: 12.5),
                   ),
@@ -616,19 +652,19 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
   ButtonStyle _primaryButton() => ElevatedButton.styleFrom(
-    backgroundColor: forest,
-    foregroundColor: Colors.white,
-    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 7),
-    minimumSize: const Size(0, 31),
+    backgroundColor: context.colors.primary,
+    foregroundColor: context.colors.onPrimary,
+    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 7),
+    minimumSize: Size(0, 31),
     visualDensity: VisualDensity.compact,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
   );
   ButtonStyle _outlineButton() => OutlinedButton.styleFrom(
-    backgroundColor: const Color(0xFFF7FAF7),
-    foregroundColor: ink,
-    side: const BorderSide(color: line),
-    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 7),
-    minimumSize: const Size(0, 31),
+    backgroundColor: context.colors.surfaceContainerLow,
+    foregroundColor: context.colors.onSurface,
+    side: BorderSide(color: context.colors.outlineVariant),
+    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 7),
+    minimumSize: Size(0, 31),
     visualDensity: VisualDensity.compact,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
   );
@@ -638,7 +674,7 @@ class _HomeScreenState extends State<HomeScreen> {
     String? eyebrow,
     VoidCallback? onTap,
   }) => Padding(
-    padding: const EdgeInsets.fromLTRB(1, 0, 1, 7),
+    padding: EdgeInsets.fromLTRB(1, 0, 1, 7),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -649,18 +685,18 @@ class _HomeScreenState extends State<HomeScreen> {
               if (eyebrow != null)
                 Text(
                   eyebrow,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     letterSpacing: .4,
-                    color: muted,
+                    color: context.colors.onSurfaceVariant,
                   ),
                 ),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w800,
-                  color: ink,
+                  color: context.colors.onSurface,
                   height: 1.25,
                 ),
               ),
@@ -672,9 +708,9 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: onTap,
             child: Text(
               trailing,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11.5,
-                color: forest,
+                color: context.colors.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -687,7 +723,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _sectionTitle('Civic Architecture', trailing: 'NAIROBI 047 PORTALS'),
       GridView.count(
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         crossAxisCount: 2,
         mainAxisSpacing: 5,
         crossAxisSpacing: 5,
@@ -724,10 +760,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _arch(IconData icon, String n, String title, String desc) => InkWell(
     onTap: () => notice(title, desc),
     child: Container(
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: line),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border.all(color: context.colors.outlineVariant),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -736,24 +772,34 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               _iconBox(icon),
-              const Spacer(),
-              Text(n, style: const TextStyle(fontSize: 10.5, color: muted)),
+              Spacer(),
+              Text(
+                n,
+                style: TextStyle(
+                  fontSize: 10.5,
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
-          const Spacer(),
+          Spacer(),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: ink,
+              color: context.colors.onSurface,
             ),
           ),
           Text(
             desc,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 11.5, color: muted, height: 1.25),
+            style: TextStyle(
+              fontSize: 11.5,
+              color: context.colors.onSurfaceVariant,
+              height: 1.25,
+            ),
           ),
         ],
       ),
@@ -763,10 +809,10 @@ class _HomeScreenState extends State<HomeScreen> {
     width: 22,
     height: 22,
     decoration: BoxDecoration(
-      color: pale,
+      color: context.colors.secondaryContainer,
       borderRadius: BorderRadius.circular(6),
     ),
-    child: Icon(icon, size: 13, color: forest),
+    child: Icon(icon, size: 13, color: context.colors.primary),
   );
 
   Widget _briefings() => Column(
@@ -787,7 +833,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'Article #47-EQ',
         'account_balance',
       ),
-      const SizedBox(height: 5),
+      SizedBox(height: 5),
       _article(
         1,
         'Devolution 101',
@@ -808,10 +854,10 @@ class _HomeScreenState extends State<HomeScreen> {
     String ref,
     String image,
   ) => Container(
-    padding: const EdgeInsets.all(8),
+    padding: EdgeInsets.all(8),
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: line),
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border.all(color: context.colors.outlineVariant),
       borderRadius: BorderRadius.circular(10),
     ),
     child: Column(
@@ -821,14 +867,26 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _badge(
               tag,
-              bg: id == 0 ? const Color(0xFFF7E8C8) : pale,
-              color: id == 0 ? const Color(0xFF875B1B) : forest,
+              bg: id == 0
+                  ? context.warningColor
+                  : context.colors.secondaryContainer,
+              color: id == 0 ? context.warningColor : context.colors.primary,
             ),
-            const SizedBox(width: 5),
-            const Icon(Icons.schedule, size: 10, color: muted),
-            const SizedBox(width: 3),
-            Text(time, style: const TextStyle(fontSize: 11, color: muted)),
-            const Spacer(),
+            SizedBox(width: 5),
+            Icon(
+              Icons.schedule,
+              size: 10,
+              color: context.colors.onSurfaceVariant,
+            ),
+            SizedBox(width: 3),
+            Text(
+              time,
+              style: TextStyle(
+                fontSize: 11,
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+            Spacer(),
             InkWell(
               onTap: () => setState(
                 () => SavedLibrary.instance.toggle(
@@ -847,13 +905,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     : Icons.bookmark_border,
                 size: 16,
                 color: SavedLibrary.instance.contains('briefing_$id')
-                    ? forest
-                    : muted,
+                    ? context.colors.primary
+                    : context.colors.onSurfaceVariant,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -865,35 +923,35 @@ class _HomeScreenState extends State<HomeScreen> {
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       height: 1.2,
-                      color: ink,
+                      color: context.colors.onSurface,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3),
                   Text(
                     desc,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11.5,
-                      color: muted,
+                      color: context.colors.onSurfaceVariant,
                       height: 1.2,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 7),
+            SizedBox(width: 7),
             Container(
               width: 48,
               height: 43,
               decoration: BoxDecoration(
                 color: id == 0
-                    ? const Color(0xFFECE8D7)
-                    : const Color(0xFFDCE9DF),
+                    ? context.warningColor
+                    : context.colors.secondaryContainer,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Icon(
@@ -902,22 +960,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     : image == 'groups'
                     ? Icons.groups
                     : Icons.account_balance_outlined,
-                color: forest,
+                color: context.colors.primary,
                 size: 24,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         Row(
           children: [
-            Text(ref, style: const TextStyle(fontSize: 10.5, color: muted)),
-            const Spacer(),
-            const Text(
+            Text(
+              ref,
+              style: TextStyle(
+                fontSize: 10.5,
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+            Spacer(),
+            Text(
               'Read Briefing →',
               style: TextStyle(
                 fontSize: 11.5,
-                color: forest,
+                color: context.colors.primary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -939,7 +1003,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'Audit Ledger (PDF)',
         true,
       ),
-      const SizedBox(height: 5),
+      SizedBox(height: 5),
       _record(
         Icons.verified_outlined,
         'National Treasury Gazette',
@@ -960,10 +1024,10 @@ class _HomeScreenState extends State<HomeScreen> {
     String action,
     bool red,
   ) => Container(
-    padding: const EdgeInsets.all(8),
+    padding: EdgeInsets.all(8),
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: line),
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border.all(color: context.colors.outlineVariant),
       borderRadius: BorderRadius.circular(9),
     ),
     child: Column(
@@ -971,32 +1035,52 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Row(
           children: [
-            Icon(icon, size: 13, color: red ? const Color(0xFFC94A45) : forest),
-            const SizedBox(width: 5),
+            Icon(
+              icon,
+              size: 13,
+              color: red ? context.colors.error : context.colors.primary,
+            ),
+            SizedBox(width: 5),
             _badge(
               org,
-              bg: red ? const Color(0xFFFCEDEC) : const Color(0xFFE9F2EB),
-              color: red ? const Color(0xFFC94A45) : muted,
+              bg: red
+                  ? context.colors.error
+                  : context.colors.secondaryContainer,
+              color: red
+                  ? context.colors.error
+                  : context.colors.onSurfaceVariant,
             ),
-            const Spacer(),
-            Text(date, style: const TextStyle(fontSize: 11, color: muted)),
+            Spacer(),
+            Text(
+              date,
+              style: TextStyle(
+                fontSize: 11,
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w700,
             height: 1.2,
-            color: ink,
+            color: context.colors.onSurface,
           ),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         Row(
           children: [
-            Text(ref, style: const TextStyle(fontSize: 10.5, color: muted)),
-            const Spacer(),
+            Text(
+              ref,
+              style: TextStyle(
+                fontSize: 10.5,
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+            Spacer(),
             InkWell(
               onTap: () => notice(
                 action,
@@ -1004,9 +1088,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Text(
                 '$action ↗',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
-                  color: forest,
+                  color: context.colors.primary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1018,44 +1102,55 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   Widget _continueCard() => Container(
-    padding: const EdgeInsets.all(8),
+    padding: EdgeInsets.all(8),
     decoration: BoxDecoration(
-      color: const Color(0xFFEEF5EF),
+      color: context.colors.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(10),
     ),
     child: Column(
       children: [
         Row(
           children: [
-            const Icon(Icons.history, size: 12, color: muted),
-            const SizedBox(width: 4),
-            const Expanded(
+            Icon(
+              Icons.history,
+              size: 12,
+              color: context.colors.onSurfaceVariant,
+            ),
+            SizedBox(width: 4),
+            Expanded(
               child: Text(
                 'CONTINUE EXPLORING',
                 style: TextStyle(
                   fontSize: 11,
-                  color: muted,
+                  color: context.colors.onSurfaceVariant,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ),
-            _badge('78% Verified', bg: pale, color: forest),
+            _badge(
+              '78% Verified',
+              bg: context.colors.secondaryContainer,
+              color: context.colors.primary,
+            ),
           ],
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         Row(
           children: [
             Container(
               width: 48,
               height: 40,
               decoration: BoxDecoration(
-                color: const Color(0xFFD8E7DC),
+                color: context.colors.outline,
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: const Icon(Icons.landscape_outlined, color: forest),
+              child: Icon(
+                Icons.landscape_outlined,
+                color: context.colors.primary,
+              ),
             ),
-            const SizedBox(width: 7),
-            const Expanded(
+            SizedBox(width: 7),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1066,28 +1161,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Text(
                     '14 tender contracts audited • Ward 032',
-                    style: TextStyle(fontSize: 11, color: muted),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                   SizedBox(height: 5),
                   LinearProgressIndicator(
                     value: .78,
                     minHeight: 3,
-                    backgroundColor: line,
-                    color: forest,
+                    backgroundColor: context.colors.outlineVariant,
+                    color: context.colors.primary,
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             InkWell(
               onTap: () => notice(
                 'Continue exploring',
                 'Nakuru County housing projects • Ward 032. Evidence coverage: 78%.',
               ),
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 12,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.arrow_forward, color: forest, size: 15),
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: context.colors.primary,
+                  size: 15,
+                ),
               ),
             ),
           ],
@@ -1111,7 +1213,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'CRA Portal ↗',
         'Verified Statutory',
       ),
-      const SizedBox(height: 5),
+      SizedBox(height: 5),
       _source(
         Icons.gavel_outlined,
         'Office of the Auditor-General (OAG)',
@@ -1120,7 +1222,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'OAG Reports ↗',
         'Verified Statutory',
       ),
-      const SizedBox(height: 5),
+      SizedBox(height: 5),
       _source(
         Icons.account_balance_wallet_outlined,
         'National Treasury & Planning',
@@ -1129,7 +1231,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'Treasury Portal ↗',
         'Verified Statutory',
       ),
-      const SizedBox(height: 5),
+      SizedBox(height: 5),
       _source(
         Icons.bar_chart,
         'KNBS & Demographic Census',
@@ -1138,7 +1240,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'KNBS Data ↗',
         'Official Baseline',
       ),
-      const SizedBox(height: 5),
+      SizedBox(height: 5),
       _source(
         Icons.dataset_outlined,
         'PPIP & Kenya Open Data (KODI)',
@@ -1157,10 +1259,10 @@ class _HomeScreenState extends State<HomeScreen> {
     String action,
     String badge,
   ) => Container(
-    padding: const EdgeInsets.all(8),
+    padding: EdgeInsets.all(8),
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: line),
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border.all(color: context.colors.outlineVariant),
       borderRadius: BorderRadius.circular(9),
     ),
     child: Column(
@@ -1169,48 +1271,57 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 14, color: forest),
-            const SizedBox(width: 6),
+            Icon(icon, size: 14, color: context.colors.primary),
+            SizedBox(width: 6),
             Expanded(
               child: Text(
                 name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   height: 1.2,
-                  color: ink,
+                  color: context.colors.onSurface,
                 ),
               ),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             _badge(
               badge,
               bg: badge == 'Live Feed'
-                  ? const Color(0xFFD9F5E5)
+                  ? context.colors.secondaryContainer
                   : badge == 'Official Baseline'
-                  ? const Color(0xFFECEFED)
-                  : const Color(0xFFD9F5E5),
-              color: badge == 'Official Baseline' ? muted : forest,
+                  ? context.colors.secondaryContainer
+                  : context.colors.secondaryContainer,
+              color: badge == 'Official Baseline'
+                  ? context.colors.onSurfaceVariant
+                  : context.colors.primary,
             ),
           ],
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20),
           child: Text(
             desc,
-            style: const TextStyle(fontSize: 11, color: muted, height: 1.25),
+            style: TextStyle(
+              fontSize: 11,
+              color: context.colors.onSurfaceVariant,
+              height: 1.25,
+            ),
           ),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20),
           child: Row(
             children: [
               Expanded(
                 child: Text(
                   meta,
-                  style: const TextStyle(fontSize: 10.5, color: muted),
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ),
               InkWell(
@@ -1220,9 +1331,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Text(
                   action,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: forest,
+                    color: context.colors.primary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -1235,54 +1346,65 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   Widget _footer() => Container(
     width: double.infinity,
-    padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-    decoration: const BoxDecoration(
-      border: Border(top: BorderSide(color: line)),
+    padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+    decoration: BoxDecoration(
+      border: Border(top: BorderSide(color: context.colors.outlineVariant)),
     ),
     child: Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.storage_outlined, size: 10, color: muted),
-            const SizedBox(width: 4),
-            const Text(
+            Icon(
+              Icons.storage_outlined,
+              size: 10,
+              color: context.colors.onSurfaceVariant,
+            ),
+            SizedBox(width: 4),
+            Text(
               'PUBLIC RESEARCH ENGINE',
-              style: TextStyle(fontSize: 10.5, color: muted, letterSpacing: .3),
+              style: TextStyle(
+                fontSize: 10.5,
+                color: context.colors.onSurfaceVariant,
+                letterSpacing: .3,
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 5),
-        const Text(
+        SizedBox(height: 5),
+        Text(
           'All data displayed is for civic illustration and research purposes. Verify with the Kenya Open Data Initiative principles.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 10.5, color: muted, height: 1.3),
+          style: TextStyle(
+            fontSize: 10.5,
+            color: context.colors.onSurfaceVariant,
+            height: 1.3,
+          ),
         ),
       ],
     ),
   );
-  Widget _badge(String text, {required Color bg, Color color = muted}) =>
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 10.5,
-            color: color,
-            fontWeight: FontWeight.w600,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      );
+  Widget _badge(String text, {required Color bg, Color? color}) => Container(
+    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+    decoration: BoxDecoration(
+      color: bg,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Text(
+      text,
+      style: TextStyle(
+        fontSize: 10.5,
+        color: color ?? context.colors.onSurfaceVariant,
+        fontWeight: FontWeight.w600,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    ),
+  );
   Widget _bottomNav() => Container(
-    decoration: const BoxDecoration(
-      color: Color(0xFFFAFCFA),
-      border: Border(top: BorderSide(color: line)),
+    decoration: BoxDecoration(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border(top: BorderSide(color: context.colors.outlineVariant)),
     ),
     padding: EdgeInsets.only(
       top: 5,
@@ -1311,13 +1433,21 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icons[i], size: 17, color: nav == i ? forest : muted),
-                const SizedBox(height: 2),
+                Icon(
+                  icons[i],
+                  size: 17,
+                  color: nav == i
+                      ? context.colors.primary
+                      : context.colors.onSurfaceVariant,
+                ),
+                SizedBox(height: 2),
                 Text(
                   labels[i],
                   style: TextStyle(
                     fontSize: 10.5,
-                    color: nav == i ? forest : muted,
+                    color: nav == i
+                        ? context.colors.primary
+                        : context.colors.onSurfaceVariant,
                     fontWeight: nav == i ? FontWeight.w700 : FontWeight.w400,
                   ),
                 ),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../theme/app_colors.dart';
 import 'globe_map_surface.dart';
 
 GlobeMapSurface createGlobeMapSurface({
@@ -23,7 +24,7 @@ class _MobileGlobeMapSurface implements GlobeMapSurface {
   }) {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFF071612))
+      ..setBackgroundColor(AppColors.darkBackground)
       ..addJavaScriptChannel(
         'MziziMapBridge',
         onMessageReceived: (message) => onMessage(message.message),
@@ -33,7 +34,9 @@ class _MobileGlobeMapSurface implements GlobeMapSurface {
           onPageFinished: (_) => onLoad(),
           onWebResourceError: (error) {
             if (error.isForMainFrame == true) {
-              onError('The 3D map could not be loaded. Check your connection and retry.');
+              onError(
+                'The 3D map could not be loaded. Check your connection and retry.',
+              );
             }
           },
         ),
