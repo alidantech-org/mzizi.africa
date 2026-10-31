@@ -15,9 +15,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   GeographyEntity? selectedPlace;
-  int nav = 0;
+  GeographyScene? selectedScene;
   final searchController = TextEditingController();
+  final searchFocus = FocusNode();
   final scroll = ScrollController();
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    searchFocus.dispose();
+    scroll.dispose();
+    super.dispose();
+  }
+
   void notice(String title, String body, {List<String> options = const []}) {
     showModalBottomSheet<void>(
       context: context,
@@ -90,10 +100,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> chooseLocation() async {
+  Future<void> chooseLocation({String initialQuery = ''}) async {
     final queryController = TextEditingController();
+    queryController.text = initialQuery;
     List<GeographyEntity> results = const [];
     bool loading = false;
+    String? error;
+    Future<void> searchPlaces(StateSetter setSheetState) async {
+      final query = queryController.text.trim();
+      if (query.isEmpty || loading) return;
+      setSheetState(() {
+        loading = true;
+        error = null;
+        results = const [];
+      });
+      try {
+        results = await GeographyApiClient.instance.search(query);
+      } catch (exception) {
+        error = exception.toString().replaceFirst('Exception: ', '');
+      }
+      if (context.mounted) setSheetState(() => loading = false);
+    }
+
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -131,31 +159,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         : IconButton(
                             icon: Icon(Icons.search),
-                            onPressed: () async {
-                              setSheetState(() => loading = true);
-                              try {
-                                results = await GeographyApiClient.instance
-                                    .search(queryController.text);
-                              } catch (_) {
-                                results = const [];
-                              }
-                              if (context.mounted) {
-                                setSheetState(() => loading = false);
-                              }
-                            },
+                            onPressed: () => searchPlaces(setSheetState),
                           ),
                   ),
-                  onSubmitted: (_) async {
-                    setSheetState(() => loading = true);
-                    try {
-                      results = await GeographyApiClient.instance.search(
-                        queryController.text,
-                      );
-                    } catch (_) {
-                      results = const [];
-                    }
-                    if (context.mounted) setSheetState(() => loading = false);
-                  },
+                  onSubmitted: (_) => searchPlaces(setSheetState),
                 ),
                 if (results.isNotEmpty)
                   Flexible(
@@ -177,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTap: () {
                                 setState(() {
                                   selectedPlace = place;
+                                  selectedScene = null;
                                 });
                                 Navigator.pop(sheetContext);
                               },
@@ -185,13 +193,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           .toList(),
                     ),
                   ),
+                if (!loading && error != null)
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      error!,
+                      style: TextStyle(color: context.colors.error),
+                    ),
+                  ),
                 if (!loading &&
+                    error == null &&
                     results.isEmpty &&
                     queryController.text.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: Text(
-                      'No matches yet. Submit a place name to search.',
+                      'No matching places were found. Check the spelling or try a broader area.',
                       style: TextStyle(
                         color: context.colors.onSurfaceVariant,
                         fontSize: 16,
@@ -207,6 +224,9 @@ class _HomeScreenState extends State<HomeScreen> {
     queryController.dispose();
   }
 
+  Future<void> _searchFromHome([String? value]) =>
+      chooseLocation(initialQuery: (value ?? searchController.text).trim());
+
   @override
   Widget build(BuildContext context) => Scaffold(
     body: SafeArea(
@@ -221,11 +241,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverToBoxAdapter(child: _search()),
                 SliverToBoxAdapter(child: _filters()),
                 SliverPadding(
-                  padding: EdgeInsets.fromLTRB(10, 5, 10, 16),
+                  padding: EdgeInsets.fromLTRB(16, 8, 16, 20),
                   sliver: SliverList.list(
                     children: [
                       _mapCard(),
-                      SizedBox(height: 14),
+                      SizedBox(height: 20),
                       _architecture(),
                       SizedBox(height: 15),
                       _briefings(),
@@ -244,7 +264,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          _bottomNav(),
         ],
       ),
     ),
@@ -324,10 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         IconButton(
-          onPressed: () => notice(
-            'Search Mzizi',
-            'Search counties, public projects, budgets, and official records.',
-          ),
+          onPressed: () => searchFocus.requestFocus(),
           icon: Icon(Icons.search, size: 20),
           visualDensity: VisualDensity.compact,
         ),
@@ -363,7 +379,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: TextField(
                     controller: searchController,
+                    focusNode: searchFocus,
                     style: TextStyle(fontSize: 13),
+                    textInputAction: TextInputAction.search,
                     decoration: InputDecoration(
                       hintText: 'Search Kilimani projects, Nairobi budget…',
                       hintStyle: TextStyle(
@@ -373,21 +391,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       border: InputBorder.none,
                       isDense: true,
                     ),
-                    onSubmitted: (s) => notice(
-                      'Search results',
-                      s.isEmpty
-                          ? 'Enter a topic to search.'
-                          : 'Illustrative results for “$s”.',
-                    ),
+                    onSubmitted: _searchFromHome,
                   ),
                 ),
                 InkWell(
-                  onTap: () => notice(
-                    'Search results',
-                    searchController.text.isEmpty
-                        ? 'Enter a topic to search.'
-                        : 'Illustrative results for “${searchController.text}”.',
-                  ),
+                  onTap: _searchFromHome,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                     decoration: BoxDecoration(
@@ -491,7 +499,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   _badge(
-                    '3D political globe',
+                    'KENYA COUNTY MAP',
                     bg: context.colors.secondaryContainer,
                   ),
                 ],
@@ -505,16 +513,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          selectedPlace?.name ?? 'Select a location',
+                          selectedPlace?.name ?? 'Explore Kenya',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontFamily: 'serif',
+                            fontSize: 24,
                             fontWeight: FontWeight.w800,
                             color: context.colors.onSurface,
                           ),
                         ),
                         Text(
-                          selectedPlace?.displayName ??
-                              'Search for a place in ${GeographyApiClient.defaultCountry == 'KE' ? 'Kenya' : 'the selected country'}.',
+                          selectedPlace?.displayName ?? 'Select a county to explore its constituencies and local boundaries.',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -533,7 +541,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: Text(
-                      'Change⌄',
+                      'Search',
                       style: TextStyle(
                         fontSize: 12.5,
                         color: context.colors.primary,
@@ -546,104 +554,62 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         SizedBox(
-          height: 130,
+          height: 420,
           child: CinematicGlobeMap(
             selectedPlace: selectedPlace,
-            height: 130,
+            height: 420,
+            cinematicIntro: true,
             onPlaceSelected: (place) => setState(() => selectedPlace = place),
+            onSceneChanged: (scene) => setState(() => selectedScene = scene),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(7, 0, 7, 5),
-          child: Row(
+        Container(
+          padding: EdgeInsets.fromLTRB(14, 12, 14, 14),
+          color: context.colors.surfaceContainerLow,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _badge(
-                '● ${selectedPlace?.name ?? 'No location selected'}',
-                bg: context.colors.secondaryContainer,
-                color: context.colors.primary,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(9, 3, 9, 4),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'SELECT WARD TO INSPECT:',
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w700,
-                    color: context.colors.onSurfaceVariant,
+              Row(
+                children: [
+                  Icon(
+                    Icons.touch_app_outlined,
+                    size: 18,
+                    color: context.colors.primary,
                   ),
-                ),
-              ),
-              TextButton(
-                onPressed: chooseLocation,
-                child: Text(
-                  'Search locations',
-                  style: TextStyle(fontSize: 12.5),
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 36,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            children: [
-              ActionChip(
-                label: Text(
-                  selectedPlace?.name ?? 'Find a place',
-                  style: TextStyle(fontSize: 12.5),
-                ),
-                avatar: Icon(Icons.search, size: 13),
-                onPressed: chooseLocation,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(8, 4, 8, 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => notice(
-                    'Map layers',
-                    'Choose data layers to display on the constituency map.',
-                    options: [
-                      'Ward boundaries',
-                      'Public projects',
-                      'Budget allocations',
-                      'Audits',
-                    ],
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _mapInstruction,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   ),
-                  icon: Icon(Icons.layers_outlined, size: 13),
-                  label: Text(
-                    'Explore Map Layers',
-                    style: TextStyle(fontSize: 12.5),
-                  ),
-                  style: _primaryButton(),
-                ),
+                ],
               ),
-              SizedBox(width: 6),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => notice(
-                    'NG-CDF Ledger',
-                    'Illustrative NG-CDF allocations and project records for Dagoretti North.',
+              SizedBox(height: 8),
+              Text(
+                _mapAttribution,
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: context.colors.onSurfaceVariant),
+              ),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: FilledButton.tonalIcon(
+                      onPressed: () => widget.onNavigate?.call(1),
+                      icon: Icon(Icons.explore_outlined),
+                      label: Text('Explore map'),
+                    ),
                   ),
-                  icon: Icon(Icons.description_outlined, size: 13),
-                  label: Text(
-                    'NG-CDF Ledger',
-                    style: TextStyle(fontSize: 12.5),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: chooseLocation,
+                      icon: Icon(Icons.search),
+                      label: Text('Find a place'),
+                    ),
                   ),
-                  style: _outlineButton(),
-                ),
+                ],
               ),
             ],
           ),
@@ -651,23 +617,46 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     ),
   );
-  ButtonStyle _primaryButton() => ElevatedButton.styleFrom(
-    backgroundColor: context.colors.primary,
-    foregroundColor: context.colors.onPrimary,
-    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 7),
-    minimumSize: Size(0, 31),
-    visualDensity: VisualDensity.compact,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-  );
-  ButtonStyle _outlineButton() => OutlinedButton.styleFrom(
-    backgroundColor: context.colors.surfaceContainerLow,
-    foregroundColor: context.colors.onSurface,
-    side: BorderSide(color: context.colors.outlineVariant),
-    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 7),
-    minimumSize: Size(0, 31),
-    visualDensity: VisualDensity.compact,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-  );
+
+  GeographyFeatureProperties? get _firstChildProperties {
+    final features =
+        selectedScene?.childBoundaries?.features ?? const <GeographyFeature>[];
+    return features.isEmpty ? null : features.first.properties;
+  }
+
+  String get _mapInstruction {
+    final place = selectedPlace;
+    if (place == null) {
+      return 'Tap a verified county to view its constituencies.';
+    }
+    final children =
+        selectedScene?.childBoundaries?.features ?? const <GeographyFeature>[];
+    final childLevel = _firstChildProperties?.level.trim();
+    if (children.isNotEmpty) {
+      final level = childLevel?.isNotEmpty == true
+          ? childLevel!.toLowerCase()
+          : 'local administrative';
+      return '${children.length} verified $level boundaries in ${place.name}';
+    }
+    if (selectedScene != null) {
+      return 'No verified child boundaries are available for ${place.name} yet.';
+    }
+    return 'Loading verified boundaries for ${place.name}…';
+  }
+
+  String get _mapAttribution {
+    final metadata = selectedPlace?.boundaryMetadata;
+    final source = metadata?.source?.trim();
+    final license = metadata?.license?.trim();
+    final detail = [
+      source,
+      license,
+    ].where((value) => value != null && value.isNotEmpty).join(' · ');
+    return detail.isEmpty
+        ? 'NASA GIBS imagery · Verified boundaries from the Mzizi geography API.'
+        : 'NASA GIBS imagery · $detail';
+  }
+
   Widget _sectionTitle(
     String title, {
     String? trailing,
@@ -694,6 +683,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 title,
                 style: TextStyle(
+                  fontFamily: 'serif',
                   fontSize: 17,
                   fontWeight: FontWeight.w800,
                   color: context.colors.onSurface,
@@ -1399,63 +1389,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-    ),
-  );
-  Widget _bottomNav() => Container(
-    decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      border: Border(top: BorderSide(color: context.colors.outlineVariant)),
-    ),
-    padding: EdgeInsets.only(
-      top: 5,
-      bottom: MediaQuery.of(context).padding.bottom > 0
-          ? MediaQuery.of(context).padding.bottom
-          : 7,
-    ),
-    child: Row(
-      children: List.generate(5, (i) {
-        final icons = [
-          Icons.home_outlined,
-          Icons.explore_outlined,
-          Icons.account_balance_wallet_outlined,
-          Icons.history,
-          Icons.bookmark_border,
-        ];
-        final labels = ['Home', 'Explore', 'Money', 'History', 'Saved'];
-        return Expanded(
-          child: InkWell(
-            onTap: () {
-              setState(() => nav = i);
-              if (i > 0) {
-                widget.onNavigate?.call(i);
-              }
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icons[i],
-                  size: 17,
-                  color: nav == i
-                      ? context.colors.primary
-                      : context.colors.onSurfaceVariant,
-                ),
-                SizedBox(height: 2),
-                Text(
-                  labels[i],
-                  style: TextStyle(
-                    fontSize: 10.5,
-                    color: nav == i
-                        ? context.colors.primary
-                        : context.colors.onSurfaceVariant,
-                    fontWeight: nav == i ? FontWeight.w700 : FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }),
     ),
   );
 }

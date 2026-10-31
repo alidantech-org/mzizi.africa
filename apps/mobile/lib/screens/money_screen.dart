@@ -15,6 +15,31 @@ class _MoneyScreenState extends State<MoneyScreen> {
   final searchFocus = FocusNode();
   String fiscalYear = 'FY 2024/25 (Current)';
 
+  List<({String keywords, Widget child})> get _sections => [
+    (
+      keywords: 'budget fiscal year appropriation county allocation',
+      child: _fiscalCard(),
+    ),
+    (
+      keywords:
+          'money flow architecture parliament controller treasury county ward',
+      child: _architecture(),
+    ),
+    (
+      keywords: 'portals tenders procurement contractors suppliers contracts',
+      child: _portals(),
+    ),
+    (
+      keywords: 'evidence audit documents sources accountability',
+      child: _evidenceDeepDive(),
+    ),
+    (
+      keywords: 'ward inspections projects delivery citizen observation',
+      child: _wardInspections(),
+    ),
+    (keywords: 'gazette records notices legislation', child: _gazetteRecords()),
+  ];
+
   @override
   void dispose() {
     search.dispose();
@@ -107,35 +132,54 @@ class _MoneyScreenState extends State<MoneyScreen> {
             child: CustomScrollView(
               slivers: [
                 SliverPadding(
-                  padding: EdgeInsets.fromLTRB(9, 8, 9, 15),
+                  padding: EdgeInsets.fromLTRB(16, 14, 16, 22),
                   sliver: SliverList.list(
                     children: [
                       _intro(),
-                      SizedBox(height: 9),
+                      SizedBox(height: 14),
                       _searchBar(),
-                      SizedBox(height: 8),
-                      _fiscalCard(),
-                      SizedBox(height: 9),
-                      _architecture(),
-                      SizedBox(height: 11),
-                      _portals(),
-                      SizedBox(height: 11),
-                      _evidenceDeepDive(),
                       SizedBox(height: 12),
-                      _wardInspections(),
-                      SizedBox(height: 12),
-                      _gazetteRecords(),
+                      ..._visibleSections(),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          _bottomNav(),
         ],
       ),
     ),
   );
+
+  List<Widget> _visibleSections() {
+    final query = search.text.trim().toLowerCase();
+    final sections = _sections.where((section) {
+      if (query.isEmpty) return true;
+      final terms = query.split(RegExp(r'\s+'));
+      return terms.any((term) => section.keywords.contains(term));
+    }).toList();
+    if (sections.isEmpty) {
+      return [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 28),
+          child: Center(
+            child: Text(
+              'No public money sections match “${search.text.trim()}”. Try budget, tender, audit, ward, or gazette.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: context.colors.onSurfaceVariant),
+            ),
+          ),
+        ),
+      ];
+    }
+    final gaps = [14.0, 11.0, 11.0, 12.0, 12.0];
+    return [
+      for (var index = 0; index < sections.length; index++) ...[
+        if (index > 0) SizedBox(height: gaps[index - 1]),
+        sections[index].child,
+      ],
+    ];
+  }
 
   Widget _header() => Container(
     padding: EdgeInsets.fromLTRB(10, 7, 10, 7),
@@ -253,6 +297,8 @@ class _MoneyScreenState extends State<MoneyScreen> {
           child: TextField(
             controller: search,
             focusNode: searchFocus,
+            textInputAction: TextInputAction.search,
+            onChanged: (_) => setState(() {}),
             style: TextStyle(fontSize: 11.5),
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -263,28 +309,24 @@ class _MoneyScreenState extends State<MoneyScreen> {
                 color: context.colors.onSurfaceVariant,
               ),
             ),
-            onSubmitted: (value) => openSheet(
-              'Fiscal search',
-              'Illustrative results matching “$value”.',
+            onSubmitted: (_) => setState(() {}),
+          ),
+        ),
+        if (search.text.isNotEmpty)
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints.tightFor(width: 22, height: 22),
+            onPressed: () {
+              search.clear();
+              setState(() {});
+            },
+            icon: Icon(
+              Icons.close,
+              size: 14,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
-        ),
-        InkWell(
-          onTap: () => openSheet(
-            'Search filters',
-            'Filter fiscal records by county, year, source institution, and evidence status.',
-            options: [
-              'County: Nakuru',
-              'Source: Controller of Budget',
-              'Status: Audited',
-            ],
-          ),
-          child: Icon(
-            Icons.tune,
-            size: 13,
-            color: context.colors.onSurfaceVariant,
-          ),
-        ),
       ],
     ),
   );
@@ -1103,7 +1145,8 @@ class _MoneyScreenState extends State<MoneyScreen> {
           child: Text(
             title,
             style: TextStyle(
-              fontSize: 13,
+              fontFamily: 'serif',
+              fontSize: 16,
               fontWeight: FontWeight.w700,
               color: context.colors.onSurface,
             ),
@@ -1130,62 +1173,6 @@ class _MoneyScreenState extends State<MoneyScreen> {
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(fontSize: 10.5, color: fg, fontWeight: FontWeight.w600),
-    ),
-  );
-
-  Widget _bottomNav() => Container(
-    decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      border: Border(top: BorderSide(color: context.colors.outlineVariant)),
-    ),
-    padding: EdgeInsets.only(
-      top: 5,
-      bottom: MediaQuery.of(context).padding.bottom > 0
-          ? MediaQuery.of(context).padding.bottom
-          : 7,
-    ),
-    child: Row(
-      children: [
-        _navItem(0, Icons.home_outlined, 'Home'),
-        _navItem(1, Icons.explore_outlined, 'Explore'),
-        _navItem(2, Icons.account_balance_wallet_outlined, 'Money'),
-        _navItem(3, Icons.history, 'History'),
-        _navItem(4, Icons.bookmark_border, 'Saved'),
-      ],
-    ),
-  );
-  Widget _navItem(int index, IconData icon, String label) => Expanded(
-    child: InkWell(
-      onTap: () {
-        if (index <= 4) {
-          widget.onNavigate?.call(index);
-        } else {
-          openSheet(label, '$label records and saved public evidence.');
-        }
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 17,
-            color: index == 2
-                ? context.colors.primary
-                : context.colors.onSurfaceVariant,
-          ),
-          SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10.5,
-              color: index == 2
-                  ? context.colors.primary
-                  : context.colors.onSurfaceVariant,
-              fontWeight: index == 2 ? FontWeight.w700 : FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
     ),
   );
 }

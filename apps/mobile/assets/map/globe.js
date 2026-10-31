@@ -31,6 +31,7 @@
 
   const Cesium = window.Cesium;
   let initialView = { longitude: 37.9, latitude: -0.3, height: 1450000 };
+  const openingView = { longitude: 20, latitude: 7, height: 17000000 };
   const viewer = new Cesium.Viewer('globe', {
     animation: false,
     baseLayerPicker: false,
@@ -58,8 +59,8 @@
   viewer.scene.screenSpaceCameraController.inertiaSpin = 0.82;
   viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.82;
   viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(initialView.longitude, initialView.latitude, initialView.height),
-    orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
+    destination: Cesium.Cartesian3.fromDegrees(openingView.longitude, openingView.latitude, openingView.height),
+    orientation: { heading: Cesium.Math.toRadians(-8), pitch: Cesium.Math.toRadians(-68), roll: 0 },
   });
 
   // NASA GIBS imagery is independent of OpenStreetMap. It gives the globe a
@@ -82,13 +83,57 @@
   let childSource;
   let selectedId = null;
   let sceneGeneration = 0;
+  let cameraGeneration = 0;
+  let cinematicFlightActive = false;
   const clickHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
   function flyToInitial(duration = 1.5) {
+    cameraGeneration += 1;
+    cinematicFlightActive = false;
+    viewer.camera.cancelFlight();
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(initialView.longitude, initialView.latitude, initialView.height),
       orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
       duration,
+    });
+  }
+
+  function flyToKenyaCinematic() {
+    const generation = ++cameraGeneration;
+    cinematicFlightActive = true;
+    viewer.camera.cancelFlight();
+    state.textContent = 'AFRICA · A LIVING ATLAS';
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(32.5, 3.5, 6900000),
+      orientation: { heading: Cesium.Math.toRadians(-8), pitch: Cesium.Math.toRadians(-72), roll: 0 },
+      duration: 2.3,
+      complete: () => {
+        if (generation !== cameraGeneration) return;
+        state.textContent = 'KENYA · COUNTY GEOGRAPHY';
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(initialView.longitude, initialView.latitude, initialView.height),
+          orientation: { heading: 0, pitch: Cesium.Math.toRadians(-84), roll: 0 },
+          duration: 3.4,
+          complete: () => {
+            if (generation !== cameraGeneration) return;
+            cinematicFlightActive = false;
+            state.textContent = '';
+            viewer.scene.requestRender();
+          },
+          cancel: () => {
+            if (generation === cameraGeneration) {
+              cinematicFlightActive = false;
+              state.textContent = '';
+            }
+          },
+        });
+      },
+      cancel: () => {
+        if (generation === cameraGeneration) {
+          cinematicFlightActive = false;
+          state.textContent = '';
+        }
+      },
     });
   }
 
@@ -229,7 +274,22 @@
           latitude: Number(requestedView.latitude),
           height: Number(requestedView.height),
         };
-        flyToInitial(0.8);
+        const reducedMotion = window.matchMedia &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (config && config.cinematicIntro && reducedMotion) {
+          cameraGeneration += 1;
+          cinematicFlightActive = false;
+          viewer.camera.cancelFlight();
+          viewer.camera.setView({
+            destination: Cesium.Cartesian3.fromDegrees(initialView.longitude, initialView.latitude, initialView.height),
+            orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
+          });
+          state.textContent = '';
+        } else if (config && config.cinematicIntro) {
+          flyToKenyaCinematic();
+        } else {
+          flyToInitial(0.8);
+        }
       }
       if (config && config.ionToken) {
         Cesium.Ion.defaultAccessToken = config.ionToken;
@@ -253,7 +313,7 @@
         });
         viewer.dataSources.add(initialBoundarySource);
         styleInitialBoundaries(initialBoundarySource, selectedId);
-        state.textContent = '';
+        if (!cinematicFlightActive) state.textContent = '';
         viewer.scene.requestRender();
       } catch (error) {
           post('mapWarning', { message: 'Verified initial geography boundaries could not be displayed.' });
@@ -261,6 +321,9 @@
     },
     async setScene(scene) {
       const generation = ++sceneGeneration;
+      cameraGeneration += 1;
+      cinematicFlightActive = false;
+      viewer.camera.cancelFlight();
       state.textContent = scene && scene.loadingLabel ? scene.loadingLabel : '';
       selectedId = scene ? scene.selectedId : null;
       this.selectedLevel = scene ? scene.selectedLevel : '';

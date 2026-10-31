@@ -15,12 +15,14 @@ class CinematicGlobeMap extends StatefulWidget {
     super.key,
     this.selectedPlace,
     this.height = 360,
+    this.cinematicIntro = false,
     this.onPlaceSelected,
     this.onSceneChanged,
   });
 
   final GeographyEntity? selectedPlace;
   final double height;
+  final bool cinematicIntro;
   final ValueChanged<GeographyEntity?>? onPlaceSelected;
   final ValueChanged<GeographyScene?>? onSceneChanged;
 
@@ -50,7 +52,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
       -0.3;
   static final _initialHeight =
       double.tryParse(String.fromEnvironment('MZIZI_MAP_INITIAL_HEIGHT')) ??
-      1450000;
+      850000;
 
   @override
   void initState() {
@@ -119,6 +121,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
     _configSent = true;
     await _surface.invoke('configure', {
       'ionToken': _ionToken,
+      'cinematicIntro': widget.cinematicIntro,
       'initialView': {
         'longitude': _initialLongitude,
         'latitude': _initialLatitude,
@@ -249,7 +252,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
             top: 10,
             child: Column(
               children: [
-                _button(Icons.public, 'Reset to globe', _resetGlobe),
+                _button(Icons.public, 'Reset to Kenya view', _resetGlobe),
                 SizedBox(height: 6),
                 _button(Icons.add, 'Zoom in', () => _runMapAction('zoomIn')),
                 SizedBox(height: 6),

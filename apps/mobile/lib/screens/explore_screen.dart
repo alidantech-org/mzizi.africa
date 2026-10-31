@@ -120,7 +120,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
     final wide = MediaQuery.sizeOf(context).width >= 900;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      bottomNavigationBar: _bottomNav(),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -643,59 +642,5 @@ class _ExploreScreenState extends State<ExploreScreen> {
         ),
       ),
     ],
-  );
-
-  Widget _bottomNav() => SafeArea(
-    top: false,
-    child: Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        border: Border(top: BorderSide(color: context.colors.outlineVariant)),
-      ),
-      padding: EdgeInsets.only(top: 7, bottom: 8),
-      child: Row(
-        children: [
-          _navItem(0, Icons.home_outlined, 'Home'),
-          _navItem(1, Icons.explore_outlined, 'Explore'),
-          _navItem(2, Icons.account_balance_wallet_outlined, 'Money'),
-          _navItem(3, Icons.history, 'History'),
-          _navItem(4, Icons.bookmark_border, 'Saved'),
-        ],
-      ),
-    ),
-  );
-
-  Widget _navItem(int index, IconData icon, String label) => Expanded(
-    child: Semantics(
-      button: true,
-      selected: index == 1,
-      label: label,
-      child: InkWell(
-        onTap: () => widget.onNavigate?.call(index),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 19,
-              color: index == 1
-                  ? context.colors.primary
-                  : context.colors.onSurfaceVariant,
-            ),
-            SizedBox(height: 3),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                color: index == 1
-                    ? context.colors.primary
-                    : context.colors.onSurfaceVariant,
-                fontWeight: index == 1 ? FontWeight.w700 : FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
   );
 }

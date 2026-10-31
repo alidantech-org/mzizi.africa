@@ -166,9 +166,9 @@ abstract final class AppTheme {
       cardTheme: CardThemeData(
         color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
         surfaceTintColor: Colors.transparent,
-        elevation: 0,
+        elevation: 1,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           side: BorderSide(color: scheme.outlineVariant),
         ),
       ),
@@ -177,15 +177,15 @@ abstract final class AppTheme {
         fillColor: scheme.surfaceContainerLow,
         hintStyle: TextStyle(color: scheme.onSurfaceVariant),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: scheme.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: scheme.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: scheme.primary, width: 1.5),
         ),
       ),

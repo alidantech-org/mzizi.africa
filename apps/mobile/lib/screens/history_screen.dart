@@ -162,15 +162,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
             child: CustomScrollView(
               slivers: [
                 SliverPadding(
-                  padding: EdgeInsets.fromLTRB(12, 11, 12, 18),
+                  padding: EdgeInsets.fromLTRB(16, 14, 16, 22),
                   sliver: SliverList.list(
                     children: [
                       _intro(),
-                      SizedBox(height: 11),
+                      SizedBox(height: 14),
                       _searchBar(),
-                      SizedBox(height: 10),
+                      SizedBox(height: 12),
                       _countyCard(),
-                      SizedBox(height: 11),
+                      SizedBox(height: 14),
                       _eraFilters(),
                       SizedBox(height: 13),
                       _timeline(),
@@ -186,7 +186,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ],
             ),
           ),
-          _bottomNav(),
         ],
       ),
     ),
@@ -902,61 +901,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
     child: Text(
       text,
       style: TextStyle(fontSize: 12.5, color: context.colors.onSurfaceVariant),
-    ),
-  );
-
-  Widget _bottomNav() => Container(
-    decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      border: Border(top: BorderSide(color: context.colors.outlineVariant)),
-    ),
-    padding: EdgeInsets.only(
-      top: 5,
-      bottom: MediaQuery.of(context).padding.bottom > 0
-          ? MediaQuery.of(context).padding.bottom
-          : 7,
-    ),
-    child: Row(
-      children: [
-        _nav(0, Icons.home_outlined, 'Home'),
-        _nav(1, Icons.explore_outlined, 'Explore'),
-        _nav(2, Icons.account_balance_wallet_outlined, 'Money'),
-        _nav(3, Icons.history, 'History'),
-        _nav(4, Icons.bookmark_border, 'Saved'),
-      ],
-    ),
-  );
-  Widget _nav(int i, IconData icon, String label) => Expanded(
-    child: InkWell(
-      onTap: () {
-        if (i == 4)
-          widget.onNavigate?.call(i);
-        else if (i != 3)
-          widget.onNavigate?.call(i);
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 17,
-            color: i == 3
-                ? context.colors.primary
-                : context.colors.onSurfaceVariant,
-          ),
-          SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10.5,
-              color: i == 3
-                  ? context.colors.primary
-                  : context.colors.onSurfaceVariant,
-              fontWeight: i == 3 ? FontWeight.w700 : FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
     ),
   );
 }

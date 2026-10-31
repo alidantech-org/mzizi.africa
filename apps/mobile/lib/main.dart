@@ -35,16 +35,41 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
-    final onNavigate = (int tab) => setState(() => selectedTab = tab);
-    return IndexedStack(
-      index: selectedTab,
-      children: [
-        HomeScreen(onNavigate: onNavigate),
-        ExploreScreen(onNavigate: onNavigate),
-        MoneyScreen(onNavigate: onNavigate),
-        HistoryScreen(onNavigate: onNavigate),
-        SavedScreen(onNavigate: onNavigate),
-      ],
+    void onNavigate(int tab) => setState(() => selectedTab = tab);
+    return Scaffold(
+      body: IndexedStack(
+        index: selectedTab,
+        children: [
+          HomeScreen(onNavigate: onNavigate),
+          ExploreScreen(onNavigate: onNavigate),
+          MoneyScreen(onNavigate: onNavigate),
+          HistoryScreen(onNavigate: onNavigate),
+          SavedScreen(onNavigate: onNavigate),
+        ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedTab,
+        onDestinationSelected: onNavigate,
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
+          NavigationDestination(
+            icon: Icon(Icons.explore_outlined),
+            label: 'Explore',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.account_balance_wallet_outlined),
+            label: 'Money',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.history_outlined),
+            label: 'History',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bookmark_border),
+            label: 'Saved',
+          ),
+        ],
+      ),
     );
   }
 }

@@ -124,15 +124,15 @@ class _SavedScreenState extends State<SavedScreen> {
               builder: (context, _) => CustomScrollView(
                 slivers: [
                   SliverPadding(
-                    padding: EdgeInsets.fromLTRB(13, 12, 13, 18),
+                    padding: EdgeInsets.fromLTRB(16, 14, 16, 22),
                     sliver: SliverList.list(
                       children: [
                         _intro(),
-                        SizedBox(height: 11),
+                        SizedBox(height: 14),
                         _searchBar(),
-                        SizedBox(height: 9),
+                        SizedBox(height: 12),
                         _filterChips(),
-                        SizedBox(height: 11),
+                        SizedBox(height: 14),
                         _summary(),
                         SizedBox(height: 10),
                         _savedItems(),
@@ -145,7 +145,6 @@ class _SavedScreenState extends State<SavedScreen> {
               ),
             ),
           ),
-          _bottomNav(),
         ],
       ),
     ),
@@ -599,56 +598,6 @@ class _SavedScreenState extends State<SavedScreen> {
     child: Text(
       text,
       style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: fg),
-    ),
-  );
-
-  Widget _bottomNav() => Container(
-    decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      border: Border(top: BorderSide(color: context.colors.outlineVariant)),
-    ),
-    padding: EdgeInsets.only(
-      top: 5,
-      bottom: MediaQuery.of(context).padding.bottom > 0
-          ? MediaQuery.of(context).padding.bottom
-          : 7,
-    ),
-    child: Row(
-      children: [
-        _nav(0, Icons.home_outlined, 'Home'),
-        _nav(1, Icons.explore_outlined, 'Explore'),
-        _nav(2, Icons.account_balance_wallet_outlined, 'Money'),
-        _nav(3, Icons.history, 'History'),
-        _nav(4, Icons.bookmark_border, 'Saved'),
-      ],
-    ),
-  );
-  Widget _nav(int i, IconData icon, String label) => Expanded(
-    child: InkWell(
-      onTap: () => widget.onNavigate?.call(i),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 17,
-            color: i == 4
-                ? context.colors.primary
-                : context.colors.onSurfaceVariant,
-          ),
-          SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10.5,
-              color: i == 4
-                  ? context.colors.primary
-                  : context.colors.onSurfaceVariant,
-              fontWeight: i == 4 ? FontWeight.w700 : FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
     ),
   );
 }
