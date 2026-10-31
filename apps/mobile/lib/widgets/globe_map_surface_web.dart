@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:js_interop';
-import 'dart:js_util' as js_util;
 import 'dart:ui_web' as ui_web;
 import 'dart:convert';
 
@@ -13,11 +12,8 @@ GlobeMapSurface createGlobeMapSurface({
   required GlobeMessageCallback onMessage,
   required GlobeLoadCallback onLoad,
   required GlobeErrorCallback onError,
-}) => _WebGlobeMapSurface(
-  onMessage: onMessage,
-  onLoad: onLoad,
-  onError: onError,
-);
+}) =>
+    _WebGlobeMapSurface(onMessage: onMessage, onLoad: onLoad, onError: onError);
 
 class _WebGlobeMapSurface implements GlobeMapSurface {
   _WebGlobeMapSurface({
@@ -31,8 +27,8 @@ class _WebGlobeMapSurface implements GlobeMapSurface {
       final frame = _frame;
       if (frame == null || event.source != frame.contentWindow) return;
       if (event.origin != Uri.base.origin) return;
-      final message = js_util.dartify(event.data);
-      if (message is String) onMessage(message);
+      final message = event.data.toString();
+      onMessage(message);
     });
     ui_web.platformViewRegistry.registerViewFactory(_viewType, (viewId) {
       final frame = web.HTMLIFrameElement()
@@ -43,7 +39,9 @@ class _WebGlobeMapSurface implements GlobeMapSurface {
         ..style.width = '100%'
         ..style.height = '100%';
       frame.onLoad.listen((_) => _onLoad());
-      frame.onError.listen((_) => _onError('The 3D map page could not be loaded.'));
+      frame.onError.listen(
+        (_) => _onError('The 3D map page could not be loaded.'),
+      );
       _frame = frame;
       return frame;
     });
@@ -68,7 +66,7 @@ class _WebGlobeMapSurface implements GlobeMapSurface {
       'method': method,
       'payload': payload,
     });
-    target.postMessage(command.toJS, Uri.base.origin);
+    target.postMessage(command.toJS, Uri.base.origin.toJS);
   }
 
   @override

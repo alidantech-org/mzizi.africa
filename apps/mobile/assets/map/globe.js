@@ -3,10 +3,25 @@
 
   const state = document.getElementById('state');
   const post = (type, payload = {}) => {
+    const message = JSON.stringify({ type, ...payload });
     if (window.MziziMapBridge && typeof window.MziziMapBridge.postMessage === 'function') {
-      window.MziziMapBridge.postMessage(JSON.stringify({ type, ...payload }));
+      window.MziziMapBridge.postMessage(message);
+    } else if (window.parent && window.parent !== window) {
+      window.parent.postMessage(message, window.location.origin);
     }
   };
+
+  // The browser host uses postMessage; native WebViews call MziziMap methods
+  // directly through the JavaScript channel bridge.
+  window.addEventListener('message', (event) => {
+    if (event.source !== window.parent || event.origin !== window.location.origin) return;
+    let command;
+    try { command = typeof event.data === 'string' ? JSON.parse(event.data) : event.data; }
+    catch (_) { return; }
+    if (!command || command.source !== 'mziziFlutter' || typeof command.method !== 'string') return;
+    const handler = window.MziziMap && window.MziziMap[command.method];
+    if (typeof handler === 'function') handler.call(window.MziziMap, command.payload || {});
+  });
 
   if (!window.Cesium) {
     state.textContent = 'Could not load the 3D map library';

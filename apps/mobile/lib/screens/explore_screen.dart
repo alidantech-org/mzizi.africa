@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'dart:async';
+
 import '../data/geography_api.dart';
 import '../theme/app_colors.dart';
 import '../widgets/cinematic_globe_map.dart';
@@ -16,6 +18,7 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   final _search = TextEditingController();
   final _focus = FocusNode();
+  Timer? _searchDebounce;
   GeographyEntity? _selected;
   GeographyScene? _scene;
   bool _mapLoading = false;
@@ -28,10 +31,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
   void dispose() {
     _search.dispose();
     _focus.dispose();
+    _searchDebounce?.cancel();
     super.dispose();
   }
 
   Future<void> _searchPlaces([String? value]) async {
+    _searchDebounce?.cancel();
     final query = (value ?? _search.text).trim();
     if (query.isEmpty) return;
     final generation = ++_searchGeneration;
@@ -216,8 +221,23 @@ class _ExploreScreenState extends State<ExploreScreen> {
       focusNode: _focus,
       textInputAction: TextInputAction.search,
       onSubmitted: _searchPlaces,
+      onChanged: (value) {
+        _searchDebounce?.cancel();
+        if (value.trim().isEmpty) {
+          ++_searchGeneration;
+          setState(() {
+            _results = const [];
+            _searchError = null;
+            _searching = false;
+          });
+          return;
+        }
+        _searchDebounce = Timer(const Duration(milliseconds: 350), () {
+          if (mounted) _searchPlaces(value);
+        });
+      },
       decoration: InputDecoration(
-        hintText: 'Search county, constituency, or ward',
+        hintText: 'Search a place or administrative area',
         prefixIcon: const Icon(Icons.search, color: forest),
         suffixIcon: _searching
             ? const Padding(
@@ -377,7 +397,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       ),
       const SizedBox(height: 8),
       const Text(
-        'Search for a Kenyan county, constituency, or ward, or rotate and zoom the map. Tap a highlighted area to explore its local areas.',
+        'Search for a Kenyan place, or rotate and zoom the map. Tap a verified area to explore its local areas.',
         style: TextStyle(color: muted, fontSize: 16, height: 1.45),
       ),
       const Spacer(),
@@ -385,7 +405,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       const SizedBox(height: 7),
       _metadataLine(
         Icons.account_tree_outlined,
-        'Explore counties, constituencies, and wards across Kenya',
+        'Follow the administrative hierarchy provided by Mzizi geography',
       ),
     ],
   );
