@@ -99,8 +99,9 @@ class _MoneyScreenState extends State<MoneyScreen> {
                   ),
                   title: Text(option),
                   onTap: () {
-                    if (title == 'Fiscal scope')
+                    if (title == 'Fiscal scope') {
                       setState(() => fiscalYear = option);
+                    }
                     Navigator.pop(sheetContext);
                   },
                 ),

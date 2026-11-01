@@ -16,42 +16,42 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String era = 'All Eras';
   String county = 'Nakuru County';
   static const events = [
-    const _HistoryEvent(
+    _HistoryEvent(
       '1895',
       'Protectorate administration begins',
       'The British East Africa Protectorate is established. The region that later becomes Kenya is administered as a protectorate.',
       'COLONIAL PERIOD',
       'East Africa Protectorate records',
     ),
-    const _HistoryEvent(
+    _HistoryEvent(
       '1920',
       'Kenya Colony proclaimed',
       'The territory is formally designated the Kenya Colony, with changing administrative districts and boundaries.',
       'COLONIAL PERIOD',
       'Kenya Colony Gazette notices',
     ),
-    const _HistoryEvent(
+    _HistoryEvent(
       '1963',
       'Independence and self-government',
       'Kenya attains independence. Provincial and district administration continues through the early republic.',
       'REPUBLIC',
       'Independence instruments • Kenya National Archives',
     ),
-    const _HistoryEvent(
+    _HistoryEvent(
       '2010',
       'Constitution establishes 47 counties',
       'The Constitution introduces devolved government and lists the county boundaries and names in the First Schedule.',
       'DEVOLUTION',
       'Constitution of Kenya • First Schedule',
     ),
-    const _HistoryEvent(
+    _HistoryEvent(
       '2013',
       'County governments take office',
       'The first county administrations are established following the March 2013 general election.',
       'DEVOLUTION',
       'Transition Authority • County handover reports',
     ),
-    const _HistoryEvent(
+    _HistoryEvent(
       '2023–27',
       'Nakuru County development plan',
       'The County Integrated Development Plan sets the county planning framework and priority programmes for the period.',

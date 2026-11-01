@@ -105,21 +105,36 @@ class _HomeScreenState extends State<HomeScreen> {
     queryController.text = initialQuery;
     List<GeographyEntity> results = const [];
     bool loading = false;
+    bool hasSearched = false;
     String? error;
-    Future<void> searchPlaces(StateSetter setSheetState) async {
+    var requestGeneration = 0;
+    Future<void> searchPlaces(
+      StateSetter setSheetState,
+      BuildContext sheetContext,
+    ) async {
       final query = queryController.text.trim();
       if (query.isEmpty || loading) return;
+      final generation = ++requestGeneration;
       setSheetState(() {
         loading = true;
+        hasSearched = true;
         error = null;
         results = const [];
       });
       try {
-        results = await GeographyApiClient.instance.search(query);
+        final matches = await GeographyApiClient.instance.search(query);
+        if (!sheetContext.mounted || generation != requestGeneration) return;
+        setSheetState(() {
+          results = matches;
+          loading = false;
+        });
       } catch (exception) {
-        error = exception.toString().replaceFirst('Exception: ', '');
+        if (!sheetContext.mounted || generation != requestGeneration) return;
+        setSheetState(() {
+          error = exception.toString().replaceFirst('Exception: ', '');
+          loading = false;
+        });
       }
-      if (context.mounted) setSheetState(() => loading = false);
     }
 
     await showModalBottomSheet<void>(
@@ -146,6 +161,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: queryController,
                   autofocus: true,
                   textInputAction: TextInputAction.search,
+                  onChanged: (_) {
+                    ++requestGeneration;
+                    setSheetState(() {
+                      results = const [];
+                      error = null;
+                      loading = false;
+                      hasSearched = false;
+                    });
+                  },
                   decoration: InputDecoration(
                     hintText: 'Search by place name',
                     suffixIcon: loading
@@ -159,10 +183,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         : IconButton(
                             icon: Icon(Icons.search),
-                            onPressed: () => searchPlaces(setSheetState),
+                            onPressed: () =>
+                                searchPlaces(setSheetState, sheetContext),
                           ),
                   ),
-                  onSubmitted: (_) => searchPlaces(setSheetState),
+                  onSubmitted: (_) => searchPlaces(setSheetState, sheetContext),
                 ),
                 if (results.isNotEmpty)
                   Flexible(
@@ -202,9 +227,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 if (!loading &&
+                    hasSearched &&
                     error == null &&
                     results.isEmpty &&
-                    queryController.text.isNotEmpty)
+                    queryController.text.trim().isNotEmpty)
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: Text(

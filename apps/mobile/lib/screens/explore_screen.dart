@@ -63,11 +63,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   Future<void> _select(GeographyEntity place) async {
+    _searchDebounce?.cancel();
+    ++_searchGeneration;
     _focus.unfocus();
     setState(() {
       _selected = place;
       _scene = null;
       _mapLoading = true;
+      _searching = false;
       _results = const [];
       _searchError = null;
     });
@@ -105,10 +108,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   void _reset() {
+    _searchDebounce?.cancel();
+    ++_searchGeneration;
     setState(() {
       _selected = null;
       _scene = null;
       _mapLoading = false;
+      _searching = false;
       _results = const [];
       _searchError = null;
       _search.clear();
@@ -239,13 +245,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
       onSubmitted: _searchPlaces,
       onChanged: (value) {
         _searchDebounce?.cancel();
+        ++_searchGeneration;
+        setState(() {
+          _results = const [];
+          _searchError = null;
+          _searching = false;
+        });
         if (value.trim().isEmpty) {
-          ++_searchGeneration;
-          setState(() {
-            _results = const [];
-            _searchError = null;
-            _searching = false;
-          });
           return;
         }
         _searchDebounce = Timer(Duration(milliseconds: 350), () {

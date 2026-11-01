@@ -290,6 +290,32 @@ void main() {
       },
     );
 
+    test('search returns an empty list when the API has no matches', () async {
+      final client = GeographyApiClient(
+        baseUrl: 'https://api.example.org',
+        client: MockClient((_) async => http.Response('{"results":[]}', 200)),
+      );
+
+      expect(await client.search('No such place'), isEmpty);
+    });
+
+    test(
+      'search preserves connection failures for the UI error state',
+      () async {
+        final client = GeographyApiClient(
+          baseUrl: 'https://api.example.org',
+          client: MockClient(
+            (_) async => throw http.ClientException('Connection refused'),
+          ),
+        );
+
+        await expectLater(
+          client.search('Nakuru'),
+          throwsA(isA<http.ClientException>()),
+        );
+      },
+    );
+
     test('entity metadata is cached by canonical ID', () async {
       var requests = 0;
       final client = GeographyApiClient(
