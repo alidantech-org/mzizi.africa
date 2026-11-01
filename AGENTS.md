@@ -186,3 +186,14 @@ Before adding a feature, ask:
 > Does this help Mzizi research, preserve, structure, verify, connect, version or explain African historical and present-day knowledge?
 
 If the answer is unclear, document the reason before expanding the platform.
+
+## 14. Task workspace
+
+Use the repository Task workspace in `.tasks` to organize implementation activities. The root `task.yaml` points the CLI to that workspace. Keep current planning and project guidance in sync:
+
+- `.tasks/todo/mzizi-africa/plan.md` — cross-surface activity sequence;
+- `.tasks/docs/` — project overview, repository map, development setup, testing guide, and roadmap;
+- `.tasks/rules/` — coding, testing, security, and Git rules;
+- `.tasks/guidance/codex.md` — agent workflow that supplements this file.
+
+This section supplements the repository contract above; it does not replace or weaken it.
