@@ -44,11 +44,14 @@ import { HistoricalEntityDto } from "#/modules/shared/dto/historical-entity.dto.
 import { StatisticsTableDto } from "#/modules/statistics/dto/statistics-table.dto.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import { ConfidenceLevel } from "#/types/statistics/confidence-level.enum.ts";
+import { EstimateKind } from "#/types/statistics/estimate-kind.enum.ts";
+import { MeasureType } from "#/types/statistics/measure-type.enum.ts";
 import type { Description } from "#/types/shared/description.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
 import type { ObservationValue } from "#/types/statistics/observation-value.type.ts";
+import type { ReleaseLabel } from "#/types/statistics/release-label.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
 
@@ -70,6 +73,22 @@ export class ObservationDto {
   createdAt!: DateTime;
 
   @IsOptional()
+  @ValidateIf((object) => object.denominatorObservationId !== null)
+  @IsString()
+  @IsUUID()
+  denominatorObservationId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.denominatorValue !== null)
+  @IsNumber({})
+  denominatorValue?: ObservationValue | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.estimateKind !== null)
+  @IsEnum(EstimateKind)
+  estimateKind?: EstimateKind | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.geoUnitId !== null)
   @IsString()
   @IsUUID()
@@ -87,6 +106,16 @@ export class ObservationDto {
   isCurrent!: Flag;
 
   @IsOptional()
+  @ValidateIf((object) => object.marginOfError !== null)
+  @IsNumber({})
+  marginOfError?: ObservationValue | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.measureType !== null)
+  @IsEnum(MeasureType)
+  measureType?: MeasureType | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.numericValue !== null)
   @IsNumber({})
   numericValue?: ObservationValue | null;
@@ -94,6 +123,18 @@ export class ObservationDto {
   @IsString()
   @IsUUID()
   periodId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.releaseLabel !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(200)
+  releaseLabel?: ReleaseLabel | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.standardError !== null)
+  @IsNumber({})
+  standardError?: ObservationValue | null;
 
   @IsString()
   @IsUUID()
@@ -131,4 +172,10 @@ export class ObservationDto {
   @IsInt()
   @Min(0)
   version!: Version;
+
+  @IsOptional()
+  @ValidateIf((object) => object.vintageId !== null)
+  @IsString()
+  @IsUUID()
+  vintageId?: Id | null;
 }

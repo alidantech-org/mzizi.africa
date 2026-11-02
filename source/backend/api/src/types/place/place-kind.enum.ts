@@ -1,4 +1,4 @@
-/** Place \1ind */
+/** Place Kind */
 export enum PlaceKind {
   FLOOR = "floor",
   ROOM = "room",

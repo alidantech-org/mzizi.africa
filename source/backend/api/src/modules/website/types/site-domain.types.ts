@@ -5,7 +5,9 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
+import type { DomainOrigin } from '#/types/website/domain-origin.enum';
 import type { DomainRole } from '#/types/website/domain-role.enum';
+import type { DomainStatus } from '#/types/website/domain-status.enum';
 import type { UrlScheme } from '#/types/website/url-scheme.enum';
 
 // ----------------------------------
@@ -35,14 +37,23 @@ import type {
 /** Site Domain */
 export interface ISiteDomain extends B.IBase {
   hostname: string;
+  isApex: boolean | null;
+  lastHttpStatus: number | null;
+  lastProbeAt: Date | null;
   observedAt: Date | null;
+  origin: DomainOrigin | null;
+  parentDomainId: string | null;
+  redirectTo: string | null;
   role: DomainRole;
   scheme: UrlScheme;
   siteId: string;
+  status: DomainStatus;
+  statusReason: string | null;
   validFrom: Date;
   validFromPrecision: DatePrecision;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
+  zoneId: string | null;
   readonly site?: SiteTypes.ISite;
 }
 

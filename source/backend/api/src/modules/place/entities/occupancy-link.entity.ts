@@ -1,12 +1,26 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
+import {
+  Check,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  type Relation,
+} from "typeorm";
 
+import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-numeric.transformer.ts";
 import { OccupancyEntity } from "#/modules/place/entities/occupancy.entity.ts";
-import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import { OccupancyLinkKind } from "#/types/place/occupancy-link-kind.enum.ts";
-import type { Id } from "#/types/shared/id.type.ts";
-import type { Date } from "#/types/shared/date.type.ts";
+import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
+import type { Id } from "#/types/shared/id.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
+import type { DateTime } from "#/types/shared/date-time.type.ts";
+import type { Date } from "#/types/shared/date.type.ts";
 
 /**
  * Occupancy Link

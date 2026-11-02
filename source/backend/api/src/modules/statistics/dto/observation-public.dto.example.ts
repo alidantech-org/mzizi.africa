@@ -1,6 +1,8 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import { ConfidenceLevel } from "#/types/statistics/confidence-level.enum.ts";
+import { EstimateKind } from "#/types/statistics/estimate-kind.enum.ts";
+import { MeasureType } from "#/types/statistics/measure-type.enum.ts";
 import { statisticsTableExample } from "#/modules/statistics/dto/statistics-table.dto.example.ts";
 
 /** The contract shape of ObservationPublic, for generated tests. */
@@ -24,6 +26,24 @@ export const observationPublicExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "temporal", temporal: "date-time" },
+    },
+    {
+      name: "denominatorObservationId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "denominatorValue",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number" },
+    },
+    {
+      name: "estimateKind",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(EstimateKind) },
     },
     {
       name: "geoUnitId",
@@ -50,6 +70,18 @@ export const observationPublicExample: ContractExample = contractExample({
       spec: { kind: "boolean" },
     },
     {
+      name: "marginOfError",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number" },
+    },
+    {
+      name: "measureType",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(MeasureType) },
+    },
+    {
       name: "numericValue",
       optional: true,
       nullable: true,
@@ -60,6 +92,18 @@ export const observationPublicExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "releaseLabel",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 200 },
+    },
+    {
+      name: "standardError",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number" },
     },
     {
       name: "tableId",
@@ -108,6 +152,12 @@ export const observationPublicExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
+      name: "vintageId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
   ],
   invariants: [

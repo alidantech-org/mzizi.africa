@@ -1,4 +1,4 @@
-/** Expectation \1asis */
+/** Expectation Basis */
 export enum ExpectationBasis {
   LEGAL_RULE = "legal_rule",
   PATTERN = "pattern",

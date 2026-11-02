@@ -1,4 +1,4 @@
-/** Place \1tatus */
+/** Place Status */
 export enum PlaceStatus {
   CLOSED = "closed",
   DEMOLISHED = "demolished",

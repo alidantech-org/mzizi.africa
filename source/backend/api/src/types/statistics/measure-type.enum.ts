@@ -1,4 +1,4 @@
-/** MeasureType */
+/** Measure Type */
 export enum MeasureType {
   COUNT = "count",
   INDEX = "index",

@@ -1,4 +1,4 @@
-/** Occupancy \1tatus */
+/** Occupancy Status */
 export enum OccupancyStatus {
   ACTIVE = "active",
   CLOSED = "closed",

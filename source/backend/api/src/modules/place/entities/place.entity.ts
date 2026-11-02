@@ -1,17 +1,30 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
+import {
+  Check,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  type Relation,
+} from "typeorm";
 
 import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-numeric.transformer.ts";
-import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import { PlaceKind } from "#/types/place/place-kind.enum.ts";
 import { PlaceStatus } from "#/types/place/place-status.enum.ts";
-import type { Id } from "#/types/shared/id.type.ts";
-import type { Date } from "#/types/shared/date.type.ts";
-import type { Flag } from "#/types/shared/flag.type.ts";
+import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { Latitude } from "#/types/place/latitude.type.ts";
-import type { LongText } from "#/types/shared/long-text.type.ts";
 import type { Longitude } from "#/types/place/longitude.type.ts";
+import type { Flag } from "#/types/shared/flag.type.ts";
+import type { Id } from "#/types/shared/id.type.ts";
+import type { LongText } from "#/types/shared/long-text.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
+import type { DateTime } from "#/types/shared/date-time.type.ts";
+import type { Date } from "#/types/shared/date.type.ts";
 
 /**
  * Place

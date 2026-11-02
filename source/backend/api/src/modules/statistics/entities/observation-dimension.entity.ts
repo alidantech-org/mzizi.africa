@@ -1,28 +1,45 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
+import {
+  Check,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  type Relation,
+} from "typeorm";
 
 import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-numeric.transformer.ts";
 import { ObservationEntity } from "#/modules/statistics/entities/observation.entity.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
-import type { Id } from "#/types/shared/id.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
+import type { Id } from "#/types/shared/id.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
+import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
-import type { BusinessCode } from "#/types/shared/business-code.type.ts";
-import type { Label } from "#/types/shared/label.type.ts";
-import type { Name } from "#/types/shared/name.type.ts";
-import type { Description } from "#/types/shared/description.type.ts";
-import type { ObservationValue } from "#/types/statistics/observation-value.type.ts";
 
-/** One dimension member attached to an observation. */
+/**
+ * Observation Dimension
+ */
 @Entity({ schema: "statistical", name: "observation_dimensions" })
 @Index("idx_observation_dimension_unique", ["observationId", "dimensionId"], { unique: true })
 @Index("idx_observation_dimension_member", ["memberId"])
 export class ObservationDimensionEntity {
+
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id!: Id;
 
+  @Column({ name: "created_at", type: "timestamptz" })
+  createdAt!: Date;
+
   @Column({ name: "dimension_id", type: "uuid" })
   dimensionId!: Id;
+
+  @Column({ name: "is_current", type: "boolean" })
+  isCurrent!: Flag;
 
   @Column({ name: "member_id", type: "uuid" })
   memberId!: Id;
@@ -33,12 +50,6 @@ export class ObservationDimensionEntity {
   @ManyToOne(() => ObservationEntity)
   @JoinColumn({ name: "observation_id" })
   observation?: Relation<ObservationEntity>;
-
-  @Column({ name: "created_at", type: "timestamptz" })
-  createdAt!: Date;
-
-  @Column({ name: "is_current", type: "boolean" })
-  isCurrent!: Flag;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

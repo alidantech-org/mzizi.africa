@@ -1,4 +1,4 @@
-/** Expectation \1tatus */
+/** Expectation Status */
 export enum ExpectationStatus {
   CEASED = "ceased",
   EXPECTED = "expected",

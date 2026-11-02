@@ -1,2 +1,2 @@
-/** Contact \1alue */
+/** Contact Value */
 export type ContactValue = string;

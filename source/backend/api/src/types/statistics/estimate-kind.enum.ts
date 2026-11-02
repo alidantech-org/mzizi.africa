@@ -1,4 +1,4 @@
-/** EstimateKind */
+/** Estimate Kind */
 export enum EstimateKind {
   ADMINISTRATIVE = "administrative",
   CENSUS = "census",

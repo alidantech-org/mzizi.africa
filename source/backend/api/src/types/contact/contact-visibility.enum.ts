@@ -1,4 +1,4 @@
-/** Contact \1isibility */
+/** Contact Visibility */
 export enum ContactVisibility {
   INTERNAL = "internal",
   PUBLIC = "public",

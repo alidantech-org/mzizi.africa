@@ -1,4 +1,4 @@
-/** Occupancy \1ink \1ind */
+/** Occupancy Link Kind */
 export enum OccupancyLinkKind {
   MERGE = "merge",
   MOVE = "move",

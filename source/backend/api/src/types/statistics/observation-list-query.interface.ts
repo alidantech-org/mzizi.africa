@@ -18,4 +18,5 @@ export interface ObservationListQuery {
   periodId?: Id;
   sort?: SortDirection;
   tableId?: Id;
+  vintageId?: Id;
 }

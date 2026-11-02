@@ -4,6 +4,12 @@ import { Global, type INestApplication, Module } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { dimensionListQueryExample } from "#/modules/statistics/dto/dimension-list-query.dto.example.ts";
+import { dimensionMemberListQueryExample } from "#/modules/statistics/dto/dimension-member-list-query.dto.example.ts";
+import { dimensionMemberResponseExample } from "#/modules/statistics/dto/dimension-member-response.dto.example.ts";
+import { dimensionMembersListResponseExample } from "#/modules/statistics/dto/dimension-members-list-response.dto.example.ts";
+import { dimensionResponseExample } from "#/modules/statistics/dto/dimension-response.dto.example.ts";
+import { dimensionsListResponseExample } from "#/modules/statistics/dto/dimensions-list-response.dto.example.ts";
 import { indicatorCategoriesListResponseExample } from "#/modules/statistics/dto/indicator-categories-list-response.dto.example.ts";
 import { indicatorCategoryListQueryExample } from "#/modules/statistics/dto/indicator-category-list-query.dto.example.ts";
 import { indicatorCategoryResponseExample } from "#/modules/statistics/dto/indicator-category-response.dto.example.ts";
@@ -13,6 +19,12 @@ import { indicatorColumnsListResponseExample } from "#/modules/statistics/dto/in
 import { indicatorListQueryExample } from "#/modules/statistics/dto/indicator-list-query.dto.example.ts";
 import { indicatorResponseExample } from "#/modules/statistics/dto/indicator-response.dto.example.ts";
 import { indicatorsListResponseExample } from "#/modules/statistics/dto/indicators-list-response.dto.example.ts";
+import { observationDerivationListQueryExample } from "#/modules/statistics/dto/observation-derivation-list-query.dto.example.ts";
+import { observationDerivationResponseExample } from "#/modules/statistics/dto/observation-derivation-response.dto.example.ts";
+import { observationDerivationsListResponseExample } from "#/modules/statistics/dto/observation-derivations-list-response.dto.example.ts";
+import { observationDimensionListQueryExample } from "#/modules/statistics/dto/observation-dimension-list-query.dto.example.ts";
+import { observationDimensionResponseExample } from "#/modules/statistics/dto/observation-dimension-response.dto.example.ts";
+import { observationDimensionsListResponseExample } from "#/modules/statistics/dto/observation-dimensions-list-response.dto.example.ts";
 import { observationListQueryExample } from "#/modules/statistics/dto/observation-list-query.dto.example.ts";
 import { observationResponseExample } from "#/modules/statistics/dto/observation-response.dto.example.ts";
 import { observationsListResponseExample } from "#/modules/statistics/dto/observations-list-response.dto.example.ts";
@@ -22,6 +34,9 @@ import { periodsListResponseExample } from "#/modules/statistics/dto/periods-lis
 import { statisticsTableListQueryExample } from "#/modules/statistics/dto/statistics-table-list-query.dto.example.ts";
 import { statisticsTableResponseExample } from "#/modules/statistics/dto/statistics-table-response.dto.example.ts";
 import { statisticsTablesListResponseExample } from "#/modules/statistics/dto/statistics-tables-list-response.dto.example.ts";
+import { vintageListQueryExample } from "#/modules/statistics/dto/vintage-list-query.dto.example.ts";
+import { vintageResponseExample } from "#/modules/statistics/dto/vintage-response.dto.example.ts";
+import { vintagesListResponseExample } from "#/modules/statistics/dto/vintages-list-response.dto.example.ts";
 
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 import { StatisticsStatisticsReadModule } from "#/modules/statistics/statistics-read/statistics-read.module.ts";
@@ -47,18 +62,28 @@ import { StatisticsStatisticsReadService } from "#/modules/statistics/statistics
 class InMemoryDataSourceModule {}
 
 const service = {
+  findDimensionMembers: vi.fn(),
+  findDimensions: vi.fn(),
   findIndicatorCategories: vi.fn(),
   findIndicatorColumns: vi.fn(),
   findIndicators: vi.fn(),
+  findObservationDerivations: vi.fn(),
+  findObservationDimensions: vi.fn(),
   findObservations: vi.fn(),
   findPeriods: vi.fn(),
   findStatisticsTables: vi.fn(),
+  findVintages: vi.fn(),
+  getDimensionById: vi.fn(),
+  getDimensionMemberById: vi.fn(),
   getIndicatorById: vi.fn(),
   getIndicatorCategoryById: vi.fn(),
   getIndicatorColumnById: vi.fn(),
   getObservationById: vi.fn(),
+  getObservationDerivationById: vi.fn(),
+  getObservationDimensionById: vi.fn(),
   getPeriodById: vi.fn(),
   getStatisticsTableById: vi.fn(),
+  getVintageById: vi.fn(),
 };
 
 type Sent = {
@@ -112,6 +137,44 @@ async function send(method: string, path: string, sent: Sent): Promise<Response>
     body: sent.body === undefined ? undefined : JSON.stringify(sent.body),
   });
 }
+
+describe("GET /v1/statistics/dimension-members (findDimensionMembers)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(dimensionMemberListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = dimensionMembersListResponseExample.valid();
+    service.findDimensionMembers.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/dimension-members", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findDimensionMembers).toHaveBeenCalledTimes(1);
+    expect(service.findDimensionMembers).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/statistics/dimensions (findDimensions)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(dimensionListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = dimensionsListResponseExample.valid();
+    service.findDimensions.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/dimensions", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findDimensions).toHaveBeenCalledTimes(1);
+    expect(service.findDimensions).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
 
 describe("GET /v1/statistics/indicator-categories (findIndicatorCategories)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
@@ -170,6 +233,44 @@ describe("GET /v1/statistics/indicators (findIndicators)", () => {
   });
 });
 
+describe("GET /v1/statistics/observation-derivations (findObservationDerivations)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(observationDerivationListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = observationDerivationsListResponseExample.valid();
+    service.findObservationDerivations.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/observation-derivations", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findObservationDerivations).toHaveBeenCalledTimes(1);
+    expect(service.findObservationDerivations).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/statistics/observation-dimensions (findObservationDimensions)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(observationDimensionListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = observationDimensionsListResponseExample.valid();
+    service.findObservationDimensions.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/observation-dimensions", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findObservationDimensions).toHaveBeenCalledTimes(1);
+    expect(service.findObservationDimensions).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/statistics/observations (findObservations)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -223,6 +324,63 @@ describe("GET /v1/statistics/tables (findStatisticsTables)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.findStatisticsTables).toHaveBeenCalledTimes(1);
     expect(service.findStatisticsTables).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/statistics/vintages (findVintages)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(vintageListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = vintagesListResponseExample.valid();
+    service.findVintages.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/vintages", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findVintages).toHaveBeenCalledTimes(1);
+    expect(service.findVintages).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/statistics/dimensions/{dimensionId} (getDimensionById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "dimensionId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = dimensionResponseExample.valid();
+    service.getDimensionById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/dimensions/{dimensionId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getDimensionById).toHaveBeenCalledTimes(1);
+    expect(service.getDimensionById).toHaveBeenCalledWith(expect.objectContaining({ dimensionId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/statistics/dimension-members/{memberId} (getDimensionMemberById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "memberId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = dimensionMemberResponseExample.valid();
+    service.getDimensionMemberById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/dimension-members/{memberId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getDimensionMemberById).toHaveBeenCalledTimes(1);
+    expect(service.getDimensionMemberById).toHaveBeenCalledWith(expect.objectContaining({ memberId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -303,6 +461,44 @@ describe("GET /v1/statistics/observations/{observationId} (getObservationById)",
   });
 });
 
+describe("GET /v1/statistics/observation-derivations/{derivationId} (getObservationDerivationById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "derivationId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = observationDerivationResponseExample.valid();
+    service.getObservationDerivationById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/observation-derivations/{derivationId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getObservationDerivationById).toHaveBeenCalledTimes(1);
+    expect(service.getObservationDerivationById).toHaveBeenCalledWith(expect.objectContaining({ derivationId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/statistics/observation-dimensions/{observationDimensionId} (getObservationDimensionById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "observationDimensionId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = observationDimensionResponseExample.valid();
+    service.getObservationDimensionById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/observation-dimensions/{observationDimensionId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getObservationDimensionById).toHaveBeenCalledTimes(1);
+    expect(service.getObservationDimensionById).toHaveBeenCalledWith(expect.objectContaining({ observationDimensionId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/statistics/periods/{periodId} (getPeriodById)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -337,6 +533,25 @@ describe("GET /v1/statistics/tables/{tableId} (getStatisticsTableById)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getStatisticsTableById).toHaveBeenCalledTimes(1);
     expect(service.getStatisticsTableById).toHaveBeenCalledWith(expect.objectContaining({ tableId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/statistics/vintages/{vintageId} (getVintageById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "vintageId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = vintageResponseExample.valid();
+    service.getVintageById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/statistics/vintages/{vintageId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getVintageById).toHaveBeenCalledTimes(1);
+    expect(service.getVintageById).toHaveBeenCalledWith(expect.objectContaining({ vintageId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

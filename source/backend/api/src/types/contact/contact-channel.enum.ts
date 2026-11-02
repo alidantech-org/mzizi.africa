@@ -1,4 +1,4 @@
-/** Contact \1hannel */
+/** Contact Channel */
 export enum ContactChannel {
   EMAIL = "email",
   FAX = "fax",

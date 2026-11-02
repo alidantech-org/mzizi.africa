@@ -67,6 +67,12 @@ export const observationListQueryExample: ContractExample = contractExample({
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
+    {
+      name: "vintageId",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
   ],
   invariants: [
   ],

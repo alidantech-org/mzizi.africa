@@ -6,6 +6,8 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
 import type { ConfidenceLevel } from '#/types/statistics/confidence-level.enum';
+import type { EstimateKind } from '#/types/statistics/estimate-kind.enum';
+import type { MeasureType } from '#/types/statistics/measure-type.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -35,17 +37,25 @@ import type {
 export interface IObservation extends B.IBase {
   columnId: string | null;
   confidenceLevel: ConfidenceLevel;
+  denominatorObservationId: string | null;
+  denominatorValue: number | null;
+  estimateKind: EstimateKind | null;
   geoUnitId: string | null;
   indicatorId: string;
   isCurrent: boolean;
+  marginOfError: number | null;
+  measureType: MeasureType | null;
   numericValue: number | null;
   periodId: string;
+  releaseLabel: string | null;
+  standardError: number | null;
   tableId: string;
   textValue: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
+  vintageId: string | null;
   readonly statisticsTable?: StatisticsTableTypes.IStatisticsTable;
 }
 

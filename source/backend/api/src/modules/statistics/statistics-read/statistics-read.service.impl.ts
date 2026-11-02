@@ -29,6 +29,31 @@ import { GetIndicatorColumnByIdUseCase } from '#/modules/statistics/statistics-r
 import { GetObservationByIdUseCase } from '#/modules/statistics/statistics-read/use-cases/get-observation-by-id.usecase';
 import { GetPeriodByIdUseCase } from '#/modules/statistics/statistics-read/use-cases/get-period-by-id.usecase';
 import { GetStatisticsTableByIdUseCase } from '#/modules/statistics/statistics-read/use-cases/get-statistics-table-by-id.usecase';
+import { FindDimensionMembersUseCase } from '#/modules/statistics/statistics-read/use-cases/find-dimension-members.usecase';
+import type { DimensionMemberListQueryDto } from '#/modules/statistics/dto/dimension-member-list-query.dto';
+import type { DimensionMembersListResponseDto } from '#/modules/statistics/dto/dimension-members-list-response.dto';
+import { FindDimensionsUseCase } from '#/modules/statistics/statistics-read/use-cases/find-dimensions.usecase';
+import type { DimensionListQueryDto } from '#/modules/statistics/dto/dimension-list-query.dto';
+import type { DimensionsListResponseDto } from '#/modules/statistics/dto/dimensions-list-response.dto';
+import { FindObservationDerivationsUseCase } from '#/modules/statistics/statistics-read/use-cases/find-observation-derivations.usecase';
+import type { ObservationDerivationListQueryDto } from '#/modules/statistics/dto/observation-derivation-list-query.dto';
+import type { ObservationDerivationsListResponseDto } from '#/modules/statistics/dto/observation-derivations-list-response.dto';
+import { FindObservationDimensionsUseCase } from '#/modules/statistics/statistics-read/use-cases/find-observation-dimensions.usecase';
+import type { ObservationDimensionListQueryDto } from '#/modules/statistics/dto/observation-dimension-list-query.dto';
+import type { ObservationDimensionsListResponseDto } from '#/modules/statistics/dto/observation-dimensions-list-response.dto';
+import { FindVintagesUseCase } from '#/modules/statistics/statistics-read/use-cases/find-vintages.usecase';
+import type { VintageListQueryDto } from '#/modules/statistics/dto/vintage-list-query.dto';
+import type { VintagesListResponseDto } from '#/modules/statistics/dto/vintages-list-response.dto';
+import { GetDimensionByIdUseCase } from '#/modules/statistics/statistics-read/use-cases/get-dimension-by-id.usecase';
+import type { DimensionResponseDto } from '#/modules/statistics/dto/dimension-response.dto';
+import { GetDimensionMemberByIdUseCase } from '#/modules/statistics/statistics-read/use-cases/get-dimension-member-by-id.usecase';
+import type { DimensionMemberResponseDto } from '#/modules/statistics/dto/dimension-member-response.dto';
+import { GetObservationDerivationByIdUseCase } from '#/modules/statistics/statistics-read/use-cases/get-observation-derivation-by-id.usecase';
+import type { ObservationDerivationResponseDto } from '#/modules/statistics/dto/observation-derivation-response.dto';
+import { GetObservationDimensionByIdUseCase } from '#/modules/statistics/statistics-read/use-cases/get-observation-dimension-by-id.usecase';
+import type { ObservationDimensionResponseDto } from '#/modules/statistics/dto/observation-dimension-response.dto';
+import { GetVintageByIdUseCase } from '#/modules/statistics/statistics-read/use-cases/get-vintage-by-id.usecase';
+import type { VintageResponseDto } from '#/modules/statistics/dto/vintage-response.dto';
 
 /**
  * Statistics Read: implements the generated StatisticsStatisticsReadService contract by
@@ -51,6 +76,16 @@ export class StatisticsStatisticsReadServiceImpl {
     private readonly getObservationByIdUseCase: GetObservationByIdUseCase,
     private readonly getPeriodByIdUseCase: GetPeriodByIdUseCase,
     private readonly getStatisticsTableByIdUseCase: GetStatisticsTableByIdUseCase,
+    private readonly findDimensionMembersUseCase: FindDimensionMembersUseCase,
+    private readonly findDimensionsUseCase: FindDimensionsUseCase,
+    private readonly findObservationDerivationsUseCase: FindObservationDerivationsUseCase,
+    private readonly findObservationDimensionsUseCase: FindObservationDimensionsUseCase,
+    private readonly findVintagesUseCase: FindVintagesUseCase,
+    private readonly getDimensionByIdUseCase: GetDimensionByIdUseCase,
+    private readonly getDimensionMemberByIdUseCase: GetDimensionMemberByIdUseCase,
+    private readonly getObservationDerivationByIdUseCase: GetObservationDerivationByIdUseCase,
+    private readonly getObservationDimensionByIdUseCase: GetObservationDimensionByIdUseCase,
+    private readonly getVintageByIdUseCase: GetVintageByIdUseCase,
   ) {}
 
   /** List indicator categories. */
@@ -111,5 +146,55 @@ export class StatisticsStatisticsReadServiceImpl {
   /** Get statistics tables by id. */
   getStatisticsTableById(input: { tableId: string }) {
     return this.getStatisticsTableByIdUseCase.execute(input);
+  }
+
+  /** findDimensionMembers. */
+  findDimensionMembers(input: DimensionMemberListQueryDto) {
+    return this.findDimensionMembersUseCase.execute(input);
+  }
+
+  /** findDimensions. */
+  findDimensions(input: DimensionListQueryDto) {
+    return this.findDimensionsUseCase.execute(input);
+  }
+
+  /** findObservationDerivations. */
+  findObservationDerivations(input: ObservationDerivationListQueryDto) {
+    return this.findObservationDerivationsUseCase.execute(input);
+  }
+
+  /** findObservationDimensions. */
+  findObservationDimensions(input: ObservationDimensionListQueryDto) {
+    return this.findObservationDimensionsUseCase.execute(input);
+  }
+
+  /** findVintages. */
+  findVintages(input: VintageListQueryDto) {
+    return this.findVintagesUseCase.execute(input);
+  }
+
+  /** getDimensionById. */
+  getDimensionById(input: { dimensionId: string }) {
+    return this.getDimensionByIdUseCase.execute(input);
+  }
+
+  /** getDimensionMemberById. */
+  getDimensionMemberById(input: { memberId: string }) {
+    return this.getDimensionMemberByIdUseCase.execute(input);
+  }
+
+  /** getObservationDerivationById. */
+  getObservationDerivationById(input: { derivationId: string }) {
+    return this.getObservationDerivationByIdUseCase.execute(input);
+  }
+
+  /** getObservationDimensionById. */
+  getObservationDimensionById(input: { observationDimensionId: string }) {
+    return this.getObservationDimensionByIdUseCase.execute(input);
+  }
+
+  /** getVintageById. */
+  getVintageById(input: { vintageId: string }) {
+    return this.getVintageByIdUseCase.execute(input);
   }
 }

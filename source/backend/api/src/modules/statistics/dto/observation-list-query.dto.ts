@@ -99,4 +99,9 @@ export class ObservationListQueryDto {
   @IsString()
   @IsUUID()
   tableId?: Id;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  vintageId?: Id;
 }

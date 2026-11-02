@@ -1,12 +1,26 @@
-import { Check, Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
+import {
+  Check,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  type Relation,
+} from "typeorm";
 
-import { DomainZoneEntity } from "#/modules/website/entities/domain-zone.entity.ts";
-import { SiteDomainEntity } from "#/modules/website/entities/site-domain.entity.ts";
+import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-numeric.transformer.ts";
 import type { Id } from "#/types/shared/id.type.ts";
-import type { Date } from "#/types/shared/date.type.ts";
+import type { LongText } from "#/types/shared/long-text.type.ts";
+import type { Version } from "#/types/shared/version.type.ts";
+import type { JsonText } from "#/types/website/json-text.type.ts";
+import type { DateTime } from "#/types/shared/date-time.type.ts";
 
 /**
- * DNS Snapshot
+ * Dns Snapshot
  */
 @Entity({ schema: "website", name: "dns_snapshots" })
 @Index("idx_dns_snapshot_domain", ["domainId", "recordType", "observedAt"])
@@ -22,29 +36,27 @@ export class DnsSnapshotEntity {
   @Column({ name: "domain_id", type: "uuid", nullable: true })
   domainId?: Id | null;
 
-  @ManyToOne(() => SiteDomainEntity)
-  @JoinColumn({ name: "domain_id" })
-  domain?: Relation<SiteDomainEntity>;
-
   @Column({ name: "observed_at", type: "timestamptz" })
   observedAt!: Date;
 
   @Column({ name: "rcode", type: "text", nullable: true })
-  rcode?: string | null;
+  rcode?: LongText | null;
 
   @Column({ name: "record_type", type: "text" })
-  recordType!: string;
+  recordType!: LongText;
 
   @Column({ name: "resolver", type: "text", nullable: true })
-  resolver?: string | null;
+  resolver?: LongText | null;
+
+  @Column({ name: "updated_at", type: "timestamptz" })
+  updatedAt!: Date;
 
   @Column({ name: "values", type: "text" })
-  values!: string;
+  values!: JsonText;
+
+  @Column({ name: "version", type: "integer" })
+  version!: Version;
 
   @Column({ name: "zone_id", type: "uuid", nullable: true })
   zoneId?: Id | null;
-
-  @ManyToOne(() => DomainZoneEntity)
-  @JoinColumn({ name: "zone_id" })
-  zone?: Relation<DomainZoneEntity>;
 }

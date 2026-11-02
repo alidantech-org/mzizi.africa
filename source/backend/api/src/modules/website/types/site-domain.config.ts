@@ -40,7 +40,7 @@ export const SITE_DOMAIN_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'validFrom
 
 export const SITE_DOMAIN_SEARCHABLE_FIELDS = [] as const satisfies readonly SiteDomainKey[];
 
-export const SITE_DOMAIN_FILTERABLE_FIELDS = ['hostname', 'id', 'role', 'siteId', 'version', ] as const satisfies readonly SiteDomainKey[];
+export const SITE_DOMAIN_FILTERABLE_FIELDS = ['hostname', 'id', 'parentDomainId', 'role', 'siteId', 'status', 'version', 'zoneId', ] as const satisfies readonly SiteDomainKey[];
 
 export const SITE_DOMAIN_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', ] as const satisfies readonly SiteDomainKey[];
 
@@ -48,7 +48,7 @@ export const SITE_DOMAIN_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFr
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const SITE_DOMAIN_SELECTABLE_FIELDS = ['createdAt', 'hostname', 'id', 'observedAt', 'role', 'scheme', 'siteId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly SiteDomainKey[];
+export const SITE_DOMAIN_SELECTABLE_FIELDS = ['createdAt', 'hostname', 'id', 'isApex', 'lastHttpStatus', 'lastProbeAt', 'observedAt', 'origin', 'parentDomainId', 'redirectTo', 'role', 'scheme', 'siteId', 'status', 'statusReason', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'zoneId', ] as const satisfies readonly SiteDomainKey[];
 
 export const SITE_DOMAIN_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly SiteDomainSelectableField[];
 
@@ -56,7 +56,7 @@ export const SITE_DOMAIN_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const SITE_DOMAIN_EDITABLE_FIELDS = ['hostname', 'observedAt', 'role', 'scheme', 'siteId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly SiteDomainKey[];
+export const SITE_DOMAIN_EDITABLE_FIELDS = ['hostname', 'isApex', 'lastHttpStatus', 'lastProbeAt', 'observedAt', 'origin', 'parentDomainId', 'redirectTo', 'role', 'scheme', 'siteId', 'status', 'statusReason', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'zoneId', ] as const satisfies readonly SiteDomainKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
