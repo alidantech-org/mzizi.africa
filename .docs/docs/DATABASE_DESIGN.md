@@ -18,7 +18,7 @@ The canonical PostgreSQL database is organised into domain schemas that are desi
 
 ## Engine-owned objects outside the catalogue
 
-`staging` (runs, candidates, issues, promotions: validation and review before promotion), `engine` (migration history and the data engine job queue) and `geography.boundary_shapes` (PostGIS shapes derived from the GeoJSON text by a trigger). They are created by hand-written migrations in `source/backend/engine/database/migrations`, are not Dryv entities, and are not served by the API (the API role may see staging candidate ids only, for review decisions). The catalogue below lists the Dryv-generated schemas (19 including `website`).
+`staging` (runs, candidates, issues, promotions: validation and review before promotion), `engine` (migration history and the data engine job queue) and `geography.boundary_shapes` (PostGIS shapes derived from the GeoJSON text by a trigger). They are created by hand-written migrations in `source/backend/engine/database/migrations`, are not Dryv entities, and are not served by the API (the API role may see staging candidate ids only, for review decisions). The catalogue below lists the Dryv-generated schemas (21 including `website`, `place` and `contact`).
 
 ## Schema catalogue
 
@@ -42,6 +42,8 @@ The canonical PostgreSQL database is organised into domain schemas that are desi
 | `filesystem` | files, versions, media | `stores`, `formats`, `folders`, `objects`, `files`, `versions`, `variants`, `attachments`, `uploads`, `events` |
 | `source` | where claims come from | `publishers`, `documents`, `captures`, `methods`, `attributions`, `verifications` |
 | `website` | known sites, domains, structures (see `WEBSITE_DESIGN.md`) | `sites`, `domains`, `site_publishers`, `structures`, `structure_versions`, `structure_files`, `checks`, `families`, `domain_patterns`, `members`, `subjects`, `traits`, `relations`, `fingerprints`, `assessments`, `dossiers` |
+| `place` | places, occupancy and expected presence (see `DOMAINS.md`) | `places`, `occupancies`, `occupancy_links`, `expectations` |
+| `contact` | contact points at any scope | `points` |
 | `audit` | discussion and review | `comments`, `evidence`, `decisions` |
 
 Reference tables (`reference`) are read constantly and change rarely; `filesystem.events`, `source.attributions` and `audit.*` are the heavy append-only tables.

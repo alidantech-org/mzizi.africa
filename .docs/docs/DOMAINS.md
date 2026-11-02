@@ -73,6 +73,20 @@ Neutral geography contracts live in `dryv/contracts/foundation/geography/index.t
 
 Modern borders are not timeless. Geography must change with the timeline so the platform can represent the political reality of a historical period rather than forcing all data into today's map.
 
+### Places, occupancy, expected presence and contact points (shared capability)
+
+Where something physically is, who uses it, where a presence is expected to exist, and how to reach it are domain-neutral, so they live in two small schemas used by governance, civic, organization and any later domain. Contracts: `dryv/contracts/domains/place/index.ts`; design and the eight worked scenarios: `.docs/docs/PLACES_AND_PRESENCE_ASSESSMENT.md`.
+
+| Table | Meaning |
+|---|---|
+| `place.places` | One self-referencing tree. `kind` (site, structure, floor, wing, room, unit, service_point), `parent_id` (null only for a site), `name`, optional building type (classification id), optional `address_text`, optional point (`latitude` and `longitude` together), the containing geography unit `located_in_unit_id` (containment, never jurisdiction), `available_from`, and the place's own `status` (planned, in_use, vacant, closed, demolished). |
+| `place.occupancies` | A subject (`subject_kind` as `schema.table` plus `subject_id`) uses a place, structure or space for a role (classification id), with status (expected, active, moved, closed) and `valid_from`/`valid_to`. Ending an occupancy never changes the place. |
+| `place.occupancy_links` | Predecessor to successor with kind move, split or merge. One predecessor with several links is a split, several predecessors into one successor is a merge. |
+| `place.expectations` | A subject should have a presence with a role in a scope geography unit (and optionally a facility type), `min_count`/`max_count`, `basis` (legal_rule, plan, pattern) and `status` (expected, researching, identified, no_details_found, not_applicable, ceased). It never holds an address or a place; once identified it points at the resolving occupancy. |
+| `contact.points` | A channel (phone, email, fax, postal, messaging) with value, visibility (public, restricted, internal) and validity, at any scope (`scope_kind`, `scope_id`). Lookup falls back from a place to its ancestors and then to the occupant (`resolveContact` in the database engine). |
+
+Rules: no `source` columns anywhere. Evidence is `source.attributions` and `source.verifications` on the target kinds `place.places`, `place.occupancies`, `place.occupancy_links`, `place.expectations` and `contact.points` (listed in `access-rules.generated.ts`). Subjects, scopes, geography units and classifications are plain ids; only `place.occupancies.place_id` and `place.occupancy_links.predecessor_id` are real foreign keys, both inside `place`. The database engine checks the rest (`integrity.ts`): every occupancy and contact scope target exists, the tree has no cycles or parentless non-sites, points are complete and in range, moved occupancies have a successor link, splits and merges have several links, an identified expectation is resolved by an occupancy of the same subject and role, and an expectation holds no address columns. `organization.locations` is untouched here; its mapping into places is a later task.
+
 ## 4. Pre-colonial political systems
 
 ### Includes
