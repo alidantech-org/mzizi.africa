@@ -9,6 +9,7 @@
  *   generate <name>     write a migration for what the Dryv entities need beyond the existing ones
  *   check               drift check: fails when entities need statements the migrations do not provide
  *   seed [reference|research|fixtures]   reference seed, agent-collected registry rows, or fixtures (_dev and _test only)
+ *   backfill-governance  link offices to the unit they represent and institutions to matching entities (evidence only; reports unmatched)
  *   integrity           check plain-id references, target kinds and derived geometry
  *   seed dev-accounts   create the local development reviewer and admin accounts (local _dev or _test databases only)
  *   grants <role>       grant per-schema read access to a role
@@ -16,6 +17,8 @@
  *   validate [runId]    validate pending candidates (errors make them invalid, the rest go to review)
  *   apply-review        move in-review candidates by their newest review decision (reviewer grant required)
  *   promote [runId]     promote approved candidates: record, attribution, verification, promotion decision
+ *   review-claims <actor> <rationale> [fields]  accept or reject proposed claims (winner of an undisputed field is accepted)
+ *   promote-claims      fill the data table from accepted winning claims (never overwrites a different value)
  *   candidates          counts of candidates by status
  *   export-targets      write ../../contracts/targets.json: stored tables and their fields, for mapping validation
  *   reset               drop every schema, migrate, seed reference and fixtures (_dev and _test only)
@@ -24,9 +27,12 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataSource, targetUrl } from "./config.ts";
 import { advanceDossier, autoAssess, decideAssessment, draftAssessment, type AssessmentOutcome } from "./assessments.ts";
+import { seedStatisticalCatalogue } from "./catalogue.ts";
 import { checkIntegrity } from "./integrity.ts";
+import { backfillGovernance } from "./governance-backfill.ts";
 import { grantReadOnly, grantReviewerRead } from "./grants.ts";
 import { applyReviewDecisions, reviewRun } from "./staging/review.ts";
+import { promoteClaims, reviewClaims } from "./claims.ts";
 import { promoteApproved, promoteCandidate } from "./staging/promotion.ts";
 import { validateCandidates } from "./staging/validation.ts";
 import { drift, generate, migrate, revertLast } from "./migrations.ts";
@@ -45,6 +51,10 @@ async function withDb<T>(options: { destructive?: boolean }, work: (db: Awaited<
 }
 
 switch (command) {
+  case "backfill-governance": {
+    await withDb({}, async (db) => console.log(JSON.stringify(await backfillGovernance(db), null, 2)));
+    break;
+  }
   case "status": {
     await withDb({}, async (db) => {
       const tableExists = (await db.query(`SELECT to_regclass('${bookkeepingSchema}.migrations') AS name`))[0].name;
@@ -90,6 +100,10 @@ switch (command) {
     }
     if (kind === "domain-zones") {
       console.log(JSON.stringify(await withDb({}, (db) => seedDomainZones(db))));
+      break;
+    }
+    if (kind === "statistical-catalogue") {
+      console.log(JSON.stringify(await withDb({}, (db) => seedStatisticalCatalogue(db))));
       break;
     }
     if (kind === "expected-sites") {
@@ -181,6 +195,16 @@ switch (command) {
     const [actorId, runId, rationale] = [argument, process.argv[4], process.argv[5]];
     if (!actorId || !runId || !rationale) throw new Error("usage: review-run <actorAccountId> <runId> '<rationale>'");
     console.log(JSON.stringify(await withDb({}, (db) => reviewRun(db, runId, actorId, rationale))));
+    break;
+  }
+  case "review-claims": {
+    const [actorId, rationale, fields] = [argument, process.argv[4], process.argv[5]];
+    if (!actorId || !rationale) throw new Error("usage: review-claims <actorAccountId> '<rationale>' [field,field]");
+    console.log(JSON.stringify(await withDb({}, (db) => reviewClaims(db, actorId, rationale, { fields: fields?.split(",") }))));
+    break;
+  }
+  case "promote-claims": {
+    console.log(JSON.stringify(await withDb({}, (db) => promoteClaims(db))));
     break;
   }
   case "candidates": {

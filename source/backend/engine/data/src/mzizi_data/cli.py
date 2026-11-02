@@ -99,6 +99,21 @@ def main(argv: list[str] | None = None) -> int:
     gp = sub.add_parser("gaps", help="gap queue: build (queue missing fields, disputed, stale), report, enqueue (refill jobs)")
     gp.add_argument("action", choices=["build", "report", "enqueue"])
     gp.add_argument("--limit", type=int, default=50)
+    wr = sub.add_parser("wikimedia-register", help="register the Wikimedia API hosts as a site (then run the database engine's auto-assess)")
+    wr.add_argument("--jurisdiction", default="ke")
+    rf = sub.add_parser("refill", help="run refill jobs for queued gaps with the Wikidata handler through the gate (gaps build, then this)")
+    rf.add_argument("--field", action="append", help="only gaps of this field (repeatable)")
+    rf.add_argument("--kind", action="append", help="only gaps of this target kind (repeatable)")
+    rf.add_argument("--limit", type=int, default=50)
+    rf.add_argument("--rate", type=float, default=0.5, help="requests per second (polite default 0.5)")
+    rf.add_argument("--store", default=".data/objects")
+    fm = sub.add_parser("fetch-media", help="store flags, emblems, logos and portraits announced by promoted markers, only with a recorded free licence")
+    fm.add_argument("--role", choices=["flag", "emblem", "logo", "portrait"])
+    fm.add_argument("--limit", type=int, default=None)
+    fm.add_argument("--rate", type=float, default=0.5)
+    fm.add_argument("--store", default=".data/objects")
+    fm.add_argument("--report", default=".data/reports/wikimedia-media.json")
+    sub.add_parser("claims-rebuild", help="recompute every claim standing after claims were rejected")
     pf = sub.add_parser("profile", help="print everything held about one person (by code) as JSON")
     pf.add_argument("code")
     gx = sub.add_parser("geo-crosscheck", help="compare promoted county and constituency boundaries with the HDX COD-AB files; --apply marks agreeing boundaries verified")
@@ -111,7 +126,21 @@ def main(argv: list[str] | None = None) -> int:
     fe.add_argument("--site", required=True, help="site code, e.g. ke/parliament")
     fe.add_argument("--url", required=True)
     fe.add_argument("--out", required=True, help="directory for the saved file")
-    wb = sub.add_parser("import-worldbank", help="stage population candidates from a saved World Bank SP.POP.TOTL JSON file")
+    cs = sub.add_parser("crawl-sections", help="bounded, gated crawl of a site's modelled content sections; registers downloaded files as documents (0.2 req/s, robots.txt, depth 2, stop on refusal)")
+    cs.add_argument("--site", required=True, help="site code, e.g. ke/orpp")
+    cs.add_argument("--seed-family", help="use the seeded sections of this family code (e.g. ke/regulator) instead of the site's own structure")
+    cs.add_argument("--max-requests", type=int, default=100)
+    cs.add_argument("--max-pages-per-section", type=int, default=3)
+    cs.add_argument("--max-file-mb", type=int, default=25)
+    cs.add_argument("--raw-dir", help="also keep raw bytes with a provenance file beside each")
+    cs.add_argument("--store", default=".data/objects")
+    cd = sub.add_parser("classify-documents", help="classify registered documents (URL, text, fuzzy title), route to parsers, queue unclassified ones as gaps")
+    cd.add_argument("--site")
+    cd.add_argument("--limit", type=int)
+    cd.add_argument("--force", action="store_true", help="reclassify documents already classified by this classifier version")
+    cd.add_argument("--labels", help="JSON file of [{id, kind}] reviewed labels: print precision and recall per kind")
+    cd.add_argument("--store", default=".data/objects")
+    wb = sub.add_parser("import-worldbank",help="stage population candidates from a saved World Bank SP.POP.TOTL JSON file")
     wb.add_argument("file")
     wb.add_argument("--iso3", required=True)
     wb.add_argument("--store", default=".data/objects")
@@ -315,6 +344,60 @@ def main(argv: list[str] | None = None) -> int:
             conn.commit()
         print(json.dumps(out, default=str, indent=2))
         return 0
+    if args.command == "wikimedia-register":
+        from . import wikimedia
+        from .db import connect
+
+        with connect() as conn:
+            site_id = wikimedia.register_site(conn, args.jurisdiction)
+            conn.commit()
+        print(site_id)
+        return 0
+    if args.command == "claims-rebuild":
+        from . import reinforcement
+        from .db import connect
+
+        with connect() as conn:
+            n = reinforcement.rebuild_all_standings(conn)
+            conn.commit()
+        print(n)
+        return 0
+    if args.command in ("refill", "fetch-media"):
+        from . import jobs, reinforcement, wikimedia
+        from .db import connect
+        from .fetch import live_fetcher
+        from .files import LocalDirectoryStore
+
+        with connect() as conn:
+            site = conn.execute("SELECT id FROM website.sites WHERE code = %s", (wikimedia.SITE_CODE,)).fetchone()
+            if not site:
+                raise SystemExit("register the Wikimedia site first (wikimedia-register, then auto-assess)")
+            fetcher = live_fetcher(conn, str(site["id"]), {"rate": {"requests_per_second": args.rate}, "limits": {"max_response_bytes": 8_000_000}}, mode="api")
+            wm = wikimedia.Wikimedia(fetcher.get)
+            store = LocalDirectoryStore(conn, args.store)
+            if args.command == "fetch-media":
+                import json as _json
+                from pathlib import Path
+
+                report = wikimedia.fetch_media(conn, wm, store, only=args.role, limit=args.limit)
+                Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+                Path(args.report).write_text(_json.dumps({"stored": report.stored, "skipped": report.skipped}, indent=1))
+                print(_json.dumps({"stored": len(report.stored), "skipped": len(report.skipped), "report": args.report}))
+                return 0
+            reinforcement.register_refill("wikidata", wikimedia.wikidata_refill(conn, wm, store))
+            n = reinforcement.enqueue_refills(conn, args.limit, fields=args.field, kinds=args.kind)
+            conn.commit()
+            done = 0
+            handlers = {"refill": reinforcement.refill_handler(conn)}
+            while jobs.run_once(conn, handlers, worker="refill"):
+                done += 1
+                conn.commit()
+                if fetcher.tripped:
+                    print(f"stopped: {fetcher.tripped}")
+                    break
+            conn.commit()
+        print(f"enqueued {n}, ran {done}")
+        return 0
     if args.command == "profile":
         from .db import connect
         from .dedup import profile_person
@@ -337,6 +420,35 @@ def main(argv: list[str] | None = None) -> int:
         with connect() as conn:
             report = fix_containment(conn, args.apply)
         print(json.dumps({**report, "counts": {k: len(v) for k, v in report.items()}}, indent=1))
+        return 0
+    if args.command == "crawl-sections":
+        from pathlib import Path
+
+        from . import crawl
+        from .db import connect
+        from .fetch import live_fetcher
+        from .files import LocalDirectoryStore
+
+        with connect() as conn:
+            store = LocalDirectoryStore(conn, args.store)
+            config = crawl.CrawlConfig(max_requests=args.max_requests, max_pages_per_section=args.max_pages_per_section, max_file_bytes=args.max_file_mb * 1024 * 1024, raw_dir=Path(args.raw_dir) if args.raw_dir else None)
+            report = crawl.crawl_site(conn, store, live_fetcher, args.site, config, args.seed_family, log=lambda m: print(m, flush=True))
+        print(json.dumps({**report.to_json(), "skipped_sample": report.skipped[:15], "errors_sample": report.errors[:10]}, indent=1, default=str))
+        return 0
+    if args.command == "classify-documents":
+        from . import semantics
+        from .db import connect
+        from .files import LocalDirectoryStore
+
+        with connect() as conn:
+            store = LocalDirectoryStore(conn, args.store)
+            summary = semantics.classify_pending(conn, store, args.limit, args.site, log=lambda m: print(m, flush=True), force=args.force)
+            conn.commit()
+            if args.labels:
+                labels = json.loads(open(args.labels).read())
+                rows = conn.execute("SELECT document_id::text AS id, kind FROM source.document_classifications WHERE classifier_version = %s", (semantics.CLASSIFIER_VERSION,)).fetchall()
+                summary["precision"] = semantics.precision_by_kind(labels, {r["id"]: r["kind"] for r in rows})
+        print(json.dumps(summary, indent=1))
         return 0
     if args.command == "fetch":
         from .db import connect
