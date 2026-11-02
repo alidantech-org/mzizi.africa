@@ -10,9 +10,9 @@
     "dev": "bun --watch src/main.ts",
     "typecheck": "bunx --bun tsc --noEmit -p src/tsconfig.json",
     "test": "vitest run --root src",
-    "db:reset": "bun scripts/dev-db.ts reset",
-    "db:schema": "bun scripts/dev-db.ts schema",
-    "db:fixtures": "bun scripts/dev-db.ts fixtures"
+    "db:reset": "bun ../engine/database/src/cli.ts reset",
+    "db:schema": "bun ../engine/database/src/cli.ts migrate",
+    "db:fixtures": "bun ../engine/database/src/cli.ts seed fixtures"
   },
   "dependencies": {
     "@nestjs/common": "^11",

@@ -13,11 +13,11 @@ docker start postgis
 docker exec postgis psql -U postgres -c "CREATE DATABASE mzizi_dev"
 cd source/backend/api && bun install
 export DATABASE_URL=postgres://postgres@localhost:5432/mzizi_dev
-bun run db:reset       # dev only: 18 domain schemas (geography, legal, source, filesystem ...), media format seeds, from the generated entities + Kenya and South Africa fixtures
+bun run db:reset       # dev only: runs the database engine's migrations, then reference seeds and the Kenya and South Africa fixtures (19 domain schemas plus staging)
 bun run start          # http://localhost:3000, 167 routes, e.g. /v1/reference/jurisdictions
 ```
 
-`db:reset` exists only because `source/backend/engine/database` does not own schema and seeds yet; it refuses non-local hosts and any database not named `*_dev` or `*_test`. The API itself never creates schema. Run `bun` from this folder: the root `tsconfig.json` is what makes Bun apply the decorator settings NestJS needs.
+`db:reset`, `db:schema` and `db:fixtures` are thin aliases for `source/backend/engine/database/src/cli.ts` (`reset`, `migrate`, `seed fixtures`), which owns schema and seeds; destructive commands refuse non-local hosts and any database not named `mzizi_*_dev` or `mzizi_*_test`. The API itself never creates schema. Run `bun` from this folder: the root `tsconfig.json` is what makes Bun apply the decorator settings NestJS needs.
 
 ## Test
 
