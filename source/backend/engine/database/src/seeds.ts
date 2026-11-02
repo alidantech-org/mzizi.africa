@@ -50,6 +50,11 @@ export async function seedResearch(db: DataSource): Promise<number> {
   const before = ids.size;
   await loadFixtures(db, readFixture("research/ke-pilot-sites").rows, ids, { provenance: false });
   await loadFixtures(db, readFixture("research/ke-site-families").rows, ids, { provenance: false });
+  for (const code of ["za", "ng", "tz"]) {
+    const [row] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [code]);
+    if (row) ids.set(code, row.id);
+  }
+  await loadFixtures(db, readFixture("research/dossiers").rows, ids, { provenance: false });
   return ids.size - before;
 }
 

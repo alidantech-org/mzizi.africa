@@ -1,0 +1,62 @@
+{
+  "note": "Jurisdiction dossier records (website.dossiers). All stay at launch stage 'research': the collection gate requires 'pilot' or 'production'. The law lists were assembled by an agent on 2026-11-02 and are not verified against official texts.",
+  "country": null,
+  "rows": [
+    {
+      "entity": "DossierEntity",
+      "key": "dossier:ke",
+      "values": {
+        "jurisdictionId": "@ke",
+        "regulator": "Office of the Data Protection Commissioner (data protection); Commission on Administrative Justice (access to information)",
+        "legislationRepositoryUrl": "https://new.kenyalaw.org/legislation/",
+        "applicableLaws": "[{\"law\": \"Constitution of Kenya 2010, Articles 31 (privacy) and 35 (access to information)\", \"url\": \"https://new.kenyalaw.org/legislation/\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"named in the compliance baseline\"}, {\"law\": \"Access to Information Act, 2016 (No. 31 of 2016) and Access to Information (General) Regulations, 2023\", \"url\": \"https://ombudsman.go.ke/access-information-center\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"regulator: Commission on Administrative Justice\"}, {\"law\": \"Data Protection Act, 2019 (No. 24 of 2019) and the 2021 General, Registration, and Complaints Handling and Enforcement Regulations\", \"url\": \"https://www.odpc.go.ke/data-protection-laws-kenya/\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"regulator: Office of the Data Protection Commissioner; registration, DPIA and transfer duties not yet assessed against Mzizi's actual processing\"}, {\"law\": \"Computer Misuse and Cybercrimes Act, 2018 (No. 5 of 2018) as amended by the Computer Misuse and Cybercrimes (Amendment) Act, 2025 (No. 17 of 2025)\", \"url\": \"https://ke-cirt.go.ke/law-regulations/\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"web search on 2026-11-02: assent 15 Oct 2025, commencement 4 Nov 2025; challenged in the High Court with conservatory orders on some provisions, and one aggregator reports a July 2026 declaration of unconstitutionality for two provisions: the current legal effect must be read from the judgment\"}, {\"law\": \"Copyright Act, 2001 (Cap. 130) as amended\", \"url\": \"https://new.kenyalaw.org/legislation/\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"rights, licences and database questions per source\"}]",
+        "treatyStatus": "[{\"instrument\": \"African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention)\", \"status\": \"in force since June 2023; Kenya had not ratified per sources dated up to 2026\", \"checkedOn\": \"2026-11-02\", \"source\": \"web search results, secondary; confirm on the AU treaty status list\"}]",
+        "launchStage": "research",
+        "isCurrent": true,
+        "openQuestions": "Open for counsel: whether Mzizi must register as a data controller or processor with the ODPC and whether a DPIA is needed; lawful basis and retention for public-office holder data; effect of the 2025 cybercrimes amendment and the litigation on automated access to public sites; licences and rights holders for government publications (no source has an assessed licence yet); where raw documents, backups and logs are hosted and which AI providers see source content."
+      }
+    },
+    {
+      "entity": "DossierEntity",
+      "key": "dossier:za",
+      "values": {
+        "jurisdictionId": "@za",
+        "regulator": null,
+        "legislationRepositoryUrl": null,
+        "applicableLaws": "[{\"law\": \"Protection of Personal Information Act 4 of 2013 (POPIA)\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate from general knowledge; unverified\"}, {\"law\": \"Promotion of Access to Information Act 2 of 2000 (PAIA)\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate; unverified\"}, {\"law\": \"Cybercrimes Act 19 of 2020\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate; unverified\"}, {\"law\": \"Copyright Act 98 of 1978\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate; unverified\"}]",
+        "treatyStatus": "[{\"instrument\": \"African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention)\", \"status\": \"signed 16 Feb 2023, not ratified per an AU table dated 2024\", \"checkedOn\": \"2026-11-02\", \"source\": \"web search results, secondary; confirm on the AU treaty status list\"}]",
+        "launchStage": "research",
+        "isCurrent": true,
+        "openQuestions": "Not reviewed. The law list is a candidate list from general knowledge and must be checked against official repositories, then reviewed by local counsel before any collection beyond licensed bulk downloads."
+      }
+    },
+    {
+      "entity": "DossierEntity",
+      "key": "dossier:ng",
+      "values": {
+        "jurisdictionId": "@ng",
+        "regulator": null,
+        "legislationRepositoryUrl": null,
+        "applicableLaws": "[{\"law\": \"Nigeria Data Protection Act 2023\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate from general knowledge; unverified\"}, {\"law\": \"Freedom of Information Act 2011\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate; unverified\"}, {\"law\": \"Cybercrimes (Prohibition, Prevention, etc.) Act 2015 as amended\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate; unverified\"}, {\"law\": \"Copyright Act 2022\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate; unverified\"}]",
+        "treatyStatus": "[{\"instrument\": \"African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention)\", \"status\": \"signed 23 Jan 2024, not ratified per an AU table dated 2024\", \"checkedOn\": \"2026-11-02\", \"source\": \"web search results, secondary; confirm on the AU treaty status list\"}]",
+        "launchStage": "research",
+        "isCurrent": true,
+        "openQuestions": "Not reviewed. The law list is a candidate list from general knowledge and must be checked against official repositories, then reviewed by local counsel before any collection beyond licensed bulk downloads."
+      }
+    },
+    {
+      "entity": "DossierEntity",
+      "key": "dossier:tz",
+      "values": {
+        "jurisdictionId": "@tz",
+        "regulator": null,
+        "legislationRepositoryUrl": null,
+        "applicableLaws": "[{\"law\": \"Personal Data Protection Act, 2022\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate from general knowledge; unverified\"}, {\"law\": \"Access to Information Act, 2016\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate; unverified\"}, {\"law\": \"Cybercrimes Act, 2015\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate; unverified\"}, {\"law\": \"Copyright and Neighbouring Rights Act, 1999\", \"url\": \"\", \"checkedOn\": \"2026-11-02\", \"verifiedAgainstOfficialText\": false, \"note\": \"candidate; unverified\"}]",
+        "treatyStatus": "[{\"instrument\": \"African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention)\", \"status\": \"no entry found\", \"checkedOn\": \"2026-11-02\", \"source\": \"web search results, secondary; confirm on the AU treaty status list\"}]",
+        "launchStage": "research",
+        "isCurrent": true,
+        "openQuestions": "Not reviewed. The law list is a candidate list from general knowledge and must be checked against official repositories, then reviewed by local counsel before any collection beyond licensed bulk downloads."
+      }
+    }
+  ]
+}
