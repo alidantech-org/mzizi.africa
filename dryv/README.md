@@ -58,3 +58,33 @@ Found while generating the full model; the contract audit enforces the first thr
 - **Database module wiring.** `AppModule` only imports `DatabaseModule` once some operation reads an entity through a projection, which is why every entity gets a read surface (`readSurface`).
 - **Renames leave stale files.** Renaming a contract does not delete its old generated files or the old project-owned scaffolds (use cases, service implementation methods). Delete the old files, then add the new methods to the `*.service.impl.ts`; the typecheck that runs after generation lists what is left.
 - **Project-owned scaffolds.** Use cases, `*.service.impl.ts`, `database.module.ts` and `vitest.config.ts` are created once and never regenerated. A new operation needs a method in the service implementation by hand.
+
+## Local setup, start to finish
+
+```bash
+# 1. Dryv engine API (from the Dryv checkout at the pinned ref; DRYV_HOME defaults to ~/Projects/personal/alidantech-org/codepot/dryv)
+cd $DRYV_HOME && uv run --project source/engine/python/api dryv-api serve --host 127.0.0.1 --port 8750 --template-server source/engine/python/api/dryv.server.yaml
+
+# 2. Contracts: install, link the local Dryv packages, check
+cd dryv && bun install && bun run check
+
+# 3. Generate (first time: bun $DRYV_HOME/source/apps/cli/bin/dryv.ts trust --yes), then adopt the shared list helper for new Find use cases
+cd .. && bun $DRYV_HOME/source/apps/cli/bin/dryv.ts --api http://127.0.0.1:8750 --yes --no-input generate
+(cd dryv && bun run adopt:list && bun run generated:check)
+
+# 4. API: typecheck and test; the PostgreSQL suites need a PostGIS server
+docker run -d --name mzizi-test-pg -e POSTGRES_PASSWORD=test -p 55432:5432 postgis/postgis:18-3.6
+cd source/backend/api && bun install && bun run typecheck
+TEST_DATABASE_URL=postgres://postgres:test@localhost:55432/postgres bun run test
+```
+
+Without `TEST_DATABASE_URL` the PostgreSQL suites are skipped and the generated specs still run. The integration suites create their own scratch databases and roles.
+
+## Checks
+
+| Command (in `dryv/`) | What it guards |
+| --- | --- |
+| `bun run check` | contracts typecheck, contract audit, Dryv doctor and compile, access rules current, API boundary |
+| `bun run generated:check` | generated output is current (needs the Dryv API) |
+| `bun run access:export` | re-export policies and target kinds after changing operations or entities |
+| `bun run adopt:list` | give newly scaffolded Find use cases the shared paging and filter helper |
