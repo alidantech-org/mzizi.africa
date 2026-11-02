@@ -1,60 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type { DataSource, DeepPartial } from 'typeorm';
-import type { CommentPublicDto } from '#/modules/audit/dto/comment-public.dto';
+import { requireActor } from '#/auth/actor-context';
+import { writeDataSource } from '#/database/write-database';
+import { assertTarget } from '#/modules/audit/audit/target';
 import type { CommentResponseDto } from '#/modules/audit/dto/comment-response.dto';
-import type { CommentDto } from '#/modules/audit/dto/comment.dto';
 import type { CreateCommentBodyDto } from '#/modules/audit/dto/create-comment-body.dto';
-import type { ActorContextDto } from '#/modules/shared/dto/actor-context.dto';
-import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
-import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
 import { CommentEntity } from '#/modules/audit/entities/comment.entity';
 
 /**
- * Add a comment to a record.
- *
- * Scaffolded by Dryv once; this file belongs to the project.
- * Generated as a starting create implementation from the contract (response read projection
- * of CommentEntity); review it and add business rules here.
+ * Project-owned. Writes with the restricted-writer connection; the actor comes from the verified
+ * token, never the body. Records are append-only: corrections are new records.
  */
 @Injectable()
 export class CreateCommentUseCase {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-
-  private get repository() {
-    return this.dataSource.getRepository(CommentEntity);
-  }
-
-  /** System fields the contract leaves to the implementation: timestamps and the version. */
-  private stamp(entity: CommentEntity, created: boolean): void {
-    const now = new Date();
-    const target = entity as unknown as Record<string, unknown>;
-    const has = (name: string) => this.repository.metadata.findColumnWithPropertyName(name) !== undefined;
-    if (created && has("createdAt")) target.createdAt = now;
-    if (has("updatedAt")) target.updatedAt = now;
-    if (has("version")) target.version = created ? 1 : Number(target.version ?? 0) + 1;
-  }
-
-  private toReadModel(entity: CommentEntity): CommentPublicDto {
-    return {
-    actorId: entity.actorId,
-    body: entity.body,
-    createdAt: entity.createdAt,
-    id: entity.id,
-    parentCommentId: entity.parentCommentId,
-    targetId: entity.targetId,
-    targetKind: entity.targetKind,
-    updatedAt: entity.updatedAt,
-    version: entity.version,
-    } as unknown as CommentPublicDto;
-  }
+  constructor(@InjectDataSource() private readonly readDb: DataSource) {}
 
   async execute(input: CreateCommentBodyDto): Promise<CommentResponseDto> {
-    const entity = this.repository.create(input as DeepPartial<CommentEntity>);
-    this.stamp(entity, true);
-    const saved = await this.repository.save(entity);
-    return {
-      comment: this.toReadModel(saved),
-    } as unknown as CommentResponseDto;
+    const actor = requireActor();
+    await assertTarget(this.readDb, input.targetKind, input.targetId);
+    if (input.parentCommentId) {
+      const [parent] = await this.readDb.query(`SELECT target_kind, target_id FROM comments WHERE id = $1`, [input.parentCommentId]);
+      if (!parent || parent.target_kind !== input.targetKind || parent.target_id !== input.targetId) {
+        throw new BadRequestException('parentCommentId must be a comment on the same record');
+      }
+    }
+    const stamped = { actorId: actor.actorId };
+    const repository = (await writeDataSource()).getRepository(CommentEntity);
+    const now = new Date();
+    const saved = await repository.save(
+      repository.create({ ...input, ...stamped, createdAt: now, updatedAt: now, version: 1 } as DeepPartial<CommentEntity>),
+    );
+    return { comment: saved } as unknown as CommentResponseDto;
   }
 }

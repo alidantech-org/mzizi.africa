@@ -18,6 +18,7 @@
     "@nestjs/typeorm": "^11",
     "class-transformer": "^0.5",
     "class-validator": "^0.14",
+    "jose": "^6.2.15",
     "reflect-metadata": "^0.2",
     "rxjs": "^7",
     "typeorm": "^0.3"

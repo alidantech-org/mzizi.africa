@@ -1,61 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type { DataSource, DeepPartial } from 'typeorm';
-import type { CreateReviewDecisionBodyDto } from '#/modules/audit/dto/create-review-decision-body.dto';
-import type { ReviewDecisionPublicDto } from '#/modules/audit/dto/review-decision-public.dto';
+import { requireActor } from '#/auth/actor-context';
+import { writeDataSource } from '#/database/write-database';
+import { assertTarget } from '#/modules/audit/audit/target';
 import type { ReviewDecisionResponseDto } from '#/modules/audit/dto/review-decision-response.dto';
-import type { ReviewDecisionDto } from '#/modules/audit/dto/review-decision.dto';
-import type { ActorContextDto } from '#/modules/shared/dto/actor-context.dto';
-import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
-import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
+import type { CreateReviewDecisionBodyDto } from '#/modules/audit/dto/create-review-decision-body.dto';
 import { ReviewDecisionEntity } from '#/modules/audit/entities/review-decision.entity';
 
 /**
- * Record a review decision about a record.
- *
- * Scaffolded by Dryv once; this file belongs to the project.
- * Generated as a starting create implementation from the contract (response read projection
- * of ReviewDecisionEntity); review it and add business rules here.
+ * Project-owned. Writes with the restricted-writer connection; the actor comes from the verified
+ * token, never the body. Records are append-only: corrections are new records.
  */
 @Injectable()
 export class CreateReviewDecisionUseCase {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-
-  private get repository() {
-    return this.dataSource.getRepository(ReviewDecisionEntity);
-  }
-
-  /** System fields the contract leaves to the implementation: timestamps and the version. */
-  private stamp(entity: ReviewDecisionEntity, created: boolean): void {
-    const now = new Date();
-    const target = entity as unknown as Record<string, unknown>;
-    const has = (name: string) => this.repository.metadata.findColumnWithPropertyName(name) !== undefined;
-    if (created && has("createdAt")) target.createdAt = now;
-    if (has("updatedAt")) target.updatedAt = now;
-    if (has("version")) target.version = created ? 1 : Number(target.version ?? 0) + 1;
-  }
-
-  private toReadModel(entity: ReviewDecisionEntity): ReviewDecisionPublicDto {
-    return {
-    createdAt: entity.createdAt,
-    decision: entity.decision,
-    id: entity.id,
-    proposedState: entity.proposedState,
-    rationale: entity.rationale,
-    reviewerId: entity.reviewerId,
-    targetId: entity.targetId,
-    targetKind: entity.targetKind,
-    updatedAt: entity.updatedAt,
-    version: entity.version,
-    } as unknown as ReviewDecisionPublicDto;
-  }
+  constructor(@InjectDataSource() private readonly readDb: DataSource) {}
 
   async execute(input: CreateReviewDecisionBodyDto): Promise<ReviewDecisionResponseDto> {
-    const entity = this.repository.create(input as DeepPartial<ReviewDecisionEntity>);
-    this.stamp(entity, true);
-    const saved = await this.repository.save(entity);
-    return {
-      decision: this.toReadModel(saved),
-    } as unknown as ReviewDecisionResponseDto;
+    const actor = requireActor();
+    await assertTarget(this.readDb, input.targetKind, input.targetId);
+    const stamped = { reviewerId: actor.actorId };
+    const repository = (await writeDataSource()).getRepository(ReviewDecisionEntity);
+    const now = new Date();
+    const saved = await repository.save(
+      repository.create({ ...input, ...stamped, createdAt: now, updatedAt: now, version: 1 } as DeepPartial<ReviewDecisionEntity>),
+    );
+    return { decision: saved } as unknown as ReviewDecisionResponseDto;
   }
 }

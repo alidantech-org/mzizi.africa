@@ -4,24 +4,9 @@
  *
  *   bun tools/audit-contracts.ts
  */
-import { spawnSync } from "node:child_process";
-import { join } from "node:path";
+import { compileIr, type Json } from "./lib/ir.ts";
 
-type Json = Record<string, any>;
-type Item = { kind: string; name: string; value: Json };
-
-const root = join(import.meta.dir, "..");
-const compile = spawnSync("bun", ["x", "dryv-ts", "compile", "contracts/index.ts"], { cwd: root, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
-if (compile.status !== 0) {
-  console.error(compile.stdout.split("\n").filter((l) => l.includes('"diagnostic"') || l.includes('"error"')).join("\n") || compile.stderr);
-  process.exit(1);
-}
-
-const items: Item[] = [];
-for (const line of compile.stdout.split("\n")) {
-  if (!line.startsWith('{"items"')) continue;
-  items.push(...(JSON.parse(line).items as Item[]));
-}
+const items = compileIr();
 
 const violations: string[] = [];
 const schemas = new Map(items.filter((i) => i.kind === "schema").map((i) => [i.name, i.value]));

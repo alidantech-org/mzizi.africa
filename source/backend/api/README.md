@@ -17,3 +17,13 @@ TEST_DATABASE_URL=postgres://postgres:test@localhost:55432/mzizi bun run test   
 ## Database access
 
 `DATABASE_URL` must point at a role with SELECT only on the domain tables. `synchronize` is false and the app has no migrations or seed path, so it cannot change schema; schema is owned by `source/backend/db-engine`. The integration test creates its own scratch schema and a SELECT-only role to prove the read slice works without write access.
+
+## Authentication and writes
+
+Reads are public. The only writes are the three `POST /v1/audit/*` routes (comments, evidence references, review decisions).
+
+- **Rules come from the contracts.** The generator does not wire contract policies into guards, so `dryv/tools/export-access.ts` exports each operation's policy to `src/auth/access-rules.generated.ts` (`bun run access:export` in `dryv/`; `access:check` is part of `bun run check`). The global `AuthGuard` enforces them and `ActorInterceptor` carries the verified actor to the use case, installed in `main.ts` with `installAuth`.
+- **Tokens.** Bearer JWTs from an OIDC-compatible issuer (`AUTH_ISSUER`, plus `AUTH_JWKS_URL` or a PEM `AUTH_PUBLIC_KEY`). `sub` must be a uuid and is the actor id; the highest of the `roles` claim (reader, contributor, reviewer, admin) is the role. With authentication unconfigured a protected route answers 503, never open access.
+- **Actor and role never come from the body.** Use cases stamp `actorId` / `reviewerId` from the token; the validation pipe also strips unknown body fields.
+- **Writer connection.** `DATABASE_WRITE_URL` is opened lazily by `src/database/write-database.ts`, knows only the three audit entities, and its role has SELECT and INSERT on those tables only: no UPDATE, no DELETE, nothing canonical. The app boots without it and writes answer 503.
+- **Targets.** `targetKind` must be one of the evidenced entities' storage names (from the same export) and the record must exist; comment replies must be on the same record.
