@@ -1,11 +1,7 @@
-import { execFile } from 'node:child_process';
-import { join } from 'node:path';
-import { promisify } from 'node:util';
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { engineCommand } from '#/database/engine-command';
+import { Injectable } from '@nestjs/common';
 import { requireActor } from '#/auth/actor-context';
 import type { PromoteResponseDto } from '#/modules/pipeline/dto/promote-response.dto';
-
-const run = promisify(execFile);
 
 /**
  * Promote an approved candidate to a canonical record through the database engine.
@@ -19,15 +15,7 @@ const run = promisify(execFile);
 export class PromoteCandidateUseCase {
   async execute(input: { candidateId: string }): Promise<PromoteResponseDto> {
     requireActor();
-    const url = process.env.DATABASE_PROMOTE_URL;
-    if (!url) throw new ServiceUnavailableException('promotion is not configured');
-    const directory = process.env.ENGINE_DATABASE_DIR ?? join(process.cwd(), '..', 'engine', 'database');
-    try {
-      const { stdout } = await run('bun', ['src/cli.ts', 'promote-one', input.candidateId], { cwd: directory, env: { ...process.env, DATABASE_URL: url }, timeout: 120_000 });
-      const result = JSON.parse(stdout.trim().split('\n').pop() ?? '{}') as { outcome: string; targetId?: string; reasons?: string[] };
-      return { outcome: result.outcome, reason: result.reasons?.length ? result.reasons.join('; ') : null, recordId: result.targetId ?? null } as unknown as PromoteResponseDto;
-    } catch {
-      throw new ServiceUnavailableException('the database engine could not promote this candidate');
-    }
+    const result = (await engineCommand(['promote-one', input.candidateId])) as { outcome: string; targetId?: string; reasons?: string[] };
+    return { outcome: result.outcome, reason: result.reasons?.length ? result.reasons.join('; ') : null, recordId: result.targetId ?? null } as unknown as PromoteResponseDto;
   }
 }

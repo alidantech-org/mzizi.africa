@@ -1,7 +1,12 @@
 
+import type { ApplyReviewsQueryDto } from "#/modules/pipeline/dto/apply-reviews-query.dto.ts";
+import type { ApplyReviewsResponseDto } from "#/modules/pipeline/dto/apply-reviews-response.dto.ts";
+import type { AssessmentDecisionResponseDto } from "#/modules/pipeline/dto/assessment-decision-response.dto.ts";
+import type { AssessmentListResponseDto } from "#/modules/pipeline/dto/assessment-list-response.dto.ts";
 import type { CandidateDetailResponseDto } from "#/modules/pipeline/dto/candidate-detail-response.dto.ts";
 import type { CandidateListQueryDto } from "#/modules/pipeline/dto/candidate-list-query.dto.ts";
 import type { CandidateListResponseDto } from "#/modules/pipeline/dto/candidate-list-response.dto.ts";
+import type { DossierListResponseDto } from "#/modules/pipeline/dto/dossier-list-response.dto.ts";
 import type { JobListResponseDto } from "#/modules/pipeline/dto/job-list-response.dto.ts";
 import type { PageQueryDto } from "#/modules/pipeline/dto/page-query.dto.ts";
 import type { PromoteResponseDto } from "#/modules/pipeline/dto/promote-response.dto.ts";
@@ -13,10 +18,15 @@ import type { SiteListResponseDto } from "#/modules/pipeline/dto/site-list-respo
  * implements it in its own class, which the feature module binds to this token.
  */
 export abstract class PipelinePipelineReviewService {
+  abstract applyReviewDecisions(input: ApplyReviewsQueryDto): Promise<ApplyReviewsResponseDto>;
+  abstract approveAssessment(input: { assessmentId: string }): Promise<AssessmentDecisionResponseDto>;
+  abstract findAssessments(input: PageQueryDto): Promise<AssessmentListResponseDto>;
   abstract findCandidates(input: CandidateListQueryDto): Promise<CandidateListResponseDto>;
+  abstract findDossiers(input: PageQueryDto): Promise<DossierListResponseDto>;
   abstract findJobs(input: PageQueryDto): Promise<JobListResponseDto>;
   abstract findRuns(input: PageQueryDto): Promise<RunListResponseDto>;
   abstract findSites(input: PageQueryDto): Promise<SiteListResponseDto>;
   abstract getCandidateDetail(input: { candidateId: string }): Promise<CandidateDetailResponseDto>;
   abstract promoteCandidate(input: { candidateId: string }): Promise<PromoteResponseDto>;
+  abstract rejectAssessment(input: { assessmentId: string }): Promise<AssessmentDecisionResponseDto>;
 }

@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import type { ApplyReviewsQueryDto } from '#/modules/pipeline/dto/apply-reviews-query.dto';
+import type { AssessmentListResponseDto } from '#/modules/pipeline/dto/assessment-list-response.dto';
+import type { DossierListResponseDto } from '#/modules/pipeline/dto/dossier-list-response.dto';
 import type { CandidateDetailResponseDto } from '#/modules/pipeline/dto/candidate-detail-response.dto';
 import type { CandidateListQueryDto } from '#/modules/pipeline/dto/candidate-list-query.dto';
 import type { CandidateListResponseDto } from '#/modules/pipeline/dto/candidate-list-response.dto';
@@ -7,6 +10,11 @@ import type { PageQueryDto } from '#/modules/pipeline/dto/page-query.dto';
 import type { PromoteResponseDto } from '#/modules/pipeline/dto/promote-response.dto';
 import type { RunListResponseDto } from '#/modules/pipeline/dto/run-list-response.dto';
 import type { SiteListResponseDto } from '#/modules/pipeline/dto/site-list-response.dto';
+import { ApplyReviewDecisionsUseCase } from '#/modules/pipeline/pipeline-review/use-cases/apply-review-decisions.usecase';
+import { ApproveAssessmentUseCase } from '#/modules/pipeline/pipeline-review/use-cases/approve-assessment.usecase';
+import { FindAssessmentsUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-assessments.usecase';
+import { FindDossiersUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-dossiers.usecase';
+import { RejectAssessmentUseCase } from '#/modules/pipeline/pipeline-review/use-cases/reject-assessment.usecase';
 import { FindCandidatesUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-candidates.usecase';
 import { FindJobsUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-jobs.usecase';
 import { FindRunsUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-runs.usecase';
@@ -23,6 +31,11 @@ import { PromoteCandidateUseCase } from '#/modules/pipeline/pipeline-review/use-
 @Injectable()
 export class PipelinePipelineReviewServiceImpl {
   constructor(
+    private readonly applyReviewDecisionsUseCase: ApplyReviewDecisionsUseCase,
+    private readonly approveAssessmentUseCase: ApproveAssessmentUseCase,
+    private readonly findAssessmentsUseCase: FindAssessmentsUseCase,
+    private readonly findDossiersUseCase: FindDossiersUseCase,
+    private readonly rejectAssessmentUseCase: RejectAssessmentUseCase,
     private readonly findCandidatesUseCase: FindCandidatesUseCase,
     private readonly findJobsUseCase: FindJobsUseCase,
     private readonly findRunsUseCase: FindRunsUseCase,
@@ -59,5 +72,30 @@ export class PipelinePipelineReviewServiceImpl {
   /** Promote an approved candidate to a canonical record through the database engine. */
   promoteCandidate(input: { candidateId: string }) {
     return this.promoteCandidateUseCase.execute(input);
+  }
+
+  /** Apply recorded review decisions to their candidates. */
+  applyReviewDecisions(input: ApplyReviewsQueryDto) {
+    return this.applyReviewDecisionsUseCase.execute(input);
+  }
+
+  /** Approve a site assessment (a named human holding assessment.approve). */
+  approveAssessment(input: { assessmentId: string }) {
+    return this.approveAssessmentUseCase.execute(input);
+  }
+
+  /** Reject a site assessment. */
+  rejectAssessment(input: { assessmentId: string }) {
+    return this.rejectAssessmentUseCase.execute(input);
+  }
+
+  /** List site assessments. */
+  findAssessments(input: PageQueryDto) {
+    return this.findAssessmentsUseCase.execute(input);
+  }
+
+  /** List jurisdiction dossiers. */
+  findDossiers(input: PageQueryDto) {
+    return this.findDossiersUseCase.execute(input);
   }
 }

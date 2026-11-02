@@ -10,6 +10,7 @@
  *   check               drift check: fails when entities need statements the migrations do not provide
  *   seed [reference|research|fixtures]   reference seed, agent-collected registry rows, or fixtures (_dev and _test only)
  *   integrity           check plain-id references, target kinds and derived geometry
+ *   seed dev-accounts   create the local development reviewer and admin accounts (local _dev or _test databases only)
  *   grants <role>       grant per-schema read access to a role
  *   grants-reviewer <role>  grant pipeline read (staging, engine, registry) to the reviewer role
  *   validate [runId]    validate pending candidates (errors make them invalid, the rest go to review)
@@ -22,13 +23,14 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataSource, targetUrl } from "./config.ts";
+import { decideAssessment, type AssessmentOutcome } from "./assessments.ts";
 import { checkIntegrity } from "./integrity.ts";
 import { grantReadOnly, grantReviewerRead } from "./grants.ts";
 import { applyReviewDecisions } from "./staging/review.ts";
 import { promoteApproved, promoteCandidate } from "./staging/promotion.ts";
 import { validateCandidates } from "./staging/validation.ts";
 import { drift, generate, migrate, revertLast } from "./migrations.ts";
-import { seedFixtures, seedReference, seedResearch } from "./seeds.ts";
+import { seedDevAccounts, seedFixtures, seedReference, seedResearch } from "./seeds.ts";
 
 const [command, argument] = process.argv.slice(2);
 
@@ -86,6 +88,11 @@ switch (command) {
       console.log(`seeded research registry rows (${await withDb({}, seedResearch)} rows)`);
       break;
     }
+    if (kind === "dev-accounts") {
+      // Local development only (destructive guard: local host and a _dev or _test database).
+      console.log(`seeded dev accounts: ${(await withDb({ destructive: true }, seedDevAccounts)).join(", ")}`);
+      break;
+    }
     await withDb({ destructive: kind === "fixtures" }, async (db) => {
       const ids = await seedReference(db);
       if (kind === "fixtures") console.log(`loaded ${await seedFixtures(db, ids)} rows`);
@@ -128,6 +135,12 @@ switch (command) {
   case "promote-one": {
     if (!argument) throw new Error("usage: promote-one <candidateId>");
     console.log(JSON.stringify(await withDb({}, (db) => promoteCandidate(db, argument))));
+    break;
+  }
+  case "decide-assessment": {
+    const [assessmentId, actorId, outcome] = [argument, process.argv[4], process.argv[5]];
+    if (!assessmentId || !actorId || !outcome) throw new Error("usage: decide-assessment <assessmentId> <actorAccountId> <outcome>");
+    console.log(JSON.stringify(await withDb({}, (db) => decideAssessment(db, assessmentId, actorId, outcome as AssessmentOutcome))));
     break;
   }
   case "candidates": {

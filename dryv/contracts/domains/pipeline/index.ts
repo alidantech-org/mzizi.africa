@@ -82,7 +82,44 @@ const detail = pipeline.schemas({
   }),
 });
 
+const registry = pipeline.schemas({
+  AssessmentSummary: dryv.schema({
+    id: dryv.field(sharedProperties.Id),
+    siteId: dryv.field(sharedProperties.Id),
+    siteName: dryv.field(sharedProperties.Label),
+    status: dryv.field(sharedProperties.Label),
+    isCurrent: dryv.field(sharedProperties.Flag),
+    sourceType: dryv.field(sharedProperties.Label),
+    rightsHolder: dryv.field(sharedProperties.Label),
+    approvedScope: dryv.field(pipelineProperties.JsonText),
+    rationale: dryv.field(pipelineProperties.Text).optional().nullable(),
+    reviewedBy: dryv.field(sharedProperties.Id).optional().nullable(),
+    reviewedAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+  }),
+  DossierSummary: dryv.schema({
+    id: dryv.field(sharedProperties.Id),
+    jurisdictionId: dryv.field(sharedProperties.Id),
+    jurisdictionName: dryv.field(sharedProperties.Label),
+    launchStage: dryv.field(sharedProperties.Label),
+    isCurrent: dryv.field(sharedProperties.Flag),
+    reviewedAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+    openQuestions: dryv.field(pipelineProperties.Text).optional().nullable(),
+  }),
+  ApplyReviewsQuery: dryv.schema({ runId: dryv.field(sharedProperties.Id).optional() }),
+  ApplyReviewsResponse: dryv.schema({
+    applied: dryv.field(sharedProperties.PaginationNumber),
+    detail: dryv.field(pipelineProperties.JsonText),
+  }),
+  AssessmentDecisionResponse: dryv.schema({
+    assessmentId: dryv.field(sharedProperties.Id),
+    outcome: dryv.field(sharedProperties.Label),
+    newAssessmentId: dryv.field(sharedProperties.Id),
+  }),
+});
+
 const lists = pipeline.schemas({
+  AssessmentListResponse: dryv.schema({ assessments: dryv.field(registry.AssessmentSummary).array() }).extends(sharedSchemas.PaginatedResponse),
+  DossierListResponse: dryv.schema({ dossiers: dryv.field(registry.DossierSummary).array() }).extends(sharedSchemas.PaginatedResponse),
   CandidateListQuery: dryv.schema({
     status: dryv.field(pipelineProperties.CandidateStatusFilter).optional(),
     targetKind: dryv.field(pipelineProperties.TargetKind).optional(),
@@ -107,16 +144,17 @@ function read(description: string, path: string, input: any, output: any, policy
   return op;
 }
 
-function promoteOperation() {
-  const description = "Promote an approved candidate to a canonical record through the database engine.";
-  const op = dryv.operation().description(description).input({ candidateId: sharedProperties.Id } as any).output(detail.PromoteResponse).failures(...failures).authenticated().requires(accessPolicies.CandidatePromoteAccess);
+function action(description: string, path: string, idParam: string | undefined, output: any, policy: any) {
+  const op = dryv.operation().description(description).input(idParam ? ({ [idParam]: sharedProperties.Id } as any) : registry.ApplyReviewsQuery).output(output).failures(...failures).authenticated().requires(policy);
   op.facets({
-    http: withStandardHttpFailures(dryv.http("POST", "/v1/pipeline/candidates/{candidateId}/promote").description(description).input((op.in as any).candidateId, dryv.path()).output(op.out, dryv.respond(200)))
+    http: withStandardHttpFailures(idParam ? dryv.http("POST", `/v1${path}`).description(description).input((op.in as any)[idParam], dryv.path()).output(op.out, dryv.respond(200)) : dryv.http("POST", `/v1${path}`).description(description).input(op.in, dryv.queryObject()).output(op.out, dryv.respond(200)))
       .failure(sharedFailures.Unauthorized, 401)
       .failure(sharedFailures.Forbidden, 403),
   });
   return op;
 }
+
+const promoteOperation = () => action("Promote an approved candidate to a canonical record through the database engine.", "/pipeline/candidates/{candidateId}/promote", "candidateId", detail.PromoteResponse, accessPolicies.CandidatePromoteAccess);
 
 const reviewer = pipeline.feature("PipelineReview").description("Reviewer-only reads over the pipeline and the promote action.").tags("internal");
 
@@ -127,4 +165,9 @@ export const pipelineOperations = reviewer.operations({
   FindJobs: read("List data engine jobs.", "/pipeline/jobs", lists.PageQuery, lists.JobListResponse, accessPolicies.PipelineReadAccess),
   FindSites: read("List registered sites.", "/pipeline/sites", lists.PageQuery, lists.SiteListResponse, accessPolicies.PipelineReadAccess),
   PromoteCandidate: promoteOperation(),
+  ApplyReviewDecisions: action("Apply recorded review decisions to their candidates (approved, rejected, held) through the database engine.", "/pipeline/reviews/apply", undefined, registry.ApplyReviewsResponse, accessPolicies.ReviewerAccess),
+  FindAssessments: read("List site legal and source assessments.", "/pipeline/assessments", lists.PageQuery, lists.AssessmentListResponse, accessPolicies.PipelineReadAccess),
+  FindDossiers: read("List jurisdiction legal dossiers.", "/pipeline/dossiers", lists.PageQuery, lists.DossierListResponse, accessPolicies.PipelineReadAccess),
+  ApproveAssessment: action("Approve a site assessment; only a named human account holding assessment.approve.", "/pipeline/assessments/{assessmentId}/approve", "assessmentId", registry.AssessmentDecisionResponse, accessPolicies.AssessmentApproveAccess),
+  RejectAssessment: action("Reject a site assessment; only a named human account holding assessment.approve.", "/pipeline/assessments/{assessmentId}/reject", "assessmentId", registry.AssessmentDecisionResponse, accessPolicies.AssessmentApproveAccess),
 });

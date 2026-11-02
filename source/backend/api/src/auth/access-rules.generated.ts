@@ -2,15 +2,20 @@
 
 /** HTTP operations that require a policy, keyed by "METHOD /nest/path". Operations not listed are public reads. */
 export const accessRules = {
+  "GET /v1/pipeline/assessments": "PipelineReadAccess",
   "GET /v1/pipeline/candidates": "PipelineReadAccess",
   "GET /v1/pipeline/candidates/:candidateId": "PipelineReadAccess",
+  "GET /v1/pipeline/dossiers": "PipelineReadAccess",
   "GET /v1/pipeline/jobs": "PipelineReadAccess",
   "GET /v1/pipeline/runs": "PipelineReadAccess",
   "GET /v1/pipeline/sites": "PipelineReadAccess",
   "POST /v1/audit/comments": "ContributorAccess",
   "POST /v1/audit/decisions": "ReviewerAccess",
   "POST /v1/audit/evidence": "ContributorAccess",
-  "POST /v1/pipeline/candidates/:candidateId/promote": "CandidatePromoteAccess"
+  "POST /v1/pipeline/assessments/:assessmentId/approve": "AssessmentApproveAccess",
+  "POST /v1/pipeline/assessments/:assessmentId/reject": "AssessmentApproveAccess",
+  "POST /v1/pipeline/candidates/:candidateId/promote": "CandidatePromoteAccess",
+  "POST /v1/pipeline/reviews/apply": "ReviewerAccess"
 } as const satisfies Record<string, "ContributorAccess" | "ReviewerAccess" | "AdminAccess" | "PipelineReadAccess" | "AssessmentApproveAccess" | "CandidatePromoteAccess" | "AccessManageAccess">;
 
 /** Schema-qualified table of every domain fact: the only valid targetKind values for audit records. */

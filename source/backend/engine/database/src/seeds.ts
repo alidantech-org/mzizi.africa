@@ -66,3 +66,21 @@ export async function seedSiteFixtures(db: DataSource, ids: Map<string, string>)
   await loadFixtures(db, readFixture("kenya-sites").rows, ids);
   await repairProvenanceKinds(db);
 }
+
+/** Fixed ids so a local development sign-in (the admin site) can mint tokens for them. Never used outside local databases. */
+export const DEV_ACCOUNTS = [
+  { id: "00000000-0000-4000-8000-0000000000a1", subject: "dev-reviewer", role: "reviewer" },
+  { id: "00000000-0000-4000-8000-0000000000a2", subject: "dev-admin", role: "admin" },
+] as const;
+
+export async function seedDevAccounts(db: DataSource): Promise<string[]> {
+  for (const account of DEV_ACCOUNTS) {
+    await db.query(
+      `INSERT INTO identity.accounts (id, issuer, subject, status, created_at, updated_at, version) VALUES ($1, 'mzizi-dev', $2, 'active', now(), now(), 1) ON CONFLICT (id) DO NOTHING`,
+      [account.id, account.subject],
+    );
+    const [existing] = await db.query(`SELECT 1 AS ok FROM identity.grants WHERE account_id = $1 AND role = $2`, [account.id, account.role]);
+    if (!existing) await db.query(`INSERT INTO identity.grants (account_id, role, is_current, created_at, updated_at, version) VALUES ($1, $2, true, now(), now(), 1)`, [account.id, account.role]);
+  }
+  return DEV_ACCOUNTS.map((account) => account.subject);
+}
