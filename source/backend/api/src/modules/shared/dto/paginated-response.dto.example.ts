@@ -1,7 +1,4 @@
-import {
-  type ContractExample,
-  contractExample,
-} from "#/modules/common/dto/testing/examples.ts";
+import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { paginationMetaExample } from "#/modules/shared/dto/pagination-meta.dto.example.ts";
 
 /** The contract shape of PaginatedResponse, for generated tests. */
@@ -15,5 +12,6 @@ export const paginatedResponseExample: ContractExample = contractExample({
       spec: { kind: "schema", example: () => paginationMetaExample },
     },
   ],
-  invariants: [],
+  invariants: [
+  ],
 });

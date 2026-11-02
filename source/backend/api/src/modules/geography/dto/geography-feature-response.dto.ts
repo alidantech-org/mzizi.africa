@@ -47,6 +47,7 @@ import type { Flag } from "#/types/shared/flag.type.ts";
  * Geography Feature Response
  */
 export class GeographyFeatureResponseDto {
+
   @IsBoolean()
   boundaryVerified!: Flag;
 

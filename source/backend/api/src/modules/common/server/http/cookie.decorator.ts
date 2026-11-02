@@ -3,9 +3,7 @@ import { createParamDecorator, type ExecutionContext } from "@nestjs/common";
 /** Reads one cookie value from the raw Cookie header, without a cookie-parser dependency. */
 export const Cookie = createParamDecorator(
   (name: string, context: ExecutionContext): string | undefined => {
-    const request = context
-      .switchToHttp()
-      .getRequest<{ headers: { cookie?: string } }>();
+    const request = context.switchToHttp().getRequest<{ headers: { cookie?: string } }>();
     const header = request.headers.cookie;
     if (!header) return undefined;
 

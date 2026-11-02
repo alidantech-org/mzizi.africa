@@ -1,7 +1,4 @@
-import {
-  type ContractExample,
-  contractExample,
-} from "#/modules/common/dto/testing/examples.ts";
+import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import { baseEntityExample } from "#/modules/shared/dto/base-entity.dto.example.ts";
 
@@ -64,5 +61,6 @@ export const historicalEntityExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 0 },
     },
   ],
-  invariants: [],
+  invariants: [
+  ],
 });

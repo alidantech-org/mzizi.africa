@@ -27,6 +27,7 @@ import { GeographyGeographyReadService } from "./geography-read.service.ts";
 export class GeographyGeographyReadController {
   constructor(private readonly service: GeographyGeographyReadService) {}
 
+
   @Get("/v1/geography/search")
   @HttpCode(200)
   searchGeography(
@@ -34,6 +35,7 @@ export class GeographyGeographyReadController {
   ): Promise<GeographySearchResponseDto> {
     return this.service.searchGeography(input);
   }
+
 
   @Get("/v1/geography/entities/:entityId/children/boundaries")
   @HttpCode(200)
@@ -43,11 +45,15 @@ export class GeographyGeographyReadController {
     return this.service.getChildBoundaries({ entityId });
   }
 
+
   @Get("/v1/geography/units/:unitId")
   @HttpCode(200)
-  getGeoUnitById(@Param("unitId") unitId: string): Promise<GeoUnitResponseDto> {
+  getGeoUnitById(
+    @Param("unitId") unitId: string,
+  ): Promise<GeoUnitResponseDto> {
     return this.service.getGeoUnitById({ unitId });
   }
+
 
   @Get("/v1/geography/entities/:entityId/boundary")
   @HttpCode(200)
@@ -56,6 +62,7 @@ export class GeographyGeographyReadController {
   ): Promise<GeographyFeatureResponseDto> {
     return this.service.getGeographyBoundary({ entityId });
   }
+
 
   @Get("/v1/geography/entities/:entityId")
   @HttpCode(200)

@@ -36,19 +36,13 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Classification Record
  */
 @Entity({ name: "classification_records" })
-@Index("idx_classification_scheme_code", ["jurisdictionId", "scheme", "code"], {
-  unique: true,
-})
+@Index("idx_classification_scheme_code", ["jurisdictionId", "scheme", "code"], { unique: true })
 export class ClassificationRecordEntity {
+
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id!: Id;
 
-  @Column({
-    name: "artifact_checksum",
-    type: "varchar",
-    length: 64,
-    nullable: true,
-  })
+  @Column({ name: "artifact_checksum", type: "varchar", length: 64, nullable: true })
   artifactChecksum?: Checksum | null;
 
   @Column({ name: "artifact_id", type: "uuid", nullable: true })
@@ -76,12 +70,7 @@ export class ClassificationRecordEntity {
   @Column({ name: "label", type: "varchar", length: 300 })
   label!: Label;
 
-  @Column({
-    name: "legal_basis",
-    type: "varchar",
-    length: 4000,
-    nullable: true,
-  })
+  @Column({ name: "legal_basis", type: "varchar", length: 4000, nullable: true })
   legalBasis?: Description | null;
 
   @Column({ name: "licence", type: "varchar", length: 300, nullable: true })
@@ -102,23 +91,13 @@ export class ClassificationRecordEntity {
   @Column({ name: "source_name", type: "varchar", length: 300 })
   sourceName!: Name;
 
-  @Column({
-    name: "source_reference",
-    type: "varchar",
-    length: 4000,
-    nullable: true,
-  })
+  @Column({ name: "source_reference", type: "varchar", length: 4000, nullable: true })
   sourceReference?: Description | null;
 
   @Column({ name: "source_url", type: "varchar", length: 1000, nullable: true })
   sourceUrl?: Url | null;
 
-  @Column({
-    name: "tool_or_model",
-    type: "varchar",
-    length: 300,
-    nullable: true,
-  })
+  @Column({ name: "tool_or_model", type: "varchar", length: 300, nullable: true })
   toolOrModel?: Name | null;
 
   @Column({ name: "updated_at", type: "timestamptz" })
@@ -127,23 +106,13 @@ export class ClassificationRecordEntity {
   @Column({ name: "valid_from", type: "date", nullable: true })
   validFrom?: Date | null;
 
-  @Column({
-    name: "valid_from_precision",
-    type: "enum",
-    enum: DatePrecision,
-    nullable: true,
-  })
+  @Column({ name: "valid_from_precision", type: "enum", enum: DatePrecision, nullable: true })
   validFromPrecision?: DatePrecision | null;
 
   @Column({ name: "valid_to", type: "date", nullable: true })
   validTo?: Date | null;
 
-  @Column({
-    name: "valid_to_precision",
-    type: "enum",
-    enum: DatePrecision,
-    nullable: true,
-  })
+  @Column({ name: "valid_to_precision", type: "enum", enum: DatePrecision, nullable: true })
   validToPrecision?: DatePrecision | null;
 
   @Column({ name: "verification_state", type: "enum", enum: VerificationState })

@@ -1,7 +1,4 @@
-import {
-  type ContractExample,
-  contractExample,
-} from "#/modules/common/dto/testing/examples.ts";
+import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 
 /** The contract shape of GeographySearchQuery, for generated tests. */
 export const geographySearchQueryExample: ContractExample = contractExample({
@@ -26,5 +23,6 @@ export const geographySearchQueryExample: ContractExample = contractExample({
       spec: { kind: "string", minLength: 1, maxLength: 120 },
     },
   ],
-  invariants: [],
+  invariants: [
+  ],
 });

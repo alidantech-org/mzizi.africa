@@ -46,6 +46,7 @@ import type { PaginationNumber } from "#/types/shared/pagination-number.type.ts"
  * Pagination Meta
  */
 export class PaginationMetaDto {
+
   @IsNumber({})
   @Min(0)
   @Max(1000)

@@ -1,7 +1,4 @@
-import {
-  type ContractExample,
-  contractExample,
-} from "#/modules/common/dto/testing/examples.ts";
+import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 
 /** The contract shape of GeographyEntity, for generated tests. */
 export const geographyEntityExample: ContractExample = contractExample({
@@ -104,5 +101,6 @@ export const geographyEntityExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
   ],
-  invariants: [],
+  invariants: [
+  ],
 });

@@ -61,6 +61,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Geo Unit Change (entity)
  */
 export class GeoUnitChangeDto {
+
   @IsOptional()
   @ValidateIf((object) => object.artifactChecksum !== null)
   @IsString()

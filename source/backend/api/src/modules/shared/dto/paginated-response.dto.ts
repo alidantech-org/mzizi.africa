@@ -46,6 +46,7 @@ import { PaginationMetaDto } from "#/modules/shared/dto/pagination-meta.dto.ts";
  * Paginated Response
  */
 export class PaginatedResponseDto {
+
   @IsDefined()
   @ValidateNested()
   @Type(() => PaginationMetaDto)

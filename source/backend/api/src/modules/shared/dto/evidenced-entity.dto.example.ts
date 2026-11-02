@@ -1,7 +1,4 @@
-import {
-  type ContractExample,
-  contractExample,
-} from "#/modules/common/dto/testing/examples.ts";
+import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import { ProvenanceMethod } from "#/types/shared/provenance-method.enum.ts";
 import { VerificationState } from "#/types/shared/verification-state.enum.ts";
@@ -132,5 +129,6 @@ export const evidencedEntityExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 0 },
     },
   ],
-  invariants: [],
+  invariants: [
+  ],
 });

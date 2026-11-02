@@ -3,15 +3,7 @@ import "reflect-metadata";
 import { Global, type INestApplication, Module } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { getDataSourceToken } from "@nestjs/typeorm";
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { geoUnitResponseExample } from "#/modules/geography/dto/geo-unit-response.dto.example.ts";
 import { geographyEntityExample } from "#/modules/geography/dto/geography-entity.dto.example.ts";
 import { geographyFeatureResponseExample } from "#/modules/geography/dto/geography-feature-response.dto.example.ts";
@@ -34,11 +26,7 @@ import { GeographyGeographyReadService } from "#/modules/geography/geography-rea
   providers: [
     {
       provide: getDataSourceToken(),
-      useValue: {
-        options: { type: "postgres" },
-        entityMetadatas: [],
-        getRepository: () => ({}),
-      },
+      useValue: { options: { type: "postgres" }, entityMetadatas: [], getRepository: () => ({}) },
     },
   ],
   exports: [getDataSourceToken()],
@@ -87,27 +75,16 @@ beforeEach(() => {
 /** Scalar query parameters from an example; nested values stay out of the query string. */
 function queryOf(value: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(
-    Object.entries(value).filter(
-      ([, item]) =>
-        item === null || typeof item !== "object" || Array.isArray(item),
-    ),
+    Object.entries(value).filter(([, item]) => item === null || typeof item !== "object" || Array.isArray(item)),
   );
 }
 
-async function send(
-  method: string,
-  path: string,
-  sent: Sent,
-): Promise<Response> {
+async function send(method: string, path: string, sent: Sent): Promise<Response> {
   const url = new URL(
-    base +
-      path.replace(/\{(\w+)\}/g, (_match, name: string) =>
-        encodeURIComponent(String(sent.params[name])),
-      ),
+    base + path.replace(/\{(\w+)\}/g, (_match, name: string) => encodeURIComponent(String(sent.params[name]))),
   );
   for (const [key, value] of Object.entries(sent.query)) {
-    for (const item of Array.isArray(value) ? value : [value])
-      url.searchParams.append(key, String(item));
+    for (const item of Array.isArray(value) ? value : [value]) url.searchParams.append(key, String(item));
   }
   return fetch(url, {
     method,
@@ -119,26 +96,18 @@ async function send(
 describe("GET /v1/geography/entities/{entityId}/children/boundaries (getChildBoundaries)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
-      params: { entityId: "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11" },
-      query: {},
-      headers: {},
-    };
+        params: { "entityId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
     const result = geographyFeatureResponseExample.valid();
     service.getChildBoundaries.mockResolvedValue(result);
 
-    const response = await send(
-      "GET",
-      "/v1/geography/entities/{entityId}/children/boundaries",
-      sent,
-    );
+    const response = await send("GET", "/v1/geography/entities/{entityId}/children/boundaries", sent);
 
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getChildBoundaries).toHaveBeenCalledTimes(1);
-    expect(service.getChildBoundaries).toHaveBeenCalledWith(
-      expect.objectContaining({
-        entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
-      }),
-    );
+    expect(service.getChildBoundaries).toHaveBeenCalledWith(expect.objectContaining({ entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -146,10 +115,10 @@ describe("GET /v1/geography/entities/{entityId}/children/boundaries (getChildBou
 describe("GET /v1/geography/units/{unitId} (getGeoUnitById)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
-      params: { unitId: "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11" },
-      query: {},
-      headers: {},
-    };
+        params: { "unitId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
     const result = geoUnitResponseExample.valid();
     service.getGeoUnitById.mockResolvedValue(result);
 
@@ -157,11 +126,7 @@ describe("GET /v1/geography/units/{unitId} (getGeoUnitById)", () => {
 
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getGeoUnitById).toHaveBeenCalledTimes(1);
-    expect(service.getGeoUnitById).toHaveBeenCalledWith(
-      expect.objectContaining({
-        unitId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
-      }),
-    );
+    expect(service.getGeoUnitById).toHaveBeenCalledWith(expect.objectContaining({ unitId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -169,26 +134,18 @@ describe("GET /v1/geography/units/{unitId} (getGeoUnitById)", () => {
 describe("GET /v1/geography/entities/{entityId}/boundary (getGeographyBoundary)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
-      params: { entityId: "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11" },
-      query: {},
-      headers: {},
-    };
+        params: { "entityId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
     const result = geographyFeatureResponseExample.valid();
     service.getGeographyBoundary.mockResolvedValue(result);
 
-    const response = await send(
-      "GET",
-      "/v1/geography/entities/{entityId}/boundary",
-      sent,
-    );
+    const response = await send("GET", "/v1/geography/entities/{entityId}/boundary", sent);
 
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getGeographyBoundary).toHaveBeenCalledTimes(1);
-    expect(service.getGeographyBoundary).toHaveBeenCalledWith(
-      expect.objectContaining({
-        entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
-      }),
-    );
+    expect(service.getGeographyBoundary).toHaveBeenCalledWith(expect.objectContaining({ entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -196,26 +153,18 @@ describe("GET /v1/geography/entities/{entityId}/boundary (getGeographyBoundary)"
 describe("GET /v1/geography/entities/{entityId} (getGeographyEntity)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
-      params: { entityId: "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11" },
-      query: {},
-      headers: {},
-    };
+        params: { "entityId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
     const result = geographyEntityExample.valid();
     service.getGeographyEntity.mockResolvedValue(result);
 
-    const response = await send(
-      "GET",
-      "/v1/geography/entities/{entityId}",
-      sent,
-    );
+    const response = await send("GET", "/v1/geography/entities/{entityId}", sent);
 
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getGeographyEntity).toHaveBeenCalledTimes(1);
-    expect(service.getGeographyEntity).toHaveBeenCalledWith(
-      expect.objectContaining({
-        entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
-      }),
-    );
+    expect(service.getGeographyEntity).toHaveBeenCalledWith(expect.objectContaining({ entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -223,10 +172,10 @@ describe("GET /v1/geography/entities/{entityId} (getGeographyEntity)", () => {
 describe("GET /v1/geography/search (searchGeography)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
-      params: {},
-      query: { ...queryOf(geographySearchQueryExample.valid()) },
-      headers: {},
-    };
+        params: { },
+        query: { ...queryOf(geographySearchQueryExample.valid()), },
+        headers: { },
+      };
     const result = geographySearchResponseExample.valid();
     service.searchGeography.mockResolvedValue(result);
 

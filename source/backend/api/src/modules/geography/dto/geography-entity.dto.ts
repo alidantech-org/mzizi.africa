@@ -53,6 +53,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Geography Entity
  */
 export class GeographyEntityDto {
+
   @IsOptional()
   @ValidateIf((object) => object.boundaryLicense !== null)
   @IsString()

@@ -28,6 +28,7 @@
     "@swc/core": "^1",
     "@types/bun": "latest",
     "@types/node": "latest",
+    "@types/pg": "^8.23.1",
     "pg": "^8",
     "pg-mem": "^3",
     "prettier": "^3.9.10",

@@ -46,6 +46,7 @@ import { GeoUnitPublicDto } from "#/modules/geography/dto/geo-unit-public.dto.ts
  * Geo Unit Response
  */
 export class GeoUnitResponseDto {
+
   @IsDefined()
   @ValidateNested()
   @Type(() => GeoUnitPublicDto)

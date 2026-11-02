@@ -9,20 +9,15 @@ import { geographySearchResponseExample } from "#/modules/geography/dto/geograph
 
 /** Managed by Dryv: GeographySearchResponseDto enforces exactly what the GeographySearchResponse contract says. */
 async function errorsFor(value: Record<string, unknown>): Promise<string[]> {
-  const errors = await validate(
-    plainToInstance(GeographySearchResponseDto, value),
-    {
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      forbidUnknownValues: false,
-    },
-  );
+  const errors = await validate(plainToInstance(GeographySearchResponseDto, value), {
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    forbidUnknownValues: false,
+  });
   return errors.map((error) => error.property);
 }
 
-const cases = geographySearchResponseExample
-  .violations()
-  .map((item) => [item.field, item.reason, item.value] as const);
+const cases = geographySearchResponseExample.violations().map((item) => [item.field, item.reason, item.value] as const);
 
 describe("GeographySearchResponseDto contract", () => {
   it("accepts the contract example", async () => {
@@ -30,12 +25,9 @@ describe("GeographySearchResponseDto contract", () => {
   });
 
   it("rejects unknown properties", async () => {
-    expect(
-      await errorsFor({
-        ...geographySearchResponseExample.valid(),
-        unexpectedField: 1,
-      }),
-    ).toContain("unexpectedField");
+    expect(await errorsFor({ ...geographySearchResponseExample.valid(), unexpectedField: 1 })).toContain(
+      "unexpectedField",
+    );
   });
 
   if (cases.length > 0) {

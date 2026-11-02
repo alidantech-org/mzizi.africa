@@ -1,3 +1,4 @@
+
 import type { RelationKind } from "#/types/geography/relation-kind.enum.ts";
 import type { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { ProvenanceMethod } from "#/types/shared/provenance-method.enum.ts";

@@ -17,9 +17,7 @@ async function errorsFor(value: Record<string, unknown>): Promise<string[]> {
   return errors.map((error) => error.property);
 }
 
-const cases = paginationMetaExample
-  .violations()
-  .map((item) => [item.field, item.reason, item.value] as const);
+const cases = paginationMetaExample.violations().map((item) => [item.field, item.reason, item.value] as const);
 
 describe("PaginationMetaDto contract", () => {
   it("accepts the contract example", async () => {
@@ -27,9 +25,9 @@ describe("PaginationMetaDto contract", () => {
   });
 
   it("rejects unknown properties", async () => {
-    expect(
-      await errorsFor({ ...paginationMetaExample.valid(), unexpectedField: 1 }),
-    ).toContain("unexpectedField");
+    expect(await errorsFor({ ...paginationMetaExample.valid(), unexpectedField: 1 })).toContain(
+      "unexpectedField",
+    );
   });
 
   if (cases.length > 0) {

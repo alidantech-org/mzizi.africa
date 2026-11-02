@@ -15,8 +15,7 @@ export function Satisfies<T extends object>(
       propertyName: String(propertyName),
       ...(options === undefined ? {} : { options }),
       validator: {
-        validate: (_value, args) =>
-          args !== undefined && rule(args.object as T),
+        validate: (_value, args) => args !== undefined && rule(args.object as T),
       },
     });
   };

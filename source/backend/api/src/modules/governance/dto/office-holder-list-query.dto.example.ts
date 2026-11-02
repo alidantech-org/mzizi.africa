@@ -1,0 +1,55 @@
+import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
+import { HolderStatus } from "#/types/governance/holder-status.enum.ts";
+import { SortDirection } from "#/types/shared/sort-direction.enum.ts";
+import { baseQueryExample } from "#/modules/shared/dto/base-query.dto.example.ts";
+
+/** The contract shape of OfficeHolderListQuery, for generated tests. */
+export const officeHolderListQueryExample: ContractExample = contractExample({
+  name: "OfficeHolderListQuery",
+  fields: [
+    {
+      name: "limit",
+      optional: true,
+      nullable: false,
+      spec: { kind: "number", min: 0, max: 1000 },
+    },
+    {
+      name: "officeId",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "order",
+      optional: true,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(SortDirection) },
+    },
+    {
+      name: "page",
+      optional: true,
+      nullable: false,
+      spec: { kind: "number", min: 0, max: 1000 },
+    },
+    {
+      name: "personId",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "sort",
+      optional: true,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(SortDirection) },
+    },
+    {
+      name: "status",
+      optional: true,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(HolderStatus) },
+    },
+  ],
+  invariants: [
+  ],
+});

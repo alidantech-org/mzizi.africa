@@ -3,6 +3,7 @@ import "reflect-metadata";
 
 import { NotFoundException } from "@nestjs/common";
 import { DataSource } from "typeorm";
+import { scratchDatabase } from "#/database/scratch-database";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { GetChildBoundariesUseCase } from "#/modules/geography/geography-read/use-cases/get-child-boundaries.usecase";
@@ -22,10 +23,11 @@ const entities = Object.values(
 ).flatMap((module) => Object.values(module));
 
 const adminUrl = process.env.TEST_DATABASE_URL;
-const READER = "mzizi_api_reader_test";
+const READER = "mzizi_geo_reader_test";
 
 describe.skipIf(!adminUrl)("geography read slice (PostgreSQL)", () => {
   let admin: DataSource;
+  let dbUrl: string;
   let reader: DataSource;
   const ids = {
     ke: "11111111-1111-4111-8111-111111111111",
@@ -43,9 +45,10 @@ describe.skipIf(!adminUrl)("geography read slice (PostgreSQL)", () => {
   const polygon = { type: "Polygon", coordinates: [[[36.6, -1.4], [37.1, -1.4], [37.1, -1.1], [36.6, -1.1], [36.6, -1.4]]] };
 
   beforeAll(async () => {
+    dbUrl = await scratchDatabase(adminUrl as string, "mzizi_geography_test");
     admin = new DataSource({
       type: "postgres",
-      url: adminUrl,
+      url: dbUrl,
       entities,
       synchronize: true,
       dropSchema: true,
@@ -97,7 +100,7 @@ describe.skipIf(!adminUrl)("geography read slice (PostgreSQL)", () => {
     );
     await admin.query(`CREATE ROLE ${READER} LOGIN PASSWORD 'reader'`);
     await admin.query(`GRANT SELECT ON ALL TABLES IN SCHEMA public TO ${READER}`);
-    const url = new URL(adminUrl as string);
+    const url = new URL(dbUrl);
     url.username = READER;
     url.password = "reader";
     reader = new DataSource({ type: "postgres", url: url.toString() });
@@ -106,6 +109,8 @@ describe.skipIf(!adminUrl)("geography read slice (PostgreSQL)", () => {
 
   afterAll(async () => {
     await reader?.destroy();
+    await admin?.query(`DROP OWNED BY ${READER}`);
+    await admin?.query(`DROP ROLE IF EXISTS ${READER}`);
     await admin?.destroy();
   });
 

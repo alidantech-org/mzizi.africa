@@ -61,6 +61,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Geo Relationship (entity)
  */
 export class GeoRelationshipDto {
+
   @IsOptional()
   @ValidateIf((object) => object.artifactChecksum !== null)
   @IsString()

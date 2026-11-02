@@ -61,6 +61,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Jurisdiction (entity)
  */
 export class JurisdictionDto {
+
   @IsOptional()
   @ValidateIf((object) => object.artifactChecksum !== null)
   @IsString()

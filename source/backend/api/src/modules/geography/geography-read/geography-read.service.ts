@@ -1,3 +1,4 @@
+
 import type { GeoUnitResponseDto } from "#/modules/geography/dto/geo-unit-response.dto.ts";
 import type { GeographyEntityDto } from "#/modules/geography/dto/geography-entity.dto.ts";
 import type { GeographyFeatureResponseDto } from "#/modules/geography/dto/geography-feature-response.dto.ts";
@@ -9,19 +10,9 @@ import type { GeographySearchResponseDto } from "#/modules/geography/dto/geograp
  * implements it in its own class, which the feature module binds to this token.
  */
 export abstract class GeographyGeographyReadService {
-  abstract getChildBoundaries(input: {
-    entityId: string;
-  }): Promise<GeographyFeatureResponseDto>;
-  abstract getGeoUnitById(input: {
-    unitId: string;
-  }): Promise<GeoUnitResponseDto>;
-  abstract getGeographyBoundary(input: {
-    entityId: string;
-  }): Promise<GeographyFeatureResponseDto>;
-  abstract getGeographyEntity(input: {
-    entityId: string;
-  }): Promise<GeographyEntityDto>;
-  abstract searchGeography(
-    input: GeographySearchQueryDto,
-  ): Promise<GeographySearchResponseDto>;
+  abstract getChildBoundaries(input: { entityId: string }): Promise<GeographyFeatureResponseDto>;
+  abstract getGeoUnitById(input: { unitId: string }): Promise<GeoUnitResponseDto>;
+  abstract getGeographyBoundary(input: { entityId: string }): Promise<GeographyFeatureResponseDto>;
+  abstract getGeographyEntity(input: { entityId: string }): Promise<GeographyEntityDto>;
+  abstract searchGeography(input: GeographySearchQueryDto): Promise<GeographySearchResponseDto>;
 }

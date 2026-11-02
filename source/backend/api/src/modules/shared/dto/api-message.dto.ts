@@ -46,6 +46,7 @@ import type { Message } from "#/types/shared/message.type.ts";
  * Api Message
  */
 export class ApiMessageDto {
+
   @IsString()
   @MinLength(1)
   @MaxLength(500)

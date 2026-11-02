@@ -47,3 +47,14 @@ cd source/backend/api && bun run typecheck && bun run test
 - an HTTP operation is not under `/v1/` or maps no failures.
 
 The local Dryv checkout is used instead of the published packages (they are out of date): `bun install` links it through `scripts/link-dryv.sh` (set `DRYV_HOME`).
+
+## Generator limits and workarounds
+
+Found while generating the full model; the contract audit enforces the first three.
+
+- **One relation per target.** The entity pack names a relation property after its target, so two relations from one entity to the same target collide. Keep one relation and make the others plain ids (`plainId()` in `foundation/shared/builders.ts`).
+- **Reserved schema names.** A schema named `Contract` collides with the generated test helper `contractExample`; the procurement schema is `ProcurementContract`.
+- **Varchar limits.** A string maximum becomes `varchar(max)`; PostgreSQL caps that at 10485760, so unbounded text (GeoJSON, legal provisions) omits the maximum.
+- **Database module wiring.** `AppModule` only imports `DatabaseModule` once some operation reads an entity through a projection, which is why every entity gets a read surface (`readSurface`).
+- **Renames leave stale files.** Renaming a contract does not delete its old generated files or the old project-owned scaffolds (use cases, service implementation methods). Delete the old files, then add the new methods to the `*.service.impl.ts`; the typecheck that runs after generation lists what is left.
+- **Project-owned scaffolds.** Use cases, `*.service.impl.ts`, `database.module.ts` and `vitest.config.ts` are created once and never regenerated. A new operation needs a method in the service implementation by hand.

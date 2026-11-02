@@ -1,8 +1,4 @@
-import {
-  type ArgumentMetadata,
-  ValidationPipe,
-  type ValidationPipeOptions,
-} from "@nestjs/common";
+import { type ArgumentMetadata, ValidationPipe, type ValidationPipeOptions } from "@nestjs/common";
 import { getMetadataStorage } from "class-validator";
 
 /**
@@ -24,10 +20,7 @@ export const httpOptions: ValidationPipeOptions = {
  * for boolean fields. Bodies are not converted, so JSON stays strict.
  */
 export class HttpValidationPipe extends ValidationPipe {
-  override async transform(
-    value: unknown,
-    metadata: ArgumentMetadata,
-  ): Promise<unknown> {
+  override async transform(value: unknown, metadata: ArgumentMetadata): Promise<unknown> {
     if (metadata.type === "query" && metadata.metatype && isRecord(value)) {
       return super.transform(coerceQuery(value, metadata.metatype), metadata);
     }
@@ -47,16 +40,9 @@ const BOOLEAN = new Set(["isBoolean"]);
  * than reflected design types, which per-file compilers (SWC, esbuild) cannot resolve for
  * imported type aliases.
  */
-function fieldKinds(
-  type: abstract new (...args: never[]) => unknown,
-): Map<string, "number" | "boolean"> {
+function fieldKinds(type: abstract new (...args: never[]) => unknown): Map<string, "number" | "boolean"> {
   const kinds = new Map<string, "number" | "boolean">();
-  for (const item of getMetadataStorage().getTargetValidationMetadatas(
-    type as never,
-    "",
-    true,
-    false,
-  )) {
+  for (const item of getMetadataStorage().getTargetValidationMetadatas(type as never, "", true, false)) {
     const name = item.name ?? "";
     if (NUMERIC.has(name)) kinds.set(item.propertyName, "number");
     else if (BOOLEAN.has(name)) kinds.set(item.propertyName, "boolean");
@@ -64,29 +50,19 @@ function fieldKinds(
   return kinds;
 }
 
-function coerceQuery(
-  query: Record<string, unknown>,
-  type: abstract new (...args: never[]) => unknown,
-) {
+function coerceQuery(query: Record<string, unknown>, type: abstract new (...args: never[]) => unknown) {
   const kinds = fieldKinds(type);
   const coerced: Record<string, unknown> = { ...query };
   for (const [key, raw] of Object.entries(query)) {
     const kind = kinds.get(key);
-    coerced[key] = Array.isArray(raw)
-      ? raw.map((item) => coerce(item, kind))
-      : coerce(raw, kind);
+    coerced[key] = Array.isArray(raw) ? raw.map((item) => coerce(item, kind)) : coerce(raw, kind);
   }
   return coerced;
 }
 
-function coerce(
-  value: unknown,
-  kind: "number" | "boolean" | undefined,
-): unknown {
+function coerce(value: unknown, kind: "number" | "boolean" | undefined): unknown {
   if (typeof value !== "string") return value;
-  if (kind === "number" && value.trim() !== "" && !Number.isNaN(Number(value)))
-    return Number(value);
-  if (kind === "boolean" && (value === "true" || value === "false"))
-    return value === "true";
+  if (kind === "number" && value.trim() !== "" && !Number.isNaN(Number(value))) return Number(value);
+  if (kind === "boolean" && (value === "true" || value === "false")) return value === "true";
   return value;
 }

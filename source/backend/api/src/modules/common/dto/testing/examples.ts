@@ -15,13 +15,7 @@ export type FieldSpec =
       exactLength?: number;
       patterns?: readonly string[];
     }
-  | {
-      kind: "number";
-      integer?: boolean;
-      min?: number;
-      max?: number;
-      multipleOf?: number;
-    }
+  | { kind: "number"; integer?: boolean; min?: number; max?: number; multipleOf?: number }
   | { kind: "boolean" }
   | { kind: "enum"; values: readonly unknown[] }
   | { kind: "temporal"; temporal: string }
@@ -40,10 +34,7 @@ export interface FieldEntry {
 export type Operand =
   | { field: string }
   | { literal: unknown }
-  | {
-      terms: readonly Operand[];
-      operator: "add" | "subtract" | "multiply" | "divide";
-    };
+  | { terms: readonly Operand[]; operator: "add" | "subtract" | "multiply" | "divide" };
 
 export interface Comparison {
   left: Operand;
@@ -135,29 +126,17 @@ const TEMPORAL_VALUES: Record<string, string> = {
 
 const MAX_DEPTH = 3;
 
-function stringBounds(
-  spec: Extract<FieldSpec, { kind: "string" }>,
-): [number, number] {
-  if (spec.exactLength !== undefined)
-    return [spec.exactLength, spec.exactLength];
-  return [
-    spec.minLength ?? 1,
-    spec.maxLength ?? Math.max(spec.minLength ?? 1, 12),
-  ];
+function stringBounds(spec: Extract<FieldSpec, { kind: "string" }>): [number, number] {
+  if (spec.exactLength !== undefined) return [spec.exactLength, spec.exactLength];
+  return [spec.minLength ?? 1, spec.maxLength ?? Math.max(spec.minLength ?? 1, 12)];
 }
 
-function fitsLength(
-  value: string,
-  spec: Extract<FieldSpec, { kind: "string" }>,
-): boolean {
+function fitsLength(value: string, spec: Extract<FieldSpec, { kind: "string" }>): boolean {
   const [min, max] = stringBounds(spec);
   return value.length >= min && value.length <= max;
 }
 
-function matchesPatterns(
-  value: string,
-  patterns: readonly string[] | undefined,
-): boolean {
+function matchesPatterns(value: string, patterns: readonly string[] | undefined): boolean {
   return (patterns ?? []).every((pattern) => new RegExp(pattern).test(value));
 }
 
@@ -169,18 +148,11 @@ function exampleString(spec: Extract<FieldSpec, { kind: "string" }>): string {
       const generator = new RandExp(first);
       generator.max = Math.max(1, Math.min(max, 16));
       const candidate = generator.gen();
-      if (
-        fitsLength(candidate, spec) &&
-        matchesPatterns(candidate, spec.patterns)
-      )
-        return candidate;
+      if (fitsLength(candidate, spec) && matchesPatterns(candidate, spec.patterns)) return candidate;
     }
-    throw new Error(
-      `no example satisfies patterns ${spec.patterns.join(", ")} within ${min}..${max}`,
-    );
+    throw new Error(`no example satisfies patterns ${spec.patterns.join(", ")} within ${min}..${max}`);
   }
-  const formatted =
-    spec.format === undefined ? undefined : FORMAT_VALUES[spec.format];
+  const formatted = spec.format === undefined ? undefined : FORMAT_VALUES[spec.format];
   if (formatted !== undefined) return formatted;
   const target = Math.min(Math.max(min, 5), max);
   return "example".repeat(Math.ceil(target / 7)).slice(0, target);
@@ -188,8 +160,7 @@ function exampleString(spec: Extract<FieldSpec, { kind: "string" }>): string {
 
 function exampleNumber(spec: Extract<FieldSpec, { kind: "number" }>): number {
   let value = spec.min ?? (spec.max !== undefined ? Math.min(spec.max, 1) : 1);
-  if (spec.multipleOf !== undefined)
-    value = Math.ceil(value / spec.multipleOf) * spec.multipleOf;
+  if (spec.multipleOf !== undefined) value = Math.ceil(value / spec.multipleOf) * spec.multipleOf;
   if (spec.integer) value = Math.ceil(value);
   return value;
 }
@@ -221,15 +192,10 @@ function entryValue(entry: FieldEntry, depth: number): unknown {
   return Array.from({ length: Math.max(entry.array.min ?? 1, 1) }, () => item);
 }
 
-function operandValue(
-  operand: Operand,
-  object: Record<string, unknown>,
-): unknown {
+function operandValue(operand: Operand, object: Record<string, unknown>): unknown {
   if ("field" in operand) return object[operand.field];
   if ("literal" in operand) return operand.literal;
-  const values = operand.terms.map((term) =>
-    Number(operandValue(term, object)),
-  );
+  const values = operand.terms.map((term) => Number(operandValue(term, object)));
   return values.slice(1).reduce((total, value) => {
     if (operand.operator === "add") return total + value;
     if (operand.operator === "subtract") return total - value;
@@ -241,19 +207,12 @@ function operandValue(
 /** Adjusts the left field of a comparison so the comparison holds. */
 function distinctFrom(value: unknown, spec: FieldSpec | undefined): unknown {
   if (typeof value === "number") return value + 1;
-  if (
-    spec?.kind === "string" &&
-    spec.format !== undefined &&
-    FORMAT_ALTERNATES[spec.format]
-  ) {
+  if (spec?.kind === "string" && spec.format !== undefined && FORMAT_ALTERNATES[spec.format]) {
     return FORMAT_ALTERNATES[spec.format];
   }
-  if (spec?.kind === "enum")
-    return spec.values.find((item) => item !== value) ?? value;
+  if (spec?.kind === "enum") return spec.values.find((item) => item !== value) ?? value;
   const text = String(value);
-  return text.length > 0
-    ? `${text.slice(0, -1)}${text.at(-1) === "z" ? "y" : "z"}`
-    : "z";
+  return text.length > 0 ? `${text.slice(0, -1)}${text.at(-1) === "z" ? "y" : "z"}` : "z";
 }
 
 function satisfy(
@@ -270,8 +229,7 @@ function satisfy(
       object[field] = target;
       return;
     case "not-equal":
-      if (object[field] === target)
-        object[field] = distinctFrom(target, specs.get(field));
+      if (object[field] === target) object[field] = distinctFrom(target, specs.get(field));
       return;
     case "greater-than":
       object[field] = (target as number) + step;
@@ -287,42 +245,27 @@ function satisfy(
 }
 
 /** A valid example: every field present (optional ones too), nested to a bounded depth. */
-export function buildExample(
-  example: SchemaExample,
-  depth = 0,
-): Record<string, unknown> {
+export function buildExample(example: SchemaExample, depth = 0): Record<string, unknown> {
   const object: Record<string, unknown> = {};
   for (const entry of example.fields) {
-    if (entry.optional && (depth >= MAX_DEPTH || entry.spec.kind === "schema"))
-      continue;
+    if (entry.optional && (depth >= MAX_DEPTH || entry.spec.kind === "schema")) continue;
     object[entry.name] = entryValue(entry, depth);
   }
-  const specs = new Map(
-    example.fields.map((entry) => [entry.name, entry.spec] as const),
-  );
+  const specs = new Map(example.fields.map((entry) => [entry.name, entry.spec] as const));
   for (const invariant of example.invariants) {
-    const comparisons = invariant.any
-      ? invariant.comparisons.slice(0, 1)
-      : invariant.comparisons;
+    const comparisons = invariant.any ? invariant.comparisons.slice(0, 1) : invariant.comparisons;
     for (const comparison of comparisons) satisfy(comparison, object, specs);
   }
   return object;
 }
 
-function without(
-  object: Record<string, unknown>,
-  field: string,
-): Record<string, unknown> {
+function without(object: Record<string, unknown>, field: string): Record<string, unknown> {
   const copy = { ...object };
   delete copy[field];
   return copy;
 }
 
-function withValue(
-  object: Record<string, unknown>,
-  field: string,
-  value: unknown,
-) {
+function withValue(object: Record<string, unknown>, field: string, value: unknown) {
   return { ...object, [field]: value };
 }
 
@@ -344,9 +287,7 @@ function wrongType(spec: FieldSpec): unknown | undefined {
   }
 }
 
-function itemViolations(
-  spec: FieldSpec,
-): Array<{ reason: string; value: unknown }> {
+function itemViolations(spec: FieldSpec): Array<{ reason: string; value: unknown }> {
   const found: Array<{ reason: string; value: unknown }> = [];
   const type = wrongType(spec);
   if (type !== undefined) found.push({ reason: "wrong type", value: type });
@@ -354,26 +295,14 @@ function itemViolations(
     const [min, max] = stringBounds(spec);
     const base = exampleString(spec);
     // Only lengths the contract declares; an undeclared minimum accepts "".
-    if (
-      (spec.exactLength !== undefined || spec.minLength !== undefined) &&
-      min > 0
-    ) {
-      found.push({
-        reason: `shorter than ${min}`,
-        value: base.slice(0, min - 1),
-      });
+    if ((spec.exactLength !== undefined || spec.minLength !== undefined) && min > 0) {
+      found.push({ reason: `shorter than ${min}`, value: base.slice(0, min - 1) });
     }
     if (spec.maxLength !== undefined || spec.exactLength !== undefined) {
-      found.push({
-        reason: `longer than ${max}`,
-        value: base.padEnd(max + 1, base.at(-1) ?? "a"),
-      });
+      found.push({ reason: `longer than ${max}`, value: base.padEnd(max + 1, base.at(-1) ?? "a") });
     }
     if (spec.format !== undefined && FORMAT_VALUES[spec.format] !== undefined) {
-      found.push({
-        reason: `not a ${spec.format}`,
-        value: "!".repeat(Math.max(min, 1)),
-      });
+      found.push({ reason: `not a ${spec.format}`, value: "!".repeat(Math.max(min, 1)) });
     }
     if (spec.patterns && spec.patterns.length > 0) {
       const candidate = "!".repeat(Math.max(min, 1));
@@ -383,20 +312,12 @@ function itemViolations(
     }
   }
   if (spec.kind === "number") {
-    if (spec.min !== undefined)
-      found.push({ reason: `below ${spec.min}`, value: spec.min - 1 });
-    if (spec.max !== undefined)
-      found.push({ reason: `above ${spec.max}`, value: spec.max + 1 });
-    if (spec.integer)
-      found.push({
-        reason: "not an integer",
-        value: exampleNumber(spec) + 0.5,
-      });
+    if (spec.min !== undefined) found.push({ reason: `below ${spec.min}`, value: spec.min - 1 });
+    if (spec.max !== undefined) found.push({ reason: `above ${spec.max}`, value: spec.max + 1 });
+    if (spec.integer) found.push({ reason: "not an integer", value: exampleNumber(spec) + 0.5 });
   }
-  if (spec.kind === "enum")
-    found.push({ reason: "not an allowed value", value: "__not_allowed__" });
-  if (spec.kind === "temporal")
-    found.push({ reason: "not an ISO-8601 value", value: "not-a-date" });
+  if (spec.kind === "enum") found.push({ reason: "not an allowed value", value: "__not_allowed__" });
+  if (spec.kind === "temporal") found.push({ reason: "not an ISO-8601 value", value: "not-a-date" });
   return found;
 }
 
@@ -407,54 +328,30 @@ export function violations(example: SchemaExample): Violation[] {
   for (const entry of example.fields) {
     // An `unknown` field accepts anything, including nothing.
     if (!entry.optional && entry.spec.kind !== "unknown") {
-      found.push({
-        field: entry.name,
-        reason: "missing",
-        value: without(valid, entry.name),
-      });
+      found.push({ field: entry.name, reason: "missing", value: without(valid, entry.name) });
       if (!entry.nullable) {
-        found.push({
-          field: entry.name,
-          reason: "null",
-          value: withValue(valid, entry.name, null),
-        });
+        found.push({ field: entry.name, reason: "null", value: withValue(valid, entry.name, null) });
       }
     }
     for (const item of itemViolations(entry.spec)) {
       const value = entry.array === undefined ? item.value : [item.value];
-      found.push({
-        field: entry.name,
-        reason: item.reason,
-        value: withValue(valid, entry.name, value),
-      });
+      found.push({ field: entry.name, reason: item.reason, value: withValue(valid, entry.name, value) });
     }
     if (entry.array !== undefined) {
       const element = entryValue({ ...entry, array: undefined }, 0);
-      found.push({
-        field: entry.name,
-        reason: "not an array",
-        value: withValue(valid, entry.name, element),
-      });
+      found.push({ field: entry.name, reason: "not an array", value: withValue(valid, entry.name, element) });
       if ((entry.array.min ?? 0) > 0) {
         found.push({
           field: entry.name,
           reason: `fewer than ${entry.array.min} items`,
-          value: withValue(
-            valid,
-            entry.name,
-            Array.from({ length: (entry.array.min ?? 1) - 1 }, () => element),
-          ),
+          value: withValue(valid, entry.name, Array.from({ length: (entry.array.min ?? 1) - 1 }, () => element)),
         });
       }
       if (entry.array.max !== undefined) {
         found.push({
           field: entry.name,
           reason: `more than ${entry.array.max} items`,
-          value: withValue(
-            valid,
-            entry.name,
-            Array.from({ length: entry.array.max + 1 }, () => element),
-          ),
+          value: withValue(valid, entry.name, Array.from({ length: entry.array.max + 1 }, () => element)),
         });
       }
     }
@@ -469,9 +366,5 @@ export interface ContractExample extends SchemaExample {
 }
 
 export function contractExample(shape: SchemaExample): ContractExample {
-  return {
-    ...shape,
-    valid: () => buildExample(shape),
-    violations: () => violations(shape),
-  };
+  return { ...shape, valid: () => buildExample(shape), violations: () => violations(shape) };
 }

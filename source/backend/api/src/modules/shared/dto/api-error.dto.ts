@@ -47,6 +47,7 @@ import type { StatusCode } from "#/types/shared/status-code.type.ts";
  * Api Error
  */
 export class ApiErrorDto {
+
   @IsOptional()
   @IsNumber({})
   @Min(100)

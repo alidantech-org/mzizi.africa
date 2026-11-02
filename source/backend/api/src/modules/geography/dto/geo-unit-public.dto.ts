@@ -64,6 +64,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Derived from GeoUnit for read.
  */
 export class GeoUnitPublicDto {
+
   @IsOptional()
   @ValidateIf((object) => object.artifactChecksum !== null)
   @IsString()

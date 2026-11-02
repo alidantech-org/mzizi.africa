@@ -2,16 +2,9 @@ import { BadRequestException, type PipeTransform } from "@nestjs/common";
 
 /** A zod schema: anything with `safeParse`. */
 interface SafeParseSchema {
-  safeParse(
-    value: unknown,
-  ):
+  safeParse(value: unknown):
     | { success: true; data: unknown }
-    | {
-        success: false;
-        error: {
-          issues: readonly { path: readonly PropertyKey[]; message: string }[];
-        };
-      };
+    | { success: false; error: { issues: readonly { path: readonly PropertyKey[]; message: string }[] } };
 }
 
 /** A Joi schema: anything with `validate`. */
@@ -19,12 +12,7 @@ interface ValidateSchema {
   validate(
     value: unknown,
     options: { abortEarly: boolean },
-  ): {
-    value: unknown;
-    error?: {
-      details: readonly { path: readonly PropertyKey[]; message: string }[];
-    };
-  };
+  ): { value: unknown; error?: { details: readonly { path: readonly PropertyKey[]; message: string }[] } };
 }
 
 /**
@@ -39,19 +27,13 @@ export class SchemaValidationPipe implements PipeTransform {
       const result = this.schema.safeParse(value);
       if (result.success) return result.data;
       throw new BadRequestException(
-        result.error.issues.map((issue) => ({
-          path: issue.path.join("."),
-          message: issue.message,
-        })),
+        result.error.issues.map((issue) => ({ path: issue.path.join("."), message: issue.message })),
       );
     }
     const result = this.schema.validate(value, { abortEarly: false });
     if (result.error === undefined) return result.value;
     throw new BadRequestException(
-      result.error.details.map((detail) => ({
-        path: detail.path.join("."),
-        message: detail.message,
-      })),
+      result.error.details.map((detail) => ({ path: detail.path.join("."), message: detail.message })),
     );
   }
 }

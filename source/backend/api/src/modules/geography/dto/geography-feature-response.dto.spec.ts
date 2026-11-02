@@ -9,35 +9,25 @@ import { geographyFeatureResponseExample } from "#/modules/geography/dto/geograp
 
 /** Managed by Dryv: GeographyFeatureResponseDto enforces exactly what the GeographyFeatureResponse contract says. */
 async function errorsFor(value: Record<string, unknown>): Promise<string[]> {
-  const errors = await validate(
-    plainToInstance(GeographyFeatureResponseDto, value),
-    {
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      forbidUnknownValues: false,
-    },
-  );
+  const errors = await validate(plainToInstance(GeographyFeatureResponseDto, value), {
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    forbidUnknownValues: false,
+  });
   return errors.map((error) => error.property);
 }
 
-const cases = geographyFeatureResponseExample
-  .violations()
-  .map((item) => [item.field, item.reason, item.value] as const);
+const cases = geographyFeatureResponseExample.violations().map((item) => [item.field, item.reason, item.value] as const);
 
 describe("GeographyFeatureResponseDto contract", () => {
   it("accepts the contract example", async () => {
-    expect(await errorsFor(geographyFeatureResponseExample.valid())).toEqual(
-      [],
-    );
+    expect(await errorsFor(geographyFeatureResponseExample.valid())).toEqual([]);
   });
 
   it("rejects unknown properties", async () => {
-    expect(
-      await errorsFor({
-        ...geographyFeatureResponseExample.valid(),
-        unexpectedField: 1,
-      }),
-    ).toContain("unexpectedField");
+    expect(await errorsFor({ ...geographyFeatureResponseExample.valid(), unexpectedField: 1 })).toContain(
+      "unexpectedField",
+    );
   });
 
   if (cases.length > 0) {

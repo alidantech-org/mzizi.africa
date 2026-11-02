@@ -1,0 +1,17 @@
+
+import type { SortDirection } from "#/types/shared/sort-direction.enum.ts";
+import type { Id } from "#/types/shared/id.type.ts";
+import type { PaginationNumber } from "#/types/shared/pagination-number.type.ts";
+import type { TargetKind } from "#/types/shared/target-kind.type.ts";
+import type { BaseQuery } from "#/types/shared/base-query.interface.ts";
+
+/** Legal Authority Link List Query */
+export interface LegalAuthorityLinkListQuery {
+  limit?: PaginationNumber;
+  order?: SortDirection;
+  page?: PaginationNumber;
+  provisionId?: Id;
+  sort?: SortDirection;
+  targetId?: Id;
+  targetKind?: TargetKind;
+}

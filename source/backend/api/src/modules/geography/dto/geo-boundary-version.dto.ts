@@ -61,6 +61,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Geo Boundary Version (entity)
  */
 export class GeoBoundaryVersionDto {
+
   @IsOptional()
   @ValidateIf((object) => object.artifactChecksum !== null)
   @IsString()

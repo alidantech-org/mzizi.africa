@@ -61,6 +61,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Geo Unit Name Version (entity)
  */
 export class GeoUnitNameVersionDto {
+
   @IsOptional()
   @ValidateIf((object) => object.artifactChecksum !== null)
   @IsString()

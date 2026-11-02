@@ -43,6 +43,12 @@ function chain(name: string): string[] {
   return seen;
 }
 
+/** Names the generated test helpers already use; a schema with one of these names breaks the example files. */
+const reservedSchemaNames = new Set(["Contract"]);
+for (const name of schemas.keys()) {
+  if (reservedSchemaNames.has(name.split(".").pop() ?? "")) violations.push(`${name}: reserved schema name (collides with a generated helper); rename it`);
+}
+
 const tables = new Map<string, string>();
 for (const [name, schema] of schemas) {
   if (schema.role !== "entity" || schema.abstract) continue;

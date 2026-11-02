@@ -46,6 +46,7 @@ import { GeographyEntityDto } from "#/modules/geography/dto/geography-entity.dto
  * Geography Search Response
  */
 export class GeographySearchResponseDto {
+
   @IsArray()
   @IsDefined()
   @ValidateNested({ each: true })

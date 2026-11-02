@@ -59,6 +59,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Evidenced Entity
  */
 export class EvidencedEntityDto {
+
   @IsOptional()
   @ValidateIf((object) => object.artifactChecksum !== null)
   @IsString()

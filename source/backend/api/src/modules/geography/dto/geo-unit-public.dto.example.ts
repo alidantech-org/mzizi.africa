@@ -1,7 +1,4 @@
-import {
-  type ContractExample,
-  contractExample,
-} from "#/modules/common/dto/testing/examples.ts";
+import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { UnitKind } from "#/types/geography/unit-kind.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import { ProvenanceMethod } from "#/types/shared/provenance-method.enum.ts";
@@ -176,5 +173,6 @@ export const geoUnitPublicExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 0 },
     },
   ],
-  invariants: [],
+  invariants: [
+  ],
 });

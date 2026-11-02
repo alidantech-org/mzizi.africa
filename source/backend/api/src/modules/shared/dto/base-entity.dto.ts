@@ -48,6 +48,7 @@ import type { DateTime } from "#/types/shared/date-time.type.ts";
  * Base Entity
  */
 export class BaseEntityDto {
+
   @IsISO8601({})
   createdAt!: DateTime;
 

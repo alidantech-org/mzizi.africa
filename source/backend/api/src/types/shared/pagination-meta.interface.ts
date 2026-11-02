@@ -1,3 +1,4 @@
+
 import type { PaginationNumber } from "#/types/shared/pagination-number.type.ts";
 
 /** Pagination Meta */

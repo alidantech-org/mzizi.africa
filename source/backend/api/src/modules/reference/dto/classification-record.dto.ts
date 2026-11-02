@@ -64,6 +64,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Classification Record (entity)
  */
 export class ClassificationRecordDto {
+
   @IsOptional()
   @ValidateIf((object) => object.artifactChecksum !== null)
   @IsString()

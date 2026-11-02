@@ -52,6 +52,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Historical Entity
  */
 export class HistoricalEntityDto {
+
   @IsISO8601({})
   createdAt!: DateTime;
 

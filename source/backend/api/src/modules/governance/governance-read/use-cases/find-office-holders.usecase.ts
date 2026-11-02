@@ -1,0 +1,89 @@
+import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import type { DataSource, FindOptionsWhere } from 'typeorm';
+import type { InstitutionDto } from '#/modules/governance/dto/institution.dto';
+import type { OfficeHolderListQueryDto } from '#/modules/governance/dto/office-holder-list-query.dto';
+import type { OfficeHolderPublicDto } from '#/modules/governance/dto/office-holder-public.dto';
+import type { OfficeHolderDto } from '#/modules/governance/dto/office-holder.dto';
+import type { OfficeHoldersListResponseDto } from '#/modules/governance/dto/office-holders-list-response.dto';
+import type { OfficeDto } from '#/modules/governance/dto/office.dto';
+import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
+import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
+import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
+import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
+import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
+import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
+import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
+import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
+import { OfficeHolderEntity } from '#/modules/governance/entities/office-holder.entity';
+
+/**
+ * List office holders.
+ *
+ * Scaffolded by Dryv once; this file belongs to the project.
+ * Generated as a starting list implementation from the contract (response read projection
+ * of OfficeHolderEntity); review it and add business rules here.
+ */
+@Injectable()
+export class FindOfficeHoldersUseCase {
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+
+  private get repository() {
+    return this.dataSource.getRepository(OfficeHolderEntity);
+  }
+
+  private toReadModel(entity: OfficeHolderEntity): OfficeHolderPublicDto {
+    return {
+    artifactChecksum: entity.artifactChecksum,
+    artifactId: entity.artifactId,
+    confidence: entity.confidence,
+    createdAt: entity.createdAt,
+    departureReason: entity.departureReason,
+    id: entity.id,
+    isCurrent: entity.isCurrent,
+    legalBasisId: entity.legalBasisId,
+    licence: entity.licence,
+    method: entity.method,
+    officeId: entity.officeId,
+    personId: entity.personId,
+    retrievedAt: entity.retrievedAt,
+    selectionProcedureId: entity.selectionProcedureId,
+    sourceName: entity.sourceName,
+    sourceReference: entity.sourceReference,
+    sourceUrl: entity.sourceUrl,
+    status: entity.status,
+    termNumber: entity.termNumber,
+    toolOrModel: entity.toolOrModel,
+    updatedAt: entity.updatedAt,
+    validFrom: entity.validFrom,
+    validFromPrecision: entity.validFromPrecision,
+    validTo: entity.validTo,
+    validToPrecision: entity.validToPrecision,
+    verificationState: entity.verificationState,
+    version: entity.version,
+    } as unknown as OfficeHolderPublicDto;
+  }
+
+  async execute(input: OfficeHolderListQueryDto): Promise<OfficeHoldersListResponseDto> {
+    const page = Number(input.page ?? 1);
+    const limit = Number(input.limit ?? 20);
+    const where: Record<string, unknown> = {};
+    if (input.officeId !== undefined) where.officeId = input.officeId;
+    if (input.personId !== undefined) where.personId = input.personId;
+    if (input.status !== undefined) where.status = input.status;
+    const [rows, total] = await this.repository.findAndCount({
+      where: where as FindOptionsWhere<OfficeHolderEntity>,
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return {
+      holders: rows.map((entity) => this.toReadModel(entity)),
+    meta: {
+      limit: limit,
+      page: page,
+      total: total,
+      totalPages: Math.ceil(total / limit),
+    },
+    } as unknown as OfficeHoldersListResponseDto;
+  }
+}

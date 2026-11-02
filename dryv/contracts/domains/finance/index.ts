@@ -317,7 +317,7 @@ const bidsAndContracts = procurement.schemas({
     [{ name: "idx_bid_tender", fields: ["tenderId"] }],
   ),
 
-  Contract: evidenced(
+  ProcurementContract: evidenced(
     {
       tenderId: relationTo(() => tenders.Tender.field("id")),
       awardedEntityId: plainId(),
@@ -337,7 +337,7 @@ const bidsAndContracts = procurement.schemas({
 const contractDetails = procurement.schemas({
   ContractMilestone: evidenced(
     {
-      contractId: relationTo(() => bidsAndContracts.Contract.field("id")),
+      contractId: relationTo(() => bidsAndContracts.ProcurementContract.field("id")),
       title: dryv.field(sharedProperties.Name),
       dueOn: dryv.field(sharedProperties.Date).optional().nullable(),
       completedOn: dryv.field(sharedProperties.Date).optional().nullable(),
@@ -350,7 +350,7 @@ const contractDetails = procurement.schemas({
 
   ContractVariation: evidenced(
     {
-      contractId: relationTo(() => bidsAndContracts.Contract.field("id")),
+      contractId: relationTo(() => bidsAndContracts.ProcurementContract.field("id")),
       amountChange: amount(),
       currencyCode: currency(),
       reason: dryv.field(sharedProperties.Description),
@@ -394,7 +394,7 @@ export const debtReadOperations = register(debt, "DebtRead", "Public read access
 export const procurementReadOperations = register(procurement, "ProcurementRead", "Public read access to tenders, bids, contracts, milestones and variations.", [
   { singular: "Tender", plural: "Tenders", itemKey: "tender", listKey: "tenders", path: "/procurement/tenders", idParam: "tenderId", entity: tenders.Tender, description: "tenders", filters: { issuingUnitId: id(), status: dryv.field(procurementProperties.TenderStatus).optional(), q: q() } },
   { singular: "Bid", plural: "Bids", itemKey: "bid", listKey: "bids", path: "/procurement/bids", idParam: "bidId", entity: bidsAndContracts.Bid, description: "bids", filters: { tenderId: id(), bidderEntityId: id() } },
-  { singular: "Contract", plural: "Contracts", itemKey: "contract", listKey: "contracts", path: "/procurement/contracts", idParam: "contractId", entity: bidsAndContracts.Contract, description: "contracts", filters: { tenderId: id(), awardedEntityId: id(), contractingUnitId: id() } },
+  { singular: "ProcurementContract", plural: "ProcurementContracts", itemKey: "contract", listKey: "contracts", path: "/procurement/contracts", idParam: "contractId", entity: bidsAndContracts.ProcurementContract, description: "contracts", filters: { tenderId: id(), awardedEntityId: id(), contractingUnitId: id() } },
   { singular: "ContractMilestone", plural: "ContractMilestones", itemKey: "milestone", listKey: "milestones", path: "/procurement/milestones", idParam: "milestoneId", entity: contractDetails.ContractMilestone, description: "contract milestones", filters: { contractId: id() } },
   { singular: "ContractVariation", plural: "ContractVariations", itemKey: "variation", listKey: "variations", path: "/procurement/variations", idParam: "variationId", entity: contractDetails.ContractVariation, description: "contract variations", filters: { contractId: id() } },
 ]);

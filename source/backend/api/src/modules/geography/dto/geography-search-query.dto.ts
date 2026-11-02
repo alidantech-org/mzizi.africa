@@ -48,6 +48,7 @@ import type { SearchText } from "#/types/geography/search-text.type.ts";
  * Geography Search Query
  */
 export class GeographySearchQueryDto {
+
   @IsOptional()
   @IsString()
   @MinLength(2)

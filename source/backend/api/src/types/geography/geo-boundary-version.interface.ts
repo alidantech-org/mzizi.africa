@@ -1,3 +1,4 @@
+
 import type { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { ProvenanceMethod } from "#/types/shared/provenance-method.enum.ts";
 import type { VerificationState } from "#/types/shared/verification-state.enum.ts";

@@ -17,9 +17,7 @@ async function errorsFor(value: Record<string, unknown>): Promise<string[]> {
   return errors.map((error) => error.property);
 }
 
-const cases = jurisdictionExample
-  .violations()
-  .map((item) => [item.field, item.reason, item.value] as const);
+const cases = jurisdictionExample.violations().map((item) => [item.field, item.reason, item.value] as const);
 
 describe("JurisdictionDto contract", () => {
   it("accepts the contract example", async () => {
@@ -27,9 +25,9 @@ describe("JurisdictionDto contract", () => {
   });
 
   it("rejects unknown properties", async () => {
-    expect(
-      await errorsFor({ ...jurisdictionExample.valid(), unexpectedField: 1 }),
-    ).toContain("unexpectedField");
+    expect(await errorsFor({ ...jurisdictionExample.valid(), unexpectedField: 1 })).toContain(
+      "unexpectedField",
+    );
   });
 
   if (cases.length > 0) {

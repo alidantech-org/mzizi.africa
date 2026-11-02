@@ -1,3 +1,4 @@
+
 import type { BusinessCode } from "#/types/shared/business-code.type.ts";
 import type { Description } from "#/types/shared/description.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";

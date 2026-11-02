@@ -1,7 +1,4 @@
-import {
-  type ContractExample,
-  contractExample,
-} from "#/modules/common/dto/testing/examples.ts";
+import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 
 /** The contract shape of BaseEntity, for generated tests. */
 export const baseEntityExample: ContractExample = contractExample({
@@ -32,5 +29,6 @@ export const baseEntityExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 0 },
     },
   ],
-  invariants: [],
+  invariants: [
+  ],
 });

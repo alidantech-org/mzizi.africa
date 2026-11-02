@@ -25,8 +25,7 @@ import { GeographyGeographyReadService } from "./geography-read.service.ts";
   providers: [
     {
       provide: GeographyGeographyReadService,
-      useClass:
-        GeographyGeographyReadServiceImpl satisfies Type<GeographyGeographyReadService>,
+      useClass: GeographyGeographyReadServiceImpl satisfies Type<GeographyGeographyReadService>,
     },
     GetChildBoundariesUseCase,
     GetGeoUnitByIdUseCase,
