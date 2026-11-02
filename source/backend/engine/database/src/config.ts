@@ -10,7 +10,7 @@ const apiRoot = join(packageRoot, "..", "..", "api");
 /** History of applied migrations lives here so nothing is placed in `public`. */
 export const bookkeepingSchema = "engine";
 /** Schemas owned by hand-written migrations (not generated from Dryv entities). */
-export const engineSchemas = ["staging"];
+export const engineSchemas = ["staging", "access"];
 
 const LOCAL_HOSTS = ["localhost", "127.0.0.1", "::1", "[::1]"];
 

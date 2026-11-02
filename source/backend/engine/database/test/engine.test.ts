@@ -46,6 +46,22 @@ run("database engine", () => {
     expect(count).toBeGreaterThan(40);
   });
 
+  test("access catalogue resolves a current grant to its permissions", async () => {
+    const [account] = await db.query(`INSERT INTO identity.accounts (issuer, subject, status, created_at, updated_at, version) VALUES ('test', $1, 'active', now(), now(), 1) RETURNING id`, [randomUUID()]);
+    await db.query(`INSERT INTO identity.grants (account_id, role, is_current, created_at, updated_at, version) VALUES ($1, 'reviewer', true, now(), now(), 1)`, [account.id]);
+    const rows = await db.query(`SELECT permission_code FROM access.account_permissions WHERE account_id = $1`, [account.id]);
+    const codes = rows.map((row: { permission_code: string }) => row.permission_code);
+    expect(codes).toContain("pipeline.read");
+    expect(codes).not.toContain("candidate.promote");
+  });
+
+  test("staging rows track updated_at and version", async () => {
+    const [run] = await db.query(`INSERT INTO staging.runs (dataset, mapping_version) VALUES ('t', '1') RETURNING id`);
+    await db.query(`UPDATE staging.runs SET status = 'running' WHERE id = $1`, [run.id]);
+    const [row] = await db.query(`SELECT version FROM staging.runs WHERE id = $1`, [run.id]);
+    expect(row.version).toBe(2);
+  });
+
   test("entities and migrations have not drifted", async () => {
     expect(await drift()).toEqual([]);
   }, 120_000);

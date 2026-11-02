@@ -11,6 +11,7 @@
  *   seed [reference|research|fixtures]   reference seed, agent-collected registry rows, or fixtures (_dev and _test only)
  *   integrity           check plain-id references, target kinds and derived geometry
  *   grants <role>       grant per-schema read access to a role
+ *   grants-reviewer <role>  grant pipeline read (staging, engine, registry) to the reviewer role
  *   validate [runId]    validate pending candidates (errors make them invalid, the rest go to review)
  *   apply-review        move in-review candidates by their newest review decision (reviewer grant required)
  *   promote [runId]     promote approved candidates: record, attribution, verification, promotion decision
@@ -22,7 +23,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataSource, targetUrl } from "./config.ts";
 import { checkIntegrity } from "./integrity.ts";
-import { grantReadOnly } from "./grants.ts";
+import { grantReadOnly, grantReviewerRead } from "./grants.ts";
 import { applyReviewDecisions } from "./staging/review.ts";
 import { promoteApproved } from "./staging/promotion.ts";
 import { validateCandidates } from "./staging/validation.ts";
@@ -102,6 +103,12 @@ switch (command) {
     if (!argument) throw new Error("usage: grants <role>");
     const schemas = await withDb({}, (db) => grantReadOnly(db, argument));
     console.log(`granted read on ${schemas.length} schemas to ${argument}`);
+    break;
+  }
+  case "grants-reviewer": {
+    if (!argument) throw new Error("usage: grants-reviewer <role>");
+    const schemas = await withDb({}, (db) => grantReviewerRead(db, argument));
+    console.log(`granted reviewer read on ${schemas.length} schemas to ${argument}`);
     break;
   }
   case "validate": {
