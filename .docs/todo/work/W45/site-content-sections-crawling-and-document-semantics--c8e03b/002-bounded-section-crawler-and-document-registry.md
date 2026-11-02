@@ -1,0 +1,18 @@
+---
+{id: TSK-C6D4EC067F97,name: Bounded section crawler and document registry,type: task,status: planned,priority: medium,created_at: 2026-11-02T20:24:22.629Z,updated_at: 2026-11-02T20:24:22.629Z,order: 2048}
+---
+
+# Bounded section crawler and document registry
+
+## Goal
+Expand each modelled section through the existing request gate, download documents found there, and register every file with provenance so nothing is fetched twice and nothing is lost.
+
+## Context
+Policy set by the product owner on 2 November 2026: only trusted `.go.ke` hosts and explicitly named exact hosts (such as `.or.ke` bodies) are crawled; 0.2 requests per second, robots.txt respected, stop on challenge, 401, 403 or 429; depth 2; file types pdf, xlsx, csv, docx and zip; a size cap per file. Kenya Law's bot challenge is never bypassed. The crawler follows pagination, resolves relative links, deduplicates by content hash across sites, and stores raw bytes with a provenance file beside each. This is data extraction only; it does not interpret content.
+
+## Acceptance checklist
+- [ ] Implement the section expander using the path rules, with pagination and depth limits.
+- [ ] Register each file as a document with URL, hash, size, headers, retrieval time and the section that led to it.
+- [ ] Deduplicate by hash and record every URL a document was seen at.
+- [ ] Enforce host rules and size caps, with tests using recorded fixtures instead of live requests.
+- [ ] Run a first bounded crawl of ORPP and NG-CDF sites and report the findings.
