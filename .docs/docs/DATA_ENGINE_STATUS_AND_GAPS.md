@@ -59,3 +59,9 @@ Counts at the end of this run: API 14,149 unit tests, database engine 81, data e
 2. Do anything not blocked by a human: constituency and ward source selection (026), review API and dashboard (033), files service (034), then the imports whose sources are reachable.
 3. Never run live requests until `MZIZI_USER_AGENT` resolves and an approved assessment covers the request; use mocks and saved samples.
 4. Keep gaps in this file current; close tasks only when their checklists are true.
+
+## Update 2026-11-02 (session 3)
+
+Built: the `access` catalogue (roles, permissions, `account_permissions`) and permission-based API checks; a read-only reviewer database role; the reviewer-only `pipeline` API (candidates with detail, runs, jobs, sites, assessments, dossiers, apply decisions, promote, approve or reject assessment); human-only assessment decisions in the database engine; Tesseract OCR with English and Swahili behind the `ocr` profile; table realignment and the budget-table import (fiscal year, units, budgets) reaching `finance.budgets`; and the review workbench at `/review` in `source/apps/web` on Bun.
+
+Still open: no live request has ever run and none is permitted (no approved assessment, dossier at research). `MZIZI_USER_AGENT` is set only in the git-ignored `.data/env.local` for development; the production contact and bot page are added at deployment. The budget table mapping is proven on a generated PDF, not a real Parliament table. The workbench lacks a canonical data browser, documents, captures, structure versions and checks views, and automated tests; the inherited `/admin` pages were not re-verified after the move from pnpm to Bun. The API has no endpoints yet for documents, captures, structure versions and checks, and reviewers cannot draft assessments through it. The review decision is recorded by the web server action; the dev sign-in is not real authentication.

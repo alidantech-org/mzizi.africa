@@ -50,9 +50,13 @@ export async function promoteCandidate(db: DataSource, candidateId: string): Pro
   try {
     return await promoteInner(db, candidateId);
   } catch (cause) {
-    if (!(cause instanceof DeferredError)) throw cause;
+    // A unique-key collision means a record with this natural key already exists and could not be versioned: hold it for a reviewer, never crash.
+    const duplicate = (cause as { driverError?: { code?: string; detail?: string } }).driverError;
+    if (!(cause instanceof DeferredError) && duplicate?.code !== "23505") throw cause;
     const [candidate]: CandidateRow[] = await db.query(`SELECT * FROM staging.candidates WHERE id = $1`, [candidateId]);
-    return defer(db, candidate!, cause.reasons, cause.decisionId);
+    if (cause instanceof DeferredError) return defer(db, candidate!, cause.reasons, cause.decisionId);
+    const decision = await latestDecision(db, candidateId);
+    return defer(db, candidate!, [`a record with the same key already exists (${duplicate?.detail ?? "unique violation"}); it was not overwritten`], decision?.id);
   }
 }
 

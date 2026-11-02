@@ -21,13 +21,13 @@ export async function grantReadOnly(db: DataSource, role: string): Promise<strin
 }
 
 /**
- * The reviewer connection: read access to the pipeline (staging, engine jobs, website registry, source,
- * filesystem and access catalogue) for endpoints guarded by `pipeline.read`. It cannot write anywhere;
+ * The reviewer connection: read access to the pipeline (staging, engine jobs, access catalogue and every canonical schema) for endpoints guarded by `pipeline.read`. It cannot write anywhere;
  * writes (decisions, promotion) use their own roles. Never handed to public-facing reads.
  */
 export async function grantReviewerRead(db: DataSource, role: string): Promise<string[]> {
   if (!/^[a-z_][a-z0-9_]*$/.test(role)) throw new Error(`invalid role name: ${role}`);
-  const schemas = ["staging", "engine", "website", "source", "filesystem", "audit", "access", "identity"];
+  // Every canonical schema too: the candidate detail compares a staged row to the current record it would replace.
+  const schemas = [...new Set(["staging", "engine", "access", ...entitySchemas(db)])];
   for (const schema of schemas) {
     await db.query(`GRANT USAGE ON SCHEMA "${schema}" TO ${role}`);
     await db.query(`GRANT SELECT ON ALL TABLES IN SCHEMA "${schema}" TO ${role}`);

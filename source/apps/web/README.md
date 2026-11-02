@@ -96,3 +96,21 @@ Do not rewrite the whole dashboard before the underlying evidence/data contracts
 - [`../../.docs/SYSTEM.md`](../../.docs/SYSTEM.md)
 - [`../../.docs/DATA_LIFECYCLE.md`](../../.docs/DATA_LIFECYCLE.md)
 - [`../../.docs/MIGRATION.md`](../../.docs/MIGRATION.md)
+
+## Review workbench (`/review`)
+
+The reviewer workbench runs on the **Bun** runtime on port 3100. It reads and acts through the NestJS API (reviewer-only `/v1/pipeline/*` endpoints and the audit decisions endpoint); it never touches the database directly.
+
+Local development stack (needs the PostGIS container: `docker start postgis`):
+
+```bash
+cd source/apps/web && bun install && bun run dev:env          # creates .data/dev-auth keys (git-ignored)
+cd ../../backend/engine/database
+export DATABASE_URL=postgres://postgres@localhost:5432/mzizi_dev
+bun src/cli.ts migrate && bun src/cli.ts seed dev-accounts     # dev reviewer and dev admin accounts
+bun src/cli.ts grants-reviewer mzizi_reviewer                   # after creating that login role
+```
+
+Then export the values in `.data/dev.env` (database URLs for the read, write, reviewer and promote roles, `AUTH_ISSUER=https://dev.mzizi.local`, `AUTH_PUBLIC_KEY` from `.data/dev-auth/public.pem`) and start `bun src/main.ts` in `source/backend/api` and `bun run dev` here, then open http://localhost:3100/review. Sign-in is development only and refuses any host other than localhost; real single sign-on later replaces the minted token with the identity provider's, through the same API verifier (`AUTH_JWKS_URL`).
+
+Permissions, not role names, gate actions: `pipeline.read`, `review.decide`, `candidate.promote` and `assessment.approve` (the last two held by admin for now). Agents never approve data or assessments.
