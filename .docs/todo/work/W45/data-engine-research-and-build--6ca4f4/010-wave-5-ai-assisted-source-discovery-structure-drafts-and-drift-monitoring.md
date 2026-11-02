@@ -15,3 +15,6 @@ Read .docs/docs/DATA_INTAKE_PLAN.md and .docs/decisions/data-engine-design.md fi
 - [ ] Kenya inventory prototype with counting rules, evidence and human approval.
 - [ ] Drift detection for one approved source with a researcher-facing report.
 - [ ] Update DATA_INTAKE_PLAN.md and ARCHITECTURE.md.
+
+## Notes
+This wave depends on the website schema, the structure runner and the agent batch tooling tasks. Inventory counts must state their scope, date and counting rules, and must separate institutions, sites, domains, datasets and downloadable resources instead of reporting one number.
