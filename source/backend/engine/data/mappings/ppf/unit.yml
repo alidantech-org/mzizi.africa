@@ -1,0 +1,14 @@
+mapping: unit
+extractor: ppf-distribution
+target_kind: finance.units
+key: [code]
+fields:
+  code:           { from: unitCode }
+  name:           { from: unitName }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  levelId:        { from: levelCode, transform: [{ ref: { kind: reference.classifications, field: code } }] }
+  partyId:        { from: partyCode, transform: [{ ref: { kind: political.parties, field: code } }] }
+  institutionId:  { from: institutionCode, transform: [{ ref: { kind: governance.institutions, field: code } }] }
+provenance:
+  locator: { page: $page, row: $row }
+  method: extracted

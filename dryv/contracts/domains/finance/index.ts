@@ -148,9 +148,10 @@ const fiscalYears = finance.schemas({
       institutionId: optionalId(),
       legalEntityId: optionalId(),
       geoUnitId: optionalId(),
+      partyId: optionalId(),
     },
     "units",
-    [{ name: "idx_budgetary_unit_code", fields: ["code"], unique: true }],
+    [{ name: "idx_budgetary_unit_code", fields: ["code"], unique: true }, { name: "idx_budgetary_unit_party", fields: ["partyId"] }],
   ),
 });
 

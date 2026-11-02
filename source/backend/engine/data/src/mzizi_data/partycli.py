@@ -16,6 +16,16 @@ def register(sub: argparse._SubParsersAction) -> None:
     a.add_argument("--actor", required=True, help="the approving account id (agent or person)")
     a.add_argument("--rationale", required=True)
     a.add_argument("--store", default=".data/objects")
+    register_money(sub)
+
+
+def register_money(sub: argparse._SubParsersAction) -> None:
+    m = sub.add_parser("import-ppf", help="stage Political Parties Fund units (stage A) or allocations as transfers (stage B) from the ORPP distribution PDFs")
+    m.add_argument("--pdf", action="append", required=True, help="a saved ORPP distribution PDF (repeat)")
+    m.add_argument("--stage", choices=["A", "B"], required=True)
+    m.add_argument("--plan", default=".data/reports/orpp-parties-plan.json", help="the party register plan, for former-name aliases")
+    m.add_argument("--report", default=".data/reports/ppf-report.json")
+    m.add_argument("--store", default=".data/objects")
 
 
 def dispatch(args: argparse.Namespace) -> int | None:
@@ -38,5 +48,14 @@ def dispatch(args: argparse.Namespace) -> int | None:
 
         with connect() as conn:
             print(json.dumps(orpp_parties.apply_register(conn, LocalDirectoryStore(conn, args.store), args.plan, args.actor, args.rationale)))
+        return 0
+    if args.command == "import-ppf":
+        from .imports import ppf
+
+        with connect() as conn:
+            out = ppf.stage_ppf(conn, LocalDirectoryStore(conn, args.store), args.pdf, args.plan, args.stage, args.report)
+        print(json.dumps({k: v for k, v in out.report.items() if k not in ("totalByYear",)}, indent=1))
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
         return 0
     return None

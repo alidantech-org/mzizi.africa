@@ -1,0 +1,18 @@
+mapping: transfer
+extractor: ppf-distribution
+target_kind: finance.transfers
+key: [fromUnitId, toUnitId, fiscalYearId]
+fields:
+  fromUnitId:         { from: fundUnitCode, transform: [{ ref: { kind: finance.units, field: code } }] }
+  toUnitId:           { from: unitCode, transform: [{ ref: { kind: finance.units, field: code } }] }
+  fiscalYearId:       { from: fiscalYear, transform: [{ ref: { kind: finance.years, field: code } }] }
+  amount:             { from: amount, transform: decimal }
+  currencyCode:       { const: KES }
+  transferTypeId:     { const: { $ref: { kind: reference.classifications, where: { code: "finance/transfer-type/political-parties-fund-allocation", jurisdictionId: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } } } } }
+  restriction:        { const: earmarked }
+  status:             { const: approved }
+  validFrom:          { from: fyStart }
+  validFromPrecision: { const: year }
+provenance:
+  locator: { page: $page, row: $row }
+  method: extracted

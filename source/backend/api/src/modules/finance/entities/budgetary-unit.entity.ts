@@ -27,6 +27,7 @@ import type { Date } from "#/types/shared/date.type.ts";
  */
 @Entity({ schema: "finance", name: "units" })
 @Index("idx_budgetary_unit_code", ["code"], { unique: true })
+@Index("idx_budgetary_unit_party", ["partyId"])
 export class BudgetaryUnitEntity {
 
   @PrimaryGeneratedColumn("uuid", { name: "id" })
@@ -61,6 +62,9 @@ export class BudgetaryUnitEntity {
 
   @Column({ name: "parent_unit_id", type: "uuid", nullable: true })
   parentUnitId?: Id | null;
+
+  @Column({ name: "party_id", type: "uuid", nullable: true })
+  partyId?: Id | null;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
