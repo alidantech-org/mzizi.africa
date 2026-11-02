@@ -147,7 +147,7 @@ export async function validatePayload(db: DataSource, target: string, rawPayload
   if (sound && target === "geography.boundaries") issues.push(...(await containmentIssues(db, payload)));
   if (sound && target === "geography.units") issues.push(...(await levelIssues(db, payload)));
   // plain-id references must resolve: foreign relations and the known soft references by name
-  const softTargets: Record<string, string> = { jurisdictionId: "reference.jurisdictions", unitId: "geography.units", parentId: target, publisherId: "source.publishers", kindId: "reference.classifications", levelId: "reference.classifications" };
+  const softTargets: Record<string, string> = { jurisdictionId: "reference.jurisdictions", unitId: target.startsWith("finance.") ? "finance.units" : "geography.units", parentId: target, publisherId: "source.publishers", kindId: "reference.classifications", levelId: "reference.classifications" };
   for (const [field, kind] of Object.entries(softTargets)) {
     const value = payload[field];
     if (typeof value !== "string" || !known.has(field) || !UUID.test(value) || issues.some((i) => i.rule === "reference" && i.message.startsWith(`${field}:`))) continue;

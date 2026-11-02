@@ -1,0 +1,12 @@
+mapping: fiscal_year
+extractor: pdf
+target_kind: finance.years
+key: [code]
+fields:
+  code:           { from: fiscalYear, transform: { prefix: "fy/${jurisdiction}/" } }
+  startsOn:       { from: startsOn }
+  endsOn:         { from: endsOn }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+provenance:
+  locator: { table: $table }
+  method: extracted

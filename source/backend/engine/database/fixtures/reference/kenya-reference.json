@@ -164,6 +164,17 @@
         "label": "payment",
         "order": 3
       }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:unit-level:mda",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "finance/unit-level",
+        "code": "finance/unit-level/mda",
+        "label": "ministry, department or agency",
+        "order": 0
+      }
     }
   ]
 }

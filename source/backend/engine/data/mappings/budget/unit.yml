@@ -1,0 +1,12 @@
+mapping: unit
+extractor: pdf
+target_kind: finance.units
+key: [code]
+fields:
+  code:           { from: label, transform: { slug_code: "${jurisdiction}/mda/" } }
+  name:           { from: label, transform: collapse_whitespace }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  levelId:        { const: { $ref: { kind: reference.classifications, where: { code: "finance/unit-level/mda", jurisdictionId: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } } } } }
+provenance:
+  locator: { table: $table, row: $row }
+  method: extracted

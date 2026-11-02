@@ -37,6 +37,17 @@ def main(argv: list[str] | None = None) -> int:
     dem = ssub.add_parser("demote")
     dem.add_argument("version_id")
     dem.add_argument("--reason", required=True)
+    bt = sub.add_parser("import-budget-table", help="stage fiscal year, unit and budget candidates from a budget table PDF")
+    bt.add_argument("file")
+    bt.add_argument("--jurisdiction", required=True)
+    bt.add_argument("--fiscal-year", required=True)
+    bt.add_argument("--title", required=True)
+    bt.add_argument("--publisher-code", required=True)
+    bt.add_argument("--publisher-name", required=True)
+    bt.add_argument("--currency", default=None, help="used only when the table states none")
+    bt.add_argument("--ocr", action="store_true", help="read scanned pages with Tesseract")
+    bt.add_argument("--stage", choices=["foundation", "budget"], default="foundation", help="foundation = fiscal year and units; budget = budgets, after those are promoted")
+    bt.add_argument("--store", default=".data/objects")
     wb = sub.add_parser("import-worldbank", help="stage population candidates from a saved World Bank SP.POP.TOTL JSON file")
     wb.add_argument("file")
     wb.add_argument("--iso3", required=True)
@@ -95,6 +106,18 @@ def main(argv: list[str] | None = None) -> int:
                 batch.demote(conn, args.version_id, args.reason)
                 conn.commit()
                 print("demoted")
+        return 0
+    if args.command == "import-budget-table":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import budget_table
+
+        with connect() as conn:
+            out = budget_table.import_budget_table(conn, LocalDirectoryStore(conn, args.store), args.file, args.jurisdiction, args.fiscal_year, args.title, args.publisher_code, args.publisher_name, default_currency=args.currency, profile="tables+ocr" if args.ocr else "tables", stages=("budget",) if args.stage == "budget" else ("fiscal_year", "unit"))
+        for name in out.stats:
+            print(f"{name}: {out.stats[name].created} new, {out.stats[name].unchanged} unchanged (run {out.runs[name]})")
+        for problem in out.problems:
+            print(f"note: {problem}")
         return 0
     if args.command == "import-worldbank":
         from .db import connect

@@ -1,0 +1,14 @@
+mapping: budget
+extractor: pdf
+target_kind: finance.budgets
+key: [unitId, fiscalYearId, programCode, kind]
+fields:
+  unitId:         { from: label, transform: [{ slug_code: "${jurisdiction}/mda/" }, { ref: { kind: finance.units, field: code } }] }
+  fiscalYearId:   { from: fiscalYear, transform: [{ prefix: "fy/${jurisdiction}/" }, { ref: { kind: finance.years, field: code } }] }
+  programCode:    { from: column }
+  kind:           { const: original }
+  approvedAmount: { from: amount, transform: decimal }
+  currencyCode:   { from: currency }
+provenance:
+  locator: { table: $table, row: $row, column: $column }
+  method: extracted
