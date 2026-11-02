@@ -51,6 +51,35 @@ def cref(code: str, jurisdiction: str) -> dict:
     return {"$ref": {"kind": "reference.classifications", "where": {"code": code, "jurisdictionId": {"$ref": {"kind": "reference.jurisdictions", "where": {"code": jurisdiction}}}}}}
 
 
+_CONTACT = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+|(?<!\d)(?:\+254|254|0)[17]\d{8}(?!\d)")
+
+
+def _fit(text, limit):
+    """Titles longer than the column are cut with an ellipsis; the raw package keeps the full title."""
+    if text and len(text) > limit:
+        return text[: limit - 1].rstrip() + "\u2026"
+    return text
+
+
+def _iso_date(value):
+    """Only a real calendar date; the portal sometimes publishes placeholders such as -0001-11-3."""
+    if not value:
+        return value
+    from datetime import date
+    try:
+        return date.fromisoformat(str(value)[:10]).isoformat() if re.match(r"^\d{4}-\d\d-\d\d", str(value)) else None
+    except ValueError:
+        return None
+
+
+def _scrub_contact(text):
+    """Directory address fields sometimes hold an email or phone number; that is contact data, not an address."""
+    if not text:
+        return text
+    cleaned = _CONTACT.sub("", str(text)).strip(" ,;:-")
+    return cleaned or None
+
+
 @dataclass
 class ProcurementImport:
     sources: int
@@ -88,6 +117,7 @@ def import_procurement(conn: psycopg.Connection, store: LocalDirectoryStore, pe_
     def entity_record(pe_id, name, county, city, address, phone, email, pin, website) -> dict:
         """The record the model uses. Published contact data is kept apart (`contacts`) and only reaches the identifier stage."""
         kind = entity_type(name)
+        address = _scrub_contact(address)
         if phone or email or pin:
             contacts[str(pe_id)] = {"contact-phone": phone, "contact-email": email, "kra-pin": pin}
         return {"id": pe_id, "name": name, "unitCode": f"ke/pe/{pe_id}", "entityCode": f"ke/pe/{pe_id}", "levelRef": level_ref, "typeRef": cref(f"organization/entity-type/{kind}", jurisdiction), "geoUnitCode": geo.county(county), "addressText": ", ".join(x for x in (address, city, county) if x) or None}
@@ -119,8 +149,11 @@ def import_procurement(conn: psycopg.Connection, store: LocalDirectoryStore, pe_
                 notes.append(f"{r['ocid']}: no buyer or procurement category; tender skipped")
                 continue
             code = r["ocid"]
+            if len(code) > 200:
+                notes.append(f"{code[:60]}...: tender code is {len(code)} characters (maximum 200); tender and its contracts skipped, raw package keeps it")
+                continue
             if code not in tenders:
-                tenders[code] = (capture_id, str(result.id), segment.key, {"ocid": code, "tenderCode": code, "title": r["title"], "kindRef": cref(f"procurement/tender-kind/{kind}", jurisdiction), "methodRef": cref(f"procurement/method/{METHODS.get(r['method'], 'other')}", jurisdiction), "buyerCode": f"ke/pe/{buyer}", "status": "awarded" if r["awards"] else "published", "publishedOn": r["starts"], "closesOn": r["ends"]})
+                tenders[code] = (capture_id, str(result.id), segment.key, {"ocid": code, "tenderCode": code, "title": _fit(_scrub_contact(r["title"]), 300), "kindRef": cref(f"procurement/tender-kind/{kind}", jurisdiction), "methodRef": cref(f"procurement/method/{METHODS.get(r['method'], 'other')}", jurisdiction), "buyerCode": f"ke/pe/{buyer}", "status": "awarded" if r["awards"] else "published", "publishedOn": r["starts"], "closesOn": _iso_date(r["ends"])})
             for award in r["awards"]:
                 sid = str(award["supplierId"])
                 suppliers.setdefault(sid, (capture_id, str(result.id), segment.key, {"id": sid, "name": award["supplierName"], "entityCode": f"ke/supplier/{sid}", "typeRef": cref("organization/entity-type/company", jurisdiction)}))
