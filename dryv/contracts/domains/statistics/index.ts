@@ -33,6 +33,10 @@ export const statisticsProperties = statistics.properties({
   ColumnDataType: dryv.property.enum({ integer: "integer", decimal: "decimal", text: "text", boolean: "boolean", percentage: "percentage" }),
   UnitOfMeasure: dryv.property.string().length({ min: 1, max: 100 }),
   ObservationValue: dryv.property.number.decimal({ precision: 25, scale: 4 }),
+  MeasureType: dryv.property.enum({ count: "count", rate: "rate", ratio: "ratio", percentage: "percentage", index: "index", mean: "mean", median: "median", other: "other" }),
+  EstimateKind: dryv.property.enum({ census: "census", projection: "projection", survey: "survey", administrative: "administrative", derived: "derived" }),
+  ReleaseLabel: dryv.property.string().length({ min: 1, max: 200 }),
+  SortOrder: dryv.property.number.integer({ range: { min: 0 } }),
 });
 
 export const servicesProperties = services.properties({
@@ -110,6 +114,52 @@ const indicatorColumns = statistics.schemas({
   ),
 });
 
+/**
+ * Dimensions: a figure broken down by sex, age group, community, religion, urban or rural, and so on is one
+ * observation with one row per dimension in observation_dimensions (design decision: dimension tables, not a JSON
+ * column, so members have hierarchy and reference codes and can be queried, joined and constrained).
+ */
+const dimensions = statistics.schemas({
+  Dimension: recorded(
+    {
+      code: dryv.field(sharedProperties.BusinessCode).query(searchable),
+      name: dryv.field(sharedProperties.Name).query(searchable),
+      description: dryv.field(sharedProperties.Description).optional().nullable(),
+    },
+    "dimensions",
+    [{ name: "idx_dimension_code", fields: ["code"], unique: true }],
+  ),
+  Vintage: recorded(
+    {
+      code: dryv.field(sharedProperties.BusinessCode).query(searchable),
+      label: dryv.field(statisticsProperties.ReleaseLabel).query(searchable),
+      releasedOn: dryv.field(sharedProperties.Date).optional().nullable(),
+      supersedesId: optionalId(),
+      publisherInstitutionId: optionalId(),
+    },
+    "vintages",
+    [{ name: "idx_vintage_code", fields: ["code"], unique: true }],
+  ),
+});
+
+const dimensionMembers = statistics.schemas({
+  DimensionMember: recorded(
+    {
+      dimensionId: relationTo(() => dimensions.Dimension.field("id")),
+      parentId: optionalId(),
+      code: dryv.field(sharedProperties.BusinessCode).query(searchable),
+      label: dryv.field(sharedProperties.Label).query(searchable),
+      referenceCode: dryv.field(sharedProperties.BusinessCode).optional().nullable(),
+      sortOrder: dryv.field(statisticsProperties.SortOrder).optional().nullable(),
+    },
+    "dimension_members",
+    [
+      { name: "idx_dimension_member_code", fields: ["dimensionId", "code"], unique: true },
+      { name: "idx_dimension_member_parent", fields: ["parentId"] },
+    ],
+  ),
+});
+
 const observations = statistics.schemas({
   Observation: recorded(
     {
@@ -121,11 +171,49 @@ const observations = statistics.schemas({
       numericValue: dryv.field(statisticsProperties.ObservationValue).optional().nullable().query({ filter: ["between"], sort: true }),
       textValue: dryv.field(sharedProperties.Description).optional().nullable(),
       confidenceLevel: dryv.field(statisticsProperties.ConfidenceLevel).query({ filter: ["equal", "in"] }),
+      measureType: dryv.field(statisticsProperties.MeasureType).optional().nullable().query({ filter: ["equal", "in"] }),
+      estimateKind: dryv.field(statisticsProperties.EstimateKind).optional().nullable().query({ filter: ["equal", "in"] }),
+      denominatorObservationId: optionalId(),
+      denominatorValue: dryv.field(statisticsProperties.ObservationValue).optional().nullable(),
+      marginOfError: dryv.field(statisticsProperties.ObservationValue).optional().nullable(),
+      standardError: dryv.field(statisticsProperties.ObservationValue).optional().nullable(),
+      vintageId: optionalId(),
+      releaseLabel: dryv.field(statisticsProperties.ReleaseLabel).optional().nullable(),
     },
     "observations",
     [
       { name: "idx_observation_table", fields: ["tableId"] },
       { name: "idx_observation_lookup", fields: ["indicatorId", "periodId", "geoUnitId"] },
+      { name: "idx_observation_vintage", fields: ["vintageId"] },
+    ],
+  ),
+});
+
+const observationLinks = statistics.schemas({
+  ObservationDimension: recorded(
+    {
+      observationId: relationTo(() => observations.Observation.field("id")),
+      dimensionId: plainId(),
+      memberId: plainId(),
+    },
+    "observation_dimensions",
+    [
+      { name: "idx_observation_dimension_unique", fields: ["observationId", "dimensionId"], unique: true },
+      { name: "idx_observation_dimension_member", fields: ["memberId"] },
+    ],
+  ),
+  /** A computed value names its inputs and the method; an observation may have many inputs. */
+  ObservationDerivation: recorded(
+    {
+      observationId: relationTo(() => observations.Observation.field("id")),
+      inputObservationId: plainId(),
+      computation: dryv.field(sharedProperties.Name),
+      inputRole: dryv.field(sharedProperties.Label).optional().nullable(),
+    },
+    "observation_derivations",
+    [
+      { name: "idx_observation_derivation_observation", fields: ["observationId"] },
+      { name: "idx_observation_derivation_input", fields: ["inputObservationId"] },
     ],
   ),
 });
@@ -198,7 +286,12 @@ export const statisticsReadOperations = register(statistics, "StatisticsRead", "
   { singular: "Indicator", plural: "Indicators", itemKey: "indicator", listKey: "indicators", path: "/statistics/indicators", idParam: "indicatorId", entity: indicators.Indicator, description: "indicators", filters: { categoryId: id(), parentId: id(), q: q() } },
   { singular: "IndicatorColumn", plural: "IndicatorColumns", itemKey: "column", listKey: "columns", path: "/statistics/indicator-columns", idParam: "columnId", entity: indicatorColumns.IndicatorColumn, description: "indicator columns", filters: { indicatorId: id() } },
   { singular: "StatisticsTable", plural: "StatisticsTables", itemKey: "table", listKey: "tables", path: "/statistics/tables", idParam: "tableId", entity: indicatorColumns.StatisticsTable, description: "statistics tables", filters: { jurisdictionId: id(), indicatorId: id(), geoUnitId: id(), q: q() } },
-  { singular: "Observation", plural: "Observations", itemKey: "observation", listKey: "observations", path: "/statistics/observations", idParam: "observationId", entity: observations.Observation, description: "observations", filters: { tableId: id(), indicatorId: id(), periodId: id(), geoUnitId: id(), confidenceLevel: dryv.field(statisticsProperties.ConfidenceLevel).optional() } },
+  { singular: "Dimension", plural: "Dimensions", itemKey: "dimension", listKey: "dimensions", path: "/statistics/dimensions", idParam: "dimensionId", entity: dimensions.Dimension, description: "dimensions", filters: { q: q() } },
+  { singular: "DimensionMember", plural: "DimensionMembers", itemKey: "member", listKey: "members", path: "/statistics/dimension-members", idParam: "memberId", entity: dimensionMembers.DimensionMember, description: "dimension members", filters: { dimensionId: id(), parentId: id(), q: q() } },
+  { singular: "Vintage", plural: "Vintages", itemKey: "vintage", listKey: "vintages", path: "/statistics/vintages", idParam: "vintageId", entity: dimensions.Vintage, description: "release vintages", filters: { q: q() } },
+  { singular: "ObservationDimension", plural: "ObservationDimensions", itemKey: "observationDimension", listKey: "observationDimensions", path: "/statistics/observation-dimensions", idParam: "observationDimensionId", entity: observationLinks.ObservationDimension, description: "observation dimensions", filters: { observationId: id(), dimensionId: id(), memberId: id() } },
+  { singular: "ObservationDerivation", plural: "ObservationDerivations", itemKey: "derivation", listKey: "derivations", path: "/statistics/observation-derivations", idParam: "derivationId", entity: observationLinks.ObservationDerivation, description: "observation derivations", filters: { observationId: id(), inputObservationId: id() } },
+  { singular: "Observation", plural: "Observations", itemKey: "observation", listKey: "observations", path: "/statistics/observations", idParam: "observationId", entity: observations.Observation, description: "observations", filters: { tableId: id(), indicatorId: id(), periodId: id(), geoUnitId: id(), confidenceLevel: dryv.field(statisticsProperties.ConfidenceLevel).optional(), vintageId: id() } },
 ]);
 
 export const servicesReadOperations = register(services, "ServicesRead", "Public read access to public services, amenities and delivery.", [

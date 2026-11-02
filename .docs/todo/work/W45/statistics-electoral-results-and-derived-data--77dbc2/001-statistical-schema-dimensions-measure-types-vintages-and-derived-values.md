@@ -1,5 +1,5 @@
 ---
-{id: TSK-1F02AF48DAD0,name: "Statistical schema: dimensions, measure types, vintages and derived values",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:51.207Z,updated_at: 2026-11-02T19:25:51.207Z,order: 1024}
+{id: TSK-1F02AF48DAD0,name: "Statistical schema: dimensions, measure types, vintages and derived values",type: task,status: completed,priority: medium,created_at: 2026-11-02T19:25:51.207Z,updated_at: 2026-11-02T21:45:13.471Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T21:45:01.180Z},{from: in-progress,to: completed,at: 2026-11-02T21:45:13.471Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-1F02AF48DAD0/1793655901182-start,started_at: 2026-11-02T21:45:01.705Z,end_ref: refs/tracking/TSK-1F02AF48DAD0/1793655913472-end,ended_at: 2026-11-02T21:45:13.471Z,summary: {files: 1,insertions: 232,deletions: 0}}]}}}
 ---
 
 # Statistical schema: dimensions, measure types, vintages and derived values
@@ -14,9 +14,9 @@ The current schema has categories, indicators, datasets, fields, periods and obs
 
 ## Acceptance checklist
 
-- [ ] Write a design note comparing a dimension-table design with a dimensions JSON column, and decide.
-- [ ] Add dimensions and dimension members (sex, age group, ethnic community, religion, urban or rural, education level, and others) with hierarchies and reference codes.
-- [ ] Add measure type, denominator link, margin of error, estimate kind (census, projection, survey, administrative, derived) and release label to observations.
-- [ ] Add derived-from links so a computed value names its inputs and the method.
-- [ ] Author the contracts in Dryv, regenerate, add the migration, and keep the database engine drift check clean.
-- [ ] Add engine tests that store a multi-dimensional figure, a rate with a denominator and a derived value.
+- [x] Write a design note comparing a dimension-table design with a dimensions JSON column, and decide.
+- [x] Add dimensions and dimension members (sex, age group, ethnic community, religion, urban or rural, education level, and others) with hierarchies and reference codes.
+- [x] Add measure type, denominator link, margin of error, estimate kind (census, projection, survey, administrative, derived) and release label to observations.
+- [x] Add derived-from links so a computed value names its inputs and the method.
+- [x] Author the contracts in Dryv, regenerate, add the migration, and keep the database engine drift check clean.
+- [x] Add engine tests that store a multi-dimensional figure, a rate with a denominator and a derived value.

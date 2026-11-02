@@ -15,6 +15,8 @@ import {
 import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-numeric.transformer.ts";
 import { StatisticsTableEntity } from "#/modules/statistics/entities/statistics-table.entity.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { EstimateKind } from "#/types/statistics/estimate-kind.enum.ts";
+import { MeasureType } from "#/types/statistics/measure-type.enum.ts";
 import { ConfidenceLevel } from "#/types/statistics/confidence-level.enum.ts";
 import type { Description } from "#/types/shared/description.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
@@ -29,11 +31,36 @@ import type { Date } from "#/types/shared/date.type.ts";
  */
 @Entity({ schema: "statistical", name: "observations" })
 @Index("idx_observation_table", ["tableId"])
+@Index("idx_observation_vintage", ["vintageId"])
 @Index("idx_observation_lookup", ["indicatorId", "periodId", "geoUnitId"])
 export class ObservationEntity {
 
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id!: Id;
+
+  @Column({ name: "denominator_value", type: "numeric", precision: 25, scale: 4, transformer: new ColumnNumericTransformer(), nullable: true })
+  denominatorValue?: ObservationValue | null;
+
+  @Column({ name: "margin_of_error", type: "numeric", precision: 25, scale: 4, transformer: new ColumnNumericTransformer(), nullable: true })
+  marginOfError?: ObservationValue | null;
+
+  @Column({ name: "standard_error", type: "numeric", precision: 25, scale: 4, transformer: new ColumnNumericTransformer(), nullable: true })
+  standardError?: ObservationValue | null;
+
+  @Column({ name: "denominator_observation_id", type: "uuid", nullable: true })
+  denominatorObservationId?: Id | null;
+
+  @Column({ name: "estimate_kind", type: "enum", enum: EstimateKind, nullable: true })
+  estimateKind?: EstimateKind | null;
+
+  @Column({ name: "measure_type", type: "enum", enum: MeasureType, nullable: true })
+  measureType?: MeasureType | null;
+
+  @Column({ name: "release_label", type: "varchar", length: 200, nullable: true })
+  releaseLabel?: string | null;
+
+  @Column({ name: "vintage_id", type: "uuid", nullable: true })
+  vintageId?: Id | null;
 
   @Column({ name: "column_id", type: "uuid", nullable: true })
   columnId?: Id | null;

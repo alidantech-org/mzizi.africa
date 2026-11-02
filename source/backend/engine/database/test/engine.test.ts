@@ -11,7 +11,7 @@ import { seedDomainZones, seedExpectedSites, seedGovernanceStructure, seedDevAcc
 
 /** Runs against a scratch database on the server in TEST_DATABASE_URL (skipped without it). */
 const adminUrl = process.env.TEST_DATABASE_URL;
-const scratch = "mzizi_test";
+const scratch = process.env.TEST_SCRATCH_DB ?? "mzizi_test";
 const run = adminUrl ? describe : describe.skip;
 
 run("database engine", () => {
@@ -151,9 +151,11 @@ run("database engine", () => {
     const first = await seedExpectedSites(db);
     expect(first.sites).toBeGreaterThan(80);
     expect(first.linked).toBeGreaterThan(75);
-    expect(await seedExpectedSites(db)).toEqual({ sites: 0, linked: 0 });
+    expect(await seedExpectedSites(db)).toEqual({ sites: 0, linked: 0, domains: 0 });
     const [row] = await db.query(`SELECT s.status::text AS status, (SELECT count(*)::int FROM website.domains d WHERE d.site_id = s.id) AS domains FROM website.sites s WHERE s.code = 'ke/nca'`);
-    expect(row).toEqual({ status: "expected", domains: 0 });
+    expect(row).toEqual({ status: "expected", domains: 1 });
+    const [dom] = await db.query(`SELECT status::text AS status, origin::text AS origin, role::text AS role FROM website.domains d JOIN website.sites s ON s.id = d.site_id WHERE s.code = 'ke/nca' ORDER BY role`);
+    expect(dom).toEqual({ status: "candidate", origin: "seed_research", role: "primary" });
   });
 
   test("domain model keeps candidate, redirect and snapshot history", async () => {
@@ -183,6 +185,38 @@ run("database engine", () => {
     await db.query(`UPDATE staging.runs SET status = 'running' WHERE id = $1`, [run.id]);
     const [row] = await db.query(`SELECT version FROM staging.runs WHERE id = $1`, [run.id]);
     expect(row.version).toBe(2);
+  });
+
+  test("statistics store multi-dimensional figures, rates with a denominator and derived values", async () => {
+    const meta = `created_at, updated_at, version, is_current`;
+    const mv = `now(), now(), 1, true`;
+    const one = async (sql: string, args: unknown[] = []) => (await db.query(sql, args))[0].id as string;
+    const cat = await one(`INSERT INTO statistical.categories (code, label, ${meta}) VALUES ('t-cat', 'Population', ${mv}) RETURNING id`);
+    const ind = await one(`INSERT INTO statistical.indicators (category_id, code, name, ${meta}) VALUES ($1, 't-ind', 'Population', ${mv}) RETURNING id`, [cat]);
+    const per = await one(`INSERT INTO statistical.periods (code, granularity, starts_on, ends_on, ${meta}) VALUES ('t-2019', 'year', '2019-08-24', '2019-08-24', ${mv}) RETURNING id`);
+    const jur = (await db.query(`SELECT id FROM reference.jurisdictions LIMIT 1`))[0].id;
+    const tab = await one(`INSERT INTO statistical.datasets (jurisdiction_id, code, title, ${meta}) VALUES ($1, 't-tab', 'Census 2019', ${mv}) RETURNING id`, [jur]);
+    const vin = await one(`INSERT INTO statistical.vintages (code, label, ${meta}) VALUES ('knbs-2019-vol1', 'KNBS 2019 Census Vol I', ${mv}) RETURNING id`);
+    const sex = await one(`INSERT INTO statistical.dimensions (code, name, ${meta}) VALUES ('sex', 'Sex', ${mv}) RETURNING id`);
+    const age = await one(`INSERT INTO statistical.dimensions (code, name, ${meta}) VALUES ('age-group', 'Age group', ${mv}) RETURNING id`);
+    const female = await one(`INSERT INTO statistical.dimension_members (dimension_id, code, label, reference_code, ${meta}) VALUES ($1, 'female', 'Female', 'F', ${mv}) RETURNING id`, [sex]);
+    const a1519 = await one(`INSERT INTO statistical.dimension_members (dimension_id, code, label, sort_order, ${meta}) VALUES ($1, '15-19', '15 to 19', 4, ${mv}) RETURNING id`, [age]);
+    const obs = (value: number, extra = "", args: unknown[] = []) =>
+      one(`INSERT INTO statistical.observations (table_id, indicator_id, period_id, numeric_value, confidence_level, vintage_id, ${extra ? extra.split("=")[0] + "," : ""} ${meta}) VALUES ($1, $2, $3, $4, 'high', $5, ${extra ? "$6," : ""} ${mv}) RETURNING id`, [tab, ind, per, value, vin, ...args]);
+    const figure = await obs(1200);
+    await db.query(`UPDATE statistical.observations SET measure_type = 'count', estimate_kind = 'census', release_label = 'Vol I' WHERE id = $1`, [figure]);
+    await db.query(`INSERT INTO statistical.observation_dimensions (observation_id, dimension_id, member_id, ${meta}) VALUES ($1, $2, $3, ${mv}), ($1, $4, $5, ${mv})`, [figure, sex, female, age, a1519]);
+    await expect(db.query(`INSERT INTO statistical.observation_dimensions (observation_id, dimension_id, member_id, ${meta}) VALUES ($1, $2, $3, ${mv})`, [figure, sex, female])).rejects.toThrow();
+    const denom = await obs(4800);
+    const rate = await obs(25, "denominator_observation_id=", [denom]);
+    await db.query(`UPDATE statistical.observations SET measure_type = 'percentage', estimate_kind = 'derived', margin_of_error = 1.2, denominator_value = 4800 WHERE id = $1`, [rate]);
+    await db.query(`INSERT INTO statistical.observation_derivations (observation_id, input_observation_id, computation, input_role, ${meta}) VALUES ($1, $2, 'figure / denominator * 100', 'numerator', ${mv}), ($1, $3, 'figure / denominator * 100', 'denominator', ${mv})`, [rate, figure, denom]);
+    const dims = await db.query(`SELECT d.code AS dimension, m.code AS member FROM statistical.observation_dimensions od JOIN statistical.dimensions d ON d.id = od.dimension_id JOIN statistical.dimension_members m ON m.id = od.member_id WHERE od.observation_id = $1 ORDER BY d.code`, [figure]);
+    expect(dims.map((row: any) => `${row.dimension}:${row.member}`)).toEqual(["age-group:15-19", "sex:female"]);
+    const [stored] = await db.query(`SELECT measure_type, estimate_kind, margin_of_error::float AS moe, denominator_observation_id FROM statistical.observations WHERE id = $1`, [rate]);
+    expect(stored).toMatchObject({ measure_type: "percentage", estimate_kind: "derived", moe: 1.2, denominator_observation_id: denom });
+    const [{ inputs }] = await db.query(`SELECT count(*)::int AS inputs FROM statistical.observation_derivations WHERE observation_id = $1`, [rate]);
+    expect(inputs).toBe(2);
   });
 
   test("entities and migrations have not drifted", async () => {

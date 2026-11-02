@@ -63,3 +63,7 @@ Reference tables (`reference`) are read constantly and change rarely; `filesyste
 - Files are one logical `files` row, many immutable `versions`, each pointing at one deduplicated `objects` row; renditions are `variants`.
 - Money has an explicit currency column and no default; dates carry a precision; vocabularies are classifications.
 - Remaining review candidates, recorded rather than done: split `geography.boundaries` geometry into its own table if metadata scans become hot; add a `reference.languages` vocabulary used by names, profiles and documents; split `organization.identifiers` into verified registries once the first registry import exists.
+
+## Statistical dimensions and derived values
+
+Decision: breakdowns of a figure (county, sex, age group, community, religion, urban or rural) are rows, not a JSON column. `statistical.dimensions` and `statistical.dimension_members` (hierarchy through `parent_id`, `reference_code` for external codes) are joined to an observation through `statistical.observation_dimensions`, unique per observation and dimension. A JSON column cannot be constrained, indexed by member or given hierarchy. Observations also carry `measure_type`, `estimate_kind` (census, projection, survey, administrative, derived), `denominator_observation_id` and `denominator_value`, `margin_of_error`, `standard_error`, and a `vintage_id` (`statistical.vintages`, with `supersedes_id`) plus `release_label`. A computed value lists its inputs and computation in `statistical.observation_derivations`. Provenance stays in the source schema.
