@@ -1,5 +1,5 @@
 ---
-{id: TSK-202EE9F68B65,name: Design and generate geography contracts as the pilot domain,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.372Z,updated_at: 2026-11-02T04:56:58.372Z,order: 3072}
+{id: TSK-202EE9F68B65,name: Design and generate geography contracts as the pilot domain,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.372Z,updated_at: 2026-11-02T04:58:11.673Z,order: 3072,due_at: 2026-11-02}
 ---
 
 # Design and generate geography contracts as the pilot domain

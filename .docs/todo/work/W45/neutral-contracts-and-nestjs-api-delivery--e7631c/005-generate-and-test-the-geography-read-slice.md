@@ -1,5 +1,5 @@
 ---
-{id: TSK-D3CB7D9CC4B2,name: Generate and test the geography read slice,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.525Z,updated_at: 2026-11-02T04:56:58.525Z,order: 5120}
+{id: TSK-D3CB7D9CC4B2,name: Generate and test the geography read slice,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.525Z,updated_at: 2026-11-02T04:58:11.814Z,order: 5120,due_at: 2026-11-02}
 ---
 
 # Generate and test the geography read slice

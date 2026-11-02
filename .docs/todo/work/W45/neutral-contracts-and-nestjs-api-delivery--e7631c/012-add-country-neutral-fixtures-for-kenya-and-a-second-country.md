@@ -1,5 +1,5 @@
 ---
-{id: TSK-F6AB37BA55CE,name: Add country-neutral fixtures for Kenya and a second country,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:59.150Z,updated_at: 2026-11-02T04:56:59.150Z,order: 12288}
+{id: TSK-F6AB37BA55CE,name: Add country-neutral fixtures for Kenya and a second country,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:59.150Z,updated_at: 2026-11-02T04:58:12.312Z,order: 12288,due_at: 2026-11-02}
 ---
 
 # Add country-neutral fixtures for Kenya and a second country

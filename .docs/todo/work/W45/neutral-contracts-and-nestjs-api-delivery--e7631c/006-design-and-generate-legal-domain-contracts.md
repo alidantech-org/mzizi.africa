@@ -1,5 +1,5 @@
 ---
-{id: TSK-3D6EAF7A8E89,name: Design and generate legal domain contracts,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.604Z,updated_at: 2026-11-02T04:56:58.604Z,order: 6144}
+{id: TSK-3D6EAF7A8E89,name: Design and generate legal domain contracts,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.604Z,updated_at: 2026-11-02T04:58:11.886Z,order: 6144,due_at: 2026-11-02}
 ---
 
 # Design and generate legal domain contracts

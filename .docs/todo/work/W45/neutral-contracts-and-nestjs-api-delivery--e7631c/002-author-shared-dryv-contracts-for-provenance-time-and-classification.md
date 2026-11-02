@@ -1,5 +1,5 @@
 ---
-{id: TSK-067E739172A7,name: "Author shared Dryv contracts for provenance, time and classification",type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.288Z,updated_at: 2026-11-02T04:56:58.288Z,order: 2048}
+{id: TSK-067E739172A7,name: "Author shared Dryv contracts for provenance, time and classification",type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.288Z,updated_at: 2026-11-02T04:58:11.601Z,order: 2048,due_at: 2026-11-02}
 ---
 
 # Author shared Dryv contracts for provenance, time and classification

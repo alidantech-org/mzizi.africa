@@ -1,5 +1,5 @@
 ---
-{id: TSK-8AEAA3F9CA61,name: "Design and generate elections, political and events contracts",type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.763Z,updated_at: 2026-11-02T04:56:58.763Z,order: 8192}
+{id: TSK-8AEAA3F9CA61,name: "Design and generate elections, political and events contracts",type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.763Z,updated_at: 2026-11-02T04:58:12.029Z,order: 8192,due_at: 2026-11-02}
 ---
 
 # Design and generate elections, political and events contracts

@@ -1,5 +1,5 @@
 ---
-{id: TSK-6A4BD4FD613A,name: Scaffold the NestJS app in source/backend/api beside the Python service,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.450Z,updated_at: 2026-11-02T04:56:58.450Z,order: 4096}
+{id: TSK-6A4BD4FD613A,name: Scaffold the NestJS app in source/backend/api beside the Python service,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.450Z,updated_at: 2026-11-02T04:58:11.744Z,order: 4096,due_at: 2026-11-02}
 ---
 
 # Scaffold the NestJS app in source/backend/api beside the Python service

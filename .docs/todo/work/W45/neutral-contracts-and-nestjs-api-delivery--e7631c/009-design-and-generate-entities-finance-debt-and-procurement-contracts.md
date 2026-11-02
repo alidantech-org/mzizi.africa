@@ -1,5 +1,5 @@
 ---
-{id: TSK-0035D0E11D76,name: "Design and generate entities, finance, debt and procurement contracts",type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.871Z,updated_at: 2026-11-02T04:56:58.871Z,order: 9216}
+{id: TSK-0035D0E11D76,name: "Design and generate entities, finance, debt and procurement contracts",type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.871Z,updated_at: 2026-11-02T04:58:12.100Z,order: 9216,due_at: 2026-11-02}
 ---
 
 # Design and generate entities, finance, debt and procurement contracts

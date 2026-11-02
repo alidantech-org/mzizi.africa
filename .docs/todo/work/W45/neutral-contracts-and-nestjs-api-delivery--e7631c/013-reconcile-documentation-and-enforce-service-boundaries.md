@@ -1,5 +1,5 @@
 ---
-{id: TSK-768D87100265,name: Reconcile documentation and enforce service boundaries,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:57:03.525Z,updated_at: 2026-11-02T04:57:03.525Z,order: 13312}
+{id: TSK-768D87100265,name: Reconcile documentation and enforce service boundaries,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:57:03.525Z,updated_at: 2026-11-02T04:58:12.383Z,order: 13312,due_at: 2026-11-02}
 ---
 
 # Reconcile documentation and enforce service boundaries

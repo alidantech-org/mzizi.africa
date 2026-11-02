@@ -1,5 +1,5 @@
 ---
-{id: TSK-C1D45F1811D1,name: "Design and generate governance, offices and people contracts",type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.682Z,updated_at: 2026-11-02T04:56:58.682Z,order: 7168}
+{id: TSK-C1D45F1811D1,name: "Design and generate governance, offices and people contracts",type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.682Z,updated_at: 2026-11-02T04:58:11.956Z,order: 7168,due_at: 2026-11-02}
 ---
 
 # Design and generate governance, offices and people contracts

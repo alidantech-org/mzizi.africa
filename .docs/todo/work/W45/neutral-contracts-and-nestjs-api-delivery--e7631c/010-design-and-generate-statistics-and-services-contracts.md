@@ -1,5 +1,5 @@
 ---
-{id: TSK-6B688516A6C3,name: Design and generate statistics and services contracts,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.962Z,updated_at: 2026-11-02T04:56:58.962Z,order: 10240}
+{id: TSK-6B688516A6C3,name: Design and generate statistics and services contracts,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.962Z,updated_at: 2026-11-02T04:58:12.171Z,order: 10240,due_at: 2026-11-02}
 ---
 
 # Design and generate statistics and services contracts
