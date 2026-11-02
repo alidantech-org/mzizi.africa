@@ -10,6 +10,55 @@ Written for an agent starting a fresh chat. It states intent, what exists, what 
 
 Make Mzizi's **data engine** real: a pipeline that takes preserved source evidence, extracts and normalises it, produces candidate records, lets them be reviewed, and promotes them into the canonical database that the NestJS API already serves. Today the API, its contracts and its tests exist, but **nothing populates the database except two test fixtures**. The first deliverable of this chat is research, a decision record and a task plan, then a thin working vertical slice.
 
+## Start here: survey the schemas, then plan how data enters
+
+The database now exists as 18 schemas and 91 tables with nothing in them except test fixtures. Before designing the engine, **look at what is there**, then plan how real data gets in.
+
+### How to inspect it
+
+```bash
+docker start postgis                                   # shared no-auth PostGIS on 127.0.0.1:5432; never touch other projects' databases
+docker exec postgis psql -U postgres -c "CREATE DATABASE mzizi_dev"   # first time only
+cd source/backend/api && bun install
+export DATABASE_URL=postgres://postgres@localhost:5432/mzizi_dev
+bun run db:reset                                       # dev only: creates the 18 schemas, loads fixtures
+docker exec postgis psql -U postgres -d mzizi_dev -c "\dn" -c "\dt geography.*"
+bun run start                                          # 167 routes on :3000
+```
+
+Read the contracts for exact columns: `dryv/contracts/**/index.ts`, or the generated entities in `source/backend/api/src/modules/<group>/entities`.
+
+### Schema inventory and intake
+
+Load order follows the soft references (a record can only point at ids that exist). "Route" is how data should normally arrive; deciding that properly is your job.
+
+| Order | Schema | Holds | Typical real sources | Intake route to plan |
+| --- | --- | --- | --- | --- |
+| 1 | `reference` | jurisdictions, classifications (levels, kinds, types, schemes) | none: curated vocabularies | reference seed, versioned in the database package |
+| 1 | `source` (publishers, methods), `filesystem` (stores, formats, folders) | bootstrap rows | none | reference seed (formats come from `fixtures/reference/media-formats.json`) |
+| 2 | `geography` | units, boundaries, names, relationships, lineage | boundary GeoJSON or shapefiles, gazettes, census geography | file import then extraction then candidates |
+| 3 | `legal` | instruments, provisions, amendments, authority links | constitutions, statutes, gazettes (PDF, HTML) | document extraction with pinpoint structure |
+| 4 | `person`, `governance`, `political`, `electoral` | people, institutions, offices and holders, parties, elections and results | government and electoral commission sites, gazettes, results PDFs and sheets | extraction plus entity resolution (one human, one row) |
+| 5 | `organization`, `finance`, `debt`, `procurement` | legal entities, budgets, transfers, loans, tenders, contracts | budget PDFs and sheets, open-data portals, procurement notices | table extraction, currency and fiscal-year mapping |
+| 6 | `statistical`, `civic`, `calendar` | indicators and observations, facilities and services, events | census and survey tables, facility registers | dataset parsing |
+| runtime | `audit`, `identity` | comments, evidence submissions, decisions; accounts | people using the product | written by the API and the account system, never bulk-loaded |
+| side effect | `source`, `filesystem` | documents, captures, attributions, verifications; files, versions, objects | every import | **every import must also write these** |
+
+Every record that enters must come with its provenance: a `source.documents` row, a `source.captures` row pointing at a `filesystem` file version holding the preserved bytes, a `source.attributions` row per target record (with method and locator), and a `source.verifications` row (starts `unverified`). Data tables themselves carry no provenance columns.
+
+### What to produce for this part
+
+A document `.docs/docs/DATA_INTAKE_PLAN.md` (with Task tasks for what it implies) that answers, per schema group in the table above:
+
+1. which real datasets or documents would feed it (name concrete, openly licensed candidates and check their licences), and what format they are in;
+2. the intake path from raw artifact to canonical row, using the lifecycle in `DATA_LIFECYCLE.md`: register the artifact, preserve it, extract, normalise, produce candidates, validate, review, promote, with the exact rows written to `source` and `filesystem` at each step;
+3. the staging shape and where validation rules live (which rules are per-domain, which are cross-domain such as geometry validity, parent containment, currency present, dates with precision, plain-id references resolving);
+4. entity resolution needs (people, institutions, places, legal entities) and how duplicates and aliases are handled;
+5. idempotency and re-runs: how re-importing the same document, or a corrected one, avoids duplicates and supersedes rather than overwrites;
+6. the order and the smallest vertical slice that proves the path end to end (the geography boundary slice below is the proposal);
+7. the legacy CSV seeds under `source/backend/api-legacy/app/routes/*/_seed` and how each maps to the neutral model (use `.docs/docs/audits/LEGACY_MODEL_INVENTORY.md`), with what to drop;
+8. what is out of scope for now and why.
+
 ## Hard rules (repeat of the repository contract)
 
 - Work only on `develop` in the main checkout. No branches, no worktrees, no push, no `.github/**` changes.
@@ -101,7 +150,7 @@ The research phase is done when decision records exist, the plan above is turned
 
 ## First moves for the new chat
 
-1. Run `task list` and `task show` for the task created with this handoff.
-2. Read the files above; check `git branch --show-current` is `develop`.
+1. Run `task list` and `task show TSK-BD46EDE97821` (the research and decide task in the group "Data engine research and build").
+2. Read the files above; check `git branch --show-current` is `develop`. Inspect the live schemas as described in "Start here" before reading further.
 3. Answer the layout question with the user, then write the decision record.
 4. Work through the research questions with small experiments (run a legacy extractor on a sample, try generating a Python model from a contract), recording findings in the task file, then turn the plan into tasks.
