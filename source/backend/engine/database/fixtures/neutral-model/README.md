@@ -15,8 +15,8 @@ Each file is `{ rows: [{ entity, key, values }] }`. A string value `"@key"` refe
 ## Gaps the exercise found
 
 - Jurisdictions and classification records had no read endpoints, so a client could not discover a country's levels or vocabularies. Fixed: `ReferenceRead` (`/v1/reference/jurisdictions`, `/v1/reference/classification-records`).
-- References between records are plain ids, not foreign keys, wherever an entity already has a generated relation to the same target (a generator limit, see `dryv/README.md`). Integrity of those links must come from db-engine validation, not the schema alone.
-- `ClassificationRecord.code` is unique per jurisdiction and scheme but nothing yet checks that a record's `scheme` is one the contracts expect (for example `geography/level`). A scheme registry is a db-engine concern still to be designed.
+- References between records are plain ids, not foreign keys, wherever an entity already has a generated relation to the same target (a generator limit, see `dryv/README.md`). Integrity of those links must come from database engine validation, not the schema alone.
+- `ClassificationRecord.code` is unique per jurisdiction and scheme but nothing yet checks that a record's `scheme` is one the contracts expect (for example `geography/level`). A scheme registry is a database engine concern still to be designed.
 - Only structure that differs most between the two countries is exercised (hierarchy, selection of head of state, election system, fiscal calendar and currency). Seats, results, parties, procurement and statistics have no fixtures yet.
 
 `../reference/media-formats.json` seeds `filesystem.formats` from the archived file types (44 formats).

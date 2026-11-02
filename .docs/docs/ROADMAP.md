@@ -132,7 +132,7 @@ Separate extraction from the application API.
 
 ## Build
 
-`source/backend/data-engine` in Python.
+`source/backend/engine/data` in Python.
 
 Initial extractors:
 
@@ -203,7 +203,7 @@ Extract schema/migration/seed responsibility from the Python API.
 
 ## Build
 
-`source/backend/db-engine`
+`source/backend/engine/database`
 
 Initial commands/capabilities:
 
@@ -279,7 +279,7 @@ Replace FastAPI as the product API boundary.
 
 The NestJS service lives at `source/backend/api`; the old Python code was moved to `source/backend/api-legacy`.
 
-**Progress (2026-11-02):** generated from `dryv/` contracts for geography, legal, governance, elections, political, events, entities, finance, debt, procurement, statistics, services, reference and audit (about 135 operations); read use cases, the audit write paths with a contract-driven auth guard, Kenya and South Africa neutrality fixtures, and the contract and boundary checks are in place with 506 test files passing. Still open: data migration through db-engine, the map and governance clients, heritage, linguistics, migration, colonial and pre-colonial domains, and an external auth provider integration.
+**Progress (2026-11-02):** generated from `dryv/` contracts for geography, legal, governance, elections, political, events, entities, finance, debt, procurement, statistics, services, reference and audit (about 135 operations); read use cases, the audit write paths with a contract-driven auth guard, Kenya and South Africa neutrality fixtures, and the contract and boundary checks are in place with 506 test files passing. Still open: data migration through database engine, the map and governance clients, heritage, linguistics, migration, colonial and pre-colonial domains, and an external auth provider integration.
 
 Initial modules should reflect canonical use cases, not legacy folder names blindly.
 

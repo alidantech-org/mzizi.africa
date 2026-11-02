@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type { DataSource } from "typeorm";
 
 /**
- * Loads db-engine fixtures (source/backend/db-engine/fixtures) for tests. Rows are written in
+ * Loads database engine fixtures (source/backend/engine/database/fixtures) for tests. Rows are written in
  * dependency order; a string value "@key" refers to the id of the row with that key.
  *
  * Data rows carry no provenance, so the loader records it where it belongs: one source document
@@ -17,7 +17,7 @@ export interface FixtureRow {
   values: Record<string, unknown>;
 }
 
-export const fixturesRoot = join(import.meta.dirname, "../../../db-engine/fixtures");
+export const fixturesRoot = join(import.meta.dirname, "../../../engine/database/fixtures");
 export const fixturesDir = join(fixturesRoot, "neutral-model");
 
 /** Fixed placeholder for the vocabulary ids a fixture document needs but does not model. */

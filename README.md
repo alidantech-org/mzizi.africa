@@ -53,9 +53,10 @@ mzizi.africa/
 │   │   └── mobile/
 │   └── backend/
 │       ├── files/          Evidence artifact lifecycle
-│       ├── data-engine/    Discovery, extraction and parsing
+│       ├── engine/
+│       │   ├── data/       Discovery, extraction and parsing
+│       │   └── database/   Migrations, seeds, validation and promotion
 │       ├── intelligence/   AI/tool classification, cleaning and evaluation
-│       ├── db-engine/      Migrations, seeds, validation and promotion
 │       └── api/            Future NestJS product API
 ├── packages/           Shared contracts/taxonomies when justified
 └── .docs/

@@ -7,9 +7,10 @@ Mzizi services are separated by responsibility so evidence ingestion, AI process
 ```text
 source/backend/
 ├── files/          # Evidence artifact custody and file lifecycle
-├── data-engine/    # Source discovery, extraction, OCR and parsing
+├── engine/
+│   ├── data/       # Source discovery, extraction, OCR and parsing
+│   └── database/   # Database schema, migrations, seeds and canonical promotion
 ├── intelligence/   # AI/tool-assisted classification, cleaning and evaluation
-├── db-engine/      # Database schema, migrations, seeds and canonical promotion
 └── api/            # Future NestJS product API
 ```
 
@@ -24,9 +25,9 @@ Useful responsibilities from that service will be decomposed according to `.docs
 | Question | Owner |
 | --- | --- |
 | Where is the exact source PDF/map/dataset preserved? | `files` |
-| How is text/table/metadata extracted from it? | `data-engine` |
+| How is text/table/metadata extracted from it? | `engine/data` |
 | How is it classified, cleaned, linked or evaluated with AI/tools? | `intelligence` |
-| Who owns migrations, seeds, integrity and candidate promotion? | `db-engine` |
+| Who owns migrations, seeds, integrity and candidate promotion? | `engine/database` |
 | How do applications query approved canonical knowledge? | NestJS `api` |
 
 ## Shared rule

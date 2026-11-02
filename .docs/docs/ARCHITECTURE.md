@@ -34,9 +34,10 @@ mzizi.africa/
 │   │   ├── web/                # Research, review, stewardship and operations dashboard
 │   │   └── mobile/             # Flutter mobile client
 │   └── backend/
-│       ├── data-engine/        # Discovery, ingestion, extraction, parsing
+│       ├── engine/
+│       │   ├── data/           # Discovery, ingestion, extraction, parsing
+│       │   └── database/       # Schema, migrations, seeds, imports, promotion
 │       ├── intelligence/       # AI/tool-assisted classification and evaluation
-│       ├── db-engine/          # Schema, migrations, seeds, imports, promotion
 │       ├── files/              # Source artifact and file lifecycle service
 │       └── api/                # Target NestJS product API (legacy Python lives here until migrated)
 │
@@ -165,7 +166,7 @@ source artifact
 
 ---
 
-# 4. Data engine — `source/backend/data-engine`
+# 4. Data engine — `source/backend/engine/data`
 
 ## Purpose
 
@@ -305,7 +306,7 @@ AI output enters a candidate/evaluation workflow. Promotion rules decide what be
 
 ---
 
-# 6. Database management engine — `source/backend/db-engine`
+# 6. Database management engine — `source/backend/engine/database`
 
 ## Purpose
 

@@ -14,6 +14,9 @@ Date: 2026-11-02. Decided by the user.
 4. Agents author structures in batches and publish them without human approval, because a structure is not canonical data. Authorship is attributed (method, model, inputs). A failing live check demotes a version automatically.
 5. The engine runs structures deterministically; no model runs at extraction time.
 
+6. Sites belong to families (geographic unit, institution type, independent body, platform, purpose) defined by domain patterns such as `{county}.go.ke`. Patterns plus subject sets (geography units, institutions) generate `expected` sites that are probed and promoted; they are never identifiers.
+7. Families own base structure bundles; sites extend them with overlays. Similarity is captured three ways: agent-assigned trait tags, computed fingerprints, and explicit relation edges between sites and families. Sites link to geography units, governance institutions, organizations and kinds of material through `site_subjects`.
+
 ## Consequences
 
 The earlier research note's DevAuto integration contract, the "structure approval" gate and the plan to reference DevAuto structures by hash are dropped from the intake plan. New work: Dryv contracts for `website`, migrations, the JSON Schema, structure loader/runner and agent batch tooling. Data extracted through structures keeps its normal candidate, validation and review path.

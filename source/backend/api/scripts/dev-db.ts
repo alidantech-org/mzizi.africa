@@ -1,7 +1,7 @@
 /**
  * Development only: creates the schema from the generated entities and loads the neutral-model
  * fixtures (Kenya, South Africa) into a LOCAL database, so the API has something to serve until
- * source/backend/db-engine owns schema and seeds. The API itself never does this.
+ * source/backend/engine/database owns schema and seeds. The API itself never does this.
  *
  *   DATABASE_URL=postgres://postgres@localhost:5432/mzizi_dev bun scripts/dev-db.ts schema
  *   DATABASE_URL=... bun scripts/dev-db.ts fixtures

@@ -61,10 +61,10 @@ No old module should be deleted simply because a new directory exists.
 
 | Current concern in Python service | Target owner |
 | --- | --- |
-| Web/document discovery | `source/backend/data-engine` |
-| Web fetching/scraping | `source/backend/data-engine` |
-| PDF/text/table extraction | `source/backend/data-engine` |
-| OCR and document parsing | `source/backend/data-engine` |
+| Web/document discovery | `source/backend/engine/data` |
+| Web fetching/scraping | `source/backend/engine/data` |
+| PDF/text/table extraction | `source/backend/engine/data` |
+| OCR and document parsing | `source/backend/engine/data` |
 | Source file metadata/storage routes | `source/backend/files` |
 | Raw/derived artifact lifecycle | `source/backend/files` |
 | AI classification | `source/backend/intelligence` |
@@ -72,9 +72,9 @@ No old module should be deleted simply because a new directory exists.
 | Entity resolution suggestions | `source/backend/intelligence` |
 | Contradiction/evidence evaluation | `source/backend/intelligence` |
 | SQLAlchemy domain models | design input for canonical schema/contracts |
-| Alembic migrations | `source/backend/db-engine` migration source |
-| Seed scripts/data | `source/backend/db-engine` after classification by seed type |
-| Data repair/backfill scripts | `source/backend/db-engine` |
+| Alembic migrations | `source/backend/engine/database` migration source |
+| Seed scripts/data | `source/backend/engine/database` after classification by seed type |
+| Data repair/backfill scripts | `source/backend/engine/database` |
 | Public/query HTTP endpoints | NestJS `source/backend/api` |
 | Dashboard workflow endpoints | NestJS `source/backend/api` |
 | Authentication/authorization | future NestJS API / platform auth design |
@@ -339,11 +339,11 @@ What the legacy Python service (`source/backend/api-legacy`) did, where each res
 | Geographic endpoints and mobile geography contract (`routes/geographic`) | NestJS `geography` group | Contracts, read use cases and tests done, including search, boundaries, children, hierarchy, map context, history, governance by place | Endpoints yes once clients switch; geo seed data (units, relationships, boundaries) not yet migrated |
 | Legal endpoints (`routes/legal`) | NestJS `legal` group | Contracts and read use cases done | Endpoints yes once clients switch; constitution seed data not migrated |
 | Models without endpoints: governance, offices, people, elections, political, events, entities, finance, debt, procurement, statistics, services | NestJS domain groups | Neutral contracts and read use cases done; inventory dispositions applied | The models can be retired as design reference, but their CSV seeds (below) are still the only data |
-| CSV seeds under `routes/*/_seed` | `source/backend/db-engine` | Not started | No |
-| Alembic migrations 001 to 016 (schema mixed with seed loading) | `source/backend/db-engine` | Not started; the generated entities define the neutral schema but db-engine must own DDL and the missing `services` migration | No |
+| CSV seeds under `routes/*/_seed` | `source/backend/engine/database` | Not started | No |
+| Alembic migrations 001 to 016 (schema mixed with seed loading) | `source/backend/engine/database` | Not started; the generated entities define the neutral schema but database engine must own DDL and the missing `services` migration | No |
 | Files models, S3 client, files routes | `source/backend/files` writes bytes; metadata model is the `filesystem` schema (`FILESYSTEM_DESIGN.md`), replacing archived directories, files and file_types; formats seeded from the archived file types | Schema, contracts and read endpoints done; the files service (upload, download, scanning) not built | No |
-| Scraper models, web search scraper, crawlers, converters | `source/backend/data-engine`; retrieval records become `source.captures` and results `source.attributions` (`SOURCING_DESIGN.md`) | Schema done; engine not built | No |
-| PDF extractor, OCR, NLP | data-engine (extraction) and intelligence (classification) | Not started | No |
+| Scraper models, web search scraper, crawlers, converters | `source/backend/engine/data`; retrieval records become `source.captures` and results `source.attributions` (`SOURCING_DESIGN.md`) | Schema done; engine not built | No |
+| PDF extractor, OCR, NLP | data engine (extraction) and intelligence (classification) | Not started | No |
 | Archived justice, land, constitution amendments, legal instruments, `person_*` models | Review for later contracts | Investigate list in the inventory | Keep as reference |
 
-Nothing in `api-legacy` can be removed yet. Removal needs: neutral data migrated into the canonical schema by db-engine, clients switched to the NestJS endpoints, and the data-engine and files responsibilities replaced. The contract audit and `check-api-boundary.ts` ensure none of the non-API responsibilities were absorbed into the new API.
+Nothing in `api-legacy` can be removed yet. Removal needs: neutral data migrated into the canonical schema by database engine, clients switched to the NestJS endpoints, and the data engine and files responsibilities replaced. The contract audit and `check-api-boundary.ts` ensure none of the non-API responsibilities were absorbed into the new API.

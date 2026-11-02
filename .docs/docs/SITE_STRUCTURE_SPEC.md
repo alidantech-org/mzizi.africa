@@ -43,6 +43,25 @@ tags: [jurisdiction:KE, domain:finance]
 
 `auth` other than `none`, CAPTCHAs and access challenges are not supported; the engine stops and records a check.
 
+## Inheritance and overlays
+
+A family bundle has the same layout as a site bundle and declares `kind: family`. A site bundle may extend it:
+
+```yaml
+schema: mzizi.site/v1
+site: ke-nairobi-county
+extends: { family: ke-county-government, version: 3 }   # version optional: latest active
+vars: { base_path: /tenders }                           # per-site parameters used by family modules as ${base_path}
+overlay:
+  modules:
+    replace: [tenders]       # use this bundle's modules/tenders.yml instead of the family's
+    add: [city-bylaws]
+    remove: [assembly-links]
+  tags: [geo:county]
+```
+
+Family modules reference `${subject.geography}` and similar subject variables; the engine fills them from `website.site_subjects`, so a mapping can set the geography unit of every candidate without hard-coded ids. Resolution is: family modules, minus `remove`, with `replace` and `add` applied, then `vars`. The engine stores the effective manifest hash on captures. Cycles and more than one level of inheritance are rejected in v1.
+
 ## Modules
 
 A module has `discover` (how to find items), `fetch` (how to get each), `extract` (how to read fields) and optional `paginate`.

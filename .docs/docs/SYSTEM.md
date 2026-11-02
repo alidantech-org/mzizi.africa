@@ -38,7 +38,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Data engine
 
-**Target path:** `source/backend/data-engine`
+**Target path:** `source/backend/engine/data`
 
 **Role:** source acquisition, extraction, OCR, parsing and low-risk normalization.
 
@@ -54,7 +54,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Database management engine
 
-**Target path:** `source/backend/db-engine`
+**Target path:** `source/backend/engine/database`
 
 **Role:** schema, migrations, seeds, backfills, integrity validation and controlled promotion into canonical storage.
 

@@ -19,11 +19,11 @@ Mzizi needs to know the sites that publish public information: who runs them, wh
 
 ```text
 sites             the known site: code, name, kind (portal, publication, api, dataset catalogue, archive),
-                  jurisdiction (soft id), status (discovered, profiled, active, degraded, paused, retired), first/last seen
+                  jurisdiction (soft id), status (expected, discovered, profiled, active, degraded, paused, rejected, retired), first/last seen
 domains           hostname, site (FK), role (primary, alias, redirect, legacy, mirror), valid_from/valid_to with precision,
                   scheme, observed_at; unique on (site, hostname, valid_from); NOT unique on hostname alone
 site_publishers   site (FK), publisher (soft id into source), role (owner, operator, hosted), valid time
-structures        one logical structure per site and purpose (default `main`); current_version (FK), status
+structures        one logical structure per owner and purpose (default `main`); owner_kind (site, family), owner_id; current_version (FK), status
 structure_versions
                   structure (FK), number, status (draft, validated, active, superseded, rejected), bundle folder (soft id into filesystem),
                   manifest_hash (sha256 of the canonical manifest), schema_version (e.g. mzizi.site/v1), method (soft id into source.methods),
@@ -36,9 +36,40 @@ Foreign keys exist only inside `website`. `site_publishers.publisher_id`, `struc
 
 `structure_versions.status` is the structure's own lifecycle (agent authored, machine validated, active). It is not a data verification state and does not use `source.verifications`.
 
+## Families, domain patterns and similarity
+
+Governments publish sites in families: `{county}.go.ke` for county governments, `{county}assembly.go.ke` for county assemblies, `{constituency}.ngcdf.go.ke` for constituency funds, `{ministry}.go.ke` for ministries. Nobody should register 47 county sites by hand, and a fix to how county sites list tenders should not be made 47 times. Independent bodies such as the electoral commission or the statistics bureau are not hierarchical members of any such family, yet they share traits (a downloads section, PDF publications). The model captures all of this.
+
+```text
+site_families     code, name, kind (geographic_unit, institution_type, independent_body, platform, purpose), description,
+                  subject_kind (what members are about: e.g. county, constituency, ministry), jurisdiction (soft id), status
+domain_patterns   family (FK), template (`{county}.go.ke`), variables (JSON: slot -> subject source and slug rule),
+                  scheme, expected domain role, status, notes
+site_members      site (FK), family (FK), role (member, template_source), basis (pattern, agent, fingerprint), confidence,
+                  method (soft id), valid time
+site_subjects     site (FK), target_kind (`geography.units`, `governance.institutions`, `organization.entities`,
+                  `reference.classifications` for the kind of material), target_id (soft), relation (serves, operated_by, about, publishes), valid time
+traits            owner_kind (site, family), owner_id, tag (`platform:wordpress`, `section:downloads`, `purpose:data-portal`),
+                  method (soft id), confidence, observed_at
+relations         from_kind/from_id and to_kind/to_id (site or family), relation (similar_to, derived_from, shares_platform, shares_module),
+                  score, basis (agent, fingerprint), evidence (JSON)
+fingerprints      site (FK), kind (markup, navigation, assets, document_types), digest and feature vector (JSON), computed_at, check (FK)
+```
+
+- **Expected sites.** A pattern plus a subject set creates sites in status `expected`. For `{county}.go.ke` the subjects are the units of the county level from `geography.units`; each gets a candidate hostname built with the slug rule (lowercase, strip words such as county, join) and a `site_subjects` row. A rate-limited probe records a `checks` row of kind `reachability`: reachable hostnames promote the site to `discovered`, failures become `rejected` or get a slug override (an alias on the subject) and a retry. Probing obeys each family's politeness policy and never loops over hosts faster than the policy allows.
+- **Patterns are data, not identity.** A pattern yields candidate domains; the resulting `domains` rows are dated attributes of a site. If a county moves to a new domain, the site keeps its id, gets a second domain and a legacy role on the old one.
+- **Subjects tie sites into the system.** A county site links to its `geography.units` row (and through it the governance institutions of that unit), an assembly site to the assembly institution, IEBC and KNBS to their `organization.entities` or institution records, and a tenders portal to the document kind it publishes. Reading a county page of the product can list its official sites; reviewing a governance institution can show where it publishes.
+- **Traits are tags.** Agents assign namespaced traits (platform, section, purpose, document types) with confidence. Traits attach to families as well as sites, so a family states the traits all members are expected to share, and a member that lacks one is flagged.
+- **Fingerprints.** The engine computes fingerprints (markup skeleton, navigation labels and paths, asset hosts, document type mix) from fetched pages. Similarity between fingerprints suggests membership of an existing family or a `similar_to` relation, written with `basis: fingerprint` and a score. Suggestions are data, not decisions: they never rewrite a structure.
+- **Cross-family DNA.** `relations` of kind `shares_module` link families that reuse a module, for example a generic "downloads section" module used by both the electoral commission and the statistics bureau although their sites are otherwise unrelated.
+
+### Structure inheritance
+
+A family owns a base bundle. A site's bundle may `extends` its family's active version and store only an overlay (see `SITE_STRUCTURE_SPEC.md`). The engine resolves the effective structure at load time: the family version, then the site overlay, and records both version ids on captures. Repairing a family module fixes every member, and a member that needs a difference overrides only that module. If a probe shows a member diverges too far, the overlay grows or the member is moved to another family.
+
 ## Links from `source`
 
-`source.captures` gains three soft columns: `site_id`, `domain_id` (the host actually used) and `structure_version_id` (the structure that drove discovery or extraction, null for manual downloads). `source.documents` gains `site_id` (nullable). The linkage lets a researcher trace any record to its document, capture, site, domain and the exact structure version, and lets the engine find every capture made with a structure that is later found wrong.
+`source.captures` gains four soft columns: `site_id`, `domain_id` (the host actually used), `structure_version_id` (the site overlay or standalone structure that drove discovery or extraction, null for manual downloads) and `family_version_id` (the inherited base, null when none). `source.documents` gains `site_id` (nullable). The linkage lets a researcher trace any record to its document, capture, site, domain and the exact structure version, and lets the engine find every capture made with a structure that is later found wrong.
 
 ## Storage in `filesystem`
 
@@ -47,7 +78,7 @@ Each structure version is a folder: `/website-structures/<site code>/<version nu
 ## How the engine uses it
 
 1. Load the active version of a site's structure (by site code) through the database package's read interface or the API.
-2. Resolve the base URL from the site's currently valid `primary` domain; try aliases when it fails and record a `checks` row.
+2. Resolve the effective structure (family base plus site overlay) and the base URL from the site's currently valid `primary` domain; try aliases when it fails and record a `checks` row.
 3. Execute the structure's discovery and extraction modules deterministically; write captures with `site_id`, `domain_id` and `structure_version_id`.
 4. Apply the structure's mappings to produce candidate records with tags attached to lineage.
 5. On a mismatch (expected collection missing, field empty, schema drift), write a `checks` row of kind `drift`, set the site `degraded` and stop affected jobs; it does not guess.

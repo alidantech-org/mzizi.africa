@@ -47,10 +47,10 @@ In particular, do not add new platform responsibilities here by default for:
 ```text
 Current Python service
         │
-        ├── extraction/scraping ──────> ../data-engine
+        ├── extraction/scraping ──────> ../engine/data
         ├── file/artifact behavior ───> ../files
         ├── AI/intelligence behavior ─> ../intelligence
-        ├── models/migrations/seeds ───> ../db-engine + canonical schema design
+        ├── models/migrations/seeds ───> ../engine/database + canonical schema design
         └── product endpoints ────────> future NestJS API
 ```
 
