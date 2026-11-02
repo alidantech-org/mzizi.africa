@@ -8,7 +8,7 @@
 
 # API, Mobile, and Sites Roadmap
 
-This roadmap is represented by linked activities in the Task groups **API**, **Mobile app**, and **Sites**. The intended order is in `.docs/todo/mzizi-africa/plan.md`.
+This roadmap is represented by linked activities in the Task groups **API**, **Mobile app**, and **Sites**. The intended order lives in the group plan files under `.docs/todo/`; run `task list` to see what exists.
 
 ## API
 

@@ -6,12 +6,12 @@ This file defines how coding agents and contributors should reason about the Mzi
 
 Before changing architecture or domain behavior, read:
 
-1. `.docs/WHY.md`
-2. `.docs/STORY.md`
-3. `.docs/ARCHITECTURE.md`
-4. `.docs/DATA_LIFECYCLE.md`
-5. `.docs/DOMAINS.md`
-6. `.docs/MIGRATION.md`
+1. `.docs/docs/WHY.md`
+2. `.docs/docs/STORY.md`
+3. `.docs/docs/ARCHITECTURE.md`
+4. `.docs/docs/DATA_LIFECYCLE.md`
+5. `.docs/docs/DOMAINS.md`
+6. `.docs/docs/MIGRATION.md`
 
 Mzizi is an **evidence-first African heritage, history, geography, culture, linguistics, governance and political intelligence platform**. The goal is to research public/historical material and structure it cleanly while preserving provenance, time, place, uncertainty and version history.
 
@@ -42,7 +42,7 @@ Do not place a responsibility in the nearest convenient service merely because c
 
 ## 3. Treat the current Python API as migration source material
 
-`services/api` contains valuable domain design, schema work, migrations, seeds and extraction-related code inherited from the previous political-governance project.
+`source/backend/api` contains valuable domain design, schema work, migrations, seeds and extraction-related code inherited from the previous political-governance project.
 
 Do not deepen it as the long-term public API unless explicitly instructed.
 
@@ -57,7 +57,7 @@ When replacing it:
 7. expose approved domain contracts through the NestJS API;
 8. only remove old code after equivalent responsibilities are accounted for.
 
-See `.docs/MIGRATION.md`.
+See `.docs/docs/MIGRATION.md`.
 
 ## 4. Evidence is part of the data model
 
@@ -141,7 +141,7 @@ Mzizi domains are not arbitrary database modules. Each should support the wider 
 - finance/debt/procurement reveal how public power uses resources;
 - evidence/provenance makes the whole system trustworthy.
 
-Read `.docs/DOMAINS.md` before introducing new top-level domains.
+Read `.docs/docs/DOMAINS.md` before introducing new top-level domains.
 
 ## 9. Documentation is part of implementation
 
@@ -167,13 +167,13 @@ These contracts should eventually live in shared packages or schemas once implem
 
 ## 11. Applications consume knowledge; they do not define it
 
-`apps/www` and `apps/dashboard` should consume stable domain contracts.
+`source/apps/www` and `source/apps/web` should consume stable domain contracts.
 
 Avoid putting canonical domain rules only in React components or frontend-specific types.
 
 ## 12. Repository hygiene
 
-- Work on the branch explicitly requested by the user; do not create branches unless requested.
+- **Branch: `develop` only.** Work directly on `develop`. Never create, rename or switch to another branch, and never create git worktrees. See `.docs/rules/branching-and-task-usage.md`.
 - Do not add or modify `.github/**` unless explicitly requested.
 - Keep generated files, local databases, build outputs, virtual environments and dependency directories out of source control.
 - Prefer small, meaningful commits when making repository changes.
@@ -187,11 +187,13 @@ Before adding a feature, ask:
 
 If the answer is unclear, document the reason before expanding the platform.
 
-## 14. Task workspace
+## 14. Task workspace (mandatory)
 
-Use the repository Task workspace in `.tasks` to organize implementation activities. The root `task.yaml` points the CLI to that workspace. Keep current planning and project guidance in sync:
+Using the Task CLI is **mandatory, not optional**. Every unit of work must be planned, started, recorded and completed through `task` (see `.docs/rules/branching-and-task-usage.md`). Work not tracked in Task is not done.
 
-- `.docs/todo/mzizi-africa/plan.md` — cross-surface activity sequence;
+Use the repository Task workspace in `.docs` to organize implementation activities. The root `task.yaml` points the CLI to that workspace. Keep current planning and project guidance in sync:
+
+- `.docs/todo/` — Task groups and tasks (created and changed only through the `task` CLI);
 - `.docs/docs/` — project overview, repository map, development setup, testing guide, and roadmap;
 - `.docs/rules/` — coding, testing, security, and Git rules;
 - `.docs/guidance/codex.md` — agent workflow that supplements this file.
@@ -202,7 +204,7 @@ This section supplements the repository contract above; it does not replace or w
 
 ## Task workspace
 
-This project manages its work with Task (`taskcode`; `task` and `tc` are aliases). Task records, documents, decisions and handoffs live in `.docs/` as Markdown files with YAML frontmatter. Read `.docs/README.md` for how the tool works.
+This project manages its work with Task (`taskcode`; `task` and `tc` are aliases). Task records, documents, decisions and handoffs live in `.docs/` as Markdown files with YAML frontmatter. Read `.docs/README.md` for how the tool works. Using Task is mandatory.
 
 - **Write detailed tasks.** Task rejects scaffold-only or thin files: one task file per piece of work, with a Goal, Context and an Acceptance checklist of at least a few `- [ ]` steps ("task create --body-file"). Groups need detailed `goal.md` and `plan.md`. Read `.docs/rules/task-writing.md` before creating work, and update the same file in follow-ups.
 - Tick checkboxes with `task check <id> --item N | --section "Heading" | --all` instead of hand-editing.
@@ -211,5 +213,6 @@ This project manages its work with Task (`taskcode`; `task` and `tc` are aliases
 - Moving a task to `in-progress` records the project's file changes automatically (with or without Git); `task changes <id>` shows what the task changed.
 - Deleting is recoverable only briefly: `task delete <id> --yes` moves items to the OS temp folder; restore with `task undelete <trash-id>`. Prefer `task archive` for work that should be kept.
 - Run `task validate` after editing anything inside `.docs/`. Every Markdown file there needs valid frontmatter.
+- **Branch rule:** work only on `develop`; never create branches or worktrees (`.docs/rules/branching-and-task-usage.md`).
 - Record meaningful decisions in `.docs/decisions/` and agent handoffs in `.docs/handoffs/`.
 <!-- END TASK MANAGED TASK-TOOL -->

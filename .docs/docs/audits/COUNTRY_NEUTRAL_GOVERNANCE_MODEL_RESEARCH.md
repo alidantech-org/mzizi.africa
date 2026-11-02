@@ -1,3 +1,7 @@
+---
+{id: DOC-9F49F94216B5,name: COUNTRY_NEUTRAL_GOVERNANCE_MODEL_RESEARCH,type: documentation}
+---
+
 # Country-Neutral Governance Model — Comparative Research and Polifin Design Review
 
 **Recorded:** 2026-10-28  

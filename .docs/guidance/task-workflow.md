@@ -4,8 +4,10 @@
 
 # Task Workflow Guidance
 
+Using Task is mandatory: plan, start, check off, document and complete every piece of work with the CLI. See `.docs/rules/branching-and-task-usage.md`.
+
 - One Task activity should describe one reviewable outcome and include acceptance criteria.
-- Assign work to **API**, **Mobile app**, or **Sites**; use **Mzizi Africa** for cross-cutting planning.
+- Assign work to a Task group (`task group create` if none fits) covering the relevant `source/` area.
 - Use `planned` before work starts, `in-progress` while active, `blocked` only for a concrete dependency, and `completed` only after acceptance criteria are met.
 - Set dependencies only when a predecessor genuinely blocks the work; parallel activities should remain independent.
 - Put design notes, evidence, and validation results in the task body or linked project document. Keep the group plan as sequencing guidance, not a substitute for task status.

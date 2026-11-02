@@ -1,3 +1,7 @@
+---
+{id: DOC-2D92C9949EC8,name: README,type: documentation}
+---
+
 # Mzizi Africa Documentation
 
 This directory is the durable system and product memory for Mzizi Africa.

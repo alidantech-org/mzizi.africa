@@ -1,3 +1,7 @@
+---
+{id: DOC-5AAE3F263DAE,name: WHY,type: documentation}
+---
+
 # WHY — Why Mzizi Africa Exists
 
 ## The short answer

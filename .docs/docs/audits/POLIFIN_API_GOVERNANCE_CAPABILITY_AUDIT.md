@@ -1,3 +1,7 @@
+---
+{id: DOC-9B4A725D54CF,name: POLIFIN_API_GOVERNANCE_CAPABILITY_AUDIT,type: documentation}
+---
+
 # Polifin API Governance Capability Audit
 
 **Recorded:** 2026-10-28  

@@ -23,7 +23,7 @@ That fragmentation makes it difficult to answer connected questions such as:
 
 Mzizi exists to research and structure this information cleanly so that history, heritage and the current world can be explored as one connected, evidence-backed system.
 
-Read [.docs/WHY.md](.docs/WHY.md), [.docs/GOALS.md](.docs/GOALS.md) and [.docs/STORY.md](.docs/STORY.md) first.
+Read [.docs/docs/WHY.md](.docs/docs/WHY.md), [.docs/docs/GOALS.md](.docs/docs/GOALS.md) and [.docs/docs/STORY.md](.docs/docs/STORY.md) first.
 
 ## Product surfaces
 
@@ -116,8 +116,8 @@ The long-term application API will be built in **NestJS**. It exposes stable pro
 
 ### 6. Applications
 
-- **`apps/www`** — public-facing African atlas, heritage museum, historical explorer and evidence-backed knowledge experience.
-- **`apps/dashboard`** — internal/research workspace for source review, extraction review, curation, classification, corrections, publishing and governance intelligence.
+- **`source/apps/www`** — public-facing African atlas, heritage museum, historical explorer and evidence-backed knowledge experience.
+- **`source/apps/web`** — internal/research workspace for source review, extraction review, curation, classification, corrections, publishing and governance intelligence.
 
 ## Knowledge domains
 
@@ -144,7 +144,7 @@ Mzizi connects historical and contemporary layers rather than isolating them:
 - Statistics and development indicators
 - Sources, evidence, provenance, uncertainty and scholarly disagreement
 
-See [.docs/DOMAINS.md](.docs/DOMAINS.md) for the reason each domain belongs in the same platform.
+See [.docs/docs/DOMAINS.md](.docs/docs/DOMAINS.md) for the reason each domain belongs in the same platform.
 
 ## Core principles
 
@@ -163,16 +163,16 @@ See [.docs/DOMAINS.md](.docs/DOMAINS.md) for the reason each domain belongs in t
 
 Start with:
 
-- [.docs/README.md](.docs/README.md) — documentation map
-- [.docs/WHY.md](.docs/WHY.md) — common purpose and reasons
-- [.docs/GOALS.md](.docs/GOALS.md) — goals, success conditions and non-goals
-- [.docs/STORY.md](.docs/STORY.md) — product story and user journey
-- [.docs/DOMAINS.md](.docs/DOMAINS.md) — knowledge domains and why they matter
-- [.docs/SYSTEM.md](.docs/SYSTEM.md) — system responsibilities and invariants
-- [.docs/ARCHITECTURE.md](.docs/ARCHITECTURE.md) — target technical architecture
-- [.docs/DATA_LIFECYCLE.md](.docs/DATA_LIFECYCLE.md) — evidence-to-canonical-data pipeline
-- [.docs/MIGRATION.md](.docs/MIGRATION.md) — transition from the consolidated legacy code
-- [.docs/ROADMAP.md](.docs/ROADMAP.md) — build sequence
+- [.docs/README.md](.docs/docs/README.md) — documentation map
+- [.docs/docs/WHY.md](.docs/docs/WHY.md) — common purpose and reasons
+- [.docs/docs/GOALS.md](.docs/docs/GOALS.md) — goals, success conditions and non-goals
+- [.docs/docs/STORY.md](.docs/docs/STORY.md) — product story and user journey
+- [.docs/docs/DOMAINS.md](.docs/docs/DOMAINS.md) — knowledge domains and why they matter
+- [.docs/docs/SYSTEM.md](.docs/docs/SYSTEM.md) — system responsibilities and invariants
+- [.docs/docs/ARCHITECTURE.md](.docs/docs/ARCHITECTURE.md) — target technical architecture
+- [.docs/docs/DATA_LIFECYCLE.md](.docs/docs/DATA_LIFECYCLE.md) — evidence-to-canonical-data pipeline
+- [.docs/docs/MIGRATION.md](.docs/docs/MIGRATION.md) — transition from the consolidated legacy code
+- [.docs/docs/ROADMAP.md](.docs/docs/ROADMAP.md) — build sequence
 
 ## Current state
 
@@ -193,5 +193,6 @@ This project manages its work with Task (`taskcode`; `task` and `tc` are aliases
 - Moving a task to `in-progress` records the project's file changes automatically (with or without Git); `task changes <id>` shows what the task changed.
 - Deleting is recoverable only briefly: `task delete <id> --yes` moves items to the OS temp folder; restore with `task undelete <trash-id>`. Prefer `task archive` for work that should be kept.
 - Run `task validate` after editing anything inside `.docs/`. Every Markdown file there needs valid frontmatter.
+- **Branch rule:** work only on `develop`; never create branches or worktrees (`.docs/rules/branching-and-task-usage.md`).
 - Record meaningful decisions in `.docs/decisions/` and agent handoffs in `.docs/handoffs/`.
 <!-- END TASK MANAGED TASK-TOOL -->

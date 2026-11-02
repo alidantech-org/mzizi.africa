@@ -8,10 +8,10 @@ Mzizi Africa is an evidence-first platform for exploring African heritage, histo
 
 ## Product surfaces
 
-- `apps/www`: public atlas and knowledge exploration experience.
-- `apps/dashboard`: research, review, and stewardship workbench.
-- `apps/mobile`: Flutter client for map and civic evidence exploration.
-- `services/api`: inherited Python FastAPI service and migration source material. The target product API is NestJS.
+- `source/apps/www`: public atlas and knowledge exploration experience.
+- `source/apps/web`: research, review, and stewardship workbench.
+- `source/apps/mobile`: Flutter client for map and civic evidence exploration.
+- `source/backend/api`: inherited Python FastAPI service and migration source material. The target product API is NestJS.
 
 ## Work areas
 
@@ -19,6 +19,6 @@ See the Task groups **API**, **Mobile app**, and **Sites** for scoped activities
 
 ## Architecture references
 
-Read the repository `AGENTS.md` and `.docs/WHY.md`, `.docs/STORY.md`, `.docs/ARCHITECTURE.md`, `.docs/DATA_LIFECYCLE.md`, `.docs/DOMAINS.md`, and `.docs/MIGRATION.md` before changing domain ownership or architecture.
+Read the repository `AGENTS.md` and `.docs/docs/WHY.md`, `.docs/docs/STORY.md`, `.docs/docs/ARCHITECTURE.md`, `.docs/docs/DATA_LIFECYCLE.md`, `.docs/docs/DOMAINS.md`, and `.docs/docs/MIGRATION.md` before changing domain ownership or architecture.
 
-The mobile map client contract is documented in `apps/docs/geography-api-contract.md`.
+The mobile map client contract is documented in `.docs/docs/geography-api-contract.md`.

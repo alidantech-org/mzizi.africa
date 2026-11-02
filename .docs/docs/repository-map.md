@@ -6,16 +6,17 @@
 
 | Path | Responsibility |
 | --- | --- |
-| `apps/www` | Public-facing atlas, heritage, history, and exploration site. |
-| `apps/dashboard` | Research and evidence stewardship workflows. |
-| `apps/mobile` | Flutter mobile application and embedded Cesium map. |
-| `apps/docs` | Application contracts, including the mobile geography API contract. |
-| `services/api` | Legacy Python/FastAPI behavior, schema, migrations, seeds, and migration input. |
-| `services/data-engine` | Target owner for discovery, ingestion, and extraction. |
-| `services/db-engine` | Target owner for migrations, seeds, imports, and database lifecycle. |
-| `services/files` | Target owner for raw and derived evidence artifact custody. |
-| `services/intelligence` | Target owner for reviewable AI/tool-assisted classification and evaluation. |
-| `.docs` | Product purpose, domains, architecture, lifecycle, and migration guidance. |
-| `.tasks` | Task groups, implementation activities, project docs, rules, and agent guidance. |
+| `source/apps/www` | Public-facing atlas, heritage, history, and exploration site. |
+| `source/apps/web` | Research dashboard (formerly `apps/dashboard`): research and evidence stewardship workflows. |
+| `source/apps/mobile` | Flutter mobile application and embedded Cesium map. |
+| `.docs/docs/geography-api-contract.md` | Mobile geography API contract. |
+| `source/backend/api` | Legacy Python/FastAPI behavior, schema, migrations, seeds, and migration input. |
+| `source/backend/data-engine` | Target owner for discovery, ingestion, and extraction. |
+| `source/backend/db-engine` | Target owner for migrations, seeds, imports, and database lifecycle. |
+| `source/backend/files` | Target owner for raw and derived evidence artifact custody. |
+| `source/backend/intelligence` | Target owner for reviewable AI/tool-assisted classification and evaluation. |
+| `.docs` | Task workspace (`task.yaml` points here): product docs in `docs/`, `rules/`, `guidance/`, `decisions/`, `handoffs/`, and `todo/` task groups. |
+
+All code lives under `source/`. Older docs and diagrams showing top-level `apps/` and `services/` mean `source/apps/` and `source/backend/`.
 
 The target product API is NestJS. Confirm actual service/package presence before planning implementation work; do not infer that a target directory exists just because it appears in architecture documentation.

@@ -1,10 +1,14 @@
+---
+{id: DOC-3146BB9271CA,name: MIGRATION,type: documentation}
+---
+
 # MIGRATION — From Consolidated Legacy Code to the Target Mzizi Architecture
 
 ## Purpose
 
 The repository is consolidated, but the architecture is not yet consolidated around the final Mzizi system boundaries.
 
-`services/api` currently contains the inherited Python political-governance backend. It is valuable because it contains domain thinking, SQLAlchemy models, Alembic migrations, seed data, file routes, scraping/extraction utilities and early API behavior.
+`source/backend/api` currently contains the inherited Python political-governance backend. It is valuable because it contains domain thinking, SQLAlchemy models, Alembic migrations, seed data, file routes, scraping/extraction utilities and early API behavior.
 
 It should be treated as **source material to decompose**, not as the long-term backend shape.
 
@@ -57,22 +61,22 @@ No old module should be deleted simply because a new directory exists.
 
 | Current concern in Python service | Target owner |
 | --- | --- |
-| Web/document discovery | `services/data-engine` |
-| Web fetching/scraping | `services/data-engine` |
-| PDF/text/table extraction | `services/data-engine` |
-| OCR and document parsing | `services/data-engine` |
-| Source file metadata/storage routes | `services/files` |
-| Raw/derived artifact lifecycle | `services/files` |
-| AI classification | `services/intelligence` |
-| AI-assisted cleaning | `services/intelligence` |
-| Entity resolution suggestions | `services/intelligence` |
-| Contradiction/evidence evaluation | `services/intelligence` |
+| Web/document discovery | `source/backend/data-engine` |
+| Web fetching/scraping | `source/backend/data-engine` |
+| PDF/text/table extraction | `source/backend/data-engine` |
+| OCR and document parsing | `source/backend/data-engine` |
+| Source file metadata/storage routes | `source/backend/files` |
+| Raw/derived artifact lifecycle | `source/backend/files` |
+| AI classification | `source/backend/intelligence` |
+| AI-assisted cleaning | `source/backend/intelligence` |
+| Entity resolution suggestions | `source/backend/intelligence` |
+| Contradiction/evidence evaluation | `source/backend/intelligence` |
 | SQLAlchemy domain models | design input for canonical schema/contracts |
-| Alembic migrations | `services/db-engine` migration source |
-| Seed scripts/data | `services/db-engine` after classification by seed type |
-| Data repair/backfill scripts | `services/db-engine` |
-| Public/query HTTP endpoints | future NestJS `services/api` |
-| Dashboard workflow endpoints | future NestJS `services/api` |
+| Alembic migrations | `source/backend/db-engine` migration source |
+| Seed scripts/data | `source/backend/db-engine` after classification by seed type |
+| Data repair/backfill scripts | `source/backend/db-engine` |
+| Public/query HTTP endpoints | future NestJS `source/backend/api` |
+| Dashboard workflow endpoints | future NestJS `source/backend/api` |
 | Authentication/authorization | future NestJS API / platform auth design |
 
 ## Phase 1 — Freeze architectural expansion inside FastAPI
@@ -243,7 +247,7 @@ Avoid generic CRUD-first design. Prefer domain/query/workflow endpoints that exp
 
 ## Phase 9 — Migrate applications
 
-### `apps/www`
+### `source/apps/www`
 
 Move public data access to the NestJS API while preserving the existing visual direction.
 
@@ -254,7 +258,7 @@ Priority routes remain conceptually aligned with:
 - `/stories`;
 - `/sources`.
 
-### `apps/dashboard`
+### `source/apps/web`
 
 The old Katiba Book dashboard should evolve into the Mzizi research and stewardship workbench.
 

@@ -1,3 +1,7 @@
+---
+{id: DOC-FB1C0E0D5A8E,name: DATA_LIFECYCLE,type: documentation}
+---
+
 # DATA LIFECYCLE — From Evidence to Canonical Knowledge
 
 ## Purpose
@@ -673,8 +677,8 @@ AI classification/cleaning       -> Intelligence Layer
 Candidate data                   -> Staging domain
 Validation/promotion/versioning   -> DB Engine
 Canonical query/mutation contract -> NestJS API
-Public exploration               -> apps/www
-Research/review                   -> apps/dashboard
+Public exploration               -> source/apps/www
+Research/review                   -> source/apps/web
 ```
 
 ## Final rule

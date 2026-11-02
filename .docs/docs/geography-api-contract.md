@@ -1,3 +1,7 @@
+---
+{id: DOC-D4C1C7C7777E,name: geography-api-contract,type: documentation}
+---
+
 # Mzizi geography API contract for the mobile map
 
 The Flutter client does not own administrative geography. Its IDs, hierarchy,

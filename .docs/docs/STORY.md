@@ -1,3 +1,7 @@
+---
+{id: DOC-4BE1AA51029E,name: STORY,type: documentation}
+---
+
 # STORY — The Mzizi Africa Story
 
 ## Mzizi means roots
@@ -220,7 +224,7 @@ The emphasis is:
 - comparisons;
 - clear explanations of uncertainty.
 
-This is primarily `apps/www`.
+This is primarily `source/apps/www`.
 
 ### Research and stewardship mode
 
@@ -239,7 +243,7 @@ The emphasis is:
 - canonical publication;
 - audit history.
 
-This is primarily `apps/dashboard` plus the supporting services.
+This is primarily `source/apps/web` plus the supporting services.
 
 ## What Mzizi should never become
 

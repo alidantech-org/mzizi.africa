@@ -1,3 +1,7 @@
+---
+{id: DOC-32E1E997FDD0,name: ARCHITECTURE,type: documentation}
+---
+
 # ARCHITECTURE — Target Mzizi System
 
 ## Status
@@ -47,7 +51,7 @@ The exact package tooling can evolve. The ownership boundaries should not be col
 
 ---
 
-# 1. Public application — `apps/www`
+# 1. Public application — `source/apps/www`
 
 ## Purpose
 
@@ -79,7 +83,7 @@ The app consumes stable API contracts.
 
 ---
 
-# 2. Research/dashboard application — `apps/dashboard`
+# 2. Research/dashboard application — `source/apps/web`
 
 ## Purpose
 
@@ -108,7 +112,7 @@ The dashboard exists to support the process by which uncertain raw material beco
 
 ---
 
-# 3. File management service — `services/files`
+# 3. File management service — `source/backend/files`
 
 ## Purpose
 
@@ -160,7 +164,7 @@ source artifact
 
 ---
 
-# 4. Data engine — `services/data-engine`
+# 4. Data engine — `source/backend/data-engine`
 
 ## Purpose
 
@@ -229,7 +233,7 @@ It should be possible to rerun extraction with a newer extractor while preservin
 
 ---
 
-# 5. Intelligence layer — `services/intelligence`
+# 5. Intelligence layer — `source/backend/intelligence`
 
 ## Purpose
 
@@ -300,7 +304,7 @@ AI output enters a candidate/evaluation workflow. Promotion rules decide what be
 
 ---
 
-# 6. Database management engine — `services/db-engine`
+# 6. Database management engine — `source/backend/db-engine`
 
 ## Purpose
 
@@ -358,13 +362,13 @@ The canonical model should support:
 
 ---
 
-# 7. Product API — `services/api`
+# 7. Product API — `source/backend/api`
 
 ## Target implementation
 
 **NestJS** is the target application API technology.
 
-The existing Python FastAPI code currently in `services/api` is legacy/consolidated source material and should be decomposed. It should not determine the long-term service boundary.
+The existing Python FastAPI code currently in `source/backend/api` is legacy/consolidated source material and should be decomposed. It should not determine the long-term service boundary.
 
 ## Purpose
 
@@ -579,7 +583,7 @@ When deciding where code belongs, ask:
 - Is it reasoning/classifying/evaluating? -> intelligence layer.
 - Is it changing database schema/seeds/canonical state? -> DB engine.
 - Is it exposing stable product data/actions? -> NestJS API.
-- Is it presenting public knowledge? -> `apps/www`.
-- Is it supporting research/review/stewardship? -> `apps/dashboard`.
+- Is it presenting public knowledge? -> `source/apps/www`.
+- Is it supporting research/review/stewardship? -> `source/apps/web`.
 
 If one feature seems to belong everywhere, define a contract and split the responsibilities rather than creating a new monolith.

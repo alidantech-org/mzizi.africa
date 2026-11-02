@@ -4,7 +4,7 @@
 
 # Git and Review Rules
 
-- Stay on the branch requested by the user; do not create branches unless asked.
+- Work only on `develop`. Never create branches or worktrees. Full rules: `branching-and-task-usage.md`.
 - Do not add or modify `.github/**` unless explicitly requested.
 - Check `git status` before editing and preserve unrelated user changes.
 - Keep changes focused, review diffs, and avoid committing generated files, build output, local databases, virtual environments, and dependency directories.

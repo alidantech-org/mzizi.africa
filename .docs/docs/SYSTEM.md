@@ -1,3 +1,7 @@
+---
+{id: DOC-B84B0063429C,name: SYSTEM,type: documentation}
+---
+
 # SYSTEM — Mzizi Responsibilities and Invariants
 
 This document is the operational summary of how the Mzizi platform should behave as a system.
@@ -10,7 +14,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Public application
 
-**Path:** `apps/www`
+**Path:** `source/apps/www`
 
 **Role:** public atlas, heritage museum, historical explorer and evidence-backed knowledge experience.
 
@@ -18,7 +22,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Research/dashboard application
 
-**Path:** `apps/dashboard`
+**Path:** `source/apps/web`
 
 **Role:** research and data-stewardship workspace.
 
@@ -26,7 +30,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### File management service
 
-**Target path:** `services/files`
+**Target path:** `source/backend/files`
 
 **Role:** custody of source artifacts and derived files.
 
@@ -34,7 +38,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Data engine
 
-**Target path:** `services/data-engine`
+**Target path:** `source/backend/data-engine`
 
 **Role:** source acquisition, extraction, OCR, parsing and low-risk normalization.
 
@@ -42,7 +46,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Intelligence layer
 
-**Target path:** `services/intelligence`
+**Target path:** `source/backend/intelligence`
 
 **Role:** explicit AI/tool-assisted classification, cleaning, entity resolution, contradiction detection and evaluation.
 
@@ -50,7 +54,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Database management engine
 
-**Target path:** `services/db-engine`
+**Target path:** `source/backend/db-engine`
 
 **Role:** schema, migrations, seeds, backfills, integrity validation and controlled promotion into canonical storage.
 
@@ -58,11 +62,11 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Product API
 
-**Target path:** `services/api`
+**Target path:** `source/backend/api`
 
 **Target technology:** NestJS.
 
-**Role:** stable contracts over canonical data for `apps/www`, `apps/dashboard` and integrations.
+**Role:** stable contracts over canonical data for `source/apps/www`, `source/apps/web` and integrations.
 
 **Important:** the current Python FastAPI code is migration source material, not the final API implementation.
 

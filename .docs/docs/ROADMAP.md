@@ -1,3 +1,7 @@
+---
+{id: DOC-1C9F5E9CC9FF,name: ROADMAP,type: documentation}
+---
+
 # ROADMAP — Building Mzizi from the Consolidated Repository
 
 ## Guiding rule
@@ -26,16 +30,16 @@ In progress.
 
 - [x] root `README.md`;
 - [x] root `AGENTS.md`;
-- [x] `.docs/README.md`;
-- [x] `.docs/WHY.md`;
-- [x] `.docs/STORY.md`;
-- [x] `.docs/GOALS.md`;
-- [x] `.docs/DOMAINS.md`;
-- [x] `.docs/ARCHITECTURE.md`;
-- [x] `.docs/SYSTEM.md`;
-- [x] `.docs/DATA_LIFECYCLE.md`;
-- [x] `.docs/MIGRATION.md`;
-- [x] `.docs/ROADMAP.md`.
+- [x] `.docs/docs/README.md`;
+- [x] `.docs/docs/WHY.md`;
+- [x] `.docs/docs/STORY.md`;
+- [x] `.docs/docs/GOALS.md`;
+- [x] `.docs/docs/DOMAINS.md`;
+- [x] `.docs/docs/ARCHITECTURE.md`;
+- [x] `.docs/docs/SYSTEM.md`;
+- [x] `.docs/docs/DATA_LIFECYCLE.md`;
+- [x] `.docs/docs/MIGRATION.md`;
+- [x] `.docs/docs/ROADMAP.md`.
 
 ---
 
@@ -47,7 +51,7 @@ Understand what exists before replacing it.
 
 ## Work
 
-- inventory all models in `services/api`;
+- inventory all models in `source/backend/api`;
 - inventory Alembic migrations;
 - inventory seed datasets/scripts;
 - inventory scraper/extractor code;
@@ -91,7 +95,7 @@ Create trustworthy source-artifact custody before scaling extraction.
 
 ## Build
 
-`services/files`
+`source/backend/files`
 
 Initial capabilities:
 
@@ -128,7 +132,7 @@ Separate extraction from the application API.
 
 ## Build
 
-`services/data-engine` in Python.
+`source/backend/data-engine` in Python.
 
 Initial extractors:
 
@@ -158,7 +162,7 @@ Introduce AI where it creates leverage while preserving attribution and reviewab
 
 ## Build
 
-`services/intelligence`
+`source/backend/intelligence`
 
 First tools:
 
@@ -199,7 +203,7 @@ Extract schema/migration/seed responsibility from the Python API.
 
 ## Build
 
-`services/db-engine`
+`source/backend/db-engine`
 
 Initial commands/capabilities:
 
@@ -273,7 +277,7 @@ Replace FastAPI as the product API boundary.
 
 ## Build
 
-A new NestJS service at `services/api` after the old Python code has been moved/archived safely.
+A new NestJS service at `source/backend/api` after the old Python code has been moved/archived safely.
 
 Initial modules should reflect canonical use cases, not legacy folder names blindly.
 
@@ -290,7 +294,7 @@ Suggested API capabilities:
 
 ## Exit condition
 
-`apps/www` can consume canonical historical/place data through NestJS without depending on Python FastAPI.
+`source/apps/www` can consume canonical historical/place data through NestJS without depending on Python FastAPI.
 
 ---
 
@@ -429,7 +433,7 @@ The next concrete engineering sequence should be:
 7. choose canonical schema/migration tooling
 8. implement one historical-geography vertical slice
 9. begin NestJS API
-10. connect apps/www to real canonical data
+10. connect source/apps/www to real canonical data
 ```
 
 Do not start by rewriting every old Python endpoint in NestJS. That would reproduce the wrong boundary in a new language.

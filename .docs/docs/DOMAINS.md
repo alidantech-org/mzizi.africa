@@ -1,3 +1,7 @@
+---
+{id: DOC-D1CE78CB8902,name: DOMAINS,type: documentation}
+---
+
 # DOMAINS — What Mzizi Researches and Why
 
 Mzizi is intentionally multi-domain because African history and present-day governance cannot be understood through one category of data.

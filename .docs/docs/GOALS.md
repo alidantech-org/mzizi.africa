@@ -1,3 +1,7 @@
+---
+{id: DOC-1607BB740C73,name: GOALS,type: documentation}
+---
+
 # GOALS — What Mzizi Must Achieve
 
 ## North-star goal
