@@ -1,0 +1,16 @@
+mapping: instrument
+extractor: klrc-constitution
+target_kind: legal.instruments
+key: [code]
+fields:
+  code:               { from: instrumentCode }
+  title:              { from: instrumentTitle }
+  jurisdictionId:     { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  kindId:             { const: { $ref: { kind: reference.classifications, where: { code: "legal/instrument-kind/constitution", jurisdictionId: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } } } } }
+  status:             { const: in_force }
+  documentUrl:        { from: documentUrl }
+  validFrom:          { const: "2010-08-27" }
+  validFromPrecision: { const: exact }
+provenance:
+  locator: { title: $title }
+  method: extracted

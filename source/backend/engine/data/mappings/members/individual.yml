@@ -1,0 +1,13 @@
+mapping: individual
+extractor: parliament-members
+target_kind: person.individuals
+key: [code]
+fields:
+  code:        { from: personCode }
+  displayName: { from: displayName }
+  givenName:   { from: givenName }
+  familyName:  { from: familyName }
+  lifeStatus:  { const: alive }
+provenance:
+  locator: { row: $row }
+  method: extracted

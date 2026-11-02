@@ -84,7 +84,9 @@ export async function draftAssessment(db: DataSource, actorId: string, draft: As
 
 
 interface TrustedSuffix {
-  suffix: string;
+  /** Either a domain suffix such as `.go.ke` or one exact host. */
+  suffix?: string;
+  host?: string;
   jurisdiction: string;
   rightsHolder: string;
   maxRequestsPerSecond: number;
@@ -95,7 +97,7 @@ function trustedSuffixes(): TrustedSuffix[] {
 }
 
 /**
- * Approves sites whose every domain falls under a trusted suffix (for example `.go.ke`), recording the rule as the
+ * Approves sites whose every domain falls under a trusted suffix (for example `.go.ke`, or one exact host), recording the rule as the
  * rationale and the acting account (a person or an AI agent) as the approver. The scope is bounded: https only,
  * plain HTTP fetching, the listed hosts and a low request rate; robots.txt is still respected by the fetcher.
  * Sites with any domain outside the trusted suffixes are left untouched. Re-running is safe.
@@ -107,13 +109,14 @@ export async function autoAssess(db: DataSource, actorId: string): Promise<{ app
   const sites: { id: string; code: string; jurisdiction_id: string | null }[] = await db.query(`SELECT id, code, jurisdiction_id FROM website.sites ORDER BY code`);
   for (const site of sites) {
     const domains: { hostname: string }[] = await db.query(`SELECT hostname FROM website.domains WHERE site_id = $1`, [site.id]);
-    const rule = domains.length ? rules.find((r) => domains.every((d) => d.hostname.endsWith(r.suffix))) : undefined;
+    const rule = domains.length ? rules.find((r) => domains.every((d) => (r.host ? d.hostname === r.host || (r.host === 'kenyalaw.org' && d.hostname.endsWith('.kenyalaw.org')) : d.hostname.endsWith(r.suffix as string)))) : undefined;
     if (!rule) {
       skipped.push(site.code);
       continue;
     }
-    const [existing] = await db.query(`SELECT status::text AS status FROM website.assessments WHERE site_id = $1 AND is_current`, [site.id]);
-    if (existing && (existing.status === "approved" || existing.status === "restricted" || existing.status === "rejected")) {
+    const [existing] = await db.query(`SELECT status::text AS status, approved_scope FROM website.assessments WHERE site_id = $1 AND is_current`, [site.id]);
+    const covered = existing?.status === "approved" && (() => { try { const hosts = JSON.parse(existing.approved_scope).hosts ?? []; return domains.every((d) => hosts.includes(d.hostname)); } catch { return false; } })();
+    if (existing && (covered || existing.status === "restricted" || existing.status === "rejected")) {
       skipped.push(site.code);
       continue;
     }
@@ -125,7 +128,7 @@ export async function autoAssess(db: DataSource, actorId: string): Promise<{ app
       sourceType: "official_website",
       rightsHolder: rule.rightsHolder,
       approvedScope: scope,
-      rationale: `Trusted domain rule: every domain of this site is under ${rule.suffix}; bounded, identified, robots-respecting collection of public pages only.`,
+      rationale: `Trusted domain rule: every domain of this site matches ${rule.suffix ?? rule.host}; bounded, identified, robots-respecting collection of public pages only.`,
     });
     await db.query(`UPDATE website.assessments SET jurisdiction_id = $2, review_due_at = now() + interval '1 year' WHERE id = $1`, [draft.assessmentId, jurisdiction?.id ?? site.jurisdiction_id]);
     await decideAssessment(db, draft.assessmentId, actorId, "approved");

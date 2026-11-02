@@ -1,0 +1,11 @@
+mapping: holder
+extractor: iebc-commissioners
+target_kind: governance.holders
+key: [officeId, personId]
+fields:
+  officeId: { from: officeCode, transform: [{ ref: { kind: governance.offices, field: code } }] }
+  personId: { from: personCode, transform: [{ ref: { kind: person.individuals, field: code } }] }
+  status:   { const: substantive }
+provenance:
+  locator: { row: $row }
+  method: extracted

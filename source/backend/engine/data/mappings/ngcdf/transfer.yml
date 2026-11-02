@@ -1,0 +1,18 @@
+mapping: transfer
+extractor: ngcdf-api
+target_kind: finance.transfers
+key: [toUnitId, fiscalYearId, validFrom, amount]
+fields:
+  toUnitId:           { from: unitCode, transform: [{ ref: { kind: finance.units, field: code } }] }
+  fromUnitId:         { from: boardUnitCode, transform: [{ ref: { kind: finance.units, field: code } }] }
+  fiscalYearId:       { from: fiscalYearCode, transform: [{ ref: { kind: finance.years, field: code } }] }
+  amount:             { from: amount, transform: decimal }
+  currencyCode:       { const: KES }
+  transferTypeId:     { const: { $ref: { kind: reference.classifications, where: { code: "finance/transfer-type/ngcdf-disbursement", jurisdictionId: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } } } } }
+  restriction:        { const: earmarked }
+  status:             { const: disbursed }
+  validFrom:          { from: date }
+  validFromPrecision: { const: exact }
+provenance:
+  locator: { row: $row }
+  method: extracted

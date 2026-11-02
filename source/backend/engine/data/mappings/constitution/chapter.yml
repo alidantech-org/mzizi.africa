@@ -1,0 +1,14 @@
+mapping: chapter
+extractor: klrc-constitution
+target_kind: legal.provisions
+key: [code]
+fields:
+  code:         { from: chapterCode }
+  citation:     { from: chapterCitation }
+  heading:      { from: chapterHeading }
+  kind:         { const: chapter }
+  instrumentId: { from: instrumentCode, transform: [{ ref: { kind: legal.instruments, field: code } }] }
+  sortOrder:    { from: chapterOrder }
+provenance:
+  locator: { title: $title }
+  method: extracted

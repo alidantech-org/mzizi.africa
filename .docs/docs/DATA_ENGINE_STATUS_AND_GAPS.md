@@ -68,3 +68,19 @@ Still open: no live request has ever run and none is permitted (no approved asse
 - Live: after `auto-assess` and `advance-dossier`, the gated `fetch` command retrieved the Parliament of Kenya budget pages and the National Treasury "Budget Summary FY 2026/27" PDF (36 MB, a scan). Four requests to `www.parliament.go.ke`, identified by `MZIZI_USER_AGENT`, 0.2/s, robots.txt respected, the assessment id recorded in each provenance file.
 - Real import: `import-budget-summary` read Table 3 (page 22) with Tesseract under several renderings, accepted only values whose sums add up (arms = national government; national + consolidated fund services + county = total), and staged the fiscal year, five units and five budgets. The agent account validated, approved and promoted them: `finance.budgets` now holds KSh 2,817,388.2m Executive, 48,690.7m Parliament, 30,441.8m Judiciary, 1,501,327.1m Consolidated Fund Services and 420,000.0m County Governments for FY 2026/27. The 2025/26 column was not staged because OCR misread a digit there; the totals caught it.
 - Single sign-on: `source/dev/keycloak` (realm fixture) plus an OIDC code-with-PKCE login in the workbench; the API verifies Keycloak tokens by JWKS. Production points `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `AUTH_ISSUER` and `AUTH_JWKS_URL` at the real provider.
+
+## 2 November 2026 (night): people, legal text, NG-CDF and IEBC from live sources
+
+All fetched through the gate (assessments by the agent account under DEC-AUTO-APPROVAL: `.go.ke` suffix, plus exact hosts for `www.iebc.or.ke` and Kenya Law), 0.2 requests per second, robots.txt respected, provenance file beside every raw artifact in `.data/raw`. Everything below was validated, approved and promoted by the agent account with a recorded rationale.
+
+| Data | Source | In the canonical tables |
+| --- | --- | --- |
+| National Assembly and Senate members, 13th Parliament | www.parliament.go.ke member lists (43 pages) | 350 MPs and 67 senators as individuals, seats (offices), holders, 25 parties, memberships; two institutions |
+| Official portraits | the same site, per member | 410 raw images kept as documents and captures, each attributed to its person |
+| IEBC commissioners | www.iebc.or.ke | 7 individuals, offices and holders |
+| Constitution of Kenya, 2010 | www.klrc.go.ke article pages (Kenya Law answered with a bot challenge, so it was not used) | the instrument, 18 chapters, 274 articles, schedules and preamble, verbatim |
+| NG-CDF allocations and disbursements | crm.ngcdf.go.ke API behind the fund's own pages | 290 constituency committee units plus the board; 4,058 allocations (FY 2013/14 to 2026/27) as budgets; 22,643 dated disbursements as transfers (KSh 417.9 billion) |
+
+Scope kept to public-office facts: names, seats, party, chamber; no phone numbers, emails, addresses or histories. Names are cleaned of honorifics, and family and given names are only recorded when the list gives an order. Known limits: two members with the same cleaned name would share one person code; 26 NG-CDF constituencies are missing from the fund's list page, so their units carry no county; the IEBC constituency-offices PDF, the Senate and county assembly pages, Hansard, Acts, county workers and gazettes are not imported yet; licences are recorded as unassessed; Kenya Law remains blocked by its challenge.
+
+Commands: `fetch`, `fetch-photos`, `import-members --stage A|B|C`, `import-ngcdf --stage A|B`, `import-constitution --stage A|B`, `import-iebc --stage B|C`, then `validate`, `review-run`, `apply-review`, `promote` in the database engine.

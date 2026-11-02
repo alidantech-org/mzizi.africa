@@ -1,0 +1,12 @@
+mapping: fiscal_year
+extractor: ngcdf-api
+target_kind: finance.years
+key: [code]
+fields:
+  code:           { from: fiscalYearCode }
+  startsOn:       { from: startsOn }
+  endsOn:         { from: endsOn }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+provenance:
+  locator: { row: $row }
+  method: extracted

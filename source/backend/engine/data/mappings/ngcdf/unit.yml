@@ -1,0 +1,12 @@
+mapping: unit
+extractor: ngcdf-api
+target_kind: finance.units
+key: [code]
+fields:
+  code:           { from: unitCode }
+  name:           { from: unitName }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  levelId:        { from: levelCode, transform: [{ ref: { kind: reference.classifications, field: code } }] }
+provenance:
+  locator: { row: $row }
+  method: extracted

@@ -55,6 +55,29 @@ def main(argv: list[str] | None = None) -> int:
     bs.add_argument("--url", default=None)
     bs.add_argument("--stage", choices=["foundation", "budget"], default="foundation")
     bs.add_argument("--store", default=".data/objects")
+    mb = sub.add_parser("import-members", help="stage National Assembly and Senate members from fetched Parliament list pages (stages A, B, C)")
+    mb.add_argument("directory")
+    mb.add_argument("--stage", choices=["A", "B", "C"], required=True)
+    mb.add_argument("--jurisdiction", default="ke")
+    mb.add_argument("--store", default=".data/objects")
+    ph = sub.add_parser("fetch-photos", help="fetch official portraits of listed members through the gate (slow: one request every 5 s)")
+    ph.add_argument("directory")
+    ph.add_argument("--site", default="ke/parliament")
+    ph.add_argument("--limit", type=int, default=None)
+    ph.add_argument("--store", default=".data/objects")
+    ng = sub.add_parser("import-ngcdf", help="stage NG-CDF allocations and disbursements from fetched API responses (stages A, B)")
+    ng.add_argument("directory")
+    ng.add_argument("--constituencies", required=True, help="the saved NG-CDF constituency list page")
+    ng.add_argument("--stage", choices=["A", "B"], required=True)
+    ng.add_argument("--store", default=".data/objects")
+    cn = sub.add_parser("import-constitution", help="stage the Constitution of Kenya (instrument, chapters, articles) from fetched KLRC pages (stages A, B)")
+    cn.add_argument("directory")
+    cn.add_argument("--stage", choices=["A", "B"], required=True)
+    cn.add_argument("--store", default=".data/objects")
+    ie = sub.add_parser("import-iebc", help="stage the IEBC commissioners from the fetched Commissioners page (stages B, C)")
+    ie.add_argument("page")
+    ie.add_argument("--stage", choices=["B", "C"], required=True)
+    ie.add_argument("--store", default=".data/objects")
     fe = sub.add_parser("fetch", help="live, gated, rate-limited fetch of one URL for a registered site (robots.txt respected); saves the raw bytes")
     fe.add_argument("--site", required=True, help="site code, e.g. ke/parliament")
     fe.add_argument("--url", required=True)
@@ -139,6 +162,64 @@ def main(argv: list[str] | None = None) -> int:
             out = budget_summary.import_budget_summary(conn, LocalDirectoryStore(conn, args.store), args.file, args.jurisdiction, args.fiscal_year, args.title, args.publisher_code, args.publisher_name, column=args.column, url=args.url, stages=("budget",) if args.stage == "budget" else ("fiscal_year", "unit"))
         for name in out.stats:
             print(f"{name}: {out.stats[name].created} new, {out.stats[name].unchanged} unchanged (run {out.runs[name]})")
+        return 0
+    if args.command == "import-members":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import members
+
+        with connect() as conn:
+            out = members.import_members(conn, LocalDirectoryStore(conn, args.store), args.directory, args.jurisdiction, args.stage)
+        print(f"{out.pages} pages, {out.members} member rows")
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        return 0
+    if args.command == "fetch-photos":
+        from .db import connect
+        from .fetch import live_fetcher
+        from .files import LocalDirectoryStore
+        from .imports import photos
+
+        with connect() as conn:
+            site = conn.execute("SELECT id FROM website.sites WHERE code = %s", (args.site,)).fetchone()
+            fetcher = live_fetcher(conn, str(site["id"]), {"rate": {"requests_per_second": 0.2}, "limits": {"max_response_bytes": 5_000_000}})
+            print(photos.fetch_photos(conn, LocalDirectoryStore(conn, args.store), args.directory, fetcher, args.limit))
+        return 0
+    if args.command == "import-ngcdf":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import ngcdf
+
+        with connect() as conn:
+            out = ngcdf.import_ngcdf(conn, LocalDirectoryStore(conn, args.store), args.directory, args.constituencies, args.stage)
+        print(f"{out.files} files, {out.rows} rows, {len(out.skipped)} skipped")
+        for note in out.skipped[:10]:
+            print(f"note: {note}")
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        return 0
+    if args.command == "import-constitution":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import constitution
+
+        with connect() as conn:
+            out = constitution.import_constitution(conn, LocalDirectoryStore(conn, args.store), args.directory, args.stage)
+        print(f"{out.pages} article pages, {out.articles} numbered articles")
+        for note in out.notes[:10]:
+            print(f"note: {note}")
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        return 0
+    if args.command == "import-iebc":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import iebc
+
+        with connect() as conn:
+            out = iebc.import_iebc(conn, LocalDirectoryStore(conn, args.store), args.page, args.page + ".provenance.json", args.stage)
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
         return 0
     if args.command == "fetch":
         from .db import connect

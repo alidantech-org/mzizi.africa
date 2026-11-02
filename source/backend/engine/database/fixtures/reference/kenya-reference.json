@@ -175,6 +175,50 @@
         "label": "ministry, department or agency",
         "order": 0
       }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:unit-level:mda",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "governance/institution-type",
+        "code": "governance/institution-type/legislature",
+        "label": "legislature",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:finance:unit-level:constituency-fund",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "finance/unit-level",
+        "code": "finance/unit-level/constituency-fund",
+        "label": "constituency development fund committee",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:finance:transfer-type:ngcdf-disbursement",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "finance/transfer-type",
+        "code": "finance/transfer-type/ngcdf-disbursement",
+        "label": "NG-CDF disbursement to a constituency",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:legal:instrument-kind:constitution",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "legal/instrument-kind",
+        "code": "legal/instrument-kind/constitution",
+        "label": "constitution",
+        "order": 0
+      }
     }
   ]
 }

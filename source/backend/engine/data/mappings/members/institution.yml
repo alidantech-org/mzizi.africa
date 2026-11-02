@@ -1,0 +1,12 @@
+mapping: institution
+extractor: parliament-members
+target_kind: governance.institutions
+key: [code]
+fields:
+  code:           { from: institutionCode }
+  name:           { from: institutionName }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  typeId:         { const: { $ref: { kind: reference.classifications, where: { code: "governance/institution-type/legislature", jurisdictionId: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } } } } }
+provenance:
+  locator: { row: $row }
+  method: extracted

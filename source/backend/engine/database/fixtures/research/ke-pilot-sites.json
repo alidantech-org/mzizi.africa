@@ -89,6 +89,133 @@
         "validFromPrecision": "exact",
         "observedAt": "2026-11-02T09:30:00Z"
       }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:ke/ngcdf",
+      "values": {
+        "code": "ke/ngcdf",
+        "name": "National Government Constituencies Development Fund",
+        "kind": "portal",
+        "status": "profiled",
+        "jurisdictionId": "@ke",
+        "description": "Official NG-CDF board site. Registered 2026-11-02; profiled by gated fetch on 2026-11-02; not legally assessed by a person."
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/ngcdf:www.ngcdf.go.ke",
+      "values": {
+        "siteId": "@site:ke/ngcdf",
+        "hostname": "www.ngcdf.go.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T16:00:00Z"
+      }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:ke/kenya-law",
+      "values": {
+        "code": "ke/kenya-law",
+        "name": "National Council for Law Reporting (Kenya Law)",
+        "kind": "portal",
+        "status": "profiled",
+        "jurisdictionId": "@ke",
+        "description": "Official legal publisher: Constitution, Acts, case law. Registered 2026-11-02; profiled by gated fetch on 2026-11-02; not legally assessed by a person."
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/kenya-law:kenyalaw.org",
+      "values": {
+        "siteId": "@site:ke/kenya-law",
+        "hostname": "kenyalaw.org",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T16:00:00Z"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/kenya-law:new.kenyalaw.org",
+      "values": {
+        "siteId": "@site:ke/kenya-law",
+        "hostname": "new.kenyalaw.org",
+        "scheme": "https",
+        "role": "alias",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T16:00:00Z"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/ngcdf:ngcdf.go.ke",
+      "values": {
+        "siteId": "@site:ke/ngcdf",
+        "hostname": "ngcdf.go.ke",
+        "scheme": "https",
+        "role": "alias",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T16:00:00Z"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/ngcdf:crm.ngcdf.go.ke",
+      "values": {
+        "siteId": "@site:ke/ngcdf",
+        "hostname": "crm.ngcdf.go.ke",
+        "scheme": "https",
+        "role": "alias",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T16:00:00Z"
+      }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:ke/klrc",
+      "values": {
+        "code": "ke/klrc",
+        "name": "Kenya Law Reform Commission",
+        "kind": "portal",
+        "status": "profiled",
+        "jurisdictionId": "@ke",
+        "description": "Official law reform commission site; hosts the Constitution as article pages. Registered 2026-11-02; profiled by gated fetch on 2026-11-02; not legally assessed by a person."
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/klrc:www.klrc.go.ke",
+      "values": {
+        "siteId": "@site:ke/klrc",
+        "hostname": "www.klrc.go.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T16:00:00Z"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/klrc:klrc.go.ke",
+      "values": {
+        "siteId": "@site:ke/klrc",
+        "hostname": "klrc.go.ke",
+        "scheme": "https",
+        "role": "alias",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T16:00:00Z"
+      }
     }
   ]
 }

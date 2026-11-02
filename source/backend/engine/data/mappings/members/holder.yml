@@ -1,0 +1,14 @@
+mapping: holder
+extractor: parliament-members
+target_kind: governance.holders
+key: [officeId, personId]
+fields:
+  officeId:           { from: officeCode, transform: [{ ref: { kind: governance.offices, field: code } }] }
+  personId:           { from: personCode, transform: [{ ref: { kind: person.individuals, field: code } }] }
+  status:             { const: substantive }
+  termNumber:         { const: 13 }
+  validFrom:          { const: "2022-01-01" }
+  validFromPrecision: { const: year }
+provenance:
+  locator: { row: $row }
+  method: extracted
