@@ -191,24 +191,25 @@ If the answer is unclear, document the reason before expanding the platform.
 
 Use the repository Task workspace in `.tasks` to organize implementation activities. The root `task.yaml` points the CLI to that workspace. Keep current planning and project guidance in sync:
 
-- `.tasks/todo/mzizi-africa/plan.md` — cross-surface activity sequence;
-- `.tasks/docs/` — project overview, repository map, development setup, testing guide, and roadmap;
-- `.tasks/rules/` — coding, testing, security, and Git rules;
-- `.tasks/guidance/codex.md` — agent workflow that supplements this file.
+- `.docs/todo/mzizi-africa/plan.md` — cross-surface activity sequence;
+- `.docs/docs/` — project overview, repository map, development setup, testing guide, and roadmap;
+- `.docs/rules/` — coding, testing, security, and Git rules;
+- `.docs/guidance/codex.md` — agent workflow that supplements this file.
 
 This section supplements the repository contract above; it does not replace or weaken it.
 
 <!-- BEGIN TASK MANAGED TASK-TOOL -->
+
 ## Task workspace
 
-This project manages its work with Task (`taskcode`; `task` and `tc` are aliases). Task records, documents, decisions and handoffs live in `tasks/` as Markdown files with YAML frontmatter. Read `tasks/README.md` for how the tool works.
+This project manages its work with Task (`taskcode`; `task` and `tc` are aliases). Task records, documents, decisions and handoffs live in `.docs/` as Markdown files with YAML frontmatter. Read `.docs/README.md` for how the tool works.
 
-- **Write detailed tasks.** Task rejects scaffold-only or thin files: one task file per piece of work, with a Goal, Context and an Acceptance checklist of at least a few `- [ ]` steps ("task create --body-file"). Groups need detailed `goal.md` and `plan.md`. Read `tasks/rules/task-writing.md` before creating work, and update the same file in follow-ups.
+- **Write detailed tasks.** Task rejects scaffold-only or thin files: one task file per piece of work, with a Goal, Context and an Acceptance checklist of at least a few `- [ ]` steps ("task create --body-file"). Groups need detailed `goal.md` and `plan.md`. Read `.docs/rules/task-writing.md` before creating work, and update the same file in follow-ups.
 - Tick checkboxes with `task check <id> --item N | --section "Heading" | --all` instead of hand-editing.
 - Create and change tasks through the CLI (`task create`, `task update <id> --status in-progress`) rather than keeping a separate TODO list. Do not hand-edit `id`, `status_history` or other managed frontmatter.
 - Use `--json` for machine-readable output; commands exit non-zero on failure, and outside an interactive terminal they require explicit arguments instead of prompting.
 - Moving a task to `in-progress` records the project's file changes automatically (with or without Git); `task changes <id>` shows what the task changed.
 - Deleting is recoverable only briefly: `task delete <id> --yes` moves items to the OS temp folder; restore with `task undelete <trash-id>`. Prefer `task archive` for work that should be kept.
-- Run `task validate` after editing anything inside `tasks/`. Every Markdown file there needs valid frontmatter.
-- Record meaningful decisions in `tasks/decisions/` and agent handoffs in `tasks/handoffs/`.
+- Run `task validate` after editing anything inside `.docs/`. Every Markdown file there needs valid frontmatter.
+- Record meaningful decisions in `.docs/decisions/` and agent handoffs in `.docs/handoffs/`.
 <!-- END TASK MANAGED TASK-TOOL -->

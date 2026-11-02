@@ -9,7 +9,7 @@ This directory is the Task-managed workspace for mzizi.africa. Task (`taskcode`,
 ## Layout
 
 ```
-tasks/
+.docs/
   README.md          this guide
   todo/              task groups and tasks (one Markdown file per task)
     _completed/      groups whose tasks are all completed (YYYY/MM/YYYY-MM-DD-<slug>/)

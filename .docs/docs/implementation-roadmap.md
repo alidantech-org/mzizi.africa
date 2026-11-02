@@ -1,10 +1,14 @@
 ---
-{id: DOC-142CAE04649D,name: "API, Mobile, and Sites Roadmap",type: documentation}
+{
+  id: DOC-142CAE04649D,
+  name: "API, Mobile, and Sites Roadmap",
+  type: documentation,
+}
 ---
 
 # API, Mobile, and Sites Roadmap
 
-This roadmap is represented by linked activities in the Task groups **API**, **Mobile app**, and **Sites**. The intended order is in `.tasks/todo/mzizi-africa/plan.md`.
+This roadmap is represented by linked activities in the Task groups **API**, **Mobile app**, and **Sites**. The intended order is in `.docs/todo/mzizi-africa/plan.md`.
 
 ## API
 
