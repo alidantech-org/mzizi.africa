@@ -616,3 +616,26 @@ The layers meet only through documented documents (AGENTS.md section 10), author
 | `PromotionDecision` | database engine | audit, API | the act of applying a review decision: outcome, target ids, verification state, reasons |
 
 TypeScript uses the Dryv-generated types; Python generates models from the JSON Schema. See `source/backend/contracts/README.md`.
+
+
+# Website registry, structures and the engine flow
+
+A **site** is a known publishing property with its own stable id (`website.sites`); hostnames are dated attributes (`website.domains`) and never identifiers, a site relates to publishers many-to-many, and sites are grouped into **families** (county governments, county assemblies, independent bodies) that share a base structure and are suggested by **domain patterns** and fingerprint similarity. A **structure** is a bundle of files (`mzizi.site/v1`: manifest, modules, mappings, tags, notes, examples) stored as one folder per immutable version in `filesystem`; versions are authored mostly by agents and published without activating collection. Legal and source approval is a separate versioned record (`website.assessments`, `website.dossiers`) enforced by the collection gate. See `WEBSITE_DESIGN.md`, `SITE_STRUCTURE_SPEC.md` and `LEGALITY_SAFETY_AND_COMPLIANCE.md`.
+
+```text
+site registry --(assessment + dossier)--> collection gate (database engine gate.ts, data engine gate.py; same test vectors)
+      |                                              |
+      v                                              v
+structure version (files in filesystem) --> structure runner (data engine, deterministic)
+                                                |   raw page preserved first (files service interface)
+                                                v
+                      source.documents + source.captures (site, domain, structure, family, assessment ids)
+                                                v
+                                   ExtractionResult (immutable file) --> candidates (staging)
+                                                v
+          validate (database engine) --> review (audit.decisions on staging.candidates) --> promote
+                                                v
+                  canonical row + source.attributions + source.verifications + staging.promotions
+```
+
+Packages: `engine/data` (Python: structures, runner, polite fetcher, compliance controls, extractors, imports, jobs, patterns, fingerprints) and `engine/database` (Bun: migrations generated from the Dryv entities with a drift check, seeds, integrity checks, grants, the gate, staging validation, review application, promotion). Contracts between the layers live in `source/backend/contracts` and are generated from `dryv/contracts/domains/exchange`.

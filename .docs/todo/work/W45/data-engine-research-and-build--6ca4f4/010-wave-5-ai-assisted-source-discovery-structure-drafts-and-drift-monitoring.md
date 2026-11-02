@@ -21,3 +21,6 @@ This wave depends on the website schema, the structure runner and the agent batc
 
 ## Compliance (added after LEGALITY_SAFETY_AND_COMPLIANCE.md)
 Source discovery output is a proposal: agents may inventory institutions and draft assessments but must not mark a source legally approved. Legal-condition drift (terms, licence, robots, ownership, new access walls, complaints) is monitored alongside technical drift and can restrict a site independently of its structure health.
+
+## Progress (2026-11-02)
+Delivered toward this wave: the website schema with families, patterns, assessments and dossiers; the structure format, validator, deterministic runner and drift checks; agent batch tooling and three pilot structures; offline pattern expansion, gated probes and fingerprint similarity; the Kenya site catalogue. Still open: the research workflow itself (an evidence-backed institution and dataset inventory per country with counting rules), live probing and drift monitoring against real sites (blocked on the monitored contact in the operations readiness task), and agent-assisted proposals through the intelligence layer. The DevAuto integration was dropped by decision DEC-WEBSITE-SCHEMA-STRUCTURE.

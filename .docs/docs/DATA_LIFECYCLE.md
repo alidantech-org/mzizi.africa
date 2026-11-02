@@ -138,6 +138,10 @@ Important metadata:
 
 ---
 
+## Sites, structures and approval in discovery and registration
+
+Discovery and registration now have a registry: a discovered institution website becomes a `website.sites` row (status `expected`, `discovered` or `profiled`) with dated domains and links to the geography unit, institution or body it is about; families and domain patterns propose more sites. Registration of a source for collection additionally requires a **current legal and source assessment** (`website.assessments`, human reviewer named) and the jurisdiction's dossier at pilot or production. A structure version (files in `filesystem`) describes how to read the site; publishing one never starts collection. Every capture records the site, the hostname actually used, the structure version, the inherited family version and the assessment that governed it.
+
 # 3. Raw artifact capture
 
 ## Goal

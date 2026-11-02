@@ -435,6 +435,12 @@ manifesto -> election winner -> budget/program -> procurement/project
 
 The goal is not to claim simplistic causality. The goal is to make documented continuity, discontinuity and transformation explorable.
 
+## 24. Sites, structures and source access
+
+**Why it exists.** Evidence comes from places that move, change layout, change owners and sometimes restrict access. Mzizi must know which sites publish what, under which names over time, how to read them, and under what legal conditions, or its provenance stops at "a URL".
+
+**Owns (schema `website`).** Known sites, their dated domains, publisher links, structure versions and files, drift and reachability checks, families, domain patterns, memberships, subjects, traits, relations, fingerprints, legal and source assessments and jurisdiction dossiers. It does not own the evidence itself (`source`, `filesystem`) or the claims extracted from it.
+
 ## Shared cross-domain dimensions
 
 Every domain should reuse a small set of common concepts instead of inventing incompatible structures:

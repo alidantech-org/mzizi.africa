@@ -16,6 +16,10 @@ The canonical PostgreSQL database is organised into domain schemas that are desi
 6. **Append-only where history matters.** Attributions, verifications, comments, decisions and file events are never updated; corrections are new rows.
 7. **Controlled vocabularies are data.** Levels, kinds and types are `reference.classifications` rows scoped by jurisdiction, not enums or columns. Small closed technical states (a file's processing state) stay enums.
 
+## Engine-owned objects outside the catalogue
+
+`staging` (runs, candidates, issues, promotions: validation and review before promotion), `engine` (migration history and the data engine job queue) and `geography.boundary_shapes` (PostGIS shapes derived from the GeoJSON text by a trigger). They are created by hand-written migrations in `source/backend/engine/database/migrations`, are not Dryv entities, and are not served by the API (the API role may see staging candidate ids only, for review decisions). The catalogue below lists the Dryv-generated schemas (19 including `website`).
+
 ## Schema catalogue
 
 | Schema | Purpose | Tables |

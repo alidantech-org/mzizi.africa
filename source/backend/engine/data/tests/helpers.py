@@ -40,8 +40,10 @@ def make_site(conn, store, code="ke/treasury", scope=None, status="approved", ca
                VALUES (%s, %s, %s, 'official_website', 'published_terms', 'unknown', %s, %s, gen_random_uuid(), now(), now() + interval '1 year', true, now(), now(), 1)""",
             (site_id, jid, status, json.dumps(categories or ["none_known"]), json.dumps(scope)),
         )
-    if with_dossier and not conn.execute("SELECT 1 FROM website.dossiers WHERE jurisdiction_id = %s AND is_current", (jid,)).fetchone():
-        conn.execute("INSERT INTO website.dossiers (jurisdiction_id, applicable_laws, launch_stage, is_current, created_at, updated_at, version) VALUES (%s, '[]', 'pilot', true, now(), now(), 1)", (jid,))
+    if with_dossier:
+        # a research seed may already hold a current dossier at stage research; the tests need the pilot stage
+        if conn.execute("UPDATE website.dossiers SET launch_stage = 'pilot' WHERE jurisdiction_id = %s AND is_current", (jid,)).rowcount == 0:
+            conn.execute("INSERT INTO website.dossiers (jurisdiction_id, applicable_laws, launch_stage, is_current, created_at, updated_at, version) VALUES (%s, '[]', 'pilot', true, now(), now(), 1)", (jid,))
     base = bundle_mod.load(SAMPLES / sample)
     files = dict(base.files)
     if rewrite_host:

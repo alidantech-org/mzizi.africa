@@ -347,3 +347,8 @@ What the legacy Python service (`source/backend/api-legacy`) did, where each res
 | Archived justice, land, constitution amendments, legal instruments, `person_*` models | Review for later contracts | Investigate list in the inventory | Keep as reference |
 
 Nothing in `api-legacy` can be removed yet. Removal needs: neutral data migrated into the canonical schema by database engine, clients switched to the NestJS endpoints, and the data engine and files responsibilities replaced. The contract audit and `check-api-boundary.ts` ensure none of the non-API responsibilities were absorbed into the new API.
+
+
+## Update 2026-11-02: legacy seeds measured, not imported
+
+See `audits/LEGACY_SEED_FINDINGS.md`. The geographic seed has duplicate and conflicting codes and 7 missing counties, the other seeds are samples without sources, and the people seed contains personal data. The responsibility table above is unchanged: the data engine (`engine/data`), database engine (`engine/database`) and the website registry now exist, but legacy code is not removed until the Tier B extractors (PDF and table), real legal, governance, election and finance imports, and the files service exist.

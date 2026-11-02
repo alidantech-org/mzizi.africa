@@ -101,7 +101,7 @@ def test_the_iebc_pilot_runs_end_to_end_once_a_human_approves_the_source(conn, s
         "INSERT INTO website.assessments (site_id, jurisdiction_id, status, source_type, access_basis, rights_holder, personal_data_categories, approved_scope, reviewed_by, reviewed_at, review_due_at, is_current, created_at, updated_at, version) VALUES (%s, %s, 'approved', 'official_website', 'published_terms', 'unknown', '[\"none_known\"]', %s, gen_random_uuid(), now(), now() + interval '1 year', true, now(), now(), 1)",
         (site["id"], site["jid"], json.dumps({"hosts": ["www.iebc.or.ke"], "schemes": ["https"], "paths": {"allow": ["/resources/"]}, "fetchModes": ["http"], "maxRequestsPerSecond": 0.2})),
     )
-    if not conn.execute("SELECT 1 FROM website.dossiers WHERE jurisdiction_id = %s AND is_current", (site["jid"],)).fetchone():
+    if conn.execute("UPDATE website.dossiers SET launch_stage = 'pilot' WHERE jurisdiction_id = %s AND is_current", (site["jid"],)).rowcount == 0:
         conn.execute("INSERT INTO website.dossiers (jurisdiction_id, applicable_laws, launch_stage, is_current, created_at, updated_at, version) VALUES (%s, '[]', 'pilot', true, now(), now(), 1)", (site["jid"],))
     conn.commit()
     listing = (PILOTS / "ke-iebc" / "examples" / "party-list.html").read_text()

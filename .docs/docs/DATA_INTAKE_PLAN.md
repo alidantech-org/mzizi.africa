@@ -202,7 +202,7 @@ Superseded by `DEC-WEBSITE-SCHEMA-STRUCTURE` (decided after the note):
 
 ## 14. Issues found in the handoff and schemas
 
-- The handoff says 69 tables in places and 91 elsewhere; the 18-schema catalogue is the current truth, confirm by inspecting the live database.
+- The handoff said 69 and 91 tables; the live database is the truth (the contracts now generate 19 schemas and 105 tables; run `bun src/cli.ts status`).
 - No `staging` schema exists; it must be created by the database engine outside the generated Dryv entities.
 - `ClassificationRecord.scheme` is free text with no registry, so level, type and stage vocabularies cannot be validated yet.
 - Cross-schema links are plain ids with no foreign keys, so integrity jobs are required, not optional.

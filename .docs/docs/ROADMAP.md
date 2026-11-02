@@ -447,3 +447,8 @@ At each phase ask:
 > Does this step make Mzizi better at turning African evidence into trustworthy structured knowledge?
 
 If not, it should not displace the foundation work.
+
+
+# Status update (2026-11-02): data intake build
+
+Delivered on `develop`: engine layout (`engine/data`, `engine/database`); layer exchange contracts and generated Pydantic models; the `website` schema (sites, domains, structures, families, patterns, assessments, dossiers) with read endpoints; database engine v1 (generated migrations and drift check, seeds, integrity checks, grants, collection gate, staging, validation, review application, controlled promotion); data engine v1 (job queue, local files interface, GeoJSON and World Bank extractors, structure validator, deterministic runner, polite fetcher with compliance controls, candidates, incident handling, pattern expansion, fingerprints, batch tooling); the Kenya county boundary vertical slice through the API; Wave 1 for Kenya, South Africa, Nigeria and Tanzania (boundaries and national population). Remaining waves and every limitation are in `DATA_INTAKE_PLAN.md`, the task group "Data engine research and build" and `DATA_ENGINE_STATUS_AND_GAPS.md`.

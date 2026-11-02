@@ -110,3 +110,19 @@ def test_an_invalid_selector_is_a_validation_error_not_a_crash():
     original = (SAMPLES / "html-publications/modules/budgets.yml").read_text()
     report = validate(mutate("html-publications", "modules/budgets.yml", original.replace('css: "article.pub"', 'css: "div:has(> a > b)"')))
     assert any("selector error" in e for e in report.errors)
+
+
+def test_legacy_geography_seed_is_not_fit_to_import_as_is():
+    import json
+
+    from mzizi_data.imports import legacy_seeds
+
+    root = Path(__file__).resolve().parents[2]
+    report = legacy_seeds.analyse_geo_units(
+        root.parent.parent / "backend" / "api-legacy" / "app" / "routes" / "geographic" / "_seed" / "geo_units.csv",
+        [f["properties"]["shapeName"] for f in json.loads((Path(__file__).parent / "data" / "geoboundaries" / "KEN-ADM1-simplified.geojson").read_text())["features"]],
+    ) if (root.parent.parent / "backend" / "api-legacy").exists() else None
+    if report is None:
+        pytest.skip("legacy seeds not present")
+    assert report["rows"] == 550 and report["uniqueCodes"] == 382 and report["conflictingDuplicates"] == 140
+    assert report["uniqueUnitsPerLevel"]["county"] == 42 and len(report["countiesMissingFromLegacy"]) == 7
