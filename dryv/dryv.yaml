@@ -1,0 +1,23 @@
+version: dryv/v1alpha1
+sources:
+  authoring:
+    main:
+      type: python
+      path: contracts
+      entrypoint: app.py
+  packs:
+    official:
+      repository: https://github.com/dryvcode/dryv
+      ref: 6dba3100f02ada9dfd061e5100112c1d01760e3b
+destinations:
+  ir:
+    compiled:
+      path: .dryv/ir
+authoring:
+  source:
+    $ref: "#/sources/authoring/main"
+  destination:
+    $ref: "#/destinations/ir/compiled"
+build:
+  cache: reuse
+  default_action: generate
