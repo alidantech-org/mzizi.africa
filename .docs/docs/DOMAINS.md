@@ -65,6 +65,10 @@ Chronology is what turns isolated records into history. The system must be able 
 - approximate boundaries;
 - historical names and aliases.
 
+### Contracts
+
+Neutral geography contracts live in `dryv/contracts/geography.py`; see `.docs/docs/geography-model.md`.
+
 ### Why it belongs
 
 Modern borders are not timeless. Geography must change with the timeline so the platform can represent the political reality of a historical period rather than forcing all data into today's map.
