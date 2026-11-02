@@ -14,5 +14,6 @@ export interface OfficeListQuery {
   order?: SortDirection;
   page?: PaginationNumber;
   q?: Name;
+  scopeGeoUnitId?: Id;
   sort?: SortDirection;
 }

@@ -53,11 +53,6 @@ import type { PaginationNumber } from "#/types/shared/pagination-number.type.ts"
 export class AmenityListQueryDto {
 
   @IsOptional()
-  @IsString()
-  @IsUUID()
-  geoUnitId?: Id;
-
-  @IsOptional()
   @IsBoolean()
   includeHistory?: Flag;
 

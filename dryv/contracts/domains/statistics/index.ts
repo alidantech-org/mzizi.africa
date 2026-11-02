@@ -238,13 +238,12 @@ const publicServices = services.schemas({
     {
       jurisdictionId: plainId(),
       sectorId: plainId(),
-      geoUnitId: optionalId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       name: dryv.field(sharedProperties.Name).query(searchable),
       isActive: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
     },
     "amenities",
-    [{ name: "idx_amenity_code", fields: ["code"], unique: true }, { name: "idx_amenity_geo", fields: ["geoUnitId"] }],
+    [{ name: "idx_amenity_code", fields: ["code"], unique: true }],
   ),
 });
 
@@ -296,7 +295,7 @@ export const statisticsReadOperations = register(statistics, "StatisticsRead", "
 
 export const servicesReadOperations = register(services, "ServicesRead", "Public read access to public services, amenities and delivery.", [
   { singular: "PublicService", plural: "PublicServices", itemKey: "service", listKey: "services", path: "/services/services", idParam: "serviceId", entity: publicServices.PublicService, description: "public services", filters: { jurisdictionId: id(), sectorId: id(), q: q() } },
-  { singular: "Amenity", plural: "Amenities", itemKey: "amenity", listKey: "amenities", path: "/services/amenities", idParam: "amenityId", entity: publicServices.Amenity, description: "amenities", filters: { jurisdictionId: id(), sectorId: id(), geoUnitId: id(), q: q() } },
+  { singular: "Amenity", plural: "Amenities", itemKey: "amenity", listKey: "amenities", path: "/services/amenities", idParam: "amenityId", entity: publicServices.Amenity, description: "amenities", filters: { jurisdictionId: id(), sectorId: id(), q: q() } },
   { singular: "AmenityOffice", plural: "AmenityOffices", itemKey: "amenityOffice", listKey: "amenityOffices", path: "/services/amenity-offices", idParam: "amenityOfficeId", entity: amenityLinks.AmenityOffice, description: "amenity offices", filters: { amenityId: id(), officeId: id() } },
   { singular: "ServiceDelivery", plural: "ServiceDeliveries", itemKey: "delivery", listKey: "deliveries", path: "/services/deliveries", idParam: "deliveryId", entity: amenityLinks.ServiceDelivery, description: "service deliveries", filters: { amenityId: id(), serviceId: id() } },
 ]);

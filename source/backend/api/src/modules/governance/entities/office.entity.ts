@@ -30,6 +30,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 @Entity({ schema: "governance", name: "offices" })
 @Index("idx_office_code", ["code"], { unique: true })
 @Index("idx_office_institution", ["institutionId"])
+@Index("idx_office_scope", ["scopeGeoUnitId"])
 export class OfficeEntity {
 
   @PrimaryGeneratedColumn("uuid", { name: "id" })
@@ -40,6 +41,9 @@ export class OfficeEntity {
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
+
+  @Column({ name: "definition_code", type: "varchar", length: 200, nullable: true })
+  definitionCode?: BusinessCode | null;
 
   @Column({ name: "description", type: "varchar", length: 4000, nullable: true })
   description?: Description | null;
@@ -62,6 +66,9 @@ export class OfficeEntity {
 
   @Column({ name: "parent_office_id", type: "uuid", nullable: true })
   parentOfficeId?: Id | null;
+
+  @Column({ name: "scope_geo_unit_id", type: "uuid", nullable: true })
+  scopeGeoUnitId?: Id | null;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

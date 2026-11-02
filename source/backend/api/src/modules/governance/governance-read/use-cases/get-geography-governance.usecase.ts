@@ -19,13 +19,17 @@ export class GetGeographyGovernanceUseCase {
     const [unit] = await this.dataSource.query(`SELECT id FROM geography.units WHERE id = $1`, [input.entityId]);
     if (!unit) throw new NotFoundException('geography entity not found');
     const institutions = await this.dataSource.getRepository(InstitutionEntity).find({
-      where: { geoUnitId: input.entityId, isCurrent: true },
+      where: { scopeGeoUnitId: input.entityId, isCurrent: true },
       order: { name: 'ASC' },
     });
     const institutionIds = institutions.map((institution) => institution.id);
-    const offices = institutionIds.length
-      ? await this.dataSource.getRepository(OfficeEntity).find({ where: { institutionId: In(institutionIds), isCurrent: true }, order: { name: 'ASC' } })
-      : [];
+    const offices = await this.dataSource.getRepository(OfficeEntity).find({
+      where: [
+        ...(institutionIds.length ? [{ institutionId: In(institutionIds), isCurrent: true }] : []),
+        { scopeGeoUnitId: input.entityId, isCurrent: true },
+      ],
+      order: { name: 'ASC' },
+    });
     const officeIds = offices.map((office) => office.id);
     const holders = officeIds.length
       ? await this.dataSource.getRepository(OfficeHolderEntity).find({ where: { officeId: In(officeIds), isCurrent: true } })

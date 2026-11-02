@@ -32,7 +32,6 @@ import type {
 /** Amenity */
 export interface IAmenity extends B.IBase {
   code: string;
-  geoUnitId: string | null;
   isActive: boolean;
   isCurrent: boolean;
   jurisdictionId: string;

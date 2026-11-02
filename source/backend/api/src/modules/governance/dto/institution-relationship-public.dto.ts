@@ -40,11 +40,11 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
-import { InstitutionDto } from "#/modules/governance/dto/institution.dto.ts";
 import { RelationshipKind } from "#/types/governance/relationship-kind.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
+import type { TargetKind } from "#/types/shared/target-kind.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
@@ -55,10 +55,6 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Derived from InstitutionRelationship for read.
  */
 export class InstitutionRelationshipPublicDto {
-
-  @IsString()
-  @IsUUID()
-  childInstitutionId!: Id;
 
   @IsISO8601({})
   createdAt!: DateTime;
@@ -81,7 +77,21 @@ export class InstitutionRelationshipPublicDto {
 
   @IsString()
   @IsUUID()
-  parentInstitutionId!: Id;
+  objectId!: Id;
+
+  @IsString()
+  @MinLength(2)
+  @MaxLength(100)
+  objectKind!: TargetKind;
+
+  @IsString()
+  @IsUUID()
+  subjectId!: Id;
+
+  @IsString()
+  @MinLength(2)
+  @MaxLength(100)
+  subjectKind!: TargetKind;
 
   @IsISO8601({})
   updatedAt!: DateTime;

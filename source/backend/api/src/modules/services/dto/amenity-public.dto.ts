@@ -64,12 +64,6 @@ export class AmenityPublicDto {
   @IsISO8601({})
   createdAt!: DateTime;
 
-  @IsOptional()
-  @ValidateIf((object) => object.geoUnitId !== null)
-  @IsString()
-  @IsUUID()
-  geoUnitId?: Id | null;
-
   @IsString()
   @IsUUID()
   id!: Id;

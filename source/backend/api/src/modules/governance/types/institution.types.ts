@@ -5,6 +5,7 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
+import type { MediaMarker } from '#/types/shared/media-marker.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -34,16 +35,19 @@ export interface IInstitution extends B.IBase {
   branchId: string | null;
   code: string;
   description: string | null;
-  geoUnitId: string | null;
+  entityId: string | null;
   isCurrent: boolean;
   jurisdictionId: string;
   legalBasisId: string | null;
+  logoMarker: MediaMarker | null;
   name: string;
+  scopeGeoUnitId: string | null;
   typeId: string;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
+  wikidataId: string | null;
 }
 
 // ----------------------------------

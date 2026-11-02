@@ -1,5 +1,6 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import { historicalEntityExample } from "#/modules/shared/dto/historical-entity.dto.example.ts";
 
 /** The contract shape of Institution, for generated tests. */
@@ -31,7 +32,7 @@ export const institutionExample: ContractExample = contractExample({
       spec: { kind: "string", maxLength: 4000 },
     },
     {
-      name: "geoUnitId",
+      name: "entityId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -61,10 +62,22 @@ export const institutionExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "logoMarker",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(MediaMarker) },
+    },
+    {
       name: "name",
       optional: false,
       nullable: false,
       spec: { kind: "string", minLength: 1, maxLength: 300 },
+    },
+    {
+      name: "scopeGeoUnitId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "typeId",
@@ -107,6 +120,12 @@ export const institutionExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
+      name: "wikidataId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 2, maxLength: 20 },
     },
   ],
   invariants: [

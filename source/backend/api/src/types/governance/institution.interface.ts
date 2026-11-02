@@ -1,11 +1,13 @@
 
 import type { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import type { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import type { BusinessCode } from "#/types/shared/business-code.type.ts";
 import type { Description } from "#/types/shared/description.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
+import type { WikidataId } from "#/types/shared/wikidata-id.type.ts";
 import type { HistoricalEntity } from "#/types/shared/historical-entity.interface.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
@@ -16,12 +18,14 @@ export interface Institution {
   code: BusinessCode;
   createdAt: DateTime;
   description?: Description | null;
-  geoUnitId?: Id | null;
+  entityId?: Id | null;
   id: Id;
   isCurrent: Flag;
   jurisdictionId: Id;
   legalBasisId?: Id | null;
+  logoMarker?: MediaMarker | null;
   name: Name;
+  scopeGeoUnitId?: Id | null;
   typeId: Id;
   updatedAt: DateTime;
   validFrom?: Date | null;
@@ -29,4 +33,5 @@ export interface Institution {
   validTo?: Date | null;
   validToPrecision?: DatePrecision | null;
   version: Version;
+  wikidataId?: WikidataId | null;
 }

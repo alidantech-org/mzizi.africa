@@ -27,13 +27,15 @@ export class GetInstitutionRelationshipByIdUseCase {
 
   private toReadModel(entity: InstitutionRelationshipEntity): InstitutionRelationshipPublicDto {
     return {
-    childInstitutionId: entity.childInstitutionId,
     createdAt: entity.createdAt,
     id: entity.id,
     isCurrent: entity.isCurrent,
     kind: entity.kind,
     legalBasisId: entity.legalBasisId,
-    parentInstitutionId: entity.parentInstitutionId,
+    objectId: entity.objectId,
+    objectKind: entity.objectKind,
+    subjectId: entity.subjectId,
+    subjectKind: entity.subjectKind,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,

@@ -39,7 +39,7 @@ export const INSTITUTION_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'update
 
 export const INSTITUTION_SEARCHABLE_FIELDS = ['code', 'name', ] as const satisfies readonly InstitutionKey[];
 
-export const INSTITUTION_FILTERABLE_FIELDS = ['branchId', 'code', 'geoUnitId', 'id', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'name', 'typeId', 'version', ] as const satisfies readonly InstitutionKey[];
+export const INSTITUTION_FILTERABLE_FIELDS = ['branchId', 'code', 'entityId', 'id', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'logoMarker', 'name', 'scopeGeoUnitId', 'typeId', 'version', 'wikidataId', ] as const satisfies readonly InstitutionKey[];
 
 export const INSTITUTION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly InstitutionKey[];
 
@@ -47,7 +47,7 @@ export const INSTITUTION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFr
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const INSTITUTION_SELECTABLE_FIELDS = ['branchId', 'code', 'createdAt', 'description', 'geoUnitId', 'id', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'name', 'typeId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly InstitutionKey[];
+export const INSTITUTION_SELECTABLE_FIELDS = ['branchId', 'code', 'createdAt', 'description', 'entityId', 'id', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'logoMarker', 'name', 'scopeGeoUnitId', 'typeId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'wikidataId', ] as const satisfies readonly InstitutionKey[];
 
 export const INSTITUTION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly InstitutionSelectableField[];
 
@@ -55,7 +55,7 @@ export const INSTITUTION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const INSTITUTION_EDITABLE_FIELDS = ['branchId', 'code', 'description', 'geoUnitId', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'name', 'typeId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly InstitutionKey[];
+export const INSTITUTION_EDITABLE_FIELDS = ['branchId', 'code', 'description', 'entityId', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'logoMarker', 'name', 'scopeGeoUnitId', 'typeId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'wikidataId', ] as const satisfies readonly InstitutionKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -8,12 +8,14 @@ import type { BaseQuery } from "#/types/shared/base-query.interface.ts";
 
 /** Institution List Query */
 export interface InstitutionListQuery {
+  entityId?: Id;
   includeHistory?: Flag;
   jurisdictionId?: Id;
   limit?: PaginationNumber;
   order?: SortDirection;
   page?: PaginationNumber;
   q?: Name;
+  scopeGeoUnitId?: Id;
   sort?: SortDirection;
   typeId?: Id;
 }

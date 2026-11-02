@@ -40,7 +40,7 @@ export const OFFICE_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'updatedAt',
 
 export const OFFICE_SEARCHABLE_FIELDS = ['code', 'name', ] as const satisfies readonly OfficeKey[];
 
-export const OFFICE_FILTERABLE_FIELDS = ['code', 'id', 'institutionId', 'isCurrent', 'isSingleton', 'name', 'parentOfficeId', 'version', ] as const satisfies readonly OfficeKey[];
+export const OFFICE_FILTERABLE_FIELDS = ['code', 'definitionCode', 'id', 'institutionId', 'isCurrent', 'isSingleton', 'name', 'parentOfficeId', 'scopeGeoUnitId', 'version', ] as const satisfies readonly OfficeKey[];
 
 export const OFFICE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly OfficeKey[];
 
@@ -48,7 +48,7 @@ export const OFFICE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const OFFICE_SELECTABLE_FIELDS = ['code', 'createdAt', 'description', 'id', 'institutionId', 'isCurrent', 'isSingleton', 'name', 'parentOfficeId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly OfficeKey[];
+export const OFFICE_SELECTABLE_FIELDS = ['code', 'createdAt', 'definitionCode', 'description', 'id', 'institutionId', 'isCurrent', 'isSingleton', 'name', 'parentOfficeId', 'scopeGeoUnitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly OfficeKey[];
 
 export const OFFICE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly OfficeSelectableField[];
 
@@ -56,7 +56,7 @@ export const OFFICE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satis
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const OFFICE_EDITABLE_FIELDS = ['code', 'description', 'institutionId', 'isCurrent', 'isSingleton', 'name', 'parentOfficeId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly OfficeKey[];
+export const OFFICE_EDITABLE_FIELDS = ['code', 'definitionCode', 'description', 'institutionId', 'isCurrent', 'isSingleton', 'name', 'parentOfficeId', 'scopeGeoUnitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly OfficeKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

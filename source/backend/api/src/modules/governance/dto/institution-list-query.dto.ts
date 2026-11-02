@@ -53,6 +53,11 @@ import type { PaginationNumber } from "#/types/shared/pagination-number.type.ts"
 export class InstitutionListQueryDto {
 
   @IsOptional()
+  @IsString()
+  @IsUUID()
+  entityId?: Id;
+
+  @IsOptional()
   @IsBoolean()
   includeHistory?: Flag;
 
@@ -82,6 +87,11 @@ export class InstitutionListQueryDto {
   @MinLength(1)
   @MaxLength(300)
   q?: Name;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  scopeGeoUnitId?: Id;
 
   @IsOptional()
   @IsEnum(SortDirection)

@@ -39,7 +39,7 @@ export const AMENITY_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'updatedAt'
 
 export const AMENITY_SEARCHABLE_FIELDS = ['code', 'name', ] as const satisfies readonly AmenityKey[];
 
-export const AMENITY_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'isActive', 'isCurrent', 'jurisdictionId', 'name', 'sectorId', 'version', ] as const satisfies readonly AmenityKey[];
+export const AMENITY_FILTERABLE_FIELDS = ['code', 'id', 'isActive', 'isCurrent', 'jurisdictionId', 'name', 'sectorId', 'version', ] as const satisfies readonly AmenityKey[];
 
 export const AMENITY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly AmenityKey[];
 
@@ -47,7 +47,7 @@ export const AMENITY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom',
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const AMENITY_SELECTABLE_FIELDS = ['code', 'createdAt', 'geoUnitId', 'id', 'isActive', 'isCurrent', 'jurisdictionId', 'name', 'sectorId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly AmenityKey[];
+export const AMENITY_SELECTABLE_FIELDS = ['code', 'createdAt', 'id', 'isActive', 'isCurrent', 'jurisdictionId', 'name', 'sectorId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly AmenityKey[];
 
 export const AMENITY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly AmenitySelectableField[];
 
@@ -55,7 +55,7 @@ export const AMENITY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const sati
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const AMENITY_EDITABLE_FIELDS = ['code', 'geoUnitId', 'isActive', 'isCurrent', 'jurisdictionId', 'name', 'sectorId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly AmenityKey[];
+export const AMENITY_EDITABLE_FIELDS = ['code', 'isActive', 'isCurrent', 'jurisdictionId', 'name', 'sectorId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly AmenityKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

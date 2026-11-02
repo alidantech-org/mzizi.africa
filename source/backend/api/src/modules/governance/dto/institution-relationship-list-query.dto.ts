@@ -46,16 +46,12 @@ import { SortDirection } from "#/types/shared/sort-direction.enum.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { PaginationNumber } from "#/types/shared/pagination-number.type.ts";
+import type { TargetKind } from "#/types/shared/target-kind.type.ts";
 
 /**
  * Institution Relationship List Query
  */
 export class InstitutionRelationshipListQueryDto {
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  childInstitutionId?: Id;
 
   @IsOptional()
   @IsBoolean()
@@ -72,6 +68,17 @@ export class InstitutionRelationshipListQueryDto {
   limit?: PaginationNumber;
 
   @IsOptional()
+  @IsString()
+  @IsUUID()
+  objectId?: Id;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(2)
+  @MaxLength(100)
+  objectKind?: TargetKind;
+
+  @IsOptional()
   @IsEnum(SortDirection)
   order?: SortDirection;
 
@@ -82,11 +89,17 @@ export class InstitutionRelationshipListQueryDto {
   page?: PaginationNumber;
 
   @IsOptional()
-  @IsString()
-  @IsUUID()
-  parentInstitutionId?: Id;
-
-  @IsOptional()
   @IsEnum(SortDirection)
   sort?: SortDirection;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  subjectId?: Id;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(2)
+  @MaxLength(100)
+  subjectKind?: TargetKind;
 }

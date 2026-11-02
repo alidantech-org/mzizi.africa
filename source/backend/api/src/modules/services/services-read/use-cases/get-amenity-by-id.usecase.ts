@@ -28,7 +28,6 @@ export class GetAmenityByIdUseCase {
     return {
     code: entity.code,
     createdAt: entity.createdAt,
-    geoUnitId: entity.geoUnitId,
     id: entity.id,
     isActive: entity.isActive,
     isCurrent: entity.isCurrent,

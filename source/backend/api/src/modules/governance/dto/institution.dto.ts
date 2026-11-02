@@ -42,12 +42,14 @@ import {
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
 import { HistoricalEntityDto } from "#/modules/shared/dto/historical-entity.dto.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import type { BusinessCode } from "#/types/shared/business-code.type.ts";
 import type { Description } from "#/types/shared/description.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
+import type { WikidataId } from "#/types/shared/wikidata-id.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
 
@@ -77,10 +79,10 @@ export class InstitutionDto {
   description?: Description | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.geoUnitId !== null)
+  @ValidateIf((object) => object.entityId !== null)
   @IsString()
   @IsUUID()
-  geoUnitId?: Id | null;
+  entityId?: Id | null;
 
   @IsString()
   @IsUUID()
@@ -99,10 +101,21 @@ export class InstitutionDto {
   @IsUUID()
   legalBasisId?: Id | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.logoMarker !== null)
+  @IsEnum(MediaMarker)
+  logoMarker?: MediaMarker | null;
+
   @IsString()
   @MinLength(1)
   @MaxLength(300)
   name!: Name;
+
+  @IsOptional()
+  @ValidateIf((object) => object.scopeGeoUnitId !== null)
+  @IsString()
+  @IsUUID()
+  scopeGeoUnitId?: Id | null;
 
   @IsString()
   @IsUUID()
@@ -134,4 +147,11 @@ export class InstitutionDto {
   @IsInt()
   @Min(0)
   version!: Version;
+
+  @IsOptional()
+  @ValidateIf((object) => object.wikidataId !== null)
+  @IsString()
+  @MinLength(2)
+  @MaxLength(20)
+  wikidataId?: WikidataId | null;
 }

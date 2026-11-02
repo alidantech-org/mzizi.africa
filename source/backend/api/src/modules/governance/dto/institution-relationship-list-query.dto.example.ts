@@ -8,12 +8,6 @@ export const institutionRelationshipListQueryExample: ContractExample = contract
   name: "InstitutionRelationshipListQuery",
   fields: [
     {
-      name: "childInstitutionId",
-      optional: true,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "includeHistory",
       optional: true,
       nullable: false,
@@ -32,6 +26,18 @@ export const institutionRelationshipListQueryExample: ContractExample = contract
       spec: { kind: "number", min: 0, max: 1000 },
     },
     {
+      name: "objectId",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "objectKind",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", minLength: 2, maxLength: 100 },
+    },
+    {
       name: "order",
       optional: true,
       nullable: false,
@@ -44,16 +50,22 @@ export const institutionRelationshipListQueryExample: ContractExample = contract
       spec: { kind: "number", min: 0, max: 1000 },
     },
     {
-      name: "parentInstitutionId",
+      name: "sort",
+      optional: true,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(SortDirection) },
+    },
+    {
+      name: "subjectId",
       optional: true,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "sort",
+      name: "subjectKind",
       optional: true,
       nullable: false,
-      spec: { kind: "enum", values: Object.values(SortDirection) },
+      spec: { kind: "string", minLength: 2, maxLength: 100 },
     },
   ],
   invariants: [

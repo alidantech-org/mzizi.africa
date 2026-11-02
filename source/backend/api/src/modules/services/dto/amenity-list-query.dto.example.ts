@@ -7,12 +7,6 @@ export const amenityListQueryExample: ContractExample = contractExample({
   name: "AmenityListQuery",
   fields: [
     {
-      name: "geoUnitId",
-      optional: true,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "includeHistory",
       optional: true,
       nullable: false,

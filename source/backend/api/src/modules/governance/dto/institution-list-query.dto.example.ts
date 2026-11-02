@@ -7,6 +7,12 @@ export const institutionListQueryExample: ContractExample = contractExample({
   name: "InstitutionListQuery",
   fields: [
     {
+      name: "entityId",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "includeHistory",
       optional: true,
       nullable: false,
@@ -41,6 +47,12 @@ export const institutionListQueryExample: ContractExample = contractExample({
       optional: true,
       nullable: false,
       spec: { kind: "string", minLength: 1, maxLength: 300 },
+    },
+    {
+      name: "scopeGeoUnitId",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "sort",

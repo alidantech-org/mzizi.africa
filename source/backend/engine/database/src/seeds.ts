@@ -107,6 +107,13 @@ interface StructureRow {
  * manual research and says so in its `_meta`. Also creates one county government and one county assembly per county unit
  * already in the geography schema. Idempotent: an institution that exists by code is left alone.
  */
+/** The root geography unit of a jurisdiction (the country unit). Fails loudly when there is none (DEC-JURISDICTION-WIDE-SCOPE). */
+export async function rootUnitId(db: DataSource, jurisdictionId: string): Promise<string> {
+  const rows = await db.query(`SELECT id FROM geography.units WHERE jurisdiction_id = $1 AND parent_id IS NULL AND is_current`, [jurisdictionId]);
+  if (rows.length !== 1) throw new Error(`jurisdiction ${jurisdictionId} must have exactly one root geography unit, found ${rows.length}`);
+  return rows[0].id;
+}
+
 export async function seedGovernanceStructure(db: DataSource, jurisdictionCode = "ke"): Promise<{ institutions: number; relationships: number; counties: number }> {
   const file = JSON.parse(readFileSync(join(import.meta.dir, "..", "fixtures", "seed", "ke-governance-structure.json"), "utf8")) as { _meta: { label: string; caveat: string }; institutions: StructureRow[] };
   const [jurisdiction] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [jurisdictionCode]);
@@ -121,6 +128,8 @@ export async function seedGovernanceStructure(db: DataSource, jurisdictionCode =
   const note = (row: StructureRow) => [row.abbreviation && `Abbreviation: ${row.abbreviation}.`, row.legalBasis && `Legal basis: ${row.legalBasis}.`, `${file._meta.label}; confidence ${row.confidence}.`].filter(Boolean).join(" ");
   let institutions = 0;
   const ids = new Map<string, string>();
+  // Every institution in this file is a national body (the county bodies are generated below from their unit), so its scope is the root unit.
+  const nationalScope = await rootUnitId(db, jurisdiction.id);
   for (const row of file.institutions) {
     const [existing] = await db.query(`SELECT id FROM governance.institutions WHERE code = $1 AND jurisdiction_id = $2 AND is_current`, [row.code, jurisdiction.id]);
     if (existing) {
@@ -130,8 +139,8 @@ export async function seedGovernanceStructure(db: DataSource, jurisdictionCode =
     const typeId = await ensureClass("governance/institution-type", row.type);
     const branchId = await ensureClass("governance/branch", row.branch);
     const [created] = await db.query(
-      `INSERT INTO governance.institutions (code, name, type_id, branch_id, jurisdiction_id, description, is_current, created_at, updated_at, version) VALUES ($1, $2, $3, $4, $5, $6, true, now(), now(), 1) RETURNING id`,
-      [row.code, row.name, typeId, branchId, jurisdiction.id, note(row)],
+      `INSERT INTO governance.institutions (code, name, type_id, branch_id, jurisdiction_id, scope_geo_unit_id, description, is_current, created_at, updated_at, version) VALUES ($1, $2, $3, $4, $5, $6, $7, true, now(), now(), 1) RETURNING id`,
+      [row.code, row.name, typeId, branchId, jurisdiction.id, nationalScope, note(row)],
     );
     ids.set(row.code, created.id);
     institutions++;
@@ -140,9 +149,9 @@ export async function seedGovernanceStructure(db: DataSource, jurisdictionCode =
   for (const row of file.institutions) {
     if (!row.parent || !ids.has(row.parent) || !ids.has(row.code)) continue;
     const kind = row.relationship ?? "oversees";
-    const [exists] = await db.query(`SELECT 1 AS ok FROM governance.relationships WHERE parent_institution_id = $1 AND child_institution_id = $2 AND kind = $3::governance.relationships_kind_enum AND is_current`, [ids.get(row.parent), ids.get(row.code), kind]);
+    const [exists] = await db.query(`SELECT 1 AS ok FROM governance.relationships WHERE subject_kind = 'institution' AND subject_id = $1 AND object_kind = 'institution' AND object_id = $2 AND kind = $3::governance.relationships_kind_enum AND is_current`, [ids.get(row.parent), ids.get(row.code), kind]);
     if (exists) continue;
-    await db.query(`INSERT INTO governance.relationships (parent_institution_id, child_institution_id, kind, is_current, created_at, updated_at, version) VALUES ($1, $2, $3::governance.relationships_kind_enum, true, now(), now(), 1)`, [ids.get(row.parent), ids.get(row.code), kind]);
+    await db.query(`INSERT INTO governance.relationships (subject_kind, subject_id, object_kind, object_id, kind, is_current, created_at, updated_at, version) VALUES ('institution', $1, 'institution', $2, $3::governance.relationships_kind_enum, true, now(), now(), 1)`, [ids.get(row.parent), ids.get(row.code), kind]);
     relationships++;
   }
   let counties = 0;
@@ -159,7 +168,7 @@ export async function seedGovernanceStructure(db: DataSource, jurisdictionCode =
       const [exists] = await db.query(`SELECT 1 AS ok FROM governance.institutions WHERE code = $1 AND jurisdiction_id = $2 AND is_current`, [code, jurisdiction.id]);
       if (exists) continue;
       await db.query(
-        `INSERT INTO governance.institutions (code, name, type_id, branch_id, jurisdiction_id, geo_unit_id, description, is_current, created_at, updated_at, version) VALUES ($1, $2, $3, $4, $5, $6, $7, true, now(), now(), 1)`,
+        `INSERT INTO governance.institutions (code, name, type_id, branch_id, jurisdiction_id, scope_geo_unit_id, description, is_current, created_at, updated_at, version) VALUES ($1, $2, $3, $4, $5, $6, $7, true, now(), now(), 1)`,
         [code, `${label} ${unit.name}`, typeId, branchId, jurisdiction.id, unit.id, `Devolved ${suffix} of ${unit.name} county (Constitution of Kenya 2010, chapter 11). Generated from the county geography unit; ${file._meta.label}.`],
       );
       counties++;

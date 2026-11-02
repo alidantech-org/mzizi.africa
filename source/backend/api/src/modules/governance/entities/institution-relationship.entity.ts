@@ -13,11 +13,11 @@ import {
 } from "typeorm";
 
 import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-numeric.transformer.ts";
-import { InstitutionEntity } from "#/modules/governance/entities/institution.entity.ts";
 import { RelationshipKind } from "#/types/governance/relationship-kind.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
+import type { TargetKind } from "#/types/shared/target-kind.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
@@ -26,14 +26,12 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Institution Relationship
  */
 @Entity({ schema: "governance", name: "relationships" })
-@Index("idx_institution_relationship_parent", ["parentInstitutionId", "kind"])
+@Index("idx_relationship_subject", ["subjectKind", "subjectId", "kind"])
+@Index("idx_relationship_object", ["objectKind", "objectId", "kind"])
 export class InstitutionRelationshipEntity {
 
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id!: Id;
-
-  @Column({ name: "child_institution_id", type: "uuid" })
-  childInstitutionId!: Id;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
@@ -47,12 +45,17 @@ export class InstitutionRelationshipEntity {
   @Column({ name: "legal_basis_id", type: "uuid", nullable: true })
   legalBasisId?: Id | null;
 
-  @Column({ name: "parent_institution_id", type: "uuid" })
-  parentInstitutionId!: Id;
+  @Column({ name: "object_id", type: "uuid" })
+  objectId!: Id;
 
-  @ManyToOne(() => InstitutionEntity)
-  @JoinColumn({ name: "parent_institution_id" })
-  parentInstitution?: Relation<InstitutionEntity>;
+  @Column({ name: "object_kind", type: "varchar", length: 100 })
+  objectKind!: TargetKind;
+
+  @Column({ name: "subject_id", type: "uuid" })
+  subjectId!: Id;
+
+  @Column({ name: "subject_kind", type: "varchar", length: 100 })
+  subjectKind!: TargetKind;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

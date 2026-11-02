@@ -84,6 +84,11 @@ export class OfficeListQueryDto {
   q?: Name;
 
   @IsOptional()
+  @IsString()
+  @IsUUID()
+  scopeGeoUnitId?: Id;
+
+  @IsOptional()
   @IsEnum(SortDirection)
   sort?: SortDirection;
 }

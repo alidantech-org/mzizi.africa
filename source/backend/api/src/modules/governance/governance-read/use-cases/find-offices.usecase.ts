@@ -39,6 +39,8 @@ export class FindOfficesUseCase {
     institutionId: entity.institutionId,
     isCurrent: entity.isCurrent,
     isSingleton: entity.isSingleton,
+    definitionCode: entity.definitionCode,
+    scopeGeoUnitId: entity.scopeGeoUnitId,
     name: entity.name,
     parentOfficeId: entity.parentOfficeId,
     updatedAt: entity.updatedAt,

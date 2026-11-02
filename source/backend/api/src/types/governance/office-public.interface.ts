@@ -14,6 +14,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 export interface OfficePublic {
   code: BusinessCode;
   createdAt: DateTime;
+  definitionCode?: BusinessCode | null;
   description?: Description | null;
   id: Id;
   institutionId: Id;
@@ -21,6 +22,7 @@ export interface OfficePublic {
   isSingleton: Flag;
   name: Name;
   parentOfficeId?: Id | null;
+  scopeGeoUnitId?: Id | null;
   updatedAt: DateTime;
   validFrom?: Date | null;
   validFromPrecision?: DatePrecision | null;

@@ -29,6 +29,12 @@ export const governanceProperties = governance.properties({
     oversees: "oversees",
     accountableTo: "accountable_to",
     delegatesTo: "delegates_to",
+    ownedBy: "owned_by",
+    operatedBy: "operated_by",
+    fundedBy: "funded_by",
+    regulatedBy: "regulated_by",
+    overseenBy: "overseen_by",
+    partOf: "part_of",
   }),
   RuleKind: dryv.property.enum({
     maxTerms: "max_terms",
@@ -65,28 +71,45 @@ const institutions = governance.schemas({
       name: dryv.field(sharedProperties.Name).query(searchable),
       typeId: plainId(),
       branchId: optionalId(),
-      geoUnitId: optionalId(),
+      /** Optional soft link to the legal person (organization.entities) when the public body is also a registered entity. */
+      entityId: optionalId(),
+      /** Territory the body serves (jurisdiction scope). Never a building: physical sites are place.places. */
+      scopeGeoUnitId: optionalId(),
       legalBasisId: optionalId(),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
+      wikidataId: dryv.field(sharedProperties.WikidataId).optional().nullable().query({ filter: ["equal"] }),
+      logoMarker: dryv.field(sharedProperties.MediaMarker).optional().nullable().query({ filter: ["equal"] }),
     },
     "institutions",
     [
       { name: "idx_institution_code", fields: ["code"], unique: true },
       { name: "idx_institution_jurisdiction", fields: ["jurisdictionId"] },
+      { name: "idx_institution_entity", fields: ["entityId"] },
+      { name: "idx_institution_scope", fields: ["scopeGeoUnitId"] },
     ],
   ),
 });
 
 const relationships = governance.schemas({
+  /**
+   * A typed edge between any two subjects (institution, entity, amenity, unit): "subject kind object",
+   * for example amenity operated_by entity, institution oversees institution, institution has_component unit.
+   * Subjects are plain kind and id pairs, never foreign keys, so the edge can cross schemas. Money amounts stay in finance.
+   */
   InstitutionRelationship: recorded(
     {
-      parentInstitutionId: relationTo(() => institutions.Institution.field("id")),
-      childInstitutionId: plainId(),
+      subjectKind: dryv.field(sharedProperties.TargetKind).query({ filter: ["equal"] }),
+      subjectId: plainId(),
+      objectKind: dryv.field(sharedProperties.TargetKind).query({ filter: ["equal"] }),
+      objectId: plainId(),
       kind: dryv.field(governanceProperties.RelationshipKind).query({ filter: ["equal", "in"] }),
       legalBasisId: optionalId(),
     },
     "relationships",
-    [{ name: "idx_institution_relationship_parent", fields: ["parentInstitutionId", "kind"] }],
+    [
+      { name: "idx_relationship_subject", fields: ["subjectKind", "subjectId", "kind"] },
+      { name: "idx_relationship_object", fields: ["objectKind", "objectId", "kind"] },
+    ],
   ),
 
   Office: recorded(
@@ -94,6 +117,10 @@ const relationships = governance.schemas({
       institutionId: relationTo(() => institutions.Institution.field("id")),
       parentOfficeId: optionalId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
+      /** Reusable pattern the post was created from (for example county-executive/governor); definitions live in seed JSON, not a table. */
+      definitionCode: dryv.field(sharedProperties.BusinessCode).optional().nullable().query({ filter: ["equal"] }),
+      /** The geography unit this post represents (the constituency of an MP, the county of a governor). Null for national posts. */
+      scopeGeoUnitId: optionalId(),
       name: dryv.field(sharedProperties.Name).query(searchable),
       isSingleton: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
@@ -102,6 +129,7 @@ const relationships = governance.schemas({
     [
       { name: "idx_office_code", fields: ["code"], unique: true },
       { name: "idx_office_institution", fields: ["institutionId"] },
+      { name: "idx_office_scope", fields: ["scopeGeoUnitId"] },
     ],
   ),
 });
@@ -177,6 +205,8 @@ const surfaces = [
     filters: {
       jurisdictionId: dryv.field(sharedProperties.Id).optional(),
       typeId: dryv.field(sharedProperties.Id).optional(),
+      entityId: dryv.field(sharedProperties.Id).optional(),
+      scopeGeoUnitId: dryv.field(sharedProperties.Id).optional(),
       q: dryv.field(sharedProperties.Name).optional(),
     },
   }),
@@ -184,15 +214,17 @@ const surfaces = [
     singular: "InstitutionRelationship", plural: "InstitutionRelationships", itemKey: "relationship", listKey: "relationships",
     path: "/governance/institution-relationships", idParam: "relationshipId", entity: entities.InstitutionRelationship, description: "institution relationships",
     filters: {
-      parentInstitutionId: dryv.field(sharedProperties.Id).optional(),
-      childInstitutionId: dryv.field(sharedProperties.Id).optional(),
+      subjectKind: dryv.field(sharedProperties.TargetKind).optional(),
+      subjectId: dryv.field(sharedProperties.Id).optional(),
+      objectKind: dryv.field(sharedProperties.TargetKind).optional(),
+      objectId: dryv.field(sharedProperties.Id).optional(),
       kind: dryv.field(governanceProperties.RelationshipKind).optional(),
     },
   }),
   readSurface(governance, {
     singular: "Office", plural: "Offices", itemKey: "office", listKey: "offices",
     path: "/governance/offices", idParam: "officeId", entity: entities.Office, description: "offices",
-    filters: { institutionId: dryv.field(sharedProperties.Id).optional(), q: dryv.field(sharedProperties.Name).optional() },
+    filters: { institutionId: dryv.field(sharedProperties.Id).optional(), scopeGeoUnitId: dryv.field(sharedProperties.Id).optional(), q: dryv.field(sharedProperties.Name).optional() },
   }),
   readSurface(governance, {
     singular: "OfficeRule", plural: "OfficeRules", itemKey: "rule", listKey: "rules",

@@ -43,6 +43,12 @@ export const officeListQueryExample: ContractExample = contractExample({
       spec: { kind: "string", minLength: 1, maxLength: 300 },
     },
     {
+      name: "scopeGeoUnitId",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "sort",
       optional: true,
       nullable: false,

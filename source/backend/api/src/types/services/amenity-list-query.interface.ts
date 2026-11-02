@@ -8,7 +8,6 @@ import type { BaseQuery } from "#/types/shared/base-query.interface.ts";
 
 /** Amenity List Query */
 export interface AmenityListQuery {
-  geoUnitId?: Id;
   includeHistory?: Flag;
   jurisdictionId?: Id;
   limit?: PaginationNumber;

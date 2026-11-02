@@ -33,12 +33,14 @@ import type {
 /** Office */
 export interface IOffice extends B.IBase {
   code: string;
+  definitionCode: string | null;
   description: string | null;
   institutionId: string;
   isCurrent: boolean;
   isSingleton: boolean;
   name: string;
   parentOfficeId: string | null;
+  scopeGeoUnitId: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;

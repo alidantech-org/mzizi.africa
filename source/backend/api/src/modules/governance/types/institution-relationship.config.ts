@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as InstitutionConfig from '#/modules/governance/types/institution.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const INSTITUTION_RELATIONSHIP_RELATION_KEYS = ['institution', ] as const satisfies readonly InstitutionRelationshipKey[];
+export const INSTITUTION_RELATIONSHIP_RELATION_KEYS = [] as const satisfies readonly InstitutionRelationshipKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const INSTITUTION_RELATIONSHIP_SORTABLE_FIELDS = ['createdAt', 'updatedAt
 
 export const INSTITUTION_RELATIONSHIP_SEARCHABLE_FIELDS = [] as const satisfies readonly InstitutionRelationshipKey[];
 
-export const INSTITUTION_RELATIONSHIP_FILTERABLE_FIELDS = ['childInstitutionId', 'id', 'isCurrent', 'kind', 'legalBasisId', 'parentInstitutionId', 'version', ] as const satisfies readonly InstitutionRelationshipKey[];
+export const INSTITUTION_RELATIONSHIP_FILTERABLE_FIELDS = ['id', 'isCurrent', 'kind', 'legalBasisId', 'objectId', 'objectKind', 'subjectId', 'subjectKind', 'version', ] as const satisfies readonly InstitutionRelationshipKey[];
 
 export const INSTITUTION_RELATIONSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly InstitutionRelationshipKey[];
 
@@ -48,7 +47,7 @@ export const INSTITUTION_RELATIONSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updated
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const INSTITUTION_RELATIONSHIP_SELECTABLE_FIELDS = ['childInstitutionId', 'createdAt', 'id', 'isCurrent', 'kind', 'legalBasisId', 'parentInstitutionId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly InstitutionRelationshipKey[];
+export const INSTITUTION_RELATIONSHIP_SELECTABLE_FIELDS = ['createdAt', 'id', 'isCurrent', 'kind', 'legalBasisId', 'objectId', 'objectKind', 'subjectId', 'subjectKind', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly InstitutionRelationshipKey[];
 
 export const INSTITUTION_RELATIONSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly InstitutionRelationshipSelectableField[];
 
@@ -56,7 +55,7 @@ export const INSTITUTION_RELATIONSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id'
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const INSTITUTION_RELATIONSHIP_EDITABLE_FIELDS = ['childInstitutionId', 'isCurrent', 'kind', 'legalBasisId', 'parentInstitutionId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly InstitutionRelationshipKey[];
+export const INSTITUTION_RELATIONSHIP_EDITABLE_FIELDS = ['isCurrent', 'kind', 'legalBasisId', 'objectId', 'objectKind', 'subjectId', 'subjectKind', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly InstitutionRelationshipKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const INSTITUTION_RELATIONSHIP_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const INSTITUTION_RELATIONSHIP_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<InstitutionRelationshipRelationKey>().one(InstitutionConfig.INSTITUTION_AS_ONE_RELATION_CONFIG, 'institution'),
 ] as const;
 
 export const INSTITUTION_RELATIONSHIP_MANY_RELATION_QUERY_OPTIONS = [

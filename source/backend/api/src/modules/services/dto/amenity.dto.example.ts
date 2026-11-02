@@ -19,12 +19,6 @@ export const amenityExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date-time" },
     },
     {
-      name: "geoUnitId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "id",
       optional: false,
       nullable: false,

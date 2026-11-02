@@ -67,6 +67,13 @@ export class OfficePublicDto {
   createdAt!: DateTime;
 
   @IsOptional()
+  @ValidateIf((object) => object.definitionCode !== null)
+  @IsString()
+  @MinLength(2)
+  @MaxLength(200)
+  definitionCode?: BusinessCode | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.description !== null)
   @IsString()
   @MaxLength(4000)
@@ -96,6 +103,12 @@ export class OfficePublicDto {
   @IsString()
   @IsUUID()
   parentOfficeId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.scopeGeoUnitId !== null)
+  @IsString()
+  @IsUUID()
+  scopeGeoUnitId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: DateTime;

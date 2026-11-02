@@ -104,7 +104,7 @@ describe.skipIf(!adminUrl)("read APIs (PostgreSQL, read-only role)", () => {
     await save("GeoUnitChangeEntity", "change", fact({ sourceUnitId: ids.kisumu, targetUnitId: ids.nairobi, kind: "continued_as" }));
 
     // Governance linked to Nairobi: an institution, its office and a current and a former holder.
-    await save("InstitutionEntity", "county", fact({ jurisdictionId: ids.ke, code: "ke/nairobi/county-government", name: "Nairobi County Government", typeId: ids.ke, geoUnitId: ids.nairobi }));
+    await save("InstitutionEntity", "county", fact({ jurisdictionId: ids.ke, code: "ke/nairobi/county-government", name: "Nairobi County Government", typeId: ids.ke, scopeGeoUnitId: ids.nairobi }));
     await save("OfficeEntity", "governor", fact({ institutionId: ids.county, code: "ke/nairobi/governor", name: "Governor", isSingleton: true }));
     await save("PersonEntity", "person", fact({ code: "example/person", displayName: "Example Person", lifeStatus: "alive" }));
     await save("OfficeHolderEntity", "holderNow", fact({ officeId: ids.governor, personId: ids.person, status: "substantive" }));

@@ -13,7 +13,6 @@ import type { Date } from "#/types/shared/date.type.ts";
 export interface Amenity {
   code: BusinessCode;
   createdAt: DateTime;
-  geoUnitId?: Id | null;
   id: Id;
   isActive: Flag;
   isCurrent: Flag;

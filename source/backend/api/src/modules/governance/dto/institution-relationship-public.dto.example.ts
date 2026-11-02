@@ -1,18 +1,11 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { RelationshipKind } from "#/types/governance/relationship-kind.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
-import { institutionExample } from "#/modules/governance/dto/institution.dto.example.ts";
 
 /** The contract shape of InstitutionRelationshipPublic, for generated tests. */
 export const institutionRelationshipPublicExample: ContractExample = contractExample({
   name: "InstitutionRelationshipPublic",
   fields: [
-    {
-      name: "childInstitutionId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
     {
       name: "createdAt",
       optional: false,
@@ -44,10 +37,28 @@ export const institutionRelationshipPublicExample: ContractExample = contractExa
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "parentInstitutionId",
+      name: "objectId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "objectKind",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", minLength: 2, maxLength: 100 },
+    },
+    {
+      name: "subjectId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "subjectKind",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", minLength: 2, maxLength: 100 },
     },
     {
       name: "updatedAt",

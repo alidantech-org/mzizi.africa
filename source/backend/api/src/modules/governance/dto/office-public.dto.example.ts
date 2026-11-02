@@ -19,6 +19,12 @@ export const officePublicExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date-time" },
     },
     {
+      name: "definitionCode",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 2, maxLength: 200 },
+    },
+    {
       name: "description",
       optional: true,
       nullable: true,
@@ -56,6 +62,12 @@ export const officePublicExample: ContractExample = contractExample({
     },
     {
       name: "parentOfficeId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "scopeGeoUnitId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },

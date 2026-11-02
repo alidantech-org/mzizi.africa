@@ -27,7 +27,6 @@ import type { Date } from "#/types/shared/date.type.ts";
  */
 @Entity({ schema: "civic", name: "amenities" })
 @Index("idx_amenity_code", ["code"], { unique: true })
-@Index("idx_amenity_geo", ["geoUnitId"])
 export class AmenityEntity {
 
   @PrimaryGeneratedColumn("uuid", { name: "id" })
@@ -38,9 +37,6 @@ export class AmenityEntity {
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
-
-  @Column({ name: "geo_unit_id", type: "uuid", nullable: true })
-  geoUnitId?: Id | null;
 
   @Column({ name: "is_active", type: "boolean" })
   isActive!: Flag;

@@ -10,7 +10,6 @@ import type { DatePrecision } from '#/types/shared/date-precision.enum';
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as InstitutionTypes from '#/modules/governance/types/institution.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -33,16 +32,17 @@ import type {
 
 /** Institution Relationship */
 export interface IInstitutionRelationship extends B.IBase {
-  childInstitutionId: string;
   isCurrent: boolean;
   kind: RelationshipKind;
   legalBasisId: string | null;
-  parentInstitutionId: string;
+  objectId: string;
+  objectKind: string;
+  subjectId: string;
+  subjectKind: string;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  readonly institution?: InstitutionTypes.IInstitution;
 }
 
 // ----------------------------------
@@ -123,7 +123,6 @@ export type IInstitutionRelationshipAsManyRelationQuery = Q.IAsManyRelationQuery
 // ----------------------------------
 
 export interface IInstitutionRelationshipRelationMap extends Record<InstitutionRelationshipRelationKey, unknown> {
-  institution: InstitutionTypes.IInstitutionAsOneRelationQuery;
 }
 
 // ----------------------------------
