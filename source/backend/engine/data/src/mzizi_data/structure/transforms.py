@@ -34,6 +34,11 @@ def _normalise_name(value: Any, _arg: Any = None) -> Any:
     return _collapse(_nfc(value))
 
 
+def _clean_ordinal(value: Any, _arg: Any = None) -> Any:
+    """Removes English ordinal suffixes after day numbers: '22nd Jul' becomes '22 Jul'."""
+    return re.sub(r"(\d)(st|nd|rd|th)\b", r"\1", value) if isinstance(value, str) else value
+
+
 def _date(value: Any, fmt: Any = "%Y-%m-%d") -> str | None:
     if value in (None, ""):
         return None
@@ -113,6 +118,7 @@ LIBRARY: dict[str, Callable[..., Any]] = {
     "upper": _upper,
     "lower": _lower,
     "normalise_name": _normalise_name,
+    "clean_ordinal": _clean_ordinal,
     "date": _date,
     "decimal": _decimal,
     "fiscal_year": _fiscal_year,

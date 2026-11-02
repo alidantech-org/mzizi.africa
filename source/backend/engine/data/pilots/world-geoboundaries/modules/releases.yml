@@ -1,0 +1,14 @@
+module: releases
+tags: [kind:boundary, tier:1]
+discover:
+  api:
+    url: /api/current/gbOpen/KEN/ADM1/
+    items: { jsonpath: "$" }
+fetch: { resource: json }
+extract:
+  fields:
+    title:    { from: "$.boundaryName", tags: [label:title] }
+    download: { from: "$.simplifiedGeometryGeoJSON", tags: [label:url] }
+    licence:  { from: "$.boundaryLicense" }
+    built:    { from: "$.buildDate", parse: { date: "%b %d, %Y" }, tags: [time:published] }
+expect: { min_items: 1, required_fields: [title, download, licence] }

@@ -23,6 +23,14 @@ from .gate import Decision
 GateCheck = Callable[[dict], Decision]
 
 
+def live_fetcher(conn, site_id: str, policy: dict, mode: str = "http", **kwargs) -> "PoliteFetcher":
+    """A fetcher for real requests: identified (or refused), limited by the policy and gated by the database."""
+    from . import gate
+    from .compliance import effective_limits, resolve_user_agent
+
+    return PoliteFetcher(user_agent=resolve_user_agent(policy), limits=effective_limits(policy), gate=lambda request: gate.check_collection(conn, request), site_id=site_id, fetch_mode=mode, **kwargs)
+
+
 class RobotsDisallowed(Exception):
     pass
 

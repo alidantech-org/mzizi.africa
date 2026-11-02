@@ -1,0 +1,15 @@
+module: budget-documents
+tags: [kind:budget, tier:2, section:publications]
+discover:
+  listing:
+    url: /2025-2026-budget-documents
+    items:
+      - { css: "div.field--name-body a[href$='.pdf']", confidence: 0.9 }
+      - { css: "article a[href$='.pdf']", confidence: 0.4 }
+fetch: { resource: pdf }
+extract:
+  fields:
+    title:       { from: link_text, tags: [label:title] }
+    href:        { from: link_href, tags: [label:url] }
+    fiscal_year: { from: title, regex: "((?:FY\\s*)?\\d{4}\\s*[/-]\\s*\\d{2,4})", parse: fiscal_year, tags: [period:fiscal_year] }
+expect: { min_items: 5, required_fields: [title, href] }

@@ -1,0 +1,13 @@
+mapping: party-list
+module: party-list
+target_kind: source.documents
+key: [url]
+fields:
+  title:       { from: title, transform: collapse_whitespace }
+  url:         { from: href }
+  publishedOn: { from: uploaded, precision: exact }
+  publisherId: { const: { $ref: { kind: source.publishers, where: { code: ke/iebc } } } }
+  kindId:      { const: { $ref: { kind: reference.classifications, where: { code: source/document-kind/dataset } } } }
+provenance:
+  locator: { page: $page, item: $item_index }
+  method: extracted

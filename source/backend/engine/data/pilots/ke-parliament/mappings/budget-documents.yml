@@ -1,0 +1,12 @@
+mapping: budget-documents
+module: budget-documents
+target_kind: source.documents
+key: [url]
+fields:
+  title:       { from: title, transform: collapse_whitespace }
+  url:         { from: href }
+  publisherId: { const: { $ref: { kind: source.publishers, where: { code: ke/parliament } } } }
+  kindId:      { const: { $ref: { kind: reference.classifications, where: { code: source/document-kind/budget } } } }
+provenance:
+  locator: { page: $page, item: $item_index }
+  method: extracted

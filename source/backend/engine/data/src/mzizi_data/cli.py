@@ -21,6 +21,22 @@ def main(argv: list[str] | None = None) -> int:
     geo.add_argument("--iso3", default="KEN")
     geo.add_argument("--jurisdiction", default="ke")
     geo.add_argument("--store", default=".data/objects", help="local object store directory")
+    st = sub.add_parser("structure", help="site structure versions: submit, batch, list, activate, demote")
+    ssub = st.add_subparsers(dest="action", required=True)
+    for name in ("submit", "batch"):
+        c = ssub.add_parser(name)
+        c.add_argument("path")
+        c.add_argument("--agent", required=True, help="the authoring agent or tool name")
+        c.add_argument("--model")
+        c.add_argument("--family", help="family bundle directory for a site that extends it (submit only)")
+        c.add_argument("--store", default=".data/objects")
+    lst = ssub.add_parser("list")
+    lst.add_argument("code")
+    act = ssub.add_parser("activate")
+    act.add_argument("version_id")
+    dem = ssub.add_parser("demote")
+    dem.add_argument("version_id")
+    dem.add_argument("--reason", required=True)
     stop = sub.add_parser("stop", help="incident: stop collection for a site, cancel its pending jobs and quarantine its candidates")
     stop.add_argument("site_code")
     stop.add_argument("--reason", required=True)
@@ -45,6 +61,33 @@ def main(argv: list[str] | None = None) -> int:
             result = geoboundaries.import_directory(conn, LocalDirectoryStore(conn, args.store), args.directory, args.iso3, args.jurisdiction)
         for item in result.levels:
             print(f"{item.level}: units {item.units.created} new / {item.units.unchanged} unchanged (run {item.unit_run}), boundaries {item.boundaries.created} new / {item.boundaries.unchanged} unchanged (run {item.boundary_run})")
+        return 0
+    if args.command == "structure":
+        from . import batch
+        from .db import connect
+        from .files import LocalDirectoryStore
+
+        with connect() as conn:
+            if args.action in ("submit", "batch"):
+                store = LocalDirectoryStore(conn, args.store)
+                results = [batch.submit(conn, store, args.path, args.agent, args.model, args.family)] if args.action == "submit" else batch.submit_batch(conn, store, args.path, args.agent, args.model)
+                conn.commit()
+                for r in results:
+                    print(f"{r.status:9} {r.site_code} {('v' + str(r.number)) if r.number else ''} {r.directory}")
+                    for e in r.errors[:5]:
+                        print(f"   error: {e}")
+                return 0 if all(r.status == "validated" for r in results) else 1
+            if args.action == "list":
+                for v in batch.list_versions(conn, args.code):
+                    print(f"v{v['number']:<3} {v['status']:10} {'current' if v['is_current'] else '':8} {v['id']}")
+            elif args.action == "activate":
+                batch.activate(conn, args.version_id)
+                conn.commit()
+                print("activated (collection still requires an approved assessment)")
+            elif args.action == "demote":
+                batch.demote(conn, args.version_id, args.reason)
+                conn.commit()
+                print("demoted")
         return 0
     if args.command == "stop":
         from . import incidents, registry

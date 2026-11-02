@@ -1,0 +1,13 @@
+module: party-list
+tags: [kind:dataset, tier:2, section:downloads]
+discover:
+  listing:
+    url: /resources/?Party_list
+    items: { css: "div.row:has(> div.col-lg-4)", confidence: 0.9 }
+fetch: { resource: pdf }
+extract:
+  fields:
+    title:    { from: { css: "h4" }, tags: [label:title] }
+    href:     { from: { css: "a.r_download", attr: href }, tags: [label:url] }
+    uploaded: { from: item_text, regex: "Uploaded on:\\s*([A-Za-z]{3} \\d{1,2}[a-z]{2} [A-Za-z]{3}, \\d{4})", parse: [clean_ordinal, { date: "%a %d %b, %Y" }], tags: [time:published] }
+expect: { min_items: 5, required_fields: [title, href] }

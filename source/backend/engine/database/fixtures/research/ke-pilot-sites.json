@@ -1,0 +1,94 @@
+{
+  "note": "Pilot site registry rows from the 2026-11-02 research (agent-collected, one manual GET per page). Sites are 'profiled', never active; no assessment exists, so the collection gate refuses them.",
+  "country": "ke",
+  "rows": [
+    {
+      "entity": "SiteEntity",
+      "key": "site:ke/iebc",
+      "values": {
+        "code": "ke/iebc",
+        "name": "Independent Electoral and Boundaries Commission (Kenya)",
+        "kind": "portal",
+        "status": "profiled",
+        "jurisdictionId": "@ke",
+        "description": "Observed by manual GET on 2026-11-02; resources pages list PDFs by category. Not legally assessed."
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/iebc:www.iebc.or.ke",
+      "values": {
+        "siteId": "@site:ke/iebc",
+        "hostname": "www.iebc.or.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:ke/parliament",
+      "values": {
+        "code": "ke/parliament",
+        "name": "Parliament of Kenya",
+        "kind": "portal",
+        "status": "profiled",
+        "jurisdictionId": "@ke",
+        "description": "Drupal site; budget documents and Hansard PDFs. Observed on 2026-11-02. Not legally assessed."
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/parliament:www.parliament.go.ke",
+      "values": {
+        "siteId": "@site:ke/parliament",
+        "hostname": "www.parliament.go.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/parliament:parliament.go.ke",
+      "values": {
+        "siteId": "@site:ke/parliament",
+        "hostname": "parliament.go.ke",
+        "scheme": "https",
+        "role": "alias",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:world/geoboundaries",
+      "values": {
+        "code": "world/geoboundaries",
+        "name": "geoBoundaries (William & Mary geoLab)",
+        "kind": "api",
+        "status": "profiled",
+        "jurisdictionId": null,
+        "description": "JSON release catalogue API; supplies boundary data for many countries. Not legally assessed."
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:world/geoboundaries:www.geoboundaries.org",
+      "values": {
+        "siteId": "@site:world/geoboundaries",
+        "hostname": "www.geoboundaries.org",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    }
+  ]
+}

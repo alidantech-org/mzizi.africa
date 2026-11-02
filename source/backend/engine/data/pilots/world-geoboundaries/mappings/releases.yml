@@ -1,0 +1,14 @@
+mapping: releases
+module: releases
+target_kind: source.documents
+key: [url]
+fields:
+  title:       { from: title }
+  url:         { from: download }
+  licence:     { from: licence }
+  publishedOn: { from: built, precision: exact }
+  publisherId: { const: { $ref: { kind: source.publishers, where: { code: geoboundaries } } } }
+  kindId:      { const: { $ref: { kind: reference.classifications, where: { code: source/document-kind/dataset } } } }
+provenance:
+  locator: { path: $, index: $item_index }
+  method: extracted

@@ -36,3 +36,17 @@ export async function seedFixtures(db: DataSource, ids: Map<string, string>): Pr
   await repairProvenanceKinds(db);
   return ids.size;
 }
+
+/**
+ * Research seeds: registry rows collected by agents (sites and domains observed on a stated date).
+ * They are facts about the registry, not claims about the world, and carry no legal approval.
+ */
+export async function seedResearch(db: DataSource): Promise<number> {
+  const ids = new Map<string, string>();
+  const [ke] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = 'ke'`);
+  if (!ke) throw new Error("seed the reference data first (jurisdiction ke is missing)");
+  ids.set("ke", ke.id);
+  const before = ids.size;
+  await loadFixtures(db, readFixture("research/ke-pilot-sites").rows, ids, { provenance: false });
+  return ids.size - before;
+}

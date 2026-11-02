@@ -1,0 +1,21 @@
+schema: mzizi.site/v1
+site: ke/iebc
+fetch: { mode: http }
+modules: [party-list]
+tags: [purpose:elections, purpose:publications, platform:custom]
+policy:
+  assessment: { ref: assess-ke-iebc-pending }
+  licence: { ref: unknown }
+  scope:
+    hosts: [www.iebc.or.ke]
+    schemes: [https]
+    paths: { allow: [/resources/, /uploads/resources/], deny: [/admin, /login] }
+  rate: { requests_per_second: 0.2, max_concurrency: 1 }
+  retries: { max: 2, backoff: exponential_jitter }
+  limits: { max_response_bytes: 52428800, timeout_seconds: 30 }
+  identify: { user_agent: "MziziBot/0.1 (+https://example.invalid/bot; contact@example.invalid)" }
+  robots: respect
+  auth: none
+  stop_on: ["401", "403", "429", repeated_5xx, access_challenge, block_notice]
+  data: { excluded_categories: [national_id, health, children, criminal], on_unexpected: quarantine }
+  purposes: [research]

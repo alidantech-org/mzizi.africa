@@ -63,8 +63,10 @@ async function fixtureProvenance(db: DataSource, ids: Map<string, string>): Prom
   return { documentId: ids.get("fixture:document") as string, methodId: ids.get("fixture:method") as string };
 }
 
-export async function loadFixtures(db: DataSource, rows: FixtureRow[], ids: Map<string, string> = new Map()): Promise<Map<string, string>> {
-  const provenance = await fixtureProvenance(db, ids);
+/** options.provenance false loads rows without the test-fixture attribution and verification (for registry rows that are not claims about the world). */
+export async function loadFixtures(db: DataSource, rows: FixtureRow[], ids: Map<string, string> = new Map(), options: { provenance?: boolean } = {}): Promise<Map<string, string>> {
+  const withProvenance = options.provenance !== false;
+  const provenance = withProvenance ? await fixtureProvenance(db, ids) : ({ documentId: "", methodId: "" } as Provenance);
   for (const row of rows) {
     // A key that is already loaded (for example by the reference seed) is not loaded twice.
     if (ids.has(row.key)) continue;
@@ -84,7 +86,7 @@ export async function loadFixtures(db: DataSource, rows: FixtureRow[], ids: Map<
     ids.set(row.key, id);
 
     // Domain facts (valid time) get their provenance in the source schema.
-    if (metadata.columns.some((column) => column.propertyName === "validFrom")) {
+    if (withProvenance && metadata.columns.some((column) => column.propertyName === "validFrom")) {
       const targetKind = `${metadata.schema}.${metadata.tableName}`;
       await save(db, "AttributionEntity", { documentId: provenance.documentId, methodId: provenance.methodId, targetKind, targetId: id, relation: "supports" });
       await save(db, "VerificationEntity", { targetKind, targetId: id, state: "unverified", isCurrent: true });

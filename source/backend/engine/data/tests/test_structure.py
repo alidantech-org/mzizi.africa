@@ -104,3 +104,9 @@ def test_transform_library():
         transforms.apply("fiscal_year", "2023/30")
     with pytest.raises(ValueError):
         transforms.apply({"lookup": {"a": 1}}, "b")
+
+
+def test_an_invalid_selector_is_a_validation_error_not_a_crash():
+    original = (SAMPLES / "html-publications/modules/budgets.yml").read_text()
+    report = validate(mutate("html-publications", "modules/budgets.yml", original.replace('css: "article.pub"', 'css: "div:has(> a > b)"')))
+    assert any("selector error" in e for e in report.errors)

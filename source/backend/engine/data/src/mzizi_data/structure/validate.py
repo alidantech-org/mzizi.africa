@@ -197,7 +197,11 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             if example is None:
                 report.warnings.append(f"module {name}: no example in examples/, dry run skipped")
                 continue
-            match = extract.discover_items(example, module)
+            try:
+                match = extract.discover_items(example, module)
+            except Exception as error:  # an invalid selector is a validation error, not a crash
+                report.errors.append(f"module {name}: selector error: {str(error).splitlines()[0][:200]}")
+                continue
             records = [extract.extract_item(item, module["extract"]["fields"]) for item in match.items]
             expect = module.get("expect", {})
             result = {"items": len(match.items), "selector": match.selector_index, "fieldErrors": sum(len(e) for _, e in records)}

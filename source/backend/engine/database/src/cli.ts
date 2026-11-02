@@ -8,7 +8,7 @@
  *   revert              undo the last migration (_dev and _test only)
  *   generate <name>     write a migration for what the Dryv entities need beyond the existing ones
  *   check               drift check: fails when entities need statements the migrations do not provide
- *   seed [reference|fixtures]   reference seed, or fixtures (_dev and _test only)
+ *   seed [reference|research|fixtures]   reference seed, agent-collected registry rows, or fixtures (_dev and _test only)
  *   integrity           check plain-id references, target kinds and derived geometry
  *   grants <role>       grant per-schema read access to a role
  *   validate [runId]    validate pending candidates (errors make them invalid, the rest go to review)
@@ -27,7 +27,7 @@ import { applyReviewDecisions } from "./staging/review.ts";
 import { promoteApproved } from "./staging/promotion.ts";
 import { validateCandidates } from "./staging/validation.ts";
 import { drift, generate, migrate, revertLast } from "./migrations.ts";
-import { seedFixtures, seedReference } from "./seeds.ts";
+import { seedFixtures, seedReference, seedResearch } from "./seeds.ts";
 
 const [command, argument] = process.argv.slice(2);
 
@@ -81,6 +81,10 @@ switch (command) {
   }
   case "seed": {
     const kind = argument ?? "reference";
+    if (kind === "research") {
+      console.log(`seeded research registry rows (${await withDb({}, seedResearch)} rows)`);
+      break;
+    }
     await withDb({ destructive: kind === "fixtures" }, async (db) => {
       const ids = await seedReference(db);
       if (kind === "fixtures") console.log(`loaded ${await seedFixtures(db, ids)} rows`);

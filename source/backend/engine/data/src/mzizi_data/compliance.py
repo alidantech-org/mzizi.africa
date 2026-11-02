@@ -19,6 +19,25 @@ GLOBAL_MAX_RETRIES = 5
 DEFAULT_RPS = 0.5
 
 
+class IdentityMissing(Exception):
+    """No usable, monitored user agent is configured, so live requests are refused."""
+
+
+def resolve_user_agent(policy: dict, environ: dict[str, str] | None = None) -> str:
+    """The user agent the engine sends: MZIZI_USER_AGENT from the deployment wins over the manifest.
+
+    The string must name a monitored contact (compliance document section 5.3). A placeholder
+    contact (an .invalid or example host, or an empty value) fails closed, so a bundle written
+    before a real contact channel exists can never be run live by accident.
+    """
+    import os
+
+    value = ((environ if environ is not None else os.environ).get("MZIZI_USER_AGENT") or (policy.get("identify") or {}).get("user_agent") or "").strip()
+    if not value or re.search(r"example\.(invalid|com|org|net)|\.invalid\b|\.test\b|localhost", value, re.I) or "@" not in value:
+        raise IdentityMissing("no monitored contact is configured: set MZIZI_USER_AGENT to a user agent with a real contact address and bot page")
+    return value
+
+
 class StopRun(Exception):
     """Ends the run. Raised for 401, 403, 429, repeated 5xx, access challenges and block notices; never retried."""
 
