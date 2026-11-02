@@ -129,7 +129,9 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
         if name not in bundle.modules:
             report.errors.append(f"overlay names module {name!r} but modules/{name}.yml does not exist")
     for name, mapping in bundle.mappings.items():
-        if mapping["module"] not in modules:
+        if "module" not in mapping and "extractor" not in mapping:
+            report.errors.append(f"mappings/{name}.yml: needs a module (structure mapping) or an extractor (dataset import)")
+        elif "module" in mapping and mapping["module"] not in modules:
             report.errors.append(f"mappings/{name}.yml: module {mapping['module']!r} does not exist")
         target = known_targets.get(mapping["target_kind"])
         if known_targets and target is None:
@@ -144,7 +146,7 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             missing = [f for f in target["required"] if f not in mapping["fields"] and f not in ("isCurrent",)]
             if missing:
                 report.warnings.append(f"mappings/{name}.yml: required fields not mapped (supplied by the engine or defaults?): {', '.join(missing)}")
-        module_fields = set(modules.get(mapping["module"], {}).get("extract", {}).get("fields", {}))
+        module_fields = set(modules.get(mapping.get("module", ""), {}).get("extract", {}).get("fields", {}))
         for key, spec in mapping["fields"].items():
             if "from" in spec and module_fields and spec["from"].split(".")[0] not in module_fields:
                 report.errors.append(f"mappings/{name}.yml: field {key!r} reads {spec['from']!r}, which module {mapping['module']!r} does not extract")

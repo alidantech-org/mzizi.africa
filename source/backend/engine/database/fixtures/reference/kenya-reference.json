@@ -1,0 +1,59 @@
+{
+  "note": "Kenya reference vocabularies that real imports depend on: the jurisdiction and the administrative hierarchy (country, county, constituency, ward). Keys match the test fixture so loading the fixtures afterwards skips rows that already exist.",
+  "country": "ke",
+  "rows": [
+    {
+      "entity": "JurisdictionEntity",
+      "key": "ke",
+      "values": {
+        "code": "ke",
+        "name": "Kenya",
+        "kind": "modern_state"
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:level:country",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "geography/level",
+        "code": "geography/level/country",
+        "label": "country",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:level:county",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "geography/level",
+        "code": "geography/level/county",
+        "label": "county",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:level:constituency",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "geography/level",
+        "code": "geography/level/constituency",
+        "label": "constituency",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:level:ward",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "geography/level",
+        "code": "geography/level/ward",
+        "label": "ward",
+        "order": 3
+      }
+    }
+  ]
+}

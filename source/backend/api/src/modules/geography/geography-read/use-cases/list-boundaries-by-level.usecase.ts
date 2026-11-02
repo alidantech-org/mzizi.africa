@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { ENTITY_SQL, CURRENT_VERIFIED_BOUNDARY_SQL, toEntity, toFeature, type Row } from '#/modules/geography/geography-read/geography-read.queries';
+import { ENTITY_SQL, BOUNDARY_COLUMNS, CURRENT_VERIFIED_BOUNDARY_SQL, toEntity, toFeature, type Row } from '#/modules/geography/geography-read/geography-read.queries';
 import type { GeographyBoundariesQueryDto } from '#/modules/geography/dto/geography-boundaries-query.dto';
 import type { GeographyFeatureResponseDto } from '#/modules/geography/dto/geography-feature-response.dto';
 
@@ -14,7 +14,7 @@ export class ListBoundariesByLevelUseCase {
 
   async execute(input: GeographyBoundariesQueryDto): Promise<GeographyFeatureResponseDto> {
     const rows: Row[] = await this.db.query(
-      `SELECT u.id, u.code, u.name, v.geometry, v.label_point
+      `SELECT u.id, u.code, u.name, ${BOUNDARY_COLUMNS}
          FROM geography.units u
          JOIN reference.classifications c ON c.id = u.level_id
          JOIN reference.jurisdictions j ON j.id = u.jurisdiction_id

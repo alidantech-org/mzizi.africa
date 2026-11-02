@@ -120,7 +120,26 @@ Aliases go in the domain's `names` table with a validity period. Fuzzy matches a
 - A candidate is keyed by natural-key hash within a target. A re-import with the same payload hash is a no-op; a changed payload becomes a new candidate that supersedes the earlier one.
 - Promoting a changed candidate creates a new record version, closes the previous version's validity, appends a `superseded` verification and keeps both attributions. Nothing is updated in place.
 
-## 9. Vertical slice (Wave 0): Kenya county boundaries
+## 9. Vertical slice (Wave 0): Kenya county boundaries (implemented)
+
+Runbook (operator, with the database engine and data engine installed; the reviewer step is human):
+
+```bash
+# 1. download the simplified ADM0 and ADM1 GeoJSON and the API metadata for KEN from geoBoundaries (samples are in engine/data/tests/data/geoboundaries)
+export DATABASE_URL=postgres://postgres@localhost:5432/mzizi_dev
+cd source/backend/engine/database && bun src/cli.ts reset                     # migrations, reference seeds (incl. Kenya levels), fixtures
+cd ../data && .venv/bin/mzizi-data import-geoboundaries tests/data/geoboundaries   # preserve, register, extract, stage (prints the four run ids)
+cd ../database
+bun src/cli.ts validate <unit-adm0-run>; # a reviewer records approvals through the API (audit decision on staging.candidates)
+bun src/cli.ts apply-review; bun src/cli.ts promote <unit-adm0-run>
+# repeat for boundary-adm0, unit-adm1, boundary-adm1 runs in that order (units before their boundaries, country before counties)
+```
+
+`engine/data/tests/test_slice_geoboundaries.py` runs the whole chain on the real files with a test reviewer account and ends by reading the result back through the API use cases (`api/src/neutral/boundary-slice.integration.spec.ts`): 48 units and 48 boundaries promoted, all verified, containment checked, re-import adds nothing, the endpoint returns source, licence, year and version.
+
+Dataset facts used: geoBoundaries gbOpen, Kenya, simplified geometry, build 9469f09, 47 ADM1 units; its metadata states licence "Public Domain" with source RCMRD GeoPortal. The licence has not been confirmed by a human; the document record says so.
+
+Original plan: Kenya county boundaries
 
 Dataset: a county-level (47) administrative boundary file with a verified open licence. Path: register and preserve (1-2), GeoJSON extractor (3-4), candidates for `geography.units` and `geography.boundaries` (6), validation of geometry, parent containment (the Kenya country unit) and level (7), review decision through the audit write path (8), promotion with attribution and verification (9), then `GET /v1/geography/entities/{id}/boundary` returns the boundary with source and licence. Pass criteria: an integration test runs this chain against PostGIS on a small real file, then re-runs it and proves no duplicates.
 

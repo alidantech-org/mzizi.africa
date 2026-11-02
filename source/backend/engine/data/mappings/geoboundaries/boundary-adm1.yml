@@ -1,0 +1,11 @@
+mapping: boundary-adm1
+extractor: geojson
+target_kind: geography.boundaries
+key: [unitId]
+fields:
+  unitId:        { from: shapeName, transform: [{ slug_code: "ke/" }, { ref: { kind: geography.units, field: code } }] }
+  geometry:      { from: geometry }
+  referenceYear: { const: 2020 }
+provenance:
+  locator: { feature: $feature }
+  method: extracted

@@ -82,7 +82,8 @@ export async function checkIntegrity(db: DataSource): Promise<IntegrityIssue[]> 
   }
 
   // (target_kind, target_id) references: the kind must name a stored table and the row must exist.
-  const known = new Set(db.entityMetadatas.map(qualified));
+  // Staging candidates are a legal review target (the API accepts that one extra kind); they are not entities.
+  const known = new Set([...db.entityMetadatas.map(qualified), "staging.candidates"]);
   for (const name of targetKindTables) {
     const meta = table(db, name);
     const kindCol = column(meta, "targetKind");
@@ -92,6 +93,10 @@ export async function checkIntegrity(db: DataSource): Promise<IntegrityIssue[]> 
       if (!known.has(kind)) {
         const [{ count }] = await db.query(`SELECT count(*)::int AS count FROM "${meta.schema}"."${meta.tableName}" WHERE "${kindCol}" = $1`, [kind]);
         issues.push({ rule: `${name}.targetKind names no stored table`, count, samples: [kind] });
+        continue;
+      }
+      if (kind === "staging.candidates") {
+        push(await orphans(db, `${name} (${kind}) -> ${kind}`, `FROM "${meta.schema}"."${meta.tableName}" f WHERE f."${kindCol}" = $1 AND NOT EXISTS (SELECT 1 FROM staging.candidates t WHERE t.id = f."${idCol}")`, [kind]));
         continue;
       }
       const target = table(db, kind);

@@ -44,11 +44,24 @@ export const ENTITY_SQL = `
 
 /** The current boundary of unit u whose verification is current and verified. */
 export const CURRENT_VERIFIED_BOUNDARY_SQL = `
-  SELECT v.* FROM geography.boundaries v
+  SELECT v.*, bs.source_name, bs.source_reference, bs.source_url, bs.publisher_name, bs.licence, bs.retrieved_at
+    FROM geography.boundaries v
     JOIN source.verifications ver
       ON ver.target_kind = ${BOUNDARY_TARGET} AND ver.target_id = v.id AND ver.is_current = true AND ver.state = 'verified'
+    LEFT JOIN LATERAL (
+      SELECT d.title AS source_name, d.citation AS source_reference, d.url AS source_url, p.name AS publisher_name, d.licence, cap.retrieved_at
+        FROM source.attributions a
+        JOIN source.documents d ON d.id = a.document_id
+        JOIN source.publishers p ON p.id = d.publisher_id
+        LEFT JOIN source.captures cap ON cap.id = a.capture_id
+       WHERE a.target_kind = ${BOUNDARY_TARGET} AND a.target_id = v.id AND a.relation = 'supports'
+       ORDER BY a.created_at DESC LIMIT 1
+    ) bs ON true
    WHERE v.unit_id = u.id AND v.is_current = true
    ORDER BY v.version_number DESC LIMIT 1`;
+
+/** Columns every boundary feature query selects from the lateral boundary `v`, so features carry their source and licence. */
+export const BOUNDARY_COLUMNS = `v.geometry, v.label_point, v.version_number, v.reference_year, v.source_name, v.source_reference, v.source_url, v.publisher_name, v.licence, v.retrieved_at`;
 
 export function toEntity(row: Row): GeographyEntityDto {
   return {
@@ -80,6 +93,15 @@ export function toFeature(row: Row) {
       code: row.code,
       name: row.name,
       label_point: row.label_point ? JSON.parse(String(row.label_point)) : null,
+      // The verified state is what selected this row; source, reference and licence come from the supporting attribution.
+      boundary_verified: true,
+      boundary_source: row.publisher_name && row.source_name ? `${row.publisher_name}: ${row.source_name}` : (row.source_name ?? null),
+      boundary_source_reference: row.source_url ?? row.source_reference ?? null,
+      boundary_citation: row.source_reference ?? null,
+      boundary_license: row.licence ?? null,
+      boundary_year: row.reference_year === null || row.reference_year === undefined ? null : String(row.reference_year),
+      boundary_retrieved_at: row.retrieved_at instanceof Date ? row.retrieved_at.toISOString() : (row.retrieved_at ?? null),
+      boundary_version: row.version_number ?? null,
     },
   };
 }

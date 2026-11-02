@@ -89,6 +89,14 @@ def _lookup(value: Any, table: Any) -> Any:
     return table[value]
 
 
+def _slug_code(value: Any, prefix: Any = "") -> str | None:
+    """A hierarchical business code from a name: lowercase ASCII, apostrophes dropped, other runs of characters become hyphens."""
+    if value in (None, ""):
+        return None
+    text = unicodedata.normalize("NFKD", str(value)).encode("ascii", "ignore").decode().lower().replace("'", "").replace("\u2019", "")
+    return f"{prefix or ''}{re.sub(r'[^a-z0-9]+', '-', text).strip('-')}"
+
+
 def _ref(value: Any, spec: Any) -> dict | None:
     """A reference to another record by natural key, resolved to an id by the database engine at validation and promotion."""
     if value in (None, ""):
@@ -112,11 +120,14 @@ LIBRARY: dict[str, Callable[..., Any]] = {
     "regex": _regex,
     "lookup": _lookup,
     "ref": _ref,
+    "slug_code": _slug_code,
 }
 
 
 def split(spec: Any) -> tuple[str, Any]:
-    """A transform is a name or a one-key object {name: argument}."""
+    """A transform is a name or a one-key object {name: argument}; a list is a pipeline applied in order."""
+    if isinstance(spec, list):
+        return "pipeline", spec
     if isinstance(spec, str):
         return spec, None
     (name, argument), = spec.items()
@@ -124,10 +135,16 @@ def split(spec: Any) -> tuple[str, Any]:
 
 
 def known(spec: Any) -> bool:
+    if isinstance(spec, list):
+        return bool(spec) and all(known(step) for step in spec)
     return split(spec)[0] in LIBRARY
 
 
 def apply(spec: Any, value: Any) -> Any:
+    if isinstance(spec, list):
+        for step in spec:
+            value = apply(step, value)
+        return value
     name, argument = split(spec)
     if name not in LIBRARY:
         raise ValueError(f"unknown transform: {name}")

@@ -13,6 +13,7 @@ export async function seedReference(db: DataSource): Promise<Map<string, string>
   const ids = await loadFixtures(db, readFixture("reference/media-formats").rows);
   await loadFixtures(db, readFixture("reference/site-tags").rows, ids);
   await loadFixtures(db, readFixture("reference/source-kinds").rows, ids);
+  await loadFixtures(db, readFixture("reference/kenya-reference").rows, ids);
   await repairProvenanceKinds(db);
   return ids;
 }

@@ -70,7 +70,12 @@ The API must set `boundary_verified` only after validating the geometry source
 and its applicable license. It must also provide enough feature properties to
 identify child polygons by canonical ID. Multipolygon geometry and holes must
 be preserved in the GeoJSON; the renderer supports standard GeoJSON geometry
-types through Cesium's GeoJSON loader. A verified `label_point` property in
+types through Cesium's GeoJSON loader. Every boundary Feature (single, children, level list and map context) also carries
+`boundary_verified: true`, `boundary_source` (publisher and dataset title),
+`boundary_source_reference` (the dataset URL), `boundary_citation`, `boundary_license`,
+`boundary_year`, `boundary_retrieved_at` and `boundary_version`, read from the boundary's
+supporting attribution, document and capture; an unknown detail is `null`, never guessed.
+A verified `label_point` property in
 `[longitude, latitude]` order lets the map place labels without guessing a
 centroid. The focus Feature and parent outline must also carry a canonical
 geography ID in `properties.geography_id`, `geo_id`, or `id`.

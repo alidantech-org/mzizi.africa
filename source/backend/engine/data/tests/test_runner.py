@@ -1,4 +1,5 @@
 import json
+import uuid
 
 import pytest
 
@@ -25,8 +26,9 @@ def prepared(conn, store):
 
     def make(**kwargs):
         counter["n"] += 1
-        code = f"ke/treasury-{counter['n']}-{id(conn)}"
-        host = f"t{counter['n']}-{id(conn) % 10000}.example.org"
+        unique = uuid.uuid4().hex[:10]
+        code = f"ke/treasury-{counter['n']}-{unique}"
+        host = f"t{counter['n']}-{unique}.example.org"
         if "scope" not in kwargs:
             kwargs["scope"] = {"hosts": [host], "schemes": ["https"], "paths": {"allow": ["/publications/"]}, "fetchModes": ["http", "api"], "maxRequestsPerSecond": 0.5}
         return code, make_site(conn, store, code=code, host=host, **kwargs)

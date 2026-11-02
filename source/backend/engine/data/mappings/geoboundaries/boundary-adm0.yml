@@ -1,0 +1,11 @@
+mapping: boundary-adm0
+extractor: geojson
+target_kind: geography.boundaries
+key: [unitId]
+fields:
+  unitId:        { const: { $ref: { kind: geography.units, where: { code: ke } } } }
+  geometry:      { from: geometry }
+  referenceYear: { const: 2020 }
+provenance:
+  locator: { feature: $feature }
+  method: extracted

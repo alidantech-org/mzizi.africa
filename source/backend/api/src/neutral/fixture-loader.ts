@@ -66,6 +66,8 @@ async function fixtureProvenance(db: DataSource, ids: Map<string, string>): Prom
 export async function loadFixtures(db: DataSource, rows: FixtureRow[], ids: Map<string, string> = new Map()): Promise<Map<string, string>> {
   const provenance = await fixtureProvenance(db, ids);
   for (const row of rows) {
+    // A key that is already loaded (for example by the reference seed) is not loaded twice.
+    if (ids.has(row.key)) continue;
     const metadata = db.entityMetadatas.find((candidate) => candidate.name === row.entity);
     if (!metadata) throw new Error(`fixture row ${row.key}: unknown entity ${row.entity}`);
     const values: Record<string, unknown> = {};
