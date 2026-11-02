@@ -1,5 +1,5 @@
 ---
-{id: DEC-CLAIMS-AND-CONFLICTS,name: Decision - keep all claims, rank by source trust, derive the canonical value,type: decision,tags: [data-engine,provenance,reinforcement,claims]}
+{id: DEC-CLAIMS-AND-CONFLICTS,name: "Decision - keep all claims, rank by source trust, derive the canonical value",type: decision,tags: [data-engine,provenance,reinforcement,claims]}
 ---
 
 # Decision: claims, corroboration and conflicts
