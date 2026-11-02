@@ -1,5 +1,5 @@
 ---
-{id: TSK-8D70F7C0C53E,name: Resolve the 90 deferred geography boundaries,type: task,status: planned,priority: medium,created_at: 2026-11-02T22:25:03.733Z,updated_at: 2026-11-02T22:25:03.733Z,order: 44032}
+{id: TSK-8D70F7C0C53E,name: Resolve the 90 deferred geography boundaries,type: task,status: in-progress,priority: medium,created_at: 2026-11-02T22:25:03.733Z,updated_at: 2026-11-02T22:28:44.728Z,order: 44032,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:28:44.728Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-8D70F7C0C53E/1793658524731-start,started_at: 2026-11-02T22:28:45.375Z}]}}}
 ---
 
 ## Goal
@@ -12,7 +12,14 @@ The 90 candidates (80 wards, 10 constituencies) come from the simplified geoBoun
 
 ## Acceptance
 
-- [ ] List the units whose best parent differs from the assigned parent and stage replacement units and boundaries for them.
-- [ ] Decide for the remaining spill cases between a better geometry and a recorded containment waiver with the measured percentage.
-- [ ] Re-run validation and promotion; the invalid count for geography boundaries is zero or each remainder has a recorded reason.
+- [x] List the units whose best parent differs from the assigned parent and stage replacement units and boundaries for them.
+- [x] Decide for the remaining spill cases between a better geometry and a recorded containment waiver with the measured percentage.
+- [ ] Re-run validation and promotion; the invalid count for geography boundaries is zero or each remainder has a recorded reason (36 wards remain: need a better source geometry).
+
 - [ ] Run the HDX cross-check again and update the status document.
+
+## Comments
+
+### 2026-11-02T22:28:41.004Z · PETER IRUNGU
+
+Done in mzizi: 7 wards reparented, 54 boundaries clipped (inferred) and promoted, 1,754 current boundaries, all constituencies covered. Open: 36 wards need a better source geometry; HDX cross-check not re-run.

@@ -104,6 +104,8 @@ def main(argv: list[str] | None = None) -> int:
     gx.add_argument("hdx_dir")
     gx.add_argument("--actor", default=None)
     gx.add_argument("--apply", action="store_true")
+    gf = sub.add_parser("geo-fix-containment", help="reparent wrongly parented units and re-stage clipped boundaries for candidates the containment check deferred; --apply writes")
+    gf.add_argument("--apply", action="store_true")
     fe = sub.add_parser("fetch", help="live, gated, rate-limited fetch of one URL for a registered site (robots.txt respected); saves the raw bytes")
     fe.add_argument("--site", required=True, help="site code, e.g. ke/parliament")
     fe.add_argument("--url", required=True)
@@ -317,6 +319,14 @@ def main(argv: list[str] | None = None) -> int:
         with connect() as conn:
             report = crosscheck(conn, args.hdx_dir, args.actor, args.apply)
         print(json.dumps({**report, "low_overlap": report["low_overlap"][:25], "not_in_hdx": report["not_in_hdx"][:25], "hdx_not_in_mzizi": report["hdx_not_in_mzizi"][:25], "low_overlap_total": len(report["low_overlap"]), "not_in_hdx_total": len(report["not_in_hdx"]), "hdx_not_in_mzizi_total": len(report["hdx_not_in_mzizi"])}, indent=1))
+        return 0
+    if args.command == "geo-fix-containment":
+        from .db import connect
+        from .geo_fix import fix_containment
+
+        with connect() as conn:
+            report = fix_containment(conn, args.apply)
+        print(json.dumps({**report, "counts": {k: len(v) for k, v in report.items()}}, indent=1))
         return 0
     if args.command == "fetch":
         from .db import connect
