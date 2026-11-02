@@ -4,12 +4,18 @@ import type { DataSource } from "typeorm";
 import { targetKinds } from "#/auth/access-rules.generated";
 
 /**
+ * Targets that are not contract entities. A staging candidate (review before promotion) can be the
+ * subject of a review decision: the read role may see that its id exists, never its payload.
+ */
+const EXTRA_TARGET_KINDS = ["staging.candidates"];
+
+/**
  * Audit records point at another record by kind (its schema-qualified table, for example geography.units) and id. The kind must be one of
  * the contract's evidenced entities, which also makes it safe to use as a table name below, and
  * the record must exist.
  */
 export async function assertTarget(readDb: DataSource, targetKind: string, targetId: string): Promise<void> {
-  if (!(targetKinds as readonly string[]).includes(targetKind)) throw new BadRequestException(`unknown targetKind: ${targetKind}`);
+  if (!(targetKinds as readonly string[]).includes(targetKind) && !EXTRA_TARGET_KINDS.includes(targetKind)) throw new BadRequestException(`unknown targetKind: ${targetKind}`);
   const [schema, table] = targetKind.split(".");
   const rows = await readDb.query(`SELECT 1 FROM "${schema}"."${table}" WHERE id = $1 LIMIT 1`, [targetId]);
   if (rows.length === 0) throw new NotFoundException(`${targetKind} ${targetId} not found`);

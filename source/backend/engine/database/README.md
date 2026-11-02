@@ -13,7 +13,12 @@ bun src/cli.ts generate <name>         # write a migration for what the Dryv ent
 bun src/cli.ts check                   # drift check: entities vs migrations (also run in CI)
 bun src/cli.ts seed [reference|fixtures]   # fixtures: _dev and _test only
 bun src/cli.ts integrity               # plain-id references, target kinds, derived geometry
-bun src/cli.ts grants <role>           # per-schema USAGE and SELECT for the API role
+bun src/cli.ts grants <role>           # per-schema USAGE and SELECT for the API role (staging: candidate ids only)
+bun src/cli.ts validate [runId]        # validate pending candidates -> invalid or in_review
+bun src/cli.ts apply-review            # approve/reject by the newest decision of a reviewer
+bun src/cli.ts promote [runId]         # promote approved candidates (record, attribution, verification, promotion decision)
+bun src/cli.ts candidates              # counts by status
+bun src/cli.ts export-targets          # write contracts/targets.json for mapping validation
 bun src/cli.ts reset                   # _dev and _test only: drop everything, migrate, seed
 TEST_DATABASE_URL=postgres://postgres@localhost:5432/postgres bun test test
 ```

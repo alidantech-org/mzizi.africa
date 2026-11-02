@@ -67,7 +67,16 @@ Stage names follow `DATA_LIFECYCLE.md`. "Writes" lists the rows the stage create
 | 9 | Promote | database engine | one transaction: canonical row (or new version, previous validity closed), `source.attributions` (document, capture, method, locator, confidence) per record, `source.verifications` row with `is_current` (unverified, or verified on an approved decision), candidate marked promoted |
 | 10 | Re-evaluate | database engine | new verifications or superseding versions; history is never edited |
 
-### Staging model (proposed; confirmed by decision record)
+### Staging model (implemented)
+
+Implemented in `engine/database` (migrations `staging`, `staging-promotion`) with the rules in `src/staging/`: `validation.ts`, `review.ts`, `promotion.ts`.
+
+- **References by natural key.** A candidate payload may hold `{"$ref": {"kind": "geography.units", "where": {"code": "ke/nairobi"}}}` (produced by the `ref` transform). Validation and promotion resolve it to the current record's id; an unresolved reference is an error, so parents are promoted before children.
+- **Statuses.** `pending` (from extraction) then `invalid` or `in_review` (validation), `approved` or `rejected` (review decisions), `promoted`, `superseded`, or `quarantined` (unexpected personal data or a stopped source; quarantined candidates are never validated forward or promoted).
+- **Review path.** A reviewer's decision is an `audit.decisions` row with target kind `staging.candidates` (the API accepts that one extra kind and can see only candidate ids). `apply-review` honours a decision only from an account with a current reviewer or admin grant.
+- **Promotion rules.** Only approved candidates; the newest decision must be an approval by a reviewer; the candidate must have a capture whose document records a licence; if the capture belongs to a site its current assessment must be approved and not overdue; the payload must still validate; the natural key must match at most one current record. An identical record already present gets only a new attribution. A changed record becomes a new version (`isCurrent` false and `validTo` set on the old row, `versionNumber` + 1, a `superseded` verification on the old row), and only for versioned tables; for any other table a change is deferred, never overwritten. Everything for one candidate happens in one transaction, writes `source.attributions`, `source.verifications` (state from the approving decision, default `unverified`) and `staging.promotions` (the PromotionDecision), and never edits audit tables.
+
+Original sketch:
 
 Same PostgreSQL, a `staging` schema owned by the database engine and not served by the public API. Generic rather than per-domain tables:
 

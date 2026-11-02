@@ -11,6 +11,10 @@
  *   seed [reference|fixtures]   reference seed, or fixtures (_dev and _test only)
  *   integrity           check plain-id references, target kinds and derived geometry
  *   grants <role>       grant per-schema read access to a role
+ *   validate [runId]    validate pending candidates (errors make them invalid, the rest go to review)
+ *   apply-review        move in-review candidates by their newest review decision (reviewer grant required)
+ *   promote [runId]     promote approved candidates: record, attribution, verification, promotion decision
+ *   candidates          counts of candidates by status
  *   export-targets      write ../../contracts/targets.json: stored tables and their fields, for mapping validation
  *   reset               drop every schema, migrate, seed reference and fixtures (_dev and _test only)
  */
@@ -19,6 +23,9 @@ import { join } from "node:path";
 import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataSource, targetUrl } from "./config.ts";
 import { checkIntegrity } from "./integrity.ts";
 import { grantReadOnly } from "./grants.ts";
+import { applyReviewDecisions } from "./staging/review.ts";
+import { promoteApproved } from "./staging/promotion.ts";
+import { validateCandidates } from "./staging/validation.ts";
 import { drift, generate, migrate, revertLast } from "./migrations.ts";
 import { seedFixtures, seedReference } from "./seeds.ts";
 
@@ -91,6 +98,25 @@ switch (command) {
     if (!argument) throw new Error("usage: grants <role>");
     const schemas = await withDb({}, (db) => grantReadOnly(db, argument));
     console.log(`granted read on ${schemas.length} schemas to ${argument}`);
+    break;
+  }
+  case "validate": {
+    console.log(JSON.stringify(await withDb({}, (db) => validateCandidates(db, argument))));
+    break;
+  }
+  case "apply-review": {
+    console.log(JSON.stringify(await withDb({}, applyReviewDecisions)));
+    break;
+  }
+  case "promote": {
+    const results = await withDb({}, (db) => promoteApproved(db, argument));
+    for (const r of results) console.log(`${r.outcome} ${r.candidateId}${r.targetId ? ` -> ${r.targetKind} ${r.targetId}` : ""}${r.reasons.length ? ` (${r.reasons.join("; ")})` : ""}`);
+    console.log(`${results.filter((r) => r.outcome === "promoted").length} promoted, ${results.filter((r) => r.outcome === "deferred").length} deferred`);
+    break;
+  }
+  case "candidates": {
+    const rows = await withDb({}, (db) => db.query(`SELECT status, count(*)::int AS n FROM staging.candidates GROUP BY status ORDER BY status`));
+    for (const row of rows) console.log(`${row.status}: ${row.n}`);
     break;
   }
   case "export-targets": {

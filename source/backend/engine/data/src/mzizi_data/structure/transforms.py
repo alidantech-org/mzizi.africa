@@ -89,6 +89,15 @@ def _lookup(value: Any, table: Any) -> Any:
     return table[value]
 
 
+def _ref(value: Any, spec: Any) -> dict | None:
+    """A reference to another record by natural key, resolved to an id by the database engine at validation and promotion."""
+    if value in (None, ""):
+        return None
+    if not isinstance(spec, dict) or "kind" not in spec or "field" not in spec:
+        raise ValueError("ref needs {kind: schema.table, field: property}")
+    return {"$ref": {"kind": spec["kind"], "where": {spec["field"]: value}}}
+
+
 LIBRARY: dict[str, Callable[..., Any]] = {
     "trim": _trim,
     "collapse_whitespace": _collapse,
@@ -102,6 +111,7 @@ LIBRARY: dict[str, Callable[..., Any]] = {
     "fy_start": _fy_start,
     "regex": _regex,
     "lookup": _lookup,
+    "ref": _ref,
 }
 
 

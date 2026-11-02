@@ -20,6 +20,8 @@ export const softLinks: Array<{ from: string; to: string }> = [
   { from: "website.assessments.supersedesId", to: "website.assessments" },
   { from: "website.dossiers.supersedesId", to: "website.dossiers" },
   { from: "source.documents.siteId", to: "website.sites" },
+  { from: "source.publishers.kindId", to: "reference.classifications" },
+  { from: "source.documents.kindId", to: "reference.classifications" },
   { from: "source.attributions.captureId", to: "source.captures" },
   { from: "source.attributions.methodId", to: "source.methods" },
   { from: "website.site_publishers.publisherId", to: "source.publishers" },

@@ -91,9 +91,9 @@ def add_candidates(
             stats.unchanged += 1
             continue
         row = conn.execute(
-            """INSERT INTO staging.candidates (run_id, target_kind, natural_key_hash, payload_hash, payload, extraction_result_id, segment_key, locator, method, status, supersedes_candidate_id)
-               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
-            (run_id, target, key_hash, payload_hash, Jsonb(payload), extraction_result_id, segment_key, Jsonb({"segment": segment_key}), method, status, existing["id"] if existing else None),
+            """INSERT INTO staging.candidates (run_id, target_kind, natural_key_hash, payload_hash, payload, extraction_result_id, segment_key, locator, method, status, supersedes_candidate_id, key_fields)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+            (run_id, target, key_hash, payload_hash, Jsonb(payload), extraction_result_id, segment_key, Jsonb({"segment": segment_key}), method, status, existing["id"] if existing else None, list(mapping["key"])),
         ).fetchone()
         cid = str(row["id"])
         stats.ids.append(cid)

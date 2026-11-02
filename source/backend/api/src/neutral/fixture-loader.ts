@@ -44,10 +44,20 @@ async function save(db: DataSource, entity: string, values: Record<string, unkno
   return (saved as unknown as { id: string }).id;
 }
 
+/** The seeded classification for a source kind when the reference seed was loaded, else the placeholder id (API-only test databases). */
+async function kindId(db: DataSource, scheme: string, code: string): Promise<string> {
+  try {
+    const rows = await db.query(`SELECT id FROM reference.classifications WHERE scheme = $1 AND code = $2 LIMIT 1`, [scheme, `${scheme}/${code}`]);
+    return rows[0]?.id ?? PLACEHOLDER_KIND;
+  } catch {
+    return PLACEHOLDER_KIND;
+  }
+}
+
 async function fixtureProvenance(db: DataSource, ids: Map<string, string>): Promise<Provenance> {
   if (!ids.has("fixture:document")) {
-    const publisher = await save(db, "PublisherEntity", { kindId: PLACEHOLDER_KIND, code: "test-fixtures", name: "Test fixtures" });
-    ids.set("fixture:document", await save(db, "DocumentEntity", { publisherId: publisher, kindId: PLACEHOLDER_KIND, title: "Test fixture", licence: "none" }));
+    const publisher = await save(db, "PublisherEntity", { kindId: await kindId(db, "source/publisher-kind", "institution"), code: "test-fixtures", name: "Test fixtures" });
+    ids.set("fixture:document", await save(db, "DocumentEntity", { publisherId: publisher, kindId: await kindId(db, "source/document-kind", "dataset"), title: "Test fixture", licence: "none" }));
     ids.set("fixture:method", await save(db, "MethodEntity", { kind: "curated", name: "Fixture loader", tool: "fixture-loader" }));
   }
   return { documentId: ids.get("fixture:document") as string, methodId: ids.get("fixture:method") as string };
