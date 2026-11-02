@@ -26,10 +26,24 @@ Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/typ
 ```bash
 cd dryv
 bun install && bun run link          # link the local Dryv checkout (set DRYV_HOME if not in the default place)
-bun run check                        # typecheck, doctor, compile
+bun run check                        # typecheck, contract audit, doctor, compile
+bun run generated:check              # after generating: fails if a plan would still change files (needs the Dryv API)
 # start the Dryv API (from the Dryv checkout): uv run --project source/engine/python/api dryv-api serve --port 8750 --template-server source/engine/python/api/dryv.server.yaml
 cd .. && bun $DRYV_HOME/source/apps/cli/bin/dryv.ts --api http://127.0.0.1:8750 generate
 cd source/backend/api && bun run typecheck && bun run test
 ```
 
 `bun run test` in the API runs the generated specs. The PostgreSQL integration test runs when `TEST_DATABASE_URL` points at a scratch PostGIS database, for example `postgres://postgres:test@localhost:55432/mzizi`.
+
+## Contract checks
+
+`bun run check` runs, in order: `tsc` over the contracts, `tools/audit-contracts.ts`, `dryv-ts doctor` and `dryv-ts compile`. The audit compiles to Runtime IR and fails when:
+
+- an entity does not extend `shared.EvidencedEntity` (provenance, valid time, verification);
+- one entity has two relations to the same target (the entity pack would generate colliding properties);
+- a stored entity has no storage name or reuses another entity's;
+- a string maximum exceeds PostgreSQL's varchar limit;
+- a contract names a country (Kenya is data, never contract);
+- an HTTP operation is not under `/v1/` or maps no failures.
+
+The local Dryv checkout is used instead of the published packages (they are out of date): `bun install` links it through `scripts/link-dryv.sh` (set `DRYV_HOME`).
