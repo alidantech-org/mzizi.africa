@@ -7,7 +7,7 @@ import { advanceDossier, autoAssess, decideAssessment, draftAssessment } from ".
 import { checkCollection } from "../src/gate.ts";
 import { checkIntegrity } from "../src/integrity.ts";
 import { drift, migrate } from "../src/migrations.ts";
-import { seedExpectedSites, seedGovernanceStructure, seedDevAccounts, seedFixtures, seedReference, seedSiteFixtures } from "../src/seeds.ts";
+import { seedDomainZones, seedExpectedSites, seedGovernanceStructure, seedDevAccounts, seedFixtures, seedReference, seedSiteFixtures } from "../src/seeds.ts";
 
 /** Runs against a scratch database on the server in TEST_DATABASE_URL (skipped without it). */
 const adminUrl = process.env.TEST_DATABASE_URL;
@@ -154,6 +154,28 @@ run("database engine", () => {
     expect(await seedExpectedSites(db)).toEqual({ sites: 0, linked: 0 });
     const [row] = await db.query(`SELECT s.status::text AS status, (SELECT count(*)::int FROM website.domains d WHERE d.site_id = s.id) AS domains FROM website.sites s WHERE s.code = 'ke/nca'`);
     expect(row).toEqual({ status: "expected", domains: 0 });
+  });
+
+  test("domain model keeps candidate, redirect and snapshot history", async () => {
+    expect(await seedDomainZones(db)).toEqual({ zones: 12 });
+    expect(await seedDomainZones(db)).toEqual({ zones: 0 });
+    const [zone] = await db.query(`SELECT id FROM website.domain_zones WHERE suffix = 'go.ke'`);
+    const [site] = await db.query(`SELECT id FROM website.sites LIMIT 1`);
+    const [apex] = await db.query(
+      `INSERT INTO website.domains (site_id, hostname, scheme, role, valid_from, valid_from_precision, zone_id, source, status_reason, is_apex, created_at, updated_at, version) VALUES ($1, 'example.go.ke', 'https', 'alias', '2026-11-02', 'exact', $2, 'pattern', 'from the county pattern', true, now(), now(), 1) RETURNING id, status::text AS status`,
+      [site.id, zone.id],
+    );
+    expect(apex.status).toBe("candidate");
+    const [sub] = await db.query(
+      `INSERT INTO website.domains (site_id, hostname, scheme, role, valid_from, valid_from_precision, parent_domain_id, status, redirect_to, last_http_status, created_at, updated_at, version) VALUES ($1, 'www.example.go.ke', 'https', 'redirect', '2026-11-02', 'exact', $2, 'redirects', 'https://example.go.ke/', 301, now(), now(), 1) RETURNING status::text AS status`,
+      [site.id, apex.id],
+    );
+    expect(sub.status).toBe("redirects");
+    for (const [at, values] of [["2026-11-02T10:00:00Z", '["192.0.2.1"]'], ["2026-11-03T10:00:00Z", '["192.0.2.2"]']]) {
+      await db.query(`INSERT INTO website.dns_snapshots (domain_id, record_type, values, resolver, observed_at, created_at) VALUES ($1, 'A', $2, '1.1.1.1', $3, now())`, [apex.id, values, at]);
+    }
+    const history = await db.query(`SELECT values FROM website.dns_snapshots WHERE domain_id = $1 AND record_type = 'A' ORDER BY observed_at`, [apex.id]);
+    expect(history.map((row: { values: string }) => row.values)).toEqual(['["192.0.2.1"]', '["192.0.2.2"]']);
   });
 
   test("staging rows track updated_at and version", async () => {

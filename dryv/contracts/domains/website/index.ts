@@ -27,6 +27,8 @@ export const websiteProperties = website.properties({
     retired: "retired",
   }),
   DomainRole: dryv.property.enum({ primary: "primary", alias: "alias", redirect: "redirect", legacy: "legacy", mirror: "mirror" }),
+  DomainStatus: dryv.property.enum({ candidate: "candidate", reachable: "reachable", redirects: "redirects", moved: "moved", unreachable: "unreachable", refused: "refused", retired: "retired" }),
+  DomainSource: dryv.property.enum({ pattern: "pattern", seed_research: "seed_research", page_link: "page_link", redirect: "redirect", manual: "manual" }),
   UrlScheme: dryv.property.enum({ http: "http", https: "https" }),
   SitePublisherRole: dryv.property.enum({ owner: "owner", operator: "operator", hosted: "hosted" }),
   StructureOwnerKind: dryv.property.enum({ site: "site", family: "family" }),
@@ -35,6 +37,7 @@ export const websiteProperties = website.properties({
   StructureFileRole: dryv.property.enum({ manifest: "manifest", module: "module", mapping: "mapping", tags: "tags", notes: "notes", example: "example" }),
   CheckKind: dryv.property.enum({ reachability: "reachability", fit: "fit", drift: "drift" }),
   CheckOutcome: dryv.property.enum({ ok: "ok", degraded: "degraded", failed: "failed" }),
+  HttpStatus: dryv.property.number.integer({ range: { min: 100, max: 599 } }),
   Hostname: dryv.property.string().length({ min: 1, max: 253 }),
   BundlePath: dryv.property.string().length({ min: 1, max: 500 }),
   SchemaVersion: dryv.property.string().length({ min: 1, max: 60 }),
@@ -103,11 +106,55 @@ const domains = website.schemas({
       validTo: dryv.field(sharedProperties.Date).optional().nullable(),
       validToPrecision: dryv.field(sharedProperties.DatePrecision).optional().nullable(),
       observedAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+      status: dryv.field(websiteProperties.DomainStatus).query({ filter: ["equal", "in"] }),
+      statusReason: dryv.field(sharedProperties.LongText).optional().nullable(),
+      source: dryv.field(websiteProperties.DomainSource).optional().nullable(),
+      sourceNote: dryv.field(sharedProperties.LongText).optional().nullable(),
+      isApex: dryv.field(sharedProperties.Flag).optional().nullable(),
+      parentDomainId: optionalId(),
+      zoneId: optionalId(),
+      lastProbeAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+      lastHttpStatus: dryv.field(websiteProperties.HttpStatus).optional().nullable(),
+      redirectTo: dryv.field(sharedProperties.LongText).optional().nullable(),
     },
     "domains",
     [
       { name: "idx_domain_site_host", fields: ["siteId", "hostname", "validFrom"], unique: true },
       { name: "idx_domain_hostname", fields: ["hostname"] },
+      { name: "idx_domain_status", fields: ["status"] },
+      { name: "idx_domain_zone", fields: ["zoneId"] },
+    ],
+  ),
+
+  /** A registry zone in use (.go.ke, .or.ke, ...) with its operator, purpose and whether second-level names are open. */
+  DomainZone: systemRecord(
+    {
+      suffix: dryv.field(websiteProperties.Hostname).query({ filter: ["equal"] }),
+      parentSuffix: dryv.field(websiteProperties.Hostname).optional().nullable(),
+      operator: dryv.field(sharedProperties.LongText).optional().nullable(),
+      purpose: dryv.field(sharedProperties.LongText).optional().nullable(),
+      secondLevelOpen: dryv.field(sharedProperties.Flag).optional().nullable(),
+      source: dryv.field(sharedProperties.LongText).optional().nullable(),
+      sourceNote: dryv.field(sharedProperties.LongText).optional().nullable(),
+    },
+    "domain_zones",
+  ),
+
+  /** A dated DNS lookup for a domain or a zone. Appended, never overwritten. */
+  DnsSnapshot: systemRecord(
+    {
+      domainId: optionalId(),
+      zoneId: optionalId(),
+      recordType: dryv.field(sharedProperties.LongText),
+      values: dryv.field(websiteProperties.JsonText),
+      resolver: dryv.field(sharedProperties.LongText).optional().nullable(),
+      rcode: dryv.field(sharedProperties.LongText).optional().nullable(),
+      observedAt: dryv.field(sharedProperties.DateTime),
+    },
+    "dns_snapshots",
+    [
+      { name: "idx_dns_snapshot_domain", fields: ["domainId", "recordType", "observedAt"] },
+      { name: "idx_dns_snapshot_zone", fields: ["zoneId", "recordType", "observedAt"] },
     ],
   ),
 

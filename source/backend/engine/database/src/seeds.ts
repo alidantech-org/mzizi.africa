@@ -201,3 +201,21 @@ export async function seedExpectedSites(db: DataSource, jurisdictionCode = "ke")
   }
   return { sites, linked };
 }
+
+
+/**
+ * Registers the registry zones in use from `fixtures/seed/ke-domain-zones.json` (custom-prepared from manual research).
+ * Idempotent by suffix; existing zones are left as they are. No request is made.
+ */
+export async function seedDomainZones(db: DataSource): Promise<{ zones: number }> {
+  const file = JSON.parse(readFileSync(join(import.meta.dir, "..", "fixtures", "seed", "ke-domain-zones.json"), "utf8")) as { _meta: { label: string }; zones: { suffix: string; parentSuffix: string | null; operator: string; purpose: string; secondLevelOpen: boolean }[] };
+  let zones = 0;
+  for (const zone of file.zones) {
+    const inserted = await db.query(
+      `INSERT INTO website.domain_zones (suffix, parent_suffix, operator, purpose, second_level_open, source, created_at, updated_at, version) VALUES ($1, $2, $3, $4, $5, $6, now(), now(), 1) ON CONFLICT (suffix) DO NOTHING RETURNING id`,
+      [zone.suffix, zone.parentSuffix, zone.operator, zone.purpose, zone.secondLevelOpen, file._meta.label],
+    );
+    if (inserted.length > 0) zones++;
+  }
+  return { zones };
+}

@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "label": "Custom-prepared from manual research",
+    "caveat": "Zone operators and purposes are written from general knowledge of the Kenyan name space (KENIC administers .ke and its second-level zones). Nothing was contacted when this file was prepared; confirm against KENIC's published policy before relying on openness flags."
+  },
+  "zones": [
+    { "suffix": "ke", "parentSuffix": null, "operator": "Kenya Network Information Centre (KENIC)", "purpose": "Country-code top-level domain for Kenya", "secondLevelOpen": false },
+    { "suffix": "go.ke", "parentSuffix": "ke", "operator": "KENIC", "purpose": "Government of Kenya bodies", "secondLevelOpen": false },
+    { "suffix": "or.ke", "parentSuffix": "ke", "operator": "KENIC", "purpose": "Non-profit organisations and other registered organisations, including bodies such as the ORPP", "secondLevelOpen": true },
+    { "suffix": "ac.ke", "parentSuffix": "ke", "operator": "KENIC", "purpose": "Academic and tertiary institutions", "secondLevelOpen": false },
+    { "suffix": "co.ke", "parentSuffix": "ke", "operator": "KENIC", "purpose": "Commercial entities and some public corporations", "secondLevelOpen": true },
+    { "suffix": "ne.ke", "parentSuffix": "ke", "operator": "KENIC", "purpose": "Network providers", "secondLevelOpen": true },
+    { "suffix": "sc.ke", "parentSuffix": "ke", "operator": "KENIC", "purpose": "Primary and secondary schools", "secondLevelOpen": false },
+    { "suffix": "me.ke", "parentSuffix": "ke", "operator": "KENIC", "purpose": "Personal names", "secondLevelOpen": true },
+    { "suffix": "info.ke", "parentSuffix": "ke", "operator": "KENIC", "purpose": "Information sites", "secondLevelOpen": true },
+    { "suffix": "mobi.ke", "parentSuffix": "ke", "operator": "KENIC", "purpose": "Mobile content", "secondLevelOpen": true },
+    { "suffix": "com", "parentSuffix": null, "operator": "Verisign", "purpose": "Generic commercial top-level domain, used by some Kenyan bodies", "secondLevelOpen": true },
+    { "suffix": "org", "parentSuffix": null, "operator": "Public Interest Registry", "purpose": "Generic organisation top-level domain, used by some Kenyan bodies", "secondLevelOpen": true }
+  ]
+}

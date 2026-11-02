@@ -13,8 +13,11 @@ import {
 } from "typeorm";
 
 import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-numeric.transformer.ts";
+import { DomainZoneEntity } from "#/modules/website/entities/domain-zone.entity.ts";
 import { SiteEntity } from "#/modules/website/entities/site.entity.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { DomainSource } from "#/types/website/domain-source.enum.ts";
+import { DomainStatus } from "#/types/website/domain-status.enum.ts";
 import { DomainRole } from "#/types/website/domain-role.enum.ts";
 import { UrlScheme } from "#/types/website/url-scheme.enum.ts";
 import type { Id } from "#/types/shared/id.type.ts";
@@ -29,6 +32,8 @@ import type { Date } from "#/types/shared/date.type.ts";
 @Entity({ schema: "website", name: "domains" })
 @Index("idx_domain_site_host", ["siteId", "hostname", "validFrom"], { unique: true })
 @Index("idx_domain_hostname", ["hostname"])
+@Index("idx_domain_status", ["status"])
+@Index("idx_domain_zone", ["zoneId"])
 export class SiteDomainEntity {
 
   @PrimaryGeneratedColumn("uuid", { name: "id" })
@@ -36,6 +41,44 @@ export class SiteDomainEntity {
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
+
+  @Column({ name: "is_apex", type: "boolean", nullable: true })
+  isApex?: boolean | null;
+
+  @Column({ name: "last_http_status", type: "integer", nullable: true })
+  lastHttpStatus?: number | null;
+
+  @Column({ name: "last_probe_at", type: "timestamptz", nullable: true })
+  lastProbeAt?: Date | null;
+
+  @Column({ name: "parent_domain_id", type: "uuid", nullable: true })
+  parentDomainId?: Id | null;
+
+  @ManyToOne(() => SiteDomainEntity)
+  @JoinColumn({ name: "parent_domain_id" })
+  parentDomain?: Relation<SiteDomainEntity>;
+
+  @Column({ name: "redirect_to", type: "text", nullable: true })
+  redirectTo?: string | null;
+
+  @Column({ name: "source", type: "enum", enum: DomainSource, nullable: true })
+  source?: DomainSource | null;
+
+  @Column({ name: "source_note", type: "text", nullable: true })
+  sourceNote?: string | null;
+
+  @Column({ name: "status", type: "enum", enum: DomainStatus, default: DomainStatus.CANDIDATE })
+  status!: DomainStatus;
+
+  @Column({ name: "status_reason", type: "text", nullable: true })
+  statusReason?: string | null;
+
+  @Column({ name: "zone_id", type: "uuid", nullable: true })
+  zoneId?: Id | null;
+
+  @ManyToOne(() => DomainZoneEntity)
+  @JoinColumn({ name: "zone_id" })
+  zone?: Relation<DomainZoneEntity>;
 
   @Column({ name: "hostname", type: "varchar", length: 253 })
   hostname!: Hostname;

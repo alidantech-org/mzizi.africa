@@ -1,5 +1,5 @@
 ---
-{id: TSK-2FE5E3594E4C,name: "Domain model: candidate domains, status, source, parent, TLD zones and DNS snapshots",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:40.961Z,updated_at: 2026-11-02T20:02:40.961Z,order: 1024}
+{id: TSK-2FE5E3594E4C,name: "Domain model: candidate domains, status, source, parent, TLD zones and DNS snapshots",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:02:40.961Z,updated_at: 2026-11-02T20:04:49.023Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T20:04:49.023Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-2FE5E3594E4C/1793649889025-start,started_at: 2026-11-02T20:04:49.546Z}]}}}
 ---
 
 # Domain model: candidate domains, status, source, parent, TLD zones and DNS snapshots
@@ -19,4 +19,4 @@ Today `website.domains` holds hostname, scheme, role (primary, alias, redirect, 
 - [ ] Add the zone registry table with operator, purpose, openness and source, seeded with the zones in use, labelled as custom-prepared from manual research.
 - [ ] Add the DNS snapshot table (domain or zone, record type, values, resolver, observed at).
 - [ ] Update the generated API and read endpoints and keep the schema integration spec green.
-- [ ] Add engine tests for a candidate domain, a redirect and a snapshot history.
+- [x] Add engine tests for a candidate domain, a redirect and a snapshot history.
