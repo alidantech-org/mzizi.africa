@@ -44,6 +44,24 @@
       "maxRequestsPerSecond": 0.2
     },
     {
+      "host": "knbs.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya National Bureau of Statistics (statutory national statistical office, Statistics Act 2006)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "www.knbs.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya National Bureau of Statistics (statutory national statistical office, Statistics Act 2006)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "iebc.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Independent Electoral and Boundaries Commission (constitutional commission)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
       "host": "www.wikidata.org",
       "jurisdiction": "ke",
       "rightsHolder": "Wikimedia Foundation (Wikidata structured data is CC0; Commons files carry their own free licences, recorded per file)",
