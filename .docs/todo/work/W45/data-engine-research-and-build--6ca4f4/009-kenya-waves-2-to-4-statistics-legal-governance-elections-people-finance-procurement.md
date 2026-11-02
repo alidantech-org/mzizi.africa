@@ -16,3 +16,6 @@ Read .docs/docs/DATA_INTAKE_PLAN.md and .docs/decisions/data-engine-design.md fi
 - [ ] Wave 4: budgets, debt, procurement and organisations with currency and fiscal-year mapping.
 - [ ] Legacy seeds imported as reviewed candidates per the mapping table.
 - [ ] Remove from api-legacy only what MIGRATION.md accounts for.
+
+## Compliance (added after LEGALITY_SAFETY_AND_COMPLIANCE.md)
+Gate each wave on source assessments and the Kenya dossier. People, voter, beneficiary and tender-participant data are personal data: record purpose and lawful basis, apply the default exclusions, and obtain specialist review before importing person-level data. Check licences and rights holders for every document before publication, and avoid reproducing whole protected reports.

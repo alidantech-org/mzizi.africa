@@ -16,3 +16,6 @@ Read .docs/docs/WEBSITE_DESIGN.md (section Families, domain patterns and similar
 - [ ] Sites linked to geography units and governance institutions where those records exist.
 - [ ] Independent bodies registered as individual sites with traits and relations to families.
 - [ ] Report coverage counts with explicit scope and counting rules.
+
+## Compliance (added after LEGALITY_SAFETY_AND_COMPLIANCE.md)
+Probing expected sites is automated access: keep it bounded, identified and rate limited, limited to reachability under a not_reviewed assessment, and never retry around a block or challenge. Generated expected sites are discovery only; none becomes active without its own assessment. Record family-level access conditions in the family NOTES.md and treat patterns as research aids, not authorisation.

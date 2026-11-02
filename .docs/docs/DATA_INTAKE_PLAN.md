@@ -19,6 +19,11 @@ How real data enters Mzizi. The database (19 schemas, 96 tables) and the NestJS 
 5. Re-running never overwrites: a rerun creates a new extraction result; a correction creates a new record version and supersedes the old one.
 6. Provenance is written with the record, in the same promotion transaction.
 
+7. **Legal and source approval is a separate gate** (`LEGALITY_SAFETY_AND_COMPLIANCE.md`). Public visibility is not permission. No scheduled or bulk collection runs for a source whose legal/source assessment is missing, expired or outside scope, and no country moves from research to production collection without a jurisdiction dossier and its launch checklist. Technical success (a valid structure, a healthy site, a clean extraction) is never evidence of legality or accuracy.
+8. **Personal data is excluded by default.** The default scope is institutional, legal, geographic and aggregate statistical information. Identity numbers, biometrics, health, children, home addresses, protected attributes and criminal records need specialist review and explicit approval; person-level lists and cross-source person profiles need a documented purpose and lawful basis. Unexpected personal data quarantines candidates instead of promoting them.
+9. **Licence and rights travel with the source.** `source.documents` records the rights holder, licence name/version/URL, attribution and reuse conditions; a missing or ambiguous licence blocks publication of the content (not necessarily internal assessment).
+10. **External processors are assessed first.** No personal, confidential or restricted source content goes to an external AI or cloud provider until its role, location, retention and transfer basis are assessed; minimise or redact before sending.
+
 ## 2. Source tiers
 
 | Tier | What | Examples | Handling |
@@ -50,6 +55,7 @@ Stage names follow `DATA_LIFECYCLE.md`. "Writes" lists the rows the stage create
 
 | # | Stage | Owner | Writes |
 | --- | --- | --- | --- |
+| 0 | Assess | human reviewer (agents draft only) | an `assessment` for the site: status, access basis, licence, data categories, approved scope; the engine fails closed without a current `approved` assessment covering the request |
 | 1 | Register | data engine (calls files service for custody) | `source.publishers` (if new), `source.documents` (title, kind, publisher, published date, language, licence, citation, URL) |
 | 2 | Preserve | files service | `filesystem.objects` (content hash, size, store, key), `filesystem.files` + `filesystem.versions` (in a `source-artifacts` folder), `filesystem.events` (created); then `source.captures` (retrieval time, URL, HTTP status, content hash, tool, file version id) |
 | 3 | Extract | data engine | a new `ExtractionResult` (extractor, version, profile, diagnostics, segments/tables/features) stored as a derived file (`filesystem.variants`, kind extract) plus a row in the data engine job table; a `source.methods` row if the extractor is new |
@@ -114,7 +120,7 @@ Dataset: a county-level (47) administrative boundary file with a verified open l
 | Wave | Content | Depends on |
 | --- | --- | --- |
 | 0 | engine layout, contracts, database package v1 (migrations, integrity checks), data package v1, staging and promotion, the slice above | decisions |
-| 1 | South Africa, Nigeria, Tanzania: jurisdiction, boundaries levels 1-2, one population table; Kenya reference seed | 0 |
+| 1 | South Africa, Nigeria, Tanzania: jurisdiction, boundaries levels 1-2, one population table; Kenya reference seed. Each country needs a jurisdiction dossier and an approved source assessment before collection; until then only licensed bulk downloads reviewed by a human are used | 0 |
 | 2 | Kenya statistics (KNBS), legal (constitution and chosen Acts), institutions and offices | 1 |
 | 3 | Kenya elections and parties; people with entity resolution and privacy review | 2 |
 | 4 | Kenya budgets, debt, procurement, organisations | 2 |
@@ -159,7 +165,7 @@ Superseded by `DEC-WEBSITE-SCHEMA-STRUCTURE` (decided after the note):
 | Item | Reason |
 | --- | --- |
 | OCR of historical archives and scanned gazettes | quality and licensing unknown; text PDFs first |
-| Sensitive person data (ids, health, family) | no privacy review yet (`PEOPLE_DESIGN.md`) |
+| Sensitive person data (ids, health, family) | excluded by default; needs specialist review and approval (`LEGALITY_SAFETY_AND_COMPLIANCE.md` section 6, `PEOPLE_DESIGN.md`) |
 | Automated promotion without review | no track record; every dataset starts at tier 2 or 3 |
 | Continuous monitoring and drift | needs stable intake first (Wave 5) |
 | Polifin integration | separate canonical database |

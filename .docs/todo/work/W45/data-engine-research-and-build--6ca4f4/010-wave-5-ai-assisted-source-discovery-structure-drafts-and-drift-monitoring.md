@@ -18,3 +18,6 @@ Read .docs/docs/DATA_INTAKE_PLAN.md and .docs/decisions/data-engine-design.md fi
 
 ## Notes
 This wave depends on the website schema, the structure runner and the agent batch tooling tasks. Inventory counts must state their scope, date and counting rules, and must separate institutions, sites, domains, datasets and downloadable resources instead of reporting one number.
+
+## Compliance (added after LEGALITY_SAFETY_AND_COMPLIANCE.md)
+Source discovery output is a proposal: agents may inventory institutions and draft assessments but must not mark a source legally approved. Legal-condition drift (terms, licence, robots, ownership, new access walls, complaints) is monitored alongside technical drift and can restrict a site independently of its structure health.

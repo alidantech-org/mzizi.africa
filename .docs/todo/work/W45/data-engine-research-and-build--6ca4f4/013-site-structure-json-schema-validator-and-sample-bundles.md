@@ -15,3 +15,6 @@ Read .docs/docs/WEBSITE_DESIGN.md, .docs/docs/SITE_STRUCTURE_SPEC.md and .docs/d
 - [ ] Static checks: module references, known tags, mapping targets exist in the contracts, transforms in the library.
 - [ ] Dry run against examples applying each module's expect block.
 - [ ] Two sample bundles (one HTML listing, one JSON API) with NOTES.md, and tests for valid and invalid cases.
+
+## Compliance (added after LEGALITY_SAFETY_AND_COMPLIANCE.md)
+Extend the manifest schema with the machine-enforced policy block (assessment reference, allowed hosts, schemes and paths, rate, retries, limits, identification, robots, stop conditions, excluded data categories, purposes) and reject any bundle that contains secrets, cookies or tokens. Technical validity must remain independent of legal approval.

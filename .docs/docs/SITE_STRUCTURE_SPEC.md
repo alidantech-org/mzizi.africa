@@ -41,7 +41,30 @@ modules: [budgets, tenders]
 tags: [jurisdiction:KE, domain:finance]
 ```
 
-`auth` other than `none`, CAPTCHAs and access challenges are not supported; the engine stops and records a check.
+`auth` other than `none`, CAPTCHAs and access challenges are not supported; the engine stops and records a check. A manifest never contains secrets, passwords, cookies or tokens.
+
+### Policy block (machine-enforced)
+
+The manifest `policy` is enforced by the engine and mirrors `LEGALITY_SAFETY_AND_COMPLIANCE.md` section 9.2. The effective limit is the most conservative of this block, the site's approved scope and the engine's global ceilings.
+
+```yaml
+policy:
+  assessment: { ref: assess-ke-treasury-2026-11 }      # the legal/source assessment this recipe relies on; resolved at run time
+  scope:
+    hosts: [treasury.go.ke]                            # exact hosts and schemes the engine may contact
+    schemes: [https]
+    paths: { allow: [/publications/], deny: [/admin/, /login] }
+  rate: { requests_per_second: 0.5, max_concurrency: 2 }
+  retries: { max: 3, backoff: exponential_jitter }
+  limits: { max_response_bytes: 52428800, timeout_seconds: 30 }
+  identify: { user_agent: "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)" }
+  robots: respect                                      # a default operational rule, not a legal safe harbour
+  stop_on: [401, 403, 429, repeated_5xx, access_challenge, block_notice]
+  data: { excluded_categories: [national_id, biometric, health, children, precise_address, criminal, political_opinion], on_unexpected: quarantine }
+  purposes: [research, public_atlas]                   # collection and publication purposes covered by the assessment
+```
+
+A structure is a technical recipe, not a licence or authorisation: it validates against the schema and a dry run even when its source is legally unapproved, and the engine refuses to run it unless the assessment is `approved` (or `approved_with_conditions` with every condition enforceable) and the request falls inside `scope`. Structure publication never activates collection. Retry loops never try to overcome a restriction; a stop condition ends the run and records a check.
 
 ## Inheritance and overlays
 

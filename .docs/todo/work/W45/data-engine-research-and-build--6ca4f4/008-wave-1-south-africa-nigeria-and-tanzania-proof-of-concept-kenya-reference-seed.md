@@ -15,3 +15,6 @@ Read .docs/docs/DATA_INTAKE_PLAN.md and .docs/decisions/data-engine-design.md fi
 - [ ] Boundaries levels 1 and 2 imported for the three countries through the same pipeline.
 - [ ] One national population table each imported into the statistical schema.
 - [ ] Report any country-specific code that was needed.
+
+## Compliance (added after LEGALITY_SAFETY_AND_COMPLIANCE.md)
+Each country needs a jurisdiction dossier and a human-reviewed source assessment before collection; until then use only licensed bulk downloads and record licence, rights holder and attribution on the source document. South Africa, Nigeria and Tanzania have different privacy, cybercrime and copyright regimes; do not apply the Kenya baseline mechanically.

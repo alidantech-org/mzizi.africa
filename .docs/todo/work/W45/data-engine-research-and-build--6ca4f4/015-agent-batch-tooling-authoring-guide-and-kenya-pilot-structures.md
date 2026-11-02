@@ -16,3 +16,6 @@ Read .docs/docs/WEBSITE_DESIGN.md, .docs/docs/SITE_STRUCTURE_SPEC.md and .docs/d
 - [ ] Five pilot Kenyan site structures with notes, each passing dry run and a live check.
 - [ ] Site, domain and publisher rows created for the pilots, including aliases and domain validity.
 - [ ] Report gaps in the format found during authoring and update the spec.
+
+## Compliance (added after LEGALITY_SAFETY_AND_COMPLIANCE.md)
+Publishing a validated structure never activates collection: agents may draft assessments and structures but cannot approve a source. Batch tooling must add a lint that rejects secrets, cookies and tokens, record the assessment reference in each version, and make 'publish' and 'activate' separate commands. Pilot sites need an approved assessment (or licensed bulk data only) before any live check beyond reachability.

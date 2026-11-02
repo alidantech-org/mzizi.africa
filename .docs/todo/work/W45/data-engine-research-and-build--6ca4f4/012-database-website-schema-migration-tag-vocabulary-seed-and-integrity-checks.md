@@ -18,3 +18,6 @@ Read .docs/docs/WEBSITE_DESIGN.md, .docs/docs/SITE_STRUCTURE_SPEC.md and .docs/d
 
 ## Progress
 Seven family tables authored (families, domain_patterns, members, subjects, traits, relations, fingerprints) and exposed as read endpoints; 14 service methods added by hand to the project-owned service implementation. Membership and trait confidence is named `score` because the contract audit forbids a `confidence` column on data rows. Worked examples: `fixtures/neutral-model/kenya-sites.json` (four families with patterns, six sites, a legacy domain, a hostname reused by two sites over time, shared traits and a shares_module relation) with an integration test. Contract check, generated:check, API typecheck, 13999 unit tests and the neutral integration tests pass; the website schema has 14 tables, 103 in total.
+
+## Compliance (added after LEGALITY_SAFETY_AND_COMPLIANCE.md)
+The migration part of this task is already covered by the database engine's generated migrations (site, family and structure tables exist in migration 1793607856459). What remains is the site-tag classification seed and extra integrity checks; add the assessment links when the legal assessment task lands.

@@ -67,6 +67,30 @@ fingerprints      site (FK), kind (markup, navigation, assets, document_types), 
 
 A family owns a base bundle. A site's bundle may `extends` its family's active version and store only an overlay (see `SITE_STRUCTURE_SPEC.md`). The engine resolves the effective structure at load time: the family version, then the site overlay, and records both version ids on captures. Repairing a family module fixes every member, and a member that needs a difference overrides only that module. If a probe shows a member diverges too far, the overlay grows or the member is moved to another family.
 
+## Legal and source approval gate
+
+`LEGALITY_SAFETY_AND_COMPLIANCE.md` is binding on this design. Two consequences shape the model:
+
+1. **A structure is a technical recipe, not a licence.** Publishing a validated structure never starts collection. Technical validation (schema, static checks, dry run) and legal/source approval are independent gates, and the engine runs a structure only when both pass.
+2. **Legal status is its own record.** Each site has an append-only history of legal/source assessments:
+
+```text
+assessments       site (FK), jurisdiction (soft id), status (not_reviewed, in_review, approved, approved_with_conditions,
+                  restricted, rejected, expired), source_type (api, open_data_portal, official_website, document_repository, third_party),
+                  access_basis (open_endpoint, published_terms, open_licence, written_permission, ati_response, other),
+                  access_conditions, licence_name/url/version, rights_holder (unknown stays explicit),
+                  personal_data_categories (JSON, including none_known), processing_purpose, lawful_basis,
+                  approved_scope (JSON: paths, fetch modes, frequency, publication scope), conditions, rationale,
+                  evidence (JSON refs to saved terms, permissions, advice), reviewed_by (soft account id), reviewed_at, review_due_at,
+                  is_current, supersedes (FK)
+```
+
+`source.captures` gains a soft `assessment_id`, so a later review can tell which approval governed a collection. Gate semantics follow section 9.3 of the compliance document: `not_reviewed` and `in_review` allow only bounded discovery and assessment (including the reachability probes of expected sites), `approved` and `approved_with_conditions` allow collection within the approved scope and conditions (fail closed if a condition cannot be enforced), and `restricted`, `rejected` and `expired` stop collection. A site is `degraded` for technical drift and `restricted` for legal drift; neither is inferred from the other. Agents may propose an assessment draft (identity, terms found, licence, personal-data signals) but cannot approve one; `reviewed_by` is a named human account.
+
+The engine also keeps jurisdiction dossiers (regulator, legislation repository, applicable laws, treaty status, reviewer and date, launch stage) so no country moves from research to production collection because its structures exist. Placement of the dossier table is decided in the contracts task.
+
+On a credible restriction, complaint, unexpected sensitive data or expiry, the engine pauses scheduled jobs for the site, quarantines affected candidates (`quarantined` in `staging.candidates`) and raises a review item.
+
 ## Links from `source`
 
 `source.captures` gains four soft columns: `site_id`, `domain_id` (the host actually used), `structure_version_id` (the site overlay or standalone structure that drove discovery or extraction, null for manual downloads) and `family_version_id` (the inherited base, null when none). `source.documents` gains `site_id` (nullable). The linkage lets a researcher trace any record to its document, capture, site, domain and the exact structure version, and lets the engine find every capture made with a structure that is later found wrong.

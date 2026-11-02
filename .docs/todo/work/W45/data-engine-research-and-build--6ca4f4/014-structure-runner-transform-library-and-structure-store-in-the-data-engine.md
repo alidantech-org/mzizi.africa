@@ -16,3 +16,6 @@ Read .docs/docs/WEBSITE_DESIGN.md, .docs/docs/SITE_STRUCTURE_SPEC.md and .docs/d
 - [ ] Transform library (date, decimal, fiscal year, lookup, name normalisation) with tests.
 - [ ] Captures and candidates written with site, domain and structure version lineage.
 - [ ] Drift detection writing website.checks and pausing affected jobs.
+
+## Compliance (added after LEGALITY_SAFETY_AND_COMPLIANCE.md)
+The runner must refuse any request unless the site has a current approved legal/source assessment covering the host, path, method and frequency (fail closed), enforce the manifest policy block with the most conservative limit, identify itself with a monitored user agent, stop on 401 403 429, repeated 5xx and access challenges without retry loops, and quarantine candidates when unexpected personal data appears. Add these items: assessment gate called before every fetch; policy enforcement tests; stop conditions write checks. Details are in the compliance controls task and the collection gate task.
