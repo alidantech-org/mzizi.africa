@@ -1,6 +1,6 @@
 import './review.css';
 
-import { currentRole } from '@/lib/review/auth';
+import { currentRole, oidcConfigured } from '@/lib/review/auth';
 import { signOutAction } from './actions';
 import { Nav } from './nav';
 
@@ -19,7 +19,7 @@ export default async function ReviewLayout({ children }: { children: React.React
           {role ? <Nav /> : null}
           {role ? (
             <form className="rv-who" action={signOutAction}>
-              Signed in as <b>{role}</b> (development)
+              Signed in as <b>{role}</b> {oidcConfigured() ? '' : '(development)'}
               <div className="rv-actions">
                 <button type="submit">Sign out</button>
               </div>

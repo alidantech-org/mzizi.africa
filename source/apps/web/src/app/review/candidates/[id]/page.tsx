@@ -108,8 +108,7 @@ export default async function CandidatePage({ params, searchParams }: { params: 
           <form action={promoteAction}>
             <input type="hidden" name="id" value={id} />
             <div className="rv-actions">
-              <button className="primary" type="submit" disabled={role !== 'admin'}>Promote to canonical record</button>
-              {role !== 'admin' ? <span className="sub">Promotion needs the candidate.promote permission (admin).</span> : null}
+              <button className="primary" type="submit" >Promote to canonical record</button>
             </div>
           </form>
         ) : null}

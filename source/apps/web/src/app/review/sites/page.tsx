@@ -8,7 +8,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   return (
     <>
       <h1>Sites</h1>
-      <p className="sub">The registry of sources the data engine knows. A site is only collected once a human approves its assessment.</p>
+      <p className="sub">The registry of sources the data engine knows. A site is only collected once its assessment is approved (by a person, an AI agent, or the trusted-domain rule) and its jurisdiction is at pilot.</p>
       <Notice bad={error} />
       {data && data.sites.length === 0 ? <Empty>Nothing here yet.</Empty> : null}
       {data && data.sites.length > 0 ? (

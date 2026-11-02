@@ -27,7 +27,7 @@ export class AccessControl1793700000000 implements MigrationInterface {
       reader: "Read public records.",
       contributor: "Add comments and evidence references.",
       reviewer: "Review staged candidates and the pipeline; draft assessments.",
-      admin: "Everything a reviewer may do, plus promotion and approvals.",
+      admin: "Everything a reviewer may do, plus managing roles and grants.",
     };
     const permissions: Record<string, string> = {
       "record.read": "Read published records.",
@@ -36,14 +36,14 @@ export class AccessControl1793700000000 implements MigrationInterface {
       "review.decide": "Record a review decision.",
       "pipeline.read": "Read staging candidates, runs, jobs, documents, captures and the site registry.",
       "assessment.draft": "Draft legal and source assessments.",
-      "assessment.approve": "Approve a legal and source assessment (named human accounts only).",
+      "assessment.approve": "Approve a legal and source assessment (a person or an AI agent, always recorded against the account).",
       "candidate.promote": "Promote an approved candidate to a canonical record.",
       "access.manage": "Manage roles, permissions and grants.",
     };
     const bundles: Record<string, string[]> = {
       reader: ["record.read"],
       contributor: ["record.read", "comment.create", "evidence.create"],
-      reviewer: ["record.read", "comment.create", "evidence.create", "review.decide", "pipeline.read", "assessment.draft"],
+      reviewer: ["record.read", "comment.create", "evidence.create", "review.decide", "pipeline.read", "assessment.draft", "assessment.approve", "candidate.promote"],
       admin: Object.keys(permissions),
     };
     for (const [code, description] of Object.entries(roles)) await queryRunner.query(`INSERT INTO access.roles (code, description) VALUES ($1, $2)`, [code, description]);

@@ -55,7 +55,7 @@ Stage names follow `DATA_LIFECYCLE.md`. "Writes" lists the rows the stage create
 
 | # | Stage | Owner | Writes |
 | --- | --- | --- | --- |
-| 0 | Assess | human reviewer (agents draft only) | an `assessment` for the site: status, access basis, licence, data categories, approved scope; the engine fails closed without a current `approved` assessment covering the request |
+| 0 | Assess | approving account (a person or an AI agent; DEC-AUTO-APPROVAL) | an `assessment` for the site: status, access basis, licence, data categories, approved scope; the engine fails closed without a current `approved` assessment covering the request |
 | 1 | Register | data engine (calls files service for custody) | `source.publishers` (if new), `source.documents` (title, kind, publisher, published date, language, licence, citation, URL) |
 | 2 | Preserve | files service | `filesystem.objects` (content hash, size, store, key), `filesystem.files` + `filesystem.versions` (in a `source-artifacts` folder), `filesystem.events` (created); then `source.captures` (retrieval time, URL, HTTP status, content hash, tool, file version id) |
 | 3 | Extract | data engine | a new `ExtractionResult` (extractor, version, profile, diagnostics, segments/tables/features) stored as a derived file (`filesystem.variants`, kind extract) plus a row in the data engine job table; a `source.methods` row if the extractor is new |

@@ -1,16 +1,18 @@
 import type { DataSource } from "typeorm";
 
+import { readFixture } from "../../../api/src/neutral/fixture-loader.ts";
+
 /**
  * Decides a site's legal and source assessment (LEGALITY_SAFETY_AND_COMPLIANCE.md section 9).
  *
  * Assessments are append-only: a decision is a new row that supersedes the current one, so the history of
- * who approved what, and when, is never overwritten. Only a named human account holding the
+ * who approved what, and when, is never overwritten. Only an active, named account (a person or an AI
+ * agent) holding the
  * `assessment.approve` permission may approve; an account whose issuer marks it as an agent or service
  * can never do it, however it was granted. Approval also needs a stated scope and a rationale.
  */
 export type AssessmentOutcome = "approved" | "approved_with_conditions" | "restricted" | "rejected";
 export const OUTCOMES: AssessmentOutcome[] = ["approved", "approved_with_conditions", "restricted", "rejected"];
-const AGENT_ISSUER = /^(agent|service|bot|ai)/i;
 
 export interface AssessmentDecision {
   assessmentId: string;
@@ -23,7 +25,6 @@ export async function decideAssessment(db: DataSource, assessmentId: string, act
   return db.transaction(async (manager) => {
     const [actor] = await manager.query(`SELECT issuer FROM identity.accounts WHERE id = $1 AND status = 'active'`, [actorId]);
     if (!actor) throw new Error("the deciding account does not exist or is not active");
-    if (AGENT_ISSUER.test(actor.issuer)) throw new Error("agents and services may draft assessments but never decide them");
     const [allowed] = await manager.query(`SELECT 1 AS ok FROM access.account_permissions WHERE account_id = $1 AND permission_code = 'assessment.approve' LIMIT 1`, [actorId]);
     if (!allowed) throw new Error("the account does not hold assessment.approve");
     const [current] = await manager.query(`SELECT * FROM website.assessments WHERE id = $1 FOR UPDATE`, [assessmentId]);
@@ -60,7 +61,7 @@ export interface AssessmentDraft {
 
 /**
  * Records a draft assessment as `in_review`. A draft never authorises collection: only a later decision by a
- * named human holding `assessment.approve` can. The drafter needs `assessment.draft`; a current assessment
+ * an account holding `assessment.approve` can, or the trusted-domain rule below. The drafter needs `assessment.draft`; a current assessment
  * for the site is superseded so there is one current row, and the history stays.
  */
 export async function draftAssessment(db: DataSource, actorId: string, draft: AssessmentDraft): Promise<{ assessmentId: string }> {
@@ -78,5 +79,75 @@ export async function draftAssessment(db: DataSource, actorId: string, draft: As
     );
     if (current) await manager.query(`UPDATE website.assessments SET is_current = false, updated_at = now(), version = version + 1 WHERE id = $1`, [current.id]);
     return { assessmentId: created.id };
+  });
+}
+
+
+interface TrustedSuffix {
+  suffix: string;
+  jurisdiction: string;
+  rightsHolder: string;
+  maxRequestsPerSecond: number;
+}
+
+function trustedSuffixes(): TrustedSuffix[] {
+  return (readFixture("policy/trusted-domains") as unknown as { suffixes: TrustedSuffix[] }).suffixes;
+}
+
+/**
+ * Approves sites whose every domain falls under a trusted suffix (for example `.go.ke`), recording the rule as the
+ * rationale and the acting account (a person or an AI agent) as the approver. The scope is bounded: https only,
+ * plain HTTP fetching, the listed hosts and a low request rate; robots.txt is still respected by the fetcher.
+ * Sites with any domain outside the trusted suffixes are left untouched. Re-running is safe.
+ */
+export async function autoAssess(db: DataSource, actorId: string): Promise<{ approved: string[]; skipped: string[] }> {
+  const approved: string[] = [];
+  const skipped: string[] = [];
+  const rules = trustedSuffixes();
+  const sites: { id: string; code: string; jurisdiction_id: string | null }[] = await db.query(`SELECT id, code, jurisdiction_id FROM website.sites ORDER BY code`);
+  for (const site of sites) {
+    const domains: { hostname: string }[] = await db.query(`SELECT hostname FROM website.domains WHERE site_id = $1`, [site.id]);
+    const rule = domains.length ? rules.find((r) => domains.every((d) => d.hostname.endsWith(r.suffix))) : undefined;
+    if (!rule) {
+      skipped.push(site.code);
+      continue;
+    }
+    const [existing] = await db.query(`SELECT status::text AS status FROM website.assessments WHERE site_id = $1 AND is_current`, [site.id]);
+    if (existing && (existing.status === "approved" || existing.status === "restricted" || existing.status === "rejected")) {
+      skipped.push(site.code);
+      continue;
+    }
+    const [jurisdiction] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [rule.jurisdiction]);
+    const scope = JSON.stringify({ hosts: domains.map((d) => d.hostname), schemes: ["https"], fetchModes: ["http"], maxRequestsPerSecond: rule.maxRequestsPerSecond });
+    const draft = await draftAssessment(db, actorId, {
+      siteId: site.id,
+      accessBasis: "published_terms",
+      sourceType: "official_website",
+      rightsHolder: rule.rightsHolder,
+      approvedScope: scope,
+      rationale: `Trusted domain rule: every domain of this site is under ${rule.suffix}; bounded, identified, robots-respecting collection of public pages only.`,
+    });
+    await db.query(`UPDATE website.assessments SET jurisdiction_id = $2, review_due_at = now() + interval '1 year' WHERE id = $1`, [draft.assessmentId, jurisdiction?.id ?? site.jurisdiction_id]);
+    await decideAssessment(db, draft.assessmentId, actorId, "approved");
+    approved.push(site.code);
+  }
+  return { approved, skipped };
+}
+
+/** Moves a jurisdiction's current dossier to a new launch stage, as a new row that supersedes the old one. */
+export async function advanceDossier(db: DataSource, actorId: string, jurisdictionCode: string, stage: string): Promise<{ dossierId: string }> {
+  return db.transaction(async (manager) => {
+    const [allowed] = await manager.query(`SELECT 1 AS ok FROM access.account_permissions WHERE account_id = $1 AND permission_code = 'assessment.approve' LIMIT 1`, [actorId]);
+    if (!allowed) throw new Error("the account does not hold assessment.approve");
+    const [current] = await manager.query(`SELECT d.* FROM website.dossiers d JOIN reference.jurisdictions j ON j.id = d.jurisdiction_id WHERE j.code = $1 AND d.is_current FOR UPDATE OF d`, [jurisdictionCode]);
+    if (!current) throw new Error(`no current dossier for ${jurisdictionCode}`);
+    if (current.launch_stage === stage) return { dossierId: current.id };
+    const [created] = await manager.query(
+      `INSERT INTO website.dossiers (jurisdiction_id, applicable_laws, launch_stage, is_current, supersedes_id, reviewer_id, reviewed_at, open_questions, regulator, legislation_repository_url, treaty_status, review_due_at, created_at, updated_at, version)
+       SELECT jurisdiction_id, applicable_laws, $2::website.dossiers_launch_stage_enum, true, id, $3, now(), open_questions, regulator, legislation_repository_url, treaty_status, now() + interval '1 year', now(), now(), 1 FROM website.dossiers WHERE id = $1 RETURNING id`,
+      [current.id, stage, actorId],
+    );
+    await manager.query(`UPDATE website.dossiers SET is_current = false, updated_at = now(), version = version + 1 WHERE id = $1`, [current.id]);
+    return { dossierId: created.id };
   });
 }

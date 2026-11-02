@@ -113,6 +113,8 @@ bun src/cli.ts grants-reviewer mzizi_reviewer                   # after creating
 
 Then export the values in `.data/dev.env` (database URLs for the read, write, reviewer and promote roles, `AUTH_ISSUER=https://dev.mzizi.local`, `AUTH_PUBLIC_KEY` from `.data/dev-auth/public.pem`) and start `bun src/main.ts` in `source/backend/api` and `bun run dev` here, then open http://localhost:3100/review. Sign-in is development only and refuses any host other than localhost; real single sign-on later replaces the minted token with the identity provider's, through the same API verifier (`AUTH_JWKS_URL`).
 
-Permissions, not role names, gate actions: `pipeline.read`, `review.decide`, `candidate.promote` and `assessment.approve` (the last two held by admin for now). Agents never approve data or assessments.
+Permissions, not role names, gate actions: `pipeline.read`, `review.decide`, `candidate.promote` and `assessment.approve` (the last two held by admin for now). An AI agent or a person may approve and promote; every decision is recorded against the approving account.
 
 Checks: `bun run typecheck`, `bun test` (catalog, components), and with the stack running `bun scripts/smoke.ts` (loads every review page as reviewer and admin). Regenerate the data browser catalog after the API gains list routes with `bun scripts/data-catalog.ts`. The inherited `/admin` pages need `SERVER_URL` (the file and scraper service) to build and to show data; without it they fail soft.
+
+Single sign-on: start Keycloak (`source/dev/keycloak/README.md`), export `AUTH_ISSUER` and `AUTH_JWKS_URL` for the API and `OIDC_ISSUER=http://localhost:8180/realms/mzizi OIDC_CLIENT_ID=mzizi-web` for this app; the login page then offers single sign-on (dev users `dev-reviewer` and `dev-admin`, password equal to the username). Without `OIDC_ISSUER` the localhost dev sign-in is used, and `scripts/smoke.ts` only works in that mode.

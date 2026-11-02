@@ -72,7 +72,7 @@ def evaluate(assessment: dict | None, dossier_stage: str | None, request: dict, 
     if not assessment:
         return deny("no assessment")
     if not assessment.get("reviewedBy") or not assessment.get("reviewedAt"):
-        return deny("an approval must name an accountable human reviewer and a review date")
+        return deny("an approval must name an accountable approving account (a person or an AI agent) and a review date")
 
     reasons: list[str] = []
     scope = _parse(assessment.get("approvedScope"), "approved scope", reasons)

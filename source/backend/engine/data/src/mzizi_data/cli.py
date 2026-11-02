@@ -48,6 +48,17 @@ def main(argv: list[str] | None = None) -> int:
     bt.add_argument("--ocr", action="store_true", help="read scanned pages with Tesseract")
     bt.add_argument("--stage", choices=["foundation", "budget"], default="foundation", help="foundation = fiscal year and units; budget = budgets, after those are promoted")
     bt.add_argument("--store", default=".data/objects")
+    bs = sub.add_parser("import-budget-summary", help="stage fiscal year, unit and budget candidates from a scanned 'summary of budget' page; refuses a table that does not add up")
+    for name in ("file", "--jurisdiction", "--fiscal-year", "--title", "--publisher-code", "--publisher-name"):
+        bs.add_argument(name, **({} if name == "file" else {"required": True}))
+    bs.add_argument("--column", type=int, default=3, help="0-based amount column (default 3: the budget estimates of the year)")
+    bs.add_argument("--url", default=None)
+    bs.add_argument("--stage", choices=["foundation", "budget"], default="foundation")
+    bs.add_argument("--store", default=".data/objects")
+    fe = sub.add_parser("fetch", help="live, gated, rate-limited fetch of one URL for a registered site (robots.txt respected); saves the raw bytes")
+    fe.add_argument("--site", required=True, help="site code, e.g. ke/parliament")
+    fe.add_argument("--url", required=True)
+    fe.add_argument("--out", required=True, help="directory for the saved file")
     wb = sub.add_parser("import-worldbank", help="stage population candidates from a saved World Bank SP.POP.TOTL JSON file")
     wb.add_argument("file")
     wb.add_argument("--iso3", required=True)
@@ -118,6 +129,24 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{name}: {out.stats[name].created} new, {out.stats[name].unchanged} unchanged (run {out.runs[name]})")
         for problem in out.problems:
             print(f"note: {problem}")
+        return 0
+    if args.command == "import-budget-summary":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import budget_summary
+
+        with connect() as conn:
+            out = budget_summary.import_budget_summary(conn, LocalDirectoryStore(conn, args.store), args.file, args.jurisdiction, args.fiscal_year, args.title, args.publisher_code, args.publisher_name, column=args.column, url=args.url, stages=("budget",) if args.stage == "budget" else ("fiscal_year", "unit"))
+        for name in out.stats:
+            print(f"{name}: {out.stats[name].created} new, {out.stats[name].unchanged} unchanged (run {out.runs[name]})")
+        return 0
+    if args.command == "fetch":
+        from .db import connect
+        from .fetch import live_fetcher
+        from .fetchcmd import fetch_to_directory
+
+        with connect() as conn:
+            print(fetch_to_directory(conn, live_fetcher, args.site, args.url, args.out))
         return 0
     if args.command == "import-worldbank":
         from .db import connect

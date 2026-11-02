@@ -34,14 +34,15 @@ beforeAll(async () => {
 });
 
 describe("permissions", () => {
-  it("lets a reviewer read the pipeline but not promote or approve", () => {
+  it("lets a reviewer read the pipeline, approve and promote, but not manage access", () => {
     expect(satisfies("reviewer", "PipelineReadAccess")).toBe(true);
-    expect(satisfies("reviewer", "CandidatePromoteAccess")).toBe(false);
-    expect(satisfies("reviewer", "AssessmentApproveAccess")).toBe(false);
+    expect(satisfies("reviewer", "CandidatePromoteAccess")).toBe(true);
+    expect(satisfies("reviewer", "AssessmentApproveAccess")).toBe(true);
+    expect(satisfies("reviewer", "AccessManageAccess")).toBe(false);
   });
   it("lets an admin do everything and a direct grant widen a reviewer", () => {
     expect(satisfies("admin", "CandidatePromoteAccess")).toBe(true);
-    expect(satisfies("reviewer", "CandidatePromoteAccess", ["candidate.promote"])).toBe(true);
+    expect(satisfies("contributor", "CandidatePromoteAccess", ["candidate.promote"])).toBe(true);
     expect(satisfies("reader", "CandidatePromoteAccess", ["not.a.permission"])).toBe(false);
   });
 });

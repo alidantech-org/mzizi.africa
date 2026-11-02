@@ -32,13 +32,10 @@ Counts at the end of this run: API 14,149 unit tests, database engine 81, data e
 
 ## Not done, and why (gaps and limitations)
 
-**Needs a human (an agent must not do these)**
-- Name the six accountable roles and create reviewer grants (`KENYA_JURISDICTION_DOSSIER.md`).
-- Confirm every recorded licence; approve or reject source assessments (none exist; the gate refuses all sites).
-- Counsel review of the Kenya dossier; verify the law lists against official texts; decide on ODPC registration and DPIA.
-- Assess the external AI provider and other processors before any personal or restricted content is sent.
-- Provide a monitored contact address and bot page; set `MZIZI_USER_AGENT`. Until then the engine refuses live requests, so **no live probe, crawl or drift check has ever run against a real site**.
-- Record real review decisions through the API (tests use a test reviewer account).
+**Approvals (DEC-AUTO-APPROVAL: a person or an AI agent may do these, recorded against the account)**
+- Source assessments and dossier stages: sites under a trusted suffix (`.go.ke`) are approved by `auto-assess`; the Kenya dossier was moved to pilot by the agent account on 2 November 2026. Other suffixes need an entry in `fixtures/policy/trusted-domains.json` or an explicit approval.
+- Licences are still recorded as unconfirmed for imported documents; counsel review of the Kenya dossier, ODPC registration and the DPIA remain open questions in the dossier, now carried by rules and the audit trail rather than a gate.
+- The production contact and bot page for `MZIZI_USER_AGENT` (development uses `.data/env.local`).
 
 **Engineering gaps (tasks exist)**
 - Tier B extractors: PDF (text, tables, scan detection) and HTML legal text exist (DEC-PDF-EXTRACTION); OCR is not performed, table column alignment is left to mappings, and the legacy pdf_extractor was never run.
@@ -65,3 +62,9 @@ Counts at the end of this run: API 14,149 unit tests, database engine 81, data e
 Built: the `access` catalogue (roles, permissions, `account_permissions`) and permission-based API checks; a read-only reviewer database role; the reviewer-only `pipeline` API (candidates with detail, runs, jobs, sites, documents, captures, structure versions, checks, assessments, dossiers, draft an assessment (reviewer), apply decisions, promote, approve or reject assessment (admin)); human-only assessment decisions in the database engine; Tesseract OCR with English and Swahili behind the `ocr` profile; table realignment and the budget-table import (fiscal year, units, budgets) reaching `finance.budgets`; and the review workbench at `/review` in `source/apps/web` on Bun (queue, candidate detail, decisions, promote, runs, jobs, sites, documents, captures, structure versions, checks, assessments with a draft form, dossiers, and a read-only canonical data browser over the API's list routes), with unit tests, a smoke script (`bun scripts/smoke.ts`) and the API checking JWKS single sign-on tokens.
 
 Still open: no live request has ever run and none is permitted (no approved assessment, dossier at research); a named human must approve an assessment in the workbench and move the Kenya dossier to pilot before that changes, and an agent must not. `MZIZI_USER_AGENT` is set only in the git-ignored `.data/env.local`; the production contact and bot page are added at deployment. The budget table mapping is proven on a generated PDF because no real Parliament PDF is stored in the repo and fetching one is a live request; the end-to-end review of that import in tests used SQL-inserted decisions, while the decide, apply and promote path through the API was checked by hand on the dev database. The data browser has pagination but no filters yet. The inherited `/admin` pages build and return 200 on Bun but need `SERVER_URL` and the file and scraper service, which are not running here. Five orphaned inherited login and dashboard components that imported modules that no longer exist were removed so the app type checks. Dev sign-in is not real authentication: the API verifier already accepts an identity provider's tokens (`AUTH_JWKS_URL`, tested with a local JWKS server), but the web app has no OIDC login flow yet because no provider is chosen.
+
+## 2 November 2026 (evening): live extraction and a real import
+
+- Live: after `auto-assess` and `advance-dossier`, the gated `fetch` command retrieved the Parliament of Kenya budget pages and the National Treasury "Budget Summary FY 2026/27" PDF (36 MB, a scan). Four requests to `www.parliament.go.ke`, identified by `MZIZI_USER_AGENT`, 0.2/s, robots.txt respected, the assessment id recorded in each provenance file.
+- Real import: `import-budget-summary` read Table 3 (page 22) with Tesseract under several renderings, accepted only values whose sums add up (arms = national government; national + consolidated fund services + county = total), and staged the fiscal year, five units and five budgets. The agent account validated, approved and promoted them: `finance.budgets` now holds KSh 2,817,388.2m Executive, 48,690.7m Parliament, 30,441.8m Judiciary, 1,501,327.1m Consolidated Fund Services and 420,000.0m County Governments for FY 2026/27. The 2025/26 column was not staged because OCR misread a digit there; the totals caught it.
+- Single sign-on: `source/dev/keycloak` (realm fixture) plus an OIDC code-with-PKCE login in the workbench; the API verifies Keycloak tokens by JWKS. Production points `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `AUTH_ISSUER` and `AUTH_JWKS_URL` at the real provider.

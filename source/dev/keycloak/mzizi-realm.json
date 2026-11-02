@@ -1,0 +1,34 @@
+{
+  "realm": "mzizi",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "accessTokenLifespan": 3600,
+  "ssoSessionIdleTimeout": 28800,
+  "roles": { "realm": [
+    { "name": "reader" }, { "name": "contributor" }, { "name": "reviewer" }, { "name": "admin" }
+  ] },
+  "clients": [
+    {
+      "clientId": "mzizi-web",
+      "name": "Mzizi review workbench",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost:3100/review/auth/callback"],
+      "webOrigins": ["http://localhost:3100"],
+      "attributes": { "pkce.code.challenge.method": "S256", "post.logout.redirect.uris": "http://localhost:3100/review/login" },
+      "protocolMappers": [
+        { "name": "roles", "protocol": "openid-connect", "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": { "claim.name": "roles", "jsonType.label": "String", "multivalued": "true", "access.token.claim": "true", "id.token.claim": "true", "userinfo.token.claim": "false" } }
+      ]
+    }
+  ],
+  "users": [
+    { "id": "00000000-0000-4000-8000-0000000000a1", "username": "dev-reviewer", "enabled": true, "email": "dev-reviewer@mzizi.local", "emailVerified": true, "firstName": "Dev", "lastName": "Reviewer",
+      "credentials": [{ "type": "password", "value": "dev-reviewer", "temporary": false }], "realmRoles": ["reviewer"] },
+    { "id": "00000000-0000-4000-8000-0000000000a2", "username": "dev-admin", "enabled": true, "email": "dev-admin@mzizi.local", "emailVerified": true, "firstName": "Dev", "lastName": "Admin",
+      "credentials": [{ "type": "password", "value": "dev-admin", "temporary": false }], "realmRoles": ["admin"] }
+  ]
+}

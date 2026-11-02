@@ -13,7 +13,7 @@ export default async function QueuePage({ searchParams }: { searchParams: Promis
   return (
     <>
       <h1>Review queue</h1>
-      <p className="sub">Staged candidates waiting for a human decision. Nothing here is canonical until a reviewer approves it and it is promoted.</p>
+      <p className="sub">Staged candidates waiting for a decision from a reviewer, a person or an AI agent. Nothing here is canonical until a reviewer approves it and it is promoted; each decision names the approving account.</p>
       <Notice bad={error} />
       <div className="rv-filters" role="group" aria-label="Filter by status">
         {[...STATUSES, 'all'].map((s) => (

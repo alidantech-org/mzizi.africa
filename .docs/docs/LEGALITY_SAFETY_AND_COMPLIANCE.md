@@ -208,7 +208,9 @@ If the licence is missing, ambiguous, incompatible with Mzizi's intended use or 
 
 For public outputs, prefer factual values and short, necessary quotations with clear citations over reproducing whole reports. A source link and attribution are good provenance, but do not cure an otherwise unauthorised reproduction.
 
-## 8. Human-in-the-loop and AI agent boundaries
+## 8. Approvals and AI agent boundaries
+
+Updated by DEC-AUTO-APPROVAL: an AI agent or a person may approve, always as a named account and with the rule recorded. The lists below remain the limits of what an agent may conclude on its own judgement; trusted domain suffixes and the approval permissions are how approval is delegated.
 
 AI agents may:
 - discover candidate sources and official domains;
@@ -219,16 +221,16 @@ AI agents may:
 - generate evidence-backed review summaries.
 
 AI agents must not:
-- declare a source legally approved solely from a page scan;
+- declare a source legally approved solely from a page scan, except under a recorded trusted-domain rule;
 - infer permission from public reachability;
-- override a human restriction or legal-review decision;
+- override a restriction or legal-review decision recorded against another account;
 - decide that personal-data processing has a lawful basis without accountable review;
 - bypass a block or security control;
 - publish uncertain licence conclusions as facts.
 
 **Separate technical validation from legal/source approval.** A structure may pass JSON Schema, static checks and dry-run validation while its source remains legally unapproved. Structure publication must not activate collection unless the source's access policy and legal status permit it.
 
-For each source, the human review should confirm identity and authority, jurisdiction, access route, terms, licence, data categories, purpose, request policy and publication scope. Sensitive or ambiguous cases require legal/privacy review.
+For each source, the approving account (a person, an AI agent, or the trusted-domain rule) should confirm identity and authority, jurisdiction, access route, terms, licence, data categories, purpose, request policy and publication scope. Sensitive or ambiguous cases require legal/privacy review.
 
 Extracted records remain subject to Mzizi's existing candidate, validation, review and promotion lifecycle. Technical extraction success is not legal approval or proof that a record is accurate.
 

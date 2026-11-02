@@ -5,7 +5,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     <TablePage
       route="/review/structure"
       path="/pipeline/structure-versions"
-      key="structureVersions"
+      rowsKey="structureVersions"
       page={(await searchParams).page}
       title="Structure versions"
       sub="Versioned descriptions of how a site is laid out, used by extraction. A new layout is a new version, never an edit."

@@ -5,7 +5,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     <TablePage
       route="/review/captures"
       path="/pipeline/captures"
-      key="captures"
+      rowsKey="captures"
       page={(await searchParams).page}
       title="Captures"
       sub="Every retrieval of a document, with its time, status, tool and content hash, so a claim can be traced to what was actually fetched."

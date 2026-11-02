@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 
 import { openDataSource, withDatabase } from "../src/config.ts";
-import { decideAssessment, draftAssessment } from "../src/assessments.ts";
+import { advanceDossier, autoAssess, decideAssessment, draftAssessment } from "../src/assessments.ts";
 import { checkCollection } from "../src/gate.ts";
 import { checkIntegrity } from "../src/integrity.ts";
 import { drift, migrate } from "../src/migrations.ts";
@@ -53,17 +53,20 @@ run("database engine", () => {
     const rows = await db.query(`SELECT permission_code FROM access.account_permissions WHERE account_id = $1`, [account.id]);
     const codes = rows.map((row: { permission_code: string }) => row.permission_code);
     expect(codes).toContain("pipeline.read");
-    expect(codes).not.toContain("candidate.promote");
+    expect(codes).toContain("candidate.promote");
+    expect(codes).not.toContain("access.manage");
   });
 
   test("dev accounts are seeded once with their roles", async () => {
     await seedDevAccounts(db);
     await seedDevAccounts(db);
     const rows = await db.query(`SELECT a.subject, count(g.id)::int AS grants FROM identity.accounts a JOIN identity.grants g ON g.account_id = a.id WHERE a.issuer = 'mzizi-dev' GROUP BY a.subject ORDER BY a.subject`);
-    expect(rows).toEqual([{ subject: "dev-admin", grants: 1 }, { subject: "dev-reviewer", grants: 1 }]);
+    expect(rows.map((row: { subject: string }) => row.subject)).toEqual(["dev-admin", "dev-reviewer"]);
+    const [agent] = await db.query(`SELECT a.issuer, count(g.id)::int AS grants FROM identity.accounts a JOIN identity.grants g ON g.account_id = a.id WHERE a.subject = 'mzizi-agent' GROUP BY a.issuer`);
+    expect(agent).toEqual({ issuer: "agent-mzizi", grants: 1 });
   });
 
-  test("only a human holding assessment.approve decides an assessment, and a decision supersedes the row", async () => {
+  test("an active account holding assessment.approve decides an assessment (a person or an AI agent), and a decision supersedes the row", async () => {
     await seedDevAccounts(db);
     const [site] = await db.query(`INSERT INTO website.sites (code, name, kind, status, created_at, updated_at, version) VALUES ($1, 'Assessed', 'portal', 'expected', now(), now(), 1) RETURNING id`, [`assess-${randomUUID()}`]);
     const [draft] = await db.query(
@@ -73,10 +76,9 @@ run("database engine", () => {
     );
     const reviewer = "00000000-0000-4000-8000-0000000000a1";
     const admin = "00000000-0000-4000-8000-0000000000a2";
-    await expect(decideAssessment(db, draft.id, reviewer, "approved")).rejects.toThrow(/assessment.approve/);
-    const [agent] = await db.query(`INSERT INTO identity.accounts (issuer, subject, status, created_at, updated_at, version) VALUES ('agent-bot', 'a1', 'active', now(), now(), 1) RETURNING id`);
-    await db.query(`INSERT INTO identity.grants (account_id, role, is_current, created_at, updated_at, version) VALUES ($1, 'admin', true, now(), now(), 1)`, [agent.id]);
-    await expect(decideAssessment(db, draft.id, agent.id, "approved")).rejects.toThrow(/never decide/);
+    const [reader] = await db.query(`INSERT INTO identity.accounts (issuer, subject, status, created_at, updated_at, version) VALUES ('mzizi-dev', 'plain-reader', 'active', now(), now(), 1) RETURNING id`);
+    await db.query(`INSERT INTO identity.grants (account_id, role, is_current, created_at, updated_at, version) VALUES ($1, 'reader', true, now(), now(), 1)`, [reader.id]);
+    await expect(decideAssessment(db, draft.id, reader.id, "approved")).rejects.toThrow(/assessment.approve/);
     const decision = await decideAssessment(db, draft.id, admin, "approved");
     const rows = await db.query(`SELECT id, status::text AS status, is_current, reviewed_by, supersedes_id FROM website.assessments WHERE site_id = $1 ORDER BY created_at, status`, [site.id]);
     expect(rows).toHaveLength(2);
@@ -101,6 +103,32 @@ run("database engine", () => {
     await expect(draftAssessment(db, outsider, draft)).rejects.toThrow(/assessment.draft/);
     const gate = await checkCollection(db, { siteId: site.id, host: "drafted.example", path: "/a", purpose: "collect", requestsPerSecond: 0.2 });
     expect(gate.allowed).toBe(false);
+  });
+
+  test("trusted-domain sites are approved by the agent account and become collectable once the dossier is at pilot", async () => {
+    await seedDevAccounts(db);
+    const agent = "00000000-0000-4000-8000-0000000000a3";
+    const [ke] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = 'ke'`);
+    const [site] = await db.query(`INSERT INTO website.sites (code, name, kind, status, jurisdiction_id, created_at, updated_at, version) VALUES ($1, 'Trusted', 'portal', 'expected', $2, now(), now(), 1) RETURNING id`, [`trusted-${randomUUID()}`, ke.id]);
+    await db.query(`INSERT INTO website.domains (site_id, hostname, scheme, role, valid_from, valid_from_precision, created_at, updated_at, version) VALUES ($1, 'www.example.go.ke', 'https', 'primary', '2020-01-01', 'year', now(), now(), 1)`, [site.id]);
+    const [other] = await db.query(`INSERT INTO website.sites (code, name, kind, status, jurisdiction_id, created_at, updated_at, version) VALUES ($1, 'Untrusted', 'portal', 'expected', $2, now(), now(), 1) RETURNING id`, [`untrusted-${randomUUID()}`, ke.id]);
+    await db.query(`INSERT INTO website.domains (site_id, hostname, scheme, role, valid_from, valid_from_precision, created_at, updated_at, version) VALUES ($1, 'www.example.com', 'https', 'primary', '2020-01-01', 'year', now(), now(), 1)`, [other.id]);
+
+    const [dossier] = await db.query(`SELECT id FROM website.dossiers WHERE jurisdiction_id = $1 AND is_current`, [ke.id]);
+    if (!dossier) await db.query(`INSERT INTO website.dossiers (id, jurisdiction_id, applicable_laws, launch_stage, is_current, created_at, updated_at, version) VALUES ($1, $2, '[]', 'research', true, now(), now(), 1)`, [randomUUID(), ke.id]);
+    const result = await autoAssess(db, agent);
+    expect(result.approved.some((code: string) => code.startsWith("trusted-"))).toBe(true);
+    expect(result.skipped.some((code: string) => code.startsWith("untrusted-"))).toBe(true);
+    const [row] = await db.query(`SELECT status::text AS status, reviewed_by, jurisdiction_id FROM website.assessments WHERE site_id = $1 AND is_current`, [site.id]);
+    expect(row).toMatchObject({ status: "approved", reviewed_by: agent });
+    const request = { siteId: site.id, host: "www.example.go.ke", path: "/a.pdf", purpose: "collect" as const, requestsPerSecond: 0.2 };
+    const blocked = await checkCollection(db, request);
+    if (!blocked.allowed) expect(blocked.reasons.join(" ")).toContain("dossier");
+    await advanceDossier(db, agent, "ke", "pilot");
+    expect((await checkCollection(db, request)).allowed).toBe(true);
+    expect((await checkCollection(db, { ...request, host: "www.example.com" })).allowed).toBe(false);
+    await db.query(`UPDATE website.dossiers SET supersedes_id = NULL WHERE jurisdiction_id = $1`, [ke.id]);
+    await db.query(`DELETE FROM website.dossiers WHERE jurisdiction_id = $1`, [ke.id]);
   });
 
   test("staging rows track updated_at and version", async () => {

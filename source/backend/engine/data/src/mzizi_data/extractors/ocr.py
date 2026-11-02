@@ -14,7 +14,9 @@ import shutil
 import subprocess
 
 DEFAULT_LANGUAGES = "eng+swa"
-RENDER_SCALE = 3  # about 216 dpi from a 72 dpi page
+# Page segmentation 4 (one column of variable-sized text) keeps table rows on one line, which 3 often splits.
+PSM = "4"
+RENDER_SCALE = 4  # about 288 dpi from a 72 dpi page; table digits read more reliably than at 216
 TIMEOUT_SECONDS = 120
 
 
@@ -42,7 +44,7 @@ def check(languages: str = DEFAULT_LANGUAGES) -> str:
 
 def recognise(png: bytes, languages: str = DEFAULT_LANGUAGES) -> tuple[str, float]:
     """Text and mean word confidence (0..1) for one page image."""
-    out = subprocess.run(["tesseract", "stdin", "stdout", "-l", languages, "--psm", "3", "tsv"], input=png, capture_output=True, timeout=TIMEOUT_SECONDS)
+    out = subprocess.run(["tesseract", "stdin", "stdout", "-l", languages, "--psm", PSM, "tsv"], input=png, capture_output=True, timeout=TIMEOUT_SECONDS)
     if out.returncode != 0:
         raise OcrUnavailable(out.stderr.decode(errors="replace")[:200])
     rows = list(csv.DictReader(io.StringIO(out.stdout.decode("utf-8", errors="replace")), delimiter="\t", quoting=csv.QUOTE_NONE))

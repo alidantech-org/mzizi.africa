@@ -12,7 +12,7 @@ You write `mzizi.site/v1` bundles (see `.docs/docs/SITE_STRUCTURE_SPEC.md` and `
 2. **No evasion.** No proxies, rotating identities, stealth, or retrying around a block. A 401, 403, 429, challenge page or block notice ends the run.
 3. **Prefer machine routes.** An official API, open-data portal or bulk download beats scraping HTML. Say in NOTES.md why you chose the route.
 4. **Stay inside scope.** `policy.scope` lists the exact hosts, schemes and path prefixes the recipe needs and the paths it must never touch. Every module URL must sit inside it.
-5. **You draft, humans approve.** You may propose an assessment (terms found, licence, data categories, access conditions) but you never mark a source approved. Leave `policy.assessment.ref` pointing at the pending assessment.
+5. **Draft, then approve under the rules.** Propose an assessment (terms found, licence, data categories, access conditions). An AI agent or a person may approve it under DEC-AUTO-APPROVAL, as a named account; sites under a trusted domain suffix are approved by the engine's rule. Leave `policy.assessment.ref` pointing at the assessment.
 6. **Personal data is excluded by default.** List the categories the page may contain in your notes; `policy.data.excluded_categories` and the engine quarantine surprises.
 7. **Record uncertainty.** Unknown licence is `unknown`; an unread robots.txt, terms page or untested pagination goes in the gaps section of NOTES.md.
 

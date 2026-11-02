@@ -4,7 +4,10 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { api, ApiError } from '@/lib/review/api';
-import { signIn, signOut, type DevRole } from '@/lib/review/auth';
+import { headers } from 'next/headers';
+
+import { oidcConfigured, signIn, signOut, type DevRole } from '@/lib/review/auth';
+import { logoutUrl } from '@/lib/review/oidc';
 
 export async function signInAction(formData: FormData): Promise<void> {
   const role = formData.get('role') === 'admin' ? 'admin' : 'reviewer';
@@ -14,6 +17,11 @@ export async function signInAction(formData: FormData): Promise<void> {
 
 export async function signOutAction(): Promise<void> {
   await signOut();
+  if (oidcConfigured()) {
+    const host = (await headers()).get('host') ?? 'localhost:3100';
+    const target = await logoutUrl(`http://${host}/review/login`).catch(() => null);
+    if (target) redirect(target);
+  }
   redirect('/review/login');
 }
 
@@ -21,7 +29,7 @@ function back(path: string, kind: 'ok' | 'bad', message: string): never {
   redirect(`${path}?${kind}=${encodeURIComponent(message)}`);
 }
 
-/** Records a human review decision, then asks the database engine to apply it to the candidate. */
+/** Records a review decision, then asks the database engine to apply it to the candidate. */
 export async function decideAction(decision: 'approve' | 'request_changes' | 'reject', formData: FormData): Promise<void> {
   const id = String(formData.get('id'));
   const path = `/review/candidates/${id}`;
@@ -62,7 +70,7 @@ export async function assessmentAction(verb: 'approve' | 'reject', formData: For
     throw error;
   }
   revalidatePath('/review/assessments');
-  back('/review/assessments', 'ok', verb === 'approve' ? 'Assessment approved under your name.' : 'Assessment rejected.');
+  back('/review/assessments', 'ok', verb === 'approve' ? 'Assessment approved and recorded against your account.' : 'Assessment rejected.');
 }
 
 /** A reviewer drafts an assessment. It is recorded as in_review and never authorises collection by itself. */

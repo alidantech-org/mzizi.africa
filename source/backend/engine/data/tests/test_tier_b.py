@@ -147,3 +147,30 @@ def test_ocr_flags_an_unreadable_blank_scan():
     out = run("pdf", buffer.getvalue(), "ocr")
     assert any(d["code"] == "ocr_no_text" for d in out.diagnostics)
     assert out.status != "succeeded" or not out.segments
+
+
+def test_fetch_command_saves_bytes_and_provenance(tmp_path):
+    from mzizi_data.fetch import FetchResult
+    from mzizi_data.fetchcmd import fetch_to_directory
+
+    class Row(dict):
+        pass
+
+    class Conn:
+        def execute(self, *_a):
+            class R:
+                def fetchone(_s):
+                    return {"id": "11111111-1111-4111-8111-111111111111"}
+
+            return R()
+
+    class Fetcher:
+        user_agent = "test-agent (+https://bot.example; ops@example.org)"
+
+        def get(self, url):
+            return FetchResult(url, 200, {"content-type": "application/pdf"}, b"%PDF-1.4 test", False, "assessment-1")
+
+    saved = fetch_to_directory(Conn(), lambda *_a, **_k: Fetcher(), "ke/parliament", "https://www.parliament.go.ke/files/budget.pdf", str(tmp_path))
+    assert open(saved, "rb").read() == b"%PDF-1.4 test"
+    meta = json.loads(open(saved + ".provenance.json").read())
+    assert meta["assessment_id"] == "assessment-1" and meta["site"] == "ke/parliament" and meta["bytes"] == 13

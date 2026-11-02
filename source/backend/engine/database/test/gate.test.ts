@@ -52,7 +52,7 @@ describe("collection gate: status", () => {
     expect(decision.reasons.join(" ")).toContain("overdue");
   });
 
-  test("an approval needs a named human reviewer", () => {
+  test("an approval needs an accountable approving account", () => {
     expect(evaluate(approved({ reviewedBy: null }), "pilot", request()).allowed).toBe(false);
   });
 });

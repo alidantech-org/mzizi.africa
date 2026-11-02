@@ -24,8 +24,29 @@ export async function devSignInAllowed(): Promise<boolean> {
   return LOCAL.has(host);
 }
 
+/** Single sign-on (OpenID Connect, authorization code with PKCE) is used whenever OIDC_ISSUER is set; otherwise the localhost dev sign-in. */
+export const oidcConfigured = (): boolean => Boolean(process.env.OIDC_ISSUER && process.env.OIDC_CLIENT_ID);
+export const ACCESS_COOKIE = 'mzizi_access';
+
+/** The highest known role in a token's `roles` claim. The API verifies the token for real; this only decides what the UI shows. */
+export function roleFromToken(token: string): DevRole | null {
+  try {
+    const payload = JSON.parse(Buffer.from(token.split('.')[1] ?? '', 'base64url').toString('utf8')) as { roles?: unknown; exp?: number };
+    if (payload.exp && payload.exp * 1000 < Date.now()) return null;
+    const roles = Array.isArray(payload.roles) ? payload.roles : [];
+    return roles.includes('admin') ? 'admin' : roles.includes('reviewer') ? 'reviewer' : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function currentRole(): Promise<DevRole | null> {
-  const value = (await cookies()).get(COOKIE)?.value;
+  const jar = await cookies();
+  if (oidcConfigured()) {
+    const token = jar.get(ACCESS_COOKIE)?.value;
+    return token ? roleFromToken(token) : null;
+  }
+  const value = jar.get(COOKIE)?.value;
   return value === 'reviewer' || value === 'admin' ? value : null;
 }
 
@@ -35,7 +56,9 @@ export async function signIn(role: DevRole): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
-  (await cookies()).delete(COOKIE);
+  const jar = await cookies();
+  jar.delete(COOKIE);
+  jar.delete(ACCESS_COOKIE);
 }
 
 function privateKeyPem(): string {
@@ -44,6 +67,11 @@ function privateKeyPem(): string {
 }
 
 export async function mintToken(): Promise<string> {
+  if (oidcConfigured()) {
+    const token = (await cookies()).get(ACCESS_COOKIE)?.value;
+    if (!token || !roleFromToken(token)) throw new Error('not signed in');
+    return token;
+  }
   const role = await currentRole();
   if (!role) throw new Error('not signed in');
   if (!(await devSignInAllowed())) throw new Error('development sign-in is only available on localhost');

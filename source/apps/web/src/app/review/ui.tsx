@@ -64,10 +64,10 @@ export function ago(value: string | null | undefined): string {
 export type Column = { label: string; field: string; kind?: 'badge' | 'time' | 'mono' };
 
 /** One paged table over a reviewer list endpoint; the rows live under `key` in the response. */
-export async function TablePage({ title, sub, path, key, columns, page, route }: { title: string; sub: string; path: string; key: string; columns: Column[]; page?: string; route: string }) {
+export async function TablePage({ title, sub, path, rowsKey, columns, page, route }: { title: string; sub: string; path: string; rowsKey: string; columns: Column[]; page?: string; route: string }) {
   await requireRole();
   const { data, error } = await load<Record<string, any>>(path, { page });
-  const rows: Record<string, any>[] = data?.[key] ?? [];
+  const rows: Record<string, any>[] = data?.[rowsKey] ?? [];
   return (
     <>
       <h1>{title}</h1>

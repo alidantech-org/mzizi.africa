@@ -14,3 +14,4 @@ for (const role of ['reviewer', 'admin']) {
 const anonymous = await fetch(`${base}/review`, { redirect: 'manual' });
 if (anonymous.status !== 307 && anonymous.status !== 303) { failed++; console.log(`FAIL anonymous /review should redirect to login, got ${anonymous.status}`); }
 process.exit(failed ? 1 : 0);
+export {};

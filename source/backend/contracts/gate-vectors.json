@@ -29,7 +29,7 @@
     { "name": "expired, collect", "assessment": { "status": "expired" }, "expect": { "allowed": false, "reason": "expired" } },
     { "name": "expired, assess", "assessment": { "status": "expired" }, "request": { "purpose": "assess" }, "expect": { "allowed": true } },
     { "name": "overdue review is treated as expired", "assessment": { "reviewDueAt": "2026-10-31T00:00:00Z" }, "expect": { "allowed": false, "reason": "overdue" } },
-    { "name": "approval without a named reviewer", "assessment": { "reviewedBy": null }, "expect": { "allowed": false, "reason": "accountable human reviewer" } },
+    { "name": "approval without a named reviewer", "assessment": { "reviewedBy": null }, "expect": { "allowed": false, "reason": "accountable approving account" } },
     { "name": "other host", "request": { "host": "other.go.ke" }, "expect": { "allowed": false, "reason": "outside the approved scope" } },
     { "name": "denied path", "request": { "path": "/publications/internal/x.pdf" }, "expect": { "allowed": false, "reason": "is denied" } },
     { "name": "path outside allow list", "request": { "path": "/admin/" }, "expect": { "allowed": false, "reason": "not in the allowed paths" } },

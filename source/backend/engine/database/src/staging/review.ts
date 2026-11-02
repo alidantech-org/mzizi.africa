@@ -58,3 +58,28 @@ export async function applyReviewDecisions(db: DataSource): Promise<{ approved: 
   }
   return tally;
 }
+
+/**
+ * Review by an accountable account (a person or an AI agent) holding `review.decide`: approves every candidate of a
+ * run that passed validation (status in_review, no error-severity issue). Each decision is a row in `audit.decisions`
+ * naming the account and the rule applied, exactly like a person's decision, then applied by `applyReviewDecisions`.
+ */
+export async function reviewRun(db: DataSource, runId: string, actorId: string, rationale: string): Promise<{ approved: number; skipped: number }> {
+  const [allowed] = await db.query(`SELECT 1 AS ok FROM access.account_permissions WHERE account_id = $1 AND permission_code = 'review.decide' LIMIT 1`, [actorId]);
+  if (!allowed) throw new Error("the account does not hold review.decide");
+  if (!rationale.trim()) throw new Error("a rationale is required");
+  const rows: { id: string }[] = await db.query(
+    `SELECT c.id FROM staging.candidates c WHERE c.run_id = $1 AND c.status = 'in_review'
+       AND NOT EXISTS (SELECT 1 FROM staging.issues i WHERE i.candidate_id = c.id AND i.severity = 'error')
+       AND NOT EXISTS (SELECT 1 FROM audit.decisions d WHERE d.target_kind = 'staging.candidates' AND d.target_id = c.id AND d.reviewer_id = $2)`,
+    [runId, actorId],
+  );
+  for (const row of rows) {
+    await db.query(
+      `INSERT INTO audit.decisions (target_kind, target_id, decision, proposed_state, rationale, reviewer_id, created_at, updated_at, version) VALUES ('staging.candidates', $1, 'approve', 'unverified', $2, $3, now(), now(), 1)`,
+      [row.id, rationale, actorId],
+    );
+  }
+  const [{ total }] = await db.query(`SELECT count(*)::int AS total FROM staging.candidates WHERE run_id = $1`, [runId]);
+  return { approved: rows.length, skipped: total - rows.length };
+}

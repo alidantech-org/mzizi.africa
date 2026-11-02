@@ -15,7 +15,7 @@ export type Permission = (typeof PERMISSIONS)[number];
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
   reader: ["record.read"],
   contributor: ["record.read", "comment.create", "evidence.create"],
-  reviewer: ["record.read", "comment.create", "evidence.create", "review.decide", "pipeline.read", "assessment.draft"],
+  reviewer: ["record.read", "comment.create", "evidence.create", "review.decide", "pipeline.read", "assessment.draft", "assessment.approve", "candidate.promote"],
   admin: PERMISSIONS,
 };
 

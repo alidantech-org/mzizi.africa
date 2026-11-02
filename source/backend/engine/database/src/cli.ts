@@ -23,10 +23,10 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataSource, targetUrl } from "./config.ts";
-import { decideAssessment, draftAssessment, type AssessmentOutcome } from "./assessments.ts";
+import { advanceDossier, autoAssess, decideAssessment, draftAssessment, type AssessmentOutcome } from "./assessments.ts";
 import { checkIntegrity } from "./integrity.ts";
 import { grantReadOnly, grantReviewerRead } from "./grants.ts";
-import { applyReviewDecisions } from "./staging/review.ts";
+import { applyReviewDecisions, reviewRun } from "./staging/review.ts";
 import { promoteApproved, promoteCandidate } from "./staging/promotion.ts";
 import { validateCandidates } from "./staging/validation.ts";
 import { drift, generate, migrate, revertLast } from "./migrations.ts";
@@ -147,6 +147,23 @@ switch (command) {
     const [actorId, json] = [argument, process.argv[4]];
     if (!actorId || !json) throw new Error("usage: draft-assessment <actorAccountId> '<json draft>'");
     console.log(JSON.stringify(await withDb({}, (db) => draftAssessment(db, actorId, JSON.parse(json)))));
+    break;
+  }
+  case "auto-assess": {
+    if (!argument) throw new Error("usage: auto-assess <actorAccountId>");
+    console.log(JSON.stringify(await withDb({}, (db) => autoAssess(db, argument))));
+    break;
+  }
+  case "advance-dossier": {
+    const [jurisdiction, stage] = [process.argv[4], process.argv[5]];
+    if (!argument || !jurisdiction || !stage) throw new Error("usage: advance-dossier <actorAccountId> <jurisdictionCode> <stage>");
+    console.log(JSON.stringify(await withDb({}, (db) => advanceDossier(db, argument, jurisdiction, stage))));
+    break;
+  }
+  case "review-run": {
+    const [actorId, runId, rationale] = [argument, process.argv[4], process.argv[5]];
+    if (!actorId || !runId || !rationale) throw new Error("usage: review-run <actorAccountId> <runId> '<rationale>'");
+    console.log(JSON.stringify(await withDb({}, (db) => reviewRun(db, runId, actorId, rationale))));
     break;
   }
   case "candidates": {

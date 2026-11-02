@@ -84,7 +84,7 @@ export function evaluate(assessment: AssessmentRecord | undefined, dossierStage:
 
   if (effective !== "approved" && effective !== "approved_with_conditions") return deny(effective === "expired" && overdue ? "the assessment review is overdue" : `legal status is ${effective}`);
   if (!assessment) return deny("no assessment");
-  if (!assessment.reviewedBy || !assessment.reviewedAt) return deny("an approval must name an accountable human reviewer and a review date");
+  if (!assessment.reviewedBy || !assessment.reviewedAt) return deny("an approval must name the accountable approving account (a person or an AI agent) and a review date");
 
   const reasons: string[] = [];
   const scope = parse<Scope>(assessment.approvedScope, "approved scope", reasons);

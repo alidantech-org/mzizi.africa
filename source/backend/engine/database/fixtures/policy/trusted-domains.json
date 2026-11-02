@@ -1,0 +1,6 @@
+{
+  "note": "Domain suffixes whose public sites the engine may assess and approve for bounded, identified, robots-respecting collection without a person in the loop (DEC-AUTO-APPROVAL). Add suffixes as jurisdictions are opened. Every approval is still recorded against the approving account (human or AI), with the rule that justified it.",
+  "suffixes": [
+    { "suffix": ".go.ke", "jurisdiction": "ke", "rightsHolder": "Government of Kenya (public body)", "maxRequestsPerSecond": 0.2 }
+  ]
+}
