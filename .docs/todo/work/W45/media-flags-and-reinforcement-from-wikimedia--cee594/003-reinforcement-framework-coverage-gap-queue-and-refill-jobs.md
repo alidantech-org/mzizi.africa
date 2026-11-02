@@ -1,5 +1,5 @@
 ---
-{id: TSK-BF88B31E115A,name: "Reinforcement framework: coverage, gap queue and refill jobs",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:42.756Z,updated_at: 2026-11-02T20:02:42.756Z,order: 3072}
+{id: TSK-BF88B31E115A,name: "Reinforcement framework: coverage, gap queue and refill jobs",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:02:42.756Z,updated_at: 2026-11-02T22:01:58.649Z,order: 3072,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:01:58.649Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-BF88B31E115A/1793656918651-start,started_at: 2026-11-02T22:01:59.158Z}]}}}
 ---
 
 # Reinforcement framework: coverage, gap queue and refill jobs
@@ -19,4 +19,4 @@ Because the schema accepts missing data almost everywhere, completeness is a mea
 - [ ] Add a refill job type to the job runner with a handler per source.
 - [ ] Route found values through staging and review rather than writing them directly.
 - [ ] Publish a coverage report in the status document and the review workbench.
-- [ ] Add tests for gap creation, an attempt that finds nothing, and a refill that goes through review.
+- [x] Add tests for gap creation, an attempt that finds nothing, and a refill that goes through review.
