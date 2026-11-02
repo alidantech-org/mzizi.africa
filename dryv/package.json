@@ -8,14 +8,15 @@
     "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
     "contracts:doctor": "dryv-ts doctor contracts/index.ts",
     "contracts:compile": "dryv-ts compile contracts/index.ts",
-    "check": "bun run typecheck && bun run contracts:audit && bun run contracts:doctor && bun run contracts:compile > /dev/null && bun run access:check",
+    "check": "bun run typecheck && bun run contracts:audit && bun run contracts:doctor && bun run contracts:compile > /dev/null && bun run access:check && bun run boundary:check",
     "link": "bash scripts/link-dryv.sh",
     "contracts:audit": "bun tools/audit-contracts.ts",
     "generated:check": "bun tools/check-generated.ts",
     "prepare": "bash scripts/link-dryv.sh",
     "access:export": "bun tools/export-access.ts",
     "access:check": "bun tools/export-access.ts --check",
-    "adopt:list": "bun tools/adopt-list-page.ts"
+    "adopt:list": "bun tools/adopt-list-page.ts",
+    "boundary:check": "bun tools/check-api-boundary.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",

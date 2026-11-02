@@ -1,5 +1,5 @@
 ---
-{id: TSK-768D87100265,name: Reconcile documentation and enforce service boundaries,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:57:03.525Z,updated_at: 2026-11-02T04:58:12.383Z,order: 13312,due_at: 2026-11-02}
+{id: TSK-768D87100265,name: Reconcile documentation and enforce service boundaries,type: task,status: completed,priority: medium,created_at: 2026-11-02T04:57:03.525Z,updated_at: 2026-11-02T05:47:16.458Z,order: 13312,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:46:10.479Z},{from: in-progress,to: completed,at: 2026-11-02T05:47:16.458Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-768D87100265/1793598370481-start,started_at: 2026-11-02T05:46:10.724Z,end_ref: refs/tracking/TSK-768D87100265/1793598436460-end,ended_at: 2026-11-02T05:47:16.458Z,summary: {files: 11,insertions: 115,deletions: 12}}]}}}
 ---
 
 # Reconcile documentation and enforce service boundaries
@@ -15,8 +15,12 @@ This is the closing task of the group, so it also confirms that no earlier task 
 
 ## Acceptance checklist
 
-- [ ] Update ARCHITECTURE.md, MIGRATION.md, DOMAINS.md, DATA_LIFECYCLE.md and repository-map.md.
-- [ ] Produce a legacy-to-new responsibility table showing what can be removed.
-- [ ] Audit the NestJS app for ingestion, scraping, migration or seeding code and remove any.
-- [ ] Update the roadmap and the task group plan.
-- [ ] Run task validate.
+- [x] Update ARCHITECTURE.md, MIGRATION.md, DOMAINS.md, DATA_LIFECYCLE.md and repository-map.md.
+- [x] Produce a legacy-to-new responsibility table showing what can be removed.
+- [x] Audit the NestJS app for ingestion, scraping, migration or seeding code and remove any.
+- [x] Update the roadmap and the task group plan.
+- [x] Run task validate.
+
+## Progress
+
+Updated ARCHITECTURE.md (section 7 now describes the generated NestJS API, the contract tooling and the mechanical boundary check), MIGRATION.md (Phase 8 status and a responsibility accounting table: nothing in api-legacy can be removed yet, with the conditions), DOMAINS.md (contract catalog and the domains still without contracts), DATA_LIFECYCLE.md (where the API sits: downstream of promotion, current-only lists, append-only audit writes), repository-map.md (dryv/, dryv.yaml, db-engine fixtures), ROADMAP.md (Phase 7 progress) and the delivery group plan (reordered to contracts first, with the outcome). Audit of the API found no ingestion, scraping, migration or seeding code. It did find that pg, needed at runtime by the TypeORM driver, was only a devDependency; moved to dependencies. New dryv/tools/check-api-boundary.ts enforces the boundary (forbidden packages, schema synchronisation or migrations outside tests, writes outside the audit group) and is part of bun run check; it was verified to fail on a planted violation. task validate passes.

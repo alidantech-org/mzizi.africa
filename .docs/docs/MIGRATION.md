@@ -245,6 +245,8 @@ Initial API responsibilities:
 
 Avoid generic CRUD-first design. Prefer domain/query/workflow endpoints that express Mzizi concepts.
 
+**Status (2026-11-02):** the NestJS API exists at `source/backend/api` with read endpoints for every contracted domain and the audit write paths; see the responsibility accounting at the end of this file.
+
 ## Phase 9 — Migrate applications
 
 ### `source/apps/www`
@@ -324,3 +326,24 @@ NestJS exposes stable contracts
 www explores/publishes
 Dashboard researches/reviews
 ```
+
+
+---
+
+# Responsibility accounting (2026-11-02)
+
+What the legacy Python service (`source/backend/api-legacy`) did, where each responsibility now lives, and whether the legacy code can go. AGENTS.md section 3 allows removal only after equivalent responsibilities are accounted for.
+
+| Legacy responsibility | New owner | Status | Can the legacy code be removed? |
+| --- | --- | --- | --- |
+| Geographic endpoints and mobile geography contract (`routes/geographic`) | NestJS `geography` group | Contracts, read use cases and tests done, including search, boundaries, children, hierarchy, map context, history, governance by place | Endpoints yes once clients switch; geo seed data (units, relationships, boundaries) not yet migrated |
+| Legal endpoints (`routes/legal`) | NestJS `legal` group | Contracts and read use cases done | Endpoints yes once clients switch; constitution seed data not migrated |
+| Models without endpoints: governance, offices, people, elections, political, events, entities, finance, debt, procurement, statistics, services | NestJS domain groups | Neutral contracts and read use cases done; inventory dispositions applied | The models can be retired as design reference, but their CSV seeds (below) are still the only data |
+| CSV seeds under `routes/*/_seed` | `source/backend/db-engine` | Not started | No |
+| Alembic migrations 001 to 016 (schema mixed with seed loading) | `source/backend/db-engine` | Not started; the generated entities define the neutral schema but db-engine must own DDL and the missing `services` migration | No |
+| Files models, S3 client, files routes | `source/backend/files` | Not started | No |
+| Scraper models, web search scraper, crawlers, converters | `source/backend/data-engine` | Not started | No |
+| PDF extractor, OCR, NLP | data-engine (extraction) and intelligence (classification) | Not started | No |
+| Archived justice, land, constitution amendments, legal instruments, `person_*` models | Review for later contracts | Investigate list in the inventory | Keep as reference |
+
+Nothing in `api-legacy` can be removed yet. Removal needs: neutral data migrated into the canonical schema by db-engine, clients switched to the NestJS endpoints, and the data-engine and files responsibilities replaced. The contract audit and `check-api-boundary.ts` ensure none of the non-API responsibilities were absorbed into the new API.

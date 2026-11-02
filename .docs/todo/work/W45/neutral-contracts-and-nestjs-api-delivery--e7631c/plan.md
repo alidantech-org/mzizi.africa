@@ -6,7 +6,7 @@
 
 ## Approach
 
-Continue from the inventory. First settle the technical decisions (Dryv pack source, PostGIS and JSONB support, auth, evidence handling). Then author the shared contracts, then the geography pilot contracts, then scaffold the NestJS app beside the Python service and generate the geography read slice. After that migrate the remaining domains in batches, add the limited write paths, prove neutrality with fixtures for two countries, and reconcile the documentation.
+Continue from the inventory. The plan was reordered during delivery to author all domain contracts first, then generate and validate everything together. First settle the technical decisions (Dryv pack source, PostGIS and JSONB support, auth, evidence handling). Then author the shared contracts, then the geography pilot contracts, then scaffold the NestJS app beside the Python service and generate the geography read slice. After that migrate the remaining domains in batches, add the limited write paths, prove neutrality with fixtures for two countries, and reconcile the documentation.
 
 ## Milestones
 
@@ -20,3 +20,7 @@ Continue from the inventory. First settle the technical decisions (Dryv pack sou
 ## Risks
 
 Dryv packs may not express PostGIS or JSONB. Boundary violations are the main risk: ingestion, cleaning and migrations must not leak into the API. The Python service shares the folder with the new app, so the layout must be documented before any removal.
+
+## Outcome (2026-11-02)
+
+All six milestones were reached in this order: decisions, shared and geography contracts, scaffold, every remaining domain contract, tooling (contract audit, access export, generated-output check, API boundary check), full generation and validation, read use cases, write paths, Kenya and South Africa fixtures, and documentation. Remaining work is outside this group: migrating data through db-engine, building data-engine and files, further domains (heritage, linguistics, migration, colonial history) and the external auth provider.

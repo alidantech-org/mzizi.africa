@@ -19,6 +19,7 @@
     "class-transformer": "^0.5",
     "class-validator": "^0.14",
     "jose": "^6.2.15",
+    "pg": "^8",
     "reflect-metadata": "^0.2",
     "rxjs": "^7",
     "typeorm": "^0.3"
@@ -30,7 +31,6 @@
     "@types/bun": "latest",
     "@types/node": "latest",
     "@types/pg": "^8.23.1",
-    "pg": "^8",
     "pg-mem": "^3",
     "prettier": "^3.9.10",
     "randexp": "^0.5",
