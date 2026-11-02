@@ -1,0 +1,111 @@
+{
+  "_meta": {
+    "label": "Custom-prepared from manual research",
+    "preparedBy": "coding agent (Claude, Lane C), after bounded gated fetches of orpp.or.ke on 2026-11-02",
+    "site": "ke/orpp",
+    "institution": "ke/registrar-of-political-parties",
+    "host": "orpp.or.ke",
+    "access": "Exact-host rule in fixtures/policy/trusted-domains.json (orpp.or.ke is .or.ke, not covered by the .go.ke suffix rule); assessment decided by the agent account under DEC-AUTO-APPROVAL; 0.2 requests per second; robots.txt read by the gate; stop on challenge, 401, 403 or 429. Subdomains (ippms.orpp.or.ke self-service portal, opac.orpp.or.ke, outlook.orpp.or.ke) are NOT in scope and are never requested.",
+    "terms": "No licence or reuse statement was found on the site (the footer carries only a copyright line). The register, fund notices and Gazette notices are public statutory notices (Political Parties Act, Cap. 7D, s.34(e) register; Gazette notices); reuse terms are unassessed and recorded as such on every document.",
+    "placement": "The institution carries no location columns by design (places redesign). The Registrar's offices (Lion Place, Waiyaki Way, Nairobi, per the Fund PDF letterhead) are an expected placement to be created by the places lane."
+  },
+  "publications": [
+    {
+      "type": "fully-registered-parties-register",
+      "title": "Fully registered political parties (register of particulars)",
+      "urlPattern": "https://orpp.or.ke/wp-content/uploads/<yyyy>/<mm>/Fully_registered_parties_<Month>_<year>*.pdf, linked from /list-of-political-parties/ and /fully-registered-political-parties-2/",
+      "format": "text PDF (Microsoft Word export, 34 pages, table with an embedded symbol image per party)",
+      "frequency": "revised whenever a party is registered, deregistered, merged or changes particulars (file name carries the as-at month)",
+      "carries": ["certificate serial", "certificate number", "party name", "abbreviation", "date of issue", "symbol (image and description)", "colours", "postal address", "head office location", "slogan", "changes (former names, mergers)"],
+      "pipeline": "preserve PDF as raw artifact; PyMuPDF words by column x-ranges into rows (a row starts at an ordinal in the first column); extract embedded images as logo artifacts keyed by row; map to political.parties (new) or reviewed in-place update (matched); contacts (postal address) stay as restricted identifiers"
+    },
+    {
+      "type": "provisionally-registered-parties-register",
+      "title": "Provisionally registered political parties",
+      "urlPattern": "https://orpp.or.ke/wp-content/uploads/<yyyy>/<mm>/PROVISIONAL_PARTIES_<Month>_<year>.pdf, linked from /list-of-political-parties/",
+      "format": "text PDF (6 pages)",
+      "frequency": "revised as provisional registrations are granted or upgraded",
+      "carries": ["party code", "name", "abbreviation", "symbol description", "slogan", "colours", "date of registration", "status", "party email (restricted)"],
+      "pipeline": "same as the fully registered register; status 'provisional'; the email is a restricted contact identifier, never a public field"
+    },
+    {
+      "type": "ppf-distribution-history",
+      "title": "Political Parties Fund distribution by financial year (2013/14 onwards)",
+      "urlPattern": "https://orpp.or.ke/wp-content/uploads/<yyyy>/<mm>/Political[-_]Parties[-_]Fund[-_]PPF[-_]distribution*.pdf, linked from /administration-of-the-political-parties-fund/",
+      "format": "text PDF (Word export; one table per financial year with party and Kshs)",
+      "frequency": "once per financial year after allocation",
+      "carries": ["party name", "amount in Kshs", "financial year"],
+      "pipeline": "text tables to transfers (Fund to party) with legal basis Political Parties Act s.23-25; parts-sum-to-total check where a total row exists; page kept per row"
+    },
+    {
+      "type": "ppf-annual-allocation-gazette-notice",
+      "title": "Allocation of the Political Parties Fund (Gazette notice)",
+      "urlPattern": "https://orpp.or.ke/wp-content/uploads/<yyyy>/<mm>/Political-Parties-Fund-PPF-Allocation-of-FY<yyyy><yy>.pdf",
+      "format": "text PDF (3 pages: cover, Gazette notice with eligible parties and totals)",
+      "frequency": "annual (Gazette notice)",
+      "carries": ["gazette notice number", "legal basis", "party code and name", "total allocation"],
+      "pipeline": "as above; the sum of party rows is checked against the stated total"
+    },
+    {
+      "type": "ppf-allocation-image-scan",
+      "title": "Allocation of the PPF, September 2023 (image)",
+      "urlPattern": "https://orpp.or.ke/wp-content/uploads/2023/10/allocation-of-PPF-September_2023.pdf",
+      "format": "scanned PDF (3 page images, no text layer)",
+      "frequency": "one-off",
+      "pipeline": "preserve only; OCR with the budget-summary reader and arithmetic check if the figures are needed (the 2023/24 distribution text PDF already covers them)"
+    },
+    {
+      "type": "provisional-registration-notices",
+      "title": "Notices of provisional registration (English and Kiswahili)",
+      "urlPattern": "https://orpp.or.ke/document/notice-for-provisional-registration-*/ and /document/notisi-ya-usajili-wa-muda-*/",
+      "format": "PDF and image (avif/webp) per notice",
+      "frequency": "per application",
+      "pipeline": "record as source documents linked to the party; not parsed in this pass"
+    },
+    {
+      "type": "forms",
+      "title": "Political party forms (PP-1 to PP-21, PPF-1 to PPF-4, PPM-1 to PPM-5)",
+      "urlPattern": "https://orpp.or.ke/document/form-*/",
+      "format": "DOCX and PDF templates",
+      "frequency": "rarely",
+      "pipeline": "preserve as reference documents; they define what a party must file (changes of officials, signatories, constitutions, accounts) and so what could be requested"
+    },
+    {
+      "type": "annual-reports-and-strategic-plan",
+      "title": "ORPP annual reports (2021/22, 2024/25) and Strategic Plan 2025-2028",
+      "urlPattern": "https://orpp.or.ke/wp-content/uploads/<yyyy>/<mm>/ORPP-ANNUAL-REPORT*.pdf",
+      "format": "large text PDF",
+      "frequency": "annual",
+      "pipeline": "preserve; parties' audited accounts summaries and Fund reconciliation are candidates for the party-money task once fetched"
+    },
+    {
+      "type": "pplc-and-election-communiques",
+      "title": "Political Parties Liaison Committee results, by-election and 2027 general election communiques",
+      "urlPattern": "https://orpp.or.ke/document/*",
+      "format": "PDF and image",
+      "frequency": "per election",
+      "pipeline": "preserve and link to election events once the statistics electoral loader exists"
+    },
+    {
+      "type": "coalitions-and-mergers",
+      "title": "Coalitions and mergers (page and notification of status of coalitions)",
+      "urlPattern": "https://orpp.or.ke/coalitions-coalition-political-parties/ and /document/notification-of-the-status-of-coalitions/",
+      "format": "HTML page (content loaded from a document)",
+      "frequency": "per registration",
+      "pipeline": "coalitions are modelled apart from parties; not loaded in this pass"
+    },
+    {
+      "type": "tenders-and-procurement",
+      "title": "Tenders, bidders and supplier registration",
+      "urlPattern": "https://orpp.or.ke/tenders/ and /document/list-of-*-bidders-*/",
+      "format": "PDF",
+      "frequency": "annual",
+      "pipeline": "out of scope for this lane; the procurement lane may consume"
+    }
+  ],
+  "notPublishedThere": [
+    "Party officials (national officers) are not in the register PDFs; Form PP-7 changes of officials are filed with the Registrar but the filings are not published as a list on the pages fetched.",
+    "Party constitutions are not linked from the register or forms pages fetched; the link /constitution_of_kenya_2010/ is the national constitution.",
+    "Parties' audited accounts are not published on the pages fetched; Form PPF-3 and PPF-4 (templates) are the reporting forms."
+  ]
+}

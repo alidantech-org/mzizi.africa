@@ -36,6 +36,12 @@
       "jurisdiction": "ke",
       "rightsHolder": "UN OCHA Humanitarian Data Exchange (file storage used by data.humdata.org downloads)",
       "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "orpp.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Office of the Registrar of Political Parties (statutory office, Political Parties Act 2011)",
+      "maxRequestsPerSecond": 0.2
     }
   ]
 }

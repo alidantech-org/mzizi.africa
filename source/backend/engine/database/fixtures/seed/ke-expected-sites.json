@@ -737,6 +737,14 @@
       "hosts": [
         "senate.parliament.go.ke"
       ]
+    },
+    {
+      "code": "ke/orpp",
+      "institution": "ke/registrar-of-political-parties",
+      "name": "Office of the Registrar of Political Parties",
+      "hosts": [
+        "orpp.or.ke"
+      ]
     }
   ]
 }

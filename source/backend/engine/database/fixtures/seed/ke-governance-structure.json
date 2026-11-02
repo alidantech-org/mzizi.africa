@@ -496,6 +496,17 @@
       "relationship": null
     },
     {
+      "code": "ke/registrar-of-political-parties",
+      "name": "Office of the Registrar of Political Parties",
+      "abbreviation": "ORPP",
+      "type": "regulator",
+      "branch": "independent",
+      "parent": null,
+      "legalBasis": "Political Parties Act, 2011 (Act No. 11 of 2011), Part III (Registrar and the Political Parties Fund); Constitution art. 91 and 92",
+      "confidence": "medium",
+      "relationship": null
+    },
+    {
       "code": "ke/salaries-and-remuneration-commission",
       "name": "Salaries and Remuneration Commission",
       "abbreviation": "SRC",

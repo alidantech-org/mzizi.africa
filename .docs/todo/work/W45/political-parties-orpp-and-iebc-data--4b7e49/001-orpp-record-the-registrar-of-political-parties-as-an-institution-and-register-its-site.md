@@ -1,5 +1,5 @@
 ---
-{id: TSK-A67F72A02702,name: "ORPP: record the Registrar of Political Parties as an institution and register its site",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:41.390Z,updated_at: 2026-11-02T20:02:41.390Z,order: 1024}
+{id: TSK-A67F72A02702,name: "ORPP: record the Registrar of Political Parties as an institution and register its site",type: task,status: completed,priority: medium,created_at: 2026-11-02T20:02:41.390Z,updated_at: 2026-11-02T22:38:08.817Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:32:13.927Z},{from: in-progress,to: completed,at: 2026-11-02T22:38:08.817Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-A67F72A02702/1793658733929-start,started_at: 2026-11-02T22:32:14.393Z,end_ref: refs/tracking/TSK-A67F72A02702/1793659088821-end,ended_at: 2026-11-02T22:38:08.818Z,summary: {files: 122,insertions: 4996,deletions: 202}}]}}}
 ---
 
 # ORPP: record the Registrar of Political Parties as an institution and register its site
@@ -14,8 +14,8 @@ The ORPP registers and regulates political parties and administers the Political
 
 ## Acceptance checklist
 
-- [ ] Add the ORPP institution to the governance structure seed with parent and legal basis, labelled as manual research.
-- [ ] Register the ORPP site and its domains, assess it, and probe it through the gate.
-- [ ] Catalogue every publication type with URL pattern, format, frequency and terms.
-- [ ] Save the catalogue as a seed JSON and describe the pipeline design for each format.
-- [ ] Update the status document.
+- [x] Add the ORPP institution to the governance structure seed with parent and legal basis, labelled as manual research.
+- [x] Register the ORPP site and its domains, assess it, and probe it through the gate.
+- [x] Catalogue every publication type with URL pattern, format, frequency and terms.
+- [x] Save the catalogue as a seed JSON and describe the pipeline design for each format.
+- [x] Update the status document.

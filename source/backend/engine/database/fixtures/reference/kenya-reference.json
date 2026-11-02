@@ -79,6 +79,28 @@
     },
     {
       "entity": "ClassificationRecordEntity",
+      "key": "ke:itype:regional-office",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "governance/institution-type",
+        "code": "governance/institution-type/regional-office",
+        "label": "regional office",
+        "order": 90
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:itype:operational-unit",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "governance/institution-type",
+        "code": "governance/institution-type/operational-unit",
+        "label": "operational unit",
+        "order": 91
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
       "key": "ke:method:direct-election",
       "values": {
         "jurisdictionId": "@ke",
