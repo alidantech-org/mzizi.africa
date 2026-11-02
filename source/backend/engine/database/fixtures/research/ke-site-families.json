@@ -1,0 +1,242 @@
+{
+  "note": "Kenyan site family catalogue (agent research, 2026-11-02): families and proposed domain patterns (unverified), plus the pilot sites' memberships and traits. Statuses are 'proposed'; nothing here has been probed.",
+  "country": "ke",
+  "rows": [
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:ke/county-government",
+      "values": {
+        "code": "ke/county-government",
+        "name": "County government sites",
+        "kind": "geographic_unit",
+        "status": "proposed",
+        "jurisdictionId": "@ke",
+        "description": "One site per county government. The pattern comes from the project owner's description; it is not yet verified, and counties are known to spell their hostnames with and without hyphens."
+      }
+    },
+    {
+      "entity": "DomainPatternEntity",
+      "key": "pattern:ke/county-government",
+      "values": {
+        "familyId": "@family:ke/county-government",
+        "template": "{county}.go.ke",
+        "scheme": "https",
+        "domainRole": "primary",
+        "variables": "{\"county\": {\"source\": \"geography.units\", \"level\": \"county\", \"slug\": \"lowercase-strip-county\"}}",
+        "status": "proposed",
+        "notes": "Proposed from the project owner's note (2026-11-02). Unverified: expect exceptions (other domains, dropped words, abbreviations)."
+      }
+    },
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:ke/county-assembly",
+      "values": {
+        "code": "ke/county-assembly",
+        "name": "County assembly sites",
+        "kind": "geographic_unit",
+        "status": "proposed",
+        "jurisdictionId": "@ke",
+        "description": "One site per county assembly, a separate institution from the county executive."
+      }
+    },
+    {
+      "entity": "DomainPatternEntity",
+      "key": "pattern:ke/county-assembly",
+      "values": {
+        "familyId": "@family:ke/county-assembly",
+        "template": "{county}assembly.go.ke",
+        "scheme": "https",
+        "domainRole": "primary",
+        "variables": "{\"county\": {\"source\": \"geography.units\", \"level\": \"county\", \"slug\": \"lowercase-strip-county\"}}",
+        "status": "proposed",
+        "notes": "Proposed from the project owner's note (2026-11-02). Unverified."
+      }
+    },
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:ke/ngcdf",
+      "values": {
+        "code": "ke/ngcdf",
+        "name": "Constituency development fund (NG-CDF) sites",
+        "kind": "geographic_unit",
+        "status": "proposed",
+        "jurisdictionId": "@ke",
+        "description": "One site per constituency fund committee."
+      }
+    },
+    {
+      "entity": "DomainPatternEntity",
+      "key": "pattern:ke/ngcdf",
+      "values": {
+        "familyId": "@family:ke/ngcdf",
+        "template": "{constituency}.ngcdf.go.ke",
+        "scheme": "https",
+        "domainRole": "primary",
+        "variables": "{\"constituency\": {\"source\": \"geography.units\", \"level\": \"constituency\", \"slug\": \"lowercase-hyphen\"}}",
+        "status": "proposed",
+        "notes": "Proposed from the project owner's note (2026-11-02). Needs constituency units, which are not imported yet. Unverified."
+      }
+    },
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:ke/ministry",
+      "values": {
+        "code": "ke/ministry",
+        "name": "Ministry and state department sites",
+        "kind": "institution_type",
+        "status": "proposed",
+        "jurisdictionId": "@ke",
+        "description": "Sites of ministries and state departments under the national executive."
+      }
+    },
+    {
+      "entity": "DomainPatternEntity",
+      "key": "pattern:ke/ministry",
+      "values": {
+        "familyId": "@family:ke/ministry",
+        "template": "{ministry}.go.ke",
+        "scheme": "https",
+        "domainRole": "primary",
+        "variables": "{\"ministry\": {\"source\": \"governance.institutions\", \"type\": \"ministry\", \"slug\": \"lowercase-hyphen\"}}",
+        "status": "proposed",
+        "notes": "Proposed from the project owner's note (2026-11-02). Needs ministry institutions, which are not imported yet. Many ministries use other hostnames (treasury.go.ke is one, parliament.go.ke another body entirely). Unverified."
+      }
+    },
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:ke/independent-body",
+      "values": {
+        "code": "ke/independent-body",
+        "name": "Independent bodies, commissions and agencies",
+        "kind": "independent_body",
+        "status": "proposed",
+        "jurisdictionId": "@ke",
+        "description": "Constitutional commissions, regulators and agencies. Hostnames are not patterned (iebc.or.ke, knbs.or.ke); they share traits such as a downloads section, not structure."
+      }
+    },
+    {
+      "entity": "SiteMemberEntity",
+      "key": "member:ke/iebc",
+      "values": {
+        "siteId": "@site:ke/iebc",
+        "familyId": "@family:ke/independent-body",
+        "role": "member",
+        "basis": "agent",
+        "score": 0.7
+      }
+    },
+    {
+      "entity": "SiteMemberEntity",
+      "key": "member:ke/parliament",
+      "values": {
+        "siteId": "@site:ke/parliament",
+        "familyId": "@family:ke/independent-body",
+        "role": "member",
+        "basis": "agent",
+        "score": 0.7
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:ke/iebc:section:downloads",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:ke/iebc",
+        "tag": "section:downloads",
+        "score": 0.9,
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:ke/iebc:section:publications",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:ke/iebc",
+        "tag": "section:publications",
+        "score": 0.9,
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:ke/iebc:section:tenders",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:ke/iebc",
+        "tag": "section:tenders",
+        "score": 0.9,
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:ke/iebc:purpose:elections",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:ke/iebc",
+        "tag": "purpose:elections",
+        "score": 0.9,
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:ke/parliament:platform:drupal",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:ke/parliament",
+        "tag": "platform:drupal",
+        "score": 0.9,
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:ke/parliament:section:downloads",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:ke/parliament",
+        "tag": "section:downloads",
+        "score": 0.9,
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:ke/parliament:section:publications",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:ke/parliament",
+        "tag": "section:publications",
+        "score": 0.9,
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:ke/parliament:purpose:governance",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:ke/parliament",
+        "tag": "purpose:governance",
+        "score": 0.9,
+        "observedAt": "2026-11-02T09:30:00Z"
+      }
+    },
+    {
+      "entity": "SiteRelationEntity",
+      "key": "relation:iebc-parliament",
+      "values": {
+        "fromKind": "site",
+        "fromId": "@site:ke/iebc",
+        "toKind": "site",
+        "toId": "@site:ke/parliament",
+        "relation": "shares_module",
+        "score": 0.5,
+        "basis": "agent",
+        "evidence": "{\"module\": \"document listing with PDF links\", \"note\": \"both publish PDF documents in listings; markup differs (custom row layout vs Drupal body field)\"}"
+      }
+    }
+  ]
+}

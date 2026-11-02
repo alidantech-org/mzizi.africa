@@ -6,7 +6,7 @@ import { openDataSource, withDatabase } from "../src/config.ts";
 import { checkCollection } from "../src/gate.ts";
 import { checkIntegrity } from "../src/integrity.ts";
 import { drift, migrate } from "../src/migrations.ts";
-import { seedFixtures, seedReference } from "../src/seeds.ts";
+import { seedFixtures, seedReference, seedSiteFixtures } from "../src/seeds.ts";
 
 /** Runs against a scratch database on the server in TEST_DATABASE_URL (skipped without it). */
 const adminUrl = process.env.TEST_DATABASE_URL;
@@ -25,7 +25,9 @@ run("database engine", () => {
     process.env.DATABASE_URL = withDatabase(adminUrl as string, scratch);
     await migrate();
     db = await openDataSource(process.env.DATABASE_URL);
-    await seedFixtures(db, await seedReference(db));
+    const ids = await seedReference(db);
+    await seedFixtures(db, ids);
+    await seedSiteFixtures(db, ids);
   }, 120_000);
 
   afterAll(async () => {

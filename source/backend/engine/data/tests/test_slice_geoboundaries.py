@@ -90,6 +90,20 @@ def test_kenya_counties_from_open_data_to_the_boundary_endpoint(conn, store, dat
     assert conn.execute("SELECT count(*) AS n FROM source.captures c JOIN source.documents d ON d.id = c.document_id WHERE d.title LIKE 'geoBoundaries%%'").fetchone()["n"] == 4
     assert conn.execute("SELECT count(DISTINCT content_hash) AS n FROM filesystem.objects o JOIN filesystem.versions v ON v.object_id = o.id JOIN filesystem.files f ON f.id = v.file_id WHERE f.name LIKE 'geoBoundaries-%%'").fetchone()["n"] == 2
 
+    # the catalogue's county pattern now has its 47 subjects: expected sites appear, none confirmed, none with a domain yet
+    cli(database_url, "seed", "research")
+    from mzizi_data import patterns
+
+    pattern = conn.execute("SELECT id::text AS id FROM website.domain_patterns WHERE template = '{county}.go.ke'").fetchone()["id"]
+    expected = patterns.expand_pattern(conn, pattern)
+    conn.commit()
+    assert len(expected) == 47 and all(e.created for e in expected)
+    by_name = {e.subject_name: e.candidates for e in expected}
+    assert by_name["Taita Taveta"] == ["taitataveta.go.ke", "taita-taveta.go.ke"] and by_name["Murang'a"] == ["muranga.go.ke"] and by_name["Nairobi"] == ["nairobi.go.ke"]
+    assert conn.execute("SELECT count(*) AS n FROM website.sites WHERE status = 'expected'").fetchone()["n"] == 47
+    assert conn.execute("SELECT count(*) AS n FROM website.subjects s JOIN geography.units u ON u.id = s.target_id WHERE s.target_kind = 'geography.units'").fetchone()["n"] == 47
+    assert not any(e.created for e in patterns.expand_pattern(conn, pattern))
+
     # 10: the API reads it back
     out = subprocess.run(["bunx", "vitest", "run", "--root", "src", "neutral/boundary-slice"], cwd=BACKEND.parent / "api", env={**os.environ, "SLICE_DATABASE_URL": database_url}, capture_output=True, text=True)
     assert out.returncode == 0, out.stdout[-3000:] + out.stderr[-2000:]

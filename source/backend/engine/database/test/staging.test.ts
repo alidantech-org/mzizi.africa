@@ -183,8 +183,8 @@ run("staging validation and promotion", () => {
     await approve(c);
     expect((await promoteCandidate(db, c)).reasons.join(" ")).toContain("no licence");
 
-    const [site] = await db.query(`SELECT id FROM website.sites WHERE code = 'ke/treasury'`);
     const [jur] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = 'ke'`);
+    const [site] = await db.query(`INSERT INTO website.sites (code, name, kind, status, jurisdiction_id, created_at, updated_at, version) VALUES ('ke/staging-test-site', 'Staging test site', 'portal', 'active', $1, now(), now(), 1) RETURNING id`, [jur.id]);
     await db.query(`INSERT INTO website.assessments (site_id, jurisdiction_id, status, source_type, access_basis, rights_holder, personal_data_categories, approved_scope, is_current, created_at, updated_at, version) VALUES ($1, $2, 'restricted', 'official_website', 'published_terms', 'unknown', '["none_known"]', '{"hosts":["x.example.org"]}', true, now(), now(), 1)`, [site.id, jur.id]);
     const [cap2] = await db.query(`INSERT INTO source.captures (document_id, retrieved_at, site_id, created_at, updated_at, version) VALUES ($1, now(), $2, now(), now(), 1) RETURNING id`, [documentId, site.id]);
     const [r2] = await db.query(`INSERT INTO staging.runs (dataset, mapping_version, capture_id, status) VALUES ('restricted', 'v1', $1, 'completed') RETURNING id`, [cap2.id]);

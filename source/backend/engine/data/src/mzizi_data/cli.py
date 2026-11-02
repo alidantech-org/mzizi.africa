@@ -41,6 +41,9 @@ def main(argv: list[str] | None = None) -> int:
     wb.add_argument("file")
     wb.add_argument("--iso3", required=True)
     wb.add_argument("--store", default=".data/objects")
+    ex = sub.add_parser("expand-patterns", help="create expected sites from a family's domain patterns (offline; no requests are made)")
+    ex.add_argument("family_code")
+    rep = sub.add_parser("catalogue-report", help="counts of families, patterns, sites and domains with their counting rules")
     stop = sub.add_parser("stop", help="incident: stop collection for a site, cancel its pending jobs and quarantine its candidates")
     stop.add_argument("site_code")
     stop.add_argument("--reason", required=True)
@@ -102,6 +105,33 @@ def main(argv: list[str] | None = None) -> int:
             out = worldbank.import_population(conn, LocalDirectoryStore(conn, args.store), args.file, args.iso3)
         for name in worldbank.ORDER:
             print(f"{name}: {out.stats[name].created} new, {out.stats[name].unchanged} unchanged (run {out.runs[name]})")
+        return 0
+    if args.command == "expand-patterns":
+        from . import patterns
+        from .db import connect
+
+        with connect() as conn:
+            family = conn.execute("SELECT id::text AS id FROM website.families WHERE code = %s", (args.family_code,)).fetchone()
+            if not family:
+                raise SystemExit(f"unknown family {args.family_code}")
+            made = 0
+            for pattern in conn.execute("SELECT id::text AS id, template FROM website.domain_patterns WHERE family_id = %s", (family["id"],)).fetchall():
+                expected = patterns.expand_pattern(conn, pattern["id"])
+                made += sum(1 for e in expected if e.created)
+                print(f"{pattern['template']}: {len(expected)} subjects, {sum(1 for e in expected if e.created)} new expected sites")
+            conn.commit()
+        return 0
+    if args.command == "catalogue-report":
+        from .db import connect
+
+        with connect() as conn:
+            q = lambda sql: conn.execute(sql).fetchall()
+            print("Counting rules: families and patterns are registry records, not claims about existing sites; 'sites' counts website.sites rows by status; 'domains' counts rows valid today (a site can have many); expected sites are unconfirmed candidates, never counted as known sites.")
+            print("families:", {r["status"]: r["n"] for r in q("SELECT status, count(*)::int AS n FROM website.families GROUP BY status")})
+            print("patterns:", {r["status"]: r["n"] for r in q("SELECT status, count(*)::int AS n FROM website.domain_patterns GROUP BY status")})
+            print("sites by status:", {r["status"]: r["n"] for r in q("SELECT status, count(*)::int AS n FROM website.sites GROUP BY status")})
+            print("sites with a current approved assessment:", q("SELECT count(DISTINCT site_id)::int AS n FROM website.assessments WHERE is_current AND status IN ('approved','approved_with_conditions')")[0]["n"])
+            print("domains valid today:", q("SELECT count(*)::int AS n FROM website.domains WHERE valid_from <= current_date AND (valid_to IS NULL OR valid_to >= current_date)")[0]["n"])
         return 0
     if args.command == "stop":
         from . import incidents, registry

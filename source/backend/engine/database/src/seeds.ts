@@ -33,7 +33,7 @@ export async function repairProvenanceKinds(db: DataSource): Promise<void> {
 }
 
 export async function seedFixtures(db: DataSource, ids: Map<string, string>): Promise<number> {
-  for (const name of ["kenya", "kenya-sites", "south-africa"]) await loadFixtures(db, readFixture(name).rows, ids);
+  for (const name of ["kenya", "south-africa"]) await loadFixtures(db, readFixture(name).rows, ids);
   await repairProvenanceKinds(db);
   return ids.size;
 }
@@ -49,5 +49,15 @@ export async function seedResearch(db: DataSource): Promise<number> {
   ids.set("ke", ke.id);
   const before = ids.size;
   await loadFixtures(db, readFixture("research/ke-pilot-sites").rows, ids, { provenance: false });
+  await loadFixtures(db, readFixture("research/ke-site-families").rows, ids, { provenance: false });
   return ids.size - before;
+}
+
+/**
+ * Illustrative site families and sites used by tests (worked examples). They are kept apart from the
+ * default fixtures because their codes mirror the real research catalogue and must not collide with it.
+ */
+export async function seedSiteFixtures(db: DataSource, ids: Map<string, string>): Promise<void> {
+  await loadFixtures(db, readFixture("kenya-sites").rows, ids);
+  await repairProvenanceKinds(db);
 }
