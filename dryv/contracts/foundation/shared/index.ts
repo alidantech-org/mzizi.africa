@@ -33,6 +33,16 @@ export const sharedProperties = shared.properties({
   Version: dryv.property.number.integer({ range: { min: 0 } }),
   Count: dryv.property.number.integer({ range: { min: 0 } }),
   Confidence: dryv.property.number().range({ min: 0, max: 1 }),
+  /** Unbounded text: legal provisions, rationales, manifestos. */
+  LongText: dryv.property.string().length({ min: 1 }),
+  /** Monetary or measured value; currency is always a separate column, never assumed. */
+  Amount: dryv.property.number.decimal({ precision: 20, scale: 4 }),
+  Rate: dryv.property.number.decimal({ precision: 9, scale: 4 }),
+  Ratio: dryv.property.number.decimal({ precision: 7, scale: 4 }),
+  CurrencyCode: dryv.property.string().length({ min: 3, max: 3 }),
+  Label: dryv.property.string().length({ min: 1, max: 300 }),
+  /** Kind of record a comment, evidence reference or decision is attached to. */
+  TargetKind: dryv.property.string().length({ min: 2, max: 100 }),
   Message: dryv.property.string().length({ min: 1, max: 500 }),
   StatusCode: dryv.property.number().range({ min: 100, max: 599 }),
   PaginationNumber: dryv.property.number().range({ min: 0, max: 1000 }),
@@ -134,6 +144,13 @@ export const transportSchemas = shared.schemas({
   ApiError: dryv.schema({
     message: dryv.field(sharedProperties.Message),
     code: dryv.field(sharedProperties.StatusCode).optional(),
+  }),
+
+  BaseQuery: dryv.schema({
+    page: dryv.field(sharedProperties.PaginationNumber).optional(),
+    limit: dryv.field(sharedProperties.PaginationNumber).optional(),
+    sort: dryv.field(sharedProperties.SortDirection).optional(),
+    order: dryv.field(sharedProperties.SortDirection).optional(),
   }),
 
   PaginationMeta: dryv.schema({

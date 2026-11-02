@@ -1,5 +1,6 @@
 import { dryv } from "@dryvcode/author";
 
+import { legal } from "./domains/legal/index.ts";
 import { geography } from "./foundation/geography/index.ts";
 import { reference } from "./foundation/reference/index.ts";
 import { frontendSurfaces, shared } from "./foundation/shared/index.ts";
@@ -11,5 +12,5 @@ import { frontendSurfaces, shared } from "./foundation/shared/index.ts";
 export default dryv
   .app({ name: "mzizi-api" })
   .info({ title: "Mzizi API", version: "0.1.0" })
-  .groups(shared, reference, geography)
+  .groups(shared, reference, geography, legal)
   .surfaces(frontendSurfaces.Web, frontendSurfaces.Mobile, frontendSurfaces.AdminWeb);
