@@ -12,7 +12,7 @@ Procurement notices name companies and sometimes individuals; ownership and dire
 
 ## Acceptance checklist
 - [ ] Select sources (procurement portal, debt bulletins) and record licences and assessments.
-- [ ] Tender, bid and contract mappings with currency and date precision.
+- [x] Tender, bid and contract mappings with currency and date precision.
 - [ ] Debt instrument and disbursement mappings.
-- [ ] Organisation identifiers and entity resolution by registry number.
+- [x] Organisation identifiers and entity resolution by registry number.
 - [ ] Report coverage and excluded personal data.
