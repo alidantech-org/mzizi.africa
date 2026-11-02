@@ -39,7 +39,7 @@ export const JURISDICTION_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'updat
 
 export const JURISDICTION_SEARCHABLE_FIELDS = ['code', 'name', ] as const satisfies readonly JurisdictionKey[];
 
-export const JURISDICTION_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'kind', 'method', 'name', 'verificationState', 'version', ] as const satisfies readonly JurisdictionKey[];
+export const JURISDICTION_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'kind', 'name', 'version', ] as const satisfies readonly JurisdictionKey[];
 
 export const JURISDICTION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly JurisdictionKey[];
 
@@ -47,7 +47,7 @@ export const JURISDICTION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validF
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const JURISDICTION_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'id', 'isCurrent', 'kind', 'licence', 'method', 'name', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly JurisdictionKey[];
+export const JURISDICTION_SELECTABLE_FIELDS = ['code', 'createdAt', 'id', 'isCurrent', 'kind', 'name', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly JurisdictionKey[];
 
 export const JURISDICTION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly JurisdictionSelectableField[];
 
@@ -55,7 +55,7 @@ export const JURISDICTION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const JURISDICTION_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'isCurrent', 'kind', 'licence', 'method', 'name', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly JurisdictionKey[];
+export const JURISDICTION_EDITABLE_FIELDS = ['code', 'isCurrent', 'kind', 'name', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly JurisdictionKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

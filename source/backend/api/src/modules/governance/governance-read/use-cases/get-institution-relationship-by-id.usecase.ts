@@ -5,10 +5,8 @@ import type { InstitutionRelationshipPublicDto } from '#/modules/governance/dto/
 import type { InstitutionRelationshipResponseDto } from '#/modules/governance/dto/institution-relationship-response.dto';
 import type { InstitutionRelationshipDto } from '#/modules/governance/dto/institution-relationship.dto';
 import type { InstitutionDto } from '#/modules/governance/dto/institution.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { InstitutionRelationshipEntity } from '#/modules/governance/entities/institution-relationship.entity';
 
@@ -29,29 +27,18 @@ export class GetInstitutionRelationshipByIdUseCase {
 
   private toReadModel(entity: InstitutionRelationshipEntity): InstitutionRelationshipPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     childInstitutionId: entity.childInstitutionId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     id: entity.id,
     isCurrent: entity.isCurrent,
     kind: entity.kind,
     legalBasisId: entity.legalBasisId,
-    licence: entity.licence,
-    method: entity.method,
     parentInstitutionId: entity.parentInstitutionId,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as InstitutionRelationshipPublicDto;
   }

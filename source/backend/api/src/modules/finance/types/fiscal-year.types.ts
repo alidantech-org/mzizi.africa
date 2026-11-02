@@ -5,13 +5,10 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as JurisdictionTypes from '#/modules/reference/types/jurisdiction.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -34,27 +31,15 @@ import type {
 
 /** Fiscal Year */
 export interface IFiscalYear extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   code: string;
-  confidence: number | null;
   endsOn: Date;
   isCurrent: boolean;
   jurisdictionId: string;
-  licence: string | null;
-  method: ProvenanceMethod;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   startsOn: Date;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
-  readonly jurisdiction?: JurisdictionTypes.IJurisdiction;
 }
 
 // ----------------------------------
@@ -135,7 +120,6 @@ export type IFiscalYearAsManyRelationQuery = Q.IAsManyRelationQuery<IFiscalYear,
 // ----------------------------------
 
 export interface IFiscalYearRelationMap extends Record<FiscalYearRelationKey, unknown> {
-  jurisdiction: JurisdictionTypes.IJurisdictionAsOneRelationQuery;
 }
 
 // ----------------------------------

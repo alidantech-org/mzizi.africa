@@ -30,7 +30,11 @@ function escapeLike(text: string): string {
   return text.replace(/[\\%_]/g, (character) => `\\${character}`);
 }
 
-export async function listPage<E extends ObjectLiteral>(repository: Repository<E>, input: object) {
+/**
+ * `constraints` are fixed filters the caller cannot override (for example exposure = public); they
+ * apply to every row served, whatever the query says.
+ */
+export async function listPage<E extends ObjectLiteral>(repository: Repository<E>, input: object, constraints: Record<string, unknown> = {}) {
   const query = input as Record<string, unknown>;
   const page = Math.max(1, whole(query.page) ?? 1);
   const limit = Math.min(Math.max(1, whole(query.limit) ?? DEFAULT_LIMIT), MAX_LIMIT);
@@ -41,6 +45,7 @@ export async function listPage<E extends ObjectLiteral>(repository: Repository<E
     if (!CONTROL.has(key) && value !== undefined && value !== null && columns.has(key)) base[key] = value;
   }
   if (columns.has("isCurrent") && !flag(query.includeHistory)) base.isCurrent = true;
+  Object.assign(base, constraints);
 
   const text = typeof query.q === "string" && query.q.trim() !== "" ? query.q.trim() : undefined;
   const textColumns = TEXT_COLUMNS.filter((column) => columns.has(column));

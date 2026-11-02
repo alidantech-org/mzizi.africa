@@ -8,11 +8,9 @@ import type { SelectionStageListQueryDto } from '#/modules/governance/dto/select
 import type { SelectionStagePublicDto } from '#/modules/governance/dto/selection-stage-public.dto';
 import type { SelectionStageDto } from '#/modules/governance/dto/selection-stage.dto';
 import type { SelectionStagesListResponseDto } from '#/modules/governance/dto/selection-stages-list-response.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
 import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
@@ -38,29 +36,18 @@ export class FindSelectionStagesUseCase {
     return {
     actorInstitutionId: entity.actorInstitutionId,
     actorOfficeId: entity.actorOfficeId,
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     description: entity.description,
     id: entity.id,
     isCurrent: entity.isCurrent,
     kind: entity.kind,
-    licence: entity.licence,
-    method: entity.method,
     procedureId: entity.procedureId,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     stageOrder: entity.stageOrder,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as SelectionStagePublicDto;
   }

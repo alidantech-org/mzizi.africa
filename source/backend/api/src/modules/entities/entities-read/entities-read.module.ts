@@ -4,7 +4,6 @@ import { EntityIdentifierEntity } from "#/modules/entities/entities/entity-ident
 import { EntityLocationEntity } from "#/modules/entities/entities/entity-location.entity.ts";
 import { EntityOwnershipEntity } from "#/modules/entities/entities/entity-ownership.entity.ts";
 import { LegalEntityEntity } from "#/modules/entities/entities/legal-entity.entity.ts";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { EntitiesEntitiesReadServiceImpl } from "#/modules/entities/entities-read/entities-read.service.impl.ts";
 import { FindEntityIdentifiersUseCase } from "#/modules/entities/entities-read/use-cases/find-entity-identifiers.usecase.ts";
 import { FindEntityLocationsUseCase } from "#/modules/entities/entities-read/use-cases/find-entity-locations.usecase.ts";
@@ -25,7 +24,6 @@ import { EntitiesEntitiesReadService } from "./entities-read.service.ts";
       EntityLocationEntity,
       EntityOwnershipEntity,
       LegalEntityEntity,
-      JurisdictionEntity,
     ]),
   ],
   controllers: [EntitiesEntitiesReadController],

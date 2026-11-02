@@ -5,34 +5,16 @@ export const createEvidenceReferenceBodyExample: ContractExample = contractExamp
   name: "CreateEvidenceReferenceBody",
   fields: [
     {
-      name: "artifactChecksum",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", minLength: 64, maxLength: 64 },
-    },
-    {
-      name: "artifactId",
+      name: "fileId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "mediaType",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", minLength: 3, maxLength: 200 },
     },
     {
       name: "note",
       optional: true,
       nullable: true,
       spec: { kind: "string", maxLength: 4000 },
-    },
-    {
-      name: "sizeBytes",
-      optional: false,
-      nullable: false,
-      spec: { kind: "number", integer: true, min: 0 },
     },
     {
       name: "targetId",

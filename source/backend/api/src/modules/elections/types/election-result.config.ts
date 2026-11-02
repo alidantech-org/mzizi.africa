@@ -40,7 +40,7 @@ export const ELECTION_RESULT_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'valid
 
 export const ELECTION_RESULT_SEARCHABLE_FIELDS = [] as const satisfies readonly ElectionResultKey[];
 
-export const ELECTION_RESULT_FILTERABLE_FIELDS = ['candidateId', 'declaringInstitutionId', 'geoUnitId', 'id', 'isCurrent', 'isWinner', 'method', 'resultLevelId', 'seatId', 'verificationState', 'version', 'votes', ] as const satisfies readonly ElectionResultKey[];
+export const ELECTION_RESULT_FILTERABLE_FIELDS = ['candidateId', 'declaringInstitutionId', 'geoUnitId', 'id', 'isCurrent', 'isWinner', 'resultLevelId', 'seatId', 'version', 'votes', ] as const satisfies readonly ElectionResultKey[];
 
 export const ELECTION_RESULT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ElectionResultKey[];
 
@@ -48,7 +48,7 @@ export const ELECTION_RESULT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'val
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const ELECTION_RESULT_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'candidateId', 'confidence', 'createdAt', 'declaredAt', 'declaringInstitutionId', 'geoUnitId', 'id', 'isCurrent', 'isWinner', 'licence', 'method', 'rank', 'resultLevelId', 'retrievedAt', 'seatId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', 'votes', ] as const satisfies readonly ElectionResultKey[];
+export const ELECTION_RESULT_SELECTABLE_FIELDS = ['candidateId', 'createdAt', 'declaredAt', 'declaringInstitutionId', 'geoUnitId', 'id', 'isCurrent', 'isWinner', 'rank', 'resultLevelId', 'seatId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'votes', ] as const satisfies readonly ElectionResultKey[];
 
 export const ELECTION_RESULT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ElectionResultSelectableField[];
 
@@ -56,7 +56,7 @@ export const ELECTION_RESULT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as co
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const ELECTION_RESULT_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'candidateId', 'confidence', 'declaredAt', 'declaringInstitutionId', 'geoUnitId', 'isCurrent', 'isWinner', 'licence', 'method', 'rank', 'resultLevelId', 'retrievedAt', 'seatId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', 'votes', ] as const satisfies readonly ElectionResultKey[];
+export const ELECTION_RESULT_EDITABLE_FIELDS = ['candidateId', 'declaredAt', 'declaringInstitutionId', 'geoUnitId', 'isCurrent', 'isWinner', 'rank', 'resultLevelId', 'seatId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'votes', ] as const satisfies readonly ElectionResultKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

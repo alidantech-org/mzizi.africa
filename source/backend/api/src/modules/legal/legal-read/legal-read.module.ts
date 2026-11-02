@@ -5,7 +5,6 @@ import { LegalAmendmentEntity } from "#/modules/legal/entities/legal-amendment.e
 import { LegalAuthorityLinkEntity } from "#/modules/legal/entities/legal-authority-link.entity.ts";
 import { LegalInstrumentEntity } from "#/modules/legal/entities/legal-instrument.entity.ts";
 import { LegalProvisionEntity } from "#/modules/legal/entities/legal-provision.entity.ts";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { LegalLegalReadServiceImpl } from "#/modules/legal/legal-read/legal-read.service.impl.ts";
 import { FindLegalAmendmentChangesUseCase } from "#/modules/legal/legal-read/use-cases/find-legal-amendment-changes.usecase.ts";
 import { FindLegalAmendmentsUseCase } from "#/modules/legal/legal-read/use-cases/find-legal-amendments.usecase.ts";
@@ -29,7 +28,6 @@ import { LegalLegalReadService } from "./legal-read.service.ts";
       LegalAuthorityLinkEntity,
       LegalInstrumentEntity,
       LegalProvisionEntity,
-      JurisdictionEntity,
     ]),
   ],
   controllers: [LegalLegalReadController],

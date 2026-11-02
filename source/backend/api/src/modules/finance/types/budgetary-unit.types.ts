@@ -5,13 +5,10 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as JurisdictionTypes from '#/modules/reference/types/jurisdiction.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -34,31 +31,19 @@ import type {
 
 /** Budgetary Unit */
 export interface IBudgetaryUnit extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   code: string;
-  confidence: number | null;
   geoUnitId: string | null;
   institutionId: string | null;
   isCurrent: boolean;
   jurisdictionId: string;
   legalEntityId: string | null;
   levelId: string;
-  licence: string | null;
-  method: ProvenanceMethod;
   name: string;
   parentUnitId: string | null;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
-  readonly jurisdiction?: JurisdictionTypes.IJurisdiction;
 }
 
 // ----------------------------------
@@ -139,7 +124,6 @@ export type IBudgetaryUnitAsManyRelationQuery = Q.IAsManyRelationQuery<IBudgetar
 // ----------------------------------
 
 export interface IBudgetaryUnitRelationMap extends Record<BudgetaryUnitRelationKey, unknown> {
-  jurisdiction: JurisdictionTypes.IJurisdictionAsOneRelationQuery;
 }
 
 // ----------------------------------

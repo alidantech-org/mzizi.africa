@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as JurisdictionConfig from '#/modules/reference/types/jurisdiction.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const PUBLIC_SERVICE_RELATION_KEYS = ['jurisdiction', ] as const satisfies readonly PublicServiceKey[];
+export const PUBLIC_SERVICE_RELATION_KEYS = [] as const satisfies readonly PublicServiceKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const PUBLIC_SERVICE_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'upd
 
 export const PUBLIC_SERVICE_SEARCHABLE_FIELDS = ['code', 'name', ] as const satisfies readonly PublicServiceKey[];
 
-export const PUBLIC_SERVICE_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'method', 'name', 'sectorId', 'verificationState', 'version', ] as const satisfies readonly PublicServiceKey[];
+export const PUBLIC_SERVICE_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'name', 'sectorId', 'version', ] as const satisfies readonly PublicServiceKey[];
 
 export const PUBLIC_SERVICE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PublicServiceKey[];
 
@@ -48,7 +47,7 @@ export const PUBLIC_SERVICE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'vali
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PUBLIC_SERVICE_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'description', 'id', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'licence', 'method', 'name', 'retrievedAt', 'sectorId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PublicServiceKey[];
+export const PUBLIC_SERVICE_SELECTABLE_FIELDS = ['code', 'createdAt', 'description', 'id', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'name', 'sectorId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PublicServiceKey[];
 
 export const PUBLIC_SERVICE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PublicServiceSelectableField[];
 
@@ -56,7 +55,7 @@ export const PUBLIC_SERVICE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as con
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PUBLIC_SERVICE_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'description', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'licence', 'method', 'name', 'retrievedAt', 'sectorId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PublicServiceKey[];
+export const PUBLIC_SERVICE_EDITABLE_FIELDS = ['code', 'description', 'isCurrent', 'jurisdictionId', 'legalBasisId', 'name', 'sectorId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PublicServiceKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const PUBLIC_SERVICE_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const PUBLIC_SERVICE_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<PublicServiceRelationKey>().one(JurisdictionConfig.JURISDICTION_AS_ONE_RELATION_CONFIG, 'jurisdiction'),
 ] as const;
 
 export const PUBLIC_SERVICE_MANY_RELATION_QUERY_OPTIONS = [

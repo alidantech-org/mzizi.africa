@@ -6,8 +6,6 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { NominationStatus } from '#/types/elections/nomination-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -35,27 +33,16 @@ import type {
 
 /** Candidate */
 export interface ICandidate extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
-  confidence: number | null;
   isCurrent: boolean;
   isIndependent: boolean;
-  licence: string | null;
-  method: ProvenanceMethod;
   nominationStatus: NominationStatus;
   partyId: string | null;
   personId: string;
-  retrievedAt: Date | null;
   seatId: string;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly seat?: SeatTypes.ISeat;
 }
 

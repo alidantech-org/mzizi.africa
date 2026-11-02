@@ -5,8 +5,6 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -34,27 +32,16 @@ import type {
 
 /** Manifesto Commitment */
 export interface IManifestoCommitment extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
-  confidence: number | null;
   isCurrent: boolean;
-  licence: string | null;
   manifestoId: string;
-  method: ProvenanceMethod;
   parentId: string | null;
-  retrievedAt: Date | null;
   sortOrder: number;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   text: string;
-  toolOrModel: string | null;
   topicId: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly manifesto?: ManifestoTypes.IManifesto;
 }
 

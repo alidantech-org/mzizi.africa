@@ -40,7 +40,7 @@ export const INDICATOR_COLUMN_SORTABLE_FIELDS = ['code', 'createdAt', 'updatedAt
 
 export const INDICATOR_COLUMN_SEARCHABLE_FIELDS = ['code', ] as const satisfies readonly IndicatorColumnKey[];
 
-export const INDICATOR_COLUMN_FILTERABLE_FIELDS = ['code', 'id', 'indicatorId', 'isCurrent', 'method', 'verificationState', 'version', ] as const satisfies readonly IndicatorColumnKey[];
+export const INDICATOR_COLUMN_FILTERABLE_FIELDS = ['code', 'id', 'indicatorId', 'isCurrent', 'version', ] as const satisfies readonly IndicatorColumnKey[];
 
 export const INDICATOR_COLUMN_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly IndicatorColumnKey[];
 
@@ -48,7 +48,7 @@ export const INDICATOR_COLUMN_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'va
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const INDICATOR_COLUMN_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'dataType', 'id', 'indicatorId', 'isCurrent', 'label', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly IndicatorColumnKey[];
+export const INDICATOR_COLUMN_SELECTABLE_FIELDS = ['code', 'createdAt', 'dataType', 'id', 'indicatorId', 'isCurrent', 'label', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly IndicatorColumnKey[];
 
 export const INDICATOR_COLUMN_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly IndicatorColumnSelectableField[];
 
@@ -56,7 +56,7 @@ export const INDICATOR_COLUMN_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as c
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const INDICATOR_COLUMN_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'dataType', 'indicatorId', 'isCurrent', 'label', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly IndicatorColumnKey[];
+export const INDICATOR_COLUMN_EDITABLE_FIELDS = ['code', 'dataType', 'indicatorId', 'isCurrent', 'label', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly IndicatorColumnKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

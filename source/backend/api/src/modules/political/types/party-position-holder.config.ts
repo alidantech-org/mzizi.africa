@@ -40,7 +40,7 @@ export const PARTY_POSITION_HOLDER_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 
 
 export const PARTY_POSITION_HOLDER_SEARCHABLE_FIELDS = [] as const satisfies readonly PartyPositionHolderKey[];
 
-export const PARTY_POSITION_HOLDER_FILTERABLE_FIELDS = ['id', 'isActing', 'isCurrent', 'method', 'personId', 'positionId', 'verificationState', 'version', ] as const satisfies readonly PartyPositionHolderKey[];
+export const PARTY_POSITION_HOLDER_FILTERABLE_FIELDS = ['id', 'isActing', 'isCurrent', 'personId', 'positionId', 'version', ] as const satisfies readonly PartyPositionHolderKey[];
 
 export const PARTY_POSITION_HOLDER_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PartyPositionHolderKey[];
 
@@ -48,7 +48,7 @@ export const PARTY_POSITION_HOLDER_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt'
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_POSITION_HOLDER_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isActing', 'isCurrent', 'licence', 'method', 'personId', 'positionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyPositionHolderKey[];
+export const PARTY_POSITION_HOLDER_SELECTABLE_FIELDS = ['createdAt', 'id', 'isActing', 'isCurrent', 'personId', 'positionId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyPositionHolderKey[];
 
 export const PARTY_POSITION_HOLDER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PartyPositionHolderSelectableField[];
 
@@ -56,7 +56,7 @@ export const PARTY_POSITION_HOLDER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ]
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_POSITION_HOLDER_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'isActing', 'isCurrent', 'licence', 'method', 'personId', 'positionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyPositionHolderKey[];
+export const PARTY_POSITION_HOLDER_EDITABLE_FIELDS = ['isActing', 'isCurrent', 'personId', 'positionId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyPositionHolderKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

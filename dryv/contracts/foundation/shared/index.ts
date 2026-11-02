@@ -32,6 +32,8 @@ export const sharedProperties = shared.properties({
   Flag: dryv.property.boolean(),
   Version: dryv.property.number.integer({ range: { min: 0 } }),
   Count: dryv.property.number.integer({ range: { min: 0 } }),
+  /** File and object sizes can exceed 32 bits. */
+  ByteCount: dryv.property.number.int64().range({ min: 0 }),
   Confidence: dryv.property.number().range({ min: 0, max: 1 }),
   /** Unbounded text: legal provisions, rationales, manifestos. */
   LongText: dryv.property.string().length({ min: 1 }),
@@ -107,29 +109,6 @@ export const historicalEntitySchemas = shared.schemas({
     })
     .abstract()
     .extends(baseEntitySchemas.BaseEntity),
-});
-
-/**
- * Evidence on a record: where it came from, how it was produced, how confident we are and its
- * review state. The source artifact is referenced (files service), never copied.
- */
-export const evidencedEntitySchemas = shared.schemas({
-  EvidencedEntity: dryv
-    .schema({
-      sourceName: dryv.field(sharedProperties.Name),
-      sourceReference: dryv.field(sharedProperties.Description).optional().nullable(),
-      sourceUrl: dryv.field(sharedProperties.Url).optional().nullable(),
-      artifactId: dryv.field(sharedProperties.Id).optional().nullable(),
-      artifactChecksum: dryv.field(sharedProperties.Checksum).optional().nullable(),
-      retrievedAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
-      licence: dryv.field(sharedProperties.Name).optional().nullable(),
-      method: dryv.field(sharedProperties.ProvenanceMethod).query({ filter: ["equal", "in"] }),
-      toolOrModel: dryv.field(sharedProperties.Name).optional().nullable(),
-      confidence: dryv.field(sharedProperties.Confidence).optional().nullable(),
-      verificationState: dryv.field(sharedProperties.VerificationState).query({ filter: ["equal", "in"] }),
-    })
-    .abstract()
-    .extends(historicalEntitySchemas.HistoricalEntity),
 });
 
 /* -------------------------------------------------------------------------- */

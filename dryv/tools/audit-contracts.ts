@@ -11,8 +11,13 @@ const items = compileIr();
 const violations: string[] = [];
 const schemas = new Map(items.filter((i) => i.kind === "schema").map((i) => [i.name, i.value]));
 
-/** Entities that are deliberately not evidence-bearing claims (for example user comments). */
-const evidenceExempt = new Set<string>(["audit.Comment", "audit.ReviewDecision", "audit.EvidenceReference"]);
+/**
+ * Schemas whose records are system or append-only (identity and record time only). Every other
+ * schema holds domain facts and its entities carry valid time. Provenance is never a column: it
+ * lives in the source schema (SOURCING_DESIGN.md).
+ */
+const systemSchemas = new Set(["audit", "source", "filesystem", "identity"]);
+const provenanceFields = ["sourceName", "sourceReference", "sourceUrl", "artifactId", "artifactChecksum", "retrievedAt", "licence", "method", "toolOrModel", "confidence", "verificationState"];
 
 function ref(value: Json | undefined): string | undefined {
   return value?.$ref?.replace("#/schemas/", "");
@@ -34,13 +39,20 @@ for (const name of schemas.keys()) {
   if (reservedSchemaNames.has(name.split(".").pop() ?? "")) violations.push(`${name}: reserved schema name (collides with a generated helper); rename it`);
 }
 
+/** Schema names are full words (rule: .docs/rules/database-naming.md). */
+const approvedSchemas = new Set(["reference", "geography", "legal", "person", "identity", "governance", "electoral", "political", "calendar", "organization", "finance", "debt", "procurement", "statistical", "civic", "filesystem", "source", "audit"]);
+
 const tables = new Map<string, string>();
 for (const [name, schema] of schemas) {
   if (schema.role !== "entity" || schema.abstract) continue;
 
-  // 1. Provenance and time are part of every claim-bearing record (AGENTS.md sections 4 and 6).
-  if (!evidenceExempt.has(name) && !chain(name).includes("shared.EvidencedEntity")) {
-    violations.push(`${name}: entity must extend shared.EvidencedEntity (provenance, valid time, verification)`);
+  // 1. Domain facts carry valid time; provenance and verification are not columns on data rows.
+  const owner = storageOf(items, schema).schema ?? "";
+  const lineage = chain(name);
+  if (!lineage.includes("shared.BaseEntity")) violations.push(`${name}: entity must extend shared.BaseEntity`);
+  if (!systemSchemas.has(owner) && !lineage.includes("shared.HistoricalEntity")) violations.push(`${name}: domain entity must extend shared.HistoricalEntity (valid time)`);
+  for (const field of owner === "source" ? [] : Object.keys(schema.fields ?? {})) {
+    if (provenanceFields.includes(field)) violations.push(`${name}.${field}: provenance belongs in the source schema, not on data rows`);
   }
 
   // 2. The entity pack names a relation property after its target; two relations collide.
@@ -60,6 +72,14 @@ for (const [name, schema] of schemas) {
     continue;
   }
   const qualified = `${dbSchema}.${table}`;
+  // No foreign key may cross a schema: other schemas are referenced by plain id.
+  for (const [field, spec] of Object.entries<Json>(schema.fields ?? {})) {
+    const targetName = ref(spec.relation?.target);
+    if (!targetName) continue;
+    const target = storageOf(items, schemas.get(targetName) as Json);
+    if (target.schema !== dbSchema) violations.push(`${name}.${field}: relation to ${targetName} crosses from ${dbSchema} to ${target.schema}; use a plain id`);
+  }
+  if (!approvedSchemas.has(dbSchema)) violations.push(`${name}: schema ${dbSchema} is not an approved full-word schema name`);
   if (dbSchema === "public") violations.push(`${name}: tables must not live in the public schema`);
   if (!/^[a-z][a-z0-9]*$/.test(dbSchema)) violations.push(`${name}: schema ${dbSchema} must be one lowercase word`);
   if (dbSchema.endsWith("s") && !["address"].includes(dbSchema)) violations.push(`${name}: schema ${dbSchema} must be singular`);

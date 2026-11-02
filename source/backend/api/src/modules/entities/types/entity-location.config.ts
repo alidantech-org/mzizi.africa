@@ -40,7 +40,7 @@ export const ENTITY_LOCATION_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'valid
 
 export const ENTITY_LOCATION_SEARCHABLE_FIELDS = [] as const satisfies readonly EntityLocationKey[];
 
-export const ENTITY_LOCATION_FILTERABLE_FIELDS = ['entityId', 'geoUnitId', 'id', 'isCurrent', 'kindId', 'method', 'verificationState', 'version', ] as const satisfies readonly EntityLocationKey[];
+export const ENTITY_LOCATION_FILTERABLE_FIELDS = ['entityId', 'geoUnitId', 'id', 'isCurrent', 'kindId', 'version', ] as const satisfies readonly EntityLocationKey[];
 
 export const ENTITY_LOCATION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly EntityLocationKey[];
 
@@ -48,7 +48,7 @@ export const ENTITY_LOCATION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'val
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const ENTITY_LOCATION_SELECTABLE_FIELDS = ['addressText', 'artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'entityId', 'geoUnitId', 'id', 'isCurrent', 'kindId', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly EntityLocationKey[];
+export const ENTITY_LOCATION_SELECTABLE_FIELDS = ['addressText', 'createdAt', 'entityId', 'geoUnitId', 'id', 'isCurrent', 'kindId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly EntityLocationKey[];
 
 export const ENTITY_LOCATION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly EntityLocationSelectableField[];
 
@@ -56,7 +56,7 @@ export const ENTITY_LOCATION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as co
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const ENTITY_LOCATION_EDITABLE_FIELDS = ['addressText', 'artifactChecksum', 'artifactId', 'confidence', 'entityId', 'geoUnitId', 'isCurrent', 'kindId', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly EntityLocationKey[];
+export const ENTITY_LOCATION_EDITABLE_FIELDS = ['addressText', 'entityId', 'geoUnitId', 'isCurrent', 'kindId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly EntityLocationKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -1,5 +1,5 @@
 ---
-{id: TSK-9D555B563153,name: Source schema and removal of embedded provenance,type: task,status: planned,priority: medium,created_at: 2026-11-02T06:41:22.356Z,updated_at: 2026-11-02T06:41:22.356Z,due_at: 2026-11-02,order: 2048}
+{id: TSK-9D555B563153,name: Source schema and removal of embedded provenance,type: task,status: completed,priority: medium,created_at: 2026-11-02T06:41:22.356Z,updated_at: 2026-11-02T06:59:00.053Z,due_at: 2026-11-02,order: 2048,extra: {status_history: [{from: planned,to: completed,at: 2026-11-02T06:59:00.053Z}]}}
 ---
 
 # Source schema and removal of embedded provenance
@@ -14,9 +14,13 @@ Create the source schema (publishers, documents, captures, methods, attributions
 
 ## Acceptance checklist
 
-- [ ] Author the source contracts with read endpoints for documents, captures, methods, attributions and verifications.
-- [ ] Remove provenance fields from the shared base and all domain entities.
-- [ ] Update the audit tool and the target-kind export for the new base.
-- [ ] Rewrite the geography boundary provenance and verified-only queries to use source.
-- [ ] Update the fixture loader to create document, capture and attribution rows.
-- [ ] Update every test that seeded evidence fields.
+- [x] Author the source contracts with read endpoints for documents, captures, methods, attributions and verifications.
+- [x] Remove provenance fields from the shared base and all domain entities.
+- [x] Update the audit tool and the target-kind export for the new base.
+- [x] Rewrite the geography boundary provenance and verified-only queries to use source.
+- [x] Update the fixture loader to create document, capture and attribution rows.
+- [x] Update every test that seeded evidence fields.
+
+## Progress
+
+New source schema: publishers, documents, captures, methods, attributions (target kind + id + relation + locator + method + confidence) and an append-only verifications ledger, with public read endpoints. The ten embedded evidence columns were removed from all data entities, which now extend HistoricalEntity (domain facts) or BaseEntity (system schemas); the audit rejects provenance columns outside source. Geography boundary source, licence, retrieval time and verified-only reads now join source in hand-written SQL (the only cross-schema reads). The fixture loader writes a Test fixture document, attribution and unverified verification per row. Decision record: .docs/decisions/provenance-in-source-schema.md.

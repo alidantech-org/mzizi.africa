@@ -40,7 +40,7 @@ export const SELECTION_PROCEDURE_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'v
 
 export const SELECTION_PROCEDURE_SEARCHABLE_FIELDS = [] as const satisfies readonly SelectionProcedureKey[];
 
-export const SELECTION_PROCEDURE_FILTERABLE_FIELDS = ['id', 'isCurrent', 'legalBasisId', 'method', 'methodId', 'officeId', 'verificationState', 'version', ] as const satisfies readonly SelectionProcedureKey[];
+export const SELECTION_PROCEDURE_FILTERABLE_FIELDS = ['id', 'isCurrent', 'legalBasisId', 'methodId', 'officeId', 'version', ] as const satisfies readonly SelectionProcedureKey[];
 
 export const SELECTION_PROCEDURE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly SelectionProcedureKey[];
 
@@ -48,7 +48,7 @@ export const SELECTION_PROCEDURE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const SELECTION_PROCEDURE_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'description', 'id', 'isCurrent', 'legalBasisId', 'licence', 'method', 'methodId', 'officeId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly SelectionProcedureKey[];
+export const SELECTION_PROCEDURE_SELECTABLE_FIELDS = ['createdAt', 'description', 'id', 'isCurrent', 'legalBasisId', 'methodId', 'officeId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly SelectionProcedureKey[];
 
 export const SELECTION_PROCEDURE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly SelectionProcedureSelectableField[];
 
@@ -56,7 +56,7 @@ export const SELECTION_PROCEDURE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] a
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const SELECTION_PROCEDURE_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'description', 'isCurrent', 'legalBasisId', 'licence', 'method', 'methodId', 'officeId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly SelectionProcedureKey[];
+export const SELECTION_PROCEDURE_EDITABLE_FIELDS = ['description', 'isCurrent', 'legalBasisId', 'methodId', 'officeId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly SelectionProcedureKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

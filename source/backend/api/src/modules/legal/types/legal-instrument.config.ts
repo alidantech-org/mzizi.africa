@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as JurisdictionConfig from '#/modules/reference/types/jurisdiction.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const LEGAL_INSTRUMENT_RELATION_KEYS = ['jurisdiction', ] as const satisfies readonly LegalInstrumentKey[];
+export const LEGAL_INSTRUMENT_RELATION_KEYS = [] as const satisfies readonly LegalInstrumentKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const LEGAL_INSTRUMENT_SORTABLE_FIELDS = ['code', 'createdAt', 'title', '
 
 export const LEGAL_INSTRUMENT_SEARCHABLE_FIELDS = ['code', 'title', ] as const satisfies readonly LegalInstrumentKey[];
 
-export const LEGAL_INSTRUMENT_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'issuingInstitutionId', 'jurisdictionId', 'kindId', 'method', 'status', 'title', 'verificationState', 'version', ] as const satisfies readonly LegalInstrumentKey[];
+export const LEGAL_INSTRUMENT_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'issuingInstitutionId', 'jurisdictionId', 'kindId', 'status', 'title', 'version', ] as const satisfies readonly LegalInstrumentKey[];
 
 export const LEGAL_INSTRUMENT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly LegalInstrumentKey[];
 
@@ -48,7 +47,7 @@ export const LEGAL_INSTRUMENT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'va
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_INSTRUMENT_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'contentHash', 'createdAt', 'documentUrl', 'id', 'isCurrent', 'issuingInstitutionId', 'jurisdictionId', 'kindId', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'summary', 'title', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalInstrumentKey[];
+export const LEGAL_INSTRUMENT_SELECTABLE_FIELDS = ['code', 'contentHash', 'createdAt', 'documentUrl', 'id', 'isCurrent', 'issuingInstitutionId', 'jurisdictionId', 'kindId', 'status', 'summary', 'title', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalInstrumentKey[];
 
 export const LEGAL_INSTRUMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly LegalInstrumentSelectableField[];
 
@@ -56,7 +55,7 @@ export const LEGAL_INSTRUMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as c
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_INSTRUMENT_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'contentHash', 'documentUrl', 'isCurrent', 'issuingInstitutionId', 'jurisdictionId', 'kindId', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'summary', 'title', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalInstrumentKey[];
+export const LEGAL_INSTRUMENT_EDITABLE_FIELDS = ['code', 'contentHash', 'documentUrl', 'isCurrent', 'issuingInstitutionId', 'jurisdictionId', 'kindId', 'status', 'summary', 'title', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalInstrumentKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const LEGAL_INSTRUMENT_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const LEGAL_INSTRUMENT_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<LegalInstrumentRelationKey>().one(JurisdictionConfig.JURISDICTION_AS_ONE_RELATION_CONFIG, 'jurisdiction'),
 ] as const;
 
 export const LEGAL_INSTRUMENT_MANY_RELATION_QUERY_OPTIONS = [

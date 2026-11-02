@@ -1,10 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type { DataSource } from 'typeorm';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import type { ObservationPublicDto } from '#/modules/statistics/dto/observation-public.dto';
 import type { ObservationResponseDto } from '#/modules/statistics/dto/observation-response.dto';
@@ -29,33 +27,22 @@ export class GetObservationByIdUseCase {
 
   private toReadModel(entity: ObservationEntity): ObservationPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     columnId: entity.columnId,
-    confidence: entity.confidence,
     confidenceLevel: entity.confidenceLevel,
     createdAt: entity.createdAt,
     geoUnitId: entity.geoUnitId,
     id: entity.id,
     indicatorId: entity.indicatorId,
     isCurrent: entity.isCurrent,
-    licence: entity.licence,
-    method: entity.method,
     numericValue: entity.numericValue,
     periodId: entity.periodId,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     tableId: entity.tableId,
     textValue: entity.textValue,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as ObservationPublicDto;
   }

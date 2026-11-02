@@ -40,7 +40,7 @@ export const PARTY_IDEOLOGY_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'validF
 
 export const PARTY_IDEOLOGY_SEARCHABLE_FIELDS = [] as const satisfies readonly PartyIdeologyKey[];
 
-export const PARTY_IDEOLOGY_FILTERABLE_FIELDS = ['id', 'ideologyId', 'isCurrent', 'method', 'partyId', 'verificationState', 'version', ] as const satisfies readonly PartyIdeologyKey[];
+export const PARTY_IDEOLOGY_FILTERABLE_FIELDS = ['id', 'ideologyId', 'isCurrent', 'partyId', 'version', ] as const satisfies readonly PartyIdeologyKey[];
 
 export const PARTY_IDEOLOGY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PartyIdeologyKey[];
 
@@ -48,7 +48,7 @@ export const PARTY_IDEOLOGY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'vali
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_IDEOLOGY_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'ideologyId', 'isCurrent', 'licence', 'method', 'partyId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyIdeologyKey[];
+export const PARTY_IDEOLOGY_SELECTABLE_FIELDS = ['createdAt', 'id', 'ideologyId', 'isCurrent', 'partyId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyIdeologyKey[];
 
 export const PARTY_IDEOLOGY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PartyIdeologySelectableField[];
 
@@ -56,7 +56,7 @@ export const PARTY_IDEOLOGY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as con
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_IDEOLOGY_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'ideologyId', 'isCurrent', 'licence', 'method', 'partyId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyIdeologyKey[];
+export const PARTY_IDEOLOGY_EDITABLE_FIELDS = ['ideologyId', 'isCurrent', 'partyId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyIdeologyKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

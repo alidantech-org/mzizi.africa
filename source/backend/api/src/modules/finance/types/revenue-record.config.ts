@@ -40,7 +40,7 @@ export const REVENUE_RECORD_SORTABLE_FIELDS = ['amount', 'createdAt', 'receivedO
 
 export const REVENUE_RECORD_SEARCHABLE_FIELDS = [] as const satisfies readonly RevenueRecordKey[];
 
-export const REVENUE_RECORD_FILTERABLE_FIELDS = ['amount', 'categoryId', 'fiscalYearId', 'id', 'isCurrent', 'method', 'payerEntityId', 'restriction', 'unitId', 'verificationState', 'version', ] as const satisfies readonly RevenueRecordKey[];
+export const REVENUE_RECORD_FILTERABLE_FIELDS = ['amount', 'categoryId', 'fiscalYearId', 'id', 'isCurrent', 'payerEntityId', 'restriction', 'unitId', 'version', ] as const satisfies readonly RevenueRecordKey[];
 
 export const REVENUE_RECORD_DATE_RANGE_FIELDS = ['createdAt', 'receivedOn', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly RevenueRecordKey[];
 
@@ -48,7 +48,7 @@ export const REVENUE_RECORD_DATE_RANGE_FIELDS = ['createdAt', 'receivedOn', 'upd
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const REVENUE_RECORD_SELECTABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'categoryId', 'confidence', 'createdAt', 'currencyCode', 'fiscalYearId', 'id', 'isCurrent', 'licence', 'method', 'payerEntityId', 'receivedOn', 'restriction', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly RevenueRecordKey[];
+export const REVENUE_RECORD_SELECTABLE_FIELDS = ['amount', 'categoryId', 'createdAt', 'currencyCode', 'fiscalYearId', 'id', 'isCurrent', 'payerEntityId', 'receivedOn', 'restriction', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly RevenueRecordKey[];
 
 export const REVENUE_RECORD_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly RevenueRecordSelectableField[];
 
@@ -56,7 +56,7 @@ export const REVENUE_RECORD_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as con
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const REVENUE_RECORD_EDITABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'categoryId', 'confidence', 'currencyCode', 'fiscalYearId', 'isCurrent', 'licence', 'method', 'payerEntityId', 'receivedOn', 'restriction', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly RevenueRecordKey[];
+export const REVENUE_RECORD_EDITABLE_FIELDS = ['amount', 'categoryId', 'currencyCode', 'fiscalYearId', 'isCurrent', 'payerEntityId', 'receivedOn', 'restriction', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly RevenueRecordKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

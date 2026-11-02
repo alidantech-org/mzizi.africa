@@ -6,7 +6,6 @@ import { ElectionEntity } from "#/modules/elections/entities/election.entity.ts"
 import { ManifestoCommitmentEntity } from "#/modules/elections/entities/manifesto-commitment.entity.ts";
 import { ManifestoEntity } from "#/modules/elections/entities/manifesto.entity.ts";
 import { SeatEntity } from "#/modules/elections/entities/seat.entity.ts";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { ElectionsElectionsReadServiceImpl } from "#/modules/elections/elections-read/elections-read.service.impl.ts";
 import { FindCandidatesUseCase } from "#/modules/elections/elections-read/use-cases/find-candidates.usecase.ts";
 import { FindElectionResultsUseCase } from "#/modules/elections/elections-read/use-cases/find-election-results.usecase.ts";
@@ -33,7 +32,6 @@ import { ElectionsElectionsReadService } from "./elections-read.service.ts";
       ManifestoCommitmentEntity,
       ManifestoEntity,
       SeatEntity,
-      JurisdictionEntity,
     ]),
   ],
   controllers: [ElectionsElectionsReadController],

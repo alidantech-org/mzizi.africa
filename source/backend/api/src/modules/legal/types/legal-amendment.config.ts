@@ -40,7 +40,7 @@ export const LEGAL_AMENDMENT_SORTABLE_FIELDS = ['code', 'createdAt', 'updatedAt'
 
 export const LEGAL_AMENDMENT_SEARCHABLE_FIELDS = ['code', ] as const satisfies readonly LegalAmendmentKey[];
 
-export const LEGAL_AMENDMENT_FILTERABLE_FIELDS = ['amendingInstrumentId', 'code', 'id', 'instrumentId', 'isCurrent', 'method', 'verificationState', 'version', ] as const satisfies readonly LegalAmendmentKey[];
+export const LEGAL_AMENDMENT_FILTERABLE_FIELDS = ['amendingInstrumentId', 'code', 'id', 'instrumentId', 'isCurrent', 'version', ] as const satisfies readonly LegalAmendmentKey[];
 
 export const LEGAL_AMENDMENT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly LegalAmendmentKey[];
 
@@ -48,7 +48,7 @@ export const LEGAL_AMENDMENT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'val
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_AMENDMENT_SELECTABLE_FIELDS = ['amendingInstrumentId', 'artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'id', 'instrumentId', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'summary', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalAmendmentKey[];
+export const LEGAL_AMENDMENT_SELECTABLE_FIELDS = ['amendingInstrumentId', 'code', 'createdAt', 'id', 'instrumentId', 'isCurrent', 'summary', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalAmendmentKey[];
 
 export const LEGAL_AMENDMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly LegalAmendmentSelectableField[];
 
@@ -56,7 +56,7 @@ export const LEGAL_AMENDMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as co
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_AMENDMENT_EDITABLE_FIELDS = ['amendingInstrumentId', 'artifactChecksum', 'artifactId', 'code', 'confidence', 'instrumentId', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'summary', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalAmendmentKey[];
+export const LEGAL_AMENDMENT_EDITABLE_FIELDS = ['amendingInstrumentId', 'code', 'instrumentId', 'isCurrent', 'summary', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalAmendmentKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

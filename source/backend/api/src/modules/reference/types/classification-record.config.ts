@@ -40,7 +40,7 @@ export const CLASSIFICATION_RECORD_SORTABLE_FIELDS = ['code', 'createdAt', 'labe
 
 export const CLASSIFICATION_RECORD_SEARCHABLE_FIELDS = ['code', 'label', ] as const satisfies readonly ClassificationRecordKey[];
 
-export const CLASSIFICATION_RECORD_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'jurisdictionId', 'label', 'method', 'scheme', 'verificationState', 'version', ] as const satisfies readonly ClassificationRecordKey[];
+export const CLASSIFICATION_RECORD_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'jurisdictionId', 'label', 'scheme', 'version', ] as const satisfies readonly ClassificationRecordKey[];
 
 export const CLASSIFICATION_RECORD_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ClassificationRecordKey[];
 
@@ -48,7 +48,7 @@ export const CLASSIFICATION_RECORD_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt'
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const CLASSIFICATION_RECORD_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'id', 'isCurrent', 'jurisdictionId', 'label', 'legalBasis', 'licence', 'method', 'order', 'retrievedAt', 'scheme', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ClassificationRecordKey[];
+export const CLASSIFICATION_RECORD_SELECTABLE_FIELDS = ['code', 'createdAt', 'id', 'isCurrent', 'jurisdictionId', 'label', 'legalBasis', 'order', 'scheme', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ClassificationRecordKey[];
 
 export const CLASSIFICATION_RECORD_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ClassificationRecordSelectableField[];
 
@@ -56,7 +56,7 @@ export const CLASSIFICATION_RECORD_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ]
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const CLASSIFICATION_RECORD_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'isCurrent', 'jurisdictionId', 'label', 'legalBasis', 'licence', 'method', 'order', 'retrievedAt', 'scheme', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ClassificationRecordKey[];
+export const CLASSIFICATION_RECORD_EDITABLE_FIELDS = ['code', 'isCurrent', 'jurisdictionId', 'label', 'legalBasis', 'order', 'scheme', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ClassificationRecordKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

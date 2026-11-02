@@ -40,7 +40,7 @@ export const OFFICE_RULE_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'validFrom
 
 export const OFFICE_RULE_SEARCHABLE_FIELDS = [] as const satisfies readonly OfficeRuleKey[];
 
-export const OFFICE_RULE_FILTERABLE_FIELDS = ['id', 'isCurrent', 'kind', 'legalBasisId', 'method', 'officeId', 'verificationState', 'version', ] as const satisfies readonly OfficeRuleKey[];
+export const OFFICE_RULE_FILTERABLE_FIELDS = ['id', 'isCurrent', 'kind', 'legalBasisId', 'officeId', 'version', ] as const satisfies readonly OfficeRuleKey[];
 
 export const OFFICE_RULE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly OfficeRuleKey[];
 
@@ -48,7 +48,7 @@ export const OFFICE_RULE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFr
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const OFFICE_RULE_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'kind', 'legalBasisId', 'licence', 'method', 'numericValue', 'officeId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'textValue', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly OfficeRuleKey[];
+export const OFFICE_RULE_SELECTABLE_FIELDS = ['createdAt', 'id', 'isCurrent', 'kind', 'legalBasisId', 'numericValue', 'officeId', 'textValue', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly OfficeRuleKey[];
 
 export const OFFICE_RULE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly OfficeRuleSelectableField[];
 
@@ -56,7 +56,7 @@ export const OFFICE_RULE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const OFFICE_RULE_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'isCurrent', 'kind', 'legalBasisId', 'licence', 'method', 'numericValue', 'officeId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'textValue', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly OfficeRuleKey[];
+export const OFFICE_RULE_EDITABLE_FIELDS = ['isCurrent', 'kind', 'legalBasisId', 'numericValue', 'officeId', 'textValue', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly OfficeRuleKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

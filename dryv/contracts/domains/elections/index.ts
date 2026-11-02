@@ -1,7 +1,7 @@
 import * as dryv from "@dryvcode/author";
 
 import { referenceSchemas } from "../../foundation/reference/index.ts";
-import { evidenced, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
+import { recorded, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
 import { readSurface } from "../../foundation/shared/read-surface.ts";
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
@@ -60,9 +60,9 @@ export const eventProperties = events.properties({
 /* ---------------------------------- Elections ---------------------------------- */
 
 const electionCore = elections.schemas({
-  Election: evidenced(
+  Election: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       name: dryv.field(sharedProperties.Name).query(searchable),
       typeId: plainId(),
@@ -82,7 +82,7 @@ const electionCore = elections.schemas({
 });
 
 const electionSeats = elections.schemas({
-  Seat: evidenced(
+  Seat: recorded(
     {
       electionId: relationTo(() => electionCore.Election.field("id")),
       officeId: optionalId(),
@@ -97,7 +97,7 @@ const electionSeats = elections.schemas({
 });
 
 const electionContests = elections.schemas({
-  Candidate: evidenced(
+  Candidate: recorded(
     {
       seatId: relationTo(() => electionSeats.Seat.field("id")),
       personId: plainId(),
@@ -111,7 +111,7 @@ const electionContests = elections.schemas({
 });
 
 const electionOutcomes = elections.schemas({
-  ElectionResult: evidenced(
+  ElectionResult: recorded(
     {
       candidateId: relationTo(() => electionContests.Candidate.field("id")),
       seatId: plainId(),
@@ -127,7 +127,7 @@ const electionOutcomes = elections.schemas({
     [{ name: "idx_result_candidate", fields: ["candidateId"] }, { name: "idx_result_seat", fields: ["seatId", "resultLevelId"] }],
   ),
 
-  Manifesto: evidenced(
+  Manifesto: recorded(
     {
       candidateId: relationTo(() => electionContests.Candidate.field("id")),
       title: dryv.field(sharedProperties.Name).query(searchable),
@@ -141,7 +141,7 @@ const electionOutcomes = elections.schemas({
 });
 
 const manifestoCommitments = elections.schemas({
-  ManifestoCommitment: evidenced(
+  ManifestoCommitment: recorded(
     {
       manifestoId: relationTo(() => electionOutcomes.Manifesto.field("id")),
       parentId: optionalId(),
@@ -157,9 +157,9 @@ const manifestoCommitments = elections.schemas({
 /* ---------------------------------- Political ---------------------------------- */
 
 const parties = political.schemas({
-  Party: evidenced(
+  Party: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       name: dryv.field(sharedProperties.Name).query(searchable),
       abbreviation: dryv.field(politicalProperties.Abbreviation).optional().nullable().query({ filter: ["contains"], search: true }),
@@ -174,7 +174,7 @@ const parties = political.schemas({
 });
 
 const partyDetails = political.schemas({
-  PartyMembership: evidenced(
+  PartyMembership: recorded(
     {
       partyId: relationTo(() => parties.Party.field("id")),
       personId: plainId(),
@@ -184,7 +184,7 @@ const partyDetails = political.schemas({
     [{ name: "idx_membership_party", fields: ["partyId"] }, { name: "idx_membership_person", fields: ["personId"] }],
   ),
 
-  PartyUnit: evidenced(
+  PartyUnit: recorded(
     {
       partyId: relationTo(() => parties.Party.field("id")),
       parentUnitId: optionalId(),
@@ -197,9 +197,9 @@ const partyDetails = political.schemas({
     [{ name: "idx_party_unit_party_code", fields: ["partyId", "code"], unique: true }],
   ),
 
-  Ideology: evidenced(
+  Ideology: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       label: dryv.field(sharedProperties.Label).query(searchable),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
@@ -210,7 +210,7 @@ const partyDetails = political.schemas({
 });
 
 const partyLinks = political.schemas({
-  PartyPosition: evidenced(
+  PartyPosition: recorded(
     {
       unitId: relationTo(() => partyDetails.PartyUnit.field("id")),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
@@ -220,7 +220,7 @@ const partyLinks = political.schemas({
     [{ name: "idx_party_position_unit_code", fields: ["unitId", "code"], unique: true }],
   ),
 
-  PartyIdeology: evidenced(
+  PartyIdeology: recorded(
     {
       partyId: relationTo(() => parties.Party.field("id")),
       ideologyId: plainId(),
@@ -231,7 +231,7 @@ const partyLinks = political.schemas({
 });
 
 const partyHolders = political.schemas({
-  PartyPositionHolder: evidenced(
+  PartyPositionHolder: recorded(
     {
       positionId: relationTo(() => partyLinks.PartyPosition.field("id")),
       personId: plainId(),
@@ -245,9 +245,9 @@ const partyHolders = political.schemas({
 /* ----------------------------------- Events ------------------------------------ */
 
 const eventCore = events.schemas({
-  Event: evidenced(
+  Event: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       title: dryv.field(sharedProperties.Name).query(searchable),
       typeId: plainId(),
@@ -265,7 +265,7 @@ const eventCore = events.schemas({
 });
 
 const eventLinks = events.schemas({
-  EventLink: evidenced(
+  EventLink: recorded(
     {
       eventId: relationTo(() => eventCore.Event.field("id")),
       targetKind: dryv.field(sharedProperties.TargetKind).query({ filter: ["equal"] }),

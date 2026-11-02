@@ -6,13 +6,10 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { LoanStatus } from '#/types/debt/loan-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as BudgetaryUnitTypes from '#/modules/finance/types/budgetary-unit.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -35,32 +32,20 @@ import type {
 
 /** Loan */
 export interface ILoan extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   borrowerUnitId: string;
   code: string;
-  confidence: number | null;
   currencyCode: string;
   interestRate: number | null;
   isCurrent: boolean;
   legalBasisId: string | null;
   lenderEntityId: string | null;
-  licence: string | null;
-  method: ProvenanceMethod;
   principalAmount: number;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   status: LoanStatus;
   termMonths: number | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
-  readonly budgetaryUnit?: BudgetaryUnitTypes.IBudgetaryUnit;
 }
 
 // ----------------------------------
@@ -141,7 +126,6 @@ export type ILoanAsManyRelationQuery = Q.IAsManyRelationQuery<ILoan, LoanSelecta
 // ----------------------------------
 
 export interface ILoanRelationMap extends Record<LoanRelationKey, unknown> {
-  budgetaryUnit: BudgetaryUnitTypes.IBudgetaryUnitAsOneRelationQuery;
 }
 
 // ----------------------------------

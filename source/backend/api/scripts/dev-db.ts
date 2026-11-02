@@ -38,7 +38,8 @@ try {
     await synchronizeDomainSchemas(db);
   }
   if (command === "fixtures" || command === "reset") {
-    const ids = await loadFixtures(db, readFixture("kenya").rows);
+    const ids = await loadFixtures(db, readFixture("reference/media-formats").rows);
+    await loadFixtures(db, readFixture("kenya").rows, ids);
     await loadFixtures(db, readFixture("south-africa").rows, ids);
     console.log(`Loaded ${ids.size} fixture rows`);
   }

@@ -5,8 +5,6 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -34,25 +32,14 @@ import type {
 
 /** Party Position Holder */
 export interface IPartyPositionHolder extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
-  confidence: number | null;
   isActing: boolean;
   isCurrent: boolean;
-  licence: string | null;
-  method: ProvenanceMethod;
   personId: string;
   positionId: string;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly partyPosition?: PartyPositionTypes.IPartyPosition;
 }
 

@@ -5,13 +5,10 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as JurisdictionTypes from '#/modules/reference/types/jurisdiction.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -34,29 +31,17 @@ import type {
 
 /** Amenity */
 export interface IAmenity extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   code: string;
-  confidence: number | null;
   geoUnitId: string | null;
   isActive: boolean;
   isCurrent: boolean;
   jurisdictionId: string;
-  licence: string | null;
-  method: ProvenanceMethod;
   name: string;
-  retrievedAt: Date | null;
   sectorId: string;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
-  readonly jurisdiction?: JurisdictionTypes.IJurisdiction;
 }
 
 // ----------------------------------
@@ -137,7 +122,6 @@ export type IAmenityAsManyRelationQuery = Q.IAsManyRelationQuery<IAmenity, Ameni
 // ----------------------------------
 
 export interface IAmenityRelationMap extends Record<AmenityRelationKey, unknown> {
-  jurisdiction: JurisdictionTypes.IJurisdictionAsOneRelationQuery;
 }
 
 // ----------------------------------

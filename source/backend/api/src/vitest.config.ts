@@ -12,6 +12,7 @@ export default defineConfig({
     include: ["**/*.spec.ts"],
     exclude: ["**/node_modules/**"],
     testTimeout: 30_000,
+    hookTimeout: 120_000,
   },
   plugins: [tsconfigPaths({ projects: ["tsconfig.json"] }), swc.vite({ module: { type: "es6" } })],
 });

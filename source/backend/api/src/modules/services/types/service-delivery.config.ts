@@ -40,7 +40,7 @@ export const SERVICE_DELIVERY_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'vali
 
 export const SERVICE_DELIVERY_SEARCHABLE_FIELDS = [] as const satisfies readonly ServiceDeliveryKey[];
 
-export const SERVICE_DELIVERY_FILTERABLE_FIELDS = ['amenityId', 'budgetId', 'id', 'isCurrent', 'method', 'responsibleOfficeId', 'serviceId', 'status', 'verificationState', 'version', ] as const satisfies readonly ServiceDeliveryKey[];
+export const SERVICE_DELIVERY_FILTERABLE_FIELDS = ['amenityId', 'budgetId', 'id', 'isCurrent', 'responsibleOfficeId', 'serviceId', 'status', 'version', ] as const satisfies readonly ServiceDeliveryKey[];
 
 export const SERVICE_DELIVERY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ServiceDeliveryKey[];
 
@@ -48,7 +48,7 @@ export const SERVICE_DELIVERY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'va
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const SERVICE_DELIVERY_SELECTABLE_FIELDS = ['amenityId', 'artifactChecksum', 'artifactId', 'budgetId', 'confidence', 'createdAt', 'id', 'isCurrent', 'licence', 'method', 'responsibleOfficeId', 'retrievedAt', 'serviceId', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ServiceDeliveryKey[];
+export const SERVICE_DELIVERY_SELECTABLE_FIELDS = ['amenityId', 'budgetId', 'createdAt', 'id', 'isCurrent', 'responsibleOfficeId', 'serviceId', 'status', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ServiceDeliveryKey[];
 
 export const SERVICE_DELIVERY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ServiceDeliverySelectableField[];
 
@@ -56,7 +56,7 @@ export const SERVICE_DELIVERY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as c
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const SERVICE_DELIVERY_EDITABLE_FIELDS = ['amenityId', 'artifactChecksum', 'artifactId', 'budgetId', 'confidence', 'isCurrent', 'licence', 'method', 'responsibleOfficeId', 'retrievedAt', 'serviceId', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ServiceDeliveryKey[];
+export const SERVICE_DELIVERY_EDITABLE_FIELDS = ['amenityId', 'budgetId', 'isCurrent', 'responsibleOfficeId', 'serviceId', 'status', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ServiceDeliveryKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

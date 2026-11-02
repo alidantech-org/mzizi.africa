@@ -32,12 +32,6 @@ import { OfficeRuleListQueryDto } from "#/modules/governance/dto/office-rule-lis
 import { OfficeRuleResponseDto } from "#/modules/governance/dto/office-rule-response.dto.ts";
 import { OfficeRulesListResponseDto } from "#/modules/governance/dto/office-rules-list-response.dto.ts";
 import { OfficesListResponseDto } from "#/modules/governance/dto/offices-list-response.dto.ts";
-import { PeopleListResponseDto } from "#/modules/governance/dto/people-list-response.dto.ts";
-import { PersonListQueryDto } from "#/modules/governance/dto/person-list-query.dto.ts";
-import { PersonNameListQueryDto } from "#/modules/governance/dto/person-name-list-query.dto.ts";
-import { PersonNameResponseDto } from "#/modules/governance/dto/person-name-response.dto.ts";
-import { PersonNamesListResponseDto } from "#/modules/governance/dto/person-names-list-response.dto.ts";
-import { PersonResponseDto } from "#/modules/governance/dto/person-response.dto.ts";
 import { SelectionProcedureListQueryDto } from "#/modules/governance/dto/selection-procedure-list-query.dto.ts";
 import { SelectionProcedureResponseDto } from "#/modules/governance/dto/selection-procedure-response.dto.ts";
 import { SelectionProceduresListResponseDto } from "#/modules/governance/dto/selection-procedures-list-response.dto.ts";
@@ -93,24 +87,6 @@ export class GovernanceGovernanceReadController {
     @Query() input: OfficeListQueryDto,
   ): Promise<OfficesListResponseDto> {
     return this.service.findOffices(input);
-  }
-
-
-  @Get("/v1/governance/people")
-  @HttpCode(200)
-  findPeople(
-    @Query() input: PersonListQueryDto,
-  ): Promise<PeopleListResponseDto> {
-    return this.service.findPeople(input);
-  }
-
-
-  @Get("/v1/governance/person-names")
-  @HttpCode(200)
-  findPersonNames(
-    @Query() input: PersonNameListQueryDto,
-  ): Promise<PersonNamesListResponseDto> {
-    return this.service.findPersonNames(input);
   }
 
 
@@ -183,24 +159,6 @@ export class GovernanceGovernanceReadController {
     @Param("ruleId") ruleId: string,
   ): Promise<OfficeRuleResponseDto> {
     return this.service.getOfficeRuleById({ ruleId });
-  }
-
-
-  @Get("/v1/governance/people/:personId")
-  @HttpCode(200)
-  getPersonById(
-    @Param("personId") personId: string,
-  ): Promise<PersonResponseDto> {
-    return this.service.getPersonById({ personId });
-  }
-
-
-  @Get("/v1/governance/person-names/:personNameId")
-  @HttpCode(200)
-  getPersonNameById(
-    @Param("personNameId") personNameId: string,
-  ): Promise<PersonNameResponseDto> {
-    return this.service.getPersonNameById({ personNameId });
   }
 
 

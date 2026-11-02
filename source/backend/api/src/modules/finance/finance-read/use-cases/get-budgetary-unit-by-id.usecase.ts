@@ -4,10 +4,8 @@ import type { DataSource } from 'typeorm';
 import type { BudgetaryUnitPublicDto } from '#/modules/finance/dto/budgetary-unit-public.dto';
 import type { BudgetaryUnitResponseDto } from '#/modules/finance/dto/budgetary-unit-response.dto';
 import type { BudgetaryUnitDto } from '#/modules/finance/dto/budgetary-unit.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { BudgetaryUnitEntity } from '#/modules/finance/entities/budgetary-unit.entity';
 
@@ -28,10 +26,7 @@ export class GetBudgetaryUnitByIdUseCase {
 
   private toReadModel(entity: BudgetaryUnitEntity): BudgetaryUnitPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     code: entity.code,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     geoUnitId: entity.geoUnitId,
     id: entity.id,
@@ -40,21 +35,13 @@ export class GetBudgetaryUnitByIdUseCase {
     jurisdictionId: entity.jurisdictionId,
     legalEntityId: entity.legalEntityId,
     levelId: entity.levelId,
-    licence: entity.licence,
-    method: entity.method,
     name: entity.name,
     parentUnitId: entity.parentUnitId,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as BudgetaryUnitPublicDto;
   }

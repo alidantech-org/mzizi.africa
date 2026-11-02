@@ -40,7 +40,7 @@ export const MANIFESTO_SORTABLE_FIELDS = ['createdAt', 'title', 'updatedAt', 'va
 
 export const MANIFESTO_SEARCHABLE_FIELDS = ['title', ] as const satisfies readonly ManifestoKey[];
 
-export const MANIFESTO_FILTERABLE_FIELDS = ['candidateId', 'id', 'isCurrent', 'method', 'title', 'verificationState', 'version', ] as const satisfies readonly ManifestoKey[];
+export const MANIFESTO_FILTERABLE_FIELDS = ['candidateId', 'id', 'isCurrent', 'title', 'version', ] as const satisfies readonly ManifestoKey[];
 
 export const MANIFESTO_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ManifestoKey[];
 
@@ -48,7 +48,7 @@ export const MANIFESTO_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const MANIFESTO_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'candidateId', 'confidence', 'createdAt', 'documentUrl', 'id', 'isCurrent', 'language', 'licence', 'method', 'publishedOn', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'title', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ManifestoKey[];
+export const MANIFESTO_SELECTABLE_FIELDS = ['candidateId', 'createdAt', 'documentUrl', 'id', 'isCurrent', 'language', 'publishedOn', 'title', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ManifestoKey[];
 
 export const MANIFESTO_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ManifestoSelectableField[];
 
@@ -56,7 +56,7 @@ export const MANIFESTO_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const sa
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const MANIFESTO_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'candidateId', 'confidence', 'documentUrl', 'isCurrent', 'language', 'licence', 'method', 'publishedOn', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'title', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ManifestoKey[];
+export const MANIFESTO_EDITABLE_FIELDS = ['candidateId', 'documentUrl', 'isCurrent', 'language', 'publishedOn', 'title', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ManifestoKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

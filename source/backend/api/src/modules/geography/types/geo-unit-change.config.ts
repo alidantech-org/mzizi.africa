@@ -40,7 +40,7 @@ export const GEO_UNIT_CHANGE_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'valid
 
 export const GEO_UNIT_CHANGE_SEARCHABLE_FIELDS = [] as const satisfies readonly GeoUnitChangeKey[];
 
-export const GEO_UNIT_CHANGE_FILTERABLE_FIELDS = ['id', 'isCurrent', 'kind', 'method', 'sourceUnitId', 'targetUnitId', 'verificationState', 'version', ] as const satisfies readonly GeoUnitChangeKey[];
+export const GEO_UNIT_CHANGE_FILTERABLE_FIELDS = ['id', 'isCurrent', 'kind', 'sourceUnitId', 'targetUnitId', 'version', ] as const satisfies readonly GeoUnitChangeKey[];
 
 export const GEO_UNIT_CHANGE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly GeoUnitChangeKey[];
 
@@ -48,7 +48,7 @@ export const GEO_UNIT_CHANGE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'val
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const GEO_UNIT_CHANGE_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'kind', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUnitId', 'sourceUrl', 'targetUnitId', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly GeoUnitChangeKey[];
+export const GEO_UNIT_CHANGE_SELECTABLE_FIELDS = ['createdAt', 'id', 'isCurrent', 'kind', 'sourceUnitId', 'targetUnitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly GeoUnitChangeKey[];
 
 export const GEO_UNIT_CHANGE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly GeoUnitChangeSelectableField[];
 
@@ -56,7 +56,7 @@ export const GEO_UNIT_CHANGE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as co
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const GEO_UNIT_CHANGE_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'isCurrent', 'kind', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUnitId', 'sourceUrl', 'targetUnitId', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly GeoUnitChangeKey[];
+export const GEO_UNIT_CHANGE_EDITABLE_FIELDS = ['isCurrent', 'kind', 'sourceUnitId', 'targetUnitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly GeoUnitChangeKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

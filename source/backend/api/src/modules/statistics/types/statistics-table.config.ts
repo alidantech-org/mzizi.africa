@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as JurisdictionConfig from '#/modules/reference/types/jurisdiction.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const STATISTICS_TABLE_RELATION_KEYS = ['jurisdiction', ] as const satisfies readonly StatisticsTableKey[];
+export const STATISTICS_TABLE_RELATION_KEYS = [] as const satisfies readonly StatisticsTableKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const STATISTICS_TABLE_SORTABLE_FIELDS = ['code', 'createdAt', 'title', '
 
 export const STATISTICS_TABLE_SEARCHABLE_FIELDS = ['code', 'title', ] as const satisfies readonly StatisticsTableKey[];
 
-export const STATISTICS_TABLE_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'indicatorId', 'isCurrent', 'jurisdictionId', 'method', 'publisherInstitutionId', 'title', 'verificationState', 'version', ] as const satisfies readonly StatisticsTableKey[];
+export const STATISTICS_TABLE_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'indicatorId', 'isCurrent', 'jurisdictionId', 'publisherInstitutionId', 'title', 'version', ] as const satisfies readonly StatisticsTableKey[];
 
 export const STATISTICS_TABLE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly StatisticsTableKey[];
 
@@ -48,7 +47,7 @@ export const STATISTICS_TABLE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'va
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const STATISTICS_TABLE_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'collector', 'confidence', 'createdAt', 'geoUnitId', 'id', 'indicatorId', 'isCurrent', 'jurisdictionId', 'licence', 'method', 'methodology', 'publisherInstitutionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'title', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly StatisticsTableKey[];
+export const STATISTICS_TABLE_SELECTABLE_FIELDS = ['code', 'collector', 'createdAt', 'geoUnitId', 'id', 'indicatorId', 'isCurrent', 'jurisdictionId', 'methodology', 'publisherInstitutionId', 'title', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly StatisticsTableKey[];
 
 export const STATISTICS_TABLE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly StatisticsTableSelectableField[];
 
@@ -56,7 +55,7 @@ export const STATISTICS_TABLE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as c
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const STATISTICS_TABLE_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'collector', 'confidence', 'geoUnitId', 'indicatorId', 'isCurrent', 'jurisdictionId', 'licence', 'method', 'methodology', 'publisherInstitutionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'title', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly StatisticsTableKey[];
+export const STATISTICS_TABLE_EDITABLE_FIELDS = ['code', 'collector', 'geoUnitId', 'indicatorId', 'isCurrent', 'jurisdictionId', 'methodology', 'publisherInstitutionId', 'title', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly StatisticsTableKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const STATISTICS_TABLE_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const STATISTICS_TABLE_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<StatisticsTableRelationKey>().one(JurisdictionConfig.JURISDICTION_AS_ONE_RELATION_CONFIG, 'jurisdiction'),
 ] as const;
 
 export const STATISTICS_TABLE_MANY_RELATION_QUERY_OPTIONS = [

@@ -6,8 +6,6 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { StageKind } from '#/types/governance/stage-kind.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -37,26 +35,15 @@ import type {
 export interface ISelectionStage extends B.IBase {
   actorInstitutionId: string | null;
   actorOfficeId: string | null;
-  artifactChecksum: string | null;
-  artifactId: string | null;
-  confidence: number | null;
   description: string | null;
   isCurrent: boolean;
   kind: StageKind;
-  licence: string | null;
-  method: ProvenanceMethod;
   procedureId: string;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   stageOrder: number;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly selectionProcedure?: SelectionProcedureTypes.ISelectionProcedure;
 }
 

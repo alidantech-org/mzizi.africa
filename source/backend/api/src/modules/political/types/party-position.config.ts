@@ -40,7 +40,7 @@ export const PARTY_POSITION_SORTABLE_FIELDS = ['code', 'createdAt', 'title', 'up
 
 export const PARTY_POSITION_SEARCHABLE_FIELDS = ['code', 'title', ] as const satisfies readonly PartyPositionKey[];
 
-export const PARTY_POSITION_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'method', 'title', 'unitId', 'verificationState', 'version', ] as const satisfies readonly PartyPositionKey[];
+export const PARTY_POSITION_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'title', 'unitId', 'version', ] as const satisfies readonly PartyPositionKey[];
 
 export const PARTY_POSITION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PartyPositionKey[];
 
@@ -48,7 +48,7 @@ export const PARTY_POSITION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'vali
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_POSITION_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'id', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'title', 'toolOrModel', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyPositionKey[];
+export const PARTY_POSITION_SELECTABLE_FIELDS = ['code', 'createdAt', 'id', 'isCurrent', 'title', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyPositionKey[];
 
 export const PARTY_POSITION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PartyPositionSelectableField[];
 
@@ -56,7 +56,7 @@ export const PARTY_POSITION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as con
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_POSITION_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'title', 'toolOrModel', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyPositionKey[];
+export const PARTY_POSITION_EDITABLE_FIELDS = ['code', 'isCurrent', 'title', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyPositionKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

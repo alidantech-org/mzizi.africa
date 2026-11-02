@@ -1,6 +1,5 @@
 import { Module, type Type } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { AmenityOfficeEntity } from "#/modules/services/entities/amenity-office.entity.ts";
 import { AmenityEntity } from "#/modules/services/entities/amenity.entity.ts";
 import { PublicServiceEntity } from "#/modules/services/entities/public-service.entity.ts";
@@ -21,7 +20,6 @@ import { ServicesServicesReadService } from "./services-read.service.ts";
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      JurisdictionEntity,
       AmenityOfficeEntity,
       AmenityEntity,
       PublicServiceEntity,

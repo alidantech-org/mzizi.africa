@@ -5,10 +5,8 @@ import type { EntityOwnershipPublicDto } from '#/modules/entities/dto/entity-own
 import type { EntityOwnershipResponseDto } from '#/modules/entities/dto/entity-ownership-response.dto';
 import type { EntityOwnershipDto } from '#/modules/entities/dto/entity-ownership.dto';
 import type { LegalEntityDto } from '#/modules/entities/dto/legal-entity.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { EntityOwnershipEntity } from '#/modules/entities/entities/entity-ownership.entity';
 
@@ -29,30 +27,19 @@ export class GetEntityOwnershipByIdUseCase {
 
   private toReadModel(entity: EntityOwnershipEntity): EntityOwnershipPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     entityId: entity.entityId,
     id: entity.id,
     isCurrent: entity.isCurrent,
-    licence: entity.licence,
-    method: entity.method,
     ownerEntityId: entity.ownerEntityId,
     ownerPersonId: entity.ownerPersonId,
     percentage: entity.percentage,
     position: entity.position,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as EntityOwnershipPublicDto;
   }

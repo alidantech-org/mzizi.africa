@@ -6,13 +6,10 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { TenderStatus } from '#/types/procurement/tender-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as BudgetaryUnitTypes from '#/modules/finance/types/budgetary-unit.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -35,36 +32,24 @@ import type {
 
 /** Tender */
 export interface ITender extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   budgetId: string | null;
   closesOn: Date | null;
   code: string;
-  confidence: number | null;
   currencyCode: string;
   estimatedValue: number | null;
   isCurrent: boolean;
   issuingUnitId: string;
   kindId: string;
   legalBasisId: string | null;
-  licence: string | null;
-  method: ProvenanceMethod;
   methodId: string;
   procuringOfficeId: string | null;
   publishedOn: Date | null;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   status: TenderStatus;
   title: string;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
-  readonly budgetaryUnit?: BudgetaryUnitTypes.IBudgetaryUnit;
 }
 
 // ----------------------------------
@@ -145,7 +130,6 @@ export type ITenderAsManyRelationQuery = Q.IAsManyRelationQuery<ITender, TenderS
 // ----------------------------------
 
 export interface ITenderRelationMap extends Record<TenderRelationKey, unknown> {
-  budgetaryUnit: BudgetaryUnitTypes.IBudgetaryUnitAsOneRelationQuery;
 }
 
 // ----------------------------------

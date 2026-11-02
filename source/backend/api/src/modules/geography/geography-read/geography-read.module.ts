@@ -3,8 +3,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { GeoUnitChangeEntity } from "#/modules/geography/entities/geo-unit-change.entity.ts";
 import { GeoUnitNameVersionEntity } from "#/modules/geography/entities/geo-unit-name-version.entity.ts";
 import { GeoUnitEntity } from "#/modules/geography/entities/geo-unit.entity.ts";
-import { ClassificationRecordEntity } from "#/modules/reference/entities/classification-record.entity.ts";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { GeographyGeographyReadServiceImpl } from "#/modules/geography/geography-read/geography-read.service.impl.ts";
 import { GetChildBoundariesUseCase } from "#/modules/geography/geography-read/use-cases/get-child-boundaries.usecase.ts";
 import { GetGeoUnitByIdUseCase } from "#/modules/geography/geography-read/use-cases/get-geo-unit-by-id.usecase.ts";
@@ -25,8 +23,6 @@ import { GeographyGeographyReadService } from "./geography-read.service.ts";
       GeoUnitChangeEntity,
       GeoUnitNameVersionEntity,
       GeoUnitEntity,
-      ClassificationRecordEntity,
-      JurisdictionEntity,
     ]),
   ],
   controllers: [GeographyGeographyReadController],

@@ -1,7 +1,7 @@
 import * as dryv from "@dryvcode/author";
 
 import { referenceSchemas } from "../../foundation/reference/index.ts";
-import { evidenced, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
+import { recorded, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
 import { readSurface } from "../../foundation/shared/read-surface.ts";
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
@@ -46,9 +46,9 @@ export const legalProperties = legal.properties({
 });
 
 export const legalEntitySchemas = legal.schemas({
-  LegalInstrument: evidenced(
+  LegalInstrument: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       title: dryv.field(sharedProperties.Name).query(searchable),
       kindId: plainId(),
@@ -67,7 +67,7 @@ export const legalEntitySchemas = legal.schemas({
 });
 
 export const legalProvisionSchemas = legal.schemas({
-  LegalProvision: evidenced(
+  LegalProvision: recorded(
     {
       instrumentId: relationTo(() => legalEntitySchemas.LegalInstrument.field("id")),
       parentId: optionalId(),
@@ -88,7 +88,7 @@ export const legalProvisionSchemas = legal.schemas({
 });
 
 export const legalAmendmentSchemas = legal.schemas({
-  LegalAmendment: evidenced(
+  LegalAmendment: recorded(
     {
       instrumentId: relationTo(() => legalEntitySchemas.LegalInstrument.field("id")),
       amendingInstrumentId: optionalId(),
@@ -101,7 +101,7 @@ export const legalAmendmentSchemas = legal.schemas({
 });
 
 export const legalChangeSchemas = legal.schemas({
-  LegalAmendmentChange: evidenced(
+  LegalAmendmentChange: recorded(
     {
       amendmentId: relationTo(() => legalAmendmentSchemas.LegalAmendment.field("id")),
       provisionId: plainId(),
@@ -117,7 +117,7 @@ export const legalChangeSchemas = legal.schemas({
    * Legal basis link: the provision that authorises, establishes or constrains a record in another
    * domain (an office rule, an election, a budget, a loan). targetKind + targetId name the record.
    */
-  LegalAuthorityLink: evidenced(
+  LegalAuthorityLink: recorded(
     {
       provisionId: relationTo(() => legalProvisionSchemas.LegalProvision.field("id")),
       targetKind: dryv.field(sharedProperties.TargetKind).query({ filter: ["equal"] }),

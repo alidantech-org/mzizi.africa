@@ -1,7 +1,7 @@
 import * as dryv from "@dryvcode/author";
 
 import { readSurface } from "../shared/read-surface.ts";
-import { evidencedEntitySchemas, sharedProperties } from "../shared/index.ts";
+import { historicalEntitySchemas, sharedProperties } from "../shared/index.ts";
 
 /**
  * Jurisdictions and jurisdiction-scoped vocabulary.
@@ -34,7 +34,7 @@ export const referenceSchemas = reference.schemas({
       kind: dryv.field(referenceProperties.JurisdictionKind).query({ filter: ["equal", "in"] }),
     })
     .role("entity")
-    .extends(evidencedEntitySchemas.EvidencedEntity)
+    .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({
       storage: dryv.storage("jurisdictions").indexes({ name: "idx_jurisdiction_code", fields: ["code"], unique: true }),
     }),
@@ -55,7 +55,7 @@ export const referenceSchemas = reference.schemas({
       legalBasis: dryv.field(sharedProperties.Description).optional().nullable(),
     })
     .role("entity")
-    .extends(evidencedEntitySchemas.EvidencedEntity)
+    .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({
       storage: dryv.storage("classifications").indexes(
         { name: "idx_classification_scheme_code", fields: ["jurisdictionId", "scheme", "code"], unique: true },

@@ -40,7 +40,7 @@ export const PARTY_MEMBERSHIP_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'vali
 
 export const PARTY_MEMBERSHIP_SEARCHABLE_FIELDS = [] as const satisfies readonly PartyMembershipKey[];
 
-export const PARTY_MEMBERSHIP_FILTERABLE_FIELDS = ['id', 'isCurrent', 'method', 'partyId', 'personId', 'verificationState', 'version', ] as const satisfies readonly PartyMembershipKey[];
+export const PARTY_MEMBERSHIP_FILTERABLE_FIELDS = ['id', 'isCurrent', 'partyId', 'personId', 'version', ] as const satisfies readonly PartyMembershipKey[];
 
 export const PARTY_MEMBERSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PartyMembershipKey[];
 
@@ -48,7 +48,7 @@ export const PARTY_MEMBERSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'va
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_MEMBERSHIP_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'licence', 'method', 'partyId', 'personId', 'retrievedAt', 'roleTitle', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyMembershipKey[];
+export const PARTY_MEMBERSHIP_SELECTABLE_FIELDS = ['createdAt', 'id', 'isCurrent', 'partyId', 'personId', 'roleTitle', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyMembershipKey[];
 
 export const PARTY_MEMBERSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PartyMembershipSelectableField[];
 
@@ -56,7 +56,7 @@ export const PARTY_MEMBERSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as c
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_MEMBERSHIP_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'isCurrent', 'licence', 'method', 'partyId', 'personId', 'retrievedAt', 'roleTitle', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyMembershipKey[];
+export const PARTY_MEMBERSHIP_EDITABLE_FIELDS = ['isCurrent', 'partyId', 'personId', 'roleTitle', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyMembershipKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -40,7 +40,7 @@ export const AMENITY_OFFICE_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'validF
 
 export const AMENITY_OFFICE_SEARCHABLE_FIELDS = [] as const satisfies readonly AmenityOfficeKey[];
 
-export const AMENITY_OFFICE_FILTERABLE_FIELDS = ['amenityId', 'id', 'isCurrent', 'method', 'officeId', 'roleKindId', 'verificationState', 'version', ] as const satisfies readonly AmenityOfficeKey[];
+export const AMENITY_OFFICE_FILTERABLE_FIELDS = ['amenityId', 'id', 'isCurrent', 'officeId', 'roleKindId', 'version', ] as const satisfies readonly AmenityOfficeKey[];
 
 export const AMENITY_OFFICE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly AmenityOfficeKey[];
 
@@ -48,7 +48,7 @@ export const AMENITY_OFFICE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'vali
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const AMENITY_OFFICE_SELECTABLE_FIELDS = ['amenityId', 'artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'licence', 'method', 'officeId', 'retrievedAt', 'roleKindId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly AmenityOfficeKey[];
+export const AMENITY_OFFICE_SELECTABLE_FIELDS = ['amenityId', 'createdAt', 'id', 'isCurrent', 'officeId', 'roleKindId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly AmenityOfficeKey[];
 
 export const AMENITY_OFFICE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly AmenityOfficeSelectableField[];
 
@@ -56,7 +56,7 @@ export const AMENITY_OFFICE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as con
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const AMENITY_OFFICE_EDITABLE_FIELDS = ['amenityId', 'artifactChecksum', 'artifactId', 'confidence', 'isCurrent', 'licence', 'method', 'officeId', 'retrievedAt', 'roleKindId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly AmenityOfficeKey[];
+export const AMENITY_OFFICE_EDITABLE_FIELDS = ['amenityId', 'isCurrent', 'officeId', 'roleKindId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly AmenityOfficeKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -7,7 +7,6 @@ import { FiscalYearEntity } from "#/modules/finance/entities/fiscal-year.entity.
 import { LedgerEntryEntity } from "#/modules/finance/entities/ledger-entry.entity.ts";
 import { RevenueRecordEntity } from "#/modules/finance/entities/revenue-record.entity.ts";
 import { TransferEntity } from "#/modules/finance/entities/transfer.entity.ts";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { FinanceFinanceReadServiceImpl } from "#/modules/finance/finance-read/finance-read.service.impl.ts";
 import { FindBudgetaryUnitsUseCase } from "#/modules/finance/finance-read/use-cases/find-budgetary-units.usecase.ts";
 import { FindBudgetsUseCase } from "#/modules/finance/finance-read/use-cases/find-budgets.usecase.ts";
@@ -37,7 +36,6 @@ import { FinanceFinanceReadService } from "./finance-read.service.ts";
       LedgerEntryEntity,
       RevenueRecordEntity,
       TransferEntity,
-      JurisdictionEntity,
     ]),
   ],
   controllers: [FinanceFinanceReadController],

@@ -7,10 +7,8 @@ import type { ElectionResultResponseDto } from '#/modules/elections/dto/election
 import type { ElectionResultDto } from '#/modules/elections/dto/election-result.dto';
 import type { ElectionDto } from '#/modules/elections/dto/election.dto';
 import type { SeatDto } from '#/modules/elections/dto/seat.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { ElectionResultEntity } from '#/modules/elections/entities/election-result.entity';
 
@@ -31,10 +29,7 @@ export class GetElectionResultByIdUseCase {
 
   private toReadModel(entity: ElectionResultEntity): ElectionResultPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     candidateId: entity.candidateId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     declaredAt: entity.declaredAt,
     declaringInstitutionId: entity.declaringInstitutionId,
@@ -42,22 +37,14 @@ export class GetElectionResultByIdUseCase {
     id: entity.id,
     isCurrent: entity.isCurrent,
     isWinner: entity.isWinner,
-    licence: entity.licence,
-    method: entity.method,
     rank: entity.rank,
     resultLevelId: entity.resultLevelId,
-    retrievedAt: entity.retrievedAt,
     seatId: entity.seatId,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     votes: entity.votes,
     } as unknown as ElectionResultPublicDto;

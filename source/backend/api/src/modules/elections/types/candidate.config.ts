@@ -40,7 +40,7 @@ export const CANDIDATE_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'validFrom',
 
 export const CANDIDATE_SEARCHABLE_FIELDS = [] as const satisfies readonly CandidateKey[];
 
-export const CANDIDATE_FILTERABLE_FIELDS = ['id', 'isCurrent', 'isIndependent', 'method', 'nominationStatus', 'partyId', 'personId', 'seatId', 'verificationState', 'version', ] as const satisfies readonly CandidateKey[];
+export const CANDIDATE_FILTERABLE_FIELDS = ['id', 'isCurrent', 'isIndependent', 'nominationStatus', 'partyId', 'personId', 'seatId', 'version', ] as const satisfies readonly CandidateKey[];
 
 export const CANDIDATE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly CandidateKey[];
 
@@ -48,7 +48,7 @@ export const CANDIDATE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const CANDIDATE_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'isIndependent', 'licence', 'method', 'nominationStatus', 'partyId', 'personId', 'retrievedAt', 'seatId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly CandidateKey[];
+export const CANDIDATE_SELECTABLE_FIELDS = ['createdAt', 'id', 'isCurrent', 'isIndependent', 'nominationStatus', 'partyId', 'personId', 'seatId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly CandidateKey[];
 
 export const CANDIDATE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly CandidateSelectableField[];
 
@@ -56,7 +56,7 @@ export const CANDIDATE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const sa
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const CANDIDATE_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'isCurrent', 'isIndependent', 'licence', 'method', 'nominationStatus', 'partyId', 'personId', 'retrievedAt', 'seatId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly CandidateKey[];
+export const CANDIDATE_EDITABLE_FIELDS = ['isCurrent', 'isIndependent', 'nominationStatus', 'partyId', 'personId', 'seatId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly CandidateKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -7,10 +7,8 @@ import type { ManifestoPublicDto } from '#/modules/elections/dto/manifesto-publi
 import type { ManifestoResponseDto } from '#/modules/elections/dto/manifesto-response.dto';
 import type { ManifestoDto } from '#/modules/elections/dto/manifesto.dto';
 import type { SeatDto } from '#/modules/elections/dto/seat.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { ManifestoEntity } from '#/modules/elections/entities/manifesto.entity';
 
@@ -31,30 +29,19 @@ export class GetManifestoByIdUseCase {
 
   private toReadModel(entity: ManifestoEntity): ManifestoPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     candidateId: entity.candidateId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     documentUrl: entity.documentUrl,
     id: entity.id,
     isCurrent: entity.isCurrent,
     language: entity.language,
-    licence: entity.licence,
-    method: entity.method,
     publishedOn: entity.publishedOn,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     title: entity.title,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as ManifestoPublicDto;
   }

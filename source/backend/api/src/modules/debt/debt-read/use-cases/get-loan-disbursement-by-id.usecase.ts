@@ -5,11 +5,8 @@ import type { LoanDisbursementPublicDto } from '#/modules/debt/dto/loan-disburse
 import type { LoanDisbursementResponseDto } from '#/modules/debt/dto/loan-disbursement-response.dto';
 import type { LoanDisbursementDto } from '#/modules/debt/dto/loan-disbursement.dto';
 import type { LoanDto } from '#/modules/debt/dto/loan.dto';
-import type { BudgetaryUnitDto } from '#/modules/finance/dto/budgetary-unit.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { LoanDisbursementEntity } from '#/modules/debt/entities/loan-disbursement.entity';
 
@@ -31,29 +28,18 @@ export class GetLoanDisbursementByIdUseCase {
   private toReadModel(entity: LoanDisbursementEntity): LoanDisbursementPublicDto {
     return {
     amount: entity.amount,
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     currencyCode: entity.currencyCode,
     disbursedOn: entity.disbursedOn,
     id: entity.id,
     isCurrent: entity.isCurrent,
     ledgerEntryId: entity.ledgerEntryId,
-    licence: entity.licence,
     loanId: entity.loanId,
-    method: entity.method,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as LoanDisbursementPublicDto;
   }

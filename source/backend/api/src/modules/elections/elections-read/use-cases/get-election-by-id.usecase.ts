@@ -4,10 +4,8 @@ import type { DataSource } from 'typeorm';
 import type { ElectionPublicDto } from '#/modules/elections/dto/election-public.dto';
 import type { ElectionResponseDto } from '#/modules/elections/dto/election-response.dto';
 import type { ElectionDto } from '#/modules/elections/dto/election.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { ElectionEntity } from '#/modules/elections/entities/election.entity';
 
@@ -29,10 +27,7 @@ export class GetElectionByIdUseCase {
   private toReadModel(entity: ElectionEntity): ElectionPublicDto {
     return {
     administeringInstitutionId: entity.administeringInstitutionId,
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     code: entity.code,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     geoUnitId: entity.geoUnitId,
     heldDate: entity.heldDate,
@@ -40,23 +35,15 @@ export class GetElectionByIdUseCase {
     isCurrent: entity.isCurrent,
     jurisdictionId: entity.jurisdictionId,
     legalBasisId: entity.legalBasisId,
-    licence: entity.licence,
-    method: entity.method,
     name: entity.name,
-    retrievedAt: entity.retrievedAt,
     scheduledDate: entity.scheduledDate,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     status: entity.status,
-    toolOrModel: entity.toolOrModel,
     typeId: entity.typeId,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as ElectionPublicDto;
   }

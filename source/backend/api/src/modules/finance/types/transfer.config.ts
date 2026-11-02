@@ -40,7 +40,7 @@ export const TRANSFER_SORTABLE_FIELDS = ['amount', 'createdAt', 'updatedAt', 'va
 
 export const TRANSFER_SEARCHABLE_FIELDS = [] as const satisfies readonly TransferKey[];
 
-export const TRANSFER_FILTERABLE_FIELDS = ['amount', 'fiscalYearId', 'fromUnitId', 'id', 'isCurrent', 'legalBasisId', 'method', 'restriction', 'status', 'toUnitId', 'transferTypeId', 'verificationState', 'version', ] as const satisfies readonly TransferKey[];
+export const TRANSFER_FILTERABLE_FIELDS = ['amount', 'fiscalYearId', 'fromUnitId', 'id', 'isCurrent', 'legalBasisId', 'restriction', 'status', 'toUnitId', 'transferTypeId', 'version', ] as const satisfies readonly TransferKey[];
 
 export const TRANSFER_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly TransferKey[];
 
@@ -48,7 +48,7 @@ export const TRANSFER_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom'
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const TRANSFER_SELECTABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'currencyCode', 'fiscalYearId', 'fromUnitId', 'id', 'isCurrent', 'legalBasisId', 'licence', 'method', 'restriction', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'toUnitId', 'toolOrModel', 'transferTypeId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly TransferKey[];
+export const TRANSFER_SELECTABLE_FIELDS = ['amount', 'createdAt', 'currencyCode', 'fiscalYearId', 'fromUnitId', 'id', 'isCurrent', 'legalBasisId', 'restriction', 'status', 'toUnitId', 'transferTypeId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly TransferKey[];
 
 export const TRANSFER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly TransferSelectableField[];
 
@@ -56,7 +56,7 @@ export const TRANSFER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const sat
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const TRANSFER_EDITABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'confidence', 'currencyCode', 'fiscalYearId', 'fromUnitId', 'isCurrent', 'legalBasisId', 'licence', 'method', 'restriction', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'toUnitId', 'toolOrModel', 'transferTypeId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly TransferKey[];
+export const TRANSFER_EDITABLE_FIELDS = ['amount', 'currencyCode', 'fiscalYearId', 'fromUnitId', 'isCurrent', 'legalBasisId', 'restriction', 'status', 'toUnitId', 'transferTypeId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly TransferKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

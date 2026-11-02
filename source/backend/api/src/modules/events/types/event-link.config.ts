@@ -40,7 +40,7 @@ export const EVENT_LINK_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'validFrom'
 
 export const EVENT_LINK_SEARCHABLE_FIELDS = [] as const satisfies readonly EventLinkKey[];
 
-export const EVENT_LINK_FILTERABLE_FIELDS = ['eventId', 'id', 'isCurrent', 'method', 'targetId', 'targetKind', 'verificationState', 'version', ] as const satisfies readonly EventLinkKey[];
+export const EVENT_LINK_FILTERABLE_FIELDS = ['eventId', 'id', 'isCurrent', 'targetId', 'targetKind', 'version', ] as const satisfies readonly EventLinkKey[];
 
 export const EVENT_LINK_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly EventLinkKey[];
 
@@ -48,7 +48,7 @@ export const EVENT_LINK_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFro
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const EVENT_LINK_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'eventId', 'id', 'isCurrent', 'licence', 'method', 'retrievedAt', 'role', 'sourceName', 'sourceReference', 'sourceUrl', 'targetId', 'targetKind', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly EventLinkKey[];
+export const EVENT_LINK_SELECTABLE_FIELDS = ['createdAt', 'eventId', 'id', 'isCurrent', 'role', 'targetId', 'targetKind', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly EventLinkKey[];
 
 export const EVENT_LINK_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly EventLinkSelectableField[];
 
@@ -56,7 +56,7 @@ export const EVENT_LINK_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const s
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const EVENT_LINK_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'eventId', 'isCurrent', 'licence', 'method', 'retrievedAt', 'role', 'sourceName', 'sourceReference', 'sourceUrl', 'targetId', 'targetKind', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly EventLinkKey[];
+export const EVENT_LINK_EDITABLE_FIELDS = ['eventId', 'isCurrent', 'role', 'targetId', 'targetKind', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly EventLinkKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

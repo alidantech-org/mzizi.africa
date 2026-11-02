@@ -6,13 +6,10 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { ElectionStatus } from '#/types/elections/election-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as JurisdictionTypes from '#/modules/reference/types/jurisdiction.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -36,32 +33,20 @@ import type {
 /** Election */
 export interface IElection extends B.IBase {
   administeringInstitutionId: string | null;
-  artifactChecksum: string | null;
-  artifactId: string | null;
   code: string;
-  confidence: number | null;
   geoUnitId: string | null;
   heldDate: Date | null;
   isCurrent: boolean;
   jurisdictionId: string;
   legalBasisId: string | null;
-  licence: string | null;
-  method: ProvenanceMethod;
   name: string;
-  retrievedAt: Date | null;
   scheduledDate: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   status: ElectionStatus;
-  toolOrModel: string | null;
   typeId: string;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
-  readonly jurisdiction?: JurisdictionTypes.IJurisdiction;
 }
 
 // ----------------------------------
@@ -142,7 +127,6 @@ export type IElectionAsManyRelationQuery = Q.IAsManyRelationQuery<IElection, Ele
 // ----------------------------------
 
 export interface IElectionRelationMap extends Record<ElectionRelationKey, unknown> {
-  jurisdiction: JurisdictionTypes.IJurisdictionAsOneRelationQuery;
 }
 
 // ----------------------------------

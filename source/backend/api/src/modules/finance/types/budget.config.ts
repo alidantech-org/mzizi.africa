@@ -40,7 +40,7 @@ export const BUDGET_SORTABLE_FIELDS = ['approvedAmount', 'createdAt', 'updatedAt
 
 export const BUDGET_SEARCHABLE_FIELDS = [] as const satisfies readonly BudgetKey[];
 
-export const BUDGET_FILTERABLE_FIELDS = ['approvedAmount', 'fiscalYearId', 'id', 'isCurrent', 'kind', 'legalBasisId', 'method', 'programCode', 'unitId', 'verificationState', 'version', ] as const satisfies readonly BudgetKey[];
+export const BUDGET_FILTERABLE_FIELDS = ['approvedAmount', 'fiscalYearId', 'id', 'isCurrent', 'kind', 'legalBasisId', 'programCode', 'unitId', 'version', ] as const satisfies readonly BudgetKey[];
 
 export const BUDGET_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly BudgetKey[];
 
@@ -48,7 +48,7 @@ export const BUDGET_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const BUDGET_SELECTABLE_FIELDS = ['approvedAmount', 'artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'currencyCode', 'fiscalYearId', 'id', 'isCurrent', 'kind', 'legalBasisId', 'licence', 'method', 'programCode', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly BudgetKey[];
+export const BUDGET_SELECTABLE_FIELDS = ['approvedAmount', 'createdAt', 'currencyCode', 'fiscalYearId', 'id', 'isCurrent', 'kind', 'legalBasisId', 'programCode', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BudgetKey[];
 
 export const BUDGET_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly BudgetSelectableField[];
 
@@ -56,7 +56,7 @@ export const BUDGET_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satis
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const BUDGET_EDITABLE_FIELDS = ['approvedAmount', 'artifactChecksum', 'artifactId', 'confidence', 'currencyCode', 'fiscalYearId', 'isCurrent', 'kind', 'legalBasisId', 'licence', 'method', 'programCode', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly BudgetKey[];
+export const BUDGET_EDITABLE_FIELDS = ['approvedAmount', 'currencyCode', 'fiscalYearId', 'isCurrent', 'kind', 'legalBasisId', 'programCode', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BudgetKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

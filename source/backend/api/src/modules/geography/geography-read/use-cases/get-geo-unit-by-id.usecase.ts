@@ -4,11 +4,8 @@ import type { DataSource } from 'typeorm';
 import type { GeoUnitPublicDto } from '#/modules/geography/dto/geo-unit-public.dto';
 import type { GeoUnitResponseDto } from '#/modules/geography/dto/geo-unit-response.dto';
 import type { GeoUnitDto } from '#/modules/geography/dto/geo-unit.dto';
-import type { ClassificationRecordDto } from '#/modules/reference/dto/classification-record.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { GeoUnitEntity } from '#/modules/geography/entities/geo-unit.entity';
 
@@ -29,10 +26,7 @@ export class GetGeoUnitByIdUseCase {
 
   private toReadModel(entity: GeoUnitEntity): GeoUnitPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     code: entity.code,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     id: entity.id,
     isActive: entity.isActive,
@@ -40,21 +34,13 @@ export class GetGeoUnitByIdUseCase {
     jurisdictionId: entity.jurisdictionId,
     kind: entity.kind,
     levelId: entity.levelId,
-    licence: entity.licence,
-    method: entity.method,
     name: entity.name,
     parentId: entity.parentId,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as GeoUnitPublicDto;
   }

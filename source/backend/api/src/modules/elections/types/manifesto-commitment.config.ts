@@ -40,7 +40,7 @@ export const MANIFESTO_COMMITMENT_SORTABLE_FIELDS = ['createdAt', 'sortOrder', '
 
 export const MANIFESTO_COMMITMENT_SEARCHABLE_FIELDS = [] as const satisfies readonly ManifestoCommitmentKey[];
 
-export const MANIFESTO_COMMITMENT_FILTERABLE_FIELDS = ['id', 'isCurrent', 'manifestoId', 'method', 'parentId', 'topicId', 'verificationState', 'version', ] as const satisfies readonly ManifestoCommitmentKey[];
+export const MANIFESTO_COMMITMENT_FILTERABLE_FIELDS = ['id', 'isCurrent', 'manifestoId', 'parentId', 'topicId', 'version', ] as const satisfies readonly ManifestoCommitmentKey[];
 
 export const MANIFESTO_COMMITMENT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ManifestoCommitmentKey[];
 
@@ -48,7 +48,7 @@ export const MANIFESTO_COMMITMENT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt',
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const MANIFESTO_COMMITMENT_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'licence', 'manifestoId', 'method', 'parentId', 'retrievedAt', 'sortOrder', 'sourceName', 'sourceReference', 'sourceUrl', 'text', 'toolOrModel', 'topicId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ManifestoCommitmentKey[];
+export const MANIFESTO_COMMITMENT_SELECTABLE_FIELDS = ['createdAt', 'id', 'isCurrent', 'manifestoId', 'parentId', 'sortOrder', 'text', 'topicId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ManifestoCommitmentKey[];
 
 export const MANIFESTO_COMMITMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ManifestoCommitmentSelectableField[];
 
@@ -56,7 +56,7 @@ export const MANIFESTO_COMMITMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const MANIFESTO_COMMITMENT_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'isCurrent', 'licence', 'manifestoId', 'method', 'parentId', 'retrievedAt', 'sortOrder', 'sourceName', 'sourceReference', 'sourceUrl', 'text', 'toolOrModel', 'topicId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ManifestoCommitmentKey[];
+export const MANIFESTO_COMMITMENT_EDITABLE_FIELDS = ['isCurrent', 'manifestoId', 'parentId', 'sortOrder', 'text', 'topicId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ManifestoCommitmentKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

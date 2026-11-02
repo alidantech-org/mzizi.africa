@@ -6,13 +6,10 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { InstrumentStatus } from '#/types/legal/instrument-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as JurisdictionTypes from '#/modules/reference/types/jurisdiction.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -35,32 +32,20 @@ import type {
 
 /** Legal Instrument */
 export interface ILegalInstrument extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   code: string;
-  confidence: number | null;
   contentHash: string | null;
   documentUrl: string | null;
   isCurrent: boolean;
   issuingInstitutionId: string | null;
   jurisdictionId: string;
   kindId: string;
-  licence: string | null;
-  method: ProvenanceMethod;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   status: InstrumentStatus;
   summary: string | null;
   title: string;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
-  readonly jurisdiction?: JurisdictionTypes.IJurisdiction;
 }
 
 // ----------------------------------
@@ -141,7 +126,6 @@ export type ILegalInstrumentAsManyRelationQuery = Q.IAsManyRelationQuery<ILegalI
 // ----------------------------------
 
 export interface ILegalInstrumentRelationMap extends Record<LegalInstrumentRelationKey, unknown> {
-  jurisdiction: JurisdictionTypes.IJurisdictionAsOneRelationQuery;
 }
 
 // ----------------------------------

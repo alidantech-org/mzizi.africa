@@ -39,7 +39,7 @@ export const INDICATOR_CATEGORY_SORTABLE_FIELDS = ['code', 'createdAt', 'label',
 
 export const INDICATOR_CATEGORY_SEARCHABLE_FIELDS = ['code', 'label', ] as const satisfies readonly IndicatorCategoryKey[];
 
-export const INDICATOR_CATEGORY_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'label', 'method', 'parentId', 'verificationState', 'version', ] as const satisfies readonly IndicatorCategoryKey[];
+export const INDICATOR_CATEGORY_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'label', 'parentId', 'version', ] as const satisfies readonly IndicatorCategoryKey[];
 
 export const INDICATOR_CATEGORY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly IndicatorCategoryKey[];
 
@@ -47,7 +47,7 @@ export const INDICATOR_CATEGORY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', '
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const INDICATOR_CATEGORY_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'id', 'isCurrent', 'label', 'licence', 'method', 'parentId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly IndicatorCategoryKey[];
+export const INDICATOR_CATEGORY_SELECTABLE_FIELDS = ['code', 'createdAt', 'id', 'isCurrent', 'label', 'parentId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly IndicatorCategoryKey[];
 
 export const INDICATOR_CATEGORY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly IndicatorCategorySelectableField[];
 
@@ -55,7 +55,7 @@ export const INDICATOR_CATEGORY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const INDICATOR_CATEGORY_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'isCurrent', 'label', 'licence', 'method', 'parentId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly IndicatorCategoryKey[];
+export const INDICATOR_CATEGORY_EDITABLE_FIELDS = ['code', 'isCurrent', 'label', 'parentId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly IndicatorCategoryKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

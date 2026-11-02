@@ -1,5 +1,5 @@
 ---
-{id: TSK-1E47CD72A745,name: Filesystem schema for files and media,type: task,status: planned,priority: medium,created_at: 2026-11-02T06:41:22.631Z,updated_at: 2026-11-02T06:41:22.631Z,due_at: 2026-11-02,order: 4096}
+{id: TSK-1E47CD72A745,name: Filesystem schema for files and media,type: task,status: completed,priority: medium,created_at: 2026-11-02T06:41:22.631Z,updated_at: 2026-11-02T06:59:00.813Z,due_at: 2026-11-02,order: 1152,extra: {status_history: [{from: planned,to: completed,at: 2026-11-02T06:59:00.813Z}]}}
 ---
 
 # Filesystem schema for files and media
@@ -14,8 +14,12 @@ Create the filesystem schema (stores, formats, folders, objects, files, versions
 
 ## Acceptance checklist
 
-- [ ] Author the filesystem contracts and public metadata reads for formats, folders, files, versions, variants and attachments.
-- [ ] Keep stores, objects, uploads and events entities without public endpoints.
-- [ ] Repoint audit evidence and source captures at filesystem files by id.
-- [ ] Seed the media formats from the archived file types.
-- [ ] Test that object keys and store details never appear in public responses.
+- [x] Author the filesystem contracts and public metadata reads for formats, folders, files, versions, variants and attachments.
+- [x] Keep stores, objects, uploads and events entities without public endpoints.
+- [x] Repoint audit evidence and source captures at filesystem files by id.
+- [x] Seed the media formats from the archived file types.
+- [x] Test that object keys and store details never appear in public responses.
+
+## Progress
+
+New filesystem schema: stores, formats, folders, content-addressed objects, files, versions, variants, attachments, uploads and events, designed from the archived files service (no folder counters, logical file versus immutable bytes, versions, one attachment table that links media to any record). Public reads cover formats, folders, files, versions and attachments with public-only constraints in the use cases; a test proves restricted files, their versions and attachments are hidden and that object keys, hashes and store details never appear. audit.evidence now points at a file id; source.captures point at file versions. 44 media formats seeded from the archived file types.

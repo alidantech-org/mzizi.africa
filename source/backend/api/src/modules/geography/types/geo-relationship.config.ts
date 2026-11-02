@@ -40,7 +40,7 @@ export const GEO_RELATIONSHIP_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'vali
 
 export const GEO_RELATIONSHIP_SEARCHABLE_FIELDS = [] as const satisfies readonly GeoRelationshipKey[];
 
-export const GEO_RELATIONSHIP_FILTERABLE_FIELDS = ['childId', 'id', 'isCurrent', 'kind', 'method', 'parentId', 'verificationState', 'version', ] as const satisfies readonly GeoRelationshipKey[];
+export const GEO_RELATIONSHIP_FILTERABLE_FIELDS = ['childId', 'id', 'isCurrent', 'kind', 'parentId', 'version', ] as const satisfies readonly GeoRelationshipKey[];
 
 export const GEO_RELATIONSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly GeoRelationshipKey[];
 
@@ -48,7 +48,7 @@ export const GEO_RELATIONSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'va
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const GEO_RELATIONSHIP_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'childId', 'confidence', 'createdAt', 'id', 'isCurrent', 'kind', 'licence', 'method', 'parentId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly GeoRelationshipKey[];
+export const GEO_RELATIONSHIP_SELECTABLE_FIELDS = ['childId', 'createdAt', 'id', 'isCurrent', 'kind', 'parentId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly GeoRelationshipKey[];
 
 export const GEO_RELATIONSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly GeoRelationshipSelectableField[];
 
@@ -56,7 +56,7 @@ export const GEO_RELATIONSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as c
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const GEO_RELATIONSHIP_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'childId', 'confidence', 'isCurrent', 'kind', 'licence', 'method', 'parentId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly GeoRelationshipKey[];
+export const GEO_RELATIONSHIP_EDITABLE_FIELDS = ['childId', 'isCurrent', 'kind', 'parentId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly GeoRelationshipKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as BudgetaryUnitConfig from '#/modules/finance/types/budgetary-unit.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const LOAN_RELATION_KEYS = ['budgetaryUnit', ] as const satisfies readonly LoanKey[];
+export const LOAN_RELATION_KEYS = [] as const satisfies readonly LoanKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const LOAN_SORTABLE_FIELDS = ['code', 'createdAt', 'principalAmount', 'up
 
 export const LOAN_SEARCHABLE_FIELDS = ['code', ] as const satisfies readonly LoanKey[];
 
-export const LOAN_FILTERABLE_FIELDS = ['borrowerUnitId', 'code', 'id', 'isCurrent', 'legalBasisId', 'lenderEntityId', 'method', 'principalAmount', 'status', 'verificationState', 'version', ] as const satisfies readonly LoanKey[];
+export const LOAN_FILTERABLE_FIELDS = ['borrowerUnitId', 'code', 'id', 'isCurrent', 'legalBasisId', 'lenderEntityId', 'principalAmount', 'status', 'version', ] as const satisfies readonly LoanKey[];
 
 export const LOAN_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly LoanKey[];
 
@@ -48,7 +47,7 @@ export const LOAN_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'v
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const LOAN_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'borrowerUnitId', 'code', 'confidence', 'createdAt', 'currencyCode', 'id', 'interestRate', 'isCurrent', 'legalBasisId', 'lenderEntityId', 'licence', 'method', 'principalAmount', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'termMonths', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LoanKey[];
+export const LOAN_SELECTABLE_FIELDS = ['borrowerUnitId', 'code', 'createdAt', 'currencyCode', 'id', 'interestRate', 'isCurrent', 'legalBasisId', 'lenderEntityId', 'principalAmount', 'status', 'termMonths', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LoanKey[];
 
 export const LOAN_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly LoanSelectableField[];
 
@@ -56,7 +55,7 @@ export const LOAN_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfi
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const LOAN_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'borrowerUnitId', 'code', 'confidence', 'currencyCode', 'interestRate', 'isCurrent', 'legalBasisId', 'lenderEntityId', 'licence', 'method', 'principalAmount', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'termMonths', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LoanKey[];
+export const LOAN_EDITABLE_FIELDS = ['borrowerUnitId', 'code', 'currencyCode', 'interestRate', 'isCurrent', 'legalBasisId', 'lenderEntityId', 'principalAmount', 'status', 'termMonths', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LoanKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const LOAN_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const LOAN_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<LoanRelationKey>().one(BudgetaryUnitConfig.BUDGETARY_UNIT_AS_ONE_RELATION_CONFIG, 'budgetaryUnit'),
 ] as const;
 
 export const LOAN_MANY_RELATION_QUERY_OPTIONS = [

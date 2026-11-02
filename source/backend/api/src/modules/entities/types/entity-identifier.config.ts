@@ -40,7 +40,7 @@ export const ENTITY_IDENTIFIER_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'val
 
 export const ENTITY_IDENTIFIER_SEARCHABLE_FIELDS = ['value', ] as const satisfies readonly EntityIdentifierKey[];
 
-export const ENTITY_IDENTIFIER_FILTERABLE_FIELDS = ['entityId', 'id', 'isCurrent', 'issuingAuthorityId', 'method', 'schemeId', 'value', 'verificationState', 'version', ] as const satisfies readonly EntityIdentifierKey[];
+export const ENTITY_IDENTIFIER_FILTERABLE_FIELDS = ['entityId', 'id', 'isCurrent', 'issuingAuthorityId', 'schemeId', 'value', 'version', ] as const satisfies readonly EntityIdentifierKey[];
 
 export const ENTITY_IDENTIFIER_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly EntityIdentifierKey[];
 
@@ -48,7 +48,7 @@ export const ENTITY_IDENTIFIER_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'v
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const ENTITY_IDENTIFIER_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'entityId', 'id', 'isCurrent', 'issuingAuthorityId', 'licence', 'method', 'retrievedAt', 'schemeId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'value', 'verificationState', ] as const satisfies readonly EntityIdentifierKey[];
+export const ENTITY_IDENTIFIER_SELECTABLE_FIELDS = ['createdAt', 'entityId', 'id', 'isCurrent', 'issuingAuthorityId', 'schemeId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'value', ] as const satisfies readonly EntityIdentifierKey[];
 
 export const ENTITY_IDENTIFIER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly EntityIdentifierSelectableField[];
 
@@ -56,7 +56,7 @@ export const ENTITY_IDENTIFIER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const ENTITY_IDENTIFIER_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'entityId', 'isCurrent', 'issuingAuthorityId', 'licence', 'method', 'retrievedAt', 'schemeId', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'value', 'verificationState', ] as const satisfies readonly EntityIdentifierKey[];
+export const ENTITY_IDENTIFIER_EDITABLE_FIELDS = ['entityId', 'isCurrent', 'issuingAuthorityId', 'schemeId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'value', ] as const satisfies readonly EntityIdentifierKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

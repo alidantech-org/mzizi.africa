@@ -7,11 +7,9 @@ import type { OfficeHolderPublicDto } from '#/modules/governance/dto/office-hold
 import type { OfficeHolderDto } from '#/modules/governance/dto/office-holder.dto';
 import type { OfficeHoldersListResponseDto } from '#/modules/governance/dto/office-holders-list-response.dto';
 import type { OfficeDto } from '#/modules/governance/dto/office.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
 import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
@@ -35,32 +33,21 @@ export class FindOfficeHoldersUseCase {
 
   private toReadModel(entity: OfficeHolderEntity): OfficeHolderPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     departureReason: entity.departureReason,
     id: entity.id,
     isCurrent: entity.isCurrent,
     legalBasisId: entity.legalBasisId,
-    licence: entity.licence,
-    method: entity.method,
     officeId: entity.officeId,
     personId: entity.personId,
-    retrievedAt: entity.retrievedAt,
     selectionProcedureId: entity.selectionProcedureId,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     status: entity.status,
     termNumber: entity.termNumber,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as OfficeHolderPublicDto;
   }

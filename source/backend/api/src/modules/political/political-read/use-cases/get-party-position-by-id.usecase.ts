@@ -6,10 +6,8 @@ import type { PartyPositionResponseDto } from '#/modules/political/dto/party-pos
 import type { PartyPositionDto } from '#/modules/political/dto/party-position.dto';
 import type { PartyUnitDto } from '#/modules/political/dto/party-unit.dto';
 import type { PartyDto } from '#/modules/political/dto/party.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { PartyPositionEntity } from '#/modules/political/entities/party-position.entity';
 
@@ -30,28 +28,17 @@ export class GetPartyPositionByIdUseCase {
 
   private toReadModel(entity: PartyPositionEntity): PartyPositionPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     code: entity.code,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     id: entity.id,
     isCurrent: entity.isCurrent,
-    licence: entity.licence,
-    method: entity.method,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     title: entity.title,
-    toolOrModel: entity.toolOrModel,
     unitId: entity.unitId,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as PartyPositionPublicDto;
   }

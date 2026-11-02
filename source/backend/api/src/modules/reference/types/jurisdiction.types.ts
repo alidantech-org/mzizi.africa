@@ -6,8 +6,6 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { JurisdictionKind } from '#/types/reference/jurisdiction-kind.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -34,25 +32,14 @@ import type {
 
 /** Jurisdiction */
 export interface IJurisdiction extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   code: string;
-  confidence: number | null;
   isCurrent: boolean;
   kind: JurisdictionKind;
-  licence: string | null;
-  method: ProvenanceMethod;
   name: string;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
 }
 
 // ----------------------------------

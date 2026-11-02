@@ -40,7 +40,7 @@ export const ENTITY_OWNERSHIP_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'vali
 
 export const ENTITY_OWNERSHIP_SEARCHABLE_FIELDS = [] as const satisfies readonly EntityOwnershipKey[];
 
-export const ENTITY_OWNERSHIP_FILTERABLE_FIELDS = ['entityId', 'id', 'isCurrent', 'method', 'ownerEntityId', 'ownerPersonId', 'verificationState', 'version', ] as const satisfies readonly EntityOwnershipKey[];
+export const ENTITY_OWNERSHIP_FILTERABLE_FIELDS = ['entityId', 'id', 'isCurrent', 'ownerEntityId', 'ownerPersonId', 'version', ] as const satisfies readonly EntityOwnershipKey[];
 
 export const ENTITY_OWNERSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly EntityOwnershipKey[];
 
@@ -48,7 +48,7 @@ export const ENTITY_OWNERSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'va
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const ENTITY_OWNERSHIP_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'entityId', 'id', 'isCurrent', 'licence', 'method', 'ownerEntityId', 'ownerPersonId', 'percentage', 'position', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly EntityOwnershipKey[];
+export const ENTITY_OWNERSHIP_SELECTABLE_FIELDS = ['createdAt', 'entityId', 'id', 'isCurrent', 'ownerEntityId', 'ownerPersonId', 'percentage', 'position', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly EntityOwnershipKey[];
 
 export const ENTITY_OWNERSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly EntityOwnershipSelectableField[];
 
@@ -56,7 +56,7 @@ export const ENTITY_OWNERSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as c
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const ENTITY_OWNERSHIP_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'entityId', 'isCurrent', 'licence', 'method', 'ownerEntityId', 'ownerPersonId', 'percentage', 'position', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly EntityOwnershipKey[];
+export const ENTITY_OWNERSHIP_EDITABLE_FIELDS = ['entityId', 'isCurrent', 'ownerEntityId', 'ownerPersonId', 'percentage', 'position', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly EntityOwnershipKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

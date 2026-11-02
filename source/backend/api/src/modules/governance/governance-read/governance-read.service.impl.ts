@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GetGeographyGovernanceUseCase } from '#/modules/governance/governance-read/use-cases/get-geography-governance.usecase';
+import type { GeographyGovernanceResponseDto } from '#/modules/governance/dto/geography-governance-response.dto';
 import type { InstitutionListQueryDto } from '#/modules/governance/dto/institution-list-query.dto';
 import type { InstitutionRelationshipListQueryDto } from '#/modules/governance/dto/institution-relationship-list-query.dto';
 import type { InstitutionRelationshipResponseDto } from '#/modules/governance/dto/institution-relationship-response.dto';
@@ -15,12 +15,6 @@ import type { OfficeRuleListQueryDto } from '#/modules/governance/dto/office-rul
 import type { OfficeRuleResponseDto } from '#/modules/governance/dto/office-rule-response.dto';
 import type { OfficeRulesListResponseDto } from '#/modules/governance/dto/office-rules-list-response.dto';
 import type { OfficesListResponseDto } from '#/modules/governance/dto/offices-list-response.dto';
-import type { PeopleListResponseDto } from '#/modules/governance/dto/people-list-response.dto';
-import type { PersonListQueryDto } from '#/modules/governance/dto/person-list-query.dto';
-import type { PersonNameListQueryDto } from '#/modules/governance/dto/person-name-list-query.dto';
-import type { PersonNameResponseDto } from '#/modules/governance/dto/person-name-response.dto';
-import type { PersonNamesListResponseDto } from '#/modules/governance/dto/person-names-list-response.dto';
-import type { PersonResponseDto } from '#/modules/governance/dto/person-response.dto';
 import type { SelectionProcedureListQueryDto } from '#/modules/governance/dto/selection-procedure-list-query.dto';
 import type { SelectionProcedureResponseDto } from '#/modules/governance/dto/selection-procedure-response.dto';
 import type { SelectionProceduresListResponseDto } from '#/modules/governance/dto/selection-procedures-list-response.dto';
@@ -32,17 +26,14 @@ import { FindInstitutionsUseCase } from '#/modules/governance/governance-read/us
 import { FindOfficeHoldersUseCase } from '#/modules/governance/governance-read/use-cases/find-office-holders.usecase';
 import { FindOfficeRulesUseCase } from '#/modules/governance/governance-read/use-cases/find-office-rules.usecase';
 import { FindOfficesUseCase } from '#/modules/governance/governance-read/use-cases/find-offices.usecase';
-import { FindPeopleUseCase } from '#/modules/governance/governance-read/use-cases/find-people.usecase';
-import { FindPersonNamesUseCase } from '#/modules/governance/governance-read/use-cases/find-person-names.usecase';
 import { FindSelectionProceduresUseCase } from '#/modules/governance/governance-read/use-cases/find-selection-procedures.usecase';
 import { FindSelectionStagesUseCase } from '#/modules/governance/governance-read/use-cases/find-selection-stages.usecase';
+import { GetGeographyGovernanceUseCase } from '#/modules/governance/governance-read/use-cases/get-geography-governance.usecase';
 import { GetInstitutionByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-institution-by-id.usecase';
 import { GetInstitutionRelationshipByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-institution-relationship-by-id.usecase';
 import { GetOfficeByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-office-by-id.usecase';
 import { GetOfficeHolderByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-office-holder-by-id.usecase';
 import { GetOfficeRuleByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-office-rule-by-id.usecase';
-import { GetPersonByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-person-by-id.usecase';
-import { GetPersonNameByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-person-name-by-id.usecase';
 import { GetSelectionProcedureByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-selection-procedure-by-id.usecase';
 import { GetSelectionStageByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-selection-stage-by-id.usecase';
 
@@ -55,23 +46,19 @@ import { GetSelectionStageByIdUseCase } from '#/modules/governance/governance-re
 @Injectable()
 export class GovernanceGovernanceReadServiceImpl {
   constructor(
-    private readonly getGeographyGovernanceUseCase: GetGeographyGovernanceUseCase,
     private readonly findInstitutionRelationshipsUseCase: FindInstitutionRelationshipsUseCase,
     private readonly findInstitutionsUseCase: FindInstitutionsUseCase,
     private readonly findOfficeHoldersUseCase: FindOfficeHoldersUseCase,
     private readonly findOfficeRulesUseCase: FindOfficeRulesUseCase,
     private readonly findOfficesUseCase: FindOfficesUseCase,
-    private readonly findPeopleUseCase: FindPeopleUseCase,
-    private readonly findPersonNamesUseCase: FindPersonNamesUseCase,
     private readonly findSelectionProceduresUseCase: FindSelectionProceduresUseCase,
     private readonly findSelectionStagesUseCase: FindSelectionStagesUseCase,
+    private readonly getGeographyGovernanceUseCase: GetGeographyGovernanceUseCase,
     private readonly getInstitutionByIdUseCase: GetInstitutionByIdUseCase,
     private readonly getInstitutionRelationshipByIdUseCase: GetInstitutionRelationshipByIdUseCase,
     private readonly getOfficeByIdUseCase: GetOfficeByIdUseCase,
     private readonly getOfficeHolderByIdUseCase: GetOfficeHolderByIdUseCase,
     private readonly getOfficeRuleByIdUseCase: GetOfficeRuleByIdUseCase,
-    private readonly getPersonByIdUseCase: GetPersonByIdUseCase,
-    private readonly getPersonNameByIdUseCase: GetPersonNameByIdUseCase,
     private readonly getSelectionProcedureByIdUseCase: GetSelectionProcedureByIdUseCase,
     private readonly getSelectionStageByIdUseCase: GetSelectionStageByIdUseCase,
   ) {}
@@ -79,11 +66,6 @@ export class GovernanceGovernanceReadServiceImpl {
   /** List institution relationships. */
   findInstitutionRelationships(input: InstitutionRelationshipListQueryDto) {
     return this.findInstitutionRelationshipsUseCase.execute(input);
-  }
-
-  /** Institutions, offices and current office holders linked to a geography entity. */
-  getGeographyGovernance(input: { entityId: string }) {
-    return this.getGeographyGovernanceUseCase.execute(input);
   }
 
   /** List institutions. */
@@ -106,16 +88,6 @@ export class GovernanceGovernanceReadServiceImpl {
     return this.findOfficesUseCase.execute(input);
   }
 
-  /** List people. */
-  findPeople(input: PersonListQueryDto) {
-    return this.findPeopleUseCase.execute(input);
-  }
-
-  /** List person names. */
-  findPersonNames(input: PersonNameListQueryDto) {
-    return this.findPersonNamesUseCase.execute(input);
-  }
-
   /** List selection procedures. */
   findSelectionProcedures(input: SelectionProcedureListQueryDto) {
     return this.findSelectionProceduresUseCase.execute(input);
@@ -124,6 +96,11 @@ export class GovernanceGovernanceReadServiceImpl {
   /** List selection stages. */
   findSelectionStages(input: SelectionStageListQueryDto) {
     return this.findSelectionStagesUseCase.execute(input);
+  }
+
+  /** Institutions, offices and current office holders linked to a geography entity. */
+  getGeographyGovernance(input: { entityId: string }) {
+    return this.getGeographyGovernanceUseCase.execute(input);
   }
 
   /** Get institutions by id. */
@@ -149,16 +126,6 @@ export class GovernanceGovernanceReadServiceImpl {
   /** Get office rules by id. */
   getOfficeRuleById(input: { ruleId: string }) {
     return this.getOfficeRuleByIdUseCase.execute(input);
-  }
-
-  /** Get people by id. */
-  getPersonById(input: { personId: string }) {
-    return this.getPersonByIdUseCase.execute(input);
-  }
-
-  /** Get person names by id. */
-  getPersonNameById(input: { personNameId: string }) {
-    return this.getPersonNameByIdUseCase.execute(input);
   }
 
   /** Get selection procedures by id. */

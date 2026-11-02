@@ -39,7 +39,7 @@ export const EVIDENCE_REFERENCE_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 've
 
 export const EVIDENCE_REFERENCE_SEARCHABLE_FIELDS = [] as const satisfies readonly EvidenceReferenceKey[];
 
-export const EVIDENCE_REFERENCE_FILTERABLE_FIELDS = ['actorId', 'artifactId', 'id', 'targetId', 'targetKind', 'version', ] as const satisfies readonly EvidenceReferenceKey[];
+export const EVIDENCE_REFERENCE_FILTERABLE_FIELDS = ['actorId', 'fileId', 'id', 'targetId', 'targetKind', 'version', ] as const satisfies readonly EvidenceReferenceKey[];
 
 export const EVIDENCE_REFERENCE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', ] as const satisfies readonly EvidenceReferenceKey[];
 
@@ -47,7 +47,7 @@ export const EVIDENCE_REFERENCE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', ]
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const EVIDENCE_REFERENCE_SELECTABLE_FIELDS = ['actorId', 'artifactChecksum', 'artifactId', 'createdAt', 'id', 'mediaType', 'note', 'sizeBytes', 'targetId', 'targetKind', 'updatedAt', ] as const satisfies readonly EvidenceReferenceKey[];
+export const EVIDENCE_REFERENCE_SELECTABLE_FIELDS = ['actorId', 'createdAt', 'fileId', 'id', 'note', 'targetId', 'targetKind', 'updatedAt', ] as const satisfies readonly EvidenceReferenceKey[];
 
 export const EVIDENCE_REFERENCE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly EvidenceReferenceSelectableField[];
 
@@ -55,7 +55,7 @@ export const EVIDENCE_REFERENCE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const EVIDENCE_REFERENCE_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'mediaType', 'note', 'sizeBytes', 'targetId', 'targetKind', ] as const satisfies readonly EvidenceReferenceKey[];
+export const EVIDENCE_REFERENCE_EDITABLE_FIELDS = ['fileId', 'note', 'targetId', 'targetKind', ] as const satisfies readonly EvidenceReferenceKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -7,7 +7,6 @@ import { PartyPositionHolderEntity } from "#/modules/political/entities/party-po
 import { PartyPositionEntity } from "#/modules/political/entities/party-position.entity.ts";
 import { PartyUnitEntity } from "#/modules/political/entities/party-unit.entity.ts";
 import { PartyEntity } from "#/modules/political/entities/party.entity.ts";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { PoliticalPoliticalReadServiceImpl } from "#/modules/political/political-read/political-read.service.impl.ts";
 import { FindIdeologiesUseCase } from "#/modules/political/political-read/use-cases/find-ideologies.usecase.ts";
 import { FindPartiesUseCase } from "#/modules/political/political-read/use-cases/find-parties.usecase.ts";
@@ -37,7 +36,6 @@ import { PoliticalPoliticalReadService } from "./political-read.service.ts";
       PartyPositionEntity,
       PartyUnitEntity,
       PartyEntity,
-      JurisdictionEntity,
     ]),
   ],
   controllers: [PoliticalPoliticalReadController],

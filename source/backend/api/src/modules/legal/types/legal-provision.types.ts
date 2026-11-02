@@ -6,8 +6,6 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { ProvisionKind } from '#/types/legal/provision-kind.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -35,31 +33,20 @@ import type {
 
 /** Legal Provision */
 export interface ILegalProvision extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   citation: string;
   code: string;
-  confidence: number | null;
   content: string | null;
   heading: string | null;
   instrumentId: string;
   isCurrent: boolean;
   kind: ProvisionKind;
-  licence: string | null;
-  method: ProvenanceMethod;
   parentId: string | null;
   previousVersionId: string | null;
-  retrievedAt: Date | null;
   sortOrder: number;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly legalInstrument?: LegalInstrumentTypes.ILegalInstrument;
 }
 

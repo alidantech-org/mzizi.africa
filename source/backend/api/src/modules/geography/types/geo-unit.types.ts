@@ -6,14 +6,10 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { UnitKind } from '#/types/geography/unit-kind.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as JurisdictionTypes from '#/modules/reference/types/jurisdiction.types';
-import type * as ClassificationRecordTypes from '#/modules/reference/types/classification-record.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -36,31 +32,18 @@ import type {
 
 /** Geo Unit */
 export interface IGeoUnit extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   code: string;
-  confidence: number | null;
   isActive: boolean;
   isCurrent: boolean;
   jurisdictionId: string;
   kind: UnitKind;
   levelId: string;
-  licence: string | null;
-  method: ProvenanceMethod;
   name: string;
   parentId: string | null;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
-  readonly jurisdiction?: JurisdictionTypes.IJurisdiction;
-  readonly classificationRecord?: ClassificationRecordTypes.IClassificationRecord;
 }
 
 // ----------------------------------
@@ -141,8 +124,6 @@ export type IGeoUnitAsManyRelationQuery = Q.IAsManyRelationQuery<IGeoUnit, GeoUn
 // ----------------------------------
 
 export interface IGeoUnitRelationMap extends Record<GeoUnitRelationKey, unknown> {
-  jurisdiction: JurisdictionTypes.IJurisdictionAsOneRelationQuery;
-  classificationRecord: ClassificationRecordTypes.IClassificationRecordAsOneRelationQuery;
 }
 
 // ----------------------------------

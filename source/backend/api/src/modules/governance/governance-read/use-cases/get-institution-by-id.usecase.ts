@@ -4,10 +4,8 @@ import type { DataSource } from 'typeorm';
 import type { InstitutionPublicDto } from '#/modules/governance/dto/institution-public.dto';
 import type { InstitutionResponseDto } from '#/modules/governance/dto/institution-response.dto';
 import type { InstitutionDto } from '#/modules/governance/dto/institution.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { InstitutionEntity } from '#/modules/governance/entities/institution.entity';
 
@@ -28,32 +26,22 @@ export class GetInstitutionByIdUseCase {
 
   private toReadModel(entity: InstitutionEntity): InstitutionPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     branchId: entity.branchId,
     code: entity.code,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     description: entity.description,
+    geoUnitId: entity.geoUnitId,
     id: entity.id,
     isCurrent: entity.isCurrent,
     jurisdictionId: entity.jurisdictionId,
     legalBasisId: entity.legalBasisId,
-    licence: entity.licence,
-    method: entity.method,
     name: entity.name,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     typeId: entity.typeId,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as InstitutionPublicDto;
   }

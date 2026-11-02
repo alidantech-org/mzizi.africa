@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as JurisdictionConfig from '#/modules/reference/types/jurisdiction.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const EVENT_RELATION_KEYS = ['jurisdiction', ] as const satisfies readonly EventKey[];
+export const EVENT_RELATION_KEYS = [] as const satisfies readonly EventKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const EVENT_SORTABLE_FIELDS = ['code', 'createdAt', 'startsOn', 'title', 
 
 export const EVENT_SEARCHABLE_FIELDS = ['code', 'title', ] as const satisfies readonly EventKey[];
 
-export const EVENT_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'impactLevel', 'isCurrent', 'isRecurring', 'jurisdictionId', 'method', 'status', 'title', 'typeId', 'verificationState', 'version', ] as const satisfies readonly EventKey[];
+export const EVENT_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'impactLevel', 'isCurrent', 'isRecurring', 'jurisdictionId', 'status', 'title', 'typeId', 'version', ] as const satisfies readonly EventKey[];
 
 export const EVENT_DATE_RANGE_FIELDS = ['createdAt', 'startsOn', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly EventKey[];
 
@@ -48,7 +47,7 @@ export const EVENT_DATE_RANGE_FIELDS = ['createdAt', 'startsOn', 'updatedAt', 'v
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const EVENT_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'description', 'endsOn', 'geoUnitId', 'id', 'impactLevel', 'isCurrent', 'isRecurring', 'jurisdictionId', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'startsOn', 'status', 'title', 'toolOrModel', 'typeId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly EventKey[];
+export const EVENT_SELECTABLE_FIELDS = ['code', 'createdAt', 'description', 'endsOn', 'geoUnitId', 'id', 'impactLevel', 'isCurrent', 'isRecurring', 'jurisdictionId', 'startsOn', 'status', 'title', 'typeId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly EventKey[];
 
 export const EVENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly EventSelectableField[];
 
@@ -56,7 +55,7 @@ export const EVENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisf
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const EVENT_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'description', 'endsOn', 'geoUnitId', 'impactLevel', 'isCurrent', 'isRecurring', 'jurisdictionId', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'startsOn', 'status', 'title', 'toolOrModel', 'typeId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly EventKey[];
+export const EVENT_EDITABLE_FIELDS = ['code', 'description', 'endsOn', 'geoUnitId', 'impactLevel', 'isCurrent', 'isRecurring', 'jurisdictionId', 'startsOn', 'status', 'title', 'typeId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly EventKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const EVENT_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const EVENT_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<EventRelationKey>().one(JurisdictionConfig.JURISDICTION_AS_ONE_RELATION_CONFIG, 'jurisdiction'),
 ] as const;
 
 export const EVENT_MANY_RELATION_QUERY_OPTIONS = [

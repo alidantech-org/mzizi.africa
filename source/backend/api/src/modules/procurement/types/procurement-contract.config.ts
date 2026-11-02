@@ -40,7 +40,7 @@ export const PROCUREMENT_CONTRACT_SORTABLE_FIELDS = ['code', 'createdAt', 'updat
 
 export const PROCUREMENT_CONTRACT_SEARCHABLE_FIELDS = ['code', ] as const satisfies readonly ProcurementContractKey[];
 
-export const PROCUREMENT_CONTRACT_FILTERABLE_FIELDS = ['awardedEntityId', 'code', 'contractingOfficeId', 'contractingUnitId', 'id', 'isCurrent', 'method', 'status', 'tenderId', 'value', 'verificationState', 'version', ] as const satisfies readonly ProcurementContractKey[];
+export const PROCUREMENT_CONTRACT_FILTERABLE_FIELDS = ['awardedEntityId', 'code', 'contractingOfficeId', 'contractingUnitId', 'id', 'isCurrent', 'status', 'tenderId', 'value', 'version', ] as const satisfies readonly ProcurementContractKey[];
 
 export const PROCUREMENT_CONTRACT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ProcurementContractKey[];
 
@@ -48,7 +48,7 @@ export const PROCUREMENT_CONTRACT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt',
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PROCUREMENT_CONTRACT_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'awardedEntityId', 'awardedOn', 'code', 'confidence', 'contractingOfficeId', 'contractingUnitId', 'createdAt', 'currencyCode', 'id', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'tenderId', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'value', 'verificationState', ] as const satisfies readonly ProcurementContractKey[];
+export const PROCUREMENT_CONTRACT_SELECTABLE_FIELDS = ['awardedEntityId', 'awardedOn', 'code', 'contractingOfficeId', 'contractingUnitId', 'createdAt', 'currencyCode', 'id', 'isCurrent', 'status', 'tenderId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'value', ] as const satisfies readonly ProcurementContractKey[];
 
 export const PROCUREMENT_CONTRACT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ProcurementContractSelectableField[];
 
@@ -56,7 +56,7 @@ export const PROCUREMENT_CONTRACT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PROCUREMENT_CONTRACT_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'awardedEntityId', 'awardedOn', 'code', 'confidence', 'contractingOfficeId', 'contractingUnitId', 'currencyCode', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'tenderId', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'value', 'verificationState', ] as const satisfies readonly ProcurementContractKey[];
+export const PROCUREMENT_CONTRACT_EDITABLE_FIELDS = ['awardedEntityId', 'awardedOn', 'code', 'contractingOfficeId', 'contractingUnitId', 'currencyCode', 'isCurrent', 'status', 'tenderId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'value', ] as const satisfies readonly ProcurementContractKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

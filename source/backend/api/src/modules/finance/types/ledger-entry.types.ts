@@ -6,8 +6,6 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { LedgerReferenceKind } from '#/types/finance/ledger-reference-kind.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -36,29 +34,18 @@ import type {
 /** Ledger Entry */
 export interface ILedgerEntry extends B.IBase {
   accountCode: string;
-  artifactChecksum: string | null;
-  artifactId: string | null;
-  confidence: number | null;
   creditAmount: number;
   currencyCode: string;
   debitAmount: number;
   isCurrent: boolean;
-  licence: string | null;
-  method: ProvenanceMethod;
   postedOn: Date;
   referenceId: string | null;
   referenceKind: LedgerReferenceKind;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
-  toolOrModel: string | null;
   unitId: string;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly budgetaryUnit?: BudgetaryUnitTypes.IBudgetaryUnit;
 }
 

@@ -1,7 +1,7 @@
 import * as dryv from "@dryvcode/author";
 
 import { referenceSchemas } from "../../foundation/reference/index.ts";
-import { evidenced, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
+import { recorded, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
 import { readSurface } from "../../foundation/shared/read-surface.ts";
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
@@ -15,7 +15,7 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * kind and id so spend can be traced from budget through commitment, payment and contract.
  */
 export const entities = dryv.group({ name: "entities" }).description("Legal entities, identifiers, ownership and locations.").tags("public", "entities")
-  .facets({ storage: { namespace: "org" } });
+  .facets({ storage: { namespace: "organization" } });
 export const finance = dryv.group({ name: "finance" }).description("Fiscal years, budgets, transfers, revenue, expenditure and the ledger.").tags("public", "finance")
   .facets({ storage: { namespace: "finance" } });
 export const debt = dryv.group({ name: "debt" }).description("Loans, disbursements and repayments.").tags("public", "debt")
@@ -73,9 +73,9 @@ const q = () => dryv.field(sharedProperties.Name).optional();
 /* ---------------------------------- Entities ----------------------------------- */
 
 const legalEntities = entities.schemas({
-  LegalEntity: evidenced(
+  LegalEntity: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       officialName: dryv.field(sharedProperties.Name).query(searchable),
       entityTypeId: plainId(),
@@ -89,7 +89,7 @@ const legalEntities = entities.schemas({
 
 const entityDetails = entities.schemas({
   /** Registration numbers and tax identifiers: scheme and issuing authority are records, not columns. */
-  EntityIdentifier: evidenced(
+  EntityIdentifier: recorded(
     {
       entityId: relationTo(() => legalEntities.LegalEntity.field("id")),
       schemeId: plainId(),
@@ -100,7 +100,7 @@ const entityDetails = entities.schemas({
     [{ name: "idx_entity_identifier_entity", fields: ["entityId"] }, { name: "idx_entity_identifier_value", fields: ["schemeId", "value"] }],
   ),
 
-  EntityOwnership: evidenced(
+  EntityOwnership: recorded(
     {
       entityId: relationTo(() => legalEntities.LegalEntity.field("id")),
       ownerEntityId: optionalId(),
@@ -112,7 +112,7 @@ const entityDetails = entities.schemas({
     [{ name: "idx_entity_ownership_entity", fields: ["entityId"] }],
   ),
 
-  EntityLocation: evidenced(
+  EntityLocation: recorded(
     {
       entityId: relationTo(() => legalEntities.LegalEntity.field("id")),
       geoUnitId: optionalId(),
@@ -127,9 +127,9 @@ const entityDetails = entities.schemas({
 /* ----------------------------------- Finance ----------------------------------- */
 
 const fiscalYears = finance.schemas({
-  FiscalYear: evidenced(
+  FiscalYear: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       startsOn: dryv.field(sharedProperties.Date).query({ filter: ["between"], sort: true }),
       endsOn: dryv.field(sharedProperties.Date).query({ filter: ["between"], sort: true }),
@@ -138,9 +138,9 @@ const fiscalYears = finance.schemas({
     [{ name: "idx_fiscal_year_code", fields: ["code"], unique: true }],
   ),
 
-  BudgetaryUnit: evidenced(
+  BudgetaryUnit: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       name: dryv.field(sharedProperties.Name).query(searchable),
       levelId: plainId(),
@@ -155,7 +155,7 @@ const fiscalYears = finance.schemas({
 });
 
 const budgets = finance.schemas({
-  Budget: evidenced(
+  Budget: recorded(
     {
       unitId: relationTo(() => fiscalYears.BudgetaryUnit.field("id")),
       fiscalYearId: plainId(),
@@ -171,7 +171,7 @@ const budgets = finance.schemas({
 });
 
 const flows = finance.schemas({
-  Transfer: evidenced(
+  Transfer: recorded(
     {
       fromUnitId: relationTo(() => fiscalYears.BudgetaryUnit.field("id")),
       toUnitId: plainId(),
@@ -187,7 +187,7 @@ const flows = finance.schemas({
     [{ name: "idx_transfer_from", fields: ["fromUnitId", "fiscalYearId"] }, { name: "idx_transfer_to", fields: ["toUnitId"] }],
   ),
 
-  RevenueRecord: evidenced(
+  RevenueRecord: recorded(
     {
       unitId: relationTo(() => fiscalYears.BudgetaryUnit.field("id")),
       fiscalYearId: plainId(),
@@ -202,7 +202,7 @@ const flows = finance.schemas({
     [{ name: "idx_revenue_unit_year", fields: ["unitId", "fiscalYearId"] }],
   ),
 
-  Expenditure: evidenced(
+  Expenditure: recorded(
     {
       budgetId: relationTo(() => budgets.Budget.field("id")),
       unitId: plainId(),
@@ -217,7 +217,7 @@ const flows = finance.schemas({
     [{ name: "idx_expenditure_budget", fields: ["budgetId", "stageOrder"] }],
   ),
 
-  LedgerEntry: evidenced(
+  LedgerEntry: recorded(
     {
       unitId: relationTo(() => fiscalYears.BudgetaryUnit.field("id")),
       accountCode: dryv.field(financeProperties.AccountCode).query({ filter: ["equal", "startsWith"] }),
@@ -236,9 +236,9 @@ const flows = finance.schemas({
 /* ------------------------------------- Debt ------------------------------------ */
 
 const loans = debt.schemas({
-  Loan: evidenced(
+  Loan: recorded(
     {
-      borrowerUnitId: relationTo(() => fiscalYears.BudgetaryUnit.field("id")),
+      borrowerUnitId: plainId(),
       lenderEntityId: optionalId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       principalAmount: amount().query({ filter: ["between"], sort: true }),
@@ -254,7 +254,7 @@ const loans = debt.schemas({
 });
 
 const loanFlows = debt.schemas({
-  LoanDisbursement: evidenced(
+  LoanDisbursement: recorded(
     {
       loanId: relationTo(() => loans.Loan.field("id")),
       ledgerEntryId: optionalId(),
@@ -266,7 +266,7 @@ const loanFlows = debt.schemas({
     [{ name: "idx_loan_disbursement_loan", fields: ["loanId"] }],
   ),
 
-  LoanRepayment: evidenced(
+  LoanRepayment: recorded(
     {
       loanId: relationTo(() => loans.Loan.field("id")),
       ledgerEntryId: optionalId(),
@@ -284,9 +284,9 @@ const loanFlows = debt.schemas({
 /* ---------------------------------- Procurement -------------------------------- */
 
 const tenders = procurement.schemas({
-  Tender: evidenced(
+  Tender: recorded(
     {
-      issuingUnitId: relationTo(() => fiscalYears.BudgetaryUnit.field("id")),
+      issuingUnitId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       title: dryv.field(sharedProperties.Name).query(searchable),
       kindId: plainId(),
@@ -306,7 +306,7 @@ const tenders = procurement.schemas({
 });
 
 const bidsAndContracts = procurement.schemas({
-  Bid: evidenced(
+  Bid: recorded(
     {
       tenderId: relationTo(() => tenders.Tender.field("id")),
       bidderEntityId: plainId(),
@@ -321,7 +321,7 @@ const bidsAndContracts = procurement.schemas({
     [{ name: "idx_bid_tender", fields: ["tenderId"] }],
   ),
 
-  ProcurementContract: evidenced(
+  ProcurementContract: recorded(
     {
       tenderId: relationTo(() => tenders.Tender.field("id")),
       awardedEntityId: plainId(),
@@ -339,7 +339,7 @@ const bidsAndContracts = procurement.schemas({
 });
 
 const contractDetails = procurement.schemas({
-  ContractMilestone: evidenced(
+  ContractMilestone: recorded(
     {
       contractId: relationTo(() => bidsAndContracts.ProcurementContract.field("id")),
       title: dryv.field(sharedProperties.Name),
@@ -352,7 +352,7 @@ const contractDetails = procurement.schemas({
     [{ name: "idx_milestone_contract", fields: ["contractId"] }],
   ),
 
-  ContractVariation: evidenced(
+  ContractVariation: recorded(
     {
       contractId: relationTo(() => bidsAndContracts.ProcurementContract.field("id")),
       amountChange: amount(),

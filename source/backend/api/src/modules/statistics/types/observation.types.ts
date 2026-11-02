@@ -5,8 +5,6 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 import type { ConfidenceLevel } from '#/types/statistics/confidence-level.enum';
 
 // ----------------------------------
@@ -35,30 +33,19 @@ import type {
 
 /** Observation */
 export interface IObservation extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   columnId: string | null;
-  confidence: number | null;
   confidenceLevel: ConfidenceLevel;
   geoUnitId: string | null;
   indicatorId: string;
   isCurrent: boolean;
-  licence: string | null;
-  method: ProvenanceMethod;
   numericValue: number | null;
   periodId: string;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   tableId: string;
   textValue: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly statisticsTable?: StatisticsTableTypes.IStatisticsTable;
 }
 

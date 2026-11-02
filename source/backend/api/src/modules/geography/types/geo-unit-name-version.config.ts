@@ -40,7 +40,7 @@ export const GEO_UNIT_NAME_VERSION_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 
 
 export const GEO_UNIT_NAME_VERSION_SEARCHABLE_FIELDS = ['name', ] as const satisfies readonly GeoUnitNameVersionKey[];
 
-export const GEO_UNIT_NAME_VERSION_FILTERABLE_FIELDS = ['id', 'isCurrent', 'method', 'name', 'unitId', 'verificationState', 'version', ] as const satisfies readonly GeoUnitNameVersionKey[];
+export const GEO_UNIT_NAME_VERSION_FILTERABLE_FIELDS = ['id', 'isCurrent', 'name', 'unitId', 'version', ] as const satisfies readonly GeoUnitNameVersionKey[];
 
 export const GEO_UNIT_NAME_VERSION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly GeoUnitNameVersionKey[];
 
@@ -48,7 +48,7 @@ export const GEO_UNIT_NAME_VERSION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt'
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const GEO_UNIT_NAME_VERSION_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'language', 'licence', 'method', 'name', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly GeoUnitNameVersionKey[];
+export const GEO_UNIT_NAME_VERSION_SELECTABLE_FIELDS = ['createdAt', 'id', 'isCurrent', 'language', 'name', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly GeoUnitNameVersionKey[];
 
 export const GEO_UNIT_NAME_VERSION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly GeoUnitNameVersionSelectableField[];
 
@@ -56,7 +56,7 @@ export const GEO_UNIT_NAME_VERSION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ]
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const GEO_UNIT_NAME_VERSION_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'isCurrent', 'language', 'licence', 'method', 'name', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly GeoUnitNameVersionKey[];
+export const GEO_UNIT_NAME_VERSION_EDITABLE_FIELDS = ['isCurrent', 'language', 'name', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly GeoUnitNameVersionKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

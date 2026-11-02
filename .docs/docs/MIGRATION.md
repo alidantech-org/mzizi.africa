@@ -341,8 +341,8 @@ What the legacy Python service (`source/backend/api-legacy`) did, where each res
 | Models without endpoints: governance, offices, people, elections, political, events, entities, finance, debt, procurement, statistics, services | NestJS domain groups | Neutral contracts and read use cases done; inventory dispositions applied | The models can be retired as design reference, but their CSV seeds (below) are still the only data |
 | CSV seeds under `routes/*/_seed` | `source/backend/db-engine` | Not started | No |
 | Alembic migrations 001 to 016 (schema mixed with seed loading) | `source/backend/db-engine` | Not started; the generated entities define the neutral schema but db-engine must own DDL and the missing `services` migration | No |
-| Files models, S3 client, files routes | `source/backend/files` | Not started | No |
-| Scraper models, web search scraper, crawlers, converters | `source/backend/data-engine` | Not started | No |
+| Files models, S3 client, files routes | `source/backend/files` writes bytes; metadata model is the `filesystem` schema (`FILESYSTEM_DESIGN.md`), replacing archived directories, files and file_types; formats seeded from the archived file types | Schema, contracts and read endpoints done; the files service (upload, download, scanning) not built | No |
+| Scraper models, web search scraper, crawlers, converters | `source/backend/data-engine`; retrieval records become `source.captures` and results `source.attributions` (`SOURCING_DESIGN.md`) | Schema done; engine not built | No |
 | PDF extractor, OCR, NLP | data-engine (extraction) and intelligence (classification) | Not started | No |
 | Archived justice, land, constitution amendments, legal instruments, `person_*` models | Review for later contracts | Investigate list in the inventory | Keep as reference |
 

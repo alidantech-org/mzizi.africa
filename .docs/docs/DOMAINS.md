@@ -464,17 +464,21 @@ A new top-level domain should be added only when:
 
 # Contract catalog
 
-Each domain's API contract lives in `dryv/contracts`. Tables live in per-domain schemas with short plural names, never in `public` (`.docs/rules/database-naming.md`). Domains without a row here have no contract yet and must not get one without reading this file and `AGENTS.md` section 8.
+Each domain's API contract lives in `dryv/contracts`. Tables live in per-domain schemas with full-word names, never in `public` (`.docs/rules/database-naming.md`); the design is in `.docs/docs/DATABASE_DESIGN.md`. Domains without a row here have no contract yet and must not get one without reading this file and `AGENTS.md` section 8.
 
 | Domain | Contract group (path under `dryv/contracts`) | Database schema | Notes |
 | --- | --- | --- | --- |
-| Evidence, time, jurisdiction | `foundation/shared`, `foundation/reference` | `reference` | Provenance, valid time, record time, verification, business codes, jurisdictions and jurisdiction-scoped classification records (levels, institution types, election types, fiscal stages are records, not enums). |
-| Geography | `foundation/geography` | `geo` | Units, versioned boundaries, name history, lineage, hierarchy, map context, mobile geography contract. |
+| Time and jurisdiction | `foundation/shared`, `foundation/reference` | `reference` | Valid time, record time, business codes, jurisdictions and jurisdiction-scoped classification records (levels, institution types, election types, fiscal stages are records, not enums). |
+| Geography | `foundation/geography` | `geography` | Units, versioned boundaries, name history, lineage, hierarchy, map context, mobile geography contract. |
 | Constitutions and law | `domains/legal` | `legal` | Legal instruments, provisions with pinpoint citation, amendments, authority links used as legal basis by other domains. |
-| Governance | `domains/governance` | `governance` | Institutions, typed relationships, offices, dated office rules, selection procedures and stages, people, office holders. |
+| People | `domains/person` | `person` | Real humans: individuals, names, profiles, contacts and social handles with an exposure level (`PEOPLE_DESIGN.md`). |
+| Accounts | `domains/person` (group identity) | `identity` | Platform accounts and grants. Private, no endpoints. |
+| Governance | `domains/governance` | `governance` | Institutions, typed relationships, offices, dated office rules, selection procedures and stages, office holders (people are in `person`). |
 | Politics and elections | `domains/elections` (groups elections, political, events) | `electoral`, `political`, `calendar` | Elections, seats, candidates, results, manifestos, parties, membership, ideologies, calendar events. |
-| Finance, debt, procurement | `domains/finance` (groups entities, finance, debt, procurement) | `org`, `finance`, `debt`, `procurement` | Neutral legal identity with jurisdiction-scoped identifiers, budgets, transfers, revenue, expenditure, ledger, loans, tenders, bids, contracts. Every amount carries a currency. |
-| Statistics and services | `domains/statistics` (groups statistics, services) | `statistic`, `civic` | Periods, indicators, observations with confidence and verification; public services, amenities (boards and leaders are governance office links). |
-| Review and discussion | `domains/audit` | `audit` | The API's only writes: comments, evidence references (file artifact by reference), review decisions. |
+| Finance, debt, procurement | `domains/finance` (groups entities, finance, debt, procurement) | `organization`, `finance`, `debt`, `procurement` | Neutral legal identity with jurisdiction-scoped identifiers, budgets, transfers, revenue, expenditure, ledger, loans, tenders, bids, contracts. Every amount carries a currency. |
+| Statistics and services | `domains/statistics` (groups statistics, services) | `statistical`, `civic` | Periods, indicators, observations; public services, amenities (boards and leaders are governance office links). |
+| Files and media | `domains/filesystem` | `filesystem` | Stores, formats, folders, content-addressed objects, files, versions, variants, attachments (the one place media links from), uploads, events (`FILESYSTEM_DESIGN.md`). |
+| Sources and provenance | `domains/source` | `source` | Publishers, documents, captures, methods, attributions that point at any record, verification ledger (`SOURCING_DESIGN.md`). |
+| Review and discussion | `domains/audit` | `audit` | The API's only writes: comments, evidence submissions (a file reference), review decisions. |
 
 Not yet contracted: heritage and culture, linguistics, migration and settlement, trade and resources, colonial administration, pre-colonial political systems, land, and the justice system. The inventory (`.docs/docs/audits/LEGACY_MODEL_INVENTORY.md`) lists archived justice and land models to review first.

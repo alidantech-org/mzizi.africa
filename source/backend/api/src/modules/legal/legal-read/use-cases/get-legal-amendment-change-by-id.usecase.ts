@@ -6,10 +6,8 @@ import type { LegalAmendmentChangeResponseDto } from '#/modules/legal/dto/legal-
 import type { LegalAmendmentChangeDto } from '#/modules/legal/dto/legal-amendment-change.dto';
 import type { LegalAmendmentDto } from '#/modules/legal/dto/legal-amendment.dto';
 import type { LegalInstrumentDto } from '#/modules/legal/dto/legal-instrument.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { LegalAmendmentChangeEntity } from '#/modules/legal/entities/legal-amendment-change.entity';
 
@@ -31,29 +29,18 @@ export class GetLegalAmendmentChangeByIdUseCase {
   private toReadModel(entity: LegalAmendmentChangeEntity): LegalAmendmentChangePublicDto {
     return {
     amendmentId: entity.amendmentId,
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     id: entity.id,
     isCurrent: entity.isCurrent,
     kind: entity.kind,
-    licence: entity.licence,
-    method: entity.method,
     newText: entity.newText,
     previousText: entity.previousText,
     provisionId: entity.provisionId,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as LegalAmendmentChangePublicDto;
   }

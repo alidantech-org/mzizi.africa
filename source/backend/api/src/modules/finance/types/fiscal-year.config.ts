@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as JurisdictionConfig from '#/modules/reference/types/jurisdiction.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const FISCAL_YEAR_RELATION_KEYS = ['jurisdiction', ] as const satisfies readonly FiscalYearKey[];
+export const FISCAL_YEAR_RELATION_KEYS = [] as const satisfies readonly FiscalYearKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const FISCAL_YEAR_SORTABLE_FIELDS = ['code', 'createdAt', 'endsOn', 'star
 
 export const FISCAL_YEAR_SEARCHABLE_FIELDS = ['code', ] as const satisfies readonly FiscalYearKey[];
 
-export const FISCAL_YEAR_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'jurisdictionId', 'method', 'verificationState', 'version', ] as const satisfies readonly FiscalYearKey[];
+export const FISCAL_YEAR_FILTERABLE_FIELDS = ['code', 'id', 'isCurrent', 'jurisdictionId', 'version', ] as const satisfies readonly FiscalYearKey[];
 
 export const FISCAL_YEAR_DATE_RANGE_FIELDS = ['createdAt', 'endsOn', 'startsOn', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly FiscalYearKey[];
 
@@ -48,7 +47,7 @@ export const FISCAL_YEAR_DATE_RANGE_FIELDS = ['createdAt', 'endsOn', 'startsOn',
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const FISCAL_YEAR_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'endsOn', 'id', 'isCurrent', 'jurisdictionId', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'startsOn', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly FiscalYearKey[];
+export const FISCAL_YEAR_SELECTABLE_FIELDS = ['code', 'createdAt', 'endsOn', 'id', 'isCurrent', 'jurisdictionId', 'startsOn', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly FiscalYearKey[];
 
 export const FISCAL_YEAR_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly FiscalYearSelectableField[];
 
@@ -56,7 +55,7 @@ export const FISCAL_YEAR_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const FISCAL_YEAR_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'endsOn', 'isCurrent', 'jurisdictionId', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'startsOn', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly FiscalYearKey[];
+export const FISCAL_YEAR_EDITABLE_FIELDS = ['code', 'endsOn', 'isCurrent', 'jurisdictionId', 'startsOn', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly FiscalYearKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const FISCAL_YEAR_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const FISCAL_YEAR_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<FiscalYearRelationKey>().one(JurisdictionConfig.JURISDICTION_AS_ONE_RELATION_CONFIG, 'jurisdiction'),
 ] as const;
 
 export const FISCAL_YEAR_MANY_RELATION_QUERY_OPTIONS = [

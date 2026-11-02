@@ -40,7 +40,7 @@ export const EXPENDITURE_SORTABLE_FIELDS = ['amount', 'createdAt', 'stageOrder',
 
 export const EXPENDITURE_SEARCHABLE_FIELDS = [] as const satisfies readonly ExpenditureKey[];
 
-export const EXPENDITURE_FILTERABLE_FIELDS = ['amount', 'approverPersonId', 'budgetId', 'contractId', 'id', 'isCurrent', 'method', 'stageId', 'unitId', 'verificationState', 'version', ] as const satisfies readonly ExpenditureKey[];
+export const EXPENDITURE_FILTERABLE_FIELDS = ['amount', 'approverPersonId', 'budgetId', 'contractId', 'id', 'isCurrent', 'stageId', 'unitId', 'version', ] as const satisfies readonly ExpenditureKey[];
 
 export const EXPENDITURE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ExpenditureKey[];
 
@@ -48,7 +48,7 @@ export const EXPENDITURE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFr
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const EXPENDITURE_SELECTABLE_FIELDS = ['amount', 'approverPersonId', 'artifactChecksum', 'artifactId', 'budgetId', 'confidence', 'contractId', 'createdAt', 'currencyCode', 'id', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'stageId', 'stageOrder', 'toolOrModel', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ExpenditureKey[];
+export const EXPENDITURE_SELECTABLE_FIELDS = ['amount', 'approverPersonId', 'budgetId', 'contractId', 'createdAt', 'currencyCode', 'id', 'isCurrent', 'stageId', 'stageOrder', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ExpenditureKey[];
 
 export const EXPENDITURE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ExpenditureSelectableField[];
 
@@ -56,7 +56,7 @@ export const EXPENDITURE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const EXPENDITURE_EDITABLE_FIELDS = ['amount', 'approverPersonId', 'artifactChecksum', 'artifactId', 'budgetId', 'confidence', 'contractId', 'currencyCode', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'stageId', 'stageOrder', 'toolOrModel', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ExpenditureKey[];
+export const EXPENDITURE_EDITABLE_FIELDS = ['amount', 'approverPersonId', 'budgetId', 'contractId', 'currencyCode', 'isCurrent', 'stageId', 'stageOrder', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ExpenditureKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

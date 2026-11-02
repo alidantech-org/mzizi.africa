@@ -5,8 +5,6 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -36,28 +34,17 @@ import type {
 export interface IExpenditure extends B.IBase {
   amount: number;
   approverPersonId: string | null;
-  artifactChecksum: string | null;
-  artifactId: string | null;
   budgetId: string;
-  confidence: number | null;
   contractId: string | null;
   currencyCode: string;
   isCurrent: boolean;
-  licence: string | null;
-  method: ProvenanceMethod;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   stageId: string;
   stageOrder: number;
-  toolOrModel: string | null;
   unitId: string;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly budget?: BudgetTypes.IBudget;
 }
 

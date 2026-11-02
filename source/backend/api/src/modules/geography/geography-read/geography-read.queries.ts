@@ -6,24 +6,48 @@ import type { GeographyEntityDto } from "#/modules/geography/dto/geography-entit
  */
 export type Row = Record<string, unknown>;
 
+/**
+ * Boundary provenance and verified state are not columns: they come from the source schema, which
+ * points at the boundary row by (geography.boundaries, id). These joins are the only cross-schema
+ * reads in the geography API (DATABASE_DESIGN.md).
+ */
+export const BOUNDARY_TARGET = "'geography.boundaries'";
+
 export const ENTITY_SQL = `
   SELECT u.id, u.code, u.name, c.label AS level, u.parent_id, p.name AS parent_name,
          u.valid_from, u.valid_to,
-         b.version_number, b.source_name, b.source_reference, b.licence, b.reference_year,
-         b.retrieved_at, b.verification_state
-    FROM geo.units u
+         b.version_number, b.reference_year,
+         bs.source_name, bs.source_reference, bs.licence, bs.retrieved_at,
+         bv.state AS verification_state
+    FROM geography.units u
     JOIN reference.classifications c ON c.id = u.level_id
     JOIN reference.jurisdictions j ON j.id = u.jurisdiction_id
-    LEFT JOIN geo.units p ON p.id = u.parent_id
+    LEFT JOIN geography.units p ON p.id = u.parent_id
     LEFT JOIN LATERAL (
-      SELECT * FROM geo.boundaries v
+      SELECT * FROM geography.boundaries v
        WHERE v.unit_id = u.id AND v.is_current = true
        ORDER BY v.version_number DESC LIMIT 1
-    ) b ON true`;
+    ) b ON true
+    LEFT JOIN LATERAL (
+      SELECT ver.state FROM source.verifications ver
+       WHERE ver.target_kind = ${BOUNDARY_TARGET} AND ver.target_id = b.id AND ver.is_current = true
+       LIMIT 1
+    ) bv ON true
+    LEFT JOIN LATERAL (
+      SELECT d.title AS source_name, d.citation AS source_reference, d.licence, cap.retrieved_at
+        FROM source.attributions a
+        JOIN source.documents d ON d.id = a.document_id
+        LEFT JOIN source.captures cap ON cap.id = a.capture_id
+       WHERE a.target_kind = ${BOUNDARY_TARGET} AND a.target_id = b.id AND a.relation = 'supports'
+       ORDER BY a.created_at DESC LIMIT 1
+    ) bs ON true`;
 
+/** The current boundary of unit u whose verification is current and verified. */
 export const CURRENT_VERIFIED_BOUNDARY_SQL = `
-  SELECT * FROM geo.boundaries v
-   WHERE v.unit_id = u.id AND v.is_current = true AND v.verification_state = 'verified'
+  SELECT v.* FROM geography.boundaries v
+    JOIN source.verifications ver
+      ON ver.target_kind = ${BOUNDARY_TARGET} AND ver.target_id = v.id AND ver.is_current = true AND ver.state = 'verified'
+   WHERE v.unit_id = u.id AND v.is_current = true
    ORDER BY v.version_number DESC LIMIT 1`;
 
 export function toEntity(row: Row): GeographyEntityDto {

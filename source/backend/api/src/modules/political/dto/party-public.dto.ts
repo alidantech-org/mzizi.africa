@@ -40,17 +40,11 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
-import { JurisdictionDto } from "#/modules/reference/dto/jurisdiction.dto.ts";
 import { PartyStatus } from "#/types/political/party-status.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
-import { ProvenanceMethod } from "#/types/shared/provenance-method.enum.ts";
-import { VerificationState } from "#/types/shared/verification-state.enum.ts";
 import type { Abbreviation } from "#/types/political/abbreviation.type.ts";
 import type { RegistryIdentifier } from "#/types/political/registry-identifier.type.ts";
 import type { BusinessCode } from "#/types/shared/business-code.type.ts";
-import type { Checksum } from "#/types/shared/checksum.type.ts";
-import type { Confidence } from "#/types/shared/confidence.type.ts";
-import type { Description } from "#/types/shared/description.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
@@ -73,30 +67,10 @@ export class PartyPublicDto {
   @MaxLength(40)
   abbreviation?: Abbreviation | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.artifactChecksum !== null)
-  @IsString()
-  @MinLength(64)
-  @MaxLength(64)
-  artifactChecksum?: Checksum | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.artifactId !== null)
-  @IsString()
-  @IsUUID()
-  artifactId?: Id | null;
-
   @IsString()
   @MinLength(2)
   @MaxLength(200)
   code!: BusinessCode;
-
-  @IsOptional()
-  @ValidateIf((object) => object.confidence !== null)
-  @IsNumber({})
-  @Min(0)
-  @Max(1)
-  confidence?: Confidence | null;
 
   @IsISO8601({})
   createdAt!: DateTime;
@@ -111,16 +85,6 @@ export class PartyPublicDto {
   @IsString()
   @IsUUID()
   jurisdictionId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.licence !== null)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  licence?: Name | null;
-
-  @IsEnum(ProvenanceMethod)
-  method!: ProvenanceMethod;
 
   @IsString()
   @MinLength(1)
@@ -140,29 +104,6 @@ export class PartyPublicDto {
   @MaxLength(120)
   registryIdentifier?: RegistryIdentifier | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.retrievedAt !== null)
-  @IsISO8601({})
-  retrievedAt?: DateTime | null;
-
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  sourceName!: Name;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceReference !== null)
-  @IsString()
-  @MaxLength(4000)
-  sourceReference?: Description | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceUrl !== null)
-  @IsString()
-  @IsUrl()
-  @MaxLength(1000)
-  sourceUrl?: Url | null;
-
   @IsEnum(PartyStatus)
   status!: PartyStatus;
 
@@ -172,13 +113,6 @@ export class PartyPublicDto {
   @IsUrl()
   @MaxLength(1000)
   symbolUrl?: Url | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.toolOrModel !== null)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  toolOrModel?: Name | null;
 
   @IsISO8601({})
   updatedAt!: DateTime;
@@ -202,9 +136,6 @@ export class PartyPublicDto {
   @ValidateIf((object) => object.validToPrecision !== null)
   @IsEnum(DatePrecision)
   validToPrecision?: DatePrecision | null;
-
-  @IsEnum(VerificationState)
-  verificationState!: VerificationState;
 
   @IsInt()
   @Min(0)

@@ -31,13 +31,10 @@ export class FindEvidenceReferencesUseCase {
   private toReadModel(entity: EvidenceReferenceEntity): EvidenceReferencePublicDto {
     return {
     actorId: entity.actorId,
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     createdAt: entity.createdAt,
+    fileId: entity.fileId,
     id: entity.id,
-    mediaType: entity.mediaType,
     note: entity.note,
-    sizeBytes: entity.sizeBytes,
     targetId: entity.targetId,
     targetKind: entity.targetKind,
     updatedAt: entity.updatedAt,

@@ -40,7 +40,7 @@ export const SELECTION_STAGE_SORTABLE_FIELDS = ['createdAt', 'stageOrder', 'upda
 
 export const SELECTION_STAGE_SEARCHABLE_FIELDS = [] as const satisfies readonly SelectionStageKey[];
 
-export const SELECTION_STAGE_FILTERABLE_FIELDS = ['actorInstitutionId', 'actorOfficeId', 'id', 'isCurrent', 'kind', 'method', 'procedureId', 'verificationState', 'version', ] as const satisfies readonly SelectionStageKey[];
+export const SELECTION_STAGE_FILTERABLE_FIELDS = ['actorInstitutionId', 'actorOfficeId', 'id', 'isCurrent', 'kind', 'procedureId', 'version', ] as const satisfies readonly SelectionStageKey[];
 
 export const SELECTION_STAGE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly SelectionStageKey[];
 
@@ -48,7 +48,7 @@ export const SELECTION_STAGE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'val
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const SELECTION_STAGE_SELECTABLE_FIELDS = ['actorInstitutionId', 'actorOfficeId', 'artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'description', 'id', 'isCurrent', 'kind', 'licence', 'method', 'procedureId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'stageOrder', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly SelectionStageKey[];
+export const SELECTION_STAGE_SELECTABLE_FIELDS = ['actorInstitutionId', 'actorOfficeId', 'createdAt', 'description', 'id', 'isCurrent', 'kind', 'procedureId', 'stageOrder', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly SelectionStageKey[];
 
 export const SELECTION_STAGE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly SelectionStageSelectableField[];
 
@@ -56,7 +56,7 @@ export const SELECTION_STAGE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as co
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const SELECTION_STAGE_EDITABLE_FIELDS = ['actorInstitutionId', 'actorOfficeId', 'artifactChecksum', 'artifactId', 'confidence', 'description', 'isCurrent', 'kind', 'licence', 'method', 'procedureId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'stageOrder', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly SelectionStageKey[];
+export const SELECTION_STAGE_EDITABLE_FIELDS = ['actorInstitutionId', 'actorOfficeId', 'description', 'isCurrent', 'kind', 'procedureId', 'stageOrder', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly SelectionStageKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

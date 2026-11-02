@@ -1,12 +1,10 @@
 import { Module, type Type } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { BudgetaryUnitEntity } from "#/modules/finance/entities/budgetary-unit.entity.ts";
 import { BidEntity } from "#/modules/procurement/entities/bid.entity.ts";
 import { ContractMilestoneEntity } from "#/modules/procurement/entities/contract-milestone.entity.ts";
 import { ContractVariationEntity } from "#/modules/procurement/entities/contract-variation.entity.ts";
 import { ProcurementContractEntity } from "#/modules/procurement/entities/procurement-contract.entity.ts";
 import { TenderEntity } from "#/modules/procurement/entities/tender.entity.ts";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { ProcurementProcurementReadServiceImpl } from "#/modules/procurement/procurement-read/procurement-read.service.impl.ts";
 import { FindBidsUseCase } from "#/modules/procurement/procurement-read/use-cases/find-bids.usecase.ts";
 import { FindContractMilestonesUseCase } from "#/modules/procurement/procurement-read/use-cases/find-contract-milestones.usecase.ts";
@@ -25,13 +23,11 @@ import { ProcurementProcurementReadService } from "./procurement-read.service.ts
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      BudgetaryUnitEntity,
       BidEntity,
       ContractMilestoneEntity,
       ContractVariationEntity,
       ProcurementContractEntity,
       TenderEntity,
-      JurisdictionEntity,
     ]),
   ],
   controllers: [ProcurementProcurementReadController],

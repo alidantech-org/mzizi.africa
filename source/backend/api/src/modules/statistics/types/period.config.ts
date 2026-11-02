@@ -39,7 +39,7 @@ export const PERIOD_SORTABLE_FIELDS = ['code', 'createdAt', 'endsOn', 'startsOn'
 
 export const PERIOD_SEARCHABLE_FIELDS = ['code', ] as const satisfies readonly PeriodKey[];
 
-export const PERIOD_FILTERABLE_FIELDS = ['code', 'granularity', 'id', 'isCurrent', 'method', 'verificationState', 'version', ] as const satisfies readonly PeriodKey[];
+export const PERIOD_FILTERABLE_FIELDS = ['code', 'granularity', 'id', 'isCurrent', 'version', ] as const satisfies readonly PeriodKey[];
 
 export const PERIOD_DATE_RANGE_FIELDS = ['createdAt', 'endsOn', 'startsOn', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PeriodKey[];
 
@@ -47,7 +47,7 @@ export const PERIOD_DATE_RANGE_FIELDS = ['createdAt', 'endsOn', 'startsOn', 'upd
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PERIOD_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'endsOn', 'granularity', 'id', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'startsOn', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PeriodKey[];
+export const PERIOD_SELECTABLE_FIELDS = ['code', 'createdAt', 'endsOn', 'granularity', 'id', 'isCurrent', 'startsOn', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PeriodKey[];
 
 export const PERIOD_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PeriodSelectableField[];
 
@@ -55,7 +55,7 @@ export const PERIOD_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satis
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PERIOD_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'endsOn', 'granularity', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'startsOn', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PeriodKey[];
+export const PERIOD_EDITABLE_FIELDS = ['code', 'endsOn', 'granularity', 'isCurrent', 'startsOn', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PeriodKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

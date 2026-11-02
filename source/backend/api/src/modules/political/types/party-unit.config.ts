@@ -40,7 +40,7 @@ export const PARTY_UNIT_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'updated
 
 export const PARTY_UNIT_SEARCHABLE_FIELDS = ['code', 'name', ] as const satisfies readonly PartyUnitKey[];
 
-export const PARTY_UNIT_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'isCurrent', 'levelId', 'method', 'name', 'parentUnitId', 'partyId', 'verificationState', 'version', ] as const satisfies readonly PartyUnitKey[];
+export const PARTY_UNIT_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'isCurrent', 'levelId', 'name', 'parentUnitId', 'partyId', 'version', ] as const satisfies readonly PartyUnitKey[];
 
 export const PARTY_UNIT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PartyUnitKey[];
 
@@ -48,7 +48,7 @@ export const PARTY_UNIT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFro
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_UNIT_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'geoUnitId', 'id', 'isCurrent', 'levelId', 'licence', 'method', 'name', 'parentUnitId', 'partyId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyUnitKey[];
+export const PARTY_UNIT_SELECTABLE_FIELDS = ['code', 'createdAt', 'geoUnitId', 'id', 'isCurrent', 'levelId', 'name', 'parentUnitId', 'partyId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyUnitKey[];
 
 export const PARTY_UNIT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PartyUnitSelectableField[];
 
@@ -56,7 +56,7 @@ export const PARTY_UNIT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const s
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_UNIT_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'geoUnitId', 'isCurrent', 'levelId', 'licence', 'method', 'name', 'parentUnitId', 'partyId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyUnitKey[];
+export const PARTY_UNIT_EDITABLE_FIELDS = ['code', 'geoUnitId', 'isCurrent', 'levelId', 'name', 'parentUnitId', 'partyId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyUnitKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

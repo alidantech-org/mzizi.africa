@@ -40,7 +40,7 @@ export const LEGAL_AUTHORITY_LINK_SORTABLE_FIELDS = ['createdAt', 'updatedAt', '
 
 export const LEGAL_AUTHORITY_LINK_SEARCHABLE_FIELDS = [] as const satisfies readonly LegalAuthorityLinkKey[];
 
-export const LEGAL_AUTHORITY_LINK_FILTERABLE_FIELDS = ['id', 'isCurrent', 'method', 'provisionId', 'targetId', 'targetKind', 'verificationState', 'version', ] as const satisfies readonly LegalAuthorityLinkKey[];
+export const LEGAL_AUTHORITY_LINK_FILTERABLE_FIELDS = ['id', 'isCurrent', 'provisionId', 'targetId', 'targetKind', 'version', ] as const satisfies readonly LegalAuthorityLinkKey[];
 
 export const LEGAL_AUTHORITY_LINK_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly LegalAuthorityLinkKey[];
 
@@ -48,7 +48,7 @@ export const LEGAL_AUTHORITY_LINK_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt',
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_AUTHORITY_LINK_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'licence', 'method', 'note', 'provisionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'targetId', 'targetKind', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalAuthorityLinkKey[];
+export const LEGAL_AUTHORITY_LINK_SELECTABLE_FIELDS = ['createdAt', 'id', 'isCurrent', 'note', 'provisionId', 'targetId', 'targetKind', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalAuthorityLinkKey[];
 
 export const LEGAL_AUTHORITY_LINK_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly LegalAuthorityLinkSelectableField[];
 
@@ -56,7 +56,7 @@ export const LEGAL_AUTHORITY_LINK_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_AUTHORITY_LINK_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'isCurrent', 'licence', 'method', 'note', 'provisionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'targetId', 'targetKind', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalAuthorityLinkKey[];
+export const LEGAL_AUTHORITY_LINK_EDITABLE_FIELDS = ['isCurrent', 'note', 'provisionId', 'targetId', 'targetKind', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalAuthorityLinkKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

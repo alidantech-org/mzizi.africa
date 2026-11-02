@@ -1,7 +1,7 @@
 import * as dryv from "@dryvcode/author";
 
 import { referenceSchemas } from "../reference/index.ts";
-import { evidencedEntitySchemas, sharedFailures, sharedProperties } from "../shared/index.ts";
+import { historicalEntitySchemas, sharedFailures, sharedProperties } from "../shared/index.ts";
 
 /* -------------------------------------------------------------------------- */
 /* Domain                                                                 */
@@ -19,7 +19,7 @@ export const geography = dryv
   .group({ name: "geography" })
   .description("Places, boundaries and their changes over time.")
   .tags("public", "geography")
-  .facets({ storage: { namespace: "geo" } });
+  .facets({ storage: { namespace: "geography" } });
 
 export const geographyProperties = geography.properties({
   GeoJson: dryv.property.string().length({ min: 2 }),
@@ -59,25 +59,14 @@ const geoOwnedSchemas = geography.schemas({
       code: dryv.field(sharedProperties.BusinessCode).query({ filter: ["equal", "startsWith"], sort: true, search: true }),
       name: dryv.field(sharedProperties.Name).query({ filter: ["startsWith", "contains"], sort: true, search: true }),
       kind: dryv.field(geographyProperties.UnitKind).query({ filter: ["equal", "in"] }),
-      jurisdictionId: dryv
-        .field(sharedProperties.Id)
-        .query({ filter: ["equal"] })
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Jurisdiction.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-        }),
-      levelId: dryv
-        .field(sharedProperties.Id)
-        .query({ filter: ["equal"] })
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.ClassificationRecord.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-        }),
+      // Other schemas are referenced by plain id: no foreign key crosses a schema (DATABASE_DESIGN.md).
+      jurisdictionId: dryv.field(sharedProperties.Id).query({ filter: ["equal"] }),
+      levelId: dryv.field(sharedProperties.Id).query({ filter: ["equal"] }),
       parentId: dryv.field(sharedProperties.Id).optional().nullable().query({ filter: ["equal"], sort: true }),
       isActive: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
     })
     .role("entity")
-    .extends(evidencedEntitySchemas.EvidencedEntity)
+    .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({
       storage: dryv.storage("units").indexes(
         { name: "idx_geo_unit_code", fields: ["code"], unique: true },
@@ -103,7 +92,7 @@ export const geographySchemas = geography.schemas({
       kind: dryv.field(geographyProperties.RelationKind).query({ filter: ["equal", "in"] }),
     })
     .role("entity")
-    .extends(evidencedEntitySchemas.EvidencedEntity)
+    .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({ storage: dryv.storage("relationships").indexes({ name: "idx_geo_relationship_parent", fields: ["parentId"] }) }),
 
   GeoBoundaryVersion: dryv
@@ -121,7 +110,7 @@ export const geographySchemas = geography.schemas({
       referenceYear: dryv.field(sharedProperties.Version).optional().nullable(),
     })
     .role("entity")
-    .extends(evidencedEntitySchemas.EvidencedEntity)
+    .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({
       storage: dryv.storage("boundaries").indexes(
         { name: "idx_geo_boundary_unit_current", fields: ["unitId", "isCurrent"] },
@@ -142,7 +131,7 @@ export const geographySchemas = geography.schemas({
       language: dryv.field(geographyProperties.LanguageTag).optional().nullable(),
     })
     .role("entity")
-    .extends(evidencedEntitySchemas.EvidencedEntity)
+    .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({ storage: dryv.storage("names").indexes({ name: "idx_geo_name_unit", fields: ["unitId"] }) }),
 
   GeoUnitChange: dryv
@@ -158,7 +147,7 @@ export const geographySchemas = geography.schemas({
       kind: dryv.field(geographyProperties.ChangeKind).query({ filter: ["equal", "in"] }),
     })
     .role("entity")
-    .extends(evidencedEntitySchemas.EvidencedEntity)
+    .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({ storage: dryv.storage("changes").indexes({ name: "idx_geo_change_source", fields: ["sourceUnitId"] }) }),
 });
 

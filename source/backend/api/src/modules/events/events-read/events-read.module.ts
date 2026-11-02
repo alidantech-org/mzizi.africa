@@ -2,7 +2,6 @@ import { Module, type Type } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { EventLinkEntity } from "#/modules/events/entities/event-link.entity.ts";
 import { EventEntity } from "#/modules/events/entities/event.entity.ts";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { EventsEventsReadServiceImpl } from "#/modules/events/events-read/events-read.service.impl.ts";
 import { FindEventLinksUseCase } from "#/modules/events/events-read/use-cases/find-event-links.usecase.ts";
 import { FindEventsUseCase } from "#/modules/events/events-read/use-cases/find-events.usecase.ts";
@@ -17,7 +16,6 @@ import { EventsEventsReadService } from "./events-read.service.ts";
     TypeOrmModule.forFeature([
       EventLinkEntity,
       EventEntity,
-      JurisdictionEntity,
     ]),
   ],
   controllers: [EventsEventsReadController],

@@ -40,7 +40,7 @@ export const INSTITUTION_RELATIONSHIP_SORTABLE_FIELDS = ['createdAt', 'updatedAt
 
 export const INSTITUTION_RELATIONSHIP_SEARCHABLE_FIELDS = [] as const satisfies readonly InstitutionRelationshipKey[];
 
-export const INSTITUTION_RELATIONSHIP_FILTERABLE_FIELDS = ['childInstitutionId', 'id', 'isCurrent', 'kind', 'legalBasisId', 'method', 'parentInstitutionId', 'verificationState', 'version', ] as const satisfies readonly InstitutionRelationshipKey[];
+export const INSTITUTION_RELATIONSHIP_FILTERABLE_FIELDS = ['childInstitutionId', 'id', 'isCurrent', 'kind', 'legalBasisId', 'parentInstitutionId', 'version', ] as const satisfies readonly InstitutionRelationshipKey[];
 
 export const INSTITUTION_RELATIONSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly InstitutionRelationshipKey[];
 
@@ -48,7 +48,7 @@ export const INSTITUTION_RELATIONSHIP_DATE_RANGE_FIELDS = ['createdAt', 'updated
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const INSTITUTION_RELATIONSHIP_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'childInstitutionId', 'confidence', 'createdAt', 'id', 'isCurrent', 'kind', 'legalBasisId', 'licence', 'method', 'parentInstitutionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly InstitutionRelationshipKey[];
+export const INSTITUTION_RELATIONSHIP_SELECTABLE_FIELDS = ['childInstitutionId', 'createdAt', 'id', 'isCurrent', 'kind', 'legalBasisId', 'parentInstitutionId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly InstitutionRelationshipKey[];
 
 export const INSTITUTION_RELATIONSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly InstitutionRelationshipSelectableField[];
 
@@ -56,7 +56,7 @@ export const INSTITUTION_RELATIONSHIP_DEFAULT_SELECT_FIELDS = ['createdAt', 'id'
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const INSTITUTION_RELATIONSHIP_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'childInstitutionId', 'confidence', 'isCurrent', 'kind', 'legalBasisId', 'licence', 'method', 'parentInstitutionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly InstitutionRelationshipKey[];
+export const INSTITUTION_RELATIONSHIP_EDITABLE_FIELDS = ['childInstitutionId', 'isCurrent', 'kind', 'legalBasisId', 'parentInstitutionId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly InstitutionRelationshipKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

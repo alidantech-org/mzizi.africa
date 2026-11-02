@@ -1,32 +1,22 @@
 
 import type { TenderStatus } from "#/types/procurement/tender-status.enum.ts";
 import type { DatePrecision } from "#/types/shared/date-precision.enum.ts";
-import type { ProvenanceMethod } from "#/types/shared/provenance-method.enum.ts";
-import type { VerificationState } from "#/types/shared/verification-state.enum.ts";
 import type { Amount } from "#/types/shared/amount.type.ts";
 import type { BusinessCode } from "#/types/shared/business-code.type.ts";
-import type { Checksum } from "#/types/shared/checksum.type.ts";
-import type { Confidence } from "#/types/shared/confidence.type.ts";
 import type { CurrencyCode } from "#/types/shared/currency-code.type.ts";
-import type { Description } from "#/types/shared/description.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
-import type { Url } from "#/types/shared/url.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
-import type { BudgetaryUnit } from "#/types/finance/budgetary-unit.interface.ts";
-import type { EvidencedEntity } from "#/types/shared/evidenced-entity.interface.ts";
+import type { HistoricalEntity } from "#/types/shared/historical-entity.interface.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
 
 /** Tender */
 export interface Tender {
-  artifactChecksum?: Checksum | null;
-  artifactId?: Id | null;
   budgetId?: Id | null;
   closesOn?: Date | null;
   code: BusinessCode;
-  confidence?: Confidence | null;
   createdAt: DateTime;
   currencyCode: CurrencyCode;
   estimatedValue?: Amount | null;
@@ -35,23 +25,15 @@ export interface Tender {
   issuingUnitId: Id;
   kindId: Id;
   legalBasisId?: Id | null;
-  licence?: Name | null;
-  method: ProvenanceMethod;
   methodId: Id;
   procuringOfficeId?: Id | null;
   publishedOn?: Date | null;
-  retrievedAt?: DateTime | null;
-  sourceName: Name;
-  sourceReference?: Description | null;
-  sourceUrl?: Url | null;
   status: TenderStatus;
   title: Name;
-  toolOrModel?: Name | null;
   updatedAt: DateTime;
   validFrom?: Date | null;
   validFromPrecision?: DatePrecision | null;
   validTo?: Date | null;
   validToPrecision?: DatePrecision | null;
-  verificationState: VerificationState;
   version: Version;
 }

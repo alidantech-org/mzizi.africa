@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as JurisdictionConfig from '#/modules/reference/types/jurisdiction.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const PARTY_RELATION_KEYS = ['jurisdiction', ] as const satisfies readonly PartyKey[];
+export const PARTY_RELATION_KEYS = [] as const satisfies readonly PartyKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const PARTY_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'updatedAt', 
 
 export const PARTY_SEARCHABLE_FIELDS = ['abbreviation', 'code', 'name', ] as const satisfies readonly PartyKey[];
 
-export const PARTY_FILTERABLE_FIELDS = ['abbreviation', 'code', 'id', 'isCurrent', 'jurisdictionId', 'method', 'name', 'registryAuthorityId', 'status', 'verificationState', 'version', ] as const satisfies readonly PartyKey[];
+export const PARTY_FILTERABLE_FIELDS = ['abbreviation', 'code', 'id', 'isCurrent', 'jurisdictionId', 'name', 'registryAuthorityId', 'status', 'version', ] as const satisfies readonly PartyKey[];
 
 export const PARTY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PartyKey[];
 
@@ -48,7 +47,7 @@ export const PARTY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', '
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_SELECTABLE_FIELDS = ['abbreviation', 'artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'id', 'isCurrent', 'jurisdictionId', 'licence', 'method', 'name', 'registryAuthorityId', 'registryIdentifier', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'symbolUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyKey[];
+export const PARTY_SELECTABLE_FIELDS = ['abbreviation', 'code', 'createdAt', 'id', 'isCurrent', 'jurisdictionId', 'name', 'registryAuthorityId', 'registryIdentifier', 'status', 'symbolUrl', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyKey[];
 
 export const PARTY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PartySelectableField[];
 
@@ -56,7 +55,7 @@ export const PARTY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisf
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_EDITABLE_FIELDS = ['abbreviation', 'artifactChecksum', 'artifactId', 'code', 'confidence', 'isCurrent', 'jurisdictionId', 'licence', 'method', 'name', 'registryAuthorityId', 'registryIdentifier', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'symbolUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly PartyKey[];
+export const PARTY_EDITABLE_FIELDS = ['abbreviation', 'code', 'isCurrent', 'jurisdictionId', 'name', 'registryAuthorityId', 'registryIdentifier', 'status', 'symbolUrl', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const PARTY_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const PARTY_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<PartyRelationKey>().one(JurisdictionConfig.JURISDICTION_AS_ONE_RELATION_CONFIG, 'jurisdiction'),
 ] as const;
 
 export const PARTY_MANY_RELATION_QUERY_OPTIONS = [

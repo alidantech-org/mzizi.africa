@@ -40,7 +40,7 @@ export const SEAT_SORTABLE_FIELDS = ['code', 'createdAt', 'updatedAt', 'validFro
 
 export const SEAT_SEARCHABLE_FIELDS = ['code', ] as const satisfies readonly SeatKey[];
 
-export const SEAT_FILTERABLE_FIELDS = ['code', 'electionId', 'geoUnitId', 'id', 'isCurrent', 'legalBasisId', 'method', 'officeId', 'verificationState', 'version', ] as const satisfies readonly SeatKey[];
+export const SEAT_FILTERABLE_FIELDS = ['code', 'electionId', 'geoUnitId', 'id', 'isCurrent', 'legalBasisId', 'officeId', 'version', ] as const satisfies readonly SeatKey[];
 
 export const SEAT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly SeatKey[];
 
@@ -48,7 +48,7 @@ export const SEAT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'v
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const SEAT_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'electionId', 'geoUnitId', 'id', 'isCurrent', 'legalBasisId', 'licence', 'method', 'officeId', 'positions', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly SeatKey[];
+export const SEAT_SELECTABLE_FIELDS = ['code', 'createdAt', 'electionId', 'geoUnitId', 'id', 'isCurrent', 'legalBasisId', 'officeId', 'positions', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly SeatKey[];
 
 export const SEAT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly SeatSelectableField[];
 
@@ -56,7 +56,7 @@ export const SEAT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfi
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const SEAT_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'electionId', 'geoUnitId', 'isCurrent', 'legalBasisId', 'licence', 'method', 'officeId', 'positions', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly SeatKey[];
+export const SEAT_EDITABLE_FIELDS = ['code', 'electionId', 'geoUnitId', 'isCurrent', 'legalBasisId', 'officeId', 'positions', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly SeatKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

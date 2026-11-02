@@ -31,11 +31,8 @@ import type {
 /** Evidence Reference */
 export interface IEvidenceReference extends B.IBase {
   actorId: string;
-  artifactChecksum: string;
-  artifactId: string;
-  mediaType: string;
+  fileId: string;
   note: string | null;
-  sizeBytes: number;
   targetId: string;
   targetKind: string;
 }

@@ -15,12 +15,6 @@ import type { OfficeRuleListQueryDto } from "#/modules/governance/dto/office-rul
 import type { OfficeRuleResponseDto } from "#/modules/governance/dto/office-rule-response.dto.ts";
 import type { OfficeRulesListResponseDto } from "#/modules/governance/dto/office-rules-list-response.dto.ts";
 import type { OfficesListResponseDto } from "#/modules/governance/dto/offices-list-response.dto.ts";
-import type { PeopleListResponseDto } from "#/modules/governance/dto/people-list-response.dto.ts";
-import type { PersonListQueryDto } from "#/modules/governance/dto/person-list-query.dto.ts";
-import type { PersonNameListQueryDto } from "#/modules/governance/dto/person-name-list-query.dto.ts";
-import type { PersonNameResponseDto } from "#/modules/governance/dto/person-name-response.dto.ts";
-import type { PersonNamesListResponseDto } from "#/modules/governance/dto/person-names-list-response.dto.ts";
-import type { PersonResponseDto } from "#/modules/governance/dto/person-response.dto.ts";
 import type { SelectionProcedureListQueryDto } from "#/modules/governance/dto/selection-procedure-list-query.dto.ts";
 import type { SelectionProcedureResponseDto } from "#/modules/governance/dto/selection-procedure-response.dto.ts";
 import type { SelectionProceduresListResponseDto } from "#/modules/governance/dto/selection-procedures-list-response.dto.ts";
@@ -38,8 +32,6 @@ export abstract class GovernanceGovernanceReadService {
   abstract findOfficeHolders(input: OfficeHolderListQueryDto): Promise<OfficeHoldersListResponseDto>;
   abstract findOfficeRules(input: OfficeRuleListQueryDto): Promise<OfficeRulesListResponseDto>;
   abstract findOffices(input: OfficeListQueryDto): Promise<OfficesListResponseDto>;
-  abstract findPeople(input: PersonListQueryDto): Promise<PeopleListResponseDto>;
-  abstract findPersonNames(input: PersonNameListQueryDto): Promise<PersonNamesListResponseDto>;
   abstract findSelectionProcedures(input: SelectionProcedureListQueryDto): Promise<SelectionProceduresListResponseDto>;
   abstract findSelectionStages(input: SelectionStageListQueryDto): Promise<SelectionStagesListResponseDto>;
   abstract getGeographyGovernance(input: { entityId: string }): Promise<GeographyGovernanceResponseDto>;
@@ -48,8 +40,6 @@ export abstract class GovernanceGovernanceReadService {
   abstract getOfficeById(input: { officeId: string }): Promise<OfficeResponseDto>;
   abstract getOfficeHolderById(input: { holderId: string }): Promise<OfficeHolderResponseDto>;
   abstract getOfficeRuleById(input: { ruleId: string }): Promise<OfficeRuleResponseDto>;
-  abstract getPersonById(input: { personId: string }): Promise<PersonResponseDto>;
-  abstract getPersonNameById(input: { personNameId: string }): Promise<PersonNameResponseDto>;
   abstract getSelectionProcedureById(input: { procedureId: string }): Promise<SelectionProcedureResponseDto>;
   abstract getSelectionStageById(input: { stageId: string }): Promise<SelectionStageResponseDto>;
 }

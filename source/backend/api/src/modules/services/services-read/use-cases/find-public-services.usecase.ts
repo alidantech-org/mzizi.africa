@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type { DataSource, FindOptionsWhere } from 'typeorm';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { PublicServiceListQueryDto } from '#/modules/services/dto/public-service-list-query.dto';
 import type { PublicServicePublicDto } from '#/modules/services/dto/public-service-public.dto';
 import type { PublicServiceDto } from '#/modules/services/dto/public-service.dto';
@@ -9,7 +8,6 @@ import type { PublicServicesListResponseDto } from '#/modules/services/dto/publi
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
 import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
@@ -33,31 +31,20 @@ export class FindPublicServicesUseCase {
 
   private toReadModel(entity: PublicServiceEntity): PublicServicePublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     code: entity.code,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     description: entity.description,
     id: entity.id,
     isCurrent: entity.isCurrent,
     jurisdictionId: entity.jurisdictionId,
     legalBasisId: entity.legalBasisId,
-    licence: entity.licence,
-    method: entity.method,
     name: entity.name,
-    retrievedAt: entity.retrievedAt,
     sectorId: entity.sectorId,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as PublicServicePublicDto;
   }

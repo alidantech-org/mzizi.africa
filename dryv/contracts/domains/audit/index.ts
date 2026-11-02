@@ -12,7 +12,7 @@ import { baseEntitySchemas, sharedFailures, sharedProperties } from "../../found
  * new records. None mutates canonical data: a review decision records a verdict and the verification
  * state it proposes, and applying that state to a canonical record is a reviewed step owned by the
  * database management engine. Actor identity and role come from the verified token, never the body.
- * Evidence points at a file artifact held by the files service (DEC-EVIDENCE-VIA-FILES).
+ * Evidence points at a file in the filesystem schema (DEC-EVIDENCE-VIA-FILES).
  */
 export const audit = dryv.group({ name: "audit" }).description("Comments, evidence references and review decisions about canonical records.").tags("public", "audit")
   .facets({ storage: { namespace: "audit" } });
@@ -25,8 +25,6 @@ export const auditProperties = audit.properties({
     requestChanges: "request_changes",
     supersede: "supersede",
   }),
-  MediaType: dryv.property.string().length({ min: 3, max: 200 }),
-  SizeBytes: dryv.property.number.integer({ range: { min: 0 } }),
 });
 
 function appendOnly(fields: Record<string, any>, table: string, indexes: Array<{ name: string; fields: string[] }>) {
@@ -58,15 +56,13 @@ const records = audit.schemas({
   EvidenceReference: appendOnly(
     {
       ...target,
-      artifactId: plainId(),
-      artifactChecksum: dryv.field(sharedProperties.Checksum),
-      mediaType: dryv.field(auditProperties.MediaType),
-      sizeBytes: dryv.field(auditProperties.SizeBytes),
+      // The evidence is a file in the filesystem schema; its hash, media type and size live there.
+      fileId: plainId(),
       note: dryv.field(sharedProperties.Description).optional().nullable(),
       actorId: actor(),
     },
     "evidence",
-    [{ name: "idx_evidence_target", fields: ["targetKind", "targetId"] }, { name: "idx_evidence_artifact", fields: ["artifactId"] }],
+    [{ name: "idx_evidence_target", fields: ["targetKind", "targetId"] }, { name: "idx_evidence_file", fields: ["fileId"] }],
   ),
 
   ReviewDecision: appendOnly(
@@ -90,10 +86,7 @@ const bodies = audit.schemas({
   }),
   CreateEvidenceReferenceBody: dryv.schema({
     ...target,
-    artifactId: plainId(),
-    artifactChecksum: dryv.field(sharedProperties.Checksum),
-    mediaType: dryv.field(auditProperties.MediaType),
-    sizeBytes: dryv.field(auditProperties.SizeBytes),
+    fileId: plainId(),
     note: dryv.field(sharedProperties.Description).optional().nullable(),
   }),
   CreateReviewDecisionBody: dryv.schema({

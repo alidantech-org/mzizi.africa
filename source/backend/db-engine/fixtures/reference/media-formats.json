@@ -1,0 +1,622 @@
+{
+  "note": "Media formats seeded from the archived files service (api-legacy/_archives/files/_seed/file_types.csv). Reference seed.",
+  "country": null,
+  "rows": [
+    {
+      "entity": "FormatEntity",
+      "key": "format:pdf",
+      "values": {
+        "code": "pdf",
+        "name": "PDF",
+        "mimeType": "application/pdf",
+        "extension": "pdf",
+        "category": "document",
+        "isPreviewable": true,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "pdf_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:docx",
+      "values": {
+        "code": "docx",
+        "name": "Microsoft Word",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "extension": "docx",
+        "category": "document",
+        "isPreviewable": false,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "word_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:xlsx",
+      "values": {
+        "code": "xlsx",
+        "name": "Microsoft Excel",
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "extension": "xlsx",
+        "category": "document",
+        "isPreviewable": false,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "excel_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:pptx",
+      "values": {
+        "code": "pptx",
+        "name": "Microsoft PowerPoint",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "extension": "pptx",
+        "category": "document",
+        "isPreviewable": false,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "office_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:txt",
+      "values": {
+        "code": "txt",
+        "name": "Plain Text",
+        "mimeType": "text/plain",
+        "extension": "txt",
+        "category": "document",
+        "isPreviewable": true,
+        "maxSizeBytes": 10485760,
+        "processingStrategy": "text_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:rtf",
+      "values": {
+        "code": "rtf",
+        "name": "Rich Text Format",
+        "mimeType": "application/rtf",
+        "extension": "rtf",
+        "category": "document",
+        "isPreviewable": false,
+        "maxSizeBytes": 20971520,
+        "processingStrategy": "text_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:odt",
+      "values": {
+        "code": "odt",
+        "name": "OpenDocument Text",
+        "mimeType": "application/vnd.oasis.opendocument.text",
+        "extension": "odt",
+        "category": "document",
+        "isPreviewable": false,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "word_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:ods",
+      "values": {
+        "code": "ods",
+        "name": "OpenDocument Spreadsheet",
+        "mimeType": "application/vnd.oasis.opendocument.spreadsheet",
+        "extension": "ods",
+        "category": "document",
+        "isPreviewable": false,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "excel_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:md",
+      "values": {
+        "code": "md",
+        "name": "Markdown",
+        "mimeType": "text/markdown",
+        "extension": "md",
+        "category": "document",
+        "isPreviewable": true,
+        "maxSizeBytes": 10485760,
+        "processingStrategy": "text_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:json",
+      "values": {
+        "code": "json",
+        "name": "JSON Data",
+        "mimeType": "application/json",
+        "extension": "json",
+        "category": "dataset",
+        "isPreviewable": true,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "json_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:geojson",
+      "values": {
+        "code": "geojson",
+        "name": "GeoJSON Data",
+        "mimeType": "application/geo+json",
+        "extension": "geojson",
+        "category": "dataset",
+        "isPreviewable": true,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "json_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:csv",
+      "values": {
+        "code": "csv",
+        "name": "CSV Data",
+        "mimeType": "text/csv",
+        "extension": "csv",
+        "category": "dataset",
+        "isPreviewable": true,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "csv_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:dbf",
+      "values": {
+        "code": "dbf",
+        "name": "DBF Database",
+        "mimeType": "application/x-dbf",
+        "extension": "dbf",
+        "category": "dataset",
+        "isPreviewable": false,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "dbf_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:xml",
+      "values": {
+        "code": "xml",
+        "name": "XML Data",
+        "mimeType": "application/xml",
+        "extension": "xml",
+        "category": "dataset",
+        "isPreviewable": true,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "xml_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:yaml",
+      "values": {
+        "code": "yaml",
+        "name": "YAML Data",
+        "mimeType": "application/x-yaml",
+        "extension": "yaml",
+        "category": "dataset",
+        "isPreviewable": true,
+        "maxSizeBytes": 10485760,
+        "processingStrategy": "yaml_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:toml",
+      "values": {
+        "code": "toml",
+        "name": "TOML Data",
+        "mimeType": "application/toml",
+        "extension": "toml",
+        "category": "dataset",
+        "isPreviewable": true,
+        "maxSizeBytes": 10485760,
+        "processingStrategy": "text_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:ini",
+      "values": {
+        "code": "ini",
+        "name": "INI Config",
+        "mimeType": "text/x-ini",
+        "extension": "ini",
+        "category": "dataset",
+        "isPreviewable": true,
+        "maxSizeBytes": 5242880,
+        "processingStrategy": "text_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:jpeg",
+      "values": {
+        "code": "jpeg",
+        "name": "JPEG Image",
+        "mimeType": "image/jpeg",
+        "extension": "jpg",
+        "category": "image",
+        "isPreviewable": true,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "image_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:png",
+      "values": {
+        "code": "png",
+        "name": "PNG Image",
+        "mimeType": "image/png",
+        "extension": "png",
+        "category": "image",
+        "isPreviewable": true,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "image_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:gif",
+      "values": {
+        "code": "gif",
+        "name": "GIF Image",
+        "mimeType": "image/gif",
+        "extension": "gif",
+        "category": "image",
+        "isPreviewable": true,
+        "maxSizeBytes": 20971520,
+        "processingStrategy": "image_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:webp",
+      "values": {
+        "code": "webp",
+        "name": "WebP Image",
+        "mimeType": "image/webp",
+        "extension": "webp",
+        "category": "image",
+        "isPreviewable": true,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "image_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:svg",
+      "values": {
+        "code": "svg",
+        "name": "SVG Image",
+        "mimeType": "image/svg+xml",
+        "extension": "svg",
+        "category": "image",
+        "isPreviewable": true,
+        "maxSizeBytes": 10485760,
+        "processingStrategy": "image_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:bmp",
+      "values": {
+        "code": "bmp",
+        "name": "Bitmap Image",
+        "mimeType": "image/bmp",
+        "extension": "bmp",
+        "category": "image",
+        "isPreviewable": true,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "image_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:tiff",
+      "values": {
+        "code": "tiff",
+        "name": "TIFF Image",
+        "mimeType": "image/tiff",
+        "extension": "tiff",
+        "category": "image",
+        "isPreviewable": true,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "image_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:ico",
+      "values": {
+        "code": "ico",
+        "name": "ICO Icon",
+        "mimeType": "image/x-icon",
+        "extension": "ico",
+        "category": "image",
+        "isPreviewable": true,
+        "maxSizeBytes": 5242880,
+        "processingStrategy": "image_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:mp3",
+      "values": {
+        "code": "mp3",
+        "name": "MP3 Audio",
+        "mimeType": "audio/mpeg",
+        "extension": "mp3",
+        "category": "audio",
+        "isPreviewable": false,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "audio_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:wav",
+      "values": {
+        "code": "wav",
+        "name": "WAV Audio",
+        "mimeType": "audio/wav",
+        "extension": "wav",
+        "category": "audio",
+        "isPreviewable": false,
+        "maxSizeBytes": 524288000,
+        "processingStrategy": "audio_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:flac",
+      "values": {
+        "code": "flac",
+        "name": "FLAC Audio",
+        "mimeType": "audio/flac",
+        "extension": "flac",
+        "category": "audio",
+        "isPreviewable": false,
+        "maxSizeBytes": 209715200,
+        "processingStrategy": "audio_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:aac",
+      "values": {
+        "code": "aac",
+        "name": "AAC Audio",
+        "mimeType": "audio/aac",
+        "extension": "aac",
+        "category": "audio",
+        "isPreviewable": false,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "audio_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:ogg",
+      "values": {
+        "code": "ogg",
+        "name": "OGG Audio",
+        "mimeType": "audio/ogg",
+        "extension": "ogg",
+        "category": "audio",
+        "isPreviewable": false,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "audio_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:mp4",
+      "values": {
+        "code": "mp4",
+        "name": "MP4 Video",
+        "mimeType": "video/mp4",
+        "extension": "mp4",
+        "category": "video",
+        "isPreviewable": false,
+        "maxSizeBytes": 1048576000,
+        "processingStrategy": "video_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:avi",
+      "values": {
+        "code": "avi",
+        "name": "AVI Video",
+        "mimeType": "video/x-msvideo",
+        "extension": "avi",
+        "category": "video",
+        "isPreviewable": false,
+        "maxSizeBytes": 2097152000,
+        "processingStrategy": "video_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:mov",
+      "values": {
+        "code": "mov",
+        "name": "MOV Video",
+        "mimeType": "video/quicktime",
+        "extension": "mov",
+        "category": "video",
+        "isPreviewable": false,
+        "maxSizeBytes": 1048576000,
+        "processingStrategy": "video_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:wmv",
+      "values": {
+        "code": "wmv",
+        "name": "WMV Video",
+        "mimeType": "video/x-ms-wmv",
+        "extension": "wmv",
+        "category": "video",
+        "isPreviewable": false,
+        "maxSizeBytes": 1048576000,
+        "processingStrategy": "video_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:webm",
+      "values": {
+        "code": "webm",
+        "name": "WebM Video",
+        "mimeType": "video/webm",
+        "extension": "webm",
+        "category": "video",
+        "isPreviewable": false,
+        "maxSizeBytes": 1048576000,
+        "processingStrategy": "video_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:mkv",
+      "values": {
+        "code": "mkv",
+        "name": "MKV Video",
+        "mimeType": "video/x-matroska",
+        "extension": "mkv",
+        "category": "video",
+        "isPreviewable": false,
+        "maxSizeBytes": 2097152000,
+        "processingStrategy": "video_process"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:zip",
+      "values": {
+        "code": "zip",
+        "name": "ZIP Archive",
+        "mimeType": "application/zip",
+        "extension": "zip",
+        "category": "archive",
+        "isPreviewable": false,
+        "maxSizeBytes": 524288000,
+        "processingStrategy": "archive_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:rar",
+      "values": {
+        "code": "rar",
+        "name": "RAR Archive",
+        "mimeType": "application/x-rar-compressed",
+        "extension": "rar",
+        "category": "archive",
+        "isPreviewable": false,
+        "maxSizeBytes": 524288000,
+        "processingStrategy": "archive_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:7z",
+      "values": {
+        "code": "7z",
+        "name": "7Z Archive",
+        "mimeType": "application/x-7z-compressed",
+        "extension": "7z",
+        "category": "archive",
+        "isPreviewable": false,
+        "maxSizeBytes": 524288000,
+        "processingStrategy": "archive_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:tar",
+      "values": {
+        "code": "tar",
+        "name": "TAR Archive",
+        "mimeType": "application/x-tar",
+        "extension": "tar",
+        "category": "archive",
+        "isPreviewable": false,
+        "maxSizeBytes": 1048576000,
+        "processingStrategy": "archive_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:pdf_form",
+      "values": {
+        "code": "pdf_form",
+        "name": "PDF Form",
+        "mimeType": "application/x-pdf-form",
+        "extension": "pdf",
+        "category": "document",
+        "isPreviewable": true,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "pdf_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:epub",
+      "values": {
+        "code": "epub",
+        "name": "E-book",
+        "mimeType": "application/epub+zip",
+        "extension": "epub",
+        "category": "document",
+        "isPreviewable": false,
+        "maxSizeBytes": 104857600,
+        "processingStrategy": "ebook_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:shp",
+      "values": {
+        "code": "shp",
+        "name": "Shapefile",
+        "mimeType": "application/x-shapefile",
+        "extension": "shp",
+        "category": "dataset",
+        "isPreviewable": false,
+        "maxSizeBytes": 209715200,
+        "processingStrategy": "geospatial_extract"
+      }
+    },
+    {
+      "entity": "FormatEntity",
+      "key": "format:kml",
+      "values": {
+        "code": "kml",
+        "name": "KML Geographic",
+        "mimeType": "application/vnd.google-earth.kml+xml",
+        "extension": "kml",
+        "category": "dataset",
+        "isPreviewable": true,
+        "maxSizeBytes": 52428800,
+        "processingStrategy": "xml_extract"
+      }
+    }
+  ]
+}

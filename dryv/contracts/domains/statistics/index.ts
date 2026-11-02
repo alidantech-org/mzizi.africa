@@ -1,7 +1,7 @@
 import * as dryv from "@dryvcode/author";
 
 import { referenceSchemas } from "../../foundation/reference/index.ts";
-import { evidenced, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
+import { recorded, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
 import { readSurface } from "../../foundation/shared/read-surface.ts";
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
@@ -14,7 +14,7 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * governance domain, so leadership is not a separate hard-coded role list.
  */
 export const statistics = dryv.group({ name: "statistics" }).description("Periods, indicators, statistical tables and observations.").tags("public", "statistics")
-  .facets({ storage: { namespace: "statistic" } });
+  .facets({ storage: { namespace: "statistical" } });
 export const services = dryv.group({ name: "services" }).description("Public services, amenities and service delivery.").tags("public", "services")
   .facets({ storage: { namespace: "civic" } });
 
@@ -45,7 +45,7 @@ const q = () => dryv.field(sharedProperties.Name).optional();
 /* -------------------------------- Statistics ----------------------------------- */
 
 const periods = statistics.schemas({
-  Period: evidenced(
+  Period: recorded(
     {
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       granularity: dryv.field(statisticsProperties.Granularity).query({ filter: ["equal", "in"] }),
@@ -56,7 +56,7 @@ const periods = statistics.schemas({
     [{ name: "idx_period_code", fields: ["code"], unique: true }],
   ),
 
-  IndicatorCategory: evidenced(
+  IndicatorCategory: recorded(
     {
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       label: dryv.field(sharedProperties.Label).query(searchable),
@@ -68,7 +68,7 @@ const periods = statistics.schemas({
 });
 
 const indicators = statistics.schemas({
-  Indicator: evidenced(
+  Indicator: recorded(
     {
       categoryId: relationTo(() => periods.IndicatorCategory.field("id")),
       parentId: optionalId(),
@@ -83,7 +83,7 @@ const indicators = statistics.schemas({
 });
 
 const indicatorColumns = statistics.schemas({
-  IndicatorColumn: evidenced(
+  IndicatorColumn: recorded(
     {
       indicatorId: relationTo(() => indicators.Indicator.field("id")),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
@@ -94,9 +94,9 @@ const indicatorColumns = statistics.schemas({
     [{ name: "idx_indicator_column_code", fields: ["code"], unique: true }],
   ),
 
-  StatisticsTable: evidenced(
+  StatisticsTable: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       indicatorId: optionalId(),
       geoUnitId: optionalId(),
       publisherInstitutionId: optionalId(),
@@ -111,7 +111,7 @@ const indicatorColumns = statistics.schemas({
 });
 
 const observations = statistics.schemas({
-  Observation: evidenced(
+  Observation: recorded(
     {
       tableId: relationTo(() => indicatorColumns.StatisticsTable.field("id")),
       geoUnitId: optionalId(),
@@ -133,9 +133,9 @@ const observations = statistics.schemas({
 /* --------------------------------- Services ------------------------------------ */
 
 const publicServices = services.schemas({
-  PublicService: evidenced(
+  PublicService: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       sectorId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       name: dryv.field(sharedProperties.Name).query(searchable),
@@ -146,9 +146,9 @@ const publicServices = services.schemas({
     [{ name: "idx_public_service_code", fields: ["code"], unique: true }],
   ),
 
-  Amenity: evidenced(
+  Amenity: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       sectorId: plainId(),
       geoUnitId: optionalId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
@@ -162,7 +162,7 @@ const publicServices = services.schemas({
 
 const amenityLinks = services.schemas({
   /** Boards and leadership of a facility are offices in the governance domain, typed by a classification. */
-  AmenityOffice: evidenced(
+  AmenityOffice: recorded(
     {
       amenityId: relationTo(() => publicServices.Amenity.field("id")),
       officeId: plainId(),
@@ -172,7 +172,7 @@ const amenityLinks = services.schemas({
     [{ name: "idx_amenity_office_amenity", fields: ["amenityId"] }],
   ),
 
-  ServiceDelivery: evidenced(
+  ServiceDelivery: recorded(
     {
       amenityId: relationTo(() => publicServices.Amenity.field("id")),
       serviceId: plainId(),

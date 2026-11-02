@@ -40,7 +40,7 @@ export const CONTRACT_MILESTONE_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'va
 
 export const CONTRACT_MILESTONE_SEARCHABLE_FIELDS = [] as const satisfies readonly ContractMilestoneKey[];
 
-export const CONTRACT_MILESTONE_FILTERABLE_FIELDS = ['contractId', 'id', 'isCurrent', 'method', 'verificationState', 'version', ] as const satisfies readonly ContractMilestoneKey[];
+export const CONTRACT_MILESTONE_FILTERABLE_FIELDS = ['contractId', 'id', 'isCurrent', 'version', ] as const satisfies readonly ContractMilestoneKey[];
 
 export const CONTRACT_MILESTONE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ContractMilestoneKey[];
 
@@ -48,7 +48,7 @@ export const CONTRACT_MILESTONE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', '
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const CONTRACT_MILESTONE_SELECTABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'completedOn', 'confidence', 'contractId', 'createdAt', 'currencyCode', 'dueOn', 'id', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'title', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ContractMilestoneKey[];
+export const CONTRACT_MILESTONE_SELECTABLE_FIELDS = ['amount', 'completedOn', 'contractId', 'createdAt', 'currencyCode', 'dueOn', 'id', 'isCurrent', 'title', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ContractMilestoneKey[];
 
 export const CONTRACT_MILESTONE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ContractMilestoneSelectableField[];
 
@@ -56,7 +56,7 @@ export const CONTRACT_MILESTONE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const CONTRACT_MILESTONE_EDITABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'completedOn', 'confidence', 'contractId', 'currencyCode', 'dueOn', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'title', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ContractMilestoneKey[];
+export const CONTRACT_MILESTONE_EDITABLE_FIELDS = ['amount', 'completedOn', 'contractId', 'currencyCode', 'dueOn', 'isCurrent', 'title', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ContractMilestoneKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

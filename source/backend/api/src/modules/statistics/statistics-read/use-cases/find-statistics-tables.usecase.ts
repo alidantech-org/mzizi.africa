@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type { DataSource, FindOptionsWhere } from 'typeorm';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
 import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
@@ -33,33 +31,22 @@ export class FindStatisticsTablesUseCase {
 
   private toReadModel(entity: StatisticsTableEntity): StatisticsTablePublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     code: entity.code,
     collector: entity.collector,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     geoUnitId: entity.geoUnitId,
     id: entity.id,
     indicatorId: entity.indicatorId,
     isCurrent: entity.isCurrent,
     jurisdictionId: entity.jurisdictionId,
-    licence: entity.licence,
-    method: entity.method,
     methodology: entity.methodology,
     publisherInstitutionId: entity.publisherInstitutionId,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     title: entity.title,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as StatisticsTablePublicDto;
   }

@@ -1,13 +1,14 @@
 import * as dryv from "@dryvcode/author";
 
 import { referenceSchemas } from "../../foundation/reference/index.ts";
-import { evidenced, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
+import { recorded, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
 import { readSurface, standardFailures, withStandardHttpFailures } from "../../foundation/shared/read-surface.ts";
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
 /**
  * Governance: institutions, typed relationships, offices, dated office rules, selection
- * procedures, people and office holders.
+ * procedures and office holders. People live in the person schema; a holder refers to an
+ * individual by id and never copies a name.
  *
  * An office is a role; a holder is a person occupying it for a period. Institution types, branches
  * of government, selection methods and procedure stages are jurisdiction-scoped classification
@@ -15,7 +16,7 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  */
 export const governance = dryv
   .group({ name: "governance" })
-  .description("Institutions, offices, rules, selection procedures, people and office holders.")
+  .description("Institutions, offices, rules, selection procedures and office holders.")
   .tags("public", "governance")
   .facets({ storage: { namespace: "governance" } });
 
@@ -44,8 +45,6 @@ export const governanceProperties = governance.properties({
     appointment: "appointment",
     confirmation: "confirmation",
   }),
-  LifeStatus: dryv.property.enum({ alive: "alive", deceased: "deceased", unknown: "unknown" }),
-  NameKind: dryv.property.enum({ birth: "birth", common: "common", honorific: "honorific", alias: "alias", transliteration: "transliteration" }),
   HolderStatus: dryv.property.enum({ substantive: "substantive", acting: "acting", interim: "interim" }),
   DepartureReason: dryv.property.enum({
     termEnded: "term_ended",
@@ -59,9 +58,9 @@ export const governanceProperties = governance.properties({
 });
 
 const institutions = governance.schemas({
-  Institution: evidenced(
+  Institution: recorded(
     {
-      jurisdictionId: relationTo(() => referenceSchemas.Jurisdiction.field("id")),
+      jurisdictionId: plainId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       name: dryv.field(sharedProperties.Name).query(searchable),
       typeId: plainId(),
@@ -79,7 +78,7 @@ const institutions = governance.schemas({
 });
 
 const relationships = governance.schemas({
-  InstitutionRelationship: evidenced(
+  InstitutionRelationship: recorded(
     {
       parentInstitutionId: relationTo(() => institutions.Institution.field("id")),
       childInstitutionId: plainId(),
@@ -90,7 +89,7 @@ const relationships = governance.schemas({
     [{ name: "idx_institution_relationship_parent", fields: ["parentInstitutionId", "kind"] }],
   ),
 
-  Office: evidenced(
+  Office: recorded(
     {
       institutionId: relationTo(() => institutions.Institution.field("id")),
       parentOfficeId: optionalId(),
@@ -109,7 +108,7 @@ const relationships = governance.schemas({
 
 const officeDetails = governance.schemas({
   /** A dated rule on an office (term limit, term length, age limits) with its legal basis. */
-  OfficeRule: evidenced(
+  OfficeRule: recorded(
     {
       officeId: relationTo(() => relationships.Office.field("id")),
       kind: dryv.field(governanceProperties.RuleKind).query({ filter: ["equal", "in"] }),
@@ -121,7 +120,7 @@ const officeDetails = governance.schemas({
     [{ name: "idx_office_rule_office", fields: ["officeId", "kind"] }],
   ),
 
-  SelectionProcedure: evidenced(
+  SelectionProcedure: recorded(
     {
       officeId: relationTo(() => relationships.Office.field("id")),
       methodId: plainId(),
@@ -134,7 +133,7 @@ const officeDetails = governance.schemas({
 });
 
 const procedureStages = governance.schemas({
-  SelectionStage: evidenced(
+  SelectionStage: recorded(
     {
       procedureId: relationTo(() => officeDetails.SelectionProcedure.field("id")),
       stageOrder: dryv.field(governanceProperties.StageOrder).query({ sort: true }),
@@ -148,38 +147,8 @@ const procedureStages = governance.schemas({
   ),
 });
 
-const people = governance.schemas({
-  Person: evidenced(
-    {
-      code: dryv.field(sharedProperties.BusinessCode).query(searchable),
-      displayName: dryv.field(sharedProperties.Name).query(searchable),
-      givenName: dryv.field(sharedProperties.Name).optional().nullable(),
-      familyName: dryv.field(sharedProperties.Name).optional().nullable(),
-      birthDate: dryv.field(sharedProperties.Date).optional().nullable().query({ filter: ["between"] }),
-      birthDatePrecision: dryv.field(sharedProperties.DatePrecision).optional().nullable(),
-      deathDate: dryv.field(sharedProperties.Date).optional().nullable(),
-      deathDatePrecision: dryv.field(sharedProperties.DatePrecision).optional().nullable(),
-      lifeStatus: dryv.field(governanceProperties.LifeStatus).query({ filter: ["equal"] }),
-      birthPlaceId: optionalId(),
-    },
-    "people",
-    [{ name: "idx_person_code", fields: ["code"], unique: true }],
-  ),
-});
-
-const personDetails = governance.schemas({
-  PersonName: evidenced(
-    {
-      personId: relationTo(() => people.Person.field("id")),
-      name: dryv.field(sharedProperties.Name).query({ filter: ["contains"], search: true }),
-      kind: dryv.field(governanceProperties.NameKind).query({ filter: ["equal"] }),
-      language: dryv.field(sharedProperties.Label).optional().nullable(),
-    },
-    "aliases",
-    [{ name: "idx_person_name_person", fields: ["personId"] }],
-  ),
-
-  OfficeHolder: evidenced(
+const officeHolders = governance.schemas({
+  OfficeHolder: recorded(
     {
       officeId: relationTo(() => relationships.Office.field("id")),
       personId: plainId(),
@@ -197,9 +166,9 @@ const personDetails = governance.schemas({
   ),
 });
 
-const entities = { ...institutions, ...relationships, ...officeDetails, ...procedureStages, ...people, ...personDetails };
+const entities = { ...institutions, ...relationships, ...officeDetails, ...procedureStages, ...officeHolders };
 
-const governanceRead = governance.feature("GovernanceRead").description("Public read access to institutions, offices, rules, people and office holders.").tags("public");
+const governanceRead = governance.feature("GovernanceRead").description("Public read access to institutions, offices, rules and office holders.").tags("public");
 
 const surfaces = [
   readSurface(governance, {
@@ -239,16 +208,6 @@ const surfaces = [
     singular: "SelectionStage", plural: "SelectionStages", itemKey: "stage", listKey: "stages",
     path: "/governance/selection-stages", idParam: "stageId", entity: entities.SelectionStage, description: "selection stages",
     filters: { procedureId: dryv.field(sharedProperties.Id).optional() },
-  }),
-  readSurface(governance, {
-    singular: "Person", plural: "People", itemKey: "person", listKey: "people",
-    path: "/governance/people", idParam: "personId", entity: entities.Person, description: "people",
-    filters: { lifeStatus: dryv.field(governanceProperties.LifeStatus).optional(), q: dryv.field(sharedProperties.Name).optional() },
-  }),
-  readSurface(governance, {
-    singular: "PersonName", plural: "PersonNames", itemKey: "personName", listKey: "personNames",
-    path: "/governance/person-names", idParam: "personNameId", entity: entities.PersonName, description: "person names",
-    filters: { personId: dryv.field(sharedProperties.Id).optional(), q: dryv.field(sharedProperties.Name).optional() },
   }),
   readSurface(governance, {
     singular: "OfficeHolder", plural: "OfficeHolders", itemKey: "holder", listKey: "holders",

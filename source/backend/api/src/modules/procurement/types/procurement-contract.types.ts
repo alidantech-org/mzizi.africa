@@ -6,8 +6,6 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { ContractStatus } from '#/types/procurement/contract-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -35,31 +33,20 @@ import type {
 
 /** Procurement Contract */
 export interface IProcurementContract extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
   awardedEntityId: string;
   awardedOn: Date | null;
   code: string;
-  confidence: number | null;
   contractingOfficeId: string | null;
   contractingUnitId: string;
   currencyCode: string;
   isCurrent: boolean;
-  licence: string | null;
-  method: ProvenanceMethod;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   status: ContractStatus;
   tenderId: string;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
   value: number;
-  verificationState: VerificationState;
   readonly tender?: TenderTypes.ITender;
 }
 

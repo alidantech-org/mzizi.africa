@@ -6,8 +6,6 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { RuleKind } from '#/types/governance/rule-kind.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -35,27 +33,16 @@ import type {
 
 /** Office Rule */
 export interface IOfficeRule extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
-  confidence: number | null;
   isCurrent: boolean;
   kind: RuleKind;
   legalBasisId: string | null;
-  licence: string | null;
-  method: ProvenanceMethod;
   numericValue: number | null;
   officeId: string;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   textValue: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly office?: OfficeTypes.IOffice;
 }
 

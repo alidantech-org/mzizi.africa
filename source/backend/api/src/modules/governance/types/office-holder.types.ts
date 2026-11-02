@@ -7,8 +7,6 @@ import * as B from '#/modules/common/types/base';
 import type { DepartureReason } from '#/types/governance/departure-reason.enum';
 import type { HolderStatus } from '#/types/governance/holder-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -36,29 +34,18 @@ import type {
 
 /** Office Holder */
 export interface IOfficeHolder extends B.IBase {
-  artifactChecksum: string | null;
-  artifactId: string | null;
-  confidence: number | null;
   departureReason: DepartureReason | null;
   isCurrent: boolean;
   legalBasisId: string | null;
-  licence: string | null;
-  method: ProvenanceMethod;
   officeId: string;
   personId: string;
-  retrievedAt: Date | null;
   selectionProcedureId: string | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   status: HolderStatus;
   termNumber: number | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly office?: OfficeTypes.IOffice;
 }
 

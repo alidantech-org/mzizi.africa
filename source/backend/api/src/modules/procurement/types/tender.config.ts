@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as BudgetaryUnitConfig from '#/modules/finance/types/budgetary-unit.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const TENDER_RELATION_KEYS = ['budgetaryUnit', ] as const satisfies readonly TenderKey[];
+export const TENDER_RELATION_KEYS = [] as const satisfies readonly TenderKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const TENDER_SORTABLE_FIELDS = ['code', 'createdAt', 'publishedOn', 'titl
 
 export const TENDER_SEARCHABLE_FIELDS = ['code', 'title', ] as const satisfies readonly TenderKey[];
 
-export const TENDER_FILTERABLE_FIELDS = ['budgetId', 'code', 'estimatedValue', 'id', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'method', 'methodId', 'procuringOfficeId', 'status', 'title', 'verificationState', 'version', ] as const satisfies readonly TenderKey[];
+export const TENDER_FILTERABLE_FIELDS = ['budgetId', 'code', 'estimatedValue', 'id', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'methodId', 'procuringOfficeId', 'status', 'title', 'version', ] as const satisfies readonly TenderKey[];
 
 export const TENDER_DATE_RANGE_FIELDS = ['createdAt', 'publishedOn', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly TenderKey[];
 
@@ -48,7 +47,7 @@ export const TENDER_DATE_RANGE_FIELDS = ['createdAt', 'publishedOn', 'updatedAt'
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const TENDER_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'budgetId', 'closesOn', 'code', 'confidence', 'createdAt', 'currencyCode', 'estimatedValue', 'id', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'licence', 'method', 'methodId', 'procuringOfficeId', 'publishedOn', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'title', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly TenderKey[];
+export const TENDER_SELECTABLE_FIELDS = ['budgetId', 'closesOn', 'code', 'createdAt', 'currencyCode', 'estimatedValue', 'id', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'methodId', 'procuringOfficeId', 'publishedOn', 'status', 'title', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly TenderKey[];
 
 export const TENDER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly TenderSelectableField[];
 
@@ -56,7 +55,7 @@ export const TENDER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satis
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const TENDER_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'budgetId', 'closesOn', 'code', 'confidence', 'currencyCode', 'estimatedValue', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'licence', 'method', 'methodId', 'procuringOfficeId', 'publishedOn', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'title', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly TenderKey[];
+export const TENDER_EDITABLE_FIELDS = ['budgetId', 'closesOn', 'code', 'currencyCode', 'estimatedValue', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'methodId', 'procuringOfficeId', 'publishedOn', 'status', 'title', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly TenderKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const TENDER_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const TENDER_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<TenderRelationKey>().one(BudgetaryUnitConfig.BUDGETARY_UNIT_AS_ONE_RELATION_CONFIG, 'budgetaryUnit'),
 ] as const;
 
 export const TENDER_MANY_RELATION_QUERY_OPTIONS = [

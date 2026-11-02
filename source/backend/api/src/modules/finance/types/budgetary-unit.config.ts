@@ -8,7 +8,6 @@ import { ERelationType } from '#/modules/common/types/enums';
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as JurisdictionConfig from '#/modules/reference/types/jurisdiction.config';
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,7 +29,7 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const BUDGETARY_UNIT_RELATION_KEYS = ['jurisdiction', ] as const satisfies readonly BudgetaryUnitKey[];
+export const BUDGETARY_UNIT_RELATION_KEYS = [] as const satisfies readonly BudgetaryUnitKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -40,7 +39,7 @@ export const BUDGETARY_UNIT_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'upd
 
 export const BUDGETARY_UNIT_SEARCHABLE_FIELDS = ['code', 'name', ] as const satisfies readonly BudgetaryUnitKey[];
 
-export const BUDGETARY_UNIT_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'method', 'name', 'parentUnitId', 'verificationState', 'version', ] as const satisfies readonly BudgetaryUnitKey[];
+export const BUDGETARY_UNIT_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'name', 'parentUnitId', 'version', ] as const satisfies readonly BudgetaryUnitKey[];
 
 export const BUDGETARY_UNIT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly BudgetaryUnitKey[];
 
@@ -48,7 +47,7 @@ export const BUDGETARY_UNIT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'vali
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const BUDGETARY_UNIT_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'createdAt', 'geoUnitId', 'id', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'licence', 'method', 'name', 'parentUnitId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly BudgetaryUnitKey[];
+export const BUDGETARY_UNIT_SELECTABLE_FIELDS = ['code', 'createdAt', 'geoUnitId', 'id', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'name', 'parentUnitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BudgetaryUnitKey[];
 
 export const BUDGETARY_UNIT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly BudgetaryUnitSelectableField[];
 
@@ -56,7 +55,7 @@ export const BUDGETARY_UNIT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as con
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const BUDGETARY_UNIT_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'code', 'confidence', 'geoUnitId', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'licence', 'method', 'name', 'parentUnitId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly BudgetaryUnitKey[];
+export const BUDGETARY_UNIT_EDITABLE_FIELDS = ['code', 'geoUnitId', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'name', 'parentUnitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BudgetaryUnitKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -84,7 +83,6 @@ export const BUDGETARY_UNIT_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const BUDGETARY_UNIT_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<BudgetaryUnitRelationKey>().one(JurisdictionConfig.JURISDICTION_AS_ONE_RELATION_CONFIG, 'jurisdiction'),
 ] as const;
 
 export const BUDGETARY_UNIT_MANY_RELATION_QUERY_OPTIONS = [

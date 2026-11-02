@@ -40,7 +40,7 @@ export const OFFICE_HOLDER_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'validFr
 
 export const OFFICE_HOLDER_SEARCHABLE_FIELDS = [] as const satisfies readonly OfficeHolderKey[];
 
-export const OFFICE_HOLDER_FILTERABLE_FIELDS = ['id', 'isCurrent', 'legalBasisId', 'method', 'officeId', 'personId', 'selectionProcedureId', 'status', 'verificationState', 'version', ] as const satisfies readonly OfficeHolderKey[];
+export const OFFICE_HOLDER_FILTERABLE_FIELDS = ['id', 'isCurrent', 'legalBasisId', 'officeId', 'personId', 'selectionProcedureId', 'status', 'version', ] as const satisfies readonly OfficeHolderKey[];
 
 export const OFFICE_HOLDER_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly OfficeHolderKey[];
 
@@ -48,7 +48,7 @@ export const OFFICE_HOLDER_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'valid
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const OFFICE_HOLDER_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'departureReason', 'id', 'isCurrent', 'legalBasisId', 'licence', 'method', 'officeId', 'personId', 'retrievedAt', 'selectionProcedureId', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'termNumber', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly OfficeHolderKey[];
+export const OFFICE_HOLDER_SELECTABLE_FIELDS = ['createdAt', 'departureReason', 'id', 'isCurrent', 'legalBasisId', 'officeId', 'personId', 'selectionProcedureId', 'status', 'termNumber', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly OfficeHolderKey[];
 
 export const OFFICE_HOLDER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly OfficeHolderSelectableField[];
 
@@ -56,7 +56,7 @@ export const OFFICE_HOLDER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as cons
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const OFFICE_HOLDER_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'departureReason', 'isCurrent', 'legalBasisId', 'licence', 'method', 'officeId', 'personId', 'retrievedAt', 'selectionProcedureId', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'termNumber', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly OfficeHolderKey[];
+export const OFFICE_HOLDER_EDITABLE_FIELDS = ['departureReason', 'isCurrent', 'legalBasisId', 'officeId', 'personId', 'selectionProcedureId', 'status', 'termNumber', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly OfficeHolderKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -1,13 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type { DataSource } from 'typeorm';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { AmenityPublicDto } from '#/modules/services/dto/amenity-public.dto';
 import type { AmenityResponseDto } from '#/modules/services/dto/amenity-response.dto';
 import type { AmenityDto } from '#/modules/services/dto/amenity.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { AmenityEntity } from '#/modules/services/entities/amenity.entity';
 
@@ -28,31 +26,20 @@ export class GetAmenityByIdUseCase {
 
   private toReadModel(entity: AmenityEntity): AmenityPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     code: entity.code,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     geoUnitId: entity.geoUnitId,
     id: entity.id,
     isActive: entity.isActive,
     isCurrent: entity.isCurrent,
     jurisdictionId: entity.jurisdictionId,
-    licence: entity.licence,
-    method: entity.method,
     name: entity.name,
-    retrievedAt: entity.retrievedAt,
     sectorId: entity.sectorId,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as AmenityPublicDto;
   }

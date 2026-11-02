@@ -6,11 +6,9 @@ import type { LegalProvisionListQueryDto } from '#/modules/legal/dto/legal-provi
 import type { LegalProvisionPublicDto } from '#/modules/legal/dto/legal-provision-public.dto';
 import type { LegalProvisionDto } from '#/modules/legal/dto/legal-provision.dto';
 import type { LegalProvisionsListResponseDto } from '#/modules/legal/dto/legal-provisions-list-response.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
 import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
@@ -34,11 +32,8 @@ export class FindLegalProvisionsUseCase {
 
   private toReadModel(entity: LegalProvisionEntity): LegalProvisionPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     citation: entity.citation,
     code: entity.code,
-    confidence: entity.confidence,
     content: entity.content,
     createdAt: entity.createdAt,
     heading: entity.heading,
@@ -46,22 +41,14 @@ export class FindLegalProvisionsUseCase {
     instrumentId: entity.instrumentId,
     isCurrent: entity.isCurrent,
     kind: entity.kind,
-    licence: entity.licence,
-    method: entity.method,
     parentId: entity.parentId,
     previousVersionId: entity.previousVersionId,
-    retrievedAt: entity.retrievedAt,
     sortOrder: entity.sortOrder,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as LegalProvisionPublicDto;
   }

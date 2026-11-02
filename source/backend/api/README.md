@@ -13,8 +13,8 @@ docker start postgis
 docker exec postgis psql -U postgres -c "CREATE DATABASE mzizi_dev"
 cd source/backend/api && bun install
 export DATABASE_URL=postgres://postgres@localhost:5432/mzizi_dev
-bun run db:reset       # dev only: 14 domain schemas (geo, legal, audit ...) from the generated entities + Kenya and South Africa fixtures
-bun run start          # http://localhost:3000, 139 routes, e.g. /v1/reference/jurisdictions
+bun run db:reset       # dev only: 18 domain schemas (geography, legal, source, filesystem ...), media format seeds, from the generated entities + Kenya and South Africa fixtures
+bun run start          # http://localhost:3000, 167 routes, e.g. /v1/reference/jurisdictions
 ```
 
 `db:reset` exists only because `source/backend/db-engine` does not own schema and seeds yet; it refuses non-local hosts and any database not named `*_dev` or `*_test`. The API itself never creates schema. Run `bun` from this folder: the root `tsconfig.json` is what makes Bun apply the decorator settings NestJS needs.
@@ -33,7 +33,7 @@ TEST_DATABASE_URL=postgres://postgres@localhost:5432/postgres bun run test    # 
 
 ## Authentication and writes
 
-Reads are public. The only writes are the three `POST /v1/audit/*` routes (comments, evidence references, review decisions).
+Reads are public. The only writes are the three `POST /v1/audit/*` routes (comments, evidence submissions, review decisions).
 
 - **Rules come from the contracts.** The generator does not wire contract policies into guards, so `dryv/tools/export-access.ts` exports each operation's policy to `src/auth/access-rules.generated.ts` (`bun run access:export` in `dryv/`; `access:check` is part of `bun run check`). The global `AuthGuard` enforces them and `ActorInterceptor` carries the verified actor to the use case, installed in `main.ts` with `installAuth`.
 - **Tokens.** Bearer JWTs from an OIDC-compatible issuer (`AUTH_ISSUER`, plus `AUTH_JWKS_URL` or a PEM `AUTH_PUBLIC_KEY`). `sub` must be a uuid and is the actor id; the highest of the `roles` claim (reader, contributor, reviewer, admin) is the role. With authentication unconfigured a protected route answers 503, never open access.

@@ -40,7 +40,7 @@ export const BID_SORTABLE_FIELDS = ['amount', 'createdAt', 'updatedAt', 'validFr
 
 export const BID_SEARCHABLE_FIELDS = [] as const satisfies readonly BidKey[];
 
-export const BID_FILTERABLE_FIELDS = ['amount', 'bidderEntityId', 'id', 'isCurrent', 'method', 'status', 'tenderId', 'verificationState', 'version', ] as const satisfies readonly BidKey[];
+export const BID_FILTERABLE_FIELDS = ['amount', 'bidderEntityId', 'id', 'isCurrent', 'status', 'tenderId', 'version', ] as const satisfies readonly BidKey[];
 
 export const BID_DATE_RANGE_FIELDS = ['createdAt', 'submittedOn', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly BidKey[];
 
@@ -48,7 +48,7 @@ export const BID_DATE_RANGE_FIELDS = ['createdAt', 'submittedOn', 'updatedAt', '
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const BID_SELECTABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'bidderEntityId', 'confidence', 'createdAt', 'currencyCode', 'evaluationNote', 'id', 'isCompliant', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'submittedOn', 'tenderId', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly BidKey[];
+export const BID_SELECTABLE_FIELDS = ['amount', 'bidderEntityId', 'createdAt', 'currencyCode', 'evaluationNote', 'id', 'isCompliant', 'isCurrent', 'status', 'submittedOn', 'tenderId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BidKey[];
 
 export const BID_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly BidSelectableField[];
 
@@ -56,7 +56,7 @@ export const BID_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfie
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const BID_EDITABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'bidderEntityId', 'confidence', 'currencyCode', 'evaluationNote', 'isCompliant', 'isCurrent', 'licence', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'status', 'submittedOn', 'tenderId', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly BidKey[];
+export const BID_EDITABLE_FIELDS = ['amount', 'bidderEntityId', 'currencyCode', 'evaluationNote', 'isCompliant', 'isCurrent', 'status', 'submittedOn', 'tenderId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BidKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

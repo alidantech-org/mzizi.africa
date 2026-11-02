@@ -5,10 +5,8 @@ import type { PartyMembershipPublicDto } from '#/modules/political/dto/party-mem
 import type { PartyMembershipResponseDto } from '#/modules/political/dto/party-membership-response.dto';
 import type { PartyMembershipDto } from '#/modules/political/dto/party-membership.dto';
 import type { PartyDto } from '#/modules/political/dto/party.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { PartyMembershipEntity } from '#/modules/political/entities/party-membership.entity';
 
@@ -29,28 +27,17 @@ export class GetPartyMembershipByIdUseCase {
 
   private toReadModel(entity: PartyMembershipEntity): PartyMembershipPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     id: entity.id,
     isCurrent: entity.isCurrent,
-    licence: entity.licence,
-    method: entity.method,
     partyId: entity.partyId,
     personId: entity.personId,
-    retrievedAt: entity.retrievedAt,
     roleTitle: entity.roleTitle,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as PartyMembershipPublicDto;
   }

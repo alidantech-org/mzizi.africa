@@ -40,7 +40,7 @@ export const GEO_BOUNDARY_VERSION_SORTABLE_FIELDS = ['createdAt', 'updatedAt', '
 
 export const GEO_BOUNDARY_VERSION_SEARCHABLE_FIELDS = [] as const satisfies readonly GeoBoundaryVersionKey[];
 
-export const GEO_BOUNDARY_VERSION_FILTERABLE_FIELDS = ['id', 'isCurrent', 'method', 'unitId', 'verificationState', 'version', 'versionNumber', ] as const satisfies readonly GeoBoundaryVersionKey[];
+export const GEO_BOUNDARY_VERSION_FILTERABLE_FIELDS = ['id', 'isCurrent', 'unitId', 'version', 'versionNumber', ] as const satisfies readonly GeoBoundaryVersionKey[];
 
 export const GEO_BOUNDARY_VERSION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly GeoBoundaryVersionKey[];
 
@@ -48,7 +48,7 @@ export const GEO_BOUNDARY_VERSION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt',
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const GEO_BOUNDARY_VERSION_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'licence', 'method', 'referenceYear', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', 'versionNumber', ] as const satisfies readonly GeoBoundaryVersionKey[];
+export const GEO_BOUNDARY_VERSION_SELECTABLE_FIELDS = ['createdAt', 'id', 'isCurrent', 'referenceYear', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'versionNumber', ] as const satisfies readonly GeoBoundaryVersionKey[];
 
 export const GEO_BOUNDARY_VERSION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly GeoBoundaryVersionSelectableField[];
 
@@ -56,7 +56,7 @@ export const GEO_BOUNDARY_VERSION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const GEO_BOUNDARY_VERSION_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'geometry', 'isCurrent', 'labelPoint', 'licence', 'method', 'referenceYear', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', 'versionNumber', ] as const satisfies readonly GeoBoundaryVersionKey[];
+export const GEO_BOUNDARY_VERSION_EDITABLE_FIELDS = ['geometry', 'isCurrent', 'labelPoint', 'referenceYear', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'versionNumber', ] as const satisfies readonly GeoBoundaryVersionKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

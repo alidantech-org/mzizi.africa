@@ -1,6 +1,5 @@
 import { Module, type Type } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { IndicatorCategoryEntity } from "#/modules/statistics/entities/indicator-category.entity.ts";
 import { IndicatorColumnEntity } from "#/modules/statistics/entities/indicator-column.entity.ts";
 import { IndicatorEntity } from "#/modules/statistics/entities/indicator.entity.ts";
@@ -27,7 +26,6 @@ import { StatisticsStatisticsReadService } from "./statistics-read.service.ts";
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      JurisdictionEntity,
       IndicatorCategoryEntity,
       IndicatorColumnEntity,
       IndicatorEntity,

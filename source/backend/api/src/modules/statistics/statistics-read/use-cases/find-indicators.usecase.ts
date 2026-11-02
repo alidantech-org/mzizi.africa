@@ -4,7 +4,6 @@ import type { DataSource, FindOptionsWhere } from 'typeorm';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
 import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
@@ -33,31 +32,20 @@ export class FindIndicatorsUseCase {
 
   private toReadModel(entity: IndicatorEntity): IndicatorPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
     categoryId: entity.categoryId,
     code: entity.code,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     definition: entity.definition,
     id: entity.id,
     isCurrent: entity.isCurrent,
-    licence: entity.licence,
-    method: entity.method,
     name: entity.name,
     parentId: entity.parentId,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
-    toolOrModel: entity.toolOrModel,
     unitOfMeasure: entity.unitOfMeasure,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as IndicatorPublicDto;
   }

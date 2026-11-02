@@ -4,7 +4,7 @@ import type { DataSource } from "typeorm";
 import { targetKinds } from "#/auth/access-rules.generated";
 
 /**
- * Audit records point at another record by kind (its schema-qualified table, for example geo.units) and id. The kind must be one of
+ * Audit records point at another record by kind (its schema-qualified table, for example geography.units) and id. The kind must be one of
  * the contract's evidenced entities, which also makes it safe to use as a table name below, and
  * the record must exist.
  */

@@ -40,7 +40,7 @@ export const LEDGER_ENTRY_SORTABLE_FIELDS = ['createdAt', 'postedOn', 'updatedAt
 
 export const LEDGER_ENTRY_SEARCHABLE_FIELDS = [] as const satisfies readonly LedgerEntryKey[];
 
-export const LEDGER_ENTRY_FILTERABLE_FIELDS = ['accountCode', 'creditAmount', 'debitAmount', 'id', 'isCurrent', 'method', 'referenceId', 'referenceKind', 'unitId', 'verificationState', 'version', ] as const satisfies readonly LedgerEntryKey[];
+export const LEDGER_ENTRY_FILTERABLE_FIELDS = ['accountCode', 'creditAmount', 'debitAmount', 'id', 'isCurrent', 'referenceId', 'referenceKind', 'unitId', 'version', ] as const satisfies readonly LedgerEntryKey[];
 
 export const LEDGER_ENTRY_DATE_RANGE_FIELDS = ['createdAt', 'postedOn', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly LedgerEntryKey[];
 
@@ -48,7 +48,7 @@ export const LEDGER_ENTRY_DATE_RANGE_FIELDS = ['createdAt', 'postedOn', 'updated
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const LEDGER_ENTRY_SELECTABLE_FIELDS = ['accountCode', 'artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'creditAmount', 'currencyCode', 'debitAmount', 'id', 'isCurrent', 'licence', 'method', 'postedOn', 'referenceId', 'referenceKind', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LedgerEntryKey[];
+export const LEDGER_ENTRY_SELECTABLE_FIELDS = ['accountCode', 'createdAt', 'creditAmount', 'currencyCode', 'debitAmount', 'id', 'isCurrent', 'postedOn', 'referenceId', 'referenceKind', 'unitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LedgerEntryKey[];
 
 export const LEDGER_ENTRY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly LedgerEntrySelectableField[];
 
@@ -56,7 +56,7 @@ export const LEDGER_ENTRY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const LEDGER_ENTRY_EDITABLE_FIELDS = ['accountCode', 'artifactChecksum', 'artifactId', 'confidence', 'creditAmount', 'currencyCode', 'debitAmount', 'isCurrent', 'licence', 'method', 'postedOn', 'referenceId', 'referenceKind', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LedgerEntryKey[];
+export const LEDGER_ENTRY_EDITABLE_FIELDS = ['accountCode', 'creditAmount', 'currencyCode', 'debitAmount', 'isCurrent', 'postedOn', 'referenceId', 'referenceKind', 'unitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LedgerEntryKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -33,7 +33,7 @@ describe.skipIf(!adminUrl)("generated schema (PostgreSQL)", () => {
       `SELECT table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('public', 'pg_catalog', 'information_schema')`,
     );
     expect(rows.length).toBe(db.entityMetadatas.length);
-    expect(rows.length).toBeGreaterThan(60);
+    expect(rows.length).toBeGreaterThan(80);
   });
 
   it("keeps every table out of public and in its domain schema", async () => {
@@ -47,15 +47,35 @@ describe.skipIf(!adminUrl)("generated schema (PostgreSQL)", () => {
     }
   });
 
-  it("gives every claim-bearing table provenance, valid time and verification columns", async () => {
-    const evidenced = db.entityMetadatas.filter((meta) => meta.columns.some((column) => column.propertyName === "sourceName"));
-    expect(evidenced.length).toBeGreaterThan(50);
-    for (const meta of evidenced) {
+  it("keeps provenance out of data tables: it lives in the source schema", () => {
+    const provenance = ["sourceName", "sourceReference", "sourceUrl", "artifactId", "artifactChecksum", "retrievedAt", "licence", "method", "toolOrModel", "confidence", "verificationState"];
+    for (const meta of db.entityMetadatas.filter((entity) => entity.schema !== "source")) {
       const names = meta.columns.map((column) => column.propertyName);
-      for (const required of ["method", "verificationState", "validFrom", "validTo", "isCurrent", "createdAt", "version"]) {
-        expect(names, `${meta.tableName} is missing ${required}`).toContain(required);
+      for (const field of provenance) expect(names, `${meta.schema}.${meta.tableName} has ${field}`).not.toContain(field);
+    }
+    const attributions = db.entityMetadatas.find((meta) => meta.schema === "source" && meta.tableName === "attributions");
+    expect(attributions?.columns.map((column) => column.propertyName)).toEqual(expect.arrayContaining(["targetKind", "targetId", "documentId", "methodId", "relation"]));
+  });
+
+  it("gives every domain table valid time, record time and a version", () => {
+    const system = new Set(["audit", "source", "filesystem", "identity"]);
+    const domain = db.entityMetadatas.filter((meta) => !system.has(meta.schema as string));
+    expect(domain.length).toBeGreaterThan(40);
+    for (const meta of domain) {
+      const names = meta.columns.map((column) => column.propertyName);
+      for (const required of ["validFrom", "validTo", "isCurrent", "createdAt", "version"]) {
+        expect(names, `${meta.schema}.${meta.tableName} is missing ${required}`).toContain(required);
       }
     }
+  });
+
+  it("has no foreign key from one schema to another", async () => {
+    const crossing: Array<{ from: string; to: string }> = await db.query(`
+      SELECT c.conrelid::regclass::text AS "from", c.confrelid::regclass::text AS "to"
+        FROM pg_constraint c
+        JOIN pg_class a ON a.oid = c.conrelid JOIN pg_class b ON b.oid = c.confrelid
+       WHERE c.contype = 'f' AND a.relnamespace <> b.relnamespace`);
+    expect(crossing).toEqual([]);
   });
 
   it("stores no money without a currency", () => {

@@ -6,10 +6,8 @@ import type { LegalAuthorityLinkResponseDto } from '#/modules/legal/dto/legal-au
 import type { LegalAuthorityLinkDto } from '#/modules/legal/dto/legal-authority-link.dto';
 import type { LegalInstrumentDto } from '#/modules/legal/dto/legal-instrument.dto';
 import type { LegalProvisionDto } from '#/modules/legal/dto/legal-provision.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import { LegalAuthorityLinkEntity } from '#/modules/legal/entities/legal-authority-link.entity';
 
@@ -30,29 +28,18 @@ export class GetLegalAuthorityLinkByIdUseCase {
 
   private toReadModel(entity: LegalAuthorityLinkEntity): LegalAuthorityLinkPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     id: entity.id,
     isCurrent: entity.isCurrent,
-    licence: entity.licence,
-    method: entity.method,
     note: entity.note,
     provisionId: entity.provisionId,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     targetId: entity.targetId,
     targetKind: entity.targetKind,
-    toolOrModel: entity.toolOrModel,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as LegalAuthorityLinkPublicDto;
   }

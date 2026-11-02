@@ -1,5 +1,5 @@
 ---
-{id: TSK-EDD0990C97E9,name: Person and identity schemas,type: task,status: planned,priority: medium,created_at: 2026-11-02T06:41:22.494Z,updated_at: 2026-11-02T06:41:22.494Z,due_at: 2026-11-02,order: 3072}
+{id: TSK-EDD0990C97E9,name: Person and identity schemas,type: task,status: completed,priority: medium,created_at: 2026-11-02T06:41:22.494Z,updated_at: 2026-11-02T06:59:00.417Z,due_at: 2026-11-02,order: 1280,extra: {status_history: [{from: planned,to: completed,at: 2026-11-02T06:59:00.417Z}]}}
 ---
 
 # Person and identity schemas
@@ -14,8 +14,12 @@ Model the humans in the loop: a person schema for every real human with names, p
 
 ## Acceptance checklist
 
-- [ ] Author the person contracts and read endpoints at /v1/people.
-- [ ] Remove people and aliases from governance and repoint references to the individual id.
-- [ ] Enforce public-only contacts and handles in the use cases and test the leak case.
-- [ ] Author identity accounts and grants without public endpoints.
-- [ ] Update the access rules export, fixtures and tests.
+- [x] Author the person contracts and read endpoints at /v1/people.
+- [x] Remove people and aliases from governance and repoint references to the individual id.
+- [x] Enforce public-only contacts and handles in the use cases and test the leak case.
+- [x] Author identity accounts and grants without public endpoints.
+- [x] Update the access rules export, fixtures and tests.
+
+## Progress
+
+New person schema (individuals, names, profiles, contacts, handles) with read endpoints at /v1/people, and a private identity schema (accounts, grants) with no endpoints. People and aliases left governance; holders refer to an individual by id. Contacts and handles carry an exposure level and the use cases serve public values only: a test shows a client cannot request private values through the query and a private contact answers 404. Decision record: .docs/decisions/person-and-identity-split.md.

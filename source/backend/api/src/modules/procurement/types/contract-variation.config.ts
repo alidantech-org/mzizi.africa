@@ -40,7 +40,7 @@ export const CONTRACT_VARIATION_SORTABLE_FIELDS = ['createdAt', 'updatedAt', 'va
 
 export const CONTRACT_VARIATION_SEARCHABLE_FIELDS = [] as const satisfies readonly ContractVariationKey[];
 
-export const CONTRACT_VARIATION_FILTERABLE_FIELDS = ['contractId', 'id', 'isCurrent', 'method', 'verificationState', 'version', ] as const satisfies readonly ContractVariationKey[];
+export const CONTRACT_VARIATION_FILTERABLE_FIELDS = ['contractId', 'id', 'isCurrent', 'version', ] as const satisfies readonly ContractVariationKey[];
 
 export const CONTRACT_VARIATION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ContractVariationKey[];
 
@@ -48,7 +48,7 @@ export const CONTRACT_VARIATION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', '
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const CONTRACT_VARIATION_SELECTABLE_FIELDS = ['amountChange', 'approvedOn', 'artifactChecksum', 'artifactId', 'confidence', 'contractId', 'createdAt', 'currencyCode', 'id', 'isCurrent', 'licence', 'method', 'reason', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ContractVariationKey[];
+export const CONTRACT_VARIATION_SELECTABLE_FIELDS = ['amountChange', 'approvedOn', 'contractId', 'createdAt', 'currencyCode', 'id', 'isCurrent', 'reason', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ContractVariationKey[];
 
 export const CONTRACT_VARIATION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ContractVariationSelectableField[];
 
@@ -56,7 +56,7 @@ export const CONTRACT_VARIATION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const CONTRACT_VARIATION_EDITABLE_FIELDS = ['amountChange', 'approvedOn', 'artifactChecksum', 'artifactId', 'confidence', 'contractId', 'currencyCode', 'isCurrent', 'licence', 'method', 'reason', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ContractVariationKey[];
+export const CONTRACT_VARIATION_EDITABLE_FIELDS = ['amountChange', 'approvedOn', 'contractId', 'currencyCode', 'isCurrent', 'reason', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ContractVariationKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

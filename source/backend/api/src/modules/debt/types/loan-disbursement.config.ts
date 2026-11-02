@@ -40,7 +40,7 @@ export const LOAN_DISBURSEMENT_SORTABLE_FIELDS = ['createdAt', 'disbursedOn', 'u
 
 export const LOAN_DISBURSEMENT_SEARCHABLE_FIELDS = [] as const satisfies readonly LoanDisbursementKey[];
 
-export const LOAN_DISBURSEMENT_FILTERABLE_FIELDS = ['amount', 'id', 'isCurrent', 'ledgerEntryId', 'loanId', 'method', 'verificationState', 'version', ] as const satisfies readonly LoanDisbursementKey[];
+export const LOAN_DISBURSEMENT_FILTERABLE_FIELDS = ['amount', 'id', 'isCurrent', 'ledgerEntryId', 'loanId', 'version', ] as const satisfies readonly LoanDisbursementKey[];
 
 export const LOAN_DISBURSEMENT_DATE_RANGE_FIELDS = ['createdAt', 'disbursedOn', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly LoanDisbursementKey[];
 
@@ -48,7 +48,7 @@ export const LOAN_DISBURSEMENT_DATE_RANGE_FIELDS = ['createdAt', 'disbursedOn', 
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const LOAN_DISBURSEMENT_SELECTABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'currencyCode', 'disbursedOn', 'id', 'isCurrent', 'ledgerEntryId', 'licence', 'loanId', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LoanDisbursementKey[];
+export const LOAN_DISBURSEMENT_SELECTABLE_FIELDS = ['amount', 'createdAt', 'currencyCode', 'disbursedOn', 'id', 'isCurrent', 'ledgerEntryId', 'loanId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LoanDisbursementKey[];
 
 export const LOAN_DISBURSEMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly LoanDisbursementSelectableField[];
 
@@ -56,7 +56,7 @@ export const LOAN_DISBURSEMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const LOAN_DISBURSEMENT_EDITABLE_FIELDS = ['amount', 'artifactChecksum', 'artifactId', 'confidence', 'currencyCode', 'disbursedOn', 'isCurrent', 'ledgerEntryId', 'licence', 'loanId', 'method', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LoanDisbursementKey[];
+export const LOAN_DISBURSEMENT_EDITABLE_FIELDS = ['amount', 'currencyCode', 'disbursedOn', 'isCurrent', 'ledgerEntryId', 'loanId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LoanDisbursementKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

@@ -7,8 +7,6 @@ import * as B from '#/modules/common/types/base';
 import type { FundRestriction } from '#/types/finance/fund-restriction.enum';
 import type { TransferStatus } from '#/types/finance/transfer-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -37,30 +35,19 @@ import type {
 /** Transfer */
 export interface ITransfer extends B.IBase {
   amount: number;
-  artifactChecksum: string | null;
-  artifactId: string | null;
-  confidence: number | null;
   currencyCode: string;
   fiscalYearId: string;
   fromUnitId: string;
   isCurrent: boolean;
   legalBasisId: string | null;
-  licence: string | null;
-  method: ProvenanceMethod;
   restriction: FundRestriction;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   status: TransferStatus;
   toUnitId: string;
-  toolOrModel: string | null;
   transferTypeId: string;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
   readonly budgetaryUnit?: BudgetaryUnitTypes.IBudgetaryUnit;
 }
 

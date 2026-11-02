@@ -1,9 +1,9 @@
 import * as dryv from "@dryvcode/author";
 
-import { evidencedEntitySchemas, sharedProperties } from "./index.ts";
+import { baseEntitySchemas, historicalEntitySchemas, sharedProperties } from "./index.ts";
 
 /**
- * Authoring helpers so every domain declares entities the same way: evidence, valid time and
+ * Authoring helpers so every domain declares entities the same way: valid time and
  * record time come from the shared foundation, identifiers are uuids, and references between
  * records are plain ids unless the entity pack should generate a relation.
  *
@@ -12,12 +12,12 @@ import { evidencedEntitySchemas, sharedProperties } from "./index.ts";
  */
 export type IndexSpec = { name: string; fields: string[]; unique?: boolean };
 
-/** A stored, claim-bearing entity: provenance, valid time, verification and record time. */
-export function evidenced(fields: Record<string, any>, table: string, indexes: IndexSpec[] = []) {
+/** A stored domain fact: valid time, record time and version. Provenance is not a column; the source schema points at the row. */
+export function recorded(fields: Record<string, any>, table: string, indexes: IndexSpec[] = []) {
   return dryv
     .schema(fields)
     .role("entity")
-    .extends(evidencedEntitySchemas.EvidencedEntity)
+    .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({ storage: dryv.storage(table).indexes(...indexes) });
 }
 
@@ -39,3 +39,12 @@ export function optionalId() {
 }
 
 export const searchable = { filter: ["startsWith", "contains"], sort: true, search: true } as const;
+
+/** A system or append-only record (no valid time): identity, record time and version only. */
+export function systemRecord(fields: Record<string, any>, table: string, indexes: IndexSpec[] = []) {
+  return dryv
+    .schema(fields)
+    .role("entity")
+    .extends(baseEntitySchemas.BaseEntity)
+    .facets({ storage: dryv.storage(table).indexes(...indexes) });
+}

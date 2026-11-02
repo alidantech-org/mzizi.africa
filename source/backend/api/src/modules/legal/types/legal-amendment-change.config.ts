@@ -40,7 +40,7 @@ export const LEGAL_AMENDMENT_CHANGE_SORTABLE_FIELDS = ['createdAt', 'updatedAt',
 
 export const LEGAL_AMENDMENT_CHANGE_SEARCHABLE_FIELDS = [] as const satisfies readonly LegalAmendmentChangeKey[];
 
-export const LEGAL_AMENDMENT_CHANGE_FILTERABLE_FIELDS = ['amendmentId', 'id', 'isCurrent', 'kind', 'method', 'provisionId', 'verificationState', 'version', ] as const satisfies readonly LegalAmendmentChangeKey[];
+export const LEGAL_AMENDMENT_CHANGE_FILTERABLE_FIELDS = ['amendmentId', 'id', 'isCurrent', 'kind', 'provisionId', 'version', ] as const satisfies readonly LegalAmendmentChangeKey[];
 
 export const LEGAL_AMENDMENT_CHANGE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly LegalAmendmentChangeKey[];
 
@@ -48,7 +48,7 @@ export const LEGAL_AMENDMENT_CHANGE_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_AMENDMENT_CHANGE_SELECTABLE_FIELDS = ['amendmentId', 'artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'id', 'isCurrent', 'kind', 'licence', 'method', 'newText', 'previousText', 'provisionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalAmendmentChangeKey[];
+export const LEGAL_AMENDMENT_CHANGE_SELECTABLE_FIELDS = ['amendmentId', 'createdAt', 'id', 'isCurrent', 'kind', 'newText', 'previousText', 'provisionId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalAmendmentChangeKey[];
 
 export const LEGAL_AMENDMENT_CHANGE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly LegalAmendmentChangeSelectableField[];
 
@@ -56,7 +56,7 @@ export const LEGAL_AMENDMENT_CHANGE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_AMENDMENT_CHANGE_EDITABLE_FIELDS = ['amendmentId', 'artifactChecksum', 'artifactId', 'confidence', 'isCurrent', 'kind', 'licence', 'method', 'newText', 'previousText', 'provisionId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalAmendmentChangeKey[];
+export const LEGAL_AMENDMENT_CHANGE_EDITABLE_FIELDS = ['amendmentId', 'isCurrent', 'kind', 'newText', 'previousText', 'provisionId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalAmendmentChangeKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

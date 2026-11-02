@@ -40,7 +40,7 @@ export const LEGAL_PROVISION_SORTABLE_FIELDS = ['code', 'createdAt', 'sortOrder'
 
 export const LEGAL_PROVISION_SEARCHABLE_FIELDS = ['citation', 'code', 'heading', ] as const satisfies readonly LegalProvisionKey[];
 
-export const LEGAL_PROVISION_FILTERABLE_FIELDS = ['citation', 'code', 'heading', 'id', 'instrumentId', 'isCurrent', 'kind', 'method', 'parentId', 'previousVersionId', 'verificationState', 'version', ] as const satisfies readonly LegalProvisionKey[];
+export const LEGAL_PROVISION_FILTERABLE_FIELDS = ['citation', 'code', 'heading', 'id', 'instrumentId', 'isCurrent', 'kind', 'parentId', 'previousVersionId', 'version', ] as const satisfies readonly LegalProvisionKey[];
 
 export const LEGAL_PROVISION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly LegalProvisionKey[];
 
@@ -48,7 +48,7 @@ export const LEGAL_PROVISION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'val
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_PROVISION_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'citation', 'code', 'confidence', 'content', 'createdAt', 'heading', 'id', 'instrumentId', 'isCurrent', 'kind', 'licence', 'method', 'parentId', 'previousVersionId', 'retrievedAt', 'sortOrder', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalProvisionKey[];
+export const LEGAL_PROVISION_SELECTABLE_FIELDS = ['citation', 'code', 'content', 'createdAt', 'heading', 'id', 'instrumentId', 'isCurrent', 'kind', 'parentId', 'previousVersionId', 'sortOrder', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalProvisionKey[];
 
 export const LEGAL_PROVISION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly LegalProvisionSelectableField[];
 
@@ -56,7 +56,7 @@ export const LEGAL_PROVISION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as co
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const LEGAL_PROVISION_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'citation', 'code', 'confidence', 'content', 'heading', 'instrumentId', 'isCurrent', 'kind', 'licence', 'method', 'parentId', 'previousVersionId', 'retrievedAt', 'sortOrder', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LegalProvisionKey[];
+export const LEGAL_PROVISION_EDITABLE_FIELDS = ['citation', 'code', 'content', 'heading', 'instrumentId', 'isCurrent', 'kind', 'parentId', 'previousVersionId', 'sortOrder', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LegalProvisionKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

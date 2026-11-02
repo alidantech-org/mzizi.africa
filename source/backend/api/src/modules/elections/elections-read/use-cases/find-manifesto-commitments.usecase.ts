@@ -9,11 +9,9 @@ import type { ManifestoCommitmentDto } from '#/modules/elections/dto/manifesto-c
 import type { ManifestoCommitmentsListResponseDto } from '#/modules/elections/dto/manifesto-commitments-list-response.dto';
 import type { ManifestoDto } from '#/modules/elections/dto/manifesto.dto';
 import type { SeatDto } from '#/modules/elections/dto/seat.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
 import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
@@ -37,30 +35,19 @@ export class FindManifestoCommitmentsUseCase {
 
   private toReadModel(entity: ManifestoCommitmentEntity): ManifestoCommitmentPublicDto {
     return {
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     id: entity.id,
     isCurrent: entity.isCurrent,
-    licence: entity.licence,
     manifestoId: entity.manifestoId,
-    method: entity.method,
     parentId: entity.parentId,
-    retrievedAt: entity.retrievedAt,
     sortOrder: entity.sortOrder,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     text: entity.text,
-    toolOrModel: entity.toolOrModel,
     topicId: entity.topicId,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as ManifestoCommitmentPublicDto;
   }

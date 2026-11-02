@@ -40,7 +40,7 @@ export const LOAN_REPAYMENT_SORTABLE_FIELDS = ['createdAt', 'paidOn', 'updatedAt
 
 export const LOAN_REPAYMENT_SEARCHABLE_FIELDS = [] as const satisfies readonly LoanRepaymentKey[];
 
-export const LOAN_REPAYMENT_FILTERABLE_FIELDS = ['id', 'isCurrent', 'ledgerEntryId', 'loanId', 'method', 'verificationState', 'version', ] as const satisfies readonly LoanRepaymentKey[];
+export const LOAN_REPAYMENT_FILTERABLE_FIELDS = ['id', 'isCurrent', 'ledgerEntryId', 'loanId', 'version', ] as const satisfies readonly LoanRepaymentKey[];
 
 export const LOAN_REPAYMENT_DATE_RANGE_FIELDS = ['createdAt', 'paidOn', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly LoanRepaymentKey[];
 
@@ -48,7 +48,7 @@ export const LOAN_REPAYMENT_DATE_RANGE_FIELDS = ['createdAt', 'paidOn', 'updated
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const LOAN_REPAYMENT_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'createdAt', 'currencyCode', 'feesPaid', 'id', 'interestPaid', 'isCurrent', 'ledgerEntryId', 'licence', 'loanId', 'method', 'paidOn', 'principalPaid', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LoanRepaymentKey[];
+export const LOAN_REPAYMENT_SELECTABLE_FIELDS = ['createdAt', 'currencyCode', 'feesPaid', 'id', 'interestPaid', 'isCurrent', 'ledgerEntryId', 'loanId', 'paidOn', 'principalPaid', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LoanRepaymentKey[];
 
 export const LOAN_REPAYMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly LoanRepaymentSelectableField[];
 
@@ -56,7 +56,7 @@ export const LOAN_REPAYMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as con
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const LOAN_REPAYMENT_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'confidence', 'currencyCode', 'feesPaid', 'interestPaid', 'isCurrent', 'ledgerEntryId', 'licence', 'loanId', 'method', 'paidOn', 'principalPaid', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly LoanRepaymentKey[];
+export const LOAN_REPAYMENT_EDITABLE_FIELDS = ['currencyCode', 'feesPaid', 'interestPaid', 'isCurrent', 'ledgerEntryId', 'loanId', 'paidOn', 'principalPaid', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly LoanRepaymentKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

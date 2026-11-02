@@ -15,7 +15,8 @@ Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/typ
 
 ## Contract rules
 
-- Every claim-bearing entity extends `EvidencedEntity` (provenance, verification) over `HistoricalEntity` (valid time) over `BaseEntity` (identity and record time).
+- Domain entities extend `HistoricalEntity` (valid time) over `BaseEntity` (identity, record time, version); system schemas (`audit`, `source`, `filesystem`, `identity`) extend `BaseEntity`. Provenance and verification are never columns: the `source` schema points at records (`.docs/docs/SOURCING_DESIGN.md`).
+- No relation crosses a schema; other schemas are referenced by plain id.
 - Business codes are hierarchical and lowercase, such as `ke/nairobi/westlands`.
 - Levels, institution types, election types, selection methods and fiscal stages are `ClassificationRecord` rows scoped by jurisdiction, never enums or columns. Contracts never name a country.
 - Strings with a maximum length become `varchar(max)`; leave out the maximum for unbounded text such as GeoJSON.
@@ -60,6 +61,7 @@ Found while generating the full model; the contract audit enforces the first thr
 - **Reserved schema names.** A schema named `Contract` collides with the generated test helper `contractExample`; the procurement schema is `ProcurementContract`.
 - **Varchar limits.** A string maximum becomes `varchar(max)`; PostgreSQL caps that at 10485760, so unbounded text (GeoJSON, legal provisions) omits the maximum.
 - **Database module wiring.** `AppModule` only imports `DatabaseModule` once some operation reads an entity through a projection, which is why every entity gets a read surface (`readSurface`).
+- **Removed or renamed contracts leave stale files** (entities, DTOs, types, scaffolds); `generated:stale` finds stale entities, which would otherwise create phantom tables.
 - **Renames leave stale files.** Renaming a contract does not delete its old generated files or the old project-owned scaffolds (use cases, service implementation methods). Delete the old files, then add the new methods to the `*.service.impl.ts`; the typecheck that runs after generation lists what is left.
 - **Project-owned scaffolds.** Use cases, `*.service.impl.ts`, `database.module.ts` and `vitest.config.ts` are created once and never regenerated. A new operation needs a method in the service implementation by hand.
 
@@ -89,6 +91,6 @@ Without `TEST_DATABASE_URL` the PostgreSQL suites are skipped and the generated 
 | Command (in `dryv/`) | What it guards |
 | --- | --- |
 | `bun run check` | contracts typecheck, contract audit (including database naming), Dryv doctor and compile, access rules current, API boundary |
-| `bun run generated:check` | generated output is current (needs the Dryv API) |
+| `bun run generated:check` | generated output is current and no stale entities remain (needs the Dryv API) |
 | `bun run access:export` | re-export policies and target kinds after changing operations or entities |
 | `bun run adopt:list` | give newly scaffolded Find use cases the shared paging and filter helper |

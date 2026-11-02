@@ -40,7 +40,7 @@ export const OBSERVATION_SORTABLE_FIELDS = ['createdAt', 'numericValue', 'update
 
 export const OBSERVATION_SEARCHABLE_FIELDS = [] as const satisfies readonly ObservationKey[];
 
-export const OBSERVATION_FILTERABLE_FIELDS = ['columnId', 'confidenceLevel', 'geoUnitId', 'id', 'indicatorId', 'isCurrent', 'method', 'numericValue', 'periodId', 'tableId', 'verificationState', 'version', ] as const satisfies readonly ObservationKey[];
+export const OBSERVATION_FILTERABLE_FIELDS = ['columnId', 'confidenceLevel', 'geoUnitId', 'id', 'indicatorId', 'isCurrent', 'numericValue', 'periodId', 'tableId', 'version', ] as const satisfies readonly ObservationKey[];
 
 export const OBSERVATION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly ObservationKey[];
 
@@ -48,7 +48,7 @@ export const OBSERVATION_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFr
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const OBSERVATION_SELECTABLE_FIELDS = ['artifactChecksum', 'artifactId', 'columnId', 'confidence', 'confidenceLevel', 'createdAt', 'geoUnitId', 'id', 'indicatorId', 'isCurrent', 'licence', 'method', 'numericValue', 'periodId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'tableId', 'textValue', 'toolOrModel', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ObservationKey[];
+export const OBSERVATION_SELECTABLE_FIELDS = ['columnId', 'confidenceLevel', 'createdAt', 'geoUnitId', 'id', 'indicatorId', 'isCurrent', 'numericValue', 'periodId', 'tableId', 'textValue', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ObservationKey[];
 
 export const OBSERVATION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ObservationSelectableField[];
 
@@ -56,7 +56,7 @@ export const OBSERVATION_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const 
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const OBSERVATION_EDITABLE_FIELDS = ['artifactChecksum', 'artifactId', 'columnId', 'confidence', 'confidenceLevel', 'geoUnitId', 'indicatorId', 'isCurrent', 'licence', 'method', 'numericValue', 'periodId', 'retrievedAt', 'sourceName', 'sourceReference', 'sourceUrl', 'tableId', 'textValue', 'toolOrModel', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'verificationState', ] as const satisfies readonly ObservationKey[];
+export const OBSERVATION_EDITABLE_FIELDS = ['columnId', 'confidenceLevel', 'geoUnitId', 'indicatorId', 'isCurrent', 'numericValue', 'periodId', 'tableId', 'textValue', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ObservationKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

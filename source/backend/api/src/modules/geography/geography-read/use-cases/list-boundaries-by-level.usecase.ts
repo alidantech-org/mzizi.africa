@@ -15,7 +15,7 @@ export class ListBoundariesByLevelUseCase {
   async execute(input: GeographyBoundariesQueryDto): Promise<GeographyFeatureResponseDto> {
     const rows: Row[] = await this.db.query(
       `SELECT u.id, u.code, u.name, v.geometry, v.label_point
-         FROM geo.units u
+         FROM geography.units u
          JOIN reference.classifications c ON c.id = u.level_id
          JOIN reference.jurisdictions j ON j.id = u.jurisdiction_id
          JOIN LATERAL (${CURRENT_VERIFIED_BOUNDARY_SQL}) v ON true

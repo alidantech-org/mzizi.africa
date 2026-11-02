@@ -6,13 +6,10 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { PartyStatus } from '#/types/political/party-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
-import type { ProvenanceMethod } from '#/types/shared/provenance-method.enum';
-import type { VerificationState } from '#/types/shared/verification-state.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as JurisdictionTypes from '#/modules/reference/types/jurisdiction.types';
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -36,30 +33,18 @@ import type {
 /** Party */
 export interface IParty extends B.IBase {
   abbreviation: string | null;
-  artifactChecksum: string | null;
-  artifactId: string | null;
   code: string;
-  confidence: number | null;
   isCurrent: boolean;
   jurisdictionId: string;
-  licence: string | null;
-  method: ProvenanceMethod;
   name: string;
   registryAuthorityId: string | null;
   registryIdentifier: string | null;
-  retrievedAt: Date | null;
-  sourceName: string;
-  sourceReference: string | null;
-  sourceUrl: string | null;
   status: PartyStatus;
   symbolUrl: string | null;
-  toolOrModel: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
-  verificationState: VerificationState;
-  readonly jurisdiction?: JurisdictionTypes.IJurisdiction;
 }
 
 // ----------------------------------
@@ -140,7 +125,6 @@ export type IPartyAsManyRelationQuery = Q.IAsManyRelationQuery<IParty, PartySele
 // ----------------------------------
 
 export interface IPartyRelationMap extends Record<PartyRelationKey, unknown> {
-  jurisdiction: JurisdictionTypes.IJurisdictionAsOneRelationQuery;
 }
 
 // ----------------------------------

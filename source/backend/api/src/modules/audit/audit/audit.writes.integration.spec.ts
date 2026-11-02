@@ -65,7 +65,7 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
     await admin.initialize();
     await synchronizeDomainSchemas(admin);
     const jurisdiction = await admin.getRepository(entities.find((e) => e.name === "JurisdictionEntity") as never).save({
-      code: "ke", name: "Kenya", kind: "modern_state", sourceName: "Test", method: "curated", verificationState: "verified", isCurrent: true, version: 1, createdAt: new Date(), updatedAt: new Date(),
+      code: "ke", name: "Kenya", kind: "modern_state", isCurrent: true, version: 1, createdAt: new Date(), updatedAt: new Date(),
     } as never);
     jurisdictionId = (jurisdiction as unknown as { id: string }).id;
 
@@ -155,18 +155,17 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
 
   describe("evidence", () => {
     const evidence = (extra: Record<string, unknown> = {}) => ({
-      targetKind: "reference.jurisdictions", targetId: jurisdictionId, artifactId: "33333333-cccc-4ccc-8ccc-333333333333",
-      artifactChecksum: "a".repeat(64), mediaType: "application/pdf", sizeBytes: 1024, note: "Gazette notice", ...extra,
+      targetKind: "reference.jurisdictions", targetId: jurisdictionId, fileId: "33333333-cccc-4ccc-8ccc-333333333333", note: "Gazette notice", ...extra,
     });
 
-    it("records a reference to a file artifact without storing any bytes", async () => {
+    it("records a reference to a file in the filesystem schema without storing any bytes", async () => {
       const response = await post("/v1/audit/evidence", evidence(), await sign(CONTRIBUTOR, ["contributor"]));
       expect(response.status).toBe(201);
-      expect(response.body.evidence).toMatchObject({ actorId: CONTRIBUTOR, artifactChecksum: "a".repeat(64), sizeBytes: 1024 });
+      expect(response.body.evidence).toMatchObject({ actorId: CONTRIBUTOR, fileId: "33333333-cccc-4ccc-8ccc-333333333333" });
     });
 
-    it("rejects a malformed checksum", async () => {
-      const response = await post("/v1/audit/evidence", evidence({ artifactChecksum: "not-a-checksum" }), await sign(CONTRIBUTOR, ["contributor"]));
+    it("rejects a file id that is not a uuid", async () => {
+      const response = await post("/v1/audit/evidence", evidence({ fileId: "not-a-uuid" }), await sign(CONTRIBUTOR, ["contributor"]));
       expect(response.status).toBeGreaterThanOrEqual(400);
       expect(response.status).toBeLessThan(500);
     });
@@ -181,8 +180,8 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
     });
 
     it("never changes canonical data: the jurisdiction is untouched after all writes", async () => {
-      const [row] = await admin.query(`SELECT name, verification_state FROM reference.jurisdictions WHERE id = $1`, [jurisdictionId]);
-      expect(row).toEqual({ name: "Kenya", verification_state: "verified" });
+      const [row] = await admin.query(`SELECT name, is_current FROM reference.jurisdictions WHERE id = $1`, [jurisdictionId]);
+      expect(row).toEqual({ name: "Kenya", is_current: true });
     });
   });
 });

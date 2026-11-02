@@ -41,9 +41,6 @@ import {
 
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
 import { BaseEntityDto } from "#/modules/shared/dto/base-entity.dto.ts";
-import type { MediaType } from "#/types/audit/media-type.type.ts";
-import type { SizeBytes } from "#/types/audit/size-bytes.type.ts";
-import type { Checksum } from "#/types/shared/checksum.type.ts";
 import type { Description } from "#/types/shared/description.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { TargetKind } from "#/types/shared/target-kind.type.ts";
@@ -59,36 +56,22 @@ export class EvidenceReferenceDto {
   @IsUUID()
   actorId!: Id;
 
-  @IsString()
-  @MinLength(64)
-  @MaxLength(64)
-  artifactChecksum!: Checksum;
-
-  @IsString()
-  @IsUUID()
-  artifactId!: Id;
-
   @IsISO8601({})
   createdAt!: DateTime;
 
   @IsString()
   @IsUUID()
-  id!: Id;
+  fileId!: Id;
 
   @IsString()
-  @MinLength(3)
-  @MaxLength(200)
-  mediaType!: MediaType;
+  @IsUUID()
+  id!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.note !== null)
   @IsString()
   @MaxLength(4000)
   note?: Description | null;
-
-  @IsInt()
-  @Min(0)
-  sizeBytes!: SizeBytes;
 
   @IsString()
   @IsUUID()

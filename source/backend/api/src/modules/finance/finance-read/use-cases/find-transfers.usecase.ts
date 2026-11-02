@@ -6,11 +6,9 @@ import type { TransferListQueryDto } from '#/modules/finance/dto/transfer-list-q
 import type { TransferPublicDto } from '#/modules/finance/dto/transfer-public.dto';
 import type { TransferDto } from '#/modules/finance/dto/transfer.dto';
 import type { TransfersListResponseDto } from '#/modules/finance/dto/transfers-list-response.dto';
-import type { JurisdictionDto } from '#/modules/reference/dto/jurisdiction.dto';
 import type { ApiErrorDto } from '#/modules/shared/dto/api-error.dto';
 import type { BaseEntityDto } from '#/modules/shared/dto/base-entity.dto';
 import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
-import type { EvidencedEntityDto } from '#/modules/shared/dto/evidenced-entity.dto';
 import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity.dto';
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
@@ -35,9 +33,6 @@ export class FindTransfersUseCase {
   private toReadModel(entity: TransferEntity): TransferPublicDto {
     return {
     amount: entity.amount,
-    artifactChecksum: entity.artifactChecksum,
-    artifactId: entity.artifactId,
-    confidence: entity.confidence,
     createdAt: entity.createdAt,
     currencyCode: entity.currencyCode,
     fiscalYearId: entity.fiscalYearId,
@@ -45,23 +40,15 @@ export class FindTransfersUseCase {
     id: entity.id,
     isCurrent: entity.isCurrent,
     legalBasisId: entity.legalBasisId,
-    licence: entity.licence,
-    method: entity.method,
     restriction: entity.restriction,
-    retrievedAt: entity.retrievedAt,
-    sourceName: entity.sourceName,
-    sourceReference: entity.sourceReference,
-    sourceUrl: entity.sourceUrl,
     status: entity.status,
     toUnitId: entity.toUnitId,
-    toolOrModel: entity.toolOrModel,
     transferTypeId: entity.transferTypeId,
     updatedAt: entity.updatedAt,
     validFrom: entity.validFrom,
     validFromPrecision: entity.validFromPrecision,
     validTo: entity.validTo,
     validToPrecision: entity.validToPrecision,
-    verificationState: entity.verificationState,
     version: entity.version,
     } as unknown as TransferPublicDto;
   }

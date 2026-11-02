@@ -20,12 +20,6 @@ import { officeRuleListQueryExample } from "#/modules/governance/dto/office-rule
 import { officeRuleResponseExample } from "#/modules/governance/dto/office-rule-response.dto.example.ts";
 import { officeRulesListResponseExample } from "#/modules/governance/dto/office-rules-list-response.dto.example.ts";
 import { officesListResponseExample } from "#/modules/governance/dto/offices-list-response.dto.example.ts";
-import { peopleListResponseExample } from "#/modules/governance/dto/people-list-response.dto.example.ts";
-import { personListQueryExample } from "#/modules/governance/dto/person-list-query.dto.example.ts";
-import { personNameListQueryExample } from "#/modules/governance/dto/person-name-list-query.dto.example.ts";
-import { personNameResponseExample } from "#/modules/governance/dto/person-name-response.dto.example.ts";
-import { personNamesListResponseExample } from "#/modules/governance/dto/person-names-list-response.dto.example.ts";
-import { personResponseExample } from "#/modules/governance/dto/person-response.dto.example.ts";
 import { selectionProcedureListQueryExample } from "#/modules/governance/dto/selection-procedure-list-query.dto.example.ts";
 import { selectionProcedureResponseExample } from "#/modules/governance/dto/selection-procedure-response.dto.example.ts";
 import { selectionProceduresListResponseExample } from "#/modules/governance/dto/selection-procedures-list-response.dto.example.ts";
@@ -62,8 +56,6 @@ const service = {
   findOfficeHolders: vi.fn(),
   findOfficeRules: vi.fn(),
   findOffices: vi.fn(),
-  findPeople: vi.fn(),
-  findPersonNames: vi.fn(),
   findSelectionProcedures: vi.fn(),
   findSelectionStages: vi.fn(),
   getGeographyGovernance: vi.fn(),
@@ -72,8 +64,6 @@ const service = {
   getOfficeById: vi.fn(),
   getOfficeHolderById: vi.fn(),
   getOfficeRuleById: vi.fn(),
-  getPersonById: vi.fn(),
-  getPersonNameById: vi.fn(),
   getSelectionProcedureById: vi.fn(),
   getSelectionStageById: vi.fn(),
 };
@@ -221,44 +211,6 @@ describe("GET /v1/governance/offices (findOffices)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.findOffices).toHaveBeenCalledTimes(1);
     expect(service.findOffices).toHaveBeenCalledWith(expect.anything());
-    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
-  });
-});
-
-describe("GET /v1/governance/people (findPeople)", () => {
-  it("passes a valid request to the service and answers with the contract status", async () => {
-    const sent: Sent = {
-        params: { },
-        query: { ...queryOf(personListQueryExample.valid()), },
-        headers: { },
-      };
-    const result = peopleListResponseExample.valid();
-    service.findPeople.mockResolvedValue(result);
-
-    const response = await send("GET", "/v1/governance/people", sent);
-
-    expect(response.status, await response.clone().text()).toBe(200);
-    expect(service.findPeople).toHaveBeenCalledTimes(1);
-    expect(service.findPeople).toHaveBeenCalledWith(expect.anything());
-    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
-  });
-});
-
-describe("GET /v1/governance/person-names (findPersonNames)", () => {
-  it("passes a valid request to the service and answers with the contract status", async () => {
-    const sent: Sent = {
-        params: { },
-        query: { ...queryOf(personNameListQueryExample.valid()), },
-        headers: { },
-      };
-    const result = personNamesListResponseExample.valid();
-    service.findPersonNames.mockResolvedValue(result);
-
-    const response = await send("GET", "/v1/governance/person-names", sent);
-
-    expect(response.status, await response.clone().text()).toBe(200);
-    expect(service.findPersonNames).toHaveBeenCalledTimes(1);
-    expect(service.findPersonNames).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -411,44 +363,6 @@ describe("GET /v1/governance/office-rules/{ruleId} (getOfficeRuleById)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getOfficeRuleById).toHaveBeenCalledTimes(1);
     expect(service.getOfficeRuleById).toHaveBeenCalledWith(expect.objectContaining({ ruleId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
-    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
-  });
-});
-
-describe("GET /v1/governance/people/{personId} (getPersonById)", () => {
-  it("passes a valid request to the service and answers with the contract status", async () => {
-    const sent: Sent = {
-        params: { "personId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
-        query: { },
-        headers: { },
-      };
-    const result = personResponseExample.valid();
-    service.getPersonById.mockResolvedValue(result);
-
-    const response = await send("GET", "/v1/governance/people/{personId}", sent);
-
-    expect(response.status, await response.clone().text()).toBe(200);
-    expect(service.getPersonById).toHaveBeenCalledTimes(1);
-    expect(service.getPersonById).toHaveBeenCalledWith(expect.objectContaining({ personId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
-    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
-  });
-});
-
-describe("GET /v1/governance/person-names/{personNameId} (getPersonNameById)", () => {
-  it("passes a valid request to the service and answers with the contract status", async () => {
-    const sent: Sent = {
-        params: { "personNameId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
-        query: { },
-        headers: { },
-      };
-    const result = personNameResponseExample.valid();
-    service.getPersonNameById.mockResolvedValue(result);
-
-    const response = await send("GET", "/v1/governance/person-names/{personNameId}", sent);
-
-    expect(response.status, await response.clone().text()).toBe(200);
-    expect(service.getPersonNameById).toHaveBeenCalledTimes(1);
-    expect(service.getPersonNameById).toHaveBeenCalledWith(expect.objectContaining({ personNameId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

@@ -14,6 +14,7 @@ import { FindSelectionProceduresUseCase } from "#/modules/governance/governance-
 import { FindSelectionStagesUseCase } from "#/modules/governance/governance-read/use-cases/find-selection-stages.usecase";
 import { FindClassificationRecordsUseCase } from "#/modules/reference/reference-read/use-cases/find-classification-records.usecase";
 import { FindJurisdictionsUseCase } from "#/modules/reference/reference-read/use-cases/find-jurisdictions.usecase";
+import { FindFormatsUseCase } from "#/modules/filesystem/filesystem-read/use-cases/find-formats.usecase";
 import { loadFixtures, readFixture } from "#/neutral/fixture-loader";
 
 /**
@@ -44,7 +45,8 @@ describe.skipIf(!adminUrl)("country-neutral model (Kenya and South Africa)", () 
     admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await admin.initialize();
     await synchronizeDomainSchemas(admin);
-    ids = await loadFixtures(admin, readFixture("kenya").rows);
+    ids = await loadFixtures(admin, readFixture("reference/media-formats").rows);
+    await loadFixtures(admin, readFixture("kenya").rows, ids);
     await loadFixtures(admin, readFixture("south-africa").rows, ids);
 
     await admin.query(`DO $$ BEGIN IF EXISTS (SELECT FROM pg_roles WHERE rolname = '${READER}') THEN DROP OWNED BY ${READER}; DROP ROLE ${READER}; END IF; END $$`);
@@ -62,6 +64,11 @@ describe.skipIf(!adminUrl)("country-neutral model (Kenya and South Africa)", () 
     await admin?.query(`DROP OWNED BY ${READER}`);
     await admin?.query(`DROP ROLE IF EXISTS ${READER}`);
     await admin?.destroy();
+  });
+
+  it("seeds media formats from the archived file types", async () => {
+    const formats = (await new FindFormatsUseCase(reader).execute({ code: "pdf" } as never)) as never as Page<"formats">;
+    expect(formats.formats[0]).toMatchObject({ mimeType: "application/pdf", category: "document" });
   });
 
   it("holds both countries as jurisdictions in one schema", async () => {
