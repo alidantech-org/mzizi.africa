@@ -1,5 +1,5 @@
 ---
-{id: TSK-2107BCCA74E8,name: "Shared capability contracts: place tree, occupancy, expectation and contact points",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:59:35.586Z,updated_at: 2026-11-02T21:37:55.122Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T21:37:55.122Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-2107BCCA74E8/1793655475125-start,started_at: 2026-11-02T21:37:55.712Z}]}}}
+{id: TSK-2107BCCA74E8,name: "Shared capability contracts: place tree, occupancy, expectation and contact points",type: task,status: completed,priority: medium,created_at: 2026-11-02T20:59:35.586Z,updated_at: 2026-11-02T22:29:42.333Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T21:37:55.122Z},{from: in-progress,to: completed,at: 2026-11-02T22:29:42.333Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-2107BCCA74E8/1793655475125-start,started_at: 2026-11-02T21:37:55.712Z,end_ref: refs/tracking/TSK-2107BCCA74E8/1793658582335-end,ended_at: 2026-11-02T22:29:42.333Z,summary: {files: 283,insertions: 17609,deletions: 108}}]}}}
 ---
 
 # Shared capability contracts: place tree, occupancy, expectation and contact points
@@ -15,4 +15,4 @@ All nine assessment decisions were accepted on 3 November 2026. The place tree i
 - [x] Write the migration with indexes and enum types, and register the new target kinds for attributions and verifications.
 - [x] Add integrity rules: every occupancy target exists, no place without a kind and status, no expectation containing an address.
 - [x] Add engine tests that express all eight scenarios in the assessment (Governor with unknown building, IEBC offices, funded private school, county hospital, shared compound, many buildings, a move with history, a multi-tenant building).
-- [ ] Add read endpoints and contract documentation, and update `.docs/docs/DOMAINS.md`.
+- [x] Add read endpoints and contract documentation, and update `.docs/docs/DOMAINS.md`.
