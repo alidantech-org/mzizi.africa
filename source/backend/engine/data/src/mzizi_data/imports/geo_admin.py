@@ -73,14 +73,20 @@ def build_units(features_by_level: dict[int, list[dict]], country_code: str, cou
                 out.append(Unit(0, sid, country_name, country_code, None, feat["geometry"]))
                 continue
             point = geom.representative_point()
-            idx = [i for i in tree.query(point) if parent_shapes[i].contains(point)]
+            # The parent is the polygon holding most of the shape, not the one under its representative point: the
+            # simplified shapes of neighbours overlap along their borders, and a point can fall in the wrong one.
+            hits = [(parent_shapes[i].intersection(geom).area, i) for i in tree.query(geom) if parent_shapes[i].intersects(geom)]
             note = None
-            if idx:
-                parent = parents[idx[0]]
+            if hits and max(hits)[0] > 0:
+                parent = parents[max(hits)[1]]
+                under_point = [i for i in tree.query(point) if parent_shapes[i].contains(point)]
+                if under_point and parents[under_point[0]] is not parent:
+                    note = f"ADM{level} {name}: most of the shape lies in {parent.name}, not in {parents[under_point[0]].name} under its representative point; {parent.name} used"
+                    problems.append(note)
             else:
                 nearest = tree.nearest(point)
                 parent = parents[int(nearest)]
-                note = f"ADM{level} {name}: representative point is in no ADM{level - 1} polygon; nearest parent {parent.name} used"
+                note = f"ADM{level} {name}: shape meets no ADM{level - 1} polygon; nearest parent {parent.name} used"
                 problems.append(note)
             base = f"{parent.code}/{slug(name)}"
             twin = taken.get(base)
