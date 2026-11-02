@@ -4,7 +4,7 @@
 
 # Legacy model inventory and disposition
 
-Produced by task `TSK-4B83AC17019D`. Source: `source/backend/api/app/routes/*/models`, `_archives`, seeds under `*/_seed`, and `alembic/versions`. Findings come from reading code and seeds; no queries or migrations were run, so items marked "verify" are unconfirmed. Dispositions are **proposals** framed by `COUNTRY_NEUTRAL_GOVERNANCE_MODEL_RESEARCH.md`; none authorises schema or API change.
+Produced by task `TSK-4B83AC17019D`. Source: `source/backend/api-legacy/app/routes/*/models`, `_archives`, seeds under `*/_seed`, and `alembic/versions`. Findings come from reading code and seeds; no queries or migrations were run, so items marked "verify" are unconfirmed. Dispositions are **proposals** framed by `COUNTRY_NEUTRAL_GOVERNANCE_MODEL_RESEARCH.md`; none authorises schema or API change.
 
 Disposition vocabulary: **reuse**, **extend**, **split**, **country-config** (becomes jurisdiction-scoped records), **replace**, **investigate**.
 

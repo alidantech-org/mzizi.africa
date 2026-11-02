@@ -16,3 +16,7 @@ Date: 2026-11-02. Decided by the user after the `source/` restructure.
 - The NestJS scaffold must not be created until the Python code has been inventoried (task TSK-4B83AC17019D) and a layout for coexistence or replacement is agreed.
 - Generated code is output into the NestJS app; only service implementations are hand-written.
 - Cleaning, ingestion and migrations stay out of the API, per the hard boundaries in `AGENTS.md`.
+
+## Coexistence layout (2026-11-02)
+
+The Python service was moved with `git mv` from `source/backend/api` to `source/backend/api-legacy`, so `source/backend/api` holds only the NestJS app. History is preserved. The legacy folder is removed only after `.docs/docs/MIGRATION.md` accounts for every responsibility.

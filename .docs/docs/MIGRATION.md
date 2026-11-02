@@ -8,7 +8,7 @@
 
 The repository is consolidated, but the architecture is not yet consolidated around the final Mzizi system boundaries.
 
-`source/backend/api` currently contains the inherited Python political-governance backend. It is valuable because it contains domain thinking, SQLAlchemy models, Alembic migrations, seed data, file routes, scraping/extraction utilities and early API behavior.
+`source/backend/api-legacy` contains the inherited Python political-governance backend. It is valuable because it contains domain thinking, SQLAlchemy models, Alembic migrations, seed data, file routes, scraping/extraction utilities and early API behavior.
 
 It should be treated as **source material to decompose**, not as the long-term backend shape.
 
@@ -75,8 +75,8 @@ No old module should be deleted simply because a new directory exists.
 | Alembic migrations | `source/backend/db-engine` migration source |
 | Seed scripts/data | `source/backend/db-engine` after classification by seed type |
 | Data repair/backfill scripts | `source/backend/db-engine` |
-| Public/query HTTP endpoints | future NestJS `source/backend/api` |
-| Dashboard workflow endpoints | future NestJS `source/backend/api` |
+| Public/query HTTP endpoints | NestJS `source/backend/api` |
+| Dashboard workflow endpoints | NestJS `source/backend/api` |
 | Authentication/authorization | future NestJS API / platform auth design |
 
 ## Phase 1 — Freeze architectural expansion inside FastAPI

@@ -369,7 +369,7 @@ The canonical model should support:
 
 **NestJS** is the target application API technology.
 
-The existing Python FastAPI code currently in `source/backend/api` is legacy/consolidated source material and should be decomposed. It should not determine the long-term service boundary.
+The existing Python FastAPI code, now in `source/backend/api-legacy`, is legacy/consolidated source material and should be decomposed. It should not determine the long-term service boundary.
 
 ## Purpose
 

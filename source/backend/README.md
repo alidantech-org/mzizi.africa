@@ -15,7 +15,7 @@ source/backend/
 
 ## Current transition state
 
-`source/backend/api` currently contains the inherited Python FastAPI political-governance backend. It is valuable migration source material but is **not** the target API architecture.
+`source/backend/api-legacy` contains the inherited Python FastAPI political-governance backend. It is valuable migration source material but is **not** the target API architecture.
 
 Useful responsibilities from that service will be decomposed according to `.docs/MIGRATION.md`.
 

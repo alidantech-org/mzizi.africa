@@ -10,7 +10,8 @@
 | `source/apps/web` | Research dashboard (formerly `apps/dashboard`): research and evidence stewardship workflows. |
 | `source/apps/mobile` | Flutter mobile application and embedded Cesium map. |
 | `.docs/docs/geography-api-contract.md` | Mobile geography API contract. |
-| `source/backend/api` | Legacy Python/FastAPI behavior, schema, migrations, seeds, and migration input. |
+| `source/backend/api` | NestJS product API (read-mostly). |
+| `source/backend/api-legacy` | Legacy Python/FastAPI behavior, schema, migrations, seeds, and migration input. |
 | `source/backend/data-engine` | Target owner for discovery, ingestion, and extraction. |
 | `source/backend/db-engine` | Target owner for migrations, seeds, imports, and database lifecycle. |
 | `source/backend/files` | Target owner for raw and derived evidence artifact custody. |

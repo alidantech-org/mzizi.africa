@@ -51,7 +51,7 @@ Understand what exists before replacing it.
 
 ## Work
 
-- inventory all models in `source/backend/api`;
+- inventory all models in `source/backend/api-legacy`;
 - inventory Alembic migrations;
 - inventory seed datasets/scripts;
 - inventory scraper/extractor code;
@@ -277,7 +277,7 @@ Replace FastAPI as the product API boundary.
 
 ## Build
 
-A new NestJS service at `source/backend/api` after the old Python code has been moved/archived safely.
+The NestJS service lives at `source/backend/api`; the old Python code was moved to `source/backend/api-legacy`.
 
 Initial modules should reflect canonical use cases, not legacy folder names blindly.
 

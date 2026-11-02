@@ -42,7 +42,7 @@ Do not place a responsibility in the nearest convenient service merely because c
 
 ## 3. Treat the current Python API as migration source material
 
-`source/backend/api` contains valuable domain design, schema work, migrations, seeds and extraction-related code inherited from the previous political-governance project.
+`source/backend/api-legacy` contains valuable domain design, schema work, migrations, seeds and extraction-related code inherited from the previous political-governance project.
 
 Do not deepen it as the long-term public API unless explicitly instructed.
 
