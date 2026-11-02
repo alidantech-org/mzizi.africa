@@ -52,6 +52,10 @@ How the current consolidated code should be decomposed without losing useful wor
 
 A build sequence that prioritizes platform foundations before product surface expansion.
 
+### Legal, privacy and source governance
+
+- [Legality, Safety and Compliance](LEGALITY_SAFETY_AND_COMPLIANCE.md) defines Mzizi's cross-jurisdiction baseline for public-source discovery, automated collection, personal data, copyright/licensing, AI-agent boundaries, source approval, cross-border processing and operational safeguards. It is a policy baseline requiring jurisdiction-specific legal review, not a legal opinion.
+
 ### Governance model research and capability audit
 
 - [Country-Neutral Governance Model — Comparative Research and Polifin Design Review](audits/COUNTRY_NEUTRAL_GOVERNANCE_MODEL_RESEARCH.md) records the Mzizi vision for a universal governance core with complete Kenya support, comparative stress tests across Africa, Asia, Europe and the Americas, source-level Polifin model assumptions, a preliminary model disposition, an auditability contract and a phased design/migration plan. It is a research/design proposal, not an approved implementation or migration.
@@ -88,6 +92,7 @@ When an architectural boundary, domain responsibility or core data-lifecycle rul
 ```text
 .docs/docs/
 ├── README.md             # Documentation entry point
+├── LEGALITY_SAFETY_AND_COMPLIANCE.md # Jurisdiction-aware legal and collection policy
 ├── WHY.md                # Common purpose and reasons
 ├── GOALS.md              # Goals, success criteria and non-goals
 ├── STORY.md              # Product narrative and user value
