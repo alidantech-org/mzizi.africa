@@ -1,5 +1,5 @@
 ---
-{id: TSK-AA0A323E646D,name: "Governance generalisation: relationships, office scope, units and entity link",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:59:35.795Z,updated_at: 2026-11-02T21:34:17.251Z,order: 2048,depends_on: [TSK-2107BCCA74E8]}
+{id: TSK-AA0A323E646D,name: "Governance generalisation: relationships, office scope, units and entity link",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:59:35.795Z,updated_at: 2026-11-02T22:32:12.465Z,order: 2048,depends_on: [TSK-2107BCCA74E8],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:32:12.465Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-AA0A323E646D/1793658732467-start,started_at: 2026-11-02T22:32:13.008Z}]}}}
 ---
 
 # Governance generalisation: relationships, office scope, units and entity link

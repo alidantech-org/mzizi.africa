@@ -1,5 +1,5 @@
 ---
-{id: TSK-20EFD30E52E3,name: "Geography measurements: area, perimeter, label point and size of every unit",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:51.570Z,updated_at: 2026-11-02T21:36:49.342Z,order: 3072,depends_on: [TSK-1F02AF48DAD0]}
+{id: TSK-20EFD30E52E3,name: "Geography measurements: area, perimeter, label point and size of every unit",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:51.570Z,updated_at: 2026-11-02T22:33:14.749Z,order: 3072,depends_on: [TSK-1F02AF48DAD0],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:33:14.749Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-20EFD30E52E3/1793658794751-start,started_at: 2026-11-02T22:33:15.318Z}]}}}
 ---
 
 # Geography measurements: area, perimeter, label point and size of every unit
