@@ -7,6 +7,12 @@ export const fiscalYearListQueryExample: ContractExample = contractExample({
   name: "FiscalYearListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "jurisdictionId",
       optional: true,
       nullable: false,

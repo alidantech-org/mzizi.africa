@@ -7,6 +7,12 @@ export const indicatorColumnListQueryExample: ContractExample = contractExample(
   name: "IndicatorColumnListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "indicatorId",
       optional: true,
       nullable: false,

@@ -13,6 +13,12 @@ export const indicatorListQueryExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "limit",
       optional: true,
       nullable: false,

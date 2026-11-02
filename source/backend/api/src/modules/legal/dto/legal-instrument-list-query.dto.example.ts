@@ -8,6 +8,12 @@ export const legalInstrumentListQueryExample: ContractExample = contractExample(
   name: "LegalInstrumentListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "jurisdictionId",
       optional: true,
       nullable: false,

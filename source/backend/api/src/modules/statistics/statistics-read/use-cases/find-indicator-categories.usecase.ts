@@ -13,6 +13,7 @@ import type { IndicatorCategoryListQueryDto } from '#/modules/statistics/dto/ind
 import type { IndicatorCategoryPublicDto } from '#/modules/statistics/dto/indicator-category-public.dto';
 import type { IndicatorCategoryDto } from '#/modules/statistics/dto/indicator-category.dto';
 import { IndicatorCategoryEntity } from '#/modules/statistics/entities/indicator-category.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List indicator categories.
@@ -58,23 +59,7 @@ export class FindIndicatorCategoriesUseCase {
   }
 
   async execute(input: IndicatorCategoryListQueryDto): Promise<IndicatorCategoriesListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.parentId !== undefined) where.parentId = input.parentId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<IndicatorCategoryEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      categories: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as IndicatorCategoriesListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { categories: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as IndicatorCategoriesListResponseDto;
   }
 }

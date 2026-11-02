@@ -1,4 +1,5 @@
 
+import type { GeographyGovernanceResponseDto } from "#/modules/governance/dto/geography-governance-response.dto.ts";
 import type { InstitutionListQueryDto } from "#/modules/governance/dto/institution-list-query.dto.ts";
 import type { InstitutionRelationshipListQueryDto } from "#/modules/governance/dto/institution-relationship-list-query.dto.ts";
 import type { InstitutionRelationshipResponseDto } from "#/modules/governance/dto/institution-relationship-response.dto.ts";
@@ -41,6 +42,7 @@ export abstract class GovernanceGovernanceReadService {
   abstract findPersonNames(input: PersonNameListQueryDto): Promise<PersonNamesListResponseDto>;
   abstract findSelectionProcedures(input: SelectionProcedureListQueryDto): Promise<SelectionProceduresListResponseDto>;
   abstract findSelectionStages(input: SelectionStageListQueryDto): Promise<SelectionStagesListResponseDto>;
+  abstract getGeographyGovernance(input: { entityId: string }): Promise<GeographyGovernanceResponseDto>;
   abstract getInstitutionById(input: { institutionId: string }): Promise<InstitutionResponseDto>;
   abstract getInstitutionRelationshipById(input: { relationshipId: string }): Promise<InstitutionRelationshipResponseDto>;
   abstract getOfficeById(input: { officeId: string }): Promise<OfficeResponseDto>;

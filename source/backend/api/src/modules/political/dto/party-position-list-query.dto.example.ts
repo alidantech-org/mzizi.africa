@@ -7,6 +7,12 @@ export const partyPositionListQueryExample: ContractExample = contractExample({
   name: "PartyPositionListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "limit",
       optional: true,
       nullable: false,

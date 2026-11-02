@@ -8,6 +8,12 @@ export const eventListQueryExample: ContractExample = contractExample({
   name: "EventListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "jurisdictionId",
       optional: true,
       nullable: false,

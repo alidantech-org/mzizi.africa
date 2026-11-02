@@ -61,6 +61,9 @@ export class InstitutionEntity {
   @Column({ name: "description", type: "varchar", length: 4000, nullable: true })
   description?: Description | null;
 
+  @Column({ name: "geo_unit_id", type: "uuid", nullable: true })
+  geoUnitId?: Id | null;
+
   @Column({ name: "is_current", type: "boolean" })
   isCurrent!: Flag;
 

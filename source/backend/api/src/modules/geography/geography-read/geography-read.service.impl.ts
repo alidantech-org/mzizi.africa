@@ -3,6 +3,11 @@ import type { GeographyEntityDto } from '#/modules/geography/dto/geography-entit
 import type { GeographyFeatureResponseDto } from '#/modules/geography/dto/geography-feature-response.dto';
 import type { GeographySearchQueryDto } from '#/modules/geography/dto/geography-search-query.dto';
 import type { GeographySearchResponseDto } from '#/modules/geography/dto/geography-search-response.dto';
+import type { GeographyBoundariesQueryDto } from '#/modules/geography/dto/geography-boundaries-query.dto';
+import { GetGeographyHierarchyUseCase } from '#/modules/geography/geography-read/use-cases/get-geography-hierarchy.usecase';
+import { GetGeographyHistoryUseCase } from '#/modules/geography/geography-read/use-cases/get-geography-history.usecase';
+import { GetGeographyMapContextUseCase } from '#/modules/geography/geography-read/use-cases/get-geography-map-context.usecase';
+import { ListBoundariesByLevelUseCase } from '#/modules/geography/geography-read/use-cases/list-boundaries-by-level.usecase';
 import { GetGeoUnitByIdUseCase } from '#/modules/geography/geography-read/use-cases/get-geo-unit-by-id.usecase';
 import { GetChildBoundariesUseCase } from '#/modules/geography/geography-read/use-cases/get-child-boundaries.usecase';
 import { GetGeographyBoundaryUseCase } from '#/modules/geography/geography-read/use-cases/get-geography-boundary.usecase';
@@ -22,8 +27,32 @@ export class GeographyGeographyReadServiceImpl {
     private readonly getGeoUnitByIdUseCase: GetGeoUnitByIdUseCase,
     private readonly getGeographyBoundaryUseCase: GetGeographyBoundaryUseCase,
     private readonly getGeographyEntityUseCase: GetGeographyEntityUseCase,
+    private readonly getGeographyHierarchyUseCase: GetGeographyHierarchyUseCase,
+    private readonly getGeographyHistoryUseCase: GetGeographyHistoryUseCase,
+    private readonly getGeographyMapContextUseCase: GetGeographyMapContextUseCase,
+    private readonly listBoundariesByLevelUseCase: ListBoundariesByLevelUseCase,
     private readonly searchGeographyUseCase: SearchGeographyUseCase,
   ) {}
+
+  /** Ancestors and children of an entity. */
+  getGeographyHierarchy(input: { entityId: string }) {
+    return this.getGeographyHierarchyUseCase.execute(input);
+  }
+
+  /** Historical names and lineage of an entity. */
+  getGeographyHistory(input: { entityId: string }) {
+    return this.getGeographyHistoryUseCase.execute(input);
+  }
+
+  /** Parent outline and sibling boundaries for map context. */
+  getGeographyMapContext(input: { entityId: string }) {
+    return this.getGeographyMapContextUseCase.execute(input);
+  }
+
+  /** Verified outlines of every unit at a level within a country. */
+  listBoundariesByLevel(input: GeographyBoundariesQueryDto) {
+    return this.listBoundariesByLevelUseCase.execute(input);
+  }
 
   /** Return the immediate child boundaries as GeoJSON. */
   getChildBoundaries(input: { entityId: string }) {

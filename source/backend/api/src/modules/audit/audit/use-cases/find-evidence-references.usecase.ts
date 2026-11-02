@@ -11,6 +11,7 @@ import type { BaseQueryDto } from '#/modules/shared/dto/base-query.dto';
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { EvidenceReferenceEntity } from '#/modules/audit/entities/evidence-reference.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List evidence references.
@@ -45,24 +46,7 @@ export class FindEvidenceReferencesUseCase {
   }
 
   async execute(input: EvidenceReferenceListQueryDto): Promise<EvidenceReferencesListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.targetId !== undefined) where.targetId = input.targetId;
-    if (input.targetKind !== undefined) where.targetKind = input.targetKind;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<EvidenceReferenceEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      evidenceReferences: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as EvidenceReferencesListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { evidenceReferences: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as EvidenceReferencesListResponseDto;
   }
 }

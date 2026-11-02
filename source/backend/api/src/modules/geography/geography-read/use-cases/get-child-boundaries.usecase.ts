@@ -16,7 +16,7 @@ export class GetChildBoundariesUseCase {
       `SELECT u.id, u.code, u.name, v.geometry, v.label_point
          FROM geo_units u
          JOIN LATERAL (${CURRENT_VERIFIED_BOUNDARY_SQL}) v ON true
-        WHERE u.parent_id = $1 ORDER BY u.name`,
+        WHERE u.parent_id = $1 AND u.is_current = true ORDER BY u.name`,
       [input.entityId],
     );
     const collection = { type: 'FeatureCollection', features: rows.map(toFeature) };

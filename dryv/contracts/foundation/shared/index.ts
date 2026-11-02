@@ -151,6 +151,8 @@ export const transportSchemas = shared.schemas({
     limit: dryv.field(sharedProperties.PaginationNumber).optional(),
     sort: dryv.field(sharedProperties.SortDirection).optional(),
     order: dryv.field(sharedProperties.SortDirection).optional(),
+    /** Lists return current records only; set this to include superseded versions. */
+    includeHistory: dryv.field(sharedProperties.Flag).optional(),
   }),
 
   PaginationMeta: dryv.schema({

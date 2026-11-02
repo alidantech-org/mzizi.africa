@@ -1,7 +1,11 @@
 
 import type { GeoUnitResponseDto } from "#/modules/geography/dto/geo-unit-response.dto.ts";
+import type { GeographyBoundariesQueryDto } from "#/modules/geography/dto/geography-boundaries-query.dto.ts";
 import type { GeographyEntityDto } from "#/modules/geography/dto/geography-entity.dto.ts";
 import type { GeographyFeatureResponseDto } from "#/modules/geography/dto/geography-feature-response.dto.ts";
+import type { GeographyHierarchyResponseDto } from "#/modules/geography/dto/geography-hierarchy-response.dto.ts";
+import type { GeographyHistoryResponseDto } from "#/modules/geography/dto/geography-history-response.dto.ts";
+import type { GeographyMapContextResponseDto } from "#/modules/geography/dto/geography-map-context-response.dto.ts";
 import type { GeographySearchQueryDto } from "#/modules/geography/dto/geography-search-query.dto.ts";
 import type { GeographySearchResponseDto } from "#/modules/geography/dto/geography-search-response.dto.ts";
 
@@ -14,5 +18,9 @@ export abstract class GeographyGeographyReadService {
   abstract getGeoUnitById(input: { unitId: string }): Promise<GeoUnitResponseDto>;
   abstract getGeographyBoundary(input: { entityId: string }): Promise<GeographyFeatureResponseDto>;
   abstract getGeographyEntity(input: { entityId: string }): Promise<GeographyEntityDto>;
+  abstract getGeographyHierarchy(input: { entityId: string }): Promise<GeographyHierarchyResponseDto>;
+  abstract getGeographyHistory(input: { entityId: string }): Promise<GeographyHistoryResponseDto>;
+  abstract getGeographyMapContext(input: { entityId: string }): Promise<GeographyMapContextResponseDto>;
+  abstract listBoundariesByLevel(input: GeographyBoundariesQueryDto): Promise<GeographyFeatureResponseDto>;
   abstract searchGeography(input: GeographySearchQueryDto): Promise<GeographySearchResponseDto>;
 }

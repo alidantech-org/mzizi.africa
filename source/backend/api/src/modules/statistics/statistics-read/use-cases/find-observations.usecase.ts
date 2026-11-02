@@ -15,6 +15,7 @@ import type { ObservationDto } from '#/modules/statistics/dto/observation.dto';
 import type { ObservationsListResponseDto } from '#/modules/statistics/dto/observations-list-response.dto';
 import type { StatisticsTableDto } from '#/modules/statistics/dto/statistics-table.dto';
 import { ObservationEntity } from '#/modules/statistics/entities/observation.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List observations.
@@ -65,27 +66,7 @@ export class FindObservationsUseCase {
   }
 
   async execute(input: ObservationListQueryDto): Promise<ObservationsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.confidenceLevel !== undefined) where.confidenceLevel = input.confidenceLevel;
-    if (input.geoUnitId !== undefined) where.geoUnitId = input.geoUnitId;
-    if (input.indicatorId !== undefined) where.indicatorId = input.indicatorId;
-    if (input.periodId !== undefined) where.periodId = input.periodId;
-    if (input.tableId !== undefined) where.tableId = input.tableId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<ObservationEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      observations: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as ObservationsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { observations: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as ObservationsListResponseDto;
   }
 }

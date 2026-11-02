@@ -15,6 +15,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { EntityLocationEntity } from '#/modules/entities/entities/entity-location.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List entity locations.
@@ -61,24 +62,7 @@ export class FindEntityLocationsUseCase {
   }
 
   async execute(input: EntityLocationListQueryDto): Promise<EntityLocationsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.entityId !== undefined) where.entityId = input.entityId;
-    if (input.geoUnitId !== undefined) where.geoUnitId = input.geoUnitId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<EntityLocationEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      locations: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as EntityLocationsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { locations: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as EntityLocationsListResponseDto;
   }
 }

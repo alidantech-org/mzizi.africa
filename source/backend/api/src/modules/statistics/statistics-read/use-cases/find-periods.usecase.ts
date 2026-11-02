@@ -13,6 +13,7 @@ import type { PeriodPublicDto } from '#/modules/statistics/dto/period-public.dto
 import type { PeriodDto } from '#/modules/statistics/dto/period.dto';
 import type { PeriodsListResponseDto } from '#/modules/statistics/dto/periods-list-response.dto';
 import { PeriodEntity } from '#/modules/statistics/entities/period.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List periods.
@@ -59,23 +60,7 @@ export class FindPeriodsUseCase {
   }
 
   async execute(input: PeriodListQueryDto): Promise<PeriodsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.granularity !== undefined) where.granularity = input.granularity;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<PeriodEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      periods: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as PeriodsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { periods: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as PeriodsListResponseDto;
   }
 }

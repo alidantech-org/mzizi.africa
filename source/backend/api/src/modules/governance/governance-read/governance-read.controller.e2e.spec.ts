@@ -4,6 +4,7 @@ import { Global, type INestApplication, Module } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { geographyGovernanceResponseExample } from "#/modules/governance/dto/geography-governance-response.dto.example.ts";
 import { institutionListQueryExample } from "#/modules/governance/dto/institution-list-query.dto.example.ts";
 import { institutionRelationshipListQueryExample } from "#/modules/governance/dto/institution-relationship-list-query.dto.example.ts";
 import { institutionRelationshipResponseExample } from "#/modules/governance/dto/institution-relationship-response.dto.example.ts";
@@ -65,6 +66,7 @@ const service = {
   findPersonNames: vi.fn(),
   findSelectionProcedures: vi.fn(),
   findSelectionStages: vi.fn(),
+  getGeographyGovernance: vi.fn(),
   getInstitutionById: vi.fn(),
   getInstitutionRelationshipById: vi.fn(),
   getOfficeById: vi.fn(),
@@ -295,6 +297,25 @@ describe("GET /v1/governance/selection-stages (findSelectionStages)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.findSelectionStages).toHaveBeenCalledTimes(1);
     expect(service.findSelectionStages).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/geography/entities/{entityId}/governance (getGeographyGovernance)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "entityId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = geographyGovernanceResponseExample.valid();
+    service.getGeographyGovernance.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/geography/entities/{entityId}/governance", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getGeographyGovernance).toHaveBeenCalledTimes(1);
+    expect(service.getGeographyGovernance).toHaveBeenCalledWith(expect.objectContaining({ entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

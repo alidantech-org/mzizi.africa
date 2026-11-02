@@ -7,6 +7,12 @@ export const commentListQueryExample: ContractExample = contractExample({
   name: "CommentListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "limit",
       optional: true,
       nullable: false,

@@ -7,6 +7,12 @@ export const reviewDecisionListQueryExample: ContractExample = contractExample({
   name: "ReviewDecisionListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "limit",
       optional: true,
       nullable: false,

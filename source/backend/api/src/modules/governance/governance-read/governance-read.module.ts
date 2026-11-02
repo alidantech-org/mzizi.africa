@@ -20,6 +20,7 @@ import { FindPeopleUseCase } from "#/modules/governance/governance-read/use-case
 import { FindPersonNamesUseCase } from "#/modules/governance/governance-read/use-cases/find-person-names.usecase.ts";
 import { FindSelectionProceduresUseCase } from "#/modules/governance/governance-read/use-cases/find-selection-procedures.usecase.ts";
 import { FindSelectionStagesUseCase } from "#/modules/governance/governance-read/use-cases/find-selection-stages.usecase.ts";
+import { GetGeographyGovernanceUseCase } from "#/modules/governance/governance-read/use-cases/get-geography-governance.usecase.ts";
 import { GetInstitutionByIdUseCase } from "#/modules/governance/governance-read/use-cases/get-institution-by-id.usecase.ts";
 import { GetInstitutionRelationshipByIdUseCase } from "#/modules/governance/governance-read/use-cases/get-institution-relationship-by-id.usecase.ts";
 import { GetOfficeByIdUseCase } from "#/modules/governance/governance-read/use-cases/get-office-by-id.usecase.ts";
@@ -63,6 +64,7 @@ import { GovernanceGovernanceReadService } from "./governance-read.service.ts";
     FindPersonNamesUseCase,
     FindSelectionProceduresUseCase,
     FindSelectionStagesUseCase,
+    GetGeographyGovernanceUseCase,
     GetInstitutionByIdUseCase,
     GetInstitutionRelationshipByIdUseCase,
     GetOfficeByIdUseCase,

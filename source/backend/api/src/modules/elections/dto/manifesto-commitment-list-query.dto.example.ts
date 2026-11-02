@@ -7,6 +7,12 @@ export const manifestoCommitmentListQueryExample: ContractExample = contractExam
   name: "ManifestoCommitmentListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "limit",
       optional: true,
       nullable: false,

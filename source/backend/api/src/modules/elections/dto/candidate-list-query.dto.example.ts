@@ -7,6 +7,12 @@ export const candidateListQueryExample: ContractExample = contractExample({
   name: "CandidateListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "limit",
       optional: true,
       nullable: false,

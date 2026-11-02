@@ -7,6 +7,12 @@ export const publicServiceListQueryExample: ContractExample = contractExample({
   name: "PublicServiceListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "jurisdictionId",
       optional: true,
       nullable: false,

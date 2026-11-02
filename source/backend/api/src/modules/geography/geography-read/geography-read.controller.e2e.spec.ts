@@ -5,8 +5,12 @@ import { Test } from "@nestjs/testing";
 import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { geoUnitResponseExample } from "#/modules/geography/dto/geo-unit-response.dto.example.ts";
+import { geographyBoundariesQueryExample } from "#/modules/geography/dto/geography-boundaries-query.dto.example.ts";
 import { geographyEntityExample } from "#/modules/geography/dto/geography-entity.dto.example.ts";
 import { geographyFeatureResponseExample } from "#/modules/geography/dto/geography-feature-response.dto.example.ts";
+import { geographyHierarchyResponseExample } from "#/modules/geography/dto/geography-hierarchy-response.dto.example.ts";
+import { geographyHistoryResponseExample } from "#/modules/geography/dto/geography-history-response.dto.example.ts";
+import { geographyMapContextResponseExample } from "#/modules/geography/dto/geography-map-context-response.dto.example.ts";
 import { geographySearchQueryExample } from "#/modules/geography/dto/geography-search-query.dto.example.ts";
 import { geographySearchResponseExample } from "#/modules/geography/dto/geography-search-response.dto.example.ts";
 
@@ -38,6 +42,10 @@ const service = {
   getGeoUnitById: vi.fn(),
   getGeographyBoundary: vi.fn(),
   getGeographyEntity: vi.fn(),
+  getGeographyHierarchy: vi.fn(),
+  getGeographyHistory: vi.fn(),
+  getGeographyMapContext: vi.fn(),
+  listBoundariesByLevel: vi.fn(),
   searchGeography: vi.fn(),
 };
 
@@ -165,6 +173,82 @@ describe("GET /v1/geography/entities/{entityId} (getGeographyEntity)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getGeographyEntity).toHaveBeenCalledTimes(1);
     expect(service.getGeographyEntity).toHaveBeenCalledWith(expect.objectContaining({ entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/geography/entities/{entityId}/hierarchy (getGeographyHierarchy)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "entityId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = geographyHierarchyResponseExample.valid();
+    service.getGeographyHierarchy.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/geography/entities/{entityId}/hierarchy", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getGeographyHierarchy).toHaveBeenCalledTimes(1);
+    expect(service.getGeographyHierarchy).toHaveBeenCalledWith(expect.objectContaining({ entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/geography/entities/{entityId}/history (getGeographyHistory)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "entityId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = geographyHistoryResponseExample.valid();
+    service.getGeographyHistory.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/geography/entities/{entityId}/history", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getGeographyHistory).toHaveBeenCalledTimes(1);
+    expect(service.getGeographyHistory).toHaveBeenCalledWith(expect.objectContaining({ entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/geography/entities/{entityId}/map-context (getGeographyMapContext)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "entityId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = geographyMapContextResponseExample.valid();
+    service.getGeographyMapContext.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/geography/entities/{entityId}/map-context", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getGeographyMapContext).toHaveBeenCalledTimes(1);
+    expect(service.getGeographyMapContext).toHaveBeenCalledWith(expect.objectContaining({ entityId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/geography/boundaries (listBoundariesByLevel)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(geographyBoundariesQueryExample.valid()), },
+        headers: { },
+      };
+    const result = geographyFeatureResponseExample.valid();
+    service.listBoundariesByLevel.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/geography/boundaries", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.listBoundariesByLevel).toHaveBeenCalledTimes(1);
+    expect(service.listBoundariesByLevel).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

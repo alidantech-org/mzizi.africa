@@ -15,6 +15,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { RevenueRecordEntity } from '#/modules/finance/entities/revenue-record.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List revenue records.
@@ -65,25 +66,7 @@ export class FindRevenueRecordsUseCase {
   }
 
   async execute(input: RevenueRecordListQueryDto): Promise<RevenueRecordsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.categoryId !== undefined) where.categoryId = input.categoryId;
-    if (input.fiscalYearId !== undefined) where.fiscalYearId = input.fiscalYearId;
-    if (input.unitId !== undefined) where.unitId = input.unitId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<RevenueRecordEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      revenues: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as RevenueRecordsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { revenues: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as RevenueRecordsListResponseDto;
   }
 }

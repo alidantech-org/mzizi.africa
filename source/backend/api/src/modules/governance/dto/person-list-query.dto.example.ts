@@ -8,6 +8,12 @@ export const personListQueryExample: ContractExample = contractExample({
   name: "PersonListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "lifeStatus",
       optional: true,
       nullable: false,

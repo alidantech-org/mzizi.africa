@@ -14,6 +14,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { InstitutionEntity } from '#/modules/governance/entities/institution.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List institutions.
@@ -63,24 +64,7 @@ export class FindInstitutionsUseCase {
   }
 
   async execute(input: InstitutionListQueryDto): Promise<InstitutionsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.jurisdictionId !== undefined) where.jurisdictionId = input.jurisdictionId;
-    if (input.typeId !== undefined) where.typeId = input.typeId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<InstitutionEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      institutions: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as InstitutionsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { institutions: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as InstitutionsListResponseDto;
   }
 }

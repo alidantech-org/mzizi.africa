@@ -2189,6 +2189,7 @@ describe("entity schema matches the contract", () => {
             ["confidence", true, false],
             ["created_at", false, false],
             ["description", true, false],
+            ["geo_unit_id", true, false],
             ["id", false, true],
             ["is_current", false, false],
             ["jurisdiction_id", false, false],

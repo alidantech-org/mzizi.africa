@@ -15,6 +15,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { SeatEntity } from '#/modules/elections/entities/seat.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List seats.
@@ -63,23 +64,7 @@ export class FindSeatsUseCase {
   }
 
   async execute(input: SeatListQueryDto): Promise<SeatsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.electionId !== undefined) where.electionId = input.electionId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<SeatEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      seats: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as SeatsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { seats: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as SeatsListResponseDto;
   }
 }

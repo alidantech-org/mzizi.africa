@@ -8,6 +8,12 @@ export const officeRuleListQueryExample: ContractExample = contractExample({
   name: "OfficeRuleListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "kind",
       optional: true,
       nullable: false,

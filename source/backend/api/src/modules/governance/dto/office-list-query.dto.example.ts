@@ -7,6 +7,12 @@ export const officeListQueryExample: ContractExample = contractExample({
   name: "OfficeListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "institutionId",
       optional: true,
       nullable: false,

@@ -103,6 +103,12 @@ export class InstitutionPublicDto {
   @MaxLength(4000)
   description?: Description | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.geoUnitId !== null)
+  @IsString()
+  @IsUUID()
+  geoUnitId?: Id | null;
+
   @IsString()
   @IsUUID()
   id!: Id;

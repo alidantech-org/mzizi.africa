@@ -201,7 +201,37 @@ export const geographyProjectionSchemas = geography.schemas({
   GeoUnitPublic: dryv.schema({}).projection(dryv.projection(geoOwnedSchemas.GeoUnit).read()),
 });
 
+export const geographyHistoryProjections = geography.schemas({
+  GeoUnitNameVersionPublic: dryv.schema({}).projection(dryv.projection(geographySchemas.GeoUnitNameVersion).read()),
+  GeoUnitChangePublic: dryv.schema({}).projection(dryv.projection(geographySchemas.GeoUnitChange).read()),
+});
+
+export const geographyBoundariesQuerySchemas = geography.schemas({
+  GeographyBoundariesQuery: dryv.schema({
+    country: dryv.field(geographyProperties.CountryFilter),
+    level: dryv.field(sharedProperties.Label),
+  }),
+});
+
 export const geographyCollectionSchemas = geography.schemas({
+  /** Immediate neighbours of an entity: its ancestors (root first) and children. */
+  GeographyHierarchyResponse: dryv.schema({
+    entity: dryv.field(geographyResponseSchemas.GeographyEntity),
+    ancestors: dryv.field(geographyResponseSchemas.GeographyEntity).array(),
+    children: dryv.field(geographyResponseSchemas.GeographyEntity).array(),
+  }),
+
+  /** Parent outline and sibling boundaries for map context; verified boundaries only. */
+  GeographyMapContextResponse: dryv.schema({
+    parentGeojson: dryv.field(geographyProperties.GeoJson).optional().nullable(),
+    siblingsGeojson: dryv.field(geographyProperties.GeoJson),
+  }),
+
+  GeographyHistoryResponse: dryv.schema({
+    names: dryv.field(geographyHistoryProjections.GeoUnitNameVersionPublic).array(),
+    changes: dryv.field(geographyHistoryProjections.GeoUnitChangePublic).array(),
+  }),
+
   GeoUnitResponse: dryv.schema({
     unit: dryv.field(geographyProjectionSchemas.GeoUnitPublic),
   }),
@@ -304,6 +334,74 @@ GetChildBoundaries.facets({
   ),
 });
 
+const ListBoundariesByLevel = dryv
+  .operation()
+  .description("Verified outlines of every unit at a level within a country.")
+  .input(geographyBoundariesQuerySchemas.GeographyBoundariesQuery)
+  .output(geographyCollectionSchemas.GeographyFeatureResponse)
+  .failures(...standardFailures);
+
+ListBoundariesByLevel.facets({
+  http: withStandardHttpFailures(
+    dryv
+      .http("GET", "/v1/geography/boundaries")
+      .description("List boundaries by level.")
+      .input(ListBoundariesByLevel.in, dryv.queryObject())
+      .output(ListBoundariesByLevel.out, dryv.respond(200)),
+  ),
+});
+
+const GetGeographyHierarchy = dryv
+  .operation()
+  .description("Ancestors and children of an entity.")
+  .input({ entityId: sharedProperties.Id })
+  .output(geographyCollectionSchemas.GeographyHierarchyResponse)
+  .failures(...standardFailures);
+
+GetGeographyHierarchy.facets({
+  http: withStandardHttpFailures(
+    dryv
+      .http("GET", "/v1/geography/entities/{entityId}/hierarchy")
+      .description("Get hierarchy.")
+      .input(GetGeographyHierarchy.in.entityId, dryv.path())
+      .output(GetGeographyHierarchy.out, dryv.respond(200)),
+  ),
+});
+
+const GetGeographyMapContext = dryv
+  .operation()
+  .description("Parent outline and sibling boundaries for map context.")
+  .input({ entityId: sharedProperties.Id })
+  .output(geographyCollectionSchemas.GeographyMapContextResponse)
+  .failures(...standardFailures);
+
+GetGeographyMapContext.facets({
+  http: withStandardHttpFailures(
+    dryv
+      .http("GET", "/v1/geography/entities/{entityId}/map-context")
+      .description("Get map context.")
+      .input(GetGeographyMapContext.in.entityId, dryv.path())
+      .output(GetGeographyMapContext.out, dryv.respond(200)),
+  ),
+});
+
+const GetGeographyHistory = dryv
+  .operation()
+  .description("Historical names and lineage of an entity.")
+  .input({ entityId: sharedProperties.Id })
+  .output(geographyCollectionSchemas.GeographyHistoryResponse)
+  .failures(...standardFailures);
+
+GetGeographyHistory.facets({
+  http: withStandardHttpFailures(
+    dryv
+      .http("GET", "/v1/geography/entities/{entityId}/history")
+      .description("Get history.")
+      .input(GetGeographyHistory.in.entityId, dryv.path())
+      .output(GetGeographyHistory.out, dryv.respond(200)),
+  ),
+});
+
 const GetGeoUnitById = dryv
   .operation()
   .description("Get a geography unit record with its evidence fields.")
@@ -322,6 +420,10 @@ GetGeoUnitById.facets({
 });
 
 export const geographyReadOperations = geographyRead.operations({
+  ListBoundariesByLevel,
+  GetGeographyHierarchy,
+  GetGeographyMapContext,
+  GetGeographyHistory,
   GetGeoUnitById,
   SearchGeography,
   GetGeographyEntity,

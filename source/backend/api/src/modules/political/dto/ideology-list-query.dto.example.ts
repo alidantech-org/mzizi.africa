@@ -7,6 +7,12 @@ export const ideologyListQueryExample: ContractExample = contractExample({
   name: "IdeologyListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "jurisdictionId",
       optional: true,
       nullable: false,

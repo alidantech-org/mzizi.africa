@@ -17,6 +17,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { ManifestoEntity } from '#/modules/elections/entities/manifesto.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List manifestos.
@@ -64,23 +65,7 @@ export class FindManifestosUseCase {
   }
 
   async execute(input: ManifestoListQueryDto): Promise<ManifestosListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.candidateId !== undefined) where.candidateId = input.candidateId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<ManifestoEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      manifestos: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as ManifestosListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { manifestos: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as ManifestosListResponseDto;
   }
 }

@@ -20,6 +20,12 @@ export const observationListQueryExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "indicatorId",
       optional: true,
       nullable: false,

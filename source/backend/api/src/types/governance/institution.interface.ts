@@ -25,6 +25,7 @@ export interface Institution {
   confidence?: Confidence | null;
   createdAt: DateTime;
   description?: Description | null;
+  geoUnitId?: Id | null;
   id: Id;
   isCurrent: Flag;
   jurisdictionId: Id;

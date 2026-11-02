@@ -14,6 +14,12 @@ export const loanListQueryExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "lenderEntityId",
       optional: true,
       nullable: false,

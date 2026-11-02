@@ -14,6 +14,7 @@ import type { IndicatorPublicDto } from '#/modules/statistics/dto/indicator-publ
 import type { IndicatorDto } from '#/modules/statistics/dto/indicator.dto';
 import type { IndicatorsListResponseDto } from '#/modules/statistics/dto/indicators-list-response.dto';
 import { IndicatorEntity } from '#/modules/statistics/entities/indicator.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List indicators.
@@ -62,24 +63,7 @@ export class FindIndicatorsUseCase {
   }
 
   async execute(input: IndicatorListQueryDto): Promise<IndicatorsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.categoryId !== undefined) where.categoryId = input.categoryId;
-    if (input.parentId !== undefined) where.parentId = input.parentId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<IndicatorEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      indicators: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as IndicatorsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { indicators: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as IndicatorsListResponseDto;
   }
 }

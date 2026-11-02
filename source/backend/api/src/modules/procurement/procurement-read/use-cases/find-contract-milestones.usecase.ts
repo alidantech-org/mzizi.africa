@@ -17,6 +17,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { ContractMilestoneEntity } from '#/modules/procurement/entities/contract-milestone.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List contract milestones.
@@ -65,23 +66,7 @@ export class FindContractMilestonesUseCase {
   }
 
   async execute(input: ContractMilestoneListQueryDto): Promise<ContractMilestonesListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.contractId !== undefined) where.contractId = input.contractId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<ContractMilestoneEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      milestones: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as ContractMilestonesListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { milestones: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as ContractMilestonesListResponseDto;
   }
 }

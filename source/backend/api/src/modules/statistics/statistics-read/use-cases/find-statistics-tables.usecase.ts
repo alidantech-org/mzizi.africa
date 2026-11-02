@@ -14,6 +14,7 @@ import type { StatisticsTablePublicDto } from '#/modules/statistics/dto/statisti
 import type { StatisticsTableDto } from '#/modules/statistics/dto/statistics-table.dto';
 import type { StatisticsTablesListResponseDto } from '#/modules/statistics/dto/statistics-tables-list-response.dto';
 import { StatisticsTableEntity } from '#/modules/statistics/entities/statistics-table.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List statistics tables.
@@ -64,25 +65,7 @@ export class FindStatisticsTablesUseCase {
   }
 
   async execute(input: StatisticsTableListQueryDto): Promise<StatisticsTablesListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.geoUnitId !== undefined) where.geoUnitId = input.geoUnitId;
-    if (input.indicatorId !== undefined) where.indicatorId = input.indicatorId;
-    if (input.jurisdictionId !== undefined) where.jurisdictionId = input.jurisdictionId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<StatisticsTableEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      tables: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as StatisticsTablesListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { tables: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as StatisticsTablesListResponseDto;
   }
 }

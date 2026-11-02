@@ -15,6 +15,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { LedgerEntryEntity } from '#/modules/finance/entities/ledger-entry.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List ledger entries.
@@ -65,24 +66,7 @@ export class FindLedgerEntriesUseCase {
   }
 
   async execute(input: LedgerEntryListQueryDto): Promise<LedgerEntriesListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.referenceId !== undefined) where.referenceId = input.referenceId;
-    if (input.unitId !== undefined) where.unitId = input.unitId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<LedgerEntryEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      entries: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as LedgerEntriesListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { entries: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as LedgerEntriesListResponseDto;
   }
 }

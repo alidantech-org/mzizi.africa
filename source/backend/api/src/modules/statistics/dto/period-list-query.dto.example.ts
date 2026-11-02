@@ -14,6 +14,12 @@ export const periodListQueryExample: ContractExample = contractExample({
       spec: { kind: "enum", values: Object.values(Granularity) },
     },
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "limit",
       optional: true,
       nullable: false,

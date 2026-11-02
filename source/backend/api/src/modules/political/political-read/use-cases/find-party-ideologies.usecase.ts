@@ -15,6 +15,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { PartyIdeologyEntity } from '#/modules/political/entities/party-ideology.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List party ideologies.
@@ -59,24 +60,7 @@ export class FindPartyIdeologiesUseCase {
   }
 
   async execute(input: PartyIdeologyListQueryDto): Promise<PartyIdeologiesListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.ideologyId !== undefined) where.ideologyId = input.ideologyId;
-    if (input.partyId !== undefined) where.partyId = input.partyId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<PartyIdeologyEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      partyIdeologies: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as PartyIdeologiesListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { partyIdeologies: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as PartyIdeologiesListResponseDto;
   }
 }

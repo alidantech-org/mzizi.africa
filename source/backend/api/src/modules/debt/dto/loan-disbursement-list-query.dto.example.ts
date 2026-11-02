@@ -7,6 +7,12 @@ export const loanDisbursementListQueryExample: ContractExample = contractExample
   name: "LoanDisbursementListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "limit",
       optional: true,
       nullable: false,

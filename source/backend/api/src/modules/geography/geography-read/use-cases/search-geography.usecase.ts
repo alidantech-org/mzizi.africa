@@ -16,7 +16,7 @@ export class SearchGeographyUseCase {
     const limit = Math.min(Math.max(Number(input.limit) || 12, 1), 50);
     const rows: Row[] = await this.db.query(
       `${ENTITY_SQL}
-        WHERE (u.name ILIKE $1 OR u.code ILIKE $1)
+        WHERE u.is_current = true AND (u.name ILIKE $1 OR u.code ILIKE $1)
           AND ($2::text IS NULL OR lower(j.code) = lower($2))
         ORDER BY u.name LIMIT $3`,
       [`%${input.q}%`, input.country ?? null, limit],

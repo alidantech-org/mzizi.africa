@@ -14,6 +14,12 @@ export const institutionRelationshipListQueryExample: ContractExample = contract
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "kind",
       optional: true,
       nullable: false,

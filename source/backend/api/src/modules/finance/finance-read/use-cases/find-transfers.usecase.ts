@@ -15,6 +15,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { TransferEntity } from '#/modules/finance/entities/transfer.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List transfers.
@@ -66,25 +67,7 @@ export class FindTransfersUseCase {
   }
 
   async execute(input: TransferListQueryDto): Promise<TransfersListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.fiscalYearId !== undefined) where.fiscalYearId = input.fiscalYearId;
-    if (input.fromUnitId !== undefined) where.fromUnitId = input.fromUnitId;
-    if (input.toUnitId !== undefined) where.toUnitId = input.toUnitId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<TransferEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      transfers: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as TransfersListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { transfers: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as TransfersListResponseDto;
   }
 }

@@ -15,6 +15,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { EntityOwnershipEntity } from '#/modules/entities/entities/entity-ownership.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List entity ownerships.
@@ -62,25 +63,7 @@ export class FindEntityOwnershipsUseCase {
   }
 
   async execute(input: EntityOwnershipListQueryDto): Promise<EntityOwnershipsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.entityId !== undefined) where.entityId = input.entityId;
-    if (input.ownerEntityId !== undefined) where.ownerEntityId = input.ownerEntityId;
-    if (input.ownerPersonId !== undefined) where.ownerPersonId = input.ownerPersonId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<EntityOwnershipEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      ownerships: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as EntityOwnershipsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { ownerships: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as EntityOwnershipsListResponseDto;
   }
 }

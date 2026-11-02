@@ -7,6 +7,12 @@ export const budgetaryUnitListQueryExample: ContractExample = contractExample({
   name: "BudgetaryUnitListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "jurisdictionId",
       optional: true,
       nullable: false,

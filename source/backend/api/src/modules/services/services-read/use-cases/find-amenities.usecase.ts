@@ -14,6 +14,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { AmenityEntity } from '#/modules/services/entities/amenity.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List amenities.
@@ -62,25 +63,7 @@ export class FindAmenitiesUseCase {
   }
 
   async execute(input: AmenityListQueryDto): Promise<AmenitiesListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.geoUnitId !== undefined) where.geoUnitId = input.geoUnitId;
-    if (input.jurisdictionId !== undefined) where.jurisdictionId = input.jurisdictionId;
-    if (input.sectorId !== undefined) where.sectorId = input.sectorId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<AmenityEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      amenities: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as AmenitiesListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { amenities: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as AmenitiesListResponseDto;
   }
 }

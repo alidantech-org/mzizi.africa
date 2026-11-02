@@ -43,6 +43,7 @@ import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
 import { BaseQueryDto } from "#/modules/shared/dto/base-query.dto.ts";
 import { RelationshipKind } from "#/types/governance/relationship-kind.enum.ts";
 import { SortDirection } from "#/types/shared/sort-direction.enum.ts";
+import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { PaginationNumber } from "#/types/shared/pagination-number.type.ts";
 
@@ -55,6 +56,10 @@ export class InstitutionRelationshipListQueryDto {
   @IsString()
   @IsUUID()
   childInstitutionId?: Id;
+
+  @IsOptional()
+  @IsBoolean()
+  includeHistory?: Flag;
 
   @IsOptional()
   @IsEnum(RelationshipKind)

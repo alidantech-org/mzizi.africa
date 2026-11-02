@@ -8,6 +8,12 @@ export const tenderListQueryExample: ContractExample = contractExample({
   name: "TenderListQuery",
   fields: [
     {
+      name: "includeHistory",
+      optional: true,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
       name: "issuingUnitId",
       optional: true,
       nullable: false,

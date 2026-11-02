@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { GetGeographyGovernanceUseCase } from '#/modules/governance/governance-read/use-cases/get-geography-governance.usecase';
 import type { InstitutionListQueryDto } from '#/modules/governance/dto/institution-list-query.dto';
 import type { InstitutionRelationshipListQueryDto } from '#/modules/governance/dto/institution-relationship-list-query.dto';
 import type { InstitutionRelationshipResponseDto } from '#/modules/governance/dto/institution-relationship-response.dto';
@@ -54,6 +55,7 @@ import { GetSelectionStageByIdUseCase } from '#/modules/governance/governance-re
 @Injectable()
 export class GovernanceGovernanceReadServiceImpl {
   constructor(
+    private readonly getGeographyGovernanceUseCase: GetGeographyGovernanceUseCase,
     private readonly findInstitutionRelationshipsUseCase: FindInstitutionRelationshipsUseCase,
     private readonly findInstitutionsUseCase: FindInstitutionsUseCase,
     private readonly findOfficeHoldersUseCase: FindOfficeHoldersUseCase,
@@ -77,6 +79,11 @@ export class GovernanceGovernanceReadServiceImpl {
   /** List institution relationships. */
   findInstitutionRelationships(input: InstitutionRelationshipListQueryDto) {
     return this.findInstitutionRelationshipsUseCase.execute(input);
+  }
+
+  /** Institutions, offices and current office holders linked to a geography entity. */
+  getGeographyGovernance(input: { entityId: string }) {
+    return this.getGeographyGovernanceUseCase.execute(input);
   }
 
   /** List institutions. */

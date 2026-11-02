@@ -2,7 +2,7 @@ import * as dryv from "@dryvcode/author";
 
 import { referenceSchemas } from "../../foundation/reference/index.ts";
 import { evidenced, optionalId, plainId, relationTo, searchable } from "../../foundation/shared/builders.ts";
-import { readSurface } from "../../foundation/shared/read-surface.ts";
+import { readSurface, standardFailures, withStandardHttpFailures } from "../../foundation/shared/read-surface.ts";
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
 /**
@@ -65,6 +65,7 @@ const institutions = governance.schemas({
       name: dryv.field(sharedProperties.Name).query(searchable),
       typeId: plainId(),
       branchId: optionalId(),
+      geoUnitId: optionalId(),
       legalBasisId: optionalId(),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
     },
@@ -259,4 +260,35 @@ const surfaces = [
   }),
 ];
 
-export const governanceReadOperations = governanceRead.operations(Object.assign({}, ...surfaces.map((surface) => surface.operations)));
+const surfaceSchemas = Object.assign({}, ...surfaces.map((surface) => surface.schemas)) as Record<string, any>;
+
+/** Governance linked to a place: institutions with that territorial scope, their offices and current holders. */
+const governanceByGeography = governance.schemas({
+  GeographyGovernanceResponse: dryv.schema({
+    institutions: dryv.field(surfaceSchemas.InstitutionPublic).array(),
+    offices: dryv.field(surfaceSchemas.OfficePublic).array(),
+    holders: dryv.field(surfaceSchemas.OfficeHolderPublic).array(),
+  }),
+});
+
+const GetGeographyGovernance = dryv
+  .operation()
+  .description("Institutions, offices and current office holders linked to a geography entity.")
+  .input({ entityId: sharedProperties.Id })
+  .output(governanceByGeography.GeographyGovernanceResponse)
+  .failures(...standardFailures);
+
+GetGeographyGovernance.facets({
+  http: withStandardHttpFailures(
+    dryv
+      .http("GET", "/v1/geography/entities/{entityId}/governance")
+      .description("Get governance for a geography entity.")
+      .input(GetGeographyGovernance.in.entityId, dryv.path())
+      .output(GetGeographyGovernance.out, dryv.respond(200)),
+  ),
+});
+
+export const governanceReadOperations = governanceRead.operations({
+  ...Object.assign({}, ...surfaces.map((surface) => surface.operations)),
+  GetGeographyGovernance,
+});

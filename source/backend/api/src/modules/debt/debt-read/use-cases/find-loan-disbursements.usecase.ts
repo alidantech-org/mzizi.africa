@@ -16,6 +16,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { LoanDisbursementEntity } from '#/modules/debt/entities/loan-disbursement.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List loan disbursements.
@@ -63,23 +64,7 @@ export class FindLoanDisbursementsUseCase {
   }
 
   async execute(input: LoanDisbursementListQueryDto): Promise<LoanDisbursementsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.loanId !== undefined) where.loanId = input.loanId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<LoanDisbursementEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      disbursements: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as LoanDisbursementsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { disbursements: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as LoanDisbursementsListResponseDto;
   }
 }

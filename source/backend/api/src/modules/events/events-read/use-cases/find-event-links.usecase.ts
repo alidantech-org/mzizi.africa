@@ -15,6 +15,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { EventLinkEntity } from '#/modules/events/entities/event-link.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List event links.
@@ -61,25 +62,7 @@ export class FindEventLinksUseCase {
   }
 
   async execute(input: EventLinkListQueryDto): Promise<EventLinksListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.eventId !== undefined) where.eventId = input.eventId;
-    if (input.targetId !== undefined) where.targetId = input.targetId;
-    if (input.targetKind !== undefined) where.targetKind = input.targetKind;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<EventLinkEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      links: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as EventLinksListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { links: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as EventLinksListResponseDto;
   }
 }

@@ -17,6 +17,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { ContractVariationEntity } from '#/modules/procurement/entities/contract-variation.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List contract variations.
@@ -64,23 +65,7 @@ export class FindContractVariationsUseCase {
   }
 
   async execute(input: ContractVariationListQueryDto): Promise<ContractVariationsListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.contractId !== undefined) where.contractId = input.contractId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<ContractVariationEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      variations: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as ContractVariationsListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { variations: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as ContractVariationsListResponseDto;
   }
 }

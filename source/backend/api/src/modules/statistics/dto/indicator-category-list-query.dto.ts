@@ -42,6 +42,7 @@ import {
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
 import { BaseQueryDto } from "#/modules/shared/dto/base-query.dto.ts";
 import { SortDirection } from "#/types/shared/sort-direction.enum.ts";
+import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { PaginationNumber } from "#/types/shared/pagination-number.type.ts";
 
@@ -49,6 +50,10 @@ import type { PaginationNumber } from "#/types/shared/pagination-number.type.ts"
  * Indicator Category List Query
  */
 export class IndicatorCategoryListQueryDto {
+
+  @IsOptional()
+  @IsBoolean()
+  includeHistory?: Flag;
 
   @IsOptional()
   @IsNumber({})

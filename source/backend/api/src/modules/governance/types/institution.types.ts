@@ -40,6 +40,7 @@ export interface IInstitution extends B.IBase {
   code: string;
   confidence: number | null;
   description: string | null;
+  geoUnitId: string | null;
   isCurrent: boolean;
   jurisdictionId: string;
   legalBasisId: string | null;

@@ -17,6 +17,7 @@ import type { HistoricalEntityDto } from '#/modules/shared/dto/historical-entity
 import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-response.dto';
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { SelectionStageEntity } from '#/modules/governance/entities/selection-stage.entity';
+import { listPage } from '#/read/list-page';
 
 /**
  * List selection stages.
@@ -65,23 +66,7 @@ export class FindSelectionStagesUseCase {
   }
 
   async execute(input: SelectionStageListQueryDto): Promise<SelectionStagesListResponseDto> {
-    const page = Number(input.page ?? 1);
-    const limit = Number(input.limit ?? 20);
-    const where: Record<string, unknown> = {};
-    if (input.procedureId !== undefined) where.procedureId = input.procedureId;
-    const [rows, total] = await this.repository.findAndCount({
-      where: where as FindOptionsWhere<SelectionStageEntity>,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-    return {
-      stages: rows.map((entity) => this.toReadModel(entity)),
-    meta: {
-      limit: limit,
-      page: page,
-      total: total,
-      totalPages: Math.ceil(total / limit),
-    },
-    } as unknown as SelectionStagesListResponseDto;
+    const { rows, meta } = await listPage(this.repository, input);
+    return { stages: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as SelectionStagesListResponseDto;
   }
 }

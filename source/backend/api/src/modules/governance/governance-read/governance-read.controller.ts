@@ -16,6 +16,7 @@ import {
 } from "@nestjs/common";
 
 import { Cookie } from "#/modules/common/server/http/cookie.decorator.ts";
+import { GeographyGovernanceResponseDto } from "#/modules/governance/dto/geography-governance-response.dto.ts";
 import { InstitutionListQueryDto } from "#/modules/governance/dto/institution-list-query.dto.ts";
 import { InstitutionRelationshipListQueryDto } from "#/modules/governance/dto/institution-relationship-list-query.dto.ts";
 import { InstitutionRelationshipResponseDto } from "#/modules/governance/dto/institution-relationship-response.dto.ts";
@@ -128,6 +129,15 @@ export class GovernanceGovernanceReadController {
     @Query() input: SelectionStageListQueryDto,
   ): Promise<SelectionStagesListResponseDto> {
     return this.service.findSelectionStages(input);
+  }
+
+
+  @Get("/v1/geography/entities/:entityId/governance")
+  @HttpCode(200)
+  getGeographyGovernance(
+    @Param("entityId") entityId: string,
+  ): Promise<GeographyGovernanceResponseDto> {
+    return this.service.getGeographyGovernance({ entityId });
   }
 
 

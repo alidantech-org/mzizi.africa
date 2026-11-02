@@ -51,6 +51,12 @@ export const institutionPublicExample: ContractExample = contractExample({
       spec: { kind: "string", maxLength: 4000 },
     },
     {
+      name: "geoUnitId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "id",
       optional: false,
       nullable: false,
