@@ -169,6 +169,74 @@ beforeAll(async () => {
     }),
   );
   const namespaces = new Set<string>([
+    "audit",
+    "audit",
+    "audit",
+    "debt",
+    "debt",
+    "debt",
+    "electoral",
+    "electoral",
+    "electoral",
+    "electoral",
+    "electoral",
+    "electoral",
+    "org",
+    "org",
+    "org",
+    "org",
+    "calendar",
+    "calendar",
+    "finance",
+    "finance",
+    "finance",
+    "finance",
+    "finance",
+    "finance",
+    "finance",
+    "geo",
+    "geo",
+    "geo",
+    "geo",
+    "geo",
+    "governance",
+    "governance",
+    "governance",
+    "governance",
+    "governance",
+    "governance",
+    "governance",
+    "governance",
+    "governance",
+    "legal",
+    "legal",
+    "legal",
+    "legal",
+    "legal",
+    "political",
+    "political",
+    "political",
+    "political",
+    "political",
+    "political",
+    "political",
+    "procurement",
+    "procurement",
+    "procurement",
+    "procurement",
+    "procurement",
+    "reference",
+    "reference",
+    "civic",
+    "civic",
+    "civic",
+    "civic",
+    "statistic",
+    "statistic",
+    "statistic",
+    "statistic",
+    "statistic",
+    "statistic",
   ]);
   for (const namespace of namespaces) db.createSchema(namespace);
   dataSource = await db.adapters.createTypeormDataSource({ type: "postgres", entities });
@@ -228,7 +296,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "comments" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "audit"."comments" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -237,7 +305,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(EvidenceReferenceEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("evidence_references");
+      expect(metadata().tableName).toBe("evidence");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -272,7 +340,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "evidence_references" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "audit"."evidence" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -281,7 +349,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(ReviewDecisionEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("review_decisions");
+      expect(metadata().tableName).toBe("decisions");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -313,7 +381,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "review_decisions" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "audit"."decisions" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -366,7 +434,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "borrower_unit_id->budgetary_units",
+          "borrower_unit_id->finance.units",
         ].sort(),
       );
     });
@@ -385,7 +453,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "loans" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "debt"."loans" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -394,7 +462,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(LoanDisbursementEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("loan_disbursements");
+      expect(metadata().tableName).toBe("disbursements");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -434,7 +502,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "loan_id->loans",
+          "loan_id->debt.loans",
         ].sort(),
       );
     });
@@ -452,7 +520,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "loan_disbursements" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "debt"."disbursements" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -461,7 +529,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(LoanRepaymentEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("loan_repayments");
+      expect(metadata().tableName).toBe("repayments");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -503,7 +571,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "loan_id->loans",
+          "loan_id->debt.loans",
         ].sort(),
       );
     });
@@ -521,7 +589,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "loan_repayments" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "debt"."repayments" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -570,7 +638,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "seat_id->seats",
+          "seat_id->electoral.seats",
         ].sort(),
       );
     });
@@ -589,7 +657,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "candidates" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "electoral"."candidates" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -643,7 +711,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -662,7 +730,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "elections" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "electoral"."elections" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -671,7 +739,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(ElectionResultEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("election_results");
+      expect(metadata().tableName).toBe("results");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -715,7 +783,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "candidate_id->candidates",
+          "candidate_id->electoral.candidates",
         ].sort(),
       );
     });
@@ -734,7 +802,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "election_results" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "electoral"."results" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -783,7 +851,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "candidate_id->candidates",
+          "candidate_id->electoral.candidates",
         ].sort(),
       );
     });
@@ -801,7 +869,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "manifestos" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "electoral"."manifestos" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -810,7 +878,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(ManifestoCommitmentEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("manifesto_commitments");
+      expect(metadata().tableName).toBe("commitments");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -850,7 +918,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "manifesto_id->manifestos",
+          "manifesto_id->electoral.manifestos",
         ].sort(),
       );
     });
@@ -868,7 +936,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "manifesto_commitments" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "electoral"."commitments" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -918,7 +986,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "election_id->elections",
+          "election_id->electoral.elections",
         ].sort(),
       );
     });
@@ -936,7 +1004,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "seats" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "electoral"."seats" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -945,7 +1013,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(EntityIdentifierEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("entity_identifiers");
+      expect(metadata().tableName).toBe("identifiers");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -984,7 +1052,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "entity_id->legal_entities",
+          "entity_id->org.entities",
         ].sort(),
       );
     });
@@ -1003,7 +1071,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "entity_identifiers" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "org"."identifiers" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1012,7 +1080,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(EntityLocationEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("entity_locations");
+      expect(metadata().tableName).toBe("locations");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1051,7 +1119,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "entity_id->legal_entities",
+          "entity_id->org.entities",
         ].sort(),
       );
     });
@@ -1069,7 +1137,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "entity_locations" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "org"."locations" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1078,7 +1146,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(EntityOwnershipEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("entity_ownerships");
+      expect(metadata().tableName).toBe("ownerships");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1118,7 +1186,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "entity_id->legal_entities",
+          "entity_id->org.entities",
         ].sort(),
       );
     });
@@ -1136,7 +1204,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "entity_ownerships" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "org"."ownerships" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1145,7 +1213,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(LegalEntityEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("legal_entities");
+      expect(metadata().tableName).toBe("entities");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1186,7 +1254,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -1205,7 +1273,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "legal_entities" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "org"."entities" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1260,7 +1328,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -1279,7 +1347,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "events" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "calendar"."events" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1288,7 +1356,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(EventLinkEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("event_links");
+      expect(metadata().tableName).toBe("links");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1327,7 +1395,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "event_id->events",
+          "event_id->calendar.events",
         ].sort(),
       );
     });
@@ -1346,7 +1414,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "event_links" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "calendar"."links" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1397,7 +1465,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "unit_id->budgetary_units",
+          "unit_id->finance.units",
         ].sort(),
       );
     });
@@ -1415,7 +1483,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "budgets" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "finance"."budgets" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1424,7 +1492,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(BudgetaryUnitEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("budgetary_units");
+      expect(metadata().tableName).toBe("units");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1467,7 +1535,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -1485,7 +1553,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "budgetary_units" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "finance"."units" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1537,7 +1605,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "budget_id->budgets",
+          "budget_id->finance.budgets",
         ].sort(),
       );
     });
@@ -1555,7 +1623,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "expenditures" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "finance"."expenditures" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1564,7 +1632,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(FiscalYearEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("fiscal_years");
+      expect(metadata().tableName).toBe("years");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1603,7 +1671,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -1621,7 +1689,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "fiscal_years" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "finance"."years" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1630,7 +1698,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(LedgerEntryEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("ledger_entries");
+      expect(metadata().tableName).toBe("entries");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1673,7 +1741,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "unit_id->budgetary_units",
+          "unit_id->finance.units",
         ].sort(),
       );
     });
@@ -1692,7 +1760,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "ledger_entries" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "finance"."entries" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1701,7 +1769,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(RevenueRecordEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("revenue_records");
+      expect(metadata().tableName).toBe("revenues");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1744,7 +1812,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "unit_id->budgetary_units",
+          "unit_id->finance.units",
         ].sort(),
       );
     });
@@ -1762,7 +1830,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "revenue_records" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "finance"."revenues" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1815,7 +1883,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "from_unit_id->budgetary_units",
+          "from_unit_id->finance.units",
         ].sort(),
       );
     });
@@ -1834,7 +1902,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "transfers" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "finance"."transfers" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1843,7 +1911,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(GeoBoundaryVersionEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("geo_boundary_versions");
+      expect(metadata().tableName).toBe("boundaries");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1883,7 +1951,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "unit_id->geo_units",
+          "unit_id->geo.units",
         ].sort(),
       );
     });
@@ -1902,7 +1970,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "geo_boundary_versions" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "geo"."boundaries" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1911,7 +1979,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(GeoRelationshipEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("geo_relationships");
+      expect(metadata().tableName).toBe("relationships");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -1949,7 +2017,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "parent_id->geo_units",
+          "parent_id->geo.units",
         ].sort(),
       );
     });
@@ -1967,7 +2035,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "geo_relationships" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "geo"."relationships" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1976,7 +2044,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(GeoUnitEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("geo_units");
+      expect(metadata().tableName).toBe("units");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2018,8 +2086,8 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
-          "level_id->classification_records",
+          "jurisdiction_id->reference.jurisdictions",
+          "level_id->reference.classifications",
         ].sort(),
       );
     });
@@ -2039,7 +2107,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "geo_units" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "geo"."units" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2048,7 +2116,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(GeoUnitChangeEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("geo_unit_changes");
+      expect(metadata().tableName).toBe("changes");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2086,7 +2154,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "source_unit_id->geo_units",
+          "source_unit_id->geo.units",
         ].sort(),
       );
     });
@@ -2104,7 +2172,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "geo_unit_changes" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "geo"."changes" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2113,7 +2181,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(GeoUnitNameVersionEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("geo_unit_name_versions");
+      expect(metadata().tableName).toBe("names");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2151,7 +2219,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "unit_id->geo_units",
+          "unit_id->geo.units",
         ].sort(),
       );
     });
@@ -2169,7 +2237,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "geo_unit_name_versions" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "geo"."names" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2221,7 +2289,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -2240,7 +2308,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "institutions" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "governance"."institutions" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2249,7 +2317,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(InstitutionRelationshipEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("institution_relationships");
+      expect(metadata().tableName).toBe("relationships");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2288,7 +2356,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "parent_institution_id->institutions",
+          "parent_institution_id->governance.institutions",
         ].sort(),
       );
     });
@@ -2306,7 +2374,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "institution_relationships" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "governance"."relationships" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2356,7 +2424,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "institution_id->institutions",
+          "institution_id->governance.institutions",
         ].sort(),
       );
     });
@@ -2375,7 +2443,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "offices" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "governance"."offices" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2384,7 +2452,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(OfficeHolderEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("office_holders");
+      expect(metadata().tableName).toBe("holders");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2426,7 +2494,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "office_id->offices",
+          "office_id->governance.offices",
         ].sort(),
       );
     });
@@ -2445,7 +2513,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "office_holders" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "governance"."holders" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2454,7 +2522,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(OfficeRuleEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("office_rules");
+      expect(metadata().tableName).toBe("rules");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2494,7 +2562,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "office_id->offices",
+          "office_id->governance.offices",
         ].sort(),
       );
     });
@@ -2512,7 +2580,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "office_rules" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "governance"."rules" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2573,7 +2641,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "people" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "governance"."people" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2582,7 +2650,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(PersonNameEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("person_names");
+      expect(metadata().tableName).toBe("aliases");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2621,7 +2689,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "person_id->people",
+          "person_id->governance.people",
         ].sort(),
       );
     });
@@ -2639,7 +2707,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "person_names" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "governance"."aliases" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2648,7 +2716,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(SelectionProcedureEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("selection_procedures");
+      expect(metadata().tableName).toBe("procedures");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2687,7 +2755,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "office_id->offices",
+          "office_id->governance.offices",
         ].sort(),
       );
     });
@@ -2705,7 +2773,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "selection_procedures" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "governance"."procedures" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2714,7 +2782,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(SelectionStageEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("selection_stages");
+      expect(metadata().tableName).toBe("stages");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2755,7 +2823,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "procedure_id->selection_procedures",
+          "procedure_id->governance.procedures",
         ].sort(),
       );
     });
@@ -2773,7 +2841,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "selection_stages" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "governance"."stages" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2782,7 +2850,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(LegalAmendmentEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("legal_amendments");
+      expect(metadata().tableName).toBe("amendments");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2821,7 +2889,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "instrument_id->legal_instruments",
+          "instrument_id->legal.instruments",
         ].sort(),
       );
     });
@@ -2839,7 +2907,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "legal_amendments" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "legal"."amendments" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2848,7 +2916,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(LegalAmendmentChangeEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("legal_amendment_changes");
+      expect(metadata().tableName).toBe("changes");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2888,7 +2956,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "amendment_id->legal_amendments",
+          "amendment_id->legal.amendments",
         ].sort(),
       );
     });
@@ -2906,7 +2974,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "legal_amendment_changes" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "legal"."changes" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2915,7 +2983,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(LegalAuthorityLinkEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("legal_authority_links");
+      expect(metadata().tableName).toBe("links");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -2954,7 +3022,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "provision_id->legal_provisions",
+          "provision_id->legal.provisions",
         ].sort(),
       );
     });
@@ -2972,7 +3040,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "legal_authority_links" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "legal"."links" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2981,7 +3049,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(LegalInstrumentEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("legal_instruments");
+      expect(metadata().tableName).toBe("instruments");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3025,7 +3093,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -3044,7 +3112,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "legal_instruments" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "legal"."instruments" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3053,7 +3121,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(LegalProvisionEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("legal_provisions");
+      expect(metadata().tableName).toBe("provisions");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3097,7 +3165,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "instrument_id->legal_instruments",
+          "instrument_id->legal.instruments",
         ].sort(),
       );
     });
@@ -3116,7 +3184,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "legal_provisions" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "legal"."provisions" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3164,7 +3232,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -3182,7 +3250,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "ideologies" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "political"."ideologies" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3234,7 +3302,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -3253,7 +3321,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "parties" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "political"."parties" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3262,7 +3330,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(PartyIdeologyEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("party_ideologies");
+      expect(metadata().tableName).toBe("alignments");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3299,7 +3367,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "party_id->parties",
+          "party_id->political.parties",
         ].sort(),
       );
     });
@@ -3317,7 +3385,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "party_ideologies" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "political"."alignments" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3326,7 +3394,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(PartyMembershipEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("party_memberships");
+      expect(metadata().tableName).toBe("memberships");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3364,7 +3432,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "party_id->parties",
+          "party_id->political.parties",
         ].sort(),
       );
     });
@@ -3383,7 +3451,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "party_memberships" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "political"."memberships" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3392,7 +3460,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(PartyPositionEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("party_positions");
+      expect(metadata().tableName).toBe("positions");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3430,7 +3498,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "unit_id->party_units",
+          "unit_id->political.units",
         ].sort(),
       );
     });
@@ -3448,7 +3516,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "party_positions" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "political"."positions" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3457,7 +3525,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(PartyPositionHolderEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("party_position_holders");
+      expect(metadata().tableName).toBe("holders");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3495,7 +3563,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "position_id->party_positions",
+          "position_id->political.positions",
         ].sort(),
       );
     });
@@ -3514,7 +3582,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "party_position_holders" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "political"."holders" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3523,7 +3591,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(PartyUnitEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("party_units");
+      expect(metadata().tableName).toBe("units");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3564,7 +3632,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "party_id->parties",
+          "party_id->political.parties",
         ].sort(),
       );
     });
@@ -3582,7 +3650,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "party_units" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "political"."units" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3634,7 +3702,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "tender_id->tenders",
+          "tender_id->procurement.tenders",
         ].sort(),
       );
     });
@@ -3652,7 +3720,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "bids" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "procurement"."bids" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3661,7 +3729,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(ContractMilestoneEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("contract_milestones");
+      expect(metadata().tableName).toBe("milestones");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3702,7 +3770,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "contract_id->contracts",
+          "contract_id->procurement.contracts",
         ].sort(),
       );
     });
@@ -3720,7 +3788,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "contract_milestones" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "procurement"."milestones" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3729,7 +3797,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(ContractVariationEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("contract_variations");
+      expect(metadata().tableName).toBe("variations");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3769,7 +3837,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "contract_id->contracts",
+          "contract_id->procurement.contracts",
         ].sort(),
       );
     });
@@ -3787,7 +3855,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "contract_variations" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "procurement"."variations" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3840,7 +3908,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "tender_id->tenders",
+          "tender_id->procurement.tenders",
         ].sort(),
       );
     });
@@ -3859,7 +3927,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "contracts" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "procurement"."contracts" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3916,7 +3984,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "issuing_unit_id->budgetary_units",
+          "issuing_unit_id->finance.units",
         ].sort(),
       );
     });
@@ -3935,7 +4003,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "tenders" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "procurement"."tenders" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -3944,7 +4012,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(ClassificationRecordEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("classification_records");
+      expect(metadata().tableName).toBe("classifications");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -3985,7 +4053,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -4003,7 +4071,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "classification_records" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "reference"."classifications" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4057,7 +4125,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "jurisdictions" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "reference"."jurisdictions" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4107,7 +4175,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -4126,7 +4194,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "amenities" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "civic"."amenities" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4135,7 +4203,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(AmenityOfficeEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("amenity_offices");
+      expect(metadata().tableName).toBe("posts");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -4173,7 +4241,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "amenity_id->amenities",
+          "amenity_id->civic.amenities",
         ].sort(),
       );
     });
@@ -4191,7 +4259,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "amenity_offices" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "civic"."posts" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4200,7 +4268,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(PublicServiceEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("public_services");
+      expect(metadata().tableName).toBe("services");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -4241,7 +4309,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -4259,7 +4327,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "public_services" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "civic"."services" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4268,7 +4336,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(ServiceDeliveryEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("service_deliveries");
+      expect(metadata().tableName).toBe("deliveries");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -4308,7 +4376,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "amenity_id->amenities",
+          "amenity_id->civic.amenities",
         ].sort(),
       );
     });
@@ -4327,7 +4395,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "service_deliveries" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "civic"."deliveries" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4377,7 +4445,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "category_id->indicator_categories",
+          "category_id->statistic.categories",
         ].sort(),
       );
     });
@@ -4395,7 +4463,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "indicators" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "statistic"."indicators" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4404,7 +4472,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(IndicatorCategoryEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("indicator_categories");
+      expect(metadata().tableName).toBe("categories");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -4449,7 +4517,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "indicator_categories" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "statistic"."categories" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4458,7 +4526,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(IndicatorColumnEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("indicator_columns");
+      expect(metadata().tableName).toBe("fields");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -4497,7 +4565,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "indicator_id->indicators",
+          "indicator_id->statistic.indicators",
         ].sort(),
       );
     });
@@ -4515,7 +4583,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "indicator_columns" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "statistic"."fields" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4567,7 +4635,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "table_id->statistics_tables",
+          "table_id->statistic.datasets",
         ].sort(),
       );
     });
@@ -4586,7 +4654,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "observations" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "statistic"."observations" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4641,7 +4709,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "periods" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "statistic"."periods" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -4650,7 +4718,7 @@ describe("entity schema matches the contract", () => {
     const metadata = () => dataSource.getMetadata(StatisticsTableEntity);
 
     it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("statistics_tables");
+      expect(metadata().tableName).toBe("datasets");
       expect(columns(metadata())).toEqual(
         (
           [
@@ -4693,7 +4761,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
-          "jurisdiction_id->jurisdictions",
+          "jurisdiction_id->reference.jurisdictions",
         ].sort(),
       );
     });
@@ -4711,7 +4779,7 @@ describe("entity schema matches the contract", () => {
 
     it("rejects a row without its required columns", async () => {
       await expect(
-        dataSource.query('INSERT INTO "statistics_tables" DEFAULT VALUES'),
+        dataSource.query('INSERT INTO "statistic"."datasets" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });

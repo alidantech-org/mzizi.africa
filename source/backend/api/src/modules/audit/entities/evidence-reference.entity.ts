@@ -25,7 +25,7 @@ import type { DateTime } from "#/types/shared/date-time.type.ts";
 /**
  * Evidence Reference
  */
-@Entity({ name: "evidence_references" })
+@Entity({ schema: "audit", name: "evidence" })
 @Index("idx_evidence_target", ["targetKind", "targetId"])
 @Index("idx_evidence_artifact", ["artifactId"])
 export class EvidenceReferenceEntity {

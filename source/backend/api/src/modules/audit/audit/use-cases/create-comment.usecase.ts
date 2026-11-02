@@ -20,7 +20,7 @@ export class CreateCommentUseCase {
     const actor = requireActor();
     await assertTarget(this.readDb, input.targetKind, input.targetId);
     if (input.parentCommentId) {
-      const [parent] = await this.readDb.query(`SELECT target_kind, target_id FROM comments WHERE id = $1`, [input.parentCommentId]);
+      const [parent] = await this.readDb.query(`SELECT target_kind, target_id FROM audit.comments WHERE id = $1`, [input.parentCommentId]);
       if (!parent || parent.target_kind !== input.targetKind || parent.target_id !== input.targetId) {
         throw new BadRequestException('parentCommentId must be a comment on the same record');
       }

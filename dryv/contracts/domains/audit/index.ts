@@ -14,7 +14,8 @@ import { baseEntitySchemas, sharedFailures, sharedProperties } from "../../found
  * database management engine. Actor identity and role come from the verified token, never the body.
  * Evidence points at a file artifact held by the files service (DEC-EVIDENCE-VIA-FILES).
  */
-export const audit = dryv.group({ name: "audit" }).description("Comments, evidence references and review decisions about canonical records.").tags("public", "audit");
+export const audit = dryv.group({ name: "audit" }).description("Comments, evidence references and review decisions about canonical records.").tags("public", "audit")
+  .facets({ storage: { namespace: "audit" } });
 
 export const auditProperties = audit.properties({
   Decision: dryv.property.enum({
@@ -64,7 +65,7 @@ const records = audit.schemas({
       note: dryv.field(sharedProperties.Description).optional().nullable(),
       actorId: actor(),
     },
-    "evidence_references",
+    "evidence",
     [{ name: "idx_evidence_target", fields: ["targetKind", "targetId"] }, { name: "idx_evidence_artifact", fields: ["artifactId"] }],
   ),
 
@@ -76,7 +77,7 @@ const records = audit.schemas({
       rationale: dryv.field(sharedProperties.LongText),
       reviewerId: actor(),
     },
-    "review_decisions",
+    "decisions",
     [{ name: "idx_decision_target", fields: ["targetKind", "targetId"] }],
   ),
 });

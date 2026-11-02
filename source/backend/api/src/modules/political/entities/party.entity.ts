@@ -35,7 +35,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Party
  */
-@Entity({ name: "parties" })
+@Entity({ schema: "political", name: "parties" })
 @Index("idx_party_code", ["code"], { unique: true })
 @Index("idx_party_jurisdiction", ["jurisdictionId"])
 export class PartyEntity {

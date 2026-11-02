@@ -14,10 +14,14 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * methods and entity types are classification ids. Ledger entries reference their source record by
  * kind and id so spend can be traced from budget through commitment, payment and contract.
  */
-export const entities = dryv.group({ name: "entities" }).description("Legal entities, identifiers, ownership and locations.").tags("public", "entities");
-export const finance = dryv.group({ name: "finance" }).description("Fiscal years, budgets, transfers, revenue, expenditure and the ledger.").tags("public", "finance");
-export const debt = dryv.group({ name: "debt" }).description("Loans, disbursements and repayments.").tags("public", "debt");
-export const procurement = dryv.group({ name: "procurement" }).description("Tenders, bids, contracts, milestones and variations.").tags("public", "procurement");
+export const entities = dryv.group({ name: "entities" }).description("Legal entities, identifiers, ownership and locations.").tags("public", "entities")
+  .facets({ storage: { namespace: "org" } });
+export const finance = dryv.group({ name: "finance" }).description("Fiscal years, budgets, transfers, revenue, expenditure and the ledger.").tags("public", "finance")
+  .facets({ storage: { namespace: "finance" } });
+export const debt = dryv.group({ name: "debt" }).description("Loans, disbursements and repayments.").tags("public", "debt")
+  .facets({ storage: { namespace: "debt" } });
+export const procurement = dryv.group({ name: "procurement" }).description("Tenders, bids, contracts, milestones and variations.").tags("public", "procurement")
+  .facets({ storage: { namespace: "procurement" } });
 
 export const entityProperties = entities.properties({
   EntityStatus: dryv.property.enum({ active: "active", dormant: "dormant", dissolved: "dissolved", unknown: "unknown" }),
@@ -78,7 +82,7 @@ const legalEntities = entities.schemas({
       parentEntityId: optionalId(),
       status: dryv.field(entityProperties.EntityStatus).query({ filter: ["equal", "in"] }),
     },
-    "legal_entities",
+    "entities",
     [{ name: "idx_legal_entity_code", fields: ["code"], unique: true }, { name: "idx_legal_entity_jurisdiction", fields: ["jurisdictionId"] }],
   ),
 });
@@ -92,7 +96,7 @@ const entityDetails = entities.schemas({
       value: dryv.field(entityProperties.IdentifierValue).query({ filter: ["equal", "startsWith"], search: true }),
       issuingAuthorityId: optionalId(),
     },
-    "entity_identifiers",
+    "identifiers",
     [{ name: "idx_entity_identifier_entity", fields: ["entityId"] }, { name: "idx_entity_identifier_value", fields: ["schemeId", "value"] }],
   ),
 
@@ -104,7 +108,7 @@ const entityDetails = entities.schemas({
       percentage: dryv.field(entityProperties.OwnershipPercentage).optional().nullable(),
       position: dryv.field(sharedProperties.Label).optional().nullable(),
     },
-    "entity_ownerships",
+    "ownerships",
     [{ name: "idx_entity_ownership_entity", fields: ["entityId"] }],
   ),
 
@@ -115,7 +119,7 @@ const entityDetails = entities.schemas({
       kindId: optionalId(),
       addressText: dryv.field(entityProperties.AddressText).optional().nullable(),
     },
-    "entity_locations",
+    "locations",
     [{ name: "idx_entity_location_entity", fields: ["entityId"] }],
   ),
 });
@@ -130,7 +134,7 @@ const fiscalYears = finance.schemas({
       startsOn: dryv.field(sharedProperties.Date).query({ filter: ["between"], sort: true }),
       endsOn: dryv.field(sharedProperties.Date).query({ filter: ["between"], sort: true }),
     },
-    "fiscal_years",
+    "years",
     [{ name: "idx_fiscal_year_code", fields: ["code"], unique: true }],
   ),
 
@@ -145,7 +149,7 @@ const fiscalYears = finance.schemas({
       legalEntityId: optionalId(),
       geoUnitId: optionalId(),
     },
-    "budgetary_units",
+    "units",
     [{ name: "idx_budgetary_unit_code", fields: ["code"], unique: true }],
   ),
 });
@@ -194,7 +198,7 @@ const flows = finance.schemas({
       restriction: dryv.field(financeProperties.FundRestriction).query({ filter: ["equal"] }),
       receivedOn: dryv.field(sharedProperties.Date).query({ filter: ["between"], sort: true }),
     },
-    "revenue_records",
+    "revenues",
     [{ name: "idx_revenue_unit_year", fields: ["unitId", "fiscalYearId"] }],
   ),
 
@@ -224,7 +228,7 @@ const flows = finance.schemas({
       referenceId: optionalId(),
       postedOn: dryv.field(sharedProperties.Date).query({ filter: ["between"], sort: true }),
     },
-    "ledger_entries",
+    "entries",
     [{ name: "idx_ledger_unit", fields: ["unitId", "postedOn"] }, { name: "idx_ledger_reference", fields: ["referenceKind", "referenceId"] }],
   ),
 });
@@ -258,7 +262,7 @@ const loanFlows = debt.schemas({
       currencyCode: currency(),
       disbursedOn: dryv.field(sharedProperties.Date).query({ filter: ["between"], sort: true }),
     },
-    "loan_disbursements",
+    "disbursements",
     [{ name: "idx_loan_disbursement_loan", fields: ["loanId"] }],
   ),
 
@@ -272,7 +276,7 @@ const loanFlows = debt.schemas({
       currencyCode: currency(),
       paidOn: dryv.field(sharedProperties.Date).query({ filter: ["between"], sort: true }),
     },
-    "loan_repayments",
+    "repayments",
     [{ name: "idx_loan_repayment_loan", fields: ["loanId"] }],
   ),
 });
@@ -344,7 +348,7 @@ const contractDetails = procurement.schemas({
       amount: amount().optional().nullable(),
       currencyCode: currency().optional().nullable(),
     },
-    "contract_milestones",
+    "milestones",
     [{ name: "idx_milestone_contract", fields: ["contractId"] }],
   ),
 
@@ -356,7 +360,7 @@ const contractDetails = procurement.schemas({
       reason: dryv.field(sharedProperties.Description),
       approvedOn: dryv.field(sharedProperties.Date).optional().nullable(),
     },
-    "contract_variations",
+    "variations",
     [{ name: "idx_variation_contract", fields: ["contractId"] }],
   ),
 });

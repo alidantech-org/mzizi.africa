@@ -13,8 +13,10 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * are classification records. A facility's boards and leaders are office and holder links to the
  * governance domain, so leadership is not a separate hard-coded role list.
  */
-export const statistics = dryv.group({ name: "statistics" }).description("Periods, indicators, statistical tables and observations.").tags("public", "statistics");
-export const services = dryv.group({ name: "services" }).description("Public services, amenities and service delivery.").tags("public", "services");
+export const statistics = dryv.group({ name: "statistics" }).description("Periods, indicators, statistical tables and observations.").tags("public", "statistics")
+  .facets({ storage: { namespace: "statistic" } });
+export const services = dryv.group({ name: "services" }).description("Public services, amenities and service delivery.").tags("public", "services")
+  .facets({ storage: { namespace: "civic" } });
 
 export const statisticsProperties = statistics.properties({
   Granularity: dryv.property.enum({
@@ -60,7 +62,7 @@ const periods = statistics.schemas({
       label: dryv.field(sharedProperties.Label).query(searchable),
       parentId: optionalId(),
     },
-    "indicator_categories",
+    "categories",
     [{ name: "idx_indicator_category_code", fields: ["code"], unique: true }],
   ),
 });
@@ -88,7 +90,7 @@ const indicatorColumns = statistics.schemas({
       label: dryv.field(sharedProperties.Label),
       dataType: dryv.field(statisticsProperties.ColumnDataType),
     },
-    "indicator_columns",
+    "fields",
     [{ name: "idx_indicator_column_code", fields: ["code"], unique: true }],
   ),
 
@@ -103,7 +105,7 @@ const indicatorColumns = statistics.schemas({
       methodology: dryv.field(sharedProperties.LongText).optional().nullable(),
       collector: dryv.field(sharedProperties.Name).optional().nullable(),
     },
-    "statistics_tables",
+    "datasets",
     [{ name: "idx_statistics_table_code", fields: ["code"], unique: true }],
   ),
 });
@@ -140,7 +142,7 @@ const publicServices = services.schemas({
       legalBasisId: optionalId(),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
     },
-    "public_services",
+    "services",
     [{ name: "idx_public_service_code", fields: ["code"], unique: true }],
   ),
 
@@ -166,7 +168,7 @@ const amenityLinks = services.schemas({
       officeId: plainId(),
       roleKindId: optionalId(),
     },
-    "amenity_offices",
+    "posts",
     [{ name: "idx_amenity_office_amenity", fields: ["amenityId"] }],
   ),
 
@@ -178,7 +180,7 @@ const amenityLinks = services.schemas({
       budgetId: optionalId(),
       status: dryv.field(servicesProperties.DeliveryStatus).query({ filter: ["equal", "in"] }),
     },
-    "service_deliveries",
+    "deliveries",
     [{ name: "idx_service_delivery_amenity", fields: ["amenityId"] }, { name: "idx_service_delivery_service", fields: ["serviceId"] }],
   ),
 });

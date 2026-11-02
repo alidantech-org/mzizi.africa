@@ -4,7 +4,7 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { scratchDatabase } from "#/database/scratch-database";
+import { grantReadOnly, scratchDatabase, synchronizeDomainSchemas } from "#/database/scratch-database";
 import { FindElectionsUseCase } from "#/modules/elections/elections-read/use-cases/find-elections.usecase";
 import { FindBudgetsUseCase } from "#/modules/finance/finance-read/use-cases/find-budgets.usecase";
 import { FindFiscalYearsUseCase } from "#/modules/finance/finance-read/use-cases/find-fiscal-years.usecase";
@@ -41,14 +41,15 @@ describe.skipIf(!adminUrl)("country-neutral model (Kenya and South Africa)", () 
 
   beforeAll(async () => {
     const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_neutral_test");
-    admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: true, dropSchema: true });
+    admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await admin.initialize();
+    await synchronizeDomainSchemas(admin);
     ids = await loadFixtures(admin, readFixture("kenya").rows);
     await loadFixtures(admin, readFixture("south-africa").rows, ids);
 
     await admin.query(`DO $$ BEGIN IF EXISTS (SELECT FROM pg_roles WHERE rolname = '${READER}') THEN DROP OWNED BY ${READER}; DROP ROLE ${READER}; END IF; END $$`);
     await admin.query(`CREATE ROLE ${READER} LOGIN PASSWORD 'pw'`);
-    await admin.query(`GRANT SELECT ON ALL TABLES IN SCHEMA public TO ${READER}`);
+    await grantReadOnly(admin, READER);
     const url = new URL(dbUrl);
     url.username = READER;
     url.password = "pw";

@@ -13,9 +13,12 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * a verification state so disputed or superseded counts stay visible. Events are a neutral calendar
  * record; election and legislative meaning lives in the domain records they link to.
  */
-export const elections = dryv.group({ name: "elections" }).description("Elections, seats, candidates, results and manifestos.").tags("public", "elections");
-export const political = dryv.group({ name: "political" }).description("Political parties, membership, structure and ideology.").tags("public", "political");
-export const events = dryv.group({ name: "events" }).description("A neutral calendar of dated events linked to domain records.").tags("public", "events");
+export const elections = dryv.group({ name: "elections" }).description("Elections, seats, candidates, results and manifestos.").tags("public", "elections")
+  .facets({ storage: { namespace: "electoral" } });
+export const political = dryv.group({ name: "political" }).description("Political parties, membership, structure and ideology.").tags("public", "political")
+  .facets({ storage: { namespace: "political" } });
+export const events = dryv.group({ name: "events" }).description("A neutral calendar of dated events linked to domain records.").tags("public", "events")
+  .facets({ storage: { namespace: "calendar" } });
 
 export const electionProperties = elections.properties({
   ElectionStatus: dryv.property.enum({
@@ -120,7 +123,7 @@ const electionOutcomes = elections.schemas({
       isWinner: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
       declaredAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
     },
-    "election_results",
+    "results",
     [{ name: "idx_result_candidate", fields: ["candidateId"] }, { name: "idx_result_seat", fields: ["seatId", "resultLevelId"] }],
   ),
 
@@ -146,7 +149,7 @@ const manifestoCommitments = elections.schemas({
       text: dryv.field(sharedProperties.LongText),
       sortOrder: dryv.field(sharedProperties.Count).query({ sort: true }),
     },
-    "manifesto_commitments",
+    "commitments",
     [{ name: "idx_commitment_manifesto", fields: ["manifestoId"] }],
   ),
 });
@@ -177,7 +180,7 @@ const partyDetails = political.schemas({
       personId: plainId(),
       roleTitle: dryv.field(sharedProperties.Label).optional().nullable(),
     },
-    "party_memberships",
+    "memberships",
     [{ name: "idx_membership_party", fields: ["partyId"] }, { name: "idx_membership_person", fields: ["personId"] }],
   ),
 
@@ -190,7 +193,7 @@ const partyDetails = political.schemas({
       name: dryv.field(sharedProperties.Name).query(searchable),
       geoUnitId: optionalId(),
     },
-    "party_units",
+    "units",
     [{ name: "idx_party_unit_party_code", fields: ["partyId", "code"], unique: true }],
   ),
 
@@ -213,7 +216,7 @@ const partyLinks = political.schemas({
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       title: dryv.field(sharedProperties.Name).query(searchable),
     },
-    "party_positions",
+    "positions",
     [{ name: "idx_party_position_unit_code", fields: ["unitId", "code"], unique: true }],
   ),
 
@@ -222,7 +225,7 @@ const partyLinks = political.schemas({
       partyId: relationTo(() => parties.Party.field("id")),
       ideologyId: plainId(),
     },
-    "party_ideologies",
+    "alignments",
     [{ name: "idx_party_ideology_party", fields: ["partyId"] }],
   ),
 });
@@ -234,7 +237,7 @@ const partyHolders = political.schemas({
       personId: plainId(),
       isActing: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
     },
-    "party_position_holders",
+    "holders",
     [{ name: "idx_party_holder_position", fields: ["positionId"] }, { name: "idx_party_holder_person", fields: ["personId"] }],
   ),
 });
@@ -269,7 +272,7 @@ const eventLinks = events.schemas({
       targetId: plainId(),
       role: dryv.field(eventProperties.LinkRole).optional().nullable(),
     },
-    "event_links",
+    "links",
     [{ name: "idx_event_link_event", fields: ["eventId"] }, { name: "idx_event_link_target", fields: ["targetKind", "targetId"] }],
   ),
 });

@@ -32,7 +32,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Period
  */
-@Entity({ name: "periods" })
+@Entity({ schema: "statistic", name: "periods" })
 @Index("idx_period_code", ["code"], { unique: true })
 export class PeriodEntity {
 

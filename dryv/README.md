@@ -48,6 +48,10 @@ cd source/backend/api && bun run typecheck && bun run test
 
 The local Dryv checkout is used instead of the published packages (they are out of date): `bun install` links it through `scripts/link-dryv.sh` (set `DRYV_HOME`).
 
+## Database naming
+
+Every group sets a storage namespace (a PostgreSQL schema) and every entity a short plural table name: `geo.units`, not `geo_units` in `public`. The rule and the full map are in `.docs/rules/database-naming.md`, and the contract audit enforces it (namespace present, never `public`, singular one-word schema, table not prefixed with its schema, at most one underscore, unique per schema). Audit `targetKind` values are the schema-qualified names (`geo.units`), exported by `access:export`. TypeORM creates enum types before a table's schema, so schemas must exist before `synchronize`; `synchronizeDomainSchemas` (api `src/database/scratch-database.ts`) does that for dev and tests, and the database engine must do the same.
+
 ## Generator limits and workarounds
 
 Found while generating the full model; the contract audit enforces the first three.
@@ -84,7 +88,7 @@ Without `TEST_DATABASE_URL` the PostgreSQL suites are skipped and the generated 
 
 | Command (in `dryv/`) | What it guards |
 | --- | --- |
-| `bun run check` | contracts typecheck, contract audit, Dryv doctor and compile, access rules current, API boundary |
+| `bun run check` | contracts typecheck, contract audit (including database naming), Dryv doctor and compile, access rules current, API boundary |
 | `bun run generated:check` | generated output is current (needs the Dryv API) |
 | `bun run access:export` | re-export policies and target kinds after changing operations or entities |
 | `bun run adopt:list` | give newly scaffolded Find use cases the shared paging and filter helper |

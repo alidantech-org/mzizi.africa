@@ -34,7 +34,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Revenue Record
  */
-@Entity({ name: "revenue_records" })
+@Entity({ schema: "finance", name: "revenues" })
 @Index("idx_revenue_unit_year", ["unitId", "fiscalYearId"])
 export class RevenueRecordEntity {
 

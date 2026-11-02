@@ -16,7 +16,7 @@ export class GetGeographyGovernanceUseCase {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async execute(input: { entityId: string }): Promise<GeographyGovernanceResponseDto> {
-    const [unit] = await this.dataSource.query(`SELECT id FROM geo_units WHERE id = $1`, [input.entityId]);
+    const [unit] = await this.dataSource.query(`SELECT id FROM geo.units WHERE id = $1`, [input.entityId]);
     if (!unit) throw new NotFoundException('geography entity not found');
     const institutions = await this.dataSource.getRepository(InstitutionEntity).find({
       where: { geoUnitId: input.entityId, isCurrent: true },

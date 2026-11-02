@@ -32,7 +32,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Legal Amendment
  */
-@Entity({ name: "legal_amendments" })
+@Entity({ schema: "legal", name: "amendments" })
 @Index("idx_legal_amendment_instrument", ["instrumentId"])
 export class LegalAmendmentEntity {
 

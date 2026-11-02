@@ -464,17 +464,17 @@ A new top-level domain should be added only when:
 
 # Contract catalog
 
-Each domain's API contract lives in `dryv/contracts`. Domains without a row here have no contract yet and must not get one without reading this file and `AGENTS.md` section 8.
+Each domain's API contract lives in `dryv/contracts`. Tables live in per-domain schemas with short plural names, never in `public` (`.docs/rules/database-naming.md`). Domains without a row here have no contract yet and must not get one without reading this file and `AGENTS.md` section 8.
 
-| Domain | Contract group (path under `dryv/contracts`) | Notes |
-| --- | --- | --- |
-| Evidence, time, jurisdiction | `foundation/shared`, `foundation/reference` | Provenance, valid time, record time, verification, business codes, jurisdictions and jurisdiction-scoped classification records (levels, institution types, election types, fiscal stages are records, not enums). |
-| Geography | `foundation/geography` | Units, versioned boundaries, name history, lineage, hierarchy, map context, mobile geography contract. |
-| Constitutions and law | `domains/legal` | Legal instruments, provisions with pinpoint citation, amendments, authority links used as legal basis by other domains. |
-| Governance | `domains/governance` | Institutions, typed relationships, offices, dated office rules, selection procedures and stages, people, office holders. |
-| Politics and elections | `domains/elections` (groups elections, political, events) | Elections, seats, candidates, results, manifestos, parties, membership, ideologies, calendar events. |
-| Finance, debt, procurement | `domains/finance` (groups entities, finance, debt, procurement) | Neutral legal identity with jurisdiction-scoped identifiers, budgets, transfers, revenue, expenditure, ledger, loans, tenders, bids, contracts. Every amount carries a currency. |
-| Statistics and services | `domains/statistics` (groups statistics, services) | Periods, indicators, observations with confidence and verification; public services, amenities (boards and leaders are governance office links). |
-| Review and discussion | `domains/audit` | The API's only writes: comments, evidence references (file artifact by reference), review decisions. |
+| Domain | Contract group (path under `dryv/contracts`) | Database schema | Notes |
+| --- | --- | --- | --- |
+| Evidence, time, jurisdiction | `foundation/shared`, `foundation/reference` | `reference` | Provenance, valid time, record time, verification, business codes, jurisdictions and jurisdiction-scoped classification records (levels, institution types, election types, fiscal stages are records, not enums). |
+| Geography | `foundation/geography` | `geo` | Units, versioned boundaries, name history, lineage, hierarchy, map context, mobile geography contract. |
+| Constitutions and law | `domains/legal` | `legal` | Legal instruments, provisions with pinpoint citation, amendments, authority links used as legal basis by other domains. |
+| Governance | `domains/governance` | `governance` | Institutions, typed relationships, offices, dated office rules, selection procedures and stages, people, office holders. |
+| Politics and elections | `domains/elections` (groups elections, political, events) | `electoral`, `political`, `calendar` | Elections, seats, candidates, results, manifestos, parties, membership, ideologies, calendar events. |
+| Finance, debt, procurement | `domains/finance` (groups entities, finance, debt, procurement) | `org`, `finance`, `debt`, `procurement` | Neutral legal identity with jurisdiction-scoped identifiers, budgets, transfers, revenue, expenditure, ledger, loans, tenders, bids, contracts. Every amount carries a currency. |
+| Statistics and services | `domains/statistics` (groups statistics, services) | `statistic`, `civic` | Periods, indicators, observations with confidence and verification; public services, amenities (boards and leaders are governance office links). |
+| Review and discussion | `domains/audit` | `audit` | The API's only writes: comments, evidence references (file artifact by reference), review decisions. |
 
 Not yet contracted: heritage and culture, linguistics, migration and settlement, trade and resources, colonial administration, pre-colonial political systems, land, and the justice system. The inventory (`.docs/docs/audits/LEGACY_MODEL_INVENTORY.md`) lists archived justice and land models to review first.

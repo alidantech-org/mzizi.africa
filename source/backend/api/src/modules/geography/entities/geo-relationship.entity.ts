@@ -32,7 +32,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Geo Relationship
  */
-@Entity({ name: "geo_relationships" })
+@Entity({ schema: "geo", name: "relationships" })
 @Index("idx_geo_relationship_parent", ["parentId"])
 export class GeoRelationshipEntity {
 

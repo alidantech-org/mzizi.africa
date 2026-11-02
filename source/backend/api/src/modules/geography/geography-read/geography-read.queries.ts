@@ -11,18 +11,18 @@ export const ENTITY_SQL = `
          u.valid_from, u.valid_to,
          b.version_number, b.source_name, b.source_reference, b.licence, b.reference_year,
          b.retrieved_at, b.verification_state
-    FROM geo_units u
-    JOIN classification_records c ON c.id = u.level_id
-    JOIN jurisdictions j ON j.id = u.jurisdiction_id
-    LEFT JOIN geo_units p ON p.id = u.parent_id
+    FROM geo.units u
+    JOIN reference.classifications c ON c.id = u.level_id
+    JOIN reference.jurisdictions j ON j.id = u.jurisdiction_id
+    LEFT JOIN geo.units p ON p.id = u.parent_id
     LEFT JOIN LATERAL (
-      SELECT * FROM geo_boundary_versions v
+      SELECT * FROM geo.boundaries v
        WHERE v.unit_id = u.id AND v.is_current = true
        ORDER BY v.version_number DESC LIMIT 1
     ) b ON true`;
 
 export const CURRENT_VERIFIED_BOUNDARY_SQL = `
-  SELECT * FROM geo_boundary_versions v
+  SELECT * FROM geo.boundaries v
    WHERE v.unit_id = u.id AND v.is_current = true AND v.verification_state = 'verified'
    ORDER BY v.version_number DESC LIMIT 1`;
 

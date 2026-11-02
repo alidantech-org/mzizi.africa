@@ -34,7 +34,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Geo Unit
  */
-@Entity({ name: "geo_units" })
+@Entity({ schema: "geo", name: "units" })
 @Index("idx_geo_unit_code", ["code"], { unique: true })
 @Index("idx_geo_unit_parent", ["parentId"])
 @Index("idx_geo_unit_jurisdiction_level", ["jurisdictionId", "levelId"])

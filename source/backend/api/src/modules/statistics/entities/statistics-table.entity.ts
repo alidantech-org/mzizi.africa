@@ -33,7 +33,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Statistics Table
  */
-@Entity({ name: "statistics_tables" })
+@Entity({ schema: "statistic", name: "datasets" })
 @Index("idx_statistics_table_code", ["code"], { unique: true })
 export class StatisticsTableEntity {
 

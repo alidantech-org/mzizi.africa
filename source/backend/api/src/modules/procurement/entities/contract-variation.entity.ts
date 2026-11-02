@@ -33,7 +33,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Contract Variation
  */
-@Entity({ name: "contract_variations" })
+@Entity({ schema: "procurement", name: "variations" })
 @Index("idx_variation_contract", ["contractId"])
 export class ContractVariationEntity {
 

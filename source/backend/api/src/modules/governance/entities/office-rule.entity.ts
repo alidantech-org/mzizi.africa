@@ -33,7 +33,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Office Rule
  */
-@Entity({ name: "office_rules" })
+@Entity({ schema: "governance", name: "rules" })
 @Index("idx_office_rule_office", ["officeId", "kind"])
 export class OfficeRuleEntity {
 

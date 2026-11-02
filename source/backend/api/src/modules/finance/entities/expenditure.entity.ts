@@ -34,7 +34,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Expenditure
  */
-@Entity({ name: "expenditures" })
+@Entity({ schema: "finance", name: "expenditures" })
 @Index("idx_expenditure_budget", ["budgetId", "stageOrder"])
 export class ExpenditureEntity {
 

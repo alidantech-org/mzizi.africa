@@ -33,7 +33,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Indicator
  */
-@Entity({ name: "indicators" })
+@Entity({ schema: "statistic", name: "indicators" })
 @Index("idx_indicator_code", ["code"], { unique: true })
 export class IndicatorEntity {
 

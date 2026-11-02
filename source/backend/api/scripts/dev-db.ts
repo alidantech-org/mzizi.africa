@@ -13,6 +13,7 @@ import { Glob } from "bun";
 import { join } from "node:path";
 import { DataSource } from "typeorm";
 
+import { entitySchemas, synchronizeDomainSchemas } from "../src/database/scratch-database.ts";
 import { loadFixtures, readFixture } from "../src/neutral/fixture-loader.ts";
 
 const url = process.env.DATABASE_URL;
@@ -28,9 +29,14 @@ for await (const file of new Glob("src/modules/*/entities/*.entity.ts").scan({ c
 }
 
 const command = process.argv[2] ?? "reset";
-const db = new DataSource({ type: "postgres", url, entities, synchronize: command === "schema" || command === "reset", dropSchema: command === "reset" });
+const db = new DataSource({ type: "postgres", url, entities, synchronize: false });
 await db.initialize();
 try {
+  if (command === "schema" || command === "reset") {
+    // Tables live in per-domain schemas (.docs/rules/database-naming.md); TypeORM only drops public itself.
+    if (command === "reset") for (const schema of entitySchemas(db)) await db.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);
+    await synchronizeDomainSchemas(db);
+  }
   if (command === "fixtures" || command === "reset") {
     const ids = await loadFixtures(db, readFixture("kenya").rows);
     await loadFixtures(db, readFixture("south-africa").rows, ids);

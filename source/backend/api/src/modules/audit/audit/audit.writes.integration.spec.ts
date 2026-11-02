@@ -11,7 +11,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { AppModule } from "#/app.module";
 import { createTokenVerifier, installAuth } from "#/auth";
 import { DatabaseModule } from "#/database/database.module";
-import { scratchDatabase } from "#/database/scratch-database";
+import { grantReadOnly, scratchDatabase, synchronizeDomainSchemas } from "#/database/scratch-database";
 import { setWriteDataSource } from "#/database/write-database";
 import { CommentEntity } from "#/modules/audit/entities/comment.entity";
 import { EvidenceReferenceEntity } from "#/modules/audit/entities/evidence-reference.entity";
@@ -61,8 +61,9 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
     const pair = await generateKeyPair("RS256", { extractable: true });
     privateKey = pair.privateKey;
     const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_audit_test");
-    admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: true, dropSchema: true });
+    admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await admin.initialize();
+    await synchronizeDomainSchemas(admin);
     const jurisdiction = await admin.getRepository(entities.find((e) => e.name === "JurisdictionEntity") as never).save({
       code: "ke", name: "Kenya", kind: "modern_state", sourceName: "Test", method: "curated", verificationState: "verified", isCurrent: true, version: 1, createdAt: new Date(), updatedAt: new Date(),
     } as never);
@@ -72,8 +73,9 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
       await admin.query(`DO $$ BEGIN IF EXISTS (SELECT FROM pg_roles WHERE rolname = '${role}') THEN DROP OWNED BY ${role}; DROP ROLE ${role}; END IF; END $$`);
       await admin.query(`CREATE ROLE ${role} LOGIN PASSWORD 'pw'`);
     }
-    await admin.query(`GRANT SELECT ON ALL TABLES IN SCHEMA public TO ${READER}`);
-    await admin.query(`GRANT SELECT, INSERT ON comments, evidence_references, review_decisions TO ${WRITER}`);
+    await grantReadOnly(admin, READER);
+    await admin.query(`GRANT USAGE ON SCHEMA audit TO ${WRITER}`);
+    await admin.query(`GRANT SELECT, INSERT ON audit.comments, audit.evidence, audit.decisions TO ${WRITER}`);
 
     writer = new DataSource({ type: "postgres", url: urlFor(dbUrl, WRITER), entities: [CommentEntity, EvidenceReferenceEntity, ReviewDecisionEntity] });
     await writer.initialize();
@@ -100,7 +102,7 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
     await admin?.destroy();
   });
 
-  const comment = (extra: Record<string, unknown> = {}) => ({ targetKind: "jurisdictions", get targetId() { return jurisdictionId; }, body: "Needs a source for the founding date.", ...extra });
+  const comment = (extra: Record<string, unknown> = {}) => ({ targetKind: "reference.jurisdictions", get targetId() { return jurisdictionId; }, body: "Needs a source for the founding date.", ...extra });
 
   describe("access", () => {
     it("refuses a request without a token", async () => {
@@ -112,7 +114,7 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
     });
 
     it("refuses a contributor a review decision but admits a reviewer", async () => {
-      const decision = { targetKind: "jurisdictions", targetId: jurisdictionId, decision: "approve", proposedState: "verified", rationale: "Matches the gazette." };
+      const decision = { targetKind: "reference.jurisdictions", targetId: jurisdictionId, decision: "approve", proposedState: "verified", rationale: "Matches the gazette." };
       expect((await post("/v1/audit/decisions", decision, await sign(CONTRIBUTOR, ["contributor"]))).status).toBe(403);
       const ok = await post("/v1/audit/decisions", decision, await sign(REVIEWER, ["reviewer"]));
       expect(ok.status).toBe(201);
@@ -124,12 +126,12 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
     it("records the actor from the token, ignoring any actor sent in the body", async () => {
       const response = await post("/v1/audit/comments", comment({ actorId: REVIEWER }), await sign(CONTRIBUTOR, ["contributor"]));
       expect(response.status).toBe(201);
-      expect(response.body.comment).toMatchObject({ actorId: CONTRIBUTOR, targetKind: "jurisdictions", version: 1 });
+      expect(response.body.comment).toMatchObject({ actorId: CONTRIBUTOR, targetKind: "reference.jurisdictions", version: 1 });
     });
 
     it("rejects an unknown target kind and a missing target", async () => {
       const bearer = await sign(CONTRIBUTOR, ["contributor"]);
-      expect((await post("/v1/audit/comments", comment({ targetKind: "users; DROP TABLE comments" }), bearer)).status).toBe(400);
+      expect((await post("/v1/audit/comments", comment({ targetKind: "users; DROP TABLE audit.comments" }), bearer)).status).toBe(400);
       expect((await post("/v1/audit/comments", comment({ targetId: "99999999-9999-4999-8999-999999999999" }), bearer)).status).toBe(404);
     });
 
@@ -143,7 +145,7 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
     });
 
     it("lists comments publicly, without a token", async () => {
-      const response = await fetch(`${base}/v1/audit/comments?targetKind=jurisdictions&targetId=${jurisdictionId}`);
+      const response = await fetch(`${base}/v1/audit/comments?targetKind=reference.jurisdictions&targetId=${jurisdictionId}`);
       expect(response.status).toBe(200);
       const body = (await response.json()) as { comments: Array<{ actorId: string }> };
       expect(body.comments.length).toBeGreaterThanOrEqual(2);
@@ -153,7 +155,7 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
 
   describe("evidence", () => {
     const evidence = (extra: Record<string, unknown> = {}) => ({
-      targetKind: "jurisdictions", targetId: jurisdictionId, artifactId: "33333333-cccc-4ccc-8ccc-333333333333",
+      targetKind: "reference.jurisdictions", targetId: jurisdictionId, artifactId: "33333333-cccc-4ccc-8ccc-333333333333",
       artifactChecksum: "a".repeat(64), mediaType: "application/pdf", sizeBytes: 1024, note: "Gazette notice", ...extra,
     });
 
@@ -172,14 +174,14 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
 
   describe("database boundary", () => {
     it("lets the writer role insert audit records only", async () => {
-      await expect(writer.query(`UPDATE comments SET body = 'edited'`)).rejects.toThrow(/permission denied/);
-      await expect(writer.query(`DELETE FROM comments`)).rejects.toThrow(/permission denied/);
-      await expect(writer.query(`UPDATE jurisdictions SET name = 'x'`)).rejects.toThrow(/permission denied/);
-      await expect(writer.query(`DELETE FROM legal_instruments`)).rejects.toThrow(/permission denied/);
+      await expect(writer.query(`UPDATE audit.comments SET body = 'edited'`)).rejects.toThrow(/permission denied/);
+      await expect(writer.query(`DELETE FROM audit.comments`)).rejects.toThrow(/permission denied/);
+      await expect(writer.query(`UPDATE reference.jurisdictions SET name = 'x'`)).rejects.toThrow(/permission denied/);
+      await expect(writer.query(`DELETE FROM legal.instruments`)).rejects.toThrow(/permission denied/);
     });
 
     it("never changes canonical data: the jurisdiction is untouched after all writes", async () => {
-      const [row] = await admin.query(`SELECT name, verification_state FROM jurisdictions WHERE id = $1`, [jurisdictionId]);
+      const [row] = await admin.query(`SELECT name, verification_state FROM reference.jurisdictions WHERE id = $1`, [jurisdictionId]);
       expect(row).toEqual({ name: "Kenya", verification_state: "verified" });
     });
   });

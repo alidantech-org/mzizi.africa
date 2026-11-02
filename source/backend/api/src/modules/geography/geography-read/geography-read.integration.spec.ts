@@ -3,7 +3,7 @@ import "reflect-metadata";
 
 import { NotFoundException } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { scratchDatabase } from "#/database/scratch-database";
+import { grantReadOnly, scratchDatabase, synchronizeDomainSchemas } from "#/database/scratch-database";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { GetChildBoundariesUseCase } from "#/modules/geography/geography-read/use-cases/get-child-boundaries.usecase";
@@ -50,22 +50,22 @@ describe.skipIf(!adminUrl)("geography read slice (PostgreSQL)", () => {
       type: "postgres",
       url: dbUrl,
       entities,
-      synchronize: true,
-      dropSchema: true,
+      synchronize: false,
     });
     await admin.initialize();
+    await synchronizeDomainSchemas(admin);
     const evidence = `source_name, method, verification_state, is_current, version, created_at, updated_at`;
     const ev = (state: string) => `'Test source', 'curated', '${state}', true, 1, now(), now()`;
     await admin.query(
-      `INSERT INTO jurisdictions (id, code, name, kind, ${evidence}) VALUES ($1, 'ke', 'Kenya', 'modern_state', ${ev("verified")})`,
+      `INSERT INTO reference.jurisdictions (id, code, name, kind, ${evidence}) VALUES ($1, 'ke', 'Kenya', 'modern_state', ${ev("verified")})`,
       [ids.ke],
     );
     await admin.query(
-      `INSERT INTO jurisdictions (id, code, name, kind, ${evidence}) VALUES ($1, 'kingdom-of-example', 'Kingdom of Example', 'historical_polity', ${ev("disputed")})`,
+      `INSERT INTO reference.jurisdictions (id, code, name, kind, ${evidence}) VALUES ($1, 'kingdom-of-example', 'Kingdom of Example', 'historical_polity', ${ev("disputed")})`,
       [ids.polity],
     );
     await admin.query(
-      `INSERT INTO classification_records (id, jurisdiction_id, scheme, code, label, "order", ${evidence}) VALUES ($1, $2, 'geography/level', 'geography/realm', 'realm', 0, ${ev("disputed")})`,
+      `INSERT INTO reference.classifications (id, jurisdiction_id, scheme, code, label, "order", ${evidence}) VALUES ($1, $2, 'geography/level', 'geography/realm', 'realm', 0, ${ev("disputed")})`,
       [ids.lvlPolity, ids.polity],
     );
     for (const [id, code, label, order] of [
@@ -73,13 +73,13 @@ describe.skipIf(!adminUrl)("geography read slice (PostgreSQL)", () => {
       [ids.lvlCounty, "geography/county", "county", 1],
     ] as const) {
       await admin.query(
-        `INSERT INTO classification_records (id, jurisdiction_id, scheme, code, label, "order", ${evidence}) VALUES ($1, $2, 'geography/level', $3, $4, $5, ${ev("verified")})`,
+        `INSERT INTO reference.classifications (id, jurisdiction_id, scheme, code, label, "order", ${evidence}) VALUES ($1, $2, 'geography/level', $3, $4, $5, ${ev("verified")})`,
         [id, ids.ke, code, label, order],
       );
     }
     const unit = (id: string, code: string, name: string, level: string, parent: string | null, kind = "territorial", jurisdiction = ids.ke) =>
       admin.query(
-        `INSERT INTO geo_units (id, code, name, kind, jurisdiction_id, level_id, parent_id, is_active, ${evidence}) VALUES ($1,$2,$3,$4,$5,$6,$7,true, ${ev("verified")})`,
+        `INSERT INTO geo.units (id, code, name, kind, jurisdiction_id, level_id, parent_id, is_active, ${evidence}) VALUES ($1,$2,$3,$4,$5,$6,$7,true, ${ev("verified")})`,
         [id, code, name, kind, jurisdiction, level, parent],
       );
     await unit(ids.kenya, "ke", "Kenya", ids.lvlCountry, null);
@@ -88,7 +88,7 @@ describe.skipIf(!adminUrl)("geography read slice (PostgreSQL)", () => {
     await unit(ids.kingdom, "kingdom-of-example", "Kingdom of Example", ids.lvlPolity, null, "historical_polity", ids.polity);
     const boundary = (id: string, unitId: string, state: string) =>
       admin.query(
-        `INSERT INTO geo_boundary_versions (id, unit_id, version_number, geometry, source_name, licence, retrieved_at, method, verification_state, is_current, version, created_at, updated_at)
+        `INSERT INTO geo.boundaries (id, unit_id, version_number, geometry, source_name, licence, retrieved_at, method, verification_state, is_current, version, created_at, updated_at)
          VALUES ($1, $2, 1, $3, 'Test survey', 'CC-BY-4.0', now(), 'curated', $4, true, 1, now(), now())`,
         [id, unitId, JSON.stringify(polygon), state],
       );
@@ -99,7 +99,7 @@ describe.skipIf(!adminUrl)("geography read slice (PostgreSQL)", () => {
       `DO $$ BEGIN IF EXISTS (SELECT FROM pg_roles WHERE rolname = '${READER}') THEN DROP OWNED BY ${READER}; DROP ROLE ${READER}; END IF; END $$`,
     );
     await admin.query(`CREATE ROLE ${READER} LOGIN PASSWORD 'reader'`);
-    await admin.query(`GRANT SELECT ON ALL TABLES IN SCHEMA public TO ${READER}`);
+    await grantReadOnly(admin, READER);
     const url = new URL(dbUrl);
     url.username = READER;
     url.password = "reader";
@@ -163,6 +163,6 @@ describe.skipIf(!adminUrl)("geography read slice (PostgreSQL)", () => {
   });
 
   it("cannot write with the read-only role", async () => {
-    await expect(reader.query(`UPDATE geo_units SET name = 'x'`)).rejects.toThrow(/permission denied/);
+    await expect(reader.query(`UPDATE geo.units SET name = 'x'`)).rejects.toThrow(/permission denied/);
   });
 });

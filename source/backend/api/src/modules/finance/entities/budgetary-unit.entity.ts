@@ -32,7 +32,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Budgetary Unit
  */
-@Entity({ name: "budgetary_units" })
+@Entity({ schema: "finance", name: "units" })
 @Index("idx_budgetary_unit_code", ["code"], { unique: true })
 export class BudgetaryUnitEntity {
 

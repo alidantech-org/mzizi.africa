@@ -32,7 +32,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Geo Unit Name Version
  */
-@Entity({ name: "geo_unit_name_versions" })
+@Entity({ schema: "geo", name: "names" })
 @Index("idx_geo_name_unit", ["unitId"])
 export class GeoUnitNameVersionEntity {
 

@@ -5,7 +5,7 @@ import { NotFoundException } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { scratchDatabase } from "#/database/scratch-database";
+import { grantReadOnly, scratchDatabase, synchronizeDomainSchemas } from "#/database/scratch-database";
 import { GetGeographyHierarchyUseCase } from "#/modules/geography/geography-read/use-cases/get-geography-hierarchy.usecase";
 import { GetGeographyHistoryUseCase } from "#/modules/geography/geography-read/use-cases/get-geography-history.usecase";
 import { GetGeographyMapContextUseCase } from "#/modules/geography/geography-read/use-cases/get-geography-map-context.usecase";
@@ -51,8 +51,9 @@ describe.skipIf(!adminUrl)("read APIs (PostgreSQL, read-only role)", () => {
 
   beforeAll(async () => {
     const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_read_apis_test");
-    admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: true, dropSchema: true });
+    admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await admin.initialize();
+    await synchronizeDomainSchemas(admin);
 
     await save("JurisdictionEntity", "ke", evidence({ code: "ke", name: "Kenya", kind: "modern_state" }));
     await save("JurisdictionEntity", "polity", evidence({ code: "example-realm", name: "Example Realm", kind: "historical_polity", verificationState: "disputed" }));
@@ -95,7 +96,7 @@ describe.skipIf(!adminUrl)("read APIs (PostgreSQL, read-only role)", () => {
 
     await admin.query(`DO $$ BEGIN IF EXISTS (SELECT FROM pg_roles WHERE rolname = '${READER}') THEN DROP OWNED BY ${READER}; DROP ROLE ${READER}; END IF; END $$`);
     await admin.query(`CREATE ROLE ${READER} LOGIN PASSWORD 'reader'`);
-    await admin.query(`GRANT SELECT ON ALL TABLES IN SCHEMA public TO ${READER}`);
+    await grantReadOnly(admin, READER);
     const url = new URL(dbUrl);
     url.username = READER;
     url.password = "reader";
@@ -195,6 +196,6 @@ describe.skipIf(!adminUrl)("read APIs (PostgreSQL, read-only role)", () => {
   });
 
   it("never writes: the read-only role is refused", async () => {
-    await expect(reader.query(`UPDATE legal_instruments SET title = 'x'`)).rejects.toThrow(/permission denied/);
+    await expect(reader.query(`UPDATE legal.instruments SET title = 'x'`)).rejects.toThrow(/permission denied/);
   });
 });

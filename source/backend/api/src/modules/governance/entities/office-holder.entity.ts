@@ -34,7 +34,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Office Holder
  */
-@Entity({ name: "office_holders" })
+@Entity({ schema: "governance", name: "holders" })
 @Index("idx_office_holder_office", ["officeId", "isCurrent"])
 @Index("idx_office_holder_person", ["personId"])
 export class OfficeHolderEntity {

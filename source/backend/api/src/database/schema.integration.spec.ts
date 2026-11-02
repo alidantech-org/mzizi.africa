@@ -2,7 +2,7 @@
 import "reflect-metadata";
 
 import { DataSource } from "typeorm";
-import { scratchDatabase } from "#/database/scratch-database";
+import { scratchDatabase, synchronizeDomainSchemas } from "#/database/scratch-database";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 /**
@@ -19,8 +19,9 @@ describe.skipIf(!adminUrl)("generated schema (PostgreSQL)", () => {
   let db: DataSource;
 
   beforeAll(async () => {
-    db = new DataSource({ type: "postgres", url: await scratchDatabase(adminUrl as string, "mzizi_schema_test"), entities, synchronize: true, dropSchema: true });
+    db = new DataSource({ type: "postgres", url: await scratchDatabase(adminUrl as string, "mzizi_schema_test"), entities, synchronize: false });
     await db.initialize();
+    await synchronizeDomainSchemas(db);
   });
 
   afterAll(async () => {
@@ -28,11 +29,22 @@ describe.skipIf(!adminUrl)("generated schema (PostgreSQL)", () => {
   });
 
   it("creates a table for every entity", async () => {
-    const rows: Array<{ table_name: string }> = await db.query(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' AND table_name <> 'spatial_ref_sys'`,
+    const rows: Array<{ table_schema: string; table_name: string }> = await db.query(
+      `SELECT table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('public', 'pg_catalog', 'information_schema')`,
     );
     expect(rows.length).toBe(db.entityMetadatas.length);
     expect(rows.length).toBeGreaterThan(60);
+  });
+
+  it("keeps every table out of public and in its domain schema", async () => {
+    expect(db.entityMetadatas.every((meta) => meta.schema && meta.schema !== "public")).toBe(true);
+    const inPublic: Array<{ table_name: string }> = await db.query(
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' AND table_name <> 'spatial_ref_sys'`,
+    );
+    expect(inPublic).toEqual([]);
+    for (const meta of db.entityMetadatas) {
+      expect(meta.tableName, `${meta.schema}.${meta.tableName} repeats its schema`).not.toMatch(new RegExp(`^${meta.schema}_`));
+    }
   });
 
   it("gives every claim-bearing table provenance, valid time and verification columns", async () => {

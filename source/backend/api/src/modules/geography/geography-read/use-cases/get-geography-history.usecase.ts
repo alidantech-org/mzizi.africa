@@ -12,14 +12,14 @@ export class GetGeographyHistoryUseCase {
   constructor(@InjectDataSource() private readonly db: DataSource) {}
 
   async execute(input: { entityId: string }): Promise<GeographyHistoryResponseDto> {
-    const [self]: Row[] = await this.db.query(`SELECT id FROM geo_units WHERE id = $1`, [input.entityId]);
+    const [self]: Row[] = await this.db.query(`SELECT id FROM geo.units WHERE id = $1`, [input.entityId]);
     if (!self) throw new NotFoundException('geography entity not found');
     const names: Row[] = await this.db.query(
-      `SELECT * FROM geo_unit_name_versions WHERE unit_id = $1 ORDER BY valid_from NULLS FIRST, created_at`,
+      `SELECT * FROM geo.names WHERE unit_id = $1 ORDER BY valid_from NULLS FIRST, created_at`,
       [input.entityId],
     );
     const changes: Row[] = await this.db.query(
-      `SELECT * FROM geo_unit_changes WHERE source_unit_id = $1 OR target_unit_id = $1 ORDER BY valid_from NULLS FIRST, created_at`,
+      `SELECT * FROM geo.changes WHERE source_unit_id = $1 OR target_unit_id = $1 ORDER BY valid_from NULLS FIRST, created_at`,
       [input.entityId],
     );
     const camel = (row: Row) => Object.fromEntries(Object.entries(row).map(([key, value]) => [key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()), value]));

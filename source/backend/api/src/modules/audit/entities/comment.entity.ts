@@ -22,7 +22,7 @@ import type { DateTime } from "#/types/shared/date-time.type.ts";
 /**
  * Comment
  */
-@Entity({ name: "comments" })
+@Entity({ schema: "audit", name: "comments" })
 @Index("idx_comment_target", ["targetKind", "targetId"])
 export class CommentEntity {
 

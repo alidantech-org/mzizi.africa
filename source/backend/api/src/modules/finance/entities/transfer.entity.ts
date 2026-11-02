@@ -35,7 +35,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Transfer
  */
-@Entity({ name: "transfers" })
+@Entity({ schema: "finance", name: "transfers" })
 @Index("idx_transfer_from", ["fromUnitId", "fiscalYearId"])
 @Index("idx_transfer_to", ["toUnitId"])
 export class TransferEntity {

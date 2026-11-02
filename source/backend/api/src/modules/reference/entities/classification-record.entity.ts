@@ -35,7 +35,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Classification Record
  */
-@Entity({ name: "classification_records" })
+@Entity({ schema: "reference", name: "classifications" })
 @Index("idx_classification_scheme_code", ["jurisdictionId", "scheme", "code"], { unique: true })
 export class ClassificationRecordEntity {
 

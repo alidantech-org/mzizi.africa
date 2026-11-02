@@ -32,7 +32,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Fiscal Year
  */
-@Entity({ name: "fiscal_years" })
+@Entity({ schema: "finance", name: "years" })
 @Index("idx_fiscal_year_code", ["code"], { unique: true })
 export class FiscalYearEntity {
 

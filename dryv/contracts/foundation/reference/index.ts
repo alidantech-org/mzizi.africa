@@ -11,7 +11,8 @@ import { evidencedEntitySchemas, sharedProperties } from "../shared/index.ts";
  * fiscal stages are ClassificationRecord rows scoped by jurisdiction and period, never enums or
  * columns.
  */
-export const reference = dryv.group({ name: "reference" }).description("Jurisdictions and jurisdiction-scoped classification records.");
+export const reference = dryv.group({ name: "reference" }).description("Jurisdictions and jurisdiction-scoped classification records.")
+  .facets({ storage: { namespace: "reference" } });
 
 export const referenceProperties = reference.properties({
   JurisdictionKind: dryv.property.enum({
@@ -56,7 +57,7 @@ export const referenceSchemas = reference.schemas({
     .role("entity")
     .extends(evidencedEntitySchemas.EvidencedEntity)
     .facets({
-      storage: dryv.storage("classification_records").indexes(
+      storage: dryv.storage("classifications").indexes(
         { name: "idx_classification_scheme_code", fields: ["jurisdictionId", "scheme", "code"], unique: true },
       ),
     }),

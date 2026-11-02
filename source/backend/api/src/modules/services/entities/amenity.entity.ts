@@ -32,7 +32,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Amenity
  */
-@Entity({ name: "amenities" })
+@Entity({ schema: "civic", name: "amenities" })
 @Index("idx_amenity_code", ["code"], { unique: true })
 @Index("idx_amenity_geo", ["geoUnitId"])
 export class AmenityEntity {

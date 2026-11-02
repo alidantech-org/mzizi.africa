@@ -35,7 +35,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Ledger Entry
  */
-@Entity({ name: "ledger_entries" })
+@Entity({ schema: "finance", name: "entries" })
 @Index("idx_ledger_unit", ["unitId", "postedOn"])
 @Index("idx_ledger_reference", ["referenceKind", "referenceId"])
 export class LedgerEntryEntity {

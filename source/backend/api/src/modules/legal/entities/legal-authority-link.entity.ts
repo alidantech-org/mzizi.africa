@@ -32,7 +32,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Legal Authority Link
  */
-@Entity({ name: "legal_authority_links" })
+@Entity({ schema: "legal", name: "links" })
 @Index("idx_legal_authority_target", ["targetKind", "targetId"])
 export class LegalAuthorityLinkEntity {
 

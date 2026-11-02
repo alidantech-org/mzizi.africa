@@ -19,3 +19,9 @@ export function compileIr(): Item[] {
   }
   return items;
 }
+
+/** Where an entity is stored: the group's storage namespace (a database schema) and the entity's table name. */
+export function storageOf(items: Item[], schema: Json): { schema?: string; table?: string } {
+  const group = items.find((item) => item.kind === "group" && `#/groups/${item.name}` === schema.group?.$ref);
+  return { schema: group?.value.facets?.storage?.namespace, table: schema.facets?.storage?.name };
+}

@@ -13,7 +13,8 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * classification record. Provisions carry pinpoint structure, so any other domain can cite the
  * exact provision that is its legal basis through LegalAuthorityLink.
  */
-export const legal = dryv.group({ name: "legal" }).description("Legal instruments, provisions, amendments and authority links.").tags("public", "legal");
+export const legal = dryv.group({ name: "legal" }).description("Legal instruments, provisions, amendments and authority links.").tags("public", "legal")
+  .facets({ storage: { namespace: "legal" } });
 
 export const legalProperties = legal.properties({
   InstrumentStatus: dryv.property.enum({
@@ -57,7 +58,7 @@ export const legalEntitySchemas = legal.schemas({
       contentHash: dryv.field(sharedProperties.Checksum).optional().nullable(),
       summary: dryv.field(sharedProperties.Description).optional().nullable(),
     },
-    "legal_instruments",
+    "instruments",
     [
       { name: "idx_legal_instrument_code", fields: ["code"], unique: true },
       { name: "idx_legal_instrument_jurisdiction", fields: ["jurisdictionId", "status"] },
@@ -78,7 +79,7 @@ export const legalProvisionSchemas = legal.schemas({
       content: dryv.field(sharedProperties.LongText).optional().nullable(),
       sortOrder: dryv.field(sharedProperties.Count).query({ sort: true }),
     },
-    "legal_provisions",
+    "provisions",
     [
       { name: "idx_legal_provision_instrument_code", fields: ["instrumentId", "code", "version"], unique: true },
       { name: "idx_legal_provision_parent", fields: ["parentId"] },
@@ -94,7 +95,7 @@ export const legalAmendmentSchemas = legal.schemas({
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       summary: dryv.field(sharedProperties.Description).optional().nullable(),
     },
-    "legal_amendments",
+    "amendments",
     [{ name: "idx_legal_amendment_instrument", fields: ["instrumentId"] }],
   ),
 });
@@ -108,7 +109,7 @@ export const legalChangeSchemas = legal.schemas({
       previousText: dryv.field(sharedProperties.LongText).optional().nullable(),
       newText: dryv.field(sharedProperties.LongText).optional().nullable(),
     },
-    "legal_amendment_changes",
+    "changes",
     [{ name: "idx_legal_change_amendment", fields: ["amendmentId"] }],
   ),
 
@@ -123,7 +124,7 @@ export const legalChangeSchemas = legal.schemas({
       targetId: plainId(),
       note: dryv.field(sharedProperties.Description).optional().nullable(),
     },
-    "legal_authority_links",
+    "links",
     [{ name: "idx_legal_authority_target", fields: ["targetKind", "targetId"] }],
   ),
 });

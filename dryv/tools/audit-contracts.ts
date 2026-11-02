@@ -4,7 +4,7 @@
  *
  *   bun tools/audit-contracts.ts
  */
-import { compileIr, type Json } from "./lib/ir.ts";
+import { compileIr, storageOf, type Json } from "./lib/ir.ts";
 
 const items = compileIr();
 
@@ -53,11 +53,21 @@ for (const [name, schema] of schemas) {
     if (fields.length > 1) violations.push(`${name}: fields ${fields.join(", ")} all relate to ${target}; keep one relation and make the others plain ids`);
   }
 
-  // 3. A stored entity needs a unique table name.
-  const table = schema.facets?.storage?.name as string | undefined;
-  if (!table) violations.push(`${name}: entity has no storage name`);
-  else if (tables.has(table)) violations.push(`${name}: storage name ${table} already used by ${tables.get(table)}`);
-  else tables.set(table, name);
+  // 3. Storage follows .docs/rules/database-naming.md.
+  const { schema: dbSchema, table } = storageOf(items, schema);
+  if (!dbSchema || !table) {
+    violations.push(`${name}: entity needs a storage namespace (database schema) and a table name`);
+    continue;
+  }
+  const qualified = `${dbSchema}.${table}`;
+  if (dbSchema === "public") violations.push(`${name}: tables must not live in the public schema`);
+  if (!/^[a-z][a-z0-9]*$/.test(dbSchema)) violations.push(`${name}: schema ${dbSchema} must be one lowercase word`);
+  if (dbSchema.endsWith("s") && !["address"].includes(dbSchema)) violations.push(`${name}: schema ${dbSchema} must be singular`);
+  if (!/^[a-z][a-z0-9]*(_[a-z][a-z0-9]*)?$/.test(table)) violations.push(`${name}: table ${table} must be lowercase with at most one underscore`);
+  if (table.startsWith(`${dbSchema}_`) || table === dbSchema) violations.push(`${name}: table ${table} repeats its schema ${dbSchema}`);
+  if (!table.endsWith("s") && !table.endsWith("people") && !table.endsWith("evidence")) violations.push(`${name}: table ${table} should be plural`);
+  if (tables.has(qualified)) violations.push(`${name}: ${qualified} already used by ${tables.get(qualified)}`);
+  else tables.set(qualified, name);
 }
 
 // 4. Strings longer than PostgreSQL's varchar limit must be unbounded text.

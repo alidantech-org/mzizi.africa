@@ -34,7 +34,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Bid
  */
-@Entity({ name: "bids" })
+@Entity({ schema: "procurement", name: "bids" })
 @Index("idx_bid_tender", ["tenderId"])
 export class BidEntity {
 

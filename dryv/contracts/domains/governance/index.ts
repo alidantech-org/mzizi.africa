@@ -16,7 +16,8 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
 export const governance = dryv
   .group({ name: "governance" })
   .description("Institutions, offices, rules, selection procedures, people and office holders.")
-  .tags("public", "governance");
+  .tags("public", "governance")
+  .facets({ storage: { namespace: "governance" } });
 
 export const governanceProperties = governance.properties({
   RelationshipKind: dryv.property.enum({
@@ -85,7 +86,7 @@ const relationships = governance.schemas({
       kind: dryv.field(governanceProperties.RelationshipKind).query({ filter: ["equal", "in"] }),
       legalBasisId: optionalId(),
     },
-    "institution_relationships",
+    "relationships",
     [{ name: "idx_institution_relationship_parent", fields: ["parentInstitutionId", "kind"] }],
   ),
 
@@ -116,7 +117,7 @@ const officeDetails = governance.schemas({
       textValue: dryv.field(sharedProperties.Description).optional().nullable(),
       legalBasisId: optionalId(),
     },
-    "office_rules",
+    "rules",
     [{ name: "idx_office_rule_office", fields: ["officeId", "kind"] }],
   ),
 
@@ -127,7 +128,7 @@ const officeDetails = governance.schemas({
       legalBasisId: optionalId(),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
     },
-    "selection_procedures",
+    "procedures",
     [{ name: "idx_selection_procedure_office", fields: ["officeId"] }],
   ),
 });
@@ -142,7 +143,7 @@ const procedureStages = governance.schemas({
       actorOfficeId: optionalId(),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
     },
-    "selection_stages",
+    "stages",
     [{ name: "idx_selection_stage_procedure", fields: ["procedureId", "stageOrder"] }],
   ),
 });
@@ -174,7 +175,7 @@ const personDetails = governance.schemas({
       kind: dryv.field(governanceProperties.NameKind).query({ filter: ["equal"] }),
       language: dryv.field(sharedProperties.Label).optional().nullable(),
     },
-    "person_names",
+    "aliases",
     [{ name: "idx_person_name_person", fields: ["personId"] }],
   ),
 
@@ -188,7 +189,7 @@ const personDetails = governance.schemas({
       status: dryv.field(governanceProperties.HolderStatus).query({ filter: ["equal"] }),
       departureReason: dryv.field(governanceProperties.DepartureReason).optional().nullable(),
     },
-    "office_holders",
+    "holders",
     [
       { name: "idx_office_holder_office", fields: ["officeId", "isCurrent"] },
       { name: "idx_office_holder_person", fields: ["personId"] },

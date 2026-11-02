@@ -13,7 +13,7 @@ docker start postgis
 docker exec postgis psql -U postgres -c "CREATE DATABASE mzizi_dev"
 cd source/backend/api && bun install
 export DATABASE_URL=postgres://postgres@localhost:5432/mzizi_dev
-bun run db:reset       # dev only: schema from the generated entities + Kenya and South Africa fixtures
+bun run db:reset       # dev only: 14 domain schemas (geo, legal, audit ...) from the generated entities + Kenya and South Africa fixtures
 bun run start          # http://localhost:3000, 139 routes, e.g. /v1/reference/jurisdictions
 ```
 
@@ -38,5 +38,5 @@ Reads are public. The only writes are the three `POST /v1/audit/*` routes (comme
 - **Rules come from the contracts.** The generator does not wire contract policies into guards, so `dryv/tools/export-access.ts` exports each operation's policy to `src/auth/access-rules.generated.ts` (`bun run access:export` in `dryv/`; `access:check` is part of `bun run check`). The global `AuthGuard` enforces them and `ActorInterceptor` carries the verified actor to the use case, installed in `main.ts` with `installAuth`.
 - **Tokens.** Bearer JWTs from an OIDC-compatible issuer (`AUTH_ISSUER`, plus `AUTH_JWKS_URL` or a PEM `AUTH_PUBLIC_KEY`). `sub` must be a uuid and is the actor id; the highest of the `roles` claim (reader, contributor, reviewer, admin) is the role. With authentication unconfigured a protected route answers 503, never open access.
 - **Actor and role never come from the body.** Use cases stamp `actorId` / `reviewerId` from the token; the validation pipe also strips unknown body fields.
-- **Writer connection.** `DATABASE_WRITE_URL` is opened lazily by `src/database/write-database.ts`, knows only the three audit entities, and its role has SELECT and INSERT on those tables only: no UPDATE, no DELETE, nothing canonical. The app boots without it and writes answer 503.
-- **Targets.** `targetKind` must be one of the evidenced entities' storage names (from the same export) and the record must exist; comment replies must be on the same record.
+- **Writer connection.** `DATABASE_WRITE_URL` is opened lazily by `src/database/write-database.ts`, knows only the three audit entities, and its role has SELECT and INSERT on `audit.comments`, `audit.evidence` and `audit.decisions` only: no UPDATE, no DELETE, nothing canonical. The app boots without it and writes answer 503.
+- **Targets.** `targetKind` must be one of the evidenced entities' schema-qualified tables (for example `geo.units`) (from the same export) and the record must exist; comment replies must be on the same record.

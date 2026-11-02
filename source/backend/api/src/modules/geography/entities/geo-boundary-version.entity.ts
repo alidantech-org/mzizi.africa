@@ -32,7 +32,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Geo Boundary Version
  */
-@Entity({ name: "geo_boundary_versions" })
+@Entity({ schema: "geo", name: "boundaries" })
 @Index("idx_geo_boundary_unit_current", ["unitId", "isCurrent"])
 @Index("uq_geo_boundary_unit_version", ["unitId", "versionNumber"], { unique: true })
 export class GeoBoundaryVersionEntity {

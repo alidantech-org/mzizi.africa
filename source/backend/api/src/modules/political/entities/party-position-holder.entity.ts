@@ -31,7 +31,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Party Position Holder
  */
-@Entity({ name: "party_position_holders" })
+@Entity({ schema: "political", name: "holders" })
 @Index("idx_party_holder_position", ["positionId"])
 @Index("idx_party_holder_person", ["personId"])
 export class PartyPositionHolderEntity {

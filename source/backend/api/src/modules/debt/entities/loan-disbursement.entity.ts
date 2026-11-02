@@ -33,7 +33,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Loan Disbursement
  */
-@Entity({ name: "loan_disbursements" })
+@Entity({ schema: "debt", name: "disbursements" })
 @Index("idx_loan_disbursement_loan", ["loanId"])
 export class LoanDisbursementEntity {
 

@@ -16,9 +16,9 @@ export class GetGeographyHierarchyUseCase {
     if (!self) throw new NotFoundException('geography entity not found');
     const chain: Array<{ id: string }> = await this.db.query(
       `WITH RECURSIVE a AS (
-         SELECT p.id, p.parent_id, 1 AS depth FROM geo_units p WHERE p.id = (SELECT parent_id FROM geo_units WHERE id = $1)
+         SELECT p.id, p.parent_id, 1 AS depth FROM geo.units p WHERE p.id = (SELECT parent_id FROM geo.units WHERE id = $1)
          UNION ALL
-         SELECT u.id, u.parent_id, a.depth + 1 FROM geo_units u JOIN a ON u.id = a.parent_id
+         SELECT u.id, u.parent_id, a.depth + 1 FROM geo.units u JOIN a ON u.id = a.parent_id
        ) SELECT id FROM a ORDER BY depth DESC`,
       [input.entityId],
     );

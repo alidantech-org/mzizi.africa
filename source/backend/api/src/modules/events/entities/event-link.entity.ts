@@ -33,7 +33,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 /**
  * Event Link
  */
-@Entity({ name: "event_links" })
+@Entity({ schema: "calendar", name: "links" })
 @Index("idx_event_link_event", ["eventId"])
 @Index("idx_event_link_target", ["targetKind", "targetId"])
 export class EventLinkEntity {

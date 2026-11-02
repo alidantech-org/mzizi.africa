@@ -24,7 +24,7 @@ import type { DateTime } from "#/types/shared/date-time.type.ts";
 /**
  * Review Decision
  */
-@Entity({ name: "review_decisions" })
+@Entity({ schema: "audit", name: "decisions" })
 @Index("idx_decision_target", ["targetKind", "targetId"])
 export class ReviewDecisionEntity {
 
