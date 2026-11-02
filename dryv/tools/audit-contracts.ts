@@ -40,7 +40,7 @@ for (const name of schemas.keys()) {
 }
 
 /** Schema names are full words (rule: .docs/rules/database-naming.md). */
-const approvedSchemas = new Set(["reference", "geography", "legal", "person", "identity", "governance", "electoral", "political", "calendar", "organization", "finance", "debt", "procurement", "statistical", "civic", "filesystem", "source", "website", "audit"]);
+const approvedSchemas = new Set(["reference", "geography", "legal", "person", "identity", "governance", "electoral", "political", "calendar", "organization", "finance", "debt", "procurement", "statistical", "civic", "filesystem", "source", "website", "place", "contact", "audit"]);
 
 const tables = new Map<string, string>();
 for (const [name, schema] of schemas) {

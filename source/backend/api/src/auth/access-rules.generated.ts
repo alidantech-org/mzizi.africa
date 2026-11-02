@@ -31,6 +31,7 @@ export const targetKinds = [
   "civic.deliveries",
   "civic.posts",
   "civic.services",
+  "contact.points",
   "debt.disbursements",
   "debt.loans",
   "debt.repayments",
@@ -74,6 +75,10 @@ export const targetKinds = [
   "person.individuals",
   "person.names",
   "person.profiles",
+  "place.expectations",
+  "place.occupancies",
+  "place.occupancy_links",
+  "place.places",
   "political.alignments",
   "political.holders",
   "political.ideologies",
@@ -91,8 +96,13 @@ export const targetKinds = [
   "source.documents",
   "statistical.categories",
   "statistical.datasets",
+  "statistical.dimension_members",
+  "statistical.dimensions",
   "statistical.fields",
   "statistical.indicators",
+  "statistical.observation_derivations",
+  "statistical.observation_dimensions",
   "statistical.observations",
-  "statistical.periods"
+  "statistical.periods",
+  "statistical.vintages"
 ] as const;
