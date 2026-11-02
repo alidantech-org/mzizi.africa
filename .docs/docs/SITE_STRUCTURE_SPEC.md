@@ -1,0 +1,106 @@
+---
+{id: DOC-SITE-STRUCTURE-SPEC,name: SITE_STRUCTURE_SPEC,type: documentation,tags: [website,data-engine,format]}
+---
+
+# Site structure specification (mzizi.site/v1, draft)
+
+A site structure tells the data engine how to discover, fetch, extract, label and map the information a site publishes, without an LLM at run time. It is authored mostly by agents in batches, stored as files, versioned per site (see `WEBSITE_DESIGN.md`), and validated against a JSON Schema owned by Mzizi. It borrows ideas from browser site descriptions but is a different format designed for data extraction.
+
+## Bundle layout
+
+```text
+<site code>/<version>/
+  manifest.yml        identity, schema version, module list, defaults, policy
+  modules/
+    <name>.yml        one concern each: a listing, a document family, an API, a table family
+  mappings/
+    <name>.yml        field to Mzizi target mappings and semantics for one module
+  tags.yml            vocabulary extensions used by this bundle (optional)
+  NOTES.md            human-readable findings, gaps, limitations, considerations
+  notes/<topic>.md    longer explanations per module (optional)
+  examples/           small saved response samples used for dry-run validation
+```
+
+Granularity is the point: a large site is many small module files, so agents can add or repair one module without rewriting the rest, and unchanged modules deduplicate across versions.
+
+## Manifest
+
+```yaml
+schema: mzizi.site/v1
+site: ke-example-portal          # the site code, not a domain
+base:
+  domain_role: primary           # resolved from website.domains at run time
+  paths: [/]
+policy:
+  robots: respect
+  rate: { requests_per_second: 0.5, max_concurrency: 2 }
+  licence: { ref: cc-by-4.0, source: https://example.invalid/terms }
+  auth: none                     # anything other than none means the engine refuses
+fetch: { mode: http }            # http | api | browser
+modules: [budgets, tenders]
+tags: [jurisdiction:KE, domain:finance]
+```
+
+`auth` other than `none`, CAPTCHAs and access challenges are not supported; the engine stops and records a check.
+
+## Modules
+
+A module has `discover` (how to find items), `fetch` (how to get each), `extract` (how to read fields) and optional `paginate`.
+
+```yaml
+module: budgets
+tags: [kind:budget, tier:2]
+discover:
+  listing:
+    url: /publications/budgets
+    items: { css: "article.pub a[href$='.pdf']" }       # css | xpath | jsonpath | regex | sitemap | api
+    paginate: { type: query, param: page, start: 1, stop_when: empty_items }
+fetch: { resource: pdf }
+extract:
+  fields:
+    title:      { from: link_text, tags: [label:title] }
+    published:  { from: { css: ".date" }, parse: { date: "%d %B %Y" }, tags: [time:published] }
+    fiscal_year:{ from: title, regex: "(\\d{4}/\\d{2})", tags: [time:period, period:fiscal_year] }
+expect: { min_items: 5 }                                  # drift detection
+```
+
+Selectors are alternatives in confidence order; the engine tries each and records which matched. `expect` states what a healthy result looks like, so the engine can detect drift without guessing.
+
+## Tags: giving data meaning
+
+Tags are namespaced `key:value` labels attached to modules, fields, resources and mappings. They give the engine and reviewers machine-readable meaning without adding code. The base vocabulary lives in `reference.classifications` (scheme `site-tag`) so it is data, not code; a bundle's `tags.yml` may propose extensions, which the engine accepts only if they match an existing scheme prefix.
+
+Examples: `kind:budget|tender|gazette|census|boundary`, `time:published|valid_from|valid_to|period`, `label:title|identifier|amount|currency|unit`, `geo:county|ward|national`, `jurisdiction:KE`, `tier:1|2|3` (promotion policy hint), `licence:open|restricted`.
+
+## Mappings: semantics to Mzizi targets
+
+```yaml
+mapping: budgets
+target_kind: finance.budgets
+key: [fiscal_year, entity]
+fields:
+  fiscal_year: { from: fiscal_year, transform: fiscal_year }      # resolves to finance.years id by natural key
+  amount:      { from: table.approved, transform: { decimal: {thousands: ","} } }
+  currency:    { const: KES }
+  valid_from:  { from: fiscal_year, transform: fy_start, precision: day }
+provenance:
+  locator: { page: $page, table: $table_index, cell: $cell }
+  method: structure-run
+```
+
+A mapping states the target contract (`schema.table`), the natural key used for idempotency, per-field sources, transforms from a fixed library (date, decimal, fiscal year, lookup by code, normalise name), constants, and the locator template for `source.attributions`. Unknown transforms fail validation. Lookups reference reference data by natural key, never by hard-coded ids.
+
+## Validation
+
+1. Schema validation against the `mzizi.site/v1` JSON Schema (closed: unknown keys and executable code are rejected).
+2. Static checks: modules referenced exist, tags known, mappings target real contract fields, transforms in the library, policy sane.
+3. Dry run against `examples/` saved responses; results must satisfy each module's `expect`.
+4. Live check (engine): a bounded, rate-limited fetch confirms the structure still fits; recorded in `website.checks`.
+
+## NOTES.md
+
+Required for every bundle and written by the authoring agent: what was observed (dated), what the structure does not cover, known gaps, licence and access findings, unstable parts, suggested follow-ups, and which tags or transforms it wished it had. The engine ignores it; reviewers and later agents read it.
+
+## Out of scope for v1
+
+Authenticated sites, CAPTCHAs, anti-bot evasion, JavaScript execution beyond declared browser mode, OCR rules (document extraction profiles belong to the extractor config referenced by `fetch.resource`), natural-language rules.

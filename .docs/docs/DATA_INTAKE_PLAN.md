@@ -118,7 +118,7 @@ Dataset: a county-level (47) administrative boundary file with a verified open l
 | 2 | Kenya statistics (KNBS), legal (constitution and chosen Acts), institutions and offices | 1 |
 | 3 | Kenya elections and parties; people with entity resolution and privacy review | 2 |
 | 4 | Kenya budgets, debt, procurement, organisations | 2 |
-| 5 | AI-assisted source discovery, draft site structures and drift monitoring (the attached research note) | 0 stable |
+| 5 | AI-assisted source discovery at scale, agent batches of site structures, drift monitoring (see `WEBSITE_DESIGN.md`) | 0 stable, website schema |
 
 ## 11. Legacy seeds (`api-legacy/app/routes/*/_seed`)
 
@@ -145,16 +145,14 @@ Drop: anti-detection and TLS-verification-disabled code paths in the legacy scra
 
 ## 12. The attached research note (AI-assisted discovery)
 
-Adopted: separate source, site-structure, extraction and dataset definitions; human approval before automation; tiered promotion; drift states distinct from record lifecycle; an evidence-backed inventory with explicit counting rules.
+Adopted: separate source, site-structure, extraction and dataset definitions; tiered promotion; drift states distinct from record lifecycle; an evidence-backed inventory with explicit counting rules.
 
-Adjusted to this repository:
+Superseded by `DEC-WEBSITE-SCHEMA-STRUCTURE` (decided after the note):
 
-- Paths in the note (`.tasks/...`, `source/backend/data-engine`) are stale. Docs live in `.docs/`, tasks in the Task CLI, engine packages under `source/backend/engine/`.
-- `site.structure.yml` stays DevAuto's contract. Mzizi references an approved structure by hash and does not import DevAuto internals; the integration contract does not exist yet and is a prerequisite.
-- The source registry (publishers, approved sources, operational states) belongs to Mzizi, not DevAuto's static catalog. It overlaps `source.publishers`; the contracts task decides whether operational state extends publishers or is a data engine table.
-- `dataset.yml` overlaps `statistical.datasets` and the mapping version in `staging.runs`; the contracts task reconciles them before any file is authored.
-- Browser-driven acquisition is for sites with no bulk file or API; Tier A intake does not need it.
-- The note's task references (sites/001, api/001) do not exist here; Wave 5 is a new task group.
+- DevAuto's `site.structure.yml`, its integration contract and the human structure-approval gate are dropped. Mzizi owns a `website` schema (sites, many dated domains, publisher links, versioned structures stored as files in `filesystem`) and its own structure format; see `WEBSITE_DESIGN.md` and `SITE_STRUCTURE_SPEC.md`.
+- Agents author structures in batches and publish them without approval; data extracted through them still goes through candidates, validation and review.
+- The note's source, extraction and dataset files map to the bundle's manifest, modules and mappings. `dataset.yml` overlap with `statistical.datasets` is resolved by mappings targeting contract tables.
+- Paths in the note (`.tasks/...`, `source/backend/data-engine`) are stale; its task references do not exist here.
 
 ## 13. Out of scope for now
 
