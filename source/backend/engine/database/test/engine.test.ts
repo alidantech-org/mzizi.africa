@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 
 import { openDataSource, withDatabase } from "../src/config.ts";
+import { checkCollection } from "../src/gate.ts";
 import { checkIntegrity } from "../src/integrity.ts";
 import { drift, migrate } from "../src/migrations.ts";
 import { seedFixtures, seedReference } from "../src/seeds.ts";
@@ -69,5 +70,36 @@ run("database engine", () => {
     await db.query(`INSERT INTO source.captures (id, document_id, retrieved_at, site_id, created_at, updated_at, version) VALUES ($1, $2, now(), $3, now(), now(), 1)`, [randomUUID(), documentId, randomUUID()]);
     const issues = await checkIntegrity(db);
     expect(issues.map((issue) => issue.rule)).toContain("source.captures.siteId -> website.sites");
+  });
+
+  test("the database gate reads the current assessment and the jurisdiction dossier", async () => {
+    const [site] = await db.query(`SELECT id, jurisdiction_id AS jurisdiction FROM website.sites WHERE code = 'ke/treasury'`);
+    const request = { siteId: site.id, host: "treasury.go.ke", path: "/publications/a.pdf", purpose: "collect" as const, requestsPerSecond: 0.2 };
+    expect((await checkCollection(db, request)).allowed).toBe(false);
+
+    const assessmentId = randomUUID();
+    await db.query(
+      `INSERT INTO website.assessments (id, site_id, jurisdiction_id, status, source_type, access_basis, rights_holder, personal_data_categories, approved_scope, reviewed_by, reviewed_at, review_due_at, is_current, created_at, updated_at, version)
+       VALUES ($1, $2, $3, 'approved', 'official_website', 'published_terms', 'unknown', '["none_known"]', $4, $5, now(), now() + interval '1 year', true, now(), now(), 1)`,
+      [assessmentId, site.id, site.jurisdiction, JSON.stringify({ hosts: ["treasury.go.ke"], maxRequestsPerSecond: 0.5 }), randomUUID()],
+    );
+    const withoutDossier = await checkCollection(db, request);
+    expect(withoutDossier.allowed).toBe(false);
+    expect(withoutDossier.reasons.join(" ")).toContain("dossier");
+
+    await db.query(
+      `INSERT INTO website.dossiers (id, jurisdiction_id, applicable_laws, launch_stage, is_current, created_at, updated_at, version) VALUES ($1, $2, '[]', 'pilot', true, now(), now(), 1)`,
+      [randomUUID(), site.jurisdiction],
+    );
+    expect(await checkCollection(db, request)).toMatchObject({ allowed: true, assessmentId });
+    expect((await checkCollection(db, { ...request, host: "elsewhere.example" })).allowed).toBe(false);
+  });
+
+  test("integrity reports a site capture that has no covering assessment", async () => {
+    const [site] = await db.query(`SELECT id FROM website.sites WHERE code = 'ke/knbs'`);
+    const [{ id: documentId }] = await db.query(`SELECT id FROM source.documents LIMIT 1`);
+    await db.query(`INSERT INTO source.captures (id, document_id, retrieved_at, site_id, created_at, updated_at, version) VALUES ($1, $2, now(), $3, now(), now(), 1)`, [randomUUID(), documentId, site.id]);
+    const issues = await checkIntegrity(db);
+    expect(issues.map((issue) => issue.rule)).toContain("captures of a site without a covering assessment");
   });
 });

@@ -52,6 +52,20 @@ export const websiteProperties = website.properties({
   TraitTag: dryv.property.string().length({ min: 3, max: 200 }),
   /** Domain template with named slots, such as {county}.go.ke. */
   DomainTemplate: dryv.property.string().length({ min: 3, max: 300 }),
+  LegalReviewStatus: dryv.property.enum({
+    notReviewed: "not_reviewed",
+    inReview: "in_review",
+    approved: "approved",
+    approvedWithConditions: "approved_with_conditions",
+    restricted: "restricted",
+    rejected: "rejected",
+    expired: "expired",
+  }),
+  AssessmentSourceType: dryv.property.enum({ api: "api", openDataPortal: "open_data_portal", officialWebsite: "official_website", documentRepository: "document_repository", thirdPartyRepository: "third_party_repository", other: "other" }),
+  AccessBasis: dryv.property.enum({ openEndpoint: "open_endpoint", publishedTerms: "published_terms", openLicence: "open_licence", writtenPermission: "written_permission", accessToInformationResponse: "access_to_information_response", other: "other" }),
+  LaunchStage: dryv.property.enum({ research: "research", pilot: "pilot", production: "production", paused: "paused" }),
+  /** Serialised JSON text: arrays and objects whose shape the compliance engine validates. */
+  JsonText: dryv.property.string().length({ min: 2 }),
   Score: dryv.property.number.decimal({ precision: 7, scale: 4 }),
 });
 
@@ -303,6 +317,68 @@ const similarity = website.schemas({
     },
     "fingerprints",
     [{ name: "idx_fingerprint_site", fields: ["siteId", "kind", "computedAt"] }],
+  ),
+});
+
+const assessments = website.schemas({
+  /**
+   * Append-only legal and source assessment of a site (LEGALITY_SAFETY_AND_COMPLIANCE.md section 9).
+   * Agents may draft one; approval names a human reviewer. The row with isCurrent is the governing
+   * assessment; a change is a new row that supersedes the old one. Not exposed by the public API.
+   */
+  Assessment: systemRecord(
+    {
+      siteId: relationTo(() => sites.Site.field("id")),
+      jurisdictionId: optionalId(),
+      status: dryv.field(websiteProperties.LegalReviewStatus).query({ filter: ["equal", "in"] }),
+      sourceType: dryv.field(websiteProperties.AssessmentSourceType),
+      accessBasis: dryv.field(websiteProperties.AccessBasis),
+      accessConditions: dryv.field(sharedProperties.LongText).optional().nullable(),
+      licenceName: dryv.field(sharedProperties.Name).optional().nullable(),
+      licenceUrl: dryv.field(sharedProperties.Url).optional().nullable(),
+      licenceVersion: dryv.field(sharedProperties.Label).optional().nullable(),
+      /** The rights holder, or the explicit word "unknown". */
+      rightsHolder: dryv.field(sharedProperties.Name),
+      /** JSON array of data categories, including "none_known". */
+      personalDataCategories: dryv.field(websiteProperties.JsonText),
+      processingPurpose: dryv.field(sharedProperties.Description).optional().nullable(),
+      lawfulBasis: dryv.field(sharedProperties.Description).optional().nullable(),
+      /** JSON object: hosts, schemes, paths, fetch modes, maximum requests per second, publication scope. */
+      approvedScope: dryv.field(websiteProperties.JsonText),
+      conditions: dryv.field(websiteProperties.JsonText).optional().nullable(),
+      rationale: dryv.field(sharedProperties.LongText).optional().nullable(),
+      /** JSON array of evidence references (saved terms, permissions, advice, regulator guidance). */
+      evidence: dryv.field(websiteProperties.JsonText).optional().nullable(),
+      reviewedBy: optionalId(),
+      reviewedAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+      reviewDueAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+      isCurrent: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
+      supersedesId: optionalId(),
+    },
+    "assessments",
+    [{ name: "idx_assessment_site_current", fields: ["siteId", "isCurrent"] }],
+  ),
+
+  /** Per-jurisdiction legal review record; no country moves to production collection without a current one. */
+  Dossier: systemRecord(
+    {
+      jurisdictionId: plainId(),
+      regulator: dryv.field(sharedProperties.Name).optional().nullable(),
+      legislationRepositoryUrl: dryv.field(sharedProperties.Url).optional().nullable(),
+      /** JSON array: law, official text URL, date checked. */
+      applicableLaws: dryv.field(websiteProperties.JsonText),
+      /** JSON array: instrument, status, date checked. */
+      treatyStatus: dryv.field(websiteProperties.JsonText).optional().nullable(),
+      launchStage: dryv.field(websiteProperties.LaunchStage).query({ filter: ["equal", "in"] }),
+      reviewerId: optionalId(),
+      reviewedAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+      reviewDueAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+      openQuestions: dryv.field(sharedProperties.LongText).optional().nullable(),
+      isCurrent: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
+      supersedesId: optionalId(),
+    },
+    "dossiers",
+    [{ name: "idx_dossier_jurisdiction_current", fields: ["jurisdictionId", "isCurrent"] }],
   ),
 });
 

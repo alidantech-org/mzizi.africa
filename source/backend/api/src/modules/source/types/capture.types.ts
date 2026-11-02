@@ -31,6 +31,7 @@ import type {
 
 /** Capture */
 export interface ICapture extends B.IBase {
+  assessmentId: string | null;
   contentHash: string | null;
   documentId: string;
   domainId: string | null;

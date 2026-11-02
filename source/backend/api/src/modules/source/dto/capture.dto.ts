@@ -56,6 +56,12 @@ import type { DateTime } from "#/types/shared/date-time.type.ts";
 export class CaptureDto {
 
   @IsOptional()
+  @ValidateIf((object) => object.assessmentId !== null)
+  @IsString()
+  @IsUUID()
+  assessmentId?: Id | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.contentHash !== null)
   @IsString()
   @MinLength(64)

@@ -32,6 +32,9 @@ export class CaptureEntity {
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id!: Id;
 
+  @Column({ name: "assessment_id", type: "uuid", nullable: true })
+  assessmentId?: Id | null;
+
   @Column({ name: "content_hash", type: "varchar", length: 64, nullable: true })
   contentHash?: Checksum | null;
 

@@ -93,7 +93,9 @@ import { IndicatorEntity } from "#/modules/statistics/entities/indicator.entity.
 import { ObservationEntity } from "#/modules/statistics/entities/observation.entity.ts";
 import { PeriodEntity } from "#/modules/statistics/entities/period.entity.ts";
 import { StatisticsTableEntity } from "#/modules/statistics/entities/statistics-table.entity.ts";
+import { AssessmentEntity } from "#/modules/website/entities/assessment.entity.ts";
 import { DomainPatternEntity } from "#/modules/website/entities/domain-pattern.entity.ts";
+import { DossierEntity } from "#/modules/website/entities/dossier.entity.ts";
 import { SiteCheckEntity } from "#/modules/website/entities/site-check.entity.ts";
 import { SiteDomainEntity } from "#/modules/website/entities/site-domain.entity.ts";
 import { SiteFamilyEntity } from "#/modules/website/entities/site-family.entity.ts";
@@ -202,7 +204,9 @@ const entities = [
   ObservationEntity,
   PeriodEntity,
   StatisticsTableEntity,
+  AssessmentEntity,
   DomainPatternEntity,
+  DossierEntity,
   SiteEntity,
   SiteCheckEntity,
   SiteDomainEntity,
@@ -328,6 +332,8 @@ beforeAll(async () => {
     "statistical",
     "statistical",
     "statistical",
+    "website",
+    "website",
     "website",
     "website",
     "website",
@@ -4507,6 +4513,7 @@ describe("entity schema matches the contract", () => {
       expect(columns(metadata())).toEqual(
         (
           [
+            ["assessment_id", true, false],
             ["content_hash", true, false],
             ["created_at", false, false],
             ["document_id", false, false],
@@ -5046,6 +5053,74 @@ describe("entity schema matches the contract", () => {
     });
   });
 
+  describe("Assessment", () => {
+    const metadata = () => dataSource.getMetadata(AssessmentEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("assessments");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["access_basis", false, false],
+            ["access_conditions", true, false],
+            ["approved_scope", false, false],
+            ["conditions", true, false],
+            ["created_at", false, false],
+            ["evidence", true, false],
+            ["id", false, true],
+            ["is_current", false, false],
+            ["jurisdiction_id", true, false],
+            ["lawful_basis", true, false],
+            ["licence_name", true, false],
+            ["licence_url", true, false],
+            ["licence_version", true, false],
+            ["personal_data_categories", false, false],
+            ["processing_purpose", true, false],
+            ["rationale", true, false],
+            ["review_due_at", true, false],
+            ["reviewed_at", true, false],
+            ["reviewed_by", true, false],
+            ["rights_holder", false, false],
+            ["site_id", false, false],
+            ["source_type", false, false],
+            ["status", false, false],
+            ["supersedes_id", true, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "site_id->website.sites",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "site_id,is_current",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."assessments" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
   describe("DomainPattern", () => {
     const metadata = () => dataSource.getMetadata(DomainPatternEntity);
 
@@ -5095,6 +5170,53 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "website"."domain_patterns" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Dossier", () => {
+    const metadata = () => dataSource.getMetadata(DossierEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("dossiers");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["applicable_laws", false, false],
+            ["created_at", false, false],
+            ["id", false, true],
+            ["is_current", false, false],
+            ["jurisdiction_id", false, false],
+            ["launch_stage", false, false],
+            ["legislation_repository_url", true, false],
+            ["open_questions", true, false],
+            ["regulator", true, false],
+            ["review_due_at", true, false],
+            ["reviewed_at", true, false],
+            ["reviewer_id", true, false],
+            ["supersedes_id", true, false],
+            ["treaty_status", true, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "jurisdiction_id,is_current",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."dossiers" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });

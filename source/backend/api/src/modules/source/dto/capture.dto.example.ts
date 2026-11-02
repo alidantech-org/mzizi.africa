@@ -7,6 +7,12 @@ export const captureExample: ContractExample = contractExample({
   name: "Capture",
   fields: [
     {
+      name: "assessmentId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "contentHash",
       optional: true,
       nullable: true,

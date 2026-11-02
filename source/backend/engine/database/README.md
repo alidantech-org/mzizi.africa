@@ -18,6 +18,10 @@ bun src/cli.ts reset                   # _dev and _test only: drop everything, m
 TEST_DATABASE_URL=postgres://postgres@localhost:5432/postgres bun test test
 ```
 
+## Collection gate
+
+`src/gate.ts` decides whether a request may be made, from the site's current legal/source assessment and its jurisdiction dossier, and fails closed (see `.docs/docs/WEBSITE_DESIGN.md`, "The gate"). The data engine must call it before every fetch and record the returned `assessmentId` on the capture.
+
 ## How schema truth works
 
 The Dryv-generated TypeORM entities in `../../api/src/modules/*/entities` are the schema source of truth. `generate` builds a throwaway `<db>_diff` database from the existing migrations and writes a new migration for whatever the entities still need; `check` fails when that difference is not empty. Things the generator does not own are hand-written migrations: the `staging` schema, the PostGIS extension and `geography.boundary_shapes` (derived from the GeoJSON text by a trigger, kept out of the entity so the entity has no derived column). Migration history lives in `engine.migrations`, so nothing is placed in `public`.

@@ -40,7 +40,7 @@ Applies to every table the Dryv contracts define. The contract audit (`dryv/tool
 | `civic` | public services | `services` (public_services), `amenities`, `posts` (amenity_offices), `deliveries` (service_deliveries) |
 | `filesystem` | files and media | `stores`, `formats`, `folders`, `objects`, `files`, `versions`, `variants`, `attachments`, `uploads`, `events` (replaces the archived files, directories and file_types) |
 | `source` | where claims come from | `publishers`, `documents`, `captures`, `methods`, `attributions`, `verifications` |
-| `website` | known sites and their structures | `sites`, `domains`, `site_publishers`, `structures`, `structure_versions`, `structure_files`, `checks`, `families`, `domain_patterns`, `members`, `subjects`, `traits`, `relations`, `fingerprints` |
+| `website` | known sites and their structures | `sites`, `domains`, `site_publishers`, `structures`, `structure_versions`, `structure_files`, `checks`, `families`, `domain_patterns`, `members`, `subjects`, `traits`, `relations`, `fingerprints`, `assessments`, `dossiers` |
 | `audit` | discussion and review | `comments`, `evidence` (evidence_references), `decisions` (review_decisions) |
 
 Choices worth knowing: `electoral` and `civic` avoid the stutter of `election.elections` and `service.services`; `fields` avoids a table called `columns`; `organization` replaces the short `org`.

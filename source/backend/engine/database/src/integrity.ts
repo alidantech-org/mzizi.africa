@@ -16,6 +16,9 @@ export const softLinks: Array<{ from: string; to: string }> = [
   { from: "source.captures.structureVersionId", to: "website.structure_versions" },
   { from: "source.captures.familyVersionId", to: "website.structure_versions" },
   { from: "source.captures.fileVersionId", to: "filesystem.versions" },
+  { from: "source.captures.assessmentId", to: "website.assessments" },
+  { from: "website.assessments.supersedesId", to: "website.assessments" },
+  { from: "website.dossiers.supersedesId", to: "website.dossiers" },
   { from: "source.documents.siteId", to: "website.sites" },
   { from: "source.attributions.captureId", to: "source.captures" },
   { from: "source.attributions.methodId", to: "source.methods" },
@@ -93,6 +96,12 @@ export async function checkIntegrity(db: DataSource): Promise<IntegrityIssue[]> 
       push(await orphans(db, `${name} (${kind}) -> ${kind}`, `FROM "${meta.schema}"."${meta.tableName}" f WHERE f."${kindCol}" = $1 AND NOT EXISTS (SELECT 1 FROM "${target.schema}"."${target.tableName}" t WHERE t.id = f."${idCol}")`, [kind]));
     }
   }
+
+  // Legal gate records: one current assessment per site and per jurisdiction dossier, and every site capture covered by an assessment of the same site.
+  push(await orphans(db, "sites with more than one current assessment", `FROM website.sites f WHERE (SELECT count(*) FROM website.assessments a WHERE a.site_id = f.id AND a.is_current) > 1`));
+  push(await orphans(db, "jurisdictions with more than one current dossier", `FROM reference.jurisdictions f WHERE (SELECT count(*) FROM website.dossiers d WHERE d.jurisdiction_id = f.id AND d.is_current) > 1`));
+  push(await orphans(db, "captures of a site without a covering assessment", `FROM source.captures f WHERE f.site_id IS NOT NULL AND f.assessment_id IS NULL`));
+  push(await orphans(db, "captures whose assessment belongs to another site", `FROM source.captures f JOIN website.assessments a ON a.id = f.assessment_id WHERE f.site_id IS NOT NULL AND a.site_id <> f.site_id`));
 
   // Derived geometry: every boundary has a shape and every shape is valid.
   push(await orphans(db, "geography.boundaries without a valid derived shape", `FROM geography.boundaries f LEFT JOIN geography.boundary_shapes s ON s.boundary_id = f.id WHERE s.boundary_id IS NULL OR s.geom IS NULL OR s.is_valid IS NOT TRUE`));

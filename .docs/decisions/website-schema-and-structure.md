@@ -19,6 +19,8 @@ Date: 2026-11-02. Decided by the user.
 
 8. Legal and source approval is an independent, versioned gate (`LEGALITY_SAFETY_AND_COMPLIANCE.md`). Decision 4 (agents publish structures without approval) covers only the structure as a technical recipe: publication never activates collection, agents may draft but never approve an assessment, and the engine fails closed unless a current approved assessment covers the request.
 
+9. Assessments and jurisdiction dossiers are stored in the `website` schema (not `reference` or `source`): the gate reads them with the site registry, `reference` holds vocabularies, and `source` holds provenance. They are append-only with an `is_current` row, are not exposed by the public API, and captures carry a soft `assessment_id`. The gate is `engine/database/src/gate.ts`.
+
 ## Consequences
 
 The earlier research note's DevAuto integration contract, the "structure approval" gate and the plan to reference DevAuto structures by hash are dropped from the intake plan. New work: Dryv contracts for `website`, migrations, the JSON Schema, structure loader/runner and agent batch tooling. Data extracted through structures keeps its normal candidate, validation and review path.

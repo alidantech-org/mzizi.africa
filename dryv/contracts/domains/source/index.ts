@@ -87,6 +87,8 @@ const captures = source.schemas({
       domainId: optionalId(),
       structureVersionId: optionalId(),
       familyVersionId: optionalId(),
+      /** The legal/source assessment (website.assessments) that governed this retrieval. */
+      assessmentId: optionalId(),
     },
     "captures",
     [{ name: "idx_capture_document", fields: ["documentId", "retrievedAt"] }],

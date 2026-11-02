@@ -11,6 +11,7 @@ import type { DateTime } from "#/types/shared/date-time.type.ts";
 
 /** Capture */
 export interface Capture {
+  assessmentId?: Id | null;
   contentHash?: Checksum | null;
   createdAt: DateTime;
   documentId: Id;
