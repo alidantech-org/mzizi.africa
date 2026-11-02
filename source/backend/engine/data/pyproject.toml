@@ -3,7 +3,7 @@ name = "mzizi-data"
 version = "0.1.0"
 description = "Mzizi data engine: site structures, fetching, extraction, candidates."
 requires-python = ">=3.12"
-dependencies = ["pyyaml", "jsonschema", "beautifulsoup4", "lxml", "pydantic", "httpx", "shapely", "psycopg[binary]", "pypdfium2", "pdfplumber"]
+dependencies = ["pyyaml", "jsonschema", "beautifulsoup4", "lxml", "pydantic", "httpx", "shapely", "psycopg[binary]", "pypdfium2", "pdfplumber", "dnspython", "pymupdf", "rapidfuzz", "openpyxl", "python-docx"]
 
 [project.optional-dependencies]
 dev = ["pytest"]

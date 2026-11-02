@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from .structure import bundle as bundle_mod
@@ -116,12 +117,21 @@ def main(argv: list[str] | None = None) -> int:
     wb.add_argument("--store", default=".data/objects")
     ex = sub.add_parser("expand-patterns", help="create expected sites from a family's domain patterns (offline; no requests are made)")
     ex.add_argument("family_code")
+    pd = sub.add_parser("probe-domains", help="probe candidate domains of trusted zones through the gate (0.2 req/s, robots, stop on refusal) and record DNS snapshots; resumable")
+    pd.add_argument("--limit", type=int)
+    pd.add_argument("--report", action="store_true")
     sub.add_parser("backfill-domains", help="create candidate domain rows for every site from its reachability-check candidates, link zones and parents, report counts (offline)")
     rep = sub.add_parser("catalogue-report", help="counts of families, patterns, sites and domains with their counting rules")
     stop = sub.add_parser("stop", help="incident: stop collection for a site, cancel its pending jobs and quarantine its candidates")
     stop.add_argument("site_code")
     stop.add_argument("--reason", required=True)
+    from . import statcli
+
+    statcli.register(sub)
     args = parser.parse_args(argv)
+    handled = statcli.dispatch(args)
+    if handled is not None:
+        return handled
     if args.command == "validate":
         report = validate(bundle_mod.load(args.bundle), bundle_mod.load(args.family) if args.family else None)
         if args.json:
@@ -360,6 +370,16 @@ def main(argv: list[str] | None = None) -> int:
                 made += sum(1 for e in expected if e.created)
                 print(f"{pattern['template']}: {len(expected)} subjects, {sum(1 for e in expected if e.created)} new expected sites")
             conn.commit()
+        return 0
+    if args.command == "probe-domains":
+        from . import probe_domains
+        from .db import connect
+
+        with connect() as conn:
+            if not args.report:
+                print("zones snapshotted:", probe_domains.snapshot_zones(conn), flush=True)
+                print(probe_domains.probe_all(conn, os.environ.get("MZIZI_USER_AGENT", "MziziBot/1.0 (+https://alidantech.org; dev@alidantech.org)"), limit=args.limit, log=lambda m: print(m, flush=True)))
+            print(json.dumps(probe_domains.probe_report(conn), indent=2, default=str))
         return 0
     if args.command == "backfill-domains":
         from . import domains
