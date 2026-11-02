@@ -113,3 +113,18 @@ describe("collection gate: conditions", () => {
     expect(evaluate(conditional([]), "pilot", request()).allowed).toBe(false);
   });
 });
+
+describe("collection gate: shared vectors (same file the Python gate is tested with)", () => {
+  const { readFileSync } = require("node:fs") as typeof import("node:fs");
+  const file = JSON.parse(readFileSync(new URL("../../../contracts/gate-vectors.json", import.meta.url), "utf8"));
+  for (const vector of file.vectors) {
+    test(vector.name, () => {
+      const assessment = vector.assessment === null ? undefined : { ...file.base.assessment, ...(vector.assessment ?? {}) };
+      const stage = "dossierStage" in vector ? vector.dossierStage ?? undefined : file.base.dossierStage;
+      const decision = evaluate(assessment, stage, { ...file.base.request, ...(vector.request ?? {}), now: new Date(file.now) });
+      expect(decision.allowed).toBe(vector.expect.allowed);
+      if (vector.expect.reason) expect(decision.reasons.join(" | ")).toContain(vector.expect.reason);
+      if (vector.expect.requestsPerSecond !== undefined) expect(decision.limits.requestsPerSecond).toBe(vector.expect.requestsPerSecond);
+    });
+  }
+});

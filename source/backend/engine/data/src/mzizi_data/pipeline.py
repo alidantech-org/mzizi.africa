@@ -51,29 +51,35 @@ def extraction_handler(conn: psycopg.Connection, store: LocalDirectoryStore):
             "SELECT result_file_version_id FROM engine.jobs WHERE kind = 'extract' AND input_hash = %s AND generation < %s AND status = 'succeeded' ORDER BY generation DESC LIMIT 1", (jobs.input_hash("extract", payload), job.generation)
         ).fetchone()
 
-        result = ExtractionResult.model_validate(
-            {
-                "id": str(uuid.uuid4()),
-                "artifact": FileArtifactRef.model_validate({"fileVersionId": ref.version_id, "captureId": payload.get("captureId"), "documentId": document_id, "contentHash": ref.content_hash, "sizeBytes": ref.size_bytes, "mimeType": ref.mime_type}).model_dump(mode="json", exclude_none=True),
-                "extractor": extractor.name,
-                "extractorVersion": extractor.version,
-                "profile": payload.get("profile"),
-                "status": output.status,
-                "segments": output.segments,
-                "diagnostics": output.diagnostics,
-                "startedAt": started.isoformat(),
-                "finishedAt": finished.isoformat(),
-                "inputHash": sha256(json.dumps(payload, sort_keys=True).encode() + bytes.fromhex(ref.content_hash)),
-            }
-        )
-        body = json.dumps(result.model_dump(mode="json", exclude_none=True), indent=1, ensure_ascii=False).encode()
-        stored = store.put(body, f"{result.id}.json", RESULT_FOLDER, mime_type="application/json", note=f"{extractor.name} {extractor.version}")
+        result, stored = store_result(store, ref, extractor.name, extractor.version, payload.get("profile"), output.status, output.segments, output.diagnostics, started, finished, payload.get("captureId"), document_id, payload)
         summary = {"resultId": str(result.id), "status": output.status, "segments": len(output.segments), "diagnostics": len(output.diagnostics), "supersedesResultFile": str(previous["result_file_version_id"]) if previous and previous["result_file_version_id"] else None}
         if output.status == "failed":
             raise jobs.NonRetryable("; ".join(d["message"] for d in output.diagnostics if d["level"] == "error")[:500] or "extraction failed")
         return summary, stored.version_id
 
     return handle
+
+
+def store_result(store: LocalDirectoryStore, ref: FileVersionRef, extractor: str, version: str, profile: str | None, status: str, segments: list[dict], diagnostics: list[dict], started: datetime, finished: datetime, capture_id: str | None = None, document_id: str | None = None, input_payload: dict | None = None, structure_version_id: str | None = None):
+    """Builds a schema-valid ExtractionResult and stores it as a new file; results are never overwritten."""
+    result = ExtractionResult.model_validate(
+        {
+            "id": str(uuid.uuid4()),
+            "artifact": FileArtifactRef.model_validate({"fileVersionId": ref.version_id, "captureId": capture_id, "documentId": document_id, "contentHash": ref.content_hash, "sizeBytes": ref.size_bytes, "mimeType": ref.mime_type}).model_dump(mode="json", exclude_none=True),
+            "extractor": extractor,
+            "extractorVersion": version,
+            "profile": profile,
+            "structureVersionId": structure_version_id,
+            "status": status,
+            "segments": segments,
+            "diagnostics": diagnostics,
+            "startedAt": started.isoformat(),
+            "finishedAt": finished.isoformat(),
+            "inputHash": sha256(json.dumps(input_payload or {}, sort_keys=True).encode() + bytes.fromhex(ref.content_hash)),
+        }
+    )
+    body = json.dumps(result.model_dump(mode="json", exclude_none=True), indent=1, ensure_ascii=False).encode()
+    return result, store.put(body, f"{result.id}.json", RESULT_FOLDER, mime_type="application/json", note=f"{extractor} {version}")
 
 
 def load_result(store: LocalDirectoryStore, result_file_version_id: str) -> ExtractionResult:

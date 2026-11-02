@@ -19,6 +19,7 @@ def test_html_sample_is_valid_and_dry_run_finds_items():
     assert report.ok, report.errors
     assert report.dry_run["budgets"]["items"] == 3
     assert report.dry_run["budgets"]["selector"] == 0  # highest-confidence selector matched
+    assert report.dry_run["budgets"]["fieldErrors"] == 0, report.warnings
 
 
 def test_json_api_sample_is_valid():

@@ -38,6 +38,8 @@ def extract_item(item: Any, fields: dict[str, dict]) -> tuple[dict[str, Any], li
                 elif isinstance(source, (dict, list)):
                     match = selectors.select(item, source)
                     value = match.items[0] if match.items else None
+                    if hasattr(value, "get_text"):
+                        value = value.get_text(" ", strip=True)
                 elif isinstance(source, str) and isinstance(item, dict):
                     value = item.get(source)
                 else:
