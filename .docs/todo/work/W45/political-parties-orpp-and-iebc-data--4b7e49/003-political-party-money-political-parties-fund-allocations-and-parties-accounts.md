@@ -1,5 +1,5 @@
 ---
-{id: TSK-6E8B8BC93A82,name: "Political party money: Political Parties Fund allocations and parties' accounts",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:41.857Z,updated_at: 2026-11-02T20:02:41.857Z,order: 3072}
+{id: TSK-6E8B8BC93A82,name: "Political party money: Political Parties Fund allocations and parties' accounts",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:41.857Z,updated_at: 2026-11-02T21:36:48.812Z,order: 3072,depends_on: [TSK-FDB011601399]}
 ---
 
 # Political party money: Political Parties Fund allocations and parties' accounts

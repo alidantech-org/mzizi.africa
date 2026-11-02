@@ -1,5 +1,5 @@
 ---
-{id: TSK-074A0071405E,name: "Electoral loader: registered voters and results for 2013, 2017 and 2022",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.319Z,updated_at: 2026-11-02T19:25:52.319Z,order: 7168}
+{id: TSK-074A0071405E,name: "Electoral loader: registered voters and results for 2013, 2017 and 2022",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.319Z,updated_at: 2026-11-02T21:36:49.876Z,order: 7168,depends_on: [TSK-D4BDEB42D93E]}
 ---
 
 # Electoral loader: registered voters and results for 2013, 2017 and 2022

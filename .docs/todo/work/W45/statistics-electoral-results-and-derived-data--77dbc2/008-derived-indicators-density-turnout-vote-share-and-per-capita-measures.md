@@ -1,5 +1,5 @@
 ---
-{id: TSK-ACEF2C1816E2,name: "Derived indicators: density, turnout, vote share and per capita measures",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.520Z,updated_at: 2026-11-02T19:25:52.520Z,order: 8192}
+{id: TSK-ACEF2C1816E2,name: "Derived indicators: density, turnout, vote share and per capita measures",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.520Z,updated_at: 2026-11-02T21:36:50.056Z,order: 8192,depends_on: [TSK-20EFD30E52E3]}
 ---
 
 # Derived indicators: density, turnout, vote share and per capita measures

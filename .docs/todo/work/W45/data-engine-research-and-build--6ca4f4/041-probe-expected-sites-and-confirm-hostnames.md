@@ -1,5 +1,5 @@
 ---
-{id: TSK-41CD5EF36909,name: Probe expected sites and confirm hostnames,type: task,status: planned,priority: medium,created_at: 2026-11-02T19:26:08.084Z,updated_at: 2026-11-02T19:26:08.084Z,order: 41984}
+{id: TSK-41CD5EF36909,name: Probe expected sites and confirm hostnames,type: task,status: planned,priority: medium,created_at: 2026-11-02T19:26:08.084Z,updated_at: 2026-11-02T21:36:47.702Z,order: 41984,depends_on: [TSK-998EC5BE2CBA]}
 ---
 
 # Probe expected sites and confirm hostnames

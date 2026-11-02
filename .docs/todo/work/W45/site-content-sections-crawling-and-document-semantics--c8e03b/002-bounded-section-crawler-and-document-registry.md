@@ -1,5 +1,5 @@
 ---
-{id: TSK-C6D4EC067F97,name: Bounded section crawler and document registry,type: task,status: planned,priority: medium,created_at: 2026-11-02T20:24:22.629Z,updated_at: 2026-11-02T20:24:22.629Z,order: 2048}
+{id: TSK-C6D4EC067F97,name: Bounded section crawler and document registry,type: task,status: planned,priority: medium,created_at: 2026-11-02T20:24:22.629Z,updated_at: 2026-11-02T21:36:47.886Z,order: 2048,depends_on: [TSK-E29DD2591768]}
 ---
 
 # Bounded section crawler and document registry

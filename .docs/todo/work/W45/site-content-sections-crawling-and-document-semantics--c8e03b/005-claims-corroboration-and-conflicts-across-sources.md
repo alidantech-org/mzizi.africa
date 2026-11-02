@@ -1,5 +1,5 @@
 ---
-{id: TSK-D16F9399E4B6,name: "Claims, corroboration and conflicts across sources",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:24:23.315Z,updated_at: 2026-11-02T20:24:23.315Z,order: 5120}
+{id: TSK-D16F9399E4B6,name: "Claims, corroboration and conflicts across sources",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:24:23.315Z,updated_at: 2026-11-02T21:36:48.412Z,order: 5120,depends_on: [TSK-BF88B31E115A]}
 ---
 
 # Claims, corroboration and conflicts across sources

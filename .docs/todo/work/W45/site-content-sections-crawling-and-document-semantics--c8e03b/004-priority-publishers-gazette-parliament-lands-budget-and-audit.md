@@ -1,5 +1,5 @@
 ---
-{id: TSK-2A15C7E9908D,name: "Priority publishers: Gazette, Parliament, Lands, Budget and Audit",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:24:23.076Z,updated_at: 2026-11-02T20:24:23.076Z,order: 4096}
+{id: TSK-2A15C7E9908D,name: "Priority publishers: Gazette, Parliament, Lands, Budget and Audit",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:24:23.076Z,updated_at: 2026-11-02T21:36:48.239Z,order: 4096,depends_on: [TSK-C6D4EC067F97]}
 ---
 
 # Priority publishers: Gazette, Parliament, Lands, Budget and Audit

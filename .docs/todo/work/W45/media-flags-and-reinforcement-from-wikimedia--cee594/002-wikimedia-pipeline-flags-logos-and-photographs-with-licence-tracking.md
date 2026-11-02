@@ -1,5 +1,5 @@
 ---
-{id: TSK-7EC27F97DC64,name: "Wikimedia pipeline: flags, logos and photographs with licence tracking",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:42.528Z,updated_at: 2026-11-02T20:02:42.528Z,order: 2048}
+{id: TSK-7EC27F97DC64,name: "Wikimedia pipeline: flags, logos and photographs with licence tracking",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:42.528Z,updated_at: 2026-11-02T21:36:48.989Z,order: 2048,depends_on: [TSK-A6C9B9251A15]}
 ---
 
 # Wikimedia pipeline: flags, logos and photographs with licence tracking

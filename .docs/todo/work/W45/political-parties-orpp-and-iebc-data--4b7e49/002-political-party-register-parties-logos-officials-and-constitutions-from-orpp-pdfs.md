@@ -1,5 +1,5 @@
 ---
-{id: TSK-FDB011601399,name: "Political party register: parties, logos, officials and constitutions from ORPP PDFs",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:41.627Z,updated_at: 2026-11-02T20:02:41.627Z,order: 2048}
+{id: TSK-FDB011601399,name: "Political party register: parties, logos, officials and constitutions from ORPP PDFs",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:41.627Z,updated_at: 2026-11-02T21:36:48.634Z,order: 2048,depends_on: [TSK-C6D4EC067F97]}
 ---
 
 # Political party register: parties, logos, officials and constitutions from ORPP PDFs

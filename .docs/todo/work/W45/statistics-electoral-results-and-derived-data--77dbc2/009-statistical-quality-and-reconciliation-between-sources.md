@@ -1,5 +1,5 @@
 ---
-{id: TSK-E22A8A227D4B,name: Statistical quality and reconciliation between sources,type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.713Z,updated_at: 2026-11-02T19:25:52.713Z,order: 9216}
+{id: TSK-E22A8A227D4B,name: Statistical quality and reconciliation between sources,type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.713Z,updated_at: 2026-11-02T21:36:50.222Z,order: 9216,depends_on: [TSK-ACEF2C1816E2]}
 ---
 
 # Statistical quality and reconciliation between sources

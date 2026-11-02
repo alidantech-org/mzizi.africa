@@ -1,5 +1,5 @@
 ---
-{id: TSK-C6EB48738A4D,name: "Document semantics: classify and route to parsers",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:24:22.851Z,updated_at: 2026-11-02T20:24:22.851Z,order: 3072}
+{id: TSK-C6EB48738A4D,name: "Document semantics: classify and route to parsers",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:24:22.851Z,updated_at: 2026-11-02T21:36:48.064Z,order: 3072,depends_on: [TSK-C6D4EC067F97]}
 ---
 
 # Document semantics: classify and route to parsers
