@@ -37,7 +37,7 @@ The canonical PostgreSQL database is organised into domain schemas that are desi
 | `civic` | public services | `services`, `amenities`, `posts`, `deliveries` |
 | `filesystem` | files, versions, media | `stores`, `formats`, `folders`, `objects`, `files`, `versions`, `variants`, `attachments`, `uploads`, `events` |
 | `source` | where claims come from | `publishers`, `documents`, `captures`, `methods`, `attributions`, `verifications` |
-| `website` | known sites, domains, structures (see `WEBSITE_DESIGN.md`) | `sites`, `domains`, `site_publishers`, `structures`, `structure_versions`, `structure_files`, `checks` |
+| `website` | known sites, domains, structures (see `WEBSITE_DESIGN.md`) | `sites`, `domains`, `site_publishers`, `structures`, `structure_versions`, `structure_files`, `checks`, `families`, `domain_patterns`, `members`, `subjects`, `traits`, `relations`, `fingerprints` |
 | `audit` | discussion and review | `comments`, `evidence`, `decisions` |
 
 Reference tables (`reference`) are read constantly and change rarely; `filesystem.events`, `source.attributions` and `audit.*` are the heavy append-only tables.

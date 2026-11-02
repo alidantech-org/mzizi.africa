@@ -15,3 +15,6 @@ Read .docs/docs/WEBSITE_DESIGN.md, .docs/docs/SITE_STRUCTURE_SPEC.md and .docs/d
 - [ ] Constraint or check preventing overlapping primary domains for a site.
 - [ ] Seed of site-tag classifications (kind, time, label, geo, jurisdiction, tier, licence).
 - [ ] Integrity checks for publisher, folder, file-version and method ids, with tests.
+
+## Progress
+Seven family tables authored (families, domain_patterns, members, subjects, traits, relations, fingerprints) and exposed as read endpoints; 14 service methods added by hand to the project-owned service implementation. Membership and trait confidence is named `score` because the contract audit forbids a `confidence` column on data rows. Worked examples: `fixtures/neutral-model/kenya-sites.json` (four families with patterns, six sites, a legacy domain, a hostname reused by two sites over time, shared traits and a shares_module relation) with an integration test. Contract check, generated:check, API typecheck, 13999 unit tests and the neutral integration tests pass; the website schema has 14 tables, 103 in total.

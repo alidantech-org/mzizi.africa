@@ -1,15 +1,36 @@
 
+import type { DomainPatternListQueryDto } from "#/modules/website/dto/domain-pattern-list-query.dto.ts";
+import type { DomainPatternResponseDto } from "#/modules/website/dto/domain-pattern-response.dto.ts";
+import type { DomainPatternsListResponseDto } from "#/modules/website/dto/domain-patterns-list-response.dto.ts";
 import type { SiteCheckListQueryDto } from "#/modules/website/dto/site-check-list-query.dto.ts";
 import type { SiteCheckResponseDto } from "#/modules/website/dto/site-check-response.dto.ts";
 import type { SiteChecksListResponseDto } from "#/modules/website/dto/site-checks-list-response.dto.ts";
 import type { SiteDomainListQueryDto } from "#/modules/website/dto/site-domain-list-query.dto.ts";
 import type { SiteDomainResponseDto } from "#/modules/website/dto/site-domain-response.dto.ts";
 import type { SiteDomainsListResponseDto } from "#/modules/website/dto/site-domains-list-response.dto.ts";
+import type { SiteFamiliesListResponseDto } from "#/modules/website/dto/site-families-list-response.dto.ts";
+import type { SiteFamilyListQueryDto } from "#/modules/website/dto/site-family-list-query.dto.ts";
+import type { SiteFamilyResponseDto } from "#/modules/website/dto/site-family-response.dto.ts";
+import type { SiteFingerprintListQueryDto } from "#/modules/website/dto/site-fingerprint-list-query.dto.ts";
+import type { SiteFingerprintResponseDto } from "#/modules/website/dto/site-fingerprint-response.dto.ts";
+import type { SiteFingerprintsListResponseDto } from "#/modules/website/dto/site-fingerprints-list-response.dto.ts";
 import type { SiteListQueryDto } from "#/modules/website/dto/site-list-query.dto.ts";
+import type { SiteMemberListQueryDto } from "#/modules/website/dto/site-member-list-query.dto.ts";
+import type { SiteMemberResponseDto } from "#/modules/website/dto/site-member-response.dto.ts";
+import type { SiteMembersListResponseDto } from "#/modules/website/dto/site-members-list-response.dto.ts";
 import type { SitePublisherListQueryDto } from "#/modules/website/dto/site-publisher-list-query.dto.ts";
 import type { SitePublisherResponseDto } from "#/modules/website/dto/site-publisher-response.dto.ts";
 import type { SitePublishersListResponseDto } from "#/modules/website/dto/site-publishers-list-response.dto.ts";
+import type { SiteRelationListQueryDto } from "#/modules/website/dto/site-relation-list-query.dto.ts";
+import type { SiteRelationResponseDto } from "#/modules/website/dto/site-relation-response.dto.ts";
+import type { SiteRelationsListResponseDto } from "#/modules/website/dto/site-relations-list-response.dto.ts";
 import type { SiteResponseDto } from "#/modules/website/dto/site-response.dto.ts";
+import type { SiteSubjectListQueryDto } from "#/modules/website/dto/site-subject-list-query.dto.ts";
+import type { SiteSubjectResponseDto } from "#/modules/website/dto/site-subject-response.dto.ts";
+import type { SiteSubjectsListResponseDto } from "#/modules/website/dto/site-subjects-list-response.dto.ts";
+import type { SiteTraitListQueryDto } from "#/modules/website/dto/site-trait-list-query.dto.ts";
+import type { SiteTraitResponseDto } from "#/modules/website/dto/site-trait-response.dto.ts";
+import type { SiteTraitsListResponseDto } from "#/modules/website/dto/site-traits-list-response.dto.ts";
 import type { SitesListResponseDto } from "#/modules/website/dto/sites-list-response.dto.ts";
 import type { StructureFileListQueryDto } from "#/modules/website/dto/structure-file-list-query.dto.ts";
 import type { StructureFileResponseDto } from "#/modules/website/dto/structure-file-response.dto.ts";
@@ -26,17 +47,31 @@ import type { StructuresListResponseDto } from "#/modules/website/dto/structures
  * implements it in its own class, which the feature module binds to this token.
  */
 export abstract class WebsiteWebsiteReadService {
+  abstract findDomainPatterns(input: DomainPatternListQueryDto): Promise<DomainPatternsListResponseDto>;
   abstract findSiteChecks(input: SiteCheckListQueryDto): Promise<SiteChecksListResponseDto>;
   abstract findSiteDomains(input: SiteDomainListQueryDto): Promise<SiteDomainsListResponseDto>;
+  abstract findSiteFamilies(input: SiteFamilyListQueryDto): Promise<SiteFamiliesListResponseDto>;
+  abstract findSiteFingerprints(input: SiteFingerprintListQueryDto): Promise<SiteFingerprintsListResponseDto>;
+  abstract findSiteMembers(input: SiteMemberListQueryDto): Promise<SiteMembersListResponseDto>;
   abstract findSitePublishers(input: SitePublisherListQueryDto): Promise<SitePublishersListResponseDto>;
+  abstract findSiteRelations(input: SiteRelationListQueryDto): Promise<SiteRelationsListResponseDto>;
+  abstract findSiteSubjects(input: SiteSubjectListQueryDto): Promise<SiteSubjectsListResponseDto>;
+  abstract findSiteTraits(input: SiteTraitListQueryDto): Promise<SiteTraitsListResponseDto>;
   abstract findSites(input: SiteListQueryDto): Promise<SitesListResponseDto>;
   abstract findStructureFiles(input: StructureFileListQueryDto): Promise<StructureFilesListResponseDto>;
   abstract findStructureVersions(input: StructureVersionListQueryDto): Promise<StructureVersionsListResponseDto>;
   abstract findStructures(input: StructureListQueryDto): Promise<StructuresListResponseDto>;
+  abstract getDomainPatternById(input: { domainPatternId: string }): Promise<DomainPatternResponseDto>;
   abstract getSiteById(input: { siteId: string }): Promise<SiteResponseDto>;
   abstract getSiteCheckById(input: { siteCheckId: string }): Promise<SiteCheckResponseDto>;
   abstract getSiteDomainById(input: { domainId: string }): Promise<SiteDomainResponseDto>;
+  abstract getSiteFamilyById(input: { familyId: string }): Promise<SiteFamilyResponseDto>;
+  abstract getSiteFingerprintById(input: { siteFingerprintId: string }): Promise<SiteFingerprintResponseDto>;
+  abstract getSiteMemberById(input: { siteMemberId: string }): Promise<SiteMemberResponseDto>;
   abstract getSitePublisherById(input: { sitePublisherId: string }): Promise<SitePublisherResponseDto>;
+  abstract getSiteRelationById(input: { siteRelationId: string }): Promise<SiteRelationResponseDto>;
+  abstract getSiteSubjectById(input: { siteSubjectId: string }): Promise<SiteSubjectResponseDto>;
+  abstract getSiteTraitById(input: { siteTraitId: string }): Promise<SiteTraitResponseDto>;
   abstract getStructureById(input: { structureId: string }): Promise<StructureResponseDto>;
   abstract getStructureFileById(input: { structureFileId: string }): Promise<StructureFileResponseDto>;
   abstract getStructureVersionById(input: { structureVersionId: string }): Promise<StructureVersionResponseDto>;

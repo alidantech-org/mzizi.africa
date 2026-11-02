@@ -39,6 +39,20 @@ export const websiteProperties = website.properties({
   BundlePath: dryv.property.string().length({ min: 1, max: 500 }),
   SchemaVersion: dryv.property.string().length({ min: 1, max: 60 }),
   Purpose: dryv.property.string().length({ min: 1, max: 100 }),
+  FamilyKind: dryv.property.enum({ geographicUnit: "geographic_unit", institutionType: "institution_type", independentBody: "independent_body", platform: "platform", purpose: "purpose" }),
+  FamilyStatus: dryv.property.enum({ proposed: "proposed", active: "active", retired: "retired" }),
+  PatternStatus: dryv.property.enum({ proposed: "proposed", verified: "verified", retired: "retired" }),
+  MembershipRole: dryv.property.enum({ member: "member", templateSource: "template_source" }),
+  MembershipBasis: dryv.property.enum({ pattern: "pattern", agent: "agent", fingerprint: "fingerprint" }),
+  SubjectRelation: dryv.property.enum({ serves: "serves", operatedBy: "operated_by", about: "about", publishes: "publishes" }),
+  RelationOwnerKind: dryv.property.enum({ site: "site", family: "family" }),
+  SiteRelationKind: dryv.property.enum({ similarTo: "similar_to", derivedFrom: "derived_from", sharesPlatform: "shares_platform", sharesModule: "shares_module" }),
+  FingerprintKind: dryv.property.enum({ markup: "markup", navigation: "navigation", assets: "assets", documentTypes: "document_types" }),
+  /** Namespaced trait such as platform:wordpress or section:downloads. */
+  TraitTag: dryv.property.string().length({ min: 3, max: 200 }),
+  /** Domain template with named slots, such as {county}.go.ke. */
+  DomainTemplate: dryv.property.string().length({ min: 3, max: 300 }),
+  Score: dryv.property.number.decimal({ precision: 7, scale: 4 }),
 });
 
 const sites = website.schemas({
@@ -169,6 +183,129 @@ const checks = website.schemas({
   ),
 });
 
+const families = website.schemas({
+  /** A group of sites that share structure, such as county government sites; members inherit the family's base structure. */
+  SiteFamily: systemRecord(
+    {
+      code: dryv.field(sharedProperties.BusinessCode).query(searchable),
+      name: dryv.field(sharedProperties.Name).query(searchable),
+      kind: dryv.field(websiteProperties.FamilyKind).query({ filter: ["equal", "in"] }),
+      /** Classification record describing what members are about (county, ministry, commission). */
+      subjectKindId: optionalId(),
+      jurisdictionId: optionalId(),
+      description: dryv.field(sharedProperties.Description).optional().nullable(),
+      status: dryv.field(websiteProperties.FamilyStatus).query({ filter: ["equal", "in"] }),
+    },
+    "families",
+    [{ name: "idx_family_code", fields: ["code"], unique: true }],
+  ),
+});
+
+const patterns = website.schemas({
+  /** A hostname template for a family. It yields candidate domains for expected sites; it never identifies a site. */
+  DomainPattern: systemRecord(
+    {
+      familyId: relationTo(() => families.SiteFamily.field("id")),
+      template: dryv.field(websiteProperties.DomainTemplate).query({ filter: ["equal", "contains"] }),
+      scheme: dryv.field(websiteProperties.UrlScheme),
+      domainRole: dryv.field(websiteProperties.DomainRole),
+      /** Slot bindings as serialised JSON: slot name to subject source and slug rule. */
+      variables: dryv.field(sharedProperties.LongText),
+      status: dryv.field(websiteProperties.PatternStatus).query({ filter: ["equal", "in"] }),
+      notes: dryv.field(sharedProperties.Description).optional().nullable(),
+    },
+    "domain_patterns",
+    [{ name: "idx_pattern_family", fields: ["familyId"] }],
+  ),
+});
+
+const membership = website.schemas({
+  SiteMember: systemRecord(
+    {
+      siteId: relationTo(() => sites.Site.field("id")),
+      familyId: plainId(),
+      role: dryv.field(websiteProperties.MembershipRole),
+      basis: dryv.field(websiteProperties.MembershipBasis).query({ filter: ["equal", "in"] }),
+      /** How strongly the assignment holds (0 to 1), not a provenance confidence; claims about the world are attributed in the source schema. */
+      score: dryv.field(sharedProperties.Confidence).optional().nullable(),
+      methodId: optionalId(),
+      validFrom: dryv.field(sharedProperties.Date).optional().nullable(),
+      validTo: dryv.field(sharedProperties.Date).optional().nullable(),
+    },
+    "members",
+    [
+      { name: "idx_member_site", fields: ["siteId"] },
+      { name: "idx_member_family", fields: ["familyId"] },
+    ],
+  ),
+
+  /** What a site is about or serves: a geography unit, governance institution, organization or kind of material. */
+  SiteSubject: systemRecord(
+    {
+      siteId: relationTo(() => sites.Site.field("id")),
+      targetKind: dryv.field(sharedProperties.TargetKind).query({ filter: ["equal"] }),
+      targetId: plainId(),
+      relation: dryv.field(websiteProperties.SubjectRelation).query({ filter: ["equal", "in"] }),
+      validFrom: dryv.field(sharedProperties.Date).optional().nullable(),
+      validTo: dryv.field(sharedProperties.Date).optional().nullable(),
+    },
+    "subjects",
+    [
+      { name: "idx_subject_site", fields: ["siteId"] },
+      { name: "idx_subject_target", fields: ["targetKind", "targetId"] },
+    ],
+  ),
+});
+
+const similarity = website.schemas({
+  /** A namespaced label for a site or family, assigned by an agent or the engine. */
+  SiteTrait: systemRecord(
+    {
+      ownerKind: dryv.field(websiteProperties.RelationOwnerKind).query({ filter: ["equal"] }),
+      ownerId: plainId(),
+      tag: dryv.field(websiteProperties.TraitTag).query({ filter: ["equal", "startsWith"] }),
+      methodId: optionalId(),
+      /** How strongly the assignment holds (0 to 1), not a provenance confidence; claims about the world are attributed in the source schema. */
+      score: dryv.field(sharedProperties.Confidence).optional().nullable(),
+      observedAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+    },
+    "traits",
+    [{ name: "idx_trait_owner", fields: ["ownerKind", "ownerId"] }, { name: "idx_trait_tag", fields: ["tag"] }],
+  ),
+
+  /** A similarity or reuse edge between two sites or families. */
+  SiteRelation: systemRecord(
+    {
+      fromKind: dryv.field(websiteProperties.RelationOwnerKind),
+      fromId: plainId(),
+      toKind: dryv.field(websiteProperties.RelationOwnerKind),
+      toId: plainId(),
+      relation: dryv.field(websiteProperties.SiteRelationKind).query({ filter: ["equal", "in"] }),
+      score: dryv.field(websiteProperties.Score).optional().nullable(),
+      basis: dryv.field(websiteProperties.MembershipBasis),
+      /** Evidence as serialised JSON. */
+      evidence: dryv.field(sharedProperties.LongText).optional().nullable(),
+    },
+    "relations",
+    [{ name: "idx_relation_from", fields: ["fromKind", "fromId"] }, { name: "idx_relation_to", fields: ["toKind", "toId"] }],
+  ),
+
+  /** A computed signature of how a site is built, used to suggest families and similar sites. */
+  SiteFingerprint: systemRecord(
+    {
+      siteId: relationTo(() => sites.Site.field("id")),
+      kind: dryv.field(websiteProperties.FingerprintKind).query({ filter: ["equal", "in"] }),
+      digest: dryv.field(sharedProperties.Checksum),
+      /** Feature vector as serialised JSON. */
+      features: dryv.field(sharedProperties.LongText),
+      checkId: optionalId(),
+      computedAt: dryv.field(sharedProperties.DateTime).query({ sort: true }),
+    },
+    "fingerprints",
+    [{ name: "idx_fingerprint_site", fields: ["siteId", "kind", "computedAt"] }],
+  ),
+});
+
 const id = () => dryv.field(sharedProperties.Id).optional();
 const websiteRead = website.feature("WebsiteRead").description("Public read access to known sites and their structures.").tags("public");
 const surfaces = [
@@ -178,6 +315,13 @@ const surfaces = [
   readSurface(website, { singular: "Structure", plural: "Structures", itemKey: "structure", listKey: "structures", path: "/website/structures", idParam: "structureId", entity: structures.Structure, description: "site structures", filters: { ownerKind: dryv.field(websiteProperties.StructureOwnerKind).optional(), ownerId: id() } }),
   readSurface(website, { singular: "StructureVersion", plural: "StructureVersions", itemKey: "structureVersion", listKey: "structureVersions", path: "/website/structure-versions", idParam: "structureVersionId", entity: versions.StructureVersion, description: "structure versions", filters: { structureId: id(), status: dryv.field(websiteProperties.VersionStatus).optional() } }),
   readSurface(website, { singular: "StructureFile", plural: "StructureFiles", itemKey: "structureFile", listKey: "structureFiles", path: "/website/structure-files", idParam: "structureFileId", entity: files.StructureFile, description: "files of structure versions", filters: { versionId: id(), role: dryv.field(websiteProperties.StructureFileRole).optional() } }),
+  readSurface(website, { singular: "SiteFamily", plural: "SiteFamilies", itemKey: "family", listKey: "families", path: "/website/families", idParam: "familyId", entity: families.SiteFamily, description: "site families", filters: { jurisdictionId: id(), kind: dryv.field(websiteProperties.FamilyKind).optional(), q: dryv.field(sharedProperties.Name).optional() } }),
+  readSurface(website, { singular: "DomainPattern", plural: "DomainPatterns", itemKey: "domainPattern", listKey: "domainPatterns", path: "/website/domain-patterns", idParam: "domainPatternId", entity: patterns.DomainPattern, description: "domain patterns", filters: { familyId: id(), status: dryv.field(websiteProperties.PatternStatus).optional() } }),
+  readSurface(website, { singular: "SiteMember", plural: "SiteMembers", itemKey: "siteMember", listKey: "siteMembers", path: "/website/members", idParam: "siteMemberId", entity: membership.SiteMember, description: "family memberships", filters: { siteId: id(), familyId: id() } }),
+  readSurface(website, { singular: "SiteSubject", plural: "SiteSubjects", itemKey: "siteSubject", listKey: "siteSubjects", path: "/website/subjects", idParam: "siteSubjectId", entity: membership.SiteSubject, description: "site subjects", filters: { siteId: id(), targetKind: dryv.field(sharedProperties.TargetKind).optional(), targetId: id() } }),
+  readSurface(website, { singular: "SiteTrait", plural: "SiteTraits", itemKey: "siteTrait", listKey: "siteTraits", path: "/website/traits", idParam: "siteTraitId", entity: similarity.SiteTrait, description: "site and family traits", filters: { ownerKind: dryv.field(websiteProperties.RelationOwnerKind).optional(), ownerId: id(), tag: dryv.field(websiteProperties.TraitTag).optional() } }),
+  readSurface(website, { singular: "SiteRelation", plural: "SiteRelations", itemKey: "siteRelation", listKey: "siteRelations", path: "/website/relations", idParam: "siteRelationId", entity: similarity.SiteRelation, description: "site and family relations", filters: { fromId: id(), toId: id(), relation: dryv.field(websiteProperties.SiteRelationKind).optional() } }),
+  readSurface(website, { singular: "SiteFingerprint", plural: "SiteFingerprints", itemKey: "siteFingerprint", listKey: "siteFingerprints", path: "/website/fingerprints", idParam: "siteFingerprintId", entity: similarity.SiteFingerprint, description: "site fingerprints", filters: { siteId: id(), kind: dryv.field(websiteProperties.FingerprintKind).optional() } }),
   readSurface(website, { singular: "SiteCheck", plural: "SiteChecks", itemKey: "siteCheck", listKey: "siteChecks", path: "/website/checks", idParam: "siteCheckId", entity: checks.SiteCheck, description: "site checks", filters: { siteId: id(), kind: dryv.field(websiteProperties.CheckKind).optional(), outcome: dryv.field(websiteProperties.CheckOutcome).optional() } }),
 ];
 export const websiteReadOperations = websiteRead.operations(Object.assign({}, ...surfaces.map((surface) => surface.operations)));

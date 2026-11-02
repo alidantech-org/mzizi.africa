@@ -1,0 +1,427 @@
+{
+  "note": "Illustrative test fixture, not canonical data: Kenyan site families, domain patterns and sites, loaded as unverified.",
+  "country": "ke",
+  "rows": [
+    {
+      "entity": "SiteEntity",
+      "key": "site:nairobi-county",
+      "values": {
+        "code": "ke/nairobi-county",
+        "name": "Nairobi City County",
+        "kind": "portal",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:nairobi-county:nairobi.go.ke",
+      "values": {
+        "siteId": "@site:nairobi-county",
+        "hostname": "nairobi.go.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2015-01-01",
+        "validFromPrecision": "year"
+      }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:nairobi-assembly",
+      "values": {
+        "code": "ke/nairobi-assembly",
+        "name": "Nairobi City County Assembly",
+        "kind": "portal",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:nairobi-assembly:nairobiassembly.go.ke",
+      "values": {
+        "siteId": "@site:nairobi-assembly",
+        "hostname": "nairobiassembly.go.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2015-01-01",
+        "validFromPrecision": "year"
+      }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:westlands-ngcdf",
+      "values": {
+        "code": "ke/westlands-ngcdf",
+        "name": "Westlands Constituency NG-CDF",
+        "kind": "portal",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:westlands-ngcdf:westlands.ngcdf.go.ke",
+      "values": {
+        "siteId": "@site:westlands-ngcdf",
+        "hostname": "westlands.ngcdf.go.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2015-01-01",
+        "validFromPrecision": "year"
+      }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:treasury",
+      "values": {
+        "code": "ke/treasury",
+        "name": "The National Treasury",
+        "kind": "portal",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:treasury:treasury.go.ke",
+      "values": {
+        "siteId": "@site:treasury",
+        "hostname": "treasury.go.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2015-01-01",
+        "validFromPrecision": "year"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:treasury:oldtreasury.example",
+      "values": {
+        "siteId": "@site:treasury",
+        "hostname": "oldtreasury.example",
+        "scheme": "https",
+        "role": "legacy",
+        "validFrom": "2012-01-01",
+        "validFromPrecision": "year",
+        "validTo": "2018-06-30",
+        "validToPrecision": "exact"
+      }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:iebc",
+      "values": {
+        "code": "ke/iebc",
+        "name": "Independent Electoral and Boundaries Commission",
+        "kind": "portal",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:iebc:iebc.or.ke",
+      "values": {
+        "siteId": "@site:iebc",
+        "hostname": "iebc.or.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2015-01-01",
+        "validFromPrecision": "year"
+      }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:knbs",
+      "values": {
+        "code": "ke/knbs",
+        "name": "Kenya National Bureau of Statistics",
+        "kind": "portal",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:knbs:knbs.or.ke",
+      "values": {
+        "siteId": "@site:knbs",
+        "hostname": "knbs.or.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2015-01-01",
+        "validFromPrecision": "year"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:treasury:finance-portal.example",
+      "values": {
+        "siteId": "@site:treasury",
+        "hostname": "finance-portal.example",
+        "scheme": "https",
+        "role": "mirror",
+        "validFrom": "2019-01-01",
+        "validFromPrecision": "year"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:knbs:finance-portal.example",
+      "values": {
+        "siteId": "@site:knbs",
+        "hostname": "finance-portal.example",
+        "scheme": "https",
+        "role": "legacy",
+        "validFrom": "2010-01-01",
+        "validFromPrecision": "year",
+        "validTo": "2018-12-31",
+        "validToPrecision": "exact"
+      }
+    },
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:county-government",
+      "values": {
+        "code": "ke/county-government",
+        "name": "County government sites",
+        "kind": "geographic_unit",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:county-assembly",
+      "values": {
+        "code": "ke/county-assembly",
+        "name": "County assembly sites",
+        "kind": "geographic_unit",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:ngcdf",
+      "values": {
+        "code": "ke/ngcdf",
+        "name": "Constituency development fund sites",
+        "kind": "geographic_unit",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:ministry",
+      "values": {
+        "code": "ke/ministry",
+        "name": "Ministry sites",
+        "kind": "institution_type",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "SiteFamilyEntity",
+      "key": "family:independent-body",
+      "values": {
+        "code": "ke/independent-body",
+        "name": "Independent bodies and agencies",
+        "kind": "independent_body",
+        "status": "active",
+        "jurisdictionId": "@ke"
+      }
+    },
+    {
+      "entity": "DomainPatternEntity",
+      "key": "pattern:county-government",
+      "values": {
+        "familyId": "@family:county-government",
+        "template": "{county}.go.ke",
+        "scheme": "https",
+        "domainRole": "primary",
+        "variables": "{\"county\": {\"source\": \"geography.units\", \"level\": \"county\", \"slug\": \"lowercase-strip-county\"}}",
+        "status": "proposed"
+      }
+    },
+    {
+      "entity": "DomainPatternEntity",
+      "key": "pattern:county-assembly",
+      "values": {
+        "familyId": "@family:county-assembly",
+        "template": "{county}assembly.go.ke",
+        "scheme": "https",
+        "domainRole": "primary",
+        "variables": "{\"county\": {\"source\": \"geography.units\", \"level\": \"county\", \"slug\": \"lowercase-strip-county\"}}",
+        "status": "proposed"
+      }
+    },
+    {
+      "entity": "DomainPatternEntity",
+      "key": "pattern:ngcdf",
+      "values": {
+        "familyId": "@family:ngcdf",
+        "template": "{constituency}.ngcdf.go.ke",
+        "scheme": "https",
+        "domainRole": "primary",
+        "variables": "{\"constituency\": {\"source\": \"geography.units\", \"level\": \"constituency\", \"slug\": \"lowercase-hyphen\"}}",
+        "status": "proposed"
+      }
+    },
+    {
+      "entity": "DomainPatternEntity",
+      "key": "pattern:ministry",
+      "values": {
+        "familyId": "@family:ministry",
+        "template": "{ministry}.go.ke",
+        "scheme": "https",
+        "domainRole": "primary",
+        "variables": "{\"ministry\": {\"source\": \"governance.institutions\", \"type\": \"ministry\", \"slug\": \"acronym-or-name\"}}",
+        "status": "proposed"
+      }
+    },
+    {
+      "entity": "SiteMemberEntity",
+      "key": "member:nairobi-county:county-government",
+      "values": {
+        "siteId": "@site:nairobi-county",
+        "familyId": "@family:county-government",
+        "role": "member",
+        "basis": "pattern",
+        "score": 0.95
+      }
+    },
+    {
+      "entity": "SiteMemberEntity",
+      "key": "member:nairobi-assembly:county-assembly",
+      "values": {
+        "siteId": "@site:nairobi-assembly",
+        "familyId": "@family:county-assembly",
+        "role": "member",
+        "basis": "pattern",
+        "score": 0.95
+      }
+    },
+    {
+      "entity": "SiteMemberEntity",
+      "key": "member:westlands-ngcdf:ngcdf",
+      "values": {
+        "siteId": "@site:westlands-ngcdf",
+        "familyId": "@family:ngcdf",
+        "role": "member",
+        "basis": "pattern",
+        "score": 0.95
+      }
+    },
+    {
+      "entity": "SiteMemberEntity",
+      "key": "member:treasury:ministry",
+      "values": {
+        "siteId": "@site:treasury",
+        "familyId": "@family:ministry",
+        "role": "member",
+        "basis": "agent",
+        "score": 0.95
+      }
+    },
+    {
+      "entity": "SiteMemberEntity",
+      "key": "member:iebc:independent-body",
+      "values": {
+        "siteId": "@site:iebc",
+        "familyId": "@family:independent-body",
+        "role": "member",
+        "basis": "agent",
+        "score": 0.95
+      }
+    },
+    {
+      "entity": "SiteMemberEntity",
+      "key": "member:knbs:independent-body",
+      "values": {
+        "siteId": "@site:knbs",
+        "familyId": "@family:independent-body",
+        "role": "member",
+        "basis": "agent",
+        "score": 0.95
+      }
+    },
+    {
+      "entity": "SiteSubjectEntity",
+      "key": "subject:nairobi-county",
+      "values": {
+        "siteId": "@site:nairobi-county",
+        "targetKind": "geography.units",
+        "targetId": "@ke:unit:nairobi",
+        "relation": "serves"
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:iebc:section:downloads",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:iebc",
+        "tag": "section:downloads",
+        "score": 0.9
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:knbs:section:downloads",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:knbs",
+        "tag": "section:downloads",
+        "score": 0.9
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:iebc:purpose:data-portal",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:iebc",
+        "tag": "purpose:data-portal",
+        "score": 0.9
+      }
+    },
+    {
+      "entity": "SiteTraitEntity",
+      "key": "trait:knbs:purpose:data-portal",
+      "values": {
+        "ownerKind": "site",
+        "ownerId": "@site:knbs",
+        "tag": "purpose:data-portal",
+        "score": 0.9
+      }
+    },
+    {
+      "entity": "SiteRelationEntity",
+      "key": "relation:iebc-knbs",
+      "values": {
+        "fromKind": "site",
+        "fromId": "@site:iebc",
+        "toKind": "site",
+        "toId": "@site:knbs",
+        "relation": "shares_module",
+        "score": 0.6,
+        "basis": "agent",
+        "evidence": "{\"module\": \"downloads-section\"}"
+      }
+    },
+    {
+      "entity": "SiteSubjectEntity",
+      "key": "subject:westlands-ngcdf",
+      "values": {
+        "siteId": "@site:westlands-ngcdf",
+        "targetKind": "geography.units",
+        "targetId": "@ke:unit:westlands",
+        "relation": "serves"
+      }
+    }
+  ]
+}

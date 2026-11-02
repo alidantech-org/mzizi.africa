@@ -45,12 +45,12 @@ site_families     code, name, kind (geographic_unit, institution_type, independe
                   subject_kind (what members are about: e.g. county, constituency, ministry), jurisdiction (soft id), status
 domain_patterns   family (FK), template (`{county}.go.ke`), variables (JSON: slot -> subject source and slug rule),
                   scheme, expected domain role, status, notes
-site_members      site (FK), family (FK), role (member, template_source), basis (pattern, agent, fingerprint), confidence,
+site_members      site (FK), family (FK), role (member, template_source), basis (pattern, agent, fingerprint), score (0 to 1),
                   method (soft id), valid time
 site_subjects     site (FK), target_kind (`geography.units`, `governance.institutions`, `organization.entities`,
                   `reference.classifications` for the kind of material), target_id (soft), relation (serves, operated_by, about, publishes), valid time
 traits            owner_kind (site, family), owner_id, tag (`platform:wordpress`, `section:downloads`, `purpose:data-portal`),
-                  method (soft id), confidence, observed_at
+                  method (soft id), score (0 to 1), observed_at
 relations         from_kind/from_id and to_kind/to_id (site or family), relation (similar_to, derived_from, shares_platform, shares_module),
                   score, basis (agent, fingerprint), evidence (JSON)
 fingerprints      site (FK), kind (markup, navigation, assets, document_types), digest and feature vector (JSON), computed_at, check (FK)

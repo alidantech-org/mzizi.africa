@@ -93,9 +93,16 @@ import { IndicatorEntity } from "#/modules/statistics/entities/indicator.entity.
 import { ObservationEntity } from "#/modules/statistics/entities/observation.entity.ts";
 import { PeriodEntity } from "#/modules/statistics/entities/period.entity.ts";
 import { StatisticsTableEntity } from "#/modules/statistics/entities/statistics-table.entity.ts";
+import { DomainPatternEntity } from "#/modules/website/entities/domain-pattern.entity.ts";
 import { SiteCheckEntity } from "#/modules/website/entities/site-check.entity.ts";
 import { SiteDomainEntity } from "#/modules/website/entities/site-domain.entity.ts";
+import { SiteFamilyEntity } from "#/modules/website/entities/site-family.entity.ts";
+import { SiteFingerprintEntity } from "#/modules/website/entities/site-fingerprint.entity.ts";
+import { SiteMemberEntity } from "#/modules/website/entities/site-member.entity.ts";
 import { SitePublisherEntity } from "#/modules/website/entities/site-publisher.entity.ts";
+import { SiteRelationEntity } from "#/modules/website/entities/site-relation.entity.ts";
+import { SiteSubjectEntity } from "#/modules/website/entities/site-subject.entity.ts";
+import { SiteTraitEntity } from "#/modules/website/entities/site-trait.entity.ts";
 import { SiteEntity } from "#/modules/website/entities/site.entity.ts";
 import { StructureFileEntity } from "#/modules/website/entities/structure-file.entity.ts";
 import { StructureVersionEntity } from "#/modules/website/entities/structure-version.entity.ts";
@@ -195,10 +202,17 @@ const entities = [
   ObservationEntity,
   PeriodEntity,
   StatisticsTableEntity,
+  DomainPatternEntity,
   SiteEntity,
   SiteCheckEntity,
   SiteDomainEntity,
+  SiteFamilyEntity,
+  SiteFingerprintEntity,
+  SiteMemberEntity,
   SitePublisherEntity,
+  SiteRelationEntity,
+  SiteSubjectEntity,
+  SiteTraitEntity,
   StructureEntity,
   StructureFileEntity,
   StructureVersionEntity,
@@ -314,6 +328,13 @@ beforeAll(async () => {
     "statistical",
     "statistical",
     "statistical",
+    "website",
+    "website",
+    "website",
+    "website",
+    "website",
+    "website",
+    "website",
     "website",
     "website",
     "website",
@@ -5025,6 +5046,59 @@ describe("entity schema matches the contract", () => {
     });
   });
 
+  describe("DomainPattern", () => {
+    const metadata = () => dataSource.getMetadata(DomainPatternEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("domain_patterns");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["domain_role", false, false],
+            ["family_id", false, false],
+            ["id", false, true],
+            ["notes", true, false],
+            ["scheme", false, false],
+            ["status", false, false],
+            ["template", false, false],
+            ["updated_at", false, false],
+            ["variables", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "family_id->website.families",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "family_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."domain_patterns" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
   describe("Site", () => {
     const metadata = () => dataSource.getMetadata(SiteEntity);
 
@@ -5177,6 +5251,155 @@ describe("entity schema matches the contract", () => {
     });
   });
 
+  describe("SiteFamily", () => {
+    const metadata = () => dataSource.getMetadata(SiteFamilyEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("families");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["code", false, false],
+            ["created_at", false, false],
+            ["description", true, false],
+            ["id", false, true],
+            ["jurisdiction_id", true, false],
+            ["kind", false, false],
+            ["name", false, false],
+            ["status", false, false],
+            ["subject_kind_id", true, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:code",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."families" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("SiteFingerprint", () => {
+    const metadata = () => dataSource.getMetadata(SiteFingerprintEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("fingerprints");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["check_id", true, false],
+            ["computed_at", false, false],
+            ["created_at", false, false],
+            ["digest", false, false],
+            ["features", false, false],
+            ["id", false, true],
+            ["kind", false, false],
+            ["site_id", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "site_id->website.sites",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "site_id,kind,computed_at",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."fingerprints" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("SiteMember", () => {
+    const metadata = () => dataSource.getMetadata(SiteMemberEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("members");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["basis", false, false],
+            ["created_at", false, false],
+            ["family_id", false, false],
+            ["id", false, true],
+            ["method_id", true, false],
+            ["role", false, false],
+            ["score", true, false],
+            ["site_id", false, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_to", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "site_id->website.sites",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "site_id",
+          "family_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."members" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
   describe("SitePublisher", () => {
     const metadata = () => dataSource.getMetadata(SitePublisherEntity);
 
@@ -5225,6 +5448,145 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "website"."site_publishers" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("SiteRelation", () => {
+    const metadata = () => dataSource.getMetadata(SiteRelationEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("relations");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["basis", false, false],
+            ["created_at", false, false],
+            ["evidence", true, false],
+            ["from_id", false, false],
+            ["from_kind", false, false],
+            ["id", false, true],
+            ["relation", false, false],
+            ["score", true, false],
+            ["to_id", false, false],
+            ["to_kind", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "from_kind,from_id",
+          "to_kind,to_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."relations" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("SiteSubject", () => {
+    const metadata = () => dataSource.getMetadata(SiteSubjectEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("subjects");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["id", false, true],
+            ["relation", false, false],
+            ["site_id", false, false],
+            ["target_id", false, false],
+            ["target_kind", false, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_to", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "site_id->website.sites",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "site_id",
+          "target_kind,target_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."subjects" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("SiteTrait", () => {
+    const metadata = () => dataSource.getMetadata(SiteTraitEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("traits");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["id", false, true],
+            ["method_id", true, false],
+            ["observed_at", true, false],
+            ["owner_id", false, false],
+            ["owner_kind", false, false],
+            ["score", true, false],
+            ["tag", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "owner_kind,owner_id",
+          "tag",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."traits" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
