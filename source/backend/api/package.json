@@ -9,7 +9,10 @@
     "start": "bun src/main.ts",
     "dev": "bun --watch src/main.ts",
     "typecheck": "bunx --bun tsc --noEmit -p src/tsconfig.json",
-    "test": "vitest run --root src"
+    "test": "vitest run --root src",
+    "db:reset": "bun scripts/dev-db.ts reset",
+    "db:schema": "bun scripts/dev-db.ts schema",
+    "db:fixtures": "bun scripts/dev-db.ts fixtures"
   },
   "dependencies": {
     "@nestjs/common": "^11",
