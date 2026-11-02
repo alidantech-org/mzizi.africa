@@ -1,0 +1,12 @@
+mapping: indicator
+extractor: worldbank-indicator
+target_kind: statistical.indicators
+key: [code]
+fields:
+  code:          { from: indicator }
+  name:          { from: indicatorName }
+  unitOfMeasure: { const: persons }
+  categoryId:    { const: { $ref: { kind: statistical.categories, where: { code: population } } } }
+provenance:
+  locator: { api: indicator }
+  method: extracted

@@ -1,0 +1,14 @@
+mapping: observation
+extractor: worldbank-indicator
+target_kind: statistical.observations
+key: [tableId, periodId, indicatorId, geoUnitId]
+fields:
+  tableId:         { from: country, transform: [{ prefix: "worldbank/SP.POP.TOTL/" }, { ref: { kind: statistical.datasets, field: code } }] }
+  periodId:        { from: date, transform: [{ prefix: "year/" }, { ref: { kind: statistical.periods, field: code } }] }
+  indicatorId:     { const: { $ref: { kind: statistical.indicators, where: { code: SP.POP.TOTL } } } }
+  geoUnitId:       { const: { $ref: { kind: geography.units, where: { code: "${jurisdiction}" } } } }
+  numericValue:    { from: value, transform: decimal }
+  confidenceLevel: { const: estimate }
+provenance:
+  locator: { date: $date }
+  method: extracted

@@ -3,9 +3,9 @@ extractor: geojson
 target_kind: geography.boundaries
 key: [unitId]
 fields:
-  unitId:        { const: { $ref: { kind: geography.units, where: { code: ke } } } }
+  unitId:        { const: { $ref: { kind: geography.units, where: { code: "${jurisdiction}" } } } }
   geometry:      { from: geometry }
-  referenceYear: { const: 2020 }
+  referenceYear: { const: "${reference_year}" }
 provenance:
   locator: { feature: $feature }
   method: extracted

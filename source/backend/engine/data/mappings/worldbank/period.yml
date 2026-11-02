@@ -1,0 +1,12 @@
+mapping: period
+extractor: worldbank-indicator
+target_kind: statistical.periods
+key: [code]
+fields:
+  code:        { from: date, transform: { prefix: "year/" } }
+  startsOn:    { from: date, transform: { suffix: "-01-01" } }
+  endsOn:      { from: date, transform: { suffix: "-12-31" } }
+  granularity: { const: year }
+provenance:
+  locator: { date: $date }
+  method: extracted

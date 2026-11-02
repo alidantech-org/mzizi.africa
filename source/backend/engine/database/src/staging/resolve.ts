@@ -23,7 +23,14 @@ export async function resolveRef(db: DataSource, ref: RefValue["$ref"]): Promise
   }
   const wheres: string[] = [];
   const params: unknown[] = [];
-  for (const [property, value] of Object.entries(ref.where)) {
+  for (const [property, raw] of Object.entries(ref.where)) {
+    // A value may itself be a reference (a classification is unique per jurisdiction, so it names its jurisdiction by reference).
+    let value = raw;
+    if (isRef(raw)) {
+      const inner = await resolveRef(db, raw.$ref);
+      if (inner.error) return { error: `${property}: ${inner.error}` };
+      value = inner.id;
+    }
     const column = meta.columns.find((candidate) => candidate.propertyName === property);
     if (!column) return { error: `${ref.kind} has no field ${property}` };
     params.push(value);

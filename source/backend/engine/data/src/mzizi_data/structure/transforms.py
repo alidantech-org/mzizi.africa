@@ -102,6 +102,14 @@ def _slug_code(value: Any, prefix: Any = "") -> str | None:
     return f"{prefix or ''}{re.sub(r'[^a-z0-9]+', '-', text).strip('-')}"
 
 
+def _prefix(value: Any, text: Any = "") -> Any:
+    return None if value in (None, "") else f"{text}{value}"
+
+
+def _suffix(value: Any, text: Any = "") -> Any:
+    return None if value in (None, "") else f"{value}{text}"
+
+
 def _ref(value: Any, spec: Any) -> dict | None:
     """A reference to another record by natural key, resolved to an id by the database engine at validation and promotion."""
     if value in (None, ""):
@@ -127,6 +135,8 @@ LIBRARY: dict[str, Callable[..., Any]] = {
     "lookup": _lookup,
     "ref": _ref,
     "slug_code": _slug_code,
+    "prefix": _prefix,
+    "suffix": _suffix,
 }
 
 

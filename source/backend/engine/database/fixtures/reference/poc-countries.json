@@ -1,0 +1,132 @@
+{
+  "note": "Jurisdictions and administrative hierarchy for the proof-of-concept countries (South Africa, Nigeria, Tanzania). Keys match the test fixture so loading the fixtures afterwards skips existing rows.",
+  "country": null,
+  "rows": [
+    {
+      "entity": "JurisdictionEntity",
+      "key": "za",
+      "values": {
+        "code": "za",
+        "name": "South Africa",
+        "kind": "modern_state"
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:level:country",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "geography/level",
+        "code": "geography/level/country",
+        "label": "country",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:level:province",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "geography/level",
+        "code": "geography/level/province",
+        "label": "province",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:level:municipality",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "geography/level",
+        "code": "geography/level/municipality",
+        "label": "municipality",
+        "order": 2
+      }
+    },
+    {
+      "entity": "JurisdictionEntity",
+      "key": "ng",
+      "values": {
+        "code": "ng",
+        "name": "Nigeria",
+        "kind": "modern_state"
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ng:level:country",
+      "values": {
+        "jurisdictionId": "@ng",
+        "scheme": "geography/level",
+        "code": "geography/level/country",
+        "label": "country",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ng:level:state",
+      "values": {
+        "jurisdictionId": "@ng",
+        "scheme": "geography/level",
+        "code": "geography/level/state",
+        "label": "state",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ng:level:lga",
+      "values": {
+        "jurisdictionId": "@ng",
+        "scheme": "geography/level",
+        "code": "geography/level/lga",
+        "label": "lga",
+        "order": 2
+      }
+    },
+    {
+      "entity": "JurisdictionEntity",
+      "key": "tz",
+      "values": {
+        "code": "tz",
+        "name": "Tanzania",
+        "kind": "modern_state"
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tz:level:country",
+      "values": {
+        "jurisdictionId": "@tz",
+        "scheme": "geography/level",
+        "code": "geography/level/country",
+        "label": "country",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tz:level:region",
+      "values": {
+        "jurisdictionId": "@tz",
+        "scheme": "geography/level",
+        "code": "geography/level/region",
+        "label": "region",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tz:level:district",
+      "values": {
+        "jurisdictionId": "@tz",
+        "scheme": "geography/level",
+        "code": "geography/level/district",
+        "label": "district",
+        "order": 2
+      }
+    }
+  ]
+}

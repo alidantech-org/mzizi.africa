@@ -28,7 +28,7 @@ def register(extractor: Extractor) -> Extractor:
 
 
 def get(name: str) -> Extractor:
-    from . import geojson  # noqa: F401  (registers on import)
+    from . import geojson, worldbank  # noqa: F401  (registers on import)
 
     if name not in REGISTRY:
         raise KeyError(f"unknown extractor {name!r}; available: {sorted(REGISTRY)}")

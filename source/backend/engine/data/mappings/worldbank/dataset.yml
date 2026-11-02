@@ -1,0 +1,14 @@
+mapping: dataset
+extractor: worldbank-indicator
+target_kind: statistical.datasets
+key: [code]
+fields:
+  code:           { from: country, transform: { prefix: "worldbank/SP.POP.TOTL/" } }
+  title:          { from: countryName, transform: { suffix: ": Population, total (World Bank)" } }
+  collector:      { const: "World Bank (aggregating national statistical offices and the UN Population Division)" }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  geoUnitId:      { const: { $ref: { kind: geography.units, where: { code: "${jurisdiction}" } } } }
+  indicatorId:    { const: { $ref: { kind: statistical.indicators, where: { code: SP.POP.TOTL } } } }
+provenance:
+  locator: { api: indicator }
+  method: extracted

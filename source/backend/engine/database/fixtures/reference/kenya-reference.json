@@ -1,5 +1,5 @@
 {
-  "note": "Kenya reference vocabularies that real imports depend on: the jurisdiction and the administrative hierarchy (country, county, constituency, ward). Keys match the test fixture so loading the fixtures afterwards skips rows that already exist.",
+  "note": "Kenya reference vocabularies that real imports depend on: the jurisdiction and the administrative hierarchy (country, county, constituency, ward). Keys match the test fixture so loading the fixtures afterwards skips rows that already exist. Also holds the institution types, selection methods, election types, result levels and fiscal workflow stages used by the Kenya fixture, promoted to reference data; these vocabularies are curated, unsourced and need a domain review before they are treated as authoritative.",
   "country": "ke",
   "rows": [
     {
@@ -52,6 +52,116 @@
         "scheme": "geography/level",
         "code": "geography/level/ward",
         "label": "ward",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:itype:commission",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "governance/institution-type",
+        "code": "governance/institution-type/commission",
+        "label": "commission",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:itype:county-government",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "governance/institution-type",
+        "code": "governance/institution-type/county-government",
+        "label": "county government",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:method:direct-election",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "governance/selection-method",
+        "code": "governance/selection-method/direct-election",
+        "label": "direct election",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:etype:general",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "elections/election-type",
+        "code": "elections/election-type/general",
+        "label": "general election",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:rlevel:ward",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "elections/result-level",
+        "code": "elections/result-level/ward",
+        "label": "ward",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:rlevel:constituency",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "elections/result-level",
+        "code": "elections/result-level/constituency",
+        "label": "constituency",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:stage:requisition",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "finance/workflow-stage",
+        "code": "finance/workflow-stage/requisition",
+        "label": "requisition",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:stage:commitment",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "finance/workflow-stage",
+        "code": "finance/workflow-stage/commitment",
+        "label": "commitment",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:stage:verification",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "finance/workflow-stage",
+        "code": "finance/workflow-stage/verification",
+        "label": "verification",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:stage:payment",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "finance/workflow-stage",
+        "code": "finance/workflow-stage/payment",
+        "label": "payment",
         "order": 3
       }
     }

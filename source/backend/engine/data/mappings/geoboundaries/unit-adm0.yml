@@ -3,12 +3,12 @@ extractor: geojson
 target_kind: geography.units
 key: [code]
 fields:
-  code:           { const: ke }
+  code:           { const: "${jurisdiction}" }
   name:           { from: shapeName, transform: collapse_whitespace }
   kind:           { const: territorial }
   isActive:       { const: true }
-  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: ke } } } }
-  levelId:        { const: { $ref: { kind: reference.classifications, where: { code: geography/level/country } } } }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  levelId:        { const: { $ref: { kind: reference.classifications, where: { code: "geography/level/${adm0_level}", jurisdictionId: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } } } } }
 provenance:
   locator: { feature: $feature }
   method: extracted

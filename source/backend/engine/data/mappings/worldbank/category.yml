@@ -1,0 +1,10 @@
+mapping: category
+extractor: worldbank-indicator
+target_kind: statistical.categories
+key: [code]
+fields:
+  code:  { const: population }
+  label: { const: Population }
+provenance:
+  locator: { api: indicator }
+  method: extracted

@@ -16,6 +16,7 @@ import psycopg
 import yaml
 
 from .. import candidates, jobs, pipeline, register
+from ..structure.effective import substitute
 from ..files import LocalDirectoryStore
 
 MAPPINGS = Path(__file__).resolve().parents[3] / "mappings" / "geoboundaries"
@@ -40,8 +41,34 @@ class ImportResult:
     levels: list[LevelImport] = field(default_factory=list)
 
 
-def load_mapping(name: str) -> dict:
-    return yaml.safe_load((MAPPINGS / f"{name}.yml").read_text())
+def load_mapping(name: str, variables: dict[str, str] | None = None) -> dict:
+    """A mapping file with its ${variables} filled in (jurisdiction code, level names, reference year); the same files serve every country."""
+    return substitute(yaml.safe_load((MAPPINGS / f"{name}.yml").read_text()), variables or {})
+
+
+@dataclass(frozen=True)
+class Country:
+    """An ISO3 code and the jurisdiction code it maps to. Level names are reference data, read from the database."""
+
+    iso3: str
+    jurisdiction: str  # jurisdiction code, also the prefix of unit codes
+
+
+# The only country-specific thing in code is this identifier mapping (ISO 3166 alpha-3 to the jurisdiction code).
+COUNTRIES = {"KEN": Country("KEN", "ke"), "ZAF": Country("ZAF", "za"), "NGA": Country("NGA", "ng"), "TZA": Country("TZA", "tz")}
+
+
+def level_names(conn: psycopg.Connection, jurisdiction: str) -> dict[int, str]:
+    """The geography levels of a jurisdiction by order (0 = country, 1 = first administrative level), from its classification records."""
+    rows = conn.execute(
+        """SELECT c."order" AS ord, c.label FROM reference.classifications c JOIN reference.jurisdictions j ON j.id = c.jurisdiction_id
+            WHERE j.code = %s AND c.scheme = 'geography/level' AND c."order" IN (0, 1)""",
+        (jurisdiction,),
+    ).fetchall()
+    found = {r["ord"]: r["label"] for r in rows}
+    if set(found) != {0, 1}:
+        raise LookupError(f"jurisdiction {jurisdiction} needs geography levels of order 0 and 1 in its reference data")
+    return found
 
 
 def segment_records(result) -> list[tuple[str, dict]]:
@@ -53,8 +80,10 @@ def segment_records(result) -> list[tuple[str, dict]]:
     return records
 
 
-def import_level(conn: psycopg.Connection, store: LocalDirectoryStore, publisher_id: str, geojson: bytes, metadata: dict, level: str, jurisdiction_id: str | None = None) -> LevelImport:
-    iso3 = metadata["boundaryISO"]
+def import_level(conn: psycopg.Connection, store: LocalDirectoryStore, publisher_id: str, geojson: bytes, metadata: dict, level: str, country: Country, jurisdiction_id: str | None = None) -> LevelImport:
+    iso3 = country.iso3
+    levels = level_names(conn, country.jurisdiction)
+    variables = {"jurisdiction": country.jurisdiction, "adm0_level": levels[0], "adm1_level": levels[1], "reference_year": metadata.get("boundaryYearRepresented", "")}
     built = datetime.strptime(metadata["buildDate"], "%b %d, %Y").date() if metadata.get("buildDate") else None
     spec = register.DocumentSpec(
         publisher_id, f"geoBoundaries gbOpen {iso3} {level} (simplified)", "dataset", url=metadata.get("simplifiedGeometryGeoJSON"),
@@ -75,7 +104,7 @@ def import_level(conn: psycopg.Connection, store: LocalDirectoryStore, publisher
     kind = "adm0" if level == "ADM0" else "adm1"
     runs, stats = {}, {}
     for what in ("unit", "boundary"):
-        mapping = load_mapping(f"{what}-{kind}")
+        mapping = load_mapping(f"{what}-{kind}", variables)
         run_id = candidates.create_run(conn, f"geoboundaries/{iso3}/{level}/{what}", "v1", capture_id, str(result.id))
         stats[what] = candidates.add_candidates(conn, run_id, mapping, records, str(result.id), ["none_known"], [])
         candidates.finish_run(conn, run_id)
@@ -84,14 +113,22 @@ def import_level(conn: psycopg.Connection, store: LocalDirectoryStore, publisher
     return LevelImport(level, document_id, capture_id, ref.version_id, str(result.id), runs["unit"], runs["boundary"], stats["unit"], stats["boundary"])
 
 
-def import_directory(conn: psycopg.Connection, store: LocalDirectoryStore, directory: str | Path, iso3: str = "KEN", jurisdiction_code: str = "ke") -> ImportResult:
-    """Imports ADM0 then ADM1 files named KEN-ADM0-simplified.geojson with a KEN-ADM0-metadata.json beside each."""
+def import_directory(conn: psycopg.Connection, store: LocalDirectoryStore, directory: str | Path, iso3: str = "KEN", jurisdiction_code: str | None = None) -> ImportResult:
+    """Imports ADM0 then ADM1 files named KEN-ADM0-simplified.geojson with a KEN-ADM0-metadata.json beside each.
+
+    The country's jurisdiction code and level names come from COUNTRIES (reference data must already be seeded).
+    """
     directory = Path(directory)
-    jurisdiction = conn.execute("SELECT id::text AS id FROM reference.jurisdictions WHERE code = %s", (jurisdiction_code,)).fetchone()
+    country = COUNTRIES[iso3]
+    if jurisdiction_code and jurisdiction_code != country.jurisdiction:
+        raise ValueError(f"{iso3} maps to jurisdiction {country.jurisdiction}, not {jurisdiction_code}")
+    jurisdiction = conn.execute("SELECT id::text AS id FROM reference.jurisdictions WHERE code = %s", (country.jurisdiction,)).fetchone()
+    if not jurisdiction:
+        raise LookupError(f"jurisdiction {country.jurisdiction} is not seeded")
     publisher_id = register.ensure_publisher(conn, "geoboundaries", "geoBoundaries (William & Mary geoLab)", kind="repository", website_url="https://www.geoboundaries.org")
     out = ImportResult()
     for level in ("ADM0", "ADM1"):
         metadata = json.loads((directory / f"{iso3}-{level}-metadata.json").read_text())
         data = (directory / f"{iso3}-{level}-simplified.geojson").read_bytes()
-        out.levels.append(import_level(conn, store, publisher_id, data, metadata, level, jurisdiction["id"] if jurisdiction else None))
+        out.levels.append(import_level(conn, store, publisher_id, data, metadata, level, country, jurisdiction["id"]))
     return out

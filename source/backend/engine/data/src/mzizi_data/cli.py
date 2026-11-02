@@ -19,7 +19,7 @@ def main(argv: list[str] | None = None) -> int:
     geo = sub.add_parser("import-geoboundaries", help="stage unit and boundary candidates from downloaded geoBoundaries files")
     geo.add_argument("directory")
     geo.add_argument("--iso3", default="KEN")
-    geo.add_argument("--jurisdiction", default="ke")
+    geo.add_argument("--jurisdiction", default=None, help="check only; the jurisdiction follows from the ISO3 code")
     geo.add_argument("--store", default=".data/objects", help="local object store directory")
     st = sub.add_parser("structure", help="site structure versions: submit, batch, list, activate, demote")
     ssub = st.add_subparsers(dest="action", required=True)
@@ -37,6 +37,10 @@ def main(argv: list[str] | None = None) -> int:
     dem = ssub.add_parser("demote")
     dem.add_argument("version_id")
     dem.add_argument("--reason", required=True)
+    wb = sub.add_parser("import-worldbank", help="stage population candidates from a saved World Bank SP.POP.TOTL JSON file")
+    wb.add_argument("file")
+    wb.add_argument("--iso3", required=True)
+    wb.add_argument("--store", default=".data/objects")
     stop = sub.add_parser("stop", help="incident: stop collection for a site, cancel its pending jobs and quarantine its candidates")
     stop.add_argument("site_code")
     stop.add_argument("--reason", required=True)
@@ -88,6 +92,16 @@ def main(argv: list[str] | None = None) -> int:
                 batch.demote(conn, args.version_id, args.reason)
                 conn.commit()
                 print("demoted")
+        return 0
+    if args.command == "import-worldbank":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import worldbank
+
+        with connect() as conn:
+            out = worldbank.import_population(conn, LocalDirectoryStore(conn, args.store), args.file, args.iso3)
+        for name in worldbank.ORDER:
+            print(f"{name}: {out.stats[name].created} new, {out.stats[name].unchanged} unchanged (run {out.runs[name]})")
         return 0
     if args.command == "stop":
         from . import incidents, registry

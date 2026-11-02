@@ -148,7 +148,7 @@ Dataset: a county-level (47) administrative boundary file with a verified open l
 | Wave | Content | Depends on |
 | --- | --- | --- |
 | 0 | engine layout, contracts, database package v1 (migrations, integrity checks), data package v1, staging and promotion, the slice above | decisions |
-| 1 | South Africa, Nigeria, Tanzania: jurisdiction, boundaries levels 1-2, one population table; Kenya reference seed. Each country needs a jurisdiction dossier and an approved source assessment before collection; until then only licensed bulk downloads reviewed by a human are used | 0 |
+| 1 | South Africa, Nigeria, Tanzania: jurisdiction, boundaries levels 1-2, one population table; Kenya reference seed. Each country needs a jurisdiction dossier and an approved source assessment before collection; until then only licensed bulk downloads reviewed by a human are used. Done as a proof for ZA, NG and TZ (country and first-level boundaries, national population series); see task Wave 1 | 0 |
 | 2 | Kenya statistics (KNBS), legal (constitution and chosen Acts), institutions and offices | 1 |
 | 3 | Kenya elections and parties; people with entity resolution and privacy review | 2 |
 | 4 | Kenya budgets, debt, procurement, organisations | 2 |
