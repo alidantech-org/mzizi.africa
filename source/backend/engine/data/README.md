@@ -1,6 +1,18 @@
 # Mzizi Data Engine
 
-**Status:** architecture scaffold; implementation follows legacy inventory and shared-contract definition.
+**Status:** v1 running (Python 3.12+): site structure validator and samples, Postgres job queue, local-directory files interface, GeoJSON extractor, and the ingest/extract pipeline producing schema-valid `ExtractionResult` files. The structure runner, compliance controls and further extractors are tracked tasks.
+
+## Run it
+
+```bash
+cd source/backend/engine/data
+python3 -m venv .venv && .venv/bin/pip install -e '.[dev]' datamodel-code-generator
+.venv/bin/mzizi-data validate samples/html-publications          # validate a structure bundle
+TEST_DATABASE_URL=postgres://postgres@localhost:5432/postgres .venv/bin/python -m pytest -q   # needs bun for the database engine migrations
+scripts/generate_models.sh                                         # Pydantic models from ../../contracts/exchange.schema.json
+```
+
+Modules: `structure/` (schemas, validator, selectors, transforms, family overlay), `files.py` (put-by-hash, get-by-version, local store; writes `filesystem`), `register.py` (publishers, documents, captures, methods in `source`), `jobs.py` (`engine.jobs` queue: idempotent on kind, input hash and generation; SKIP LOCKED claims; bounded retries with backoff), `extractors/` (registry; `geojson`), `pipeline.py` (ingest, enqueue, handler). The data engine never writes canonical domain tables or attributions; promotion belongs to the database engine.
 
 ## Purpose
 

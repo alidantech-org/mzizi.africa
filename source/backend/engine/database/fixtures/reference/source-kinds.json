@@ -1,0 +1,215 @@
+{
+  "note": "Source publisher and document kinds (classification records). Reference seed; jurisdiction-neutral. Requires the world jurisdiction from site-tags.json (loaded first).",
+  "country": null,
+  "rows": [
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/publisher-kind:institution",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/publisher-kind",
+        "code": "source/publisher-kind/institution",
+        "label": "institution",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/publisher-kind:outlet",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/publisher-kind",
+        "code": "source/publisher-kind/outlet",
+        "label": "outlet",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/publisher-kind:archive",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/publisher-kind",
+        "code": "source/publisher-kind/archive",
+        "label": "archive",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/publisher-kind:person",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/publisher-kind",
+        "code": "source/publisher-kind/person",
+        "label": "person",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/publisher-kind:repository",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/publisher-kind",
+        "code": "source/publisher-kind/repository",
+        "label": "repository",
+        "order": 4
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:gazette",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/gazette",
+        "label": "gazette",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:statute",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/statute",
+        "label": "statute text",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:census_report",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/census_report",
+        "label": "census report",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:survey",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/survey",
+        "label": "survey",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:news_article",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/news_article",
+        "label": "news article",
+        "order": 4
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:archival_record",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/archival_record",
+        "label": "archival record",
+        "order": 5
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:oral_testimony",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/oral_testimony",
+        "label": "oral testimony",
+        "order": 6
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:dataset",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/dataset",
+        "label": "dataset",
+        "order": 7
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:map",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/map",
+        "label": "map",
+        "order": 8
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:academic_paper",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/academic_paper",
+        "label": "academic paper",
+        "order": 9
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:official_website",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/official_website",
+        "label": "official website",
+        "order": 10
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:budget",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/budget",
+        "label": "budget document",
+        "order": 11
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:tender_notice",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/tender_notice",
+        "label": "tender notice",
+        "order": 12
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "source/document-kind:extraction_result",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "source/document-kind",
+        "code": "source/document-kind/extraction_result",
+        "label": "extraction result",
+        "order": 13
+      }
+    }
+  ]
+}
