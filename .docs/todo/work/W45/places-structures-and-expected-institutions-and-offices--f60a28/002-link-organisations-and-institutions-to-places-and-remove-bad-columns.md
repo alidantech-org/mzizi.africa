@@ -1,18 +1,18 @@
 ---
-{id: TSK-AA0A323E646D,name: Link organisations and institutions to places and remove bad columns,type: task,status: planned,priority: medium,created_at: 2026-11-02T20:59:35.795Z,updated_at: 2026-11-02T20:59:35.795Z,order: 2048}
+{id: TSK-AA0A323E646D,name: "Governance generalisation: relationships, office scope, units and entity link",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:59:35.795Z,updated_at: 2026-11-02T21:34:17.251Z,order: 2048,depends_on: [TSK-2107BCCA74E8]}
 ---
 
-# Link organisations and institutions to places, and remove bad columns
+# Governance generalisation: relationships, office scope, units and entity link
 
 ## Goal
-Make every organisation entity and governance institution use places through occupancies, and remove columns that held location facts directly.
+Make existing governance and civic models carry the meanings the assessment requires, by extension rather than by adding parallel tables.
 
 ## Context
-Today `governance.institutions` has a geography unit and `organization.entities` has parents and jurisdictions but no place. After the place schema exists, each body gets at least one occupancy, which may be `expected` with an unknown real location (for example "headquarters, Nairobi" or "county headquarters, county X"). The institution to entity link must be explicit so a legal person and a governance body are one identity where appropriate. This task also removes columns found to be wrongly designed during migration, with the data moved first. Entity matching (DEC-ENTITY-MATCHING) is reused to detect the same building appearing from several sources: score on name, address and point, flag, never merge on a name alone.
+Decisions accepted: generalise `governance.relationships` from institution-to-institution to subject kind and id with the added kinds owned_by, operated_by, funded_by, regulated_by, overseen_by and part_of (keeping accountable_to, appoints, delegates_to, funds, has_office, has_component, oversees); add an optional soft `entity_id` on `governance.institutions` so the legal person and the public body are one identity; represent branches and regional offices as institution children through `has_component` with types regional-office and operational-unit; add `scope_geo_unit_id` and `definition_code` to `governance.offices` and rename the institution `geo_unit_id` to make clear it is jurisdiction scope; reuse `civic.amenities` as the facility identity, drop its `geo_unit_id`, and link facilities to operators and owners through relationships. Funding amounts remain in finance. Electoral seats stay election-specific and reference the office instance. This task reconciles with TSK-5C5192D034B2 (governance institutions and offices wave 2) and must not duplicate it.
 
 ## Acceptance checklist
-- [ ] Add the explicit institution to entity link and migrate existing data.
-- [ ] Create occupancies for all 194 institutions and for organisations with known addresses.
-- [ ] Drop obsolete location columns after moving their data and update tests.
-- [ ] Add duplicate-place scoring with flags for reviewers.
-- [ ] Report bodies with no occupancy and places with no body.
+- [ ] Extend the relationship contract and migrate the 79 existing rows.
+- [ ] Add the entity link and fill it for institutions that have a matching entity, reporting unmatched ones without guessing.
+- [ ] Add office scope and definition code, and backfill the 421 offices where the scope is known from code or holder.
+- [ ] Add unit institution types and change amenity: drop its geography column after data is moved (none exists yet).
+- [ ] Update affected API endpoints, DTOs, fixtures and tests.

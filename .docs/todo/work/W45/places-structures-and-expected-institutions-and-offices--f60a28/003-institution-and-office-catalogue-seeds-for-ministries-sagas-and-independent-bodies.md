@@ -1,18 +1,18 @@
 ---
-{id: TSK-0FDD5A808362,name: "Institution and office catalogue seeds for ministries, SAGAs and independent bodies",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:59:35.990Z,updated_at: 2026-11-02T20:59:35.990Z,order: 3072}
+{id: TSK-0FDD5A808362,name: "Catalogue seeds: institutions, units, offices, facilities and expectations",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:59:35.990Z,updated_at: 2026-11-02T21:34:17.617Z,order: 3072,depends_on: [TSK-AA0A323E646D]}
 ---
 
-# Institution and office catalogue seeds (ministries, SAGAs, independent bodies)
+# Catalogue seeds: institutions, units, offices, facilities and expectations
 
 ## Goal
-Know every public body and every post it is expected to have, from JSON seed files saved in the repository, so automated fetching knows what to look for.
+Know every public body and every expected post, unit, facility and placement from reviewed JSON seeds, by extending the existing governance structure seed instead of creating a parallel catalogue.
 
 ## Context
-Seeds are prepared from manual research by a coding agent or the user, labelled "custom-prepared from manual research", kept under `fixtures/seed`, and loaded idempotently. Scope: every ministry and state department, state corporations and SAGAs, constitutional commissions and independent offices, and agencies with public data such as TSC, DCI, NTSA, KeNHA, KURA, KeRRA, KRA, EACC, ODPP, the Judiciary, IEBC, NLC, CRA, SRC, CAJ, KNCHR, ORPP and the Controller of Budget and Auditor-General. For each body: code, name, type, legal basis, parent, mandate, expected sites and hosts, expected offices (title, cardinality, appointing authority, term) and expected places (headquarters, regional offices). Unknowns stay null and are listed for reinforcement.
+`fixtures/seed/ke-governance-structure.json` holds 100 institutions (30 state corporations, 22 ministries, 14 commissions, 11 regulators, 8 judiciary, 5 executive, 4 independent offices, 3 legislature, 3 security). The seed contract is extended with stable codes, official names and aliases, classification, parent and relationship, legal basis, geography scope, effective periods, confidence, known unknowns and exceptions, offices (title, cardinality, appointing authority, term), units (regional offices) and expected placements (headquarters, regional offices). Seed and pattern files are registered as source documents under the publisher "Mzizi curated research" and loaded rows are attributed to them with method curated, so no new source fields appear on records. Bodies include TSC, DCI, NTSA, KeNHA, KURA, KeRRA, KRA, EACC, ODPP, the Judiciary, IEBC, NLC, CRA, SRC, CAJ, KNCHR, ORPP, the Controller of Budget and the Auditor-General. Generated expectations are never evidence of a real building.
 
 ## Acceptance checklist
-- [ ] Define the seed file shape and loader with a validation test.
-- [ ] Write seed files for ministries and state departments.
-- [ ] Write seed files for state corporations and SAGAs.
-- [ ] Write seed files for constitutional commissions and independent bodies.
-- [ ] Load into the real database and report counts and gaps.
+- [ ] Extend the seed schema and loader, with validation tests and idempotent loading.
+- [ ] Add ministries and state departments with offices, units and expected placements.
+- [ ] Add state corporations, SAGAs, commissions and independent bodies.
+- [ ] Register seed files as source documents and attribute loaded rows.
+- [ ] Load into the real database and report counts and known unknowns.

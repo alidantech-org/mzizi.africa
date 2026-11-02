@@ -1,18 +1,18 @@
 ---
-{id: TSK-2107BCCA74E8,name: "Place, structure, space and occupancy schema with migration",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:59:35.586Z,updated_at: 2026-11-02T20:59:35.586Z,order: 1024}
+{id: TSK-2107BCCA74E8,name: "Shared capability contracts: place tree, occupancy, expectation and contact points",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:59:35.586Z,updated_at: 2026-11-02T21:34:17.089Z,order: 1024}
 ---
 
-# Place, structure, space and occupancy schema with migration
+# Shared capability contracts: place tree, occupancy, expectation and contact points
 
 ## Goal
-Add a physical model that is separate from organisations: places, structures inside places, spaces inside structures, dated occupancies, postal addresses and contacts. Move the data from `organization.locations`, then drop that table and any column that mixes logical and physical concerns. No compatibility is kept.
+Add the four new, domain-neutral capabilities that the assessment (`.docs/docs/PLACES_AND_PRESENCE_ASSESSMENT.md`) identified as missing, through the Dryv contracts and database migrations, with no compatibility layer.
 
 ## Context
-Decision DEC-PLACES-AND-OFFICE-PATTERNS. A place is never assumed to belong to exactly one body: many bodies may share a school, hospital or county headquarters, and one body may fill a whole structure. A space is a floor, wing, room or unit in a tree under a structure, with its own address text and contacts. An occupancy links an organisation, institution or office (kind and id, no cross-schema foreign key) to a place, structure or space with a role, a status (expected, active, moved, closed), validity dates and a successor link, so a move keeps the old record. Places also carry kind, building type, `available_from`, point or footprint, a geography unit, and a source; everything but identity and status is nullable. Contracts are written in Dryv; generation may need regeneration later, so the drift check must pass.
+All nine assessment decisions were accepted on 3 November 2026. The place tree is a single self-referencing `place.places` table whose kind is site, structure, floor, wing, room, unit or service point, with name, building type, optional point, a located-in geography unit (containment, never jurisdiction), `available_from`, and its own status (planned, in_use, vacant, closed, demolished). Occupancy (`place.occupancies`) links a subject (kind and id, soft reference) to a place, structure or space with a role, status and validity; successors live in a link table so a move, split or merge can have many predecessors and successors. Expectation (`place.expectations`) holds subject, role, scope geography unit, facility type, minimum and maximum, basis (legal rule, plan, pattern) and status (expected, researching, identified, no_details_found, not_applicable, ceased) and points to the occupancy that resolves it. Contact points (`contact.points`) have scope kind and id, channel, value, visibility, validity and a fallback walk up the scope chain. None of these carries a `source` column: evidence is `source.attributions` and `source.verifications` on their target kinds. No cross-schema foreign keys.
 
 ## Acceptance checklist
-- [ ] Design columns, enums and indexes; write them in the Dryv contract and entities.
-- [ ] Write a migration that creates the tables and moves every `organization.locations` row into a place and an occupancy.
-- [ ] Drop `organization.locations` and any columns it made obsolete, and update code and tests that used them.
-- [ ] Add postal address and contact tables, with contacts hidden from the public API by policy.
-- [ ] Add read endpoints and tests for a shared building, a whole-structure occupancy and a move.
+- [ ] Write the Dryv contracts and entities for places, occupancies, occupancy links, expectations and contact points; Dryv check and drift check pass.
+- [ ] Write the migration with indexes and enum types, and register the new target kinds for attributions and verifications.
+- [ ] Add integrity rules: every occupancy target exists, no place without a kind and status, no expectation containing an address.
+- [ ] Add engine tests that express all eight scenarios in the assessment (Governor with unknown building, IEBC offices, funded private school, county hospital, shared compound, many buildings, a move with history, a multi-tenant building).
+- [ ] Add read endpoints and contract documentation, and update `.docs/docs/DOMAINS.md`.
