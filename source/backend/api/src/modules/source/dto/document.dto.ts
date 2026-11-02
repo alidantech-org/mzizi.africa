@@ -109,6 +109,12 @@ export class DocumentDto {
   @IsUUID()
   publisherId!: Id;
 
+  @IsOptional()
+  @ValidateIf((object) => object.siteId !== null)
+  @IsString()
+  @IsUUID()
+  siteId?: Id | null;
+
   @IsString()
   @MinLength(1)
   @MaxLength(300)

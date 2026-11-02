@@ -194,6 +194,20 @@ const routes: Array<[method: string, path: string]> = [
   ["GET", "/v1/statistics/observations/{observationId}".replace("{observationId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
   ["GET", "/v1/statistics/periods/{periodId}".replace("{periodId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
   ["GET", "/v1/statistics/tables/{tableId}".replace("{tableId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
+  ["GET", "/v1/website/checks"],
+  ["GET", "/v1/website/domains"],
+  ["GET", "/v1/website/site-publishers"],
+  ["GET", "/v1/website/sites"],
+  ["GET", "/v1/website/structure-files"],
+  ["GET", "/v1/website/structure-versions"],
+  ["GET", "/v1/website/structures"],
+  ["GET", "/v1/website/sites/{siteId}".replace("{siteId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
+  ["GET", "/v1/website/checks/{siteCheckId}".replace("{siteCheckId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
+  ["GET", "/v1/website/domains/{domainId}".replace("{domainId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
+  ["GET", "/v1/website/site-publishers/{sitePublisherId}".replace("{sitePublisherId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
+  ["GET", "/v1/website/structures/{structureId}".replace("{structureId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
+  ["GET", "/v1/website/structure-files/{structureFileId}".replace("{structureFileId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
+  ["GET", "/v1/website/structure-versions/{structureVersionId}".replace("{structureVersionId}", encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")))],
 ];
 
 let app: INestApplication;

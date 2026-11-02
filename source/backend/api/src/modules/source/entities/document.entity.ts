@@ -66,6 +66,9 @@ export class DocumentEntity {
   @JoinColumn({ name: "publisher_id" })
   publisher?: Relation<PublisherEntity>;
 
+  @Column({ name: "site_id", type: "uuid", nullable: true })
+  siteId?: Id | null;
+
   @Column({ name: "title", type: "varchar", length: 300 })
   title!: Name;
 

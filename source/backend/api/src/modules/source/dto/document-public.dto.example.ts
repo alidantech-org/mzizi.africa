@@ -67,6 +67,12 @@ export const documentPublicExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "siteId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "title",
       optional: false,
       nullable: false,

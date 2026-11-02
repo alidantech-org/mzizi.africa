@@ -40,6 +40,7 @@ export interface IDocument extends B.IBase {
   publishedOn: Date | null;
   publishedOnPrecision: DatePrecision | null;
   publisherId: string;
+  siteId: string | null;
   title: string;
   url: string | null;
   readonly publisher?: PublisherTypes.IPublisher;

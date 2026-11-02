@@ -4,7 +4,7 @@
 
 # Data intake plan
 
-How real data enters Mzizi. The database (18 schemas, 91 tables) and the NestJS API exist; only two test fixtures populate them. This plan describes the path from a public artifact to a canonical row, which datasets feed which schema, and the order of work. It extends `DATA_LIFECYCLE.md` and does not replace it.
+How real data enters Mzizi. The database (19 schemas, 96 tables) and the NestJS API exist; only two test fixtures populate them. This plan describes the path from a public artifact to a canonical row, which datasets feed which schema, and the order of work. It extends `DATA_LIFECYCLE.md` and does not replace it.
 
 **Scope.** Kenya is the full suite: every schema is planned and built in waves. South Africa, Nigeria and Tanzania are a proof of concept: jurisdiction, administrative boundaries (levels 1 and 2) and one population table each, using exactly the same pipeline. If the pipeline needs country-specific code, the design is wrong.
 

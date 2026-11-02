@@ -45,6 +45,12 @@ export class CaptureEntity {
   @JoinColumn({ name: "document_id" })
   document?: Relation<DocumentEntity>;
 
+  @Column({ name: "domain_id", type: "uuid", nullable: true })
+  domainId?: Id | null;
+
+  @Column({ name: "family_version_id", type: "uuid", nullable: true })
+  familyVersionId?: Id | null;
+
   @Column({ name: "file_version_id", type: "uuid", nullable: true })
   fileVersionId?: Id | null;
 
@@ -59,6 +65,12 @@ export class CaptureEntity {
 
   @Column({ name: "retrieved_url", type: "varchar", length: 1000, nullable: true })
   retrievedUrl?: Url | null;
+
+  @Column({ name: "site_id", type: "uuid", nullable: true })
+  siteId?: Id | null;
+
+  @Column({ name: "structure_version_id", type: "uuid", nullable: true })
+  structureVersionId?: Id | null;
 
   @Column({ name: "tool", type: "varchar", length: 200, nullable: true })
   tool?: ToolName | null;

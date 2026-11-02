@@ -40,7 +40,7 @@ export const CAPTURE_SORTABLE_FIELDS = ['createdAt', 'retrievedAt', 'updatedAt',
 
 export const CAPTURE_SEARCHABLE_FIELDS = [] as const satisfies readonly CaptureKey[];
 
-export const CAPTURE_FILTERABLE_FIELDS = ['documentId', 'fileVersionId', 'id', 'retrievedBy', 'version', ] as const satisfies readonly CaptureKey[];
+export const CAPTURE_FILTERABLE_FIELDS = ['documentId', 'domainId', 'familyVersionId', 'fileVersionId', 'id', 'retrievedBy', 'siteId', 'structureVersionId', 'version', ] as const satisfies readonly CaptureKey[];
 
 export const CAPTURE_DATE_RANGE_FIELDS = ['createdAt', 'retrievedAt', 'updatedAt', ] as const satisfies readonly CaptureKey[];
 
@@ -48,7 +48,7 @@ export const CAPTURE_DATE_RANGE_FIELDS = ['createdAt', 'retrievedAt', 'updatedAt
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const CAPTURE_SELECTABLE_FIELDS = ['contentHash', 'createdAt', 'documentId', 'fileVersionId', 'httpStatus', 'id', 'retrievedAt', 'retrievedBy', 'retrievedUrl', 'tool', 'updatedAt', ] as const satisfies readonly CaptureKey[];
+export const CAPTURE_SELECTABLE_FIELDS = ['contentHash', 'createdAt', 'documentId', 'domainId', 'familyVersionId', 'fileVersionId', 'httpStatus', 'id', 'retrievedAt', 'retrievedBy', 'retrievedUrl', 'siteId', 'structureVersionId', 'tool', 'updatedAt', ] as const satisfies readonly CaptureKey[];
 
 export const CAPTURE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly CaptureSelectableField[];
 
@@ -56,7 +56,7 @@ export const CAPTURE_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const sati
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const CAPTURE_EDITABLE_FIELDS = ['contentHash', 'documentId', 'fileVersionId', 'httpStatus', 'retrievedAt', 'retrievedBy', 'retrievedUrl', 'tool', ] as const satisfies readonly CaptureKey[];
+export const CAPTURE_EDITABLE_FIELDS = ['contentHash', 'documentId', 'domainId', 'familyVersionId', 'fileVersionId', 'httpStatus', 'retrievedAt', 'retrievedBy', 'retrievedUrl', 'siteId', 'structureVersionId', 'tool', ] as const satisfies readonly CaptureKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

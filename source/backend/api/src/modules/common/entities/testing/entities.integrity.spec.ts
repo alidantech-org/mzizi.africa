@@ -93,6 +93,13 @@ import { IndicatorEntity } from "#/modules/statistics/entities/indicator.entity.
 import { ObservationEntity } from "#/modules/statistics/entities/observation.entity.ts";
 import { PeriodEntity } from "#/modules/statistics/entities/period.entity.ts";
 import { StatisticsTableEntity } from "#/modules/statistics/entities/statistics-table.entity.ts";
+import { SiteCheckEntity } from "#/modules/website/entities/site-check.entity.ts";
+import { SiteDomainEntity } from "#/modules/website/entities/site-domain.entity.ts";
+import { SitePublisherEntity } from "#/modules/website/entities/site-publisher.entity.ts";
+import { SiteEntity } from "#/modules/website/entities/site.entity.ts";
+import { StructureFileEntity } from "#/modules/website/entities/structure-file.entity.ts";
+import { StructureVersionEntity } from "#/modules/website/entities/structure-version.entity.ts";
+import { StructureEntity } from "#/modules/website/entities/structure.entity.ts";
 
 /**
  * Managed by Dryv: every generated entity synchronizes into a Postgres schema (pg-mem) and maps
@@ -188,6 +195,13 @@ const entities = [
   ObservationEntity,
   PeriodEntity,
   StatisticsTableEntity,
+  SiteEntity,
+  SiteCheckEntity,
+  SiteDomainEntity,
+  SitePublisherEntity,
+  StructureEntity,
+  StructureFileEntity,
+  StructureVersionEntity,
 ];
 
 let dataSource: DataSource;
@@ -300,6 +314,13 @@ beforeAll(async () => {
     "statistical",
     "statistical",
     "statistical",
+    "website",
+    "website",
+    "website",
+    "website",
+    "website",
+    "website",
+    "website",
   ]);
   for (const namespace of namespaces) db.createSchema(namespace);
   dataSource = await db.adapters.createTypeormDataSource({ type: "postgres", entities });
@@ -4468,12 +4489,16 @@ describe("entity schema matches the contract", () => {
             ["content_hash", true, false],
             ["created_at", false, false],
             ["document_id", false, false],
+            ["domain_id", true, false],
+            ["family_version_id", true, false],
             ["file_version_id", true, false],
             ["http_status", true, false],
             ["id", false, true],
             ["retrieved_at", false, false],
             ["retrieved_by", true, false],
             ["retrieved_url", true, false],
+            ["site_id", true, false],
+            ["structure_version_id", true, false],
             ["tool", true, false],
             ["updated_at", false, false],
             ["version", false, false],
@@ -4529,6 +4554,7 @@ describe("entity schema matches the contract", () => {
             ["published_on", true, false],
             ["published_on_precision", true, false],
             ["publisher_id", false, false],
+            ["site_id", true, false],
             ["title", false, false],
             ["updated_at", false, false],
             ["url", true, false],
@@ -4995,6 +5021,346 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "statistical"."datasets" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Site", () => {
+    const metadata = () => dataSource.getMetadata(SiteEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("sites");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["code", false, false],
+            ["created_at", false, false],
+            ["description", true, false],
+            ["first_seen_at", true, false],
+            ["id", false, true],
+            ["jurisdiction_id", true, false],
+            ["kind", false, false],
+            ["last_seen_at", true, false],
+            ["name", false, false],
+            ["status", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:code",
+          "status",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."sites" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("SiteCheck", () => {
+    const metadata = () => dataSource.getMetadata(SiteCheckEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("checks");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["checked_at", false, false],
+            ["created_at", false, false],
+            ["detail", true, false],
+            ["id", false, true],
+            ["kind", false, false],
+            ["outcome", false, false],
+            ["site_id", false, false],
+            ["structure_version_id", true, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "site_id->website.sites",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "site_id,checked_at",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."checks" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("SiteDomain", () => {
+    const metadata = () => dataSource.getMetadata(SiteDomainEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("domains");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["hostname", false, false],
+            ["id", false, true],
+            ["observed_at", true, false],
+            ["role", false, false],
+            ["scheme", false, false],
+            ["site_id", false, false],
+            ["updated_at", false, false],
+            ["valid_from", false, false],
+            ["valid_from_precision", false, false],
+            ["valid_to", true, false],
+            ["valid_to_precision", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "site_id->website.sites",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:site_id,hostname,valid_from",
+          "hostname",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."domains" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("SitePublisher", () => {
+    const metadata = () => dataSource.getMetadata(SitePublisherEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("site_publishers");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["id", false, true],
+            ["publisher_id", false, false],
+            ["role", false, false],
+            ["site_id", false, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_to", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "site_id->website.sites",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "site_id",
+          "publisher_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."site_publishers" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Structure", () => {
+    const metadata = () => dataSource.getMetadata(StructureEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("structures");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["current_version_id", true, false],
+            ["id", false, true],
+            ["owner_id", false, false],
+            ["owner_kind", false, false],
+            ["purpose", false, false],
+            ["status", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:owner_kind,owner_id,purpose",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."structures" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("StructureFile", () => {
+    const metadata = () => dataSource.getMetadata(StructureFileEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("structure_files");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["file_version_id", false, false],
+            ["id", false, true],
+            ["path", false, false],
+            ["role", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+            ["version_id", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:version_id,path",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."structure_files" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("StructureVersion", () => {
+    const metadata = () => dataSource.getMetadata(StructureVersionEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("structure_versions");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["created_by", true, false],
+            ["folder_id", true, false],
+            ["id", false, true],
+            ["manifest_hash", false, false],
+            ["method_id", true, false],
+            ["notes_summary", true, false],
+            ["number", false, false],
+            ["schema_version", false, false],
+            ["status", false, false],
+            ["structure_id", false, false],
+            ["supersedes_id", true, false],
+            ["updated_at", false, false],
+            ["validation_report", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "structure_id->website.structures",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:structure_id,number",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."structure_versions" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });

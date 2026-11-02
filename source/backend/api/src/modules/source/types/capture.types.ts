@@ -33,11 +33,15 @@ import type {
 export interface ICapture extends B.IBase {
   contentHash: string | null;
   documentId: string;
+  domainId: string | null;
+  familyVersionId: string | null;
   fileVersionId: string | null;
   httpStatus: number | null;
   retrievedAt: Date;
   retrievedBy: string | null;
   retrievedUrl: string | null;
+  siteId: string | null;
+  structureVersionId: string | null;
   tool: string | null;
   readonly document?: DocumentTypes.IDocument;
 }

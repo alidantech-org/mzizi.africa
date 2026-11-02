@@ -70,6 +70,18 @@ export class CaptureDto {
   documentId!: Id;
 
   @IsOptional()
+  @ValidateIf((object) => object.domainId !== null)
+  @IsString()
+  @IsUUID()
+  domainId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.familyVersionId !== null)
+  @IsString()
+  @IsUUID()
+  familyVersionId?: Id | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.fileVersionId !== null)
   @IsString()
   @IsUUID()
@@ -101,6 +113,18 @@ export class CaptureDto {
   @IsUrl()
   @MaxLength(1000)
   retrievedUrl?: Url | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.siteId !== null)
+  @IsString()
+  @IsUUID()
+  siteId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.structureVersionId !== null)
+  @IsString()
+  @IsUUID()
+  structureVersionId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.tool !== null)

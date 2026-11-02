@@ -42,7 +42,7 @@ No other schema has a foreign key to `source`, and `source` has none to them; `t
 
 ## Capturing without overwriting
 
-`captures` preserves raw evidence (AGENTS.md section 5): each retrieval is a new row with the retrieval time, URL, HTTP status, content hash, the tool that fetched it and the file version in `filesystem` holding the bytes. A document revisited next year produces a second capture; nothing is replaced. Extraction results and candidates produced from a capture reference it through attributions.
+`captures` preserves raw evidence (AGENTS.md section 5): each retrieval is a new row with the retrieval time, URL, HTTP status, content hash, the tool that fetched it and the file version in `filesystem` holding the bytes. A capture also carries soft ids for the site, the hostname actually used, and the structure version (and inherited family version) that drove retrieval; `documents` carry a nullable `site_id` (see `WEBSITE_DESIGN.md`). A document revisited next year produces a second capture; nothing is replaced. Extraction results and candidates produced from a capture reference it through attributions.
 
 ## Sourcing methods
 

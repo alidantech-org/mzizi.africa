@@ -25,6 +25,18 @@ export const captureExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "domainId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "familyVersionId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "fileVersionId",
       optional: true,
       nullable: true,
@@ -59,6 +71,18 @@ export const captureExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "url", maxLength: 1000 },
+    },
+    {
+      name: "siteId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "structureVersionId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "tool",

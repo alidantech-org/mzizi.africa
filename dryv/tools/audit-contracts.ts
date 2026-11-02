@@ -16,7 +16,7 @@ const schemas = new Map(items.filter((i) => i.kind === "schema").map((i) => [i.n
  * schema holds domain facts and its entities carry valid time. Provenance is never a column: it
  * lives in the source schema (SOURCING_DESIGN.md).
  */
-const systemSchemas = new Set(["audit", "source", "filesystem", "identity"]);
+const systemSchemas = new Set(["audit", "source", "filesystem", "identity", "website"]);
 const provenanceFields = ["sourceName", "sourceReference", "sourceUrl", "artifactId", "artifactChecksum", "retrievedAt", "licence", "method", "toolOrModel", "confidence", "verificationState"];
 
 function ref(value: Json | undefined): string | undefined {
@@ -40,7 +40,7 @@ for (const name of schemas.keys()) {
 }
 
 /** Schema names are full words (rule: .docs/rules/database-naming.md). */
-const approvedSchemas = new Set(["reference", "geography", "legal", "person", "identity", "governance", "electoral", "political", "calendar", "organization", "finance", "debt", "procurement", "statistical", "civic", "filesystem", "source", "audit"]);
+const approvedSchemas = new Set(["reference", "geography", "legal", "person", "identity", "governance", "electoral", "political", "calendar", "organization", "finance", "debt", "procurement", "statistical", "civic", "filesystem", "source", "website", "audit"]);
 
 const tables = new Map<string, string>();
 for (const [name, schema] of schemas) {

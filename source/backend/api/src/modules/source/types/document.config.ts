@@ -40,7 +40,7 @@ export const DOCUMENT_SORTABLE_FIELDS = ['createdAt', 'publishedOn', 'title', 'u
 
 export const DOCUMENT_SEARCHABLE_FIELDS = ['title', ] as const satisfies readonly DocumentKey[];
 
-export const DOCUMENT_FILTERABLE_FIELDS = ['id', 'jurisdictionId', 'kindId', 'publisherId', 'title', 'version', ] as const satisfies readonly DocumentKey[];
+export const DOCUMENT_FILTERABLE_FIELDS = ['id', 'jurisdictionId', 'kindId', 'publisherId', 'siteId', 'title', 'version', ] as const satisfies readonly DocumentKey[];
 
 export const DOCUMENT_DATE_RANGE_FIELDS = ['createdAt', 'publishedOn', 'updatedAt', ] as const satisfies readonly DocumentKey[];
 
@@ -48,7 +48,7 @@ export const DOCUMENT_DATE_RANGE_FIELDS = ['createdAt', 'publishedOn', 'updatedA
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const DOCUMENT_SELECTABLE_FIELDS = ['citation', 'createdAt', 'id', 'jurisdictionId', 'kindId', 'language', 'licence', 'publishedOn', 'publishedOnPrecision', 'publisherId', 'title', 'updatedAt', 'url', ] as const satisfies readonly DocumentKey[];
+export const DOCUMENT_SELECTABLE_FIELDS = ['citation', 'createdAt', 'id', 'jurisdictionId', 'kindId', 'language', 'licence', 'publishedOn', 'publishedOnPrecision', 'publisherId', 'siteId', 'title', 'updatedAt', 'url', ] as const satisfies readonly DocumentKey[];
 
 export const DOCUMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly DocumentSelectableField[];
 
@@ -56,7 +56,7 @@ export const DOCUMENT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const sat
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const DOCUMENT_EDITABLE_FIELDS = ['citation', 'jurisdictionId', 'kindId', 'language', 'licence', 'publishedOn', 'publishedOnPrecision', 'publisherId', 'title', 'url', ] as const satisfies readonly DocumentKey[];
+export const DOCUMENT_EDITABLE_FIELDS = ['citation', 'jurisdictionId', 'kindId', 'language', 'licence', 'publishedOn', 'publishedOnPrecision', 'publisherId', 'siteId', 'title', 'url', ] as const satisfies readonly DocumentKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

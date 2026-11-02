@@ -13,12 +13,16 @@ export interface CapturePublic {
   contentHash?: Checksum | null;
   createdAt: DateTime;
   documentId: Id;
+  domainId?: Id | null;
+  familyVersionId?: Id | null;
   fileVersionId?: Id | null;
   httpStatus?: HttpStatus | null;
   id: Id;
   retrievedAt: DateTime;
   retrievedBy?: Id | null;
   retrievedUrl?: Url | null;
+  siteId?: Id | null;
+  structureVersionId?: Id | null;
   tool?: ToolName | null;
   updatedAt: DateTime;
   version: Version;

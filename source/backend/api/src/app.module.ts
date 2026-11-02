@@ -19,6 +19,7 @@ import { ReferenceModule } from "#/modules/reference/reference.module.ts";
 import { ServicesModule } from "#/modules/services/services.module.ts";
 import { SourceModule } from "#/modules/source/source.module.ts";
 import { StatisticsModule } from "#/modules/statistics/statistics.module.ts";
+import { WebsiteModule } from "#/modules/website/website.module.ts";
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 
 @Module({
@@ -41,6 +42,7 @@ import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
     ServicesModule,
     SourceModule,
     StatisticsModule,
+    WebsiteModule,
   ],
   providers: [
     { provide: APP_PIPE, useValue: new HttpValidationPipe(httpOptions) },

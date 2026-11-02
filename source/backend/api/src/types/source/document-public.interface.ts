@@ -22,6 +22,7 @@ export interface DocumentPublic {
   publishedOn?: Date | null;
   publishedOnPrecision?: DatePrecision | null;
   publisherId: Id;
+  siteId?: Id | null;
   title: Name;
   updatedAt: DateTime;
   url?: Url | null;
