@@ -1,3 +1,4 @@
+import { isHiddenFromCaller } from '#/read/restricted-identifiers';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type { DataSource } from 'typeorm';
@@ -45,7 +46,7 @@ export class GetEntityIdentifierByIdUseCase {
 
   async execute(input: { identifierId: string }): Promise<EntityIdentifierResponseDto> {
     const entity = await this.repository.findOneBy({ id: input.identifierId } as never);
-    if (!entity) throw new NotFoundException('Identifier not found');
+    if (!entity || (await isHiddenFromCaller(this.dataSource, entity.schemeId))) throw new NotFoundException('Identifier not found');
     return {
       identifier: this.toReadModel(entity),
     } as unknown as EntityIdentifierResponseDto;

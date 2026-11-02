@@ -109,7 +109,8 @@ export async function autoAssess(db: DataSource, actorId: string): Promise<{ app
   const sites: { id: string; code: string; jurisdiction_id: string | null }[] = await db.query(`SELECT id, code, jurisdiction_id FROM website.sites ORDER BY code`);
   for (const site of sites) {
     const domains: { hostname: string }[] = await db.query(`SELECT hostname FROM website.domains WHERE site_id = $1`, [site.id]);
-    const rule = domains.length ? rules.find((r) => domains.every((d) => (r.host ? d.hostname === r.host || (r.host === 'kenyalaw.org' && d.hostname.endsWith('.kenyalaw.org')) : d.hostname.endsWith(r.suffix as string)))) : undefined;
+    const matches = (r: TrustedSuffix, hostname: string) => (r.host ? hostname === r.host || (r.host === 'kenyalaw.org' && hostname.endsWith('.kenyalaw.org')) : hostname.endsWith(r.suffix as string));
+    const rule = domains.length && domains.every((d) => rules.some((r) => matches(r, d.hostname))) ? rules.find((r) => matches(r, domains[0]!.hostname)) : undefined;
     if (!rule) {
       skipped.push(site.code);
       continue;

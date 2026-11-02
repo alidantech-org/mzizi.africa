@@ -254,6 +254,44 @@
         "validFromPrecision": "exact",
         "observedAt": "2026-11-02T18:00:00Z"
       }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:world/hdx",
+      "values": {
+        "code": "world/hdx",
+        "name": "Humanitarian Data Exchange (HDX)",
+        "kind": "dataset_catalogue",
+        "status": "profiled",
+        "jurisdictionId": "@ke",
+        "description": "UN OCHA open data repository; hosts Kenya COD-AB administrative boundaries and geoBoundaries copies. Registered 2026-11-02 from the product owner's pointer."
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:world/hdx:data.humdata.org",
+      "values": {
+        "siteId": "@site:world/hdx",
+        "hostname": "data.humdata.org",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T20:00:00Z"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:world/hdx:s3.us-east-1.amazonaws.com",
+      "values": {
+        "siteId": "@site:world/hdx",
+        "hostname": "s3.us-east-1.amazonaws.com",
+        "scheme": "https",
+        "role": "alias",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T20:00:00Z"
+      }
     }
   ]
 }

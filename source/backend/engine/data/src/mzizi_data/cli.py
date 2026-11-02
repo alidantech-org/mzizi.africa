@@ -84,6 +84,21 @@ def main(argv: list[str] | None = None) -> int:
     ga.add_argument("--part", choices=["units", "boundaries"], required=True)
     ga.add_argument("--reference-year", default="")
     ga.add_argument("--store", default=".data/objects")
+    pr = sub.add_parser("import-procurement", help="stage tenders.go.ke procuring entities, suppliers, tenders and contracts (stages A-D)")
+    pr.add_argument("--pe-dir", required=True)
+    pr.add_argument("--ocds-dir", required=True)
+    pr.add_argument("--stage", choices=["A", "B", "C", "D"], required=True)
+    pr.add_argument("--years", default=None, help="comma-separated financial years such as 2025-2026")
+    pr.add_argument("--store", default=".data/objects")
+    dd = sub.add_parser("dedup", help="score possible duplicates of people or organisations: auto-merge only with corroboration, flag the rest")
+    dd.add_argument("kind", choices=["person", "organization"])
+    dd.add_argument("--actor", default=None, help="the approving account id recorded on automatic decisions")
+    pf = sub.add_parser("profile", help="print everything held about one person (by code) as JSON")
+    pf.add_argument("code")
+    gx = sub.add_parser("geo-crosscheck", help="compare promoted county and constituency boundaries with the HDX COD-AB files; --apply marks agreeing boundaries verified")
+    gx.add_argument("hdx_dir")
+    gx.add_argument("--actor", default=None)
+    gx.add_argument("--apply", action="store_true")
     fe = sub.add_parser("fetch", help="live, gated, rate-limited fetch of one URL for a registered site (robots.txt respected); saves the raw bytes")
     fe.add_argument("--site", required=True, help="site code, e.g. ke/parliament")
     fe.add_argument("--url", required=True)
@@ -239,6 +254,41 @@ def main(argv: list[str] | None = None) -> int:
             print(f"note: {note}")
         for name, stat in out.stats.items():
             print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        return 0
+    if args.command == "import-procurement":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import procurement
+
+        with connect() as conn:
+            out = procurement.import_procurement(conn, LocalDirectoryStore(conn, args.store), args.pe_dir, args.ocds_dir, args.stage, args.years.split(",") if args.years else None)
+        print(f"{out.sources} procuring entities, {len(out.notes)} notes")
+        for note in out.notes[:5]:
+            print(f"note: {note}")
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        return 0
+    if args.command == "dedup":
+        from .db import connect
+        from .dedup import run_dedup
+
+        with connect() as conn:
+            print(json.dumps(run_dedup(conn, args.kind, args.actor)))
+        return 0
+    if args.command == "profile":
+        from .db import connect
+        from .dedup import profile_person
+
+        with connect() as conn:
+            print(json.dumps(profile_person(conn, args.code), default=str, indent=2))
+        return 0
+    if args.command == "geo-crosscheck":
+        from .db import connect
+        from .geo_crosscheck import crosscheck
+
+        with connect() as conn:
+            report = crosscheck(conn, args.hdx_dir, args.actor, args.apply)
+        print(json.dumps({**report, "low_overlap": report["low_overlap"][:25], "not_in_hdx": report["not_in_hdx"][:25], "hdx_not_in_mzizi": report["hdx_not_in_mzizi"][:25], "low_overlap_total": len(report["low_overlap"]), "not_in_hdx_total": len(report["not_in_hdx"]), "hdx_not_in_mzizi_total": len(report["hdx_not_in_mzizi"])}, indent=1))
         return 0
     if args.command == "fetch":
         from .db import connect

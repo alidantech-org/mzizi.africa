@@ -58,6 +58,9 @@ class NgcdfImport:
 
 
 def import_ngcdf(conn: psycopg.Connection, store: LocalDirectoryStore, directory: str | Path, constituency_page: str | Path, stage: str = "A", jurisdiction: str = "ke") -> NgcdfImport:
+    from ..geo_link import GeoResolver
+
+    geo = GeoResolver(conn, jurisdiction)
     index = constituency_index(Path(constituency_page).read_bytes())
     publisher_id = register.ensure_publisher(conn, "ke-ngcdf", "National Government Constituencies Development Fund", kind="institution", website_url="https://ngcdf.go.ke")
     row = conn.execute("SELECT id::text AS id FROM reference.jurisdictions WHERE code = %s", (jurisdiction,)).fetchone()
@@ -94,7 +97,7 @@ def import_ngcdf(conn: psycopg.Connection, store: LocalDirectoryStore, directory
             label = fiscal_year_dates(f"{first}/{second[-2:]}")
             code = f"ke/ngcdf/{slug(unit_county)}/{slug(unit_name)}" if unit_county else f"ke/ngcdf/{slug(unit_name)}"
             where = f" ({unit_county} county)" if unit_county else ""
-            records.append((segment.key, dict(record, unitCode=code, unitName=f"NG-CDF committee: {unit_name.title()} constituency{where}", levelCode="finance/unit-level/constituency-fund", fiscalYearCode=f"fy/{jurisdiction}/{label[0]}", startsOn=label[1], endsOn=label[2], boardUnitCode=BOARD_CODE)))
+            records.append((segment.key, dict(record, unitCode=code, unitName=f"NG-CDF committee: {unit_name.title()} constituency{where}", levelCode="finance/unit-level/constituency-fund", fiscalYearCode=f"fy/{jurisdiction}/{label[0]}", startsOn=label[1], endsOn=label[2], boardUnitCode=BOARD_CODE, geoUnitCode=geo.constituency(unit_county, unit_name) or geo.constituency_any_county(unit_name))))
         if records:
             per_file.append((capture_id, str(result.id), records))
     board = ("board", {"constituency": "BOARD", "amount": "0", "financialYear": "2020/2021", "unitCode": BOARD_CODE, "unitName": "National Government Constituencies Development Fund Board", "levelCode": "finance/unit-level/mda", "fiscalYearCode": "", "startsOn": "", "endsOn": "", "date": ""})

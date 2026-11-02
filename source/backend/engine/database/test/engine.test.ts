@@ -7,7 +7,7 @@ import { advanceDossier, autoAssess, decideAssessment, draftAssessment } from ".
 import { checkCollection } from "../src/gate.ts";
 import { checkIntegrity } from "../src/integrity.ts";
 import { drift, migrate } from "../src/migrations.ts";
-import { seedDevAccounts, seedFixtures, seedReference, seedSiteFixtures } from "../src/seeds.ts";
+import { seedGovernanceStructure, seedDevAccounts, seedFixtures, seedReference, seedSiteFixtures } from "../src/seeds.ts";
 
 /** Runs against a scratch database on the server in TEST_DATABASE_URL (skipped without it). */
 const adminUrl = process.env.TEST_DATABASE_URL;
@@ -129,6 +129,21 @@ run("database engine", () => {
     expect((await checkCollection(db, { ...request, host: "www.example.com" })).allowed).toBe(false);
     await db.query(`UPDATE website.dossiers SET supersedes_id = NULL WHERE jurisdiction_id = $1`, [ke.id]);
     await db.query(`DELETE FROM website.dossiers WHERE jurisdiction_id = $1`, [ke.id]);
+  });
+
+  test("the governance structure seed is idempotent, labelled as manual research and every parent exists", async () => {
+    const first = await seedGovernanceStructure(db);
+    expect(first.institutions).toBeGreaterThan(90);
+    expect(first.relationships).toBeGreaterThan(60);
+    const second = await seedGovernanceStructure(db);
+    expect(second).toEqual({ institutions: 0, relationships: 0, counties: 0 });
+    const file = JSON.parse(await Bun.file(new URL("../fixtures/seed/ke-governance-structure.json", import.meta.url)).text());
+    expect(file._meta.label).toBe("Custom-prepared from manual research");
+    const codes = new Set<string>(file.institutions.map((row: { code: string }) => row.code));
+    expect(codes.size).toBe(file.institutions.length);
+    for (const row of file.institutions) if (row.parent) expect(codes.has(row.parent), `${row.code} has unknown parent ${row.parent}`).toBe(true);
+    const [row] = await db.query(`SELECT description FROM governance.institutions WHERE code = 'ke/kra'`);
+    expect(row.description).toContain("manual research");
   });
 
   test("staging rows track updated_at and version", async () => {

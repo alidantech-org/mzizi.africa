@@ -32,7 +32,7 @@ def slug(value: str) -> str:
     return apply({"slug_code": ""}, value) if False else __import__("re").sub(r"-+", "-", __import__("re").sub(r"[^a-z0-9]+", "-", value.lower().replace("'", "").replace("’", ""))).strip("-")
 
 
-def enrich(record: dict) -> dict:
+def enrich(record: dict, geo=None) -> dict:
     """Adds the codes the mappings reference: person, office, institution and party."""
     code, name = INSTITUTIONS[record["chamber"]]
     out = dict(record, institutionCode=code, institutionName=name, personCode=f"ke/person/{slug(record['displayName'])}")
@@ -43,14 +43,16 @@ def enrich(record: dict) -> dict:
         out["officeCode"] = f"ke/senate/{slug(seat)}" if record["county"] else f"ke/senate/nominated/{slug(record['displayName'])}"
         out["officeName"] = f"Senator, {record['county'].title()}" if record["county"] else "Nominated Senator"
         out["singleton"] = False  # a county has one elected senator but nominated seats share a title
-        out["officeDescription"] = f"Seat kind: {record['seatStatus']}"
+        place = geo.county(record["county"]) if geo and record["county"] else None
+        out["officeDescription"] = f"Seat kind: {record['seatStatus']}." + (f" Geography: {place}" if place else "")
     else:
         label = record["constituency"] or record["seatStatus"] or "nominated"
         elected = bool(record["constituency"]) and record["seatStatus"].lower() == "elected"
         out["officeCode"] = f"ke/national-assembly/{slug(label)}" if elected else f"ke/national-assembly/{slug(label)}/{slug(record['displayName'])}"
         out["officeName"] = f"Member of the National Assembly, {record['constituency'].title()}" if record["constituency"] else f"Member of the National Assembly ({record['seatStatus'] or 'special seat'})"
         out["singleton"] = elected
-        out["officeDescription"] = f"County: {record['county'].title()}. Seat kind: {record['seatStatus']}"
+        place = geo.constituency(record["county"], record["constituency"]) if geo and elected else None
+        out["officeDescription"] = f"County: {record['county'].title()}. Seat kind: {record['seatStatus']}." + (f" Geography: {place}" if place else "")
     return out
 
 
@@ -66,6 +68,9 @@ def import_members(conn: psycopg.Connection, store: LocalDirectoryStore, directo
     publisher_id = register.ensure_publisher(conn, "ke-parliament", "Parliament of Kenya", kind="institution", website_url="https://www.parliament.go.ke")
     row = conn.execute("SELECT id::text AS id FROM reference.jurisdictions WHERE code = %s", (jurisdiction,)).fetchone()
     pages = sorted(Path(directory).glob("*.provenance.json"))
+    from ..geo_link import GeoResolver
+
+    geo = GeoResolver(conn, jurisdiction)
     handlers = {"extract": pipeline.extraction_handler(conn, store)}
     per_page: list[tuple[str, str, list[tuple[str, dict]]]] = []
     for meta_path in pages:
@@ -89,7 +94,7 @@ def import_members(conn: psycopg.Connection, store: LocalDirectoryStore, directo
         if job["status"] != "succeeded":
             raise RuntimeError(f"extraction of {url} did not succeed: {job['status']} {job['error']}")
         result = pipeline.load_result(store, job["fv"])
-        per_page.append((capture_id, str(result.id), [(s.key, enrich(json.loads(s.content))) for s in result.segments]))
+        per_page.append((capture_id, str(result.id), [(s.key, enrich(json.loads(s.content), geo)) for s in result.segments]))
     total = sum(len(records) for _, _, records in per_page)
     runs, stats = {}, {}
     for name in STAGES[stage]:

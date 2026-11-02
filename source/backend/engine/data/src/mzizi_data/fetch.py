@@ -172,6 +172,8 @@ class PoliteFetcher:
                 self.sleep(min(60.0, 2 ** attempts) * random.uniform(0.5, 1.5))
                 continue
             status = response.status_code
+            if _robots and status in (401, 403):  # RFC 9309: a robots.txt that is unavailable to us means no rules were published
+                return FetchResult(url, 404, {}, b"", False, decision.assessment_id)
             if status in (401, 403, 429):
                 raise self._trip(str(status), f"{url} answered {status}; stopping (no retry around a restriction)")
             if status >= 500:

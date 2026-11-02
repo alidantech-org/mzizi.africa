@@ -1,0 +1,11 @@
+mapping: identifier
+extractor: tenders-pe
+target_kind: organization.identifiers
+key: [entityId, schemeId, value]
+fields:
+  entityId: { from: entityCode, transform: [{ ref: { kind: organization.entities, field: code } }] }
+  schemeId: { from: schemeRef }
+  value:    { from: value }
+provenance:
+  locator: { id: $id }
+  method: extracted

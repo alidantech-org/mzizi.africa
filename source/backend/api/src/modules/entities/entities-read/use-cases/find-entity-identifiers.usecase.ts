@@ -14,6 +14,7 @@ import type { PaginatedResponseDto } from '#/modules/shared/dto/paginated-respon
 import type { PaginationMetaDto } from '#/modules/shared/dto/pagination-meta.dto';
 import { EntityIdentifierEntity } from '#/modules/entities/entities/entity-identifier.entity';
 import { listPage } from '#/read/list-page';
+import { identifierConstraints } from '#/read/restricted-identifiers';
 
 /**
  * List entity identifiers.
@@ -49,7 +50,7 @@ export class FindEntityIdentifiersUseCase {
   }
 
   async execute(input: EntityIdentifierListQueryDto): Promise<EntityIdentifiersListResponseDto> {
-    const { rows, meta } = await listPage(this.repository, input);
+    const { rows, meta } = await listPage(this.repository, input, await identifierConstraints(this.dataSource));
     return { identifiers: rows.map((entity) => this.toReadModel(entity)), meta } as unknown as EntityIdentifiersListResponseDto;
   }
 }

@@ -6,6 +6,7 @@ fields:
   code:           { from: unitCode }
   name:           { from: unitName }
   jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  geoUnitId:      { from: geoUnitCode, transform: [{ ref: { kind: geography.units, field: code } }] }
   levelId:        { from: levelCode, transform: [{ ref: { kind: reference.classifications, field: code } }] }
 provenance:
   locator: { row: $row }

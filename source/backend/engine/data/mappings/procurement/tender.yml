@@ -1,0 +1,17 @@
+mapping: tender
+extractor: ocds
+target_kind: procurement.tenders
+key: [code]
+fields:
+  code:          { from: tenderCode }
+  title:         { from: title }
+  kindId:        { from: kindRef }
+  methodId:      { from: methodRef }
+  issuingUnitId: { from: buyerCode, transform: [{ ref: { kind: finance.units, field: code } }] }
+  status:        { from: status }
+  currencyCode:  { const: KES }
+  publishedOn:   { from: publishedOn }
+  closesOn:      { from: closesOn }
+provenance:
+  locator: { ocid: $ocid }
+  method: extracted

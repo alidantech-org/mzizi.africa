@@ -1,0 +1,16 @@
+mapping: contract
+extractor: ocds
+target_kind: procurement.contracts
+key: [code]
+fields:
+  code:              { from: contractCode }
+  awardedEntityId:   { from: supplierCode, transform: [{ ref: { kind: organization.entities, field: code } }] }
+  contractingUnitId: { from: buyerCode, transform: [{ ref: { kind: finance.units, field: code } }] }
+  tenderId:          { from: tenderCode, transform: [{ ref: { kind: procurement.tenders, field: code } }] }
+  value:             { from: value, transform: decimal }
+  currencyCode:      { const: KES }
+  awardedOn:         { from: awardedOn }
+  status:            { const: active }
+provenance:
+  locator: { ocid: $ocid }
+  method: extracted

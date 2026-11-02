@@ -1,0 +1,13 @@
+mapping: pe-unit
+extractor: tenders-pe
+target_kind: finance.units
+key: [code]
+fields:
+  code:           { from: unitCode }
+  name:           { from: name, transform: collapse_whitespace }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  levelId:        { from: levelRef }
+  geoUnitId:      { from: geoUnitCode, transform: [{ ref: { kind: geography.units, field: code } }] }
+provenance:
+  locator: { id: $id }
+  method: extracted

@@ -24,6 +24,18 @@
       "jurisdiction": "ke",
       "rightsHolder": "National Council for Law Reporting (statutory body)",
       "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "data.humdata.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "UN OCHA Humanitarian Data Exchange (open data repository)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "s3.us-east-1.amazonaws.com",
+      "jurisdiction": "ke",
+      "rightsHolder": "UN OCHA Humanitarian Data Exchange (file storage used by data.humdata.org downloads)",
+      "maxRequestsPerSecond": 0.2
     }
   ]
 }

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import type { DataSource } from "typeorm";
 
 import { loadFixtures, readFixture } from "../../../api/src/neutral/fixture-loader.ts";
@@ -85,4 +87,83 @@ export async function seedDevAccounts(db: DataSource, only?: string): Promise<st
     if (!existing) await db.query(`INSERT INTO identity.grants (account_id, role, is_current, created_at, updated_at, version) VALUES ($1, $2, true, now(), now(), 1)`, [account.id, account.role]);
   }
   return DEV_ACCOUNTS.filter((a) => !only || a.subject === only).map((account) => account.subject);
+}
+
+interface StructureRow {
+  code: string;
+  name: string;
+  abbreviation: string | null;
+  type: string;
+  branch: string;
+  parent: string | null;
+  legalBasis: string | null;
+  confidence: string;
+  relationship: string | null;
+}
+
+/**
+ * Seeds Kenya's governance structure (arms of government, ministries, constitutional commissions, independent offices,
+ * state corporations and regulators) from `fixtures/seed/ke-governance-structure.json`, which is custom-prepared from
+ * manual research and says so in its `_meta`. Also creates one county government and one county assembly per county unit
+ * already in the geography schema. Idempotent: an institution that exists by code is left alone.
+ */
+export async function seedGovernanceStructure(db: DataSource, jurisdictionCode = "ke"): Promise<{ institutions: number; relationships: number; counties: number }> {
+  const file = JSON.parse(readFileSync(join(import.meta.dir, "..", "fixtures", "seed", "ke-governance-structure.json"), "utf8")) as { _meta: { label: string; caveat: string }; institutions: StructureRow[] };
+  const [jurisdiction] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [jurisdictionCode]);
+  if (!jurisdiction) throw new Error(`jurisdiction ${jurisdictionCode} is not seeded`);
+  const ensureClass = async (scheme: string, name: string): Promise<string> => {
+    const code = `${scheme}/${name}`;
+    const [found] = await db.query(`SELECT id FROM reference.classifications WHERE code = $1 AND jurisdiction_id = $2`, [code, jurisdiction.id]);
+    if (found) return found.id;
+    const [row] = await db.query(`INSERT INTO reference.classifications (code, scheme, label, jurisdiction_id, "order", is_current, created_at, updated_at, version) VALUES ($1, $2, $3, $4, 0, true, now(), now(), 1) RETURNING id`, [code, scheme, name.replaceAll("-", " "), jurisdiction.id]);
+    return row.id;
+  };
+  const note = (row: StructureRow) => [row.abbreviation && `Abbreviation: ${row.abbreviation}.`, row.legalBasis && `Legal basis: ${row.legalBasis}.`, `${file._meta.label}; confidence ${row.confidence}.`].filter(Boolean).join(" ");
+  let institutions = 0;
+  const ids = new Map<string, string>();
+  for (const row of file.institutions) {
+    const [existing] = await db.query(`SELECT id FROM governance.institutions WHERE code = $1 AND jurisdiction_id = $2 AND is_current`, [row.code, jurisdiction.id]);
+    if (existing) {
+      ids.set(row.code, existing.id);
+      continue;
+    }
+    const typeId = await ensureClass("governance/institution-type", row.type);
+    const branchId = await ensureClass("governance/branch", row.branch);
+    const [created] = await db.query(
+      `INSERT INTO governance.institutions (code, name, type_id, branch_id, jurisdiction_id, description, is_current, created_at, updated_at, version) VALUES ($1, $2, $3, $4, $5, $6, true, now(), now(), 1) RETURNING id`,
+      [row.code, row.name, typeId, branchId, jurisdiction.id, note(row)],
+    );
+    ids.set(row.code, created.id);
+    institutions++;
+  }
+  let relationships = 0;
+  for (const row of file.institutions) {
+    if (!row.parent || !ids.has(row.parent) || !ids.has(row.code)) continue;
+    const kind = row.relationship ?? "oversees";
+    const [exists] = await db.query(`SELECT 1 AS ok FROM governance.relationships WHERE parent_institution_id = $1 AND child_institution_id = $2 AND kind = $3::governance.relationships_kind_enum AND is_current`, [ids.get(row.parent), ids.get(row.code), kind]);
+    if (exists) continue;
+    await db.query(`INSERT INTO governance.relationships (parent_institution_id, child_institution_id, kind, is_current, created_at, updated_at, version) VALUES ($1, $2, $3::governance.relationships_kind_enum, true, now(), now(), 1)`, [ids.get(row.parent), ids.get(row.code), kind]);
+    relationships++;
+  }
+  let counties = 0;
+  const countyType = await ensureClass("governance/institution-type", "county-government");
+  const assemblyType = await ensureClass("governance/institution-type", "legislature");
+  const executiveBranch = await ensureClass("governance/branch", "executive");
+  const legislativeBranch = await ensureClass("governance/branch", "legislature");
+  const units: { id: string; code: string; name: string }[] = await db.query(
+    `SELECT u.id, u.code, u.name FROM geography.units u JOIN reference.classifications l ON l.id = u.level_id WHERE u.jurisdiction_id = $1 AND l.code = 'geography/level/county' AND u.is_current`, [jurisdiction.id],
+  );
+  for (const unit of units) {
+    for (const [suffix, label, typeId, branchId] of [["government", "County Government of", countyType, executiveBranch], ["assembly", "County Assembly of", assemblyType, legislativeBranch]] as const) {
+      const code = `${unit.code}/${suffix}`;
+      const [exists] = await db.query(`SELECT 1 AS ok FROM governance.institutions WHERE code = $1 AND jurisdiction_id = $2 AND is_current`, [code, jurisdiction.id]);
+      if (exists) continue;
+      await db.query(
+        `INSERT INTO governance.institutions (code, name, type_id, branch_id, jurisdiction_id, geo_unit_id, description, is_current, created_at, updated_at, version) VALUES ($1, $2, $3, $4, $5, $6, $7, true, now(), now(), 1)`,
+        [code, `${label} ${unit.name}`, typeId, branchId, jurisdiction.id, unit.id, `Devolved ${suffix} of ${unit.name} county (Constitution of Kenya 2010, chapter 11). Generated from the county geography unit; ${file._meta.label}.`],
+      );
+      counties++;
+    }
+  }
+  return { institutions, relationships, counties };
 }

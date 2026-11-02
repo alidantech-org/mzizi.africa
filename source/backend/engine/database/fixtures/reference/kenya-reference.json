@@ -178,7 +178,7 @@
     },
     {
       "entity": "ClassificationRecordEntity",
-      "key": "ke:unit-level:mda",
+      "key": "ke:governance:institution-type:legislature",
       "values": {
         "jurisdictionId": "@ke",
         "scheme": "governance/institution-type",
@@ -217,6 +217,259 @@
         "scheme": "legal/instrument-kind",
         "code": "legal/instrument-kind/constitution",
         "label": "constitution",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:finance:unit-level:procuring-entity",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "finance/unit-level",
+        "code": "finance/unit-level/procuring-entity",
+        "label": "procuring entity",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:entity-type:school",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/entity-type",
+        "code": "organization/entity-type/school",
+        "label": "school",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:entity-type:hospital",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/entity-type",
+        "code": "organization/entity-type/hospital",
+        "label": "hospital or health facility",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:entity-type:ministry",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/entity-type",
+        "code": "organization/entity-type/ministry",
+        "label": "ministry, department or agency",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:entity-type:county-government",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/entity-type",
+        "code": "organization/entity-type/county-government",
+        "label": "county government or assembly",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:entity-type:state-corporation",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/entity-type",
+        "code": "organization/entity-type/state-corporation",
+        "label": "state corporation or independent body",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:entity-type:tertiary-institution",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/entity-type",
+        "code": "organization/entity-type/tertiary-institution",
+        "label": "university or college",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:entity-type:company",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/entity-type",
+        "code": "organization/entity-type/company",
+        "label": "private company or supplier",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:entity-type:other-public-entity",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/entity-type",
+        "code": "organization/entity-type/other-public-entity",
+        "label": "other public entity",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:identifier-scheme:tenders-portal-id",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/identifier-scheme",
+        "code": "organization/identifier-scheme/tenders-portal-id",
+        "label": "tenders.go.ke identifier",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:identifier-scheme:kra-pin",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/identifier-scheme",
+        "code": "organization/identifier-scheme/kra-pin",
+        "label": "KRA PIN",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:identifier-scheme:business-registration",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/identifier-scheme",
+        "code": "organization/identifier-scheme/business-registration",
+        "label": "business registration number",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:identifier-scheme:contact-phone",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/identifier-scheme",
+        "code": "organization/identifier-scheme/contact-phone",
+        "label": "published telephone",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:organization:identifier-scheme:contact-email",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "organization/identifier-scheme",
+        "code": "organization/identifier-scheme/contact-email",
+        "label": "published email",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:procurement:tender-kind:goods",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "procurement/tender-kind",
+        "code": "procurement/tender-kind/goods",
+        "label": "goods",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:procurement:tender-kind:works",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "procurement/tender-kind",
+        "code": "procurement/tender-kind/works",
+        "label": "works",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:procurement:tender-kind:services",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "procurement/tender-kind",
+        "code": "procurement/tender-kind/services",
+        "label": "services",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:procurement:tender-kind:consulting-services",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "procurement/tender-kind",
+        "code": "procurement/tender-kind/consulting-services",
+        "label": "consulting services",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:procurement:method:open",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "procurement/method",
+        "code": "procurement/method/open",
+        "label": "open tendering",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:procurement:method:restricted",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "procurement/method",
+        "code": "procurement/method/restricted",
+        "label": "restricted tendering",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:procurement:method:direct",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "procurement/method",
+        "code": "procurement/method/direct",
+        "label": "direct procurement",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:procurement:method:other",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "procurement/method",
+        "code": "procurement/method/other",
+        "label": "other or unspecified method",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:geography:place-kind:address",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "geography/place-kind",
+        "code": "geography/place-kind/address",
+        "label": "published address",
         "order": 0
       }
     }

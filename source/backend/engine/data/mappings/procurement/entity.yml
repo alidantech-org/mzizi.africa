@@ -1,0 +1,13 @@
+mapping: entity
+extractor: tenders-pe
+target_kind: organization.entities
+key: [code]
+fields:
+  code:           { from: entityCode }
+  officialName:   { from: name, transform: collapse_whitespace }
+  entityTypeId:   { from: typeRef }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  status:         { const: active }
+provenance:
+  locator: { id: $id }
+  method: extracted
