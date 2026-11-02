@@ -38,6 +38,8 @@ export const websiteProperties = website.properties({
   CheckKind: dryv.property.enum({ reachability: "reachability", fit: "fit", drift: "drift" }),
   CheckOutcome: dryv.property.enum({ ok: "ok", degraded: "degraded", failed: "failed" }),
   HttpStatus: dryv.property.number.integer({ range: { min: 100, max: 599 } }),
+  /** Semantic label of a content section (publications, tenders, gazettes ...); the allowed labels are validated in the data engine. */
+  SectionLabel: dryv.property.string().length({ min: 2, max: 60 }),
   Hostname: dryv.property.string().length({ min: 1, max: 253 }),
   BundlePath: dryv.property.string().length({ min: 1, max: 500 }),
   SchemaVersion: dryv.property.string().length({ min: 1, max: 60 }),
@@ -239,6 +241,54 @@ const checks = website.schemas({
     },
     "checks",
     [{ name: "idx_check_site", fields: ["siteId", "checkedAt"] }],
+  ),
+});
+
+const crawling = website.schemas({
+  /** Append-only record that a content section of a site was expanded: which section, by which rule, and how many files it led to. */
+  SectionVisit: systemRecord(
+    {
+      siteId: relationTo(() => sites.Site.field("id")),
+      structureVersionId: optionalId(),
+      sectionLabel: dryv.field(websiteProperties.SectionLabel).query({ filter: ["equal", "in"] }),
+      /** Position of the matching rule inside the section's rules; absent when the section was reached by a link, not a rule. */
+      ruleIndex: dryv.field(sharedProperties.Count).optional().nullable(),
+      /** The page that was fetched for this visit. */
+      pageUrl: dryv.field(sharedProperties.Url).optional().nullable(),
+      depth: dryv.field(sharedProperties.Count),
+      visitedAt: dryv.field(sharedProperties.DateTime).query({ filter: ["between"], sort: true }),
+      itemsFound: dryv.field(sharedProperties.Count),
+    },
+    "section_visits",
+    [{ name: "idx_sectionvisit_site_section", fields: ["siteId", "sectionLabel", "visitedAt"] }],
+  ),
+
+  /** One URL at which a file was seen, with the response that delivered it. A document seen at several URLs has several sightings. */
+  DocumentSighting: systemRecord(
+    {
+      siteId: relationTo(() => sites.Site.field("id")),
+      /** The source.documents row, one per distinct content hash (a plain id: no cross-schema relation). */
+      documentId: plainId(),
+      captureId: optionalId(),
+      structureVersionId: optionalId(),
+      url: dryv.field(sharedProperties.Url).query({ filter: ["equal"] }),
+      pageUrl: dryv.field(sharedProperties.Url).optional().nullable(),
+      contentHash: dryv.field(sharedProperties.Checksum).query({ filter: ["equal"] }),
+      sizeBytes: dryv.field(sharedProperties.ByteCount),
+      httpStatus: dryv.field(websiteProperties.HttpStatus),
+      /** Response headers as serialised JSON. */
+      headers: dryv.field(sharedProperties.LongText).optional().nullable(),
+      /** The section whose expansion led here first (the leading section). */
+      sectionLabel: dryv.field(websiteProperties.SectionLabel).optional().nullable().query({ filter: ["equal", "in"] }),
+      ruleIndex: dryv.field(sharedProperties.Count).optional().nullable(),
+      depth: dryv.field(sharedProperties.Count),
+      seenAt: dryv.field(sharedProperties.DateTime).query({ filter: ["between"], sort: true }),
+    },
+    "document_sightings",
+    [
+      { name: "idx_sighting_url_hash", fields: ["url", "contentHash"], unique: true },
+      { name: "idx_sighting_document", fields: ["documentId"] },
+    ],
   ),
 });
 

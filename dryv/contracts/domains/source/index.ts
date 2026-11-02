@@ -20,6 +20,9 @@ export const sourceProperties = source.properties({
   HttpStatus: dryv.property.number.integer({ range: { min: 100, max: 599 } }),
   ToolName: dryv.property.string().length({ min: 1, max: 200 }),
   Citation: dryv.property.string().length({ min: 1, max: 1000 }),
+  DocumentKindCode: dryv.property.string().length({ min: 2, max: 60 }),
+  ClassifierMethod: dryv.property.enum({ urlPattern: "url_pattern", textPattern: "text_pattern", titleFuzzy: "title_fuzzy", none: "none" }),
+  RouteStatus: dryv.property.enum({ routed: "routed", unrouted: "unrouted", gapped: "gapped" }),
 });
 
 const publishers = source.schemas({
@@ -92,6 +95,35 @@ const captures = source.schemas({
     },
     "captures",
     [{ name: "idx_capture_document", fields: ["documentId", "retrievedAt"] }],
+  ),
+});
+
+const classification = source.schemas({
+  /** What a document is, as decided by one version of the layered classifier. Append-only: a new classifier version adds a row. */
+  DocumentClassification: systemRecord(
+    {
+      /** A plain id of the source.documents row. */
+      documentId: plainId(),
+      /** Code from the document-kind catalogue (gazette_notice, act, bill, hansard, budget ...) or `unclassified`. */
+      kind: dryv.field(sourceProperties.DocumentKindCode).query({ filter: ["equal", "in"] }),
+      score: dryv.field(sharedProperties.Confidence),
+      /** The deciding layer: url_pattern, text_pattern, title_fuzzy or none. */
+      method: dryv.field(sourceProperties.ClassifierMethod).query({ filter: ["equal", "in"] }),
+      classifierVersion: dryv.field(sourceProperties.ToolName).query({ filter: ["equal"] }),
+      routeStatus: dryv.field(sourceProperties.RouteStatus).query({ filter: ["equal", "in"] }),
+      /** Parser the document is routed to, when one exists. */
+      routeParser: dryv.field(sourceProperties.ToolName).optional().nullable(),
+      /** Every layer's evidence as serialised JSON. */
+      evidence: dryv.field(sharedProperties.LongText).optional().nullable(),
+      /** Extracted dates, amounts and reference numbers with their source spans, as serialised JSON. */
+      facts: dryv.field(sharedProperties.LongText).optional().nullable(),
+      classifiedAt: dryv.field(sharedProperties.DateTime).query({ filter: ["between"], sort: true }),
+    },
+    "document_classifications",
+    [
+      { name: "idx_docclass_document_version", fields: ["documentId", "classifierVersion"], unique: true },
+      { name: "idx_docclass_kind", fields: ["kind"] },
+    ],
   ),
 });
 
