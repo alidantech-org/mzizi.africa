@@ -390,6 +390,16 @@ Expose stable application and integration contracts over canonical/reviewed data
 - controlled mutations/workflow commands;
 - API validation and access policy.
 
+## Write boundary
+
+The API is read-mostly. Its only writes are append-only records in the `audit` contract group (`dryv/contracts/domains/audit`):
+
+- **Comments** on any record (`targetKind` + `targetId`), by contributors, reviewers and admins.
+- **Evidence references** that point at a file artifact held by the files service (id, checksum, media type, size). The API never stores file bytes.
+- **Review decisions** by reviewers and admins: a verdict, the verification state it proposes, and a rationale.
+
+Actor id and role come from the verified bearer token, never the request body. None of these writes mutates a canonical record: applying a proposed verification state is a reviewed step owned by the database management engine. The API uses a SELECT-only database role for all domain tables and a separate restricted writer role that can insert only into the three audit tables. See `.docs/decisions/api-auth-rbac.md` and `.docs/decisions/evidence-uploads-via-files.md`.
+
 ## Does not own
 
 - web scraping;
