@@ -16,3 +16,6 @@ Reviews are audit.decisions rows with target staging.candidates, which the API a
 - [ ] Decision write path tested with real role checks.
 - [ ] Bulk review with safeguards (no approve-all for quarantined or invalid).
 - [ ] Accessibility and mobile checks.
+
+## Note (2026-11-02)
+The reviewer-only API (TSK-6EF29D43B416) and the admin site (TSK-22C8B63A4B43) supersede this task; close it when they land.
