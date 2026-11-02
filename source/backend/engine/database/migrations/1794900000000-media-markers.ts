@@ -18,7 +18,6 @@ export class MediaMarkers1794900000000 implements MigrationInterface {
     };
     for (const [schema, table] of [["geography", "units"], ["political", "parties"], ["governance", "institutions"], ["person", "individuals"]]) {
       await queryRunner.query(`ALTER TABLE "${schema}"."${table}" ADD "wikidata_id" character varying(20)`);
-      await queryRunner.query(`CREATE INDEX "idx_${table}_wikidata_id" ON "${schema}"."${table}" ("wikidata_id") WHERE "wikidata_id" IS NOT NULL`);
     }
     await add("geography", "units", "flag_marker");
     await add("geography", "units", "emblem_marker");
@@ -35,7 +34,6 @@ export class MediaMarkers1794900000000 implements MigrationInterface {
       await queryRunner.query(`DROP TYPE "${schema}"."${table}_${column}_enum"`);
     }
     for (const [schema, table] of [["person", "individuals"], ["governance", "institutions"], ["political", "parties"], ["geography", "units"]]) {
-      await queryRunner.query(`DROP INDEX "${schema}"."idx_${table}_wikidata_id"`);
       await queryRunner.query(`ALTER TABLE "${schema}"."${table}" DROP COLUMN "wikidata_id"`);
     }
   }

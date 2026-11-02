@@ -30,6 +30,10 @@ export const sharedProperties = shared.properties({
   DateTime: dryv.property.temporal.datetime(),
   Date: dryv.property.temporal.date(),
   Flag: dryv.property.boolean(),
+  /** Three-state existence of a flag, emblem, logo or portrait: `unknown` is the default and differs from `none` (known absent). */
+  MediaMarker: dryv.property.enum({ unknown: "unknown", has: "has", none: "none" }),
+  /** Wikidata item identifier such as Q114935. */
+  WikidataId: dryv.property.string().length({ min: 2, max: 20 }),
   Version: dryv.property.number.integer({ range: { min: 0 } }),
   Count: dryv.property.number.integer({ range: { min: 0 } }),
   /** File and object sizes can exceed 32 bits. */

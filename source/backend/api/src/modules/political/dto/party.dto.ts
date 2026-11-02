@@ -43,6 +43,7 @@ import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
 import { HistoricalEntityDto } from "#/modules/shared/dto/historical-entity.dto.ts";
 import { PartyStatus } from "#/types/political/party-status.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import type { Abbreviation } from "#/types/political/abbreviation.type.ts";
 import type { RegistryIdentifier } from "#/types/political/registry-identifier.type.ts";
 import type { BusinessCode } from "#/types/shared/business-code.type.ts";
@@ -51,6 +52,7 @@ import type { Id } from "#/types/shared/id.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
 import type { Url } from "#/types/shared/url.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
+import type { WikidataId } from "#/types/shared/wikidata-id.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
 
@@ -84,6 +86,11 @@ export class PartyDto {
   @IsString()
   @IsUUID()
   jurisdictionId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.logoMarker !== null)
+  @IsEnum(MediaMarker)
+  logoMarker?: MediaMarker | null;
 
   @IsString()
   @MinLength(1)
@@ -139,4 +146,11 @@ export class PartyDto {
   @IsInt()
   @Min(0)
   version!: Version;
+
+  @IsOptional()
+  @ValidateIf((object) => object.wikidataId !== null)
+  @IsString()
+  @MinLength(2)
+  @MaxLength(20)
+  wikidataId?: WikidataId | null;
 }

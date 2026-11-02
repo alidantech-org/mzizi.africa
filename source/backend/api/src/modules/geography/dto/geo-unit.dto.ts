@@ -43,11 +43,13 @@ import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
 import { HistoricalEntityDto } from "#/modules/shared/dto/historical-entity.dto.ts";
 import { UnitKind } from "#/types/geography/unit-kind.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import type { BusinessCode } from "#/types/shared/business-code.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
+import type { WikidataId } from "#/types/shared/wikidata-id.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
 
@@ -63,6 +65,16 @@ export class GeoUnitDto {
 
   @IsISO8601({})
   createdAt!: DateTime;
+
+  @IsOptional()
+  @ValidateIf((object) => object.emblemMarker !== null)
+  @IsEnum(MediaMarker)
+  emblemMarker?: MediaMarker | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.flagMarker !== null)
+  @IsEnum(MediaMarker)
+  flagMarker?: MediaMarker | null;
 
   @IsString()
   @IsUUID()
@@ -122,4 +134,11 @@ export class GeoUnitDto {
   @IsInt()
   @Min(0)
   version!: Version;
+
+  @IsOptional()
+  @ValidateIf((object) => object.wikidataId !== null)
+  @IsString()
+  @MinLength(2)
+  @MaxLength(20)
+  wikidataId?: WikidataId | null;
 }

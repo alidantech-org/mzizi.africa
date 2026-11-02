@@ -39,7 +39,7 @@ export const PERSON_SORTABLE_FIELDS = ['code', 'createdAt', 'displayName', 'upda
 
 export const PERSON_SEARCHABLE_FIELDS = ['code', 'displayName', ] as const satisfies readonly PersonKey[];
 
-export const PERSON_FILTERABLE_FIELDS = ['birthPlaceId', 'code', 'displayName', 'id', 'isCurrent', 'lifeStatus', 'version', ] as const satisfies readonly PersonKey[];
+export const PERSON_FILTERABLE_FIELDS = ['birthPlaceId', 'code', 'displayName', 'id', 'isCurrent', 'lifeStatus', 'portraitMarker', 'version', 'wikidataId', ] as const satisfies readonly PersonKey[];
 
 export const PERSON_DATE_RANGE_FIELDS = ['birthDate', 'createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PersonKey[];
 
@@ -47,7 +47,7 @@ export const PERSON_DATE_RANGE_FIELDS = ['birthDate', 'createdAt', 'updatedAt', 
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PERSON_SELECTABLE_FIELDS = ['birthDate', 'birthDatePrecision', 'birthPlaceId', 'code', 'createdAt', 'deathDate', 'deathDatePrecision', 'displayName', 'familyName', 'givenName', 'id', 'isCurrent', 'lifeStatus', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PersonKey[];
+export const PERSON_SELECTABLE_FIELDS = ['birthDate', 'birthDatePrecision', 'birthPlaceId', 'code', 'createdAt', 'deathDate', 'deathDatePrecision', 'displayName', 'familyName', 'givenName', 'id', 'isCurrent', 'lifeStatus', 'portraitMarker', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'wikidataId', ] as const satisfies readonly PersonKey[];
 
 export const PERSON_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PersonSelectableField[];
 
@@ -55,7 +55,7 @@ export const PERSON_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satis
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PERSON_EDITABLE_FIELDS = ['birthDate', 'birthDatePrecision', 'birthPlaceId', 'code', 'deathDate', 'deathDatePrecision', 'displayName', 'familyName', 'givenName', 'isCurrent', 'lifeStatus', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PersonKey[];
+export const PERSON_EDITABLE_FIELDS = ['birthDate', 'birthDatePrecision', 'birthPlaceId', 'code', 'deathDate', 'deathDatePrecision', 'displayName', 'familyName', 'givenName', 'isCurrent', 'lifeStatus', 'portraitMarker', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'wikidataId', ] as const satisfies readonly PersonKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

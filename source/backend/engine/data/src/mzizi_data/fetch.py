@@ -61,6 +61,9 @@ class PoliteFetcher:
     sleep: Callable[[float], None] = time.sleep
     clock: Callable[[], float] = time.monotonic
     robots_policy: str = "respect"
+    # Path prefixes of a documented machine API that robots.txt (written for web crawlers) disallows; those requests skip the robots
+    # check but still pass the gate, the rate limit and the stop-on-restriction rules. Used only for the Wikimedia API (DEC-WIKIMEDIA-API-ACCESS).
+    robots_exempt_paths: tuple[str, ...] = ()
     log: list[dict] = field(default_factory=list)
     _limiters: dict[str, RateLimiter] = field(default_factory=dict)
     _robots: dict[str, robotparser.RobotFileParser | None] = field(default_factory=dict)
@@ -156,7 +159,7 @@ class PoliteFetcher:
         parsed = urlparse(url)
         host, path = parsed.netloc, parsed.path or "/"
         decision = self._gate(host, parsed.scheme, path, purpose)
-        if not _robots and not self.robots_allows(parsed.scheme, host, path):
+        if not _robots and not path.startswith(self.robots_exempt_paths or ("\0",)) and not self.robots_allows(parsed.scheme, host, path):
             self.log.append({"event": "robots_disallowed", "url": url})
             raise RobotsDisallowed(url)
         limiter = self._limiter(host, decision)

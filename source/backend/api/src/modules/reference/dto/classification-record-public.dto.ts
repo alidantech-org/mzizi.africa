@@ -42,6 +42,7 @@ import {
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
 import { JurisdictionDto } from "#/modules/reference/dto/jurisdiction.dto.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import type { ClassificationScheme } from "#/types/reference/classification-scheme.type.ts";
 import type { Label } from "#/types/reference/label.type.ts";
 import type { Order } from "#/types/reference/order.type.ts";
@@ -67,6 +68,16 @@ export class ClassificationRecordPublicDto {
 
   @IsISO8601({})
   createdAt!: DateTime;
+
+  @IsOptional()
+  @ValidateIf((object) => object.emblemExpected !== null)
+  @IsEnum(MediaMarker)
+  emblemExpected?: MediaMarker | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.flagExpected !== null)
+  @IsEnum(MediaMarker)
+  flagExpected?: MediaMarker | null;
 
   @IsString()
   @IsUUID()

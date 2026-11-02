@@ -29,6 +29,7 @@ from .reinforcement import Finding, Unsupported
 
 WIKIDATA_API = "https://www.wikidata.org/w/api.php"
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
+API_PATHS = ("/w/api.php",)  # documented API endpoints: exempt from the crawler rules in robots.txt (DEC-WIKIMEDIA-API-ACCESS)
 HOSTS = ("www.wikidata.org", "commons.wikimedia.org", "upload.wikimedia.org")
 SITE_CODE = "wikimedia"
 KENYA = "Q114"
@@ -58,6 +59,7 @@ def is_free_licence(short_name: str | None, usage_terms: str | None = None, copy
 # ---- text ---------------------------------------------------------------------------------------------------------
 
 def norm(text: str) -> str:
+    text = text.replace("\u2013", " ").replace("\u2014", " ").replace("\u2010", " ").replace("\u2011", " ")
     text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
     text = re.sub(r"[^a-z0-9 ]+", " ", text.replace("-", " "))
     words = [w for w in text.split() if w not in {"county", "constituency", "the"}]
@@ -121,10 +123,13 @@ class Wikimedia:
         self.cache: dict[str, dict] = {}
 
     def _json(self, base: str, **params: Any) -> dict:
-        result = self.get(f"{base}?{urlencode({**params, 'format': 'json'})}")
+        result = self.get(f"{base}?{urlencode({**params, 'format': 'json', 'maxlag': 5})}")
         if result.status != 200:
             raise RuntimeError(f"{base} answered {result.status}")
-        return json.loads(result.body)
+        data = json.loads(result.body)
+        if isinstance(data, dict) and "error" in data:  # e.g. maxlag: the servers are busy; stop rather than retry around it
+            raise RuntimeError(f"{base} reported {data['error'].get('code')}: {data['error'].get('info', '')[:120]}")
+        return data
 
     def search(self, text: str, limit: int = 8) -> list[dict]:
         return self._json(WIKIDATA_API, action="wbsearchentities", search=text, language="en", uselang="en", type="item", limit=limit).get("search", [])
@@ -213,10 +218,16 @@ def judge(kind: str, record: dict, entity: dict, labels_of: Callable[[list[str]]
 
     wanted = {norm(name)} | ({norm(record["abbreviation"])} if record.get("abbreviation") else set())
     have = {norm(n) for n in names(entity)}
+    partial = False
     if not (wanted & have):
-        return None
+        # A county the database names by its first part ("Tharaka" for Tharaka-Nithi): the words must all be in the label,
+        # and the country and instance checks below still apply.
+        if kind == "geography.units" and record.get("level_code") == "geography/level/county" and any(set(norm(name).split()) < set(h.split()) for h in have):
+            partial = True
+        else:
+            return None
     exact = norm(name) in {norm(label(entity) or "")}
-    reasons.append("label matches" if exact else "alias matches")
+    reasons.append("label matches" if exact else "label contains the name" if partial else "alias matches")
 
     if kind == "geography.units":
         level = record.get("level_code")
@@ -246,7 +257,7 @@ def judge(kind: str, record: dict, entity: dict, labels_of: Callable[[list[str]]
         if not country:
             return None
         reasons.append("country Kenya")
-    return Match(qid, 0.95 if exact else 0.8, reasons)
+    return Match(qid, 0.95 if exact else 0.7 if partial else 0.8, reasons)
 
 
 def find_item(wm: Wikimedia, kind: str, record: dict) -> tuple[str, list[Match]]:
@@ -257,6 +268,8 @@ def find_item(wm: Wikimedia, kind: str, record: dict) -> tuple[str, list[Match]]
     if not ids:
         return "not_found", []
     entities = wm.entities(ids[:12])
+    related = [i for e in entities.values() for prop in ("P31", "P39", "P131") for i in item_ids(e, prop)]
+    wm.entities(related)  # one batch for every class, position and place label the checks will read
     matches = [m for e in entities.values() if (m := judge(kind, record, e, wm.entity_labels)) is not None]
     if not matches:
         return "not_found", []

@@ -64,6 +64,9 @@ const geoOwnedSchemas = geography.schemas({
       levelId: dryv.field(sharedProperties.Id).query({ filter: ["equal"] }),
       parentId: dryv.field(sharedProperties.Id).optional().nullable().query({ filter: ["equal"], sort: true }),
       isActive: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
+      wikidataId: dryv.field(sharedProperties.WikidataId).optional().nullable().query({ filter: ["equal"] }),
+      flagMarker: dryv.field(sharedProperties.MediaMarker).optional().nullable().query({ filter: ["equal"] }),
+      emblemMarker: dryv.field(sharedProperties.MediaMarker).optional().nullable().query({ filter: ["equal"] }),
     })
     .role("entity")
     .extends(historicalEntitySchemas.HistoricalEntity)

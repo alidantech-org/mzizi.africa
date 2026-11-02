@@ -1,5 +1,6 @@
 
 import type { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import type { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import type { ClassificationScheme } from "#/types/reference/classification-scheme.type.ts";
 import type { Label } from "#/types/reference/label.type.ts";
 import type { Order } from "#/types/reference/order.type.ts";
@@ -17,6 +18,8 @@ import type { Date } from "#/types/shared/date.type.ts";
 export interface ClassificationRecord {
   code: BusinessCode;
   createdAt: DateTime;
+  emblemExpected?: MediaMarker | null;
+  flagExpected?: MediaMarker | null;
   id: Id;
   isCurrent: Flag;
   jurisdictionId: Id;

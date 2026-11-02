@@ -15,6 +15,7 @@ import {
 import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-numeric.transformer.ts";
 import { PartyStatus } from "#/types/political/party-status.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import type { Abbreviation } from "#/types/political/abbreviation.type.ts";
 import type { RegistryIdentifier } from "#/types/political/registry-identifier.type.ts";
 import type { BusinessCode } from "#/types/shared/business-code.type.ts";
@@ -23,6 +24,7 @@ import type { Id } from "#/types/shared/id.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
 import type { Url } from "#/types/shared/url.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
+import type { WikidataId } from "#/types/shared/wikidata-id.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
 
@@ -51,6 +53,9 @@ export class PartyEntity {
 
   @Column({ name: "jurisdiction_id", type: "uuid" })
   jurisdictionId!: Id;
+
+  @Column({ name: "logo_marker", type: "enum", enum: MediaMarker, nullable: true })
+  logoMarker?: MediaMarker | null;
 
   @Column({ name: "name", type: "varchar", length: 300 })
   name!: Name;
@@ -84,4 +89,7 @@ export class PartyEntity {
 
   @Column({ name: "version", type: "integer" })
   version!: Version;
+
+  @Column({ name: "wikidata_id", type: "varchar", length: 20, nullable: true })
+  wikidataId?: WikidataId | null;
 }

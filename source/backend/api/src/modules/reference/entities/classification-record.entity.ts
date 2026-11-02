@@ -15,6 +15,7 @@ import {
 import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-numeric.transformer.ts";
 import { JurisdictionEntity } from "#/modules/reference/entities/jurisdiction.entity.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import type { ClassificationScheme } from "#/types/reference/classification-scheme.type.ts";
 import type { Label } from "#/types/reference/label.type.ts";
 import type { Order } from "#/types/reference/order.type.ts";
@@ -41,6 +42,12 @@ export class ClassificationRecordEntity {
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
+
+  @Column({ name: "emblem_expected", type: "enum", enum: MediaMarker, nullable: true })
+  emblemExpected?: MediaMarker | null;
+
+  @Column({ name: "flag_expected", type: "enum", enum: MediaMarker, nullable: true })
+  flagExpected?: MediaMarker | null;
 
   @Column({ name: "is_current", type: "boolean" })
   isCurrent!: Flag;

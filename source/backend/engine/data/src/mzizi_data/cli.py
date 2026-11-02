@@ -378,7 +378,7 @@ def main(argv: list[str] | None = None) -> int:
             site = conn.execute("SELECT id FROM website.sites WHERE code = %s", (wikimedia.SITE_CODE,)).fetchone()
             if not site:
                 raise SystemExit("register the Wikimedia site first (wikimedia-register, then auto-assess)")
-            fetcher = live_fetcher(conn, str(site["id"]), {"rate": {"requests_per_second": args.rate}, "limits": {"max_response_bytes": 8_000_000}}, mode="api")
+            fetcher = live_fetcher(conn, str(site["id"]), {"rate": {"requests_per_second": args.rate}, "limits": {"max_response_bytes": 8_000_000}}, robots_exempt_paths=wikimedia.API_PATHS)
             wm = wikimedia.Wikimedia(fetcher.get)
             store = LocalDirectoryStore(conn, args.store)
             if args.command == "fetch-media":
@@ -390,7 +390,7 @@ def main(argv: list[str] | None = None) -> int:
                 Path(args.report).write_text(_json.dumps({"stored": report.stored, "skipped": report.skipped}, indent=1))
                 print(_json.dumps({"stored": len(report.stored), "skipped": len(report.skipped), "report": args.report}))
                 return 0
-            reinforcement.register_refill("wikidata", wikimedia.wikidata_refill(conn, wm, store))
+            reinforcement.register_refill("wikidata", wikimedia.wikidata_refill(conn, wm, store), wikimedia.SUPPORTED)
             n = reinforcement.enqueue_refills(conn, args.limit, fields=args.field, kinds=args.kind)
             conn.commit()
             done = 0

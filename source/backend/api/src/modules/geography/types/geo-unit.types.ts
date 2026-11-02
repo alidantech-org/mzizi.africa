@@ -6,6 +6,7 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { UnitKind } from '#/types/geography/unit-kind.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
+import type { MediaMarker } from '#/types/shared/media-marker.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -33,6 +34,8 @@ import type {
 /** Geo Unit */
 export interface IGeoUnit extends B.IBase {
   code: string;
+  emblemMarker: MediaMarker | null;
+  flagMarker: MediaMarker | null;
   isActive: boolean;
   isCurrent: boolean;
   jurisdictionId: string;
@@ -44,6 +47,7 @@ export interface IGeoUnit extends B.IBase {
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
+  wikidataId: string | null;
 }
 
 // ----------------------------------

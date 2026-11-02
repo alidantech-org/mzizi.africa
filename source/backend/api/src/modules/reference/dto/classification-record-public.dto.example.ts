@@ -1,5 +1,6 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import { jurisdictionExample } from "#/modules/reference/dto/jurisdiction.dto.example.ts";
 
 /** The contract shape of ClassificationRecordPublic, for generated tests. */
@@ -17,6 +18,18 @@ export const classificationRecordPublicExample: ContractExample = contractExampl
       optional: false,
       nullable: false,
       spec: { kind: "temporal", temporal: "date-time" },
+    },
+    {
+      name: "emblemExpected",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(MediaMarker) },
+    },
+    {
+      name: "flagExpected",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(MediaMarker) },
     },
     {
       name: "id",

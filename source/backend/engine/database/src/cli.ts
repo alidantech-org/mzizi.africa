@@ -9,6 +9,7 @@
  *   generate <name>     write a migration for what the Dryv entities need beyond the existing ones
  *   check               drift check: fails when entities need statements the migrations do not provide
  *   seed [reference|research|fixtures]   reference seed, agent-collected registry rows, or fixtures (_dev and _test only)
+ *   migrate-locations   move organization.locations and contact identifiers into places, occupancies and contact points (verified, one transaction)
  *   backfill-governance  link offices to the unit they represent and institutions to matching entities (evidence only; reports unmatched)
  *   integrity           check plain-id references, target kinds and derived geometry
  *   seed dev-accounts   create the local development reviewer and admin accounts (local _dev or _test databases only)
@@ -30,6 +31,7 @@ import { advanceDossier, autoAssess, decideAssessment, draftAssessment, type Ass
 import { seedStatisticalCatalogue } from "./catalogue.ts";
 import { checkIntegrity } from "./integrity.ts";
 import { backfillGovernance } from "./governance-backfill.ts";
+import { migrateLocations } from "./location-migration.ts";
 import { grantReadOnly, grantReviewerRead } from "./grants.ts";
 import { applyReviewDecisions, reviewRun } from "./staging/review.ts";
 import { promoteClaims, reviewClaims } from "./claims.ts";
@@ -54,6 +56,10 @@ async function withDb<T>(options: { destructive?: boolean }, work: (db: Awaited<
 switch (command) {
   case "backfill-governance": {
     await withDb({}, async (db) => console.log(JSON.stringify(await backfillGovernance(db), null, 2)));
+    break;
+  }
+  case "migrate-locations": {
+    await withDb({}, async (db) => console.log(JSON.stringify(await migrateLocations(db), null, 2)));
     break;
   }
   case "status": {
@@ -186,8 +192,8 @@ switch (command) {
     break;
   }
   case "auto-assess": {
-    if (!argument) throw new Error("usage: auto-assess <actorAccountId>");
-    console.log(JSON.stringify(await withDb({}, (db) => autoAssess(db, argument))));
+    if (!argument) throw new Error("usage: auto-assess <actorAccountId> [siteCode]");
+    console.log(JSON.stringify(await withDb({}, (db) => autoAssess(db, argument, process.argv[4]))));
     break;
   }
   case "advance-dossier": {

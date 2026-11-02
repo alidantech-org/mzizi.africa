@@ -167,6 +167,8 @@ const parties = political.schemas({
       registryIdentifier: dryv.field(politicalProperties.RegistryIdentifier).optional().nullable(),
       registryAuthorityId: optionalId(),
       symbolUrl: dryv.field(sharedProperties.Url).optional().nullable(),
+      wikidataId: dryv.field(sharedProperties.WikidataId).optional().nullable().query({ filter: ["equal"] }),
+      logoMarker: dryv.field(sharedProperties.MediaMarker).optional().nullable().query({ filter: ["equal"] }),
     },
     "parties",
     [{ name: "idx_party_code", fields: ["code"], unique: true }, { name: "idx_party_jurisdiction", fields: ["jurisdictionId"] }],

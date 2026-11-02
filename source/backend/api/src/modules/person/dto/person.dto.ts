@@ -43,11 +43,13 @@ import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
 import { HistoricalEntityDto } from "#/modules/shared/dto/historical-entity.dto.ts";
 import { LifeStatus } from "#/types/person/life-status.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 import type { BusinessCode } from "#/types/shared/business-code.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
+import type { WikidataId } from "#/types/shared/wikidata-id.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
 
@@ -119,6 +121,11 @@ export class PersonDto {
   @IsEnum(LifeStatus)
   lifeStatus!: LifeStatus;
 
+  @IsOptional()
+  @ValidateIf((object) => object.portraitMarker !== null)
+  @IsEnum(MediaMarker)
+  portraitMarker?: MediaMarker | null;
+
   @IsISO8601({})
   updatedAt!: DateTime;
 
@@ -145,4 +152,11 @@ export class PersonDto {
   @IsInt()
   @Min(0)
   version!: Version;
+
+  @IsOptional()
+  @ValidateIf((object) => object.wikidataId !== null)
+  @IsString()
+  @MinLength(2)
+  @MaxLength(20)
+  wikidataId?: WikidataId | null;
 }

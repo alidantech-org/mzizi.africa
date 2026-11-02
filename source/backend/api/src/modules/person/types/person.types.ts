@@ -6,6 +6,7 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { LifeStatus } from '#/types/person/life-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
+import type { MediaMarker } from '#/types/shared/media-marker.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -43,10 +44,12 @@ export interface IPerson extends B.IBase {
   givenName: string | null;
   isCurrent: boolean;
   lifeStatus: LifeStatus;
+  portraitMarker: MediaMarker | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
+  wikidataId: string | null;
 }
 
 // ----------------------------------

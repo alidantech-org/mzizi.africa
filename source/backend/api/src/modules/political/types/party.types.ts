@@ -6,6 +6,7 @@ import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { PartyStatus } from '#/types/political/party-status.enum';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
+import type { MediaMarker } from '#/types/shared/media-marker.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -36,6 +37,7 @@ export interface IParty extends B.IBase {
   code: string;
   isCurrent: boolean;
   jurisdictionId: string;
+  logoMarker: MediaMarker | null;
   name: string;
   registryAuthorityId: string | null;
   registryIdentifier: string | null;
@@ -45,6 +47,7 @@ export interface IParty extends B.IBase {
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
+  wikidataId: string | null;
 }
 
 // ----------------------------------

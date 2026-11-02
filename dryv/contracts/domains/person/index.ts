@@ -48,6 +48,8 @@ const individuals = person.schemas({
       deathDatePrecision: dryv.field(sharedProperties.DatePrecision).optional().nullable(),
       lifeStatus: dryv.field(personProperties.LifeStatus).query({ filter: ["equal"] }),
       birthPlaceId: optionalId(),
+      wikidataId: dryv.field(sharedProperties.WikidataId).optional().nullable().query({ filter: ["equal"] }),
+      portraitMarker: dryv.field(sharedProperties.MediaMarker).optional().nullable().query({ filter: ["equal"] }),
     },
     "individuals",
     [{ name: "idx_individual_code", fields: ["code"], unique: true }],

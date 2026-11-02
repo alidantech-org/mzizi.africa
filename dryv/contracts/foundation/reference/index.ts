@@ -53,6 +53,9 @@ export const referenceSchemas = reference.schemas({
       label: dryv.field(referenceProperties.Label).query({ filter: ["contains"], sort: true, search: true }),
       order: dryv.field(referenceProperties.Order).optional().nullable().query({ sort: true }),
       legalBasis: dryv.field(sharedProperties.Description).optional().nullable(),
+      /** For a geography level: whether units of this level are expected to have a flag or an emblem (has, none, unknown). */
+      flagExpected: dryv.field(sharedProperties.MediaMarker).optional().nullable(),
+      emblemExpected: dryv.field(sharedProperties.MediaMarker).optional().nullable(),
     })
     .role("entity")
     .extends(historicalEntitySchemas.HistoricalEntity)

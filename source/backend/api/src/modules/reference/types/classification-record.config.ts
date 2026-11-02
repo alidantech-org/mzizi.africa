@@ -48,7 +48,7 @@ export const CLASSIFICATION_RECORD_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt'
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const CLASSIFICATION_RECORD_SELECTABLE_FIELDS = ['code', 'createdAt', 'id', 'isCurrent', 'jurisdictionId', 'label', 'legalBasis', 'order', 'scheme', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ClassificationRecordKey[];
+export const CLASSIFICATION_RECORD_SELECTABLE_FIELDS = ['code', 'createdAt', 'emblemExpected', 'flagExpected', 'id', 'isCurrent', 'jurisdictionId', 'label', 'legalBasis', 'order', 'scheme', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ClassificationRecordKey[];
 
 export const CLASSIFICATION_RECORD_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly ClassificationRecordSelectableField[];
 
@@ -56,7 +56,7 @@ export const CLASSIFICATION_RECORD_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ]
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const CLASSIFICATION_RECORD_EDITABLE_FIELDS = ['code', 'isCurrent', 'jurisdictionId', 'label', 'legalBasis', 'order', 'scheme', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ClassificationRecordKey[];
+export const CLASSIFICATION_RECORD_EDITABLE_FIELDS = ['code', 'emblemExpected', 'flagExpected', 'isCurrent', 'jurisdictionId', 'label', 'legalBasis', 'order', 'scheme', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly ClassificationRecordKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

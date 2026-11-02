@@ -48,6 +48,11 @@ def _missing(column: str) -> str:
 STALE_AFTER = timedelta(days=365)
 
 
+def _columns(conn: psycopg.Connection, table: str) -> set[str]:
+    schema, name = table.split(".")
+    return {r["column_name"] for r in conn.execute("SELECT column_name FROM information_schema.columns WHERE table_schema = %s AND table_name = %s", (schema, name))}
+
+
 def coverage(conn: psycopg.Connection, rules: dict[str, dict[str, list[str]]] | None = None) -> list[dict[str, Any]]:
     """One row per table and field: total, present, known_absent, unknown, plus claims waiting and disputes. Read-only.
 
@@ -58,7 +63,10 @@ def coverage(conn: psycopg.Connection, rules: dict[str, dict[str, list[str]]] | 
     has_gaps = conn.execute("SELECT to_regclass('engine.gaps') IS NOT NULL AS ok").fetchone()["ok"]  # works before the migration
     for table, fields in (rules or RULES).items():
         schema, name = table.split(".")
+        existing = _columns(conn, table)  # a rule for a column a pending migration has not created yet is skipped
         for column in fields:
+            if column not in existing:
+                continue
             where = EXTRA.get((table, column))
             marker = column in MARKER_FIELDS
             join = "LEFT JOIN engine.gaps g ON g.target_kind = %s AND g.target_id = t.id AND g.field = %s" if has_gaps else "LEFT JOIN (SELECT NULL::text AS status WHERE %s::text <> %s::text) g ON false"
@@ -99,7 +107,10 @@ def build_gaps(conn: psycopg.Connection, rules: dict[str, dict[str, list[str]]] 
     created = 0
     for table, fields in (rules or RULES).items():
         schema, name = table.split(".")
+        existing = _columns(conn, table)
         for column, refill_sources in fields.items():
+            if column not in existing:
+                continue
             extra = EXTRA.get((table, column))
             query = sql.SQL(f"""INSERT INTO engine.gaps (target_kind, target_id, field, refill_sources)
                 SELECT %s, t.id, %s, %s FROM {{s}}.{{t}} t WHERE {_missing(column)}{f" AND {extra}" if extra else ""}
@@ -147,17 +158,20 @@ class Unsupported(Exception):
 
 RefillHandler = Callable[[dict[str, Any]], Finding]
 REFILL_SOURCES: dict[str, RefillHandler] = {}
+REFILL_FIELDS: dict[str, set[str] | None] = {}  # fields a handler can refill; None means any
 
 
-def register_refill(code: str, handler: RefillHandler) -> None:
-    """Other lanes register a handler per source (wikidata, orpp, knbs, iebc...). A handler only searches and reports."""
+def register_refill(code: str, handler: RefillHandler, fields: set[str] | None = None) -> None:
+    """Other lanes register a handler per source (wikidata, orpp, knbs, iebc...). A handler only searches and reports.
+    `fields` lists the fields it can refill, so gaps it cannot serve are never queued for it."""
     REFILL_SOURCES[code] = handler
+    REFILL_FIELDS[code] = fields
 
 
 def enqueue_refills(conn: psycopg.Connection, limit: int = 50, fields: list[str] | None = None, kinds: list[str] | None = None) -> int:
     n = 0
     for gap in queue(conn, limit, list(REFILL_SOURCES), fields, kinds):
-        sources = [code for code in gap["refill_sources"] or [] if code in REFILL_SOURCES]
+        sources = [code for code in gap["refill_sources"] or [] if code in REFILL_SOURCES and (REFILL_FIELDS.get(code) is None or gap["field"] in REFILL_FIELDS[code])]
         if not sources:
             continue  # no handler registered for any source of this gap: it stays open rather than logging a search that never happened
         _, created = jobs.enqueue(conn, "refill", {"gap_id": str(gap["id"])}, rerun=gap["attempts"] > 0)
@@ -172,7 +186,7 @@ def refill_handler(conn: psycopg.Connection, retry_days: int = 30) -> Callable[[
     def handle(job: jobs.Job) -> tuple[dict[str, Any], str | None]:
         gap = conn.execute("SELECT * FROM engine.gaps WHERE id = %s", (job.input["gap_id"],)).fetchone()
         tried = {r["refill_source"] for r in conn.execute("SELECT refill_source FROM engine.gap_attempts WHERE gap_id = %s AND outcome IN ('found', 'not_found', 'ambiguous') AND created_at > now() - make_interval(days => %s)", (gap["id"], retry_days))}
-        final, outcomes = "not_found", {}
+        final, outcomes, tried_any = "not_found", {}, False
         for code in gap["refill_sources"]:
             if code in tried or code not in REFILL_SOURCES:
                 continue
@@ -185,6 +199,7 @@ def refill_handler(conn: psycopg.Connection, retry_days: int = 30) -> Callable[[
                 continue
             conn.execute("INSERT INTO engine.gap_attempts (gap_id, refill_source, outcome, result, job_id) VALUES (%s, %s, %s, %s, %s)", (gap["id"], code, f.outcome, Jsonb({"value": f.value, **f.detail}), job.id))
             outcomes[code] = f.outcome
+            tried_any = True
             if f.outcome == "found":
                 if f.attribution_id is None:
                     raise jobs.NonRetryable(f"refill source {code} found a value without evidence")
@@ -193,6 +208,9 @@ def refill_handler(conn: psycopg.Connection, retry_days: int = 30) -> Callable[[
                 break
             if f.outcome == "ambiguous":
                 final = "ambiguous"
+        if not tried_any and not outcomes:
+            conn.execute("UPDATE engine.gaps SET status = 'open', updated_at = now() WHERE id = %s AND status = 'queued'", (gap["id"],))
+            return {"gap_id": str(gap["id"]), "outcome": "skipped", "attempts": {}}, None
         conn.execute("""UPDATE engine.gaps SET status = %s, attempts = attempts + 1, last_attempt_at = now(),
             retry_after = CASE WHEN %s = 'found' THEN NULL ELSE now() + make_interval(days => %s) END, updated_at = now() WHERE id = %s""", (final, final, retry_days, gap["id"]))
         return {"gap_id": str(gap["id"]), "outcome": final, "attempts": outcomes}, None

@@ -39,7 +39,7 @@ export const PARTY_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'updatedAt', 
 
 export const PARTY_SEARCHABLE_FIELDS = ['abbreviation', 'code', 'name', ] as const satisfies readonly PartyKey[];
 
-export const PARTY_FILTERABLE_FIELDS = ['abbreviation', 'code', 'id', 'isCurrent', 'jurisdictionId', 'name', 'registryAuthorityId', 'status', 'version', ] as const satisfies readonly PartyKey[];
+export const PARTY_FILTERABLE_FIELDS = ['abbreviation', 'code', 'id', 'isCurrent', 'jurisdictionId', 'logoMarker', 'name', 'registryAuthorityId', 'status', 'version', 'wikidataId', ] as const satisfies readonly PartyKey[];
 
 export const PARTY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly PartyKey[];
 
@@ -47,7 +47,7 @@ export const PARTY_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', '
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_SELECTABLE_FIELDS = ['abbreviation', 'code', 'createdAt', 'id', 'isCurrent', 'jurisdictionId', 'name', 'registryAuthorityId', 'registryIdentifier', 'status', 'symbolUrl', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyKey[];
+export const PARTY_SELECTABLE_FIELDS = ['abbreviation', 'code', 'createdAt', 'id', 'isCurrent', 'jurisdictionId', 'logoMarker', 'name', 'registryAuthorityId', 'registryIdentifier', 'status', 'symbolUrl', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'wikidataId', ] as const satisfies readonly PartyKey[];
 
 export const PARTY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly PartySelectableField[];
 
@@ -55,7 +55,7 @@ export const PARTY_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisf
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const PARTY_EDITABLE_FIELDS = ['abbreviation', 'code', 'isCurrent', 'jurisdictionId', 'name', 'registryAuthorityId', 'registryIdentifier', 'status', 'symbolUrl', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly PartyKey[];
+export const PARTY_EDITABLE_FIELDS = ['abbreviation', 'code', 'isCurrent', 'jurisdictionId', 'logoMarker', 'name', 'registryAuthorityId', 'registryIdentifier', 'status', 'symbolUrl', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'wikidataId', ] as const satisfies readonly PartyKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

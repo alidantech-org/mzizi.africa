@@ -1,6 +1,7 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { UnitKind } from "#/types/geography/unit-kind.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 
 /** The contract shape of GeoUnitPublic, for generated tests. */
 export const geoUnitPublicExample: ContractExample = contractExample({
@@ -17,6 +18,18 @@ export const geoUnitPublicExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "temporal", temporal: "date-time" },
+    },
+    {
+      name: "emblemMarker",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(MediaMarker) },
+    },
+    {
+      name: "flagMarker",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(MediaMarker) },
     },
     {
       name: "id",
@@ -101,6 +114,12 @@ export const geoUnitPublicExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
+      name: "wikidataId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 2, maxLength: 20 },
     },
   ],
   invariants: [

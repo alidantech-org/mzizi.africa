@@ -1,6 +1,7 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
 import { LifeStatus } from "#/types/person/life-status.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
+import { MediaMarker } from "#/types/shared/media-marker.enum.ts";
 
 /** The contract shape of PersonPublic, for generated tests. */
 export const personPublicExample: ContractExample = contractExample({
@@ -85,6 +86,12 @@ export const personPublicExample: ContractExample = contractExample({
       spec: { kind: "enum", values: Object.values(LifeStatus) },
     },
     {
+      name: "portraitMarker",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(MediaMarker) },
+    },
+    {
       name: "updatedAt",
       optional: false,
       nullable: false,
@@ -119,6 +126,12 @@ export const personPublicExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
+      name: "wikidataId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 2, maxLength: 20 },
     },
   ],
   invariants: [

@@ -102,11 +102,11 @@ function trustedSuffixes(): TrustedSuffix[] {
  * plain HTTP fetching, the listed hosts and a low request rate; robots.txt is still respected by the fetcher.
  * Sites with any domain outside the trusted suffixes are left untouched. Re-running is safe.
  */
-export async function autoAssess(db: DataSource, actorId: string): Promise<{ approved: string[]; skipped: string[] }> {
+export async function autoAssess(db: DataSource, actorId: string, onlySite?: string): Promise<{ approved: string[]; skipped: string[] }> {
   const approved: string[] = [];
   const skipped: string[] = [];
   const rules = trustedSuffixes();
-  const sites: { id: string; code: string; jurisdiction_id: string | null }[] = await db.query(`SELECT id, code, jurisdiction_id FROM website.sites ORDER BY code`);
+  const sites: { id: string; code: string; jurisdiction_id: string | null }[] = await db.query(`SELECT id, code, jurisdiction_id FROM website.sites WHERE ($1::text IS NULL OR code = $1) ORDER BY code`, [onlySite ?? null]);
   for (const site of sites) {
     const domains: { hostname: string }[] = await db.query(`SELECT hostname FROM website.domains WHERE site_id = $1`, [site.id]);
     const matches = (r: TrustedSuffix, hostname: string) => (r.host ? hostname === r.host || (r.host === 'kenyalaw.org' && hostname.endsWith('.kenyalaw.org')) : hostname.endsWith(r.suffix as string));

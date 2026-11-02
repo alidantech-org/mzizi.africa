@@ -39,7 +39,7 @@ export const GEO_UNIT_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'parentId'
 
 export const GEO_UNIT_SEARCHABLE_FIELDS = ['code', 'name', ] as const satisfies readonly GeoUnitKey[];
 
-export const GEO_UNIT_FILTERABLE_FIELDS = ['code', 'id', 'isActive', 'isCurrent', 'jurisdictionId', 'kind', 'levelId', 'name', 'parentId', 'version', ] as const satisfies readonly GeoUnitKey[];
+export const GEO_UNIT_FILTERABLE_FIELDS = ['code', 'emblemMarker', 'flagMarker', 'id', 'isActive', 'isCurrent', 'jurisdictionId', 'kind', 'levelId', 'name', 'parentId', 'version', 'wikidataId', ] as const satisfies readonly GeoUnitKey[];
 
 export const GEO_UNIT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly GeoUnitKey[];
 
@@ -47,7 +47,7 @@ export const GEO_UNIT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom'
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const GEO_UNIT_SELECTABLE_FIELDS = ['code', 'createdAt', 'id', 'isActive', 'isCurrent', 'jurisdictionId', 'kind', 'levelId', 'name', 'parentId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly GeoUnitKey[];
+export const GEO_UNIT_SELECTABLE_FIELDS = ['code', 'createdAt', 'emblemMarker', 'flagMarker', 'id', 'isActive', 'isCurrent', 'jurisdictionId', 'kind', 'levelId', 'name', 'parentId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'wikidataId', ] as const satisfies readonly GeoUnitKey[];
 
 export const GEO_UNIT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly GeoUnitSelectableField[];
 
@@ -55,7 +55,7 @@ export const GEO_UNIT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const sat
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const GEO_UNIT_EDITABLE_FIELDS = ['code', 'isActive', 'isCurrent', 'jurisdictionId', 'kind', 'levelId', 'name', 'parentId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly GeoUnitKey[];
+export const GEO_UNIT_EDITABLE_FIELDS = ['code', 'emblemMarker', 'flagMarker', 'isActive', 'isCurrent', 'jurisdictionId', 'kind', 'levelId', 'name', 'parentId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'wikidataId', ] as const satisfies readonly GeoUnitKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

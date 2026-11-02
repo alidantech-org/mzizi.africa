@@ -5,6 +5,7 @@
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
 import type { DatePrecision } from '#/types/shared/date-precision.enum';
+import type { MediaMarker } from '#/types/shared/media-marker.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -33,6 +34,8 @@ import type {
 /** Classification Record */
 export interface IClassificationRecord extends B.IBase {
   code: string;
+  emblemExpected: MediaMarker | null;
+  flagExpected: MediaMarker | null;
   isCurrent: boolean;
   jurisdictionId: string;
   label: string;

@@ -187,3 +187,15 @@ def test_two_agreeing_and_two_disagreeing_sources_become_a_standing(conn):
     r.rebuild_all_standings(conn)
     standing = conn.execute("SELECT s.*, c.value FROM engine.claim_standings s JOIN engine.claims c ON c.id = s.winning_claim_id WHERE s.target_id = %s", (unit,)).fetchone()
     assert standing["value"] == "Q2" and not standing["disputed"]
+
+
+def test_county_named_by_its_first_part_and_dashes():
+    WORLD["Q_tn"] = item("Q_tn", "Tharaka–Nithi County", p31=["Q_county"], p17=["Q114"])
+    WORLD["Q_tt"] = item("Q_tt", "Taita–Taveta County", p31=["Q_county"], p17=["Q114"])
+    wm = w.Wikimedia(FakeApi())
+    assert w.find_item(wm, "geography.units", {"id": 1, "name": "Taita Taveta", "level_code": "geography/level/county"})[1][0].qid == "Q_tt"
+    # the search is by name, so the fake finds by the full label; the judge is what accepts the shorter database name
+    entity = WORLD["Q_tn"]
+    match = w.judge("geography.units", {"id": 1, "name": "Tharaka", "level_code": "geography/level/county"}, entity, wm.entity_labels)
+    assert match and match.score == 0.7 and "label contains the name" in match.reasons
+    assert w.judge("geography.units", {"id": 1, "name": "Tharaka", "level_code": "geography/level/county"}, WORLD["Q8888"], wm.entity_labels) is None
