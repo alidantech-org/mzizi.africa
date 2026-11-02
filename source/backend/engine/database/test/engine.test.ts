@@ -7,7 +7,7 @@ import { advanceDossier, autoAssess, decideAssessment, draftAssessment } from ".
 import { checkCollection } from "../src/gate.ts";
 import { checkIntegrity } from "../src/integrity.ts";
 import { drift, migrate } from "../src/migrations.ts";
-import { seedGovernanceStructure, seedDevAccounts, seedFixtures, seedReference, seedSiteFixtures } from "../src/seeds.ts";
+import { seedExpectedSites, seedGovernanceStructure, seedDevAccounts, seedFixtures, seedReference, seedSiteFixtures } from "../src/seeds.ts";
 
 /** Runs against a scratch database on the server in TEST_DATABASE_URL (skipped without it). */
 const adminUrl = process.env.TEST_DATABASE_URL;
@@ -144,6 +144,16 @@ run("database engine", () => {
     for (const row of file.institutions) if (row.parent) expect(codes.has(row.parent), `${row.code} has unknown parent ${row.parent}`).toBe(true);
     const [row] = await db.query(`SELECT description FROM governance.institutions WHERE code = 'ke/kra'`);
     expect(row.description).toContain("manual research");
+  });
+
+  test("expected sites are registered once, unverified, and linked to their institutions", async () => {
+    await seedGovernanceStructure(db);
+    const first = await seedExpectedSites(db);
+    expect(first.sites).toBeGreaterThan(80);
+    expect(first.linked).toBeGreaterThan(75);
+    expect(await seedExpectedSites(db)).toEqual({ sites: 0, linked: 0 });
+    const [row] = await db.query(`SELECT s.status::text AS status, (SELECT count(*)::int FROM website.domains d WHERE d.site_id = s.id) AS domains FROM website.sites s WHERE s.code = 'ke/nca'`);
+    expect(row).toEqual({ status: "expected", domains: 0 });
   });
 
   test("staging rows track updated_at and version", async () => {

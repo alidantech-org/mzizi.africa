@@ -167,3 +167,37 @@ export async function seedGovernanceStructure(db: DataSource, jurisdictionCode =
   }
   return { institutions, relationships, counties };
 }
+
+/**
+ * Registers the sites of Kenyan government bodies from `fixtures/seed/ke-expected-sites.json` (custom-prepared from manual
+ * research): one `expected` site per entry, linked to the institution it serves, with its candidate hostnames kept in an
+ * `expected` reachability check (a domain row is only created once a probe confirms the host). No request is made.
+ * Idempotent by site code.
+ */
+export async function seedExpectedSites(db: DataSource, jurisdictionCode = "ke"): Promise<{ sites: number; linked: number }> {
+  const file = JSON.parse(readFileSync(join(import.meta.dir, "..", "fixtures", "seed", "ke-expected-sites.json"), "utf8")) as { _meta: { label: string }; sites: { code: string; institution: string; name: string; hosts: string[] }[] };
+  const [jurisdiction] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [jurisdictionCode]);
+  if (!jurisdiction) throw new Error(`jurisdiction ${jurisdictionCode} is not seeded`);
+  let sites = 0;
+  let linked = 0;
+  for (const entry of file.sites) {
+    let [site] = await db.query(`SELECT id FROM website.sites WHERE code = $1`, [entry.code]);
+    if (!site) {
+      [site] = await db.query(
+        `INSERT INTO website.sites (code, name, kind, status, jurisdiction_id, description, created_at, updated_at, version) VALUES ($1, $2, 'portal', 'expected', $3, $4, now(), now(), 1) RETURNING id`,
+        [entry.code, entry.name, jurisdiction.id, `Expected site (${file._meta.label}); hostnames are unverified candidates: ${entry.hosts.join(", ")}.`],
+      );
+      await db.query(`INSERT INTO website.checks (site_id, kind, outcome, detail, checked_at, created_at, updated_at, version) VALUES ($1, 'reachability', 'degraded', $2, now(), now(), now(), 1)`, [site.id, JSON.stringify({ type: "expected", source: file._meta.label, candidates: entry.hosts })]);
+      sites++;
+    }
+    const [institution] = await db.query(`SELECT id FROM governance.institutions WHERE code = $1 AND jurisdiction_id = $2 AND is_current`, [entry.institution, jurisdiction.id]);
+    if (institution) {
+      const [exists] = await db.query(`SELECT 1 AS ok FROM website.subjects WHERE site_id = $1 AND target_kind = 'governance.institutions' AND target_id = $2`, [site.id, institution.id]);
+      if (!exists) {
+        await db.query(`INSERT INTO website.subjects (site_id, target_kind, target_id, relation, created_at, updated_at, version) VALUES ($1, 'governance.institutions', $2, 'serves', now(), now(), 1)`, [site.id, institution.id]);
+        linked++;
+      }
+    }
+  }
+  return { sites, linked };
+}

@@ -30,7 +30,7 @@ import { applyReviewDecisions, reviewRun } from "./staging/review.ts";
 import { promoteApproved, promoteCandidate } from "./staging/promotion.ts";
 import { validateCandidates } from "./staging/validation.ts";
 import { drift, generate, migrate, revertLast } from "./migrations.ts";
-import { seedDevAccounts, seedGovernanceStructure, seedFixtures, seedReference, seedResearch } from "./seeds.ts";
+import { seedDevAccounts, seedGovernanceStructure, seedExpectedSites, seedFixtures, seedReference, seedResearch } from "./seeds.ts";
 
 const [command, argument] = process.argv.slice(2);
 
@@ -86,6 +86,10 @@ switch (command) {
     const kind = argument ?? "reference";
     if (kind === "research") {
       console.log(`seeded research registry rows (${await withDb({}, seedResearch)} rows)`);
+      break;
+    }
+    if (kind === "expected-sites") {
+      console.log(JSON.stringify(await withDb({}, (db) => seedExpectedSites(db))));
       break;
     }
     if (kind === "governance-structure") {

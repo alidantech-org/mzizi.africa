@@ -1,0 +1,742 @@
+{
+  "_meta": {
+    "label": "Custom-prepared from manual research",
+    "caveat": "Candidate hostnames written from general knowledge. None was contacted when this file was prepared, so every site is created with status 'expected' and its hostnames stay candidates until a bounded, gated probe confirms them. Several bodies use .or.ke, .co.ke or .ac.ke names; those are not covered by the .go.ke trusted-domain rule and need an assessment before any request."
+  },
+  "sites": [
+    {
+      "code": "ke/presidency",
+      "institution": "ke/presidency",
+      "name": "State House and the Presidency",
+      "hosts": [
+        "president.go.ke",
+        "statehousekenya.go.ke"
+      ]
+    },
+    {
+      "code": "ke/deputy-president",
+      "institution": "ke/office-of-the-deputy-president",
+      "name": "Office of the Deputy President",
+      "hosts": [
+        "deputypresident.go.ke"
+      ]
+    },
+    {
+      "code": "ke/cabinet-office",
+      "institution": "ke/cabinet",
+      "name": "Cabinet Office",
+      "hosts": [
+        "cabinetoffice.go.ke"
+      ]
+    },
+    {
+      "code": "ke/treasury",
+      "institution": "ke/ministry/treasury",
+      "name": "The National Treasury and Economic Planning",
+      "hosts": [
+        "treasury.go.ke"
+      ]
+    },
+    {
+      "code": "ke/interior",
+      "institution": "ke/ministry/interior",
+      "name": "Ministry of Interior and National Administration",
+      "hosts": [
+        "interior.go.ke"
+      ]
+    },
+    {
+      "code": "ke/defence",
+      "institution": "ke/ministry/defence",
+      "name": "Ministry of Defence",
+      "hosts": [
+        "mod.go.ke",
+        "defence.go.ke"
+      ]
+    },
+    {
+      "code": "ke/foreign-affairs",
+      "institution": "ke/ministry/foreign-affairs",
+      "name": "Ministry of Foreign and Diaspora Affairs",
+      "hosts": [
+        "mfa.go.ke",
+        "foreignaffairs.go.ke"
+      ]
+    },
+    {
+      "code": "ke/education",
+      "institution": "ke/ministry/education",
+      "name": "Ministry of Education",
+      "hosts": [
+        "education.go.ke"
+      ]
+    },
+    {
+      "code": "ke/health",
+      "institution": "ke/ministry/health",
+      "name": "Ministry of Health",
+      "hosts": [
+        "health.go.ke"
+      ]
+    },
+    {
+      "code": "ke/roads-transport",
+      "institution": "ke/ministry/roads",
+      "name": "Ministry of Roads and Transport",
+      "hosts": [
+        "transport.go.ke",
+        "roads.go.ke"
+      ]
+    },
+    {
+      "code": "ke/lands",
+      "institution": "ke/ministry/lands",
+      "name": "Ministry of Lands, Public Works, Housing and Urban Development",
+      "hosts": [
+        "lands.go.ke",
+        "housing.go.ke"
+      ]
+    },
+    {
+      "code": "ke/agriculture",
+      "institution": "ke/ministry/agriculture",
+      "name": "Ministry of Agriculture and Livestock Development",
+      "hosts": [
+        "kilimo.go.ke",
+        "agriculture.go.ke"
+      ]
+    },
+    {
+      "code": "ke/energy",
+      "institution": "ke/ministry/energy",
+      "name": "Ministry of Energy and Petroleum",
+      "hosts": [
+        "energy.go.ke"
+      ]
+    },
+    {
+      "code": "ke/water",
+      "institution": "ke/ministry/water",
+      "name": "Ministry of Water, Sanitation and Irrigation",
+      "hosts": [
+        "water.go.ke"
+      ]
+    },
+    {
+      "code": "ke/environment",
+      "institution": "ke/ministry/environment",
+      "name": "Ministry of Environment, Climate Change and Forestry",
+      "hosts": [
+        "environment.go.ke"
+      ]
+    },
+    {
+      "code": "ke/ict",
+      "institution": "ke/ministry/ict",
+      "name": "Ministry of Information, Communications and the Digital Economy",
+      "hosts": [
+        "ict.go.ke"
+      ]
+    },
+    {
+      "code": "ke/trade",
+      "institution": "ke/ministry/trade",
+      "name": "Ministry of Investments, Trade and Industry",
+      "hosts": [
+        "trade.go.ke"
+      ]
+    },
+    {
+      "code": "ke/labour",
+      "institution": "ke/ministry/labour",
+      "name": "Ministry of Labour and Social Protection",
+      "hosts": [
+        "labour.go.ke"
+      ]
+    },
+    {
+      "code": "ke/gender-culture",
+      "institution": "ke/ministry/gender",
+      "name": "Ministry of Gender, Culture, the Arts and Heritage",
+      "hosts": [
+        "gender.go.ke",
+        "culture.go.ke"
+      ]
+    },
+    {
+      "code": "ke/sports-youth",
+      "institution": "ke/ministry/sports",
+      "name": "Ministry of Youth Affairs, Creative Economy and Sports",
+      "hosts": [
+        "sportsyouth.go.ke",
+        "youth.go.ke"
+      ]
+    },
+    {
+      "code": "ke/tourism",
+      "institution": "ke/ministry/tourism",
+      "name": "Ministry of Tourism and Wildlife",
+      "hosts": [
+        "tourism.go.ke"
+      ]
+    },
+    {
+      "code": "ke/mining-blue-economy",
+      "institution": "ke/ministry/mining",
+      "name": "Ministry of Mining, Blue Economy and Maritime Affairs",
+      "hosts": [
+        "mining.go.ke",
+        "blueeconomy.go.ke"
+      ]
+    },
+    {
+      "code": "ke/cooperatives-msme",
+      "institution": "ke/ministry/cooperatives",
+      "name": "Ministry of Co-operatives and MSMEs Development",
+      "hosts": [
+        "cooperatives.go.ke",
+        "msmes.go.ke"
+      ]
+    },
+    {
+      "code": "ke/eac-asals",
+      "institution": "ke/ministry/eac",
+      "name": "Ministry of East African Community, the ASALs and Regional Development",
+      "hosts": [
+        "meac.go.ke",
+        "asals.go.ke"
+      ]
+    },
+    {
+      "code": "ke/public-service",
+      "institution": "ke/ministry/public-service",
+      "name": "State Department for Public Service",
+      "hosts": [
+        "publicservice.go.ke"
+      ]
+    },
+    {
+      "code": "ke/attorney-general",
+      "institution": "ke/office-of-the-attorney-general",
+      "name": "Office of the Attorney-General and Department of Justice",
+      "hosts": [
+        "ag.go.ke",
+        "statelaw.go.ke"
+      ]
+    },
+    {
+      "code": "ke/judiciary",
+      "institution": "ke/judiciary",
+      "name": "The Judiciary of Kenya",
+      "hosts": [
+        "judiciary.go.ke"
+      ]
+    },
+    {
+      "code": "ke/jsc",
+      "institution": "ke/judicial-service-commission",
+      "name": "Judicial Service Commission",
+      "hosts": [
+        "jsc.go.ke"
+      ]
+    },
+    {
+      "code": "ke/police",
+      "institution": "ke/national-police-service",
+      "name": "National Police Service",
+      "hosts": [
+        "police.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kdf",
+      "institution": "ke/kenya-defence-forces",
+      "name": "Kenya Defence Forces",
+      "hosts": [
+        "mod.go.ke"
+      ]
+    },
+    {
+      "code": "ke/nis",
+      "institution": "ke/national-intelligence-service",
+      "name": "National Intelligence Service",
+      "hosts": [
+        "nis.go.ke"
+      ]
+    },
+    {
+      "code": "ke/src",
+      "institution": "ke/salaries-and-remuneration-commission",
+      "name": "Salaries and Remuneration Commission",
+      "hosts": [
+        "src.go.ke"
+      ]
+    },
+    {
+      "code": "ke/cra",
+      "institution": "ke/commission-on-revenue-allocation",
+      "name": "Commission on Revenue Allocation",
+      "hosts": [
+        "crakenya.org",
+        "cra.go.ke"
+      ]
+    },
+    {
+      "code": "ke/psc",
+      "institution": "ke/public-service-commission",
+      "name": "Public Service Commission",
+      "hosts": [
+        "publicservice.go.ke",
+        "psc.go.ke"
+      ]
+    },
+    {
+      "code": "ke/tsc",
+      "institution": "ke/teachers-service-commission",
+      "name": "Teachers Service Commission",
+      "hosts": [
+        "tsc.go.ke"
+      ]
+    },
+    {
+      "code": "ke/parliamentary-service-commission",
+      "institution": "ke/parliamentary-service-commission",
+      "name": "Parliamentary Service Commission",
+      "hosts": [
+        "parliament.go.ke"
+      ]
+    },
+    {
+      "code": "ke/npsc",
+      "institution": "ke/national-police-service-commission",
+      "name": "National Police Service Commission",
+      "hosts": [
+        "npsc.go.ke"
+      ]
+    },
+    {
+      "code": "ke/nlc",
+      "institution": "ke/national-land-commission",
+      "name": "National Land Commission",
+      "hosts": [
+        "landcommission.go.ke",
+        "nlc.go.ke"
+      ]
+    },
+    {
+      "code": "ke/knchr",
+      "institution": "ke/kenya-national-commission-on-human-rights",
+      "name": "Kenya National Commission on Human Rights",
+      "hosts": [
+        "knchr.org"
+      ]
+    },
+    {
+      "code": "ke/ngec",
+      "institution": "ke/national-gender-and-equality-commission",
+      "name": "National Gender and Equality Commission",
+      "hosts": [
+        "ngeckenya.org"
+      ]
+    },
+    {
+      "code": "ke/caj",
+      "institution": "ke/commission-on-administrative-justice",
+      "name": "Commission on Administrative Justice (Ombudsman)",
+      "hosts": [
+        "ombudsman.go.ke",
+        "caj.go.ke"
+      ]
+    },
+    {
+      "code": "ke/eacc",
+      "institution": "ke/ethics-and-anti-corruption-commission",
+      "name": "Ethics and Anti-Corruption Commission",
+      "hosts": [
+        "eacc.go.ke"
+      ]
+    },
+    {
+      "code": "ke/ncic",
+      "institution": "ke/national-cohesion-and-integration-commission",
+      "name": "National Cohesion and Integration Commission",
+      "hosts": [
+        "cohesion.go.ke",
+        "ncic.go.ke"
+      ]
+    },
+    {
+      "code": "ke/auditor-general",
+      "institution": "ke/office-of-the-auditor-general",
+      "name": "Office of the Auditor-General",
+      "hosts": [
+        "oagkenya.go.ke"
+      ]
+    },
+    {
+      "code": "ke/controller-of-budget",
+      "institution": "ke/office-of-the-controller-of-budget",
+      "name": "Office of the Controller of Budget",
+      "hosts": [
+        "cob.go.ke"
+      ]
+    },
+    {
+      "code": "ke/odpp",
+      "institution": "ke/office-of-the-director-of-public-prosecutions",
+      "name": "Office of the Director of Public Prosecutions",
+      "hosts": [
+        "odpp.go.ke"
+      ]
+    },
+    {
+      "code": "ke/cbk",
+      "institution": "ke/central-bank",
+      "name": "Central Bank of Kenya",
+      "hosts": [
+        "centralbank.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kra",
+      "institution": "ke/kra",
+      "name": "Kenya Revenue Authority",
+      "hosts": [
+        "kra.go.ke"
+      ]
+    },
+    {
+      "code": "ke/knbs",
+      "institution": "ke/knbs",
+      "name": "Kenya National Bureau of Statistics",
+      "hosts": [
+        "knbs.or.ke",
+        "knbs.go.ke"
+      ]
+    },
+    {
+      "code": "ke/ppra",
+      "institution": "ke/ppra",
+      "name": "Public Procurement Regulatory Authority",
+      "hosts": [
+        "ppra.go.ke"
+      ]
+    },
+    {
+      "code": "ke/odpc",
+      "institution": "ke/odpc",
+      "name": "Office of the Data Protection Commissioner",
+      "hosts": [
+        "odpc.go.ke"
+      ]
+    },
+    {
+      "code": "ke/ca",
+      "institution": "ke/ca",
+      "name": "Communications Authority of Kenya",
+      "hosts": [
+        "ca.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kebs",
+      "institution": "ke/kebs",
+      "name": "Kenya Bureau of Standards",
+      "hosts": [
+        "kebs.org",
+        "kebs.go.ke"
+      ]
+    },
+    {
+      "code": "ke/nema",
+      "institution": "ke/nema",
+      "name": "National Environment Management Authority",
+      "hosts": [
+        "nema.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kws",
+      "institution": "ke/kws",
+      "name": "Kenya Wildlife Service",
+      "hosts": [
+        "kws.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kenha",
+      "institution": "ke/kenha",
+      "name": "Kenya National Highways Authority",
+      "hosts": [
+        "kenha.co.ke"
+      ]
+    },
+    {
+      "code": "ke/kerra",
+      "institution": "ke/kerra",
+      "name": "Kenya Rural Roads Authority",
+      "hosts": [
+        "kerra.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kura",
+      "institution": "ke/kura",
+      "name": "Kenya Urban Roads Authority",
+      "hosts": [
+        "kura.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kpa",
+      "institution": "ke/kpa",
+      "name": "Kenya Ports Authority",
+      "hosts": [
+        "kpa.co.ke"
+      ]
+    },
+    {
+      "code": "ke/kaa",
+      "institution": "ke/kaa",
+      "name": "Kenya Airports Authority",
+      "hosts": [
+        "kaa.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kcaa",
+      "institution": "ke/kcaa",
+      "name": "Kenya Civil Aviation Authority",
+      "hosts": [
+        "kcaa.or.ke"
+      ]
+    },
+    {
+      "code": "ke/kenya-railways",
+      "institution": "ke/kenya-railways",
+      "name": "Kenya Railways Corporation",
+      "hosts": [
+        "krc.co.ke"
+      ]
+    },
+    {
+      "code": "ke/kengen",
+      "institution": "ke/kengen",
+      "name": "Kenya Electricity Generating Company",
+      "hosts": [
+        "kengen.co.ke"
+      ]
+    },
+    {
+      "code": "ke/kplc",
+      "institution": "ke/kplc",
+      "name": "Kenya Power and Lighting Company",
+      "hosts": [
+        "kplc.co.ke"
+      ]
+    },
+    {
+      "code": "ke/epra",
+      "institution": "ke/epra",
+      "name": "Energy and Petroleum Regulatory Authority",
+      "hosts": [
+        "epra.go.ke"
+      ]
+    },
+    {
+      "code": "ke/nssf",
+      "institution": "ke/nssf",
+      "name": "National Social Security Fund",
+      "hosts": [
+        "nssf.go.ke",
+        "nssf.or.ke"
+      ]
+    },
+    {
+      "code": "ke/sha",
+      "institution": "ke/sha",
+      "name": "Social Health Authority",
+      "hosts": [
+        "sha.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kemsa",
+      "institution": "ke/kemsa",
+      "name": "Kenya Medical Supplies Authority",
+      "hosts": [
+        "kemsa.go.ke"
+      ]
+    },
+    {
+      "code": "ke/knh",
+      "institution": "ke/knh",
+      "name": "Kenyatta National Hospital",
+      "hosts": [
+        "knh.or.ke"
+      ]
+    },
+    {
+      "code": "ke/helb",
+      "institution": "ke/helb",
+      "name": "Higher Education Loans Board",
+      "hosts": [
+        "helb.co.ke"
+      ]
+    },
+    {
+      "code": "ke/knec",
+      "institution": "ke/knec",
+      "name": "Kenya National Examinations Council",
+      "hosts": [
+        "knec.ac.ke"
+      ]
+    },
+    {
+      "code": "ke/kicd",
+      "institution": "ke/kicd",
+      "name": "Kenya Institute of Curriculum Development",
+      "hosts": [
+        "kicd.ac.ke"
+      ]
+    },
+    {
+      "code": "ke/cue",
+      "institution": "ke/cue",
+      "name": "Commission for University Education",
+      "hosts": [
+        "cue.or.ke"
+      ]
+    },
+    {
+      "code": "ke/nca",
+      "institution": "ke/nca",
+      "name": "National Construction Authority",
+      "hosts": [
+        "nca.go.ke"
+      ]
+    },
+    {
+      "code": "ke/cma",
+      "institution": "ke/cma",
+      "name": "Capital Markets Authority",
+      "hosts": [
+        "cma.or.ke"
+      ]
+    },
+    {
+      "code": "ke/ira",
+      "institution": "ke/ira",
+      "name": "Insurance Regulatory Authority",
+      "hosts": [
+        "ira.go.ke"
+      ]
+    },
+    {
+      "code": "ke/rba",
+      "institution": "ke/rba",
+      "name": "Retirement Benefits Authority",
+      "hosts": [
+        "rba.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kfs",
+      "institution": "ke/kfs",
+      "name": "Kenya Forest Service",
+      "hosts": [
+        "kenyaforestservice.org",
+        "kfs.go.ke"
+      ]
+    },
+    {
+      "code": "ke/wra",
+      "institution": "ke/wra",
+      "name": "Water Resources Authority",
+      "hosts": [
+        "wra.go.ke"
+      ]
+    },
+    {
+      "code": "ke/nwhsa",
+      "institution": "ke/nwhsa",
+      "name": "National Water Harvesting and Storage Authority",
+      "hosts": [
+        "nwhsa.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kalro",
+      "institution": "ke/kalro",
+      "name": "Kenya Agricultural and Livestock Research Organization",
+      "hosts": [
+        "kalro.org"
+      ]
+    },
+    {
+      "code": "ke/pssf",
+      "institution": "ke/pssf",
+      "name": "Public Service Superannuation Fund",
+      "hosts": [
+        "pssf.go.ke"
+      ]
+    },
+    {
+      "code": "ke/ictauthority",
+      "institution": "ke/ict-authority",
+      "name": "Information and Communication Technology Authority",
+      "hosts": [
+        "icta.go.ke"
+      ]
+    },
+    {
+      "code": "ke/konza",
+      "institution": "ke/konza",
+      "name": "Konza Technopolis Development Authority",
+      "hosts": [
+        "konza.go.ke"
+      ]
+    },
+    {
+      "code": "ke/huduma",
+      "institution": "ke/ministry/public-service",
+      "name": "Huduma Kenya (government service centres)",
+      "hosts": [
+        "hudumakenya.go.ke"
+      ]
+    },
+    {
+      "code": "ke/ecitizen",
+      "institution": "ke/ministry/ict",
+      "name": "eCitizen government services portal",
+      "hosts": [
+        "ecitizen.go.ke"
+      ]
+    },
+    {
+      "code": "ke/kenya-open-data",
+      "institution": "ke/knbs",
+      "name": "Kenya Open Data Portal",
+      "hosts": [
+        "opendata.go.ke"
+      ]
+    },
+    {
+      "code": "ke/gazette",
+      "institution": "ke/kenya-law",
+      "name": "Kenya Gazette (government printer)",
+      "hosts": [
+        "kenyagazette.go.ke",
+        "gazettes.africa"
+      ]
+    },
+    {
+      "code": "ke/hansard-senate",
+      "institution": "ke/senate",
+      "name": "Senate of Kenya (member and Hansard pages)",
+      "hosts": [
+        "senate.parliament.go.ke"
+      ]
+    }
+  ]
+}
