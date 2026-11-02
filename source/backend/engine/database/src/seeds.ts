@@ -174,12 +174,13 @@ export async function seedGovernanceStructure(db: DataSource, jurisdictionCode =
  * `expected` reachability check (a domain row is only created once a probe confirms the host). No request is made.
  * Idempotent by site code.
  */
-export async function seedExpectedSites(db: DataSource, jurisdictionCode = "ke"): Promise<{ sites: number; linked: number }> {
+export async function seedExpectedSites(db: DataSource, jurisdictionCode = "ke"): Promise<{ sites: number; linked: number; domains: number }> {
   const file = JSON.parse(readFileSync(join(import.meta.dir, "..", "fixtures", "seed", "ke-expected-sites.json"), "utf8")) as { _meta: { label: string }; sites: { code: string; institution: string; name: string; hosts: string[] }[] };
   const [jurisdiction] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [jurisdictionCode]);
   if (!jurisdiction) throw new Error(`jurisdiction ${jurisdictionCode} is not seeded`);
   let sites = 0;
   let linked = 0;
+  let domains = 0;
   for (const entry of file.sites) {
     let [site] = await db.query(`SELECT id FROM website.sites WHERE code = $1`, [entry.code]);
     if (!site) {
@@ -190,6 +191,7 @@ export async function seedExpectedSites(db: DataSource, jurisdictionCode = "ke")
       await db.query(`INSERT INTO website.checks (site_id, kind, outcome, detail, checked_at, created_at, updated_at, version) VALUES ($1, 'reachability', 'degraded', $2, now(), now(), now(), 1)`, [site.id, JSON.stringify({ type: "expected", source: file._meta.label, candidates: entry.hosts })]);
       sites++;
     }
+    domains += await ensureCandidateDomains(db, site.id, entry.hosts, "seed_research", `Candidate hostname from ${file._meta.label}; not yet probed.`);
     const [institution] = await db.query(`SELECT id FROM governance.institutions WHERE code = $1 AND jurisdiction_id = $2 AND is_current`, [entry.institution, jurisdiction.id]);
     if (institution) {
       const [exists] = await db.query(`SELECT 1 AS ok FROM website.subjects WHERE site_id = $1 AND target_kind = 'governance.institutions' AND target_id = $2`, [site.id, institution.id]);
@@ -199,9 +201,32 @@ export async function seedExpectedSites(db: DataSource, jurisdictionCode = "ke")
       }
     }
   }
-  return { sites, linked };
+  return { sites, linked, domains };
 }
 
+
+/**
+ * Adds a candidate `website.domains` row for each hostname the site lacks (never touches an existing row, so a
+ * confirmed domain keeps its status). The first spelling is primary unless the site has a primary already.
+ * Zone and apex are set from the longest matching registry zone; parent links are filled by the data engine.
+ */
+async function ensureCandidateDomains(db: DataSource, siteId: string, hosts: string[], origin: string, reason: string): Promise<number> {
+  let created = 0;
+  for (const raw of hosts) {
+    const host = raw.toLowerCase().replace(/^\.|\.$/g, "");
+    const [exists] = await db.query(`SELECT 1 AS ok FROM website.domains WHERE site_id = $1 AND hostname = $2`, [siteId, host]);
+    if (exists) continue;
+    const [primary] = await db.query(`SELECT 1 AS ok FROM website.domains WHERE site_id = $1 AND role = 'primary'`, [siteId]);
+    const [zone] = await db.query(`SELECT id, suffix FROM website.domain_zones WHERE $1 LIKE '%.' || suffix ORDER BY length(suffix) DESC LIMIT 1`, [host]);
+    const isApex = zone ? host.split(".").length === zone.suffix.split(".").length + 1 : null;
+    await db.query(
+      `INSERT INTO website.domains (site_id, hostname, scheme, role, valid_from, valid_from_precision, status, status_reason, origin, is_apex, zone_id, created_at, updated_at, version) VALUES ($1, $2, 'https', $3, current_date, 'exact', 'candidate', $4, $5, $6, $7, now(), now(), 1)`,
+      [siteId, host, primary ? "alias" : "primary", reason, origin, isApex, zone?.id ?? null],
+    );
+    created++;
+  }
+  return created;
+}
 
 /**
  * Registers the registry zones in use from `fixtures/seed/ke-domain-zones.json` (custom-prepared from manual research).

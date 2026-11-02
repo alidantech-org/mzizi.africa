@@ -14,9 +14,13 @@ Candidate hostnames exist in two places: the expected-site reachability checks w
 
 ## Acceptance checklist
 
-- [ ] Change `expand-patterns` to create domain rows for every spelling variant, with source and pattern reference.
-- [ ] Change the expected-sites seeder to create domain rows for the seed hosts.
-- [ ] Backfill rows for existing expected sites from their reachability checks.
-- [ ] Link domains to zones and subdomains to parent domains.
-- [ ] Report counts by status, zone and source.
-- [ ] Add tests that a second run creates nothing and that a confirmed domain is not downgraded.
+- [x] Change `expand-patterns` to create domain rows for every spelling variant, with source and pattern reference.
+- [x] Change the expected-sites seeder to create domain rows for the seed hosts.
+- [x] Backfill rows for existing expected sites from their reachability checks.
+- [x] Link domains to zones and subdomains to parent domains.
+- [x] Report counts by status, zone and source.
+- [x] Add tests that a second run creates nothing and that a confirmed domain is not downgraded.
+
+## Result (3 November 2026, real database)
+
+Migrations 1793900000000 and 1793900000001 applied to `mzizi` after a pg_dump snapshot in `.data/backups`; zones seeded (12). Domains: 640 rows (627 candidate, 13 reachable); by origin: pattern 514, seed_research 111, manual 13, none 2; by zone: go.ke 613, org 10, or.ke 7, co.ke 6, ac.ke 2, com 1, none 1; 413 subdomains linked to a parent domain; every one of the 481 sites has at least one domain. Offline command: `python -m mzizi_data.cli backfill-domains` (idempotent, second run creates nothing).

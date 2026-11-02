@@ -154,7 +154,7 @@ run("database engine", () => {
     expect(await seedExpectedSites(db)).toEqual({ sites: 0, linked: 0, domains: 0 });
     const [row] = await db.query(`SELECT s.status::text AS status, (SELECT count(*)::int FROM website.domains d WHERE d.site_id = s.id) AS domains FROM website.sites s WHERE s.code = 'ke/nca'`);
     expect(row).toEqual({ status: "expected", domains: 1 });
-    const [dom] = await db.query(`SELECT status::text AS status, origin::text AS origin, role::text AS role FROM website.domains d JOIN website.sites s ON s.id = d.site_id WHERE s.code = 'ke/nca' ORDER BY role`);
+    const [dom] = await db.query(`SELECT d.status::text AS status, d.origin::text AS origin, d.role::text AS role FROM website.domains d JOIN website.sites s ON s.id = d.site_id WHERE s.code = 'ke/nca' ORDER BY d.role`);
     expect(dom).toEqual({ status: "candidate", origin: "seed_research", role: "primary" });
   });
 

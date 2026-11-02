@@ -14,9 +14,9 @@ Today `website.domains` holds hostname, scheme, role (primary, alias, redirect, 
 
 ## Acceptance checklist
 
-- [ ] Write the design note and decide column names, enums and the snapshot shape.
-- [ ] Add domain status, status reason, source, parent domain, zone and last probe result (nullable) through the Dryv contracts and a migration.
-- [ ] Add the zone registry table with operator, purpose, openness and source, seeded with the zones in use, labelled as custom-prepared from manual research.
+- [x] Write the design note and decide column names, enums and the snapshot shape.
+- [x] Add domain status, status reason, source, parent domain, zone and last probe result (nullable) through the Dryv contracts and a migration.
+- [x] Add the zone registry table with operator, purpose, openness and source, seeded with the zones in use, labelled as custom-prepared from manual research.
 - [x] Add the DNS snapshot table (domain or zone, record type, values, resolver, observed at).
 - [ ] Update the generated API and read endpoints and keep the schema integration spec green.
 - [x] Add engine tests for a candidate domain, a redirect and a snapshot history.

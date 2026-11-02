@@ -61,9 +61,31 @@ def test_expansion_creates_expected_sites_with_membership_subjects_and_candidate
     assert conn.execute("SELECT status FROM website.sites WHERE id = %s", (site,)).fetchone()["status"] == "expected"
     assert conn.execute("SELECT basis FROM website.members WHERE site_id = %s AND family_id = %s", (site, fam)).fetchone()["basis"] == "pattern"
     assert conn.execute("SELECT relation FROM website.subjects WHERE site_id = %s", (site,)).fetchone()["relation"] == "serves"
-    assert conn.execute("SELECT count(*) AS n FROM website.domains WHERE site_id = %s", (site,)).fetchone()["n"] == 0  # a hostname is a candidate until probed
+    # every spelling variant is a candidate domain row until probed
+    rows = conn.execute("SELECT hostname, status, origin, role FROM website.domains WHERE site_id = %s ORDER BY role", (names["Taita Taveta"].site_id,)).fetchall()
+    assert sorted([(r["hostname"], r["status"], r["origin"], r["role"]) for r in rows]) == sorted([("taitataveta.go.ke", "candidate", "pattern", "primary"), ("taita-taveta.go.ke", "candidate", "pattern", "alias")])
+    assert conn.execute("SELECT count(*) AS n FROM website.domains WHERE site_id = %s", (site,)).fetchone()["n"] == 1
     again = patterns.expand_pattern(conn, pat, jid)
     assert not any(e.created for e in again if e.code.endswith(suffix))
+    assert conn.execute("SELECT count(*) AS n FROM website.domains WHERE site_id = %s", (names["Taita Taveta"].site_id,)).fetchone()["n"] == 2
+
+
+def test_candidate_rows_never_downgrade_a_confirmed_domain_and_link_zone_and_parent(conn):
+    from mzizi_data import domains
+
+    jid, fam, pat, fcode, level_id = family_pattern(conn)
+    suffix = uuid.uuid4().hex[:5]
+    add_unit(conn, jid, level_id, f"ke/nyeri-{suffix}", "Nyeri")
+    site = next(e for e in patterns.expand_pattern(conn, pat, jid) if e.code.endswith(suffix)).site_id
+    conn.execute("UPDATE website.domains SET status = 'reachable' WHERE site_id = %s", (site,))
+    zone = f"{suffix}.ke"
+    conn.execute("INSERT INTO website.domain_zones (suffix, created_at, updated_at, version) VALUES (%s, now(), now(), 1)", (zone,))
+    assert domains.ensure_candidate_domains(conn, site, ["nyeri.go.ke", f"portal.nyeri.{zone}", f"nyeri.{zone}"], "pattern", "again") == 2
+    assert domains.ensure_candidate_domains(conn, site, ["nyeri.go.ke", f"portal.nyeri.{zone}", f"nyeri.{zone}"], "pattern", "again") == 0
+    assert conn.execute("SELECT status FROM website.domains WHERE site_id = %s AND hostname = 'nyeri.go.ke'", (site,)).fetchone()["status"] == "reachable"
+    domains.link_domains(conn)
+    sub = conn.execute("SELECT d.is_apex, d.zone_id IS NOT NULL AS z, p.hostname AS parent FROM website.domains d LEFT JOIN website.domains p ON p.id = d.parent_domain_id WHERE d.site_id = %s AND d.hostname = %s", (site, f"portal.nyeri.{zone}")).fetchone()
+    assert (sub["is_apex"], sub["z"], sub["parent"]) == (False, True, f"nyeri.{zone}")
 
 
 def probe_setup(conn, handler, sleeps=None, allow=True):
@@ -92,7 +114,8 @@ def test_probe_confirms_the_first_spelling_that_answers_and_adds_the_domain(conn
     result = patterns.probe_site(conn, fetcher, expected.site_id, expected.candidates)
     assert (result.outcome, result.host) == ("reachable", "taita-taveta.go.ke")
     assert conn.execute("SELECT status FROM website.sites WHERE id = %s", (expected.site_id,)).fetchone()["status"] == "discovered"
-    assert [d["hostname"] for d in conn.execute("SELECT hostname FROM website.domains WHERE site_id = %s", (expected.site_id,)).fetchall()] == ["taita-taveta.go.ke"]
+    rows = {d["hostname"]: (d["status"], d["role"]) for d in conn.execute("SELECT hostname, status, role FROM website.domains WHERE site_id = %s", (expected.site_id,)).fetchall()}
+    assert rows == {"taita-taveta.go.ke": ("reachable", "primary"), "taitataveta.go.ke": ("unreachable", "alias")}
     assert conn.execute("SELECT outcome FROM website.checks WHERE site_id = %s AND kind = 'reachability' ORDER BY checked_at DESC LIMIT 1", (expected.site_id,)).fetchone()["outcome"] == "ok"
 
 

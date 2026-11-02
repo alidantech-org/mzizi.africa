@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 
 import psycopg
 
-from . import incidents
+from . import domains, incidents
 from .compliance import Denied, StopRun
 from .fetch import PoliteFetcher, RobotsDisallowed
 
@@ -115,6 +115,7 @@ def expand_pattern(conn: psycopg.Connection, pattern_id: str, jurisdiction_id: s
             conn.execute("INSERT INTO website.members (site_id, family_id, role, basis, score, created_at, updated_at, version) VALUES (%s, %s, 'member', 'pattern', 0.5, now(), now(), 1)", (row["id"], pattern["family_id"]))
             conn.execute("INSERT INTO website.subjects (site_id, target_kind, target_id, relation, created_at, updated_at, version) VALUES (%s, %s, %s, 'serves', now(), now(), 1)", (row["id"], spec["source"], subject["id"]))
             incidents.record_check(conn, row["id"], "reachability", "degraded", {"type": "expected", "pattern": pattern["template"], "candidates": candidates})
+        domains.ensure_candidate_domains(conn, row["id"], candidates, "pattern", f"Candidate spelling from pattern {pattern['template']} (pattern {pattern['id']}); not yet probed.")
         out.append(Expected(row["id"], code, subject["id"], subject["name"], candidates, created))
     return out
 
@@ -149,14 +150,16 @@ def probe_site(conn: psycopg.Connection, fetcher: PoliteFetcher, site_id: str, c
             conn.execute("UPDATE website.sites SET status = 'paused', updated_at = now() WHERE id = %s", (site_id,))
             return ProbeResult(site_id, "stopped", detail={"kind": stop.kind})
         except Exception as error:  # DNS failure, timeout, TLS error: this spelling does not exist
+            domains.mark_probed(conn, site_id, host, "unreachable", None, None, today)
             tried.append({"host": host, "result": type(error).__name__})
             continue
         location = result.headers.get("location")
         if 200 <= result.status < 400:
-            conn.execute("INSERT INTO website.domains (site_id, hostname, scheme, role, valid_from, valid_from_precision, observed_at, created_at, updated_at, version) VALUES (%s, %s, 'https', 'primary', %s, 'exact', now(), now(), now(), 1) ON CONFLICT DO NOTHING", (site_id, host, today))
+            domains.mark_probed(conn, site_id, host, "reachable" if result.status < 300 else "redirects", result.status, location, today)
             conn.execute("UPDATE website.sites SET status = 'discovered', first_seen_at = COALESCE(first_seen_at, now()), last_seen_at = now(), updated_at = now() WHERE id = %s", (site_id,))
             incidents.record_check(conn, site_id, "reachability", "ok", {"type": "probe", "host": host, "status": result.status, "redirect": location, "tried": tried})
             return ProbeResult(site_id, "reachable", host, result.status, {"redirect": location})
+        domains.mark_probed(conn, site_id, host, "unreachable", result.status, None, today)
         tried.append({"host": host, "result": result.status})
     conn.execute("UPDATE website.sites SET status = 'rejected', updated_at = now() WHERE id = %s AND status = 'expected'", (site_id,))
     incidents.record_check(conn, site_id, "reachability", "failed", {"type": "probe", "tried": tried})
