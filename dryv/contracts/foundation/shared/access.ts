@@ -32,5 +32,9 @@ export const accessPolicies = shared.policies({
     .policy()
     .description("Require a reviewer or admin.")
     .requires({ actor: accessContextSchemas.ActorContext }),
+  PipelineReadAccess: dryv.policy().description("Require the pipeline.read permission (reviewer or admin).").requires({ actor: accessContextSchemas.ActorContext }),
+  AssessmentApproveAccess: dryv.policy().description("Require the assessment.approve permission (admin or a named reviewer granted it).").requires({ actor: accessContextSchemas.ActorContext }),
+  CandidatePromoteAccess: dryv.policy().description("Require the candidate.promote permission (admin or a named reviewer granted it).").requires({ actor: accessContextSchemas.ActorContext }),
+  AccessManageAccess: dryv.policy().description("Require the access.manage permission.").requires({ actor: accessContextSchemas.ActorContext }),
   AdminAccess: dryv.policy().description("Require an admin.").requires({ actor: accessContextSchemas.ActorContext }),
 });

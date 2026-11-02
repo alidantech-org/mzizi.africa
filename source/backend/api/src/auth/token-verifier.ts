@@ -46,7 +46,8 @@ export function createTokenVerifier(config: VerifierConfig): TokenVerifier {
       const verified = await jwtVerify(token, resolved as never, { issuer: config.issuer, audience: config.audience, algorithms });
       const subject = verified.payload.sub;
       if (!subject || !UUID.test(subject)) throw new Error("subject is not a uuid");
-      return { actorId: subject, role: highestRole(verified.payload.roles ?? verified.payload.role) };
+      const permissions = Array.isArray(verified.payload.permissions) ? verified.payload.permissions.filter((code): code is string => typeof code === "string") : undefined;
+      return { actorId: subject, role: highestRole(verified.payload.roles ?? verified.payload.role), ...(permissions ? { permissions } : {}) };
     } catch {
       throw new UnauthorizedException("invalid or expired token");
     }

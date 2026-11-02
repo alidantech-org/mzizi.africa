@@ -6,6 +6,8 @@ import type { Role } from "#/auth/roles";
 export interface Actor {
   actorId: string;
   role: Role;
+  /** Permissions granted directly, on top of the role's bundle (the future fine-grained path). */
+  permissions?: string[];
 }
 
 const storage = new AsyncLocalStorage<Actor>();

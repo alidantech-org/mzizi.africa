@@ -31,6 +31,19 @@ beforeAll(async () => {
   otherKey = (await generateKeyPair("RS256")).privateKey;
 });
 
+describe("permissions", () => {
+  it("lets a reviewer read the pipeline but not promote or approve", () => {
+    expect(satisfies("reviewer", "PipelineReadAccess")).toBe(true);
+    expect(satisfies("reviewer", "CandidatePromoteAccess")).toBe(false);
+    expect(satisfies("reviewer", "AssessmentApproveAccess")).toBe(false);
+  });
+  it("lets an admin do everything and a direct grant widen a reviewer", () => {
+    expect(satisfies("admin", "CandidatePromoteAccess")).toBe(true);
+    expect(satisfies("reviewer", "CandidatePromoteAccess", ["candidate.promote"])).toBe(true);
+    expect(satisfies("reader", "CandidatePromoteAccess", ["not.a.permission"])).toBe(false);
+  });
+});
+
 describe("roles", () => {
   it("pick the highest known role and ignore the rest", () => {
     expect(highestRole(["reader", "reviewer", "wizard"])).toBe("reviewer");

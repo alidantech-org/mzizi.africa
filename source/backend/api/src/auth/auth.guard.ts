@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
     if (scheme?.toLowerCase() !== "bearer" || !token) throw new UnauthorizedException("a bearer token is required");
 
     const actor = await this.verify(token);
-    if (!satisfies(actor.role, policy)) throw new ForbiddenException(`${policy} is required`);
+    if (!satisfies(actor.role, policy, actor.permissions)) throw new ForbiddenException(`${policy} is required`);
     request.actor = actor;
     return true;
   }
