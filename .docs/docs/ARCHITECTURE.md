@@ -28,16 +28,17 @@ The architecture therefore separates:
 
 ```text
 mzizi.africa/
-├── apps/
-│   ├── www/                    # Public atlas / heritage / exploration product
-│   └── dashboard/              # Research, review, stewardship and operations
-│
-├── services/
-│   ├── data-engine/            # Discovery, ingestion, extraction, parsing
-│   ├── intelligence/           # AI/tool-assisted classification and evaluation
-│   ├── db-engine/              # Schema, migrations, seeds, imports, promotion
-│   ├── files/                  # Source artifact and file lifecycle service
-│   └── api/                    # Target NestJS product API
+├── source/
+│   ├── apps/
+│   │   ├── www/                # Public atlas / heritage / exploration product
+│   │   ├── web/                # Research, review, stewardship and operations dashboard
+│   │   └── mobile/             # Flutter mobile client
+│   └── backend/
+│       ├── data-engine/        # Discovery, ingestion, extraction, parsing
+│       ├── intelligence/       # AI/tool-assisted classification and evaluation
+│       ├── db-engine/          # Schema, migrations, seeds, imports, promotion
+│       ├── files/              # Source artifact and file lifecycle service
+│       └── api/                # Target NestJS product API (legacy Python lives here until migrated)
 │
 ├── packages/                   # Future shared contracts/taxonomies when justified
 │   ├── contracts/

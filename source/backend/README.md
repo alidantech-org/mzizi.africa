@@ -2,10 +2,10 @@
 
 Mzizi services are separated by responsibility so evidence ingestion, AI processing, database lifecycle and product API concerns do not collapse into one backend.
 
-## Target services
+## Target services (under `source/backend/`)
 
 ```text
-services/
+source/backend/
 ├── files/          # Evidence artifact custody and file lifecycle
 ├── data-engine/    # Source discovery, extraction, OCR and parsing
 ├── intelligence/   # AI/tool-assisted classification, cleaning and evaluation
@@ -15,7 +15,7 @@ services/
 
 ## Current transition state
 
-`services/api` currently contains the inherited Python FastAPI political-governance backend. It is valuable migration source material but is **not** the target API architecture.
+`source/backend/api` currently contains the inherited Python FastAPI political-governance backend. It is valuable migration source material but is **not** the target API architecture.
 
 Useful responsibilities from that service will be decomposed according to `.docs/MIGRATION.md`.
 

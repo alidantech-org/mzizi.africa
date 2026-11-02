@@ -86,7 +86,7 @@ When an architectural boundary, domain responsibility or core data-lifecycle rul
 ## Current documentation map
 
 ```text
-.docs/
+.docs/docs/
 ├── README.md             # Documentation entry point
 ├── WHY.md                # Common purpose and reasons
 ├── GOALS.md              # Goals, success criteria and non-goals
@@ -104,7 +104,7 @@ When an architectural boundary, domain responsibility or core data-lifecycle rul
 As implementation grows, this directory should gain focused specifications for:
 
 ```text
-.docs/
+.docs/docs/
 ├── architecture/
 │   ├── contracts.md
 │   ├── deployment.md

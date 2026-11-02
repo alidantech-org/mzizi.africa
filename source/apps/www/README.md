@@ -1,6 +1,6 @@
 # Mzizi Africa Public Application
 
-`apps/www` is the public-facing Mzizi Africa experience: an evidence-first African historical atlas, digital heritage museum and public knowledge explorer.
+`source/apps/www` is the public-facing Mzizi Africa experience: an evidence-first African historical atlas, digital heritage museum and public knowledge explorer.
 
 The current implementation began as a pre-colonial African history landing experience. Its long-term scope is broader and follows the repository-level Mzizi architecture.
 

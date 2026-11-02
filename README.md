@@ -29,14 +29,15 @@ Read [.docs/docs/WHY.md](.docs/docs/WHY.md), [.docs/docs/GOALS.md](.docs/docs/GO
 
 ```text
 mzizi.africa/
-├── apps/
-│   ├── www/            Public atlas, heritage museum and exploration experience
-│   └── dashboard/      Research, curation, review and data-stewardship workspace
+├── source/
+│   ├── apps/
+│   │   ├── www/        Public atlas, heritage museum and exploration experience
+│   │   ├── web/        Research, curation, review and data-stewardship dashboard
+│   │   └── mobile/     Flutter mobile client
+│   └── backend/
+│       └── api/        Current Python code; source material during architecture migration
 │
-├── services/
-│   └── api/            Current Python code; source material during architecture migration
-│
-└── .docs/              Product, system and research documentation
+└── .docs/              Task workspace plus product, system and research documentation
 ```
 
 The current repository is consolidated, but the target service architecture is intentionally broader than the code that exists today.
@@ -45,15 +46,17 @@ The current repository is consolidated, but the target service architecture is i
 
 ```text
 mzizi.africa/
-├── apps/
-│   ├── www/
-│   └── dashboard/
-├── services/
-│   ├── files/          Evidence artifact lifecycle
-│   ├── data-engine/    Discovery, extraction and parsing
-│   ├── intelligence/   AI/tool classification, cleaning and evaluation
-│   ├── db-engine/      Migrations, seeds, validation and promotion
-│   └── api/            Future NestJS product API
+├── source/
+│   ├── apps/
+│   │   ├── www/
+│   │   ├── web/        Research dashboard
+│   │   └── mobile/
+│   └── backend/
+│       ├── files/          Evidence artifact lifecycle
+│       ├── data-engine/    Discovery, extraction and parsing
+│       ├── intelligence/   AI/tool classification, cleaning and evaluation
+│       ├── db-engine/      Migrations, seeds, validation and promotion
+│       └── api/            Future NestJS product API
 ├── packages/           Shared contracts/taxonomies when justified
 └── .docs/
 ```
@@ -91,7 +94,7 @@ Sources / Archives / Government / Web / Datasets
                     │
           ┌─────────┴─────────┐
           ▼                   ▼
-      apps/www          apps/dashboard
+      source/apps/www    source/apps/web
 ```
 
 ### 1. File management layer

@@ -1,14 +1,14 @@
 # Mzizi Mobile
 
 The Explore map uses the versioned geography API contract in
-[`apps/docs/geography-api-contract.md`](../docs/geography-api-contract.md).
+[`.docs/docs/geography-api-contract.md`](../../../.docs/docs/geography-api-contract.md).
 The Flutter app does not contain authoritative boundaries or governance data.
 
 ## Local API configuration
 
 The app reads `MZIZI_API_BASE_URL` at build time. Flutter does not load `.env.local` automatically; pass it using `--dart-define-from-file`. Flutter accepts `KEY=value` entries in that file. The mobile `.gitignore` excludes `.env.local` and other `.env.*` files.
 
-From `apps/mobile`, set the URL in your ignored `.env.local` file for the target you are running:
+From `source/apps/mobile`, set the URL in your ignored `.env.local` file for the target you are running:
 
 ```dotenv
 MZIZI_API_BASE_URL=http://127.0.0.1:8000

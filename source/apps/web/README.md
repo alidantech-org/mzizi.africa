@@ -1,6 +1,6 @@
 # Mzizi Research & Stewardship Dashboard
 
-`apps/dashboard` is the internal/research application for Mzizi Africa.
+`source/apps/web` (the research dashboard) is the internal/research application for Mzizi Africa.
 
 The current codebase was inherited from the earlier **Katiba Book / Political Finance & Risk Intelligence** project. That work is still valuable, especially for governance, elections, political finance and geographic analysis, but it no longer defines the full product scope.
 
