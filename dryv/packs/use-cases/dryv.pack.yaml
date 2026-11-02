@@ -1,0 +1,82 @@
+version: dryv.pack/v1alpha1
+key: mzizi.use-cases
+source: templates
+
+info:
+  title: Mzizi use cases
+  version: 0.4.0
+  description: Scaffolds, per feature, the implementation of the generated NestJS service contract and one injectable use case per HTTP operation. Scaffolds are created once and then owned by the project.
+  purpose: backend
+  languages: [typescript]
+  frameworks: [nestjs]
+  tags: [use-cases, services, scaffold]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+needs:
+  schema.validation: { required: true }
+  # Entities behind each operation's response read projection, for CRUD starting points.
+  schema.persistence: { required: true }
+
+selections:
+  operations:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: each
+
+  features:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: collects.feature
+
+# <group>/<feature>/<feature>.service.impl.ts and <group>/<feature>/use-cases/<operation>.usecase.ts.
+templates:
+  usecase:
+    $ref: '#/selections/operations'
+    output:
+      name: $(subject.name.kebab)
+      path:
+        - $(group.name.kebab)
+        - $(feature.name.kebab)
+      symbol: $(subject.name.pascal)UseCase
+    imports:
+      # Transitive: nested read-projection DTOs, not only the response DTO itself.
+      - $ref: '#/needs/schema.validation'
+        transitive: true
+      - $ref: '#/needs/schema.persistence'
+        transitive: true
+
+  implementation:
+    $ref: '#/selections/features'
+    output:
+      name: $(feature.name.kebab)
+      path:
+        - $(group.name.kebab)
+        - $(feature.name.kebab)
+      symbol: $(group.name.pascal)$(feature.name.pascal)ServiceImpl
+    imports:
+      - $ref: '#/needs/schema.validation'
+      - $ref: '#/templates/usecase'
+        members: true
+
+  # use-cases/<operation>.usecase.spec.ts: scaffolded once with the contract's promises as todos.
+  usecase-spec:
+    $ref: '#/selections/operations'
+    output:
+      name: $(subject.name.kebab)
+      path:
+        - $(group.name.kebab)
+        - $(feature.name.kebab)
+    imports:
+      - $ref: '#/templates/usecase'
+        members: true
+
+provides:
+  operation.implementation:
+    $ref: '#/templates/implementation'
+  operation.usecase:
+    $ref: '#/templates/usecase'

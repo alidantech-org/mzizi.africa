@@ -1,0 +1,10 @@
+*node_modules/
+.dryv
+# Dryv local state: keep .dryv/state, ignore the rest
+.dryv/logs/
+.dryv/plans/
+.dryv/journal/
+.dryv/.cache/
+/package.json
+/bun.lock
+/dryv/staging/

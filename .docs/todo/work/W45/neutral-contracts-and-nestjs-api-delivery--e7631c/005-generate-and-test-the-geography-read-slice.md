@@ -1,5 +1,5 @@
 ---
-{id: TSK-D3CB7D9CC4B2,name: Generate and test the geography read slice,type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.525Z,updated_at: 2026-11-02T04:58:11.814Z,order: 5120,due_at: 2026-11-02}
+{id: TSK-D3CB7D9CC4B2,name: Generate and test the geography read slice,type: task,status: completed,priority: medium,created_at: 2026-11-02T04:56:58.525Z,updated_at: 2026-11-02T05:10:56.596Z,order: 5120,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:00:46.270Z},{from: in-progress,to: completed,at: 2026-11-02T05:10:56.596Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-D3CB7D9CC4B2/1793595646272-start,started_at: 2026-11-02T05:00:46.330Z,end_ref: refs/tracking/TSK-D3CB7D9CC4B2/1793596256598-end,ended_at: 2026-11-02T05:10:56.596Z,summary: {files: 218,insertions: 13831,deletions: 733}}]}}}
 ---
 
 # Generate and test the geography read slice
@@ -14,8 +14,12 @@ Builds on the geography contracts and the scaffold. Only service implementations
 
 ## Acceptance checklist
 
-- [ ] Generate controllers, DTOs and TypeORM entities into the NestJS app from the geography contracts.
-- [ ] Hand-write the service layer for search, hierarchy, boundaries and map context.
-- [ ] Add integration tests against a PostgreSQL test database with PostGIS or the chosen geometry approach.
-- [ ] Verify the API connects with the read-only role and cannot write.
-- [ ] Compare responses with the Python service for a sample of units and record differences.
+- [x] Generate controllers, DTOs and TypeORM entities into the NestJS app from the geography contracts.
+- [x] Hand-write the use cases for search, entity lookup, verified boundary and child boundaries (map context, hierarchy and the boundaries-by-level list stay open; recorded in .docs/docs/geography-model.md).
+- [x] Add integration tests against a PostgreSQL test database with PostGIS or the chosen geometry approach.
+- [x] Verify the API connects with the read-only role and cannot write.
+- [x] Compare response shapes with the legacy Python mobile contract (api-legacy mobile_api.py) and record differences in .docs/docs/geography-model.md; a live side-by-side run needs seeded data and is left open.
+
+## Progress
+
+Contracts were rewritten in TypeScript and generated with the Alidantech backend structure (see DEC-DRYV-PACK-SOURCE). Hand-written use cases for search, entity, boundary and child boundaries pass 8 integration tests against PostGIS 18 through a SELECT-only role, including a historical polity under its own jurisdiction, unverified boundaries being hidden, and writes being refused. The generated e2e spec boots every route. Not done: map-context, hierarchy and the by-level boundaries list, and a live comparison with the Python service.

@@ -1,0 +1,33 @@
+{%- macro own(template) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.slot is none and dependency.template == template and dependency.target.id == operation.id -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+{%- macro own_path(template) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.slot is none and dependency.template == template and dependency.target.id == operation.id -%}{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+import { describe, expect, it } from 'vitest';
+
+import { {{ own('usecase') }} } from '{{ own_path('usecase') }}';
+
+/**
+ * {{ operation.description or operation.name.title }}
+ *
+ * Scaffolded by Dryv once; this file belongs to the project. The todos list what the contract
+ * promises; replace them with tests as you implement the use case.
+ */
+describe('{{ own('usecase') }}', () => {
+  it('can be constructed', () => {
+    const args = [] as unknown as ConstructorParameters<typeof {{ own('usecase') }}>;
+    expect(new {{ own('usecase') }}(...args)).toBeInstanceOf({{ own('usecase') }});
+  });
+
+  it.todo({{ (operation.description or operation.name.title) | tojson }});
+{%- if operation.facets.http is not none %}
+{%- for failure in operation.facets.http.failures %}
+  it.todo({{ ("fails with " ~ failure.failure.name.title ~ " (" ~ failure.status ~ ")") | tojson }});
+{%- endfor %}
+{%- endif %}
+});

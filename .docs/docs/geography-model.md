@@ -4,7 +4,7 @@
 
 # Geography: neutral model and contract mapping
 
-Contracts live in `dryv/contracts/geography.py` and reuse `dryv/contracts/shared.py`. They replace the geographic legacy models listed in `.docs/docs/audits/LEGACY_MODEL_INVENTORY.md` section 2.
+Contracts live in `dryv/contracts/foundation/geography/index.ts` and reuse `foundation/shared` and `foundation/reference`. They replace the geographic legacy models listed in `.docs/docs/audits/LEGACY_MODEL_INVENTORY.md` section 2.
 
 ## Model
 
@@ -39,3 +39,11 @@ Gaps still open:
 - `ancestors`, `historical_names` and `historical_relationships` are not fields of `GeographyEntity` yet; they derive from `GeoUnit` parents, name versions and changes.
 - Search accepts `country` as a jurisdiction code; the mobile client sends `KE`, so lowercase normalisation is a service concern.
 - `GeoJson` is a `json`-format string; typed GeoJSON validation is a service concern.
+
+## Legacy Python comparison (shape only)
+
+Compared with `source/backend/api-legacy/app/routes/geographic/models/mobile_api.py` by reading, not by a live run:
+
+- Same: entity metadata, verified boundary provenance (source, reference, licence, year, retrieved-at, version), valid time, GeoJSON Feature and FeatureCollection with `geography_id` in properties.
+- Different: field names are camelCase here; boundary and child boundaries are wrapped as `{ geojson, boundaryVerified }` with the GeoJSON as text instead of returning the GeoJSON object directly; ids are UUIDs, not ULIDs; `country` filters by jurisdiction code.
+- Not yet built: `/boundaries?country&level`, `/entities/{id}/map-context`, `/entities/{id}/governance`, hierarchy, ancestors, historical names and relationships on the entity.

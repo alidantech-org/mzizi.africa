@@ -23,3 +23,7 @@ AGENTS.md sections 4 to 6 require every claim to answer where it came from, when
 ## Progress
 
 `dryv/contracts/shared.py` compiles to Runtime IR (`dryv-py compile`, 32 items). Findings: string `pattern` takes structured constraints, not regular expressions, so business code format is enforced by length and later by service validation; inline numeric and boolean properties must be registered through `properties()`; arbitrary JSON (for example GeoJSON) has no direct property, so the geography task must decide between a record type and a string with `json` format.
+
+## Rework note
+
+The contracts were later rewritten from Python to TypeScript authoring to match the Alidantech backend structure (DEC-DRYV-PACK-SOURCE); the shared contracts now live in `dryv/contracts/foundation/shared` and `foundation/reference`.

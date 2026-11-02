@@ -1,0 +1,18 @@
+{
+  "name": "@mzizi/dryv",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Dryv contracts for the Mzizi canonical knowledge model (TypeScript authoring).",
+  "scripts": {
+    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
+    "contracts:doctor": "dryv-ts doctor contracts/index.ts",
+    "contracts:compile": "dryv-ts compile contracts/index.ts",
+    "check": "bun run typecheck && bun run contracts:doctor && bun run contracts:compile",
+    "link": "bash scripts/link-dryv.sh"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "typescript": "^7.0.2"
+  }
+}

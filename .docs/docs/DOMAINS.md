@@ -67,7 +67,7 @@ Chronology is what turns isolated records into history. The system must be able 
 
 ### Contracts
 
-Neutral geography contracts live in `dryv/contracts/geography.py`; see `.docs/docs/geography-model.md`.
+Neutral geography contracts live in `dryv/contracts/foundation/geography/index.ts`; see `.docs/docs/geography-model.md`.
 
 ### Why it belongs
 

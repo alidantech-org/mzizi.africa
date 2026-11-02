@@ -1,0 +1,259 @@
+{#- The shared enum (bound property.enum.types pack) for an enum property. -#}
+{%- macro enum_symbol(id) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == id and dependency.slot == 'property.enum.types' -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{#- The generated symbol of another planned file of the given template, for a subject. -#}
+{%- macro dep(id, template) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == id and dependency.template == template -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{#- Relative path (without .ts) to another planned file of the given template, for a subject. -#}
+{%- macro dep_path(id, template) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == id and dependency.template == template -%}{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{#- Fields the shared B.IBase interface already declares. -#}
+{%- macro is_base(field) -%}
+{%- if field.name.camel in ['id', 'createdAt', 'updatedAt', 'deletedAt', 'version'] -%}yes{%- endif -%}
+{%- endmacro -%}
+
+{#- "yes" for a temporal field that can be filtered by range (`between`). -#}
+{%- macro is_date_range(field) -%}
+{%- if field.value.is.property and field.value.is.temporal and field.query is not none -%}
+{%- for operator in field.query.filter -%}{%- if operator == 'between' -%}yes{%- endif -%}{%- endfor -%}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro is_filterable(field) -%}
+{%- if field.query is not none and is_date_range(field) == '' -%}{%- for operator in field.query.filter -%}{%- if loop.first -%}yes{%- endif -%}{%- endfor -%}{%- endif -%}
+{%- endmacro -%}
+
+{%- macro is_selectable(field) -%}
+{%- if field.related is none and (field.query is none or field.query.select != 'never') -%}yes{%- endif -%}
+{%- endmacro -%}
+
+{%- macro has_default_select() -%}
+{%- for field in schema.fields -%}{%- if field.query is not none and field.query.select == 'default' -%}yes{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro is_default_select(field) -%}
+{%- if has_default_select() -%}{%- if field.query is not none and field.query.select == 'default' -%}yes{%- endif -%}
+{%- elif is_selectable(field) -%}yes{%- endif -%}
+{%- endmacro -%}
+
+{#- Navigation name and target link of a relation, for fields that relate to another entity. -#}
+{#- A relation is named after its target (appId -> app), as the TypeORM pack does; a second
+    relation to the same target is named after its field instead (ownerId -> ownerIdRelation). -#}
+{%- macro relation_name(field, position) -%}
+{%- if field.relation is not none -%}{% if target_seen(field.relation.target.schema.id, position) %}{{ field.name.camel }}Relation{% else %}{{ field.relation.target.schema.name.camel }}{% endif %}{%- elif field.related is not none -%}{{ field.name.camel }}{%- endif -%}
+{%- endmacro -%}
+
+{#- "yes" when an earlier field already relates to the same target (import it once). -#}
+{%- macro target_seen(target, position) -%}
+{%- for other in schema.fields -%}{%- if loop.index < position and relation_target(other) == target -%}yes{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+
+{#- Module alias for a related entity: IApp -> App. -#}
+{%- macro alias(target) -%}{{ dep(target, 'types')[1:] }}{%- endmacro -%}
+
+{%- macro relation_target(field) -%}
+{%- if field.relation is not none -%}{{ field.relation.target.schema.id }}{%- elif field.related is not none -%}{{ field.related.via.schema.id }}{%- endif -%}
+{%- endmacro -%}
+
+{%- macro ts_type(field) -%}
+{%- set value = field.value -%}
+{%- if value.is.property and value.is.primitive -%}{% set base = value.property.primitive.type %}
+{%- elif value.is.property and value.is.enum -%}{% set base = enum_symbol(value.property.enum.id) or 'string' %}
+{%- elif value.is.property and value.is.temporal and value.property.temporal.kind not in ['duration', 'interval'] -%}{% set base = 'Date' %}
+{%- elif value.is.property and value.is.record -%}{% set base = 'Record<string, unknown>' %}
+{%- else -%}{% set base = 'unknown' %}
+{%- endif -%}
+{%- if field.array is not none -%}{{ base }}[]{%- else -%}{{ base }}{%- endif -%}
+{%- if field.nullable %} | null{% endif -%}
+{%- endmacro -%}
+
+{%- macro union(kind) -%}
+{%- for field in schema.fields -%}
+{%- if (kind == 'sensitive' and field.sensitive) or (kind != 'sensitive' and field.mutation == kind) -%}'{{ field.name.camel }}' | {% endif -%}
+{%- endfor -%}never
+{%- endmacro -%}
+{%- set name = schema.name.pascal -%}
+{%- set constant = schema.name.constant -%}
+// ----------------------------------
+// SHARED TYPES
+// ----------------------------------
+
+import * as Q from '{{ (file.path.import_base ~ 'common/types/query') if file.path.import_base else '../../common/types/query' }}';
+import * as B from '{{ (file.path.import_base ~ 'common/types/base') if file.path.import_base else '../../common/types/base' }}';
+{%- for dependency in file.dependencies %}{% if dependency.slot == 'property.enum.types' %}
+import type { {{ dependency.symbol }} } from '{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}';
+{%- endif %}{% endfor %}
+
+// ----------------------------------
+// RELATED ENTITY TYPES
+// ----------------------------------
+{%- for field in schema.fields %}
+{%- set target = relation_target(field) %}
+{%- if target and target != schema.id and dep(target, 'types') and target_seen(target, loop.index) == '' %}
+import type * as {{ alias(target) }}Types from '{{ dep_path(target, 'types') }}';
+{%- endif %}
+{%- endfor %}
+
+// ----------------------------------
+// LOCAL CONFIG CONSTANTS
+// ----------------------------------
+
+import type {
+  {{ constant }}_RELATION_KEYS,
+  {{ constant }}_SORTABLE_FIELDS,
+  {{ constant }}_SEARCHABLE_FIELDS,
+  {{ constant }}_FILTERABLE_FIELDS,
+  {{ constant }}_DATE_RANGE_FIELDS,
+  {{ constant }}_SELECTABLE_FIELDS,
+  {{ constant }}_DEFAULT_SELECT_FIELDS,
+  {{ constant }}_EDITABLE_FIELDS
+} from './{{ schema.name.kebab }}.config';
+
+// ----------------------------------
+// CORE ENTITY CONTRACT
+// ----------------------------------
+
+/** {{ schema.description or schema.name.title }} */
+export interface I{{ name }} extends B.IBase {
+{%- for field in schema.fields %}{% if is_base(field) == '' and field.related is none %}
+  {{ field.name.camel }}{% if field.optional and not field.nullable %}?{% endif %}: {{ ts_type(field) }};
+{%- endif %}{% endfor %}
+{%- for field in schema.fields %}
+{%- set target = relation_target(field) %}
+{%- if target and dep(target, 'types') %}
+  readonly {{ relation_name(field, loop.index) }}?: {% if target == schema.id %}I{{ name }}{% else %}{{ alias(target) }}Types.{{ dep(target, 'types') }}{% endif %}{% if field.related is not none %}[]{% endif %};
+{%- endif %}
+{%- endfor %}
+}
+
+// ----------------------------------
+// ENTITY KEYS
+// ----------------------------------
+
+export type {{ name }}Key = keyof I{{ name }};
+
+export type {{ name }}RelationKey = (typeof {{ constant }}_RELATION_KEYS)[number];
+
+// ----------------------------------
+// FIELD GROUPINGS
+// ----------------------------------
+
+export type I{{ name }}ReadonlyFields = B.IBaseReadonlyFields;
+
+export type I{{ name }}ContextualFields = {{ union('context') }};
+
+export type I{{ name }}SensitiveFields = {{ union('sensitive') }};
+
+export type I{{ name }}TransitionFields = {{ union('transition') }};
+
+export type I{{ name }}ImmutableFields =
+  | I{{ name }}ReadonlyFields
+  | I{{ name }}ContextualFields
+  | I{{ name }}SensitiveFields
+  | I{{ name }}TransitionFields;
+
+// ----------------------------------
+// WRITE CONTRACTS
+// ----------------------------------
+
+export type I{{ name }}Creatable = Omit<I{{ name }}, I{{ name }}ImmutableFields | {{ name }}RelationKey>;
+
+export type I{{ name }}SystemWritable = Omit<I{{ name }}, B.IBaseReadonlyFields | {{ name }}RelationKey>;
+
+export type I{{ name }}Updatable = Partial<Omit<I{{ name }}, I{{ name }}ImmutableFields | {{ name }}RelationKey>>;
+
+export interface I{{ name }}TransitionPayload {
+{%- for field in schema.fields %}{% if field.mutation == 'transition' %}
+  {{ field.name.camel }}?: {{ ts_type(field) }};
+{%- endif %}{% endfor %}
+}
+
+// ----------------------------------
+// QUERY FIELD TYPES
+// ----------------------------------
+
+export type {{ name }}SortableField = (typeof {{ constant }}_SORTABLE_FIELDS)[number];
+
+export type {{ name }}SearchableField = (typeof {{ constant }}_SEARCHABLE_FIELDS)[number];
+
+export type {{ name }}FilterableField = (typeof {{ constant }}_FILTERABLE_FIELDS)[number];
+
+export type {{ name }}DateRangeField = (typeof {{ constant }}_DATE_RANGE_FIELDS)[number];
+
+export type {{ name }}SelectableField = (typeof {{ constant }}_SELECTABLE_FIELDS)[number];
+
+export type {{ name }}DefaultSelectField = (typeof {{ constant }}_DEFAULT_SELECT_FIELDS)[number];
+
+export type {{ name }}EditableField = (typeof {{ constant }}_EDITABLE_FIELDS)[number];
+
+// ----------------------------------
+// RELATION CONFIG TYPES
+// ----------------------------------
+
+export type I{{ name }}AsOneRelationConfig = Q.IOneRelationConfig<'{{ schema.name.camel }}', {{ name }}SelectableField>;
+
+export type I{{ name }}AsManyRelationConfig = Q.IManyRelationConfig<'{{ schema.name.camel }}s', {{ name }}SelectableField, {{ name }}SortableField>;
+
+// ----------------------------------
+// RELATION QUERY TYPES
+// ----------------------------------
+
+export type I{{ name }}AsOneRelationQuery = Q.IAsOneRelationQuery<I{{ name }}, {{ name }}SelectableField>;
+
+export type I{{ name }}AsManyRelationQuery = Q.IAsManyRelationQuery<I{{ name }}, {{ name }}SelectableField, {{ name }}SortableField>;
+
+// ----------------------------------
+// RELATION MAP
+// ----------------------------------
+
+export interface I{{ name }}RelationMap extends Record<{{ name }}RelationKey, unknown> {
+{%- for field in schema.fields %}
+{%- set target = relation_target(field) %}
+{%- if target and dep(target, 'types') %}
+  {{ relation_name(field, loop.index) }}: {% if target == schema.id %}I{{ name }}{% else %}{{ alias(target) }}Types.{{ dep(target, 'types') }}{% endif %}{% if field.related is not none %}AsManyRelationQuery{% else %}AsOneRelationQuery{% endif %};
+{%- endif %}
+{%- endfor %}
+}
+
+// ----------------------------------
+// QUERY CONTRACTS
+// ----------------------------------
+
+export type I{{ name }}RelationQueries = Q.IBaseRelationQueries<I{{ name }}, {{ name }}RelationKey, I{{ name }}RelationMap>;
+
+export type I{{ name }}ItemQuery = Q.IBaseItemQuery<
+  I{{ name }},
+  {{ name }}RelationKey,
+  {{ name }}SelectableField,
+  {{ name }}RelationKey,
+  {{ name }}SelectableField,
+  I{{ name }}RelationMap,
+  I{{ name }}RelationQueries
+>;
+
+export type I{{ name }}ListQuery = Q.IBaseListQuery<
+  I{{ name }},
+  {{ name }}RelationKey,
+  {{ name }}SelectableField,
+  {{ name }}SortableField,
+  {{ name }}RelationKey,
+  {{ name }}SelectableField,
+  {{ name }}SortableField,
+  {{ name }}DateRangeField,
+  {{ name }}FilterableField,
+  I{{ name }}RelationMap,
+  I{{ name }}RelationQueries,
+  I{{ name }}ItemQuery
+>;

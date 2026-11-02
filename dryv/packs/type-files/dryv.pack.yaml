@@ -1,0 +1,59 @@
+version: dryv.pack/v1alpha1
+key: mzizi.type-files
+source: templates
+
+info:
+  title: Mzizi type files
+  version: 0.2.0
+  description: The project's query types and config per entity (<entity>.types.ts, <entity>.config.ts and a namespace entry), placed in each group module and built on the shared base and query helpers.
+  purpose: types
+  languages: [typescript]
+  tags: [types, query, entities]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+# Enums come from the bound shared types pack (inject/types/typescript).
+needs:
+  property.enum.types: { required: true }
+
+selections:
+  entities:
+    subject: schema
+    filter:
+      all: { role: entity }
+    scope: each
+
+# <group>/types/<entity>.types.ts, <entity>.config.ts and <entity>.ts.
+templates:
+  types:
+    $ref: '#/selections/entities'
+    output:
+      name: $(subject.name.kebab)
+      path:
+        - $(group.name.kebab)
+      symbol: I$(subject.name.pascal)
+    imports:
+      - $ref: '#/needs/property.enum.types'
+      - $ref: '#/templates/types'
+      - $ref: '#/templates/config'
+
+  config:
+    $ref: '#/selections/entities'
+    output:
+      name: $(subject.name.kebab)
+      path:
+        - $(group.name.kebab)
+      symbol: $(subject.name.constant)_QUERY_OPTIONS
+    imports:
+      - $ref: '#/templates/types'
+      - $ref: '#/templates/config'
+
+  index:
+    $ref: '#/selections/entities'
+    output:
+      name: $(subject.name.kebab)
+      path:
+        - $(group.name.kebab)
+      symbol: $(subject.name.pascal)

@@ -1,0 +1,238 @@
+{#- The generated symbol of another planned file, found by the subject it represents and slot. -#}
+{%- macro symbol_for(link, slot) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == link.id and dependency.slot == slot -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{#- A port's TypeScript type: DTO classes for schemas (bound schema.validation pack), else scalars. -#}
+{%- macro ts_type(value) -%}
+{%- if value is none -%}unknown
+{%- elif value.is.schema -%}{{ symbol_for(value.schema, 'schema.validation') or 'unknown' }}
+{%- elif value.is.property and value.is.primitive -%}{{ value.property.primitive.type }}
+{%- elif value.is.property and value.is.temporal -%}string
+{%- else -%}unknown
+{%- endif -%}
+{%- endmacro -%}
+
+{#- One input object, like props: a schema input is its DTO, named fields an object type. -#}
+{%- macro params(operation) -%}
+{%- if operation.input and operation.input.kind == 'schema' -%}input: {{ ts_type(operation.input.value) }}
+{%- elif operation.input -%}input: { {% for field in operation.input.fields %}{{ field.name.camel }}{% if field.optional %}?{% endif %}: {{ ts_type(field.value) }}{% if not loop.last %}; {% endif %}{% endfor %} }
+{%- endif -%}
+{%- endmacro -%}
+{%- macro result(operation) -%}
+{%- if operation.output -%}{{ ts_type(operation.output.value) }}{%- else -%}void{%- endif -%}
+{%- endmacro -%}
+
+{#- Contract facts the scaffold builds on: the response field carrying a read projection of an
+    entity (one item or a list), the path id and the body. -#}
+{%- macro item_field(operation) -%}
+{%- if operation.output is not none and operation.output.value.is.schema -%}
+{%- for field in operation.output.value.schema.fields -%}
+{%- if field.value.is.schema and field.array is none and field.value.schema.source is not none and field.value.schema.source.purpose == 'read' and symbol_for(field.value.schema.source.schema, 'schema.persistence') -%}{{ field.name.camel }}{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro list_field(operation) -%}
+{%- if operation.output is not none and operation.output.value.is.schema -%}
+{%- for field in operation.output.value.schema.fields -%}
+{%- if field.value.is.schema and field.array is not none and field.value.schema.source is not none and field.value.schema.source.purpose == 'read' and symbol_for(field.value.schema.source.schema, 'schema.persistence') -%}{{ field.name.camel }}{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro path_port(http) -%}
+{%- for binding in http.inputs %}{% if binding.is.path and loop.first %}{{ binding.port.name.camel }}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{%- macro first_path_port(http) -%}
+{%- for binding in http.inputs if binding.is.path %}{% if loop.first %}{{ binding.port.name.camel }}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{%- macro body_expression(operation, http) -%}
+{%- for binding in http.inputs if binding.is.body %}{% if loop.first %}{% if binding.port.field is none %}input{% else %}input.{{ binding.port.name.camel }}{% endif %}{% endif %}{% endfor -%}
+{%- endmacro -%}
+
+{#- "x" per response field carrying a read projection of an entity; CRUD needs exactly one. -#}
+{%- macro read_fields(operation) -%}
+{%- if operation.output is not none and operation.output.value.is.schema -%}
+{%- for field in operation.output.value.schema.fields -%}
+{%- if field.value.is.schema and field.value.schema.source is not none and field.value.schema.source.purpose == 'read' and symbol_for(field.value.schema.source.schema, 'schema.persistence') -%}x{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- endmacro -%}
+{#- The CRUD shape this operation matches, or empty when it needs a hand-written implementation. -#}
+{%- macro kind(operation) -%}
+{%- if operation.facets.http is not none and read_fields(operation) == 'x' -%}
+{%- set http = operation.facets.http -%}
+{#- A POST on an existing record (a path id) is an action, not a creation. -#}
+{%- if http.method == 'POST' and item_field(operation) and body_expression(operation, http) and not first_path_port(http) -%}create
+{%- elif http.method == 'GET' and item_field(operation) and first_path_port(http) -%}detail
+{%- elif http.method == 'GET' and list_field(operation) -%}list
+{%- elif (http.method == 'PATCH' or http.method == 'PUT') and item_field(operation) and first_path_port(http) and body_expression(operation, http) -%}update
+{%- endif -%}
+{%- endif -%}
+{%- endmacro -%}
+
+{#- Entity and read-projection details for the item or list field. -#}
+{%- macro read_field(operation) -%}{{ item_field(operation) or list_field(operation) }}{%- endmacro -%}
+{%- macro entity_symbol(operation) -%}
+{%- for field in operation.output.value.schema.fields -%}
+{%- if field.name.camel == read_field(operation) -%}{{ symbol_for(field.value.schema.source.schema, 'schema.persistence') }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+{%- macro read_symbol(operation) -%}
+{%- for field in operation.output.value.schema.fields -%}
+{%- if field.name.camel == read_field(operation) -%}{{ symbol_for(field.value.schema, 'schema.validation') }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+{%- macro read_mapping(operation) -%}
+{%- for field in operation.output.value.schema.fields -%}
+{%- if field.name.camel == read_field(operation) -%}
+{%- for item in field.value.schema.source.fields %}
+    {{ item.name.camel }}: entity.{{ item.source.camel }},
+{%- endfor -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+{#- Query fields that are also read-projection fields become equality filters. -#}
+{%- macro filters(operation) -%}
+{%- if operation.input is not none and operation.input.kind -%}
+{%- for query in operation.input.fields -%}
+{%- for field in operation.output.value.schema.fields -%}
+{%- if field.name.camel == read_field(operation) -%}
+{%- for item in field.value.schema.source.fields -%}
+{%- if item.name.camel == query.name.camel and query.name.camel not in ['page', 'limit', 'sort', 'order'] %}
+    if (input.{{ query.name.camel }} !== undefined) where.{{ item.source.camel }} = input.{{ query.name.camel }};
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro has_input_field(operation, name) -%}
+{%- if operation.input is not none and operation.input.kind -%}
+{%- for query in operation.input.fields %}{% if query.name.camel == name %}x{% endif %}{% endfor -%}
+{%- endif -%}
+{%- endmacro -%}
+{#- Pagination metadata, filled from the names it uses. -#}
+{%- macro page_meta(operation) -%}
+{%- for field in operation.output.value.schema.fields -%}
+{%- if field.name.camel != read_field(operation) and field.value.is.schema %}
+    {{ field.name.camel }}: {
+{%- for meta in field.value.schema.fields %}
+{%- set n = meta.name.camel %}
+      {{ n }}: {% if n in ['total', 'totalItems', 'count', 'totalCount'] %}total{% elif n in ['page', 'currentPage'] %}page{% elif n in ['limit', 'pageSize', 'perPage'] %}limit{% elif n in ['totalPages', 'pages', 'pageCount'] %}Math.ceil(total / limit){% elif n in ['hasNextPage', 'hasNext'] %}page * limit < total{% elif n in ['hasPreviousPage', 'hasPrevious', 'hasPrev'] %}page > 1{% else %}undefined /* TODO: {{ n }} */{% endif %},
+{%- endfor %}
+    },
+{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+{#- Other response fields, such as an ApiMessage message. -#}
+{%- macro extra_fields(operation) -%}
+{%- for field in operation.output.value.schema.fields -%}
+{%- if field.name.camel != read_field(operation) and not field.value.is.schema %}
+    {{ field.name.camel }}: {% if field.name.camel == 'message' %}{{ (operation.description or operation.name.title) | tojson }}{% else %}undefined /* TODO: {{ field.name.camel }} */{% endif %},
+{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{%- set crud = kind(operation) -%}
+{%- if crud -%}
+import { Injectable{% if crud in ['detail', 'update'] %}, NotFoundException{% endif %} } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import type { DataSource{% if crud == 'list' %}, FindOptionsWhere{% endif %}{% if crud == 'create' %}, DeepPartial{% endif %} } from 'typeorm';
+{%- else -%}
+import { Injectable, NotImplementedException } from '@nestjs/common';
+{%- endif %}
+{%- for dependency in file.dependencies %}{% if dependency.symbol and dependency.slot == 'schema.validation' %}
+import type { {{ dependency.symbol }} } from '{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}';
+{%- elif crud and dependency.symbol and dependency.slot == 'schema.persistence' and dependency.symbol == entity_symbol(operation) %}
+import { {{ dependency.symbol }} } from '{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}';
+{%- endif %}{% endfor %}
+
+/**
+ * {{ operation.description or operation.name.title }}
+ *
+ * Scaffolded by Dryv once; this file belongs to the project.
+{%- if crud %}
+ * Generated as a starting {{ crud }} implementation from the contract (response read projection
+ * of {{ entity_symbol(operation) }}); review it and add business rules here.
+{%- else %}
+ * Write the use case here.
+{%- endif %}
+ */
+@Injectable()
+export class {{ file.symbol }} {
+{%- if crud %}
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+
+  private get repository() {
+    return this.dataSource.getRepository({{ entity_symbol(operation) }});
+  }
+
+{%- if crud in ['create', 'update'] %}
+
+  /** System fields the contract leaves to the implementation: timestamps and the version. */
+  private stamp(entity: {{ entity_symbol(operation) }}, created: boolean): void {
+    const now = new Date();
+    const target = entity as unknown as Record<string, unknown>;
+    const has = (name: string) => this.repository.metadata.findColumnWithPropertyName(name) !== undefined;
+    if (created && has("createdAt")) target.createdAt = now;
+    if (has("updatedAt")) target.updatedAt = now;
+    if (has("version")) target.version = created ? 1 : Number(target.version ?? 0) + 1;
+  }
+{%- endif %}
+
+  private toReadModel(entity: {{ entity_symbol(operation) }}): {{ read_symbol(operation) }} {
+    return {
+{{- read_mapping(operation) }}
+    } as unknown as {{ read_symbol(operation) }};
+  }
+{%- endif %}
+
+  async execute({{ params(operation) }}): Promise<{{ result(operation) }}> {
+{%- if crud == 'create' %}
+    const entity = this.repository.create({{ body_expression(operation, operation.facets.http) }} as DeepPartial<{{ entity_symbol(operation) }}>);
+    this.stamp(entity, true);
+    const saved = await this.repository.save(entity);
+    return {
+      {{ read_field(operation) }}: this.toReadModel(saved),
+{{- extra_fields(operation) }}
+    } as unknown as {{ result(operation) }};
+{%- elif crud == 'detail' %}
+    const entity = await this.repository.findOneBy({ id: input.{{ first_path_port(operation.facets.http) }} } as never);
+    if (!entity) throw new NotFoundException('{{ entity_symbol(operation) | replace("Entity", "") }} not found');
+    return {
+      {{ read_field(operation) }}: this.toReadModel(entity),
+{{- extra_fields(operation) }}
+    } as unknown as {{ result(operation) }};
+{%- elif crud == 'update' %}
+    const entity = await this.repository.findOneBy({ id: input.{{ first_path_port(operation.facets.http) }} } as never);
+    if (!entity) throw new NotFoundException('{{ entity_symbol(operation) | replace("Entity", "") }} not found');
+    this.repository.merge(entity, {{ body_expression(operation, operation.facets.http) }} as never);
+    this.stamp(entity, false);
+    const saved = await this.repository.save(entity);
+    return {
+      {{ read_field(operation) }}: this.toReadModel(saved),
+{{- extra_fields(operation) }}
+    } as unknown as {{ result(operation) }};
+{%- elif crud == 'list' %}
+    const page = {% if has_input_field(operation, 'page') %}Number(input.page ?? 1){% else %}1{% endif %};
+    const limit = {% if has_input_field(operation, 'limit') %}Number(input.limit ?? 20){% else %}20{% endif %};
+    const where: Record<string, unknown> = {};
+{{- filters(operation) }}
+    const [rows, total] = await this.repository.findAndCount({
+      where: where as FindOptionsWhere<{{ entity_symbol(operation) }}>,
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return {
+      {{ read_field(operation) }}: rows.map((entity) => this.toReadModel(entity)),
+{{- page_meta(operation) }}
+{{- extra_fields(operation) }}
+    } as unknown as {{ result(operation) }};
+{%- else %}
+    throw new NotImplementedException('{{ operation.name.pascal }} is not implemented yet');
+{%- endif %}
+  }
+}

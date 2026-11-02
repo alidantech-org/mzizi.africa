@@ -1,0 +1,7 @@
+apiVersion: dryv.server/v1alpha1
+servers:
+  - kind: DRYV_API
+    name: dryv-api
+    version: "0.0.1"
+    protocol_version: dryv.api/v1alpha1
+    url: http://127.0.0.1:8750

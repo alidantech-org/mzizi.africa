@@ -1,0 +1,104 @@
+version: dryv/v1alpha1
+
+# Dryv project for the Mzizi API. The project root is the repository root so generated output can
+# land in source/backend/api (destinations may not leave the root). Contracts and project packs live
+# in dryv/. Pin: Dryv engine 6dba3100f02ada9dfd061e5100112c1d01760e3b, packs 7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a.
+
+sources:
+  authoring:
+    model:
+      type: typescript
+      path: dryv/contracts
+      entrypoint: index.ts
+  packs:
+    official:
+      repository: https://github.com/dryvcode/packs
+      ref: 7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a
+      root: packs
+    project: { path: dryv/packs }
+
+actions:
+  imports:
+    stage: files
+    extensions: [.ts]
+    commands:
+      - run: [bun, x, biome, lint, --write, --unsafe, --only=correctness/noUnusedImports, $(files)]
+  typecheck:
+    stage: final
+    after: [install]
+    commands:
+      - run: [bun, x, tsc, -p, ../tsconfig.json]
+
+destinations:
+  ir:
+    compiled: { path: dryv/.dryv/ir/dryv.ir.yaml }
+  # Injected NestJS modules: source/backend/api/src/modules/<group>/...
+  modules:
+    path: source/backend/api/src/modules
+    imports: { path: source/backend/api/src, prefix: "#/" }
+    choose: { js.package_manager: bun }
+    actions:
+      - { $ref: "#/actions/imports" }
+      - { $ref: "#/actions/typecheck" }
+  # app.module.ts and the database/ scaffold.
+  app:
+    path: source/backend/api/src
+    imports: { path: source/backend/api/src, prefix: "#/" }
+    choose: { js.package_manager: bun }
+  # Shared framework-free declarations: source/backend/api/src/types/<group>/...
+  types:
+    path: source/backend/api/src/types
+    imports: { path: source/backend/api/src, prefix: "#/" }
+    choose: { js.package_manager: bun }
+
+authoring:
+  source: { $ref: "#/sources/authoring/model" }
+  destination: { $ref: "#/destinations/ir/compiled" }
+
+packs:
+  types:
+    source: { $ref: "#/sources/packs/official", path: inject/types/typescript }
+    destination: { $ref: "#/destinations/types" }
+
+  dtos:
+    source: { $ref: "#/sources/packs/official", path: inject/validation/class-validator }
+    destination: { $ref: "#/destinations/modules" }
+    bind:
+      property.enum.types: { $ref: "#/packs/types" }
+      property.types: { $ref: "#/packs/types" }
+
+  entities:
+    source: { $ref: "#/sources/packs/official", path: inject/persistence/typeorm }
+    destination: { $ref: "#/destinations/modules" }
+    bind:
+      property.enum.types: { $ref: "#/packs/types" }
+      property.types: { $ref: "#/packs/types" }
+
+  type-files:
+    source: { $ref: "#/sources/packs/project", path: type-files }
+    destination: { $ref: "#/destinations/modules" }
+    bind:
+      property.enum.types: { $ref: "#/packs/types" }
+
+  use-cases:
+    source: { $ref: "#/sources/packs/project", path: use-cases }
+    destination: { $ref: "#/destinations/modules" }
+    bind:
+      schema.validation: { $ref: "#/packs/dtos" }
+      schema.persistence: { $ref: "#/packs/entities" }
+
+  server:
+    source: { $ref: "#/sources/packs/official", path: inject/backend/nestjs }
+    destination: { $ref: "#/destinations/modules" }
+    destinations:
+      app: { $ref: "#/destinations/app" }
+    bind:
+      schema.validation: { $ref: "#/packs/dtos" }
+      schema.persistence: { $ref: "#/packs/entities" }
+      schema.examples: { $ref: "#/packs/dtos" }
+      operation.implementation: { $ref: "#/packs/use-cases" }
+      operation.usecase: { $ref: "#/packs/use-cases" }
+
+build:
+  cache: reuse
+  default_action: generate

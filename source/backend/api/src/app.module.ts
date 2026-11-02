@@ -1,15 +1,14 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { readOptions, writeOptions } from "./database/database.config";
-import { HealthController } from "./health/health.controller";
+import { APP_PIPE } from "@nestjs/core";
+
+import { DatabaseModule } from "./database/database.module.ts";
+import { GeographyModule } from "#/modules/geography/geography.module.ts";
+import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({ name: "read", useFactory: readOptions }),
-    TypeOrmModule.forRootAsync({ name: "write", useFactory: writeOptions }),
+  imports: [DatabaseModule, GeographyModule],
+  providers: [
+    { provide: APP_PIPE, useValue: new HttpValidationPipe(httpOptions) },
   ],
-  controllers: [HealthController],
 })
 export class AppModule {}

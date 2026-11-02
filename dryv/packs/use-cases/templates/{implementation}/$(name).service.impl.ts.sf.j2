@@ -1,0 +1,66 @@
+{#- The generated symbol of another planned file, found by the subject it represents. -#}
+{%- macro symbol_for(link) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == link.id -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{#- A port's TypeScript type: DTO classes for schemas (bound schema.validation pack), else scalars. -#}
+{%- macro ts_type(value) -%}
+{%- if value is none -%}unknown
+{%- elif value.is.schema -%}{{ symbol_for(value.schema) or 'unknown' }}
+{%- elif value.is.property and value.is.primitive -%}{{ value.property.primitive.type }}
+{%- elif value.is.property and value.is.temporal -%}string
+{%- else -%}unknown
+{%- endif -%}
+{%- endmacro -%}
+
+{#- One input object, like props: a schema input is its DTO, named fields an object type. -#}
+{%- macro params(operation) -%}
+{%- if operation.input and operation.input.kind == 'schema' -%}input: {{ ts_type(operation.input.value) }}
+{%- elif operation.input -%}input: { {% for field in operation.input.fields %}{{ field.name.camel }}{% if field.optional %}?{% endif %}: {{ ts_type(field.value) }}{% if not loop.last %}; {% endif %}{% endfor %} }
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro args(operation) -%}
+{%- if operation.input -%}input{%- endif -%}
+{%- endmacro -%}
+
+{%- macro result(operation) -%}
+{%- if operation.output -%}{{ ts_type(operation.output.value) }}{%- else -%}void{%- endif -%}
+{%- endmacro -%}
+{#- The use case this pack generated for an operation (a member of this feature). -#}
+{%- macro usecase_for(operation) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == operation.id and dependency.slot is none -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+import { Injectable } from '@nestjs/common';
+{%- for dependency in file.dependencies %}{% if dependency.symbol and dependency.slot == 'schema.validation' %}
+import type { {{ dependency.symbol }} } from '{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}';
+{%- endif %}{% endfor %}
+{%- for dependency in file.dependencies %}{% if dependency.symbol and dependency.slot is none %}
+import { {{ dependency.symbol }} } from '{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}';
+{%- endif %}{% endfor %}
+
+/**
+ * {{ feature.name.title }}: implements the generated {{ group.name.pascal }}{{ feature.name.pascal }}Service contract by
+ * delegating to one use case per operation. The feature module binds it to that contract.
+ *
+ * Scaffolded by Dryv once; this file belongs to the project. New operations need a method here.
+ */
+@Injectable()
+export class {{ file.symbol }} {
+  constructor(
+{%- for operation in operations %}
+    private readonly {{ operation.name.camel }}UseCase: {{ usecase_for(operation) }},
+{%- endfor %}
+  ) {}
+{%- for operation in operations %}
+
+  /** {{ operation.description or operation.name.title }} */
+  {{ operation.name.camel }}({{ params(operation) }}) {
+    return this.{{ operation.name.camel }}UseCase.execute({{ args(operation) }});
+  }
+{%- endfor %}
+}
