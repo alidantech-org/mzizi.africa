@@ -13,6 +13,7 @@ import { GovernanceModule } from "#/modules/governance/governance.module.ts";
 import { LegalModule } from "#/modules/legal/legal.module.ts";
 import { PoliticalModule } from "#/modules/political/political.module.ts";
 import { ProcurementModule } from "#/modules/procurement/procurement.module.ts";
+import { ReferenceModule } from "#/modules/reference/reference.module.ts";
 import { ServicesModule } from "#/modules/services/services.module.ts";
 import { StatisticsModule } from "#/modules/statistics/statistics.module.ts";
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
@@ -31,6 +32,7 @@ import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
     LegalModule,
     PoliticalModule,
     ProcurementModule,
+    ReferenceModule,
     ServicesModule,
     StatisticsModule,
   ],

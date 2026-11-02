@@ -1,5 +1,6 @@
 import * as dryv from "@dryvcode/author";
 
+import { readSurface } from "../shared/read-surface.ts";
 import { evidencedEntitySchemas, sharedProperties } from "../shared/index.ts";
 
 /**
@@ -60,3 +61,24 @@ export const referenceSchemas = reference.schemas({
       ),
     }),
 });
+
+/* Reads: clients discover jurisdictions and the vocabularies (levels, institution types, election types ...) here. */
+
+const referenceRead = reference.feature("ReferenceRead").description("Public read access to jurisdictions and classification records.").tags("public");
+
+const jurisdictions = readSurface(reference, {
+  singular: "Jurisdiction", plural: "Jurisdictions", itemKey: "jurisdiction", listKey: "jurisdictions",
+  path: "/reference/jurisdictions", idParam: "jurisdictionId", entity: referenceSchemas.Jurisdiction, description: "jurisdictions",
+  filters: { kind: dryv.field(referenceProperties.JurisdictionKind).optional(), q: dryv.field(sharedProperties.Name).optional() },
+});
+const classifications = readSurface(reference, {
+  singular: "ClassificationRecord", plural: "ClassificationRecords", itemKey: "record", listKey: "records",
+  path: "/reference/classification-records", idParam: "recordId", entity: referenceSchemas.ClassificationRecord, description: "classification records",
+  filters: {
+    jurisdictionId: dryv.field(sharedProperties.Id).optional(),
+    scheme: dryv.field(referenceProperties.ClassificationScheme).optional(),
+    code: dryv.field(sharedProperties.BusinessCode).optional(),
+  },
+});
+
+export const referenceReadOperations = referenceRead.operations({ ...jurisdictions.operations, ...classifications.operations });

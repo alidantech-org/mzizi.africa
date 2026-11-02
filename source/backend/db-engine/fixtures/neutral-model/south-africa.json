@@ -1,0 +1,307 @@
+{
+  "note": "Illustrative test fixture, not canonical data. Every row is loaded as unverified with source 'Test fixture'.",
+  "country": "za",
+  "rows": [
+    {
+      "entity": "JurisdictionEntity",
+      "key": "za",
+      "values": {
+        "code": "za",
+        "name": "South Africa",
+        "kind": "modern_state"
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:level:country",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "geography/level",
+        "code": "geography/level/country",
+        "label": "country",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:level:province",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "geography/level",
+        "code": "geography/level/province",
+        "label": "province",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:level:municipality",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "geography/level",
+        "code": "geography/level/municipality",
+        "label": "municipality",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:itype:legislature",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "governance/institution-type",
+        "code": "governance/institution-type/legislature",
+        "label": "legislature",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:itype:department",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "governance/institution-type",
+        "code": "governance/institution-type/department",
+        "label": "department",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:method:elected-by-legislature",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "governance/selection-method",
+        "code": "governance/selection-method/elected-by-legislature",
+        "label": "elected by the legislature",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:etype:general-pr-list",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "elections/election-type",
+        "code": "elections/election-type/general-pr-list",
+        "label": "general election by closed-list proportional representation",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:rlevel:national",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "elections/result-level",
+        "code": "elections/result-level/national",
+        "label": "national",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:rlevel:provincial",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "elections/result-level",
+        "code": "elections/result-level/provincial",
+        "label": "provincial",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:stage:appropriation",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "finance/workflow-stage",
+        "code": "finance/workflow-stage/appropriation",
+        "label": "appropriation",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:stage:release",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "finance/workflow-stage",
+        "code": "finance/workflow-stage/release",
+        "label": "release",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "za:stage:expenditure",
+      "values": {
+        "jurisdictionId": "@za",
+        "scheme": "finance/workflow-stage",
+        "code": "finance/workflow-stage/expenditure",
+        "label": "expenditure",
+        "order": 2
+      }
+    },
+    {
+      "entity": "GeoUnitEntity",
+      "key": "za:unit:za",
+      "values": {
+        "jurisdictionId": "@za",
+        "levelId": "@za:level:country",
+        "parentId": null,
+        "code": "za",
+        "name": "South Africa",
+        "kind": "territorial",
+        "isActive": true
+      }
+    },
+    {
+      "entity": "GeoUnitEntity",
+      "key": "za:unit:wc",
+      "values": {
+        "jurisdictionId": "@za",
+        "levelId": "@za:level:province",
+        "parentId": "@za:unit:za",
+        "code": "za/western-cape",
+        "name": "Western Cape",
+        "kind": "territorial",
+        "isActive": true
+      }
+    },
+    {
+      "entity": "GeoUnitEntity",
+      "key": "za:unit:ct",
+      "values": {
+        "jurisdictionId": "@za",
+        "levelId": "@za:level:municipality",
+        "parentId": "@za:unit:wc",
+        "code": "za/western-cape/cape-town",
+        "name": "City of Cape Town",
+        "kind": "territorial",
+        "isActive": true
+      }
+    },
+    {
+      "entity": "InstitutionEntity",
+      "key": "za:inst:iec",
+      "values": {
+        "jurisdictionId": "@za",
+        "code": "za/electoral-commission",
+        "name": "Electoral Commission",
+        "typeId": "@za:itype:department"
+      }
+    },
+    {
+      "entity": "InstitutionEntity",
+      "key": "za:inst:na",
+      "values": {
+        "jurisdictionId": "@za",
+        "code": "za/national-assembly",
+        "name": "National Assembly",
+        "typeId": "@za:itype:legislature"
+      }
+    },
+    {
+      "entity": "OfficeEntity",
+      "key": "za:office:president",
+      "values": {
+        "institutionId": "@za:inst:na",
+        "code": "za/president",
+        "name": "President",
+        "isSingleton": true
+      }
+    },
+    {
+      "entity": "OfficeRuleEntity",
+      "key": "za:rule:president:max_terms",
+      "values": {
+        "officeId": "@za:office:president",
+        "kind": "max_terms",
+        "numericValue": 2
+      }
+    },
+    {
+      "entity": "OfficeRuleEntity",
+      "key": "za:rule:president:term_length_years",
+      "values": {
+        "officeId": "@za:office:president",
+        "kind": "term_length_years",
+        "numericValue": 5
+      }
+    },
+    {
+      "entity": "SelectionProcedureEntity",
+      "key": "za:proc:president",
+      "values": {
+        "officeId": "@za:office:president",
+        "methodId": "@za:method:elected-by-legislature"
+      }
+    },
+    {
+      "entity": "SelectionStageEntity",
+      "key": "za:proc:president:1",
+      "values": {
+        "procedureId": "@za:proc:president",
+        "stageOrder": 1,
+        "kind": "nomination",
+        "actorInstitutionId": "@za:inst:na"
+      }
+    },
+    {
+      "entity": "SelectionStageEntity",
+      "key": "za:proc:president:2",
+      "values": {
+        "procedureId": "@za:proc:president",
+        "stageOrder": 2,
+        "kind": "election",
+        "actorInstitutionId": "@za:inst:na"
+      }
+    },
+    {
+      "entity": "ElectionEntity",
+      "key": "za:election",
+      "values": {
+        "jurisdictionId": "@za",
+        "code": "za/2024-general",
+        "name": "2024 National and Provincial Elections",
+        "typeId": "@za:etype:general-pr-list",
+        "administeringInstitutionId": "@za:inst:iec",
+        "scheduledDate": "2024-05-29",
+        "heldDate": "2024-05-29",
+        "status": "completed"
+      }
+    },
+    {
+      "entity": "FiscalYearEntity",
+      "key": "za:fy",
+      "values": {
+        "jurisdictionId": "@za",
+        "code": "za/2025-2026",
+        "startsOn": "2025-04-01",
+        "endsOn": "2026-03-31"
+      }
+    },
+    {
+      "entity": "BudgetaryUnitEntity",
+      "key": "za:bunit",
+      "values": {
+        "jurisdictionId": "@za",
+        "code": "za/treasury",
+        "name": "National Treasury",
+        "levelId": "@za:level:country"
+      }
+    },
+    {
+      "entity": "BudgetEntity",
+      "key": "za:budget",
+      "values": {
+        "unitId": "@za:bunit",
+        "fiscalYearId": "@za:fy",
+        "kind": "original",
+        "approvedAmount": "2500000.0000",
+        "currencyCode": "ZAR"
+      }
+    }
+  ]
+}

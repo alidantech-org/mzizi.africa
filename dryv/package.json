@@ -14,7 +14,8 @@
     "generated:check": "bun tools/check-generated.ts",
     "prepare": "bash scripts/link-dryv.sh",
     "access:export": "bun tools/export-access.ts",
-    "access:check": "bun tools/export-access.ts --check"
+    "access:check": "bun tools/export-access.ts --check",
+    "adopt:list": "bun tools/adopt-list-page.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",

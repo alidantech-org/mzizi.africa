@@ -9,5 +9,6 @@ export * from "./governance/governance-read/index.ts";
 export * from "./legal/legal-read/index.ts";
 export * from "./political/political-read/index.ts";
 export * from "./procurement/procurement-read/index.ts";
+export * from "./reference/reference-read/index.ts";
 export * from "./services/services-read/index.ts";
 export * from "./statistics/statistics-read/index.ts";
