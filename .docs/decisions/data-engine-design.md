@@ -20,3 +20,8 @@ Date: 2026-11-02. Status: proposed; each item names the experiment that confirms
 ## Consequences
 
 Contract and migration work come before any extractor. Decision items 1, 3 and 8 stay "proposed" until their experiments are recorded in task TSK-BD46EDE97821.
+
+## Experiment results
+
+- **Shared contracts (2026-11-02).** The five layer contracts are authored in Dryv as value schemas in `dryv/contracts/domains/exchange`, exported by `dryv/tools/export-json-schema.ts` to `source/backend/contracts/exchange.schema.json`, and turned into Pydantic v2 models with `datamodel-code-generator` on Python 3.14. The `fastapi-backend` pack was not needed. Findings: the output is usable but enum classes get anonymous names (`Status`, `Status1`), and free-form documents travel as JSON text because Dryv has no open object type. Both are acceptable for v1.
+- The contracts live in `source/backend/contracts`, not under `engine/`, because they are shared by the engines, files and intelligence and `engine/` holds no shared code.

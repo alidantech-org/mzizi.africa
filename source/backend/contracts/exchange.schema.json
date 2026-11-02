@@ -1,0 +1,440 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/exchange/v1",
+  "title": "Mzizi layer exchange contracts",
+  "description": "Generated from dryv/contracts/domains/exchange by dryv/tools/export-json-schema.ts. Do not edit.",
+  "$defs": {
+    "CandidateRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "extractionResultId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 2
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "ai_assisted",
+            "curated",
+            "extracted",
+            "inferred"
+          ]
+        },
+        "naturalKeyHash": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64
+        },
+        "payload": {
+          "type": "string",
+          "minLength": 2
+        },
+        "resolvedTargetId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "runId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "segmentKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "approved",
+            "in_review",
+            "invalid",
+            "pending",
+            "promoted",
+            "rejected",
+            "superseded"
+          ]
+        },
+        "supersedesCandidateId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "target": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "extractionResultId",
+        "id",
+        "method",
+        "naturalKeyHash",
+        "payload",
+        "runId",
+        "status",
+        "target"
+      ]
+    },
+    "ExtractionDiagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "level": {
+          "type": "string",
+          "enum": [
+            "error",
+            "info",
+            "warning"
+          ]
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 2
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "code",
+        "level",
+        "message"
+      ]
+    },
+    "ExtractionResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifact": {
+          "$ref": "#/$defs/FileArtifactRef"
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExtractionDiagnostic"
+          }
+        },
+        "extractor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "extractorVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "finishedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "inputHash": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExtractionSegment"
+          }
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "failed",
+            "partial",
+            "succeeded"
+          ]
+        },
+        "structureVersionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "supersedesResultId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "artifact",
+        "diagnostics",
+        "extractor",
+        "extractorVersion",
+        "finishedAt",
+        "id",
+        "inputHash",
+        "segments",
+        "startedAt",
+        "status"
+      ]
+    },
+    "ExtractionSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "content": {
+          "type": "string",
+          "minLength": 2
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "feature",
+            "metadata",
+            "record",
+            "table",
+            "text"
+          ]
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 2
+        }
+      },
+      "required": [
+        "content",
+        "key",
+        "kind",
+        "locator"
+      ]
+    },
+    "FileArtifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "captureId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64
+        },
+        "documentId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "fileVersionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "mimeType": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "retrievedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourceUrl": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "contentHash",
+        "fileVersionId",
+        "mimeType",
+        "sizeBytes"
+      ]
+    },
+    "IntelligenceEvaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "inputHash": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "classification",
+            "contradiction",
+            "entity_match",
+            "quality",
+            "summary"
+          ]
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "output": {
+          "type": "string",
+          "minLength": 2
+        },
+        "subjectCandidateId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "subjectResultId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "toolVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        }
+      },
+      "required": [
+        "createdAt",
+        "id",
+        "inputHash",
+        "kind",
+        "output",
+        "tool",
+        "toolVersion"
+      ]
+    },
+    "PromotionDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "auditDecisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "candidateId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "decidedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "deferred",
+            "promoted",
+            "rejected"
+          ]
+        },
+        "previousTargetId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "target": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 100
+        },
+        "targetId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "verificationState": {
+          "type": "string",
+          "enum": [
+            "disputed",
+            "rejected",
+            "superseded",
+            "under_review",
+            "unverified",
+            "verified"
+          ]
+        }
+      },
+      "required": [
+        "auditDecisionId",
+        "candidateId",
+        "decidedAt",
+        "id",
+        "outcome",
+        "reasons",
+        "target",
+        "verificationState"
+      ]
+    }
+  }
+}

@@ -601,3 +601,18 @@ When deciding where code belongs, ask:
 - Is it supporting research/review/stewardship? -> `source/apps/web`.
 
 If one feature seems to belong everywhere, define a contract and split the responsibilities rather than creating a new monolith.
+
+
+# Layer exchange contracts
+
+The layers meet only through documented documents (AGENTS.md section 10), authored once in Dryv (`dryv/contracts/domains/exchange`) and exported as JSON Schema to `source/backend/contracts/exchange.schema.json`:
+
+| Contract | Produced by | Consumed by | Meaning |
+| --- | --- | --- | --- |
+| `FileArtifactRef` | files service | data engine | pointer to preserved bytes (file version, capture, hash, size, type) |
+| `ExtractionResult` | data engine | intelligence, database engine | immutable output of one extractor run: segments, diagnostics, versions; a rerun is a new result |
+| `CandidateRecord` | data engine | database engine | one intended canonical record with target, natural-key hash, payload, lineage, status |
+| `IntelligenceEvaluation` | intelligence | data engine, reviewers | attributable AI assessment with tool, model, input hash and output; never mutates records |
+| `PromotionDecision` | database engine | audit, API | the act of applying a review decision: outcome, target ids, verification state, reasons |
+
+TypeScript uses the Dryv-generated types; Python generates models from the JSON Schema. See `source/backend/contracts/README.md`.
