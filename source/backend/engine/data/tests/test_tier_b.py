@@ -117,3 +117,33 @@ def test_ocr_reports_a_missing_engine(monkeypatch):
     monkeypatch.setattr(ocr.shutil, "which", lambda _name: None)
     out = run("pdf", _scan("Some text on a scanned page that is long enough"), "ocr")
     assert any(d["code"] == "ocr_engine_unavailable" for d in out.diagnostics)
+
+
+def test_ocr_reports_a_missing_language_pack(monkeypatch):
+    from mzizi_data.extractors import ocr
+
+    monkeypatch.setattr(ocr.shutil, "which", lambda _name: "/usr/bin/tesseract")
+    monkeypatch.setattr(ocr.subprocess, "run", lambda *a, **k: type("R", (), {"stdout": "List of available languages (1):\neng\n", "stderr": "", "returncode": 0})())
+    monkeypatch.setattr(ocr, "version", lambda: "test")
+    out = run("pdf", _scan("Some text on a scanned page that is long enough"), "ocr")
+    assert any(d["code"] == "ocr_engine_unavailable" and "swa" in d["message"] for d in out.diagnostics)
+    assert out.status != "succeeded"
+
+
+def test_ocr_flags_an_unreadable_blank_scan():
+    import io
+
+    import pytest
+    from PIL import Image
+
+    from mzizi_data.extractors import ocr
+
+    try:
+        ocr.check()
+    except ocr.OcrUnavailable:
+        pytest.skip("tesseract with eng and swa is not installed")
+    buffer = io.BytesIO()
+    Image.new("RGB", (1200, 1600), "white").save(buffer, format="PDF", resolution=200)
+    out = run("pdf", buffer.getvalue(), "ocr")
+    assert any(d["code"] == "ocr_no_text" for d in out.diagnostics)
+    assert out.status != "succeeded" or not out.segments

@@ -1,7 +1,9 @@
 import "reflect-metadata";
 
 import { ForbiddenException, ServiceUnavailableException, UnauthorizedException, type ExecutionContext } from "@nestjs/common";
-import { exportSPKI, generateKeyPair, SignJWT, type CryptoKey } from "jose";
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
+import { exportJWK, exportSPKI, generateKeyPair, SignJWT, type CryptoKey } from "jose";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { AuthGuard } from "#/auth/auth.guard";
@@ -81,6 +83,27 @@ describe("token verifier", () => {
 
   it("fails closed when authentication is not configured", async () => {
     await expect(createTokenVerifier({})("x")).rejects.toBeInstanceOf(ServiceUnavailableException);
+  });
+});
+
+describe("token verifier with an issuer's JWKS endpoint (single sign-on)", () => {
+  it("verifies a token signed by a key published at the JWKS URL, and rejects one signed by another key", async () => {
+    const pair = await generateKeyPair("RS256", { extractable: true });
+    const published = { ...(await exportJWK(pair.publicKey)), kid: "k1", alg: "RS256", use: "sig" };
+    const server = createServer((_request, response) => {
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify({ keys: [published] }));
+    });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    try {
+      const verify = createTokenVerifier({ issuer: ISSUER, jwksUrl: `http://127.0.0.1:${(server.address() as AddressInfo).port}/jwks.json` });
+      const signed = await new SignJWT({ roles: ["reviewer"] }).setProtectedHeader({ alg: "RS256", kid: "k1" }).setIssuer(ISSUER).setSubject(SUBJECT).setExpirationTime("5m").sign(pair.privateKey);
+      expect(await verify(signed)).toEqual({ actorId: SUBJECT, role: "reviewer" });
+      const forged = await new SignJWT({ roles: ["admin"] }).setProtectedHeader({ alg: "RS256", kid: "k1" }).setIssuer(ISSUER).setSubject(SUBJECT).setExpirationTime("5m").sign(privateKey);
+      await expect(verify(forged)).rejects.toBeInstanceOf(UnauthorizedException);
+    } finally {
+      server.close();
+    }
   });
 });
 

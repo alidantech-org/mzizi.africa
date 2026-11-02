@@ -46,3 +46,37 @@ export async function decideAssessment(db: DataSource, assessmentId: string, act
     return { assessmentId, outcome, newAssessmentId: created.id };
   });
 }
+
+
+export interface AssessmentDraft {
+  siteId: string;
+  accessBasis: string;
+  sourceType: string;
+  rightsHolder: string;
+  approvedScope: string;
+  rationale?: string;
+  evidence?: string;
+}
+
+/**
+ * Records a draft assessment as `in_review`. A draft never authorises collection: only a later decision by a
+ * named human holding `assessment.approve` can. The drafter needs `assessment.draft`; a current assessment
+ * for the site is superseded so there is one current row, and the history stays.
+ */
+export async function draftAssessment(db: DataSource, actorId: string, draft: AssessmentDraft): Promise<{ assessmentId: string }> {
+  return db.transaction(async (manager) => {
+    const [allowed] = await manager.query(`SELECT 1 AS ok FROM access.account_permissions WHERE account_id = $1 AND permission_code IN ('assessment.draft','assessment.approve') LIMIT 1`, [actorId]);
+    if (!allowed) throw new Error("the account does not hold assessment.draft");
+    if (!draft.approvedScope?.trim() || !draft.rightsHolder?.trim()) throw new Error("a draft needs a rights holder and an approved scope");
+    const [site] = await manager.query(`SELECT id FROM website.sites WHERE id = $1`, [draft.siteId]);
+    if (!site) throw new Error("site not found");
+    const [current] = await manager.query(`SELECT id FROM website.assessments WHERE site_id = $1 AND is_current FOR UPDATE`, [draft.siteId]);
+    const [created] = await manager.query(
+      `INSERT INTO website.assessments (site_id, access_basis, source_type, rights_holder, approved_scope, rationale, evidence, personal_data_categories, status, is_current, supersedes_id, created_at, updated_at, version)
+       VALUES ($1, $2::website.assessments_access_basis_enum, $3::website.assessments_source_type_enum, $4, $5, $6, $7, '[]', 'in_review', true, $8, now(), now(), 1) RETURNING id`,
+      [draft.siteId, draft.accessBasis, draft.sourceType, draft.rightsHolder, draft.approvedScope, draft.rationale ?? null, draft.evidence ?? null, current?.id ?? null],
+    );
+    if (current) await manager.query(`UPDATE website.assessments SET is_current = false, updated_at = now(), version = version + 1 WHERE id = $1`, [current.id]);
+    return { assessmentId: created.id };
+  });
+}

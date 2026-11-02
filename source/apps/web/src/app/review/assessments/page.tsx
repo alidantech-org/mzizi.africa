@@ -1,5 +1,5 @@
 import type { Meta } from '@/lib/review/api';
-import { assessmentAction } from '../actions';
+import { assessmentAction, draftAssessmentAction } from '../actions';
 import { ago, Badge, Empty, load, Notice, Pager, requireRole } from '../ui';
 
 interface Assessment { id: string; siteName: string; status: string; isCurrent: boolean; sourceType: string; rightsHolder: string; approvedScope: string; rationale: string | null; reviewedAt: string | null }
@@ -8,9 +8,10 @@ interface Dossier { id: string; jurisdictionName: string; launchStage: string; i
 export default async function AssessmentsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const role = await requireRole();
   const params = await searchParams;
-  const [assessments, dossiers] = await Promise.all([
+  const [assessments, dossiers, sites] = await Promise.all([
     load<{ assessments: Assessment[]; meta: Meta }>('/pipeline/assessments', { page: params.page }),
     load<{ dossiers: Dossier[] }>('/pipeline/dossiers'),
+    load<{ sites: { id: string; name: string }[] }>('/pipeline/sites', { limit: 200 }),
   ]);
   return (
     <>
@@ -51,6 +52,25 @@ export default async function AssessmentsPage({ searchParams }: { searchParams: 
         </>
       ) : null}
       {role !== 'admin' ? <p className="sub">Approving needs the assessment.approve permission, held by admin accounts for now.</p> : null}
+      <h2 style={{ marginTop: 28 }}>Draft an assessment</h2>
+      <form className="rv-card" action={draftAssessmentAction}>
+        <div className="rv-row">
+          <label>Site<select name="siteId" required>{sites.data?.sites.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
+          <label>Rights holder<input type="text" name="rightsHolder" required /></label>
+        </div>
+        <div className="rv-row">
+          <label>Access basis<select name="accessBasis">{['published_terms', 'open_licence', 'open_endpoint', 'written_permission', 'access_to_information_response', 'other'].map((v) => <option key={v} value={v}>{v.replaceAll('_', ' ')}</option>)}</select></label>
+          <label>Source type<select name="sourceType">{['official_website', 'document_repository', 'open_data_portal', 'api', 'third_party_repository', 'other'].map((v) => <option key={v} value={v}>{v.replaceAll('_', ' ')}</option>)}</select></label>
+        </div>
+        <div className="rv-row">
+          <label>Approved hosts (space or comma separated)<input type="text" name="hosts" required /></label>
+          <label>Max requests per second<input type="text" name="rate" defaultValue="0.2" /></label>
+        </div>
+        <label>Rationale<textarea name="rationale" rows={3} /></label>
+        <label>Evidence (terms page, licence URL)<textarea name="evidence" rows={2} /></label>
+        <div className="rv-actions"><button className="primary" type="submit">Save draft</button></div>
+        <p className="sub" style={{ marginTop: 10 }}>A draft stays in review and never allows collection. Approving is a separate step by a person with assessment.approve.</p>
+      </form>
       <h2 style={{ marginTop: 28 }}>Jurisdiction dossiers</h2>
       <Notice bad={dossiers.error} />
       {dossiers.data?.dossiers.length === 0 ? <Empty>No dossiers recorded.</Empty> : null}

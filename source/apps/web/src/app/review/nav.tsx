@@ -9,6 +9,11 @@ const LINKS = [
   ['/review/jobs', 'Jobs'],
   ['/review/sites', 'Sites'],
   ['/review/assessments', 'Assessments'],
+  ['/review/documents', 'Documents'],
+  ['/review/captures', 'Captures'],
+  ['/review/structure', 'Structure'],
+  ['/review/checks', 'Checks'],
+  ['/review/data', 'Canonical data'],
 ] as const;
 
 export function Nav() {

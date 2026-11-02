@@ -23,7 +23,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataSource, targetUrl } from "./config.ts";
-import { decideAssessment, type AssessmentOutcome } from "./assessments.ts";
+import { decideAssessment, draftAssessment, type AssessmentOutcome } from "./assessments.ts";
 import { checkIntegrity } from "./integrity.ts";
 import { grantReadOnly, grantReviewerRead } from "./grants.ts";
 import { applyReviewDecisions } from "./staging/review.ts";
@@ -141,6 +141,12 @@ switch (command) {
     const [assessmentId, actorId, outcome] = [argument, process.argv[4], process.argv[5]];
     if (!assessmentId || !actorId || !outcome) throw new Error("usage: decide-assessment <assessmentId> <actorAccountId> <outcome>");
     console.log(JSON.stringify(await withDb({}, (db) => decideAssessment(db, assessmentId, actorId, outcome as AssessmentOutcome))));
+    break;
+  }
+  case "draft-assessment": {
+    const [actorId, json] = [argument, process.argv[4]];
+    if (!actorId || !json) throw new Error("usage: draft-assessment <actorAccountId> '<json draft>'");
+    console.log(JSON.stringify(await withDb({}, (db) => draftAssessment(db, actorId, JSON.parse(json)))));
     break;
   }
   case "candidates": {

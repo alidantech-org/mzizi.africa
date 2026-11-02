@@ -11,6 +11,12 @@ import type { PromoteResponseDto } from '#/modules/pipeline/dto/promote-response
 import type { RunListResponseDto } from '#/modules/pipeline/dto/run-list-response.dto';
 import type { SiteListResponseDto } from '#/modules/pipeline/dto/site-list-response.dto';
 import { ApplyReviewDecisionsUseCase } from '#/modules/pipeline/pipeline-review/use-cases/apply-review-decisions.usecase';
+import { DraftAssessmentUseCase } from '#/modules/pipeline/pipeline-review/use-cases/draft-assessment.usecase';
+import { FindCapturesUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-captures.usecase';
+import { FindChecksUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-checks.usecase';
+import { FindDocumentsUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-documents.usecase';
+import { FindStructureVersionsUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-structure-versions.usecase';
+import type { DraftAssessmentRequestDto } from '#/modules/pipeline/dto/draft-assessment-request.dto';
 import { ApproveAssessmentUseCase } from '#/modules/pipeline/pipeline-review/use-cases/approve-assessment.usecase';
 import { FindAssessmentsUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-assessments.usecase';
 import { FindDossiersUseCase } from '#/modules/pipeline/pipeline-review/use-cases/find-dossiers.usecase';
@@ -42,6 +48,11 @@ export class PipelinePipelineReviewServiceImpl {
     private readonly findSitesUseCase: FindSitesUseCase,
     private readonly getCandidateDetailUseCase: GetCandidateDetailUseCase,
     private readonly promoteCandidateUseCase: PromoteCandidateUseCase,
+    private readonly draftAssessmentUseCase: DraftAssessmentUseCase,
+    private readonly findCapturesUseCase: FindCapturesUseCase,
+    private readonly findChecksUseCase: FindChecksUseCase,
+    private readonly findDocumentsUseCase: FindDocumentsUseCase,
+    private readonly findStructureVersionsUseCase: FindStructureVersionsUseCase,
   ) {}
 
   /** List staged candidates. */
@@ -97,5 +108,30 @@ export class PipelinePipelineReviewServiceImpl {
   /** List jurisdiction dossiers. */
   findDossiers(input: PageQueryDto) {
     return this.findDossiersUseCase.execute(input);
+  }
+
+  /** List source documents. */
+  findDocuments(input: PageQueryDto) {
+    return this.findDocumentsUseCase.execute(input);
+  }
+
+  /** List captures. */
+  findCaptures(input: PageQueryDto) {
+    return this.findCapturesUseCase.execute(input);
+  }
+
+  /** List structure versions. */
+  findStructureVersions(input: PageQueryDto) {
+    return this.findStructureVersionsUseCase.execute(input);
+  }
+
+  /** List site checks. */
+  findChecks(input: PageQueryDto) {
+    return this.findChecksUseCase.execute(input);
+  }
+
+  /** Draft an assessment (in_review; never authorises collection). */
+  draftAssessment(input: DraftAssessmentRequestDto) {
+    return this.draftAssessmentUseCase.execute(input);
   }
 }

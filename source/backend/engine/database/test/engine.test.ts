@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 
 import { openDataSource, withDatabase } from "../src/config.ts";
-import { decideAssessment } from "../src/assessments.ts";
+import { decideAssessment, draftAssessment } from "../src/assessments.ts";
 import { checkCollection } from "../src/gate.ts";
 import { checkIntegrity } from "../src/integrity.ts";
 import { drift, migrate } from "../src/migrations.ts";
@@ -84,6 +84,23 @@ run("database engine", () => {
     const current = rows.find((row: { id: string }) => row.id === decision.newAssessmentId);
     expect(current).toMatchObject({ status: "approved", is_current: true, reviewed_by: admin, supersedes_id: draft.id });
     await expect(decideAssessment(db, draft.id, admin, "rejected")).rejects.toThrow(/current/);
+  });
+
+  test("a reviewer drafts an assessment as in_review, supersedes the current row, and a draft never allows collection", async () => {
+    await seedDevAccounts(db);
+    const reviewer = "00000000-0000-4000-8000-0000000000a1";
+    const [site] = await db.query(`INSERT INTO website.sites (code, name, kind, status, created_at, updated_at, version) VALUES ($1, 'Drafted', 'portal', 'expected', now(), now(), 1) RETURNING id`, [`draft-${randomUUID()}`]);
+    const draft = { siteId: site.id, accessBasis: "published_terms", sourceType: "official_website", rightsHolder: "Example Ministry", approvedScope: JSON.stringify({ hosts: ["drafted.example"] }), rationale: "terms reviewed" };
+    const first = await draftAssessment(db, reviewer, draft);
+    const second = await draftAssessment(db, reviewer, { ...draft, rationale: "second pass" });
+    const rows = await db.query(`SELECT id, status::text AS status, is_current, supersedes_id, reviewed_by FROM website.assessments WHERE site_id = $1`, [site.id]);
+    expect(rows).toHaveLength(2);
+    expect(rows.find((row: { id: string }) => row.id === first.assessmentId).is_current).toBe(false);
+    expect(rows.find((row: { id: string }) => row.id === second.assessmentId)).toMatchObject({ status: "in_review", is_current: true, supersedes_id: first.assessmentId, reviewed_by: null });
+    const outsider = randomUUID();
+    await expect(draftAssessment(db, outsider, draft)).rejects.toThrow(/assessment.draft/);
+    const gate = await checkCollection(db, { siteId: site.id, host: "drafted.example", path: "/a", purpose: "collect", requestsPerSecond: 0.2 });
+    expect(gate.allowed).toBe(false);
   });
 
   test("staging rows track updated_at and version", async () => {

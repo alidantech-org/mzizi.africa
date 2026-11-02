@@ -60,3 +60,44 @@ export function Pager({ meta, path, params }: { meta: Meta; path: string; params
 export function ago(value: string | null | undefined): string {
   return value ? new Date(value).toISOString().slice(0, 16).replace('T', ' ') : '';
 }
+
+export type Column = { label: string; field: string; kind?: 'badge' | 'time' | 'mono' };
+
+/** One paged table over a reviewer list endpoint; the rows live under `key` in the response. */
+export async function TablePage({ title, sub, path, key, columns, page, route }: { title: string; sub: string; path: string; key: string; columns: Column[]; page?: string; route: string }) {
+  await requireRole();
+  const { data, error } = await load<Record<string, any>>(path, { page });
+  const rows: Record<string, any>[] = data?.[key] ?? [];
+  return (
+    <>
+      <h1>{title}</h1>
+      <p className="sub">{sub}</p>
+      <Notice bad={error} />
+      {data && rows.length === 0 ? <Empty>Nothing here yet.</Empty> : null}
+      {rows.length > 0 ? (
+        <>
+          <div className="rv-table-wrap">
+            <table>
+              <thead><tr>{columns.map((c) => <th key={c.field}>{c.label}</th>)}</tr></thead>
+              <tbody>
+                {rows.map((row, i) => (
+                  <tr key={row.id ?? i}>
+                    {columns.map((c) => {
+                      const value = row[c.field];
+                      if (value === null || value === undefined) return <td key={c.field} />;
+                      if (c.kind === 'badge') return <td key={c.field}><Badge value={String(value)} /></td>;
+                      if (c.kind === 'time') return <td key={c.field} className="nowrap">{ago(String(value))}</td>;
+                      const text = typeof value === 'object' ? JSON.stringify(value) : String(value);
+                      return <td key={c.field} className={c.kind === 'mono' ? 'mono' : undefined}>{text}</td>;
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {data?.meta ? <Pager meta={data.meta} path={route} /> : null}
+        </>
+      ) : null}
+    </>
+  );
+}

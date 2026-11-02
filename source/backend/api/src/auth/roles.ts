@@ -5,7 +5,7 @@
 export const ROLES = ["reader", "contributor", "reviewer", "admin"] as const;
 export type Role = (typeof ROLES)[number];
 
-export type PolicyName = "ContributorAccess" | "ReviewerAccess" | "AdminAccess" | "PipelineReadAccess" | "AssessmentApproveAccess" | "CandidatePromoteAccess" | "AccessManageAccess";
+export type PolicyName = "ContributorAccess" | "ReviewerAccess" | "AdminAccess" | "PipelineReadAccess" | "AssessmentDraftAccess" | "AssessmentApproveAccess" | "CandidatePromoteAccess" | "AccessManageAccess";
 
 /** Things an actor may do. Mirrors `access.permissions` in the database engine's migration. */
 export const PERMISSIONS = ["record.read", "comment.create", "evidence.create", "review.decide", "pipeline.read", "assessment.draft", "assessment.approve", "candidate.promote", "access.manage"] as const;
@@ -25,6 +25,7 @@ export const POLICY_PERMISSION: Record<PolicyName, Permission> = {
   ReviewerAccess: "review.decide",
   AdminAccess: "access.manage",
   PipelineReadAccess: "pipeline.read",
+  AssessmentDraftAccess: "assessment.draft",
   AssessmentApproveAccess: "assessment.approve",
   CandidatePromoteAccess: "candidate.promote",
   AccessManageAccess: "access.manage",

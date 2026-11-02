@@ -61,6 +61,60 @@ export const pipelineSchemas = pipeline.schemas({
   }),
 });
 
+export const evidenceSchemas = pipeline.schemas({
+  DocumentSummary: dryv.schema({
+    id: dryv.field(sharedProperties.Id),
+    title: dryv.field(pipelineProperties.Text),
+    kind: dryv.field(sharedProperties.Label),
+    publisher: dryv.field(pipelineProperties.Text),
+    url: dryv.field(pipelineProperties.Text).optional().nullable(),
+    language: dryv.field(sharedProperties.Label).optional().nullable(),
+    publishedOn: dryv.field(sharedProperties.Label).optional().nullable(),
+    captures: dryv.field(sharedProperties.PaginationNumber),
+  }),
+  CaptureSummary: dryv.schema({
+    id: dryv.field(sharedProperties.Id),
+    documentId: dryv.field(sharedProperties.Id),
+    documentTitle: dryv.field(pipelineProperties.Text),
+    siteId: dryv.field(sharedProperties.Id).optional().nullable(),
+    retrievedUrl: dryv.field(pipelineProperties.Text).optional().nullable(),
+    httpStatus: dryv.field(sharedProperties.PaginationNumber).optional().nullable(),
+    contentHash: dryv.field(sharedProperties.Label).optional().nullable(),
+    tool: dryv.field(pipelineProperties.Text).optional().nullable(),
+    retrievedAt: dryv.field(sharedProperties.DateTime),
+  }),
+  StructureVersionSummary: dryv.schema({
+    id: dryv.field(sharedProperties.Id),
+    structureId: dryv.field(sharedProperties.Id),
+    purpose: dryv.field(sharedProperties.Label),
+    number: dryv.field(sharedProperties.PaginationNumber),
+    status: dryv.field(sharedProperties.Label),
+    isCurrent: dryv.field(sharedProperties.Flag),
+    schemaVersion: dryv.field(sharedProperties.Label),
+    notes: dryv.field(pipelineProperties.Text).optional().nullable(),
+    createdAt: dryv.field(sharedProperties.DateTime),
+  }),
+  CheckSummary: dryv.schema({
+    id: dryv.field(sharedProperties.Id),
+    siteId: dryv.field(sharedProperties.Id),
+    siteName: dryv.field(sharedProperties.Label),
+    kind: dryv.field(sharedProperties.Label),
+    outcome: dryv.field(sharedProperties.Label),
+    detail: dryv.field(pipelineProperties.Text).optional().nullable(),
+    checkedAt: dryv.field(sharedProperties.DateTime),
+  }),
+  DraftAssessmentRequest: dryv.schema({
+    siteId: dryv.field(sharedProperties.Id),
+    accessBasis: dryv.field(sharedProperties.Label),
+    sourceType: dryv.field(sharedProperties.Label),
+    rightsHolder: dryv.field(pipelineProperties.Text),
+    approvedScope: dryv.field(pipelineProperties.JsonText),
+    rationale: dryv.field(pipelineProperties.Text).optional(),
+    evidence: dryv.field(pipelineProperties.Text).optional(),
+  }),
+  DraftAssessmentResponse: dryv.schema({ assessmentId: dryv.field(sharedProperties.Id) }),
+});
+
 const detail = pipeline.schemas({
   CandidateDetailResponse: dryv.schema({
     candidate: dryv.field(pipelineSchemas.CandidateSummary),
@@ -129,6 +183,10 @@ const lists = pipeline.schemas({
   PageQuery: dryv.schema({}).extends(transportSchemas.BaseQuery),
   RunListResponse: dryv.schema({ runs: dryv.field(pipelineSchemas.RunSummary).array() }).extends(sharedSchemas.PaginatedResponse),
   JobListResponse: dryv.schema({ jobs: dryv.field(pipelineSchemas.JobSummary).array() }).extends(sharedSchemas.PaginatedResponse),
+  DocumentListResponse: dryv.schema({ documents: dryv.field(evidenceSchemas.DocumentSummary).array() }).extends(sharedSchemas.PaginatedResponse),
+  CaptureListResponse: dryv.schema({ captures: dryv.field(evidenceSchemas.CaptureSummary).array() }).extends(sharedSchemas.PaginatedResponse),
+  StructureVersionListResponse: dryv.schema({ structureVersions: dryv.field(evidenceSchemas.StructureVersionSummary).array() }).extends(sharedSchemas.PaginatedResponse),
+  CheckListResponse: dryv.schema({ checks: dryv.field(evidenceSchemas.CheckSummary).array() }).extends(sharedSchemas.PaginatedResponse),
   SiteListResponse: dryv.schema({ sites: dryv.field(pipelineSchemas.SiteSummary).array() }).extends(sharedSchemas.PaginatedResponse),
 });
 
@@ -156,6 +214,17 @@ function action(description: string, path: string, idParam: string | undefined, 
 
 const promoteOperation = () => action("Promote an approved candidate to a canonical record through the database engine.", "/pipeline/candidates/{candidateId}/promote", "candidateId", detail.PromoteResponse, accessPolicies.CandidatePromoteAccess);
 
+function draftOperation() {
+  const description = "Draft a site assessment as in_review; a draft never authorises collection.";
+  const op = dryv.operation().description(description).input(evidenceSchemas.DraftAssessmentRequest).output(evidenceSchemas.DraftAssessmentResponse).failures(...failures).authenticated().requires(accessPolicies.AssessmentDraftAccess);
+  op.facets({
+    http: withStandardHttpFailures(dryv.http("POST", "/v1/pipeline/assessments").description(description).input(op.in, dryv.body()).output(op.out, dryv.respond(201)))
+      .failure(sharedFailures.Unauthorized, 401)
+      .failure(sharedFailures.Forbidden, 403),
+  });
+  return op;
+}
+
 const reviewer = pipeline.feature("PipelineReview").description("Reviewer-only reads over the pipeline and the promote action.").tags("internal");
 
 export const pipelineOperations = reviewer.operations({
@@ -166,6 +235,11 @@ export const pipelineOperations = reviewer.operations({
   FindSites: read("List registered sites.", "/pipeline/sites", lists.PageQuery, lists.SiteListResponse, accessPolicies.PipelineReadAccess),
   PromoteCandidate: promoteOperation(),
   ApplyReviewDecisions: action("Apply recorded review decisions to their candidates (approved, rejected, held) through the database engine.", "/pipeline/reviews/apply", undefined, registry.ApplyReviewsResponse, accessPolicies.ReviewerAccess),
+  FindDocuments: read("List source documents with their capture counts.", "/pipeline/documents", lists.PageQuery, lists.DocumentListResponse, accessPolicies.PipelineReadAccess),
+  FindCaptures: read("List captures (retrievals of a document), newest first.", "/pipeline/captures", lists.PageQuery, lists.CaptureListResponse, accessPolicies.PipelineReadAccess),
+  FindStructureVersions: read("List site structure versions.", "/pipeline/structure-versions", lists.PageQuery, lists.StructureVersionListResponse, accessPolicies.PipelineReadAccess),
+  FindChecks: read("List site checks, newest first.", "/pipeline/checks", lists.PageQuery, lists.CheckListResponse, accessPolicies.PipelineReadAccess),
+  DraftAssessment: draftOperation(),
   FindAssessments: read("List site legal and source assessments.", "/pipeline/assessments", lists.PageQuery, lists.AssessmentListResponse, accessPolicies.PipelineReadAccess),
   FindDossiers: read("List jurisdiction legal dossiers.", "/pipeline/dossiers", lists.PageQuery, lists.DossierListResponse, accessPolicies.PipelineReadAccess),
   ApproveAssessment: action("Approve a site assessment; only a named human account holding assessment.approve.", "/pipeline/assessments/{assessmentId}/approve", "assessmentId", registry.AssessmentDecisionResponse, accessPolicies.AssessmentApproveAccess),

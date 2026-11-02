@@ -64,3 +64,30 @@ export async function assessmentAction(verb: 'approve' | 'reject', formData: For
   revalidatePath('/review/assessments');
   back('/review/assessments', 'ok', verb === 'approve' ? 'Assessment approved under your name.' : 'Assessment rejected.');
 }
+
+/** A reviewer drafts an assessment. It is recorded as in_review and never authorises collection by itself. */
+export async function draftAssessmentAction(formData: FormData): Promise<void> {
+  const field = (name: string) => String(formData.get(name) ?? '').trim();
+  const hosts = field('hosts').split(/[\s,]+/).filter(Boolean);
+  const rate = Number(field('rate') || '0.2');
+  if (!field('siteId') || !field('rightsHolder') || hosts.length === 0) back('/review/assessments', 'bad', 'Choose a site, name the rights holder and list at least one host.');
+  try {
+    await api('/pipeline/assessments', {
+      method: 'POST',
+      body: {
+        siteId: field('siteId'),
+        accessBasis: field('accessBasis'),
+        sourceType: field('sourceType'),
+        rightsHolder: field('rightsHolder'),
+        approvedScope: JSON.stringify({ hosts, maxRequestsPerSecond: rate }),
+        rationale: field('rationale') || undefined,
+        evidence: field('evidence') || undefined,
+      },
+    });
+  } catch (error) {
+    if (error instanceof ApiError) back('/review/assessments', 'bad', error.message);
+    throw error;
+  }
+  revalidatePath('/review/assessments');
+  back('/review/assessments', 'ok', 'Draft recorded as in review. A person with assessment.approve must still decide it.');
+}

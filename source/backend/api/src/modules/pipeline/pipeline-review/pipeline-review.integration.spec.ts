@@ -8,6 +8,12 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { scratchDatabase } from "#/database/scratch-database";
 import { setReviewerDataSource } from "#/database/reviewer-database";
 import { FindCandidatesUseCase } from "#/modules/pipeline/pipeline-review/use-cases/find-candidates.usecase";
+import { DraftAssessmentUseCase } from "#/modules/pipeline/pipeline-review/use-cases/draft-assessment.usecase";
+import { FindCapturesUseCase } from "#/modules/pipeline/pipeline-review/use-cases/find-captures.usecase";
+import { FindChecksUseCase } from "#/modules/pipeline/pipeline-review/use-cases/find-checks.usecase";
+import { FindDocumentsUseCase } from "#/modules/pipeline/pipeline-review/use-cases/find-documents.usecase";
+import { FindStructureVersionsUseCase } from "#/modules/pipeline/pipeline-review/use-cases/find-structure-versions.usecase";
+import { runAsActor } from "#/auth/actor-context";
 import { FindJobsUseCase } from "#/modules/pipeline/pipeline-review/use-cases/find-jobs.usecase";
 import { FindRunsUseCase } from "#/modules/pipeline/pipeline-review/use-cases/find-runs.usecase";
 import { FindSitesUseCase } from "#/modules/pipeline/pipeline-review/use-cases/find-sites.usecase";
@@ -46,6 +52,8 @@ describe.skipIf(!adminUrl)("pipeline reviewer reads (PostgreSQL)", () => {
     candidateId = candidate.id;
     await client.query(`INSERT INTO staging.issues (candidate_id, rule, severity, message) VALUES ($1, 'unit', 'warning', 'unit assumed')`, [candidateId]);
     await client.query(`INSERT INTO engine.jobs (kind, input_hash, input) VALUES ('probe', repeat('c', 64), '{}')`);
+    process.env.DATABASE_PROMOTE_URL = url;
+    process.env.ENGINE_DATABASE_DIR = engine;
     const reviewer = new URL(url);
     reviewer.username = ROLE;
     reviewer.password = "x";
@@ -82,4 +90,30 @@ describe.skipIf(!adminUrl)("pipeline reviewer reads (PostgreSQL)", () => {
     await expect(reviewer.query(`UPDATE staging.candidates SET status = 'approved'`)).rejects.toThrow(/permission denied/);
     await reviewer.end();
   });
+
+  it("lists documents, captures, structure versions and checks", async () => {
+    const first = async (type: string) => (await client.query(`SELECT (enum_range(NULL::${type}))[1]::text AS v`)).rows[0].v;
+    const [site] = (await client.query(`INSERT INTO website.sites (code, name, kind, status, created_at, updated_at, version) VALUES ('t/site', 'Test site', 'portal', 'expected', now(), now(), 1) RETURNING id`)).rows;
+    const [publisher] = (await client.query(`INSERT INTO source.publishers (code, name, kind_id, created_at, updated_at, version) VALUES ('t-pub', 'Test publisher', gen_random_uuid(), now(), now(), 1) RETURNING id`)).rows;
+    const [document] = (await client.query(`INSERT INTO source.documents (title, kind_id, publisher_id, url, created_at, updated_at, version) VALUES ('Budget book', gen_random_uuid(), $1, 'https://example.test/b.pdf', now(), now(), 1) RETURNING id`, [publisher.id])).rows;
+    await client.query(`INSERT INTO source.captures (document_id, site_id, retrieved_at, http_status, content_hash, tool, created_at, updated_at, version) VALUES ($1, $2, now(), 200, repeat('d', 64), 'fixture', now(), now(), 1)`, [document.id, site.id]);
+    const [structure] = (await client.query(`INSERT INTO website.structures (owner_id, owner_kind, purpose, status, created_at, updated_at, version) VALUES ($1, '${await first("website.structures_owner_kind_enum")}', 'extraction', '${await first("website.structures_status_enum")}', now(), now(), 1) RETURNING id`, [site.id])).rows;
+    await client.query(`INSERT INTO website.structure_versions (structure_id, number, schema_version, manifest_hash, status, created_at, updated_at, version) VALUES ($1, 1, '1', repeat('e', 64), '${await first("website.structure_versions_status_enum")}', now(), now(), 1)`, [structure.id]);
+    await client.query(`INSERT INTO website.checks (site_id, kind, outcome, checked_at, created_at, updated_at, version) VALUES ($1, '${await first("website.checks_kind_enum")}', '${await first("website.checks_outcome_enum")}', now(), now(), now(), 1)`, [site.id]);
+
+    expect((await new FindDocumentsUseCase().execute({} as never)).documents[0]).toMatchObject({ title: "Budget book", publisher: "Test publisher", captures: 1 });
+    expect((await new FindCapturesUseCase().execute({} as never)).captures[0]).toMatchObject({ documentTitle: "Budget book", httpStatus: 200 });
+    expect((await new FindStructureVersionsUseCase().execute({} as never)).structureVersions[0]).toMatchObject({ purpose: "extraction", number: 1 });
+    expect((await new FindChecksUseCase().execute({} as never)).checks[0]).toMatchObject({ siteName: "Test site" });
+  });
+
+  it("a reviewer drafts an assessment through the engine; it stays in_review", async () => {
+    await client.query(`INSERT INTO identity.accounts (id, issuer, subject, status, created_at, updated_at, version) VALUES ('00000000-0000-4000-8000-0000000000a1', 'mzizi-dev', 'dev-reviewer', 'active', now(), now(), 1) ON CONFLICT DO NOTHING`);
+    await client.query(`INSERT INTO identity.grants (account_id, role, is_current, created_at, updated_at, version) VALUES ('00000000-0000-4000-8000-0000000000a1', 'reviewer', true, now(), now(), 1)`);
+    const [site] = (await client.query(`SELECT id FROM website.sites WHERE code = 't/site'`)).rows;
+    const request = { siteId: site.id, accessBasis: "published_terms", sourceType: "official_website", rightsHolder: "Test publisher", approvedScope: JSON.stringify({ hosts: ["example.test"] }), rationale: "terms read" };
+    const result = await runAsActor({ actorId: "00000000-0000-4000-8000-0000000000a1", role: "reviewer" }, () => new DraftAssessmentUseCase().execute(request as never));
+    const [row] = (await client.query(`SELECT status::text AS status, is_current, reviewed_by FROM website.assessments WHERE id = $1`, [result.assessmentId])).rows;
+    expect(row).toEqual({ status: "in_review", is_current: true, reviewed_by: null });
+  }, 60_000);
 });

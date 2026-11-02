@@ -11,12 +11,18 @@ import { assessmentListResponseExample } from "#/modules/pipeline/dto/assessment
 import { candidateDetailResponseExample } from "#/modules/pipeline/dto/candidate-detail-response.dto.example.ts";
 import { candidateListQueryExample } from "#/modules/pipeline/dto/candidate-list-query.dto.example.ts";
 import { candidateListResponseExample } from "#/modules/pipeline/dto/candidate-list-response.dto.example.ts";
+import { captureListResponseExample } from "#/modules/pipeline/dto/capture-list-response.dto.example.ts";
+import { checkListResponseExample } from "#/modules/pipeline/dto/check-list-response.dto.example.ts";
+import { documentListResponseExample } from "#/modules/pipeline/dto/document-list-response.dto.example.ts";
 import { dossierListResponseExample } from "#/modules/pipeline/dto/dossier-list-response.dto.example.ts";
+import { draftAssessmentRequestExample } from "#/modules/pipeline/dto/draft-assessment-request.dto.example.ts";
+import { draftAssessmentResponseExample } from "#/modules/pipeline/dto/draft-assessment-response.dto.example.ts";
 import { jobListResponseExample } from "#/modules/pipeline/dto/job-list-response.dto.example.ts";
 import { pageQueryExample } from "#/modules/pipeline/dto/page-query.dto.example.ts";
 import { promoteResponseExample } from "#/modules/pipeline/dto/promote-response.dto.example.ts";
 import { runListResponseExample } from "#/modules/pipeline/dto/run-list-response.dto.example.ts";
 import { siteListResponseExample } from "#/modules/pipeline/dto/site-list-response.dto.example.ts";
+import { structureVersionListResponseExample } from "#/modules/pipeline/dto/structure-version-list-response.dto.example.ts";
 
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 import { PipelinePipelineReviewModule } from "#/modules/pipeline/pipeline-review/pipeline-review.module.ts";
@@ -44,12 +50,17 @@ class InMemoryDataSourceModule {}
 const service = {
   applyReviewDecisions: vi.fn(),
   approveAssessment: vi.fn(),
+  draftAssessment: vi.fn(),
   findAssessments: vi.fn(),
   findCandidates: vi.fn(),
+  findCaptures: vi.fn(),
+  findChecks: vi.fn(),
+  findDocuments: vi.fn(),
   findDossiers: vi.fn(),
   findJobs: vi.fn(),
   findRuns: vi.fn(),
   findSites: vi.fn(),
+  findStructureVersions: vi.fn(),
   getCandidateDetail: vi.fn(),
   promoteCandidate: vi.fn(),
   rejectAssessment: vi.fn(),
@@ -145,6 +156,42 @@ describe("POST /v1/pipeline/assessments/{assessmentId}/approve (approveAssessmen
   });
 });
 
+describe("POST /v1/pipeline/assessments (draftAssessment)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { },
+        headers: { },
+        body: draftAssessmentRequestExample.valid(),
+      };
+    const result = draftAssessmentResponseExample.valid();
+    service.draftAssessment.mockResolvedValue(result);
+
+    const response = await send("POST", "/v1/pipeline/assessments", sent);
+
+    expect(response.status, await response.clone().text()).toBe(201);
+    expect(service.draftAssessment).toHaveBeenCalledTimes(1);
+    expect(service.draftAssessment).toHaveBeenCalledWith(expect.objectContaining(sent.body));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+
+  it("rejects an invalid body without calling the service", async () => {
+    const [violation] = draftAssessmentRequestExample.violations();
+    if (violation === undefined) return;
+    const sent: Sent = { ...{
+        params: { },
+        query: { },
+        headers: { },
+        body: draftAssessmentRequestExample.valid(),
+      }, body: violation.value };
+
+    const response = await send("POST", "/v1/pipeline/assessments", sent);
+
+    expect(response.status).toBe(400);
+    expect(service.draftAssessment).not.toHaveBeenCalled();
+  });
+});
+
 describe("GET /v1/pipeline/assessments (findAssessments)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -179,6 +226,63 @@ describe("GET /v1/pipeline/candidates (findCandidates)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.findCandidates).toHaveBeenCalledTimes(1);
     expect(service.findCandidates).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/pipeline/captures (findCaptures)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(pageQueryExample.valid()), },
+        headers: { },
+      };
+    const result = captureListResponseExample.valid();
+    service.findCaptures.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/pipeline/captures", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findCaptures).toHaveBeenCalledTimes(1);
+    expect(service.findCaptures).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/pipeline/checks (findChecks)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(pageQueryExample.valid()), },
+        headers: { },
+      };
+    const result = checkListResponseExample.valid();
+    service.findChecks.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/pipeline/checks", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findChecks).toHaveBeenCalledTimes(1);
+    expect(service.findChecks).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/pipeline/documents (findDocuments)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(pageQueryExample.valid()), },
+        headers: { },
+      };
+    const result = documentListResponseExample.valid();
+    service.findDocuments.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/pipeline/documents", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findDocuments).toHaveBeenCalledTimes(1);
+    expect(service.findDocuments).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -255,6 +359,25 @@ describe("GET /v1/pipeline/sites (findSites)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.findSites).toHaveBeenCalledTimes(1);
     expect(service.findSites).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/pipeline/structure-versions (findStructureVersions)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(pageQueryExample.valid()), },
+        headers: { },
+      };
+    const result = structureVersionListResponseExample.valid();
+    service.findStructureVersions.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/pipeline/structure-versions", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findStructureVersions).toHaveBeenCalledTimes(1);
+    expect(service.findStructureVersions).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

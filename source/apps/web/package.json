@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "bun --bun next dev -p 3100",
+    "dev:env": "bun scripts/dev-env.ts",
+    "build": "bun --bun next build",
+    "start": "bun --bun next start -p 3100",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
     "lint": "eslint",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\""
   },

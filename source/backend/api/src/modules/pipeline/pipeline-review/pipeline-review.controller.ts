@@ -23,12 +23,18 @@ import { AssessmentListResponseDto } from "#/modules/pipeline/dto/assessment-lis
 import { CandidateDetailResponseDto } from "#/modules/pipeline/dto/candidate-detail-response.dto.ts";
 import { CandidateListQueryDto } from "#/modules/pipeline/dto/candidate-list-query.dto.ts";
 import { CandidateListResponseDto } from "#/modules/pipeline/dto/candidate-list-response.dto.ts";
+import { CaptureListResponseDto } from "#/modules/pipeline/dto/capture-list-response.dto.ts";
+import { CheckListResponseDto } from "#/modules/pipeline/dto/check-list-response.dto.ts";
+import { DocumentListResponseDto } from "#/modules/pipeline/dto/document-list-response.dto.ts";
 import { DossierListResponseDto } from "#/modules/pipeline/dto/dossier-list-response.dto.ts";
+import { DraftAssessmentRequestDto } from "#/modules/pipeline/dto/draft-assessment-request.dto.ts";
+import { DraftAssessmentResponseDto } from "#/modules/pipeline/dto/draft-assessment-response.dto.ts";
 import { JobListResponseDto } from "#/modules/pipeline/dto/job-list-response.dto.ts";
 import { PageQueryDto } from "#/modules/pipeline/dto/page-query.dto.ts";
 import { PromoteResponseDto } from "#/modules/pipeline/dto/promote-response.dto.ts";
 import { RunListResponseDto } from "#/modules/pipeline/dto/run-list-response.dto.ts";
 import { SiteListResponseDto } from "#/modules/pipeline/dto/site-list-response.dto.ts";
+import { StructureVersionListResponseDto } from "#/modules/pipeline/dto/structure-version-list-response.dto.ts";
 import { PipelinePipelineReviewService } from "./pipeline-review.service.ts";
 
 @Controller()
@@ -42,6 +48,15 @@ export class PipelinePipelineReviewController {
     @Query() input: ApplyReviewsQueryDto,
   ): Promise<ApplyReviewsResponseDto> {
     return this.service.applyReviewDecisions(input);
+  }
+
+
+  @Post("/v1/pipeline/assessments")
+  @HttpCode(201)
+  draftAssessment(
+    @Body() input: DraftAssessmentRequestDto,
+  ): Promise<DraftAssessmentResponseDto> {
+    return this.service.draftAssessment(input);
   }
 
 
@@ -60,6 +75,33 @@ export class PipelinePipelineReviewController {
     @Query() input: CandidateListQueryDto,
   ): Promise<CandidateListResponseDto> {
     return this.service.findCandidates(input);
+  }
+
+
+  @Get("/v1/pipeline/captures")
+  @HttpCode(200)
+  findCaptures(
+    @Query() input: PageQueryDto,
+  ): Promise<CaptureListResponseDto> {
+    return this.service.findCaptures(input);
+  }
+
+
+  @Get("/v1/pipeline/checks")
+  @HttpCode(200)
+  findChecks(
+    @Query() input: PageQueryDto,
+  ): Promise<CheckListResponseDto> {
+    return this.service.findChecks(input);
+  }
+
+
+  @Get("/v1/pipeline/documents")
+  @HttpCode(200)
+  findDocuments(
+    @Query() input: PageQueryDto,
+  ): Promise<DocumentListResponseDto> {
+    return this.service.findDocuments(input);
   }
 
 
@@ -96,6 +138,15 @@ export class PipelinePipelineReviewController {
     @Query() input: PageQueryDto,
   ): Promise<SiteListResponseDto> {
     return this.service.findSites(input);
+  }
+
+
+  @Get("/v1/pipeline/structure-versions")
+  @HttpCode(200)
+  findStructureVersions(
+    @Query() input: PageQueryDto,
+  ): Promise<StructureVersionListResponseDto> {
+    return this.service.findStructureVersions(input);
   }
 
 
