@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "label": "Custom-prepared from manual research",
+    "preparedBy": "coding agent (Claude), from general knowledge of Kenyan public symbols",
+    "date": "2026-11-03",
+    "caveat": "Whether a level is expected to have a flag or an emblem. The country has both; the 47 counties have adopted county flags and coats of arms (a few may not have published one, which the per-unit marker records as none); constituencies and wards have no official flag or emblem as a rule, so no search is queued for them. A unit can still be marked has when evidence shows otherwise."
+  },
+  "levels": [
+    { "code": "geography/level/country", "flag": "has", "emblem": "has" },
+    { "code": "geography/level/county", "flag": "has", "emblem": "has" },
+    { "code": "geography/level/constituency", "flag": "none", "emblem": "none" },
+    { "code": "geography/level/ward", "flag": "none", "emblem": "none" }
+  ]
+}

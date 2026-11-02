@@ -42,6 +42,24 @@
       "jurisdiction": "ke",
       "rightsHolder": "Office of the Registrar of Political Parties (statutory office, Political Parties Act 2011)",
       "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "www.wikidata.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Wikimedia Foundation (Wikidata structured data is CC0; Commons files carry their own free licences, recorded per file)",
+      "maxRequestsPerSecond": 0.5
+    },
+    {
+      "host": "commons.wikimedia.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Wikimedia Foundation (Wikidata structured data is CC0; Commons files carry their own free licences, recorded per file)",
+      "maxRequestsPerSecond": 0.5
+    },
+    {
+      "host": "upload.wikimedia.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Wikimedia Foundation (Wikidata structured data is CC0; Commons files carry their own free licences, recorded per file)",
+      "maxRequestsPerSecond": 0.5
     }
   ]
 }

@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 
 import { checkClaim, promoteClaims, reviewClaims } from "../src/claims.ts";
+import { seedMediaExpectations } from "../src/media.ts";
 import { openDataSource, withDatabase } from "../src/config.ts";
 import { migrate } from "../src/migrations.ts";
 import { seedFixtures, seedReference } from "../src/seeds.ts";
@@ -119,5 +120,17 @@ run("claim review and promotion", () => {
     await reviewClaims(db, reviewer, "Emblem is on Wikidata.", { fields: ["emblem_marker"] });
     expect((await promoteClaims(db)).promoted).toBe(1);
     expect((await db.query(`SELECT emblem_marker FROM geography.units WHERE id = $1`, [third]))[0].emblem_marker).toBe("has");
+  });
+
+  test("level expectations fill unknown levels and never replace a reviewed value", async () => {
+    await db.query(`UPDATE reference.classifications SET flag_expected = NULL, emblem_expected = NULL WHERE scheme = 'geography/level'`);
+    await db.query(`UPDATE reference.classifications SET flag_expected = 'none' WHERE code = 'geography/level/county'`); // a reviewer decided otherwise
+    const done = await seedMediaExpectations(db);
+    expect(done.levels).toBeGreaterThanOrEqual(3);
+    const rows: Array<{ code: string; flag_expected: string; emblem_expected: string }> = await db.query(`SELECT code, flag_expected, emblem_expected FROM reference.classifications WHERE code LIKE 'geography/level/%' AND jurisdiction_id = (SELECT id FROM reference.jurisdictions WHERE code = 'ke')`);
+    const by = Object.fromEntries(rows.map((r) => [r.code, r]));
+    expect(by["geography/level/country"]).toMatchObject({ flag_expected: "has", emblem_expected: "has" });
+    expect(by["geography/level/county"]).toMatchObject({ flag_expected: "none", emblem_expected: "has" });
+    expect(by["geography/level/ward"]).toMatchObject({ flag_expected: "none", emblem_expected: "none" });
   });
 });

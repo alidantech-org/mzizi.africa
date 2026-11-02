@@ -33,6 +33,7 @@ import { backfillGovernance } from "./governance-backfill.ts";
 import { grantReadOnly, grantReviewerRead } from "./grants.ts";
 import { applyReviewDecisions, reviewRun } from "./staging/review.ts";
 import { promoteClaims, reviewClaims } from "./claims.ts";
+import { seedMediaExpectations } from "./media.ts";
 import { promoteApproved, promoteCandidate } from "./staging/promotion.ts";
 import { validateCandidates } from "./staging/validation.ts";
 import { drift, generate, migrate, revertLast } from "./migrations.ts";
@@ -112,6 +113,10 @@ switch (command) {
     }
     if (kind === "governance-structure") {
       console.log(JSON.stringify(await withDb({}, (db) => seedGovernanceStructure(db))));
+      break;
+    }
+    if (kind === "media-expectations") {
+      console.log(JSON.stringify(await withDb({}, (db) => seedMediaExpectations(db))));
       break;
     }
     if (kind === "agent") {
