@@ -1,0 +1,213 @@
+"""Reinforcement: coverage reports, the gap queue, refill jobs and claim resolution (DEC-CLAIMS-AND-CONFLICTS).
+
+Coverage counts, per table and nullable field, records with a value, known absent (a gap closed as `known_absent`) and
+unknown. Unknowns become `engine.gaps`; a `refill` job tries the gap's sources, logs every attempt in
+`engine.gap_attempts`, and records a found value as a *proposed claim* with a `source.attributions` row, never in the
+data table. Claims are all kept; `resolve` derives the winner (highest trust, then most recent) with corroboration and
+a dispute flag.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
+from typing import Any, Callable
+
+import psycopg
+from psycopg import sql
+from psycopg.types.json import Jsonb
+
+from . import jobs
+
+# table -> fields worth chasing and the refill sources worth trying, in order.
+RULES: dict[str, dict[str, list[str]]] = {
+    "geography.units": {"parent_id": ["wikidata", "knbs"], "valid_from": ["wikidata"]},
+    "political.parties": {"registry_identifier": ["orpp"], "abbreviation": ["orpp", "wikidata"], "registry_authority_id": ["orpp"], "symbol_url": ["orpp"], "valid_from": ["orpp", "wikidata"]},
+    "governance.institutions": {"geo_unit_id": ["wikidata"], "legal_basis_id": ["kenya_law"], "description": ["wikidata"], "valid_from": ["wikidata"]},
+    "governance.offices": {"description": ["wikidata"], "valid_from": ["wikidata"]},
+    "governance.holders": {"valid_from": ["iebc", "wikidata"], "selection_procedure_id": ["kenya_law"]},
+}
+STALE_AFTER = timedelta(days=365)
+
+
+def coverage(conn: psycopg.Connection, rules: dict[str, dict[str, list[str]]] | None = None) -> list[dict[str, Any]]:
+    """One row per table and field: total, present, known_absent, unknown. Read-only."""
+    rows = []
+    for table, fields in (rules or RULES).items():
+        schema, name = table.split(".")
+        for column in fields:
+            query = sql.SQL("""SELECT count(*) AS total, count(t.{c}) AS present,
+                count(*) FILTER (WHERE t.{c} IS NULL AND g.status = 'known_absent') AS known_absent
+                FROM {s}.{t} t LEFT JOIN engine.gaps g ON g.target_kind = %s AND g.target_id = t.id AND g.field = %s""").format(c=sql.Identifier(column), s=sql.Identifier(schema), t=sql.Identifier(name))
+            r = conn.execute(query, (table, column)).fetchone()
+            rows.append({"table": table, "field": column, "total": r["total"], "present": r["present"], "known_absent": r["known_absent"], "unknown": r["total"] - r["present"] - r["known_absent"]})
+    return rows
+
+
+def format_coverage(rows: list[dict[str, Any]]) -> str:
+    lines = [f"{'table':28} {'field':24} {'total':>7} {'present':>8} {'absent':>7} {'unknown':>8}  coverage"]
+    for r in rows:
+        pct = 100 * (r["present"] + r["known_absent"]) / r["total"] if r["total"] else 100.0
+        lines.append(f"{r['table']:28} {r['field']:24} {r['total']:>7} {r['present']:>8} {r['known_absent']:>7} {r['unknown']:>8}  {pct:5.1f}%")
+    return "\n".join(lines)
+
+
+def build_gaps(conn: psycopg.Connection, rules: dict[str, dict[str, list[str]]] | None = None, limit: int | None = None) -> int:
+    """Queue every missing field as an open gap (idempotent). Gaps already tried keep their status and log."""
+    created = 0
+    for table, fields in (rules or RULES).items():
+        schema, name = table.split(".")
+        for column, refill_sources in fields.items():
+            query = sql.SQL("""INSERT INTO engine.gaps (target_kind, target_id, field, refill_sources)
+                SELECT %s, t.id, %s, %s FROM {s}.{t} t WHERE t.{c} IS NULL
+                ON CONFLICT (target_kind, target_id, field) DO NOTHING""").format(c=sql.Identifier(column), s=sql.Identifier(schema), t=sql.Identifier(name))
+            created += conn.execute(query, (table, column, Jsonb(refill_sources))).rowcount
+    return created
+
+
+def mark_disputed_and_stale(conn: psycopg.Connection, now: datetime | None = None) -> int:
+    """Disputed standings and old winning claims re-enter the queue as gaps (reason disputed or stale)."""
+    now = now or datetime.now(timezone.utc)
+    n = conn.execute("""INSERT INTO engine.gaps (target_kind, target_id, field, reason, status)
+        SELECT s.target_kind, s.target_id, s.field, 'disputed', 'open' FROM engine.claim_standings s WHERE s.disputed
+        ON CONFLICT (target_kind, target_id, field) DO UPDATE SET reason = 'disputed', status = 'open', updated_at = now() WHERE engine.gaps.status <> 'open'""").rowcount
+    n += conn.execute("""INSERT INTO engine.gaps (target_kind, target_id, field, reason, status)
+        SELECT s.target_kind, s.target_id, s.field, 'stale', 'open' FROM engine.claim_standings s JOIN engine.claims c ON c.id = s.winning_claim_id
+        WHERE NOT s.disputed AND c.observed_at < %s
+        ON CONFLICT (target_kind, target_id, field) DO UPDATE SET reason = 'stale', status = 'open', updated_at = now() WHERE engine.gaps.status = 'found'""", (now - STALE_AFTER,)).rowcount
+    return n
+
+
+def queue(conn: psycopg.Connection, limit: int = 50) -> list[dict[str, Any]]:
+    """The gap queue: open gaps, and not-found or ambiguous ones, whose retry time has passed, highest priority first."""
+    return conn.execute("SELECT * FROM engine.gaps WHERE (status = 'open' OR status IN ('not_found', 'ambiguous')) AND (retry_after IS NULL OR retry_after <= now()) ORDER BY priority DESC, created_at LIMIT %s", (limit,)).fetchall()
+
+
+def gap_report(conn: psycopg.Connection) -> list[dict[str, Any]]:
+    return conn.execute("""SELECT target_kind, field, status, reason, count(*) AS n FROM engine.gaps GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3""").fetchall()
+
+
+# ---- refill jobs -------------------------------------------------------------------------------------------------
+
+@dataclass
+class Finding:
+    outcome: str  # found | not_found | ambiguous
+    value: Any = None
+    attribution_id: str | None = None  # a source.attributions row the handler already wrote for the evidence
+    detail: dict[str, Any] = field(default_factory=dict)
+
+
+RefillHandler = Callable[[dict[str, Any]], Finding]
+REFILL_SOURCES: dict[str, RefillHandler] = {}
+
+
+def register_refill(code: str, handler: RefillHandler) -> None:
+    """Other lanes register a handler per source (wikidata, orpp, knbs, iebc...). A handler only searches and reports."""
+    REFILL_SOURCES[code] = handler
+
+
+def enqueue_refills(conn: psycopg.Connection, limit: int = 50) -> int:
+    n = 0
+    for gap in queue(conn, limit):
+        sources = gap["refill_sources"] or []
+        if not sources:
+            continue
+        _, created = jobs.enqueue(conn, "refill", {"gap_id": str(gap["id"])}, rerun=gap["attempts"] > 0)
+        if created:
+            conn.execute("UPDATE engine.gaps SET status = 'queued', updated_at = now() WHERE id = %s", (gap["id"],))
+            n += 1
+    return n
+
+
+def refill_handler(conn: psycopg.Connection, retry_days: int = 30) -> Callable[[jobs.Job], tuple[dict[str, Any], str | None]]:
+    """Job handler: try each source not already tried for the gap; log every attempt; a found value becomes a proposed claim."""
+    def handle(job: jobs.Job) -> tuple[dict[str, Any], str | None]:
+        gap = conn.execute("SELECT * FROM engine.gaps WHERE id = %s", (job.input["gap_id"],)).fetchone()
+        tried = {r["refill_source"] for r in conn.execute("SELECT refill_source FROM engine.gap_attempts WHERE gap_id = %s AND outcome IN ('found', 'not_found', 'ambiguous') AND created_at > now() - make_interval(days => %s)", (gap["id"], retry_days))}
+        final, outcomes = "not_found", {}
+        for code in gap["refill_sources"]:
+            if code in tried or code not in REFILL_SOURCES:
+                continue
+            try:
+                f = REFILL_SOURCES[code](dict(gap))
+            except Exception as error:
+                conn.execute("INSERT INTO engine.gap_attempts (gap_id, refill_source, outcome, result, job_id) VALUES (%s, %s, 'error', %s, %s)", (gap["id"], code, Jsonb({"error": str(error)[:500]}), job.id))
+                continue
+            conn.execute("INSERT INTO engine.gap_attempts (gap_id, refill_source, outcome, result, job_id) VALUES (%s, %s, %s, %s, %s)", (gap["id"], code, f.outcome, Jsonb({"value": f.value, **f.detail}), job.id))
+            outcomes[code] = f.outcome
+            if f.outcome == "found":
+                if f.attribution_id is None:
+                    raise jobs.NonRetryable(f"refill source {code} found a value without evidence")
+                add_claim(conn, gap["target_kind"], gap["target_id"], gap["field"], f.value, f.attribution_id)
+                final = "found"
+                break
+            if f.outcome == "ambiguous":
+                final = "ambiguous"
+        conn.execute("""UPDATE engine.gaps SET status = %s, attempts = attempts + 1, last_attempt_at = now(),
+            retry_after = CASE WHEN %s = 'found' THEN NULL ELSE now() + make_interval(days => %s) END, updated_at = now() WHERE id = %s""", (final, final, retry_days, gap["id"]))
+        return {"gap_id": str(gap["id"]), "outcome": final, "attempts": outcomes}, None
+    return handle
+
+
+# ---- claims ------------------------------------------------------------------------------------------------------
+
+def value_hash(value: Any) -> str:
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()
+
+
+def add_claim(conn: psycopg.Connection, kind: str, target_id: Any, fld: str, value: Any, attribution_id: Any, valid_from=None, valid_to=None) -> str:
+    """Record a claim, taking trust from the publisher of the attribution's document (reliability x attribution confidence)."""
+    a = conn.execute("""SELECT a.confidence, p.id AS publisher_id, p.reliability FROM source.attributions a
+        JOIN source.documents d ON d.id = a.document_id JOIN source.publishers p ON p.id = d.publisher_id WHERE a.id = %s""", (attribution_id,)).fetchone()
+    if a is None:
+        raise ValueError("claim needs an existing attribution")
+    trust = round((a["reliability"] if a["reliability"] is not None else 0.5) * (a["confidence"] if a["confidence"] is not None else 1.0), 4)
+    row = conn.execute("""INSERT INTO engine.claims (target_kind, target_id, field, value, value_hash, attribution_id, publisher_id, trust, valid_from, valid_to)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (attribution_id, field, value_hash) DO UPDATE SET observed_at = now() RETURNING id""",
+        (kind, target_id, fld, Jsonb(value), value_hash(value), attribution_id, a["publisher_id"], trust, valid_from, valid_to)).fetchone()
+    rebuild_standing(conn, kind, target_id, fld)
+    return str(row["id"])
+
+
+@dataclass
+class Claim:
+    id: str
+    value_hash: str
+    publisher: str | None
+    trust: float
+    observed_at: datetime
+
+
+@dataclass
+class Standing:
+    winner: str
+    corroboration: int
+    disputed: bool
+    distinct_values: int
+    why: str
+
+
+def resolve(claims: list[Claim]) -> Standing | None:
+    """Winner = highest trust, then most recent. Corroboration = independent publishers behind the winning value.
+    Disputed = more than one distinct value among the claims. Nothing is discarded."""
+    if not claims:
+        return None
+    win = max(claims, key=lambda c: (c.trust, c.observed_at))
+    agree = {c.publisher or c.id for c in claims if c.value_hash == win.value_hash}
+    values = {c.value_hash for c in claims}
+    why = f"highest trust {win.trust:.2f}" + (f" of {len(claims)} claims" if len(claims) > 1 else "")
+    return Standing(win.id, len(agree), len(values) > 1, len(values), why)
+
+
+def rebuild_standing(conn: psycopg.Connection, kind: str, target_id: Any, fld: str) -> Standing | None:
+    rows = conn.execute("SELECT id, value_hash, publisher_id, trust, observed_at FROM engine.claims WHERE target_kind = %s AND target_id = %s AND field = %s AND review <> 'rejected'", (kind, target_id, fld)).fetchall()
+    st = resolve([Claim(str(r["id"]), r["value_hash"], str(r["publisher_id"]) if r["publisher_id"] else None, float(r["trust"]), r["observed_at"]) for r in rows])
+    if st is None:
+        conn.execute("DELETE FROM engine.claim_standings WHERE target_kind = %s AND target_id = %s AND field = %s", (kind, target_id, fld))
+        return None
+    conn.execute("""INSERT INTO engine.claim_standings (target_kind, target_id, field, winning_claim_id, corroboration, disputed, distinct_values, why)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (target_kind, target_id, field) DO UPDATE SET winning_claim_id = EXCLUDED.winning_claim_id,
+        corroboration = EXCLUDED.corroboration, disputed = EXCLUDED.disputed, distinct_values = EXCLUDED.distinct_values, why = EXCLUDED.why, computed_at = now()""",
+        (kind, target_id, fld, st.winner, st.corroboration, st.disputed, st.distinct_values, st.why))
+    return st

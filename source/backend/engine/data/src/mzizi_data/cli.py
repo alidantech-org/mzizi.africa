@@ -93,6 +93,11 @@ def main(argv: list[str] | None = None) -> int:
     dd = sub.add_parser("dedup", help="score possible duplicates of people or organisations: auto-merge only with corroboration, flag the rest")
     dd.add_argument("kind", choices=["person", "organization"])
     dd.add_argument("--actor", default=None, help="the approving account id recorded on automatic decisions")
+    cv = sub.add_parser("coverage", help="coverage report per table and nullable field (read-only)")
+    cv.add_argument("--json", action="store_true")
+    gp = sub.add_parser("gaps", help="gap queue: build (queue missing fields, disputed, stale), report, enqueue (refill jobs)")
+    gp.add_argument("action", choices=["build", "report", "enqueue"])
+    gp.add_argument("--limit", type=int, default=50)
     pf = sub.add_parser("profile", help="print everything held about one person (by code) as JSON")
     pf.add_argument("code")
     gx = sub.add_parser("geo-crosscheck", help="compare promoted county and constituency boundaries with the HDX COD-AB files; --apply marks agreeing boundaries verified")
@@ -109,6 +114,7 @@ def main(argv: list[str] | None = None) -> int:
     wb.add_argument("--store", default=".data/objects")
     ex = sub.add_parser("expand-patterns", help="create expected sites from a family's domain patterns (offline; no requests are made)")
     ex.add_argument("family_code")
+    sub.add_parser("backfill-domains", help="create candidate domain rows for every site from its reachability-check candidates, link zones and parents, report counts (offline)")
     rep = sub.add_parser("catalogue-report", help="counts of families, patterns, sites and domains with their counting rules")
     stop = sub.add_parser("stop", help="incident: stop collection for a site, cancel its pending jobs and quarantine its candidates")
     stop.add_argument("site_code")
@@ -275,6 +281,28 @@ def main(argv: list[str] | None = None) -> int:
         with connect() as conn:
             print(json.dumps(run_dedup(conn, args.kind, args.actor)))
         return 0
+    if args.command == "coverage":
+        from . import reinforcement
+        from .db import connect
+
+        with connect() as conn:
+            rows = reinforcement.coverage(conn)
+        print(json.dumps(rows, indent=2) if args.json else reinforcement.format_coverage(rows))
+        return 0
+    if args.command == "gaps":
+        from . import reinforcement
+        from .db import connect
+
+        with connect() as conn:
+            if args.action == "build":
+                out = {"created": reinforcement.build_gaps(conn), "disputed_or_stale": reinforcement.mark_disputed_and_stale(conn)}
+            elif args.action == "enqueue":
+                out = {"enqueued": reinforcement.enqueue_refills(conn, args.limit)}
+            else:
+                out = reinforcement.gap_report(conn)
+            conn.commit()
+        print(json.dumps(out, default=str, indent=2))
+        return 0
     if args.command == "profile":
         from .db import connect
         from .dedup import profile_person
@@ -322,6 +350,15 @@ def main(argv: list[str] | None = None) -> int:
                 made += sum(1 for e in expected if e.created)
                 print(f"{pattern['template']}: {len(expected)} subjects, {sum(1 for e in expected if e.created)} new expected sites")
             conn.commit()
+        return 0
+    if args.command == "backfill-domains":
+        from . import domains
+        from .db import connect
+
+        with connect() as conn:
+            print(domains.backfill_from_checks(conn))
+            conn.commit()
+            print(json.dumps(domains.report(conn), indent=2))
         return 0
     if args.command == "catalogue-report":
         from .db import connect
