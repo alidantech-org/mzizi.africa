@@ -1,0 +1,11 @@
+mapping: datasets
+module: datasets
+target_kind: source.documents
+key: [url]
+fields:
+  title:       { from: title }
+  url:         { from: page }
+  publishedOn: { from: modified, precision: exact }
+provenance:
+  locator: { path: $.result.results, index: $item_index }
+  method: extracted

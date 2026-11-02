@@ -1,0 +1,697 @@
+{
+  "note": "Site-tag vocabulary (scheme site-tag) used by site structure bundles and traits. Reference seed; jurisdiction-neutral.",
+  "country": null,
+  "rows": [
+    {
+      "entity": "JurisdictionEntity",
+      "key": "world",
+      "values": {
+        "code": "world",
+        "name": "World (jurisdiction-neutral vocabulary)",
+        "kind": "supranational"
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:budget",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/budget",
+        "label": "kind:budget",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:tender",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/tender",
+        "label": "kind:tender",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:gazette",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/gazette",
+        "label": "kind:gazette",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:census",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/census",
+        "label": "kind:census",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:boundary",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/boundary",
+        "label": "kind:boundary",
+        "order": 4
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:statute",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/statute",
+        "label": "kind:statute",
+        "order": 5
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:election-result",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/election-result",
+        "label": "kind:election-result",
+        "order": 6
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:report",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/report",
+        "label": "kind:report",
+        "order": 7
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:directory",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/directory",
+        "label": "kind:directory",
+        "order": 8
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:dataset",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/dataset",
+        "label": "kind:dataset",
+        "order": 9
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:kind:notice",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/kind/notice",
+        "label": "kind:notice",
+        "order": 10
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:time:published",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/time/published",
+        "label": "time:published",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:time:valid_from",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/time/valid_from",
+        "label": "time:valid_from",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:time:valid_to",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/time/valid_to",
+        "label": "time:valid_to",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:time:period",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/time/period",
+        "label": "time:period",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:time:retrieved",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/time/retrieved",
+        "label": "time:retrieved",
+        "order": 4
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:label:title",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/label/title",
+        "label": "label:title",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:label:identifier",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/label/identifier",
+        "label": "label:identifier",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:label:amount",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/label/amount",
+        "label": "label:amount",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:label:currency",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/label/currency",
+        "label": "label:currency",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:label:unit",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/label/unit",
+        "label": "label:unit",
+        "order": 4
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:label:name",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/label/name",
+        "label": "label:name",
+        "order": 5
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:label:code",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/label/code",
+        "label": "label:code",
+        "order": 6
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:label:date",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/label/date",
+        "label": "label:date",
+        "order": 7
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:label:url",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/label/url",
+        "label": "label:url",
+        "order": 8
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:geo:national",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/geo/national",
+        "label": "geo:national",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:geo:county",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/geo/county",
+        "label": "geo:county",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:geo:constituency",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/geo/constituency",
+        "label": "geo:constituency",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:geo:ward",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/geo/ward",
+        "label": "geo:ward",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:geo:region",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/geo/region",
+        "label": "geo:region",
+        "order": 4
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:geo:district",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/geo/district",
+        "label": "geo:district",
+        "order": 5
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:jurisdiction:global",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/jurisdiction/global",
+        "label": "jurisdiction:global",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:tier:1",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/tier/1",
+        "label": "tier:1",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:tier:2",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/tier/2",
+        "label": "tier:2",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:tier:3",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/tier/3",
+        "label": "tier:3",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:licence:open",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/licence/open",
+        "label": "licence:open",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:licence:restricted",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/licence/restricted",
+        "label": "licence:restricted",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:licence:unknown",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/licence/unknown",
+        "label": "licence:unknown",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:platform:wordpress",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/platform/wordpress",
+        "label": "platform:wordpress",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:platform:drupal",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/platform/drupal",
+        "label": "platform:drupal",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:platform:ckan",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/platform/ckan",
+        "label": "platform:ckan",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:platform:custom",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/platform/custom",
+        "label": "platform:custom",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:platform:static",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/platform/static",
+        "label": "platform:static",
+        "order": 4
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:platform:arcgis",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/platform/arcgis",
+        "label": "platform:arcgis",
+        "order": 5
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:platform:dspace",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/platform/dspace",
+        "label": "platform:dspace",
+        "order": 6
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:section:downloads",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/section/downloads",
+        "label": "section:downloads",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:section:publications",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/section/publications",
+        "label": "section:publications",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:section:tenders",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/section/tenders",
+        "label": "section:tenders",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:section:news",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/section/news",
+        "label": "section:news",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:section:contacts",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/section/contacts",
+        "label": "section:contacts",
+        "order": 4
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:section:data-portal",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/section/data-portal",
+        "label": "section:data-portal",
+        "order": 5
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:purpose:data-portal",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/purpose/data-portal",
+        "label": "purpose:data-portal",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:purpose:publications",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/purpose/publications",
+        "label": "purpose:publications",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:purpose:legislation",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/purpose/legislation",
+        "label": "purpose:legislation",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:purpose:procurement",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/purpose/procurement",
+        "label": "purpose:procurement",
+        "order": 3
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:purpose:statistics",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/purpose/statistics",
+        "label": "purpose:statistics",
+        "order": 4
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:purpose:elections",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/purpose/elections",
+        "label": "purpose:elections",
+        "order": 5
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:purpose:governance",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/purpose/governance",
+        "label": "purpose:governance",
+        "order": 6
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:period:fiscal_year",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/period/fiscal_year",
+        "label": "period:fiscal_year",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:period:calendar_year",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/period/calendar_year",
+        "label": "period:calendar_year",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:period:quarter",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/period/quarter",
+        "label": "period:quarter",
+        "order": 2
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "tag:period:month",
+      "values": {
+        "jurisdictionId": "@world",
+        "scheme": "site-tag",
+        "code": "site-tag/period/month",
+        "label": "period:month",
+        "order": 3
+      }
+    }
+  ]
+}

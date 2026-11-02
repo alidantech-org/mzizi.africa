@@ -1,0 +1,14 @@
+module: datasets
+tags: [kind:dataset, tier:1]
+discover:
+  api:
+    url: /api/3/action/package_search
+    query: { rows: 100 }
+    items: { jsonpath: "$.result.results[*]" }
+fetch: { resource: json }
+extract:
+  fields:
+    title:     { from: "$.title", tags: [label:title] }
+    page:      { from: "$.url", tags: [label:url] }
+    modified:  { from: "$.metadata_modified", parse: { date: "%Y-%m-%dT%H:%M:%S" }, tags: [time:published] }
+expect: { min_items: 2, required_fields: [title] }

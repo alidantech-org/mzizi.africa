@@ -1,0 +1,11 @@
+mapping: budgets
+module: budgets
+target_kind: source.documents
+key: [url]
+fields:
+  title:       { from: title, transform: collapse_whitespace }
+  url:         { from: href }
+  publishedOn: { from: published, precision: exact }
+provenance:
+  locator: { page: $page, item: $item_index }
+  method: extracted

@@ -1,0 +1,17 @@
+module: budgets
+tags: [kind:budget, tier:2]
+discover:
+  listing:
+    url: /publications/budgets
+    items:
+      - { css: "article.pub", confidence: 0.95 }
+      - { css: "li.publication", confidence: 0.6 }
+    paginate: { type: query, param: page, start: 1, max_pages: 50, stop_when: empty_items }
+fetch: { resource: pdf }
+extract:
+  fields:
+    title:       { from: link_text, tags: [label:title] }
+    href:        { from: link_href, tags: [label:url] }
+    published:   { from: { css: ".date" }, parse: { date: "%d %B %Y" }, tags: [time:published] }
+    fiscal_year: { from: title, regex: "(\\d{4}/\\d{2})", parse: fiscal_year, tags: [period:fiscal_year] }
+expect: { min_items: 3, required_fields: [title, href] }

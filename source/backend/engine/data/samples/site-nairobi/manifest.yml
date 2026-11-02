@@ -1,0 +1,15 @@
+schema: mzizi.site/v1
+site: ke/nairobi-county
+extends: { family: ke/county-government, version: 1 }
+vars: { tenders_path: /tenders/open }
+modules: [tenders]
+policy:
+  assessment: { ref: assess-nairobi-county }
+  scope:
+    hosts: [nairobi.example.org]
+    schemes: [https]
+    paths: { allow: [/tenders/] }
+  rate: { requests_per_second: 0.25 }
+  identify: { user_agent: "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)" }
+  robots: respect
+  auth: none

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/site/v1/tags.schema.json",
+  "title": "mzizi.site/v1 tags",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["tags"],
+  "properties": {
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tag", "meaning"],
+        "properties": { "tag": { "$ref": "common.schema.json#/$defs/tag" }, "meaning": { "type": "string", "minLength": 3 } }
+      }
+    }
+  }
+}

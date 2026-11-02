@@ -1,0 +1,2557 @@
+{
+  "audit.comments": {
+    "fields": [
+      "actorId",
+      "body",
+      "createdAt",
+      "id",
+      "parentCommentId",
+      "targetId",
+      "targetKind",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "actorId",
+      "body",
+      "targetId",
+      "targetKind"
+    ]
+  },
+  "audit.decisions": {
+    "fields": [
+      "createdAt",
+      "decision",
+      "id",
+      "proposedState",
+      "rationale",
+      "reviewerId",
+      "targetId",
+      "targetKind",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "decision",
+      "proposedState",
+      "rationale",
+      "reviewerId",
+      "targetId",
+      "targetKind"
+    ]
+  },
+  "audit.evidence": {
+    "fields": [
+      "actorId",
+      "createdAt",
+      "fileId",
+      "id",
+      "note",
+      "targetId",
+      "targetKind",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "actorId",
+      "fileId",
+      "targetId",
+      "targetKind"
+    ]
+  },
+  "calendar.events": {
+    "fields": [
+      "code",
+      "createdAt",
+      "description",
+      "endsOn",
+      "geoUnitId",
+      "id",
+      "impactLevel",
+      "isCurrent",
+      "isRecurring",
+      "jurisdictionId",
+      "startsOn",
+      "status",
+      "title",
+      "typeId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "isRecurring",
+      "jurisdictionId",
+      "startsOn",
+      "status",
+      "title",
+      "typeId"
+    ]
+  },
+  "calendar.links": {
+    "fields": [
+      "createdAt",
+      "eventId",
+      "id",
+      "isCurrent",
+      "role",
+      "targetId",
+      "targetKind",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "eventId",
+      "isCurrent",
+      "targetId",
+      "targetKind"
+    ]
+  },
+  "civic.amenities": {
+    "fields": [
+      "code",
+      "createdAt",
+      "geoUnitId",
+      "id",
+      "isActive",
+      "isCurrent",
+      "jurisdictionId",
+      "name",
+      "sectorId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isActive",
+      "isCurrent",
+      "jurisdictionId",
+      "name",
+      "sectorId"
+    ]
+  },
+  "civic.deliveries": {
+    "fields": [
+      "amenityId",
+      "budgetId",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "responsibleOfficeId",
+      "serviceId",
+      "status",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "amenityId",
+      "isCurrent",
+      "serviceId",
+      "status"
+    ]
+  },
+  "civic.posts": {
+    "fields": [
+      "amenityId",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "officeId",
+      "roleKindId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "amenityId",
+      "isCurrent",
+      "officeId"
+    ]
+  },
+  "civic.services": {
+    "fields": [
+      "code",
+      "createdAt",
+      "description",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "legalBasisId",
+      "name",
+      "sectorId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "jurisdictionId",
+      "name",
+      "sectorId"
+    ]
+  },
+  "debt.disbursements": {
+    "fields": [
+      "amount",
+      "createdAt",
+      "currencyCode",
+      "disbursedOn",
+      "id",
+      "isCurrent",
+      "ledgerEntryId",
+      "loanId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "amount",
+      "currencyCode",
+      "disbursedOn",
+      "isCurrent",
+      "loanId"
+    ]
+  },
+  "debt.loans": {
+    "fields": [
+      "borrowerUnitId",
+      "code",
+      "createdAt",
+      "currencyCode",
+      "id",
+      "interestRate",
+      "isCurrent",
+      "legalBasisId",
+      "lenderEntityId",
+      "principalAmount",
+      "status",
+      "termMonths",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "borrowerUnitId",
+      "code",
+      "currencyCode",
+      "isCurrent",
+      "principalAmount",
+      "status"
+    ]
+  },
+  "debt.repayments": {
+    "fields": [
+      "createdAt",
+      "currencyCode",
+      "feesPaid",
+      "id",
+      "interestPaid",
+      "isCurrent",
+      "ledgerEntryId",
+      "loanId",
+      "paidOn",
+      "principalPaid",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "currencyCode",
+      "interestPaid",
+      "isCurrent",
+      "loanId",
+      "paidOn",
+      "principalPaid"
+    ]
+  },
+  "electoral.candidates": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "isIndependent",
+      "nominationStatus",
+      "partyId",
+      "personId",
+      "seatId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "isIndependent",
+      "nominationStatus",
+      "personId",
+      "seatId"
+    ]
+  },
+  "electoral.commitments": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "manifestoId",
+      "parentId",
+      "sortOrder",
+      "text",
+      "topicId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "manifestoId",
+      "sortOrder",
+      "text"
+    ]
+  },
+  "electoral.elections": {
+    "fields": [
+      "administeringInstitutionId",
+      "code",
+      "createdAt",
+      "geoUnitId",
+      "heldDate",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "legalBasisId",
+      "name",
+      "scheduledDate",
+      "status",
+      "typeId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "jurisdictionId",
+      "name",
+      "status",
+      "typeId"
+    ]
+  },
+  "electoral.manifestos": {
+    "fields": [
+      "candidateId",
+      "createdAt",
+      "documentUrl",
+      "id",
+      "isCurrent",
+      "language",
+      "publishedOn",
+      "title",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "candidateId",
+      "isCurrent",
+      "title"
+    ]
+  },
+  "electoral.results": {
+    "fields": [
+      "candidateId",
+      "createdAt",
+      "declaredAt",
+      "declaringInstitutionId",
+      "geoUnitId",
+      "id",
+      "isCurrent",
+      "isWinner",
+      "rank",
+      "resultLevelId",
+      "seatId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version",
+      "votes"
+    ],
+    "required": [
+      "candidateId",
+      "isCurrent",
+      "isWinner",
+      "resultLevelId",
+      "seatId",
+      "votes"
+    ]
+  },
+  "electoral.seats": {
+    "fields": [
+      "code",
+      "createdAt",
+      "electionId",
+      "geoUnitId",
+      "id",
+      "isCurrent",
+      "legalBasisId",
+      "officeId",
+      "positions",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "electionId",
+      "isCurrent",
+      "positions"
+    ]
+  },
+  "filesystem.attachments": {
+    "fields": [
+      "createdAt",
+      "fileId",
+      "id",
+      "position",
+      "role",
+      "targetId",
+      "targetKind",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "fileId",
+      "position",
+      "role",
+      "targetId",
+      "targetKind"
+    ]
+  },
+  "filesystem.events": {
+    "fields": [
+      "actorId",
+      "createdAt",
+      "detail",
+      "fileId",
+      "id",
+      "kind",
+      "occurredAt",
+      "updatedAt",
+      "version",
+      "versionId"
+    ],
+    "required": [
+      "fileId",
+      "kind",
+      "occurredAt"
+    ]
+  },
+  "filesystem.files": {
+    "fields": [
+      "createdAt",
+      "currentVersionId",
+      "folderId",
+      "id",
+      "isLegalHold",
+      "name",
+      "ownerAccountId",
+      "status",
+      "trashedAt",
+      "updatedAt",
+      "version",
+      "visibility"
+    ],
+    "required": [
+      "folderId",
+      "isLegalHold",
+      "name",
+      "status",
+      "visibility"
+    ]
+  },
+  "filesystem.folders": {
+    "fields": [
+      "createdAt",
+      "depth",
+      "id",
+      "name",
+      "parentId",
+      "path",
+      "updatedAt",
+      "version",
+      "visibility"
+    ],
+    "required": [
+      "depth",
+      "name",
+      "path",
+      "visibility"
+    ]
+  },
+  "filesystem.formats": {
+    "fields": [
+      "category",
+      "code",
+      "createdAt",
+      "extension",
+      "id",
+      "isPreviewable",
+      "maxSizeBytes",
+      "mimeType",
+      "name",
+      "processingStrategy",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "category",
+      "code",
+      "extension",
+      "isPreviewable",
+      "mimeType",
+      "name"
+    ]
+  },
+  "filesystem.objects": {
+    "fields": [
+      "contentHash",
+      "createdAt",
+      "durationSeconds",
+      "formatId",
+      "id",
+      "mediaHeight",
+      "mediaWidth",
+      "objectKey",
+      "pageCount",
+      "scanStatus",
+      "sizeBytes",
+      "storeId",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "contentHash",
+      "objectKey",
+      "scanStatus",
+      "sizeBytes",
+      "storeId"
+    ]
+  },
+  "filesystem.stores": {
+    "fields": [
+      "code",
+      "configurationName",
+      "createdAt",
+      "id",
+      "isActive",
+      "kind",
+      "region",
+      "tier",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "code",
+      "configurationName",
+      "isActive",
+      "kind",
+      "tier"
+    ]
+  },
+  "filesystem.uploads": {
+    "fields": [
+      "completedFileId",
+      "createdAt",
+      "expectedHash",
+      "expectedSizeBytes",
+      "expiresAt",
+      "fileName",
+      "folderId",
+      "id",
+      "requestedBy",
+      "state",
+      "storeId",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "expectedSizeBytes",
+      "expiresAt",
+      "fileName",
+      "folderId",
+      "state",
+      "storeId"
+    ]
+  },
+  "filesystem.variants": {
+    "fields": [
+      "createdAt",
+      "derivedObjectId",
+      "id",
+      "kind",
+      "objectId",
+      "parameters",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "derivedObjectId",
+      "kind",
+      "objectId"
+    ]
+  },
+  "filesystem.versions": {
+    "fields": [
+      "createdAt",
+      "fileId",
+      "id",
+      "note",
+      "objectId",
+      "updatedAt",
+      "uploadedBy",
+      "version",
+      "versionNumber"
+    ],
+    "required": [
+      "fileId",
+      "objectId",
+      "versionNumber"
+    ]
+  },
+  "finance.budgets": {
+    "fields": [
+      "approvedAmount",
+      "createdAt",
+      "currencyCode",
+      "fiscalYearId",
+      "id",
+      "isCurrent",
+      "kind",
+      "legalBasisId",
+      "programCode",
+      "unitId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "approvedAmount",
+      "currencyCode",
+      "fiscalYearId",
+      "isCurrent",
+      "kind",
+      "unitId"
+    ]
+  },
+  "finance.entries": {
+    "fields": [
+      "accountCode",
+      "createdAt",
+      "creditAmount",
+      "currencyCode",
+      "debitAmount",
+      "id",
+      "isCurrent",
+      "postedOn",
+      "referenceId",
+      "referenceKind",
+      "unitId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "accountCode",
+      "creditAmount",
+      "currencyCode",
+      "debitAmount",
+      "isCurrent",
+      "postedOn",
+      "referenceKind",
+      "unitId"
+    ]
+  },
+  "finance.expenditures": {
+    "fields": [
+      "amount",
+      "approverPersonId",
+      "budgetId",
+      "contractId",
+      "createdAt",
+      "currencyCode",
+      "id",
+      "isCurrent",
+      "stageId",
+      "stageOrder",
+      "unitId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "amount",
+      "budgetId",
+      "currencyCode",
+      "isCurrent",
+      "stageId",
+      "stageOrder",
+      "unitId"
+    ]
+  },
+  "finance.revenues": {
+    "fields": [
+      "amount",
+      "categoryId",
+      "createdAt",
+      "currencyCode",
+      "fiscalYearId",
+      "id",
+      "isCurrent",
+      "payerEntityId",
+      "receivedOn",
+      "restriction",
+      "unitId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "amount",
+      "categoryId",
+      "currencyCode",
+      "fiscalYearId",
+      "isCurrent",
+      "receivedOn",
+      "restriction",
+      "unitId"
+    ]
+  },
+  "finance.transfers": {
+    "fields": [
+      "amount",
+      "createdAt",
+      "currencyCode",
+      "fiscalYearId",
+      "fromUnitId",
+      "id",
+      "isCurrent",
+      "legalBasisId",
+      "restriction",
+      "status",
+      "toUnitId",
+      "transferTypeId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "amount",
+      "currencyCode",
+      "fiscalYearId",
+      "fromUnitId",
+      "isCurrent",
+      "restriction",
+      "status",
+      "toUnitId",
+      "transferTypeId"
+    ]
+  },
+  "finance.units": {
+    "fields": [
+      "code",
+      "createdAt",
+      "geoUnitId",
+      "id",
+      "institutionId",
+      "isCurrent",
+      "jurisdictionId",
+      "legalEntityId",
+      "levelId",
+      "name",
+      "parentUnitId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "jurisdictionId",
+      "levelId",
+      "name"
+    ]
+  },
+  "finance.years": {
+    "fields": [
+      "code",
+      "createdAt",
+      "endsOn",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "startsOn",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "endsOn",
+      "isCurrent",
+      "jurisdictionId",
+      "startsOn"
+    ]
+  },
+  "geography.boundaries": {
+    "fields": [
+      "createdAt",
+      "geometry",
+      "id",
+      "isCurrent",
+      "labelPoint",
+      "referenceYear",
+      "unitId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version",
+      "versionNumber"
+    ],
+    "required": [
+      "geometry",
+      "isCurrent",
+      "unitId",
+      "versionNumber"
+    ]
+  },
+  "geography.changes": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "kind",
+      "sourceUnitId",
+      "targetUnitId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "kind",
+      "sourceUnitId",
+      "targetUnitId"
+    ]
+  },
+  "geography.names": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "language",
+      "name",
+      "unitId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "name",
+      "unitId"
+    ]
+  },
+  "geography.relationships": {
+    "fields": [
+      "childId",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "kind",
+      "parentId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "childId",
+      "isCurrent",
+      "kind",
+      "parentId"
+    ]
+  },
+  "geography.units": {
+    "fields": [
+      "code",
+      "createdAt",
+      "id",
+      "isActive",
+      "isCurrent",
+      "jurisdictionId",
+      "kind",
+      "levelId",
+      "name",
+      "parentId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isActive",
+      "isCurrent",
+      "jurisdictionId",
+      "kind",
+      "levelId",
+      "name"
+    ]
+  },
+  "governance.holders": {
+    "fields": [
+      "createdAt",
+      "departureReason",
+      "id",
+      "isCurrent",
+      "legalBasisId",
+      "officeId",
+      "personId",
+      "selectionProcedureId",
+      "status",
+      "termNumber",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "officeId",
+      "personId",
+      "status"
+    ]
+  },
+  "governance.institutions": {
+    "fields": [
+      "branchId",
+      "code",
+      "createdAt",
+      "description",
+      "geoUnitId",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "legalBasisId",
+      "name",
+      "typeId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "jurisdictionId",
+      "name",
+      "typeId"
+    ]
+  },
+  "governance.offices": {
+    "fields": [
+      "code",
+      "createdAt",
+      "description",
+      "id",
+      "institutionId",
+      "isCurrent",
+      "isSingleton",
+      "name",
+      "parentOfficeId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "institutionId",
+      "isCurrent",
+      "isSingleton",
+      "name"
+    ]
+  },
+  "governance.procedures": {
+    "fields": [
+      "createdAt",
+      "description",
+      "id",
+      "isCurrent",
+      "legalBasisId",
+      "methodId",
+      "officeId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "methodId",
+      "officeId"
+    ]
+  },
+  "governance.relationships": {
+    "fields": [
+      "childInstitutionId",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "kind",
+      "legalBasisId",
+      "parentInstitutionId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "childInstitutionId",
+      "isCurrent",
+      "kind",
+      "parentInstitutionId"
+    ]
+  },
+  "governance.rules": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "kind",
+      "legalBasisId",
+      "numericValue",
+      "officeId",
+      "textValue",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "kind",
+      "officeId"
+    ]
+  },
+  "governance.stages": {
+    "fields": [
+      "actorInstitutionId",
+      "actorOfficeId",
+      "createdAt",
+      "description",
+      "id",
+      "isCurrent",
+      "kind",
+      "procedureId",
+      "stageOrder",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "kind",
+      "procedureId",
+      "stageOrder"
+    ]
+  },
+  "identity.accounts": {
+    "fields": [
+      "createdAt",
+      "id",
+      "issuer",
+      "lastSeenAt",
+      "personId",
+      "status",
+      "subject",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "issuer",
+      "status",
+      "subject"
+    ]
+  },
+  "identity.grants": {
+    "fields": [
+      "accountId",
+      "createdAt",
+      "grantedBy",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "role",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "accountId",
+      "isCurrent",
+      "role"
+    ]
+  },
+  "legal.amendments": {
+    "fields": [
+      "amendingInstrumentId",
+      "code",
+      "createdAt",
+      "id",
+      "instrumentId",
+      "isCurrent",
+      "summary",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "instrumentId",
+      "isCurrent"
+    ]
+  },
+  "legal.changes": {
+    "fields": [
+      "amendmentId",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "kind",
+      "newText",
+      "previousText",
+      "provisionId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "amendmentId",
+      "isCurrent",
+      "kind",
+      "provisionId"
+    ]
+  },
+  "legal.instruments": {
+    "fields": [
+      "code",
+      "contentHash",
+      "createdAt",
+      "documentUrl",
+      "id",
+      "isCurrent",
+      "issuingInstitutionId",
+      "jurisdictionId",
+      "kindId",
+      "status",
+      "summary",
+      "title",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "jurisdictionId",
+      "kindId",
+      "status",
+      "title"
+    ]
+  },
+  "legal.links": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "note",
+      "provisionId",
+      "targetId",
+      "targetKind",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "provisionId",
+      "targetId",
+      "targetKind"
+    ]
+  },
+  "legal.provisions": {
+    "fields": [
+      "citation",
+      "code",
+      "content",
+      "createdAt",
+      "heading",
+      "id",
+      "instrumentId",
+      "isCurrent",
+      "kind",
+      "parentId",
+      "previousVersionId",
+      "sortOrder",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "citation",
+      "code",
+      "instrumentId",
+      "isCurrent",
+      "kind",
+      "sortOrder"
+    ]
+  },
+  "organization.entities": {
+    "fields": [
+      "code",
+      "createdAt",
+      "entityTypeId",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "officialName",
+      "parentEntityId",
+      "status",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "entityTypeId",
+      "isCurrent",
+      "jurisdictionId",
+      "officialName",
+      "status"
+    ]
+  },
+  "organization.identifiers": {
+    "fields": [
+      "createdAt",
+      "entityId",
+      "id",
+      "isCurrent",
+      "issuingAuthorityId",
+      "schemeId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "value",
+      "version"
+    ],
+    "required": [
+      "entityId",
+      "isCurrent",
+      "schemeId",
+      "value"
+    ]
+  },
+  "organization.locations": {
+    "fields": [
+      "addressText",
+      "createdAt",
+      "entityId",
+      "geoUnitId",
+      "id",
+      "isCurrent",
+      "kindId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "entityId",
+      "isCurrent"
+    ]
+  },
+  "organization.ownerships": {
+    "fields": [
+      "createdAt",
+      "entityId",
+      "id",
+      "isCurrent",
+      "ownerEntityId",
+      "ownerPersonId",
+      "percentage",
+      "position",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "entityId",
+      "isCurrent"
+    ]
+  },
+  "person.contacts": {
+    "fields": [
+      "createdAt",
+      "exposure",
+      "id",
+      "isCurrent",
+      "kind",
+      "label",
+      "officeId",
+      "personId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "value",
+      "version"
+    ],
+    "required": [
+      "exposure",
+      "isCurrent",
+      "kind",
+      "personId",
+      "value"
+    ]
+  },
+  "person.handles": {
+    "fields": [
+      "createdAt",
+      "exposure",
+      "handle",
+      "id",
+      "isCurrent",
+      "isVerified",
+      "personId",
+      "platformId",
+      "updatedAt",
+      "url",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "exposure",
+      "handle",
+      "isCurrent",
+      "isVerified",
+      "personId",
+      "platformId"
+    ]
+  },
+  "person.individuals": {
+    "fields": [
+      "birthDate",
+      "birthDatePrecision",
+      "birthPlaceId",
+      "code",
+      "createdAt",
+      "deathDate",
+      "deathDatePrecision",
+      "displayName",
+      "familyName",
+      "givenName",
+      "id",
+      "isCurrent",
+      "lifeStatus",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "displayName",
+      "isCurrent",
+      "lifeStatus"
+    ]
+  },
+  "person.names": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "kind",
+      "language",
+      "name",
+      "personId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "kind",
+      "name",
+      "personId"
+    ]
+  },
+  "person.profiles": {
+    "fields": [
+      "biography",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "language",
+      "nationalityId",
+      "occupation",
+      "personId",
+      "summary",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "personId"
+    ]
+  },
+  "political.alignments": {
+    "fields": [
+      "createdAt",
+      "id",
+      "ideologyId",
+      "isCurrent",
+      "partyId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "ideologyId",
+      "isCurrent",
+      "partyId"
+    ]
+  },
+  "political.holders": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isActing",
+      "isCurrent",
+      "personId",
+      "positionId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isActing",
+      "isCurrent",
+      "personId",
+      "positionId"
+    ]
+  },
+  "political.ideologies": {
+    "fields": [
+      "code",
+      "createdAt",
+      "description",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "label",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "jurisdictionId",
+      "label"
+    ]
+  },
+  "political.memberships": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "partyId",
+      "personId",
+      "roleTitle",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "partyId",
+      "personId"
+    ]
+  },
+  "political.parties": {
+    "fields": [
+      "abbreviation",
+      "code",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "name",
+      "registryAuthorityId",
+      "registryIdentifier",
+      "status",
+      "symbolUrl",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "jurisdictionId",
+      "name",
+      "status"
+    ]
+  },
+  "political.positions": {
+    "fields": [
+      "code",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "title",
+      "unitId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "title",
+      "unitId"
+    ]
+  },
+  "political.units": {
+    "fields": [
+      "code",
+      "createdAt",
+      "geoUnitId",
+      "id",
+      "isCurrent",
+      "levelId",
+      "name",
+      "parentUnitId",
+      "partyId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "levelId",
+      "name",
+      "partyId"
+    ]
+  },
+  "procurement.bids": {
+    "fields": [
+      "amount",
+      "bidderEntityId",
+      "createdAt",
+      "currencyCode",
+      "evaluationNote",
+      "id",
+      "isCompliant",
+      "isCurrent",
+      "status",
+      "submittedOn",
+      "tenderId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "amount",
+      "bidderEntityId",
+      "currencyCode",
+      "isCurrent",
+      "status",
+      "submittedOn",
+      "tenderId"
+    ]
+  },
+  "procurement.contracts": {
+    "fields": [
+      "awardedEntityId",
+      "awardedOn",
+      "code",
+      "contractingOfficeId",
+      "contractingUnitId",
+      "createdAt",
+      "currencyCode",
+      "id",
+      "isCurrent",
+      "status",
+      "tenderId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "value",
+      "version"
+    ],
+    "required": [
+      "awardedEntityId",
+      "code",
+      "contractingUnitId",
+      "currencyCode",
+      "isCurrent",
+      "status",
+      "tenderId",
+      "value"
+    ]
+  },
+  "procurement.milestones": {
+    "fields": [
+      "amount",
+      "completedOn",
+      "contractId",
+      "createdAt",
+      "currencyCode",
+      "dueOn",
+      "id",
+      "isCurrent",
+      "title",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "contractId",
+      "isCurrent",
+      "title"
+    ]
+  },
+  "procurement.tenders": {
+    "fields": [
+      "budgetId",
+      "closesOn",
+      "code",
+      "createdAt",
+      "currencyCode",
+      "estimatedValue",
+      "id",
+      "isCurrent",
+      "issuingUnitId",
+      "kindId",
+      "legalBasisId",
+      "methodId",
+      "procuringOfficeId",
+      "publishedOn",
+      "status",
+      "title",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "currencyCode",
+      "isCurrent",
+      "issuingUnitId",
+      "kindId",
+      "methodId",
+      "status",
+      "title"
+    ]
+  },
+  "procurement.variations": {
+    "fields": [
+      "amountChange",
+      "approvedOn",
+      "contractId",
+      "createdAt",
+      "currencyCode",
+      "id",
+      "isCurrent",
+      "reason",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "amountChange",
+      "contractId",
+      "currencyCode",
+      "isCurrent",
+      "reason"
+    ]
+  },
+  "reference.classifications": {
+    "fields": [
+      "code",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "label",
+      "legalBasis",
+      "order",
+      "scheme",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "jurisdictionId",
+      "label",
+      "scheme"
+    ]
+  },
+  "reference.jurisdictions": {
+    "fields": [
+      "code",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "kind",
+      "name",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "kind",
+      "name"
+    ]
+  },
+  "source.attributions": {
+    "fields": [
+      "attributedBy",
+      "captureId",
+      "confidence",
+      "createdAt",
+      "documentId",
+      "id",
+      "locator",
+      "methodId",
+      "relation",
+      "targetField",
+      "targetId",
+      "targetKind",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "documentId",
+      "methodId",
+      "relation",
+      "targetId",
+      "targetKind"
+    ]
+  },
+  "source.captures": {
+    "fields": [
+      "assessmentId",
+      "contentHash",
+      "createdAt",
+      "documentId",
+      "domainId",
+      "familyVersionId",
+      "fileVersionId",
+      "httpStatus",
+      "id",
+      "retrievedAt",
+      "retrievedBy",
+      "retrievedUrl",
+      "siteId",
+      "structureVersionId",
+      "tool",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "documentId",
+      "retrievedAt"
+    ]
+  },
+  "source.documents": {
+    "fields": [
+      "citation",
+      "createdAt",
+      "id",
+      "jurisdictionId",
+      "kindId",
+      "language",
+      "licence",
+      "publishedOn",
+      "publishedOnPrecision",
+      "publisherId",
+      "siteId",
+      "title",
+      "updatedAt",
+      "url",
+      "version"
+    ],
+    "required": [
+      "kindId",
+      "publisherId",
+      "title"
+    ]
+  },
+  "source.methods": {
+    "fields": [
+      "createdAt",
+      "description",
+      "id",
+      "kind",
+      "model",
+      "name",
+      "tool",
+      "toolVersion",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "kind",
+      "name"
+    ]
+  },
+  "source.publishers": {
+    "fields": [
+      "code",
+      "createdAt",
+      "id",
+      "jurisdictionId",
+      "kindId",
+      "name",
+      "reliability",
+      "updatedAt",
+      "version",
+      "websiteUrl"
+    ],
+    "required": [
+      "code",
+      "kindId",
+      "name"
+    ]
+  },
+  "source.verifications": {
+    "fields": [
+      "createdAt",
+      "decidedBy",
+      "decisionId",
+      "id",
+      "isCurrent",
+      "rationale",
+      "state",
+      "targetId",
+      "targetKind",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "state",
+      "targetId",
+      "targetKind"
+    ]
+  },
+  "statistical.categories": {
+    "fields": [
+      "code",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "label",
+      "parentId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "label"
+    ]
+  },
+  "statistical.datasets": {
+    "fields": [
+      "code",
+      "collector",
+      "createdAt",
+      "geoUnitId",
+      "id",
+      "indicatorId",
+      "isCurrent",
+      "jurisdictionId",
+      "methodology",
+      "publisherInstitutionId",
+      "title",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "jurisdictionId",
+      "title"
+    ]
+  },
+  "statistical.fields": {
+    "fields": [
+      "code",
+      "createdAt",
+      "dataType",
+      "id",
+      "indicatorId",
+      "isCurrent",
+      "label",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "dataType",
+      "indicatorId",
+      "isCurrent",
+      "label"
+    ]
+  },
+  "statistical.indicators": {
+    "fields": [
+      "categoryId",
+      "code",
+      "createdAt",
+      "definition",
+      "id",
+      "isCurrent",
+      "name",
+      "parentId",
+      "unitOfMeasure",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "categoryId",
+      "code",
+      "isCurrent",
+      "name"
+    ]
+  },
+  "statistical.observations": {
+    "fields": [
+      "columnId",
+      "confidenceLevel",
+      "createdAt",
+      "geoUnitId",
+      "id",
+      "indicatorId",
+      "isCurrent",
+      "numericValue",
+      "periodId",
+      "tableId",
+      "textValue",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "confidenceLevel",
+      "indicatorId",
+      "isCurrent",
+      "periodId",
+      "tableId"
+    ]
+  },
+  "statistical.periods": {
+    "fields": [
+      "code",
+      "createdAt",
+      "endsOn",
+      "granularity",
+      "id",
+      "isCurrent",
+      "startsOn",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "endsOn",
+      "granularity",
+      "isCurrent",
+      "startsOn"
+    ]
+  },
+  "website.assessments": {
+    "fields": [
+      "accessBasis",
+      "accessConditions",
+      "approvedScope",
+      "conditions",
+      "createdAt",
+      "evidence",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "lawfulBasis",
+      "licenceName",
+      "licenceUrl",
+      "licenceVersion",
+      "personalDataCategories",
+      "processingPurpose",
+      "rationale",
+      "reviewDueAt",
+      "reviewedAt",
+      "reviewedBy",
+      "rightsHolder",
+      "siteId",
+      "sourceType",
+      "status",
+      "supersedesId",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "accessBasis",
+      "approvedScope",
+      "isCurrent",
+      "personalDataCategories",
+      "rightsHolder",
+      "siteId",
+      "sourceType",
+      "status"
+    ]
+  },
+  "website.checks": {
+    "fields": [
+      "checkedAt",
+      "createdAt",
+      "detail",
+      "id",
+      "kind",
+      "outcome",
+      "siteId",
+      "structureVersionId",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "checkedAt",
+      "kind",
+      "outcome",
+      "siteId"
+    ]
+  },
+  "website.domain_patterns": {
+    "fields": [
+      "createdAt",
+      "domainRole",
+      "familyId",
+      "id",
+      "notes",
+      "scheme",
+      "status",
+      "template",
+      "updatedAt",
+      "variables",
+      "version"
+    ],
+    "required": [
+      "domainRole",
+      "familyId",
+      "scheme",
+      "status",
+      "template",
+      "variables"
+    ]
+  },
+  "website.domains": {
+    "fields": [
+      "createdAt",
+      "hostname",
+      "id",
+      "observedAt",
+      "role",
+      "scheme",
+      "siteId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "hostname",
+      "role",
+      "scheme",
+      "siteId",
+      "validFrom",
+      "validFromPrecision"
+    ]
+  },
+  "website.dossiers": {
+    "fields": [
+      "applicableLaws",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "jurisdictionId",
+      "launchStage",
+      "legislationRepositoryUrl",
+      "openQuestions",
+      "regulator",
+      "reviewDueAt",
+      "reviewedAt",
+      "reviewerId",
+      "supersedesId",
+      "treatyStatus",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "applicableLaws",
+      "isCurrent",
+      "jurisdictionId",
+      "launchStage"
+    ]
+  },
+  "website.families": {
+    "fields": [
+      "code",
+      "createdAt",
+      "description",
+      "id",
+      "jurisdictionId",
+      "kind",
+      "name",
+      "status",
+      "subjectKindId",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "code",
+      "kind",
+      "name",
+      "status"
+    ]
+  },
+  "website.fingerprints": {
+    "fields": [
+      "checkId",
+      "computedAt",
+      "createdAt",
+      "digest",
+      "features",
+      "id",
+      "kind",
+      "siteId",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "computedAt",
+      "digest",
+      "features",
+      "kind",
+      "siteId"
+    ]
+  },
+  "website.members": {
+    "fields": [
+      "basis",
+      "createdAt",
+      "familyId",
+      "id",
+      "methodId",
+      "role",
+      "score",
+      "siteId",
+      "updatedAt",
+      "validFrom",
+      "validTo",
+      "version"
+    ],
+    "required": [
+      "basis",
+      "familyId",
+      "role",
+      "siteId"
+    ]
+  },
+  "website.relations": {
+    "fields": [
+      "basis",
+      "createdAt",
+      "evidence",
+      "fromId",
+      "fromKind",
+      "id",
+      "relation",
+      "score",
+      "toId",
+      "toKind",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "basis",
+      "fromId",
+      "fromKind",
+      "relation",
+      "toId",
+      "toKind"
+    ]
+  },
+  "website.site_publishers": {
+    "fields": [
+      "createdAt",
+      "id",
+      "publisherId",
+      "role",
+      "siteId",
+      "updatedAt",
+      "validFrom",
+      "validTo",
+      "version"
+    ],
+    "required": [
+      "publisherId",
+      "role",
+      "siteId"
+    ]
+  },
+  "website.sites": {
+    "fields": [
+      "code",
+      "createdAt",
+      "description",
+      "firstSeenAt",
+      "id",
+      "jurisdictionId",
+      "kind",
+      "lastSeenAt",
+      "name",
+      "status",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "code",
+      "kind",
+      "name",
+      "status"
+    ]
+  },
+  "website.structure_files": {
+    "fields": [
+      "createdAt",
+      "fileVersionId",
+      "id",
+      "path",
+      "role",
+      "updatedAt",
+      "version",
+      "versionId"
+    ],
+    "required": [
+      "fileVersionId",
+      "path",
+      "role",
+      "versionId"
+    ]
+  },
+  "website.structure_versions": {
+    "fields": [
+      "createdAt",
+      "createdBy",
+      "folderId",
+      "id",
+      "manifestHash",
+      "methodId",
+      "notesSummary",
+      "number",
+      "schemaVersion",
+      "status",
+      "structureId",
+      "supersedesId",
+      "updatedAt",
+      "validationReport",
+      "version"
+    ],
+    "required": [
+      "manifestHash",
+      "number",
+      "schemaVersion",
+      "status",
+      "structureId"
+    ]
+  },
+  "website.structures": {
+    "fields": [
+      "createdAt",
+      "currentVersionId",
+      "id",
+      "ownerId",
+      "ownerKind",
+      "purpose",
+      "status",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "ownerId",
+      "ownerKind",
+      "purpose",
+      "status"
+    ]
+  },
+  "website.subjects": {
+    "fields": [
+      "createdAt",
+      "id",
+      "relation",
+      "siteId",
+      "targetId",
+      "targetKind",
+      "updatedAt",
+      "validFrom",
+      "validTo",
+      "version"
+    ],
+    "required": [
+      "relation",
+      "siteId",
+      "targetId",
+      "targetKind"
+    ]
+  },
+  "website.traits": {
+    "fields": [
+      "createdAt",
+      "id",
+      "methodId",
+      "observedAt",
+      "ownerId",
+      "ownerKind",
+      "score",
+      "tag",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "ownerId",
+      "ownerKind",
+      "tag"
+    ]
+  }
+}

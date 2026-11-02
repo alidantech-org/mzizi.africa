@@ -1,0 +1,11 @@
+module: tenders
+tags: [kind:tender, section:tenders]
+discover:
+  listing:
+    url: ${tenders_path}
+    items: { css: "table.tenders tr.tender" }
+extract:
+  fields:
+    title: { from: { css: "td.title" } }
+    closing: { from: { css: "td.closing" }, parse: { date: "%Y-%m-%d" }, tags: [time:valid_to] }
+expect: { min_items: 1 }

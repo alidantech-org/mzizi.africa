@@ -8,7 +8,8 @@ import { loadFixtures, readFixture } from "../../../api/src/neutral/fixture-load
  * seeds arrive through the staging and promotion path, not from here.
  */
 export async function seedReference(db: DataSource): Promise<Map<string, string>> {
-  return loadFixtures(db, readFixture("reference/media-formats").rows);
+  const ids = await loadFixtures(db, readFixture("reference/media-formats").rows);
+  return loadFixtures(db, readFixture("reference/site-tags").rows, ids);
 }
 
 export async function seedFixtures(db: DataSource, ids: Map<string, string>): Promise<number> {

@@ -11,9 +11,12 @@
  *   seed [reference|fixtures]   reference seed, or fixtures (_dev and _test only)
  *   integrity           check plain-id references, target kinds and derived geometry
  *   grants <role>       grant per-schema read access to a role
+ *   export-targets      write ../../contracts/targets.json: stored tables and their fields, for mapping validation
  *   reset               drop every schema, migrate, seed reference and fixtures (_dev and _test only)
  */
-import { entitySchemas, engineSchemas, bookkeepingSchema, openDataSource, targetUrl } from "./config.ts";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataSource, targetUrl } from "./config.ts";
 import { checkIntegrity } from "./integrity.ts";
 import { grantReadOnly } from "./grants.ts";
 import { drift, generate, migrate, revertLast } from "./migrations.ts";
@@ -88,6 +91,22 @@ switch (command) {
     if (!argument) throw new Error("usage: grants <role>");
     const schemas = await withDb({}, (db) => grantReadOnly(db, argument));
     console.log(`granted read on ${schemas.length} schemas to ${argument}`);
+    break;
+  }
+  case "export-targets": {
+    await withDb({}, async (db) => {
+      const targets: Record<string, { fields: string[]; required: string[] }> = {};
+      for (const meta of db.entityMetadatas) {
+        const columns = meta.columns.filter((column) => !column.relationMetadata || column.isVirtual === false);
+        targets[`${meta.schema}.${meta.tableName}`] = {
+          fields: [...new Set(columns.map((column) => column.propertyName))].sort(),
+          required: columns.filter((column) => !column.isNullable && column.default === undefined && !column.isGenerated && !["id", "createdAt", "updatedAt", "version"].includes(column.propertyName)).map((column) => column.propertyName).sort(),
+        };
+      }
+      const out = join(packageRoot, "..", "..", "contracts", "targets.json");
+      writeFileSync(out, `${JSON.stringify(Object.fromEntries(Object.entries(targets).sort(([a], [b]) => a.localeCompare(b))), null, 2)}\n`);
+      console.log(`wrote ${out} (${Object.keys(targets).length} tables)`);
+    });
     break;
   }
   case "reset": {

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/site/v1/common.schema.json",
+  "$defs": {
+    "tag": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*:[a-z0-9][a-z0-9_.-]*$" },
+    "tags": { "type": "array", "items": { "$ref": "#/$defs/tag" }, "uniqueItems": true },
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*$", "maxLength": 80 },
+    "siteCode": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*(/[a-z0-9][a-z0-9_-]*)*$", "maxLength": 200 },
+    "hostname": { "type": "string", "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$" },
+    "pathPrefix": { "type": "string", "pattern": "^/" },
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "css": { "type": "string" },
+        "xpath": { "type": "string" },
+        "jsonpath": { "type": "string" },
+        "regex": { "type": "string" },
+        "attr": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "oneOf": [{ "required": ["css"] }, { "required": ["xpath"] }, { "required": ["jsonpath"] }, { "required": ["regex"] }]
+    },
+    "selectors": {
+      "oneOf": [
+        { "$ref": "#/$defs/selector" },
+        { "type": "array", "items": { "$ref": "#/$defs/selector" }, "minItems": 1 }
+      ]
+    },
+    "transform": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object", "minProperties": 1, "maxProperties": 1, "additionalProperties": true }
+      ]
+    }
+  }
+}

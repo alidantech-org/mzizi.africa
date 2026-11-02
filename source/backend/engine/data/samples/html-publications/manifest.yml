@@ -1,0 +1,21 @@
+schema: mzizi.site/v1
+site: example/treasury
+fetch: { mode: http }
+modules: [budgets]
+tags: [purpose:publications, section:publications]
+policy:
+  assessment: { ref: assess-example-treasury }
+  licence: { ref: unknown }
+  scope:
+    hosts: [treasury.example.org]
+    schemes: [https]
+    paths: { allow: [/publications/], deny: [/publications/internal/] }
+  rate: { requests_per_second: 0.5, max_concurrency: 1 }
+  retries: { max: 3, backoff: exponential_jitter }
+  limits: { max_response_bytes: 52428800, timeout_seconds: 30 }
+  identify: { user_agent: "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)" }
+  robots: respect
+  auth: none
+  stop_on: ["401", "403", "429", repeated_5xx, access_challenge, block_notice]
+  data: { excluded_categories: [national_id, health, children], on_unexpected: quarantine }
+  purposes: [research]

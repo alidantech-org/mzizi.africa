@@ -39,6 +39,11 @@ run("database engine", () => {
     expect(migrations).toBeGreaterThanOrEqual(3);
   });
 
+  test("seeds the site-tag vocabulary as classification records", async () => {
+    const [{ count }] = await db.query(`SELECT count(*)::int AS count FROM reference.classifications WHERE scheme = 'site-tag'`);
+    expect(count).toBeGreaterThan(40);
+  });
+
   test("entities and migrations have not drifted", async () => {
     expect(await drift()).toEqual([]);
   }, 120_000);
@@ -101,5 +106,12 @@ run("database engine", () => {
     await db.query(`INSERT INTO source.captures (id, document_id, retrieved_at, site_id, created_at, updated_at, version) VALUES ($1, $2, now(), $3, now(), now(), 1)`, [randomUUID(), documentId, site.id]);
     const issues = await checkIntegrity(db);
     expect(issues.map((issue) => issue.rule)).toContain("captures of a site without a covering assessment");
+  });
+
+  test("integrity reports overlapping primary domains for one site", async () => {
+    const [site] = await db.query(`SELECT id FROM website.sites WHERE code = 'ke/iebc'`);
+    await db.query(`INSERT INTO website.domains (id, site_id, hostname, scheme, role, valid_from, valid_from_precision, created_at, updated_at, version) VALUES ($1, $2, 'iebc-two.example', 'https', 'primary', '2016-01-01', 'year', now(), now(), 1)`, [randomUUID(), site.id]);
+    const issues = await checkIntegrity(db);
+    expect(issues.map((issue) => issue.rule)).toContain("sites with overlapping primary domains");
   });
 });

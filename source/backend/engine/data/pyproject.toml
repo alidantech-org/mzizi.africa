@@ -1,0 +1,22 @@
+[project]
+name = "mzizi-data"
+version = "0.1.0"
+description = "Mzizi data engine: site structures, fetching, extraction, candidates."
+requires-python = ">=3.12"
+dependencies = ["pyyaml", "jsonschema", "beautifulsoup4", "lxml", "pydantic", "httpx", "shapely", "psycopg[binary]"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+mzizi-data = "mzizi_data.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

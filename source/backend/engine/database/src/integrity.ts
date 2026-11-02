@@ -103,6 +103,9 @@ export async function checkIntegrity(db: DataSource): Promise<IntegrityIssue[]> 
   push(await orphans(db, "captures of a site without a covering assessment", `FROM source.captures f WHERE f.site_id IS NOT NULL AND f.assessment_id IS NULL`));
   push(await orphans(db, "captures whose assessment belongs to another site", `FROM source.captures f JOIN website.assessments a ON a.id = f.assessment_id WHERE f.site_id IS NOT NULL AND a.site_id <> f.site_id`));
 
+  // A site has at most one primary domain at any time (valid ranges are half-open and a null end is open).
+  push(await orphans(db, "sites with overlapping primary domains", `FROM website.domains f JOIN website.domains o ON o.site_id = f.site_id AND o.id <> f.id AND o.role = 'primary' WHERE f.role = 'primary' AND f.valid_from < COALESCE(o.valid_to, 'infinity'::date) AND o.valid_from < COALESCE(f.valid_to, 'infinity'::date)`));
+
   // Derived geometry: every boundary has a shape and every shape is valid.
   push(await orphans(db, "geography.boundaries without a valid derived shape", `FROM geography.boundaries f LEFT JOIN geography.boundary_shapes s ON s.boundary_id = f.id WHERE s.boundary_id IS NULL OR s.geom IS NULL OR s.is_valid IS NOT TRUE`));
   return issues;
