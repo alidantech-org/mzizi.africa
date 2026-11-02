@@ -21,7 +21,7 @@ describe.skipIf(!adminUrl)("website model (Kenyan site families)", () => {
   let db: DataSource;
 
   beforeAll(async () => {
-    const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_website_test");
+    const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_test");
     db = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await db.initialize();
     await synchronizeDomainSchemas(db);

@@ -21,7 +21,7 @@ EXPECTED = {"ZAF": ("za", 9, 9, 0), "NGA": ("ng", 37, 37, 0), "TZA": ("tz", 30, 
 def database_url():
     from tests.conftest import scratch_database
 
-    return scratch_database("mzizi_poc_test")
+    return scratch_database("mzizi_test")
 
 
 @pytest.fixture()

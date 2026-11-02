@@ -19,7 +19,7 @@ describe.skipIf(!adminUrl)("generated schema (PostgreSQL)", () => {
   let db: DataSource;
 
   beforeAll(async () => {
-    db = new DataSource({ type: "postgres", url: await scratchDatabase(adminUrl as string, "mzizi_schema_test"), entities, synchronize: false });
+    db = new DataSource({ type: "postgres", url: await scratchDatabase(adminUrl as string, "mzizi_test"), entities, synchronize: false });
     await db.initialize();
     await synchronizeDomainSchemas(db);
   });
@@ -58,7 +58,7 @@ describe.skipIf(!adminUrl)("generated schema (PostgreSQL)", () => {
   });
 
   it("gives every domain table valid time, record time and a version", () => {
-    const system = new Set(["audit", "source", "filesystem", "identity"]);
+    const system = new Set(["audit", "source", "filesystem", "identity", "website"]); // the site registry records observations (observedAt), not valid time
     const domain = db.entityMetadatas.filter((meta) => !system.has(meta.schema as string));
     expect(domain.length).toBeGreaterThan(40);
     for (const meta of domain) {

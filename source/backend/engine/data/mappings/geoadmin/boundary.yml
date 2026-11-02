@@ -1,0 +1,11 @@
+mapping: boundary-admin
+extractor: geojson
+target_kind: geography.boundaries
+key: [unitId]
+fields:
+  unitId:        { from: unitCode, transform: [{ ref: { kind: geography.units, field: code } }] }
+  geometry:      { from: geometry }
+  referenceYear: { const: "${reference_year}" }
+provenance:
+  locator: { feature: $feature }
+  method: extracted

@@ -52,7 +52,7 @@ def test_a_budget_pdf_reaches_canonical_budgets_only_through_review(tmp_path):
     from mzizi_data.db import connect
     from mzizi_data.files import LocalDirectoryStore
 
-    url = scratch_database("mzizi_budget_test")
+    url = scratch_database("mzizi_test")
     out_title = f"Allocations by MDA {uuid.uuid4()}"
     pdf = tmp_path / "allocations.pdf"
     pdf.write_bytes(budget_pdf())

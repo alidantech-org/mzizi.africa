@@ -13,6 +13,6 @@ def connect(url: str | None = None) -> psycopg.Connection:
     if not url:
         raise RuntimeError("DATABASE_URL is required")
     database = urlparse(url).path.lstrip("/")
-    if not database.startswith("mzizi_"):
-        raise RuntimeError(f"refusing to touch {database}: only mzizi_* databases are managed here")
+    if database != "mzizi" and not database.startswith("mzizi_"):
+        raise RuntimeError(f"refusing to touch {database}: only mzizi and mzizi_* databases are managed here")
     return psycopg.connect(url, row_factory=dict_row)

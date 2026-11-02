@@ -17,14 +17,14 @@ const LOCAL_HOSTS = ["localhost", "127.0.0.1", "::1", "[::1]"];
 /**
  * Safety rules shared by every command: only databases named mzizi_* are touched (the PostGIS
  * server also holds other projects' databases). Destructive commands also require a local host and
- * a name ending in _dev or _test.
+ * a name ending in _dev or _test (the real database, `mzizi`, can never be reset or seeded with fixtures).
  */
 export function targetUrl(options: { destructive?: boolean } = {}): { url: string; database: string } {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is required");
   const parsed = new URL(url);
   const database = parsed.pathname.slice(1);
-  if (!/^mzizi_/.test(database)) throw new Error(`refusing to touch ${database}: only mzizi_* databases are managed here`);
+  if (!/^mzizi(_|$)/.test(database)) throw new Error(`refusing to touch ${database}: only mzizi and mzizi_* databases are managed here`);
   if (options.destructive) {
     if (!LOCAL_HOSTS.includes(parsed.hostname)) throw new Error(`refusing a destructive command on a non-local host: ${parsed.hostname}`);
     if (!/(_dev|_test)$/.test(database)) throw new Error(`refusing a destructive command on ${database}: the name must end in _dev or _test`);

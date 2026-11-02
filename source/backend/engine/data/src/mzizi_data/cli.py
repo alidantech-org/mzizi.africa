@@ -78,6 +78,12 @@ def main(argv: list[str] | None = None) -> int:
     ie.add_argument("page")
     ie.add_argument("--stage", choices=["B", "C"], required=True)
     ie.add_argument("--store", default=".data/objects")
+    ga = sub.add_parser("import-geo-admin", help="stage units or boundaries of one administrative level (0-3) from geoBoundaries GeoJSON, parents found by geometry")
+    ga.add_argument("directory")
+    ga.add_argument("--level", type=int, choices=[0, 1, 2, 3], required=True)
+    ga.add_argument("--part", choices=["units", "boundaries"], required=True)
+    ga.add_argument("--reference-year", default="")
+    ga.add_argument("--store", default=".data/objects")
     fe = sub.add_parser("fetch", help="live, gated, rate-limited fetch of one URL for a registered site (robots.txt respected); saves the raw bytes")
     fe.add_argument("--site", required=True, help="site code, e.g. ke/parliament")
     fe.add_argument("--url", required=True)
@@ -218,6 +224,19 @@ def main(argv: list[str] | None = None) -> int:
 
         with connect() as conn:
             out = iebc.import_iebc(conn, LocalDirectoryStore(conn, args.store), args.page, args.page + ".provenance.json", args.stage)
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        return 0
+    if args.command == "import-geo-admin":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import geo_admin
+
+        with connect() as conn:
+            out = geo_admin.import_geo_admin(conn, LocalDirectoryStore(conn, args.store), args.directory, args.level, args.part, reference_year=args.reference_year)
+        print(f"{out.units} units at level {args.level}")
+        for note in out.problems:
+            print(f"note: {note}")
         for name, stat in out.stats.items():
             print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
         return 0

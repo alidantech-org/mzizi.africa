@@ -1,0 +1,15 @@
+mapping: unit-admin
+extractor: geojson
+target_kind: geography.units
+key: [code]
+fields:
+  code:           { from: unitCode }
+  name:           { from: name, transform: collapse_whitespace }
+  kind:           { const: territorial }
+  isActive:       { const: true }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  levelId:        { from: levelRef }
+  parentId:       { from: parentCode, transform: [{ ref: { kind: geography.units, field: code } }] }
+provenance:
+  locator: { feature: $feature }
+  method: extracted

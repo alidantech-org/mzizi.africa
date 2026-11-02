@@ -59,7 +59,7 @@ describe.skipIf(!adminUrl)("read APIs (PostgreSQL, read-only role)", () => {
   };
 
   beforeAll(async () => {
-    const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_read_apis_test");
+    const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_test");
     admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await admin.initialize();
     await synchronizeDomainSchemas(admin);

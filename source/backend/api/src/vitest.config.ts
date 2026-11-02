@@ -9,6 +9,8 @@ import { defineConfig } from "vitest/config";
  */
 export default defineConfig({
   test: {
+    // Integration specs share the one scratch database (mzizi_test), so they run one file at a time when it is configured.
+    fileParallelism: !process.env.TEST_DATABASE_URL,
     include: ["**/*.spec.ts"],
     exclude: ["**/node_modules/**"],
     testTimeout: 30_000,

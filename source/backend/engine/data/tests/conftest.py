@@ -6,7 +6,7 @@ import psycopg
 import pytest
 
 DATABASE_ENGINE = Path(__file__).resolve().parents[2] / "database"
-SCRATCH = "mzizi_data_test"
+SCRATCH = "mzizi_test"
 
 
 def scratch_database(name: str) -> str:

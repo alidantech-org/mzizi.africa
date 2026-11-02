@@ -60,7 +60,7 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
   beforeAll(async () => {
     const pair = await generateKeyPair("RS256", { extractable: true });
     privateKey = pair.privateKey;
-    const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_audit_test");
+    const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_test");
     admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await admin.initialize();
     await synchronizeDomainSchemas(admin);

@@ -22,7 +22,7 @@ def database_url():
     """The slice runs in its own database so counts are exact."""
     from tests.conftest import scratch_database
 
-    return scratch_database("mzizi_slice_test")
+    return scratch_database("mzizi_test")
 
 
 @pytest.fixture()

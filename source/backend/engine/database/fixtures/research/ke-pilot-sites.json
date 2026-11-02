@@ -216,6 +216,44 @@
         "validFromPrecision": "exact",
         "observedAt": "2026-11-02T16:00:00Z"
       }
+    },
+    {
+      "entity": "SiteEntity",
+      "key": "site:ke/tenders",
+      "values": {
+        "code": "ke/tenders",
+        "name": "Public Procurement Information Portal (tenders.go.ke)",
+        "kind": "portal",
+        "status": "profiled",
+        "jurisdictionId": "@ke",
+        "description": "National tenders, contracts, notices, procuring entities and suppliers (OCDS). Registered 2026-11-02 from the product owner's pointer; profiled by gated fetch (OCDS bulk files and public JSON endpoints) on 2026-11-02."
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/tenders:tenders.go.ke",
+      "values": {
+        "siteId": "@site:ke/tenders",
+        "hostname": "tenders.go.ke",
+        "scheme": "https",
+        "role": "primary",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T18:00:00Z"
+      }
+    },
+    {
+      "entity": "SiteDomainEntity",
+      "key": "domain:ke/tenders:www.tenders.go.ke",
+      "values": {
+        "siteId": "@site:ke/tenders",
+        "hostname": "www.tenders.go.ke",
+        "scheme": "https",
+        "role": "alias",
+        "validFrom": "2026-11-02",
+        "validFromPrecision": "exact",
+        "observedAt": "2026-11-02T18:00:00Z"
+      }
     }
   ]
 }

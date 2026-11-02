@@ -33,7 +33,7 @@ describe.skipIf(!adminUrl)("pipeline reviewer reads (PostgreSQL)", () => {
   let runId: string;
 
   beforeAll(async () => {
-    const url = await scratchDatabase(adminUrl as string, "mzizi_pipeline_test");
+    const url = await scratchDatabase(adminUrl as string, "mzizi_test");
     const env = { ...process.env, DATABASE_URL: url };
     execFileSync("bun", ["src/cli.ts", "migrate"], { cwd: engine, env, stdio: "pipe" });
     client = new Client({ connectionString: url });

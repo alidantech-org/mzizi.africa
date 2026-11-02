@@ -11,7 +11,7 @@ import { validateCandidates, validatePayload } from "../src/staging/validation.t
 
 const adminUrl = process.env.TEST_DATABASE_URL;
 const run = adminUrl ? describe : describe.skip;
-const scratch = "mzizi_staging_test";
+const scratch = "mzizi_test";
 
 const square = (x: number, y: number, size: number) => JSON.stringify({ type: "Polygon", coordinates: [[[x, y], [x + size, y], [x + size, y - size], [x, y - size], [x, y]]] });
 const KENYA = square(34, 5, 8); // roughly Kenya's extent

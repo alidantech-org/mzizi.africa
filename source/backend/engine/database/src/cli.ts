@@ -88,6 +88,11 @@ switch (command) {
       console.log(`seeded research registry rows (${await withDb({}, seedResearch)} rows)`);
       break;
     }
+    if (kind === "agent") {
+      // The AI agent account only (no dev people): what a real database needs to record approvals.
+      console.log(`seeded agent account: ${(await withDb({}, (db) => seedDevAccounts(db, "mzizi-agent"))).join(", ")}`);
+      break;
+    }
     if (kind === "dev-accounts") {
       // Local development only (destructive guard: local host and a _dev or _test database).
       console.log(`seeded dev accounts: ${(await withDb({ destructive: true }, seedDevAccounts)).join(", ")}`);

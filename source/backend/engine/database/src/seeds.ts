@@ -75,8 +75,8 @@ export const DEV_ACCOUNTS = [
   { id: "00000000-0000-4000-8000-0000000000a3", subject: "mzizi-agent", role: "reviewer", issuer: "agent-mzizi" },
 ] as const;
 
-export async function seedDevAccounts(db: DataSource): Promise<string[]> {
-  for (const account of DEV_ACCOUNTS) {
+export async function seedDevAccounts(db: DataSource, only?: string): Promise<string[]> {
+  for (const account of DEV_ACCOUNTS.filter((a) => !only || a.subject === only)) {
     await db.query(
       `INSERT INTO identity.accounts (id, issuer, subject, status, created_at, updated_at, version) VALUES ($1, $3, $2, 'active', now(), now(), 1) ON CONFLICT (id) DO NOTHING`,
       [account.id, account.subject, "issuer" in account ? account.issuer : "mzizi-dev"],
@@ -84,5 +84,5 @@ export async function seedDevAccounts(db: DataSource): Promise<string[]> {
     const [existing] = await db.query(`SELECT 1 AS ok FROM identity.grants WHERE account_id = $1 AND role = $2`, [account.id, account.role]);
     if (!existing) await db.query(`INSERT INTO identity.grants (account_id, role, is_current, created_at, updated_at, version) VALUES ($1, $2, true, now(), now(), 1)`, [account.id, account.role]);
   }
-  return DEV_ACCOUNTS.map((account) => account.subject);
+  return DEV_ACCOUNTS.filter((a) => !only || a.subject === only).map((account) => account.subject);
 }

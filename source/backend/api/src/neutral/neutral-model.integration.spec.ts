@@ -41,7 +41,7 @@ describe.skipIf(!adminUrl)("country-neutral model (Kenya and South Africa)", () 
   };
 
   beforeAll(async () => {
-    const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_neutral_test");
+    const dbUrl = await scratchDatabase(adminUrl as string, "mzizi_test");
     admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await admin.initialize();
     await synchronizeDomainSchemas(admin);

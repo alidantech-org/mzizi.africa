@@ -11,7 +11,7 @@ import { seedDevAccounts, seedFixtures, seedReference, seedSiteFixtures } from "
 
 /** Runs against a scratch database on the server in TEST_DATABASE_URL (skipped without it). */
 const adminUrl = process.env.TEST_DATABASE_URL;
-const scratch = "mzizi_engine_test";
+const scratch = "mzizi_test";
 const run = adminUrl ? describe : describe.skip;
 
 run("database engine", () => {
