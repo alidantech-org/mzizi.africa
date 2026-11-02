@@ -1,5 +1,5 @@
 ---
-{id: TSK-812FCFF7EB9A,name: "Settle Dryv integration, PostGIS and auth decisions",type: task,status: planned,priority: medium,created_at: 2026-11-02T04:56:58.208Z,updated_at: 2026-11-02T04:56:58.208Z,order: 1024}
+{id: TSK-812FCFF7EB9A,name: "Settle Dryv integration, PostGIS and auth decisions",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T04:56:58.208Z,updated_at: 2026-11-02T04:57:07.654Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T04:57:07.654Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-812FCFF7EB9A/1793595427655-start,started_at: 2026-11-02T04:57:07.711Z}]}}}
 ---
 
 # Settle Dryv integration, PostGIS and auth decisions

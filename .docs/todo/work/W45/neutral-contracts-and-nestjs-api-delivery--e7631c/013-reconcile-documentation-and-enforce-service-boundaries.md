@@ -11,6 +11,7 @@ Update architecture, migration and domain documents to match the delivered contr
 ## Context
 
 AGENTS.md section 9 requires docs to change with the work. MIGRATION.md must record which legacy responsibilities are now accounted for and which Python code can later be removed. ARCHITECTURE.md section 7 defines the API boundary. Read .docs/handoffs/neutral-model-and-nestjs-api-handoff.md, .docs/decisions/nestjs-api-and-dryv-placement.md and .docs/docs/audits/LEGACY_MODEL_INVENTORY.md before starting. Keep work on develop, track it through the Task CLI and update the matching .docs files in the same change.
+This is the closing task of the group, so it also confirms that no earlier task left stale paths or undocumented decisions behind.
 
 ## Acceptance checklist
 
