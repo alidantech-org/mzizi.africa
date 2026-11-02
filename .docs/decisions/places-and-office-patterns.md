@@ -4,6 +4,8 @@
 
 # Decision: places, structures and expected offices
 
+**Status: under revision.** See `.docs/docs/PLACES_AND_PRESENCE_ASSESSMENT.md`. In particular, new records use the existing source attribution and verification schema, not `source` columns; expectation is separate from occupancy; and successor links are a link table.
+
 Date: 2 November 2026. Set by the product owner. No compatibility with the old design is needed: the migration moves the data, then drops the old tables and the incorrectly designed columns.
 
 ## Layers
