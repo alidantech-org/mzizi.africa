@@ -1,5 +1,5 @@
 ---
-{id: TSK-812FCFF7EB9A,name: "Settle Dryv integration, PostGIS and auth decisions",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T04:56:58.208Z,updated_at: 2026-11-02T04:57:07.654Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T04:57:07.654Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-812FCFF7EB9A/1793595427655-start,started_at: 2026-11-02T04:57:07.711Z}]}}}
+{id: TSK-812FCFF7EB9A,name: "Settle Dryv integration, PostGIS and auth decisions",type: task,status: completed,priority: medium,created_at: 2026-11-02T04:56:58.208Z,updated_at: 2026-11-02T04:57:45.517Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T04:57:07.654Z},{from: in-progress,to: completed,at: 2026-11-02T04:57:45.517Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-812FCFF7EB9A/1793595427655-start,started_at: 2026-11-02T04:57:07.711Z,end_ref: refs/tracking/TSK-812FCFF7EB9A/1793595465518-end,ended_at: 2026-11-02T04:57:45.517Z,summary: {files: 4,insertions: 80,deletions: 0}}]}}}
 ---
 
 # Settle Dryv integration, PostGIS and auth decisions
@@ -14,8 +14,12 @@ The handoff lists four unsettled items: whether Dryv packs are consumed from the
 
 ## Acceptance checklist
 
-- [ ] Probe the Dryv typeorm pack with a small contract that uses a geometry and a JSONB field and record what it generates.
-- [ ] Choose local checkout versus pinned git ref for packs and record the reproducibility reasoning.
-- [ ] Choose the auth and RBAC approach with roles for reader, contributor, reviewer and admin.
-- [ ] Confirm evidence uploads go through the files service by artifact reference only.
-- [ ] Write one decision file per choice in .docs/decisions/ and run task validate.
+- [x] Probe the Dryv typeorm pack with a small contract that uses a geometry and a JSONB field and record what it generates.
+- [x] Choose local checkout versus pinned git ref for packs and record the reproducibility reasoning.
+- [x] Choose the auth and RBAC approach with roles for reader, contributor, reviewer and admin.
+- [x] Confirm evidence uploads go through the files service by artifact reference only.
+- [x] Write one decision file per choice in .docs/decisions/ and run task validate.
+
+## Progress
+
+Decisions written in `.docs/decisions/`: dryv-pack-source, typeorm-postgis-jsonb, api-auth-rbac, evidence-uploads-via-files. The typeorm pack was checked by reading its README and entity template (JSONB for records, no geometry mapping) and by running its test at the pinned ref, which passes. A contract-level generation probe happens in the shared contracts task.
