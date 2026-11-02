@@ -14,9 +14,17 @@ The Parliament import created 25 party rows named only by their abbreviation (UD
 
 ## Acceptance checklist
 
-- [ ] Design the party document pipeline and extractor for the register PDFs, including embedded logo extraction.
-- [ ] Match ORPP parties to existing party rows by name and acronym with a report of matches, new parties and conflicts.
-- [ ] Update party rows (name, abbreviation, registration data, status) and record coalitions separately.
-- [ ] Store logos and constitutions as raw artifacts linked to each party with source and licence.
+- [x] Design the party document pipeline and extractor for the register PDFs, including embedded logo extraction.
+- [x] Match ORPP parties to existing party rows by name and acronym with a report of matches, new parties and conflicts.
+- [x] Update party rows (name, abbreviation, registration data, status) and record coalitions separately.
+- [x] Store logos and constitutions as raw artifacts linked to each party with source and licence.
 - [ ] Load party officials as office holders through the matching system.
-- [ ] Add extractor and matching tests with a fixture PDF.
+- [x] Add extractor and matching tests with a fixture PDF.
+
+## Outcome (Lane C, 3 November 2026)
+
+- Pipeline: `extractors/orpp_parties.py` (text tables, symbol boxes), `imports/orpp_parties.py` (match, stage, apply), commands `import-orpp-parties` and `apply-orpp-parties`; tests in `tests/test_orpp_parties.py`.
+- Result in `mzizi`: 107 fully and 41 provisionally registered rows (6 parties in both registers merged, full wins) give 142 parties. 23 matched stored rows were updated in place (audited, previous values in the decision rationale; the party table has one row per code, so promotion cannot supersede) and 119 new parties were staged, reviewed by the agent account and promoted. 107 symbols stored as documents linked to the party (licence unassessed). Postal addresses, head offices and provisional emails are restricted contact points, never in staging.
+- Migration `1794700000100` adds the `provisional` party status (provisional parties were otherwise indistinguishable from active ones).
+- Conflicts reported, not linked: stored `IND` (independent candidates are not a party) and the mixed coalition row `ODM | Azimio La Umoja One Kenya Coalition`. The register lists "Azimio la Umoja One Kenya Coalition Party" as a party, so it became a new party row; splitting the 407 memberships between ODM and the coalition needs a coalition model that does not exist yet.
+- Not done, because the data is not published in the register PDFs fetched: party officials and party constitutions (see `ke-orpp-catalogue.json`, `notPublishedThere`). Form PP-7 filings are not published as a list.

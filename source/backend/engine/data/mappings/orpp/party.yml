@@ -1,0 +1,17 @@
+mapping: party
+extractor: orpp-parties
+target_kind: political.parties
+key: [code]
+fields:
+  code:                { from: partyCode }
+  name:                { from: name }
+  abbreviation:        { from: abbreviation }
+  jurisdictionId:      { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  status:              { from: status }
+  registryIdentifier:  { from: registryIdentifier }
+  registryAuthorityId: { from: authorityCode, transform: [{ ref: { kind: governance.institutions, field: code } }] }
+  validFrom:           { from: issueDate }
+  validFromPrecision:  { const: exact }
+provenance:
+  locator: { page: $page, row: $row }
+  method: extracted

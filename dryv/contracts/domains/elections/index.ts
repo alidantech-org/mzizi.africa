@@ -40,7 +40,7 @@ export const electionProperties = elections.properties({
 });
 
 export const politicalProperties = political.properties({
-  PartyStatus: dryv.property.enum({ active: "active", dissolved: "dissolved", suspended: "suspended", inactive: "inactive" }),
+  PartyStatus: dryv.property.enum({ active: "active", dissolved: "dissolved", suspended: "suspended", inactive: "inactive", provisional: "provisional" }),
   Abbreviation: dryv.property.string().length({ min: 1, max: 40 }),
   RegistryIdentifier: dryv.property.string().length({ min: 1, max: 120 }),
 });

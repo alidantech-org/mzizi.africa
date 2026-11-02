@@ -157,8 +157,14 @@ def main(argv: list[str] | None = None) -> int:
     from . import statcli
 
     statcli.register(sub)
+    from . import partycli
+
+    partycli.register(sub)
     args = parser.parse_args(argv)
     handled = statcli.dispatch(args)
+    if handled is not None:
+        return handled
+    handled = partycli.dispatch(args)
     if handled is not None:
         return handled
     if args.command == "validate":
