@@ -2,10 +2,16 @@
 
 /** HTTP operations that require a policy, keyed by "METHOD /nest/path". Operations not listed are public reads. */
 export const accessRules = {
+  "GET /v1/pipeline/candidates": "PipelineReadAccess",
+  "GET /v1/pipeline/candidates/:candidateId": "PipelineReadAccess",
+  "GET /v1/pipeline/jobs": "PipelineReadAccess",
+  "GET /v1/pipeline/runs": "PipelineReadAccess",
+  "GET /v1/pipeline/sites": "PipelineReadAccess",
   "POST /v1/audit/comments": "ContributorAccess",
   "POST /v1/audit/decisions": "ReviewerAccess",
-  "POST /v1/audit/evidence": "ContributorAccess"
-} as const satisfies Record<string, "ContributorAccess" | "ReviewerAccess" | "AdminAccess">;
+  "POST /v1/audit/evidence": "ContributorAccess",
+  "POST /v1/pipeline/candidates/:candidateId/promote": "CandidatePromoteAccess"
+} as const satisfies Record<string, "ContributorAccess" | "ReviewerAccess" | "AdminAccess" | "PipelineReadAccess" | "AssessmentApproveAccess" | "CandidatePromoteAccess" | "AccessManageAccess">;
 
 /** Schema-qualified table of every domain fact: the only valid targetKind values for audit records. */
 export const targetKinds = [

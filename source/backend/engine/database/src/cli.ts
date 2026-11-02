@@ -25,7 +25,7 @@ import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataS
 import { checkIntegrity } from "./integrity.ts";
 import { grantReadOnly, grantReviewerRead } from "./grants.ts";
 import { applyReviewDecisions } from "./staging/review.ts";
-import { promoteApproved } from "./staging/promotion.ts";
+import { promoteApproved, promoteCandidate } from "./staging/promotion.ts";
 import { validateCandidates } from "./staging/validation.ts";
 import { drift, generate, migrate, revertLast } from "./migrations.ts";
 import { seedFixtures, seedReference, seedResearch } from "./seeds.ts";
@@ -123,6 +123,11 @@ switch (command) {
     const results = await withDb({}, (db) => promoteApproved(db, argument));
     for (const r of results) console.log(`${r.outcome} ${r.candidateId}${r.targetId ? ` -> ${r.targetKind} ${r.targetId}` : ""}${r.reasons.length ? ` (${r.reasons.join("; ")})` : ""}`);
     console.log(`${results.filter((r) => r.outcome === "promoted").length} promoted, ${results.filter((r) => r.outcome === "deferred").length} deferred`);
+    break;
+  }
+  case "promote-one": {
+    if (!argument) throw new Error("usage: promote-one <candidateId>");
+    console.log(JSON.stringify(await withDb({}, (db) => promoteCandidate(db, argument))));
     break;
   }
   case "candidates": {

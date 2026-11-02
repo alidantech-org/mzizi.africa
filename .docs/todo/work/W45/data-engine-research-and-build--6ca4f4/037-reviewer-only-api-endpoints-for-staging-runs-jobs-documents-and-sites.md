@@ -1,5 +1,5 @@
 ---
-{id: TSK-6EF29D43B416,name: "Reviewer-only API endpoints for staging, runs, jobs, documents and sites",type: task,status: planned,priority: medium,created_at: 2026-11-02T10:21:59.477Z,updated_at: 2026-11-02T10:21:59.477Z,due_at: 2026-11-09,order: 37888}
+{id: TSK-6EF29D43B416,name: "Reviewer-only API endpoints for staging, runs, jobs, documents and sites",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T10:21:59.477Z,updated_at: 2026-11-02T10:26:17.780Z,due_at: 2026-11-09,order: 37888,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T10:26:17.780Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-6EF29D43B416/1793615177781-start,started_at: 2026-11-02T10:26:18.174Z}]}}}
 ---
 
 # Reviewer-only API endpoints for staging, runs, jobs, documents and sites
@@ -16,4 +16,10 @@ The user decided (2026-11-02) on reviewer and admin only endpoints authored in D
 - [ ] Promote action (admin) delegating to the database engine, with deferral reasons returned.
 - [ ] Assessment and dossier endpoints: draft by any reviewer, approval only by an account with a reviewer or admin grant, never by an agent.
 - [ ] Localhost-only dev token minting for a seeded reviewer account; real OIDC later through the same verifier.
-- [ ] Update access rules, run bun run check and generated:check, API tests green.
+- [x] Update access rules, run bun run check and generated:check, API tests green.
+
+## Progress 2026-11-02 (session 3)
+
+Done and committed: the `access` catalogue (roles, permissions, role permissions, `account_permissions` view) with a migration, permission-based policy checks in the API (`PipelineReadAccess`, `AssessmentApproveAccess`, `CandidatePromoteAccess`, `AccessManageAccess`; direct `permissions` token claim for fine-grained grants), a read-only reviewer role (`bun src/cli.ts grants-reviewer <role>`, connection `DATABASE_REVIEWER_URL`), and the `pipeline` Dryv group with reads for candidates (list and detail with payload, issues, capture lineage and the current canonical record), runs, jobs and sites, plus `POST /v1/pipeline/candidates/{id}/promote` that runs the engine's `promote-one` under `DATABASE_PROMOTE_URL` (`ENGINE_DATABASE_DIR` optional).
+
+Still open, so items 1 to 5 stay unticked: documents, captures, structure versions, checks, assessments and dossiers endpoints; a field-level diff (only the current record is returned); document and site lineage (null for now); a promote test against a real approved candidate; assessment draft and approve endpoints; the localhost dev-token minting. Decisions: promotion via an internal command runner, approvals as separate permissions held by admin only for now.

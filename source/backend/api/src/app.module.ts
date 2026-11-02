@@ -13,6 +13,7 @@ import { GeographyModule } from "#/modules/geography/geography.module.ts";
 import { GovernanceModule } from "#/modules/governance/governance.module.ts";
 import { LegalModule } from "#/modules/legal/legal.module.ts";
 import { PersonModule } from "#/modules/person/person.module.ts";
+import { PipelineModule } from "#/modules/pipeline/pipeline.module.ts";
 import { PoliticalModule } from "#/modules/political/political.module.ts";
 import { ProcurementModule } from "#/modules/procurement/procurement.module.ts";
 import { ReferenceModule } from "#/modules/reference/reference.module.ts";
@@ -36,6 +37,7 @@ import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
     GovernanceModule,
     LegalModule,
     PersonModule,
+    PipelineModule,
     PoliticalModule,
     ProcurementModule,
     ReferenceModule,
