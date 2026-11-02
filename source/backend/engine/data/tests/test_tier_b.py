@@ -72,3 +72,48 @@ def test_html_without_numbering_still_works_and_says_so():
     out = run("html-legal", b"<html><body><h1>Notice</h1><p>Plain text only.</p></body></html>")
     assert out.status == "succeeded" and any(d["code"] == "no_article_numbering" for d in out.diagnostics)
     assert run("html-legal", b"<html><body></body></html>").status == "failed"
+
+
+def _scan(text: str) -> bytes:
+    """A PDF whose only page is an image of rendered text (no text layer)."""
+    import io
+
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new("RGB", (1600, 500), "white")
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default(size=56)
+    for index, line in enumerate(text.split("\n")):
+        draw.text((60, 60 + index * 120), line, fill="black", font=font)
+    buffer = io.BytesIO()
+    image.save(buffer, format="PDF", resolution=200)
+    return buffer.getvalue()
+
+
+def test_ocr_reads_english_and_swahili_scans_when_requested():
+    import pytest
+
+    from mzizi_data.extractors import ocr
+
+    try:
+        ocr.check()
+    except ocr.OcrUnavailable:
+        pytest.skip("tesseract with eng and swa is not installed")
+    pdf = _scan("Annual budget estimates for the county\nBajeti ya mwaka kwa kaunti ya Nairobi")
+    plain = run("pdf", pdf)
+    assert plain.status == "failed" and any(d["code"] == "ocr_required" for d in plain.diagnostics)
+    out = run("pdf", pdf, "ocr")
+    assert out.status == "succeeded"
+    segment = out.segments[0]
+    content = json.loads(segment["content"])
+    assert content["ocr"]["engine"] == "tesseract" and content["ocr"]["languages"] == "eng+swa"
+    assert "budget" in content["text"].lower() and "bajeti" in content["text"].lower()
+    assert 0 < segment["confidence"] <= 0.9
+
+
+def test_ocr_reports_a_missing_engine(monkeypatch):
+    from mzizi_data.extractors import ocr
+
+    monkeypatch.setattr(ocr.shutil, "which", lambda _name: None)
+    out = run("pdf", _scan("Some text on a scanned page that is long enough"), "ocr")
+    assert any(d["code"] == "ocr_engine_unavailable" for d in out.diagnostics)

@@ -2,8 +2,9 @@
 
 Libraries (see DEC-PDF-EXTRACTION): pypdfium2 (BSD/Apache) for fast text and scan detection and
 pdfplumber (MIT) for tables. PyMuPDF is faster but AGPL-licensed, so it is not used. OCR is not
-performed: a page with images and no text layer is reported as `ocr_required` and the result is
-partial, never silently empty.
+performed unless the `ocr` profile is requested: a page with images and no text layer is then reported as
+`ocr_required` and the result is partial, never silently empty. With `ocr`, scanned pages are read by the
+system Tesseract (see ocr.py) and kept as lower-confidence text segments that say they are machine-read.
 """
 from __future__ import annotations
 
@@ -14,7 +15,7 @@ import re
 import pdfplumber
 import pypdfium2 as pdfium
 
-from . import Extractor, Output, register
+from . import Extractor, Output, ocr, register
 
 MAX_BYTES = 256 * 1024 * 1024
 MAX_PAGES = 3000
@@ -41,6 +42,34 @@ def clean_table(rows: list[list]) -> list[list[str]]:
     return [[r[i] for i in keep] for r in padded if any(r[i] for i in keep)]
 
 
+def _read_scanned(document, scanned: list[int], segments: list[dict], diagnostics: list[dict]) -> list[int]:
+    """OCRs scanned pages; returns the pages still unread (all of them when the engine is unavailable)."""
+    languages = ocr.DEFAULT_LANGUAGES
+    try:
+        engine = ocr.check(languages)
+    except ocr.OcrUnavailable as error:
+        diagnostics.append(_diag("error", "ocr_engine_unavailable", str(error)))
+        return scanned
+    unread: list[int] = []
+    for number in scanned:
+        try:
+            text, confidence = ocr.recognise(ocr.render_png(document[number - 1]), languages)
+        except Exception as error:
+            diagnostics.append(_diag("warning", "ocr_failed", f"page {number}: {type(error).__name__}: {str(error)[:150]}", {"page": number}))
+            unread.append(number)
+            continue
+        if len(text.strip()) < MIN_TEXT_CHARS:
+            diagnostics.append(_diag("warning", "ocr_no_text", f"page {number}: OCR found no readable text", {"page": number}))
+            unread.append(number)
+            continue
+        method = {"engine": "tesseract", "version": engine, "languages": languages, "method": "ocr"}
+        segments.append({"key": f"page-{number}", "kind": "text", "locator": json.dumps({"page": number, "ocr": True}), "content": json.dumps({"text": text, "ocr": method, "meanConfidence": round(confidence, 3)}, ensure_ascii=False), "confidence": round(min(confidence, 0.9), 3)})
+        if confidence < 0.6:
+            diagnostics.append(_diag("warning", "ocr_low_confidence", f"page {number}: mean OCR confidence {confidence:.2f}", {"page": number}))
+    diagnostics.append(_diag("info", "ocr", f"{len(scanned) - len(unread)} of {len(scanned)} scanned pages read with {engine} ({languages})"))
+    return unread
+
+
 def run(data: bytes, profile: str | None) -> Output:
     if len(data) > MAX_BYTES:
         return Output("failed", diagnostics=[_diag("error", "too_large", f"{len(data)} bytes exceeds the {MAX_BYTES} byte limit")])
@@ -65,6 +94,8 @@ def run(data: bytes, profile: str | None) -> Output:
                 scanned.append(number + 1)
             continue
         segments.append({"key": f"page-{number + 1}", "kind": "text", "locator": json.dumps({"page": number + 1}), "content": json.dumps({"text": text}, ensure_ascii=False), "confidence": 1})
+    if scanned and profile and "ocr" in profile:
+        scanned = _read_scanned(document, scanned, segments, diagnostics)
     for number in scanned:
         diagnostics.append(_diag("warning", "ocr_required", f"page {number} has images and no text layer; OCR is not performed", {"page": number}))
 
