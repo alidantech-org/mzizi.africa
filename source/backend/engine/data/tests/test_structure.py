@@ -126,3 +126,51 @@ def test_legacy_geography_seed_is_not_fit_to_import_as_is():
         pytest.skip("legacy seeds not present")
     assert report["rows"] == 550 and report["uniqueCodes"] == 382 and report["conflictingDuplicates"] == 140
     assert report["uniqueUnitsPerLevel"]["county"] == 42 and len(report["countiesMissingFromLegacy"]) == 7
+
+
+# --- content sections -------------------------------------------------------------------------
+
+SECTION_SEED = Path(__file__).resolve().parents[2] / "database" / "fixtures" / "seed" / "ke-site-sections.json"
+
+
+def with_sections(text):
+    files = dict(load("html-publications").files)
+    files["sections.yml"] = text
+    return b.from_files("sections", files)
+
+
+GOOD = """sections:
+  - label: tenders
+    file_types: [pdf]
+    paginate: { type: query, param: page }
+    rules:
+      - { kind: exact, pattern: /tenders, provenance: { method: custom-prepared, label: Custom-prepared from manual research } }
+      - { kind: regex, pattern: '^/tenders/(?P<year>\\d{4})/?$' }
+"""
+
+
+def test_valid_sections_pass_and_unknown_label_or_bad_regex_are_rejected():
+    assert validate(with_sections(GOOD), run_dry=False).ok
+    report = validate(with_sections(GOOD.replace("label: tenders", "label: cakes")), run_dry=False)
+    assert any("unknown section label 'cakes'" in e for e in report.errors)
+    report = validate(with_sections(GOOD.replace("{4})/?$", "{4/?$")), run_dry=False)
+    assert any("invalid regular expression" in e for e in report.errors)
+    report = validate(with_sections(GOOD.replace("(?P<year>", "(?P<banana>")), run_dry=False)
+    assert any("unknown slot 'banana'" in e for e in report.errors)
+    report = validate(with_sections(GOOD.replace("^/tenders", "/tenders")), run_dry=False)
+    assert any("anchored" in e for e in report.errors)
+
+
+def test_seeded_sections_are_valid_and_matchable():
+    import json
+
+    from mzizi_data.structure.sections import match_rule, validate_sections
+
+    seed = json.loads(SECTION_SEED.read_text())
+    assert seed["_meta"]["label"] == "Custom-prepared from manual research"
+    assert {"ke/county-government", "ke/county-assembly", "ke/ngcdf", "ke/ministry", "ke/commission", "ke/regulator"} <= set(seed["families"])
+    for family, sections in seed["families"].items():
+        assert validate_sections({"sections": sections}) == [], family
+    hit = match_rule(seed["families"]["ke/county-government"], "/tenders/2025")
+    assert hit and hit["label"] == "tenders" and hit["slots"]["year"] == "2025"
+    assert match_rule(seed["families"]["ke/county-government"], "/nothing-here") is None

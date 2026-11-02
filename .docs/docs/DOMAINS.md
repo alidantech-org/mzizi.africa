@@ -441,6 +441,8 @@ The goal is not to claim simplistic causality. The goal is to make documented co
 
 **Owns (schema `website`).** Known sites, their dated domains, publisher links, structure versions and files, drift and reachability checks, families, domain patterns, memberships, subjects, traits, relations, fingerprints, legal and source assessments and jurisdiction dossiers. It does not own the evidence itself (`source`, `filesystem`) or the claims extracted from it.
 
+**Content sections.** A site structure may declare content sections (`sections.yml`): a semantic label such as publications, tenders or notices, path rules (exact or regex with named slots like year or page), expected file types and pagination hints, with each rule's origin held as provenance. Crawling follows modelled meaning, not a universal `/downloads` path. See `SITE_STRUCTURE_SPEC.md`; visit tracking per section is a recorded schema gap.
+
 ## Shared cross-domain dimensions
 
 Every domain should reuse a small set of common concepts instead of inventing incompatible structures:

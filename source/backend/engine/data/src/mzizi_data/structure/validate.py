@@ -14,7 +14,7 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-from . import extract, transforms
+from . import extract, sections, transforms
 from .bundle import Bundle
 from .effective import effective_modules
 
@@ -108,6 +108,10 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             report.errors.append(f"mappings/{name}.yml: mapping name {mapping.get('mapping')!r} must equal the file name")
     if bundle.tags:
         report.errors += _schema_errors(_validator("tags"), bundle.tags, "tags.yml")
+    if bundle.sections:
+        report.errors += _schema_errors(_validator("sections"), bundle.sections, "sections.yml")
+        if not report.errors:
+            report.errors += sections.validate_sections(bundle.sections)
     if report.errors:
         return report
 

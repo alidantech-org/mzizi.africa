@@ -15,6 +15,7 @@ A site structure tells the data engine how to discover, fetch, extract, label an
     <name>.yml        one concern each: a listing, a document family, an API, a table family
   mappings/
     <name>.yml        field to Mzizi target mappings and semantics for one module
+  sections.yml        content sections: semantic label, path rules, file types, pagination (optional)
   tags.yml            vocabulary extensions used by this bundle (optional)
   NOTES.md            human-readable findings, gaps, limitations, considerations
   notes/<topic>.md    longer explanations per module (optional)
@@ -107,6 +108,26 @@ expect: { min_items: 5 }                                  # drift detection
 ```
 
 Selectors are alternatives in confidence order; the engine tries each and records which matched. `expect` states what a healthy result looks like, so the engine can detect drift without guessing.
+
+## Content sections
+
+Most sites do not use a universal `/downloads` path, and one section can be reachable from several paths. `sections.yml` therefore models meaning first: each section has a semantic `label` (publications, downloads, media, tenders, notices, legislation, reports, press, budgets, bills, gazettes, careers, projects, events, data, contacts), one or more path `rules`, optional `file_types` and a `paginate` hint.
+
+```yaml
+sections:
+  - label: tenders
+    file_types: [pdf]
+    paginate: { type: query, param: page, start: 1, max_pages: 50 }
+    rules:
+      - { kind: exact, pattern: /tenders, provenance: { method: custom-prepared, label: Custom-prepared from manual research, confidence: 0.5 } }
+      - { kind: regex, pattern: '^/tenders/(?P<year>\d{4})/?$' }
+```
+
+- A rule is an `exact` path or a `regex` anchored with `^/` whose named groups are slots. Known slots: year, county, constituency, ward, number, page, month, slug, id.
+- Validation (`structure/sections.py`) rejects unknown labels, a label declared twice, invalid regular expressions, unknown slots and unanchored regexes. `match_rule(sections, path)` returns the label, the matched rule and captured slot values.
+- Rule origin is `provenance` on the rule (method `custom-prepared`, `discovered`, `ai-proposed` or `reviewed`, plus label, ref and confidence), not a text source column. Rules found from crawled links are only proposals (`discovered` or `ai-proposed`) until reviewed.
+- Seeds for Kenyan families (county governments, assemblies, NG-CDF, ministries, commissions, regulators) are in `engine/database/fixtures/seed/ke-site-sections.json`, labelled "Custom-prepared from manual research". They are unverified hypotheses at low confidence; no site was contacted.
+- Recording each section's last visit, items found and matched rule needs a persistence table (for example `website.section_visits`) that the schema does not have yet. It is a recorded gap, not built in this lane; until it exists the matched rule is returned by `match_rule` and stored on the capture or check that used it.
 
 ## Tags: giving data meaning
 

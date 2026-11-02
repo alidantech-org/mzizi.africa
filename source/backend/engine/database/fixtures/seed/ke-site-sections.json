@@ -1,0 +1,775 @@
+{
+  "_meta": {
+    "label": "Custom-prepared from manual research",
+    "preparedBy": "coding agent (Claude), from general knowledge of how Kenyan public sites are usually laid out",
+    "date": "2026-11-03",
+    "caveat": "No site was contacted. Every rule is a hypothesis about common paths (WordPress and Drupal conventions plus typical government labels) held at confidence 0.3 to 0.6, to be confirmed or replaced by a gated bounded probe and by review. Rules discovered from crawled links only propose additions for review. Paths are matched against the URL path only; hosts and scope stay in the manifest policy."
+  },
+  "families": {
+    "ke/county-government": [
+      {
+        "label": "tenders",
+        "file_types": [
+          "pdf",
+          "doc",
+          "docx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:tenders?|procurement)(?:/(?P<year>\\d{4}))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.5
+            }
+          },
+          {
+            "kind": "exact",
+            "pattern": "/tenders",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "label": "publications",
+        "file_types": [
+          "pdf",
+          "doc",
+          "docx",
+          "xls",
+          "xlsx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:publications|documents|resources)(?:/(?P<slug>[a-z0-9-]+))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "downloads",
+        "file_types": [
+          "pdf",
+          "doc",
+          "docx",
+          "xls",
+          "xlsx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "exact",
+            "pattern": "/downloads",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.5
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/(?:wp-content/uploads|sites/default/files)/(?P<year>\\d{4})/(?P<month>\\d{2})/",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "budgets",
+        "file_types": [
+          "pdf",
+          "xlsx"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:budget|budgets|county-budget)(?:/(?P<year>\\d{4}))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "notices",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:notices|public-notices|announcements)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "press",
+        "file_types": [
+          "html"
+        ],
+        "paginate": {
+          "type": "path",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:news|press|media-centre)(?:/page/(?P<page>\\d+))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "label": "legislation",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:laws|county-laws|legislation|acts)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.3
+            }
+          }
+        ]
+      }
+    ],
+    "ke/county-assembly": [
+      {
+        "label": "bills",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:bills|bills-tracker)(?:/(?P<year>\\d{4}))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "reports",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:committee-reports|reports)(?:/(?P<year>\\d{4}))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "publications",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:hansard|order-papers|publications)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "notices",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:notices|public-participation)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.3
+            }
+          }
+        ]
+      },
+      {
+        "label": "press",
+        "file_types": [
+          "html"
+        ],
+        "paginate": {
+          "type": "path",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:news|press)(?:/page/(?P<page>\\d+))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      }
+    ],
+    "ke/ngcdf": [
+      {
+        "label": "reports",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:reports|annual-reports)(?:/(?P<year>\\d{4}))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.3
+            }
+          }
+        ]
+      },
+      {
+        "label": "tenders",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:tenders|procurement)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "projects",
+        "file_types": [
+          "pdf",
+          "html"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:projects|ongoing-projects)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.3
+            }
+          }
+        ]
+      },
+      {
+        "label": "downloads",
+        "file_types": [
+          "pdf",
+          "doc",
+          "docx",
+          "xlsx"
+        ],
+        "rules": [
+          {
+            "kind": "exact",
+            "pattern": "/downloads",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "notices",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:notices|bursary)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.3
+            }
+          }
+        ]
+      }
+    ],
+    "ke/ministry": [
+      {
+        "label": "publications",
+        "file_types": [
+          "pdf",
+          "doc",
+          "docx",
+          "xlsx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:publications|documents|resources)(?:/(?P<slug>[a-z0-9-]+))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "label": "downloads",
+        "file_types": [
+          "pdf",
+          "doc",
+          "docx",
+          "xlsx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "exact",
+            "pattern": "/downloads",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.6
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/(?:wp-content/uploads|sites/default/files)/(?P<year>\\d{4})/(?P<month>\\d{2})/",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "label": "tenders",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:tenders|procurement|tender-notices)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "label": "legislation",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:legislation|policies|acts-and-bills|laws)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "reports",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:reports|annual-reports)(?:/(?P<year>\\d{4}))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "press",
+        "file_types": [
+          "html"
+        ],
+        "paginate": {
+          "type": "path",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:press|news|media-centre|speeches)(?:/page/(?P<page>\\d+))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "label": "media",
+        "file_types": [
+          "image",
+          "video"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:gallery|videos|photos)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.3
+            }
+          }
+        ]
+      }
+    ],
+    "ke/commission": [
+      {
+        "label": "publications",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:publications|resources|documents)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "reports",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:reports|annual-reports)(?:/(?P<year>\\d{4}))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "tenders",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:tenders|procurement)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "notices",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:notices|vacancies|public-notices)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "press",
+        "file_types": [
+          "html"
+        ],
+        "paginate": {
+          "type": "path",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:media|press|news)(?:/page/(?P<page>\\d+))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      }
+    ],
+    "ke/regulator": [
+      {
+        "label": "legislation",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:regulations|legislation|laws|acts)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "publications",
+        "file_types": [
+          "pdf",
+          "xlsx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:publications|statistics|resources)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "notices",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:notices|public-notices|consultations)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "tenders",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:tenders|procurement)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "reports",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:reports|annual-reports)(?:/(?P<year>\\d{4}))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "label": "press",
+        "file_types": [
+          "html"
+        ],
+        "paginate": {
+          "type": "path",
+          "param": "page",
+          "start": 1,
+          "max_pages": 50
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:media|press|news)(?:/page/(?P<page>\\d+))?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.4
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
