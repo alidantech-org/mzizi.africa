@@ -162,7 +162,7 @@ run("database engine", () => {
     const [zone] = await db.query(`SELECT id FROM website.domain_zones WHERE suffix = 'go.ke'`);
     const [site] = await db.query(`SELECT id FROM website.sites LIMIT 1`);
     const [apex] = await db.query(
-      `INSERT INTO website.domains (site_id, hostname, scheme, role, valid_from, valid_from_precision, zone_id, source, status_reason, is_apex, created_at, updated_at, version) VALUES ($1, 'example.go.ke', 'https', 'alias', '2026-11-02', 'exact', $2, 'pattern', 'from the county pattern', true, now(), now(), 1) RETURNING id, status::text AS status`,
+      `INSERT INTO website.domains (site_id, hostname, scheme, role, valid_from, valid_from_precision, zone_id, origin, status_reason, is_apex, created_at, updated_at, version) VALUES ($1, 'example.go.ke', 'https', 'alias', '2026-11-02', 'exact', $2, 'pattern', 'from the county pattern', true, now(), now(), 1) RETURNING id, status::text AS status`,
       [site.id, zone.id],
     );
     expect(apex.status).toBe("candidate");

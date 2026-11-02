@@ -212,8 +212,8 @@ export async function seedDomainZones(db: DataSource): Promise<{ zones: number }
   let zones = 0;
   for (const zone of file.zones) {
     const inserted = await db.query(
-      `INSERT INTO website.domain_zones (suffix, parent_suffix, operator, purpose, second_level_open, source, created_at, updated_at, version) VALUES ($1, $2, $3, $4, $5, $6, now(), now(), 1) ON CONFLICT (suffix) DO NOTHING RETURNING id`,
-      [zone.suffix, zone.parentSuffix, zone.operator, zone.purpose, zone.secondLevelOpen, file._meta.label],
+      `INSERT INTO website.domain_zones (suffix, parent_suffix, operator, purpose, second_level_open, created_at, updated_at, version) VALUES ($1, $2, $3, $4, $5, now(), now(), 1) ON CONFLICT (suffix) DO NOTHING RETURNING id`,
+      [zone.suffix, zone.parentSuffix, zone.operator, zone.purpose, zone.secondLevelOpen],
     );
     if (inserted.length > 0) zones++;
   }

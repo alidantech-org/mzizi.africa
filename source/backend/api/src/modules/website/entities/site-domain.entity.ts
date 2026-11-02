@@ -16,7 +16,7 @@ import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-
 import { DomainZoneEntity } from "#/modules/website/entities/domain-zone.entity.ts";
 import { SiteEntity } from "#/modules/website/entities/site.entity.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
-import { DomainSource } from "#/types/website/domain-source.enum.ts";
+import { DomainOrigin } from "#/types/website/domain-origin.enum.ts";
 import { DomainStatus } from "#/types/website/domain-status.enum.ts";
 import { DomainRole } from "#/types/website/domain-role.enum.ts";
 import { UrlScheme } from "#/types/website/url-scheme.enum.ts";
@@ -51,6 +51,9 @@ export class SiteDomainEntity {
   @Column({ name: "last_probe_at", type: "timestamptz", nullable: true })
   lastProbeAt?: Date | null;
 
+  @Column({ name: "origin", type: "enum", enum: DomainOrigin, nullable: true })
+  origin?: DomainOrigin | null;
+
   @Column({ name: "parent_domain_id", type: "uuid", nullable: true })
   parentDomainId?: Id | null;
 
@@ -60,12 +63,6 @@ export class SiteDomainEntity {
 
   @Column({ name: "redirect_to", type: "text", nullable: true })
   redirectTo?: string | null;
-
-  @Column({ name: "source", type: "enum", enum: DomainSource, nullable: true })
-  source?: DomainSource | null;
-
-  @Column({ name: "source_note", type: "text", nullable: true })
-  sourceNote?: string | null;
 
   @Column({ name: "status", type: "enum", enum: DomainStatus, default: DomainStatus.CANDIDATE })
   status!: DomainStatus;

@@ -29,12 +29,6 @@ export class DomainZoneEntity {
   @Column({ name: "second_level_open", type: "boolean", nullable: true })
   secondLevelOpen?: boolean | null;
 
-  @Column({ name: "source", type: "text", nullable: true })
-  source?: string | null;
-
-  @Column({ name: "source_note", type: "text", nullable: true })
-  sourceNote?: string | null;
-
   @Column({ name: "suffix", type: "varchar", length: 253, unique: true })
   suffix!: Hostname;
 

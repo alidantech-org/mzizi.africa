@@ -1,5 +1,5 @@
-/** Domain Source */
-export enum DomainSource {
+/** Domain Origin */
+export enum DomainOrigin {
   MANUAL = "manual",
   PAGE_LINK = "page_link",
   PATTERN = "pattern",

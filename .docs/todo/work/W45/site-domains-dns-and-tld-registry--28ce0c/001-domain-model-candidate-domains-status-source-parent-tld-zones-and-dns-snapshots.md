@@ -17,6 +17,14 @@ Today `website.domains` holds hostname, scheme, role (primary, alias, redirect, 
 - [ ] Write the design note and decide column names, enums and the snapshot shape.
 - [ ] Add domain status, status reason, source, parent domain, zone and last probe result (nullable) through the Dryv contracts and a migration.
 - [ ] Add the zone registry table with operator, purpose, openness and source, seeded with the zones in use, labelled as custom-prepared from manual research.
-- [ ] Add the DNS snapshot table (domain or zone, record type, values, resolver, observed at).
+- [x] Add the DNS snapshot table (domain or zone, record type, values, resolver, observed at).
 - [ ] Update the generated API and read endpoints and keep the schema integration spec green.
 - [x] Add engine tests for a candidate domain, a redirect and a snapshot history.
+
+## Design note
+
+- `website.domains.status` (candidate, reachable, redirects, moved, unreachable, refused, retired) is separate from `website.sites.status`; a probe sets both independently. `status_reason` is free text for the why of the last change.
+- `origin` (pattern, seed_research, page_link, redirect, manual) classifies how a hostname was found. It was first named `source` with a `source_note`; both were removed in migration 1793900000001 because provenance belongs to the evidence/provenance records (assessment principle 14), not to duplicated text columns. `website.domain_zones.source` and `source_note` were dropped for the same reason; the label "custom-prepared from manual research" stays in the seed fixture `_meta`.
+- Apex or subdomain: `is_apex` plus `parent_domain_id` (self reference); `zone_id` points to the registry zone (longest matching suffix).
+- `website.dns_snapshots` is append-only: one row per lookup (domain or zone, record type, JSON values text, resolver, rcode, observed_at), indexed by (owner, type, observed_at desc); history is read by ordering, nothing is updated.
+- Read endpoints: the existing SiteDomain surface already returns the new columns; adding `status` and `origin` filters and zone/snapshot surfaces needs Dryv API generation and is left open.
