@@ -34,12 +34,14 @@ STALE_AFTER = timedelta(days=365)
 def coverage(conn: psycopg.Connection, rules: dict[str, dict[str, list[str]]] | None = None) -> list[dict[str, Any]]:
     """One row per table and field: total, present, known_absent, unknown. Read-only."""
     rows = []
+    has_gaps = conn.execute("SELECT to_regclass('engine.gaps') IS NOT NULL AS ok").fetchone()["ok"]  # works before the migration
     for table, fields in (rules or RULES).items():
         schema, name = table.split(".")
         for column in fields:
+            join = "LEFT JOIN engine.gaps g ON g.target_kind = %s AND g.target_id = t.id AND g.field = %s" if has_gaps else "LEFT JOIN (SELECT NULL::text AS status WHERE %s::text <> %s::text) g ON false"
             query = sql.SQL("""SELECT count(*) AS total, count(t.{c}) AS present,
                 count(*) FILTER (WHERE t.{c} IS NULL AND g.status = 'known_absent') AS known_absent
-                FROM {s}.{t} t LEFT JOIN engine.gaps g ON g.target_kind = %s AND g.target_id = t.id AND g.field = %s""").format(c=sql.Identifier(column), s=sql.Identifier(schema), t=sql.Identifier(name))
+                FROM {s}.{t} t """).format(c=sql.Identifier(column), s=sql.Identifier(schema), t=sql.Identifier(name)) + sql.SQL(join)
             r = conn.execute(query, (table, column)).fetchone()
             rows.append({"table": table, "field": column, "total": r["total"], "present": r["present"], "known_absent": r["known_absent"], "unknown": r["total"] - r["present"] - r["known_absent"]})
     return rows
