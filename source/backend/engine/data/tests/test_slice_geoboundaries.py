@@ -17,6 +17,30 @@ BACKEND = Path(__file__).resolve().parents[2]  # source/backend/engine
 DATA = Path(__file__).resolve().parent / "data" / "geoboundaries"
 
 
+@pytest.fixture(scope="module")
+def database_url():
+    """The slice runs in its own database so counts are exact."""
+    from tests.conftest import scratch_database
+
+    return scratch_database("mzizi_slice_test")
+
+
+@pytest.fixture()
+def conn(database_url):
+    from mzizi_data.db import connect
+
+    with connect(database_url) as connection:
+        yield connection
+        connection.rollback()
+
+
+@pytest.fixture()
+def store(conn, tmp_path):
+    from mzizi_data.files import LocalDirectoryStore
+
+    return LocalDirectoryStore(conn, tmp_path / "objects")
+
+
 def cli(url, *args):
     out = subprocess.run(["bun", "src/cli.ts", *args], cwd=BACKEND / "database", env={**os.environ, "DATABASE_URL": url}, capture_output=True, text=True)
     assert out.returncode == 0, out.stderr + out.stdout
