@@ -14,8 +14,8 @@ Because the schema accepts missing data almost everywhere, completeness is a mea
 
 ## Acceptance checklist
 
-- [ ] Define coverage rules for the main entity kinds and fields and write the queries.
-- [ ] Add the gap queue table and attempt log in the engine schema.
+- [x] Define coverage rules for the main entity kinds and fields and write the queries.
+- [x] Add the gap queue table and attempt log in the engine schema.
 - [ ] Add a refill job type to the job runner with a handler per source.
 - [ ] Route found values through staging and review rather than writing them directly.
 - [ ] Publish a coverage report in the status document and the review workbench.
