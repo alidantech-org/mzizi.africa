@@ -69,6 +69,7 @@ class Context:
     unit_names: dict[str, str]
     holder_codes: set[str]              # people who already hold a current holder row
     new_parties: dict = field(default_factory=dict)
+    held: set = field(default_factory=set)  # (office code, person code) already in holders
     report: dict = field(default_factory=lambda: {"unmatched_places": [], "unmatched_parties": {}, "new_people": 0, "reused_people": 0, "reuse_reasons": {}, "flagged": [], "links": []})
 
     @classmethod
@@ -83,9 +84,10 @@ class Context:
         for r in conn.execute("SELECT code, display_name FROM person.individuals"):
             people[r["code"]] = {"name": r["display_name"], "hints": set(), "parties": set()}
         holder_codes: set[str] = set()
+        held: set = set()
         for r in conn.execute("SELECT p.code, o.name, o.description, h.is_current FROM governance.holders h JOIN person.individuals p ON p.id = h.person_id JOIN governance.offices o ON o.id = h.office_id"):
             entry = people[r["code"]]
-            place = (r["name"] or "").split(",")[-1]
+            place = re.sub(r"\s*(constituency|county)\s*$", "", (r["name"] or "").split(",")[-1].strip(), flags=re.I)
             entry["hints"].add(geo_norm(place))
             county = re.search(r"County: ([^.]*)\.", r["description"] or "")
             if county:
@@ -101,7 +103,13 @@ class Context:
         for r in conn.execute("SELECT p.code AS person, y.code AS party FROM political.memberships m JOIN person.individuals p ON p.id = m.person_id JOIN political.parties y ON y.id = m.party_id"):
             people[r["person"]]["parties"].add(r["party"])
         unit_names = {r["code"]: r["name"] for r in conn.execute("SELECT code, name FROM geography.units")}
-        return cls(geo, offices, seat_by_unit, procedure, people, parties, codes, unit_names, holder_codes)
+        for r in conn.execute("SELECT p.code AS person, o.code AS office, u.name AS place FROM governance.holders h JOIN person.individuals p ON p.id = h.person_id JOIN governance.offices o ON o.id = h.office_id LEFT JOIN geography.units u ON u.id = o.scope_geo_unit_id"):
+            held.add((r["office"], r["person"]))
+            if r["place"]:
+                people[r["person"]]["hints"].add(geo_norm(r["place"]))
+        ctx = cls(geo, offices, seat_by_unit, procedure, people, parties, codes, unit_names, holder_codes)
+        ctx.held = held
+        return ctx
 
     def party(self, rec: dict) -> str | None:
         for text in (rec.get("partyTarget"), rec.get("party")):
@@ -137,7 +145,7 @@ class People:
         self.by_wiki: dict[str, str] = {}
         self.taken: dict[str, str | None] = {}
 
-    def code(self, rec: dict, area: str | None, party_code: str | None) -> str:
+    def code(self, rec: dict, area: str | None, party_code: str | None, office_code: str | None = None) -> str:
         wiki = rec.get("wiki")
         if wiki and wiki in self.by_wiki:
             return self.by_wiki[wiki]
@@ -154,7 +162,9 @@ class People:
         reason = None
         if existing is not None:
             hints, parties = existing["hints"], existing["parties"]
-            if area and geo_norm(area) in hints:
+            if office_code and (office_code, base) in self.ctx.held:
+                reason = "already holds this seat"
+            elif area and geo_norm(area) in hints:
                 reason = "same seat place"
             elif party_code and party_code in parties:
                 reason = "same party"
@@ -188,7 +198,7 @@ def to_date(year: str | None) -> str | None:
     return f"{year}-01-01" if year else None
 
 
-RENAMED = {"mbeerenorth": "Siakago", "mbeeresouth": "Gachoka", "chukaigambangombe": "Nithi", "garissatownship": "Dujis", "homabaytown": "Homa Bay", "mbita": "Suba North", "suba": "Suba South"}  # same seats under the names the seed carries
+RENAMED = {"mbeerenorth": "Siakago", "mbeeresouth": "Gachoka", "chukaigambangombe": "Nithi", "garissatownship": "Dujis", "homabaytown": "Homa Bay", "dagorettinorth": "Dagoretti", "dagorettisouth": "Dagoretti", "mwingicentral": "Mwingi East", "mbita": "Suba North", "suba": "Suba South"}  # same seats under the names the seed carries
 
 
 def find_county(ctx: Context, name: str | None) -> str | None:
@@ -230,6 +240,8 @@ def resolve_seat(ctx: Context, rec: dict) -> tuple[str, dict | None]:
         code = rec["officeCode"]
         if code in ctx.offices:
             return code, None
+        if rec.get("officeName"):
+            return code, {"officeCode": code, "officeName": rec["officeName"], "officeDescription": "Parliamentary party leadership office created from the curated seed.", "institutionCode": rec["institutionCode"], "singleton": False}
         ctx.report["unmatched_places"].append({"office": code})
         return code, None
     if seat == "constituency":
@@ -270,11 +282,12 @@ def build(ctx: Context, records: list[dict]) -> dict[str, list[tuple[str, dict]]
             continue  # the 13th Parliament lists already hold this person: the link pass attaches the seeded seat
         office_code, new_office = resolve_seat(ctx, rec)
         if new_office:
+            ctx.offices.setdefault(office_code, {"id": None, "name": new_office["officeName"], "singleton": False})
             out["office"].append((f"o-{index}", new_office))
         elif office_code not in ctx.offices:
             continue
         party_code = ctx.party(rec)
-        person_code = people.code(rec, rec.get("area"), party_code)
+        person_code = people.code(rec, rec.get("area"), party_code, office_code)
         current = rec.get("validTo") is None and rec.get("period") in ("2022-2027", "current")
         base = {"personCode": person_code, "displayName": rec["displayName"]}
         if person_code not in ctx.people:  # a reused person already has a row: only the holding is new

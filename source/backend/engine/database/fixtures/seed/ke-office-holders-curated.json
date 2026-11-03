@@ -1,33 +1,824 @@
 {
-  "note": "custom-prepared from manual research (analyst knowledge of public appointments, not yet verified against Kenya Gazette notices). Every row is imported as an unverified holding with year precision; the Gazette appointment notices in the document registry should confirm or correct each. Only public-office facts: person, office, years. Rows where the docket or date was uncertain are left out rather than guessed.",
-  "source": "curated",
-  "holders": [
-    {"seat": "president", "officeCode": "ke/presidency/president", "displayName": "Uhuru Kenyatta", "validFrom": "2013", "validTo": "2022", "period": "historic", "how": "elected"},
-    {"seat": "president", "officeCode": "ke/presidency/president", "displayName": "William Ruto", "validFrom": "2022", "period": "current", "how": "elected"},
-    {"seat": "deputy-president", "officeCode": "ke/presidency/deputy-president", "displayName": "Kithure Kindiki", "validFrom": "2024", "period": "current", "how": "elected"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/treasury/cabinet-secretary", "displayName": "Henry Rotich", "validFrom": "2013", "validTo": "2019", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/treasury/cabinet-secretary", "displayName": "Ukur Yatani", "validFrom": "2019", "validTo": "2022", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/treasury/cabinet-secretary", "displayName": "Njuguna Ndungu", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/foreign-affairs/cabinet-secretary", "displayName": "Amina Mohamed", "validFrom": "2013", "validTo": "2018", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/interior/cabinet-secretary", "displayName": "Fred Matiang'i", "validFrom": "2018", "validTo": "2022", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/interior/cabinet-secretary", "displayName": "Kithure Kindiki", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/education/cabinet-secretary", "displayName": "George Magoha", "validFrom": "2019", "validTo": "2022", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/education/cabinet-secretary", "displayName": "Ezekiel Machogu", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/health/cabinet-secretary", "displayName": "Mutahi Kagwe", "validFrom": "2020", "validTo": "2022", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/health/cabinet-secretary", "displayName": "Susan Nakhumicha Wafula", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/defence/cabinet-secretary", "displayName": "Aden Duale", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/agriculture/cabinet-secretary", "displayName": "Mithika Linturi", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/lands/cabinet-secretary", "displayName": "Alice Wahome", "validFrom": "2022", "period": "current", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/water/cabinet-secretary", "displayName": "Zachariah Njeru", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/ict/cabinet-secretary", "displayName": "Eliud Owalo", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/labour/cabinet-secretary", "displayName": "Florence Bore", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/gender/cabinet-secretary", "displayName": "Aisha Jumwa", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/sports/cabinet-secretary", "displayName": "Ababu Namwamba", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/tourism/cabinet-secretary", "displayName": "Peninah Malonza", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/cooperatives/cabinet-secretary", "displayName": "Simon Chelugui", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/mining/cabinet-secretary", "displayName": "Salim Mvurya", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/roads/cabinet-secretary", "displayName": "Kipchumba Murkomen", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/energy/cabinet-secretary", "displayName": "Davis Chirchir", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"},
-    {"seat": "cabinet-secretary", "officeCode": "ke/ministry/environment/cabinet-secretary", "displayName": "Soipan Tuya", "validFrom": "2022", "validTo": "2024", "period": "historic", "how": "appointed"}
-  ]
+ "note": "custom-prepared from manual research (analyst knowledge of public appointments, not yet verified against Kenya Gazette notices). Every row is imported as an unverified holding with year precision; the Gazette appointment notices in the document registry should confirm or correct each. Only public-office facts: person, office, years. Rows where the docket or date was uncertain are left out rather than guessed.",
+ "source": "curated",
+ "holders": [
+  {
+   "seat": "president",
+   "officeCode": "ke/presidency/president",
+   "displayName": "Uhuru Kenyatta",
+   "validFrom": "2013",
+   "validTo": "2022",
+   "period": "historic",
+   "how": "elected"
+  },
+  {
+   "seat": "president",
+   "officeCode": "ke/presidency/president",
+   "displayName": "William Ruto",
+   "validFrom": "2022",
+   "period": "current",
+   "how": "elected"
+  },
+  {
+   "seat": "deputy-president",
+   "officeCode": "ke/presidency/deputy-president",
+   "displayName": "Kithure Kindiki",
+   "validFrom": "2024",
+   "period": "current",
+   "how": "elected"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/treasury/cabinet-secretary",
+   "displayName": "Henry Rotich",
+   "validFrom": "2013",
+   "validTo": "2019",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/treasury/cabinet-secretary",
+   "displayName": "Ukur Yatani",
+   "validFrom": "2019",
+   "validTo": "2022",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/treasury/cabinet-secretary",
+   "displayName": "Njuguna Ndungu",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/foreign-affairs/cabinet-secretary",
+   "displayName": "Amina Mohamed",
+   "validFrom": "2013",
+   "validTo": "2018",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/interior/cabinet-secretary",
+   "displayName": "Fred Matiang'i",
+   "validFrom": "2018",
+   "validTo": "2022",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/interior/cabinet-secretary",
+   "displayName": "Kithure Kindiki",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/education/cabinet-secretary",
+   "displayName": "George Magoha",
+   "validFrom": "2019",
+   "validTo": "2022",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/education/cabinet-secretary",
+   "displayName": "Ezekiel Machogu",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/health/cabinet-secretary",
+   "displayName": "Mutahi Kagwe",
+   "validFrom": "2020",
+   "validTo": "2022",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/health/cabinet-secretary",
+   "displayName": "Susan Nakhumicha Wafula",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/defence/cabinet-secretary",
+   "displayName": "Aden Duale",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/agriculture/cabinet-secretary",
+   "displayName": "Mithika Linturi",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/lands/cabinet-secretary",
+   "displayName": "Alice Wahome",
+   "validFrom": "2022",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/water/cabinet-secretary",
+   "displayName": "Zachariah Njeru",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/ict/cabinet-secretary",
+   "displayName": "Eliud Owalo",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/labour/cabinet-secretary",
+   "displayName": "Florence Bore",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/gender/cabinet-secretary",
+   "displayName": "Aisha Jumwa",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/sports/cabinet-secretary",
+   "displayName": "Ababu Namwamba",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/tourism/cabinet-secretary",
+   "displayName": "Peninah Malonza",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/cooperatives/cabinet-secretary",
+   "displayName": "Simon Chelugui",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/mining/cabinet-secretary",
+   "displayName": "Salim Mvurya",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/roads/cabinet-secretary",
+   "displayName": "Kipchumba Murkomen",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/energy/cabinet-secretary",
+   "displayName": "Davis Chirchir",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/environment/cabinet-secretary",
+   "displayName": "Soipan Tuya",
+   "validFrom": "2022",
+   "validTo": "2024",
+   "period": "historic",
+   "how": "appointed"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/interior/cabinet-secretary",
+   "displayName": "Joseph ole Lenku",
+   "validFrom": "2013",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2014"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/interior/cabinet-secretary",
+   "displayName": "Joseph Nkaissery",
+   "validFrom": "2014",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2017"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/defence/cabinet-secretary",
+   "displayName": "Raychelle Omamo",
+   "validFrom": "2013",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2020"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/defence/cabinet-secretary",
+   "displayName": "Eugene Wamalwa",
+   "validFrom": "2020",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2022"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/foreign-affairs/cabinet-secretary",
+   "displayName": "Monica Juma",
+   "validFrom": "2018",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2020"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/foreign-affairs/cabinet-secretary",
+   "displayName": "Raychelle Omamo",
+   "validFrom": "2020",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2022"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/education/cabinet-secretary",
+   "displayName": "Jacob Kaimenyi",
+   "validFrom": "2013",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2015"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/education/cabinet-secretary",
+   "displayName": "Fred Matiang'i",
+   "validFrom": "2015",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2018"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/education/cabinet-secretary",
+   "displayName": "Amina Mohamed",
+   "validFrom": "2018",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2019"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/ict/cabinet-secretary",
+   "displayName": "Fred Matiang'i",
+   "validFrom": "2013",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2015"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/lands/cabinet-secretary",
+   "displayName": "Charity Ngilu",
+   "validFrom": "2013",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2015"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/lands/cabinet-secretary",
+   "displayName": "Jacob Kaimenyi",
+   "validFrom": "2015",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2018"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/lands/cabinet-secretary",
+   "displayName": "Farida Karoney",
+   "validFrom": "2018",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2022"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/agriculture/cabinet-secretary",
+   "displayName": "Willy Bett",
+   "validFrom": "2015",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2018"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/agriculture/cabinet-secretary",
+   "displayName": "Mwangi Kiunjuri",
+   "validFrom": "2018",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2019"
+  },
+  {
+   "seat": "cabinet-secretary",
+   "officeCode": "ke/ministry/agriculture/cabinet-secretary",
+   "displayName": "Peter Munya",
+   "validFrom": "2019",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2022"
+  },
+  {
+   "seat": "speaker",
+   "officeCode": "ke/senate/speaker",
+   "displayName": "Ekwee Ethuro",
+   "validFrom": "2013",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2017"
+  },
+  {
+   "seat": "speaker",
+   "officeCode": "ke/senate/speaker",
+   "displayName": "Kenneth Lusaka",
+   "validFrom": "2017",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2022"
+  },
+  {
+   "seat": "speaker",
+   "officeCode": "ke/senate/speaker",
+   "displayName": "Amason Kingi",
+   "validFrom": "2022",
+   "period": "current",
+   "how": "elected"
+  },
+  {
+   "seat": "speaker",
+   "officeCode": "ke/national-assembly/speaker",
+   "displayName": "Moses Wetangula",
+   "validFrom": "2022",
+   "period": "current",
+   "how": "elected"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/national-police-service/inspector-general",
+   "displayName": "David Kimaiyo",
+   "validFrom": "2013",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2014"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/national-police-service/inspector-general",
+   "displayName": "Joseph Boinnet",
+   "validFrom": "2015",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2018"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/national-police-service/inspector-general",
+   "displayName": "Hillary Mutyambai",
+   "validFrom": "2018",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2022"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/national-police-service/inspector-general",
+   "displayName": "Japhet Koome",
+   "validFrom": "2022",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2024"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/national-police-service/inspector-general",
+   "displayName": "Douglas Kanja Kirocho",
+   "validFrom": "2024",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/national-police-service/directorate-of-criminal-investigations/director",
+   "displayName": "George Kinoti",
+   "validFrom": "2018",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2021"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/office-of-the-director-of-public-prosecutions/director-of-public-prosecutions",
+   "displayName": "Keriako Tobiko",
+   "validFrom": "2013",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2018"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/office-of-the-director-of-public-prosecutions/director-of-public-prosecutions",
+   "displayName": "Noordin Haji",
+   "validFrom": "2018",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2022"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/office-of-the-director-of-public-prosecutions/director-of-public-prosecutions",
+   "displayName": "Renson Ingonga",
+   "validFrom": "2022",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/office-of-the-auditor-general/auditor-general",
+   "displayName": "Edward Ouko",
+   "validFrom": "2011",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2019"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/office-of-the-auditor-general/auditor-general",
+   "displayName": "Nancy Gathungu",
+   "validFrom": "2019",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/office-of-the-controller-of-budget/controller-of-budget",
+   "displayName": "Agnes Odhiambo",
+   "validFrom": "2019",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2023"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/office-of-the-controller-of-budget/controller-of-budget",
+   "displayName": "Margaret Nyakang'o",
+   "validFrom": "2023",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/ethics-and-anti-corruption-commission/chairperson",
+   "displayName": "Eliud Wabukala",
+   "validFrom": "2016",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2021"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/ethics-and-anti-corruption-commission/chairperson",
+   "displayName": "David Oginde",
+   "validFrom": "2022",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/electoral-commission/chairperson",
+   "displayName": "Isaack Hassan",
+   "validFrom": "2011",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2017"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/electoral-commission/chairperson",
+   "displayName": "Wafula Chebukati",
+   "validFrom": "2017",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2023"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/teachers-service-commission/secretary",
+   "displayName": "Nancy Macharia",
+   "validFrom": "2015",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2024"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/teachers-service-commission/secretary",
+   "displayName": "Eveleen Mitei",
+   "validFrom": "2024",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/public-service-commission/chairperson",
+   "displayName": "Margaret Kobia",
+   "validFrom": "2015",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2019"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/public-service-commission/chairperson",
+   "displayName": "Anthony Muchiri",
+   "validFrom": "2019",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/national-land-commission/chairperson",
+   "displayName": "Muhammad Swazuri",
+   "validFrom": "2013",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2020"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/salaries-and-remuneration-commission/chairperson",
+   "displayName": "Sarah Serem",
+   "validFrom": "2011",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2017"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/judicial-service-commission/chairperson",
+   "displayName": "Willy Mutunga",
+   "validFrom": "2011",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2016"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/judicial-service-commission/chairperson",
+   "displayName": "David Maraga",
+   "validFrom": "2016",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2021"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/judicial-service-commission/chairperson",
+   "displayName": "Martha Koome",
+   "validFrom": "2021",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/judicial-service-commission/secretary",
+   "displayName": "Anne Amadi",
+   "validFrom": "2014",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2024"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/judicial-service-commission/secretary",
+   "displayName": "Winfridah Mokaya",
+   "validFrom": "2024",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/judiciary/chief-registrar",
+   "displayName": "Anne Amadi",
+   "validFrom": "2014",
+   "period": "historic",
+   "how": "appointed",
+   "validTo": "2024"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/judiciary/chief-registrar",
+   "displayName": "Winfridah Mokaya",
+   "validFrom": "2024",
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/ministry/interior/internal-security-and-national-administration/principal-secretary",
+   "displayName": "Raymond Omollo",
+   "validFrom": null,
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/ministry/interior/immigration-and-citizen-services/principal-secretary",
+   "displayName": "Julius Bitok",
+   "validFrom": null,
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "appointee",
+   "officeCode": "ke/ministry/treasury/national-treasury/principal-secretary",
+   "displayName": "Chris Kiptoo",
+   "validFrom": null,
+   "period": "current",
+   "how": "appointed"
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/national-assembly/majority-leader",
+   "displayName": "Aden Duale",
+   "validFrom": "2017",
+   "period": "historic",
+   "how": "elected",
+   "validTo": "2020",
+   "officeName": "Majority Leader of the National Assembly",
+   "institutionCode": "ke/national-assembly",
+   "singleton": false
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/national-assembly/majority-leader",
+   "displayName": "Amos Kimunya",
+   "validFrom": "2020",
+   "period": "historic",
+   "how": "elected",
+   "validTo": "2022",
+   "officeName": "Majority Leader of the National Assembly",
+   "institutionCode": "ke/national-assembly",
+   "singleton": false
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/national-assembly/majority-leader",
+   "displayName": "Kimani Ichung'wah",
+   "validFrom": "2022",
+   "period": "current",
+   "how": "elected",
+   "officeName": "Majority Leader of the National Assembly",
+   "institutionCode": "ke/national-assembly",
+   "singleton": false
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/national-assembly/minority-leader",
+   "displayName": "John Mbadi",
+   "validFrom": "2017",
+   "period": "historic",
+   "how": "elected",
+   "validTo": "2022",
+   "officeName": "Minority Leader of the National Assembly",
+   "institutionCode": "ke/national-assembly",
+   "singleton": false
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/national-assembly/minority-leader",
+   "displayName": "Opiyo Wandayi",
+   "validFrom": "2022",
+   "period": "historic",
+   "how": "elected",
+   "validTo": "2024",
+   "officeName": "Minority Leader of the National Assembly",
+   "institutionCode": "ke/national-assembly",
+   "singleton": false
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/national-assembly/minority-leader",
+   "displayName": "Junet Mohamed",
+   "validFrom": "2024",
+   "period": "current",
+   "how": "elected",
+   "officeName": "Minority Leader of the National Assembly",
+   "institutionCode": "ke/national-assembly",
+   "singleton": false
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/senate/majority-leader",
+   "displayName": "Kipchumba Murkomen",
+   "validFrom": "2017",
+   "period": "historic",
+   "how": "elected",
+   "validTo": "2022",
+   "officeName": "Majority Leader of the Senate",
+   "institutionCode": "ke/senate",
+   "singleton": false
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/senate/majority-leader",
+   "displayName": "Aaron Cheruiyot",
+   "validFrom": "2022",
+   "period": "current",
+   "how": "elected",
+   "officeName": "Majority Leader of the Senate",
+   "institutionCode": "ke/senate",
+   "singleton": false
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/senate/minority-leader",
+   "displayName": "James Orengo",
+   "validFrom": "2017",
+   "period": "historic",
+   "how": "elected",
+   "validTo": "2022",
+   "officeName": "Minority Leader of the Senate",
+   "institutionCode": "ke/senate",
+   "singleton": false
+  },
+  {
+   "seat": "party-leader",
+   "officeCode": "ke/senate/minority-leader",
+   "displayName": "Stewart Madzayo",
+   "validFrom": "2022",
+   "period": "current",
+   "how": "elected",
+   "officeName": "Minority Leader of the Senate",
+   "institutionCode": "ke/senate",
+   "singleton": false
+  }
+ ]
 }
