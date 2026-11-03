@@ -130,3 +130,36 @@ All loaded into `mzizi` through stage, validate, review by the agent account (ra
 - **IEBC register of voters.** 2022 (47 counties, 282 of 290 constituencies, 1,337 of 1,450 wards), 2017 (47, 282, 1,333; diaspora and prisons registers are not geography units and stay unlinked) and 2013 (47 counties, 272 constituencies, from the "4th March 2013 General Election Data" book). Totals reconcile to the published 22,102,532 (2022), 19,611,423 (2017) and 14,388,781 (2013); constituencies or wards that fail to add are held back. The remaining rows did not match a unit by name and are listed in the staging reports. **Not loaded:** candidates and results for 2013, 2017 and 2022, turnout, rejected ballots and referendum results. The 2013 book holds results by county, constituency and ward; the 2017 data report and the 2022 forms exist, but loading candidates must pass the person matching system and was not done in this lane. The register for 2013 at ward level is not published in the book.
 - **Derived indicators.** Registry in `derived.py` (density, voters per population, NG-CDF per person and per km2, turnout and vote share registered but waiting for electoral inputs). Loaded: density 230 units, NG-CDF per person 180, per km2 279 (financial year 2019/20), voters per population 228. Each value links to its inputs in `observation_derivations`; `derive stale` lists values whose inputs were superseded.
 - **Quality.** `quality run` stored 291 findings (rules: official versus computed area, density bound, voters above a plausible share of population, county versus sum of name-matched constituencies, register parent versus children). The agent account disputed 16 (the density of Mathare and 15 constituencies whose registered voters exceed 75 percent of the name-matched population), which adds a `disputed` verification to the figure. The rest are open for review. Cross-source population (KNBS against HDX COD-PS and WorldPop) is not run: the HDX files answered 202 or timed out through the gate and WorldPop was not fetched.
+
+## 3 November 2026: reinforcement, claims, markers and Wikimedia (lane F2)
+
+Refill handler `wikidata` is registered (ids, markers, descriptions, abbreviations); found values become proposed claims, are reviewed by the agent account (audit decision with rationale) and promoted in place by `promote-claims`; a different existing value is never overwritten. ORPP, KNBS, IEBC and Kenya Law refill handlers are not written: no collected data exists to refill from, so their gaps stay open and no attempt is logged. Wikimedia hosts are a registered, assessed site (DEC-WIKIMEDIA-API-ACCESS). Files are stored only with a recorded free licence; skipped ones are listed in `.data/reports/wikimedia-media.json`. Wards and constituencies are not given flag searches (level expectation none). Review workbench publishing of coverage is not done.
+
+Coverage on `mzizi` after this run:
+
+| Table | Field | Rows worth chasing | Present | Known absent | Unknown | Claims proposed | Disputed | Coverage |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| geography.units | parent_id | 1790 | 1789 | 0 | 1 | 0 | 0 | 99.9% |
+| geography.units | valid_from | 1790 | 0 | 0 | 1790 | 0 | 0 | 0.0% |
+| geography.units | wikidata_id | 338 | 120 | 0 | 218 | 3 | 0 | 35.5% |
+| geography.units | flag_marker | 48 | 15 | 0 | 33 | 0 | 0 | 31.2% |
+| geography.units | emblem_marker | 48 | 25 | 0 | 23 | 0 | 0 | 52.1% |
+| political.parties | registry_identifier | 144 | 142 | 0 | 2 | 0 | 0 | 98.6% |
+| political.parties | abbreviation | 144 | 143 | 0 | 1 | 0 | 0 | 99.3% |
+| political.parties | registry_authority_id | 144 | 142 | 0 | 2 | 0 | 0 | 98.6% |
+| political.parties | symbol_url | 144 | 0 | 0 | 144 | 0 | 0 | 0.0% |
+| political.parties | valid_from | 144 | 141 | 0 | 3 | 0 | 0 | 97.9% |
+| political.parties | wikidata_id | 144 | 12 | 0 | 132 | 3 | 0 | 8.3% |
+| political.parties | logo_marker | 144 | 0 | 0 | 144 | 0 | 0 | 0.0% |
+| governance.institutions | scope_geo_unit_id | 195 | 195 | 0 | 0 | 0 | 0 | 100.0% |
+| governance.institutions | legal_basis_id | 195 | 0 | 0 | 195 | 0 | 0 | 0.0% |
+| governance.institutions | description | 195 | 193 | 0 | 2 | 0 | 0 | 99.0% |
+| governance.institutions | valid_from | 195 | 0 | 0 | 195 | 0 | 0 | 0.0% |
+| governance.institutions | wikidata_id | 195 | 45 | 0 | 150 | 1 | 0 | 23.1% |
+| governance.institutions | logo_marker | 195 | 2 | 0 | 193 | 0 | 0 | 1.0% |
+| governance.offices | description | 421 | 421 | 0 | 0 | 0 | 0 | 100.0% |
+| governance.offices | valid_from | 421 | 0 | 0 | 421 | 0 | 0 | 0.0% |
+| governance.holders | valid_from | 424 | 417 | 0 | 7 | 0 | 0 | 98.3% |
+| governance.holders | selection_procedure_id | 424 | 0 | 0 | 424 | 0 | 0 | 0.0% |
+| person.individuals | wikidata_id | 423 | 39 | 0 | 384 | 0 | 0 | 9.2% |
+| person.individuals | portrait_marker | 423 | 2 | 0 | 421 | 0 | 0 | 0.5% |
