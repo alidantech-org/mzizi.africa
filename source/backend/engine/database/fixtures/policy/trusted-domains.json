@@ -80,6 +80,12 @@
       "maxRequestsPerSecond": 0.5
     },
     {
+      "host": "en.wikipedia.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Wikimedia Foundation (Wikipedia text is CC BY-SA; read through the MediaWiki API only, source page and revision recorded)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
       "host": "upload.wikimedia.org",
       "jurisdiction": "ke",
       "rightsHolder": "Wikimedia Foundation (Wikidata structured data is CC0; Commons files carry their own free licences, recorded per file)",

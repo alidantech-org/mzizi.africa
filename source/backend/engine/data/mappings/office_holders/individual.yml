@@ -1,0 +1,11 @@
+mapping: individual
+extractor: wikipedia-office-holders
+target_kind: person.individuals
+key: [code]
+fields:
+  code:        { from: personCode }
+  displayName: { from: displayName }
+  lifeStatus:  { const: unknown }
+provenance:
+  locator: { row: $row }
+  method: extracted

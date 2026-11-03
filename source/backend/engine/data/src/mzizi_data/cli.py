@@ -91,6 +91,13 @@ def main(argv: list[str] | None = None) -> int:
     ga.add_argument("directory")
     ga.add_argument("--level", type=int, choices=[0, 1, 2, 3], required=True)
     ga.add_argument("--part", choices=["units", "boundaries"], required=True)
+    oh = sub.add_parser("import-office-holders", help="stage national office holders (members of both Houses, executive, judiciary) from the fetched Wikipedia list pages (stages A, B, C)")
+    oh.add_argument("directory")
+    oh.add_argument("--stage", choices=["A", "B", "C"], required=True)
+    oh.add_argument("--no-links", action="store_true")
+    oh.add_argument("--plan", default=".data/reports/office-holders-plan.json", help="written by stage A, read by stages B and C so person reuse stays consistent")
+    oh.add_argument("--report", default=".data/reports/office-holders.json")
+    oh.add_argument("--store", default=".data/objects")
     ga.add_argument("--reference-year", default="")
     ga.add_argument("--store", default=".data/objects")
     pr = sub.add_parser("import-procurement", help="stage tenders.go.ke procuring entities, suppliers, tenders and contracts (stages A-D)")
@@ -364,6 +371,22 @@ def main(argv: list[str] | None = None) -> int:
         with connect() as conn:
             out = procurement.import_procurement(conn, LocalDirectoryStore(conn, args.store), args.pe_dir, args.ocds_dir, args.stage, args.years.split(",") if args.years else None)
         print(f"{out.sources} procuring entities, {len(out.notes)} notes")
+    if args.command == "import-office-holders":
+        import json as _json
+        from pathlib import Path as _Path
+
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import office_holders
+
+        with connect() as conn:
+            out = office_holders.import_office_holders(conn, LocalDirectoryStore(conn, args.store), args.directory, args.stage, with_links=not args.no_links, plan_path=args.plan)
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        _Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+        _Path(args.report).write_text(_json.dumps(out.report, indent=1, default=str))
+        print(f"report: {args.report}")
+        return 0
         for note in out.notes[:5]:
             print(f"note: {note}")
         for name, stat in out.stats.items():

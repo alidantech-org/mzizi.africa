@@ -1,0 +1,13 @@
+mapping: membership
+extractor: wikipedia-office-holders
+target_kind: political.memberships
+key: [partyId, personId, isCurrent]
+fields:
+  partyId:   { from: partyCode, transform: [{ ref: { kind: political.parties, field: code } }] }
+  personId:  { from: personCode, transform: [{ ref: { kind: person.individuals, field: code } }] }
+  validFrom: { from: validFromDate, precision: year }
+  validTo:   { from: validToDate, precision: year }
+  isCurrent: { from: isCurrent }
+provenance:
+  locator: { row: $row }
+  method: extracted

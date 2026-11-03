@@ -28,7 +28,7 @@ def register(extractor: Extractor) -> Extractor:
 
 
 def get(name: str) -> Extractor:
-    from . import geojson, html_legal, iebc_commissioners, klrc_constitution, legal_pdf, sitting_pdf, ngcdf_api, ocds, orpp_parties, ppf_distribution, tenders_pe, parliament_members, pdf, worldbank  # noqa: F401  (registers on import)
+    from . import geojson, html_legal, iebc_commissioners, klrc_constitution, legal_pdf, sitting_pdf, ngcdf_api, ocds, orpp_parties, wikidata_county_executives, ppf_distribution, tenders_pe, parliament_members, pdf, worldbank, wikipedia_holders  # noqa: F401  (registers on import)
 
     if name not in REGISTRY:
         raise KeyError(f"unknown extractor {name!r}; available: {sorted(REGISTRY)}")

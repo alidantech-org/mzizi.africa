@@ -1,0 +1,13 @@
+mapping: party
+extractor: wikipedia-office-holders
+target_kind: political.parties
+key: [code]
+fields:
+  code:           { from: partyCode }
+  name:           { from: partyName }
+  abbreviation:   { from: partyAbbreviation }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  status:         { const: inactive }
+provenance:
+  locator: { row: $row }
+  method: extracted

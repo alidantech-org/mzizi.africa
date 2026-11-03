@@ -1,0 +1,17 @@
+mapping: holder
+extractor: wikipedia-office-holders
+target_kind: governance.holders
+key: [officeId, personId, termNumber]
+fields:
+  officeId:             { from: officeCode, transform: [{ ref: { kind: governance.offices, field: code } }] }
+  personId:             { from: personCode, transform: [{ ref: { kind: person.individuals, field: code } }] }
+  status:               { from: holderStatus }
+  termNumber:           { from: termNumber }
+  validFrom:            { from: validFromDate, precision: year }
+  validTo:              { from: validToDate, precision: year }
+  isCurrent:            { from: isCurrent }
+  departureReason:      { from: departureReason }
+  selectionProcedureId: { from: selectionProcedureId }
+provenance:
+  locator: { row: $row }
+  method: extracted
