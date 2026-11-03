@@ -15,4 +15,4 @@ Procurement notices name companies and sometimes individuals; ownership and dire
 - [x] Tender, bid and contract mappings with currency and date precision.
 - [ ] Debt instrument and disbursement mappings.
 - [x] Organisation identifiers and entity resolution by registry number.
-- [ ] Report coverage and excluded personal data.
+- [x] Report coverage and excluded personal data.
