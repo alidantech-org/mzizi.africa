@@ -1,0 +1,17 @@
+mapping: holder
+extractor: wikidata-county-executives
+target_kind: governance.holders
+key: [officeId, personId]
+fields:
+  officeId:           { from: officeCode, transform: [{ ref: { kind: governance.offices, field: code } }] }
+  personId:           { from: personCode, transform: [{ ref: { kind: person.individuals, field: code } }] }
+  status:             { const: substantive }
+  validFrom:          { from: from }
+  validFromPrecision: { from: fromPrecision }
+  validTo:            { from: to }
+  validToPrecision:   { from: toPrecision }
+  departureReason:    { from: departureReason }
+  isCurrent:          { from: current }
+provenance:
+  locator: { row: $row }
+  method: extracted

@@ -62,6 +62,10 @@ def main(argv: list[str] | None = None) -> int:
     mb.add_argument("--stage", choices=["A", "B", "C"], required=True)
     mb.add_argument("--jurisdiction", default="ke")
     mb.add_argument("--store", default=".data/objects")
+    ce = sub.add_parser("import-county-executives", help="stage governors and deputy governors from the harvested Wikidata answers (stages A individuals, B holders and memberships)")
+    ce.add_argument("directory")
+    ce.add_argument("--stage", choices=["A", "B"], required=True)
+    ce.add_argument("--store", default=".data/objects")
     ph = sub.add_parser("fetch-photos", help="fetch official portraits of listed members through the gate (slow: one request every 5 s)")
     ph.add_argument("directory")
     ph.add_argument("--site", default="ke/parliament")
@@ -284,6 +288,23 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{out.pages} pages, {out.members} member rows")
         for name, stat in out.stats.items():
             print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        return 0
+    if args.command == "import-county-executives":
+        import json as _json
+        from pathlib import Path as _Path
+
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import county_executives
+
+        labels = _json.loads((_Path(args.directory) / "labels.json").read_text())
+        with connect() as conn:
+            runs, stats, unlinked, n = county_executives.import_county_executives(conn, LocalDirectoryStore(conn, args.store), args.directory, labels, args.stage)
+        print(f"{n} holder records")
+        for name, stat in stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {runs[name]})")
+        for item in unlinked:
+            print("unlinked:", item)
         return 0
     if args.command == "fetch-photos":
         from .db import connect

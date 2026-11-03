@@ -1,0 +1,10 @@
+mapping: membership
+extractor: wikidata-county-executives
+target_kind: political.memberships
+key: [partyId, personId]
+fields:
+  partyId:  { from: partyCode, transform: [{ ref: { kind: political.parties, field: code } }] }
+  personId: { from: personCode, transform: [{ ref: { kind: person.individuals, field: code } }] }
+provenance:
+  locator: { row: $row }
+  method: extracted

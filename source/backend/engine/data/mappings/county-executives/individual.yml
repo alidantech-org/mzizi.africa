@@ -1,0 +1,12 @@
+mapping: individual
+extractor: wikidata-county-executives
+target_kind: person.individuals
+key: [code]
+fields:
+  code:        { from: personCode }
+  displayName: { from: name }
+  wikidataId:  { from: wikidata }
+  lifeStatus:  { from: life }
+provenance:
+  locator: { row: $row }
+  method: extracted
