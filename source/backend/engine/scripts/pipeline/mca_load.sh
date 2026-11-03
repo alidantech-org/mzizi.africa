@@ -7,7 +7,7 @@ for COUNTY in "$@"; do
   for STAGE in A B; do
     exec 9>/tmp/promote.lock; flock 9
     cd source/backend/engine/data
-    OUT=$(.venv/bin/python -m mzizi_data.imports.county_assembly_members ../../../../.data/raw/mca-sites "$COUNTY" --stage $STAGE --store ../../../../.data/objects --report ../../../../.data/reports/mca-import-report.json 2>&1 | tail -8)
+    OUT=$(.venv/bin/python -m mzizi_data.imports.county_assembly_members ../../../../.data/raw/mca-sites "$COUNTY" --stage $STAGE $EXTRA --store ../../../../.data/objects --report ../../../../.data/reports/mca-import-report.json 2>&1 | tail -8)
     echo "$OUT"
     cd ../database
     for R in $(echo "$OUT" | grep -o "run [0-9a-f-]*" | cut -d' ' -f2); do

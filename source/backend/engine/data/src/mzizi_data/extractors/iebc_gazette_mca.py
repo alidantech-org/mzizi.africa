@@ -81,11 +81,11 @@ def parse_elected(data: bytes) -> tuple[list[dict], list[dict]]:
 
 
 COUNTY_HEAD = re.compile(r"^\s*([A-Z][A-Z' .\-]+?)\s*(?:COUNTY)?\s*[—–-]+\s*(\d{3})\s*$")
-KIND_HEAD = re.compile(r"(MARGINALI[SZ]ED|GENDER TOP[ -]?UP)\s+LIST", re.I)
+KIND_HEAD = re.compile(r"(MARGINALI[SZ]ED|GENDER TOP[ -]?UP)(?:\s+LIST)?", re.I)
 ROW = re.compile(r"^\s*(\d{1,2})\.?\s+(?P<name>.+?)\s{1,}(?P<gender>Male|Female)\s+(?P<id>[A-Z]{0,2}\*+\s?\d+|-)(?:\s+(?P<rest>.*))?$")
 
 
-def parse_nominated(data: bytes) -> tuple[list[dict], list[dict]]:
+def parse_nominated(data: bytes, addenda: bool = False) -> tuple[list[dict], list[dict]]:
     import subprocess
     import tempfile
 
@@ -96,8 +96,21 @@ def parse_nominated(data: bytes) -> tuple[list[dict], list[dict]]:
     records, diagnostics = [], []
     county = code = kind = None
     party = ""
-    for line in text.replace("\x0c", "\n").split("\n"):
+    deleted: list[dict] = []
+    lines = text.replace("\x0c", "\n").split("\n")
+    for index, line in enumerate(lines):
         stripped = line.strip()
+        if addenda:
+            if stripped.startswith("Delete;"):
+                row = ROW.match(re.sub(r"^\s*Delete;\s*", "  ", line))
+                if row and not row.group("name").lower().startswith("not "):
+                    deleted.append({"kind": "deleted", "countyCode": code or "", "county": county or "", "displayName": title(" ".join(row.group("name").split()))})
+                continue
+            line = re.sub(r"^(\s*)Add;", r"\1     ", line)
+            stripped = line.strip()
+            if stripped.isupper() and re.fullmatch(r"[A-Z’' ]{3,25}", stripped) and any("GENDER" in x for x in lines[index + 1 : index + 3]):
+                county, code = stripped.title(), ""
+                continue
         head = re.match(r"^([A-Z][A-Z\u2019' .\-]+?)\s*(?:COUNTY)?\s*[\u2014\u2013-]+\s*(\d{1,3})$", stripped) if stripped.upper() == stripped and len(stripped) < 60 else None
         if head:
             county, code, party = head.group(1).replace("COUNTY", "").strip().title(), head.group(2).zfill(3), ""
@@ -133,7 +146,7 @@ def parse_nominated(data: bytes) -> tuple[list[dict], list[dict]]:
             known_start = fragment
             party = fragment if not party or re.search(r"(?i)\b(party|alliance|congress|union|movement|democrats?|kenya|national|forum)\b$", party) and not _continuation(party, fragment) else f"{party} {fragment}".strip()
         records.append({"kind": kind, "countyCode": code, "county": county, "displayName": title(name), "partyName": party, "line": stripped[:0]})
-    return records, diagnostics
+    return records + deleted, diagnostics
 
 
 def _continuation(party: str, fragment: str) -> bool:
@@ -142,7 +155,7 @@ def _continuation(party: str, fragment: str) -> bool:
 
 def run(data: bytes, profile: str | None) -> Output:
     try:
-        records, diagnostics = parse_elected(data) if profile == "elected" else parse_nominated(data)
+        records, diagnostics = parse_elected(data) if profile == "elected" else parse_nominated(data, profile == "addenda")
     except Exception as error:  # noqa: BLE001
         return Output("failed", diagnostics=[{"level": "error", "code": "unreadable", "message": f"{type(error).__name__}: {error}"[:200]}])
     segments = [{"key": f"{profile}-{i}", "kind": "record", "locator": json.dumps({"page": r.get("page"), "row": i}), "content": json.dumps(r, sort_keys=True), "confidence": 0.9 if profile == "elected" else 0.85} for i, r in enumerate(records)]

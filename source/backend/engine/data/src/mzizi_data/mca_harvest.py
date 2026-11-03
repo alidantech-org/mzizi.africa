@@ -49,7 +49,7 @@ def save(out: Path, site: str, url: str, result, agent: str) -> Path:
 
 def harvest_site(conn, site_code: str, out_dir: Path, max_pages: int = 14) -> dict:
     row = conn.execute("SELECT id::text AS id FROM website.sites WHERE code = %s", (site_code,)).fetchone()
-    hosts = [r["hostname"] for r in conn.execute("SELECT hostname FROM website.domains WHERE site_id = %s AND status IN ('reachable','redirects') ORDER BY status", (row["id"],)).fetchall()]
+    hosts = [r["hostname"] for r in conn.execute("SELECT hostname FROM website.domains WHERE site_id = %s AND status IN ('reachable','redirects','candidate') ORDER BY status", (row["id"],)).fetchall()]
     report = {"site": site_code, "pages": [], "error": None, "hosts": hosts}
     if not hosts:
         report["error"] = "no reachable domain"

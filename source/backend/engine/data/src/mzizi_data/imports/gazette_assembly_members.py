@@ -25,6 +25,7 @@ from .county_assembly_members import KEYS, MAPPINGS, STAGES, Geo, slug, tokens
 
 DOCS = {
     "elected": ("eafe12d9e632-t5KQ6O4YGp.pdf", "Gazette Notice 9956: Declaration of persons elected as members of the county assemblies (Kenya Gazette Vol. CXXIV No. 170, 24 August 2022)"),
+    "addenda": ("768459979486-zQhuXV3suD.pdf", "Gazette Notice 11259: Nominated members to the county assemblies, addendum (Kenya Gazette Vol. CXXIV No. 192, 21 September 2022)"),
     "nominated": ("58567008cfa5-ynAVARDxzL.pdf", "Gazette Notice 10712: Nominated members to the county assemblies (Kenya Gazette Vol. CXXIV No. 186, 9 September 2022)"),
 }
 
@@ -37,6 +38,7 @@ class Report:
     corroborated: int = 0
     different: list = field(default_factory=list)
     nominated: int = 0
+    replaced: list = field(default_factory=list)
     runs: dict = field(default_factory=dict)
     stats: dict = field(default_factory=dict)
 
@@ -59,6 +61,10 @@ def extract_all(conn, store, raw: Path, kind: str):
         raise RuntimeError(f"extraction failed: {job['status']} {job['error']}")
     result = pipeline.load_result(store, job["fv"])
     return capture_id, str(result.id), [json.loads(s.content) for s in result.segments]
+
+
+def norm_name(value: str) -> str:
+    return re.sub(r"[^a-z]", "", value.lower().replace("county", ""))
 
 
 def best_party(geo: Geo, abbreviation: str, name: str) -> str | None:
@@ -126,19 +132,24 @@ def stage(conn, store, raw: Path, county: str, which: str, cache: dict, jurisdic
     if "elected" not in cache:
         cache["elected"] = extract_all(conn, store, raw, "elected")
         cache["nominated"] = extract_all(conn, store, raw, "nominated")
+        cache["addenda"] = extract_all(conn, store, raw, "addenda")
     held = {r["code"]: r["display_name"] for r in conn.execute("SELECT o.code, p.display_name FROM governance.holders h JOIN governance.offices o ON o.id = h.office_id JOIN person.individuals p ON p.id = h.person_id WHERE h.is_current AND o.code LIKE %s", (f"ke/ward/{county}/%",)).fetchall()}
     skip_people = {r["code"] for r in conn.execute("SELECT p.code FROM governance.holders h JOIN governance.offices o ON o.id = h.office_id JOIN person.individuals p ON p.id = h.person_id WHERE o.code LIKE %s", (f"ke/county/{number}/assembly/mca-nominated/%",)).fetchall()}
     per: list[tuple[str, str, list]] = []
     taken: set = set()
     seen: set = set()
-    for kind in ("elected", "nominated"):
+    for kind in ("elected", "nominated", "addenda"):
         capture_id, result_id, recs = cache[kind]
         records = []
-        for i, rec in enumerate(r for r in recs if r["countyCode"].zfill(3) == number):
+        mine = [r for r in recs if (r["countyCode"].zfill(3) == number if r["countyCode"] else norm_name(r["county"]) == norm_name(geo.counties[county]))]
+        for i, rec in enumerate(mine):
+            if rec["kind"] == "deleted":
+                report.replaced.append(f"ke/person/{slug(rec['displayName'])}-mca-{county}")
+                continue
             out = enrich_elected(rec, county, geo, held, report, taken) if kind == "elected" else enrich_nominated(rec, county, geo, report, skip_people)
             if out is None or out["personCode"] in seen and kind == "elected":
                 continue
-            if kind == "nominated" and (out["personCode"], out["officeCode"]) in seen:
+            if kind != "elected" and (out["personCode"], out["officeCode"]) in seen:
                 continue
             seen.add(out["personCode"] if kind == "elected" else (out["personCode"], out["officeCode"]))
             records.append((f"{kind}-{i}", out))
@@ -193,5 +204,5 @@ if __name__ == "__main__":
             if args.report:
                 p = Path(args.report)
                 data = json.loads(p.read_text()) if p.exists() else {}
-                data[county] = {"linked": rep.linked, "unplaced": rep.unplaced, "corroborated": rep.corroborated, "different": rep.different, "nominated": rep.nominated}
+                data[county] = {"linked": rep.linked, "unplaced": rep.unplaced, "corroborated": rep.corroborated, "different": rep.different, "nominated": rep.nominated, "replacedByAddendum": rep.replaced}
                 p.write_text(json.dumps(data, indent=1))

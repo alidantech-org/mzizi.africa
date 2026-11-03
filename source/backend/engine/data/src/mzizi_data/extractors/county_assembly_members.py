@@ -47,7 +47,28 @@ def lines_of(data: bytes) -> list[str]:
     return [" ".join(l.split()) for l in soup.get_text("\n").split("\n") if l.strip()]
 
 
+CLERK = re.compile(r"\b(?:Mr|Mrs|Ms|Dr|Eng|CPA|Prof)\.?\s+((?:[A-Z][A-Za-z\u2019'\-]+\s+){1,3}[A-Z][A-Za-z\u2019'\-]+)")
+
+
+def run_clerk(data: bytes, county: str) -> Output:
+    """The clerk named on a 'clerk' page: the first titled name that is not followed by 'Deputy' (the page is the evidence; a page naming several people is left alone)."""
+    text = " ".join(lines_of(data))
+    names = []
+    for m in CLERK.finditer(text):
+        tail = text[m.end() : m.end() + 30].lower()
+        words = [w for w in m.group(1).split() if w.lower() not in {"the", "clerk", "deputy", "read", "more"}]
+        if "deputy" in tail.split()[:1] or len(words) < 2:
+            continue
+        names.append(" ".join(words))
+    distinct = list(dict.fromkeys(names))
+    if len(distinct) != 1:
+        return Output("failed", diagnostics=[{"level": "warning", "code": "clerk_unclear", "message": f"{len(distinct)} candidate names"}])
+    return Output("succeeded", [{"key": "clerk", "kind": "record", "locator": json.dumps({"page": "clerk"}), "content": json.dumps({"name": distinct[0], "role": "clerk", "county": county}), "confidence": 0.6}], [])
+
+
 def run(data: bytes, profile: str | None) -> Output:
+    if profile and profile.startswith("clerk:"):
+        return run_clerk(data, profile.split(":", 1)[1])
     try:
         lines = lines_of(data)
     except Exception as error:  # noqa: BLE001

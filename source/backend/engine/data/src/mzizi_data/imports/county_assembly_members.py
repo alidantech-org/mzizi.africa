@@ -278,6 +278,49 @@ def stage(conn, store, directory: Path, county: str, which: str, geo: Geo | None
     return result
 
 
+def stage_clerks(conn, store, directory: Path, county: str, which: str, geo: Geo, jurisdiction: str = "ke") -> Result:
+    """The clerk of the assembly from a harvested 'clerk' page (deputy clerks are ignored); holder on the county's clerk post."""
+    result = Result(county)
+    name, number = geo.counties[county], geo.numbers[county]
+    publisher_id = register.ensure_publisher(conn, f"ke-county-assembly-{county}", f"County Assembly of {name}", kind="institution", website_url=None)
+    row = conn.execute("SELECT id::text AS id FROM reference.jurisdictions WHERE code = 'ke'").fetchone()
+    handlers = {"extract": pipeline.extraction_handler(conn, store)}
+    per_page = []
+    for meta in sorted(directory.glob("*.provenance.json")):
+        info = json.loads(meta.read_text())
+        url = info["url"]
+        if not re.search(r"clerk", url, re.I) or re.search(r"deputy|message", url, re.I):
+            continue
+        data_path = Path(str(meta)[: -len(".provenance.json")])
+        spec = register.DocumentSpec(publisher_id, f"{name} County Assembly clerk page {slug(url)[:60]}", "official_website", url=url, licence="Not confirmed (public page on the assembly's official site; reuse terms unassessed)", citation=f"County Assembly of {name}, clerk page, retrieved {info['retrieved_at'][:10]}.", jurisdiction_id=row["id"] if row else None)
+        _doc, capture_id, ref = pipeline.ingest(conn, store, data_path.read_bytes(), f"{county}-clerk.html", spec, url=url, tool="gated-fetch", mime_type="text/html")
+        job_id, _ = pipeline.enqueue_extraction(conn, ref.version_id, "county-assembly-members", f"clerk:{county}", capture_id)
+        conn.commit()
+        while jobs.run_once(conn, handlers, worker="mca-import"):
+            pass
+        job = conn.execute("SELECT status, result_file_version_id::text AS fv FROM engine.jobs WHERE id = %s", (job_id,)).fetchone()
+        if job["status"] != "succeeded":
+            continue
+        extraction = pipeline.load_result(store, job["fv"])
+        rec = json.loads(extraction.segments[0].content)
+        out = dict(rec, displayName=rec["name"], personCode=f"ke/person/{slug(rec['name'])}-clerk-{county}", officeCode=f"ke/county/{number}/assembly/clerk", existingOffice=True, institutionCode=f"ke/{county}/assembly")
+        per_page.append((capture_id, str(extraction.id), [("clerk", out)]))
+        break
+    if not per_page:
+        return result
+    result.people = 1
+    for stage_name in STAGES[which]:
+        if stage_name in ("office", "membership"):
+            continue
+        mapping = substitute(yaml.safe_load((MAPPINGS / f"{stage_name}.yml").read_text()), {"jurisdiction": jurisdiction})
+        run_id = candidates.create_run(conn, f"county-assembly/{jurisdiction}/{county}/clerk/{stage_name}", "v1", per_page[0][0], per_page[0][1])
+        one = candidates.add_candidates(conn, run_id, mapping, per_page[0][2], per_page[0][1], [], [])
+        candidates.finish_run(conn, run_id)
+        result.runs[stage_name], result.stats[stage_name] = run_id, one
+    conn.commit()
+    return result
+
+
 if __name__ == "__main__":
     import argparse
 
@@ -287,15 +330,17 @@ if __name__ == "__main__":
     ap.add_argument("raw_dir")
     ap.add_argument("county")
     ap.add_argument("--stage", choices=["A", "B"], required=True)
+    ap.add_argument("--clerks", action="store_true")
     ap.add_argument("--store", default=".data/objects")
     ap.add_argument("--report", default=None)
     args = ap.parse_args()
     with connect() as conn:
-        res = stage(conn, LocalDirectoryStore(conn, args.store), Path(args.raw_dir) / args.county, args.county, args.stage)
+        _store = LocalDirectoryStore(conn, args.store)
+        res = stage_clerks(conn, _store, Path(args.raw_dir) / args.county, args.county, args.stage, Geo.load(conn)) if args.clerks else stage(conn, _store, Path(args.raw_dir) / args.county, args.county, args.stage)
     print(f"{args.county}: {res.pages} pages, {res.people} people, {res.linked} linked, {res.nominated} nominated, {res.speakers} speaker, {res.unlinked} unlinked")
     for name, s in res.stats.items():
         print(f"{name}: {s.created} new, {s.unchanged} unchanged, {s.invalid} invalid, {s.quarantined} quarantined (run {res.runs[name]})")
-    if args.report:
+    if args.report and not args.clerks:
         p = Path(args.report)
         data = json.loads(p.read_text()) if p.exists() else {}
         data[args.county] = {"pages": res.pages, "people": res.people, "linked": res.linked, "nominated": res.nominated, "speakers": res.speakers, "unlinked": res.unlinked, "unmatched": res.unmatched, "conflicts": res.conflicts}
