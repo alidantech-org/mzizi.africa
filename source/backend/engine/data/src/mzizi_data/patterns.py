@@ -12,6 +12,7 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 from datetime import date
+from pathlib import Path
 from urllib.parse import urlparse
 
 import psycopg
@@ -21,6 +22,19 @@ from .compliance import Denied, StopRun
 from .fetch import PoliteFetcher, RobotsDisallowed
 
 SLOT = re.compile(r"\{([a-z_][a-z0-9_]*)\}")
+SPELLINGS_FILE = Path(__file__).resolve().parents[3] / "database" / "fixtures" / "policy" / "domain-spellings.json"
+
+
+def load_spellings(path: Path = SPELLINGS_FILE) -> dict:
+    """True hostnames read from a family's own directory page, keyed by the pattern's domain suffix (for example ngcdf.go.ke)."""
+    return json.loads(path.read_text()) if path.exists() else {}
+
+
+def spelling_for(template: str, subject_name: str, spellings: dict | None = None) -> str | None:
+    """The label the directory page uses for a subject whose name differs from the pattern's own spelling, or None."""
+    spellings = load_spellings() if spellings is None else spellings
+    suffix = template.split("}", 1)[-1].lstrip(".")
+    return spellings.get(suffix, {}).get("overrides", {}).get(subject_name)
 
 
 def _ascii(name: str) -> str:
@@ -101,10 +115,15 @@ def expand_pattern(conn: psycopg.Connection, pattern_id: str, jurisdiction_id: s
     slot = slots[0]
     spec = variables[slot]
     jurisdiction_id = jurisdiction_id or pattern["jurisdiction_id"]
+    spellings = load_spellings()
     out: list[Expected] = []
     for subject in _subjects(conn, spec["source"], spec.get("level"), spec.get("type"), jurisdiction_id):
         code = f"{pattern['family_code']}/{subject['code'].split('/')[-1]}"
-        candidates = hostnames(pattern["template"], {slot: slug_variants(subject["name"], spec["slug"])})
+        labels = slug_variants(subject["name"], spec["slug"])
+        override = spelling_for(pattern["template"], subject["name"], spellings)
+        if override:  # the directory's own spelling comes first
+            labels = [override] + [l for l in labels if l != override]
+        candidates = hostnames(pattern["template"], {slot: labels})
         row = conn.execute("SELECT id::text AS id FROM website.sites WHERE code = %s", (code,)).fetchone()
         created = row is None
         if created:
@@ -164,3 +183,53 @@ def probe_site(conn: psycopg.Connection, fetcher: PoliteFetcher, site_id: str, c
     conn.execute("UPDATE website.sites SET status = 'rejected', updated_at = now() WHERE id = %s AND status = 'expected'", (site_id,))
     incidents.record_check(conn, site_id, "reachability", "failed", {"type": "probe", "tried": tried})
     return ProbeResult(site_id, "unreachable", detail={"tried": tried})
+
+
+def apply_directory(conn: psycopg.Connection, suffix: str = "ngcdf.go.ke", spellings: dict | None = None) -> dict:
+    """Reconciles a family's candidate domains with the hostnames its own directory page lists (offline, idempotent).
+
+    For each site of the family: the directory hosts that match one of its spellings, or its override, are added as
+    `page_link` candidates when missing. Hosts of the family's zone that the directory does not list, that came from a
+    pattern and are not confirmed, are marked `unreachable` with the reason (kept, never deleted). Listed hosts that no
+    unit maps to are attached to the site named in `unmapped` and reported.
+    """
+    spellings = load_spellings() if spellings is None else spellings
+    spec = spellings[suffix]
+    listed = {f"{label}.{suffix}" for label in spec["labels"]}
+    extra = {f"{label}.{suffix}" for label in spec.get("nonConstituencyHosts", [])}
+    source = spec["source"]
+    report = {"added": 0, "already_present": 0, "overrides_applied": 0, "marked_not_listed": 0, "unmapped_attached": 0, "sites_without_listed_host": []}
+    sites = conn.execute(
+        """SELECT s.id::text AS id, s.code, u.name FROM website.sites s JOIN website.subjects sb ON sb.site_id = s.id AND sb.target_kind = 'geography.units'
+             JOIN geography.units u ON u.id = sb.target_id::uuid WHERE s.code LIKE 'ke/ngcdf/%%' ORDER BY s.code"""
+    ).fetchall() if suffix == "ngcdf.go.ke" else []
+    by_site: dict[str, str] = {}
+    for site in sites:
+        by_site[site["name"]] = site["id"]
+        existing = {r["hostname"]: r for r in conn.execute("SELECT hostname FROM website.domains WHERE site_id = %s", (site["id"],)).fetchall()}
+        override = spec.get("overrides", {}).get(site["name"])
+        wanted = [f"{override}.{suffix}"] if override else [h for h in existing if h in listed]
+        if not wanted:
+            report["sites_without_listed_host"].append(site["code"])
+            continue
+        note = spec.get("overrideNotes", {}).get(site["name"])
+        for host in wanted:
+            if host in existing:
+                report["already_present"] += 1
+                continue
+            reason = f"Listed on the NG-CDF constituency directory {source} (retrieved {spec['retrievedAt']}); not yet probed." + (f" {note}" if note else "")
+            report["added"] += domains.ensure_candidate_domains(conn, site["id"], [host], "page_link", reason)
+            report["overrides_applied"] += 1 if override else 0
+    for label, site_name in spec.get("unmapped", {}).items():
+        host = f"{label}.{suffix}"
+        site_id = by_site.get(site_name)
+        if site_id and not conn.execute("SELECT 1 FROM website.domains WHERE hostname = %s", (host,)).fetchone():
+            report["unmapped_attached"] += domains.ensure_candidate_domains(conn, site_id, [host], "page_link", f"Listed on the NG-CDF constituency directory {source}; which of our units it belongs to is unresolved (directory lists Dagoretti North and Dagoretti South, our units are Dagoretti and Kilimani), so it is attached to the Dagoretti site as an alias.")
+    cur = conn.execute(
+        """UPDATE website.domains SET status = 'unreachable', updated_at = now(),
+                  status_reason = 'Pattern spelling not listed on the NG-CDF constituency directory (' || %s || '): the real constituency hostnames are listed there, so this variant is not expected to exist. Kept, never deleted.'
+            WHERE hostname LIKE %s AND origin = 'pattern' AND status IN ('candidate', 'unreachable') AND hostname <> ALL(%s)""",
+        (source, f"%.{suffix}", sorted(listed | extra)),
+    )
+    report["marked_not_listed"] = cur.rowcount
+    return report

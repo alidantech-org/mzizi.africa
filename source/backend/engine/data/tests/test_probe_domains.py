@@ -98,3 +98,16 @@ def test_dns_snapshot_rows(conn):
         probe_domains.lookup = original
     rows = conn.execute("SELECT record_type, \"values\" AS v, rcode FROM website.dns_snapshots WHERE domain_id = %s", (did,)).fetchall()
     assert len(rows) == 7 and {r["record_type"]: r["v"] for r in rows}["A"] == "1.2.3.4"
+
+
+def test_retry_timeouts_probes_only_timed_out_domains_with_the_longer_timeout(conn, monkeypatch):
+    slow, gone = make_site(conn, ["slow.go.ke"]), make_site(conn, ["gone.go.ke"])
+    conn.execute("UPDATE website.domains SET last_probe_at = now() WHERE status = 'candidate'")
+    conn.execute("UPDATE website.domains SET status = 'unreachable', status_reason = 'ReadTimeout: The read operation timed out' WHERE hostname = 'slow.go.ke'")
+    conn.execute("UPDATE website.domains SET status = 'unreachable', status_reason = 'ConnectError: [Errno -5] No address associated with hostname' WHERE hostname = 'gone.go.ke'")
+    seen = []
+    monkeypatch.setattr(probe_domains, "snapshot_dns", lambda *a, **k: seen.append(a) or "exists")
+    summary = probe_domains.probe_all(conn, UA, transport=httpx.MockTransport(lambda r: httpx.Response(404) if r.url.path == "/robots.txt" else httpx.Response(200)), log=lambda m: None, retry_timeouts=True, timeout_seconds=45)
+    assert summary["probed"] == 1 and summary["reachable"] == 1 and not seen
+    assert status_of(conn, slow, "slow.go.ke")["s"] == "reachable" and status_of(conn, gone, "gone.go.ke")["s"] == "unreachable"
+    assert conn.execute("SELECT role::text AS r FROM website.domains WHERE hostname = 'slow.go.ke'").fetchone()["r"] == "primary"

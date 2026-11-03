@@ -184,3 +184,40 @@ def test_all_47_published_county_names_expand_to_unique_valid_hostnames():
     hosts = [h for n in names for h in patterns.hostnames("{county}.go.ke", {"county": patterns.slug_variants(n, "lowercase-strip-county")})]
     assert len(set(hosts)) == len(hosts)
     assert all(re.fullmatch(r"[a-z0-9-]+\.go\.ke", h) for h in hosts)
+
+
+SPELL = {"ngcdf.go.ke": {"source": "https://ngcdf.go.ke/constituency/", "retrievedAt": "2026-11-02", "labels": ["kitutuchache-south", "juja", "dagoretti-north"],
+                          "overrides": {"Kitutu Chache South": "kitutuchache-south"}, "overrideNotes": {"Kitutu Chache South": "Directory joins Chache."},
+                          "unmapped": {"dagoretti-north": "Dagoretti"}, "nonConstituencyHosts": ["www"]}}
+
+
+def ngcdf_site(conn, jid, level_id, name, hosts):
+    uid = add_unit(conn, jid, level_id, f"ke/{uuid.uuid4().hex[:8]}", name)
+    code = f"ke/ngcdf/{uuid.uuid4().hex[:8]}"
+    site = str(conn.execute("INSERT INTO website.sites (code, name, kind, status, created_at, updated_at, version) VALUES (%s, %s, 'portal', 'expected', now(), now(), 1) RETURNING id", (code, name)).fetchone()["id"])
+    conn.execute("INSERT INTO website.subjects (site_id, target_kind, target_id, relation, created_at, updated_at, version) VALUES (%s, 'geography.units', %s, 'serves', now(), now(), 1)", (site, uid))
+    from mzizi_data import domains
+    domains.ensure_candidate_domains(conn, site, hosts, "pattern", "test")
+    return site
+
+
+def test_spelling_override_comes_first_in_expansion_candidates():
+    assert patterns.spelling_for("{constituency}.ngcdf.go.ke", "Kitutu Chache South", SPELL) == "kitutuchache-south"
+    assert patterns.spelling_for("{constituency}.ngcdf.go.ke", "Juja", SPELL) is None
+
+
+def test_apply_directory_adds_listed_hosts_marks_unlisted_variants_and_is_idempotent(conn):
+    jid, fam, pat, fcode, level_id = family_pattern(conn, "{county}.go.ke", "constituency")
+    chache = ngcdf_site(conn, jid, level_id, "Kitutu Chache South", ["kitutuchachesouth.ngcdf.go.ke", "kitutu-chache-south.ngcdf.go.ke"])
+    juja = ngcdf_site(conn, jid, level_id, "Juja", ["juja.ngcdf.go.ke", "jujaa.ngcdf.go.ke"])
+    dag = ngcdf_site(conn, jid, level_id, "Dagoretti", ["dagoretti.ngcdf.go.ke"])
+    conn.execute("UPDATE website.domains SET status = 'reachable' WHERE hostname = 'juja.ngcdf.go.ke'")
+    first = patterns.apply_directory(conn, spellings=SPELL)
+    assert first["added"] == 1 and first["unmapped_attached"] == 1 and first["marked_not_listed"] >= 3
+    row = conn.execute("SELECT origin::text AS o, status::text AS s FROM website.domains WHERE hostname = 'kitutuchache-south.ngcdf.go.ke' AND site_id = %s", (chache,)).fetchone()
+    assert row["o"] == "page_link" and row["s"] == "candidate"
+    assert conn.execute("SELECT status::text AS s FROM website.domains WHERE hostname = 'jujaa.ngcdf.go.ke'").fetchone()["s"] == "unreachable"
+    assert conn.execute("SELECT status::text AS s FROM website.domains WHERE hostname = 'juja.ngcdf.go.ke'").fetchone()["s"] == "reachable"  # listed and confirmed: untouched
+    assert conn.execute("SELECT count(*)::int AS n FROM website.domains WHERE site_id = %s", (dag,)).fetchone()["n"] == 2
+    second = patterns.apply_directory(conn, spellings=SPELL)
+    assert second["added"] == 0 and second["unmapped_attached"] == 0

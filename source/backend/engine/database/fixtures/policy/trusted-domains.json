@@ -78,6 +78,146 @@
       "jurisdiction": "ke",
       "rightsHolder": "Wikimedia Foundation (Wikidata structured data is CC0; Commons files carry their own free licences, recorded per file)",
       "maxRequestsPerSecond": 0.5
+    },
+    {
+      "host": "cma.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Capital Markets Authority (statutory regulator)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "crakenya.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Commission on Revenue Allocation (constitutional commission)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "www.crakenya.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Commission on Revenue Allocation (constitutional commission)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "cue.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Commission for University Education (statutory regulator)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "helb.co.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Higher Education Loans Board (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "kalro.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya Agricultural and Livestock Research Organization (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "kcaa.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya Civil Aviation Authority (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "kebs.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya Bureau of Standards (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "kengen.co.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya Electricity Generating Company (state-controlled public company)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "kenha.co.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya National Highways Authority (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "kenyaforestservice.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya Forest Service (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "kicd.ac.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya Institute of Curriculum Development (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "knchr.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya National Commission on Human Rights (constitutional commission)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "knec.ac.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya National Examinations Council (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "knh.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenyatta National Hospital (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "kpa.co.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya Ports Authority (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "kplc.co.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya Power and Lighting Company (state-controlled public company)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "krc.co.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Kenya Railways Corporation (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "ngeckenya.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "National Gender and Equality Commission (constitutional commission)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "nssf.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "National Social Security Fund (state corporation)",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
     }
   ]
 }

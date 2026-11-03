@@ -129,6 +129,9 @@ def apply_result(conn: psycopg.Connection, site_id: str, host: str, outcome: str
         (outcome, http_status, redirect_to, reason, outcome, site_id, host),
     )
     if outcome in CONFIRMED:
+        # the spelling that answers becomes the primary domain when the current primary is not confirmed
+        conn.execute("""UPDATE website.domains SET role = 'alias', updated_at = now() WHERE site_id = %s AND role = 'primary' AND hostname <> %s AND status NOT IN ('reachable','redirects','moved')""", (site_id, host))
+        conn.execute("UPDATE website.domains SET role = 'primary', updated_at = now() WHERE site_id = %s AND hostname = %s AND NOT EXISTS (SELECT 1 FROM website.domains p WHERE p.site_id = %s AND p.role = 'primary')", (site_id, host, site_id))
         conn.execute("UPDATE website.sites SET status = 'discovered', first_seen_at = COALESCE(first_seen_at, now()), last_seen_at = now(), updated_at = now() WHERE id = %s AND status = 'expected'", (site_id,))
     return outcome
 
@@ -140,9 +143,9 @@ def classify_redirect(host: str, location: str) -> tuple[str, str]:
 
 
 # ----------------------------------------------------------------------------------------- probing
-def probe_host(conn: psycopg.Connection, client: httpx.Client, user_agent: str, site_id: str, host: str, trusted: tuple[list[str], set[str]]) -> tuple[str, str]:
+def probe_host(conn: psycopg.Connection, client: httpx.Client, user_agent: str, site_id: str, host: str, trusted: tuple[list[str], set[str]], timeout_seconds: int = 15) -> tuple[str, str]:
     """Probes one host through the gate. Returns (status, reason)."""
-    limits = compliance.effective_limits({"rate": {"requests_per_second": 0.2}, "limits": {"timeout_seconds": 15}, "retries": {"max": 1}})
+    limits = compliance.effective_limits({"rate": {"requests_per_second": 0.2}, "limits": {"timeout_seconds": timeout_seconds}, "retries": {"max": 1}})
     fetcher = fetch.PoliteFetcher(user_agent=user_agent, limits=limits, gate=lambda req: gate.check_collection(conn, req), site_id=site_id, client=client, sleep=time.sleep)
     try:
         result = fetcher.get(f"https://{host}/", purpose="assess")
@@ -167,13 +170,23 @@ def probe_host(conn: psycopg.Connection, client: httpx.Client, user_agent: str, 
     return apply_result(conn, site_id, host, "unreachable", result.status, None, f"Answered {result.status}"), "http"
 
 
-def probe_all(conn: psycopg.Connection, user_agent: str, interval: float = 5.0, limit: int | None = None, log=print, transport: httpx.BaseTransport | None = None, resolver: dns.resolver.Resolver | None = None) -> dict:
-    """Probes every unprobed candidate domain. Resumable: a probed domain has last_probe_at set and is not selected again."""
+RETRYABLE = ("ReadTimeout%", "ConnectTimeout%", "PoolTimeout%", "WriteTimeout%")
+
+
+def probe_all(conn: psycopg.Connection, user_agent: str, interval: float = 5.0, limit: int | None = None, log=print, transport: httpx.BaseTransport | None = None, resolver: dns.resolver.Resolver | None = None, retry_timeouts: bool = False, timeout_seconds: int = 15) -> dict:
+    """Probes every unprobed candidate domain. Resumable: a probed domain has last_probe_at set and is not selected again.
+
+    With retry_timeouts the selection is instead the unreachable domains whose last failure was a timeout (a slow origin
+    is not a missing host); they are probed again with timeout_seconds, and DNS is not re-snapshotted if the name resolves.
+    """
     trusted = load_trusted()
     resolver = resolver or dns.resolver.Resolver()
     resolver.lifetime = 6.0
     client = httpx.Client(follow_redirects=False, transport=transport or PacedTransport(interval))
-    rows = conn.execute("SELECT d.id::text AS id, d.site_id::text AS site_id, d.hostname FROM website.domains d WHERE d.status = 'candidate' AND d.last_probe_at IS NULL ORDER BY d.hostname").fetchall()
+    if retry_timeouts:
+        rows = conn.execute("SELECT d.id::text AS id, d.site_id::text AS site_id, d.hostname FROM website.domains d WHERE d.status = 'unreachable' AND d.status_reason LIKE ANY(%s) AND NOT (d.status_reason LIKE '%%Not listed%%') ORDER BY d.hostname", (list(RETRYABLE),)).fetchall()
+    else:
+        rows = conn.execute("SELECT d.id::text AS id, d.site_id::text AS site_id, d.hostname FROM website.domains d WHERE d.status = 'candidate' AND d.last_probe_at IS NULL ORDER BY d.hostname").fetchall()
     summary: dict = {"skipped_untrusted": [], "probed": 0}
     for row in rows[: limit or None]:
         host = row["hostname"]
@@ -182,11 +195,11 @@ def probe_all(conn: psycopg.Connection, user_agent: str, interval: float = 5.0, 
             summary["skipped_untrusted"].append(host)
             conn.commit()
             continue
-        dns_state = snapshot_dns(conn, resolver, host, domain_id=row["id"])
+        dns_state = "exists" if retry_timeouts else snapshot_dns(conn, resolver, host, domain_id=row["id"])
         if dns_state == "nxdomain":
             status, why = apply_result(conn, row["site_id"], host, "unreachable", None, None, "DNS name does not exist (NXDOMAIN); no request was made"), "nxdomain"
         else:
-            status, why = probe_host(conn, client, user_agent, row["site_id"], host, trusted)
+            status, why = probe_host(conn, client, user_agent, row["site_id"], host, trusted, timeout_seconds)
         conn.commit()
         summary["probed"] += 1
         summary[status] = summary.get(status, 0) + 1

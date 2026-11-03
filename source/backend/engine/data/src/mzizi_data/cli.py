@@ -139,6 +139,7 @@ def main(argv: list[str] | None = None) -> int:
     cs.add_argument("--seed-family", help="use the seeded sections of this family code (e.g. ke/regulator) instead of the site's own structure")
     cs.add_argument("--max-requests", type=int, default=100)
     cs.add_argument("--max-pages-per-section", type=int, default=3)
+    cs.add_argument("--max-depth", type=int, default=2, choices=[2, 3], help="3 for sites whose listings link package pages that link the file (WordPress Download Manager)")
     cs.add_argument("--max-file-mb", type=int, default=25)
     cs.add_argument("--raw-dir", help="also keep raw bytes with a provenance file beside each")
     cs.add_argument("--store", default=".data/objects")
@@ -466,7 +467,7 @@ def main(argv: list[str] | None = None) -> int:
 
         with connect() as conn:
             store = LocalDirectoryStore(conn, args.store)
-            config = crawl.CrawlConfig(max_requests=args.max_requests, max_pages_per_section=args.max_pages_per_section, max_file_bytes=args.max_file_mb * 1024 * 1024, raw_dir=Path(args.raw_dir) if args.raw_dir else None)
+            config = crawl.CrawlConfig(max_depth=args.max_depth, max_requests=args.max_requests, max_pages_per_section=args.max_pages_per_section, max_file_bytes=args.max_file_mb * 1024 * 1024, raw_dir=Path(args.raw_dir) if args.raw_dir else None)
             report = crawl.crawl_site(conn, store, live_fetcher, args.site, config, args.seed_family, log=lambda m: print(m, flush=True))
         print(json.dumps({**report.to_json(), "skipped_sample": report.skipped[:15], "errors_sample": report.errors[:10]}, indent=1, default=str))
         return 0
