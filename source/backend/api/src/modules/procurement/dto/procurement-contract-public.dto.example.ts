@@ -23,7 +23,7 @@ export const procurementContractPublicExample: ContractExample = contractExample
       name: "code",
       optional: false,
       nullable: false,
-      spec: { kind: "string", minLength: 2, maxLength: 200 },
+      spec: { kind: "string", minLength: 2, maxLength: 300 },
     },
     {
       name: "contractingOfficeId",

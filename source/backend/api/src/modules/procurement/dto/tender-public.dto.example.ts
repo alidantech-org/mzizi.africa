@@ -22,7 +22,7 @@ export const tenderPublicExample: ContractExample = contractExample({
       name: "code",
       optional: false,
       nullable: false,
-      spec: { kind: "string", minLength: 2, maxLength: 200 },
+      spec: { kind: "string", minLength: 2, maxLength: 300 },
     },
     {
       name: "createdAt",
@@ -134,6 +134,12 @@ export const tenderPublicExample: ContractExample = contractExample({
     },
     {
       name: "version",
+      optional: false,
+      nullable: false,
+      spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
+      name: "versionNumber",
       optional: false,
       nullable: false,
       spec: { kind: "number", integer: true, min: 0 },

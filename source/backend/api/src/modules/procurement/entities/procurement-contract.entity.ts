@@ -17,10 +17,10 @@ import { TenderEntity } from "#/modules/procurement/entities/tender.entity.ts";
 import { ContractStatus } from "#/types/procurement/contract-status.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { Amount } from "#/types/shared/amount.type.ts";
-import type { BusinessCode } from "#/types/shared/business-code.type.ts";
 import type { CurrencyCode } from "#/types/shared/currency-code.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
+import type { LongCode } from "#/types/shared/long-code.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
@@ -42,8 +42,8 @@ export class ProcurementContractEntity {
   @Column({ name: "awarded_on", type: "date", nullable: true })
   awardedOn?: Date | null;
 
-  @Column({ name: "code", type: "varchar", length: 200 })
-  code!: BusinessCode;
+  @Column({ name: "code", type: "varchar", length: 300 })
+  code!: LongCode;
 
   @Column({ name: "contracting_office_id", type: "uuid", nullable: true })
   contractingOfficeId?: Id | null;

@@ -119,20 +119,54 @@ async function promoteInner(db: DataSource, candidateId: string): Promise<Promot
     let targetId: string;
     let previousTargetId: string | undefined;
     let newRow = true;
+    const dbName = (property: string) => meta.columns.find((c) => c.propertyName === property)!.databaseName;
+    const day = (value: unknown): string | null => {
+      if (value === null || value === undefined || value === "") return null;
+      if (value instanceof Date) return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
+      return /^\d{4}-\d\d-\d\d/.test(String(value)) ? String(value).slice(0, 10) : null;
+    };
+    const identical = (row: Record<string, unknown>) =>
+      Object.entries(payload).every(([property, value]) => {
+        const stored = row[dbName(property)];
+        return String(stored instanceof Date ? day(stored) : stored) === String(value) || (value === null && stored === null);
+      });
+    // Versions of one natural key: the highest number plus one, so a historical release never collides with a later one.
+    const nextVersion = async (): Promise<number> => {
+      const where = candidate.key_fields.map((f, i) => `${column(f)} = $${i + 1}`).join(" AND ");
+      const [row] = await tx.query(`SELECT COALESCE(max("version_number"), 0) AS max FROM ${table} WHERE ${where}`, candidate.key_fields.map((f) => payload[f]));
+      return Number(row.max) + 1;
+    };
     if (existing[0]) {
       const old = existing[0];
-      const same = Object.entries(payload).every(([property, value]) => {
-        const stored = old[meta.columns.find((c) => c.propertyName === property)!.databaseName];
-        return String(stored instanceof Date ? stored.toISOString().slice(0, 10) : stored) === String(value) || (value === null && stored === null);
-      });
-      if (same) {
+      if (identical(old)) {
         targetId = String(old.id);
         newRow = false;
       } else {
         if (!has("isCurrent") || !(has("versionNumber") || has("validTo"))) return rollbackDefer(db, candidate, [`${candidate.target_kind} is not versioned: a changed record cannot replace the existing one in place`], decision.id);
-        previousTargetId = String(old.id);
-        await tx.query(`UPDATE ${table} SET "is_current" = false, "updated_at" = now()${has("validTo") ? `, "valid_to" = COALESCE("valid_to", current_date), "valid_to_precision" = COALESCE("valid_to_precision", 'exact')` : ""} WHERE id = $1`, [old.id]);
-        targetId = await insertRow(tx, meta, payload, has("versionNumber") ? Number(old[meta.columns.find((c) => c.propertyName === "versionNumber")!.databaseName]) + 1 : undefined);
+        // Release rule: the release with the latest publication date is current. A release published earlier than the current one is kept as a closed historical version.
+        const release = has("publishedOn") ? day(payload.publishedOn) : null;
+        const currentRelease = has("publishedOn") ? day(old[dbName("publishedOn")]) : null;
+        if (release && currentRelease && release < currentRelease) {
+          const sameKey = candidate.key_fields.map((f, i) => `${column(f)} = $${i + 1}`).join(" AND ");
+          const versions: Array<Record<string, unknown>> = await tx.query(`SELECT * FROM ${table} WHERE ${sameKey}`, candidate.key_fields.map((f) => payload[f]));
+          const match = versions.find(identical);
+          if (match) {
+            targetId = String(match.id);
+            newRow = false;
+          } else {
+            const historical: Record<string, unknown> = { ...payload, isCurrent: false };
+            if (has("validFrom")) Object.assign(historical, { validFrom: release, validFromPrecision: "exact" });
+            if (has("validTo")) Object.assign(historical, { validTo: currentRelease, validToPrecision: "exact" });
+            targetId = await insertRow(tx, meta, historical, await nextVersion());
+          }
+        } else {
+          previousTargetId = String(old.id);
+          const closeOn = release ? `'${release}'::date` : "current_date";
+          await tx.query(`UPDATE ${table} SET "is_current" = false, "updated_at" = now()${has("validTo") ? `, "valid_to" = COALESCE("valid_to", ${closeOn}), "valid_to_precision" = COALESCE("valid_to_precision", 'exact')` : ""} WHERE id = $1`, [old.id]);
+          const successor: Record<string, unknown> = { ...payload };
+          if (release && has("validFrom")) Object.assign(successor, { validFrom: release, validFromPrecision: "exact" });
+          targetId = await insertRow(tx, meta, successor, has("versionNumber") ? await nextVersion() : undefined);
+        }
       }
     } else {
       targetId = await insertRow(tx, meta, payload, has("versionNumber") ? 1 : undefined);

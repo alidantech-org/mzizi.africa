@@ -2,10 +2,10 @@
 import type { TenderStatus } from "#/types/procurement/tender-status.enum.ts";
 import type { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { Amount } from "#/types/shared/amount.type.ts";
-import type { BusinessCode } from "#/types/shared/business-code.type.ts";
 import type { CurrencyCode } from "#/types/shared/currency-code.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
+import type { LongCode } from "#/types/shared/long-code.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
 import type { HistoricalEntity } from "#/types/shared/historical-entity.interface.ts";
@@ -16,7 +16,7 @@ import type { Date } from "#/types/shared/date.type.ts";
 export interface Tender {
   budgetId?: Id | null;
   closesOn?: Date | null;
-  code: BusinessCode;
+  code: LongCode;
   createdAt: DateTime;
   currencyCode: CurrencyCode;
   estimatedValue?: Amount | null;
@@ -36,4 +36,5 @@ export interface Tender {
   validTo?: Date | null;
   validToPrecision?: DatePrecision | null;
   version: Version;
+  versionNumber: Version;
 }

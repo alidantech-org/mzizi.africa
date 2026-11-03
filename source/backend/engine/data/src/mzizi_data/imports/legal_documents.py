@@ -156,10 +156,10 @@ def flag_figures_for_review(conn: psycopg.Connection, sites: list[str] | None = 
     ).fetchall()
     flagged = with_figures = 0
     for r in rows:
-        facts = r["facts"] or []
-        figures = [f for f in facts if (f.get("kind") if isinstance(f, dict) else None) in ("amount", "money", "kes_amount")]
+        facts = json.loads(r["facts"]) if isinstance(r["facts"], str) else (r["facts"] or [])
+        figures = [f for f in facts if isinstance(f, dict) and f.get("type") == "amount"]
         with_figures += bool(figures)
-        flagged += conn.execute("""INSERT INTO engine.gaps (target_kind, target_id, field, reason, status, priority, refill_sources) VALUES ('source.documents', %s, 'figures_review', 'missing', 'open', 5, '[]')
-            ON CONFLICT (target_kind, target_id, field) DO NOTHING""", (r["id"],)).rowcount
+        flagged += conn.execute("""INSERT INTO engine.gaps (target_kind, target_id, field, reason, status, priority, refill_sources) VALUES ('source.documents', %s, 'figures_review', 'missing', 'open', %s, '[]')
+            ON CONFLICT (target_kind, target_id, field) DO NOTHING""", (r["id"], 10 if figures else 5)).rowcount
     conn.commit()
     return {"documents": len(rows), "newly_flagged": flagged, "with_amount_facts": with_figures}

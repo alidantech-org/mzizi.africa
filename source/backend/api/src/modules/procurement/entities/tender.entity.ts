@@ -16,10 +16,10 @@ import { ColumnNumericTransformer } from "#/modules/common/entities/base/column-
 import { TenderStatus } from "#/types/procurement/tender-status.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { Amount } from "#/types/shared/amount.type.ts";
-import type { BusinessCode } from "#/types/shared/business-code.type.ts";
 import type { CurrencyCode } from "#/types/shared/currency-code.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
+import type { LongCode } from "#/types/shared/long-code.type.ts";
 import type { Name } from "#/types/shared/name.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
@@ -29,7 +29,8 @@ import type { Date } from "#/types/shared/date.type.ts";
  * Tender
  */
 @Entity({ schema: "procurement", name: "tenders" })
-@Index("idx_tender_code", ["code"], { unique: true })
+@Index("idx_tender_code", ["code"])
+@Index("uq_tender_code_version", ["code", "versionNumber"], { unique: true })
 @Index("idx_tender_issuer", ["issuingUnitId", "status"])
 export class TenderEntity {
 
@@ -42,8 +43,8 @@ export class TenderEntity {
   @Column({ name: "closes_on", type: "date", nullable: true })
   closesOn?: Date | null;
 
-  @Column({ name: "code", type: "varchar", length: 200 })
-  code!: BusinessCode;
+  @Column({ name: "code", type: "varchar", length: 300 })
+  code!: LongCode;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
@@ -98,4 +99,7 @@ export class TenderEntity {
 
   @Column({ name: "version", type: "integer" })
   version!: Version;
+
+  @Column({ name: "version_number", type: "integer" })
+  versionNumber!: Version;
 }

@@ -217,4 +217,63 @@ run("staging validation and promotion", () => {
     expect((await db.query(`SELECT count(*)::int AS n FROM geography.boundaries`))[0].n).toBe(before);
     expect((await db.query(`SELECT count(*)::int AS n FROM source.attributions WHERE target_id = $1`, [existing.id]))[0].n).toBe(2);
   });
+
+  describe("tender releases", () => {
+    let unitId: string;
+    let kindId: string;
+    const tender = (code: string, extra: Record<string, unknown> = {}) => ({ code, title: "Supply of desks", kindId, methodId: kindId, issuingUnitId: unitId, currencyCode: "KES", status: "published", publishedOn: "2026-02-01", ...extra });
+
+    beforeAll(async () => {
+      const [cls] = await db.query(`SELECT id, jurisdiction_id FROM reference.classifications LIMIT 1`);
+      kindId = cls.id;
+      [{ id: unitId }] = await db.query(`INSERT INTO finance.units (code, name, level_id, jurisdiction_id, is_current, created_at, updated_at, version) VALUES ('ke/pe/t1', 'Test entity', $1, $2, true, now(), now(), 1) RETURNING id`, [cls.id, cls.jurisdiction_id]);
+    });
+
+    async function promote(payload: Record<string, unknown>) {
+      const c = await candidate("procurement.tenders", payload, ["code"]);
+      await approve(c);
+      return promoteCandidate(db, c);
+    }
+
+    test("a tender without a title is invalid before approval", async () => {
+      const issues = await validatePayload(db, "procurement.tenders", tender("ocds-x-1", { title: null }), ["code"]);
+      expect(issues.filter((i) => i.severity === "error").map((i) => i.rule)).toContain("required");
+    });
+
+    test("a code of 255 characters is accepted without truncation", async () => {
+      const code = `ocds-x-${"L".repeat(248)}`;
+      expect((await validatePayload(db, "procurement.tenders", tender(code), ["code"])).filter((i) => i.severity === "error")).toEqual([]);
+      const result = await promote(tender(code));
+      expect(result.outcome).toBe("promoted");
+      expect((await db.query(`SELECT code FROM procurement.tenders WHERE id = $1`, [result.targetId]))[0].code).toBe(code);
+    });
+
+    test("a later release is a new current version and the earlier one is closed at the new publication date", async () => {
+      const first = await promote(tender("ocds-x-2"));
+      const second = await promote(tender("ocds-x-2", { title: "Supply of desks and chairs", publishedOn: "2026-04-01" }));
+      expect(second).toMatchObject({ outcome: "promoted", previousTargetId: first.targetId });
+      const rows = await db.query(`SELECT id, version_number, is_current, valid_to::text AS valid_to FROM procurement.tenders WHERE code = 'ocds-x-2' ORDER BY version_number`);
+      expect(rows.map((r: { version_number: number; is_current: boolean }) => [r.version_number, r.is_current])).toEqual([[1, false], [2, true]]);
+      expect(rows[0].valid_to).toBe("2026-04-01");
+    });
+
+    test("an earlier release seen later is kept as a closed version and does not take over current", async () => {
+      const current = await promote(tender("ocds-x-3", { publishedOn: "2026-06-01", title: "Newest" }));
+      const older = await promote(tender("ocds-x-3", { publishedOn: "2026-03-01", title: "Older" }));
+      expect(older.outcome).toBe("promoted");
+      expect(older.previousTargetId).toBeUndefined();
+      const rows = await db.query(`SELECT id, title, is_current, version_number, valid_to::text AS valid_to FROM procurement.tenders WHERE code = 'ocds-x-3' ORDER BY version_number`);
+      expect(rows.filter((r: { is_current: boolean }) => r.is_current).map((r: { id: string }) => r.id)).toEqual([current.targetId]);
+      const closed = rows.find((r: { id: string }) => r.id === older.targetId);
+      expect(closed).toMatchObject({ is_current: false, title: "Older", valid_to: "2026-06-01" });
+      expect((await db.query(`SELECT count(*)::int AS n FROM source.attributions WHERE target_id = $1`, [older.targetId]))[0].n).toBe(1);
+    });
+
+    test("an identical release adds attribution only and creates no version", async () => {
+      const first = await promote(tender("ocds-x-4"));
+      const again = await promote(tender("ocds-x-4"));
+      expect(again.targetId).toBe(first.targetId);
+      expect((await db.query(`SELECT count(*)::int AS n FROM procurement.tenders WHERE code = 'ocds-x-4'`))[0].n).toBe(1);
+    });
+  });
 });

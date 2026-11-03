@@ -138,7 +138,7 @@ export async function validatePayload(db: DataSource, target: string, rawPayload
   for (const column of meta.columns) {
     if (ENGINE_FIELDS.has(column.propertyName) || column.isNullable || column.default !== undefined || column.isGenerated) continue;
     if (column.relationMetadata && !column.isVirtual) continue;
-    if (payload[column.propertyName] === undefined && !errors.some((e) => e.field === column.propertyName)) issues.push(error("required", `${column.propertyName} is required`));
+    if ((payload[column.propertyName] === undefined || payload[column.propertyName] === null) && !errors.some((e) => e.field === column.propertyName)) issues.push(error("required", `${column.propertyName} is required`));
   }
   for (const key of keyFields) if (payload[key] === undefined || payload[key] === null || payload[key] === "") issues.push(error("natural_key", `key field ${key} is empty`));
   issues.push(...typeIssues(meta, payload), ...(await geometryIssues(db, meta, payload)), ...moneyIssues(meta, payload), ...datePrecisionIssues(meta, payload));

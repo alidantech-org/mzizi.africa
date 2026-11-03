@@ -277,7 +277,9 @@ const tenders = procurement.schemas({
   Tender: recorded(
     {
       issuingUnitId: plainId(),
-      code: dryv.field(sharedProperties.BusinessCode).query(searchable),
+      code: dryv.field(sharedProperties.LongCode).query(searchable),
+      /** A later release of the same tender is a new version; the newest release by publication date is current. */
+      versionNumber: dryv.field(sharedProperties.Version),
       title: dryv.field(sharedProperties.Name).query(searchable),
       kindId: plainId(),
       methodId: plainId(),
@@ -291,7 +293,7 @@ const tenders = procurement.schemas({
       legalBasisId: optionalId(),
     },
     "tenders",
-    [{ name: "idx_tender_code", fields: ["code"], unique: true }, { name: "idx_tender_issuer", fields: ["issuingUnitId", "status"] }],
+    [{ name: "idx_tender_code", fields: ["code"] }, { name: "uq_tender_code_version", fields: ["code", "versionNumber"], unique: true }, { name: "idx_tender_issuer", fields: ["issuingUnitId", "status"] }],
   ),
 });
 
@@ -317,7 +319,7 @@ const bidsAndContracts = procurement.schemas({
       awardedEntityId: plainId(),
       contractingUnitId: plainId(),
       contractingOfficeId: optionalId(),
-      code: dryv.field(sharedProperties.BusinessCode).query(searchable),
+      code: dryv.field(sharedProperties.LongCode).query(searchable),
       value: amount().query({ filter: ["between"], sort: true }),
       currencyCode: currency(),
       awardedOn: dryv.field(sharedProperties.Date).optional().nullable(),

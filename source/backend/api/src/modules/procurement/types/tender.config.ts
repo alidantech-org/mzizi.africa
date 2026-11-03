@@ -47,7 +47,7 @@ export const TENDER_DATE_RANGE_FIELDS = ['createdAt', 'publishedOn', 'updatedAt'
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const TENDER_SELECTABLE_FIELDS = ['budgetId', 'closesOn', 'code', 'createdAt', 'currencyCode', 'estimatedValue', 'id', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'methodId', 'procuringOfficeId', 'publishedOn', 'status', 'title', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly TenderKey[];
+export const TENDER_SELECTABLE_FIELDS = ['budgetId', 'closesOn', 'code', 'createdAt', 'currencyCode', 'estimatedValue', 'id', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'methodId', 'procuringOfficeId', 'publishedOn', 'status', 'title', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'versionNumber', ] as const satisfies readonly TenderKey[];
 
 export const TENDER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly TenderSelectableField[];
 
@@ -55,7 +55,7 @@ export const TENDER_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satis
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const TENDER_EDITABLE_FIELDS = ['budgetId', 'closesOn', 'code', 'currencyCode', 'estimatedValue', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'methodId', 'procuringOfficeId', 'publishedOn', 'status', 'title', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly TenderKey[];
+export const TENDER_EDITABLE_FIELDS = ['budgetId', 'closesOn', 'code', 'currencyCode', 'estimatedValue', 'isCurrent', 'issuingUnitId', 'kindId', 'legalBasisId', 'methodId', 'procuringOfficeId', 'publishedOn', 'status', 'title', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', 'versionNumber', ] as const satisfies readonly TenderKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

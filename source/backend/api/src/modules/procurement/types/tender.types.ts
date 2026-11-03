@@ -50,6 +50,7 @@ export interface ITender extends B.IBase {
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;
   validToPrecision: DatePrecision | null;
+  versionNumber: number;
 }
 
 // ----------------------------------

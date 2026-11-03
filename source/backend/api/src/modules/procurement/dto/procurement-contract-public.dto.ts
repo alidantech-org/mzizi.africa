@@ -44,10 +44,10 @@ import { TenderDto } from "#/modules/procurement/dto/tender.dto.ts";
 import { ContractStatus } from "#/types/procurement/contract-status.enum.ts";
 import { DatePrecision } from "#/types/shared/date-precision.enum.ts";
 import type { Amount } from "#/types/shared/amount.type.ts";
-import type { BusinessCode } from "#/types/shared/business-code.type.ts";
 import type { CurrencyCode } from "#/types/shared/currency-code.type.ts";
 import type { Flag } from "#/types/shared/flag.type.ts";
 import type { Id } from "#/types/shared/id.type.ts";
+import type { LongCode } from "#/types/shared/long-code.type.ts";
 import type { Version } from "#/types/shared/version.type.ts";
 import type { DateTime } from "#/types/shared/date-time.type.ts";
 import type { Date } from "#/types/shared/date.type.ts";
@@ -70,8 +70,8 @@ export class ProcurementContractPublicDto {
 
   @IsString()
   @MinLength(2)
-  @MaxLength(200)
-  code!: BusinessCode;
+  @MaxLength(300)
+  code!: LongCode;
 
   @IsOptional()
   @ValidateIf((object) => object.contractingOfficeId !== null)

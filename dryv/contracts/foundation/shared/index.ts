@@ -21,6 +21,8 @@ export const sharedProperties = shared.properties({
   Id: dryv.property.string.uuid(),
   /** Hierarchical business code such as ke/nairobi/westlands; the first segment is the jurisdiction code. */
   BusinessCode: dryv.property.string().length({ min: 2, max: 200 }),
+  /** Source-assigned identifiers such as OCDS tender and contract ids can be long; they are keys and are never truncated. */
+  LongCode: dryv.property.string().length({ min: 2, max: 300 }),
   JurisdictionCode: dryv.property.string().length({ min: 2, max: 40 }),
   Name: dryv.property.string().length({ min: 1, max: 300 }),
   Description: dryv.property.string().length({ max: 4000 }),
