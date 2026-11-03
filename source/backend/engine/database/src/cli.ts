@@ -30,6 +30,7 @@ import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataS
 import { advanceDossier, autoAssess, decideAssessment, draftAssessment, type AssessmentOutcome } from "./assessments.ts";
 import { seedStatisticalCatalogue } from "./catalogue.ts";
 import { checkIntegrity } from "./integrity.ts";
+import { backfillScope } from "./scope.ts";
 import { backfillGovernance } from "./governance-backfill.ts";
 import { migrateLocations } from "./location-migration.ts";
 import { grantReadOnly, grantReviewerRead } from "./grants.ts";
@@ -56,6 +57,10 @@ async function withDb<T>(options: { destructive?: boolean }, work: (db: Awaited<
 switch (command) {
   case "backfill-governance": {
     await withDb({}, async (db) => console.log(JSON.stringify(await backfillGovernance(db), null, 2)));
+    break;
+  }
+  case "backfill-scope": {
+    await withDb({}, async (db) => console.log(JSON.stringify(await backfillScope(db), null, 2)));
     break;
   }
   case "migrate-locations": {

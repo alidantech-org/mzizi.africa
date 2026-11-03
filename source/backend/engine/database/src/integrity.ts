@@ -178,6 +178,13 @@ export async function checkIntegrity(db: DataSource): Promise<IntegrityIssue[]> 
   // A site has at most one primary domain at any time (valid ranges are half-open and a null end is open).
   push(await orphans(db, "sites with overlapping primary domains", `FROM website.domains f JOIN website.domains o ON o.site_id = f.site_id AND o.id <> f.id AND o.role = 'primary' WHERE f.role = 'primary' AND f.valid_from < COALESCE(o.valid_to, 'infinity'::date) AND o.valid_from < COALESCE(f.valid_to, 'infinity'::date)`));
 
+  // Jurisdiction-wide scope (DEC-JURISDICTION-WIDE-SCOPE): a record of a jurisdiction that has a single root unit must carry a scope.
+  const rootCount = `(SELECT count(*) FROM geography.units r WHERE r.jurisdiction_id = JID AND r.parent_id IS NULL AND r.is_current) = 1`;
+  push(await orphans(db, "institutions of a jurisdiction with a root unit but no scope", `FROM governance.institutions f WHERE f.is_current AND f.scope_geo_unit_id IS NULL AND ${rootCount.replace("JID", "f.jurisdiction_id")}`));
+  push(await orphans(db, "offices of a jurisdiction with a root unit but no scope", `FROM governance.offices f JOIN governance.institutions i ON i.id = f.institution_id WHERE f.is_current AND f.scope_geo_unit_id IS NULL AND ${rootCount.replace("JID", "i.jurisdiction_id")}`));
+  push(await orphans(db, "finance units of a jurisdiction with a root unit but no geography unit", `FROM finance.units f WHERE f.is_current AND f.geo_unit_id IS NULL AND ${rootCount.replace("JID", "f.jurisdiction_id")}`));
+  push(await orphans(db, "statistical datasets of a jurisdiction with a root unit but no geography unit", `FROM statistical.datasets f WHERE f.is_current AND f.geo_unit_id IS NULL AND ${rootCount.replace("JID", "f.jurisdiction_id")}`));
+
   // Derived geometry: every boundary has a shape and every shape is valid.
   push(await orphans(db, "geography.boundaries without a valid derived shape", `FROM geography.boundaries f LEFT JOIN geography.boundary_shapes s ON s.boundary_id = f.id WHERE s.boundary_id IS NULL OR s.geom IS NULL OR s.is_valid IS NOT TRUE`));
   return issues;

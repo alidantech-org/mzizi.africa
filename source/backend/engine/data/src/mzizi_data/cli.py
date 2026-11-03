@@ -364,7 +364,8 @@ def main(argv: list[str] | None = None) -> int:
 
         with connect() as conn:
             rows = reinforcement.coverage(conn)
-        print(json.dumps(rows, indent=2) if args.json else reinforcement.format_coverage(rows))
+            scope = reinforcement.scope_gaps(conn)
+        print(json.dumps({"coverage": rows, "scopeGaps": scope}, indent=2) if args.json else reinforcement.format_coverage(rows) + "\n\n" + reinforcement.format_scope_gaps(scope))
         return 0
     if args.command == "gaps":
         from . import reinforcement

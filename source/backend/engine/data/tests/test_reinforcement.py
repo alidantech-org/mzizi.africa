@@ -66,3 +66,10 @@ def test_nothing_found_is_not_repeated_before_the_retry_time(conn):
     jobs.run_once(conn, {"refill": r.refill_handler(conn)})
     assert conn.execute("SELECT status FROM engine.gaps WHERE id = %s", (gap,)).fetchone()["status"] == "not_found"
     assert all(g["id"] != gap for g in r.queue(conn, 1000))
+
+
+def test_scope_gaps_count_records_with_a_jurisdiction_root_and_no_scope(conn):
+    rows = {x["table"]: x for x in r.scope_gaps(conn)}
+    assert set(rows) == {"governance.institutions", "governance.offices", "finance.units", "statistical.datasets"}
+    assert all(x["gaps"] <= x["total"] - x["scoped"] for x in rows.values())
+    assert "scope check" in r.format_scope_gaps(list(rows.values()))

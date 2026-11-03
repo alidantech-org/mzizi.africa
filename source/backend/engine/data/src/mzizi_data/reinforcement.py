@@ -85,6 +85,33 @@ def coverage(conn: psycopg.Connection, rules: dict[str, dict[str, list[str]]] | 
     return rows
 
 
+# Records that belong to a jurisdiction and must carry a geography scope (DEC-JURISDICTION-WIDE-SCOPE): (label, from clause, jurisdiction expression, scope column).
+SCOPE_CHECKS: list[tuple[str, str, str, str]] = [
+    ("governance.institutions", "governance.institutions t", "t.jurisdiction_id", "t.scope_geo_unit_id"),
+    ("governance.offices", "governance.offices t JOIN governance.institutions i ON i.id = t.institution_id", "i.jurisdiction_id", "t.scope_geo_unit_id"),
+    ("finance.units", "finance.units t", "t.jurisdiction_id", "t.geo_unit_id"),
+    ("statistical.datasets", "statistical.datasets t", "t.jurisdiction_id", "t.geo_unit_id"),
+]
+
+
+def scope_gaps(conn: psycopg.Connection) -> list[dict[str, Any]]:
+    """Scope-gap check: current records of a jurisdiction that has a single root unit but no scope. A jurisdiction-wide record
+    points at the root unit; a null is a known gap, not a normal state. Read-only; one row per table."""
+    rows = []
+    for label, source, jurisdiction, column in SCOPE_CHECKS:
+        r = conn.execute(f"""SELECT count(*) AS total, count({column}) AS scoped,
+            count(*) FILTER (WHERE {column} IS NULL AND (SELECT count(*) FROM geography.units r WHERE r.jurisdiction_id = {jurisdiction} AND r.parent_id IS NULL AND r.is_current) = 1) AS gaps
+            FROM {source} WHERE t.is_current""").fetchone()
+        rows.append({"table": label, "total": r["total"], "scoped": r["scoped"], "gaps": r["gaps"]})
+    return rows
+
+
+def format_scope_gaps(rows: list[dict[str, Any]]) -> str:
+    lines = [f"{'scope check':26} {'total':>7} {'scoped':>8} {'gaps':>6}"]
+    lines += [f"{r['table']:26} {r['total']:>7} {r['scoped']:>8} {r['gaps']:>6}" for r in rows]
+    return "\n".join(lines)
+
+
 def format_coverage(rows: list[dict[str, Any]]) -> str:
     lines = [f"{'table':26} {'field':20} {'total':>7} {'present':>8} {'absent':>7} {'unknown':>8} {'proposed':>8} {'disputed':>8}  coverage"]
     for r in rows:
