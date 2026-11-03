@@ -21,7 +21,7 @@ TITLE = re.compile(
 )
 HONORIFIC = re.compile(r"^(?:(?:hon|sen|dr|prof|eng|amb|mrs|mr|ms|rtd|maj|gen|col|lt|capt|rev|bishop|cpa|justice|lady|sir|arch|ca|fcpa|ph\.?d)\.?\s*)+", re.I)
 POST = re.compile(r"(?:,\s*|\s+)(?:CBS|EBS|OGW|MBS|HSC|EGH|MGH|SC|MP|PhD|FCPA|CPA|OBS|CBE|MBA|\(.*?\))\.?\s*$", re.I)
-BAD = re.compile(r"\b(ministry|state|department|authority|board|commission|council|office|kenya|director|secretary|chief|officer|services?|cabinet|republic|government|read|more|biography|contact|home|about|news|welcome|message|profile|view|click|download|team|management|leadership|mission|vision|ps|toll|free|hotline|phone|email|fax|livestock|agriculture|vacant)\b", re.I)
+BAD = re.compile(r"\b(ministry|state|department|authority|board|commission|council|office|kenya|director|secretary|chief|officer|services?|cabinet|republic|government|read|more|biography|contact|home|about|news|welcome|message|profile|view|click|download|team|management|leadership|mission|vision|thinking|ensuring|ps|toll|free|hotline|phone|email|fax|livestock|agriculture|vacant|skip|content|wait|please|legislation|regional|offices|change|forestry|economic|affairs|administration|representative|land|compliance|representing|enabling|public|human|resource|services)\b", re.I)
 
 
 def name_of(line: str) -> str | None:
@@ -32,7 +32,7 @@ def name_of(line: str) -> str | None:
     words = text.split()
     if not (2 <= len(words) <= 5) or len(text) > 60 or re.search(r"[0-9@/]", text) or BAD.search(text):
         return None
-    if not all(re.match(r"^[A-Za-z][A-Za-z.'’\-]*$", w) for w in words):
+    if not all(re.match(r"^[A-Z][A-Za-z.'’\-]*$", w) and w.lower() not in {"with", "through", "and", "the", "of", "for"} for w in words):
         return None
     if not any(len(w.strip(".")) >= 3 for w in words):
         return None

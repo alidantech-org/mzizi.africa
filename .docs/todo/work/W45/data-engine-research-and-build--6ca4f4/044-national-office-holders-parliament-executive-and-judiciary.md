@@ -24,7 +24,8 @@ Built on DEC-COMPLETION-FIRST, DEC-AUTO-APPROVAL and DEC-ENTITY-MATCHING: a name
 - [x] Gazette appointment extractor (`gazette-appointments`) built and run over all Gazette issues in the registry (83 files after a bounded harvest of 37 more): 6 appointees from one tribunal notice promoted as unverified; the other appointment notices have OCR names too corrupted to accept, and nothing is guessed.
 - [x] Office holder search endpoint `/v1/governance/office-holders/search` with person, office, institution, party, county and current filters, rows carrying names (Dryv contract, regenerated, unit tests); lane P1 never did search, so this lane owns it.
 - [x] Guessed seat links (Dagoretti North/South, Mwingi Central) kept as `under_review` verifications with the guess in the rationale.
-- [ ] Ministry and agency leadership pages via the section crawler: not run, the ministry sites are not yet probed reachable in the registry.
+- [x] Leadership pages of the 55 reachable ministry, commission and agency sites that serve a governance institution fetched through the gate (`fetch-leadership`, at most 6 pages per host, 159 pages) and extracted (`leadership-page`): 138 unverified holders (Cabinet and Principal Secretaries, commission chairs and commissioners, CEOs, board members) linked to seeded offices by suffix and fuzzy state-department match; 39 offices created where the seed had none; heads of departments skipped; 11 junk readings rejected and ended.
+- [x] Gazette notices re-OCRed (Tesseract, English, 300 dpi, only pages whose text layer hints at an appointment) and re-extracted: 8 appointees with clean names; fuzzy name correction only on a unique match of 92 or more (one correction); the rest loaded as low confidence with `under_review` verifications; 4 earlier noisy readings marked superseded.
 
 ## Notes
 

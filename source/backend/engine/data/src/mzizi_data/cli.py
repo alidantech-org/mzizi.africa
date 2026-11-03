@@ -103,6 +103,14 @@ def main(argv: list[str] | None = None) -> int:
     oh = sub.add_parser("import-office-holders", help="stage national office holders (members of both Houses, executive, judiciary) from the fetched Wikipedia list pages (stages A, B, C)")
     oh.add_argument("directory")
     oh.add_argument("--stage", choices=["A", "B", "C"], required=True)
+    fl = sub.add_parser("fetch-leadership", help="fetch leadership pages of reachable ministry, commission and agency sites (gated, bounded)")
+    fl.add_argument("--out", default=".data/raw/leadership")
+    fl.add_argument("--max-pages", type=int, default=6)
+    fl.add_argument("--only", action="append")
+    ga = sub.add_parser("import-geo-admin", help="stage units or boundaries of one administrative level (0-3) from geoBoundaries GeoJSON, parents found by geometry")
+    ga.add_argument("directory")
+    ga.add_argument("--level", type=int, choices=[0, 1, 2, 3], required=True)
+    ga.add_argument("--part", choices=["units", "boundaries"], required=True)
     oh.add_argument("--no-links", action="store_true")
     oh.add_argument("--plan", default=".data/reports/office-holders-plan.json", help="written by stage A, read by stages B and C so person reuse stays consistent")
     oh.add_argument("--report", default=".data/reports/office-holders.json")
@@ -391,6 +399,32 @@ def main(argv: list[str] | None = None) -> int:
         from .imports import iebc
 
         with connect() as conn:
+    if args.command == "import-office-holders":
+        import json as _json
+        from pathlib import Path as _Path
+
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import office_holders
+
+        with connect() as conn:
+            out = office_holders.import_office_holders(conn, LocalDirectoryStore(conn, args.store), args.directory, args.stage, with_links=not args.no_links, plan_path=args.plan)
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        _Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+        _Path(args.report).write_text(_json.dumps(out.report, indent=1, default=str))
+        print(f"report: {args.report}")
+        return 0
+    if args.command == "fetch-leadership":
+        from pathlib import Path as _P
+
+        from . import leadership_fetch
+        from .db import connect
+
+        with connect() as conn:
+            out = leadership_fetch.run(conn, _P(args.out), max_pages=args.max_pages, only=args.only, log=lambda m: print(m, flush=True))
+        print(json.dumps({k: v for k, v in out.items() if k != "hosts"}))
+        return 0
             out = iebc.import_iebc(conn, LocalDirectoryStore(conn, args.store), args.page, args.page + ".provenance.json", args.stage)
         for name, stat in out.stats.items():
             print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")

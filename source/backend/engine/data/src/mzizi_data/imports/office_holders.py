@@ -413,6 +413,8 @@ def leadership_office(ctx: Context, inst: str, title: str) -> tuple[str | None, 
     own = {c[len(inst) + 1:]: c for c in ctx.offices if c.startswith(inst + "/") and "/" not in c[len(inst) + 1:]}
     if "deputy" in t and "secretary" in t:
         return None, None
+    if re.match(r"^(director|registrar)\b(?![- ]general)", t) or re.search(r"director[- ]general,", t) or t.startswith(("secretary admin", "secretary to the")):
+        return None, None  # heads of departments and units are not seeded offices: skipped, not invented
     if "principal secretary" in t:
         sub = [n for n, c in ctx.inst_by_name.items() if c.startswith(inst + "/")]
         best = process.extractOne(re.sub(r"(?i)principal secretary|state department( for| of)?|ministry of", " ", title), sub, scorer=fuzz.token_set_ratio, score_cutoff=70) if sub else None
@@ -423,7 +425,7 @@ def leadership_office(ctx: Context, inst: str, title: str) -> tuple[str | None, 
         return code, {"officeCode": code, "officeName": "Principal Secretary", "officeDescription": "Created from the institution's own leadership page.", "institutionCode": target, "singleton": True}
     if "cabinet secretary" in t:
         suffix = "cabinet-secretary"
-    elif "vice" in t:
+    elif re.search(r"\bvice\b", t):
         suffix = "vice-chairperson"
     elif re.search(r"chair", t):
         suffix = "chairperson"
