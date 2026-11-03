@@ -156,3 +156,85 @@ def import_volume_4(conn, store, pdf_path, jurisdiction: str = "ke") -> dict:
     staged = statload.stage(conn, store, source, "knbs-census-vol4-tables", "1", f"census/{jurisdiction}/2019-vol-4", groups, diag)
     rep.update({"checks_passed": len(passed), "checks_failed": failed, "runs": staged.runs, "ethnicity": "Table 2.31 not staged: numbered groups plus 'Kenyan so stated' add to 47,055,780 against 47,067,376 Kenyans (11,596 apart)"})
     return rep
+
+
+# --------------------------------------------------------------- ethnicity and nationality (Table 2.31)
+
+def parse_ethnicity(pages: list[str]) -> dict:
+    """National ethnic communities of Table 2.31. The page has two columns read left column first; numbering restarts for non-Kenyan
+    nationalities, which is why numbers alone cannot key the rows (they collided in the first reading and made the Kenyan total look 11,596 short)."""
+    found = [p for p in pages if "Table 2.31: Distribution of Population by Ethnicity/Nationality" in p[:400] and "ETHNICITY/NATIONALITY" in p[:600]]
+    if not found:
+        raise ValueError("Table 2.31 page not found")
+    pat = re.compile(r"(?:(?<=\s)|^)(?:(\d{1,2})\s+)?([A-Z][A-Z/\.\-' ()]*?[A-Z)])\s{2,}([\d,]{1,12})(?=\s{3,}|$)")
+    seq = []
+    for page in found:
+        left, right = [], []
+        for l in page.splitlines():
+            for m in pat.finditer(l):
+                (left if m.start() < 60 else right).append((m.group(1), m.group(2).strip(), m.group(3)))
+        seq += left + right
+    out = {"totals": {}, "kenyan": [], "kenyan_so_stated": None, "non_kenyan": []}
+    section = "head"
+    for num, name, raw in seq:
+        val = int(raw.replace(",", ""))
+        if num is None:
+            if name in ("TOTAL POPULATION", "KENYANS", "NON KENYANS", "NOT STATED") and section == "head":
+                out["totals"][name] = val
+                if name == "NOT STATED":
+                    section = "kenyan"
+            elif name == "NON-KENYANS":
+                section = "non"
+            elif name == "KENYAN SO STATED":
+                out["kenyan_so_stated"] = val
+            continue
+        if section == "kenyan":
+            out["kenyan"].append((name, val))
+        elif section == "non":
+            out["non_kenyan"].append((name, val))
+    return out
+
+
+def ethnicity_checks(e: dict) -> tuple[list[str], list[str]]:
+    ok, bad = [], []
+    t = e["totals"]
+    kenyan = sum(v for _n, v in e["kenyan"]) + (e["kenyan_so_stated"] or 0)
+    (ok if kenyan == t["KENYANS"] else bad).append(f"Kenyan communities and 'Kenyan so stated' add to {kenyan:,}, Kenyans {t['KENYANS']:,}")
+    whole = t["KENYANS"] + t["NON KENYANS"] + t["NOT STATED"]
+    (ok if whole == t["TOTAL POPULATION"] else bad).append(f"Kenyans + non-Kenyans + not stated = {whole:,}, total {t['TOTAL POPULATION']:,}")
+    non = sum(v for _n, v in e["non_kenyan"])
+    (ok if non == t["NON KENYANS"] else bad).append(f"non-Kenyan nationalities add to {non:,}, non-Kenyans {t['NON KENYANS']:,}")
+    return ok, bad
+
+
+def stage_ethnicity(conn, store, pdf_path, jurisdiction: str = "ke") -> dict:
+    """National group counts by ethnic community (Table 2.31). Only the Kenyan communities are staged; non-Kenyan nationalities do not
+    add to their total (457,290 against 463,562) and stay out. Counts are for groups, never for individuals."""
+    import json
+
+    path = Path(pdf_path)
+    meta = json.loads(Path(str(path) + ".provenance.json").read_text())
+    data = path.read_bytes()
+    e = parse_ethnicity(read_pages(data))
+    ok, bad = ethnicity_checks(e)
+    if not ok or not any("Kenyan communities" in m for m in ok):
+        raise ValueError(f"Table 2.31 Kenyan total does not reconcile: {bad}")
+    slug = lambda n: re.sub(r"[^a-z0-9]+", "-", n.lower()).strip("-")  # noqa: E731
+    members = [(slug(n), n.title(), v) for n, v in e["kenyan"]] + [("kenyan-so-stated", "Kenyan (so stated)", e["kenyan_so_stated"]), ("non-kenyans", "Non-Kenyans", e["totals"]["NON KENYANS"]), ("not-stated", "Not stated", e["totals"]["NOT STATED"])]
+    d = ref("statistical.dimensions", code="ethnicity")
+    obs, links = [], []
+    for i, (code, _label, v) in enumerate(members):
+        oid = stable_id(DATASET, "census.population-by-ethnicity", jurisdiction, PERIOD, VINTAGE, code)
+        obs.append({"_seg": f"t2.31-{code}", "id": oid, "tableId": ref("statistical.datasets", code=DATASET), "indicatorId": ref("statistical.indicators", code="census.population-by-ethnicity"), "periodId": ref("statistical.periods", code=PERIOD), "geoUnitId": ref("geography.units", code=jurisdiction), "vintageId": ref("statistical.vintages", code=VINTAGE), "numericValue": f"{v:.4f}", "confidenceLevel": "high", "estimateKind": "census", "measureType": "count", "releaseLabel": "KNBS 2019 Census Vol. IV, Table 2.31, national"})
+        links.append({"_seg": f"t2.31-{code}-dim", "observationId": oid, "dimensionId": d, "memberId": ref("statistical.dimension_members", dimensionId=d, code=code)})
+    groups = [
+        Group("indicator", "statistical.indicators", ["code"], [{"code": "census.population-by-ethnicity", "name": "Population by ethnic community", "unitOfMeasure": "persons", "definition": "Group counts of persons by ethnic community or nationality as stated in the 2019 census; categories are those of the source and are not comparable across censuses. Never combined with other data to identify individuals.", "categoryId": ref("statistical.categories", code="population")}]),
+        Group("dimension", "statistical.dimensions", ["code"], [{"code": "ethnicity", "name": "Ethnic community or nationality", "description": "Top-level communities of Table 2.31 of the 2019 census Volume IV; group counts only."}]),
+        Group("dimension_member", "statistical.dimension_members", ["dimensionId", "code"], [{"dimensionId": d, "code": c, "label": l, "sortOrder": i} for i, (c, l, _v) in enumerate(members)]),
+        Group("observation", "statistical.observations", ["id"], obs),
+        Group("observation_dimension", "statistical.observation_dimensions", ["observationId", "dimensionId"], links),
+    ]
+    pub = statload.publisher(conn, "ke-knbs", "Kenya National Bureau of Statistics", website_url="https://www.knbs.or.ke")
+    source = statload.preserve(conn, store, data, path.name.split("-", 1)[1], pub, "2019 Kenya Population and Housing Census, Volume IV: Distribution of Population by Socio-Economic Characteristics", meta["url"], "Unassessed (KNBS publishes the report on its website; reuse terms not yet checked)", "Kenya National Bureau of Statistics, 2019 Kenya Population and Housing Census, Volume IV, November 2019.", "gated-fetch", "application/pdf", kind="census_report", jurisdiction=jurisdiction)
+    staged = statload.stage(conn, store, source, "knbs-census-vol4-ethnicity", "1", f"census/{jurisdiction}/2019-vol-4-ethnicity", groups, [{"level": "info", "code": "checks", "message": m} for m in ok] + [{"level": "warning", "code": "held_back", "message": m + " (non-Kenyan nationalities not staged)"} for m in bad])
+    return {"checks_passed": ok, "held_back": bad, "runs": staged.runs, "members": len(members)}

@@ -257,3 +257,83 @@ def stage_register(conn, store, year: str, files: dict[str, str], jurisdiction: 
         first = False
     report["runs"] = out_runs
     return report
+
+
+# ----------------------------------------------------------------- 2013 county turnout (presidential election)
+
+T1 = re.compile(rf"^\s*(\d{{1,2}})\s+([A-Z][A-Z' /\-\.]*?)\s+({NUM})\s+({NUM})\s+({NUM})\s+(\d+)%\s*$")
+T2 = re.compile(rf"^\s*({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s*$")
+
+
+def parse_turnout_2013(pages: list[str]) -> tuple[list[dict], int | None]:
+    """Per county: registered (total), voted, not voted from the 2013 book's turnout table (two lines per county), and the table's TOTAL voted."""
+    rows, total_voted = [], None
+    for i, page in enumerate(pages[:12]):
+        lines = page.splitlines()
+        for j, line in enumerate(lines):
+            m = T1.match(line)
+            if m and int(m.group(1)) <= 47:
+                nxt = next((T2.match(x) for x in lines[j + 1 : j + 3] if T2.match(x)), None)
+                if nxt:
+                    g = nxt.groups()
+                    rows.append({"no": int(m.group(1)), "county": m.group(2).strip(), "registered": _n(g[2]), "voted": _n(g[3]), "not_voted": _n(g[4]), "page": i + 1})
+            t = re.match(rf"^\s*TOTAL\s+{NUM}\s+{NUM}\s+{NUM}\s+{NUM}\s+{NUM}\s+({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s+(\d+)%", line)
+            if t:
+                total_voted = _n(t.group(7)) if False else _n(t.groups()[6 - 1 + 1]) if False else None
+    for i, page in enumerate(pages[:12]):
+        lines = page.splitlines()
+        have = {r["no"] for r in rows}
+        for j, line in enumerate(lines):
+            one = re.match(rf"^\s*(\d{{1,2}})\s+([A-Z][A-Z' /\-\.]*?)\s+{NUM}\s+{NUM}\s+{NUM}\s+{NUM}\s+{NUM}\s+({NUM})\s+({NUM})\s+({NUM})\s+\d+%\s*$", line)
+            if one and int(one.group(1)) <= 47 and int(one.group(1)) not in have and one.group(2).strip() not in ("RIFT VALLEY",):
+                rows.append({"no": int(one.group(1)), "county": one.group(2).strip(), "registered": _n(one.group(3)), "voted": _n(one.group(4)), "not_voted": _n(one.group(5)), "page": i + 1})
+            if re.match(r"^\s*ELGEYO -\s*$", line) and 28 not in have:
+                tail = next((re.match(rf"^\s*MARAKWET\s+{NUM}\s+{NUM}\s+({NUM})\s+({NUM})\s+({NUM})\s*$", x) for x in lines[j + 1 : j + 4] if re.match(rf"^\s*MARAKWET\s+{NUM}", x)), None)
+                if tail:
+                    rows.append({"no": 28, "county": "ELGEYO MARAKWET", "registered": _n(tail.group(1)), "voted": _n(tail.group(2)), "not_voted": _n(tail.group(3)), "page": i + 1})
+        t = re.search(r"TOTAL\s+38,610,097\s+18,000,000\s+[\d,]+\s+[\d,]+\s+[\d,]+\s+[\d,]+\s+([\d,]+)", page)
+        if t:
+            total_voted = _n(t.group(1))
+    return rows, total_voted
+
+
+def stage_turnout_2013(conn, store, book_path: str, jurisdiction: str = "ke") -> dict:
+    import json
+    from pathlib import Path
+
+    from .. import statload
+    from ..statload import Group, ref
+
+    path = Path(book_path)
+    pages = read_pages(path.read_bytes())
+    rows, total_voted = parse_turnout_2013(pages)
+    resolver = GeoResolver(conn, jurisdiction)
+    ok, bad = [], []
+    for r in rows:
+        (ok if r["voted"] + r["not_voted"] == r["registered"] else bad).append(f"{r['county']}: voted + not voted = {r['voted'] + r['not_voted']:,}, registered {r['registered']:,}")
+    s = sum(r["voted"] for r in rows)
+    missing = sorted(set(range(1, 48)) - {r["no"] for r in rows})
+    remainder = (total_voted or 0) - s
+    # the book's sub-total (47 counties, without the diaspora) must equal the parsed counties plus whatever could not be read; rows whose
+    # figures sit under the wrong county label in the source (Kericho and Bomet) are held back, never re-assigned
+    good = bool(total_voted) and ((not missing and remainder == 0) or (missing and remainder > 0 and len(missing) <= 2))
+    (ok if good else bad).append(f"{len(rows)} counties' voters add to {s:,}; the table's sub-total is {total_voted}; counties not read or held back: {missing} (their voters would add to {remainder:,})")
+    code, name, held = ELECTIONS["2013"]
+    jur = ref("reference.jurisdictions", code=jurisdiction)
+    version = f"IEBC register of voters for the {name}"
+    alias = {"tharakanithi": "tharaka", "nairobicity": "nairobi", "nairobi": "nairobi"}
+    out, unlinked = [], []
+    for r in rows:
+        if r["voted"] + r["not_voted"] != r["registered"]:
+            continue
+        key = alias.get(norm(r["county"]), norm(r["county"]))
+        unit = resolver.counties.get(key)
+        if not unit:
+            unlinked.append(r["county"])
+            continue
+        out.append({"_seg": f"turnout-p{r['page']}-{r['no']:02d}", "electionId": ref("electoral.elections", code=code), "geoUnitId": ref("geography.units", code=unit), "resultLevelId": ref("reference.classifications", jurisdictionId=jur, code=LEVELS["county"][0]), "registerVersion": version, "registeredVoters": r["registered"], "votesCast": r["voted"], "resultStatus": "declared", "evidenceForm": "IEBC 2013 election data, presidential turnout by county"})
+    meta = json.loads(Path(str(path) + ".provenance.json").read_text())
+    pub = statload.publisher(conn, IEBC[0], IEBC[1], website_url=IEBC[2])
+    source = statload.preserve(conn, store, path.read_bytes(), path.name.split("-", 1)[1].replace("%20", "_"), pub, "4th March 2013 General Election Data (IEBC)", meta["url"], LICENCE, f"IEBC, 4th March 2013 General Election Data. Retrieved {meta['retrieved_at'][:10]}.", "gated-fetch", "application/pdf", kind="dataset", jurisdiction=jurisdiction)
+    staged = statload.stage(conn, store, source, "iebc-turnout-2013-table", "1", f"electoral/{jurisdiction}/2013-turnout-county", [Group("electorate-turnout", "electoral.electorates", ["electionId", "geoUnitId", "resultLevelId", "registerVersion"], out)], [{"level": "info", "code": "checks_passed", "message": m} for m in ok] + [{"level": "warning", "code": "check_failed", "message": m} for m in bad])
+    return {"counties": len(out), "checks_passed": ok[:3], "checks_failed": bad, "unlinked": unlinked, "runs": staged.runs}

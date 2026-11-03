@@ -21,7 +21,7 @@ def test_registry_names_inputs_and_versions():
 
 def test_inputs_for_formulas_without_loaded_data_fail_loudly(conn):
     with pytest.raises(ValueError):
-        derived.inputs(conn, "turnout")
+        derived.inputs(conn, "vote-share")
 
 
 def test_parent_that_does_not_equal_its_children_is_a_finding():

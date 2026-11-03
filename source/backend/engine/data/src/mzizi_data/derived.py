@@ -103,6 +103,12 @@ def inputs(conn: psycopg.Connection, formula: str) -> list[dict]:
             if r["unit"] in den:
                 did, d = den[r["unit"]]
                 out.append({"unit": r["unit"], "numerator": r["approved_amount"], "denominator": d, "inputs": [("denominator", did)], "label": f"NG-CDF 2019/20 allocation (budget {r['bid']}) / {'census 2019 population' if formula == 'ngcdf-per-person' else 'computed area'}"})
+    elif formula == "turnout":
+        for r in conn.execute(
+            """SELECT u.code AS unit, e.id::text AS eid, e.votes_cast, e.registered_voters, el.held_date::text AS held FROM electoral.electorates e JOIN electoral.elections el ON el.id = e.election_id
+                 JOIN geography.units u ON u.id = e.geo_unit_id WHERE e.is_current AND e.votes_cast IS NOT NULL AND e.registered_voters IS NOT NULL"""
+        ).fetchall():
+            out.append({"unit": r["unit"], "numerator": r["votes_cast"], "denominator": r["registered_voters"], "inputs": [], "period": (f"day/{r['held']}", r["held"]), "label": f"turnout, electorate row {r['eid']}: votes cast / registered voters"})
     else:
         raise ValueError(f"{formula} has no inputs loaded yet (electoral results and turnout are not in the database)")
     return out
@@ -125,13 +131,14 @@ def run(conn: psycopg.Connection, store: LocalDirectoryStore, formula_id: str, j
     J = ref("reference.jurisdictions", code=jurisdiction)
     obs, links = [], []
     for r in rows:
-        key = dict(tableId=ref("statistical.datasets", code=DATASET), indicatorId=ref("statistical.indicators", code=f.indicator), periodId=ref("statistical.periods", code=PERIOD_CENSUS), geoUnitId=ref("geography.units", code=r["unit"]), vintageId=ref("statistical.vintages", code=f.vintage))
+        key = dict(tableId=ref("statistical.datasets", code=DATASET), indicatorId=ref("statistical.indicators", code=f.indicator), periodId=ref("statistical.periods", code=r["period"][0] if r.get("period") else PERIOD_CENSUS), geoUnitId=ref("geography.units", code=r["unit"]), vintageId=ref("statistical.vintages", code=f.vintage))
         obs.append({"_seg": f"{f.id}-{r['unit']}", **key, "numericValue": f"{r['value']:.4f}", "confidenceLevel": "estimate", "estimateKind": "derived", "measureType": f.measure, "releaseLabel": r["label"][:200]})
         for role, input_id in r["inputs"]:
             links.append({"_seg": f"{f.id}-{r['unit']}-{role}", "observationId": ref("statistical.observations", **key), "inputObservationId": input_id, "inputRole": role, "computation": f.computation})
     groups = [
         Group("category", "statistical.categories", ["code"], [{"code": CATEGORY[0], "label": CATEGORY[1]}]),
         Group("indicator", "statistical.indicators", ["code"], [{"code": f.indicator, "name": f.name, "unitOfMeasure": f.unit, "definition": f.definition, "categoryId": ref("statistical.categories", code=CATEGORY[0])}]),
+        Group("period", "statistical.periods", ["code"], [{"code": c, "startsOn": d, "endsOn": d, "granularity": "day"} for c, d in sorted({r["period"] for r in rows if r.get("period")})]),
         Group("vintage", "statistical.vintages", ["code"], [{"code": f.vintage, "label": f"formula {f.computation}"}]),
         Group("dataset", "statistical.datasets", ["code"], [{"code": DATASET, "title": "Derived indicators computed by Mzizi", "collector": PUBLISHER[1], "methodology": "Each value is a registered formula applied to current input observations; see observation_derivations.", "jurisdictionId": J}]),
         Group("observation", "statistical.observations", ["tableId", "indicatorId", "periodId", "geoUnitId", "vintageId"], obs, method="inferred"),

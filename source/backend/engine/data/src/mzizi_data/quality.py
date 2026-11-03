@@ -89,6 +89,16 @@ def run_rules(conn: psycopg.Connection) -> list[Finding]:
         for f in cross_source(r["code"], "KNBS land area km2", float(r["official"]), "computed from boundary shape km2", float(r["computed"]), "area.official-vs-computed"):
             f.target_id = r["oid"]
             out.append(f)
+    # national census count against the World Bank series for the census year (an independent compilation of UN and national estimates)
+    for r in conn.execute(
+        """SELECT o.id::text AS oid, o.numeric_value AS census, w.numeric_value AS wb FROM statistical.observations o JOIN statistical.indicators i ON i.id = o.indicator_id AND i.code = 'census.population'
+             JOIN geography.units u ON u.id = o.geo_unit_id AND u.code = 'ke'
+             JOIN statistical.observations w ON w.is_current AND w.indicator_id = (SELECT id FROM statistical.indicators WHERE code = 'SP.POP.TOTL') AND w.period_id = (SELECT id FROM statistical.periods WHERE code = 'year/2019')
+            WHERE o.is_current AND NOT EXISTS (SELECT 1 FROM statistical.observation_dimensions d WHERE d.observation_id = o.id)"""
+    ).fetchall():
+        for f in cross_source("ke", "KNBS 2019 census count", float(r["census"]), "World Bank SP.POP.TOTL 2019", float(r["wb"]), "population.knbs-vs-worldbank", 0.02):
+            f.target_id = r["oid"]
+            out.append(f)
     # density bound
     for r in conn.execute("SELECT u.code, o.id::text AS oid, o.numeric_value FROM statistical.observations o JOIN statistical.indicators i ON i.id = o.indicator_id AND i.code = 'derived.population-density' JOIN geography.units u ON u.id = o.geo_unit_id WHERE o.is_current").fetchall():
         for f in plausibility(r["code"], "density.bound", float(r["numeric_value"]), MAX_DENSITY, "density"):

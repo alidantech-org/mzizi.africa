@@ -218,6 +218,60 @@
       "rightsHolder": "National Social Security Fund (state corporation)",
       "maxRequestsPerSecond": 0.2,
       "rationale": "Kenyan public body (Government of Kenya statutory or state-owned entity) whose public website is assessed by the agent account under DEC-AUTO-APPROVAL; the host sits outside .go.ke, so it is allowed as one exact host only. Added 2026-11-03 for the domain probe (TSK-41CD5EF36909)."
+    },
+    {
+      "host": "api.worldbank.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "The World Bank (open data API; population series compiled from national statistical offices and the UN Population Division)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "hub.worldpop.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "WorldPop, University of Southampton (open data hub and REST API)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "data.worldbank.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "The World Bank (open data portal)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "worldpop.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "WorldPop, University of Southampton",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "www.worldpop.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "WorldPop, University of Southampton",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "data.worldpop.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "WorldPop, University of Southampton (file server)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "api.dhsprogram.com",
+      "jurisdiction": "ke",
+      "rightsHolder": "The DHS Program (ICF, USAID-funded survey programme; public indicator API)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "dhsprogram.com",
+      "jurisdiction": "ke",
+      "rightsHolder": "The DHS Program (ICF, USAID-funded survey programme; public indicator API)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "forms.iebc.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Independent Electoral and Boundaries Commission (constitutional commission; results forms portal)",
+      "maxRequestsPerSecond": 0.2
     }
   ]
 }

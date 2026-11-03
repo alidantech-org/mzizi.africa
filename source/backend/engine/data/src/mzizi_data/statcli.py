@@ -22,6 +22,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     er.add_argument("--constituency")
     er.add_argument("--ward")
     er.add_argument("--book")
+    er.add_argument("--turnout", action="store_true", help="2013 only: stage county turnout (votes cast) from the book")
     er.add_argument("--store", default=".data/objects")
     er.add_argument("--report")
     dv = sub.add_parser("derive", help="compute a registered derived indicator from current inputs and stage it ('stale' lists derived values whose inputs were superseded)")
@@ -33,6 +34,15 @@ def register(sub: argparse._SubParsersAction) -> None:
     c4 = sub.add_parser("import-census-vol4", help="stage census Volume IV religion and ICT county tables (group counts) after arithmetic checks")
     c4.add_argument("file")
     c4.add_argument("--store", default=".data/objects")
+    cl = sub.add_parser("census-links", help="score-based sub-county to constituency links for the 2019 census as claims; weak canonical name links are listed")
+    cl.add_argument("file")
+    cl.add_argument("--dry-run", action="store_true")
+    c3 = sub.add_parser("import-census-vol3", help="stage census Volume III age by sex per county (group counts) after arithmetic checks")
+    c3.add_argument("file")
+    c3.add_argument("--store", default=".data/objects")
+    pv = sub.add_parser("import-poverty", help="stage the Kenya Poverty Report 2021 county table (survey estimates) after checks")
+    pv.add_argument("file")
+    pv.add_argument("--store", default=".data/objects")
     p = sub.add_parser("stats-promote", help="validate, review (agent account, rationale) and promote one staging run")
     p.add_argument("run_id")
     p.add_argument("rationale")
@@ -75,6 +85,10 @@ def dispatch(args: argparse.Namespace) -> int | None:
     if args.command == "import-iebc-register":
         from .imports import iebc_register
 
+        if args.year == "2013" and args.turnout:
+            with connect() as conn:
+                print(json.dumps(iebc_register.stage_turnout_2013(conn, LocalDirectoryStore(conn, args.store), args.book), indent=1))
+            return 0
         files = {k: v for k, v in (("county", args.county), ("constituency", args.constituency), ("ward", args.ward), ("book", args.book)) if v}
         with connect() as conn:
             rep = iebc_register.stage_register(conn, LocalDirectoryStore(conn, args.store), args.year, files)
@@ -110,7 +124,31 @@ def dispatch(args: argparse.Namespace) -> int | None:
 
         with connect() as conn:
             rep = census_breakdowns.import_volume_4(conn, LocalDirectoryStore(conn, args.store), args.file)
-        print(json.dumps(rep, indent=1, default=str)[:3500])
+            eth = census_breakdowns.stage_ethnicity(conn, LocalDirectoryStore(conn, args.store), args.file)
+        print(json.dumps(rep, indent=1, default=str)[:2500])
+        print(json.dumps(eth, indent=1, default=str))
+        return 0
+    if args.command == "census-links":
+        from pathlib import Path
+
+        from . import census_links
+
+        with connect() as conn:
+            rep = census_links.run(conn, Path(args.file).read_bytes(), write=not args.dry_run)
+        print(json.dumps({k: (len(v) if isinstance(v, list) else v) for k, v in rep.items()}))
+        Path("/tmp/d2/census-links.json").write_text(json.dumps(rep, indent=1))
+        return 0
+    if args.command == "import-census-vol3":
+        from .imports import census_age
+
+        with connect() as conn:
+            print(json.dumps(census_age.import_volume_3(conn, LocalDirectoryStore(conn, args.store), args.file), indent=1, default=str)[:3000])
+        return 0
+    if args.command == "import-poverty":
+        from .imports import poverty
+
+        with connect() as conn:
+            print(json.dumps(poverty.import_report(conn, LocalDirectoryStore(conn, args.store), args.file), indent=1))
         return 0
     if args.command == "stats-promote":
         from . import statload

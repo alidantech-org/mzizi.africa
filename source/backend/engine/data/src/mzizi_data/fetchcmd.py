@@ -13,7 +13,7 @@ def fetch_to_directory(conn, make_fetcher, site_code: str, url: str, out_dir: st
     row = conn.execute("SELECT id FROM website.sites WHERE code = %s", (site_code,)).fetchone()
     if not row:
         raise SystemExit(f"unknown site {site_code}")
-    fetcher = make_fetcher(conn, str(row["id"]), {"rate": {"requests_per_second": 0.2}})
+    fetcher = make_fetcher(conn, str(row["id"]), {"rate": {"requests_per_second": 0.2}, "limits": {"timeout_seconds": 120, "max_response_bytes": 60_000_000}})
     result = fetcher.get(url)
     for _hop in range(3):  # a redirect is followed only through the gate again, so a hop to a host outside the approved scope is refused
         if result.status not in (301, 302, 307, 308):

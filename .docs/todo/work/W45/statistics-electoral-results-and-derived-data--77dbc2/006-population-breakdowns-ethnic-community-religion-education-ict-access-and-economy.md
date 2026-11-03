@@ -19,4 +19,4 @@ These are the multi-dimensional figures that need the dimension design to land f
 - [x] Load religion by county, then age and sex distributions.
 - [ ] Load education, disability and ICT access (internet, mobile, computer) by county and by lower levels where published.
 - [ ] Load economic indicators (employment, poverty, income, county fiscal and marginalisation measures) with their surveys and years.
-- [ ] Add a note on sensitivity to the status document and a rule that these tables are published only as group counts.
+- [x] Add a note on sensitivity to the status document and a rule that these tables are published only as group counts.
