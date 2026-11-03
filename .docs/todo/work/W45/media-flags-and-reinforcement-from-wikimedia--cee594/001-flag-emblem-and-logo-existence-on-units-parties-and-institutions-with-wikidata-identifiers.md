@@ -1,5 +1,5 @@
 ---
-{id: TSK-A6C9B9251A15,name: "Flag, emblem and logo existence on units, parties and institutions, with Wikidata identifiers",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:42.294Z,updated_at: 2026-11-02T20:02:42.294Z,order: 1024}
+{id: TSK-A6C9B9251A15,name: "Flag, emblem and logo existence on units, parties and institutions, with Wikidata identifiers",type: task,status: completed,priority: medium,created_at: 2026-11-02T20:02:42.294Z,updated_at: 2026-11-03T01:26:31.075Z,order: 1024,extra: {status_history: [{from: planned,to: completed,at: 2026-11-03T01:26:31.075Z}]}}
 ---
 
 # Flag, emblem and logo existence on units, parties and institutions, with Wikidata identifiers
@@ -14,8 +14,8 @@ Almost every field in the system is nullable because data is expected to be inco
 
 ## Acceptance checklist
 
-- [ ] Decide marker design (enum with unknown, has, none) and where it lives for each entity.
-- [ ] Add the nullable markers, expectation per geography level and Wikidata identifier fields through the contracts and a migration.
-- [ ] Add or reuse a media link record with role, licence, author and source URL.
-- [ ] Regenerate the API and keep the schema integration spec green.
-- [ ] Add tests for the three marker states.
+- [x] Decide marker design (enum with unknown, has, none) and where it lives for each entity.
+- [x] Add the nullable markers, expectation per geography level and Wikidata identifier fields through the contracts and a migration.
+- [x] Add or reuse a media link record with role, licence, author and source URL.
+- [x] Regenerate the API and keep the schema integration spec green.
+- [x] Add tests for the three marker states.

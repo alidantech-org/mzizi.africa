@@ -1,5 +1,5 @@
 ---
-{id: TSK-7EC27F97DC64,name: "Wikimedia pipeline: flags, logos and photographs with licence tracking",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:42.528Z,updated_at: 2026-11-02T21:36:48.989Z,order: 2048,depends_on: [TSK-A6C9B9251A15]}
+{id: TSK-7EC27F97DC64,name: "Wikimedia pipeline: flags, logos and photographs with licence tracking",type: task,status: completed,priority: medium,created_at: 2026-11-02T20:02:42.528Z,updated_at: 2026-11-03T01:26:31.297Z,order: 2048,depends_on: [TSK-A6C9B9251A15],extra: {status_history: [{from: planned,to: completed,at: 2026-11-03T01:26:31.297Z}]}}
 ---
 
 # Wikimedia pipeline: flags, logos and photographs with licence tracking
@@ -14,9 +14,9 @@ The product owner asked for county flags, country flags, party logos and people'
 
 ## Acceptance checklist
 
-- [ ] Register the Wikimedia hosts as a site, assess them, and probe through the gate.
-- [ ] Match counties, the country, parties and public figures to Wikidata items with context checks and a report of unmatched or ambiguous names.
-- [ ] Fetch flags, emblems, logos and portraits through Commons with licence, author and attribution text.
-- [ ] Store files as raw artifacts and link them to entities with the role and update the markers.
-- [ ] Skip and report any file without a recorded free licence.
-- [ ] Add tests with recorded API responses.
+- [x] Register the Wikimedia hosts as a site, assess them, and probe through the gate.
+- [x] Match counties, the country, parties and public figures to Wikidata items with context checks and a report of unmatched or ambiguous names.
+- [x] Fetch flags, emblems, logos and portraits through Commons with licence, author and attribution text.
+- [x] Store files as raw artifacts and link them to entities with the role and update the markers.
+- [x] Skip and report any file without a recorded free licence.
+- [x] Add tests with recorded API responses.

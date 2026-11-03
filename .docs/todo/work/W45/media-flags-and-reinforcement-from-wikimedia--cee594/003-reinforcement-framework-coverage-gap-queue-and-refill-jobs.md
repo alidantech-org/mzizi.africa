@@ -1,5 +1,5 @@
 ---
-{id: TSK-BF88B31E115A,name: "Reinforcement framework: coverage, gap queue and refill jobs",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:02:42.756Z,updated_at: 2026-11-02T22:01:58.649Z,order: 3072,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:01:58.649Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-BF88B31E115A/1793656918651-start,started_at: 2026-11-02T22:01:59.158Z}]}}}
+{id: TSK-BF88B31E115A,name: "Reinforcement framework: coverage, gap queue and refill jobs",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:02:42.756Z,updated_at: 2026-11-03T01:26:56.098Z,order: 3072,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:01:58.649Z},{from: in-progress,to: completed,at: 2026-11-03T01:26:29.976Z},{from: completed,to: in-progress,at: 2026-11-03T01:26:56.098Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-BF88B31E115A/1793656918651-start,started_at: 2026-11-02T22:01:59.158Z,end_ref: refs/tracking/TSK-BF88B31E115A/1793669189978-end,ended_at: 2026-11-03T01:26:29.976Z,summary: {files: 651,insertions: 35145,deletions: 1365}},{base_ref: refs/tracking/TSK-BF88B31E115A/1793669216100-start,started_at: 2026-11-03T01:26:56.611Z}]}}}
 ---
 
 # Reinforcement framework: coverage, gap queue and refill jobs
@@ -16,7 +16,7 @@ Because the schema accepts missing data almost everywhere, completeness is a mea
 
 - [x] Define coverage rules for the main entity kinds and fields and write the queries.
 - [x] Add the gap queue table and attempt log in the engine schema.
-- [ ] Add a refill job type to the job runner with a handler per source.
-- [ ] Route found values through staging and review rather than writing them directly.
+- [x] Add a refill job type to the job runner with a handler per source.
+- [x] Route found values through staging and review rather than writing them directly.
 - [ ] Publish a coverage report in the status document and the review workbench.
 - [x] Add tests for gap creation, an attempt that finds nothing, and a refill that goes through review.
