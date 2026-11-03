@@ -276,7 +276,7 @@ def load_offices(conn: psycopg.Connection, store: LocalDirectoryStore, pdf: str 
     links = match_rows(geo, rows)
     report = OfficeLoad(rows=len(rows), matched=sum(link.status == "matched" for link in links))
     report.county_offices = sum(link.status == "county_office" for link in links)
-    report.unlinked = [{"county": l.row.county, "constituency": l.row.constituency, "page": l.row.page, "status": l.status, "score": l.score, "runnerUp": l.runner_up, "wardHint": l.ward_hint, "reason": l.reason} for l in links if l.status != "matched"]
+    report.unlinked = [{"county": l.row.county, "constituency": l.row.constituency, "page": l.row.page, "status": l.status, "score": l.score, "runnerUp": l.runner_up, "wardHint": l.ward_hint, "reason": l.reason} for l in links if l.status not in ("matched", "county_office")]
     if not write:
         return report
     document_id, capture_id = register_pdf(conn, store, pdf, provenance)

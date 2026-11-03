@@ -184,20 +184,24 @@ def wikidata_place_refill(conn: psycopg.Connection, wm, store, assessment_id: st
         ctx = place_context(conn, str(gap["target_id"]))
         if ctx is None:
             return Finding("not_found", detail={"reason": "the place no longer exists"})
-        term = search_name(ctx)
-        hits = wm.search(term, limit=6)
-        entities = wm.entities([h["id"] for h in hits]) if hits else {}
-        good = []
-        for qid, entity in entities.items():
-            point = coordinate(entity)
-            if point is None or not in_kenya(*point) or "Q114" not in wikimedia.item_ids(entity, "P17"):
-                continue
-            names = wikimedia.names(entity)
-            score = max((fuzz.token_sort_ratio(fold(term), fold(n)) for n in names), default=0)
-            if score >= 90:
-                good.append((score, qid, point, entity))
+        full = search_name(ctx)
+        short = re.sub(r"\s+headquarters$", "", full.split(",")[0].strip(), flags=re.I)
+        terms = list(dict.fromkeys([full, short]))
+        good, hits, term = [], [], full
+        for term in terms:  # the full name first, then the part before the first comma; at most two searches
+            hits = wm.search(term, limit=6)
+            entities = wm.entities([h["id"] for h in hits]) if hits else {}
+            for qid, entity in entities.items():
+                point = coordinate(entity)
+                if point is None or not in_kenya(*point) or "Q114" not in wikimedia.item_ids(entity, "P17"):
+                    continue
+                score = max((fuzz.token_sort_ratio(fold(short if term == short else full), fold(n)) for n in wikimedia.names(entity)), default=0)
+                if score >= 90:
+                    good.append((score, qid, point, entity))
+            if good:
+                break
         if not good:
-            return Finding("not_found", detail={"searched": term, "results": len(hits)})
+            return Finding("not_found", detail={"searched": terms, "results": len(hits)})
         points = [g[2] for g in good]
         if any(metres(points[0], p) > NEAR_METRES for p in points[1:]):
             return Finding("ambiguous", detail={"candidates": [{"id": g[1], "point": g[2]} for g in good]})
@@ -486,6 +490,23 @@ def close_occupancy(conn: psycopg.Connection, occupancy_id: str, on: date, docum
         raise ValueError("only an active occupancy can be closed")
     conn.execute("UPDATE place.expectations SET status = 'ceased', resolved_occupancy_id = NULL, updated_at = now(), version = version + 1 WHERE resolved_occupancy_id = %s", (occupancy_id,))
     _attribute(conn, document_id, capture_id, "place.occupancies", occupancy_id, locator)
+
+
+def dispute(conn: psycopg.Connection, kind: str, target_id: str, rationale: str, document_id: str | None = None, locator: dict | None = None) -> None:
+    """Record a dispute over a place or occupancy as a `disputed` verification (and a `contradicts` attribution when a source is named).
+    Nothing is deleted or overwritten; a disputed place keeps resolving nothing new (the resolver only follows `verified` places)."""
+    from .imports.constituency_offices import _decide
+
+    if kind not in ("place.places", "place.occupancies"):
+        raise ValueError("only places and occupancies can be disputed here")
+    if document_id:
+        method_id = register.ensure_method(conn, "extracted", "occupancy change from a named source", "mzizi-data place-research", TOOL_VERSION)
+        conn.execute(
+            """INSERT INTO source.attributions (document_id, method_id, target_kind, target_id, relation, locator, confidence, attributed_by, created_at, updated_at, version)
+               VALUES (%s, %s, %s, %s, 'contradicts', %s, 0.7, %s, now(), now(), 1)""",
+            (document_id, method_id, kind, target_id, json.dumps(locator or {}, sort_keys=True), AGENT_ID),
+        )
+    _decide(conn, kind, target_id, "disputed", rationale)
 
 
 # ---- enrichment -------------------------------------------------------------------------------------------------------

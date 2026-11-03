@@ -388,3 +388,13 @@ def test_landmark_seed_creates_unverified_places_and_resolves_nothing(conn, worl
     assert pr.resolve_corroborated_expectations(conn, [str(place["id"])]) == 0
     again = landmarks.load_landmarks(conn, seed)
     assert again.places_created == 0 and again.occupancies == 0
+
+
+def test_a_dispute_is_a_verification_state_with_a_contradicting_source(conn):
+    place = _place(conn, "Disputed premises")
+    doc = _doc(conn)
+    pr.dispute(conn, "place.places", place, "A later notice puts the office elsewhere.", doc, {"page": 3})
+    assert conn.execute("SELECT state::text AS s FROM source.verifications WHERE target_kind = 'place.places' AND target_id = %s AND is_current", (place,)).fetchone()["s"] == "disputed"
+    assert conn.execute("SELECT relation::text AS r FROM source.attributions WHERE target_id = %s", (place,)).fetchone()["r"] == "contradicts"
+    with pytest.raises(ValueError):
+        pr.dispute(conn, "place.expectations", place, "no")
