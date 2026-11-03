@@ -87,7 +87,10 @@ async function containmentIssues(db: DataSource, payload: Record<string, unknown
        FROM (SELECT ST_SetSRID(ST_GeomFromGeoJSON($1), 4326) AS c, (SELECT geom FROM geography.boundary_shapes WHERE boundary_id = (SELECT b.id FROM geography.boundaries b WHERE b.unit_id = $2 AND b.is_current LIMIT 1)) AS p) t`,
     [payload.geometry, unit.parent_id],
   );
-  return row.outside > 0.02 ? [error("containment", `${(row.outside * 100).toFixed(1)}% of the boundary lies outside its parent unit`)] : [];
+  if (row.outside <= 0.02) return [];
+  const message = `${(row.outside * 100).toFixed(1)}% of the boundary lies outside its parent unit`;
+  // DEC-COMPLETION-FIRST: with MZIZI_CONTAINMENT_SOFT=1 the check warns instead of blocking; the boundary is promoted unverified.
+  return process.env.MZIZI_CONTAINMENT_SOFT === "1" ? [warning("containment", `${message} (promoted unverified; needs a gazetted boundary)`)] : [error("containment", message)];
 }
 
 /** A unit's level must sit below its parent's level, in the same jurisdiction. */

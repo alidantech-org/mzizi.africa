@@ -1,5 +1,5 @@
 ---
-{id: TSK-BF88B31E115A,name: "Reinforcement framework: coverage, gap queue and refill jobs",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:02:42.756Z,updated_at: 2026-11-03T01:26:56.098Z,order: 3072,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:01:58.649Z},{from: in-progress,to: completed,at: 2026-11-03T01:26:29.976Z},{from: completed,to: in-progress,at: 2026-11-03T01:26:56.098Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-BF88B31E115A/1793656918651-start,started_at: 2026-11-02T22:01:59.158Z,end_ref: refs/tracking/TSK-BF88B31E115A/1793669189978-end,ended_at: 2026-11-03T01:26:29.976Z,summary: {files: 651,insertions: 35145,deletions: 1365}},{base_ref: refs/tracking/TSK-BF88B31E115A/1793669216100-start,started_at: 2026-11-03T01:26:56.611Z}]}}}
+{id: TSK-BF88B31E115A,name: "Reinforcement framework: coverage, gap queue and refill jobs",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:02:42.756Z,updated_at: 2026-11-03T06:12:36.897Z,order: 3072,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:01:58.649Z},{from: in-progress,to: completed,at: 2026-11-03T01:26:29.976Z},{from: completed,to: in-progress,at: 2026-11-03T01:26:56.098Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-BF88B31E115A/1793656918651-start,started_at: 2026-11-02T22:01:59.158Z,end_ref: refs/tracking/TSK-BF88B31E115A/1793669189978-end,ended_at: 2026-11-03T01:26:29.976Z,summary: {files: 651,insertions: 35145,deletions: 1365}},{base_ref: refs/tracking/TSK-BF88B31E115A/1793669216100-start,started_at: 2026-11-03T01:26:56.611Z}]}},due_at: 2026-11-05}
 ---
 
 # Reinforcement framework: coverage, gap queue and refill jobs
@@ -20,3 +20,9 @@ Because the schema accepts missing data almost everywhere, completeness is a mea
 - [x] Route found values through staging and review rather than writing them directly.
 - [ ] Publish a coverage report in the status document and the review workbench.
 - [x] Add tests for gap creation, an attempt that finds nothing, and a refill that goes through review.
+
+## Comments
+
+### 2026-11-03T07:16:21.840Z · PETER IRUNGU
+
+Lane S: gapclose.py closes filled gaps and adds an orpp refill handler; KNBS/IEBC handlers not needed (no nullable-column gaps). Coverage is in the status document; the review workbench has no coverage view, so that item stays unticked.
