@@ -25,6 +25,8 @@ import { InstitutionResponseDto } from "#/modules/governance/dto/institution-res
 import { InstitutionsListResponseDto } from "#/modules/governance/dto/institutions-list-response.dto.ts";
 import { OfficeHolderListQueryDto } from "#/modules/governance/dto/office-holder-list-query.dto.ts";
 import { OfficeHolderResponseDto } from "#/modules/governance/dto/office-holder-response.dto.ts";
+import { OfficeHolderSearchQueryDto } from "#/modules/governance/dto/office-holder-search-query.dto.ts";
+import { OfficeHolderSearchResponseDto } from "#/modules/governance/dto/office-holder-search-response.dto.ts";
 import { OfficeHoldersListResponseDto } from "#/modules/governance/dto/office-holders-list-response.dto.ts";
 import { OfficeListQueryDto } from "#/modules/governance/dto/office-list-query.dto.ts";
 import { OfficeResponseDto } from "#/modules/governance/dto/office-response.dto.ts";
@@ -105,6 +107,15 @@ export class GovernanceGovernanceReadController {
     @Query() input: SelectionStageListQueryDto,
   ): Promise<SelectionStagesListResponseDto> {
     return this.service.findSelectionStages(input);
+  }
+
+
+  @Get("/v1/governance/office-holders/search")
+  @HttpCode(200)
+  searchOfficeHolders(
+    @Query() input: OfficeHolderSearchQueryDto,
+  ): Promise<OfficeHolderSearchResponseDto> {
+    return this.service.searchOfficeHolders(input);
   }
 
 

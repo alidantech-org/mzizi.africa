@@ -280,7 +280,72 @@ GetGeographyGovernance.facets({
   ),
 });
 
+/** Holder search: one row per holding with the person's name and the office, institution, place and party joined in. */
+const holderSearch = governance.schemas({
+  OfficeHolderSearchQuery: dryv.schema({
+    /** Words in the person's name. */
+    q: dryv.field(sharedProperties.Name).optional(),
+    /** Words in the office name. */
+    office: dryv.field(sharedProperties.Name).optional(),
+    /** Words in the institution name. */
+    institution: dryv.field(sharedProperties.Name).optional(),
+    /** A party id, or words in a party name. */
+    party: dryv.field(sharedProperties.Name).optional(),
+    /** A county (or other geography unit) by name: the office's place or the unit above it. */
+    county: dryv.field(sharedProperties.Name).optional(),
+    officeId: dryv.field(sharedProperties.Id).optional(),
+    institutionId: dryv.field(sharedProperties.Id).optional(),
+    personId: dryv.field(sharedProperties.Id).optional(),
+    /** Only current holders when true; every holding, past and present, when false or absent. */
+    current: dryv.field(sharedProperties.Flag).optional(),
+    page: dryv.field(sharedProperties.PaginationNumber).optional(),
+    limit: dryv.field(sharedProperties.PaginationNumber).optional(),
+  }),
+  OfficeHolderSearchItem: dryv.schema({
+    holderId: dryv.field(sharedProperties.Id),
+    personId: dryv.field(sharedProperties.Id),
+    personName: dryv.field(sharedProperties.Name),
+    officeId: dryv.field(sharedProperties.Id),
+    officeName: dryv.field(sharedProperties.Name),
+    institutionId: dryv.field(sharedProperties.Id),
+    institutionName: dryv.field(sharedProperties.Name),
+    placeName: dryv.field(sharedProperties.Name).optional().nullable(),
+    partyName: dryv.field(sharedProperties.Name).optional().nullable(),
+    status: dryv.field(governanceProperties.HolderStatus),
+    validFrom: dryv.field(sharedProperties.Date).optional().nullable(),
+    validTo: dryv.field(sharedProperties.Date).optional().nullable(),
+    isCurrent: dryv.field(sharedProperties.Flag),
+  }),
+});
+
+const holderSearchResponse = governance.schemas({
+  OfficeHolderSearchResponse: dryv.schema({
+    results: dryv.field(holderSearch.OfficeHolderSearchItem).array(),
+    total: dryv.field(sharedProperties.PaginationNumber),
+    page: dryv.field(sharedProperties.PaginationNumber),
+    limit: dryv.field(sharedProperties.PaginationNumber),
+  }),
+});
+
+const SearchOfficeHolders = dryv
+  .operation()
+  .description("Search office holders by person, office, institution, party and place; each row carries the names.")
+  .input(holderSearch.OfficeHolderSearchQuery)
+  .output(holderSearchResponse.OfficeHolderSearchResponse)
+  .failures(...standardFailures);
+
+SearchOfficeHolders.facets({
+  http: withStandardHttpFailures(
+    dryv
+      .http("GET", "/v1/governance/office-holders/search")
+      .description("Search office holders.")
+      .input(SearchOfficeHolders.in, dryv.queryObject())
+      .output(SearchOfficeHolders.out, dryv.respond(200)),
+  ),
+});
+
 export const governanceReadOperations = governanceRead.operations({
   ...Object.assign({}, ...surfaces.map((surface) => surface.operations)),
   GetGeographyGovernance,
+  SearchOfficeHolders,
 });

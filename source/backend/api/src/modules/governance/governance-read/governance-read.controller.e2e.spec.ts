@@ -13,6 +13,8 @@ import { institutionResponseExample } from "#/modules/governance/dto/institution
 import { institutionsListResponseExample } from "#/modules/governance/dto/institutions-list-response.dto.example.ts";
 import { officeHolderListQueryExample } from "#/modules/governance/dto/office-holder-list-query.dto.example.ts";
 import { officeHolderResponseExample } from "#/modules/governance/dto/office-holder-response.dto.example.ts";
+import { officeHolderSearchQueryExample } from "#/modules/governance/dto/office-holder-search-query.dto.example.ts";
+import { officeHolderSearchResponseExample } from "#/modules/governance/dto/office-holder-search-response.dto.example.ts";
 import { officeHoldersListResponseExample } from "#/modules/governance/dto/office-holders-list-response.dto.example.ts";
 import { officeListQueryExample } from "#/modules/governance/dto/office-list-query.dto.example.ts";
 import { officeResponseExample } from "#/modules/governance/dto/office-response.dto.example.ts";
@@ -66,6 +68,7 @@ const service = {
   getOfficeRuleById: vi.fn(),
   getSelectionProcedureById: vi.fn(),
   getSelectionStageById: vi.fn(),
+  searchOfficeHolders: vi.fn(),
 };
 
 type Sent = {
@@ -401,6 +404,25 @@ describe("GET /v1/governance/selection-stages/{stageId} (getSelectionStageById)"
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getSelectionStageById).toHaveBeenCalledTimes(1);
     expect(service.getSelectionStageById).toHaveBeenCalledWith(expect.objectContaining({ stageId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/governance/office-holders/search (searchOfficeHolders)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(officeHolderSearchQueryExample.valid()), },
+        headers: { },
+      };
+    const result = officeHolderSearchResponseExample.valid();
+    service.searchOfficeHolders.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/governance/office-holders/search", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.searchOfficeHolders).toHaveBeenCalledTimes(1);
+    expect(service.searchOfficeHolders).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

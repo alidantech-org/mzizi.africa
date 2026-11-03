@@ -8,6 +8,8 @@ import type { InstitutionResponseDto } from "#/modules/governance/dto/institutio
 import type { InstitutionsListResponseDto } from "#/modules/governance/dto/institutions-list-response.dto.ts";
 import type { OfficeHolderListQueryDto } from "#/modules/governance/dto/office-holder-list-query.dto.ts";
 import type { OfficeHolderResponseDto } from "#/modules/governance/dto/office-holder-response.dto.ts";
+import type { OfficeHolderSearchQueryDto } from "#/modules/governance/dto/office-holder-search-query.dto.ts";
+import type { OfficeHolderSearchResponseDto } from "#/modules/governance/dto/office-holder-search-response.dto.ts";
 import type { OfficeHoldersListResponseDto } from "#/modules/governance/dto/office-holders-list-response.dto.ts";
 import type { OfficeListQueryDto } from "#/modules/governance/dto/office-list-query.dto.ts";
 import type { OfficeResponseDto } from "#/modules/governance/dto/office-response.dto.ts";
@@ -42,4 +44,5 @@ export abstract class GovernanceGovernanceReadService {
   abstract getOfficeRuleById(input: { ruleId: string }): Promise<OfficeRuleResponseDto>;
   abstract getSelectionProcedureById(input: { procedureId: string }): Promise<SelectionProcedureResponseDto>;
   abstract getSelectionStageById(input: { stageId: string }): Promise<SelectionStageResponseDto>;
+  abstract searchOfficeHolders(input: OfficeHolderSearchQueryDto): Promise<OfficeHolderSearchResponseDto>;
 }

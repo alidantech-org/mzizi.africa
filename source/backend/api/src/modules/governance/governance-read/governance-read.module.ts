@@ -23,6 +23,7 @@ import { GetOfficeHolderByIdUseCase } from "#/modules/governance/governance-read
 import { GetOfficeRuleByIdUseCase } from "#/modules/governance/governance-read/use-cases/get-office-rule-by-id.usecase.ts";
 import { GetSelectionProcedureByIdUseCase } from "#/modules/governance/governance-read/use-cases/get-selection-procedure-by-id.usecase.ts";
 import { GetSelectionStageByIdUseCase } from "#/modules/governance/governance-read/use-cases/get-selection-stage-by-id.usecase.ts";
+import { SearchOfficeHoldersUseCase } from "#/modules/governance/governance-read/use-cases/search-office-holders.usecase.ts";
 
 import { GovernanceGovernanceReadController } from "./governance-read.controller.ts";
 import { GovernanceGovernanceReadService } from "./governance-read.service.ts";
@@ -60,6 +61,7 @@ import { GovernanceGovernanceReadService } from "./governance-read.service.ts";
     GetOfficeRuleByIdUseCase,
     GetSelectionProcedureByIdUseCase,
     GetSelectionStageByIdUseCase,
+    SearchOfficeHoldersUseCase,
   ],
   exports: [GovernanceGovernanceReadService],
 })

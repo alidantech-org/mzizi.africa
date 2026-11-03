@@ -28,6 +28,8 @@ import { FindOfficeRulesUseCase } from '#/modules/governance/governance-read/use
 import { FindOfficesUseCase } from '#/modules/governance/governance-read/use-cases/find-offices.usecase';
 import { FindSelectionProceduresUseCase } from '#/modules/governance/governance-read/use-cases/find-selection-procedures.usecase';
 import { FindSelectionStagesUseCase } from '#/modules/governance/governance-read/use-cases/find-selection-stages.usecase';
+import { SearchOfficeHoldersUseCase } from '#/modules/governance/governance-read/use-cases/search-office-holders.usecase';
+import type { OfficeHolderSearchQueryDto } from '#/modules/governance/dto/office-holder-search-query.dto';
 import { GetGeographyGovernanceUseCase } from '#/modules/governance/governance-read/use-cases/get-geography-governance.usecase';
 import { GetInstitutionByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-institution-by-id.usecase';
 import { GetInstitutionRelationshipByIdUseCase } from '#/modules/governance/governance-read/use-cases/get-institution-relationship-by-id.usecase';
@@ -61,7 +63,13 @@ export class GovernanceGovernanceReadServiceImpl {
     private readonly getOfficeRuleByIdUseCase: GetOfficeRuleByIdUseCase,
     private readonly getSelectionProcedureByIdUseCase: GetSelectionProcedureByIdUseCase,
     private readonly getSelectionStageByIdUseCase: GetSelectionStageByIdUseCase,
+    private readonly searchOfficeHoldersUseCase: SearchOfficeHoldersUseCase,
   ) {}
+
+  /** Search office holders with the person, office, institution, place and party names. */
+  searchOfficeHolders(input: OfficeHolderSearchQueryDto) {
+    return this.searchOfficeHoldersUseCase.execute(input);
+  }
 
   /** List institution relationships. */
   findInstitutionRelationships(input: InstitutionRelationshipListQueryDto) {
