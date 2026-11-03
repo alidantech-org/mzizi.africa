@@ -156,7 +156,7 @@ def probe_host(conn: psycopg.Connection, client: httpx.Client, user_agent: str, 
     except StopRun as stop:
         return apply_result(conn, site_id, host, "refused", None, None, f"stopped on {stop.kind}: {stop}"[:300]), stop.kind
     except Exception as error:
-        return apply_result(conn, site_id, host, "unreachable", None, None, f"{type(error).__name__}: {error}"[:300]), "error"
+        return apply_result(conn, site_id, host, "unreachable", None, None, (f"{type(error).__name__}: {error}" + (f" (retried with a {timeout_seconds}s timeout)" if timeout_seconds != 15 else ""))[:300]), "error"
     if result.status in (301, 302, 303, 307, 308):
         location = next((v for k, v in result.headers.items() if k.lower() == "location"), None)
         if location:
@@ -182,7 +182,7 @@ RETRYABLE = ("ReadTimeout%", "ConnectTimeout%", "PoolTimeout%", "WriteTimeout%")
 def probe_all(conn: psycopg.Connection, user_agent: str, interval: float = 5.0, limit: int | None = None, log=print, transport: httpx.BaseTransport | None = None, resolver: dns.resolver.Resolver | None = None, retry_timeouts: bool = False, timeout_seconds: int = 15) -> dict:
     """Probes every unprobed candidate domain. Resumable: a probed domain has last_probe_at set and is not selected again.
 
-    With retry_timeouts the selection is instead the unreachable domains whose last failure was a timeout (a slow origin
+    With retry_timeouts (resumable: domains probed in the last two hours are skipped) the selection is instead the unreachable domains whose last failure was a timeout (a slow origin
     is not a missing host); they are probed again with timeout_seconds, and DNS is not re-snapshotted if the name resolves.
     """
     trusted = load_trusted()
@@ -190,7 +190,7 @@ def probe_all(conn: psycopg.Connection, user_agent: str, interval: float = 5.0, 
     resolver.lifetime = 6.0
     client = httpx.Client(follow_redirects=False, transport=transport or PacedTransport(interval))
     if retry_timeouts:
-        rows = conn.execute("SELECT d.id::text AS id, d.site_id::text AS site_id, d.hostname FROM website.domains d WHERE d.status = 'unreachable' AND d.status_reason LIKE ANY(%s) AND NOT (d.status_reason LIKE '%%Not listed%%') ORDER BY d.hostname", (list(RETRYABLE),)).fetchall()
+        rows = conn.execute("SELECT d.id::text AS id, d.site_id::text AS site_id, d.hostname FROM website.domains d WHERE d.status = 'unreachable' AND d.status_reason LIKE ANY(%s) AND (d.last_probe_at IS NULL OR d.last_probe_at < now() - interval '2 hours') ORDER BY d.hostname", (list(RETRYABLE),)).fetchall()
     else:
         rows = conn.execute("SELECT d.id::text AS id, d.site_id::text AS site_id, d.hostname FROM website.domains d WHERE d.status = 'candidate' AND d.last_probe_at IS NULL ORDER BY d.hostname").fetchall()
     summary: dict = {"skipped_untrusted": [], "probed": 0}

@@ -272,6 +272,13 @@
       "jurisdiction": "ke",
       "rightsHolder": "Independent Electoral and Boundaries Commission (constitutional commission; results forms portal)",
       "maxRequestsPerSecond": 0.2
+    },
+    {
+      "host": "forms.iebc.or.ke",
+      "jurisdiction": "ke",
+      "rightsHolder": "Independent Electoral and Boundaries Commission (constitutional commission): results forms portal",
+      "maxRequestsPerSecond": 0.2,
+      "rationale": "Results-forms portal linked from the IEBC home page; same Kenyan constitutional commission as the already approved www.iebc.or.ke, allowed as one exact host under DEC-AUTO-APPROVAL. Added 2026-11-03."
     }
   ]
 }
