@@ -14,8 +14,8 @@ On 2 November 2026 the real database received site records for every county gove
 
 ## Acceptance checklist
 
-- [ ] Probe the .go.ke candidates (counties, assemblies, national bodies) with a bounded GET of the home page and record reachable, unreachable or refused for each.
-- [ ] Create domain rows for confirmed hostnames and move confirmed sites from expected to profiled, recording redirects as aliases.
+- [x] Probe the .go.ke candidates (counties, assemblies, national bodies) with a bounded GET of the home page and record reachable, unreachable or refused for each.
+- [x] Create domain rows for confirmed hostnames and move confirmed sites from expected to profiled, recording redirects as aliases.
 - [ ] For non-.go.ke bodies, assess the host and probe only after assessment.
 - [ ] Try the constituency NG-CDF pattern against the real NG-CDF site layout and correct the pattern if the per-constituency pages live on ngcdf.go.ke paths rather than subdomains.
 - [ ] Report counts by outcome and by family in the status document.
