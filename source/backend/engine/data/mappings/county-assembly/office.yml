@@ -1,0 +1,13 @@
+mapping: office
+extractor: county-assembly-members
+target_kind: governance.offices
+key: [code]
+fields:
+  code:          { from: officeCode }
+  name:          { from: officeName }
+  description:   { from: officeDescription }
+  institutionId: { from: institutionCode, transform: [{ ref: { kind: governance.institutions, field: code } }] }
+  isSingleton:   { from: singleton }
+provenance:
+  locator: { row: $row }
+  method: extracted
