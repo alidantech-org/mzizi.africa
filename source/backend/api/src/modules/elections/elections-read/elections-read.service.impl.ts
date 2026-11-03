@@ -29,6 +29,21 @@ import { GetElectionResultByIdUseCase } from '#/modules/elections/elections-read
 import { GetManifestoByIdUseCase } from '#/modules/elections/elections-read/use-cases/get-manifesto-by-id.usecase';
 import { GetManifestoCommitmentByIdUseCase } from '#/modules/elections/elections-read/use-cases/get-manifesto-commitment-by-id.usecase';
 import { GetSeatByIdUseCase } from '#/modules/elections/elections-read/use-cases/get-seat-by-id.usecase';
+import type { ElectorateListQueryDto } from '#/modules/elections/dto/electorate-list-query.dto';
+import { FindElectoratesUseCase } from '#/modules/elections/elections-read/use-cases/find-electorates.usecase';
+import type { ReferendumOptionListQueryDto } from '#/modules/elections/dto/referendum-option-list-query.dto';
+import { FindReferendumOptionsUseCase } from '#/modules/elections/elections-read/use-cases/find-referendum-options.usecase';
+import type { ReferendumQuestionListQueryDto } from '#/modules/elections/dto/referendum-question-list-query.dto';
+import { FindReferendumQuestionsUseCase } from '#/modules/elections/elections-read/use-cases/find-referendum-questions.usecase';
+import type { ReferendumResultListQueryDto } from '#/modules/elections/dto/referendum-result-list-query.dto';
+import { FindReferendumResultsUseCase } from '#/modules/elections/elections-read/use-cases/find-referendum-results.usecase';
+import type { SeatAllocationListQueryDto } from '#/modules/elections/dto/seat-allocation-list-query.dto';
+import { FindSeatAllocationsUseCase } from '#/modules/elections/elections-read/use-cases/find-seat-allocations.usecase';
+import { GetElectorateByIdUseCase } from '#/modules/elections/elections-read/use-cases/get-electorate-by-id.usecase';
+import { GetReferendumOptionByIdUseCase } from '#/modules/elections/elections-read/use-cases/get-referendum-option-by-id.usecase';
+import { GetReferendumQuestionByIdUseCase } from '#/modules/elections/elections-read/use-cases/get-referendum-question-by-id.usecase';
+import { GetReferendumResultByIdUseCase } from '#/modules/elections/elections-read/use-cases/get-referendum-result-by-id.usecase';
+import { GetSeatAllocationByIdUseCase } from '#/modules/elections/elections-read/use-cases/get-seat-allocation-by-id.usecase';
 
 /**
  * Elections Read: implements the generated ElectionsElectionsReadService contract by
@@ -51,7 +66,57 @@ export class ElectionsElectionsReadServiceImpl {
     private readonly getManifestoByIdUseCase: GetManifestoByIdUseCase,
     private readonly getManifestoCommitmentByIdUseCase: GetManifestoCommitmentByIdUseCase,
     private readonly getSeatByIdUseCase: GetSeatByIdUseCase,
+    private readonly findElectoratesUseCase: FindElectoratesUseCase,
+    private readonly findReferendumOptionsUseCase: FindReferendumOptionsUseCase,
+    private readonly findReferendumQuestionsUseCase: FindReferendumQuestionsUseCase,
+    private readonly findReferendumResultsUseCase: FindReferendumResultsUseCase,
+    private readonly findSeatAllocationsUseCase: FindSeatAllocationsUseCase,
+    private readonly getElectorateByIdUseCase: GetElectorateByIdUseCase,
+    private readonly getReferendumOptionByIdUseCase: GetReferendumOptionByIdUseCase,
+    private readonly getReferendumQuestionByIdUseCase: GetReferendumQuestionByIdUseCase,
+    private readonly getReferendumResultByIdUseCase: GetReferendumResultByIdUseCase,
+    private readonly getSeatAllocationByIdUseCase: GetSeatAllocationByIdUseCase,
   ) {}
+
+  findElectorates(input: ElectorateListQueryDto) {
+    return this.findElectoratesUseCase.execute(input);
+  }
+
+  findReferendumOptions(input: ReferendumOptionListQueryDto) {
+    return this.findReferendumOptionsUseCase.execute(input);
+  }
+
+  findReferendumQuestions(input: ReferendumQuestionListQueryDto) {
+    return this.findReferendumQuestionsUseCase.execute(input);
+  }
+
+  findReferendumResults(input: ReferendumResultListQueryDto) {
+    return this.findReferendumResultsUseCase.execute(input);
+  }
+
+  findSeatAllocations(input: SeatAllocationListQueryDto) {
+    return this.findSeatAllocationsUseCase.execute(input);
+  }
+
+  getElectorateById(input: { electorateId: string }) {
+    return this.getElectorateByIdUseCase.execute(input);
+  }
+
+  getReferendumOptionById(input: { optionId: string }) {
+    return this.getReferendumOptionByIdUseCase.execute(input);
+  }
+
+  getReferendumQuestionById(input: { questionId: string }) {
+    return this.getReferendumQuestionByIdUseCase.execute(input);
+  }
+
+  getReferendumResultById(input: { referendumResultId: string }) {
+    return this.getReferendumResultByIdUseCase.execute(input);
+  }
+
+  getSeatAllocationById(input: { allocationId: string }) {
+    return this.getSeatAllocationByIdUseCase.execute(input);
+  }
 
   /** List candidates. */
   findCandidates(input: CandidateListQueryDto) {

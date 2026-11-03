@@ -13,12 +13,27 @@ import { electionResultListQueryExample } from "#/modules/elections/dto/election
 import { electionResultResponseExample } from "#/modules/elections/dto/election-result-response.dto.example.ts";
 import { electionResultsListResponseExample } from "#/modules/elections/dto/election-results-list-response.dto.example.ts";
 import { electionsListResponseExample } from "#/modules/elections/dto/elections-list-response.dto.example.ts";
+import { electorateListQueryExample } from "#/modules/elections/dto/electorate-list-query.dto.example.ts";
+import { electorateResponseExample } from "#/modules/elections/dto/electorate-response.dto.example.ts";
+import { electoratesListResponseExample } from "#/modules/elections/dto/electorates-list-response.dto.example.ts";
 import { manifestoCommitmentListQueryExample } from "#/modules/elections/dto/manifesto-commitment-list-query.dto.example.ts";
 import { manifestoCommitmentResponseExample } from "#/modules/elections/dto/manifesto-commitment-response.dto.example.ts";
 import { manifestoCommitmentsListResponseExample } from "#/modules/elections/dto/manifesto-commitments-list-response.dto.example.ts";
 import { manifestoListQueryExample } from "#/modules/elections/dto/manifesto-list-query.dto.example.ts";
 import { manifestoResponseExample } from "#/modules/elections/dto/manifesto-response.dto.example.ts";
 import { manifestosListResponseExample } from "#/modules/elections/dto/manifestos-list-response.dto.example.ts";
+import { referendumOptionListQueryExample } from "#/modules/elections/dto/referendum-option-list-query.dto.example.ts";
+import { referendumOptionResponseExample } from "#/modules/elections/dto/referendum-option-response.dto.example.ts";
+import { referendumOptionsListResponseExample } from "#/modules/elections/dto/referendum-options-list-response.dto.example.ts";
+import { referendumQuestionListQueryExample } from "#/modules/elections/dto/referendum-question-list-query.dto.example.ts";
+import { referendumQuestionResponseExample } from "#/modules/elections/dto/referendum-question-response.dto.example.ts";
+import { referendumQuestionsListResponseExample } from "#/modules/elections/dto/referendum-questions-list-response.dto.example.ts";
+import { referendumResultListQueryExample } from "#/modules/elections/dto/referendum-result-list-query.dto.example.ts";
+import { referendumResultResponseExample } from "#/modules/elections/dto/referendum-result-response.dto.example.ts";
+import { referendumResultsListResponseExample } from "#/modules/elections/dto/referendum-results-list-response.dto.example.ts";
+import { seatAllocationListQueryExample } from "#/modules/elections/dto/seat-allocation-list-query.dto.example.ts";
+import { seatAllocationResponseExample } from "#/modules/elections/dto/seat-allocation-response.dto.example.ts";
+import { seatAllocationsListResponseExample } from "#/modules/elections/dto/seat-allocations-list-response.dto.example.ts";
 import { seatListQueryExample } from "#/modules/elections/dto/seat-list-query.dto.example.ts";
 import { seatResponseExample } from "#/modules/elections/dto/seat-response.dto.example.ts";
 import { seatsListResponseExample } from "#/modules/elections/dto/seats-list-response.dto.example.ts";
@@ -50,14 +65,24 @@ const service = {
   findCandidates: vi.fn(),
   findElectionResults: vi.fn(),
   findElections: vi.fn(),
+  findElectorates: vi.fn(),
   findManifestoCommitments: vi.fn(),
   findManifestos: vi.fn(),
+  findReferendumOptions: vi.fn(),
+  findReferendumQuestions: vi.fn(),
+  findReferendumResults: vi.fn(),
+  findSeatAllocations: vi.fn(),
   findSeats: vi.fn(),
   getCandidateById: vi.fn(),
   getElectionById: vi.fn(),
   getElectionResultById: vi.fn(),
+  getElectorateById: vi.fn(),
   getManifestoById: vi.fn(),
   getManifestoCommitmentById: vi.fn(),
+  getReferendumOptionById: vi.fn(),
+  getReferendumQuestionById: vi.fn(),
+  getReferendumResultById: vi.fn(),
+  getSeatAllocationById: vi.fn(),
   getSeatById: vi.fn(),
 };
 
@@ -170,6 +195,25 @@ describe("GET /v1/elections/elections (findElections)", () => {
   });
 });
 
+describe("GET /v1/elections/electorates (findElectorates)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(electorateListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = electoratesListResponseExample.valid();
+    service.findElectorates.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/electorates", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findElectorates).toHaveBeenCalledTimes(1);
+    expect(service.findElectorates).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/elections/manifesto-commitments (findManifestoCommitments)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -204,6 +248,82 @@ describe("GET /v1/elections/manifestos (findManifestos)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.findManifestos).toHaveBeenCalledTimes(1);
     expect(service.findManifestos).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/elections/referendum-options (findReferendumOptions)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(referendumOptionListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = referendumOptionsListResponseExample.valid();
+    service.findReferendumOptions.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/referendum-options", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findReferendumOptions).toHaveBeenCalledTimes(1);
+    expect(service.findReferendumOptions).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/elections/referendum-questions (findReferendumQuestions)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(referendumQuestionListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = referendumQuestionsListResponseExample.valid();
+    service.findReferendumQuestions.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/referendum-questions", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findReferendumQuestions).toHaveBeenCalledTimes(1);
+    expect(service.findReferendumQuestions).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/elections/referendum-results (findReferendumResults)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(referendumResultListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = referendumResultsListResponseExample.valid();
+    service.findReferendumResults.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/referendum-results", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findReferendumResults).toHaveBeenCalledTimes(1);
+    expect(service.findReferendumResults).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/elections/seat-allocations (findSeatAllocations)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { },
+        query: { ...queryOf(seatAllocationListQueryExample.valid()), },
+        headers: { },
+      };
+    const result = seatAllocationsListResponseExample.valid();
+    service.findSeatAllocations.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/seat-allocations", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.findSeatAllocations).toHaveBeenCalledTimes(1);
+    expect(service.findSeatAllocations).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -284,6 +404,25 @@ describe("GET /v1/elections/results/{resultId} (getElectionResultById)", () => {
   });
 });
 
+describe("GET /v1/elections/electorates/{electorateId} (getElectorateById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "electorateId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = electorateResponseExample.valid();
+    service.getElectorateById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/electorates/{electorateId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getElectorateById).toHaveBeenCalledTimes(1);
+    expect(service.getElectorateById).toHaveBeenCalledWith(expect.objectContaining({ electorateId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/elections/manifestos/{manifestoId} (getManifestoById)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -318,6 +457,82 @@ describe("GET /v1/elections/manifesto-commitments/{commitmentId} (getManifestoCo
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getManifestoCommitmentById).toHaveBeenCalledTimes(1);
     expect(service.getManifestoCommitmentById).toHaveBeenCalledWith(expect.objectContaining({ commitmentId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/elections/referendum-options/{optionId} (getReferendumOptionById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "optionId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = referendumOptionResponseExample.valid();
+    service.getReferendumOptionById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/referendum-options/{optionId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getReferendumOptionById).toHaveBeenCalledTimes(1);
+    expect(service.getReferendumOptionById).toHaveBeenCalledWith(expect.objectContaining({ optionId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/elections/referendum-questions/{questionId} (getReferendumQuestionById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "questionId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = referendumQuestionResponseExample.valid();
+    service.getReferendumQuestionById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/referendum-questions/{questionId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getReferendumQuestionById).toHaveBeenCalledTimes(1);
+    expect(service.getReferendumQuestionById).toHaveBeenCalledWith(expect.objectContaining({ questionId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/elections/referendum-results/{referendumResultId} (getReferendumResultById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "referendumResultId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = referendumResultResponseExample.valid();
+    service.getReferendumResultById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/referendum-results/{referendumResultId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getReferendumResultById).toHaveBeenCalledTimes(1);
+    expect(service.getReferendumResultById).toHaveBeenCalledWith(expect.objectContaining({ referendumResultId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/elections/seat-allocations/{allocationId} (getSeatAllocationById)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+        params: { "allocationId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
+        query: { },
+        headers: { },
+      };
+    const result = seatAllocationResponseExample.valid();
+    service.getSeatAllocationById.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/elections/seat-allocations/{allocationId}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getSeatAllocationById).toHaveBeenCalledTimes(1);
+    expect(service.getSeatAllocationById).toHaveBeenCalledWith(expect.objectContaining({ allocationId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

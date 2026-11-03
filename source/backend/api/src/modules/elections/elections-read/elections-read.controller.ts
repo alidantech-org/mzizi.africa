@@ -25,12 +25,27 @@ import { ElectionResultListQueryDto } from "#/modules/elections/dto/election-res
 import { ElectionResultResponseDto } from "#/modules/elections/dto/election-result-response.dto.ts";
 import { ElectionResultsListResponseDto } from "#/modules/elections/dto/election-results-list-response.dto.ts";
 import { ElectionsListResponseDto } from "#/modules/elections/dto/elections-list-response.dto.ts";
+import { ElectorateListQueryDto } from "#/modules/elections/dto/electorate-list-query.dto.ts";
+import { ElectorateResponseDto } from "#/modules/elections/dto/electorate-response.dto.ts";
+import { ElectoratesListResponseDto } from "#/modules/elections/dto/electorates-list-response.dto.ts";
 import { ManifestoCommitmentListQueryDto } from "#/modules/elections/dto/manifesto-commitment-list-query.dto.ts";
 import { ManifestoCommitmentResponseDto } from "#/modules/elections/dto/manifesto-commitment-response.dto.ts";
 import { ManifestoCommitmentsListResponseDto } from "#/modules/elections/dto/manifesto-commitments-list-response.dto.ts";
 import { ManifestoListQueryDto } from "#/modules/elections/dto/manifesto-list-query.dto.ts";
 import { ManifestoResponseDto } from "#/modules/elections/dto/manifesto-response.dto.ts";
 import { ManifestosListResponseDto } from "#/modules/elections/dto/manifestos-list-response.dto.ts";
+import { ReferendumOptionListQueryDto } from "#/modules/elections/dto/referendum-option-list-query.dto.ts";
+import { ReferendumOptionResponseDto } from "#/modules/elections/dto/referendum-option-response.dto.ts";
+import { ReferendumOptionsListResponseDto } from "#/modules/elections/dto/referendum-options-list-response.dto.ts";
+import { ReferendumQuestionListQueryDto } from "#/modules/elections/dto/referendum-question-list-query.dto.ts";
+import { ReferendumQuestionResponseDto } from "#/modules/elections/dto/referendum-question-response.dto.ts";
+import { ReferendumQuestionsListResponseDto } from "#/modules/elections/dto/referendum-questions-list-response.dto.ts";
+import { ReferendumResultListQueryDto } from "#/modules/elections/dto/referendum-result-list-query.dto.ts";
+import { ReferendumResultResponseDto } from "#/modules/elections/dto/referendum-result-response.dto.ts";
+import { ReferendumResultsListResponseDto } from "#/modules/elections/dto/referendum-results-list-response.dto.ts";
+import { SeatAllocationListQueryDto } from "#/modules/elections/dto/seat-allocation-list-query.dto.ts";
+import { SeatAllocationResponseDto } from "#/modules/elections/dto/seat-allocation-response.dto.ts";
+import { SeatAllocationsListResponseDto } from "#/modules/elections/dto/seat-allocations-list-response.dto.ts";
 import { SeatListQueryDto } from "#/modules/elections/dto/seat-list-query.dto.ts";
 import { SeatResponseDto } from "#/modules/elections/dto/seat-response.dto.ts";
 import { SeatsListResponseDto } from "#/modules/elections/dto/seats-list-response.dto.ts";
@@ -68,6 +83,15 @@ export class ElectionsElectionsReadController {
   }
 
 
+  @Get("/v1/elections/electorates")
+  @HttpCode(200)
+  findElectorates(
+    @Query() input: ElectorateListQueryDto,
+  ): Promise<ElectoratesListResponseDto> {
+    return this.service.findElectorates(input);
+  }
+
+
   @Get("/v1/elections/manifesto-commitments")
   @HttpCode(200)
   findManifestoCommitments(
@@ -83,6 +107,42 @@ export class ElectionsElectionsReadController {
     @Query() input: ManifestoListQueryDto,
   ): Promise<ManifestosListResponseDto> {
     return this.service.findManifestos(input);
+  }
+
+
+  @Get("/v1/elections/referendum-options")
+  @HttpCode(200)
+  findReferendumOptions(
+    @Query() input: ReferendumOptionListQueryDto,
+  ): Promise<ReferendumOptionsListResponseDto> {
+    return this.service.findReferendumOptions(input);
+  }
+
+
+  @Get("/v1/elections/referendum-questions")
+  @HttpCode(200)
+  findReferendumQuestions(
+    @Query() input: ReferendumQuestionListQueryDto,
+  ): Promise<ReferendumQuestionsListResponseDto> {
+    return this.service.findReferendumQuestions(input);
+  }
+
+
+  @Get("/v1/elections/referendum-results")
+  @HttpCode(200)
+  findReferendumResults(
+    @Query() input: ReferendumResultListQueryDto,
+  ): Promise<ReferendumResultsListResponseDto> {
+    return this.service.findReferendumResults(input);
+  }
+
+
+  @Get("/v1/elections/seat-allocations")
+  @HttpCode(200)
+  findSeatAllocations(
+    @Query() input: SeatAllocationListQueryDto,
+  ): Promise<SeatAllocationsListResponseDto> {
+    return this.service.findSeatAllocations(input);
   }
 
 
@@ -122,6 +182,15 @@ export class ElectionsElectionsReadController {
   }
 
 
+  @Get("/v1/elections/electorates/:electorateId")
+  @HttpCode(200)
+  getElectorateById(
+    @Param("electorateId") electorateId: string,
+  ): Promise<ElectorateResponseDto> {
+    return this.service.getElectorateById({ electorateId });
+  }
+
+
   @Get("/v1/elections/manifestos/:manifestoId")
   @HttpCode(200)
   getManifestoById(
@@ -137,6 +206,42 @@ export class ElectionsElectionsReadController {
     @Param("commitmentId") commitmentId: string,
   ): Promise<ManifestoCommitmentResponseDto> {
     return this.service.getManifestoCommitmentById({ commitmentId });
+  }
+
+
+  @Get("/v1/elections/referendum-options/:optionId")
+  @HttpCode(200)
+  getReferendumOptionById(
+    @Param("optionId") optionId: string,
+  ): Promise<ReferendumOptionResponseDto> {
+    return this.service.getReferendumOptionById({ optionId });
+  }
+
+
+  @Get("/v1/elections/referendum-questions/:questionId")
+  @HttpCode(200)
+  getReferendumQuestionById(
+    @Param("questionId") questionId: string,
+  ): Promise<ReferendumQuestionResponseDto> {
+    return this.service.getReferendumQuestionById({ questionId });
+  }
+
+
+  @Get("/v1/elections/referendum-results/:referendumResultId")
+  @HttpCode(200)
+  getReferendumResultById(
+    @Param("referendumResultId") referendumResultId: string,
+  ): Promise<ReferendumResultResponseDto> {
+    return this.service.getReferendumResultById({ referendumResultId });
+  }
+
+
+  @Get("/v1/elections/seat-allocations/:allocationId")
+  @HttpCode(200)
+  getSeatAllocationById(
+    @Param("allocationId") allocationId: string,
+  ): Promise<SeatAllocationResponseDto> {
+    return this.service.getSeatAllocationById({ allocationId });
   }
 
 

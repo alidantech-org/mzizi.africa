@@ -35,6 +35,10 @@ export const electionProperties = elections.properties({
     disqualified: "disqualified",
     withdrawn: "withdrawn",
   }),
+  ResultStatus: dryv.property.enum({ provisional: "provisional", declared: "declared", revised: "revised", disputed: "disputed", setAside: "set_aside" }),
+  AllocationKind: dryv.property.enum({ partyList: "party_list", womenSpecial: "women_special", youthSpecial: "youth_special", disabilitySpecial: "disability_special", workersSpecial: "workers_special", nominated: "nominated", other: "other" }),
+  RegisterVersion: dryv.property.string().length({ min: 1, max: 200 }),
+  EvidenceForm: dryv.property.string().length({ min: 1, max: 120 }),
   Votes: dryv.property.number.integer({ range: { min: 0 } }),
   Rank: dryv.property.number.integer({ range: { min: 1 } }),
 });
@@ -137,6 +141,102 @@ const electionOutcomes = elections.schemas({
     },
     "manifestos",
     [{ name: "idx_manifesto_candidate", fields: ["candidateId"] }],
+  ),
+});
+
+/**
+ * The electorate and the ballot, not only the candidates: how many voters were registered, how many voted and how many
+ * ballots were valid, rejected or spoilt in an area at a result level (optionally for one contest), referendum questions
+ * and options with the votes for each, and party-list or nominated seat allocations. Each row is a recorded fact with valid
+ * time and a version, so a revised or court-set-aside count is a new version. `evidenceForm` names the IEBC form the
+ * figure was declared on (34A at polling station, 34B at constituency, 34C at national level); the source document and
+ * its capture are linked through the source schema's attributions like every other claim.
+ */
+const electorates = elections.schemas({
+  Electorate: recorded(
+    {
+      electionId: relationTo(() => electionCore.Election.field("id")),
+      seatId: optionalId(),
+      geoUnitId: optionalId(),
+      resultLevelId: plainId(),
+      registerVersion: dryv.field(electionProperties.RegisterVersion).optional().nullable(),
+      registeredVoters: dryv.field(electionProperties.Votes).optional().nullable().query({ filter: ["between"], sort: true }),
+      votesCast: dryv.field(electionProperties.Votes).optional().nullable().query({ filter: ["between"], sort: true }),
+      validVotes: dryv.field(electionProperties.Votes).optional().nullable(),
+      rejectedVotes: dryv.field(electionProperties.Votes).optional().nullable(),
+      spoiltVotes: dryv.field(electionProperties.Votes).optional().nullable(),
+      resultStatus: dryv.field(electionProperties.ResultStatus).optional().nullable().query({ filter: ["equal", "in"] }),
+      evidenceForm: dryv.field(electionProperties.EvidenceForm).optional().nullable(),
+      declaringInstitutionId: optionalId(),
+      declaredAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+    },
+    "electorates",
+    [
+      { name: "idx_electorate_election", fields: ["electionId", "resultLevelId"] },
+      { name: "idx_electorate_geo", fields: ["geoUnitId"] },
+    ],
+  ),
+});
+
+const referendums = elections.schemas({
+  ReferendumQuestion: recorded(
+    {
+      electionId: relationTo(() => electionCore.Election.field("id")),
+      code: dryv.field(sharedProperties.BusinessCode).query(searchable),
+      text: dryv.field(sharedProperties.LongText),
+      position: dryv.field(sharedProperties.Count).optional().nullable(),
+    },
+    "referendum_questions",
+    [{ name: "idx_referendum_question_code", fields: ["electionId", "code"], unique: true }],
+  ),
+});
+
+const referendumOptions = elections.schemas({
+  ReferendumOption: recorded(
+    {
+      questionId: relationTo(() => referendums.ReferendumQuestion.field("id")),
+      code: dryv.field(sharedProperties.BusinessCode).query(searchable),
+      label: dryv.field(sharedProperties.Label),
+      position: dryv.field(sharedProperties.Count).optional().nullable(),
+    },
+    "referendum_options",
+    [{ name: "idx_referendum_option_code", fields: ["questionId", "code"], unique: true }],
+  ),
+});
+
+const referendumOutcomes = elections.schemas({
+  ReferendumResult: recorded(
+    {
+      optionId: relationTo(() => referendumOptions.ReferendumOption.field("id")),
+      resultLevelId: plainId(),
+      geoUnitId: optionalId(),
+      declaringInstitutionId: optionalId(),
+      votes: dryv.field(electionProperties.Votes).query({ filter: ["between"], sort: true }),
+      resultStatus: dryv.field(electionProperties.ResultStatus).optional().nullable().query({ filter: ["equal", "in"] }),
+      evidenceForm: dryv.field(electionProperties.EvidenceForm).optional().nullable(),
+      declaredAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
+    },
+    "referendum_results",
+    [{ name: "idx_referendum_result_option", fields: ["optionId", "resultLevelId"] }, { name: "idx_referendum_result_geo", fields: ["geoUnitId"] }],
+  ),
+});
+
+const seatAllocations = elections.schemas({
+  SeatAllocation: recorded(
+    {
+      electionId: relationTo(() => electionCore.Election.field("id")),
+      seatId: optionalId(),
+      partyId: plainId(),
+      personId: optionalId(),
+      geoUnitId: optionalId(),
+      kind: dryv.field(electionProperties.AllocationKind).query({ filter: ["equal", "in"] }),
+      listPosition: dryv.field(sharedProperties.Count).optional().nullable(),
+      seatsEntitled: dryv.field(sharedProperties.Count).optional().nullable(),
+      allocatedOn: dryv.field(sharedProperties.Date).optional().nullable(),
+      declaringInstitutionId: optionalId(),
+    },
+    "seat_allocations",
+    [{ name: "idx_seat_allocation_election", fields: ["electionId", "kind"] }, { name: "idx_seat_allocation_party", fields: ["partyId"] }],
   ),
 });
 
@@ -290,6 +390,11 @@ const electionSurfaces = [
   readSurface(elections, { singular: "Seat", plural: "Seats", itemKey: "seat", listKey: "seats", path: "/elections/seats", idParam: "seatId", entity: electionSeats.Seat, description: "seats", filters: { electionId: id(), q: q() } }),
   readSurface(elections, { singular: "Candidate", plural: "Candidates", itemKey: "candidate", listKey: "candidates", path: "/elections/candidates", idParam: "candidateId", entity: electionContests.Candidate, description: "candidates", filters: { seatId: id(), personId: id(), partyId: id() } }),
   readSurface(elections, { singular: "ElectionResult", plural: "ElectionResults", itemKey: "result", listKey: "results", path: "/elections/results", idParam: "resultId", entity: electionOutcomes.ElectionResult, description: "election results", filters: { candidateId: id(), seatId: id(), resultLevelId: id(), geoUnitId: id() } }),
+  readSurface(elections, { singular: "Electorate", plural: "Electorates", itemKey: "electorate", listKey: "electorates", path: "/elections/electorates", idParam: "electorateId", entity: electorates.Electorate, description: "registered voters, turnout and ballot counts", filters: { electionId: id(), seatId: id(), geoUnitId: id(), resultLevelId: id() } }),
+  readSurface(elections, { singular: "ReferendumQuestion", plural: "ReferendumQuestions", itemKey: "question", listKey: "questions", path: "/elections/referendum-questions", idParam: "questionId", entity: referendums.ReferendumQuestion, description: "referendum questions", filters: { electionId: id(), q: q() } }),
+  readSurface(elections, { singular: "ReferendumOption", plural: "ReferendumOptions", itemKey: "option", listKey: "options", path: "/elections/referendum-options", idParam: "optionId", entity: referendumOptions.ReferendumOption, description: "referendum options", filters: { questionId: id() } }),
+  readSurface(elections, { singular: "ReferendumResult", plural: "ReferendumResults", itemKey: "referendumResult", listKey: "referendumResults", path: "/elections/referendum-results", idParam: "referendumResultId", entity: referendumOutcomes.ReferendumResult, description: "referendum results", filters: { optionId: id(), resultLevelId: id(), geoUnitId: id() } }),
+  readSurface(elections, { singular: "SeatAllocation", plural: "SeatAllocations", itemKey: "allocation", listKey: "allocations", path: "/elections/seat-allocations", idParam: "allocationId", entity: seatAllocations.SeatAllocation, description: "party-list and nominated seat allocations", filters: { electionId: id(), partyId: id(), personId: id() } }),
   readSurface(elections, { singular: "Manifesto", plural: "Manifestos", itemKey: "manifesto", listKey: "manifestos", path: "/elections/manifestos", idParam: "manifestoId", entity: electionOutcomes.Manifesto, description: "manifestos", filters: { candidateId: id(), q: q() } }),
   readSurface(elections, { singular: "ManifestoCommitment", plural: "ManifestoCommitments", itemKey: "commitment", listKey: "commitments", path: "/elections/manifesto-commitments", idParam: "commitmentId", entity: manifestoCommitments.ManifestoCommitment, description: "manifesto commitments", filters: { manifestoId: id(), parentId: id() } }),
 ];
