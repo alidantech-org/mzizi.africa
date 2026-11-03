@@ -31,6 +31,7 @@ import { advanceDossier, autoAssess, decideAssessment, draftAssessment, type Ass
 import { seedStatisticalCatalogue } from "./catalogue.ts";
 import { checkIntegrity } from "./integrity.ts";
 import { seedGovernanceCatalogue } from "./governance-catalogue.ts";
+import { generateFromPatterns } from "./patterns.ts";
 import { backfillScope } from "./scope.ts";
 import { backfillGovernance } from "./governance-backfill.ts";
 import { migrateLocations } from "./location-migration.ts";
@@ -58,6 +59,10 @@ async function withDb<T>(options: { destructive?: boolean }, work: (db: Awaited<
 switch (command) {
   case "backfill-governance": {
     await withDb({}, async (db) => console.log(JSON.stringify(await backfillGovernance(db), null, 2)));
+    break;
+  }
+  case "generate-offices": {
+    await withDb({}, async (db) => console.log(JSON.stringify(await generateFromPatterns(db), null, 2)));
     break;
   }
   case "backfill-scope": {

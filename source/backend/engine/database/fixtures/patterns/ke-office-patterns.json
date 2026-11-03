@@ -1,0 +1,620 @@
+{
+ "_meta": {
+  "label": "Custom-prepared from manual research",
+  "preparedBy": "coding agent (Claude), from the Constitution of Kenya 2010, the County Governments Act 2012, the Elections Act 2011 and the NG-CDF Act 2015",
+  "date": "2026-11-03",
+  "caveat": "Cardinalities cited to the Constitution are as the articles read; statutory ceilings and committee sizes marked \"to be confirmed\" must be checked against the Acts. A pattern generates posts and expectations only: never coordinates, addresses, buildings or rooms."
+ },
+ "codeNote": "County codes use the First Schedule number (ke/county/047/governor is Nairobi). Constituency and ward codes use the geography unit path.",
+ "countyNumbers": {
+  "mombasa": 1,
+  "kwale": 2,
+  "kilifi": 3,
+  "tana-river": 4,
+  "lamu": 5,
+  "taita-taveta": 6,
+  "garissa": 7,
+  "wajir": 8,
+  "mandera": 9,
+  "marsabit": 10,
+  "isiolo": 11,
+  "meru": 12,
+  "tharaka": 13,
+  "embu": 14,
+  "kitui": 15,
+  "machakos": 16,
+  "makueni": 17,
+  "nyandarua": 18,
+  "nyeri": 19,
+  "kirinyaga": 20,
+  "muranga": 21,
+  "kiambu": 22,
+  "turkana": 23,
+  "west-pokot": 24,
+  "samburu": 25,
+  "trans-nzoia": 26,
+  "uasin-gishu": 27,
+  "elgeyo-marakwet": 28,
+  "nandi": 29,
+  "baringo": 30,
+  "laikipia": 31,
+  "nakuru": 32,
+  "narok": 33,
+  "kajiado": 34,
+  "kericho": 35,
+  "bomet": 36,
+  "kakamega": 37,
+  "vihiga": 38,
+  "bungoma": 39,
+  "busia": 40,
+  "siaya": 41,
+  "kisumu": 42,
+  "homa-bay": 43,
+  "migori": 44,
+  "kisii": 45,
+  "nyamira": 46,
+  "nairobi": 47
+ },
+ "legalTotals": {
+  "county": {
+   "expected": 47,
+   "basis": "Constitution of Kenya 2010, First Schedule"
+  },
+  "constituency": {
+   "expected": 290,
+   "basis": "Constitution of Kenya 2010, art. 89 and IEBC 2012 review (290 constituencies)"
+  },
+  "ward": {
+   "expected": 1450,
+   "basis": "IEBC delimitation of 2012 (1,450 wards); the geography data holds 1,452"
+  }
+ },
+ "patterns": [
+  {
+   "id": "county-executive",
+   "version": 1,
+   "kind": "seat",
+   "level": "county",
+   "institution": "{code}/government",
+   "codeTemplate": "ke/county/{no}/{definition}",
+   "description": "Executive of each county government: governor, deputy governor, county executive committee members, county secretary and chief officers.",
+   "offices": [
+    {
+     "definition": "governor",
+     "title": "Governor of {name} County",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "Direct election by registered voters of the county",
+     "selection": "direct-election",
+     "legalBasis": "Constitution of Kenya 2010, arts. 179(2)(a), 180",
+     "termYears": 5,
+     "maxTerms": 2
+    },
+    {
+     "definition": "deputy-governor",
+     "title": "Deputy Governor of {name} County",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "Elected jointly with the governor as running mate",
+     "selection": "direct-election",
+     "legalBasis": "Constitution of Kenya 2010, arts. 179(2)(a), 180(5)",
+     "termYears": 5,
+     "maxTerms": 2
+    },
+    {
+     "definition": "county-executive-committee-member",
+     "title": "County Executive Committee Member, {name} County",
+     "min": 0,
+     "max": 10,
+     "appointingAuthority": "Governor, with the approval of the county assembly, from persons who are not members of the assembly",
+     "selection": "governor-appointment-with-approval",
+     "legalBasis": "Constitution of Kenya 2010, art. 179(2)(b); County Governments Act, 2012, s. 35 (not more than ten members)",
+     "termYears": null,
+     "maxTerms": null,
+     "note": "The Constitution fixes the composition and the County Governments Act the ceiling of ten; the actual number in a county is not derived from a rule and stays unknown until researched."
+    },
+    {
+     "definition": "county-secretary",
+     "title": "County Secretary, {name} County",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "Governor, with the approval of the county assembly",
+     "selection": "governor-appointment-with-approval",
+     "legalBasis": "County Governments Act, 2012, s. 44",
+     "termYears": null,
+     "maxTerms": null
+    },
+    {
+     "definition": "county-chief-officer",
+     "title": "County Chief Officer, {name} County",
+     "min": 0,
+     "max": null,
+     "appointingAuthority": "Governor, with the approval of the county assembly",
+     "selection": "governor-appointment-with-approval",
+     "legalBasis": "County Governments Act, 2012, s. 45",
+     "termYears": null,
+     "maxTerms": null,
+     "note": "The number of chief officers equals the number of county departments and varies by county."
+    }
+   ],
+   "expectations": [
+    {
+     "subject": "institution",
+     "role": "headquarters",
+     "min": 1,
+     "max": 1,
+     "basis": "pattern",
+     "legalBasis": "County government headquarters (a county is expected to have a seat of its executive); location is research output."
+    },
+    {
+     "subject": "office:governor",
+     "role": "official-workplace",
+     "min": 1,
+     "max": 1,
+     "basis": "pattern",
+     "legalBasis": "The governor is expected to have an official workplace; no address is implied."
+    }
+   ]
+  },
+  {
+   "id": "county-assembly",
+   "version": 1,
+   "kind": "seat",
+   "level": "county",
+   "institution": "{code}/assembly",
+   "codeTemplate": "ke/county/{no}/assembly/{definition}",
+   "description": "Each county assembly: speaker, clerk and the nominated members who are not tied to a ward.",
+   "offices": [
+    {
+     "definition": "speaker",
+     "title": "Speaker of the {name} County Assembly",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "Elected by the county assembly members from outside their number",
+     "selection": "election-by-members",
+     "legalBasis": "Constitution of Kenya 2010, art. 178(1)",
+     "termYears": null,
+     "maxTerms": null
+    },
+    {
+     "definition": "clerk",
+     "title": "Clerk of the {name} County Assembly",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "County Assembly Service Board",
+     "selection": "commission-appointment",
+     "legalBasis": "County Governments Act, 2012; County Assembly Services Act, 2017",
+     "termYears": null,
+     "maxTerms": null
+    },
+    {
+     "definition": "mca-marginalised-groups",
+     "title": "Member of the {name} County Assembly, marginalised-group seat",
+     "min": 6,
+     "max": 6,
+     "appointingAuthority": "Nominated by political parties according to their party lists",
+     "selection": "party-list",
+     "legalBasis": "Constitution of Kenya 2010, art. 177(1)(c) (six members representing marginalised groups including persons with disabilities and the youth)",
+     "termYears": 5,
+     "maxTerms": null
+    },
+    {
+     "definition": "mca-gender-top-up",
+     "title": "Member of the {name} County Assembly, gender top-up seat",
+     "min": 0,
+     "max": null,
+     "appointingAuthority": "Nominated by political parties according to their party lists, as many as needed so that no more than two thirds are of one gender",
+     "selection": "party-list",
+     "legalBasis": "Constitution of Kenya 2010, art. 177(1)(b)",
+     "termYears": 5,
+     "maxTerms": null,
+     "note": "The number depends on the result of each election and is not fixed by rule."
+    }
+   ],
+   "expectations": [
+    {
+     "subject": "institution",
+     "role": "headquarters",
+     "min": 1,
+     "max": 1,
+     "basis": "pattern",
+     "legalBasis": "County assembly buildings; location is research output."
+    }
+   ]
+  },
+  {
+   "id": "ward-mca",
+   "version": 1,
+   "kind": "seat",
+   "level": "ward",
+   "institution": "{countyCode}/assembly",
+   "codeTemplate": "ke/ward/{path}/{definition}",
+   "description": "One elected member of the county assembly per ward.",
+   "offices": [
+    {
+     "definition": "mca",
+     "title": "Member of the County Assembly, {name} ward",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "Direct election by registered voters of the ward",
+     "selection": "direct-election",
+     "legalBasis": "Constitution of Kenya 2010, art. 177(1)(a)",
+     "termYears": 5,
+     "maxTerms": null
+    }
+   ],
+   "expectations": []
+  },
+  {
+   "id": "constituency-mp",
+   "version": 1,
+   "kind": "seat",
+   "level": "constituency",
+   "institution": "ke/national-assembly",
+   "codeTemplate": "ke/constituency/{path}/{definition}",
+   "adopt": "existing-scoped",
+   "description": "One elected Member of the National Assembly per constituency. Existing seat offices scoped to the constituency are adopted, never duplicated.",
+   "offices": [
+    {
+     "definition": "constituency-mp",
+     "title": "Member of the National Assembly, {name} constituency",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "Direct election by registered voters of the constituency",
+     "selection": "direct-election",
+     "legalBasis": "Constitution of Kenya 2010, art. 97(1)(a)",
+     "termYears": 5,
+     "maxTerms": null
+    }
+   ],
+   "expectations": [
+    {
+     "subject": "office:constituency-mp",
+     "role": "constituency-office",
+     "min": 1,
+     "max": 1,
+     "basis": "plan",
+     "legalBasis": "A Member of the National Assembly is expected to run a constituency office (see the physical locations of constituency offices published by the IEBC/NG-CDF); no address is implied."
+    }
+   ]
+  },
+  {
+   "id": "county-national-seats",
+   "version": 1,
+   "kind": "seat",
+   "level": "county",
+   "institution": "ke/national-assembly",
+   "codeTemplate": "ke/county/{no}/{definition}",
+   "adopt": "existing-scoped",
+   "description": "One Woman Representative in the National Assembly and one Senator per county.",
+   "offices": [
+    {
+     "definition": "woman-representative",
+     "title": "Woman Representative, {name} County",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "Direct election by registered voters of the county",
+     "selection": "direct-election",
+     "legalBasis": "Constitution of Kenya 2010, art. 97(1)(b)",
+     "termYears": 5,
+     "maxTerms": null
+    },
+    {
+     "definition": "county-senator",
+     "title": "Senator, {name} County",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "Direct election by registered voters of the county",
+     "selection": "direct-election",
+     "legalBasis": "Constitution of Kenya 2010, art. 98(1)(a)",
+     "termYears": 5,
+     "maxTerms": null,
+     "institution": "ke/senate"
+    }
+   ],
+   "expectations": []
+  },
+  {
+   "id": "national-nominated-seats",
+   "version": 1,
+   "kind": "seat",
+   "level": "national",
+   "institution": "ke/national-assembly",
+   "codeTemplate": "ke/national/{definition}",
+   "adopt": "existing-code-prefix",
+   "description": "Nominated members of Parliament, which belong to no constituency or county.",
+   "offices": [
+    {
+     "definition": "nominated-mp",
+     "title": "Nominated Member of the National Assembly",
+     "min": 12,
+     "max": 12,
+     "appointingAuthority": "Political parties, according to their party lists, to represent special interests including the youth, persons with disabilities and workers",
+     "selection": "party-list",
+     "legalBasis": "Constitution of Kenya 2010, art. 97(1)(c)",
+     "termYears": 5,
+     "maxTerms": null
+    },
+    {
+     "definition": "nominated-senator-women",
+     "title": "Nominated Senator (woman)",
+     "min": 16,
+     "max": 16,
+     "appointingAuthority": "Political parties, according to their party lists",
+     "selection": "party-list",
+     "legalBasis": "Constitution of Kenya 2010, art. 98(1)(b)",
+     "termYears": 5,
+     "maxTerms": null,
+     "institution": "ke/senate"
+    },
+    {
+     "definition": "nominated-senator-youth",
+     "title": "Nominated Senator (youth)",
+     "min": 2,
+     "max": 2,
+     "appointingAuthority": "Political parties, according to their party lists (one man and one woman)",
+     "selection": "party-list",
+     "legalBasis": "Constitution of Kenya 2010, art. 98(1)(c)",
+     "termYears": 5,
+     "maxTerms": null,
+     "institution": "ke/senate"
+    },
+    {
+     "definition": "nominated-senator-pwd",
+     "title": "Nominated Senator (person with a disability)",
+     "min": 2,
+     "max": 2,
+     "appointingAuthority": "Political parties, according to their party lists (one man and one woman)",
+     "selection": "party-list",
+     "legalBasis": "Constitution of Kenya 2010, art. 98(1)(d)",
+     "termYears": 5,
+     "maxTerms": null,
+     "institution": "ke/senate"
+    }
+   ],
+   "expectations": [],
+   "adoptPrefixes": {
+    "ke/national-assembly/nominated/": "nominated-mp",
+    "ke/senate/nominated/": "nominated-senator"
+   }
+  },
+  {
+   "id": "ngcdf-constituency-committee",
+   "version": 1,
+   "kind": "seat",
+   "level": "constituency",
+   "institution": "ke/ngcdf",
+   "codeTemplate": "ke/constituency/{path}/ngcdf/{definition}",
+   "description": "NG-CDF committee posts for each constituency. The committee size and nomination rules are in the NG-CDF Act, 2015 and must be confirmed; cardinality is recorded as unknown beyond the single posts.",
+   "offices": [
+    {
+     "definition": "ngcdf-fund-account-manager",
+     "title": "NG-CDF Fund Account Manager, {name} constituency",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "NG-CDF Board",
+     "selection": "board-appointment",
+     "legalBasis": "National Government Constituencies Development Fund Act, 2015",
+     "termYears": null,
+     "maxTerms": null
+    },
+    {
+     "definition": "ngcdf-committee-chairperson",
+     "title": "NG-CDF Committee Chairperson, {name} constituency",
+     "min": 1,
+     "max": 1,
+     "appointingAuthority": "Committee members",
+     "selection": "election-by-members",
+     "legalBasis": "National Government Constituencies Development Fund Act, 2015, s. 43 (to be confirmed)",
+     "termYears": null,
+     "maxTerms": null
+    },
+    {
+     "definition": "ngcdf-committee-member",
+     "title": "NG-CDF Committee Member, {name} constituency",
+     "min": 0,
+     "max": null,
+     "appointingAuthority": "Nominated as the Act provides",
+     "selection": "mixed",
+     "legalBasis": "National Government Constituencies Development Fund Act, 2015, s. 43 (to be confirmed)",
+     "termYears": null,
+     "maxTerms": null,
+     "note": "Committee size and nominating bodies are not recorded in this seed; the number is a known unknown."
+    }
+   ],
+   "expectations": []
+  },
+  {
+   "id": "iebc-county-office",
+   "version": 1,
+   "kind": "unit",
+   "level": "county",
+   "institution": "ke/electoral-commission",
+   "unit": {
+    "type": "regional-office",
+    "codeTemplate": "{institution}/county/{no}",
+    "nameTemplate": "IEBC county election office, {name}",
+    "generate": true
+   },
+   "expectations": [
+    {
+     "subject": "unit",
+     "role": "official-workplace",
+     "min": 1,
+     "max": 1,
+     "basis": "plan",
+     "legalBasis": "Independent Electoral and Boundaries Commission Act, 2011; Elections Act, 2011 (county returning officers)"
+    }
+   ],
+   "description": "IEBC county election office, {name} for every county."
+  },
+  {
+   "id": "iebc-constituency-office",
+   "version": 1,
+   "kind": "unit",
+   "level": "constituency",
+   "institution": "ke/electoral-commission",
+   "unit": {
+    "type": "regional-office",
+    "codeTemplate": "{institution}/constituency/{path}",
+    "nameTemplate": "IEBC constituency election office, {name}",
+    "generate": true
+   },
+   "expectations": [
+    {
+     "subject": "unit",
+     "role": "official-workplace",
+     "min": 1,
+     "max": 1,
+     "basis": "plan",
+     "legalBasis": "Elections Act, 2011 (constituency returning officers)"
+    }
+   ],
+   "description": "IEBC constituency election office, {name} for every constituency."
+  },
+  {
+   "id": "ngcdf-constituency-office",
+   "version": 1,
+   "kind": "unit",
+   "level": "constituency",
+   "institution": "ke/ngcdf",
+   "unit": {
+    "type": "regional-office",
+    "codeTemplate": "{institution}/constituency/{path}",
+    "nameTemplate": "NG-CDF constituency office, {name}",
+    "generate": true
+   },
+   "expectations": [
+    {
+     "subject": "unit",
+     "role": "official-workplace",
+     "min": 1,
+     "max": 1,
+     "basis": "plan",
+     "legalBasis": "National Government Constituencies Development Fund Act, 2015"
+    }
+   ],
+   "description": "NG-CDF constituency office, {name} for every constituency."
+  },
+  {
+   "id": "tsc-county-office",
+   "version": 1,
+   "kind": "unit",
+   "level": "county",
+   "institution": "ke/teachers-service-commission",
+   "unit": {
+    "type": "regional-office",
+    "codeTemplate": "{institution}/county/{no}",
+    "nameTemplate": "TSC county office, {name}",
+    "generate": true
+   },
+   "expectations": [
+    {
+     "subject": "unit",
+     "role": "official-workplace",
+     "min": 1,
+     "max": 1,
+     "basis": "plan",
+     "legalBasis": "Teachers Service Commission Act, 2012 (county directors)"
+    }
+   ],
+   "description": "TSC county office, {name} for every county."
+  },
+  {
+   "id": "nlc-county-land-management-board",
+   "version": 1,
+   "kind": "unit",
+   "level": "county",
+   "institution": "ke/national-land-commission",
+   "unit": {
+    "type": "regional-office",
+    "codeTemplate": "{institution}/county/{no}",
+    "nameTemplate": "County Land Management Board, {name}",
+    "generate": true
+   },
+   "expectations": [
+    {
+     "subject": "unit",
+     "role": "official-workplace",
+     "min": 1,
+     "max": 1,
+     "basis": "legal_rule",
+     "legalBasis": "National Land Commission Act, 2012, s. 18"
+    }
+   ],
+   "description": "County Land Management Board, {name} for every county."
+  },
+  {
+   "id": "odpp-county-office",
+   "version": 1,
+   "kind": "unit",
+   "level": "county",
+   "institution": "ke/office-of-the-director-of-public-prosecutions",
+   "unit": {
+    "type": "regional-office",
+    "codeTemplate": "{institution}/county/{no}",
+    "nameTemplate": "ODPP county office, {name}",
+    "generate": true
+   },
+   "expectations": [
+    {
+     "subject": "unit",
+     "role": "official-workplace",
+     "min": 1,
+     "max": 1,
+     "basis": "plan",
+     "legalBasis": "Office of the Director of Public Prosecutions Act, 2013"
+    }
+   ],
+   "description": "ODPP county office, {name} for every county."
+  },
+  {
+   "id": "dci-county-office",
+   "version": 1,
+   "kind": "unit",
+   "level": "county",
+   "institution": "ke/national-police-service/directorate-of-criminal-investigations",
+   "unit": {
+    "type": "regional-office",
+    "codeTemplate": "{institution}/county/{no}",
+    "nameTemplate": "DCI county criminal investigation office, {name}",
+    "generate": true
+   },
+   "expectations": [
+    {
+     "subject": "unit",
+     "role": "official-workplace",
+     "min": 1,
+     "max": 1,
+     "basis": "plan",
+     "legalBasis": "National Police Service Act, 2011"
+    }
+   ],
+   "description": "DCI county criminal investigation office, {name} for every county."
+  },
+  {
+   "id": "high-court-county-station",
+   "version": 1,
+   "kind": "unit",
+   "level": "county",
+   "institution": "ke/judiciary/high-court",
+   "unit": {
+    "type": "operational-unit",
+    "codeTemplate": "{institution}/county/{no}",
+    "nameTemplate": "High Court station, {name}",
+    "generate": true
+   },
+   "expectations": [
+    {
+     "subject": "unit",
+     "role": "official-workplace",
+     "min": 1,
+     "max": 1,
+     "basis": "plan",
+     "legalBasis": "Constitution of Kenya 2010, art. 165; Judiciary access-to-justice plan (a High Court station in each county)"
+    }
+   ],
+   "description": "High Court station, {name} for every county."
+  }
+ ]
+}
