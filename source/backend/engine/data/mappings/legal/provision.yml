@@ -1,0 +1,15 @@
+mapping: provision
+extractor: legal-pdf
+target_kind: legal.provisions
+key: [code]
+fields:
+  code:         { from: provisionCode }
+  citation:     { from: provisionCitation }
+  heading:      { from: heading }
+  content:      { from: text }
+  kind:         { const: section }
+  instrumentId: { from: instrumentCode, transform: [{ ref: { kind: legal.instruments, field: code } }] }
+  sortOrder:    { from: order }
+provenance:
+  locator: { section: $section }
+  method: extracted

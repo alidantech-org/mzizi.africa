@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from pathlib import Path
 import os
 import sys
 
@@ -75,6 +76,13 @@ def main(argv: list[str] | None = None) -> int:
     cn.add_argument("directory")
     cn.add_argument("--stage", choices=["A", "B"], required=True)
     cn.add_argument("--store", default=".data/objects")
+    ld = sub.add_parser("import-legal-documents", help="stage instruments (A) or provisions (B) for Acts, Bills and Gazette notices from classified registered documents; --flag-figures flags budget and audit documents for review")
+    ld.add_argument("--stage", choices=["A", "B"])
+    ld.add_argument("--site", action="append", help="site code; repeatable (default: all sites)")
+    ld.add_argument("--limit", type=int)
+    ld.add_argument("--flag-figures", action="store_true")
+    ld.add_argument("--report")
+    ld.add_argument("--store", default=".data/objects")
     ie = sub.add_parser("import-iebc", help="stage the IEBC commissioners from the fetched Commissioners page (stages B, C)")
     ie.add_argument("page")
     ie.add_argument("--stage", choices=["B", "C"], required=True)
@@ -149,6 +157,9 @@ def main(argv: list[str] | None = None) -> int:
     pd = sub.add_parser("probe-domains", help="probe candidate domains of trusted zones through the gate (0.2 req/s, robots, stop on refusal) and record DNS snapshots; resumable")
     pd.add_argument("--limit", type=int)
     pd.add_argument("--report", action="store_true")
+    pd.add_argument("--retry-timeouts", action="store_true", help="probe again the unreachable domains whose last failure was a timeout")
+    pd.add_argument("--timeout", type=int, default=15, help="seconds per request (default 15)")
+    sub.add_parser("apply-directory", help="add the hostnames the NG-CDF constituency directory lists as page_link candidates and mark unlisted pattern spellings unreachable (offline)")
     sub.add_parser("backfill-domains", help="create candidate domain rows for every site from its reachability-check candidates, link zones and parents, report counts (offline)")
     rep = sub.add_parser("catalogue-report", help="counts of families, patterns, sites and domains with their counting rules")
     stop = sub.add_parser("stop", help="incident: stop collection for a site, cancel its pending jobs and quarantine its candidates")
@@ -271,6 +282,24 @@ def main(argv: list[str] | None = None) -> int:
             print(f"note: {note}")
         for name, stat in out.stats.items():
             print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        return 0
+    if args.command == "import-legal-documents":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import legal_documents
+
+        with connect() as conn:
+            out: dict = {}
+            if args.flag_figures:
+                out["figures"] = legal_documents.flag_figures_for_review(conn, args.site)
+            if args.stage:
+                res = legal_documents.stage_legal(conn, LocalDirectoryStore(conn, args.store), args.stage, args.site, args.limit)
+                out["runs"] = res.runs
+                out["stats"] = {k: {f: getattr(v, f) for f in ("created", "unchanged", "invalid", "quarantined")} for k, v in res.stats.items()}
+                out["report"] = res.report
+        if args.report:
+            Path(args.report).write_text(json.dumps(out, indent=1, default=str))
+        print(json.dumps(out, indent=1, default=str)[:6000])
         return 0
     if args.command == "import-constitution":
         from .db import connect
@@ -496,8 +525,16 @@ def main(argv: list[str] | None = None) -> int:
         with connect() as conn:
             if not args.report:
                 print("zones snapshotted:", probe_domains.snapshot_zones(conn), flush=True)
-                print(probe_domains.probe_all(conn, os.environ.get("MZIZI_USER_AGENT", "MziziBot/1.0 (+https://alidantech.org; dev@alidantech.org)"), limit=args.limit, log=lambda m: print(m, flush=True)))
+                print(probe_domains.probe_all(conn, os.environ.get("MZIZI_USER_AGENT", "MziziBot/1.0 (+https://alidantech.org; dev@alidantech.org)"), limit=args.limit, log=lambda m: print(m, flush=True), retry_timeouts=args.retry_timeouts, timeout_seconds=args.timeout))
             print(json.dumps(probe_domains.probe_report(conn), indent=2, default=str))
+        return 0
+    if args.command == "apply-directory":
+        from . import patterns
+        from .db import connect
+
+        with connect() as conn:
+            print(json.dumps(patterns.apply_directory(conn), indent=2))
+            conn.commit()
         return 0
     if args.command == "backfill-domains":
         from . import domains

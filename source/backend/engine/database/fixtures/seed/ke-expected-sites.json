@@ -370,7 +370,8 @@
       "institution": "ke/office-of-the-auditor-general",
       "name": "Office of the Auditor-General",
       "hosts": [
-        "oagkenya.go.ke"
+        "oagkenya.go.ke",
+        "www.oagkenya.go.ke"
       ]
     },
     {

@@ -1,0 +1,18 @@
+mapping: instrument
+extractor: legal-pdf
+target_kind: legal.instruments
+key: [code]
+fields:
+  code:                 { from: instrumentCode }
+  title:                { from: title }
+  summary:              { from: summary }
+  jurisdictionId:       { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  kindId:               { from: kindCode, transform: [{ ref: { kind: reference.classifications, field: code } }] }
+  issuingInstitutionId: { from: issuerCode, transform: [{ ref: { kind: governance.institutions, field: code } }] }
+  status:               { from: status }
+  documentUrl:          { from: documentUrl }
+  contentHash:          { from: contentHash }
+  validFrom:            { from: validFrom, precision: exact }
+provenance:
+  locator: { page: $page }
+  method: extracted

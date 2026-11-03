@@ -27,7 +27,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
-from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlunparse
+from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlparse, urlunparse
 
 import httpx
 import psycopg
@@ -128,6 +128,22 @@ def normalize(url: str) -> str:
 
 def extension(url: str) -> str:
     return PurePosixPath(urlparse(url).path).suffix.lower().lstrip(".")
+
+
+WPDM_DOWNLOAD = re.compile(r"(?:^|&)wpdmdl=\d+")
+GENERIC_LINK_TEXT = {"", "download", "downloads", "read more", "view", "click here", "pdf", "open", "link"}
+
+
+def is_download_link(url: str, file_types: frozenset[str] | set[str]) -> bool:
+    """A link to a file: a known extension, or a WordPress Download Manager package download (`?wpdmdl=<id>`), which names no extension."""
+    return extension(url) in file_types or bool(WPDM_DOWNLOAD.search(urlparse(url).query))
+
+
+def disposition_name(headers: dict) -> str | None:
+    """The file name a server states in Content-Disposition (RFC 6266), when it states one."""
+    value = next((v for k, v in headers.items() if k.lower() == "content-disposition"), "")
+    match = re.search(r"filename\*?=(?:UTF-8'')?\"?([^\";]+)\"?", value, re.I)
+    return re.sub(r"[^\w.\-() ]+", "_", unquote(match.group(1)))[:150] if match else None
 
 
 def file_name(url: str, fallback: str = "index") -> str:
@@ -274,17 +290,18 @@ class SectionCrawler:
         headers = {k.lower(): v for k, v in result.headers.items() if k.lower() not in SENSITIVE_HEADERS}
         now = datetime.now(timezone.utc)
         mime = (headers.get("content-type") or mimetypes.guess_type(url)[0] or "application/octet-stream").split(";")[0].strip()
+        name = disposition_name(headers) or file_name(url)
         held = self.conn.execute("SELECT document_id::text AS document_id, file_version_id::text AS fv FROM source.captures WHERE content_hash = %s ORDER BY retrieved_at LIMIT 1", (digest,)).fetchone()
         if held:
             document_id, file_version_id, outcome = held["document_id"], held["fv"], "duplicate"
         else:
-            title = (task.text or file_name(url)).strip()[:300] or file_name(url)
+            title = (task.text if (task.text or "").strip().lower() not in GENERIC_LINK_TEXT else name).strip()[:300] or name
             kind = "dataset" if extension(url) in ("csv", "xlsx") else "archival_record"  # provisional; semantics.py decides what it is
             document_id = register.ensure_document(self.conn, register.DocumentSpec(self.publisher(), title, kind, url[:1000], jurisdiction_id=self.site["jurisdiction_id"], site_id=self.site["id"]))
-            ref = self.store.put(body, f"{digest[:12]}-{file_name(url)}", f"/crawl/{self.site['code'].replace('/', '-')}", mime_type=mime, note=f"crawled from {url}"[:500])
+            ref = self.store.put(body, f"{digest[:12]}-{name}", f"/crawl/{self.site['code'].replace('/', '-')}", mime_type=mime, note=f"crawled from {url}"[:500])
             file_version_id, outcome = ref.version_id, "new"
             if self.cfg.raw_dir:
-                self._write_raw(body, digest, url, task, headers, now, result.assessment_id)
+                self._write_raw(body, digest, url, task, headers, now, result.assessment_id, name)
         capture_id = register.record_capture(self.conn, document_id, file_version_id, digest, url[:1000], "mzizi-data crawl-sections", result.status, now, self.site["id"], self.domain_ids.get(urlparse(url).hostname or ""), self.version_id, None, result.assessment_id)
         self.conn.execute(
             """INSERT INTO website.document_sightings (site_id, document_id, capture_id, structure_version_id, url, page_url, content_hash, size_bytes, http_status, headers, section_label, rule_index, depth, seen_at, created_at, updated_at, version)
@@ -294,10 +311,10 @@ class SectionCrawler:
         )
         return outcome
 
-    def _write_raw(self, body: bytes, digest: str, url: str, task: _Task, headers: dict, now: datetime, assessment_id: str | None) -> None:
+    def _write_raw(self, body: bytes, digest: str, url: str, task: _Task, headers: dict, now: datetime, assessment_id: str | None, name: str | None = None) -> None:
         target = Path(self.cfg.raw_dir)  # type: ignore[arg-type]
         target.mkdir(parents=True, exist_ok=True)
-        saved = target / f"{digest[:12]}-{file_name(url)}"
+        saved = target / f"{digest[:12]}-{name or file_name(url)}"
         if not saved.exists():
             saved.write_bytes(body)
         saved.with_name(saved.name + ".provenance.json").write_text(json.dumps({
@@ -359,7 +376,7 @@ class SectionCrawler:
         next_numbered = False
         for url, text, is_next in extract_links(page.body, page.url):
             ext = extension(url)
-            if ext in self.cfg.file_types:
+            if is_download_link(url, self.cfg.file_types):
                 docs.setdefault(normalize(url), (url, text))
                 continue
             if ext not in PAGE_EXTENSIONS or (urlparse(url).hostname or "").lower() not in self.hosts:
@@ -413,6 +430,9 @@ class SectionCrawler:
             return
         if len(result.body) > self.cfg.max_file_bytes:
             self.report.skip(task.url, f"size cap: {len(result.body)} bytes")
+            return
+        if extension(task.url) not in self.cfg.file_types and "html" in next((v for k, v in result.headers.items() if k.lower() == "content-type"), "").lower():
+            self.report.skip(task.url, "download link answered with a web page, not a file")
             return
         if self.register_file(task, result) == "new":
             self.report.documents_new += 1

@@ -3,7 +3,8 @@
     "label": "Custom-prepared from manual research",
     "preparedBy": "coding agent (Claude), from general knowledge of how Kenyan public sites are usually laid out",
     "date": "2026-11-03",
-    "caveat": "No site was contacted. Every rule is a hypothesis about common paths (WordPress and Drupal conventions plus typical government labels) held at confidence 0.3 to 0.6, to be confirmed or replaced by a gated bounded probe and by review. Rules discovered from crawled links only propose additions for review. Paths are matched against the URL path only; hosts and scope stay in the manifest policy."
+    "caveat": "No site was contacted. Every rule is a hypothesis about common paths (WordPress and Drupal conventions plus typical government labels) held at confidence 0.3 to 0.6, to be confirmed or replaced by a gated bounded probe and by review. Rules discovered from crawled links only propose additions for review. Paths are matched against the URL path only; hosts and scope stay in the manifest policy.",
+    "publisherNote": "2026-11-03 (Lane E): publisher families ke/publisher/* for the priority publishers (parliament, nlc, cob, oag, gazette). Parliament, NLC and COB rules were derived from links on their home pages fetched through the gate; OAG rules come from its home page links at www.oagkenya.go.ke (the apex host fails TLS: wildcard certificate); Gazette rules are hypotheses (kenyagazette.go.ke does not resolve in DNS). NLC and COB publish files through WordPress Download Manager: listing pages link /download/<slug>/ package pages whose file link is ?wpdmdl=<id> (the crawler treats that as a file link)."
   },
   "families": {
     "ke/county-government": [
@@ -766,6 +767,525 @@
               "method": "custom-prepared",
               "label": "Custom-prepared from manual research",
               "confidence": 0.4
+            }
+          }
+        ]
+      }
+    ],
+    "ke/publisher/parliament": [
+      {
+        "label": "reports",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 5
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/the-(?:national-assembly|senate)/house-business/hansard/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.7
+            }
+          }
+        ]
+      },
+      {
+        "label": "publications",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 5
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/the-(?:national-assembly|senate)/house-business/order-paper/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.7
+            }
+          }
+        ]
+      },
+      {
+        "label": "bills",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 5
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/the-(?:national-assembly|senate)/house-business/bills?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.35
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/bills(?:-tracker)?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.3
+            }
+          }
+        ]
+      },
+      {
+        "label": "legislation",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 5
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/the-(?:national-assembly|senate)/house-business/acts?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.35
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/acts(?:-of-parliament)?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.3
+            }
+          }
+        ]
+      },
+      {
+        "label": "budgets",
+        "file_types": [
+          "pdf",
+          "xlsx"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:\\d{4}-\\d{4}-budget-documents|budget-books-fy-\\d{4}-\\d{4})/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.7
+            }
+          }
+        ]
+      },
+      {
+        "label": "downloads",
+        "file_types": [
+          "pdf",
+          "xlsx",
+          "docx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/downloads/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.7
+            }
+          }
+        ]
+      }
+    ],
+    "ke/publisher/nlc": [
+      {
+        "label": "legislation",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/land-laws/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          }
+        ]
+      },
+      {
+        "label": "publications",
+        "file_types": [
+          "pdf",
+          "docx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/publications/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          }
+        ]
+      },
+      {
+        "label": "reports",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/reports/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/(?:hli-determinations|review-of-grants-and-disposition-of-public-land)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/download/[^/]+/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.9
+            }
+          }
+        ]
+      },
+      {
+        "label": "notices",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/advisories/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/(?:press-release-speeches|news)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.6
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/procurement/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.6
+            }
+          }
+        ]
+      }
+    ],
+    "ke/publisher/cob": [
+      {
+        "label": "reports",
+        "file_types": [
+          "pdf",
+          "xlsx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 5
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/reports/(?:national-government-budget-implementation-review-reports|financial-reports|m-and-e-reports|expenditure-templates)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/\\?page_id=(?:2164|2166)$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/reports/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/download/[^/]+/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.9
+            }
+          }
+        ]
+      },
+      {
+        "label": "legislation",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:regulations-\\d{4}|about-us/enabling-legislation)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.7
+            }
+          }
+        ]
+      },
+      {
+        "label": "notices",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/updates/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.6
+            }
+          },
+          {
+            "kind": "regex",
+            "pattern": "^/about-us/press-releases/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.6
+            }
+          }
+        ]
+      },
+      {
+        "label": "tenders",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/tenders/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.7
+            }
+          }
+        ]
+      }
+    ],
+    "ke/publisher/oag": [
+      {
+        "label": "reports",
+        "file_types": [
+          "pdf",
+          "xlsx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:financial-audit-reports|national-government-audit-reports|county-governments-reports|specialized-audit-reports|special-audit-report|performance-audit-report|national-county-governments|commissions-and-independent-offices|funds-authorities|the-judiciary|parliament-county-assemblies|public-funded-political-parties)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          }
+        ]
+      },
+      {
+        "label": "publications",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:annual-corporate-report|strategic-document|other-publications-2)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          }
+        ]
+      },
+      {
+        "label": "legislation",
+        "file_types": [
+          "pdf"
+        ],
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/legislation/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          }
+        ]
+      },
+      {
+        "label": "tenders",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:tenders-documents|procurement-plans)/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          }
+        ]
+      }
+    ],
+    "ke/publisher/gazette": [
+      {
+        "label": "gazettes",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 5
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/(?:gazette|gazettes|gazette-notices|issues)(?:/[a-z0-9-]+)?/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.3
             }
           }
         ]
