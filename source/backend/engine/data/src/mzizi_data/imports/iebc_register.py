@@ -147,3 +147,113 @@ def ward_pools(conn, jurisdiction: str = "ke") -> dict[str, dict[str, str]]:
     ).fetchall():
         pools.setdefault(r["parent"], {})[norm(r["name"])] = r["code"]
     return pools
+
+
+# ----------------------------------------------------------------- 2013 report tables
+
+COUNTY_2013 = re.compile(rf"^\s*(\d{{1,2}})\s+([A-Za-z][A-Za-z' /\-\.]*?)\s+({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s*$")
+CONST_2013 = re.compile(rf"^\s*(\d{{3}})\s+([A-Z][A-Z' /\-\.]*?)\s+(\d{{3}})\s+([A-Z][A-Z' /\-\.\(\)]*?)\s+({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s*$")
+
+
+def parse_2013(pages: list[str]) -> dict[str, Register]:
+    """County rows (Table 2) and constituency rows (Table 3) of the IEBC '4th March 2013 General Election Data' book."""
+    county, const = [], []
+    ctotal = None
+    for i, page in enumerate(pages[:40]):
+        for line in page.splitlines():
+            if "Registered Voters, Polling Stations and Streams per County" in line and i > 12:
+                pass
+            m = COUNTY_2013.match(line)
+            if m and int(m.group(1)) <= 48 and not line.strip().startswith("TOTAL"):
+                g = m.groups()
+                if int(g[0]) not in {r.county_code and int(r.county_code) for r in county}:
+                    county.append(Row(f"{int(g[0]):03d}", g[1].strip(), None, None, None, None, _n(g[6]), _n(g[2]), i + 1))
+            t = re.match(rf"^\s*TOTAL\s+({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s+({NUM})\s*$", line)
+            if t and ctotal is None and _n(t.group(1)) == 24563:
+                ctotal = _n(t.group(5))
+            c = CONST_2013.match(line)
+            if c:
+                g = c.groups()
+                const.append(Row(g[0], g[1].strip(), g[2], g[3].strip(), None, None, _n(g[8]), _n(g[4]), i + 1))
+    return {"county": Register("county", county, ctotal), "constituency": Register("constituency", const, None)}
+
+
+# ----------------------------------------------------------------- staging
+
+ELECTIONS = {
+    "2013": ("ke/election/2013-03-04/general", "2013 General Election", "2013-03-04"),
+    "2017": ("ke/election/2017-08-08/general", "2017 General Election", "2017-08-08"),
+    "2022": ("ke/election/2022-08-09/general", "2022 General Election", "2022-08-09"),
+}
+LEVELS = {"county": ("elections/result-level/county", "county", 2), "constituency": ("elections/result-level/constituency", "constituency", 1), "ward": ("elections/result-level/ward", "ward", 0)}
+IEBC = ("ke-iebc", "Independent Electoral and Boundaries Commission", "https://www.iebc.or.ke")
+LICENCE = "Unassessed (published on the IEBC website; reuse terms not yet checked)"
+
+
+def stage_register(conn, store, year: str, files: dict[str, str], jurisdiction: str = "ke") -> dict:
+    """files: level -> local PDF path (2013: {'book': path}). Each file is preserved as its own source and staged in its own runs."""
+    import json
+    from pathlib import Path
+
+    from .. import statload
+    from ..statload import Group, ref
+
+    code, name, held = ELECTIONS[year]
+    resolver = GeoResolver(conn, jurisdiction)
+    pools = ward_pools(conn, jurisdiction)
+    jur = ref("reference.jurisdictions", code=jurisdiction)
+    version = f"IEBC register of voters for the {name}"
+    publisher_id = statload.publisher(conn, IEBC[0], IEBC[1], website_url=IEBC[2])
+    sources = {}
+    if year == "2013":
+        path = Path(files["book"])
+        pages = read_pages(path.read_bytes())
+        registers = parse_2013(pages)
+        sources = {lv: path for lv in registers}
+    else:
+        registers = {}
+        for lv, p in files.items():
+            registers[lv] = parse(read_pages(Path(p).read_bytes()), lv)
+            sources[lv] = Path(p)
+    check(registers)
+    report = {"year": year, "linked": {}, "unlinked": [], "checks_failed": [], "checks_passed": 0, "levels": {}}
+    level_ref = lambda lv: ref("reference.classifications", jurisdictionId=jur, code=LEVELS[lv][0])  # noqa: E731
+    base_groups = [
+        Group("classification", "reference.classifications", ["jurisdictionId", "scheme", "code"], [{"jurisdictionId": jur, "scheme": "elections/result-level", "code": LEVELS[lv][0], "label": LEVELS[lv][1], "order": LEVELS[lv][2]} for lv in ("county",)]),
+        Group("election", "electoral.elections", ["code"], [{"jurisdictionId": jur, "code": code, "name": name, "typeId": ref("reference.classifications", jurisdictionId=jur, code="elections/election-type/general"), "heldDate": held, "status": "completed", "administeringInstitutionId": ref("governance.institutions", code="ke/electoral-commission", jurisdictionId=jur)}]),
+    ]
+    out_runs = {}
+    first = True
+    done_sources = {}
+    for lv, reg in registers.items():
+        if reg.checks_failed:
+            report["checks_failed"] += reg.checks_failed
+        report["checks_passed"] += len(reg.checks_passed)
+        bad_const = {re.search(r"constituency (\d+)", m).group(1) for m in reg.checks_failed if m.startswith("constituency")}
+        bad_county = {re.search(r"county (\d+)", m).group(1) for m in reg.checks_failed if m.startswith("county") and lv == "constituency"}
+        linked, unlinked = link(reg, resolver, pools)
+        report["unlinked"] += unlinked
+        rows = []
+        for r, unit_code in linked:
+            if lv == "ward" and r.const_code in bad_const:
+                report["unlinked"].append(f"held back, wards do not add to the constituency: {r.county} / {r.constituency} / {r.ward}")
+                continue
+            if lv == "constituency" and r.county_code in bad_county:
+                report["unlinked"].append(f"held back, constituencies do not add to the county: {r.county} / {r.constituency}")
+                continue
+            rows.append({"_seg": f"p{r.page}-{lv}-{r.county_code}-{r.const_code or ''}-{r.ward_code or ''}", "electionId": ref("electoral.elections", code=code), "geoUnitId": ref("geography.units", code=unit_code), "resultLevelId": level_ref(lv), "registerVersion": version, "registeredVoters": r.voters, "resultStatus": "declared"})
+        report["linked"][lv] = len(rows)
+        report["levels"][lv] = len(reg.rows)
+        path = sources[lv]
+        if path not in done_sources:
+            data = path.read_bytes()
+            title = f"{name}: registered voters per {lv}" if year != "2013" else "4th March 2013 General Election Data (IEBC)"
+            meta = json.loads(Path(str(path) + ".provenance.json").read_text())
+            done_sources[path] = statload.preserve(conn, store, data, path.name.split("-", 1)[1].replace("%20", "_"), publisher_id, title, meta["url"], LICENCE, f"IEBC, {title}. Retrieved {meta['retrieved_at'][:10]}.", "gated-fetch", "application/pdf", kind="dataset", jurisdiction=jurisdiction)
+        groups = ([*base_groups] if first else []) + [Group(f"electorate-{lv}", "electoral.electorates", ["electionId", "geoUnitId", "resultLevelId", "registerVersion"], rows)]
+        diag = [{"level": "info", "code": "checks_passed", "message": f"{len(reg.checks_passed)} arithmetic checks passed"}] + [{"level": "warning", "code": "check_failed", "message": m[:300]} for m in reg.checks_failed]
+        staged = statload.stage(conn, store, done_sources[path], "iebc-register-tables", "1", f"electoral/{jurisdiction}/{year}-register-{lv}", groups, diag)
+        out_runs.update({f"{lv}:{k}": v for k, v in staged.runs.items()})
+        first = False
+    report["runs"] = out_runs
+    return report

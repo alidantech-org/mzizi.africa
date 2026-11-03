@@ -16,6 +16,20 @@ def register(sub: argparse._SubParsersAction) -> None:
     cn.add_argument("file")
     cn.add_argument("--store", default=".data/objects")
     cn.add_argument("--report", help="write the linking and checking report as JSON")
+    er = sub.add_parser("import-iebc-register", help="stage IEBC registered voters per county, constituency and ward for a general election year (2013 book, 2017 and 2022 tables)")
+    er.add_argument("year", choices=["2013", "2017", "2022"])
+    er.add_argument("--county")
+    er.add_argument("--constituency")
+    er.add_argument("--ward")
+    er.add_argument("--book")
+    er.add_argument("--store", default=".data/objects")
+    er.add_argument("--report")
+    dv = sub.add_parser("derive", help="compute a registered derived indicator from current inputs and stage it ('stale' lists derived values whose inputs were superseded)")
+    dv.add_argument("formula")
+    dv.add_argument("--store", default=".data/objects")
+    q = sub.add_parser("quality", help="run the statistical quality rules and store findings, or report; 'decide <finding> <accept|resolve|dispute> <rationale>' records a decision by the agent account")
+    q.add_argument("action", choices=["run", "report", "decide"])
+    q.add_argument("rest", nargs="*")
     p = sub.add_parser("stats-promote", help="validate, review (agent account, rationale) and promote one staging run")
     p.add_argument("run_id")
     p.add_argument("rationale")
@@ -54,6 +68,39 @@ def dispatch(args: argparse.Namespace) -> int | None:
             from pathlib import Path
 
             Path(args.report).write_text(json.dumps(rep, indent=1))
+        return 0
+    if args.command == "import-iebc-register":
+        from .imports import iebc_register
+
+        files = {k: v for k, v in (("county", args.county), ("constituency", args.constituency), ("ward", args.ward), ("book", args.book)) if v}
+        with connect() as conn:
+            rep = iebc_register.stage_register(conn, LocalDirectoryStore(conn, args.store), args.year, files)
+        print(json.dumps({k: (v if not isinstance(v, (list, dict)) or k in ("runs", "linked", "levels") else len(v)) for k, v in rep.items()}, indent=1))
+        if args.report:
+            from pathlib import Path
+
+            Path(args.report).write_text(json.dumps(rep, indent=1))
+        return 0
+    if args.command == "derive":
+        from . import derived
+
+        with connect() as conn:
+            if args.formula == "stale":
+                print(json.dumps(derived.stale(conn), indent=1))
+                return 0
+            out = derived.run(conn, LocalDirectoryStore(conn, args.store), args.formula)
+        print(json.dumps({k: v for k, v in out.items() if k != "stats"}, indent=1))
+        return 0
+    if args.command == "quality":
+        from . import quality, statload
+
+        with connect() as conn:
+            if args.action == "run":
+                print(json.dumps(quality.store(conn, quality.run_rules(conn))))
+            elif args.action == "report":
+                print(json.dumps(quality.report(conn), indent=1, default=str))
+            else:
+                print(quality.decide(conn, args.rest[0], statload.AGENT_ACCOUNT, args.rest[1], args.rest[2]))
         return 0
     if args.command == "stats-promote":
         from . import statload
