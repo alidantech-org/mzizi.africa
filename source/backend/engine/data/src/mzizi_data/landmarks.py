@@ -34,6 +34,12 @@ class LandmarkReport:
 
 def _curated(conn: psycopg.Connection, title: str, citation: str) -> tuple[str, str]:
     publisher = conn.execute("SELECT id::text AS id FROM source.publishers WHERE code = %s", (CURATED_CODE,)).fetchone()
+    if conn.execute("SELECT 1 FROM reference.classifications WHERE code = 'source/document-kind/curated_seed'").fetchone() is None:  # created by the database engine's curated loaders; a fresh database may not have it yet
+        jurisdiction = conn.execute("SELECT id FROM reference.jurisdictions WHERE code = 'ke'").fetchone()
+        conn.execute(
+            """INSERT INTO reference.classifications (code, scheme, label, jurisdiction_id, "order", is_current, created_at, updated_at, version) VALUES ('source/document-kind/curated_seed', 'source/document-kind', 'curated seed', %s, 0, true, now(), now(), 1)""",
+            (jurisdiction["id"] if jurisdiction else None,),
+        )
     publisher_id = publisher["id"] if publisher else register.ensure_publisher(conn, CURATED_CODE, "Mzizi curated research", kind="repository")
     document_id = register.ensure_document(conn, register.DocumentSpec(publisher_id, title, "curated_seed", licence="Mzizi project work (no third-party licence)", citation=citation))
     method = conn.execute("SELECT id::text AS id FROM source.methods WHERE kind = 'curated' AND tool = 'engine-database curated seed' LIMIT 1").fetchone()
