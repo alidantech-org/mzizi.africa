@@ -189,7 +189,8 @@
         "jurisdictionId": "@za",
         "code": "za/electoral-commission",
         "name": "Electoral Commission",
-        "typeId": "@za:itype:department"
+        "typeId": "@za:itype:department",
+        "scopeGeoUnitId": "@za:unit:za"
       }
     },
     {
@@ -199,7 +200,8 @@
         "jurisdictionId": "@za",
         "code": "za/national-assembly",
         "name": "National Assembly",
-        "typeId": "@za:itype:legislature"
+        "typeId": "@za:itype:legislature",
+        "scopeGeoUnitId": "@za:unit:za"
       }
     },
     {
@@ -209,7 +211,8 @@
         "institutionId": "@za:inst:na",
         "code": "za/president",
         "name": "President",
-        "isSingleton": true
+        "isSingleton": true,
+        "scopeGeoUnitId": "@za:unit:za"
       }
     },
     {
@@ -289,7 +292,8 @@
         "jurisdictionId": "@za",
         "code": "za/treasury",
         "name": "National Treasury",
-        "levelId": "@za:level:country"
+        "levelId": "@za:level:country",
+        "geoUnitId": "@za:unit:za"
       }
     },
     {

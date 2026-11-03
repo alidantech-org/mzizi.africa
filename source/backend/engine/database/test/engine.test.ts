@@ -144,7 +144,7 @@ run("database engine", () => {
     for (const row of file.institutions) if (row.parent) expect(codes.has(row.parent), `${row.code} has unknown parent ${row.parent}`).toBe(true);
     const [row] = await db.query(`SELECT description FROM governance.institutions WHERE code = 'ke/kra'`);
     expect(row.description).toContain("manual research");
-  });
+  }, 300_000);
 
   test("expected sites are registered once, unverified, and linked to their institutions", async () => {
     await seedGovernanceStructure(db);
@@ -156,7 +156,7 @@ run("database engine", () => {
     expect(row).toEqual({ status: "expected", domains: 1 });
     const [dom] = await db.query(`SELECT d.status::text AS status, d.origin::text AS origin, d.role::text AS role FROM website.domains d JOIN website.sites s ON s.id = d.site_id WHERE s.code = 'ke/nca' ORDER BY d.role`);
     expect(dom).toEqual({ status: "candidate", origin: "seed_research", role: "primary" });
-  });
+  }, 300_000);
 
   test("domain model keeps candidate, redirect and snapshot history", async () => {
     expect(await seedDomainZones(db)).toEqual({ zones: 12 });

@@ -200,7 +200,8 @@
         "jurisdictionId": "@ke",
         "code": "ke/electoral-commission",
         "name": "Independent Electoral and Boundaries Commission",
-        "typeId": "@ke:itype:commission"
+        "typeId": "@ke:itype:commission",
+        "scopeGeoUnitId": "@ke:unit:ke"
       }
     },
     {
@@ -210,7 +211,8 @@
         "jurisdictionId": "@ke",
         "code": "ke/presidency",
         "name": "Presidency",
-        "typeId": "@ke:itype:commission"
+        "typeId": "@ke:itype:commission",
+        "scopeGeoUnitId": "@ke:unit:ke"
       }
     },
     {
@@ -220,7 +222,8 @@
         "institutionId": "@ke:inst:presidency",
         "code": "ke/president",
         "name": "President",
-        "isSingleton": true
+        "isSingleton": true,
+        "scopeGeoUnitId": "@ke:unit:ke"
       }
     },
     {
@@ -290,7 +293,8 @@
         "jurisdictionId": "@ke",
         "code": "ke/treasury",
         "name": "National Treasury",
-        "levelId": "@ke:level:country"
+        "levelId": "@ke:level:country",
+        "geoUnitId": "@ke:unit:ke"
       }
     },
     {
