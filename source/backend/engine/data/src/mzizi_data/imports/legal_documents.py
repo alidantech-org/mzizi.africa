@@ -67,6 +67,9 @@ def instrument_records(document: dict, segments: list[tuple[str, dict]]) -> tupl
             inst.append({**base, "instrumentCode": code, "title": content["title"], "kindCode": f"legal/instrument-kind/{KINDS[content['kind']]}", "issuerCode": issuer, "status": "draft" if content["kind"] == "bill" else "in_force", "validFrom": content.get("commencement"), "summary": content.get("actNumber"), "sections": content.get("sectionCount", 0), "documentTitle": document["title"]})
         elif kind == "notice":
             issue = content["issue"]
+            if not issue.get("volume") and document.get("skip_unknown_issue"):
+                notes.append(f"notice {content['noticeNumber']}: issue volume unreadable, not keyed")
+                continue
             vol = f"{issue['volume']}-{issue['number']}" if issue.get("volume") else "unknown-issue"
             code = f"ke/gazette-notice/{slug(vol)}/{content['noticeNumber']}"
             title = f"Gazette Notice No. {content['noticeNumber']}" + (f" (Vol. {issue['volume']}, No. {issue['number']})" if issue.get("volume") else "")
@@ -98,7 +101,7 @@ def stage_legal(conn: psycopg.Connection, store: LocalDirectoryStore, stage: str
     best: dict[str, tuple[dict, dict, list[dict], str, str]] = {}
     for row in rows:
         data = store.get(row["fv"])
-        document = {"id": row["id"], "title": row["title"], "url": row["url"], "hash": hashlib.sha256(data).hexdigest()}
+        document = {"id": row["id"], "title": row["title"], "url": row["url"], "hash": hashlib.sha256(data).hexdigest(), "skip_unknown_issue": "/server/api/" in (row["url"] or "")}  # OCR'd repository scans: a notice number alone is not a key
         job_id, created = pipeline.enqueue_extraction(conn, row["fv"], "legal-pdf", legal_pdf.EXTRACTOR.version, row["capture_id"])
         if not created and conn.execute("SELECT status FROM engine.jobs WHERE id = %s", (job_id,)).fetchone()["status"] != "succeeded":
             job_id, _ = pipeline.enqueue_extraction(conn, row["fv"], "legal-pdf", legal_pdf.EXTRACTOR.version, row["capture_id"], rerun=True)  # the extractor may have changed since the failed run
@@ -113,7 +116,8 @@ def stage_legal(conn: psycopg.Connection, store: LocalDirectoryStore, stage: str
         for d in getattr(result, "diagnostics", None) or []:
             if d.level == "error":
                 report["refused"].append({"url": row["url"], "why": d.message})
-        insts, provs, _notes = instrument_records(document, [(json.loads(s.content)["type"], json.loads(s.content)) for s in result.segments])
+        insts, provs, notes = instrument_records(document, [(json.loads(s.content)["type"], json.loads(s.content)) for s in result.segments])
+        report.setdefault("notes", []).extend(notes[:20])
         for inst in insts:
             mine = [p for p in provs if p["instrumentCode"] == inst["instrumentCode"]]
             current = best.get(inst["instrumentCode"])

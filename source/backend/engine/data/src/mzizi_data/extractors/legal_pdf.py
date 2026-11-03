@@ -29,9 +29,9 @@ TITLE_ACT = re.compile(r"^\s*(?:THE\s+)?([A-Z][A-Za-z0-9&,'\-\(\) ]{3,120}?\b(?:
 NOT_A_TITLE = {"PURSUANT", "PROVISIONS", "PROPOSAL", "ESTABLISHED", "COMMITTEE", "REPORT", "MEMORANDUM", "PAGE", "OF", "AND", "TO", "IN", "FOR", "BY", "ON", "THURSDAY", "WEDNESDAY", "TUESDAY", "MONDAY", "FRIDAY", "SECTION", "SECTIONS", "AMENDMENT", "THAT"}
 NUMBER_OF = re.compile(r"\bNo\.?\s*(\d{1,3})\s+of\s+((?:19|20)\d{2})\b", re.I)
 SECTION = re.compile(r"^\s*(\d{1,3})([A-Z]?)\.\s+(\S.*)$")
-NOTICE = re.compile(r"GAZETTE\s+NOTICE\s+NO\.?\s*(\d{1,5})", re.I)
-ISSUE = re.compile(r"Vol(?:ume)?\.?\s+([CXVIL]+)\s*[—–-]\s*No\.?\s*(\d+)", re.I)
-ISSUE_DATE = re.compile(rf"NAIROBI,?\s+(\d{{1,2}})(?:st|nd|rd|th)?\s+({MONTHS}),?\s+(\d{{4}})", re.I)
+NOTICE = re.compile(r"\bG[A-Za-z]{3,7}\s+N[A-Za-z\']{3,6}\s+No[.,]?\s*(\d{1,5})\b", re.I)  # tolerant of OCR noise ("Gnzurru Nortcu No. 8")
+ISSUE = re.compile(r"Vol(?:ume)?\.?\s+([CXVILU]+)\s*[—–\-\s]\s*No\.?\s*(\d+)", re.I)
+ISSUE_DATE = re.compile(rf"NAIROBI,?\s+(\d{{1,2}})(?:st|nd|rd|th)?\s+({MONTHS}),?\s*(\d{{4}})", re.I)
 MONTH_NUM = {m.lower(): i for i, m in enumerate(MONTHS.split("|"), 1)}
 
 
@@ -139,10 +139,13 @@ def parse(pages: list[str]) -> Output:
     lines = [ln for ln in (line.rstrip() for line in text.splitlines()) if ln.strip()]
     segments: list[dict] = []
     notices = list(NOTICE.finditer(text))
-    if len(notices) >= 1 and re.search(r"THE\s+KENYA\s+GAZETTE|GAZETTE\s+NOTICE", text, re.I):
+    is_gazette = bool(re.search(r"K[A-Z]NYA\W*\s*G[A-Z]Z\W?E?\W?T|GAZETTE\s+NOTICE|Published\s+by\s+Author", text[:3000], re.I))
+    if is_gazette and not notices:
+        return Output("failed", diagnostics=[_diag("error", "gazette_without_notices", "a Kenya Gazette issue whose notice numbers could not be read (legal notices or a supplement): not imported")])
+    if len(notices) >= 1 and is_gazette:
         issue = ISSUE.search(text)
         date = ISSUE_DATE.search(text)
-        issue_info = {"volume": issue.group(1).upper() if issue else None, "number": int(issue.group(2)) if issue else None, "date": _iso(date) if date else None}
+        issue_info = {"volume": issue.group(1).upper().replace("U", "V") if issue else None, "number": int(issue.group(2)) if issue else None, "date": _iso(date) if date else None}
         seen: set[str] = set()
         for k, m in enumerate(notices):
             number = m.group(1)
@@ -151,7 +154,7 @@ def parse(pages: list[str]) -> Output:
             seen.add(number)
             end = notices[k + 1].start() if k + 1 < len(notices) else len(text)
             body = _clean(text[m.end():end])[:6000]
-            segments.append({"key": f"notice-{number}", "kind": "record", "locator": json.dumps({"notice": number}), "content": json.dumps({"type": "notice", "noticeNumber": number, "issue": issue_info, "text": body}, sort_keys=True), "confidence": 0.8})
+            segments.append({"key": f"notice-{number}", "kind": "record", "locator": json.dumps({"notice": number}), "content": json.dumps({"type": "notice", "noticeNumber": number, "issue": issue_info, "text": body}, sort_keys=True), "confidence": 0.8 if not re.search(r"[^\x00-\x7f]|\bN[a-z]rtcu\b", body[:200]) else 0.6})
         diagnostics.append(_diag("info", "gazette_issue", f"{len(segments)} notices; issue {issue_info}"))
         if not issue_info["date"]:
             diagnostics.append(_diag("warning", "no_issue_date", "the issue date line was not recognised; notices carry no date"))
@@ -184,4 +187,4 @@ def run(data: bytes, profile: str | None) -> Output:
     return parse(read_pages(data))
 
 
-EXTRACTOR = register(Extractor("legal-pdf", "0.2.1", run))
+EXTRACTOR = register(Extractor("legal-pdf", "0.3.1", run))
