@@ -35,7 +35,7 @@ import psycopg
 from psycopg.types.json import Jsonb
 from rapidfuzz import fuzz
 
-CATALOGUE_VERSION = "1.0.0"
+CATALOGUE_VERSION = "1.1.0"  # 1.1.0: party_constitution no longer fires on any mention of the Registrar or the Political Parties Act (found on ORPP notices)
 CLASSIFIER_VERSION = f"layered-{CATALOGUE_VERSION}"
 ACCEPT = 0.55  # combined score needed to accept a kind
 MARGIN = 0.05  # the best kind must beat the runner-up by this much, else the document stays unclassified
@@ -89,7 +89,7 @@ CATALOGUE: tuple[Kind, ...] = (
          ("Invitation to Tender", "Tender Notice", "Request for Quotation", "Expression of Interest", "Prequalification of Suppliers")),
     Kind("party_constitution", "Party constitution", None, None,
          (r"party[-_ ]?constitution", r"constitution[-_ ]of[-_ ].*party", r"party[-_ ]?manifesto", r"nomination[-_ ]rules"),
-         (r"Constitution\s+of\s+the\s+[A-Z][\w\s]{2,60}Party", r"Political\s+Parties\s+Act", r"National\s+Delegates\s+Conference", r"Party\s+Constitution", r"Registrar\s+of\s+Political\s+Parties"),
+         (r"Constitution\s+of\s+the\s+[A-Z][\w\s]{2,60}Party", r"National\s+Delegates\s+Conference", r"Party\s+Constitution"),
          ("Party Constitution", "Constitution of the Party", "Party Nomination Rules")),
     Kind("financial_statement", "Financial statement", None, None,
          (r"financial[-_ ]statements?", r"\bfs[-_ ]?(?:19|20)\d{2}", r"annual[-_ ]report"),

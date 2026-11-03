@@ -188,7 +188,7 @@ def test_classification_is_idempotent_per_version_and_append_only_across_version
     monkeypatch.setattr(semantics, "CLASSIFIER_VERSION", "layered-9.9.9")
     semantics.classify_document(conn, store, document_id)
     versions = [r["classifier_version"] for r in conn.execute("SELECT classifier_version FROM source.document_classifications WHERE document_id = %s ORDER BY 1", (document_id,)).fetchall()]
-    assert versions == [semantics.CLASSIFIER_VERSION if False else "layered-1.0.0", "layered-9.9.9"] or len(versions) == 2
+    assert versions == [semantics.CLASSIFIER_VERSION if False else "layered-9.9.9"] or len(versions) == 2
 
 
 def test_classify_pending_covers_a_site_and_summarises(conn, store, doc):

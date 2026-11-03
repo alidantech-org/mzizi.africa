@@ -127,7 +127,7 @@ sections:
 - Validation (`structure/sections.py`) rejects unknown labels, a label declared twice, invalid regular expressions, unknown slots and unanchored regexes. `match_rule(sections, path)` returns the label, the matched rule and captured slot values.
 - Rule origin is `provenance` on the rule (method `custom-prepared`, `discovered`, `ai-proposed` or `reviewed`, plus label, ref and confidence), not a text source column. Rules found from crawled links are only proposals (`discovered` or `ai-proposed`) until reviewed.
 - Seeds for Kenyan families (county governments, assemblies, NG-CDF, ministries, commissions, regulators) are in `engine/database/fixtures/seed/ke-site-sections.json`, labelled "Custom-prepared from manual research". They are unverified hypotheses at low confidence; no site was contacted.
-- Recording each section's last visit, items found and matched rule needs a persistence table (for example `website.section_visits`) that the schema does not have yet. It is a recorded gap, not built in this lane; until it exists the matched rule is returned by `match_rule` and stored on the capture or check that used it.
+- Each section page expanded is recorded in `website.section_visits` (site, structure version, section label, rule index, page URL, depth, visited_at, items_found) by `crawl.py`; files are registered as `source.documents` (one per content hash) with a `website.document_sightings` row per URL (headers, size, leading section) and classified by `semantics.py` into `source.document_classifications`.
 
 ## Tags: giving data meaning
 
