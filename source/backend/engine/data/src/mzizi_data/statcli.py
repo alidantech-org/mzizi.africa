@@ -25,6 +25,12 @@ def register(sub: argparse._SubParsersAction) -> None:
     er.add_argument("--turnout", action="store_true", help="2013 only: stage county turnout (votes cast) from the book")
     er.add_argument("--store", default=".data/objects")
     er.add_argument("--report")
+    ir = sub.add_parser("import-election-results", help="stage candidates, seats, results and turnout for the 2013, 2017 (and fresh presidential), 2022 elections and the 2005 and 2010 referendums")
+    ir.add_argument("sources", nargs="+", choices=["2013", "2017", "2022", "referendums"])
+    ir.add_argument("--store", default=".data/objects")
+    ir.add_argument("--report")
+    ew = sub.add_parser("fetch-election-wiki", help="save the MediaWiki-API HTML of an election article through the gate")
+    ew.add_argument("title")
     dv = sub.add_parser("derive", help="compute a registered derived indicator from current inputs and stage it ('stale' lists derived values whose inputs were superseded)")
     dv.add_argument("formula")
     dv.add_argument("--store", default=".data/objects")
@@ -82,6 +88,23 @@ def dispatch(args: argparse.Namespace) -> int | None:
 
             Path(args.report).write_text(json.dumps(rep, indent=1))
         return 0
+    if args.command == "import-election-results":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import election_load
+
+        with connect() as conn:
+            res = election_load.stage_all(conn, LocalDirectoryStore(conn, args.store), args.sources, args.report)
+        print(json.dumps({k: v for k, v in res.items() if k not in ("flags", "unlinked")}, indent=1, default=str)[:6000])
+        print(f"flags: {len(res.get('flags', []))}, unlinked: {len(res.get('unlinked', []))}")
+        return
+    if args.command == "fetch-election-wiki":
+        from .db import connect
+        from .imports import election_wiki
+
+        with connect() as conn:
+            print(election_wiki.fetch_page(conn, args.title))
+        return
     if args.command == "import-iebc-register":
         from .imports import iebc_register
 
