@@ -1,0 +1,11 @@
+mapping: individual
+extractor: county-leaders-web
+target_kind: person.individuals
+key: [code]
+fields:
+  code:        { from: personCode }
+  displayName: { from: name }
+  lifeStatus:  { const: unknown }
+provenance:
+  locator: { row: $row }
+  method: extracted

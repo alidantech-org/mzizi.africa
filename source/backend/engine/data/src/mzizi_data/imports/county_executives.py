@@ -104,10 +104,14 @@ class Parties:
         text = re.sub(r"[^a-z0-9 ]", " ", text)
         return " ".join(re.sub(r"\b(party|of|kenya|the|and|for)\b", " ", text).split())
 
+    ALIASES = {"wiper democratic movement": "ke/party/wdm", "wiper democratic movement kenya": "ke/party/wdm"}
+
     def find(self, label: str | None) -> tuple[str | None, str]:
         if not label:
             return None, "no party stated"
         key = self.norm(label)
+        if key in self.ALIASES and not key in self.by:
+            return self.ALIASES[key], "alias"
         if key in self.by:
             return self.by[key], "exact"
         close = {self.by[k] for k in difflib.get_close_matches(key, list(self.by), n=3, cutoff=0.92)}
@@ -161,3 +165,41 @@ def import_county_executives(conn: psycopg.Connection, store: LocalDirectoryStor
         runs[name] = run_id
     conn.commit()
     return runs, stats, unlinked, len(records)
+
+
+def party_and_reason_ids(directory: Path) -> set[str]:
+    ids: set[str] = set()
+    for p in Path(directory).glob("*-*.json"):
+        for e in json.loads(p.read_text()).get("entities", {}).values():
+            for c in e.get("claims", {}).get("P102", []):
+                v = (c["mainsnak"].get("datavalue") or {}).get("value")
+                if v:
+                    ids.add(v["id"])
+            for c in e.get("claims", {}).get("P39", []):
+                for prop in ("P102", "P1534"):
+                    for q in c.get("qualifiers", {}).get(prop, []):
+                        v = (q.get("datavalue") or {}).get("value")
+                        if v:
+                            ids.add(v["id"])
+    return ids
+
+
+def build_labels(wm: Wikimedia, directory: Path) -> dict[str, str]:
+    """English labels of the party and departure-reason items the raw answers mention, written to labels.json beside them."""
+    labels = wm.entity_labels(sorted(party_and_reason_ids(directory)))
+    (Path(directory) / "labels.json").write_text(json.dumps(labels))
+    return labels
+
+
+def run_harvest(conn: psycopg.Connection, out: Path, rate: float = 0.2, only: set[str] | None = None) -> dict:
+    """Harvest governor and deputy governor holders from Wikidata through the gate (resumable: existing files are kept)."""
+    from .. import wikimedia
+    from ..fetch import live_fetcher
+
+    site = conn.execute("SELECT id FROM website.sites WHERE code = %s", (wikimedia.SITE_CODE,)).fetchone()
+    counties = [(r["code"], r["name"]) for r in conn.execute("SELECT u.code, u.name FROM geography.units u JOIN reference.classifications l ON l.id = u.level_id WHERE l.\"order\" = 1 AND u.is_current ORDER BY 1")]
+    fetcher = live_fetcher(conn, str(site["id"]), {"rate": {"requests_per_second": rate}, "limits": {"max_response_bytes": 8_000_000}}, robots_exempt_paths=wikimedia.API_PATHS)
+    wm = wikimedia.Wikimedia(fetcher.get)
+    report = harvest(wm, counties, out, only)
+    build_labels(wm, out)
+    return report

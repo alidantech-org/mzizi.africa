@@ -1,0 +1,12 @@
+mapping: holder
+extractor: county-leaders-web
+target_kind: governance.holders
+key: [officeId, personId]
+fields:
+  officeId: { from: officeCode, transform: [{ ref: { kind: governance.offices, field: code } }] }
+  personId: { from: personCode, transform: [{ ref: { kind: person.individuals, field: code } }] }
+  status:   { const: substantive }
+  isCurrent: { from: current }
+provenance:
+  locator: { row: $row }
+  method: extracted

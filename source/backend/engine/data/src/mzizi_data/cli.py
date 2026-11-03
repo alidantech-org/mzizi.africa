@@ -66,6 +66,11 @@ def main(argv: list[str] | None = None) -> int:
     ce.add_argument("directory")
     ce.add_argument("--stage", choices=["A", "B"], required=True)
     ce.add_argument("--store", default=".data/objects")
+    cl = sub.add_parser("import-county-leaders", help="stage deputy governors, secretaries, CEC members and speakers read from Wikipedia county pages and county sites")
+    cl.add_argument("--wiki-dir", default=".data/raw/county-wikipedia")
+    cl.add_argument("--sites-dir", default=".data/raw/county-sites")
+    cl.add_argument("--stage", choices=["A", "B"], required=True)
+    cl.add_argument("--store", default=".data/objects")
     ph = sub.add_parser("fetch-photos", help="fetch official portraits of listed members through the gate (slow: one request every 5 s)")
     ph.add_argument("directory")
     ph.add_argument("--site", default="ke/parliament")
@@ -301,6 +306,10 @@ def main(argv: list[str] | None = None) -> int:
         with connect() as conn:
             runs, stats, unlinked, n = county_executives.import_county_executives(conn, LocalDirectoryStore(conn, args.store), args.directory, labels, args.stage)
         print(f"{n} holder records")
+        if args.stage == "harvest":
+            with connect() as conn:
+                print(_json.dumps(county_executives.run_harvest(conn, _Path(args.directory)), default=str)[:2000])
+            return 0
         for name, stat in stats.items():
             print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {runs[name]})")
         for item in unlinked:
@@ -310,6 +319,21 @@ def main(argv: list[str] | None = None) -> int:
         from .db import connect
         from .fetch import live_fetcher
         from .files import LocalDirectoryStore
+    if args.command == "import-county-leaders":
+        from pathlib import Path as _P
+
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import county_leaders
+
+        with connect() as conn:
+            runs, stats, report, n = county_leaders.import_county_leaders(conn, LocalDirectoryStore(conn, args.store), _P(args.wiki_dir), _P(args.sites_dir), args.stage)
+        print(f"{n} leader records")
+        for name, stat in stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {runs[name]})")
+        for item in report:
+            print("report:", item)
+        return 0
         from .imports import photos
 
         with connect() as conn:
