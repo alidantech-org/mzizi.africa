@@ -6,9 +6,9 @@ import { satisfies } from "#/auth/roles";
 
 /**
  * Identifier schemes whose values are kept (they are published by the source) but are not served to the public:
- * published telephone numbers, emails and tax numbers. Reviewers and admins (pipeline.read) see them.
+ * tax numbers (published contacts are contact points, restricted by their own visibility). Reviewers and admins (pipeline.read) see them.
  */
-export const RESTRICTED_SCHEME_CODES = ["organization/identifier-scheme/kra-pin", "organization/identifier-scheme/contact-phone", "organization/identifier-scheme/contact-email"];
+export const RESTRICTED_SCHEME_CODES = ["organization/identifier-scheme/kra-pin"];
 
 export function mayReadRestricted(): boolean {
   const actor = currentActor();

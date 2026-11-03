@@ -1,0 +1,13 @@
+mapping: contact
+extractor: tenders-pe
+target_kind: contact.points
+key: [scopeId, channel, value]
+fields:
+  scopeKind:  { const: organization.entities }
+  scopeId:    { from: entityCode, transform: [{ ref: { kind: organization.entities, field: code } }] }
+  channel:    { from: channel }
+  value:      { from: value }
+  visibility: { const: restricted }
+provenance:
+  locator: { id: $id }
+  method: extracted

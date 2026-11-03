@@ -1,0 +1,13 @@
+mapping: occupancy
+extractor: tenders-pe
+target_kind: place.occupancies
+key: [subjectId, placeId]
+fields:
+  subjectKind: { const: organization.entities }
+  subjectId:   { from: entityCode, transform: [{ ref: { kind: organization.entities, field: code } }] }
+  placeId:     { from: placeRef }
+  roleId:      { from: roleRef }
+  status:      { const: active }
+provenance:
+  locator: { id: $id }
+  method: extracted

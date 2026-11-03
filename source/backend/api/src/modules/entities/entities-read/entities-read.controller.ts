@@ -19,9 +19,6 @@ import { Cookie } from "#/modules/common/server/http/cookie.decorator.ts";
 import { EntityIdentifierListQueryDto } from "#/modules/entities/dto/entity-identifier-list-query.dto.ts";
 import { EntityIdentifierResponseDto } from "#/modules/entities/dto/entity-identifier-response.dto.ts";
 import { EntityIdentifiersListResponseDto } from "#/modules/entities/dto/entity-identifiers-list-response.dto.ts";
-import { EntityLocationListQueryDto } from "#/modules/entities/dto/entity-location-list-query.dto.ts";
-import { EntityLocationResponseDto } from "#/modules/entities/dto/entity-location-response.dto.ts";
-import { EntityLocationsListResponseDto } from "#/modules/entities/dto/entity-locations-list-response.dto.ts";
 import { EntityOwnershipListQueryDto } from "#/modules/entities/dto/entity-ownership-list-query.dto.ts";
 import { EntityOwnershipResponseDto } from "#/modules/entities/dto/entity-ownership-response.dto.ts";
 import { EntityOwnershipsListResponseDto } from "#/modules/entities/dto/entity-ownerships-list-response.dto.ts";
@@ -41,15 +38,6 @@ export class EntitiesEntitiesReadController {
     @Query() input: EntityIdentifierListQueryDto,
   ): Promise<EntityIdentifiersListResponseDto> {
     return this.service.findEntityIdentifiers(input);
-  }
-
-
-  @Get("/v1/entities/locations")
-  @HttpCode(200)
-  findEntityLocations(
-    @Query() input: EntityLocationListQueryDto,
-  ): Promise<EntityLocationsListResponseDto> {
-    return this.service.findEntityLocations(input);
   }
 
 
@@ -77,15 +65,6 @@ export class EntitiesEntitiesReadController {
     @Param("identifierId") identifierId: string,
   ): Promise<EntityIdentifierResponseDto> {
     return this.service.getEntityIdentifierById({ identifierId });
-  }
-
-
-  @Get("/v1/entities/locations/:locationId")
-  @HttpCode(200)
-  getEntityLocationById(
-    @Param("locationId") locationId: string,
-  ): Promise<EntityLocationResponseDto> {
-    return this.service.getEntityLocationById({ locationId });
   }
 
 

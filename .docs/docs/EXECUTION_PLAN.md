@@ -21,7 +21,7 @@ Written 3 November 2026 after reconciling every open task. Task dependencies are
 | Lane | Tasks (in order) | Owns | Starts when |
 |---|---|---|---|
 | A domains | TSK-2FE5E3594E4C finish (design note, API reads, rename `source` to `origin`, drop note columns); TSK-998EC5BE2CBA backfill; TSK-41CD5EF36909 probe | `website.domains`, `domain_zones`, `dns_snapshots` | now |
-| H places and governance | TSK-2107BCCA74E8; TSK-AA0A323E646D; TSK-28DC592B1E17; TSK-0FDD5A808362; TSK-02CA35EA9ED1; TSK-EBA9E2370C55; TSK-4864E3B1AD5E | `place`, `contact`, `governance`, `civic`, `organization.locations` | now (contracts first) |
+| H places and governance | TSK-2107BCCA74E8; TSK-AA0A323E646D; TSK-28DC592B1E17; TSK-0FDD5A808362; TSK-02CA35EA9ED1; TSK-EBA9E2370C55; TSK-4864E3B1AD5E | `place`, `contact`, `governance`, `civic` | now (contracts first) |
 | B structures and crawler | TSK-E29DD2591768; TSK-C6D4EC067F97; TSK-C6EB48738A4D | website structure bundles, document registry | now (after A's migration lands) |
 | C parties and IEBC | TSK-A67F72A02702; TSK-FDB011601399; TSK-6E8B8BC93A82; TSK-84B0D19A895B | `political`, party and IEBC data | ORPP seed after H's catalogue, register after B's crawler |
 | D statistics | TSK-1F02AF48DAD0 then the other eight in dependency order | `statistical`, geography measurements | now |

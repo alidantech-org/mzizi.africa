@@ -1,0 +1,13 @@
+mapping: place
+extractor: tenders-pe
+target_kind: place.places
+key: [name, addressText]
+fields:
+  kind:            { const: site }
+  status:          { const: in_use }
+  name:            { from: name }
+  addressText:     { from: addressText }
+  locatedInUnitId: { from: geoUnitCode, transform: [{ ref: { kind: geography.units, field: code } }] }
+provenance:
+  locator: { id: $id }
+  method: extracted

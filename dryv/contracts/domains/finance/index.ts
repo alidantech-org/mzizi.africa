@@ -14,7 +14,7 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * methods and entity types are classification ids. Ledger entries reference their source record by
  * kind and id so spend can be traced from budget through commitment, payment and contract.
  */
-export const entities = dryv.group({ name: "entities" }).description("Legal entities, identifiers, ownership and locations.").tags("public", "entities")
+export const entities = dryv.group({ name: "entities" }).description("Legal entities, identifiers and ownership.").tags("public", "entities")
   .facets({ storage: { namespace: "organization" } });
 export const finance = dryv.group({ name: "finance" }).description("Fiscal years, budgets, transfers, revenue, expenditure and the ledger.").tags("public", "finance")
   .facets({ storage: { namespace: "finance" } });
@@ -110,17 +110,6 @@ const entityDetails = entities.schemas({
     },
     "ownerships",
     [{ name: "idx_entity_ownership_entity", fields: ["entityId"] }],
-  ),
-
-  EntityLocation: recorded(
-    {
-      entityId: relationTo(() => legalEntities.LegalEntity.field("id")),
-      geoUnitId: optionalId(),
-      kindId: optionalId(),
-      addressText: dryv.field(entityProperties.AddressText).optional().nullable(),
-    },
-    "locations",
-    [{ name: "idx_entity_location_entity", fields: ["entityId"] }],
   ),
 });
 
@@ -373,11 +362,10 @@ function register(group: any, feature: string, description: string, specs: Param
   return group.feature(feature).description(description).tags("public").operations(Object.assign({}, ...surfaces.map((surface) => surface.operations)));
 }
 
-export const entitiesReadOperations = register(entities, "EntitiesRead", "Public read access to legal entities, identifiers, ownership and locations.", [
+export const entitiesReadOperations = register(entities, "EntitiesRead", "Public read access to legal entities, identifiers and ownership.", [
   { singular: "LegalEntity", plural: "LegalEntities", itemKey: "entity", listKey: "entities", path: "/entities/legal-entities", idParam: "entityId", entity: legalEntities.LegalEntity, description: "legal entities", filters: { jurisdictionId: id(), status: dryv.field(entityProperties.EntityStatus).optional(), q: q() } },
   { singular: "EntityIdentifier", plural: "EntityIdentifiers", itemKey: "identifier", listKey: "identifiers", path: "/entities/identifiers", idParam: "identifierId", entity: entityDetails.EntityIdentifier, description: "entity identifiers", filters: { entityId: id(), schemeId: id() } },
   { singular: "EntityOwnership", plural: "EntityOwnerships", itemKey: "ownership", listKey: "ownerships", path: "/entities/ownerships", idParam: "ownershipId", entity: entityDetails.EntityOwnership, description: "entity ownerships", filters: { entityId: id(), ownerPersonId: id(), ownerEntityId: id() } },
-  { singular: "EntityLocation", plural: "EntityLocations", itemKey: "location", listKey: "locations", path: "/entities/locations", idParam: "locationId", entity: entityDetails.EntityLocation, description: "entity locations", filters: { entityId: id(), geoUnitId: id() } },
 ]);
 
 export const financeReadOperations = register(finance, "FinanceRead", "Public read access to fiscal years, budgets, transfers, revenue, expenditure and the ledger.", [

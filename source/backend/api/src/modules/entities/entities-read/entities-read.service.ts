@@ -2,9 +2,6 @@
 import type { EntityIdentifierListQueryDto } from "#/modules/entities/dto/entity-identifier-list-query.dto.ts";
 import type { EntityIdentifierResponseDto } from "#/modules/entities/dto/entity-identifier-response.dto.ts";
 import type { EntityIdentifiersListResponseDto } from "#/modules/entities/dto/entity-identifiers-list-response.dto.ts";
-import type { EntityLocationListQueryDto } from "#/modules/entities/dto/entity-location-list-query.dto.ts";
-import type { EntityLocationResponseDto } from "#/modules/entities/dto/entity-location-response.dto.ts";
-import type { EntityLocationsListResponseDto } from "#/modules/entities/dto/entity-locations-list-response.dto.ts";
 import type { EntityOwnershipListQueryDto } from "#/modules/entities/dto/entity-ownership-list-query.dto.ts";
 import type { EntityOwnershipResponseDto } from "#/modules/entities/dto/entity-ownership-response.dto.ts";
 import type { EntityOwnershipsListResponseDto } from "#/modules/entities/dto/entity-ownerships-list-response.dto.ts";
@@ -18,11 +15,9 @@ import type { LegalEntityResponseDto } from "#/modules/entities/dto/legal-entity
  */
 export abstract class EntitiesEntitiesReadService {
   abstract findEntityIdentifiers(input: EntityIdentifierListQueryDto): Promise<EntityIdentifiersListResponseDto>;
-  abstract findEntityLocations(input: EntityLocationListQueryDto): Promise<EntityLocationsListResponseDto>;
   abstract findEntityOwnerships(input: EntityOwnershipListQueryDto): Promise<EntityOwnershipsListResponseDto>;
   abstract findLegalEntities(input: LegalEntityListQueryDto): Promise<LegalEntitiesListResponseDto>;
   abstract getEntityIdentifierById(input: { identifierId: string }): Promise<EntityIdentifierResponseDto>;
-  abstract getEntityLocationById(input: { locationId: string }): Promise<EntityLocationResponseDto>;
   abstract getEntityOwnershipById(input: { ownershipId: string }): Promise<EntityOwnershipResponseDto>;
   abstract getLegalEntityById(input: { entityId: string }): Promise<LegalEntityResponseDto>;
 }

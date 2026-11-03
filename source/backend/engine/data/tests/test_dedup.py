@@ -41,3 +41,19 @@ def test_different_companies_stay_apart_and_clusters_follow_merged_pairs():
     matches = find_matches(recs, "organization")
     assert not any({m.left, m.right} == {"a", "b"} for m in matches)
     assert clusters(["a", "b", "c", "d"], [("a", "d"), ("d", "c")]) == {"a": ["a", "c", "d"]}
+
+
+def test_organisation_geography_comes_from_the_places_it_occupies(conn):
+    """An organisation's places are the units containing its occupied places (the place model replaced organization.locations)."""
+    from mzizi_data.dedup import load_organizations
+
+    import uuid
+
+    ids = {"jur": uuid.uuid4()}
+    cls, unit = uuid.uuid4(), uuid.uuid4()  # references between schemas are soft ids
+    ent = conn.execute("INSERT INTO organization.entities (code, official_name, entity_type_id, jurisdiction_id, status, is_current, created_at, updated_at, version) VALUES ('dd/1', 'Dedup Test School', %s, %s, 'active', true, now(), now(), 1) RETURNING id", (cls, ids["jur"])).fetchone()["id"]
+    place = conn.execute("INSERT INTO place.places (kind, status, name, located_in_unit_id, is_current, created_at, updated_at, version) VALUES ('site', 'in_use', 'Dedup Test School', %s, true, now(), now(), 1) RETURNING id", (unit,)).fetchone()["id"]
+    conn.execute("INSERT INTO place.occupancies (subject_kind, subject_id, place_id, role_id, status, is_current, created_at, updated_at, version) VALUES ('organization.entities', %s, %s, %s, 'active', true, now(), now(), 1)", (ent, place, cls))
+    record = next(r for r in load_organizations(conn) if r.id == str(ent))
+    assert record.places == {str(unit)}
+    conn.rollback()

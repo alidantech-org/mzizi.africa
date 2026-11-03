@@ -153,10 +153,12 @@ def load_organizations(conn: psycopg.Connection) -> list[Record]:
         rec = orgs.get(str(r["entity_id"]))
         if rec:
             rec.identifiers.add(re.sub(r"\W", "", r["value"]).upper())
-    for r in conn.execute("SELECT entity_id, geo_unit_id FROM organization.locations WHERE geo_unit_id IS NOT NULL"):
-        rec = orgs.get(str(r["entity_id"]))
+    # Where an organisation sits: the geography unit containing each place it occupies (place model, not a location table).
+    for r in conn.execute("""SELECT o.subject_id, p.located_in_unit_id FROM place.occupancies o JOIN place.places p ON p.id = o.place_id
+                              WHERE o.subject_kind = 'organization.entities' AND o.is_current AND p.is_current AND p.located_in_unit_id IS NOT NULL"""):
+        rec = orgs.get(str(r["subject_id"]))
         if rec:
-            rec.places.add(str(r["geo_unit_id"]))
+            rec.places.add(str(r["located_in_unit_id"]))
     return list(orgs.values())
 
 

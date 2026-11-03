@@ -376,24 +376,35 @@
     },
     {
       "entity": "ClassificationRecordEntity",
-      "key": "ke:organization:identifier-scheme:contact-phone",
+      "key": "ke:place:occupancy-role:school-campus",
       "values": {
         "jurisdictionId": "@ke",
-        "scheme": "organization/identifier-scheme",
-        "code": "organization/identifier-scheme/contact-phone",
-        "label": "published telephone",
+        "scheme": "place/occupancy-role",
+        "code": "place/occupancy-role/school-campus",
+        "label": "school campus",
         "order": 0
       }
     },
     {
       "entity": "ClassificationRecordEntity",
-      "key": "ke:organization:identifier-scheme:contact-email",
+      "key": "ke:place:occupancy-role:service-site",
       "values": {
         "jurisdictionId": "@ke",
-        "scheme": "organization/identifier-scheme",
-        "code": "organization/identifier-scheme/contact-email",
-        "label": "published email",
-        "order": 0
+        "scheme": "place/occupancy-role",
+        "code": "place/occupancy-role/service-site",
+        "label": "service site",
+        "order": 1
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:place:occupancy-role:official-workplace",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "place/occupancy-role",
+        "code": "place/occupancy-role/official-workplace",
+        "label": "official workplace",
+        "order": 2
       }
     },
     {

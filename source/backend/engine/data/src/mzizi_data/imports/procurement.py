@@ -6,7 +6,7 @@ issuer of tenders) and organisations (so schools, hospitals and agencies can be 
 county's geography unit; suppliers become organisations keyed by their portal id. Published contact details of public
 procuring entities are kept as identifiers; suppliers' contact points stay only in the preserved raw packages.
 
-Stages (each promoted before the next): A units and entities, B identifiers and locations, C tenders, D contracts.
+Stages (each promoted before the next): A units and entities, B identifiers, places and contact points, C tenders and occupancies (the occupancy refers to its promoted place), D contracts.
 """
 from __future__ import annotations
 
@@ -26,7 +26,8 @@ from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 from .members import slug
 
 MAPPINGS = _BUDGET_MAPPINGS.parent / "procurement"
-STAGES = {"A": ["pe_unit", "entity"], "B": ["identifier", "location"], "C": ["tender"], "D": ["contract"]}
+STAGES = {"A": ["pe_unit", "entity"], "B": ["identifier", "place", "contact"], "C": ["tender", "occupancy"], "D": ["contract"]}
+ROLE_BY_TYPE = {"school": "school-campus", "tertiary-institution": "school-campus", "hospital": "service-site"}
 METHODS = {"open": "open", "selective": "restricted", "direct": "direct"}
 KINDS = {"goods", "works", "services"}
 TYPE_RULES = [
@@ -181,15 +182,28 @@ def import_procurement(conn: psycopg.Connection, store: LocalDirectoryStore, pe_
         elif name == "identifier":
             for pe in pes.values():
                 held = contacts.get(str(pe["id"]), {})
-                for scheme, value in (("tenders-portal-id", str(pe["id"])), ("kra-pin", held.get("kra-pin")), ("contact-phone", held.get("contact-phone")), ("contact-email", held.get("contact-email"))):
+                for scheme, value in (("tenders-portal-id", str(pe["id"])), ("kra-pin", held.get("kra-pin"))):
                     if value:
                         add(pe["_capture"], pe["_result"], pe["_key"], {"id": pe["id"], "entityCode": pe["entityCode"], "schemeRef": cref(f"organization/identifier-scheme/{scheme}", jurisdiction), "value": value})
             for cap, res, key, rec in suppliers.values():
                 add(cap, res, key, {"id": rec["id"], "entityCode": rec["entityCode"], "schemeRef": cref("organization/identifier-scheme/tenders-portal-id", jurisdiction), "value": rec["id"]})
-        elif name == "location":
+        elif name == "contact":
+            # Published contact data of public procuring entities: contact points at entity scope, restricted from the public API.
+            for pe in pes.values():
+                held = contacts.get(str(pe["id"]), {})
+                for channel, scheme in (("phone", "contact-phone"), ("email", "contact-email")):
+                    if held.get(scheme):
+                        add(pe["_capture"], pe["_result"], pe["_key"], {"id": pe["id"], "entityCode": pe["entityCode"], "channel": channel, "value": held[scheme]})
+        elif name == "place":
             for pe in pes.values():
                 if pe["geoUnitCode"] or pe["addressText"]:
-                    add(pe["_capture"], pe["_result"], pe["_key"], pe)
+                    add(pe["_capture"], pe["_result"], pe["_key"], dict(pe, name=_fit(pe["name"], 300)))
+        elif name == "occupancy":
+            for pe in pes.values():
+                if pe["geoUnitCode"] or pe["addressText"]:
+                    place = {"$ref": {"kind": "place.places", "where": {"name": _fit(pe["name"], 300), "addressText": pe["addressText"]}}}
+                    role = ROLE_BY_TYPE.get(pe["typeRef"]["$ref"]["where"]["code"].rsplit("/", 1)[-1], "official-workplace")
+                    add(pe["_capture"], pe["_result"], pe["_key"], {"id": pe["id"], "entityCode": pe["entityCode"], "placeRef": place, "roleRef": cref(f"place/occupancy-role/{role}", jurisdiction)})
         elif name == "tender":
             for cap, res, key, rec in tenders.values():
                 add(cap, res, key, rec)
@@ -197,7 +211,7 @@ def import_procurement(conn: psycopg.Connection, store: LocalDirectoryStore, pe_
             for cap, res, key, rec in contracts.values():
                 add(cap, res, key, rec)
         for (cap, res), records in batches.items():
-            allowed = ["email", "phone", "national_id"] if name == "identifier" else []  # published contact data of public procuring entities
+            allowed = ["email", "phone", "national_id"] if name in ("identifier", "contact") else []  # published contact data of public procuring entities
             one = candidates.add_candidates(conn, run_id, mapping, records, res, allowed, [])
             for field in ("created", "unchanged", "superseding", "quarantined", "invalid"):
                 setattr(total, field, getattr(total, field) + getattr(one, field))

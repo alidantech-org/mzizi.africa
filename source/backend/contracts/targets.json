@@ -120,7 +120,6 @@
     "fields": [
       "code",
       "createdAt",
-      "geoUnitId",
       "id",
       "isActive",
       "isCurrent",
@@ -212,6 +211,33 @@
       "jurisdictionId",
       "name",
       "sectorId"
+    ]
+  },
+  "contact.points": {
+    "fields": [
+      "channel",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "label",
+      "scopeId",
+      "scopeKind",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "value",
+      "version",
+      "visibility"
+    ],
+    "required": [
+      "channel",
+      "isCurrent",
+      "scopeId",
+      "scopeKind",
+      "value",
+      "visibility"
     ]
   },
   "debt.disbursements": {
@@ -377,6 +403,38 @@
       "typeId"
     ]
   },
+  "electoral.electorates": {
+    "fields": [
+      "createdAt",
+      "declaredAt",
+      "declaringInstitutionId",
+      "electionId",
+      "evidenceForm",
+      "geoUnitId",
+      "id",
+      "isCurrent",
+      "registerVersion",
+      "registeredVoters",
+      "rejectedVotes",
+      "resultLevelId",
+      "resultStatus",
+      "seatId",
+      "spoiltVotes",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "validVotes",
+      "version",
+      "votesCast"
+    ],
+    "required": [
+      "electionId",
+      "isCurrent",
+      "resultLevelId"
+    ]
+  },
   "electoral.manifestos": {
     "fields": [
       "candidateId",
@@ -398,6 +456,79 @@
       "candidateId",
       "isCurrent",
       "title"
+    ]
+  },
+  "electoral.referendum_options": {
+    "fields": [
+      "code",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "label",
+      "position",
+      "questionId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "label",
+      "questionId"
+    ]
+  },
+  "electoral.referendum_questions": {
+    "fields": [
+      "code",
+      "createdAt",
+      "electionId",
+      "id",
+      "isCurrent",
+      "position",
+      "text",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "electionId",
+      "isCurrent",
+      "text"
+    ]
+  },
+  "electoral.referendum_results": {
+    "fields": [
+      "createdAt",
+      "declaredAt",
+      "declaringInstitutionId",
+      "evidenceForm",
+      "geoUnitId",
+      "id",
+      "isCurrent",
+      "optionId",
+      "resultLevelId",
+      "resultStatus",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version",
+      "votes"
+    ],
+    "required": [
+      "isCurrent",
+      "optionId",
+      "resultLevelId",
+      "votes"
     ]
   },
   "electoral.results": {
@@ -428,6 +559,35 @@
       "resultLevelId",
       "seatId",
       "votes"
+    ]
+  },
+  "electoral.seat_allocations": {
+    "fields": [
+      "allocatedOn",
+      "createdAt",
+      "declaringInstitutionId",
+      "electionId",
+      "geoUnitId",
+      "id",
+      "isCurrent",
+      "kind",
+      "listPosition",
+      "partyId",
+      "personId",
+      "seatId",
+      "seatsEntitled",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "electionId",
+      "isCurrent",
+      "kind",
+      "partyId"
     ]
   },
   "electoral.seats": {
@@ -832,6 +992,7 @@
       "levelId",
       "name",
       "parentUnitId",
+      "partyId",
       "updatedAt",
       "validFrom",
       "validFromPrecision",
@@ -964,6 +1125,8 @@
     "fields": [
       "code",
       "createdAt",
+      "emblemMarker",
+      "flagMarker",
       "id",
       "isActive",
       "isCurrent",
@@ -977,7 +1140,8 @@
       "validFromPrecision",
       "validTo",
       "validToPrecision",
-      "version"
+      "version",
+      "wikidataId"
     ],
     "required": [
       "code",
@@ -1021,19 +1185,22 @@
       "code",
       "createdAt",
       "description",
-      "geoUnitId",
+      "entityId",
       "id",
       "isCurrent",
       "jurisdictionId",
       "legalBasisId",
+      "logoMarker",
       "name",
+      "scopeGeoUnitId",
       "typeId",
       "updatedAt",
       "validFrom",
       "validFromPrecision",
       "validTo",
       "validToPrecision",
-      "version"
+      "version",
+      "wikidataId"
     ],
     "required": [
       "code",
@@ -1047,6 +1214,7 @@
     "fields": [
       "code",
       "createdAt",
+      "definitionCode",
       "description",
       "id",
       "institutionId",
@@ -1054,6 +1222,7 @@
       "isSingleton",
       "name",
       "parentOfficeId",
+      "scopeGeoUnitId",
       "updatedAt",
       "validFrom",
       "validFromPrecision",
@@ -1093,13 +1262,15 @@
   },
   "governance.relationships": {
     "fields": [
-      "childInstitutionId",
       "createdAt",
       "id",
       "isCurrent",
       "kind",
       "legalBasisId",
-      "parentInstitutionId",
+      "objectId",
+      "objectKind",
+      "subjectId",
+      "subjectKind",
       "updatedAt",
       "validFrom",
       "validFromPrecision",
@@ -1108,10 +1279,12 @@
       "version"
     ],
     "required": [
-      "childInstitutionId",
       "isCurrent",
       "kind",
-      "parentInstitutionId"
+      "objectId",
+      "objectKind",
+      "subjectId",
+      "subjectKind"
     ]
   },
   "governance.rules": {
@@ -1381,27 +1554,6 @@
       "value"
     ]
   },
-  "organization.locations": {
-    "fields": [
-      "addressText",
-      "createdAt",
-      "entityId",
-      "geoUnitId",
-      "id",
-      "isCurrent",
-      "kindId",
-      "updatedAt",
-      "validFrom",
-      "validFromPrecision",
-      "validTo",
-      "validToPrecision",
-      "version"
-    ],
-    "required": [
-      "entityId",
-      "isCurrent"
-    ]
-  },
   "organization.ownerships": {
     "fields": [
       "createdAt",
@@ -1492,12 +1644,14 @@
       "id",
       "isCurrent",
       "lifeStatus",
+      "portraitMarker",
       "updatedAt",
       "validFrom",
       "validFromPrecision",
       "validTo",
       "validToPrecision",
-      "version"
+      "version",
+      "wikidataId"
     ],
     "required": [
       "code",
@@ -1550,6 +1704,115 @@
     "required": [
       "isCurrent",
       "personId"
+    ]
+  },
+  "place.expectations": {
+    "fields": [
+      "basis",
+      "createdAt",
+      "facilityTypeId",
+      "id",
+      "isCurrent",
+      "maxCount",
+      "minCount",
+      "resolvedOccupancyId",
+      "roleId",
+      "scopeGeoUnitId",
+      "status",
+      "subjectId",
+      "subjectKind",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "basis",
+      "isCurrent",
+      "minCount",
+      "roleId",
+      "status",
+      "subjectId",
+      "subjectKind"
+    ]
+  },
+  "place.occupancies": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "placeId",
+      "roleId",
+      "status",
+      "subjectId",
+      "subjectKind",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "placeId",
+      "roleId",
+      "status",
+      "subjectId",
+      "subjectKind"
+    ]
+  },
+  "place.occupancy_links": {
+    "fields": [
+      "createdAt",
+      "id",
+      "isCurrent",
+      "kind",
+      "predecessorId",
+      "successorId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "kind",
+      "predecessorId",
+      "successorId"
+    ]
+  },
+  "place.places": {
+    "fields": [
+      "addressText",
+      "availableFrom",
+      "buildingTypeId",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "kind",
+      "latitude",
+      "locatedInUnitId",
+      "longitude",
+      "name",
+      "parentId",
+      "status",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "isCurrent",
+      "kind",
+      "name",
+      "status"
     ]
   },
   "political.alignments": {
@@ -1646,6 +1909,7 @@
       "id",
       "isCurrent",
       "jurisdictionId",
+      "logoMarker",
       "name",
       "registryAuthorityId",
       "registryIdentifier",
@@ -1656,7 +1920,8 @@
       "validFromPrecision",
       "validTo",
       "validToPrecision",
-      "version"
+      "version",
+      "wikidataId"
     ],
     "required": [
       "code",
@@ -1865,6 +2130,8 @@
     "fields": [
       "code",
       "createdAt",
+      "emblemExpected",
+      "flagExpected",
       "id",
       "isCurrent",
       "jurisdictionId",
@@ -1957,6 +2224,33 @@
     "required": [
       "documentId",
       "retrievedAt"
+    ]
+  },
+  "source.document_classifications": {
+    "fields": [
+      "classifiedAt",
+      "classifierVersion",
+      "createdAt",
+      "documentId",
+      "evidence",
+      "facts",
+      "id",
+      "kind",
+      "method",
+      "routeParser",
+      "routeStatus",
+      "score",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "classifiedAt",
+      "classifierVersion",
+      "documentId",
+      "kind",
+      "method",
+      "routeStatus",
+      "score"
     ]
   },
   "source.documents": {
@@ -2089,6 +2383,52 @@
       "title"
     ]
   },
+  "statistical.dimension_members": {
+    "fields": [
+      "code",
+      "createdAt",
+      "dimensionId",
+      "id",
+      "isCurrent",
+      "label",
+      "parentId",
+      "referenceCode",
+      "sortOrder",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "dimensionId",
+      "isCurrent",
+      "label"
+    ]
+  },
+  "statistical.dimensions": {
+    "fields": [
+      "code",
+      "createdAt",
+      "description",
+      "id",
+      "isCurrent",
+      "name",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "name"
+    ]
+  },
   "statistical.fields": {
     "fields": [
       "code",
@@ -2138,17 +2478,69 @@
       "name"
     ]
   },
+  "statistical.observation_derivations": {
+    "fields": [
+      "computation",
+      "createdAt",
+      "id",
+      "inputObservationId",
+      "inputRole",
+      "isCurrent",
+      "observationId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "computation",
+      "inputObservationId",
+      "isCurrent",
+      "observationId"
+    ]
+  },
+  "statistical.observation_dimensions": {
+    "fields": [
+      "createdAt",
+      "dimensionId",
+      "id",
+      "isCurrent",
+      "memberId",
+      "observationId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "dimensionId",
+      "isCurrent",
+      "memberId",
+      "observationId"
+    ]
+  },
   "statistical.observations": {
     "fields": [
       "columnId",
       "confidenceLevel",
       "createdAt",
+      "denominatorObservationId",
+      "denominatorValue",
+      "estimateKind",
       "geoUnitId",
       "id",
       "indicatorId",
       "isCurrent",
+      "marginOfError",
+      "measureType",
       "numericValue",
       "periodId",
+      "releaseLabel",
+      "standardError",
       "tableId",
       "textValue",
       "updatedAt",
@@ -2156,7 +2548,8 @@
       "validFromPrecision",
       "validTo",
       "validToPrecision",
-      "version"
+      "version",
+      "vintageId"
     ],
     "required": [
       "confidenceLevel",
@@ -2188,6 +2581,29 @@
       "granularity",
       "isCurrent",
       "startsOn"
+    ]
+  },
+  "statistical.vintages": {
+    "fields": [
+      "code",
+      "createdAt",
+      "id",
+      "isCurrent",
+      "label",
+      "publisherInstitutionId",
+      "releasedOn",
+      "supersedesId",
+      "updatedAt",
+      "validFrom",
+      "validFromPrecision",
+      "validTo",
+      "validToPrecision",
+      "version"
+    ],
+    "required": [
+      "code",
+      "isCurrent",
+      "label"
     ]
   },
   "website.assessments": {
@@ -2250,6 +2666,58 @@
       "siteId"
     ]
   },
+  "website.dns_snapshots": {
+    "fields": [
+      "createdAt",
+      "domainId",
+      "id",
+      "observedAt",
+      "rcode",
+      "recordType",
+      "resolver",
+      "updatedAt",
+      "values",
+      "version",
+      "zoneId"
+    ],
+    "required": [
+      "observedAt",
+      "recordType",
+      "values"
+    ]
+  },
+  "website.document_sightings": {
+    "fields": [
+      "captureId",
+      "contentHash",
+      "createdAt",
+      "depth",
+      "documentId",
+      "headers",
+      "httpStatus",
+      "id",
+      "pageUrl",
+      "ruleIndex",
+      "sectionLabel",
+      "seenAt",
+      "siteId",
+      "sizeBytes",
+      "structureVersionId",
+      "updatedAt",
+      "url",
+      "version"
+    ],
+    "required": [
+      "contentHash",
+      "depth",
+      "documentId",
+      "httpStatus",
+      "seenAt",
+      "siteId",
+      "sizeBytes",
+      "url"
+    ]
+  },
   "website.domain_patterns": {
     "fields": [
       "createdAt",
@@ -2273,27 +2741,53 @@
       "variables"
     ]
   },
+  "website.domain_zones": {
+    "fields": [
+      "createdAt",
+      "id",
+      "operator",
+      "parentSuffix",
+      "purpose",
+      "secondLevelOpen",
+      "suffix",
+      "updatedAt",
+      "version"
+    ],
+    "required": [
+      "suffix"
+    ]
+  },
   "website.domains": {
     "fields": [
       "createdAt",
       "hostname",
       "id",
+      "isApex",
+      "lastHttpStatus",
+      "lastProbeAt",
       "observedAt",
+      "origin",
+      "parentDomainId",
+      "redirectTo",
       "role",
       "scheme",
       "siteId",
+      "status",
+      "statusReason",
       "updatedAt",
       "validFrom",
       "validFromPrecision",
       "validTo",
       "validToPrecision",
-      "version"
+      "version",
+      "zoneId"
     ],
     "required": [
       "hostname",
       "role",
       "scheme",
       "siteId",
+      "status",
       "validFrom",
       "validFromPrecision"
     ]
@@ -2410,6 +2904,29 @@
       "relation",
       "toId",
       "toKind"
+    ]
+  },
+  "website.section_visits": {
+    "fields": [
+      "createdAt",
+      "depth",
+      "id",
+      "itemsFound",
+      "pageUrl",
+      "ruleIndex",
+      "sectionLabel",
+      "siteId",
+      "structureVersionId",
+      "updatedAt",
+      "version",
+      "visitedAt"
+    ],
+    "required": [
+      "depth",
+      "itemsFound",
+      "sectionLabel",
+      "siteId",
+      "visitedAt"
     ]
   },
   "website.site_publishers": {

@@ -7,9 +7,6 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 import { entityIdentifierListQueryExample } from "#/modules/entities/dto/entity-identifier-list-query.dto.example.ts";
 import { entityIdentifierResponseExample } from "#/modules/entities/dto/entity-identifier-response.dto.example.ts";
 import { entityIdentifiersListResponseExample } from "#/modules/entities/dto/entity-identifiers-list-response.dto.example.ts";
-import { entityLocationListQueryExample } from "#/modules/entities/dto/entity-location-list-query.dto.example.ts";
-import { entityLocationResponseExample } from "#/modules/entities/dto/entity-location-response.dto.example.ts";
-import { entityLocationsListResponseExample } from "#/modules/entities/dto/entity-locations-list-response.dto.example.ts";
 import { entityOwnershipListQueryExample } from "#/modules/entities/dto/entity-ownership-list-query.dto.example.ts";
 import { entityOwnershipResponseExample } from "#/modules/entities/dto/entity-ownership-response.dto.example.ts";
 import { entityOwnershipsListResponseExample } from "#/modules/entities/dto/entity-ownerships-list-response.dto.example.ts";
@@ -42,11 +39,9 @@ class InMemoryDataSourceModule {}
 
 const service = {
   findEntityIdentifiers: vi.fn(),
-  findEntityLocations: vi.fn(),
   findEntityOwnerships: vi.fn(),
   findLegalEntities: vi.fn(),
   getEntityIdentifierById: vi.fn(),
-  getEntityLocationById: vi.fn(),
   getEntityOwnershipById: vi.fn(),
   getLegalEntityById: vi.fn(),
 };
@@ -122,25 +117,6 @@ describe("GET /v1/entities/identifiers (findEntityIdentifiers)", () => {
   });
 });
 
-describe("GET /v1/entities/locations (findEntityLocations)", () => {
-  it("passes a valid request to the service and answers with the contract status", async () => {
-    const sent: Sent = {
-        params: { },
-        query: { ...queryOf(entityLocationListQueryExample.valid()), },
-        headers: { },
-      };
-    const result = entityLocationsListResponseExample.valid();
-    service.findEntityLocations.mockResolvedValue(result);
-
-    const response = await send("GET", "/v1/entities/locations", sent);
-
-    expect(response.status, await response.clone().text()).toBe(200);
-    expect(service.findEntityLocations).toHaveBeenCalledTimes(1);
-    expect(service.findEntityLocations).toHaveBeenCalledWith(expect.anything());
-    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
-  });
-});
-
 describe("GET /v1/entities/ownerships (findEntityOwnerships)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -194,25 +170,6 @@ describe("GET /v1/entities/identifiers/{identifierId} (getEntityIdentifierById)"
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getEntityIdentifierById).toHaveBeenCalledTimes(1);
     expect(service.getEntityIdentifierById).toHaveBeenCalledWith(expect.objectContaining({ identifierId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
-    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
-  });
-});
-
-describe("GET /v1/entities/locations/{locationId} (getEntityLocationById)", () => {
-  it("passes a valid request to the service and answers with the contract status", async () => {
-    const sent: Sent = {
-        params: { "locationId": "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11", },
-        query: { },
-        headers: { },
-      };
-    const result = entityLocationResponseExample.valid();
-    service.getEntityLocationById.mockResolvedValue(result);
-
-    const response = await send("GET", "/v1/entities/locations/{locationId}", sent);
-
-    expect(response.status, await response.clone().text()).toBe(200);
-    expect(service.getEntityLocationById).toHaveBeenCalledTimes(1);
-    expect(service.getEntityLocationById).toHaveBeenCalledWith(expect.objectContaining({ locationId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"), }));
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
