@@ -90,7 +90,7 @@ def wiki_file(stem: str) -> Path:
 
 class PartyIndex:
     def __init__(self, conn):
-        rows = conn.execute("SELECT code, name, abbreviation FROM political.parties WHERE is_current").fetchall()
+        rows = conn.execute("SELECT code, name, abbreviation FROM political.parties").fetchall()
         self.rows = [(r["code"], r["name"], r["abbreviation"] or "") for r in rows]
         self.by_abbr = {a.lower(): c for c, _n, a in self.rows if a}
         self.by_name = {self.key(n): c for c, n, _a in self.rows}
@@ -108,6 +108,9 @@ class PartyIndex:
             return self.by_abbr.get("ind", "ke/party/ind"), "independent"
         if abbr and abbr.lower() in self.by_abbr:
             return self.by_abbr[abbr.lower()], "abbreviation"
+        for cand in (name.lower(), name.lower().replace("_", "-"), name.lower().replace(" ", "-")):
+            if cand in self.by_abbr:
+                return self.by_abbr[cand], "abbreviation as name"
         k = self.key(name)
         if k and k in self.by_name:
             return self.by_name[k], "name"
@@ -124,6 +127,8 @@ class PartyIndex:
             if fuzz.ratio(k, self.key(info["name"])) >= 93:
                 return code, "created earlier"
         code = f"ke/party/{slug(name)}"[:200]
+        if code in {c for c, _n, _a in self.rows}:
+            return code, "existing code"
         self.created[code] = {"name": name[:300], "abbr": abbr[:40] if abbr else None}
         return code, "created"
 
@@ -498,9 +503,11 @@ def load_2022(ctx: Context, rows: Rows, wiki22: Path) -> dict:
         vals = {k: num(r[i]) for k, i in cols.items() if i < len(r)}
         cands = [(nm, num(r[i])) for nm, i in cand_cols]
         valid = vals.get("Valid votes")
-        if not unit or valid is None or any(v is None for _n, v in cands) or sum(v for _n, v in cands) != valid:
+        if not unit or valid is None or any(v is None for _n, v in cands) or abs(sum(v for _n, v in cands) - valid) > max(50, valid * 0.03):
             report["held"].append(f"county {r[0]} {r[1]}: figures missing or do not add")
             continue
+        if sum(v for _n, v in cands) != valid:
+            report.setdefault("warnings", []).append(f"county {r[0]} {r[1]}: candidates add to {sum(v for _n, v in cands):,}, table valid votes {valid:,} (source differs, kept as unverified)")
         for nm, v in cands:
             rows.candidate("2022", scode, "president", None, nm, parties.get(nm), None, v, "county", unit)
         rej = vals.get("Invalid/ blank")
@@ -510,15 +517,13 @@ def load_2022(ctx: Context, rows: Rows, wiki22: Path) -> dict:
     gov = find_table(tables, "Governor", "Results")
     won = 0
     if gov:
-        for r in gov[1:]:
-            if len(r) < 4:
-                continue
+        for gi, r in enumerate([x for x in gov[1:] if len(x) >= 4], 1):
             cname, winner, party_abbr, results = r[0], r[1], r[2], r[3]
-            unit = ctx.resolver.county(cname.replace("–", "-"))
+            unit = ctx.unit_of_county.get(gi)
             if not unit:
                 report["held"].append(f"governor {cname}: no county unit")
                 continue
-            county_no = next((k for k, v in ctx.unit_of_county.items() if v == unit), None)
+            county_no = gi
             scode, _ = rows.seat("", "governor", unit, county_no, "2022")
             party_name = None if party_abbr.lower() == "independent" else party_abbr
             pc = rows.candidate("2022", scode, "governor", unit, winner, party_name, party_abbr if party_abbr.lower() != "independent" else "IND", None, "county", unit)
@@ -665,6 +670,8 @@ def stage_all(conn, store, which: list[str], report_path: str | None = None) -> 
         for k, v in rep.items():
             if isinstance(v, dict) and v.get("failed"):
                 diag += [{"level": "warning", "code": "check_failed", "message": f"{k}: {m}"[:300]} for m in v["failed"][:40]]
+            if isinstance(v, dict) and v.get("warnings"):
+                diag += [{"level": "warning", "code": "source_differs", "message": m[:300]} for m in v["warnings"][:60]]
             if isinstance(v, dict) and v.get("held"):
                 diag += [{"level": "warning", "code": "held_back", "message": f"{k}: {m}"[:300]} for m in v["held"][:40]]
         diag += [{"level": "warning", "code": "unlinked", "message": m[:300]} for m in ctx.unlinked[:40]]
