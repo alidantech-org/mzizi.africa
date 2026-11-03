@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "label": "Custom-prepared from manual research",
+    "site": "ke/iebc",
+    "host": "www.iebc.or.ke",
+    "access": "Existing exact-host rule; 0.2 req/s through the gate; robots.txt read.",
+    "date": "2026-11-03"
+  },
+  "publications": [
+    {"type": "party-lists-2022", "urlPattern": "/resources/?Party_List,_2022 -> /uploads/resources/<random>.pdf", "format": "text PDF (Excel export, about 40 pages per party)", "count": 79, "carries": "nominees to National Assembly, Senate and county assemblies per party, with rank and county", "handling": "Also carries masked ID numbers, masked phones, addresses, ethnicity and disability categories. Only name, party, list, rank and county may be staged; the rest is never copied. Not loaded in this pass (see task note)."},
+    {"type": "registered-voters-2017-and-current", "urlPattern": "/registration/?stats and /docs/rov_per_*.pdf, /docs/Registered Voters Per * For 2017 General Elections.pdf", "format": "text PDF and XLSX", "handling": "Owned by the statistics electoral loader (iebc_register)."},
+    {"type": "general-election-2013-data", "urlPattern": "/docs/4TH MARCH 2013 GENERAL ELECTION DATA.pdf", "format": "large PDF (27 MB)", "handling": "Statistics electoral loader."},
+    {"type": "constituency-offices", "urlPattern": "/iebc/?constituency", "format": "text PDF, 22 pages, 290 constituencies", "handling": "Moved to the places research task; not loaded here."},
+    {"type": "boundary-delimitation", "urlPattern": "/resources/?Boundary_Delimitation", "format": "PDF list page", "handling": "Page not yet fetched; compare with geoBoundaries and HDX shapes once fetched."},
+    {"type": "commissioners", "urlPattern": "/iebc/?commissioners", "format": "HTML", "handling": "Loaded earlier (7 commissioners)."}
+  ]
+}

@@ -1,5 +1,5 @@
 ---
-{id: TSK-84B0D19A895B,name: "IEBC: aspirants, candidates, registers, boundaries and constituency offices, linked to geography",type: task,status: planned,priority: medium,created_at: 2026-11-02T20:02:42.066Z,updated_at: 2026-11-02T20:02:42.066Z,order: 4096}
+{id: TSK-84B0D19A895B,name: "IEBC: aspirants, candidates, registers, boundaries and constituency offices, linked to geography",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:02:42.066Z,updated_at: 2026-11-02T22:52:42.339Z,order: 4096,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:52:42.339Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-84B0D19A895B/1793659962342-start,started_at: 2026-11-02T22:52:43.229Z}]}}}
 ---
 
 # IEBC: aspirants, candidates, registers, boundaries and constituency offices, linked to geography
@@ -14,9 +14,14 @@ The IEBC site (`www.iebc.or.ke`, already assessed) publishes the commissioners, 
 
 ## Acceptance checklist
 
-- [ ] Inventory every IEBC publication, its format and URL pattern, and record the machine routes.
+- [x] Inventory every IEBC publication, its format and URL pattern, and record the machine routes.
 - [ ] Load the 290 constituency offices with locations linked to constituency units.
 - [ ] Load aspirants and candidates and match them to people and parties.
 - [ ] Load registered voters by area once the electorate table exists, with the register version.
 - [ ] Record IEBC boundary and delimitation documents and compare them with the loaded boundaries.
 - [ ] Report unmatched names and ambiguous matches for review.
+
+## Outcome (Lane C, 3 November 2026)
+
+- Inventory done: `fixtures/seed/ke-iebc-catalogue.json`. Constituency offices were left to the places research task as instructed. Voter registers and 2013 results are being loaded by the statistics electoral loader (`iebc_register`), so they are not duplicated here.
+- Not done: the 79 party-list PDFs (2022) were found and one sample read through the gate. They mix public facts with masked IDs, phones, addresses, ethnicity and disability categories; loading nominees as people needs an extractor that keeps only name, party, list, rank and county, and a decision on creating about thousands of name-only person rows (no auto-merge is possible without corroboration). Boundary delimitation documents were not fetched. Left for a follow-up.
