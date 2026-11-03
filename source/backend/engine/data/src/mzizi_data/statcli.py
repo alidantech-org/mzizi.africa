@@ -12,6 +12,10 @@ def register(sub: argparse._SubParsersAction) -> None:
     c = sub.add_parser("measure-compare-hdx", help="compare promoted county and constituency areas against the HDX COD-AB shapes")
     c.add_argument("--hdx-dir", default=".data/raw/geo/hdx/unzipped")
     c.add_argument("--threshold", type=float, default=0.05)
+    cn = sub.add_parser("import-census", help="stage the 2019 census Volume I counts (national, county, sub-county) from a fetched KNBS PDF after arithmetic checks")
+    cn.add_argument("file")
+    cn.add_argument("--store", default=".data/objects")
+    cn.add_argument("--report", help="write the linking and checking report as JSON")
     p = sub.add_parser("stats-promote", help="validate, review (agent account, rationale) and promote one staging run")
     p.add_argument("run_id")
     p.add_argument("rationale")
@@ -36,6 +40,20 @@ def dispatch(args: argparse.Namespace) -> int | None:
 
         with connect() as conn:
             print(json.dumps(measure.compare_hdx(conn, args.hdx_dir, args.threshold), indent=1))
+        return 0
+    if args.command == "import-census":
+        from .imports import census
+
+        with connect() as conn:
+            out = census.import_volume_1(conn, LocalDirectoryStore(conn, args.store), args.file)
+        for name, st in out["staged"].stats.items():
+            print(f"{name}: {st.created} new, {st.unchanged} unchanged, {st.invalid} invalid (run {out['staged'].runs[name]})")
+        rep = out["report"]
+        print(json.dumps({k: (v if not isinstance(v, list) else len(v)) for k, v in rep.items()}))
+        if args.report:
+            from pathlib import Path
+
+            Path(args.report).write_text(json.dumps(rep, indent=1))
         return 0
     if args.command == "stats-promote":
         from . import statload

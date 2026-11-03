@@ -81,7 +81,7 @@ def stage(conn: psycopg.Connection, store: LocalDirectoryStore, source: Source, 
     segments, index = [], []
     for g in groups:
         for n, row in enumerate(g.rows):
-            key = f"{g.name}-{n}"
+            key = str(row.pop("_seg", None) or f"{g.name}-{n}")[:180]
             index.append((g, key, row))
             segments.append({"key": key, "kind": "record", "locator": json.dumps({"group": g.name, "row": n}), "content": json.dumps(row, sort_keys=True, default=str), "confidence": 1})
     result, _stored = pipeline.store_result(store, source.ref, extractor, extractor_version, profile, "succeeded", segments, diagnostics or [{"level": "info", "code": "rows", "message": f"{len(segments)} rows"}], now, now, source.capture_id, source.document_id, {"dataset": dataset, "extractor": extractor})

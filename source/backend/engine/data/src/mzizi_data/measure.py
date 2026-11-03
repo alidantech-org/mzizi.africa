@@ -28,6 +28,14 @@ INDICATORS = {
 }
 
 
+def geodesic_km(conn: psycopg.Connection, geometry_json: str) -> tuple[float, float]:
+    """(area in km2, perimeter in km) of a GeoJSON geometry on the WGS84 ellipsoid, by the same expressions `compute` uses."""
+    row = conn.execute(
+        "SELECT ST_Area(g::geography) / 1e6 AS a, ST_Perimeter(g::geography) / 1000 AS p FROM (SELECT ST_SetSRID(ST_GeomFromGeoJSON(%s), 4326) AS g) t", (geometry_json,)
+    ).fetchone()
+    return float(row["a"]), float(row["p"])
+
+
 def compute(conn: psycopg.Connection) -> list[dict]:
     """One row per unit with a valid current shape. Areas below the shape's precision are not rounded here."""
     return conn.execute(
