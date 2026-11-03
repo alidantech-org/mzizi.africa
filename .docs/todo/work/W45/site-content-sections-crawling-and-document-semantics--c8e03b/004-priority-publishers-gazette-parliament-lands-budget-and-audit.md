@@ -1,5 +1,5 @@
 ---
-{id: TSK-2A15C7E9908D,name: "Priority publishers: Gazette, Parliament, Lands, Budget and Audit",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:24:23.076Z,updated_at: 2026-11-03T01:29:28.111Z,order: 4096,depends_on: [TSK-C6D4EC067F97],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:29:28.111Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-2A15C7E9908D/1793669368116-start,started_at: 2026-11-03T01:29:28.635Z}]}}}
+{id: TSK-2A15C7E9908D,name: "Priority publishers: Gazette, Parliament, Lands, Budget and Audit",type: task,status: completed,priority: medium,created_at: 2026-11-02T20:24:23.076Z,updated_at: 2026-11-03T06:12:14.205Z,order: 4096,depends_on: [TSK-C6D4EC067F97],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:29:28.111Z},{from: in-progress,to: completed,at: 2026-11-03T06:12:14.205Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-2A15C7E9908D/1793669368116-start,started_at: 2026-11-03T01:29:28.635Z,end_ref: refs/tracking/TSK-2A15C7E9908D/1793686334212-end,ended_at: 2026-11-03T06:12:14.205Z,summary: {files: 55,insertions: 20585,deletions: 1202}}]}}}
 ---
 
 # Priority publishers: Gazette, Parliament, Lands, Budget and Audit
