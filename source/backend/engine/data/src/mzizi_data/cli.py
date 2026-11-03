@@ -299,7 +299,7 @@ def main(argv: list[str] | None = None) -> int:
                 out["stats"] = {k: {f: getattr(v, f) for f in ("created", "unchanged", "invalid", "quarantined")} for k, v in res.stats.items()}
                 out["report"] = res.report
         if args.report:
-            Path(args.report).write_text(json.dumps(out, indent=1, default=str))
+            __import__("pathlib").Path(args.report).write_text(json.dumps(out, indent=1, default=str))
         print(json.dumps(out, indent=1, default=str)[:6000])
         return 0
     if args.command == "import-constitution":

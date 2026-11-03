@@ -55,7 +55,7 @@ def test_sections_that_skip_a_number_are_refused_and_the_instrument_is_kept():
     broken = [("4. Fund" if line == "3. Fund" else line) for line in ACT]
     out = legal_pdf.parse(pages(broken))
     assert out.status == "partial"
-    assert [s["kind"] for s in out.segments] == ["instrument"]
+    assert [json.loads(s["content"])["type"] for s in out.segments] == ["instrument"]
     assert any(d["code"] == "sections_refused" for d in out.diagnostics)
 
 
@@ -63,7 +63,7 @@ def test_a_bill_is_a_draft_with_a_year_in_its_title():
     out = legal_pdf.parse(pages(["THE POLITICAL PARTIES (AMENDMENT) BILL, 2024", "A Bill for an Act of Parliament", "1. This Act may be cited as the Political Parties (Amendment) Act, 2024.", "2. Section 2 is amended."]))
     inst = contents(out)["instrument"]
     assert (inst["kind"], inst["year"]) == ("bill", 2024)
-    records, provisions, _ = legal_documents.instrument_records({"url": "https://x.go.ke/a.pdf", "hash": "h", "title": "t"}, [(s["kind"], json.loads(s["content"])) for s in out.segments])
+    records, provisions, _ = legal_documents.instrument_records({"url": "https://x.go.ke/a.pdf", "hash": "h", "title": "t"}, [(json.loads(s["content"])["type"], json.loads(s["content"])) for s in out.segments])
     assert records[0]["status"] == "draft" and records[0]["kindCode"] == "legal/instrument-kind/bill" and records[0]["issuerCode"] is None
     assert provisions[0]["provisionCode"] == f"{records[0]['instrumentCode']}/s-1"
 
@@ -73,7 +73,7 @@ def test_an_act_is_linked_to_parliament_and_a_space_glyph_is_repaired():
     text, repaired = legal_pdf.repair("\n".join(["This!Act!may!be!cited!as!the!Example!Act, " * 1] * 40))
     assert repaired and "!" not in text
     out = legal_pdf.parse(pages(ACT))
-    records, _, _ = legal_documents.instrument_records({"url": "https://x.go.ke/a.pdf", "hash": "h", "title": "t"}, [(s["kind"], json.loads(s["content"])) for s in out.segments])
+    records, _, _ = legal_documents.instrument_records({"url": "https://x.go.ke/a.pdf", "hash": "h", "title": "t"}, [(json.loads(s["content"])["type"], json.loads(s["content"])) for s in out.segments])
     assert records[0]["instrumentCode"] == "ke/act/example-fund-act" and records[0]["issuerCode"] == "ke/parliament" and records[0]["status"] == "in_force"
     assert spaced  # kept for readability of the repair case
 
@@ -84,7 +84,7 @@ def test_a_gazette_issue_gives_one_notice_per_number_dated_by_the_issue():
     c = contents(out)
     assert sorted(c) == ["notice-4410", "notice-4411"]
     assert c["notice-4410"]["issue"] == {"date": "2026-05-05", "number": 45, "volume": "CXXVIII"}
-    records, provisions, _ = legal_documents.instrument_records({"url": "u", "hash": "h", "title": "t"}, [(s["kind"], json.loads(s["content"])) for s in out.segments])
+    records, provisions, _ = legal_documents.instrument_records({"url": "u", "hash": "h", "title": "t"}, [(json.loads(s["content"])["type"], json.loads(s["content"])) for s in out.segments])
     assert records[0]["instrumentCode"] == "ke/gazette-notice/cxxviii-45/4410" and records[0]["validFrom"] == "2026-05-05" and not provisions
 
 
@@ -98,3 +98,20 @@ def test_download_manager_links_count_as_files_and_the_stated_file_name_is_used(
     assert is_download_link("https://x.go.ke/a.pdf", {"pdf"}) and not is_download_link("https://cob.go.ke/download/report/", {"pdf"})
     assert disposition_name({"Content-Disposition": 'attachment; filename="Report%20Q1.pdf"'}) == "Report Q1.pdf"
     assert disposition_name({}) is None
+
+
+def test_a_download_manager_button_handler_is_read_as_a_file_link():
+    from mzizi_data.crawl import extract_links
+
+    html = b"""<a class='wpdm-download-link' href='#' onclick="location.href='https://cob.go.ke/download/r/?wpdmdl=14825';return false;">Download</a>"""
+    assert extract_links(html, "https://cob.go.ke/download/r/") == [("https://cob.go.ke/download/r/?wpdmdl=14825", "Download", False)]
+
+
+def test_an_order_paper_that_names_bills_is_not_an_instrument():
+    out = legal_pdf.parse(pages(["REPUBLIC OF KENYA", "THE NATIONAL ASSEMBLY", "ORDERS OF THE DAY", "THE REVENUE BILL, 2026", "Second Reading", "1. Administration of Oath"]))
+    assert out.status == "failed" and out.diagnostics[0]["code"] == "not_an_instrument"
+
+
+def test_a_sentence_that_ends_in_act_is_not_a_title():
+    out = legal_pdf.parse(pages(["Page 2 of 5", "and pursuant to the provisions of section 28 of the National Infrastructure Fund Act, 2026", "1. Something"]))
+    assert out.status == "failed" and out.diagnostics[0]["code"] == "no_title"

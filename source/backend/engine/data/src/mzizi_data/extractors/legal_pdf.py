@@ -2,7 +2,7 @@
 
 Data extraction only: it reads preserved bytes and proposes structure; nothing here decides what is canonical.
 
- * `instrument` segment (one per document unless it is a Gazette issue): title, kind (act, bill, regulation), year, the
+ * `instrument` record (one per document unless it is a Gazette issue): title, kind (act, bill, regulation), year, the
    "No. N of YYYY" number when printed, commencement date when printed.
  * `provision` segments: numbered sections. The arrangement-of-sections list is read first; the body is then read as the
    *last* run of consecutive section numbers starting at 1, so the contents list is never mistaken for the body. Section
@@ -25,7 +25,8 @@ from . import Extractor, Output, register
 MAX_PAGES = 1500
 MONTHS = "January|February|March|April|May|June|July|August|September|October|November|December"
 DATE = re.compile(rf"(\d{{1,2}})(?:st|nd|rd|th)?\s+({MONTHS}),?\s+(\d{{4}})", re.I)
-TITLE_ACT = re.compile(r"^\s*(?:THE\s+)?([A-Z][A-Za-z0-9&,'\-\(\) ]{3,120}?\b(?:ACT|BILL|REGULATIONS|RULES|ORDER))\s*,?\s*((?:19|20)\d{2})\b", re.I)
+TITLE_ACT = re.compile(r"^\s*(?:THE\s+)?([A-Z][A-Za-z0-9&,'\-\(\) ]{3,120}?\b(?:ACT|BILL|REGULATIONS|RULES|ORDER))\s*,?\s*((?:19|20)\d{2})\s*(?:\([^)]*\))?\s*$", re.I)
+NOT_A_TITLE = {"PURSUANT", "PROVISIONS", "PROPOSAL", "ESTABLISHED", "COMMITTEE", "REPORT", "MEMORANDUM", "PAGE", "OF", "AND", "TO", "IN", "FOR", "BY", "ON", "THURSDAY", "WEDNESDAY", "TUESDAY", "MONDAY", "FRIDAY", "SECTION", "SECTIONS", "AMENDMENT", "THAT"}
 NUMBER_OF = re.compile(r"\bNo\.?\s*(\d{1,3})\s+of\s+((?:19|20)\d{2})\b", re.I)
 SECTION = re.compile(r"^\s*(\d{1,3})([A-Z]?)\.\s+(\S.*)$")
 NOTICE = re.compile(r"GAZETTE\s+NOTICE\s+NO\.?\s*(\d{1,5})", re.I)
@@ -58,6 +59,12 @@ TITLE_NO_YEAR = re.compile(r"^\s*(?:THE\s+)?([A-Z][A-Z0-9&,'\-\(\) ]{8,150}?\bAC
 CAP = re.compile(r"\b(?:CHAPTER|CAP\.?)\s*(\d{1,3}[A-Z]?)\b")
 
 
+def plausible(name: str) -> bool:
+    """A title is short, starts with a name word and is not the middle of a sentence."""
+    words = re.sub(r"[^\w()'&\- ]", " ", name).split()
+    return 2 <= len(words) <= 16 and words[0].upper() not in NOT_A_TITLE and not any(w.upper() in {"PURSUANT", "PROVISIONS", "ESTABLISHED", "PROPOSAL", "THURSDAY", "WEDNESDAY", "TUESDAY", "MONDAY", "FRIDAY", "PAGE"} for w in words)
+
+
 def _name(raw: str) -> str:
     name = re.sub(r"\s+", " ", raw).strip().rstrip(",")
     if name.isupper():
@@ -67,16 +74,16 @@ def _name(raw: str) -> str:
 
 def find_title(lines: list[str]) -> tuple[str | None, int | None, str | None]:
     """Returns (title, year, kind) from the first lines of the document. Revised-edition Acts carry no year in the title (they carry a chapter number)."""
-    for i in range(min(len(lines), 60)):
+    for i in range(min(len(lines), 30)):
         for width in (1, 2, 3):  # titles often wrap onto two or three lines
             joined = re.sub(r"^LAWS OF KENYA\s+", "", " ".join(x.strip() for x in lines[i:i + width]))
             match = TITLE_ACT.match(joined)
-            if match and len(match.group(1).split()) >= 2:
+            if match and plausible(match.group(1)):
                 name = _name(match.group(1))
                 word = name.rsplit(" ", 1)[-1].upper()
                 return f"{name}, {match.group(2)}", int(match.group(2)), {"ACT": "act", "BILL": "bill"}.get(word, "regulation")
             match = TITLE_NO_YEAR.match(joined)
-            if match and len(match.group(1).split()) >= 3:
+            if match and plausible(match.group(1)) and len(match.group(1).split()) >= 3:
                 return _name(match.group(1)), None, "act"
     return None, None, None
 
@@ -108,7 +115,7 @@ def split_sections(lines: list[str]) -> tuple[list[dict], list[dict], list[str]]
     if arrangement and len(arrangement) != len(body):
         problems.append(f"arrangement lists {len(arrangement)} sections but the body has {len(body)}")
     last = body[-1]
-    skipped = [h for h in hits if h[0] > last[0] and last[1] < h[1] <= last[1] + 3]
+    skipped = [h for h in hits if h[0] > last[0] and h[1] == last[1] + 2 and not h[2]]  # a quoted 14A inside an amending Bill is not a missed section; a plain jump of two is
     if skipped:
         problems.append(f"numbering continues with section {skipped[0][1]}{skipped[0][2]} after section {last[1]}{last[2]} (a section was missed)")
     numbers = [int(s["number"].rstrip("ABCDEFGHIJKLMNOPQRSTUVWXYZ")) for s in sections]
@@ -144,11 +151,14 @@ def parse(pages: list[str]) -> Output:
             seen.add(number)
             end = notices[k + 1].start() if k + 1 < len(notices) else len(text)
             body = _clean(text[m.end():end])[:6000]
-            segments.append({"key": f"notice-{number}", "kind": "notice", "locator": json.dumps({"notice": number}), "content": json.dumps({"noticeNumber": number, "issue": issue_info, "text": body}, sort_keys=True), "confidence": 0.8})
+            segments.append({"key": f"notice-{number}", "kind": "record", "locator": json.dumps({"notice": number}), "content": json.dumps({"type": "notice", "noticeNumber": number, "issue": issue_info, "text": body}, sort_keys=True), "confidence": 0.8})
         diagnostics.append(_diag("info", "gazette_issue", f"{len(segments)} notices; issue {issue_info}"))
         if not issue_info["date"]:
             diagnostics.append(_diag("warning", "no_issue_date", "the issue date line was not recognised; notices carry no date"))
         return Output("succeeded", segments, diagnostics)
+    head = "\n".join(lines[:40]).upper()
+    if re.search(r"ORDERS? OF THE DAY|ORDER PAPER|OFFICIAL REPORT|\bHANSARD\b|PARLIAMENTARY DEBATES", head):
+        return Output("failed", diagnostics=[_diag("error", "not_an_instrument", "an order paper or Hansard report names Bills and Acts as business, it is not one")])
     title, year, kind = find_title(lines)
     if not title:
         return Output("failed", diagnostics=[_diag("error", "no_title", "no Act, Bill or regulation title recognised on the first page")])
@@ -160,12 +170,12 @@ def parse(pages: list[str]) -> Output:
             commencement = _iso(d)
             break
     sections, arrangement, problems = split_sections(lines)
-    segments.append({"key": "instrument", "kind": "instrument", "locator": json.dumps({"page": 1}), "content": json.dumps({"title": title, "year": year, "kind": kind, "actNumber": f"No. {number.group(1)} of {number.group(2)}" if number else None, "chapter": (CAP.search("\n".join(lines[:40])) or [None, None])[1], "commencement": commencement, "sectionCount": len(sections), "arrangementCount": len(arrangement)}, sort_keys=True), "confidence": 0.8})
+    segments.append({"key": "instrument", "kind": "record", "locator": json.dumps({"page": 1}), "content": json.dumps({"type": "instrument", "title": title, "year": year, "kind": kind, "actNumber": f"No. {number.group(1)} of {number.group(2)}" if number else None, "chapter": (CAP.search("\n".join(lines[:40])) or [None, None])[1], "commencement": commencement, "sectionCount": len(sections), "arrangementCount": len(arrangement)}, sort_keys=True), "confidence": 0.8})
     if problems:
         diagnostics.append(_diag("error", "sections_refused", "; ".join(problems) + "; provisions not emitted"))
     else:
         for s in sections:
-            segments.append({"key": f"s-{s['number']}", "kind": "provision", "locator": json.dumps({"section": s["number"]}), "content": json.dumps(s, sort_keys=True), "confidence": 0.85})
+            segments.append({"key": f"s-{s['number']}", "kind": "record", "locator": json.dumps({"section": s["number"]}), "content": json.dumps({"type": "provision", **s}, sort_keys=True), "confidence": 0.85})
         diagnostics.append(_diag("info", "sections_read", f"{len(sections)} sections (arrangement lists {len(arrangement)})"))
     return Output("partial" if problems else "succeeded", segments, diagnostics)
 
@@ -174,4 +184,4 @@ def run(data: bytes, profile: str | None) -> Output:
     return parse(read_pages(data))
 
 
-EXTRACTOR = register(Extractor("legal-pdf", "0.1.0", run))
+EXTRACTOR = register(Extractor("legal-pdf", "0.2.1", run))

@@ -176,6 +176,11 @@ def extract_links(html: bytes, base: str) -> list[tuple[str, str, bool]]:
         text = a.get_text(" ", strip=True)
         is_next = "next" in [str(r).lower() for r in (a.get("rel") or [])] or text.lower() in ("next", "next »", "»", "›", "older")
         links.append((absolute, text, is_next))
+    # WordPress Download Manager buttons are `<a href="#" onclick="location.href='…?wpdmdl=<id>'">`: the file link is in the handler
+    for tag in soup.find_all(attrs={"onclick": True}):
+        match = re.search(r"location\.href\s*=\s*['\"]([^'\"]*[?&]wpdmdl=\d+[^'\"]*)['\"]", str(tag["onclick"]))
+        if match and urlparse(urljoin(base, match.group(1))).scheme in ("http", "https"):
+            links.append((urljoin(base, match.group(1)), tag.get_text(" ", strip=True), False))
     return links
 
 

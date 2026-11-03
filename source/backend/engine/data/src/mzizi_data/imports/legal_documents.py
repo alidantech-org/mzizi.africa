@@ -1,6 +1,7 @@
 """Acts, Bills, regulations and Gazette notices from registered documents into the legal schema (TSK-2A15C7E9908D).
 
-Works on documents the section crawler registered and the semantics layer classified (kinds act, bill, gazette_notice):
+Works on documents the section crawler registered and the semantics layer classified (kinds act, bill, gazette_notice, and
+unclassified documents whose title or URL names an Act, Bill or regulations: the extractor refuses what is not one):
 the preserved bytes are read by the `legal-pdf` extractor job (so the extraction result is the staging provenance), then
 mapped to candidates. Stage A: instruments. Stage B (after A is promoted): provisions, only for instruments whose section
 checks passed (numbers consecutive, body agrees with the arrangement of sections).
@@ -22,6 +23,7 @@ import psycopg
 import yaml
 
 from .. import candidates, jobs, pipeline
+from ..extractors import legal_pdf
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
 from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
@@ -83,9 +85,10 @@ def stage_legal(conn: psycopg.Connection, store: LocalDirectoryStore, stage: str
     rows = conn.execute(
         """SELECT DISTINCT ON (d.id) d.id::text AS id, d.title, c.kind, k.id::text AS capture_id, k.file_version_id::text AS fv, k.retrieved_url AS url
              FROM source.documents d
-             JOIN source.document_classifications c ON c.document_id = d.id AND c.kind = ANY(%s)
+             JOIN source.document_classifications c ON c.document_id = d.id
              JOIN source.captures k ON k.document_id = d.id AND k.file_version_id IS NOT NULL
-        WHERE (%s::text[] IS NULL OR EXISTS (SELECT 1 FROM website.document_sightings s JOIN website.sites st ON st.id = s.site_id WHERE s.document_id = d.id AND st.code = ANY(%s)))
+        WHERE (c.kind = ANY(%s) OR (c.kind = 'unclassified' AND (d.title || ' ' || COALESCE(d.url, '')) ~* '(^|[^a-z])(act|bill|regulations|rules)([^a-z]|$)'))
+          AND (%s::text[] IS NULL OR EXISTS (SELECT 1 FROM website.document_sightings s JOIN website.sites st ON st.id = s.site_id WHERE s.document_id = d.id AND st.code = ANY(%s)))
         ORDER BY d.id, c.classified_at DESC, k.retrieved_at""",
         (list(DOCUMENT_KINDS), sites, sites),
     ).fetchall()
@@ -96,7 +99,9 @@ def stage_legal(conn: psycopg.Connection, store: LocalDirectoryStore, stage: str
     for row in rows:
         data = store.get(row["fv"])
         document = {"id": row["id"], "title": row["title"], "url": row["url"], "hash": hashlib.sha256(data).hexdigest()}
-        job_id, _ = pipeline.enqueue_extraction(conn, row["fv"], "legal-pdf", None, row["capture_id"])
+        job_id, created = pipeline.enqueue_extraction(conn, row["fv"], "legal-pdf", legal_pdf.EXTRACTOR.version, row["capture_id"])
+        if not created and conn.execute("SELECT status FROM engine.jobs WHERE id = %s", (job_id,)).fetchone()["status"] != "succeeded":
+            job_id, _ = pipeline.enqueue_extraction(conn, row["fv"], "legal-pdf", legal_pdf.EXTRACTOR.version, row["capture_id"], rerun=True)  # the extractor may have changed since the failed run
         conn.commit()
         while jobs.run_once(conn, handlers, worker="legal-import"):
             pass
@@ -108,7 +113,7 @@ def stage_legal(conn: psycopg.Connection, store: LocalDirectoryStore, stage: str
         for d in getattr(result, "diagnostics", None) or []:
             if d.level == "error":
                 report["refused"].append({"url": row["url"], "why": d.message})
-        insts, provs, _notes = instrument_records(document, [(s.kind, json.loads(s.content)) for s in result.segments])
+        insts, provs, _notes = instrument_records(document, [(json.loads(s.content)["type"], json.loads(s.content)) for s in result.segments])
         for inst in insts:
             mine = [p for p in provs if p["instrumentCode"] == inst["instrumentCode"]]
             current = best.get(inst["instrumentCode"])
