@@ -186,3 +186,59 @@ Coverage on `mzizi` after this run:
 
 Catalogue: `engine/database/fixtures/seed/ke-priority-publishers-catalogue.json` (custom-prepared from manual research), section families `ke/publisher/*` in `ke-site-sections.json`, Parliament linked to its institution in `ke-expected-sites.json`. All hosts are `.go.ke`; no exact-host rule was needed. Crawl outcomes on `mzizi` (bounded, gated, 0.2 req/s): Parliament 122 new documents (stopped at the 150-request budget; files over 25 MB skipped), Auditor-General 35 (apex host fails TLS, `www` is now primary), Controller of Budget about 116 (WordPress Download Manager: crawler reads `?wpdmdl=` links and `onclick` handlers, `--max-depth 3`), NLC 0 files (package pages expose no file link without JavaScript), Gazette blocked (`kenyagazette.go.ke` does not resolve in DNS; Kenya Law is never contacted).
 Legal import: extractor `legal-pdf`, importer `import-legal-documents` (stage A instruments, B provisions, `--flag-figures`). Promoted: 5 instruments (NG-CDF Act with 62 sections, Controller of Budget Act with 27, two Bills with 11 and 3, one Gazette notice without issue data) and 103 provisions. Budget, audit-report and financial-statement documents (84) carry an open `figures_review` gap (9 with extracted amounts); no figure is promoted. Instrument scope is the Kenya jurisdiction (no finer geography column exists). Known limits: the classifier labels many order papers as bills (the extractor refuses them); Hansard has no parser; Acts are `in_force` as published, repeals not applied.
+
+
+## Place research (lane H4, 3 November 2026, TSK-EBA9E2370C55 and TSK-4864E3B1AD5E)
+
+Rules and reasons are in `DEC-PLACE-RESEARCH` (`.docs/decisions/place-research.md`); the handoff is `.docs/handoffs/place-research-handoff.md`. A generated expectation is never evidence of a building.
+
+**IEBC constituency offices PDF** (`.data/raw/89f94eabaa4c-...pdf`, 22 pages): 293 rows read: 276 matched a constituency unit of their county by rapidfuzz (similarity at least 90, lead of at least 6), 6 are county-level offices linked to their county, 11 stay unlinked and are reported in `.data/reports/constituency-offices.json` (Garissa Township, Chuka/Igambang'ombe, Mbeere South, Mbeere North, Mwingi Central, Tindiret, Bureti, Sisiria, Homa Bay Town, Dagoretti North, Dagoretti South: the geography table spells these differently). 293 candidate places were created (site, address text and landmark, no point), each attributed to the preserved PDF capture with the page and row as locator. 280 were verified by the agent account (similarity 95 or more, or county office) and each got an occupancy of the IEBC institution scoped to that constituency or county; two matches between 90 and 95 are `under_review`. 280 expectations moved from `expected` to `identified`; 16 constituency and 41 county IEBC office expectations remain `expected`. NG-CDF offices (290) and MP seats (337) have no source naming a location and stay `expected`.
+
+**Landmark places** (seed `ke-landmark-places.json`, custom-prepared from manual research): 109 places and 110 occupancies for 16 national bodies' headquarters and 47 county governments and 47 county assemblies; all `unverified`, text addresses only, no expectation resolved.
+
+**Refills**: handlers `site_documents`, `wikidata_place` and `osm_nominatim` are registered through `register_refill`. Wikidata (through the gate at 0.2 requests a second) was run on a first batch of landmark gaps: 2 points found as proposed claims (State House, KEMRI headquarters), 8 not found, the rest of the 109 gaps returned to `open` (the run was stopped, not exhausted). **OpenStreetMap Nominatim is refused by its robots.txt**, so no OSM point exists; with a single Wikidata claim (trust 0.51) nothing is applied or resolved. `place-apply` applies only corroborated or trusted claims.
+
+**Duplicates**: 2,112 places scored, 700 pairs flagged in `engine.match_candidates` (kind `place`): 116 with a similar address or point, 584 name-only items capped at 0.7. Nothing merged.
+
+**Integrity** (`checkIntegrity`): new rules for places and occupancies without an attribution, expectations resolved by an unattributed or ended occupancy, pattern-generated rows that do not match their pattern's newest version, a person's contact that is not restricted, and a public contact without an attribution. The real database violates none of them. `resolveContact` no longer lends one occupant's contact to another.
+
+**Not done**: contact claims through the refill framework and a live contact import (no preserved document publishes a switchboard); a source-reading enrichment job for structures and spaces (the tested function `add_space` needs a source that names them).
+
+Coverage report (`place-coverage --markdown`, real database `mzizi`):
+
+| Measure | Count |
+|---|---:|
+| Places (current) | 2112 |
+| Places with a point | 0 |
+| Places with address text | 2112 |
+| Places linked to a geography unit | 2067 |
+| Structures, floors, wings, rooms (non-site places) | 0 |
+| Places with a building type | 0 |
+| Occupancies | 2137 (active 2137, moved 0, closed 0) |
+| Duplicate-place flags awaiting review | 700 |
+
+| Expectations by status | Count |
+|---|---:|
+| expected | 1393 |
+| identified | 280 |
+
+| Family | Status | Count |
+|---|---|---:|
+| county governments and assemblies | expected | 94 |
+| IEBC constituency offices | expected | 16 |
+| IEBC constituency offices | identified | 274 |
+| IEBC county offices | expected | 41 |
+| IEBC county offices | identified | 6 |
+| NG-CDF constituency offices | expected | 290 |
+| other institutions | expected | 615 |
+| seats and posts | expected | 337 |
+
+| Contact scope | Visibility | Count |
+|---|---|---:|
+| organization.entities | restricted | 3402 |
+| political.parties | restricted | 249 |
+
+| Place claim | Review | Count |
+|---|---|---:|
+| latitude | proposed | 2 |
+

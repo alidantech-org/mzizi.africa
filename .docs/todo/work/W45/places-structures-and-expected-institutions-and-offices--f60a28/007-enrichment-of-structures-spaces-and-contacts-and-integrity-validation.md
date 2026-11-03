@@ -1,5 +1,5 @@
 ---
-{id: TSK-4864E3B1AD5E,name: "Enrichment of structures, spaces and contacts, and integrity validation",type: task,status: planned,priority: medium,created_at: 2026-11-02T21:34:07.826Z,updated_at: 2026-11-02T21:34:18.133Z,order: 7168,depends_on: [TSK-EBA9E2370C55]}
+{id: TSK-4864E3B1AD5E,name: "Enrichment of structures, spaces and contacts, and integrity validation",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T21:34:07.826Z,updated_at: 2026-11-03T06:38:56.398Z,order: 7168,depends_on: [TSK-EBA9E2370C55],due_at: 2026-11-05,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T06:38:56.398Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-4864E3B1AD5E/1793687936402-start,started_at: 2026-11-03T06:38:57.345Z}]}}}
 ---
 
 # Enrichment of structures, spaces and contacts, and integrity validation
@@ -12,7 +12,7 @@ Once a place is identified, research adds structures, floors, wings and rooms on
 
 ## Acceptance checklist
 - [ ] Add enrichment jobs for structures, spaces and building types from sources.
-- [ ] Add scoped contact import with visibility and fallback tests.
-- [ ] Implement the integrity rules in the database engine and add failing-case tests.
-- [ ] Add a coverage report: places, occupancies and contacts known versus expected.
-- [ ] Update the documentation and write the next handoff.
+- [x] Add scoped contact import with visibility and fallback tests.
+- [x] Implement the integrity rules in the database engine and add failing-case tests.
+- [x] Add a coverage report: places, occupancies and contacts known versus expected.
+- [x] Update the documentation and write the next handoff.
