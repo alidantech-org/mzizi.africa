@@ -1,5 +1,5 @@
 ---
-{id: TSK-E22A8A227D4B,name: Statistical quality and reconciliation between sources,type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.713Z,updated_at: 2026-11-02T21:36:50.222Z,order: 9216,depends_on: [TSK-ACEF2C1816E2]}
+{id: TSK-E22A8A227D4B,name: Statistical quality and reconciliation between sources,type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:52.713Z,updated_at: 2026-11-03T01:24:49.988Z,order: 9216,depends_on: [TSK-ACEF2C1816E2],extra: {status_history: [{from: planned,to: completed,at: 2026-11-03T01:24:40.168Z},{from: completed,to: in-progress,at: 2026-11-03T01:24:49.988Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-E22A8A227D4B/1793669089990-start,started_at: 2026-11-03T01:24:50.510Z}]}}}
 ---
 
 # Statistical quality and reconciliation between sources
@@ -14,8 +14,8 @@ Different publishers count the same thing differently, use different reference d
 
 ## Acceptance checklist
 
-- [ ] Write the rule set (parent equals sum of children, plausibility bounds, cross-source tolerances, missing siblings).
-- [ ] Run the rules over every loaded dataset and store findings with the figures involved.
-- [ ] Add a review path for findings: accept, resolve or dispute, recorded against the deciding account.
-- [ ] Produce a per-source and per-level coverage and quality report in the status document.
-- [ ] Add tests with deliberately inconsistent fixture data.
+- [x] Write the rule set (parent equals sum of children, plausibility bounds, cross-source tolerances, missing siblings).
+- [x] Run the rules over every loaded dataset and store findings with the figures involved.
+- [x] Add a review path for findings: accept, resolve or dispute, recorded against the deciding account.
+- [x] Produce a per-source and per-level coverage and quality report in the status document.
+- [x] Add tests with deliberately inconsistent fixture data.

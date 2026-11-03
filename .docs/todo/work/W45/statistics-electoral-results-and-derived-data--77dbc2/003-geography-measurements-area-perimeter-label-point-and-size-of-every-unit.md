@@ -1,5 +1,5 @@
 ---
-{id: TSK-20EFD30E52E3,name: "Geography measurements: area, perimeter, label point and size of every unit",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:51.570Z,updated_at: 2026-11-02T22:33:14.749Z,order: 3072,depends_on: [TSK-1F02AF48DAD0],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:33:14.749Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-20EFD30E52E3/1793658794751-start,started_at: 2026-11-02T22:33:15.318Z}]}}}
+{id: TSK-20EFD30E52E3,name: "Geography measurements: area, perimeter, label point and size of every unit",type: task,status: completed,priority: medium,created_at: 2026-11-02T19:25:51.570Z,updated_at: 2026-11-03T01:24:38.433Z,order: 3072,depends_on: [TSK-1F02AF48DAD0],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T22:33:14.749Z},{from: in-progress,to: completed,at: 2026-11-03T01:24:38.433Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-20EFD30E52E3/1793658794751-start,started_at: 2026-11-02T22:33:15.318Z,end_ref: refs/tracking/TSK-20EFD30E52E3/1793669078440-end,ended_at: 2026-11-03T01:24:38.433Z,summary: {files: 398,insertions: 19699,deletions: 992}}]}}}
 ---
 
 # Geography measurements: area, perimeter, label point and size of every unit
@@ -14,9 +14,9 @@ Answer the question whether geography units know their size: they do not store i
 
 ## Acceptance checklist
 
-- [ ] Decide whether area lives in the statistical schema as an indicator (preferred) or as columns on boundaries.
-- [ ] Compute geodesic area and perimeter from boundary shapes in PostGIS for all 1,790 promoted units and store them with method and source.
-- [ ] Compare areas between geoBoundaries and HDX shapes and report disagreements above 5 percent.
-- [ ] Load the official county areas from the KNBS publications where available and keep both values with their sources.
-- [ ] Add a recomputation command that runs when a boundary is replaced.
-- [ ] Add tests with a square of known area on the equator and at a high latitude.
+- [x] Decide whether area lives in the statistical schema as an indicator (preferred) or as columns on boundaries.
+- [x] Compute geodesic area and perimeter from boundary shapes in PostGIS for all 1,790 promoted units and store them with method and source.
+- [x] Compare areas between geoBoundaries and HDX shapes and report disagreements above 5 percent.
+- [x] Load the official county areas from the KNBS publications where available and keep both values with their sources.
+- [x] Add a recomputation command that runs when a boundary is replaced.
+- [x] Add tests with a square of known area on the equator and at a high latitude.

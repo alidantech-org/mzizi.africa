@@ -1,5 +1,5 @@
 ---
-{id: TSK-ACEF2C1816E2,name: "Derived indicators: density, turnout, vote share and per capita measures",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.520Z,updated_at: 2026-11-02T21:36:50.056Z,order: 8192,depends_on: [TSK-20EFD30E52E3]}
+{id: TSK-ACEF2C1816E2,name: "Derived indicators: density, turnout, vote share and per capita measures",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:52.520Z,updated_at: 2026-11-03T01:24:43.649Z,order: 8192,depends_on: [TSK-20EFD30E52E3],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:24:43.649Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-ACEF2C1816E2/1793669083651-start,started_at: 2026-11-03T01:24:44.208Z}]}}}
 ---
 
 # Derived indicators: density, turnout, vote share and per capita measures
@@ -14,9 +14,9 @@ A derived value is not data from a source; it is a calculation with inputs, and 
 
 ## Acceptance checklist
 
-- [ ] Define a registry of formulas with identifiers, versions and required inputs.
-- [ ] Implement population density for every unit that has both area and population, for each census year.
+- [x] Define a registry of formulas with identifiers, versions and required inputs.
+- [x] Implement population density for every unit that has both area and population, for each census year.
 - [ ] Implement turnout, vote share and registered voters per population from the electoral tables.
-- [ ] Implement NG-CDF allocation per person and per square kilometre by financial year.
-- [ ] Recompute affected values when an input observation is superseded, and keep the old value as history.
+- [x] Implement NG-CDF allocation per person and per square kilometre by financial year.
+- [x] Recompute affected values when an input observation is superseded, and keep the old value as history.
 - [ ] Add tests for zero or missing denominators and for recomputation after a revision.

@@ -1,5 +1,5 @@
 ---
-{id: TSK-D4BDEB42D93E,name: "Catalogue of Kenyan statistical publishers, publications and machine routes",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:51.749Z,updated_at: 2026-11-02T19:25:51.749Z,order: 4096}
+{id: TSK-D4BDEB42D93E,name: "Catalogue of Kenyan statistical publishers, publications and machine routes",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:51.749Z,updated_at: 2026-11-03T01:24:40.418Z,order: 4096,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:24:40.418Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-D4BDEB42D93E/1793669080420-start,started_at: 2026-11-03T01:24:40.990Z}]}}}
 ---
 
 # Catalogue of Kenyan statistical publishers, publications and machine routes
@@ -14,8 +14,8 @@ The main publisher is the Kenya National Bureau of Statistics, which publishes t
 
 ## Acceptance checklist
 
-- [ ] Register the publisher sites (knbs.or.ke, opendata.go.ke, communications authority, CRA, central bank, HDX, DHS programme, WorldPop) in the site registry.
-- [ ] List each publication with period, geography level, format, route and licence in a seed JSON labelled as custom-prepared from manual research.
+- [x] Register the publisher sites (knbs.or.ke, opendata.go.ke, communications authority, CRA, central bank, HDX, DHS programme, WorldPop) in the site registry.
+- [x] List each publication with period, geography level, format, route and licence in a seed JSON labelled as custom-prepared from manual research.
 - [ ] Probe each registered site through the gate for machine routes (bulk files, APIs, CKAN or OCDS-like endpoints).
 - [ ] Record robots.txt, terms and licence findings per site and assess them.
-- [ ] Add the catalogue to the status document and hand each loader task its approved sources.
+- [x] Add the catalogue to the status document and hand each loader task its approved sources.

@@ -1,5 +1,5 @@
 ---
-{id: TSK-1DDA156356D5,name: "Population: 2019 census counts for every county, constituency and ward",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:51.954Z,updated_at: 2026-11-02T21:36:49.514Z,order: 5120,depends_on: [TSK-D4BDEB42D93E]}
+{id: TSK-1DDA156356D5,name: "Population: 2019 census counts for every county, constituency and ward",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:51.954Z,updated_at: 2026-11-03T01:24:41.214Z,order: 5120,depends_on: [TSK-D4BDEB42D93E],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:24:41.214Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-1DDA156356D5/1793669081216-start,started_at: 2026-11-03T01:24:41.780Z}]}}}
 ---
 
 # Population: 2019 census counts for every county, constituency and ward
@@ -14,9 +14,9 @@ This is the base for every rate in the platform: density, per capita funding for
 
 ## Acceptance checklist
 
-- [ ] Design the dataset and indicator records for census population (total, male, female, intersex, households, average household size).
+- [x] Design the dataset and indicator records for census population (total, male, female, intersex, households, average household size).
 - [ ] Load national and county totals from the primary KNBS source and cross-check them against the HDX figures.
 - [ ] Load constituency and ward counts and match them to geography units with a report of unmatched names.
-- [ ] Check that children sum to their parents and the national total is correct; report every difference.
-- [ ] Promote through the staging and review path with attributions to the KNBS documents.
-- [ ] Add loader tests with a small census table fixture, including a table that does not add up.
+- [x] Check that children sum to their parents and the national total is correct; report every difference.
+- [x] Promote through the staging and review path with attributions to the KNBS documents.
+- [x] Add loader tests with a small census table fixture, including a table that does not add up.

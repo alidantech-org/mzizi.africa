@@ -1,5 +1,5 @@
 ---
-{id: TSK-4C1014E51336,name: "Population breakdowns: ethnic community, religion, education, ICT access and economy",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.135Z,updated_at: 2026-11-02T21:36:49.686Z,order: 6144,depends_on: [TSK-1DDA156356D5]}
+{id: TSK-4C1014E51336,name: "Population breakdowns: ethnic community, religion, education, ICT access and economy",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:52.135Z,updated_at: 2026-11-03T01:24:42.050Z,order: 6144,depends_on: [TSK-1DDA156356D5],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:24:42.050Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-4C1014E51336/1793669082052-start,started_at: 2026-11-03T01:24:42.615Z}]}}}
 ---
 
 # Population breakdowns: ethnic community, religion, education, ICT access and economy
@@ -14,9 +14,9 @@ These are the multi-dimensional figures that need the dimension design to land f
 
 ## Acceptance checklist
 
-- [ ] Map each source table's categories to dimension members, keeping the original labels and recording definition changes between censuses.
+- [x] Map each source table's categories to dimension members, keeping the original labels and recording definition changes between censuses.
 - [ ] Load ethnic community and nationality by county from the census volume.
-- [ ] Load religion by county, then age and sex distributions.
+- [x] Load religion by county, then age and sex distributions.
 - [ ] Load education, disability and ICT access (internet, mobile, computer) by county and by lower levels where published.
 - [ ] Load economic indicators (employment, poverty, income, county fiscal and marginalisation measures) with their surveys and years.
 - [ ] Add a note on sensitivity to the status document and a rule that these tables are published only as group counts.

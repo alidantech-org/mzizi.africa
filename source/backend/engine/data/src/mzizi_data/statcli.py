@@ -30,6 +30,9 @@ def register(sub: argparse._SubParsersAction) -> None:
     q = sub.add_parser("quality", help="run the statistical quality rules and store findings, or report; 'decide <finding> <accept|resolve|dispute> <rationale>' records a decision by the agent account")
     q.add_argument("action", choices=["run", "report", "decide"])
     q.add_argument("rest", nargs="*")
+    c4 = sub.add_parser("import-census-vol4", help="stage census Volume IV religion and ICT county tables (group counts) after arithmetic checks")
+    c4.add_argument("file")
+    c4.add_argument("--store", default=".data/objects")
     p = sub.add_parser("stats-promote", help="validate, review (agent account, rationale) and promote one staging run")
     p.add_argument("run_id")
     p.add_argument("rationale")
@@ -101,6 +104,13 @@ def dispatch(args: argparse.Namespace) -> int | None:
                 print(json.dumps(quality.report(conn), indent=1, default=str))
             else:
                 print(quality.decide(conn, args.rest[0], statload.AGENT_ACCOUNT, args.rest[1], args.rest[2]))
+        return 0
+    if args.command == "import-census-vol4":
+        from .imports import census_breakdowns
+
+        with connect() as conn:
+            rep = census_breakdowns.import_volume_4(conn, LocalDirectoryStore(conn, args.store), args.file)
+        print(json.dumps(rep, indent=1, default=str)[:3500])
         return 0
     if args.command == "stats-promote":
         from . import statload

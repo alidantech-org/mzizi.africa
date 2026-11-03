@@ -1,5 +1,5 @@
 ---
-{id: TSK-074A0071405E,name: "Electoral loader: registered voters and results for 2013, 2017 and 2022",type: task,status: planned,priority: medium,created_at: 2026-11-02T19:25:52.319Z,updated_at: 2026-11-02T21:36:49.876Z,order: 7168,depends_on: [TSK-D4BDEB42D93E]}
+{id: TSK-074A0071405E,name: "Electoral loader: registered voters and results for 2013, 2017 and 2022",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:52.319Z,updated_at: 2026-11-03T01:24:42.868Z,order: 7168,depends_on: [TSK-D4BDEB42D93E],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:24:42.868Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-074A0071405E/1793669082870-start,started_at: 2026-11-03T01:24:43.427Z}]}}}
 ---
 
 # Electoral loader: registered voters and results for 2013, 2017 and 2022
@@ -14,9 +14,9 @@ IEBC publishes the register by county, constituency and ward, and results by pol
 
 ## Acceptance checklist
 
-- [ ] Probe the IEBC site and results portal for downloadable data and record the routes.
+- [x] Probe the IEBC site and results portal for downloadable data and record the routes.
 - [ ] Load elections, seats and candidates for 2013, 2017 and 2022, linking persons through the matching system.
-- [ ] Load registered voters and turnout rows per area and election.
+- [x] Load registered voters and turnout rows per area and election.
 - [ ] Load results at the lowest published level and check each roll-up against the next level.
 - [ ] Record the supporting forms and declarations as source documents.
 - [ ] Add loader tests, including a result table that does not reconcile.
