@@ -30,6 +30,7 @@ import { packageRoot, entitySchemas, engineSchemas, bookkeepingSchema, openDataS
 import { advanceDossier, autoAssess, decideAssessment, draftAssessment, type AssessmentOutcome } from "./assessments.ts";
 import { seedStatisticalCatalogue } from "./catalogue.ts";
 import { checkIntegrity } from "./integrity.ts";
+import { seedGovernanceCatalogue } from "./governance-catalogue.ts";
 import { backfillScope } from "./scope.ts";
 import { backfillGovernance } from "./governance-backfill.ts";
 import { migrateLocations } from "./location-migration.ts";
@@ -120,6 +121,10 @@ switch (command) {
     }
     if (kind === "expected-sites") {
       console.log(JSON.stringify(await withDb({}, (db) => seedExpectedSites(db))));
+      break;
+    }
+    if (kind === "governance-catalogue") {
+      console.log(JSON.stringify(await withDb({}, (db) => seedGovernanceCatalogue(db))));
       break;
     }
     if (kind === "governance-structure") {
