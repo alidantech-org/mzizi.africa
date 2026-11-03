@@ -308,6 +308,14 @@
       ]
     },
     {
+      "code": "ke/parliament-library",
+      "institution": "ke/parliament",
+      "name": "Parliament of Kenya library repository (DSpace; holds Kenya Gazette issues)",
+      "hosts": [
+        "libraryir.parliament.go.ke"
+      ]
+    },
+    {
       "code": "ke/parliamentary-service-commission",
       "institution": "ke/parliamentary-service-commission",
       "name": "Parliamentary Service Commission",

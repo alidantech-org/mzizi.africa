@@ -143,6 +143,18 @@ def main(argv: list[str] | None = None) -> int:
     cs.add_argument("--max-file-mb", type=int, default=25)
     cs.add_argument("--raw-dir", help="also keep raw bytes with a provenance file beside each")
     cs.add_argument("--store", default=".data/objects")
+    sg = sub.add_parser("import-sittings", help="stage Hansard reports and order papers as calendar events (parliamentary sittings)")
+    sg.add_argument("--site", action="append")
+    sg.add_argument("--limit", type=int)
+    sg.add_argument("--report")
+    sg.add_argument("--store", default=".data/objects")
+    dh = sub.add_parser("harvest-dspace", help="harvest PDFs of a DSpace 7 repository through its REST API, gated and bounded")
+    dh.add_argument("--site", required=True)
+    dh.add_argument("--query", required=True)
+    dh.add_argument("--seed-family", required=True)
+    dh.add_argument("--max-requests", type=int, default=120)
+    dh.add_argument("--max-file-mb", type=int, default=60)
+    dh.add_argument("--store", default=".data/objects")
     cd = sub.add_parser("classify-documents", help="classify registered documents (URL, text, fuzzy title), route to parsers, queue unclassified ones as gaps")
     cd.add_argument("--site")
     cd.add_argument("--limit", type=int)
@@ -471,6 +483,28 @@ def main(argv: list[str] | None = None) -> int:
             config = crawl.CrawlConfig(max_depth=args.max_depth, max_requests=args.max_requests, max_pages_per_section=args.max_pages_per_section, max_file_bytes=args.max_file_mb * 1024 * 1024, raw_dir=Path(args.raw_dir) if args.raw_dir else None)
             report = crawl.crawl_site(conn, store, live_fetcher, args.site, config, args.seed_family, log=lambda m: print(m, flush=True))
         print(json.dumps({**report.to_json(), "skipped_sample": report.skipped[:15], "errors_sample": report.errors[:10]}, indent=1, default=str))
+        return 0
+    if args.command == "import-sittings":
+        from .db import connect
+        from .files import LocalDirectoryStore
+        from .imports import sittings
+
+        with connect() as conn:
+            res = sittings.stage_sittings(conn, LocalDirectoryStore(conn, args.store), args.site, args.limit)
+        out = {"run": res.run, "stats": res.stats, "report": res.report}
+        if args.report:
+            __import__("pathlib").Path(args.report).write_text(json.dumps(out, indent=1, default=str))
+        print(json.dumps({"run": res.run, "stats": res.stats, "documents": res.report["documents"], "refused": len(res.report["refused"]), "events": len(res.report["events"])}))
+        return 0
+    if args.command == "harvest-dspace":
+        from . import dspace
+        from .db import connect
+        from .fetch import live_fetcher
+        from .files import LocalDirectoryStore
+
+        with connect() as conn:
+            out = dspace.harvest(conn, LocalDirectoryStore(conn, args.store), live_fetcher, args.site, args.query, args.seed_family, args.max_requests, max_file_mb=args.max_file_mb, log=lambda m: print(m, flush=True))
+        print(json.dumps(out, indent=1, default=str))
         return 0
     if args.command == "classify-documents":
         from . import semantics

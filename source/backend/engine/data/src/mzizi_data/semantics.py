@@ -35,7 +35,7 @@ import psycopg
 from psycopg.types.json import Jsonb
 from rapidfuzz import fuzz
 
-CATALOGUE_VERSION = "1.1.0"  # 1.1.0: party_constitution no longer fires on any mention of the Registrar or the Political Parties Act (found on ORPP notices)
+CATALOGUE_VERSION = "1.2.0"  # 1.2.0: order papers and Hansard are recognised from their heading and no longer labelled as the Bills and Acts they list;  # 1.1.0: party_constitution no longer fires on any mention of the Registrar or the Political Parties Act (found on ORPP notices)
 CLASSIFIER_VERSION = f"layered-{CATALOGUE_VERSION}"
 ACCEPT = 0.55  # combined score needed to accept a kind
 MARGIN = 0.05  # the best kind must beat the runner-up by this much, else the document stays unclassified
@@ -67,7 +67,11 @@ CATALOGUE: tuple[Kind, ...] = (
          (r"(?<![a-z])bills?(?![a-z])",),
          (r"A\s+Bill\s+for\s+an\s+Act\s+of\s+Parliament", r"Memorandum\s+of\s+Objects\s+and\s+Reasons", r"\bBill,?\s+(?:19|20)\d{2}\b", r"Bills?\s+(?:No\.?\s*\d+)?\s*of\s+(?:19|20)\d{2}"),
          ("Bill, 2024", "The Finance Bill", "National Assembly Bill")),
-    Kind("hansard", "Hansard", None, None,
+    Kind("order_paper", "Order paper", None, "sitting",
+         (r"order[-_ ]?paper",),
+         (r"ORDERS?\s+OF\s+THE\s+DAY", r"ORDER\s+PAPER"),
+         ("Order Paper for Tuesday", "Supplementary Order Paper")),
+    Kind("hansard", "Hansard", None, "sitting",
          (r"hansard", r"official[-_ ]report"),
          (r"\bHANSARD\b", r"OFFICIAL\s+REPORT", r"NATIONAL\s+ASSEMBLY\s+DEBATES", r"THE\s+SENATE\s+DEBATES", r"The\s+Speaker\s*\(Hon\.", r"Hon\.\s+Speaker"),
          ("Hansard Report", "National Assembly Official Report", "Senate Debates Hansard")),
@@ -322,6 +326,16 @@ def _fuzzy_scores(candidates: list[tuple[str, float]]) -> tuple[dict[str, float]
     return scores, best
 
 
+def _sitting_kind(text: str) -> str | None:
+    """order_paper or hansard when the first lines of the text are the heading of a sitting document."""
+    head = text[:1500].upper()
+    if re.search(r"ORDERS?\s+OF\s+THE\s+DAY|\bORDER\s+PAPER\b", head):
+        return "order_paper"
+    if re.search(r"\bHANSARD\b|OFFICIAL\s+REPORT|PARLIAMENTARY\s+DEBATES|(?:NATIONAL\s+ASSEMBLY|THE\s+SENATE)\s+DEBATES", head):
+        return "hansard"
+    return None
+
+
 def classify(data: bytes | None, names: list[str], title: str | None = None, extracted: Extracted | None = None) -> Classification:
     """Classifies one file from its bytes (optional), the file names / URLs it was seen at and its link title."""
     clean = [unquote(urlparse(n).path if "://" in n else n) for n in names if n]
@@ -340,6 +354,10 @@ def classify(data: bytes | None, names: list[str], title: str | None = None, ext
             miss *= 1 - layer.get(kind, 0.0)
         if miss < 1.0:
             combined[kind] = round(min(0.99, 1 - miss), 4)
+    sitting = _sitting_kind(text)
+    if sitting:  # a sitting document names Bills, Acts and budgets as business: the heading decides, the list does not
+        combined = {k: v for k, v in combined.items() if k not in ("bill", "act", "gazette_notice", "budget", "financial_statement", "audit_report", "party_constitution", "tender_notice")}
+        combined[sitting] = 0.97
     ranked = sorted(combined.items(), key=lambda kv: -kv[1])
     evidence = {
         "names": clean[:6], "title": title, "extract": {"method": extracted.method, "chars": len(text), "scanned": extracted.scanned, "tables": extracted.tables, "note": extracted.note},

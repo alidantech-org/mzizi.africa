@@ -1,0 +1,17 @@
+mapping: event
+extractor: sitting-pdf
+target_kind: calendar.events
+key: [code]
+fields:
+  code:           { from: eventCode }
+  title:          { from: title }
+  description:    { from: description }
+  typeId:         { from: typeCode, transform: [{ ref: { kind: reference.classifications, field: code } }] }
+  jurisdictionId: { const: { $ref: { kind: reference.jurisdictions, where: { code: "${jurisdiction}" } } } }
+  geoUnitId:      { const: { $ref: { kind: geography.units, where: { code: "${jurisdiction}" } } } }
+  startsOn:       { from: date }
+  status:         { from: status }
+  isRecurring:    { const: false }
+provenance:
+  locator: { date: $date }
+  method: extracted
