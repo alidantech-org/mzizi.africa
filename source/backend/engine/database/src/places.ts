@@ -58,12 +58,16 @@ export interface ResolvedContact {
  * The contact for a scope and channel, falling back up the scope chain. For a place the chain is the place, its
  * parent places, then the subject occupying the place (nearest occupancy, the place itself first). Other scopes
  * have no chain and answer only for themselves. Public contacts only unless `visibility` widens it.
+ *
+ * A contact never crosses subjects. A building shared by several bodies has no single answer, so the fallback to an occupant is
+ * taken only when the place has one occupying subject, or when the caller names the subject whose contact is wanted (then only
+ * that subject's occupancies count). A contact that belongs to another occupant is never returned for it.
  */
 export async function resolveContact(
   db: DataSource,
   scope: { kind: string; id: string },
   channel: string,
-  options: { visibilities?: string[] } = {},
+  options: { visibilities?: string[]; subject?: { kind: string; id: string } } = {},
 ): Promise<ResolvedContact | undefined> {
   const visibilities = options.visibilities ?? ["public"];
   const at = async (kind: string, id: string): Promise<ResolvedContact | undefined> => {
@@ -83,9 +87,13 @@ export async function resolveContact(
     if (found) return found;
   }
   for (const place of chain) {
-    const [occupant] = await occupantsOf(db, place.id);
-    if (!occupant) continue;
-    const found = await at(occupant.subjectKind, occupant.subjectId);
+    const here = await occupantsOf(db, place.id);
+    const wanted = options.subject;
+    const candidates = wanted ? here.filter((o) => o.subjectKind === wanted.kind && o.subjectId === wanted.id) : here;
+    const subjects = new Set(candidates.map((o) => `${o.subjectKind}:${o.subjectId}`));
+    if (subjects.size !== 1) continue; // nobody, or several bodies and no named subject: nothing may be borrowed from an occupant
+    const [occupant] = candidates;
+    const found = await at(occupant!.subjectKind, occupant!.subjectId);
     if (found) return found;
   }
   return undefined;

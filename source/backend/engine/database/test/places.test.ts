@@ -217,7 +217,18 @@ run("places, occupancy, expectation and contact points", () => {
     expect((await resolveContact(db, { kind: "place.places", id: room202 }, "phone", { visibilities: ["public", "restricted"] }))?.value).toBe("+254711000888");
   });
 
+  /** The scenarios above insert rows directly; the evidence rule (every place and occupancy is attributed) is satisfied here the way an importer does it. */
+  const attributeEverything = async () => {
+    const [publisher] = await db.query(`INSERT INTO source.publishers (code, name, kind_id, created_at, updated_at, version) SELECT 'test-places-src', 'test', id, now(), now(), 1 FROM reference.classifications WHERE scheme = 'source/publisher-kind' LIMIT 1 ON CONFLICT (code) DO UPDATE SET name = 'test' RETURNING id`);
+    const [doc] = await db.query(`INSERT INTO source.documents (publisher_id, title, kind_id, created_at, updated_at, version) SELECT $1, 'test places scenario ' || gen_random_uuid(), id, now(), now(), 1 FROM reference.classifications WHERE scheme = 'source/document-kind' LIMIT 1 RETURNING id`, [publisher.id]);
+    const [method] = await db.query(`INSERT INTO source.methods (kind, name, tool, tool_version, created_at, updated_at, version) VALUES ('curated', 'test', 'test', '1', now(), now(), 1) RETURNING id`);
+    for (const [kind, from] of [["place.places", "place.places"], ["place.occupancies", "place.occupancies"]] as const) {
+      await db.query(`INSERT INTO source.attributions (document_id, method_id, target_kind, target_id, relation, created_at, updated_at, version) SELECT $1, $2, $3::text, f.id, 'supports', now(), now(), 1 FROM ${from} f WHERE NOT EXISTS (SELECT 1 FROM source.attributions a WHERE a.target_kind = $3 AND a.target_id = f.id)`, [doc.id, method.id, kind]);
+    }
+  };
+
   test("integrity: scenarios satisfy every place rule, and broken rows are reported", async () => {
+    await attributeEverything();
     const broken = (await rules()).filter((rule) => /^(place\.|contact\.)|places |occupanc|expectation/.test(rule));
     expect(broken).toEqual([]);
     const cycleA = await place("structure", "Cycle A", await place("site", "Cycle site"));
