@@ -21,7 +21,7 @@ import dns.resolver
 import httpx
 import psycopg
 
-from . import compliance, domains, fetch, gate
+from . import compliance, domains, fetch, fingerprint, gate
 from .fetch import Denied, RobotsDisallowed, StopRun
 
 CONSECUTIVE_FAILURES = 3
@@ -166,7 +166,13 @@ def probe_host(conn: psycopg.Connection, client: httpx.Client, user_agent: str, 
                 domains.ensure_candidate_domains(conn, site_id, [target], "redirect", f"Redirect target of {host} (answered {result.status}).")
             return outcome, "ok"
     if 200 <= result.status < 400:
-        return apply_result(conn, site_id, host, "reachable", result.status, None, f"Answered {result.status}"), "ok"
+        outcome = apply_result(conn, site_id, host, "reachable", result.status, None, f"Answered {result.status}")
+        if result.status == 200 and b"<" in result.body[:2000]:  # the home page is already in hand: its structural fingerprint costs no request
+            try:
+                fingerprint.store_fingerprint(conn, site_id, result.body.decode("utf-8", "replace"))
+            except Exception:
+                pass
+        return outcome, "ok"
     return apply_result(conn, site_id, host, "unreachable", result.status, None, f"Answered {result.status}"), "http"
 
 

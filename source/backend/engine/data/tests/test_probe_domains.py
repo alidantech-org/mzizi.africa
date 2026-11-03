@@ -111,3 +111,10 @@ def test_retry_timeouts_probes_only_timed_out_domains_with_the_longer_timeout(co
     assert summary["probed"] == 1 and summary["reachable"] == 1 and not seen
     assert status_of(conn, slow, "slow.go.ke")["s"] == "reachable" and status_of(conn, gone, "gone.go.ke")["s"] == "unreachable"
     assert conn.execute("SELECT role::text AS r FROM website.domains WHERE hostname = 'slow.go.ke'").fetchone()["r"] == "primary"
+
+
+def test_reachable_home_page_is_fingerprinted_without_another_request(conn):
+    a = make_site(conn, ["fp.go.ke"])
+    page = "<html><head><meta name='generator' content='WordPress 6.4'></head><body><nav><a href='/about'>About</a></nav></body></html>"
+    assert run(conn, a, "fp.go.ke", ok_robots(lambda r: httpx.Response(200, text=page)))[0] == "reachable"
+    assert conn.execute("SELECT count(*)::int AS n FROM website.fingerprints WHERE site_id = %s", (a,)).fetchone()["n"] == 4
