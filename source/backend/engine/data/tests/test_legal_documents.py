@@ -115,3 +115,10 @@ def test_an_order_paper_that_names_bills_is_not_an_instrument():
 def test_a_sentence_that_ends_in_act_is_not_a_title():
     out = legal_pdf.parse(pages(["Page 2 of 5", "and pursuant to the provisions of section 28 of the National Infrastructure Fund Act, 2026", "1. Something"]))
     assert out.status == "failed" and out.diagnostics[0]["code"] == "no_title"
+
+
+def test_a_download_manager_data_attribute_is_read_as_a_file_link():
+    from mzizi_data.crawl import extract_links
+
+    html = b"""<a class='wpdm-download-link' href='#' data-downloadurl="https://landcommission.go.ke/download/r/?wpdmdl=20732&refresh=abc">Download</a>"""
+    assert extract_links(html, "https://landcommission.go.ke/download/r/") == [("https://landcommission.go.ke/download/r/?wpdmdl=20732&refresh=abc", "Download", False)]

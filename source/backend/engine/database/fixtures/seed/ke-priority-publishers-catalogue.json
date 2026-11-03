@@ -17,7 +17,7 @@
       "documentKinds": [
         "gazette_notice"
       ],
-      "probe": "kenyagazette.go.ke does not resolve in DNS (2026-11-03): no TLS, no HTTP. www.kenyagazette.go.ke and gazette.go.ke do not resolve either. The Gazette is therefore read only where other allowed hosts carry Gazette notices or Gazette-printed Acts and regulations (for example NG-CDF and ORPP PDFs). Kenya Gazette issues on Kenya Law are not collected (bot challenge).",
+      "probe": "kenyagazette.go.ke does not resolve in DNS (2026-11-03): no TLS, no HTTP. www.kenyagazette.go.ke and gazette.go.ke do not resolve either. The Gazette is therefore read only where other allowed hosts carry Gazette notices or Gazette-printed Acts and regulations (for example NG-CDF and ORPP PDFs). Kenya Gazette issues on Kenya Law are not collected (bot challenge). Web search (2026-11-03) found no other official Government Printer domain; the online archive is new.kenyalaw.org/gazettes (bot challenge, never contacted). Gazette issues are also held in the Parliament library repository, registered as site ke/parliament-library (libraryir.parliament.go.ke, DSpace REST API, domain origin page_link) and harvested with harvest-dspace.",
       "publication": "Kenya Gazette issues (weekly, plus special issues and supplements); each notice is numbered 'Gazette Notice No. n' within a volume (Vol. CXXVIII, No. 45 style).",
       "pipeline": "legal-pdf extractor: one notice segment per Gazette Notice number, dated by the issue date line; instrument kind gazette-notice with code ke/gazette-notice/<volume>-<issue>/<number>; text excerpt in the summary; people named in notices are not extracted here."
     },
@@ -57,7 +57,7 @@
         "publication",
         "legislation"
       ],
-      "probe": "WordPress with Download Manager: listing pages (/reports, /publications, /land-laws, /advisories, /hli-determinations) link /download/<slug>/ package pages whose file link is ?wpdmdl=<id>. Sub-systems on other ports and hosts (repository.landcommission.go.ke:4000, atlas, hakiportal, procurement portal, mail) are not crawled.",
+      "probe": "WordPress with Download Manager: listing pages (/reports, /publications, /land-laws, /advisories, /hli-determinations) link /download/<slug>/ package pages whose file link is ?wpdmdl=<id>. Sub-systems on other ports and hosts (repository.landcommission.go.ke:4000, atlas, hakiportal, procurement portal, mail) are not crawled. The package page carries the file link in a data-downloadurl attribute (not a plain anchor); the wpdmpro post type is not exposed by wp-json, the sitemap lists package pages only.",
       "publication": "Annual reports, historical land injustice determinations, reviews of grants of public land, advisories, land laws.",
       "pipeline": "crawler (depth 3 for the package-page hop) -> semantics -> registered documents; Acts among them go through legal-pdf."
     },
@@ -68,15 +68,15 @@
         "lands.go.ke",
         "housing.go.ke"
       ],
-      "familySections": "ke/ministry",
+      "familySections": "ke/publisher/lands",
       "documentKinds": [
         "legislation",
         "gazette_notice",
         "publication"
       ],
-      "probe": "assessed (trusted suffix) but not crawled in this pass: the Ministry's registries run as Ardhisasa (ardhisasa.lands.go.ke), an application, not a document publisher.",
+      "probe": "lands.go.ke home page (2026-11-03) links /gazette-notices, /public-notices, /downloads and /active-tenders; the registries run as Ardhisasa (ardhisasa.lands.go.ke), an application that is not crawled.",
       "publication": "Lands-related public notices appear in the Gazette and on the NLC site.",
-      "pipeline": "left to a later pass; recorded here so it is not lost."
+      "pipeline": "crawler -> semantics -> registered documents; Gazette notices and Acts go through legal-pdf."
     },
     {
       "site": "ke/controller-of-budget",
@@ -112,6 +112,24 @@
       "probe": "The apex host fails TLS verification (the wildcard certificate *.oagkenya.go.ke does not cover it), so www.oagkenya.go.ke is the primary domain and the apex an alias (certificate checked with a handshake only, 2026-11-03). Reports are WordPress uploads under /wp-content/uploads/<yyyy>/<mm>/ linked from /national-government-audit-reports, /county-governments-reports, /specialized-audit-reports, /special-audit-report, /performance-audit-report, /financial-audit-reports and the entity pages.",
       "publication": "Audit reports on the national government, county governments, state corporations, funds, commissions, the Judiciary, Parliament and political parties; performance and special audits; annual corporate reports.",
       "pipeline": "crawler -> semantics -> registered documents with a figures_review gap each; large PDFs above the 25 MB cap are skipped and listed in the crawl report."
+    },
+    {
+      "site": "ke/parliament-library",
+      "institution": "ke/parliament",
+      "hosts": [
+        "libraryir.parliament.go.ke"
+      ],
+      "familySections": "ke/publisher/gazette",
+      "documentKinds": [
+        "gazette_notice",
+        "act",
+        "bill",
+        "audit_report",
+        "committee_report"
+      ],
+      "probe": "DSpace 7 (Angular client); the public REST API under /server/api answers JSON without JavaScript: discover/search/objects, core/items/<id>/bundles?embed=bitstreams, core/bitstreams/<id>/content. About 15,000 items.",
+      "publication": "Kenya Gazette issues, Acts, Bills, committee reports, Auditor-General reports tabled in Parliament.",
+      "pipeline": "harvest-dspace (gated, bounded, 2 requests per item) -> semantics -> legal-pdf for Gazette issues and Acts."
     }
   ]
 }

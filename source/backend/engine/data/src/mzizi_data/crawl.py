@@ -181,6 +181,10 @@ def extract_links(html: bytes, base: str) -> list[tuple[str, str, bool]]:
         match = re.search(r"location\.href\s*=\s*['\"]([^'\"]*[?&]wpdmdl=\d+[^'\"]*)['\"]", str(tag["onclick"]))
         if match and urlparse(urljoin(base, match.group(1))).scheme in ("http", "https"):
             links.append((urljoin(base, match.group(1)), tag.get_text(" ", strip=True), False))
+    for tag in soup.find_all(attrs={"data-downloadurl": True}):  # Download Manager variant: the link is in a data attribute
+        value = str(tag["data-downloadurl"]).strip()
+        if WPDM_DOWNLOAD.search(urlparse(value).query) and urlparse(urljoin(base, value)).scheme in ("http", "https"):
+            links.append((urljoin(base, value), tag.get_text(" ", strip=True), False))
     return links
 
 

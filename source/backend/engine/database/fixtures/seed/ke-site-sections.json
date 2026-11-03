@@ -4,7 +4,7 @@
     "preparedBy": "coding agent (Claude), from general knowledge of how Kenyan public sites are usually laid out",
     "date": "2026-11-03",
     "caveat": "No site was contacted. Every rule is a hypothesis about common paths (WordPress and Drupal conventions plus typical government labels) held at confidence 0.3 to 0.6, to be confirmed or replaced by a gated bounded probe and by review. Rules discovered from crawled links only propose additions for review. Paths are matched against the URL path only; hosts and scope stay in the manifest policy.",
-    "publisherNote": "2026-11-03 (Lane E): publisher families ke/publisher/* for the priority publishers (parliament, nlc, cob, oag, gazette). Parliament, NLC and COB rules were derived from links on their home pages fetched through the gate; OAG rules come from its home page links at www.oagkenya.go.ke (the apex host fails TLS: wildcard certificate); Gazette rules are hypotheses (kenyagazette.go.ke does not resolve in DNS). NLC and COB publish files through WordPress Download Manager: listing pages link /download/<slug>/ package pages whose file link is ?wpdmdl=<id> (the crawler treats that as a file link)."
+    "publisherNote": "2026-11-03 (Lane E): publisher families ke/publisher/* for the priority publishers (parliament, nlc, cob, oag, gazette). Parliament, NLC and COB rules were derived from links on their home pages fetched through the gate; OAG rules come from its home page links at www.oagkenya.go.ke (the apex host fails TLS: wildcard certificate); Gazette rules are hypotheses (kenyagazette.go.ke does not resolve in DNS). NLC and COB publish files through WordPress Download Manager: listing pages link /download/<slug>/ package pages whose file link is ?wpdmdl=<id> (the crawler treats that as a file link). Lands (lands.go.ke) rules come from its home page links: /gazette-notices, /public-notices, /downloads, /active-tenders. NLC package pages carry the file link in a data-downloadurl attribute."
   },
   "families": {
     "ke/county-government": [
@@ -1286,6 +1286,102 @@
               "method": "custom-prepared",
               "label": "Custom-prepared from manual research",
               "confidence": 0.3
+            }
+          }
+        ]
+      }
+    ],
+    "ke/publisher/lands": [
+      {
+        "label": "gazettes",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 5
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/gazette-notices/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          }
+        ]
+      },
+      {
+        "label": "notices",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 5
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/public-notices/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          }
+        ]
+      },
+      {
+        "label": "downloads",
+        "file_types": [
+          "pdf",
+          "xlsx",
+          "docx"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/downloads/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
+            }
+          }
+        ]
+      },
+      {
+        "label": "tenders",
+        "file_types": [
+          "pdf"
+        ],
+        "paginate": {
+          "type": "query",
+          "param": "page",
+          "start": 0,
+          "max_pages": 3
+        },
+        "rules": [
+          {
+            "kind": "regex",
+            "pattern": "^/active-tenders/?$",
+            "provenance": {
+              "method": "custom-prepared",
+              "label": "Custom-prepared from manual research",
+              "confidence": 0.8
             }
           }
         ]

@@ -184,11 +184,17 @@ def main(argv: list[str] | None = None) -> int:
     from . import partycli
 
     partycli.register(sub)
+    from . import placecli
+
+    placecli.register(sub)
     args = parser.parse_args(argv)
     handled = statcli.dispatch(args)
     if handled is not None:
         return handled
     handled = partycli.dispatch(args)
+    if handled is not None:
+        return handled
+    handled = placecli.dispatch(args)
     if handled is not None:
         return handled
     if args.command == "validate":
