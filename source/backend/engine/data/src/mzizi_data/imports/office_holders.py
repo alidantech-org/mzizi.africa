@@ -69,6 +69,8 @@ class Context:
     unit_names: dict[str, str]
     holder_codes: set[str]              # people who already hold a current holder row
     new_parties: dict = field(default_factory=dict)
+    inst_names: list = field(default_factory=list)
+    inst_by_name: dict = field(default_factory=dict)
     held: set = field(default_factory=set)  # (office code, person code) already in holders
     report: dict = field(default_factory=lambda: {"unmatched_places": [], "unmatched_parties": {}, "new_people": 0, "reused_people": 0, "reuse_reasons": {}, "flagged": [], "links": []})
 
@@ -109,6 +111,9 @@ class Context:
                 people[r["person"]]["hints"].add(geo_norm(r["place"]))
         ctx = cls(geo, offices, seat_by_unit, procedure, people, parties, codes, unit_names, holder_codes)
         ctx.held = held
+        for r in conn.execute("SELECT code, name FROM governance.institutions"):
+            ctx.inst_by_name.setdefault(r["name"], r["code"])
+        ctx.inst_names = list(ctx.inst_by_name)
         return ctx
 
     def party(self, rec: dict) -> str | None:
@@ -191,7 +196,7 @@ def name_tokens(name: str) -> set[str]:
     return {t for t in re.sub(r"[^a-z ]", " ", name.lower()).split() if len(t) > 1 and t not in {"hon", "dr", "prof", "eng", "rt", "mr", "mrs", "ms"}}
 
 
-NATIONAL_SEATS = {"constituency", "woman", "nominated", "county-senator", "nominated-senator-women", "nominated-senator-youth", "nominated-senator-pwd", "cabinet-secretary", "president", "deputy-president", "attorney-general", "speaker-na"}
+NATIONAL_SEATS = {"gazette-appointee", "constituency", "woman", "nominated", "county-senator", "nominated-senator-women", "nominated-senator-youth", "nominated-senator-pwd", "cabinet-secretary", "president", "deputy-president", "attorney-general", "speaker-na"}
 
 
 def to_date(year: str | None) -> str | None:
@@ -235,7 +240,19 @@ def find_constituency(ctx: Context, county: str | None, area: str | None) -> tup
 
 def resolve_seat(ctx: Context, rec: dict) -> tuple[str, dict | None]:
     """(office code, new office dict or None). Seated offices come from the seeded structure; a miss creates a generic seat."""
-    seat, area, period = rec["seat"], rec.get("area"), rec.get("period")
+    seat, area, period = rec.get("seat"), rec.get("area"), rec.get("period")
+    if period == "gazette":
+        inst, score = match_institution(ctx, rec.get("institutionText", ""))
+        if not inst:
+            ctx.report.setdefault("gazette_unmatched", []).append({"institution": rec.get("institutionText"), "person": rec["displayName"], "role": rec["role"], "notice": rec.get("noticeNumber")})
+            return "", None
+        suffix = ROLE_SUFFIX.get(rec["role"].lower(), slug(rec["role"]))
+        code = next((c for c in (f"{inst}/{suffix}", f"{inst}/board-member" if suffix == "member" else "", f"{inst}/commissioner" if suffix == "member" else "") if c and c in ctx.offices), None)
+        ctx.report.setdefault("gazette_links", []).append({"institution": rec.get("institutionText"), "to": inst, "score": score, "role": rec["role"], "person": rec["displayName"]})
+        if code:
+            return code, None
+        code = f"{inst}/{suffix}"
+        return code, {"officeCode": code, "officeName": rec["role"].rstrip("s") if suffix == "member" else rec["role"], "officeDescription": f"Created from a Gazette appointment notice (Gazette Notice No. {rec.get('noticeNumber')}).", "institutionCode": inst, "singleton": suffix in ("chairperson", "chief-executive")}
     if rec.get("officeCode"):
         code = rec["officeCode"]
         if code in ctx.offices:
@@ -281,6 +298,8 @@ def build(ctx: Context, records: list[dict]) -> dict[str, list[tuple[str, dict]]
         if rec.get("period") == "2022-2027" and f"ke/person/{slug(rec['displayName'])}" in ctx.holder_codes:
             continue  # the 13th Parliament lists already hold this person: the link pass attaches the seeded seat
         office_code, new_office = resolve_seat(ctx, rec)
+        if rec.get("period") == "gazette" and not office_code:
+            continue
         if new_office:
             ctx.offices.setdefault(office_code, {"id": None, "name": new_office["officeName"], "singleton": False})
             out["office"].append((f"o-{index}", new_office))
@@ -289,14 +308,16 @@ def build(ctx: Context, records: list[dict]) -> dict[str, list[tuple[str, dict]]
         party_code = ctx.party(rec)
         person_code = people.code(rec, rec.get("area"), party_code, office_code)
         current = rec.get("validTo") is None and rec.get("period") in ("2022-2027", "current")
-        base = {"personCode": person_code, "displayName": rec["displayName"]}
+        if rec.get("period") == "gazette":
+            current = bool(rec.get("effective")) and rec["effective"][:4] >= "2023"  # three-year terms: an appointment from 2023 on is taken as still running
+        base = {"personCode": person_code, "displayName": rec["displayName"], "_result": rec.get("_result")}
         if person_code not in ctx.people:  # a reused person already has a row: only the holding is new
             out["individual"].append((f"i-{index}", base))
         departure = "term_ended" if rec.get("validTo") and rec.get("period") in ("2013-2017", "2017-2022") and rec["validTo"] == rec["period"][-4:] else None
-        holder = dict(base, officeCode=office_code, holderStatus="substantive", termNumber=TERM.get(rec.get("period"), 1), validFromDate=to_date(rec.get("validFrom")), validToDate=to_date(rec.get("validTo")), isCurrent=current, departureReason=departure, selectionProcedureId=ctx.procedure.get(office_code))
+        holder = dict(base, officeCode=office_code, holderStatus="substantive", termNumber=TERM.get(rec.get("period"), 1), validFromDate=rec.get("effective") or to_date(rec.get("validFrom")), validFromPrecision=("exact" if rec.get("effective") else "year") if (rec.get("effective") or rec.get("validFrom")) else None, validToDate=to_date(rec.get("validTo")), validToPrecision="year" if rec.get("validTo") else None, isCurrent=current, departureReason=departure, selectionProcedureId=ctx.procedure.get(office_code))
         out["holder"].append((f"h-{index}", holder))
         if party_code:
-            out["membership"].append((f"m-{index}", dict(base, partyCode=party_code, validFromDate=to_date(rec.get("validFrom")), validToDate=to_date(rec.get("validTo")), isCurrent=current)))
+            out["membership"].append((f"m-{index}", dict(base, partyCode=party_code, validFromDate=rec.get("effective") or to_date(rec.get("validFrom")), validFromPrecision="exact" if rec.get("effective") else "year", validToDate=to_date(rec.get("validTo")), validToPrecision="year", isCurrent=current)))
     out["party"] = [(f"p-{i}", r) for i, r in enumerate(ctx.new_parties.values())]
     return out
 
@@ -336,8 +357,43 @@ def link_current(conn: psycopg.Connection, ctx: Context) -> list[dict]:
             ctx.report["unmatched_places"].append({"link": r["office"], "person": r["person"]})
             continue
         ctx.report["links"].append({"person": r["person"], "from": r["office"], "to": target, "why": why, "score": score})
-        out.append({"personCode": r["person"], "officeCode": target, "holderStatus": "substantive", "termNumber": 13, "validFromDate": "2022-01-01", "validToDate": None, "isCurrent": True, "departureReason": None, "selectionProcedureId": ctx.procedure.get(target), "displayName": None})
+        out.append({"personCode": r["person"], "officeCode": target, "holderStatus": "substantive", "termNumber": 13, "validFromDate": "2022-01-01", "validFromPrecision": "year", "validToDate": None, "validToPrecision": "year", "isCurrent": True, "departureReason": None, "selectionProcedureId": ctx.procedure.get(target), "displayName": None})
     return out
+
+
+ROLE_SUFFIX = {"chairperson": "chairperson", "vice chairperson": "vice-chairperson", "chief executive": "chief-executive", "chief executive officer": "chief-executive", "member": "member", "members": "member", "commissioner": "commissioner", "commissioners": "commissioner", "director general": "chief-executive", "managing director": "chief-executive", "secretary": "secretary", "registrar": "registrar", "director": "director"}
+
+
+def gazette_results(conn: psycopg.Connection, store: LocalDirectoryStore, handlers: dict):
+    """Appointment notices in every Gazette issue already in the registry: extraction jobs on the preserved files."""
+    rows = conn.execute(
+        """SELECT DISTINCT ON (c.file_version_id) c.id::text AS capture, c.file_version_id::text AS fv
+             FROM source.captures c JOIN source.documents d ON d.id = c.document_id JOIN reference.classifications k ON k.id = d.kind_id
+            WHERE k.code LIKE '%gazette' AND c.file_version_id IS NOT NULL ORDER BY c.file_version_id, c.retrieved_at DESC"""
+    ).fetchall()
+    for row in rows:
+        job_id, _ = pipeline.enqueue_extraction(conn, row["fv"], "gazette-appointments", None, row["capture"])
+        conn.commit()
+        while jobs.run_once(conn, handlers, worker="office-holders-import"):
+            pass
+        job = conn.execute("SELECT status, result_file_version_id::text AS fv FROM engine.jobs WHERE id = %s", (job_id,)).fetchone()
+        if job["status"] != "succeeded" or not job["fv"]:
+            continue
+        result = pipeline.load_result(store, job["fv"])
+        recs = [json.loads(s.content) for s in result.segments]
+        if recs:
+            yield row["capture"], str(result.id), recs
+
+
+def match_institution(ctx: Context, text: str) -> tuple[str | None, float]:
+    """Institution code by fuzzy name (token set ratio), accepted from 85, else none."""
+    from rapidfuzz import fuzz, process
+
+    clean = re.sub(r"\b(th[ec]|board|of|directors|council)\b", " ", text or "", flags=re.I)
+    if not ctx.inst_names:
+        return None, 0.0
+    best = process.extractOne(clean, ctx.inst_names, scorer=fuzz.token_set_ratio, score_cutoff=85)
+    return (ctx.inst_by_name[best[0]], best[1] / 100) if best else (None, 0.0)
 
 
 @dataclass
@@ -387,6 +443,11 @@ def import_office_holders(conn: psycopg.Connection, store: LocalDirectoryStore, 
             raise RuntimeError(f"curated extraction did not succeed: {job['status']} {job['error']}")
         result = pipeline.load_result(store, job["fv"])
         pages.append((capture_id, str(result.id), [json.loads(s.content) for s in result.segments]))
+    for capture_id, result_id, recs in gazette_results(conn, store, handlers):
+        pages.append((capture_id, result_id, recs))
+    for _c, result_id, recs in pages:
+        for r in recs:
+            r["_result"] = result_id
     # Person reuse depends on who already exists, which changes as stages promote: decide once, in stage A, and keep the plan.
     flat = [r for _c, _r, recs in pages for r in recs]
     plan = Path(plan_path) if plan_path else None
@@ -414,7 +475,16 @@ def import_office_holders(conn: psycopg.Connection, store: LocalDirectoryStore, 
             seen.add(ident)
             subset.append((key, record))
         allowed = ["political_opinion"] if name == "membership" else []
-        stats[name] = candidates.add_candidates(conn, run_id, mapping, subset, anchor[1], allowed, [])
+        total = candidates.CandidateStats()
+        by_result: dict[str, list] = {}
+        for key, record in subset:
+            by_result.setdefault(record.get("_result") or anchor[1], []).append((key, record))
+        for result_id, group in by_result.items():
+            one = candidates.add_candidates(conn, run_id, mapping, group, result_id, allowed, [])
+            for f in ("created", "unchanged", "superseding", "quarantined", "invalid"):
+                setattr(total, f, getattr(total, f) + getattr(one, f))
+            total.ids += one.ids
+        stats[name] = total
         candidates.finish_run(conn, run_id)
         runs[name] = run_id
     conn.commit()

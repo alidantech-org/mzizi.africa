@@ -7,8 +7,10 @@ fields:
   personId:             { from: personCode, transform: [{ ref: { kind: person.individuals, field: code } }] }
   status:               { from: holderStatus }
   termNumber:           { from: termNumber }
-  validFrom:            { from: validFromDate, precision: year }
-  validTo:              { from: validToDate, precision: year }
+  validFrom:            { from: validFromDate }
+  validFromPrecision:   { from: validFromPrecision }
+  validTo:              { from: validToDate }
+  validToPrecision:     { from: validToPrecision }
   isCurrent:            { from: isCurrent }
   departureReason:      { from: departureReason }
   selectionProcedureId: { from: selectionProcedureId }

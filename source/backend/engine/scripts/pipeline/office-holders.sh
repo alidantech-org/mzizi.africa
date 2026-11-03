@@ -6,7 +6,7 @@ ENVN=${2:-p3}
 set -a; . $R/.data/$ENVN.env; . $R/.data/env.local; set +a
 A=00000000-0000-4000-8000-0000000000a3
 cd $R/source/backend/engine/data
-.venv/bin/python -m mzizi_data.cli import-office-holders $R/.data/raw/wikipedia --stage "$1" --report $R/.data/reports/office-holders-$ENVN-$1.json --plan $R/.data/reports/office-holders-plan-$ENVN.json | tee /tmp/oh-$ENVN-$1.out
+.venv/bin/python -m mzizi_data.cli import-office-holders $R/.data/raw/wikipedia --stage "$1" --store $R/.data/objects --report $R/.data/reports/office-holders-$ENVN-$1.json --plan $R/.data/reports/office-holders-plan-$ENVN.json | tee /tmp/oh-$ENVN-$1.out
 cd $R/source/backend/engine/database
 bun src/cli.ts validate | tail -1
 for RUN in $(grep -o 'run [0-9a-f-]*' /tmp/oh-$ENVN-$1.out | cut -d' ' -f2); do

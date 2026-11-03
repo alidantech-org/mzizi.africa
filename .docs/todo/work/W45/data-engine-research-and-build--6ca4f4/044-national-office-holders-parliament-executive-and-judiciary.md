@@ -21,8 +21,10 @@ Built on DEC-COMPLETION-FIRST, DEC-AUTO-APPROVAL and DEC-ENTITY-MATCHING: a name
 - [x] Placeholder person Vacant ended (not deleted) and reported.
 - [x] Curated seed of previous cabinets, speakers, party leaders and commission heads loaded as unverified.
 - [ ] Principal Secretaries, commission members, Court of Appeal and High Court principal judges, state corporation CEOs and chairs: need Gazette appointment notice extraction or ministry sites.
-- [ ] Gazette appointment notices parsed into holders (33 notices in the registry are not yet read for appointments).
-- [ ] Office, party and county search filters on the API (lane P1 owns search).
+- [x] Gazette appointment extractor (`gazette-appointments`) built and run over all Gazette issues in the registry (83 files after a bounded harvest of 37 more): 6 appointees from one tribunal notice promoted as unverified; the other appointment notices have OCR names too corrupted to accept, and nothing is guessed.
+- [x] Office holder search endpoint `/v1/governance/office-holders/search` with person, office, institution, party, county and current filters, rows carrying names (Dryv contract, regenerated, unit tests); lane P1 never did search, so this lane owns it.
+- [x] Guessed seat links (Dagoretti North/South, Mwingi Central) kept as `under_review` verifications with the guess in the rationale.
+- [ ] Ministry and agency leadership pages via the section crawler: not run, the ministry sites are not yet probed reachable in the registry.
 
 ## Notes
 
