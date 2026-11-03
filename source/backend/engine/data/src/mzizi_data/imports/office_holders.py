@@ -69,8 +69,10 @@ class Context:
     unit_names: dict[str, str]
     holder_codes: set[str]              # people who already hold a current holder row
     new_parties: dict = field(default_factory=dict)
+    person_names: list = field(default_factory=list)
     inst_names: list = field(default_factory=list)
     inst_by_name: dict = field(default_factory=dict)
+    held_by_person: dict = field(default_factory=dict)
     held: set = field(default_factory=set)  # (office code, person code) already in holders
     report: dict = field(default_factory=lambda: {"unmatched_places": [], "unmatched_parties": {}, "new_people": 0, "reused_people": 0, "reuse_reasons": {}, "flagged": [], "links": []})
 
@@ -111,9 +113,12 @@ class Context:
                 people[r["person"]]["hints"].add(geo_norm(r["place"]))
         ctx = cls(geo, offices, seat_by_unit, procedure, people, parties, codes, unit_names, holder_codes)
         ctx.held = held
+        for office, person in held:
+            ctx.held_by_person.setdefault(person, set()).add(office)
         for r in conn.execute("SELECT code, name FROM governance.institutions"):
             ctx.inst_by_name.setdefault(r["name"], r["code"])
         ctx.inst_names = list(ctx.inst_by_name)
+        ctx.person_names = [v["name"] for v in people.values()]
         return ctx
 
     def party(self, rec: dict) -> str | None:
@@ -167,8 +172,11 @@ class People:
         reason = None
         if existing is not None:
             hints, parties = existing["hints"], existing["parties"]
+            inst = rec.get("institution")
             if office_code and (office_code, base) in self.ctx.held:
                 reason = "already holds this seat"
+            elif inst and any(o.startswith(inst + "/") for o in self.ctx.held_by_person.get(base, ())):
+                reason = "already holds an office in the same institution"
             elif area and geo_norm(area) in hints:
                 reason = "same seat place"
             elif party_code and party_code in parties:
@@ -241,8 +249,18 @@ def find_constituency(ctx: Context, county: str | None, area: str | None) -> tup
 def resolve_seat(ctx: Context, rec: dict) -> tuple[str, dict | None]:
     """(office code, new office dict or None). Seated offices come from the seeded structure; a miss creates a generic seat."""
     seat, area, period = rec.get("seat"), rec.get("area"), rec.get("period")
+    if period == "leadership":
+        code, new = leadership_office(ctx, rec["institution"], rec["title"])
+        if not code:
+            ctx.report.setdefault("leadership_skipped", []).append({"person": rec["displayName"], "title": rec["title"]})
+            return "", None
+        ctx.report.setdefault("leadership_links", []).append({"person": rec["displayName"], "title": rec["title"], "office": code, "created": bool(new)})
+        return code, new
     if period == "gazette":
         inst, score = match_institution(ctx, rec.get("institutionText", ""))
+        rec["displayName"], exact = correct_name(ctx, rec["displayName"], ctx.report)
+        if not exact:
+            ctx.report.setdefault("low_confidence_people", []).append(rec["displayName"])
         if not inst:
             ctx.report.setdefault("gazette_unmatched", []).append({"institution": rec.get("institutionText"), "person": rec["displayName"], "role": rec["role"], "notice": rec.get("noticeNumber")})
             return "", None
@@ -298,7 +316,7 @@ def build(ctx: Context, records: list[dict]) -> dict[str, list[tuple[str, dict]]
         if rec.get("period") == "2022-2027" and f"ke/person/{slug(rec['displayName'])}" in ctx.holder_codes:
             continue  # the 13th Parliament lists already hold this person: the link pass attaches the seeded seat
         office_code, new_office = resolve_seat(ctx, rec)
-        if rec.get("period") == "gazette" and not office_code:
+        if rec.get("period") in ("gazette", "leadership") and not office_code:
             continue
         if new_office:
             ctx.offices.setdefault(office_code, {"id": None, "name": new_office["officeName"], "singleton": False})
@@ -308,6 +326,8 @@ def build(ctx: Context, records: list[dict]) -> dict[str, list[tuple[str, dict]]
         party_code = ctx.party(rec)
         person_code = people.code(rec, rec.get("area"), party_code, office_code)
         current = rec.get("validTo") is None and rec.get("period") in ("2022-2027", "current")
+        if rec.get("period") == "leadership":
+            current = True  # named on the institution's own page when it was fetched
         if rec.get("period") == "gazette":
             current = bool(rec.get("effective")) and rec["effective"][:4] >= "2023"  # three-year terms: an appointment from 2023 on is taken as still running
         base = {"personCode": person_code, "displayName": rec["displayName"], "_result": rec.get("_result")}
@@ -372,7 +392,7 @@ def gazette_results(conn: psycopg.Connection, store: LocalDirectoryStore, handle
             WHERE k.code LIKE '%gazette' AND c.file_version_id IS NOT NULL ORDER BY c.file_version_id, c.retrieved_at DESC"""
     ).fetchall()
     for row in rows:
-        job_id, _ = pipeline.enqueue_extraction(conn, row["fv"], "gazette-appointments", None, row["capture"])
+        job_id, _ = pipeline.enqueue_extraction(conn, row["fv"], "gazette-appointments", "reocr", row["capture"])
         conn.commit()
         while jobs.run_once(conn, handlers, worker="office-holders-import"):
             pass
@@ -383,6 +403,76 @@ def gazette_results(conn: psycopg.Connection, store: LocalDirectoryStore, handle
         recs = [json.loads(s.content) for s in result.segments]
         if recs:
             yield row["capture"], str(result.id), recs
+
+
+def leadership_office(ctx: Context, inst: str, title: str) -> tuple[str | None, dict | None]:
+    """The seeded office for a title on an institution's own page: exact suffix under the institution (or the state department the title names), else a created office."""
+    from rapidfuzz import fuzz, process
+
+    t = title.lower()
+    own = {c[len(inst) + 1:]: c for c in ctx.offices if c.startswith(inst + "/") and "/" not in c[len(inst) + 1:]}
+    if "deputy" in t and "secretary" in t:
+        return None, None
+    if "principal secretary" in t:
+        sub = [n for n, c in ctx.inst_by_name.items() if c.startswith(inst + "/")]
+        best = process.extractOne(re.sub(r"(?i)principal secretary|state department( for| of)?|ministry of", " ", title), sub, scorer=fuzz.token_set_ratio, score_cutoff=70) if sub else None
+        target = ctx.inst_by_name[best[0]] if best else inst
+        code = f"{target}/principal-secretary"
+        if code in ctx.offices:
+            return code, None
+        return code, {"officeCode": code, "officeName": "Principal Secretary", "officeDescription": "Created from the institution's own leadership page.", "institutionCode": target, "singleton": True}
+    if "cabinet secretary" in t:
+        suffix = "cabinet-secretary"
+    elif "vice" in t:
+        suffix = "vice-chairperson"
+    elif re.search(r"chair", t):
+        suffix = "chairperson"
+    elif re.search(r"commissioner|board member", t):
+        suffix = "commissioner" if "commissioner" in own else "member" if "member" in own else "board-member" if "board-member" in own else "member"
+    elif re.search(r"secretary|ceo|chief executive|director[- ]general|managing director", t):
+        suffix = next((x for x in ("secretary", "chief-executive") if x in own), "chief-executive")
+    else:
+        suffix = slug(re.split(r"[-,:(]", title)[0])
+    code = f"{inst}/{suffix}"
+    if code in ctx.offices:
+        return code, None
+    return code, {"officeCode": code, "officeName": re.split(r"\s[-\u2013]|,|:", title)[0].strip().title()[:120], "officeDescription": "Created from the institution's own leadership page.", "institutionCode": inst, "singleton": suffix in ("chairperson", "chief-executive", "cabinet-secretary", "secretary")}
+
+
+def leadership_results(conn: psycopg.Connection, store: LocalDirectoryStore, handlers: dict, directory: Path):
+    """Pages fetched by `fetch-leadership`: each is ingested as an official-website document, extracted, and yielded."""
+    for meta_path in sorted(directory.glob("*/*.provenance.json")):
+        meta = json.loads(meta_path.read_text())
+        data_path = Path(str(meta_path)[: -len(".provenance.json")])
+        publisher = register.ensure_publisher(conn, "web-" + slug(meta["host"]), meta["host"], kind="institution", website_url="https://" + meta["host"])
+        row = conn.execute("SELECT id::text AS id FROM reference.jurisdictions WHERE code = 'ke'").fetchone()
+        spec = register.DocumentSpec(publisher, f"Leadership page: {meta['requested']}", "official_website", url=meta["url"], licence="Not confirmed (public page of a Kenyan public body; reuse terms unassessed)", citation=f"{meta['host']}, retrieved {meta['retrieved_at'][:10]}.", jurisdiction_id=row["id"] if row else None)
+        _doc, capture_id, ref = pipeline.ingest(conn, store, data_path.read_bytes(), "leadership.html", spec, url=meta["url"], tool="gated-fetch", mime_type="text/html")
+        job_id, _ = pipeline.enqueue_extraction(conn, ref.version_id, "leadership-page", meta["institution"], capture_id)
+        conn.commit()
+        while jobs.run_once(conn, handlers, worker="office-holders-import"):
+            pass
+        job = conn.execute("SELECT status, result_file_version_id::text AS fv FROM engine.jobs WHERE id = %s", (job_id,)).fetchone()
+        if job["status"] != "succeeded" or not job["fv"]:
+            continue
+        result = pipeline.load_result(store, job["fv"])
+        recs = [dict(json.loads(s.content), period="leadership", sourceUrl=meta["url"]) for s in result.segments]
+        if recs:
+            yield capture_id, str(result.id), recs
+
+
+def correct_name(ctx: Context, name: str, report: dict) -> tuple[str, bool]:
+    """Fix OCR noise against known names, only when exactly one known name scores 92 or more; (name, matched-or-clean)."""
+    from rapidfuzz import fuzz, process
+
+    if not ctx.person_names:
+        return name, False
+    hits = process.extract(name, ctx.person_names, scorer=fuzz.token_sort_ratio, score_cutoff=92, limit=3)
+    if len(hits) == 1 or (len(hits) > 1 and hits[0][1] - hits[1][1] >= 4):
+        if hits[0][0] != name:
+            report.setdefault("name_corrections", []).append({"ocr": name, "known": hits[0][0], "score": hits[0][1]})
+        return hits[0][0], True
+    return name, False
 
 
 def match_institution(ctx: Context, text: str) -> tuple[str | None, float]:
@@ -445,6 +535,10 @@ def import_office_holders(conn: psycopg.Connection, store: LocalDirectoryStore, 
         pages.append((capture_id, str(result.id), [json.loads(s.content) for s in result.segments]))
     for capture_id, result_id, recs in gazette_results(conn, store, handlers):
         pages.append((capture_id, result_id, recs))
+    lead_dir = Path(directory).parent / "leadership"
+    if lead_dir.exists():
+        for capture_id, result_id, recs in leadership_results(conn, store, handlers, lead_dir):
+            pages.append((capture_id, result_id, recs))
     for _c, result_id, recs in pages:
         for r in recs:
             r["_result"] = result_id

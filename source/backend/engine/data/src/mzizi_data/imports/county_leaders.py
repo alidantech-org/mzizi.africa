@@ -41,7 +41,10 @@ def wikipedia_records(directory: Path, county_codes: dict[str, str]) -> list[dic
             continue
         raw = json.loads(path.read_text())
         text = clean(raw["wikitext"])
-        for rx in DEPUTY:
+        box = re.search(r"leader_title(\d*)\s*=\s*Deputy Governor[^\n]*\n\s*\|?\s*leader_name\1\s*=\s*" + NAME, text)
+        if box and ok(box.group(2)):
+            out.append({"county": code, "kind": "deputy-governor", "name": box.group(2).strip(), "source": "wikipedia", "url": raw["url"], "confidence": 0.65, "retrievedAt": raw["retrieved_at"]})
+        for rx in ([] if box and ok(box.group(2)) else DEPUTY):
             m = rx.search(text)
             if m and ok(m.group(1)):
                 out.append({"county": code, "kind": "deputy-governor", "name": m.group(1).strip(), "source": "wikipedia", "url": raw["url"], "confidence": 0.6, "retrievedAt": raw["retrieved_at"]})

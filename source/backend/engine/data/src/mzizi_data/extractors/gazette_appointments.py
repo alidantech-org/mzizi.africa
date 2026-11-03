@@ -44,7 +44,12 @@ def iso(day: str, mon: str, year: str) -> str | None:
     return f"{y:04d}-{m:02d}-{d:02d}" if m and 1 <= d <= 31 and 1990 <= y <= 2100 else None
 
 
+NOT_A_NAME = {"defence", "forces", "republic", "president", "board", "authority", "cabinet", "secretary", "kenya", "act", "council", "commission", "tribunal", "institute", "fund", "service", "limited", "government", "chief", "commander"}
+
+
 def plausible(name: str) -> bool:
+    if any(w.lower().strip(".,") in NOT_A_NAME for w in name.split()):
+        return False
     words = [w for w in re.split(r"\s+", name.strip()) if w]
     core = [w for w in words if not re.match(r"^\(?(Dr|Prof|Eng|Amb|Rev|Hon)\.?\)?$", w, re.I)]
     return 2 <= len(core) <= 6 and all(WORD_OK.match(w) for w in words) and any(len(w) >= 3 for w in core)
@@ -52,6 +57,11 @@ def plausible(name: str) -> bool:
 
 def clean(text: str) -> str:
     return re.sub(r"\s+", " ", text.replace("￾", " ").replace("￿", " ").replace("—", "-")).strip()
+
+
+def proper(name: str) -> str:
+    """ALL-CAPS names (the Gazette prints appointees in capitals) to Title Case; mixed case is kept."""
+    return " ".join(w.capitalize() if w.isupper() and len(w) > 2 else w for w in name.split())
 
 
 def split_names(raw: str) -> list[tuple[str, str | None]]:
@@ -66,6 +76,25 @@ def split_names(raw: str) -> list[tuple[str, str | None]]:
     return out
 
 
+PAGE_HINT = re.compile(r"ppoint|pointm|Chairp|Chief Exec|Commission(?:er)?s?\b|Members? of", re.I)
+
+
+def ocr_page(page, dpi: int = 300) -> str:
+    """Tesseract (English) over the page rendered at `dpi`; empty when the engine is missing."""
+    import shutil
+    import subprocess
+    import tempfile
+
+    if not shutil.which("tesseract"):
+        return ""
+    image = page.render(scale=dpi / 72).to_pil().convert("L")
+    with tempfile.TemporaryDirectory() as tmp:
+        path = f"{tmp}/p.png"
+        image.save(path)
+        out = subprocess.run(["tesseract", path, "stdout", "-l", "eng", "--psm", "4"], capture_output=True, text=True, timeout=180)
+    return out.stdout
+
+
 def run(data: bytes, profile: str | None) -> Output:
     import io
 
@@ -73,7 +102,13 @@ def run(data: bytes, profile: str | None) -> Output:
 
     try:
         pdf = pdfium.PdfDocument(io.BytesIO(data))
-        text = "\n".join(page.get_textpage().get_text_range() for page in pdf)
+        pages = []
+        for index in range(len(pdf)):
+            page = pdf[index]
+            layer = page.get_textpage().get_text_range()
+            # re-OCR only the pages whose text layer hints at an appointment: a whole issue at 300 dpi would take hours
+            pages.append(ocr_page(page) or layer if profile == "reocr" and PAGE_HINT.search(layer) else layer)
+        text = "\n".join(pages)
     except Exception as error:  # noqa: BLE001
         return Output("failed", diagnostics=[{"level": "error", "code": "not_pdf", "message": str(error)[:160]}])
     issue = ISSUE.search(text[:4000])
@@ -98,7 +133,7 @@ def run(data: bytes, profile: str | None) -> Output:
             if not plausible(name):
                 rejected += 1
                 continue
-            body = {"noticeNumber": number, "issue": issue_info, "role": own_role or role, "institutionText": institution[:200], "displayName": re.sub(r"\s*\((?:Dr|Prof|Eng)\.?\)\s*", " ", name).strip(), "effective": iso(*effect.groups()) if effect else None, "period": "gazette"}
+            body = {"noticeNumber": number, "issue": issue_info, "role": own_role or role, "institutionText": institution[:200], "displayName": proper(re.sub(r"\s*\((?:Dr|Prof|Eng)\.?\)\s*", " ", name).strip()), "effective": iso(*effect.groups()) if effect else None, "period": "gazette"}
             segments.append({"key": f"notice-{number}-{position}", "kind": "record", "locator": json.dumps({"notice": number, "n": position}), "content": json.dumps(body, sort_keys=True), "confidence": 0.5})
     return Output("succeeded" if segments else "failed", segments, [{"level": "info", "code": "appointments", "message": f"{len(segments)} appointees read, {rejected} names rejected as unreadable OCR, issue {issue_info}"}])
 
