@@ -1,0 +1,246 @@
+{
+  "_meta": {
+    "label": "Custom-prepared from manual research (written by a coding agent from the public postal and street descriptions of these well-known institutions). Addresses are text only; no coordinates or buildings are asserted. Every place is unverified until a source corroborates it (place research claims)."
+  },
+  "national": [
+    {
+      "institution": "ke/executive/state-house",
+      "placeName": "State House, Nairobi",
+      "address": "State House Road, Nairobi",
+      "search": "State House Nairobi"
+    },
+    {
+      "institution": "ke/executive",
+      "placeName": "Harambee House, Nairobi",
+      "address": "Harambee Avenue, Nairobi",
+      "search": "Harambee House"
+    },
+    {
+      "institution": "ke/national-assembly",
+      "placeName": "Parliament Buildings, Nairobi",
+      "address": "Parliament Road, Nairobi",
+      "search": "Parliament Buildings Nairobi"
+    },
+    {
+      "institution": "ke/senate",
+      "placeName": "Parliament Buildings, Nairobi",
+      "address": "Parliament Road, Nairobi",
+      "search": "Parliament Buildings Nairobi"
+    },
+    {
+      "institution": "ke/electoral-commission",
+      "placeName": "IEBC headquarters, Anniversary Towers, Nairobi",
+      "address": "Anniversary Towers, University Way, Nairobi",
+      "search": "Anniversary Towers Nairobi"
+    },
+    {
+      "institution": "ke/helb",
+      "placeName": "Higher Education Loans Board headquarters, Anniversary Towers, Nairobi",
+      "address": "Anniversary Towers, University Way, Nairobi",
+      "search": "Anniversary Towers Nairobi"
+    },
+    {
+      "institution": "ke/central-bank",
+      "placeName": "Central Bank of Kenya headquarters, Nairobi",
+      "address": "Haile Selassie Avenue, Nairobi",
+      "search": "Central Bank of Kenya"
+    },
+    {
+      "institution": "ke/kra",
+      "placeName": "Kenya Revenue Authority headquarters, Times Tower, Nairobi",
+      "address": "Times Tower, Haile Selassie Avenue, Nairobi",
+      "search": "Times Tower Nairobi"
+    },
+    {
+      "institution": "ke/ministry/treasury/national-treasury",
+      "placeName": "The National Treasury, Treasury Building, Nairobi",
+      "address": "Treasury Building, Harambee Avenue, Nairobi",
+      "search": "Treasury Building Nairobi"
+    },
+    {
+      "institution": "ke/judiciary/supreme-court",
+      "placeName": "Supreme Court of Kenya, Nairobi",
+      "address": "Supreme Court Building, City Hall Way, Nairobi",
+      "search": "Supreme Court of Kenya"
+    },
+    {
+      "institution": "ke/ethics-and-anti-corruption-commission",
+      "placeName": "EACC headquarters, Integrity Centre, Nairobi",
+      "address": "Integrity Centre, Milimani Road, Nairobi",
+      "search": "Integrity Centre Nairobi"
+    },
+    {
+      "institution": "ke/ca",
+      "placeName": "Communications Authority of Kenya headquarters, CA Centre, Nairobi",
+      "address": "CA Centre, Waiyaki Way, Nairobi",
+      "search": "Communications Authority of Kenya"
+    },
+    {
+      "institution": "ke/kebs",
+      "placeName": "Kenya Bureau of Standards headquarters, Nairobi",
+      "address": "Popo Road, off Mombasa Road, South C, Nairobi",
+      "search": "Kenya Bureau of Standards"
+    },
+    {
+      "institution": "ke/kemri",
+      "placeName": "KEMRI headquarters, Nairobi",
+      "address": "Mbagathi Road, Nairobi",
+      "search": "Kenya Medical Research Institute"
+    },
+    {
+      "institution": "ke/kenyatta-university",
+      "placeName": "Kenyatta University main campus",
+      "address": "Thika Road, Kahawa, Nairobi",
+      "search": "Kenyatta University"
+    },
+    {
+      "institution": "ke/kaa",
+      "placeName": "Kenya Airports Authority headquarters, JKIA",
+      "address": "Jomo Kenyatta International Airport, Embakasi, Nairobi",
+      "search": "Kenya Airports Authority"
+    }
+  ],
+  "counties": {
+    "mombasa": {
+      "town": "Mombasa"
+    },
+    "kwale": {
+      "town": "Kwale"
+    },
+    "kilifi": {
+      "town": "Kilifi"
+    },
+    "tana-river": {
+      "town": "Hola"
+    },
+    "lamu": {
+      "town": "Lamu"
+    },
+    "taita-taveta": {
+      "town": "Mwatate"
+    },
+    "garissa": {
+      "town": "Garissa"
+    },
+    "wajir": {
+      "town": "Wajir"
+    },
+    "mandera": {
+      "town": "Mandera"
+    },
+    "marsabit": {
+      "town": "Marsabit"
+    },
+    "isiolo": {
+      "town": "Isiolo"
+    },
+    "meru": {
+      "town": "Meru"
+    },
+    "tharaka": {
+      "town": "Kathwana"
+    },
+    "embu": {
+      "town": "Embu"
+    },
+    "kitui": {
+      "town": "Kitui"
+    },
+    "machakos": {
+      "town": "Machakos"
+    },
+    "makueni": {
+      "town": "Wote"
+    },
+    "nyandarua": {
+      "town": "Ol Kalou"
+    },
+    "nyeri": {
+      "town": "Nyeri"
+    },
+    "kirinyaga": {
+      "town": "Kerugoya"
+    },
+    "muranga": {
+      "town": "Murang'a"
+    },
+    "kiambu": {
+      "town": "Kiambu"
+    },
+    "turkana": {
+      "town": "Lodwar"
+    },
+    "west-pokot": {
+      "town": "Kapenguria"
+    },
+    "samburu": {
+      "town": "Maralal"
+    },
+    "trans-nzoia": {
+      "town": "Kitale"
+    },
+    "uasin-gishu": {
+      "town": "Eldoret"
+    },
+    "elgeyo-marakwet": {
+      "town": "Iten"
+    },
+    "nandi": {
+      "town": "Kapsabet"
+    },
+    "baringo": {
+      "town": "Kabarnet"
+    },
+    "laikipia": {
+      "town": "Rumuruti"
+    },
+    "nakuru": {
+      "town": "Nakuru"
+    },
+    "narok": {
+      "town": "Narok"
+    },
+    "kajiado": {
+      "town": "Kajiado"
+    },
+    "kericho": {
+      "town": "Kericho"
+    },
+    "bomet": {
+      "town": "Bomet"
+    },
+    "kakamega": {
+      "town": "Kakamega"
+    },
+    "vihiga": {
+      "town": "Vihiga"
+    },
+    "bungoma": {
+      "town": "Bungoma"
+    },
+    "busia": {
+      "town": "Busia"
+    },
+    "siaya": {
+      "town": "Siaya"
+    },
+    "kisumu": {
+      "town": "Kisumu"
+    },
+    "homa-bay": {
+      "town": "Homa Bay"
+    },
+    "migori": {
+      "town": "Migori"
+    },
+    "kisii": {
+      "town": "Kisii"
+    },
+    "nyamira": {
+      "town": "Nyamira"
+    },
+    "nairobi": {
+      "town": "Nairobi"
+    }
+  }
+}

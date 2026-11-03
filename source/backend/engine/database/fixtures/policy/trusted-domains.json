@@ -62,6 +62,12 @@
       "maxRequestsPerSecond": 0.2
     },
     {
+      "host": "nominatim.openstreetmap.org",
+      "jurisdiction": "ke",
+      "rightsHolder": "OpenStreetMap contributors (ODbL 1.0; the Nominatim usage policy allows no more than one request per second, an identifying agent and no bulk geocoding, so the engine asks for at most 0.2 per second and only for named institutional places)",
+      "maxRequestsPerSecond": 0.2
+    },
+    {
       "host": "www.wikidata.org",
       "jurisdiction": "ke",
       "rightsHolder": "Wikimedia Foundation (Wikidata structured data is CC0; Commons files carry their own free licences, recorded per file)",
