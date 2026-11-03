@@ -1,5 +1,5 @@
 ---
-{id: TSK-41CD5EF36909,name: Probe expected sites and confirm hostnames,type: task,status: planned,priority: medium,created_at: 2026-11-02T19:26:08.084Z,updated_at: 2026-11-02T21:36:47.702Z,order: 41984,depends_on: [TSK-998EC5BE2CBA]}
+{id: TSK-41CD5EF36909,name: Probe expected sites and confirm hostnames,type: task,status: completed,priority: medium,created_at: 2026-11-02T19:26:08.084Z,updated_at: 2026-11-03T11:12:15.204Z,order: 41984,depends_on: [TSK-998EC5BE2CBA],due_at: 2026-11-05,extra: {status_history: [{from: planned,to: completed,at: 2026-11-03T11:12:15.204Z}]}}
 ---
 
 # Probe expected sites and confirm hostnames
@@ -16,6 +16,6 @@ On 2 November 2026 the real database received site records for every county gove
 
 - [x] Probe the .go.ke candidates (counties, assemblies, national bodies) with a bounded GET of the home page and record reachable, unreachable or refused for each.
 - [x] Create domain rows for confirmed hostnames and move confirmed sites from expected to profiled, recording redirects as aliases.
-- [ ] For non-.go.ke bodies, assess the host and probe only after assessment.
-- [ ] Try the constituency NG-CDF pattern against the real NG-CDF site layout and correct the pattern if the per-constituency pages live on ngcdf.go.ke paths rather than subdomains.
-- [ ] Report counts by outcome and by family in the status document.
+- [x] For non-.go.ke bodies, assess the host and probe only after assessment.
+- [x] Try the constituency NG-CDF pattern against the real NG-CDF site layout and correct the pattern if the per-constituency pages live on ngcdf.go.ke paths rather than subdomains.
+- [x] Report counts by outcome and by family in the status document.
