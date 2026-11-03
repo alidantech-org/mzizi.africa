@@ -1,0 +1,50 @@
+{
+  "note": "Kenya legal instrument kinds used by the Act, Bill, regulation and Gazette notice import (Lane E, 2026-11-03), beside the constitution kind in kenya-reference.json. The data engine's legal importer also creates these on demand on an existing database (idempotent).",
+  "country": "ke",
+  "rows": [
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:legal:instrument-kind:act",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "legal/instrument-kind",
+        "code": "legal/instrument-kind/act",
+        "label": "Act of Parliament",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:legal:instrument-kind:bill",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "legal/instrument-kind",
+        "code": "legal/instrument-kind/bill",
+        "label": "Bill",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:legal:instrument-kind:regulation",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "legal/instrument-kind",
+        "code": "legal/instrument-kind/regulation",
+        "label": "Regulations, rules or order",
+        "order": 0
+      }
+    },
+    {
+      "entity": "ClassificationRecordEntity",
+      "key": "ke:legal:instrument-kind:gazette-notice",
+      "values": {
+        "jurisdictionId": "@ke",
+        "scheme": "legal/instrument-kind",
+        "code": "legal/instrument-kind/gazette-notice",
+        "label": "Kenya Gazette notice",
+        "order": 0
+      }
+    }
+  ]
+}

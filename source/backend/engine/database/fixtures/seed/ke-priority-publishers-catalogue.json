@@ -1,0 +1,117 @@
+{
+  "_meta": {
+    "label": "Custom-prepared from manual research",
+    "preparedBy": "coding agent (Claude, Lane E), after bounded gated fetches on 2026-11-03",
+    "task": "TSK-2A15C7E9908D",
+    "access": "All hosts are .go.ke, covered by the suffix rule in fixtures/policy/trusted-domains.json; no exact-host rule was needed. Each site has an approved assessment by the agent account (DEC-AUTO-APPROVAL) limited to the hosts listed; 0.2 requests per second; robots.txt read by the gate; the run stops on a challenge, 401, 403 or 429. Kenya Law (kenyalaw.org, new.kenyalaw.org) answers with a bot challenge and is never contacted by the crawler: Acts are taken only from official PDFs on allowed hosts. gazettes.africa (a third-party mirror alias of the Gazette site) is outside every assessment scope.",
+    "scope": "Every record from these publishers is national: legal.instruments carries the Kenya jurisdiction (the root of the geography tree, DEC-JURISDICTION-WIDE-SCOPE) and has no finer geography column; institutions are national bodies scoped to the root unit by the governance seed."
+  },
+  "publishers": [
+    {
+      "site": "ke/gazette",
+      "institution": "ke/kenya-law",
+      "hosts": [
+        "kenyagazette.go.ke"
+      ],
+      "familySections": "ke/publisher/gazette",
+      "documentKinds": [
+        "gazette_notice"
+      ],
+      "probe": "kenyagazette.go.ke does not resolve in DNS (2026-11-03): no TLS, no HTTP. www.kenyagazette.go.ke and gazette.go.ke do not resolve either. The Gazette is therefore read only where other allowed hosts carry Gazette notices or Gazette-printed Acts and regulations (for example NG-CDF and ORPP PDFs). Kenya Gazette issues on Kenya Law are not collected (bot challenge).",
+      "publication": "Kenya Gazette issues (weekly, plus special issues and supplements); each notice is numbered 'Gazette Notice No. n' within a volume (Vol. CXXVIII, No. 45 style).",
+      "pipeline": "legal-pdf extractor: one notice segment per Gazette Notice number, dated by the issue date line; instrument kind gazette-notice with code ke/gazette-notice/<volume>-<issue>/<number>; text excerpt in the summary; people named in notices are not extracted here."
+    },
+    {
+      "site": "ke/parliament",
+      "institution": "ke/parliament",
+      "hosts": [
+        "parliament.go.ke",
+        "www.parliament.go.ke"
+      ],
+      "familySections": "ke/publisher/parliament",
+      "documentKinds": [
+        "hansard",
+        "order_paper",
+        "bill",
+        "act",
+        "budget",
+        "standing_orders",
+        "committee_report"
+      ],
+      "probe": "Drupal; home page lists order papers and Hansard as PDFs under /sites/default/files/<yyyy-mm>/, archive pages at /the-national-assembly/house-business/hansard and /order-paper, budget documents at /<yyyy>-<yyyy>-budget-documents and /budget-books-fy-<yyyy>-<yyyy>, /downloads for standing orders and guides.",
+      "publication": "Hansard (sitting reports), order papers (daily), Bills (as published for public participation), budget books, standing orders.",
+      "pipeline": "crawler registers every file once per content hash; semantics classifies; Bills go through the legal-pdf extractor into instruments (draft) and provisions; Hansard and order papers stay registered documents until a Hansard parser exists (gap queue)."
+    },
+    {
+      "site": "ke/nlc",
+      "institution": "ke/national-land-commission",
+      "hosts": [
+        "landcommission.go.ke",
+        "nlc.go.ke"
+      ],
+      "familySections": "ke/publisher/nlc",
+      "documentKinds": [
+        "annual_report",
+        "land_determination",
+        "advisory",
+        "publication",
+        "legislation"
+      ],
+      "probe": "WordPress with Download Manager: listing pages (/reports, /publications, /land-laws, /advisories, /hli-determinations) link /download/<slug>/ package pages whose file link is ?wpdmdl=<id>. Sub-systems on other ports and hosts (repository.landcommission.go.ke:4000, atlas, hakiportal, procurement portal, mail) are not crawled.",
+      "publication": "Annual reports, historical land injustice determinations, reviews of grants of public land, advisories, land laws.",
+      "pipeline": "crawler (depth 3 for the package-page hop) -> semantics -> registered documents; Acts among them go through legal-pdf."
+    },
+    {
+      "site": "ke/lands",
+      "institution": "ke/ministry/lands",
+      "hosts": [
+        "lands.go.ke",
+        "housing.go.ke"
+      ],
+      "familySections": "ke/ministry",
+      "documentKinds": [
+        "legislation",
+        "gazette_notice",
+        "publication"
+      ],
+      "probe": "assessed (trusted suffix) but not crawled in this pass: the Ministry's registries run as Ardhisasa (ardhisasa.lands.go.ke), an application, not a document publisher.",
+      "publication": "Lands-related public notices appear in the Gazette and on the NLC site.",
+      "pipeline": "left to a later pass; recorded here so it is not lost."
+    },
+    {
+      "site": "ke/controller-of-budget",
+      "institution": "ke/office-of-the-controller-of-budget",
+      "hosts": [
+        "cob.go.ke"
+      ],
+      "familySections": "ke/publisher/cob",
+      "documentKinds": [
+        "budget_implementation_review_report",
+        "county_budget_report",
+        "m_and_e_report",
+        "regulation"
+      ],
+      "probe": "WordPress with Download Manager, as NLC: /reports/<national-government-budget-implementation-review-reports|financial-reports|m-and-e-reports|expenditure-templates> and page ids 2164 (national) and 2166 (county) list /download/<slug>/ packages.",
+      "publication": "Quarterly, half-year, nine-month and annual budget implementation review reports for the national government and for the county governments.",
+      "pipeline": "crawler (depth 3) -> semantics -> registered documents; figures found in the text are kept as facts with spans and every budget, audit-report and financial-statement document gets an open figures_review gap for a reviewer. No figure is promoted to a canonical finance row from this pass."
+    },
+    {
+      "site": "ke/auditor-general",
+      "institution": "ke/office-of-the-auditor-general",
+      "hosts": [
+        "www.oagkenya.go.ke",
+        "oagkenya.go.ke"
+      ],
+      "familySections": "ke/publisher/oag",
+      "documentKinds": [
+        "audit_report",
+        "annual_corporate_report",
+        "strategic_document",
+        "procurement_plan"
+      ],
+      "probe": "The apex host fails TLS verification (the wildcard certificate *.oagkenya.go.ke does not cover it), so www.oagkenya.go.ke is the primary domain and the apex an alias (certificate checked with a handshake only, 2026-11-03). Reports are WordPress uploads under /wp-content/uploads/<yyyy>/<mm>/ linked from /national-government-audit-reports, /county-governments-reports, /specialized-audit-reports, /special-audit-report, /performance-audit-report, /financial-audit-reports and the entity pages.",
+      "publication": "Audit reports on the national government, county governments, state corporations, funds, commissions, the Judiciary, Parliament and political parties; performance and special audits; annual corporate reports.",
+      "pipeline": "crawler -> semantics -> registered documents with a figures_review gap each; large PDFs above the 25 MB cap are skipped and listed in the crawl report."
+    }
+  ]
+}

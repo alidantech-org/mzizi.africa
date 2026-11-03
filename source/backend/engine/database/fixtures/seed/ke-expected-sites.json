@@ -299,6 +299,15 @@
       ]
     },
     {
+      "code": "ke/parliament",
+      "institution": "ke/parliament",
+      "name": "Parliament of Kenya",
+      "hosts": [
+        "parliament.go.ke",
+        "www.parliament.go.ke"
+      ]
+    },
+    {
       "code": "ke/parliamentary-service-commission",
       "institution": "ke/parliamentary-service-commission",
       "name": "Parliamentary Service Commission",
