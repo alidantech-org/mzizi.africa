@@ -11,7 +11,7 @@ This is a **design and contract/fixture handoff**, not an assertion that all API
 
 | Workstream | Output | Verification state |
 | --- | --- | --- |
-| Schema inventory | [Phase 1 inventory](schema-inventory-phase1.md) and [manifest](../../../../fixtures/mobile/schema-inventory-manifest.json) | Source-backed catalogue; full migration audit still open |
+| Schema inventory | [Phase 1 inventory](schema-inventory-phase1.md) and [manifest](../../../fixtures/mobile/schema-inventory-manifest.json) | Source-backed catalogue; full migration audit still open |
 | JSON contracts | [Presentation contracts](json-data-contracts.md) and JSON Schemas in `fixtures/mobile/contracts/` | Proposed mobile projections, **not** existing NestJS DTOs |
 | UI components | [Mapping](ui-component-mapping.md) | Implementable design specification |
 | Screen definitions | [Screen specifications](screen-specifications.md) | Routes, states, flows, responsiveness |
