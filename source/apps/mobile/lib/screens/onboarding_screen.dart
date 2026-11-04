@@ -58,16 +58,55 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ),
   );
 
+  // All onboarding pages share centered headings, descriptions and artwork.
+  // Feature-list labels remain left-aligned within a centered content column.
+  Widget _pageHeading({
+    required String title,
+    required String subtitle,
+    Widget? brand,
+  }) => Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      if (brand != null) ...[
+        brand,
+        const SizedBox(height: 14),
+      ],
+      Text(
+        title,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 26,
+          height: 1.15,
+          fontWeight: FontWeight.w800,
+          color: AppColors.primary,
+        ),
+      ),
+      const SizedBox(height: 12),
+      Text(
+        subtitle,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 14.5,
+          height: 1.4,
+          color: AppColors.lightMuted,
+        ),
+      ),
+    ],
+  );
+
   Widget _welcomePage() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       Padding(
-        padding: const EdgeInsets.fromLTRB(28, 28, 28, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
+        padding: const EdgeInsets.fromLTRB(28, 40, 28, 0),
+        child: SizedBox(
+          width: double.infinity,
+          child: _pageHeading(
+            title: 'Understand Kenya.\nBe part of it.',
+            subtitle: 'Your guide to Kenya’s governance, public resources and more.',
+            brand: const Text(
               'Mzizi.',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'serif',
                 fontSize: 52,
@@ -76,26 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 letterSpacing: -2,
               ),
             ),
-            const SizedBox(height: 14),
-            const Text(
-              'Understand Kenya.\nBe part of it.',
-              style: TextStyle(
-                fontSize: 24,
-                height: 1.15,
-                fontWeight: FontWeight.w800,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Your guide to Kenya’s governance,\npublic resources and more.',
-              style: TextStyle(
-                fontSize: 14.5,
-                height: 1.4,
-                color: AppColors.lightMuted,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
       Expanded(
@@ -208,55 +228,49 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: constraints.maxHeight - 52),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w800,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 14.5,
-                height: 1.4,
-                color: AppColors.lightMuted,
-              ),
+            SizedBox(
+              width: double.infinity,
+              child: _pageHeading(title: title, subtitle: subtitle),
             ),
             const SizedBox(height: 26),
-            art,
+            Center(child: art),
             const SizedBox(height: 28),
-            for (final (icon, label) in items)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 9,
-                  horizontal: 36,
-                ),
-                child: Row(
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Column(
                   children: [
-                    Icon(
-                      icon,
-                      size: 24,
-                      color: icon == Icons.check_circle
-                          ? AppColors.lightSuccess
-                          : AppColors.brand,
-                    ),
-                    const SizedBox(width: 16),
-                    Text(
-                      label,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: AppColors.primary,
+                    for (final (icon, label) in items)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 9),
+                        child: Row(
+                          children: [
+                            Icon(
+                              icon,
+                              size: 24,
+                              color: icon == Icons.check_circle
+                                  ? AppColors.lightSuccess
+                                  : AppColors.brand,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                label,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
+            ),
           ],
         ),
       ),
