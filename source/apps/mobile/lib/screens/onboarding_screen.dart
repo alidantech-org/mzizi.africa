@@ -151,7 +151,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget _explorePage() => _featurePage(
     title: 'Explore Kenya',
     subtitle:
-        'Discover counties, government institutions,\nand public spending.',
+        'Discover counties, government institutions, and public spending.',
     art: Semantics(
       image: true,
       label: 'Map of Kenya in the colours of the national flag',
@@ -169,7 +169,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _updatesPage() => _featurePage(
     title: 'Stay in the know',
-    subtitle: 'Get updates on governance,\nprojects and news across Kenya.',
+    subtitle: 'Get updates on governance, projects and news across Kenya.',
     art: Semantics(
       image: true,
       label: 'Phone showing a notification bell',
