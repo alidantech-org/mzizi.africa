@@ -4,6 +4,8 @@ import '../data/domain_api.dart';
 import '../data/geography_api.dart' show JsonObject;
 import '../data/saved_library.dart';
 import '../theme/app_colors.dart';
+import '../data/sample_data_store.dart';
+import 'sample_data_screen.dart';
 
 class MoneyScreen extends StatefulWidget {
   const MoneyScreen({super.key, this.onNavigate});
@@ -140,6 +142,18 @@ class _MoneyScreenState extends State<MoneyScreen> {
                     fontSize: 14,
                     height: 1.35,
                     color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.science_outlined),
+                    title: const Text('See a finance chart example'),
+                    subtitle: const Text('Offline demonstration · fictional amounts'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(builder: (_) => const SampleDataScreen(initialTopic: SampleTopic.finance)),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
