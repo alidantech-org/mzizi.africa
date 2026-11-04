@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/mobile/election-contest/1.0.0",
+  "allOf": [
+    {
+      "$ref": "envelope.schema.json"
+    },
+    {
+      "properties": {
+        "kind": {
+          "const": "election.contest"
+        },
+        "data": {
+          "type": "object",
+          "required": [
+            "election",
+            "seat",
+            "resultLevelId",
+            "electorate",
+            "candidates",
+            "declaration"
+          ],
+          "properties": {
+            "resultLevelId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "electorate": {
+              "type": "object",
+              "required": [
+                "registeredVoters",
+                "votesCast",
+                "validVotes"
+              ],
+              "properties": {
+                "registeredVoters": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "votesCast": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "validVotes": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0
+                }
+              }
+            },
+            "candidates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "candidateId",
+                  "votes",
+                  "rank",
+                  "isWinner"
+                ],
+                "properties": {
+                  "candidateId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "votes": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "rank": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "isWinner": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
