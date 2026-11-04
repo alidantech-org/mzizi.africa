@@ -5,6 +5,7 @@ import '../data/geography_api.dart' show JsonObject;
 import '../data/saved_library.dart';
 import '../theme/app_colors.dart';
 import '../widgets/county_choropleth_map.dart';
+import '../widgets/sample_overview_panel.dart';
 import 'sample_data_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -192,6 +193,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 12),
+            const SampleOverviewPanel(),
             const SizedBox(height: 16),
             _searchEntry(),
             const SizedBox(height: 17),
