@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/mobile/statistics-series/1.0.0",
+  "allOf": [
+    {
+      "$ref": "envelope.schema.json"
+    },
+    {
+      "properties": {
+        "kind": {
+          "const": "statistics.series"
+        },
+        "data": {
+          "type": "object",
+          "required": [
+            "indicator",
+            "geoUnit",
+            "points",
+            "vintage",
+            "dimensions"
+          ],
+          "properties": {
+            "points": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "observationId",
+                  "period",
+                  "value"
+                ],
+                "properties": {
+                  "observationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "period": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "marginOfError": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0
+                  }
+                }
+              }
+            },
+            "dimensions": {
+              "type": "array"
+            },
+            "vintage": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
