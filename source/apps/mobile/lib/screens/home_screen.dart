@@ -5,6 +5,7 @@ import '../data/geography_api.dart' show JsonObject;
 import '../data/saved_library.dart';
 import '../theme/app_colors.dart';
 import '../widgets/county_choropleth_map.dart';
+import 'sample_data_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.onNavigate});
@@ -179,6 +180,18 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 14),
             _hero(),
+            const SizedBox(height: 12),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.analytics_outlined),
+                title: const Text('Explore data visualizations'),
+                subtitle: const Text('Offline sample data · fictional values, clearly labeled'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const SampleDataScreen()),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             _searchEntry(),
             const SizedBox(height: 17),
