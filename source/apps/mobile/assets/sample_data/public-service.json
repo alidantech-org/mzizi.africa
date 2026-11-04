@@ -1,0 +1,68 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "civic.service",
+  "data": {
+    "service": {
+      "id": "00000000-0000-4000-8000-000000000501",
+      "ref": {
+        "kind": "civic.services",
+        "id": "00000000-0000-4000-8000-000000000501"
+      },
+      "jurisdictionId": "00000000-0000-4000-8000-000000000001",
+      "sectorId": "00000000-0000-4000-8000-000000000502",
+      "code": "demo/services/registration",
+      "name": "Sample Community Registration",
+      "description": "Fictional demonstration of services and facilities."
+    },
+    "amenities": [
+      {
+        "id": "00000000-0000-4000-8000-000000000503",
+        "ref": {
+          "kind": "civic.amenities",
+          "id": "00000000-0000-4000-8000-000000000503"
+        },
+        "code": "demo/facility/north",
+        "name": "Example Northern Service Centre",
+        "isActive": true
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000504",
+        "ref": {
+          "kind": "civic.amenities",
+          "id": "00000000-0000-4000-8000-000000000504"
+        },
+        "code": "demo/facility/south",
+        "name": "Sample Southern Service Centre",
+        "isActive": true
+      }
+    ],
+    "deliveries": [
+      {
+        "id": "00000000-0000-4000-8000-000000000505",
+        "serviceId": "00000000-0000-4000-8000-000000000501",
+        "amenityId": "00000000-0000-4000-8000-000000000503",
+        "status": "operating",
+        "responsibleOfficeId": "00000000-0000-4000-8000-000000000506",
+        "budgetId": "00000000-0000-4000-8000-000000000507"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000508",
+        "serviceId": "00000000-0000-4000-8000-000000000501",
+        "amenityId": "00000000-0000-4000-8000-000000000504",
+        "status": "planned",
+        "responsibleOfficeId": null,
+        "budgetId": null
+      }
+    ],
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
