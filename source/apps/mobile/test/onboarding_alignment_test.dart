@@ -41,12 +41,29 @@ void main() {
       TextAlign.center,
     );
 
+    void expectCenteredFeatureLabels(List<String> labels) {
+      for (final label in labels) {
+        final finder = find.text(label);
+        expect(finder, findsOneWidget);
+        expect(tester.widget<Text>(finder).textAlign, TextAlign.center);
+        expect(
+          (tester.getCenter(finder).dx - 195).abs(),
+          lessThan(2),
+        );
+      }
+    }
+
     await tester.tap(find.text('Get Started'));
     await tester.pumpAndSettle();
     expectCentered(
       'Explore Kenya',
       'Discover counties, government institutions, and public spending.',
     );
+    expectCenteredFeatureLabels([
+      'Find information easily',
+      'Promote transparency',
+      'Be an informed citizen',
+    ]);
 
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
@@ -54,6 +71,11 @@ void main() {
       'Stay in the know',
       'Get updates on governance, projects and news across Kenya.',
     );
+    expectCenteredFeatureLabels([
+      'Personalised updates',
+      'Save your interests',
+      'Follow institutions',
+    ]);
     expect(tester.takeException(), isNull);
   });
 }
