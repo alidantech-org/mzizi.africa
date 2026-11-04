@@ -1,0 +1,78 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "election.contest",
+  "data": {
+    "election": {
+      "kind": "electoral.elections",
+      "id": "00000000-0000-4000-8000-000000000031",
+      "name": "Fictional Council Election",
+      "status": "completed",
+      "heldDate": "2020-01-01"
+    },
+    "seat": {
+      "kind": "electoral.seats",
+      "id": "00000000-0000-4000-8000-000000000032",
+      "code": "demo/seat-a",
+      "positions": 1
+    },
+    "geoUnit": {
+      "kind": "geography.units",
+      "id": "00000000-0000-4000-8000-000000000011",
+      "name": "Sample Region A"
+    },
+    "resultLevelId": "00000000-0000-4000-8000-000000000033",
+    "declaration": {
+      "declaredAt": null,
+      "verificationState": "unverified",
+      "isFinal": false
+    },
+    "electorate": {
+      "registeredVoters": 1000,
+      "votesCast": 750,
+      "validVotes": 735,
+      "rejectedVotes": 15,
+      "spoiltVotes": null,
+      "registerVersion": "synthetic-1"
+    },
+    "candidates": [
+      {
+        "candidateId": "00000000-0000-4000-8000-000000000034",
+        "person": {
+          "kind": "person.individuals",
+          "id": "00000000-0000-4000-8000-000000000036",
+          "name": "Candidate A"
+        },
+        "partyId": null,
+        "votes": 410,
+        "rank": 1,
+        "isWinner": false
+      },
+      {
+        "candidateId": "00000000-0000-4000-8000-000000000035",
+        "person": {
+          "kind": "person.individuals",
+          "id": "00000000-0000-4000-8000-000000000037",
+          "name": "Candidate B"
+        },
+        "partyId": null,
+        "votes": 325,
+        "rank": 2,
+        "isWinner": false
+      }
+    ],
+    "derived": {
+      "turnoutPercent": 75,
+      "formula": "votesCast / registeredVoters * 100"
+    },
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
