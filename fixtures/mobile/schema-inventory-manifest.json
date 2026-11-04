@@ -13,9 +13,11 @@
     "dryv/contracts/foundation/geography/index.ts",
     "dryv/contracts/domains/person/index.ts",
     "dryv/contracts/domains/governance/index.ts",
-    "dryv/contracts/domains/finance/index.ts"
+    "dryv/contracts/domains/finance/index.ts",
+    "dryv/contracts/domains/statistics/index.ts",
+    "dryv/contracts/domains/elections/index.ts"
   ],
-  "warning": "Documented table catalogue, not an exhaustive snapshot of current migrations or fields. Verify against Dryv and database engine before generating runtime contracts.",
+  "warning": "Updated with newer Dryv statistics and elections entities; remaining schemas are documentation-only unless contractVerified is true. Not an exhaustive generated migration/DDL or live data audit.",
   "schemas": [
     {
       "name": "reference",
@@ -35,7 +37,7 @@
         "names",
         "changes"
       ],
-      "contractVerified": false,
+      "contractVerified": true,
       "publicMobile": "subject_to_read_api_and_access_rules"
     },
     {
@@ -59,7 +61,7 @@
         "contacts",
         "handles"
       ],
-      "contractVerified": false,
+      "contractVerified": true,
       "publicMobile": "subject_to_read_api_and_access_rules"
     },
     {
@@ -82,7 +84,7 @@
         "stages",
         "holders"
       ],
-      "contractVerified": false,
+      "contractVerified": true,
       "publicMobile": "subject_to_read_api_and_access_rules"
     },
     {
@@ -93,9 +95,14 @@
         "candidates",
         "results",
         "manifestos",
+        "electorates",
+        "referendum_questions",
+        "referendum_options",
+        "referendum_results",
+        "seat_allocations",
         "commitments"
       ],
-      "contractVerified": false,
+      "contractVerified": true,
       "publicMobile": "subject_to_read_api_and_access_rules"
     },
     {
@@ -106,8 +113,8 @@
         "units",
         "ideologies",
         "positions",
-        "alignments",
-        "holders"
+        "party_ideologies",
+        "position_holders"
       ],
       "contractVerified": false,
       "publicMobile": "subject_to_read_api_and_access_rules"
@@ -142,7 +149,7 @@
         "expenditures",
         "entries"
       ],
-      "contractVerified": false,
+      "contractVerified": true,
       "publicMobile": "subject_to_read_api_and_access_rules"
     },
     {
@@ -175,9 +182,14 @@
         "indicators",
         "fields",
         "datasets",
-        "observations"
+        "dimensions",
+        "dimension_members",
+        "vintages",
+        "observations",
+        "observation_dimensions",
+        "observation_derivations"
       ],
-      "contractVerified": false,
+      "contractVerified": true,
       "publicMobile": "subject_to_read_api_and_access_rules"
     },
     {
@@ -185,7 +197,7 @@
       "documentedTables": [
         "services",
         "amenities",
-        "posts",
+        "amenity_offices",
         "deliveries"
       ],
       "contractVerified": false,
@@ -274,13 +286,7 @@
       "publicMobile": "subject_to_read_api_and_access_rules"
     }
   ],
-  "supplementaryStatisticalTablesNeedingReconciliation": [
-    "dimensions",
-    "dimension_members",
-    "observation_dimensions",
-    "vintages",
-    "observation_derivations"
-  ],
+  "supplementaryStatisticalTablesNeedingReconciliation": [],
   "retiredTablesToExclude": [
     "organization.locations"
   ],
@@ -296,5 +302,6 @@
     "Preserve valid-time and record-version semantics",
     "GeoJSON geometry requires dedicated detail/map projection",
     "Do not present synthetic fixture values as factual"
-  ]
+  ],
+  "contractVerifiedMeaning": "Verified in reviewed Dryv source code only; migration installation and operational endpoint/data population not verified."
 }
