@@ -1,0 +1,48 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "finance.summary",
+  "data": {
+    "fiscalYear": {
+      "kind": "finance.years",
+      "id": "00000000-0000-4000-8000-000000000051",
+      "code": "demo/fy-2020",
+      "startsOn": "2020-07-01",
+      "endsOn": "2021-06-30"
+    },
+    "budgetaryUnit": {
+      "kind": "finance.units",
+      "id": "00000000-0000-4000-8000-000000000052",
+      "name": "Example Department"
+    },
+    "currency": "KES",
+    "basis": "synthetic preview, no official fiscal classification",
+    "revision": "original",
+    "totals": {
+      "budgeted": 1000000,
+      "expenditure": 760000,
+      "revenue": null
+    },
+    "breakdown": [
+      {
+        "label": "Program Alpha",
+        "budgeted": 600000,
+        "expenditure": 480000
+      },
+      {
+        "label": "Program Beta",
+        "budgeted": 400000,
+        "expenditure": 280000
+      }
+    ],
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
