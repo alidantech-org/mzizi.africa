@@ -1,0 +1,95 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "procurement.contract",
+  "data": {
+    "tender": {
+      "id": "00000000-0000-4000-8000-000000000401",
+      "ref": {
+        "kind": "procurement.tenders",
+        "id": "00000000-0000-4000-8000-000000000401"
+      },
+      "code": "DEMO-TENDER-001",
+      "title": "Example Community Bridge Project",
+      "status": "awarded",
+      "versionNumber": 1,
+      "issuingUnitId": "00000000-0000-4000-8000-000000000052",
+      "estimatedValue": 10000000,
+      "currencyCode": "KES",
+      "publishedOn": "2021-01-05",
+      "closesOn": "2021-02-15"
+    },
+    "bids": [
+      {
+        "id": "00000000-0000-4000-8000-000000000402",
+        "tenderId": "00000000-0000-4000-8000-000000000401",
+        "bidderEntityId": "00000000-0000-4000-8000-000000000403",
+        "bidderName": "Example Builders Ltd",
+        "amount": 9200000,
+        "currencyCode": "KES",
+        "status": "winning",
+        "isCompliant": true
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000404",
+        "tenderId": "00000000-0000-4000-8000-000000000401",
+        "bidderEntityId": "00000000-0000-4000-8000-000000000405",
+        "bidderName": "Sample Works Ltd",
+        "amount": 9800000,
+        "currencyCode": "KES",
+        "status": "qualified",
+        "isCompliant": true
+      }
+    ],
+    "contract": {
+      "id": "00000000-0000-4000-8000-000000000406",
+      "tenderId": "00000000-0000-4000-8000-000000000401",
+      "awardedEntityId": "00000000-0000-4000-8000-000000000403",
+      "awardedEntityName": "Example Builders Ltd",
+      "code": "DEMO-CONTRACT-001",
+      "value": 9200000,
+      "currencyCode": "KES",
+      "status": "active",
+      "awardedOn": "2021-03-01"
+    },
+    "milestones": [
+      {
+        "id": "00000000-0000-4000-8000-000000000407",
+        "contractId": "00000000-0000-4000-8000-000000000406",
+        "title": "Design review",
+        "dueOn": "2021-05-01",
+        "completedOn": "2021-04-20",
+        "amount": 1200000,
+        "currencyCode": "KES"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000408",
+        "contractId": "00000000-0000-4000-8000-000000000406",
+        "title": "Construction inspection",
+        "dueOn": "2021-08-01",
+        "completedOn": null,
+        "amount": 3000000,
+        "currencyCode": "KES"
+      }
+    ],
+    "variations": [
+      {
+        "id": "00000000-0000-4000-8000-000000000409",
+        "contractId": "00000000-0000-4000-8000-000000000406",
+        "amountChange": 250000,
+        "currencyCode": "KES",
+        "reason": "Synthetic example of a variation request.",
+        "approvedOn": null
+      }
+    ],
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
