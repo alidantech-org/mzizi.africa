@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/domain_api.dart';
+import '../data/sample_data_store.dart';
 import '../data/geography_api.dart' show JsonObject;
 import '../data/saved_library.dart';
 import '../theme/app_colors.dart';
@@ -203,6 +204,50 @@ class _HomeScreenState extends State<HomeScreen> {
             _sectionTitle('Explore your Kenya', 'Browse'),
             const SizedBox(height: 10),
             _quickLinks(),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'More topics to explore',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                      color: context.colors.onSurface,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.science_outlined, size: 18),
+              ],
+            ),
+            const SizedBox(height: 5),
+            Text(
+              'Interactive previews from Mzizi’s domain schemas · fictional sample data.',
+              style: TextStyle(color: context.colors.onSurfaceVariant),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 7,
+              runSpacing: 7,
+              children: [
+                for (final topic in const [
+                  SampleTopic.governance,
+                  SampleTopic.political,
+                  SampleTopic.legal,
+                  SampleTopic.procurement,
+                  SampleTopic.services,
+                ])
+                  ActionChip(
+                    avatar: const Icon(Icons.open_in_new, size: 16),
+                    label: Text(topic.label),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => SampleDataScreen(initialTopic: topic),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             const SizedBox(height: 24),
             _sectionTitle('Events in Mzizi', 'History'),
             const SizedBox(height: 4),
