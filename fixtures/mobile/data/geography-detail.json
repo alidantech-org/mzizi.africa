@@ -1,0 +1,62 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "geography.detail",
+  "data": {
+    "id": "00000000-0000-4000-8000-000000000011",
+    "ref": {
+      "kind": "geography.units",
+      "id": "00000000-0000-4000-8000-000000000011"
+    },
+    "name": "Sample Region A",
+    "code": "demo/region-a",
+    "kind": "territorial",
+    "jurisdictionId": "00000000-0000-4000-8000-000000000001",
+    "levelId": "00000000-0000-4000-8000-000000000002",
+    "parent": {
+      "id": "00000000-0000-4000-8000-000000000010",
+      "name": "Example Territory",
+      "kind": "territorial"
+    },
+    "children": [
+      {
+        "id": "00000000-0000-4000-8000-000000000012",
+        "name": "Sample District 1",
+        "kind": "territorial"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000013",
+        "name": "Sample District 2",
+        "kind": "territorial"
+      }
+    ],
+    "names": [
+      {
+        "name": "Sample Region A",
+        "language": "en",
+        "validFrom": "2000-01-01",
+        "validTo": null
+      }
+    ],
+    "validity": {
+      "validFrom": "2000-01-01",
+      "validTo": null,
+      "validFromPrecision": "year",
+      "isCurrent": true
+    },
+    "boundary": {
+      "geometry": null,
+      "status": "unavailable",
+      "referenceYear": null
+    },
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
