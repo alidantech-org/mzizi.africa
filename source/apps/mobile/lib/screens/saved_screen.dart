@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../data/preview_content.dart';
 import '../data/saved_library.dart';
 import '../theme/app_colors.dart';
+import '../widgets/design_kit.dart';
 
 class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key, this.onNavigate});
@@ -14,6 +16,7 @@ class SavedScreen extends StatefulWidget {
 class _SavedScreenState extends State<SavedScreen> {
   final search = TextEditingController();
   String filter = 'All';
+  int tab = 0;
   static const filters = ['All', 'Events', 'Budgets'];
 
   @override
@@ -128,16 +131,31 @@ class _SavedScreenState extends State<SavedScreen> {
                     sliver: SliverList.list(
                       children: [
                         _intro(),
-                        SizedBox(height: 14),
-                        _searchBar(),
-                        SizedBox(height: 12),
-                        _filterChips(),
-                        SizedBox(height: 14),
-                        _summary(),
                         SizedBox(height: 10),
-                        _savedItems(),
-                        SizedBox(height: 12),
-                        _privacyNote(),
+                        UnderlineTabs(
+                          labels: ['Saved', 'Following', 'Alerts'],
+                          selected: tab,
+                          onSelected: (i) => setState(() => tab = i),
+                        ),
+                        SizedBox(height: 14),
+                        if (tab == 0) ...[
+                          _searchBar(),
+                          SizedBox(height: 12),
+                          _filterChips(),
+                          SizedBox(height: 14),
+                          _summary(),
+                          SizedBox(height: 10),
+                          _savedItems(),
+                          SizedBox(height: 12),
+                          _privacyNote(),
+                        ] else if (tab == 1)
+                          _following()
+                        else
+                          _emptyTab(
+                            Icons.notifications_none,
+                            'No alerts yet',
+                            'Alerts for the institutions you follow will appear here.',
+                          ),
                       ],
                     ),
                   ),
@@ -247,11 +265,67 @@ class _SavedScreenState extends State<SavedScreen> {
     ],
   );
 
+  Widget _following() => ValueListenableBuilder<Set<String>>(
+    valueListenable: PreviewContent.followed,
+    builder: (context, ids, _) {
+      final items = PreviewContent.institutions
+          .where((i) => ids.contains(i.id))
+          .toList();
+      if (items.isEmpty) {
+        return _emptyTab(
+          Icons.favorite_border,
+          'Not following anything yet',
+          'Follow an institution from its profile to keep it here.',
+        );
+      }
+      return Column(
+        children: [
+          for (final item in items)
+            Card(
+              child: ListTile(
+                leading: Icon(
+                  Icons.account_balance_outlined,
+                  color: AppColors.brand,
+                ),
+                title: Text(item.name),
+                subtitle: Text(item.type),
+                trailing: IconButton(
+                  tooltip: 'Unfollow',
+                  icon: Icon(Icons.favorite),
+                  onPressed: () => PreviewContent.toggleFollow(item.id),
+                ),
+              ),
+            ),
+        ],
+      );
+    },
+  );
+
+  Widget _emptyTab(IconData icon, String title, String body) => Container(
+    padding: EdgeInsets.all(24),
+    child: Column(
+      children: [
+        Icon(icon, size: 34, color: AppColors.brand),
+        SizedBox(height: 10),
+        Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+        ),
+        SizedBox(height: 4),
+        Text(
+          body,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: context.colors.onSurfaceVariant),
+        ),
+      ],
+    ),
+  );
+
   Widget _searchBar() => Container(
     height: 35,
     padding: EdgeInsets.symmetric(horizontal: 9),
     decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      color: context.colors.surfaceContainerLow,
       border: Border.all(color: context.colors.outlineVariant),
       borderRadius: BorderRadius.circular(18),
     ),
@@ -338,7 +412,7 @@ class _SavedScreenState extends State<SavedScreen> {
             width: 31,
             height: 31,
             decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: context.colors.surfaceContainerLow,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -398,7 +472,7 @@ class _SavedScreenState extends State<SavedScreen> {
       return Container(
         padding: EdgeInsets.fromLTRB(17, 23, 17, 20),
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: context.colors.surfaceContainerLow,
           border: Border.all(color: context.colors.outlineVariant),
           borderRadius: BorderRadius.circular(14),
         ),
@@ -489,7 +563,7 @@ class _SavedScreenState extends State<SavedScreen> {
       margin: EdgeInsets.only(bottom: 6),
       padding: EdgeInsets.all(9),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: context.colors.surfaceContainerLow,
         border: Border.all(color: context.colors.outlineVariant),
         borderRadius: BorderRadius.circular(10),
       ),

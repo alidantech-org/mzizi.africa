@@ -7,16 +7,17 @@ import '../theme/app_colors.dart';
 import '../widgets/boundary_evidence_sheet.dart';
 import '../widgets/county_choropleth_map.dart';
 
-class ExploreScreen extends StatefulWidget {
-  const ExploreScreen({super.key, this.onNavigate});
+class GeographyExplorerScreen extends StatefulWidget {
+  const GeographyExplorerScreen({super.key, this.onNavigate});
 
   final ValueChanged<int>? onNavigate;
 
   @override
-  State<ExploreScreen> createState() => _ExploreScreenState();
+  State<GeographyExplorerScreen> createState() =>
+      _GeographyExplorerScreenState();
 }
 
-class _ExploreScreenState extends State<ExploreScreen> {
+class _GeographyExplorerScreenState extends State<GeographyExplorerScreen> {
   final _search = TextEditingController();
   final _focus = FocusNode();
   Timer? _searchDebounce;
@@ -197,6 +198,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   Widget _header(bool wide) => Row(
     children: [
+      if (Navigator.canPop(context))
+        BackButton(onPressed: Navigator.of(context).pop),
       Container(
         width: 42,
         height: 42,
@@ -289,7 +292,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 icon: Icon(Icons.arrow_forward, color: context.colors.primary),
               ),
         filled: true,
-        fillColor: Theme.of(context).scaffoldBackgroundColor,
+        fillColor: context.colors.surfaceContainerLow,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(13),
           borderSide: BorderSide.none,
@@ -303,7 +306,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     constraints: BoxConstraints(maxHeight: 230),
     margin: EdgeInsets.only(top: 7),
     decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      color: context.colors.surfaceContainerLow,
       borderRadius: BorderRadius.circular(12),
       border: Border.all(color: context.colors.outlineVariant),
     ),
@@ -422,7 +425,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget _detailsPanel() => Container(
     padding: EdgeInsets.all(15),
     decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      color: context.colors.surfaceContainerLow,
       borderRadius: BorderRadius.circular(15),
       border: Border.all(color: context.colors.outlineVariant),
     ),

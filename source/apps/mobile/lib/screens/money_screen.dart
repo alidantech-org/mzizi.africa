@@ -143,6 +143,8 @@ class _MoneyScreenState extends State<MoneyScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                _summaryCard(),
+                const SizedBox(height: 12),
                 _fiscalSelector(),
                 const SizedBox(height: 14),
                 TextField(
@@ -265,6 +267,45 @@ class _MoneyScreenState extends State<MoneyScreen> {
       ],
     ),
   );
+
+  Widget _summaryCard() {
+    final code = _selectedYear?['code']?.toString();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.colors.secondaryContainer,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_budgets.length} budget records',
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                Text(
+                  code == null
+                      ? 'Fiscal period not selected'
+                      : 'Loaded for $code',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.bar_chart, size: 36, color: context.colors.tertiary),
+        ],
+      ),
+    );
+  }
 
   Widget _fiscalSelector() {
     final year = _selectedYear;

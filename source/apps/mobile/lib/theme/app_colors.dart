@@ -7,6 +7,7 @@ abstract final class AppColors {
   static const darkPrimary = Color(0xFFF1E7D7);
   static const accent = Color(0xFFB95D3B);
   static const darkAccent = Color(0xFFE38A66);
+  static const brand = Color(0xFF7B4B2A);
   static const amber = Color(0xFFC48932);
   static const tan = Color(0xFFD7A068);
 

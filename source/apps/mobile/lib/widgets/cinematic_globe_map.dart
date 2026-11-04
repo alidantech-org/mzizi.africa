@@ -300,7 +300,7 @@ class _CinematicGlobeMapState extends State<CinematicGlobeMap> {
             ),
           if (!_pageReady)
             ColoredBox(
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: context.colors.surfaceContainerLow,
               child: Center(
                 child: CircularProgressIndicator(color: context.colors.primary),
               ),

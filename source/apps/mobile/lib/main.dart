@@ -111,7 +111,7 @@ class _AppShellState extends State<AppShell> {
           ),
           NavigationDestination(
             icon: Icon(Icons.account_balance_wallet_outlined),
-            label: 'Money',
+            label: 'Public Money',
           ),
           NavigationDestination(
             icon: Icon(Icons.history_outlined),

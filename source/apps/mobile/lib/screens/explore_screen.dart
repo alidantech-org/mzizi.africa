@@ -1,0 +1,155 @@
+import 'package:flutter/material.dart';
+
+import '../theme/app_colors.dart';
+import '../widgets/county_choropleth_map.dart';
+import 'counties_screen.dart';
+import 'geography_explorer_screen.dart';
+import 'institutions_screen.dart';
+
+class ExploreScreen extends StatelessWidget {
+  const ExploreScreen({super.key, this.onNavigate});
+
+  final ValueChanged<int>? onNavigate;
+
+  void _push(BuildContext context, Widget screen) =>
+      Navigator.of(context)
+          .push(MaterialPageRoute<void>(builder: (_) => screen));
+
+  void _soon(BuildContext context, String name) => ScaffoldMessenger.of(context)
+      .showSnackBar(
+        SnackBar(
+          content: Text('$name will appear when its data is available.'),
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    final openMap = GeographyExplorerScreen(onNavigate: onNavigate);
+    final categories = <(IconData, String, String, VoidCallback)>[
+      (
+        Icons.place_outlined,
+        'Counties and geography',
+        '47 counties and more',
+        () => _push(context, const CountiesScreen()),
+      ),
+      (
+        Icons.account_balance_outlined,
+        'Government',
+        'Structures and leadership',
+        () => _push(context, const InstitutionsScreen()),
+      ),
+      (
+        Icons.domain_outlined,
+        'Public institutions',
+        'Ministries, agencies',
+        () => _push(context, const InstitutionsScreen()),
+      ),
+      (
+        Icons.person_outline,
+        'Public officials',
+        'Leaders and representatives',
+        () => _soon(context, 'Public officials'),
+      ),
+      (
+        Icons.menu_book_outlined,
+        'Kenya’s history',
+        'Our journey',
+        () => onNavigate?.call(3),
+      ),
+      (
+        Icons.gavel_outlined,
+        'Constitution and law',
+        'Rights and governance',
+        () => _soon(context, 'Constitution and law'),
+      ),
+    ];
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SafeArea(
+        bottom: false,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
+          children: [
+            Text(
+              'Explore Kenya',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: context.colors.onSurface,
+              ),
+            ),
+            const SizedBox(height: 14),
+            InkWell(
+              onTap: () => _push(context, openMap),
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 13,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colors.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: context.colors.outlineVariant),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.search, color: context.colors.onSurfaceVariant),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Search counties, institutions...',
+                      style: TextStyle(color: context.colors.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              height: 230,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: context.colors.surfaceContainerHigh,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: CountyChoroplethMap(
+                onPlaceSelected: (_) => _push(context, openMap),
+              ),
+            ),
+            const SizedBox(height: 18),
+            const Text(
+              'Browse by category',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 8),
+            for (final (icon, title, subtitle, onTap) in categories)
+              Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: context.colors.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: context.colors.outlineVariant),
+                ),
+                child: ListTile(
+                  onTap: onTap,
+                  leading: Icon(icon, color: AppColors.brand),
+                  title: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  subtitle: Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

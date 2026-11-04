@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _header(),
             const SizedBox(height: 22),
             Text(
-              'KENYA · PUBLIC RECORDS',
+              'KENYA · ${_dateLine()}',
               style: TextStyle(
                 fontSize: 11,
                 letterSpacing: 1,
@@ -170,13 +170,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Explore places, public institutions, and records from the Mzizi database.',
+              'Explore how your country works, where public resources go and what’s happening around you.',
               style: TextStyle(
                 fontSize: 14,
                 height: 1.4,
                 color: context.colors.onSurfaceVariant,
               ),
             ),
+            const SizedBox(height: 14),
+            _hero(),
             const SizedBox(height: 16),
             _searchEntry(),
             const SizedBox(height: 17),
@@ -348,23 +350,65 @@ class _HomeScreenState extends State<HomeScreen> {
     mainAxisSpacing: 9,
     shrinkWrap: true,
     physics: const NeverScrollableScrollPhysics(),
-    childAspectRatio: 1.55,
+    childAspectRatio: 1.45,
     children: [
-      _quickLink(Icons.map_outlined, 'Geography', 'Places & boundaries', 1),
+      _quickLink(
+        Icons.account_balance_outlined,
+        'Government',
+        'National & county',
+        1,
+      ),
+      _quickLink(Icons.place_outlined, 'Geography', 'Counties & places', 1),
       _quickLink(
         Icons.account_balance_wallet_outlined,
-        'Public money',
-        'Budgets & records',
+        'Public Money',
+        'Budgets & projects',
         2,
       ),
-      _quickLink(
-        Icons.history_edu_outlined,
-        'History',
-        'Events & timelines',
-        3,
-      ),
-      _quickLink(Icons.bookmark_outline, 'Saved', 'Your Mzizi library', 4),
+      _quickLink(Icons.menu_book_outlined, 'History', 'Kenya’s past', 3),
     ],
+  );
+
+  String _dateLine() {
+    const days = [
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+      'SUNDAY',
+    ];
+    const months = [
+      'JANUARY',
+      'FEBRUARY',
+      'MARCH',
+      'APRIL',
+      'MAY',
+      'JUNE',
+      'JULY',
+      'AUGUST',
+      'SEPTEMBER',
+      'OCTOBER',
+      'NOVEMBER',
+      'DECEMBER',
+    ];
+    final now = DateTime.now();
+    return '${days[now.weekday - 1]}, ${now.day} ${months[now.month - 1]}';
+  }
+
+  Widget _hero() => Semantics(
+    image: true,
+    label: 'Mount Kenya',
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Image.asset(
+        'assets/onboarding/mount_kenya.jpg',
+        height: 150,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      ),
+    ),
   );
 
   Widget _quickLink(IconData icon, String title, String subtitle, int tab) =>
@@ -379,12 +423,12 @@ class _HomeScreenState extends State<HomeScreen> {
             border: Border.all(color: context.colors.outlineVariant),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(icon, color: context.colors.primary),
+              Icon(icon, size: 30, color: AppColors.brand),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     title,
