@@ -1,0 +1,74 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "legal.instrument",
+  "data": {
+    "instrument": {
+      "id": "00000000-0000-4000-8000-000000000301",
+      "ref": {
+        "kind": "legal.instruments",
+        "id": "00000000-0000-4000-8000-000000000301"
+      },
+      "title": "Sample Public Administration Act",
+      "code": "demo/legal/01",
+      "kindId": "00000000-0000-4000-8000-000000000302",
+      "status": "in_force",
+      "jurisdictionId": "00000000-0000-4000-8000-000000000001",
+      "summary": "Fictional legal instrument demonstrating provisions, amendments and legal basis links."
+    },
+    "provisions": [
+      {
+        "id": "00000000-0000-4000-8000-000000000303",
+        "instrumentId": "00000000-0000-4000-8000-000000000301",
+        "kind": "section",
+        "citation": "Section 1",
+        "heading": "Purpose",
+        "content": "This fictional section demonstrates how legal text is displayed.",
+        "sortOrder": 1
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000304",
+        "instrumentId": "00000000-0000-4000-8000-000000000301",
+        "kind": "section",
+        "citation": "Section 2",
+        "heading": "Public reporting",
+        "content": "Illustrative provision about publication of reports; not an actual law.",
+        "sortOrder": 2
+      }
+    ],
+    "amendments": [
+      {
+        "id": "00000000-0000-4000-8000-000000000305",
+        "instrumentId": "00000000-0000-4000-8000-000000000301",
+        "code": "demo/amendment/01",
+        "summary": "Synthetic amendment example",
+        "changes": [
+          {
+            "provisionId": "00000000-0000-4000-8000-000000000304",
+            "kind": "replaced",
+            "previousText": "Example old text.",
+            "newText": "Example revised text."
+          }
+        ]
+      }
+    ],
+    "legalLinks": [
+      {
+        "provisionId": "00000000-0000-4000-8000-000000000303",
+        "targetKind": "governance.offices",
+        "targetId": "00000000-0000-4000-8000-000000000103",
+        "targetLabel": "Assembly Speaker",
+        "note": "Fictional legal basis relationship."
+      }
+    ],
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
