@@ -76,3 +76,9 @@ curl -i 'http://127.0.0.1:3000/v1/geography/boundaries?country=KE&level=county'
 - No actual boundary shapes are included in the synthetic fixture; the preview never draws fictional counties.
 
 These changes improve feedback but cannot create missing verified geometry or make an unreachable API available. Run `flutter test test/county_choropleth_map_test.dart` and `flutter analyze` locally. No builds/tests were executed through the GitHub-only connection.
+
+## Additional schema-driven mobile data views (2026-11-05)
+
+The Flutter sample explorer now includes Government, Political parties, Law, Procurement, and Public services alongside the original five preview domains. These new views map existing Dryv schemas to institution/office-holder timelines, party memberships and branches, legal provisions/amendments, tender bids/contracts/milestones, and service facilities/delivery status. The code is in `source/apps/mobile/lib/screens/sample_data_screen.dart` with associated `assets/sample_data/` fixtures.
+
+Home displays five topic chips and Explore links directly to each preview. Every screen identifies the data as **fictional** and keeps it separate from the live NestJS API. This is a schema-informed interface implementation, **not** production dataset ingestion, authentication design, real-time aggregated API endpoints, or verified government data coverage. Run `flutter analyze`, `flutter test test/sample_domain_topics_test.dart` and device previews locally before merging to production.
