@@ -5,6 +5,7 @@ import '../widgets/county_choropleth_map.dart';
 import 'counties_screen.dart';
 import 'geography_explorer_screen.dart';
 import 'institutions_screen.dart';
+import 'sample_data_screen.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key, this.onNavigate});
@@ -26,6 +27,12 @@ class ExploreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final openMap = GeographyExplorerScreen(onNavigate: onNavigate);
     final categories = <(IconData, String, String, VoidCallback)>[
+      (
+        Icons.analytics_outlined,
+        'Data visualization demo',
+        'Five fictional records · charts and profiles',
+        () => _push(context, const SampleDataScreen()),
+      ),
       (
         Icons.place_outlined,
         'Counties and geography',
@@ -114,6 +121,16 @@ class ExploreScreen extends StatelessWidget {
               ),
               child: CountyChoroplethMap(
                 onPlaceSelected: (_) => _push(context, openMap),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.science_outlined),
+                title: const Text('Explore sample data'),
+                subtitle: const Text('Offline demo · fictional examples, not real records'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _push(context, const SampleDataScreen()),
               ),
             ),
             const SizedBox(height: 18),
