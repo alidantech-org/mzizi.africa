@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import '../data/sample_data_store.dart';
 import '../widgets/county_choropleth_map.dart';
 import 'counties_screen.dart';
 import 'geography_explorer_screen.dart';
@@ -30,8 +31,38 @@ class ExploreScreen extends StatelessWidget {
       (
         Icons.analytics_outlined,
         'Data visualization demo',
-        'Five fictional records · charts and profiles',
+        'Ten sample datasets · charts and profiles',
         () => _push(context, const SampleDataScreen()),
+      ),
+      (
+        Icons.account_tree_outlined,
+        'Government structure preview',
+        'Institutions, offices and office holders',
+        () => _push(context, const SampleDataScreen(initialTopic: SampleTopic.governance)),
+      ),
+      (
+        Icons.how_to_vote_outlined,
+        'Political parties preview',
+        'Branches, membership and positions',
+        () => _push(context, const SampleDataScreen(initialTopic: SampleTopic.political)),
+      ),
+      (
+        Icons.gavel_outlined,
+        'Law and legislation preview',
+        'Legal instruments and amendments',
+        () => _push(context, const SampleDataScreen(initialTopic: SampleTopic.legal)),
+      ),
+      (
+        Icons.receipt_long_outlined,
+        'Procurement preview',
+        'Tenders, bids, contracts and milestones',
+        () => _push(context, const SampleDataScreen(initialTopic: SampleTopic.procurement)),
+      ),
+      (
+        Icons.local_hospital_outlined,
+        'Public services preview',
+        'Facilities and service delivery',
+        () => _push(context, const SampleDataScreen(initialTopic: SampleTopic.services)),
       ),
       (
         Icons.place_outlined,
@@ -55,7 +86,7 @@ class ExploreScreen extends StatelessWidget {
         Icons.person_outline,
         'Public officials',
         'Leaders and representatives',
-        () => _soon(context, 'Public officials'),
+        () => _push(context, const SampleDataScreen(initialTopic: SampleTopic.people)),
       ),
       (
         Icons.menu_book_outlined,
@@ -67,7 +98,7 @@ class ExploreScreen extends StatelessWidget {
         Icons.gavel_outlined,
         'Constitution and law',
         'Rights and governance',
-        () => _soon(context, 'Constitution and law'),
+        () => _push(context, const SampleDataScreen(initialTopic: SampleTopic.legal)),
       ),
     ];
     return Scaffold(
