@@ -8,7 +8,12 @@ enum SampleTopic {
   people('People', 'person-profile.json'),
   elections('Elections', 'election-contest.json'),
   statistics('Statistics', 'statistics-series.json'),
-  finance('Public money', 'finance-summary.json');
+  finance('Public money', 'finance-summary.json'),
+  governance('Government', 'governance-structure.json'),
+  political('Political parties', 'political-party.json'),
+  legal('Law', 'legal-instrument.json'),
+  procurement('Procurement', 'procurement-contract.json'),
+  services('Public services', 'public-service.json');
 
   const SampleTopic(this.label, this.file);
   final String label;
