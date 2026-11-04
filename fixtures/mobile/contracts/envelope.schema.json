@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/mobile/envelope/1.0.0",
+  "title": "Mzizi synthetic mobile presentation envelope",
+  "type": "object",
+  "required": [
+    "fixture",
+    "schemaVersion",
+    "kind",
+    "data",
+    "meta"
+  ],
+  "properties": {
+    "fixture": {
+      "const": true
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "kind": {
+      "enum": [
+        "geography.detail",
+        "person.profile",
+        "election.contest",
+        "statistics.series",
+        "finance.summary"
+      ]
+    },
+    "data": {
+      "type": "object"
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "source",
+        "accuracy",
+        "verified"
+      ],
+      "properties": {
+        "source": {
+          "const": "synthetic-mobile-preview"
+        },
+        "accuracy": {
+          "const": "fictional-not-for-publication"
+        },
+        "verified": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
