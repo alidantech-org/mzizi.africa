@@ -373,15 +373,29 @@ class _HomeScreenState extends State<HomeScreen> {
         'Government',
         'National & county',
         1,
+        'assets/onboarding/kicc.jpg',
       ),
-      _quickLink(Icons.place_outlined, 'Geography', 'Counties & places', 1),
+      _quickLink(
+        Icons.place_outlined,
+        'Geography',
+        'Counties & places',
+        1,
+        'assets/onboarding/mount_kenya.jpg',
+      ),
       _quickLink(
         Icons.account_balance_wallet_outlined,
         'Public Money',
         'Budgets & projects',
         2,
+        'assets/onboarding/nairobi.jpg',
       ),
-      _quickLink(Icons.menu_book_outlined, 'History', 'Kenya’s past', 3),
+      _quickLink(
+        Icons.menu_book_outlined,
+        'History',
+        'Kenya’s past',
+        3,
+        'assets/onboarding/mombasa.jpg',
+      ),
     ],
   );
 
@@ -427,42 +441,87 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
 
-  Widget _quickLink(IconData icon, String title, String subtitle, int tab) =>
-      InkWell(
-        onTap: () => widget.onNavigate?.call(tab),
-        borderRadius: BorderRadius.circular(18),
-        child: Container(
-          padding: const EdgeInsets.all(13),
-          decoration: BoxDecoration(
-            color: context.colors.surfaceContainerLow,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: context.colors.outlineVariant),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(icon, size: 30, color: AppColors.brand),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: context.colors.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+  Widget _quickLink(
+    IconData icon,
+    String title,
+    String subtitle,
+    int tab,
+    String imagePath,
+  ) => Semantics(
+    button: true,
+    label: '$title. $subtitle',
+    child: InkWell(
+      onTap: () => widget.onNavigate?.call(tab),
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: context.colors.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: context.colors.outlineVariant),
         ),
-      );
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+              excludeFromSemantics: true,
+              errorBuilder: (context, error, stackTrace) => Center(
+                child: Icon(icon, size: 50, color: AppColors.brand),
+              ),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: const [0.25, 0.56, 0.80, 1],
+                  colors: [
+                    Colors.transparent,
+                    context.colors.surfaceContainerLow.withValues(alpha: .12),
+                    context.colors.surfaceContainerLow.withValues(alpha: .82),
+                    context.colors.surfaceContainerLow,
+                  ],
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 13),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, size: 23, color: AppColors.brand),
+                    const SizedBox(height: 5),
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        color: context.colors.onSurface,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 
   Widget _eventPreview() {
     if (_loadingEvents) return const LinearProgressIndicator();
