@@ -1,0 +1,84 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "governance.structure",
+  "data": {
+    "institution": {
+      "id": "00000000-0000-4000-8000-000000000101",
+      "ref": {
+        "kind": "governance.institutions",
+        "id": "00000000-0000-4000-8000-000000000101"
+      },
+      "name": "Example Regional Assembly",
+      "code": "demo/assembly",
+      "jurisdictionId": "00000000-0000-4000-8000-000000000001",
+      "typeId": "00000000-0000-4000-8000-000000000102",
+      "description": "Fictional public institution for demonstrating governance structure."
+    },
+    "offices": [
+      {
+        "id": "00000000-0000-4000-8000-000000000103",
+        "institutionId": "00000000-0000-4000-8000-000000000101",
+        "name": "Assembly Speaker",
+        "definitionCode": "demo/speaker",
+        "isSingleton": true,
+        "scopeGeoUnitId": "00000000-0000-4000-8000-000000000011"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000104",
+        "institutionId": "00000000-0000-4000-8000-000000000101",
+        "name": "Committee Chair",
+        "definitionCode": "demo/committee-chair",
+        "isSingleton": false,
+        "scopeGeoUnitId": "00000000-0000-4000-8000-000000000011"
+      }
+    ],
+    "holders": [
+      {
+        "id": "00000000-0000-4000-8000-000000000105",
+        "officeId": "00000000-0000-4000-8000-000000000103",
+        "personId": "00000000-0000-4000-8000-000000000106",
+        "person": {
+          "id": "00000000-0000-4000-8000-000000000106",
+          "displayName": "Sample Office Holder A"
+        },
+        "status": "acting",
+        "validFrom": "2022-01-01",
+        "validTo": null,
+        "isCurrent": true
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000107",
+        "officeId": "00000000-0000-4000-8000-000000000104",
+        "personId": "00000000-0000-4000-8000-000000000108",
+        "person": {
+          "id": "00000000-0000-4000-8000-000000000108",
+          "displayName": "Sample Office Holder B"
+        },
+        "status": "substantive",
+        "validFrom": "2018-01-01",
+        "validTo": "2021-12-31",
+        "isCurrent": false
+      }
+    ],
+    "relationships": [
+      {
+        "subjectKind": "governance.institutions",
+        "subjectId": "00000000-0000-4000-8000-000000000101",
+        "objectKind": "governance.institutions",
+        "objectId": "00000000-0000-4000-8000-000000000109",
+        "objectName": "Example Oversight Council",
+        "kind": "accountable_to"
+      }
+    ],
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
