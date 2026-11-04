@@ -23,7 +23,12 @@
         "person.profile",
         "election.contest",
         "statistics.series",
-        "finance.summary"
+        "finance.summary",
+        "governance.structure",
+        "political.party",
+        "legal.instrument",
+        "procurement.contract",
+        "civic.service"
       ]
     },
     "data": {
