@@ -237,15 +237,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 26),
             Center(child: art),
             const SizedBox(height: 28),
+            // Keep icons and every feature label centered on the page,
+            // regardless of label length or device width.
             Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 320),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     for (final (icon, label) in items)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 9),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               icon,
@@ -254,14 +258,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   ? AppColors.lightSuccess
                                   : AppColors.brand,
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                label,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: AppColors.primary,
-                                ),
+                            const SizedBox(height: 5),
+                            Text(
+                              label,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: AppColors.primary,
                               ),
                             ),
                           ],
