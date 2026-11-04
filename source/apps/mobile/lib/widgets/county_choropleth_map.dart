@@ -94,7 +94,7 @@ class _CountyChoroplethMapState extends State<CountyChoroplethMap> {
           ? _message(
               icon: Icons.map_outlined,
               title: 'No verified county boundaries available',
-              description: 'The Mzizi database has no verified polygon records to display yet.',
+              description: 'The API returned no usable county polygons. Import and verify sourced GeoJSON boundaries before the map can draw them.',
             )
           : LayoutBuilder(
               builder: (context, constraints) {
@@ -148,30 +148,45 @@ class _CountyChoroplethMapState extends State<CountyChoroplethMap> {
     );
   }
 
+  /// A compact scrollable state panel: the Explore preview is only 230px tall.
+  /// Never hide network or no-data diagnostics behind a RenderFlex overflow.
   Widget _message({
     required IconData icon,
     required String title,
     required String description,
     Widget? action,
-  }) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant),
-          const SizedBox(height: 10),
-          Text(title, textAlign: TextAlign.center),
-          const SizedBox(height: 6),
-          Text(
-            description,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+  }) => LayoutBuilder(
+    builder: (context, constraints) => SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 22, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                const SizedBox(height: 5),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11,
+                    height: 1.3,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                if (action != null) ...[const SizedBox(height: 7), action],
+              ],
             ),
           ),
-          if (action != null) ...[const SizedBox(height: 12), action],
-        ],
+        ),
       ),
     ),
   );
@@ -187,8 +202,10 @@ class _CountyChoroplethMapState extends State<CountyChoroplethMap> {
   String _errorDescription(Object error) {
     if (_isNetworkFailure(error)) {
       final baseUrl = GeographyApiClient.instance.apiBaseUrl;
-      return 'Could not reach $baseUrl. Start the Mzizi NestJS API and database, '
-          'then retry. Flutter Web also needs this app origin allowed by the API CORS settings.';
+      return 'Cannot reach $baseUrl. Start NestJS and its database. '
+          'On a physical phone, pass a reachable server IP using '
+          '--dart-define=MZIZI_API_BASE_URL=http://YOUR-LAN-IP:3000. '
+          'For Flutter Web, also allow the app origin in API CORS.';
     }
     return error
         .toString()
