@@ -144,6 +144,11 @@ class _SampleDataScreenState extends State<SampleDataScreen> {
                 SampleTopic.elections => _elections(data),
                 SampleTopic.statistics => _statistics(data),
                 SampleTopic.finance => _finance(data),
+                SampleTopic.governance => _governance(data),
+                SampleTopic.political => _political(data),
+                SampleTopic.legal => _legal(data),
+                SampleTopic.procurement => _procurement(data),
+                SampleTopic.services => _services(data),
               };
             },
           ),
@@ -403,4 +408,259 @@ class _SampleDataScreenState extends State<SampleDataScreen> {
       ],
     );
   }
+
+  Widget _governance(Map<String, dynamic> data) {
+    final institution = _object(data['institution']);
+    final offices = _items(data['offices']);
+    final holders = _items(data['holders']);
+    final relationships = _items(data['relationships']);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _heading(_text(institution['name']), 'Sample institution and office hierarchy'),
+        _section('Institution', [
+          _field('Code', institution['code']),
+          _field('Description', institution['description']),
+        ]),
+        _section('Offices and holders', [
+          for (final item in offices) ...[
+            Builder(builder: (context) {
+              final office = _object(item);
+              final related = holders.where((h) => _object(h)['officeId'] == office['id']).toList();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.account_balance_outlined),
+                    title: Text(_text(office['name'])),
+                    subtitle: Text(office['isSingleton'] == true ? 'Single office' : 'Multiple posts possible'),
+                  ),
+                  for (final holder in related) Padding(
+                    padding: const EdgeInsets.only(left: 10, bottom: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _field('Holder', _object(_object(holder)['person'])['displayName']),
+                        _field('Status', _object(holder)['status']),
+                        _field('Term begins', _object(holder)['validFrom']),
+                        _field('Term ends', _object(holder)['validTo'] ?? 'Not recorded'),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ],
+        ]),
+        _section('Institutional relationships', [
+          for (final link in relationships)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.account_tree_outlined),
+              title: Text(_text(_object(link)['objectName'])),
+              subtitle: Text('Relationship: ' + _text(_object(link)['kind'])),
+            ),
+        ]),
+        _verification(data),
+      ],
+    );
+  }
+
+  Widget _political(Map<String, dynamic> data) {
+    final party = _object(data['party']);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _heading(_text(party['name']), 'Synthetic political organization'),
+        _section('Party profile', [
+          _field('Abbreviation', party['abbreviation']),
+          _field('Status', party['status']),
+          _field('Code', party['code']),
+        ]),
+        _section('Branches', [
+          for (final item in _items(data['units']))
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.hub_outlined),
+              title: Text(_text(_object(item)['name'])),
+              subtitle: Text('Code: ' + _text(_object(item)['code'])),
+            ),
+        ]),
+        _section('Membership and party offices', [
+          for (final item in _items(data['memberships'])) ...[
+            _field('Member', _object(item)['personName']),
+            _field('Role', _object(item)['roleTitle']),
+          ],
+          for (final item in _items(data['positions'])) ...[
+            _field('Position', _object(item)['title']),
+            _field('Holder', _object(_object(item)['holder'])['displayName']),
+          ],
+        ]),
+        _section('Classifications', [
+          for (final item in _items(data['ideologies']))
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(_text(_object(item)['label'])),
+              subtitle: Text(_text(_object(item)['description'])),
+            ),
+        ]),
+        _verification(data),
+      ],
+    );
+  }
+
+  Widget _legal(Map<String, dynamic> data) {
+    final instrument = _object(data['instrument']);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _heading(_text(instrument['title']), 'Fictional legal instrument and provision history'),
+        _section('Instrument', [
+          _field('Code', instrument['code']),
+          _field('Status', instrument['status']),
+          Text(_text(instrument['summary'])),
+        ]),
+        _section('Provisions', [
+          for (final item in _items(data['provisions'])) ...[
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.menu_book_outlined),
+              title: Text(_text(_object(item)['citation']) + ': ' + _text(_object(item)['heading'])),
+              subtitle: Text(_text(_object(item)['content'])),
+            ),
+            const Divider(height: 8),
+          ],
+        ]),
+        _section('Amendments', [
+          for (final item in _items(data['amendments'])) ...[
+            _field('Reference', _object(item)['code']),
+            _field('Summary', _object(item)['summary']),
+            for (final change in _items(_object(item)['changes']))
+              _field('Change', _object(change)['kind']),
+          ],
+        ]),
+        _section('Links to public offices', [
+          for (final item in _items(data['legalLinks']))
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.link_outlined),
+              title: Text(_text(_object(item)['targetLabel'])),
+              subtitle: Text(_text(_object(item)['note'])),
+            ),
+        ]),
+        _verification(data),
+      ],
+    );
+  }
+
+  Widget _procurement(Map<String, dynamic> data) {
+    final tender = _object(data['tender']);
+    final contract = _object(data['contract']);
+    final currency = _text(tender['currencyCode'], '');
+    final bids = _items(data['bids']);
+    final values = bids.map((b) => _object(b)['amount']).whereType<num>().toList();
+    final max = values.isEmpty ? 0 : values.reduce((a, b) => a > b ? a : b);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _heading(_text(tender['title']), 'Synthetic tender, bids and contract'),
+        _section('Tender', [
+          _field('Reference', tender['code']),
+          _field('Status', tender['status']),
+          _field('Published', tender['publishedOn']),
+          _field('Deadline', tender['closesOn']),
+          _field('Estimated value', '$currency ${_number(tender['estimatedValue'])}'),
+        ]),
+        _section('Bid comparison', [
+          for (final item in bids)
+            _meter(
+              _text(_object(item)['bidderName']) + ' · ' + _text(_object(item)['status']),
+              (_object(item)['amount'] as num?) ?? 0,
+              max,
+              suffix: '$currency ${_number(_object(item)['amount'])}',
+            ),
+          const Text('Comparisons require the same currency and evaluation basis.'),
+        ]),
+        _section('Awarded contract', [
+          _field('Contract', contract['code']),
+          _field('Supplier', contract['awardedEntityName']),
+          _field('Value', '$currency ${_number(contract['value'])}'),
+          _field('Status', contract['status']),
+        ]),
+        _section('Milestones', [
+          for (final item in _items(data['milestones']))
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(_object(item)['completedOn'] == null
+                  ? Icons.schedule_outlined : Icons.check_circle_outline),
+              title: Text(_text(_object(item)['title'])),
+              subtitle: Text('Due: ' + _text(_object(item)['dueOn'])
+                  + ' · Completed: ' + _text(_object(item)['completedOn'])),
+            ),
+        ]),
+        _section('Contract variations', [
+          for (final item in _items(data['variations'])) ...[
+            _field('Amount change', '$currency ${_number(_object(item)['amountChange'])}'),
+            _field('Reason', _object(item)['reason']),
+            _field('Approved', _object(item)['approvedOn']),
+          ],
+        ]),
+        _verification(data),
+      ],
+    );
+  }
+
+  Widget _services(Map<String, dynamic> data) {
+    final service = _object(data['service']);
+    final deliveries = _items(data['deliveries']);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _heading(_text(service['name']), 'Fictional public service and facility register'),
+        _section('Service definition', [
+          _field('Code', service['code']),
+          Text(_text(service['description'])),
+        ]),
+        _section('Facilities and delivery status', [
+          for (final item in _items(data['amenities']))
+            Builder(builder: (context) {
+              final amenity = _object(item);
+              final linked = deliveries.where((d) =>
+                _object(d)['amenityId'] == amenity['id']).toList();
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.local_hospital_outlined),
+                title: Text(_text(amenity['name'])),
+                subtitle: Text(
+                  'Facility: ' + (amenity['isActive'] == true ? 'active' : 'inactive') +
+                  ' · Service: ' + (linked.isEmpty
+                      ? 'not recorded'
+                      : _text(_object(linked.first)['status'])),
+                ),
+              );
+            }),
+        ]),
+        _section('Linked funding and responsibility', [
+          for (final item in deliveries) ...[
+            _field('Delivery status', _object(item)['status']),
+            _field('Budget record', _object(item)['budgetId']),
+            _field('Responsible office', _object(item)['responsibleOfficeId']),
+          ],
+          const Text('These are synthetic record links. Actual budgets and offices need API resolution.'),
+        ]),
+        _verification(data),
+      ],
+    );
+  }
+
+  Widget _verification(Map<String, dynamic> data) => _section(
+    'Source and verification',
+    [
+      _field('Status', _object(data['evidence'])['verificationState']),
+      const Text(
+        'Fictional preview only. No official source or verified record is claimed.',
+      ),
+    ],
+  );
 }
