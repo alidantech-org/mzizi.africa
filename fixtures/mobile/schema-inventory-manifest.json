@@ -1,0 +1,300 @@
+{
+  "status": "preliminary_not_migration_verified",
+  "repository": "alidantech-org/mzizi.africa",
+  "branch": "develop",
+  "generatedOn": "2026-11-04",
+  "sourceDocuments": [
+    ".docs/docs/DATABASE_DESIGN.md",
+    ".docs/docs/DOMAINS.md",
+    ".docs/docs/PEOPLE_DESIGN.md",
+    ".docs/docs/SOURCING_DESIGN.md"
+  ],
+  "sourceCodeSample": [
+    "dryv/contracts/foundation/geography/index.ts",
+    "dryv/contracts/domains/person/index.ts",
+    "dryv/contracts/domains/governance/index.ts",
+    "dryv/contracts/domains/finance/index.ts"
+  ],
+  "warning": "Documented table catalogue, not an exhaustive snapshot of current migrations or fields. Verify against Dryv and database engine before generating runtime contracts.",
+  "schemas": [
+    {
+      "name": "reference",
+      "documentedTables": [
+        "jurisdictions",
+        "classifications"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "geography",
+      "documentedTables": [
+        "units",
+        "relationships",
+        "boundaries",
+        "names",
+        "changes"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "legal",
+      "documentedTables": [
+        "instruments",
+        "provisions",
+        "amendments",
+        "changes",
+        "links"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "person",
+      "documentedTables": [
+        "individuals",
+        "names",
+        "profiles",
+        "contacts",
+        "handles"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "identity",
+      "documentedTables": [
+        "accounts",
+        "grants"
+      ],
+      "contractVerified": false,
+      "publicMobile": "not_unconditionally_public"
+    },
+    {
+      "name": "governance",
+      "documentedTables": [
+        "institutions",
+        "relationships",
+        "offices",
+        "rules",
+        "procedures",
+        "stages",
+        "holders"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "electoral",
+      "documentedTables": [
+        "elections",
+        "seats",
+        "candidates",
+        "results",
+        "manifestos",
+        "commitments"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "political",
+      "documentedTables": [
+        "parties",
+        "memberships",
+        "units",
+        "ideologies",
+        "positions",
+        "alignments",
+        "holders"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "calendar",
+      "documentedTables": [
+        "events",
+        "links"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "organization",
+      "documentedTables": [
+        "entities",
+        "identifiers",
+        "ownerships"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "finance",
+      "documentedTables": [
+        "years",
+        "units",
+        "budgets",
+        "transfers",
+        "revenues",
+        "expenditures",
+        "entries"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "debt",
+      "documentedTables": [
+        "loans",
+        "disbursements",
+        "repayments"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "procurement",
+      "documentedTables": [
+        "tenders",
+        "bids",
+        "contracts",
+        "milestones",
+        "variations"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "statistical",
+      "documentedTables": [
+        "periods",
+        "categories",
+        "indicators",
+        "fields",
+        "datasets",
+        "observations"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "civic",
+      "documentedTables": [
+        "services",
+        "amenities",
+        "posts",
+        "deliveries"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "filesystem",
+      "documentedTables": [
+        "stores",
+        "formats",
+        "folders",
+        "objects",
+        "files",
+        "versions",
+        "variants",
+        "attachments",
+        "uploads",
+        "events"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "source",
+      "documentedTables": [
+        "publishers",
+        "documents",
+        "captures",
+        "methods",
+        "attributions",
+        "verifications"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "website",
+      "documentedTables": [
+        "sites",
+        "domains",
+        "site_publishers",
+        "structures",
+        "structure_versions",
+        "structure_files",
+        "checks",
+        "families",
+        "domain_patterns",
+        "members",
+        "subjects",
+        "traits",
+        "relations",
+        "fingerprints",
+        "assessments",
+        "dossiers"
+      ],
+      "contractVerified": false,
+      "publicMobile": "not_unconditionally_public"
+    },
+    {
+      "name": "place",
+      "documentedTables": [
+        "places",
+        "occupancies",
+        "occupancy_links",
+        "expectations"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "contact",
+      "documentedTables": [
+        "points"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    },
+    {
+      "name": "audit",
+      "documentedTables": [
+        "comments",
+        "evidence",
+        "decisions"
+      ],
+      "contractVerified": false,
+      "publicMobile": "subject_to_read_api_and_access_rules"
+    }
+  ],
+  "supplementaryStatisticalTablesNeedingReconciliation": [
+    "dimensions",
+    "dimension_members",
+    "observation_dimensions",
+    "vintages",
+    "observation_derivations"
+  ],
+  "retiredTablesToExclude": [
+    "organization.locations"
+  ],
+  "engineOwnedNotPublicDryvTables": [
+    "staging.*",
+    "engine.*",
+    "geography.boundary_shapes"
+  ],
+  "mobileSafetyRules": [
+    "No private identity data",
+    "Exclude restricted and private contacts and handles",
+    "Keep provenance in source lookup/projections",
+    "Preserve valid-time and record-version semantics",
+    "GeoJSON geometry requires dedicated detail/map projection",
+    "Do not present synthetic fixture values as factual"
+  ]
+}
