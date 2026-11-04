@@ -1,5 +1,5 @@
 ---
-{id: TSK-4C1014E51336,name: "Population breakdowns: ethnic community, religion, education, ICT access and economy",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:52.135Z,updated_at: 2026-11-03T01:24:42.050Z,order: 6144,depends_on: [TSK-1DDA156356D5],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:24:42.050Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-4C1014E51336/1793669082052-start,started_at: 2026-11-03T01:24:42.615Z}]}}}
+{id: TSK-4C1014E51336,name: "Population breakdowns: ethnic community, religion, education, ICT access and economy",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:52.135Z,updated_at: 2026-11-03T06:13:09.782Z,order: 6144,depends_on: [TSK-1DDA156356D5],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:24:42.050Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-4C1014E51336/1793669082052-start,started_at: 2026-11-03T01:24:42.615Z}]}},due_at: 2026-11-03}
 ---
 
 # Population breakdowns: ethnic community, religion, education, ICT access and economy

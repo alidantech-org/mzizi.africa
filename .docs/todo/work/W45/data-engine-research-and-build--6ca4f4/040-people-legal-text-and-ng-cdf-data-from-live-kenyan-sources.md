@@ -1,5 +1,5 @@
 ---
-{id: TSK-F8FC52A3AD73,name: "People, legal text and NG-CDF data from live Kenyan sources",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T17:57:42.720Z,updated_at: 2026-11-02T17:57:50.339Z,order: 40960,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T17:57:50.339Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-F8FC52A3AD73/1793642270349-start,started_at: 2026-11-02T17:57:51.039Z}]}}}
+{id: TSK-F8FC52A3AD73,name: "People, legal text and NG-CDF data from live Kenyan sources",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T17:57:42.720Z,updated_at: 2026-11-03T06:12:31.961Z,order: 40960,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T17:57:50.339Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-F8FC52A3AD73/1793642270349-start,started_at: 2026-11-02T17:57:51.039Z}]}},due_at: 2026-11-05}
 ---
 
 ## Goal

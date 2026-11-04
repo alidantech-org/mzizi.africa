@@ -1,5 +1,5 @@
 ---
-{id: TSK-E22A8A227D4B,name: Statistical quality and reconciliation between sources,type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:52.713Z,updated_at: 2026-11-03T01:24:49.988Z,order: 9216,depends_on: [TSK-ACEF2C1816E2],extra: {status_history: [{from: planned,to: completed,at: 2026-11-03T01:24:40.168Z},{from: completed,to: in-progress,at: 2026-11-03T01:24:49.988Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-E22A8A227D4B/1793669089990-start,started_at: 2026-11-03T01:24:50.510Z}]}}}
+{id: TSK-E22A8A227D4B,name: Statistical quality and reconciliation between sources,type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:52.713Z,updated_at: 2026-11-03T06:13:18.287Z,order: 9216,depends_on: [TSK-ACEF2C1816E2],extra: {status_history: [{from: planned,to: completed,at: 2026-11-03T01:24:40.168Z},{from: completed,to: in-progress,at: 2026-11-03T01:24:49.988Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-E22A8A227D4B/1793669089990-start,started_at: 2026-11-03T01:24:50.510Z}]}},due_at: 2026-11-02}
 ---
 
 # Statistical quality and reconciliation between sources

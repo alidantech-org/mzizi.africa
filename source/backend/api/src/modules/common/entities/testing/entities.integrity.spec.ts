@@ -14,11 +14,15 @@ import { LoanEntity } from "#/modules/debt/entities/loan.entity.ts";
 import { CandidateEntity } from "#/modules/elections/entities/candidate.entity.ts";
 import { ElectionResultEntity } from "#/modules/elections/entities/election-result.entity.ts";
 import { ElectionEntity } from "#/modules/elections/entities/election.entity.ts";
+import { ElectorateEntity } from "#/modules/elections/entities/electorate.entity.ts";
 import { ManifestoCommitmentEntity } from "#/modules/elections/entities/manifesto-commitment.entity.ts";
 import { ManifestoEntity } from "#/modules/elections/entities/manifesto.entity.ts";
+import { ReferendumOptionEntity } from "#/modules/elections/entities/referendum-option.entity.ts";
+import { ReferendumQuestionEntity } from "#/modules/elections/entities/referendum-question.entity.ts";
+import { ReferendumResultEntity } from "#/modules/elections/entities/referendum-result.entity.ts";
+import { SeatAllocationEntity } from "#/modules/elections/entities/seat-allocation.entity.ts";
 import { SeatEntity } from "#/modules/elections/entities/seat.entity.ts";
 import { EntityIdentifierEntity } from "#/modules/entities/entities/entity-identifier.entity.ts";
-import { EntityLocationEntity } from "#/modules/entities/entities/entity-location.entity.ts";
 import { EntityOwnershipEntity } from "#/modules/entities/entities/entity-ownership.entity.ts";
 import { LegalEntityEntity } from "#/modules/entities/entities/legal-entity.entity.ts";
 import { EventLinkEntity } from "#/modules/events/entities/event-link.entity.ts";
@@ -88,6 +92,7 @@ import { PublicServiceEntity } from "#/modules/services/entities/public-service.
 import { ServiceDeliveryEntity } from "#/modules/services/entities/service-delivery.entity.ts";
 import { AttributionEntity } from "#/modules/source/entities/attribution.entity.ts";
 import { CaptureEntity } from "#/modules/source/entities/capture.entity.ts";
+import { DocumentClassificationEntity } from "#/modules/source/entities/document-classification.entity.ts";
 import { DocumentEntity } from "#/modules/source/entities/document.entity.ts";
 import { MethodEntity } from "#/modules/source/entities/method.entity.ts";
 import { PublisherEntity } from "#/modules/source/entities/publisher.entity.ts";
@@ -105,9 +110,11 @@ import { StatisticsTableEntity } from "#/modules/statistics/entities/statistics-
 import { VintageEntity } from "#/modules/statistics/entities/vintage.entity.ts";
 import { AssessmentEntity } from "#/modules/website/entities/assessment.entity.ts";
 import { DnsSnapshotEntity } from "#/modules/website/entities/dns-snapshot.entity.ts";
+import { DocumentSightingEntity } from "#/modules/website/entities/document-sighting.entity.ts";
 import { DomainPatternEntity } from "#/modules/website/entities/domain-pattern.entity.ts";
 import { DomainZoneEntity } from "#/modules/website/entities/domain-zone.entity.ts";
 import { DossierEntity } from "#/modules/website/entities/dossier.entity.ts";
+import { SectionVisitEntity } from "#/modules/website/entities/section-visit.entity.ts";
 import { SiteCheckEntity } from "#/modules/website/entities/site-check.entity.ts";
 import { SiteDomainEntity } from "#/modules/website/entities/site-domain.entity.ts";
 import { SiteFamilyEntity } from "#/modules/website/entities/site-family.entity.ts";
@@ -137,11 +144,15 @@ const entities = [
   CandidateEntity,
   ElectionEntity,
   ElectionResultEntity,
+  ElectorateEntity,
   ManifestoEntity,
   ManifestoCommitmentEntity,
+  ReferendumOptionEntity,
+  ReferendumQuestionEntity,
+  ReferendumResultEntity,
   SeatEntity,
+  SeatAllocationEntity,
   EntityIdentifierEntity,
-  EntityLocationEntity,
   EntityOwnershipEntity,
   LegalEntityEntity,
   EventEntity,
@@ -212,6 +223,7 @@ const entities = [
   AttributionEntity,
   CaptureEntity,
   DocumentEntity,
+  DocumentClassificationEntity,
   MethodEntity,
   PublisherEntity,
   VerificationEntity,
@@ -228,9 +240,11 @@ const entities = [
   VintageEntity,
   AssessmentEntity,
   DnsSnapshotEntity,
+  DocumentSightingEntity,
   DomainPatternEntity,
   DomainZoneEntity,
   DossierEntity,
+  SectionVisitEntity,
   SiteEntity,
   SiteCheckEntity,
   SiteDomainEntity,
@@ -280,7 +294,11 @@ beforeAll(async () => {
     "electoral",
     "electoral",
     "electoral",
-    "organization",
+    "electoral",
+    "electoral",
+    "electoral",
+    "electoral",
+    "electoral",
     "organization",
     "organization",
     "organization",
@@ -355,6 +373,7 @@ beforeAll(async () => {
     "source",
     "source",
     "source",
+    "source",
     "statistical",
     "statistical",
     "statistical",
@@ -366,6 +385,8 @@ beforeAll(async () => {
     "statistical",
     "statistical",
     "statistical",
+    "website",
+    "website",
     "website",
     "website",
     "website",
@@ -909,6 +930,72 @@ describe("entity schema matches the contract", () => {
     });
   });
 
+  describe("Electorate", () => {
+    const metadata = () => dataSource.getMetadata(ElectorateEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("electorates");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["declared_at", true, false],
+            ["declaring_institution_id", true, false],
+            ["election_id", false, false],
+            ["evidence_form", true, false],
+            ["geo_unit_id", true, false],
+            ["id", false, true],
+            ["is_current", false, false],
+            ["register_version", true, false],
+            ["registered_voters", true, false],
+            ["rejected_votes", true, false],
+            ["result_level_id", false, false],
+            ["result_status", true, false],
+            ["seat_id", true, false],
+            ["spoilt_votes", true, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_from_precision", true, false],
+            ["valid_to", true, false],
+            ["valid_to_precision", true, false],
+            ["valid_votes", true, false],
+            ["version", false, false],
+            ["votes_cast", true, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "election_id->electoral.elections",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "election_id,result_level_id",
+          "geo_unit_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "electoral"."electorates" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
   describe("Manifesto", () => {
     const metadata = () => dataSource.getMetadata(ManifestoEntity);
 
@@ -1021,6 +1108,176 @@ describe("entity schema matches the contract", () => {
     });
   });
 
+  describe("ReferendumOption", () => {
+    const metadata = () => dataSource.getMetadata(ReferendumOptionEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("referendum_options");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["code", false, false],
+            ["created_at", false, false],
+            ["id", false, true],
+            ["is_current", false, false],
+            ["label", false, false],
+            ["position", true, false],
+            ["question_id", false, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_from_precision", true, false],
+            ["valid_to", true, false],
+            ["valid_to_precision", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "question_id->electoral.referendum_questions",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:question_id,code",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "electoral"."referendum_options" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("ReferendumQuestion", () => {
+    const metadata = () => dataSource.getMetadata(ReferendumQuestionEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("referendum_questions");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["code", false, false],
+            ["created_at", false, false],
+            ["election_id", false, false],
+            ["id", false, true],
+            ["is_current", false, false],
+            ["position", true, false],
+            ["text", false, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_from_precision", true, false],
+            ["valid_to", true, false],
+            ["valid_to_precision", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "election_id->electoral.elections",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:election_id,code",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "electoral"."referendum_questions" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("ReferendumResult", () => {
+    const metadata = () => dataSource.getMetadata(ReferendumResultEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("referendum_results");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["declared_at", true, false],
+            ["declaring_institution_id", true, false],
+            ["evidence_form", true, false],
+            ["geo_unit_id", true, false],
+            ["id", false, true],
+            ["is_current", false, false],
+            ["option_id", false, false],
+            ["result_level_id", false, false],
+            ["result_status", true, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_from_precision", true, false],
+            ["valid_to", true, false],
+            ["valid_to_precision", true, false],
+            ["version", false, false],
+            ["votes", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "option_id->electoral.referendum_options",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "option_id,result_level_id",
+          "geo_unit_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "electoral"."referendum_results" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
   describe("Seat", () => {
     const metadata = () => dataSource.getMetadata(SeatEntity);
 
@@ -1078,6 +1335,68 @@ describe("entity schema matches the contract", () => {
     });
   });
 
+  describe("SeatAllocation", () => {
+    const metadata = () => dataSource.getMetadata(SeatAllocationEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("seat_allocations");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["allocated_on", true, false],
+            ["created_at", false, false],
+            ["declaring_institution_id", true, false],
+            ["election_id", false, false],
+            ["geo_unit_id", true, false],
+            ["id", false, true],
+            ["is_current", false, false],
+            ["kind", false, false],
+            ["list_position", true, false],
+            ["party_id", false, false],
+            ["person_id", true, false],
+            ["seat_id", true, false],
+            ["seats_entitled", true, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_from_precision", true, false],
+            ["valid_to", true, false],
+            ["valid_to_precision", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "election_id->electoral.elections",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "election_id,kind",
+          "party_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "electoral"."seat_allocations" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
   describe("EntityIdentifier", () => {
     const metadata = () => dataSource.getMetadata(EntityIdentifierEntity);
 
@@ -1130,61 +1449,6 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "organization"."identifiers" DEFAULT VALUES'),
-      ).rejects.toThrow();
-    });
-  });
-
-  describe("EntityLocation", () => {
-    const metadata = () => dataSource.getMetadata(EntityLocationEntity);
-
-    it("maps its contract table and columns", () => {
-      expect(metadata().tableName).toBe("locations");
-      expect(columns(metadata())).toEqual(
-        (
-          [
-            ["address_text", true, false],
-            ["created_at", false, false],
-            ["entity_id", false, false],
-            ["geo_unit_id", true, false],
-            ["id", false, true],
-            ["is_current", false, false],
-            ["kind_id", true, false],
-            ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_from_precision", true, false],
-            ["valid_to", true, false],
-            ["valid_to_precision", true, false],
-            ["version", false, false],
-          ] as Array<[string, boolean, boolean]>
-        ).sort(([left], [right]) => left.localeCompare(right)),
-      );
-    });
-
-    it("references the contract's related tables", () => {
-      const keys = metadata()
-        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
-        .sort();
-      expect(keys).toEqual(
-        [
-          "entity_id->organization.entities",
-        ].sort(),
-      );
-    });
-
-    it("declares the contract's indexes", () => {
-      const indexes = metadata()
-        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
-        .sort();
-      expect(indexes).toEqual(
-        expect.arrayContaining([
-          "entity_id",
-        ]),
-      );
-    });
-
-    it("rejects a row without its required columns", async () => {
-      await expect(
-        dataSource.query('INSERT INTO "organization"."locations" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1954,6 +2218,7 @@ describe("entity schema matches the contract", () => {
             ["level_id", false, false],
             ["name", false, false],
             ["parent_unit_id", true, false],
+            ["party_id", true, false],
             ["updated_at", false, false],
             ["valid_from", true, false],
             ["valid_from_precision", true, false],
@@ -1972,6 +2237,7 @@ describe("entity schema matches the contract", () => {
       expect(indexes).toEqual(
         expect.arrayContaining([
           "unique:code",
+          "party_id",
         ]),
       );
     });
@@ -2387,6 +2653,8 @@ describe("entity schema matches the contract", () => {
           [
             ["code", false, false],
             ["created_at", false, false],
+            ["emblem_marker", true, false],
+            ["flag_marker", true, false],
             ["id", false, true],
             ["is_active", false, false],
             ["is_current", false, false],
@@ -2401,6 +2669,7 @@ describe("entity schema matches the contract", () => {
             ["valid_to", true, false],
             ["valid_to_precision", true, false],
             ["version", false, false],
+            ["wikidata_id", true, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
       );
@@ -2546,12 +2815,14 @@ describe("entity schema matches the contract", () => {
             ["code", false, false],
             ["created_at", false, false],
             ["description", true, false],
-            ["geo_unit_id", true, false],
+            ["entity_id", true, false],
             ["id", false, true],
             ["is_current", false, false],
             ["jurisdiction_id", false, false],
             ["legal_basis_id", true, false],
+            ["logo_marker", true, false],
             ["name", false, false],
+            ["scope_geo_unit_id", true, false],
             ["type_id", false, false],
             ["updated_at", false, false],
             ["valid_from", true, false],
@@ -2559,6 +2830,7 @@ describe("entity schema matches the contract", () => {
             ["valid_to", true, false],
             ["valid_to_precision", true, false],
             ["version", false, false],
+            ["wikidata_id", true, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
       );
@@ -2572,6 +2844,8 @@ describe("entity schema matches the contract", () => {
         expect.arrayContaining([
           "unique:code",
           "jurisdiction_id",
+          "entity_id",
+          "scope_geo_unit_id",
         ]),
       );
     });
@@ -2591,13 +2865,15 @@ describe("entity schema matches the contract", () => {
       expect(columns(metadata())).toEqual(
         (
           [
-            ["child_institution_id", false, false],
             ["created_at", false, false],
             ["id", false, true],
             ["is_current", false, false],
             ["kind", false, false],
             ["legal_basis_id", true, false],
-            ["parent_institution_id", false, false],
+            ["object_id", false, false],
+            ["object_kind", false, false],
+            ["subject_id", false, false],
+            ["subject_kind", false, false],
             ["updated_at", false, false],
             ["valid_from", true, false],
             ["valid_from_precision", true, false],
@@ -2609,24 +2885,14 @@ describe("entity schema matches the contract", () => {
       );
     });
 
-    it("references the contract's related tables", () => {
-      const keys = metadata()
-        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
-        .sort();
-      expect(keys).toEqual(
-        [
-          "parent_institution_id->governance.institutions",
-        ].sort(),
-      );
-    });
-
     it("declares the contract's indexes", () => {
       const indexes = metadata()
         .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "parent_institution_id,kind",
+          "subject_kind,subject_id,kind",
+          "object_kind,object_id,kind",
         ]),
       );
     });
@@ -2648,6 +2914,7 @@ describe("entity schema matches the contract", () => {
           [
             ["code", false, false],
             ["created_at", false, false],
+            ["definition_code", true, false],
             ["description", true, false],
             ["id", false, true],
             ["institution_id", false, false],
@@ -2655,6 +2922,7 @@ describe("entity schema matches the contract", () => {
             ["is_singleton", false, false],
             ["name", false, false],
             ["parent_office_id", true, false],
+            ["scope_geo_unit_id", true, false],
             ["updated_at", false, false],
             ["valid_from", true, false],
             ["valid_from_precision", true, false],
@@ -2685,6 +2953,7 @@ describe("entity schema matches the contract", () => {
         expect.arrayContaining([
           "unique:code",
           "institution_id",
+          "scope_geo_unit_id",
         ]),
       );
     });
@@ -3317,12 +3586,14 @@ describe("entity schema matches the contract", () => {
             ["id", false, true],
             ["is_current", false, false],
             ["life_status", false, false],
+            ["portrait_marker", true, false],
             ["updated_at", false, false],
             ["valid_from", true, false],
             ["valid_from_precision", true, false],
             ["valid_to", true, false],
             ["valid_to_precision", true, false],
             ["version", false, false],
+            ["wikidata_id", true, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
       );
@@ -3846,6 +4117,7 @@ describe("entity schema matches the contract", () => {
             ["id", false, true],
             ["is_current", false, false],
             ["jurisdiction_id", false, false],
+            ["logo_marker", true, false],
             ["name", false, false],
             ["registry_authority_id", true, false],
             ["registry_identifier", true, false],
@@ -3857,6 +4129,7 @@ describe("entity schema matches the contract", () => {
             ["valid_to", true, false],
             ["valid_to_precision", true, false],
             ["version", false, false],
+            ["wikidata_id", true, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
       );
@@ -4418,6 +4691,7 @@ describe("entity schema matches the contract", () => {
             ["valid_to", true, false],
             ["valid_to_precision", true, false],
             ["version", false, false],
+            ["version_number", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
       );
@@ -4429,7 +4703,8 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:code",
+          "code",
+          "unique:code,version_number",
           "issuing_unit_id,status",
         ]),
       );
@@ -4452,6 +4727,8 @@ describe("entity schema matches the contract", () => {
           [
             ["code", false, false],
             ["created_at", false, false],
+            ["emblem_expected", true, false],
+            ["flag_expected", true, false],
             ["id", false, true],
             ["is_current", false, false],
             ["jurisdiction_id", false, false],
@@ -4552,7 +4829,6 @@ describe("entity schema matches the contract", () => {
           [
             ["code", false, false],
             ["created_at", false, false],
-            ["geo_unit_id", true, false],
             ["id", false, true],
             ["is_active", false, false],
             ["is_current", false, false],
@@ -4577,7 +4853,6 @@ describe("entity schema matches the contract", () => {
       expect(indexes).toEqual(
         expect.arrayContaining([
           "unique:code",
-          "geo_unit_id",
         ]),
       );
     });
@@ -4916,6 +5191,52 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "source"."documents" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("DocumentClassification", () => {
+    const metadata = () => dataSource.getMetadata(DocumentClassificationEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("document_classifications");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["classified_at", false, false],
+            ["classifier_version", false, false],
+            ["created_at", false, false],
+            ["document_id", false, false],
+            ["evidence", true, false],
+            ["facts", true, false],
+            ["id", false, true],
+            ["kind", false, false],
+            ["method", false, false],
+            ["route_parser", true, false],
+            ["route_status", false, false],
+            ["score", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:document_id,classifier_version",
+          "kind",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "source"."document_classifications" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -5728,6 +6049,67 @@ describe("entity schema matches the contract", () => {
     });
   });
 
+  describe("DocumentSighting", () => {
+    const metadata = () => dataSource.getMetadata(DocumentSightingEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("document_sightings");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["capture_id", true, false],
+            ["content_hash", false, false],
+            ["created_at", false, false],
+            ["depth", false, false],
+            ["document_id", false, false],
+            ["headers", true, false],
+            ["http_status", false, false],
+            ["id", false, true],
+            ["page_url", true, false],
+            ["rule_index", true, false],
+            ["section_label", true, false],
+            ["seen_at", false, false],
+            ["site_id", false, false],
+            ["size_bytes", false, false],
+            ["structure_version_id", true, false],
+            ["updated_at", false, false],
+            ["url", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "site_id->website.sites",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:url,content_hash",
+          "document_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."document_sightings" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
   describe("DomainPattern", () => {
     const metadata = () => dataSource.getMetadata(DomainPatternEntity);
 
@@ -5853,6 +6235,60 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "website"."dossiers" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("SectionVisit", () => {
+    const metadata = () => dataSource.getMetadata(SectionVisitEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("section_visits");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["depth", false, false],
+            ["id", false, true],
+            ["items_found", false, false],
+            ["page_url", true, false],
+            ["rule_index", true, false],
+            ["section_label", false, false],
+            ["site_id", false, false],
+            ["structure_version_id", true, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+            ["visited_at", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "site_id->website.sites",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map((index) => `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`)
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "site_id,section_label,visited_at",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "website"."section_visits" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });

@@ -1,5 +1,5 @@
 ---
-{id: TSK-D4BDEB42D93E,name: "Catalogue of Kenyan statistical publishers, publications and machine routes",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:51.749Z,updated_at: 2026-11-03T01:24:40.418Z,order: 4096,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:24:40.418Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-D4BDEB42D93E/1793669080420-start,started_at: 2026-11-03T01:24:40.990Z}]}}}
+{id: TSK-D4BDEB42D93E,name: "Catalogue of Kenyan statistical publishers, publications and machine routes",type: task,status: in-progress,priority: medium,created_at: 2026-11-02T19:25:51.749Z,updated_at: 2026-11-03T06:12:55.256Z,order: 4096,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-03T01:24:40.418Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-D4BDEB42D93E/1793669080420-start,started_at: 2026-11-03T01:24:40.990Z}]}},due_at: 2026-11-02}
 ---
 
 # Catalogue of Kenyan statistical publishers, publications and machine routes

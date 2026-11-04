@@ -107,6 +107,12 @@ export class BudgetaryUnitDto {
   @IsUUID()
   parentUnitId?: Id | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.partyId !== null)
+  @IsString()
+  @IsUUID()
+  partyId?: Id | null;
+
   @IsISO8601({})
   updatedAt!: DateTime;
 

@@ -1,5 +1,5 @@
 ---
-{id: TSK-E29DD2591768,name: Content section model in site structures,type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:24:22.388Z,updated_at: 2026-11-02T21:40:24.685Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T21:40:24.685Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-E29DD2591768/1793655624687-start,started_at: 2026-11-02T21:40:25.297Z}]}}}
+{id: TSK-E29DD2591768,name: Content section model in site structures,type: task,status: in-progress,priority: medium,created_at: 2026-11-02T20:24:22.388Z,updated_at: 2026-11-03T06:13:01.586Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T21:40:24.685Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-E29DD2591768/1793655624687-start,started_at: 2026-11-02T21:40:25.297Z}]}},due_at: 2026-11-03}
 ---
 
 # Content section model in site structures

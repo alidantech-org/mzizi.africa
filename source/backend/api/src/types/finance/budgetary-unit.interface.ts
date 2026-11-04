@@ -22,6 +22,7 @@ export interface BudgetaryUnit {
   levelId: Id;
   name: Name;
   parentUnitId?: Id | null;
+  partyId?: Id | null;
   updatedAt: DateTime;
   validFrom?: Date | null;
   validFromPrecision?: DatePrecision | null;

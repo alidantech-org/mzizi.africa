@@ -64,7 +64,7 @@ def main(argv: list[str] | None = None) -> int:
     mb.add_argument("--store", default=".data/objects")
     ce = sub.add_parser("import-county-executives", help="stage governors and deputy governors from the harvested Wikidata answers (stages A individuals, B holders and memberships)")
     ce.add_argument("directory")
-    ce.add_argument("--stage", choices=["A", "B"], required=True)
+    ce.add_argument("--stage", choices=["A", "B", "harvest"], required=True)
     ce.add_argument("--store", default=".data/objects")
     cl = sub.add_parser("import-county-leaders", help="stage deputy governors, secretaries, CEC members and speakers read from Wikipedia county pages and county sites")
     cl.add_argument("--wiki-dir", default=".data/raw/county-wikipedia")
@@ -96,13 +96,13 @@ def main(argv: list[str] | None = None) -> int:
     ie.add_argument("page")
     ie.add_argument("--stage", choices=["B", "C"], required=True)
     ie.add_argument("--store", default=".data/objects")
-    ga = sub.add_parser("import-geo-admin", help="stage units or boundaries of one administrative level (0-3) from geoBoundaries GeoJSON, parents found by geometry")
-    ga.add_argument("directory")
-    ga.add_argument("--level", type=int, choices=[0, 1, 2, 3], required=True)
-    ga.add_argument("--part", choices=["units", "boundaries"], required=True)
     oh = sub.add_parser("import-office-holders", help="stage national office holders (members of both Houses, executive, judiciary) from the fetched Wikipedia list pages (stages A, B, C)")
     oh.add_argument("directory")
     oh.add_argument("--stage", choices=["A", "B", "C"], required=True)
+    oh.add_argument("--no-links", action="store_true")
+    oh.add_argument("--plan", default=".data/reports/office-holders-plan.json", help="written by stage A, read by stages B and C so person reuse stays consistent")
+    oh.add_argument("--report", default=".data/reports/office-holders.json")
+    oh.add_argument("--store", default=".data/objects")
     fl = sub.add_parser("fetch-leadership", help="fetch leadership pages of reachable ministry, commission and agency sites (gated, bounded)")
     fl.add_argument("--out", default=".data/raw/leadership")
     fl.add_argument("--max-pages", type=int, default=6)
@@ -111,10 +111,6 @@ def main(argv: list[str] | None = None) -> int:
     ga.add_argument("directory")
     ga.add_argument("--level", type=int, choices=[0, 1, 2, 3], required=True)
     ga.add_argument("--part", choices=["units", "boundaries"], required=True)
-    oh.add_argument("--no-links", action="store_true")
-    oh.add_argument("--plan", default=".data/reports/office-holders-plan.json", help="written by stage A, read by stages B and C so person reuse stays consistent")
-    oh.add_argument("--report", default=".data/reports/office-holders.json")
-    oh.add_argument("--store", default=".data/objects")
     ga.add_argument("--reference-year", default="")
     ga.add_argument("--store", default=".data/objects")
     pr = sub.add_parser("import-procurement", help="stage tenders.go.ke procuring entities, suppliers, tenders and contracts (stages A-D)")
@@ -310,23 +306,19 @@ def main(argv: list[str] | None = None) -> int:
         from .files import LocalDirectoryStore
         from .imports import county_executives
 
-        labels = _json.loads((_Path(args.directory) / "labels.json").read_text())
-        with connect() as conn:
-            runs, stats, unlinked, n = county_executives.import_county_executives(conn, LocalDirectoryStore(conn, args.store), args.directory, labels, args.stage)
-        print(f"{n} holder records")
         if args.stage == "harvest":
             with connect() as conn:
                 print(_json.dumps(county_executives.run_harvest(conn, _Path(args.directory)), default=str)[:2000])
             return 0
+        labels = _json.loads((_Path(args.directory) / "labels.json").read_text())
+        with connect() as conn:
+            runs, stats, unlinked, n = county_executives.import_county_executives(conn, LocalDirectoryStore(conn, args.store), args.directory, labels, args.stage)
+        print(f"{n} holder records")
         for name, stat in stats.items():
             print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {runs[name]})")
         for item in unlinked:
             print("unlinked:", item)
         return 0
-    if args.command == "fetch-photos":
-        from .db import connect
-        from .fetch import live_fetcher
-        from .files import LocalDirectoryStore
     if args.command == "import-county-leaders":
         from pathlib import Path as _P
 
@@ -342,6 +334,10 @@ def main(argv: list[str] | None = None) -> int:
         for item in report:
             print("report:", item)
         return 0
+    if args.command == "fetch-photos":
+        from .db import connect
+        from .fetch import live_fetcher
+        from .files import LocalDirectoryStore
         from .imports import photos
 
         with connect() as conn:
@@ -399,6 +395,10 @@ def main(argv: list[str] | None = None) -> int:
         from .imports import iebc
 
         with connect() as conn:
+            out = iebc.import_iebc(conn, LocalDirectoryStore(conn, args.store), args.page, args.page + ".provenance.json", args.stage)
+        for name, stat in out.stats.items():
+            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
+        return 0
     if args.command == "import-office-holders":
         import json as _json
         from pathlib import Path as _Path
@@ -425,10 +425,6 @@ def main(argv: list[str] | None = None) -> int:
             out = leadership_fetch.run(conn, _P(args.out), max_pages=args.max_pages, only=args.only, log=lambda m: print(m, flush=True))
         print(json.dumps({k: v for k, v in out.items() if k != "hosts"}))
         return 0
-            out = iebc.import_iebc(conn, LocalDirectoryStore(conn, args.store), args.page, args.page + ".provenance.json", args.stage)
-        for name, stat in out.stats.items():
-            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
-        return 0
     if args.command == "import-geo-admin":
         from .db import connect
         from .files import LocalDirectoryStore
@@ -450,22 +446,6 @@ def main(argv: list[str] | None = None) -> int:
         with connect() as conn:
             out = procurement.import_procurement(conn, LocalDirectoryStore(conn, args.store), args.pe_dir, args.ocds_dir, args.stage, args.years.split(",") if args.years else None)
         print(f"{out.sources} procuring entities, {len(out.notes)} notes")
-    if args.command == "import-office-holders":
-        import json as _json
-        from pathlib import Path as _Path
-
-        from .db import connect
-        from .files import LocalDirectoryStore
-        from .imports import office_holders
-
-        with connect() as conn:
-            out = office_holders.import_office_holders(conn, LocalDirectoryStore(conn, args.store), args.directory, args.stage, with_links=not args.no_links, plan_path=args.plan)
-        for name, stat in out.stats.items():
-            print(f"{name}: {stat.created} new, {stat.unchanged} unchanged, {stat.invalid} invalid, {stat.quarantined} quarantined (run {out.runs[name]})")
-        _Path(args.report).parent.mkdir(parents=True, exist_ok=True)
-        _Path(args.report).write_text(_json.dumps(out.report, indent=1, default=str))
-        print(f"report: {args.report}")
-        return 0
         for note in out.notes[:5]:
             print(f"note: {note}")
         for name, stat in out.stats.items():

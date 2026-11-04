@@ -39,7 +39,7 @@ export const BUDGETARY_UNIT_SORTABLE_FIELDS = ['code', 'createdAt', 'name', 'upd
 
 export const BUDGETARY_UNIT_SEARCHABLE_FIELDS = ['code', 'name', ] as const satisfies readonly BudgetaryUnitKey[];
 
-export const BUDGETARY_UNIT_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'name', 'parentUnitId', 'version', ] as const satisfies readonly BudgetaryUnitKey[];
+export const BUDGETARY_UNIT_FILTERABLE_FIELDS = ['code', 'geoUnitId', 'id', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'name', 'parentUnitId', 'partyId', 'version', ] as const satisfies readonly BudgetaryUnitKey[];
 
 export const BUDGETARY_UNIT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'validFrom', 'validTo', ] as const satisfies readonly BudgetaryUnitKey[];
 
@@ -47,7 +47,7 @@ export const BUDGETARY_UNIT_DATE_RANGE_FIELDS = ['createdAt', 'updatedAt', 'vali
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const BUDGETARY_UNIT_SELECTABLE_FIELDS = ['code', 'createdAt', 'geoUnitId', 'id', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'name', 'parentUnitId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BudgetaryUnitKey[];
+export const BUDGETARY_UNIT_SELECTABLE_FIELDS = ['code', 'createdAt', 'geoUnitId', 'id', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'name', 'parentUnitId', 'partyId', 'updatedAt', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BudgetaryUnitKey[];
 
 export const BUDGETARY_UNIT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as const satisfies readonly BudgetaryUnitSelectableField[];
 
@@ -55,7 +55,7 @@ export const BUDGETARY_UNIT_DEFAULT_SELECT_FIELDS = ['createdAt', 'id', ] as con
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const BUDGETARY_UNIT_EDITABLE_FIELDS = ['code', 'geoUnitId', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'name', 'parentUnitId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BudgetaryUnitKey[];
+export const BUDGETARY_UNIT_EDITABLE_FIELDS = ['code', 'geoUnitId', 'institutionId', 'isCurrent', 'jurisdictionId', 'legalEntityId', 'levelId', 'name', 'parentUnitId', 'partyId', 'validFrom', 'validFromPrecision', 'validTo', 'validToPrecision', ] as const satisfies readonly BudgetaryUnitKey[];
 
 // ----------------------------------
 // RELATION CONFIGS

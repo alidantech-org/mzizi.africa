@@ -40,6 +40,7 @@ export interface IBudgetaryUnit extends B.IBase {
   levelId: string;
   name: string;
   parentUnitId: string | null;
+  partyId: string | null;
   validFrom: Date | null;
   validFromPrecision: DatePrecision | null;
   validTo: Date | null;

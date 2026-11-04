@@ -73,6 +73,12 @@ export const budgetaryUnitExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "partyId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "updatedAt",
       optional: false,
       nullable: false,
