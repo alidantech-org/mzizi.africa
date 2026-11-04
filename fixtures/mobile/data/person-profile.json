@@ -1,0 +1,54 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "person.profile",
+  "data": {
+    "id": "00000000-0000-4000-8000-000000000021",
+    "ref": {
+      "kind": "person.individuals",
+      "id": "00000000-0000-4000-8000-000000000021"
+    },
+    "displayName": "Sample Public Figure",
+    "lifeStatus": "unknown",
+    "summary": "Fictional profile created solely for mobile layout tests.",
+    "names": [
+      {
+        "name": "Sample Public Figure",
+        "kind": "common"
+      }
+    ],
+    "portrait": null,
+    "contacts": [],
+    "handles": [],
+    "roles": [
+      {
+        "holderId": "00000000-0000-4000-8000-000000000022",
+        "office": {
+          "kind": "governance.offices",
+          "id": "00000000-0000-4000-8000-000000000023",
+          "name": "Sample Council Member"
+        },
+        "institution": {
+          "kind": "governance.institutions",
+          "id": "00000000-0000-4000-8000-000000000024",
+          "name": "Example Council"
+        },
+        "status": "substantive",
+        "validFrom": "2015-01-01",
+        "validTo": "2018-12-31",
+        "validFromPrecision": "year",
+        "validToPrecision": "year",
+        "isCurrent": false
+      }
+    ],
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
