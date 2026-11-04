@@ -1,9 +1,5 @@
 ---
-{
-  id: DOC-142CAE04649D,
-  name: "API, Mobile, and Sites Roadmap",
-  type: documentation,
-}
+{id: DOC-142CAE04649D,name: "API, Mobile, and Sites Roadmap",type: documentation}
 ---
 
 # API, Mobile, and Sites Roadmap
@@ -17,6 +13,10 @@ This roadmap is represented by linked activities in the Task groups **API**, **M
 3. Deliver a narrow geography read slice (`TSK-9EEB47279B23`) and document responsibility/data migration (`TSK-38F9B96B1772`).
 
 ## Mobile app
+
+The current screen-by-screen comparison and prioritized recommendations are in [MOBILE_APP_ALIGNMENT.md](MOBILE_APP_ALIGNMENT.md). That audit distinguishes the implemented geography slice from target architecture and identifies API/data prerequisites before extending History, Money, Saved or the navigation model.
+
+The database-backed screen plan is in [MOBILE_DATA_DISPLAY_PLAN.md](MOBILE_DATA_DISPLAY_PLAN.md). It maps Mzizi datasets to mobile journeys, existing NestJS read routes, evidence/time presentation and phased readiness checks.
 
 1. Make local API origin configuration clear across Chrome, emulator, and phone (`TSK-EAB6FC782E86`).
 2. Complete verified county-to-child map navigation (`TSK-471C902B718F`) and functional search/navigation (`TSK-C8093926792F`).

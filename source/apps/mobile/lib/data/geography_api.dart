@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'api_configuration.dart';
+
 typedef JsonObject = Map<String, Object?>;
 
 bool _validPosition(Object? value) =>
@@ -87,6 +89,7 @@ class BoundaryMetadata {
     this.verified = false,
     this.source,
     this.sourceReference,
+    this.citation,
     this.license,
     this.referenceYear,
     this.retrievedAt,
@@ -99,6 +102,7 @@ class BoundaryMetadata {
   final bool verified;
   final String? source;
   final String? sourceReference;
+  final String? citation;
   final String? license;
   final String? referenceYear;
   final String? retrievedAt;
@@ -111,6 +115,8 @@ class BoundaryMetadata {
     verified: json['boundary_verified'] == true,
     source: json['boundary_source']?.toString(),
     sourceReference: json['boundary_source_reference']?.toString(),
+    citation:
+        json['boundary_citation']?.toString() ?? json['citation']?.toString(),
     license: json['boundary_license']?.toString(),
     referenceYear: json['boundary_year']?.toString(),
     retrievedAt: (json['boundary_retrieved_at'] ?? json['retrieved_at'])
@@ -125,6 +131,7 @@ class BoundaryMetadata {
     'boundary_verified': verified,
     if (source != null) 'boundary_source': source,
     if (sourceReference != null) 'boundary_source_reference': sourceReference,
+    if (citation != null) 'boundary_citation': citation,
     if (license != null) 'boundary_license': license,
     if (referenceYear != null) 'boundary_year': referenceYear,
     if (retrievedAt != null) 'boundary_retrieved_at': retrievedAt,
@@ -417,6 +424,7 @@ class GeographyEntity {
     this.boundaryVerified = false,
     this.boundarySource,
     this.boundarySourceReference,
+    this.boundaryCitation,
     this.boundaryLicense,
     this.boundaryYear,
     this.boundaryRetrievedAt,
@@ -438,6 +446,7 @@ class GeographyEntity {
   final bool boundaryVerified;
   final String? boundarySource;
   final String? boundarySourceReference;
+  final String? boundaryCitation;
   final String? boundaryLicense;
   final String? boundaryYear;
   final String? boundaryRetrievedAt;
@@ -451,6 +460,7 @@ class GeographyEntity {
     verified: boundaryVerified,
     source: boundarySource,
     sourceReference: boundarySourceReference,
+    citation: boundaryCitation,
     license: boundaryLicense,
     referenceYear: boundaryYear,
     retrievedAt: boundaryRetrievedAt,
@@ -491,6 +501,8 @@ class GeographyEntity {
       boundaryVerified: json['boundary_verified'] == true,
       boundarySource: json['boundary_source']?.toString(),
       boundarySourceReference: json['boundary_source_reference']?.toString(),
+      boundaryCitation:
+          json['boundary_citation']?.toString() ?? json['citation']?.toString(),
       boundaryLicense: json['boundary_license']?.toString(),
       boundaryYear: json['boundary_year']?.toString(),
       boundaryRetrievedAt:
@@ -559,11 +571,8 @@ class _CacheEntry<T> {
 class GeographyApiClient {
   GeographyApiClient({http.Client? client, String? baseUrl})
     : _client = client ?? http.Client(),
-      _baseUrl = baseUrl ?? _configuredBaseUrl;
+      _baseUrl = baseUrl ?? defaultMziziApiBaseUrl;
 
-  static const _configuredBaseUrl = String.fromEnvironment(
-    'MZIZI_API_BASE_URL',
-  );
   static final instance = GeographyApiClient();
 
   final http.Client _client;
@@ -575,6 +584,7 @@ class GeographyApiClient {
   Future<Map<String, String>> Function()? headersProvider;
 
   bool get isConfigured => _baseUrl.trim().isNotEmpty;
+  String get apiBaseUrl => _baseUrl;
 
   Uri _uri(String path, [Map<String, String>? query]) {
     if (!isConfigured) {

@@ -12,5 +12,22 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "MziziOnboarding")
+    let channel = FlutterMethodChannel(
+      name: "africa.mzizi/onboarding",
+      binaryMessenger: registrar.messenger()
+    )
+    channel.setMethodCallHandler { call, result in
+      let key = "mzizi.onboarding.complete.v1"
+      switch call.method {
+      case "isComplete":
+        result(UserDefaults.standard.bool(forKey: key))
+      case "markComplete":
+        UserDefaults.standard.set(true, forKey: key)
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
   }
 }

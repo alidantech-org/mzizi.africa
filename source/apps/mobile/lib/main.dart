@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'data/onboarding_store.dart';
 import 'screens/explore_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/money_screen.dart';
+import 'screens/onboarding_screen.dart';
 import 'screens/saved_screen.dart';
 import 'theme/app_theme.dart';
 
@@ -19,8 +21,59 @@ class MziziApp extends StatelessWidget {
     theme: AppTheme.light,
     darkTheme: AppTheme.dark,
     themeMode: ThemeMode.light,
-    home: const AppShell(),
+    home: const AppEntry(),
   );
+}
+
+class AppEntry extends StatefulWidget {
+  const AppEntry({super.key});
+
+  @override
+  State<AppEntry> createState() => _AppEntryState();
+}
+
+class _AppEntryState extends State<AppEntry> {
+  static const _store = OnboardingStore();
+  bool _checking = true;
+  bool _complete = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _restoreOnboarding();
+  }
+
+  Future<void> _restoreOnboarding() async {
+    var complete = false;
+    try {
+      complete = await _store.isComplete;
+    } catch (_) {
+      // Storage may be unavailable in a restricted browser context.
+    }
+    if (!mounted) return;
+    setState(() {
+      _complete = complete;
+      _checking = false;
+    });
+  }
+
+  Future<void> _finishOnboarding() async {
+    try {
+      await _store.complete();
+    } catch (_) {
+      // Continue into the app even if local persistence is unavailable.
+    }
+    if (mounted) setState(() => _complete = true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_checking) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_complete) return OnboardingScreen(onComplete: _finishOnboarding);
+    return const AppShell();
+  }
 }
 
 class AppShell extends StatefulWidget {
@@ -62,11 +115,11 @@ class _AppShellState extends State<AppShell> {
           ),
           NavigationDestination(
             icon: Icon(Icons.history_outlined),
-            label: 'History',
+            label: 'Updates',
           ),
           NavigationDestination(
             icon: Icon(Icons.bookmark_border),
-            label: 'Saved',
+            label: 'My Mzizi',
           ),
         ],
       ),

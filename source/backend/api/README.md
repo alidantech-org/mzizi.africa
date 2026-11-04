@@ -17,6 +17,8 @@ bun run db:reset       # dev only: runs the database engine's migrations, then r
 bun run start          # http://localhost:3000, 167 routes, e.g. /v1/reference/jurisdictions
 ```
 
+Flutter Web development origins on `localhost` and `127.0.0.1` are allowed by default. In production, set `CORS_ORIGINS` to a comma-separated list of exact browser origins (for example `https://mzizi.africa,https://app.mzizi.africa`). Native mobile clients do not send browser origins.
+
 `db:reset`, `db:schema` and `db:fixtures` are thin aliases for `source/backend/engine/database/src/cli.ts` (`reset`, `migrate`, `seed fixtures`), which owns schema and seeds; destructive commands refuse non-local hosts and any database not named `mzizi_*_dev` or `mzizi_*_test`. The API itself never creates schema. Run `bun` from this folder: the root `tsconfig.json` is what makes Bun apply the decorator settings NestJS needs.
 
 ## Test

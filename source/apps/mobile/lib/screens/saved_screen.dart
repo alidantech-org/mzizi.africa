@@ -14,7 +14,7 @@ class SavedScreen extends StatefulWidget {
 class _SavedScreenState extends State<SavedScreen> {
   final search = TextEditingController();
   String filter = 'All';
-  static const filters = ['All', 'Briefings', 'Records', 'Projects'];
+  static const filters = ['All', 'Events', 'Budgets'];
 
   @override
   void dispose() {
@@ -214,7 +214,7 @@ class _SavedScreenState extends State<SavedScreen> {
           ),
           SizedBox(width: 5),
           Text(
-            'YOUR CIVIC RESEARCH LIBRARY',
+            'YOUR MZIZI LIBRARY',
             style: TextStyle(
               fontSize: 11.5,
               letterSpacing: .4,
@@ -226,7 +226,7 @@ class _SavedScreenState extends State<SavedScreen> {
       ),
       SizedBox(height: 4),
       Text(
-        'Saved Evidence',
+        'My Mzizi',
         style: TextStyle(
           fontFamily: 'serif',
           fontSize: 24.5,
@@ -237,7 +237,7 @@ class _SavedScreenState extends State<SavedScreen> {
       ),
       SizedBox(height: 3),
       Text(
-        'Keep useful explainers, records, and public projects together for later review.',
+        'Keep event and budget records from Mzizi close at hand.',
         style: TextStyle(
           fontSize: 14,
           height: 1.3,
@@ -385,8 +385,8 @@ class _SavedScreenState extends State<SavedScreen> {
     final entries = SavedLibrary.instance.entries.where((entry) {
       final typeMatches =
           filter == 'All' ||
-          entry.type.toLowerCase() ==
-              filter.substring(0, filter.length - 1).toLowerCase();
+          (filter == 'Events' && entry.type.toLowerCase().contains('event')) ||
+          (filter == 'Budgets' && entry.type.toLowerCase().contains('budget'));
       final textMatches =
           '${entry.title} ${entry.description} ${entry.reference}'
               .toLowerCase()
@@ -430,7 +430,7 @@ class _SavedScreenState extends State<SavedScreen> {
             ),
             SizedBox(height: 4),
             Text(
-              hasSaved ? 'Try another category or search term.' : 'Tap a bookmark on a briefing to keep it here. Your saved items will appear in this list.',
+              hasSaved ? 'Try another category or search term.' : 'Bookmark an event or budget record to keep it in this list.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,

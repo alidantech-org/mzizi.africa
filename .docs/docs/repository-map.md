@@ -10,6 +10,8 @@
 | `source/apps/web` | Research dashboard (formerly `apps/dashboard`): research and evidence stewardship workflows. |
 | `source/apps/mobile` | Flutter mobile application and embedded Cesium map. |
 | `.docs/docs/geography-api-contract.md` | Mobile geography API contract. |
+| `.docs/docs/MOBILE_APP_ALIGNMENT.md` | Audit of mobile app alignment with product direction, current API contracts and data lifecycle; prioritized client gaps. |
+| `.docs/docs/MOBILE_DATA_DISPLAY_PLAN.md` | Screen-by-screen plan for displaying canonical Mzizi data through the NestJS API, with evidence, time, readiness and rollout guidance. |
 | `source/backend/api` | NestJS product API (read-mostly), generated from `dryv/` plus hand-written use cases, auth and read helpers. |
 | `dryv/` | Dryv contracts (TypeScript), project packs and contract tooling; the semantic source of the API. `dryv.yaml` at the repository root pins the engine and packs and maps output into `source/backend/api`. |
 | `source/backend/api-legacy` | Legacy Python/FastAPI behavior, schema, migrations, seeds, and migration input. |

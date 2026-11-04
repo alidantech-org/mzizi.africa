@@ -4,7 +4,8 @@ import 'dart:async';
 
 import '../data/geography_api.dart';
 import '../theme/app_colors.dart';
-import '../widgets/cinematic_globe_map.dart';
+import '../widgets/boundary_evidence_sheet.dart';
+import '../widgets/county_choropleth_map.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key, this.onNavigate});
@@ -64,8 +65,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   Future<void> _select(GeographyEntity place) async {
     _searchDebounce?.cancel();
-    ++_searchGeneration;
     _focus.unfocus();
+    final selection = ++_searchGeneration;
     setState(() {
       _selected = place;
       _scene = null;
@@ -74,6 +75,21 @@ class _ExploreScreenState extends State<ExploreScreen> {
       _results = const [];
       _searchError = null;
     });
+    try {
+      final scene = await GeographyApiClient.instance.sceneFor(place.id);
+      if (!mounted || selection != _searchGeneration) return;
+      setState(() {
+        _scene = scene;
+        _selected = scene.entity;
+        _mapLoading = false;
+      });
+    } catch (error) {
+      if (!mounted || selection != _searchGeneration) return;
+      setState(() {
+        _mapLoading = false;
+        _searchError = error.toString().replaceFirst('Exception: ', '');
+      });
+    }
   }
 
   Future<void> _goToParent() async {
@@ -155,17 +171,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         ? Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Expanded(
-                                flex: 7,
-                                child: _mapPanel(double.infinity),
-                              ),
+                              Expanded(flex: 7, child: _mapPanel()),
                               SizedBox(width: 16),
                               SizedBox(width: 330, child: _detailsPanel()),
                             ],
                           )
                         : Column(
                             children: [
-                              Expanded(child: _mapPanel(double.infinity)),
+                              Expanded(child: _mapPanel()),
                               SizedBox(height: 12),
                               SizedBox(height: 210, child: _detailsPanel()),
                             ],
@@ -403,15 +416,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  Widget _mapPanel(double height) => CinematicGlobeMap(
-    selectedPlace: _selected,
-    height: height,
-    onPlaceSelected: (place) => setState(() => _selected = place),
-    onSceneChanged: (scene) => setState(() {
-      _scene = scene;
-      _mapLoading = false;
-    }),
-  );
+  Widget _mapPanel() =>
+      CountyChoroplethMap(selectedPlace: _selected, onPlaceSelected: _select);
 
   Widget _detailsPanel() => Container(
     padding: EdgeInsets.all(15),
@@ -521,14 +527,31 @@ class _ExploreScreenState extends State<ExploreScreen> {
               ? context.colors.primary
               : context.warningColor,
         ),
-        if (place.boundarySource != null) ...[
+        if (place.validFrom != null || place.validTo != null) ...[
           SizedBox(height: 6),
-          _metadataLine(Icons.source_outlined, place.boundarySource!),
+          _metadataLine(
+            Icons.schedule_outlined,
+            'Valid ${place.validFrom ?? 'start not recorded'}'
+            '${place.validTo == null ? '' : ' to ${place.validTo}'}',
+          ),
         ],
-        if (place.boundaryLicense != null) ...[
-          SizedBox(height: 4),
-          _metadataLine(Icons.policy_outlined, place.boundaryLicense!),
-        ],
+        SizedBox(height: 2),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () => BoundaryEvidenceSheet.show(
+              context,
+              place,
+              geometryAvailable: scene?.hasVerifiedGeometry,
+            ),
+            icon: Icon(Icons.fact_check_outlined, size: 17),
+            label: Text('View boundary evidence'),
+            style: TextButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+          ),
+        ),
         Divider(height: 20),
         Text(
           'GOVERNANCE INFORMATION',
