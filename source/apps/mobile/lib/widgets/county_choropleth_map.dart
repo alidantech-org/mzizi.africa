@@ -9,10 +9,12 @@ class CountyChoroplethMap extends StatefulWidget {
   const CountyChoroplethMap({
     super.key,
     this.selectedPlace,
+    this.apiClient,
     required this.onPlaceSelected,
   });
 
   final GeographyEntity? selectedPlace;
+  final GeographyApiClient? apiClient;
   final ValueChanged<GeographyEntity> onPlaceSelected;
 
   @override
@@ -20,6 +22,7 @@ class CountyChoroplethMap extends StatefulWidget {
 }
 
 class _CountyChoroplethMapState extends State<CountyChoroplethMap> {
+  GeographyApiClient get _api => widget.apiClient ?? GeographyApiClient.instance;
   GeographyFeatureCollection? _collection;
   Object? _error;
   bool _loading = true;
@@ -36,7 +39,7 @@ class _CountyChoroplethMapState extends State<CountyChoroplethMap> {
       _error = null;
     });
     try {
-      final collection = await GeographyApiClient.instance.initialBoundaries();
+      final collection = await _api.initialBoundaries();
       if (!mounted) return;
       setState(() {
         _collection = collection;
@@ -53,7 +56,7 @@ class _CountyChoroplethMapState extends State<CountyChoroplethMap> {
 
   Future<void> _select(GeographyFeature feature) async {
     try {
-      final entity = await GeographyApiClient.instance.entity(
+      final entity = await _api.entity(
         feature.properties.geographyId,
       );
       if (mounted) widget.onPlaceSelected(entity);
@@ -201,7 +204,7 @@ class _CountyChoroplethMapState extends State<CountyChoroplethMap> {
 
   String _errorDescription(Object error) {
     if (_isNetworkFailure(error)) {
-      final baseUrl = GeographyApiClient.instance.apiBaseUrl;
+      final baseUrl = _api.apiBaseUrl;
       return 'Cannot reach $baseUrl. Start NestJS and its database. '
           'On a physical phone, pass a reachable server IP using '
           '--dart-define=MZIZI_API_BASE_URL=http://YOUR-LAN-IP:3000. '
