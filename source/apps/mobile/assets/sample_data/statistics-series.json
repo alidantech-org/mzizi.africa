@@ -1,0 +1,67 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "statistics.series",
+  "data": {
+    "indicator": {
+      "kind": "statistical.indicators",
+      "id": "00000000-0000-4000-8000-000000000041",
+      "code": "demo/indicator-a",
+      "name": "Synthetic indicator A",
+      "unitOfMeasure": "index points",
+      "definition": "Fictional values for demonstrating time series."
+    },
+    "geoUnit": {
+      "kind": "geography.units",
+      "id": "00000000-0000-4000-8000-000000000011",
+      "name": "Sample Region A"
+    },
+    "dimensions": [
+      {
+        "dimensionId": "00000000-0000-4000-8000-000000000042",
+        "memberId": "00000000-0000-4000-8000-000000000043",
+        "label": "All groups"
+      }
+    ],
+    "vintage": {
+      "id": "00000000-0000-4000-8000-000000000044",
+      "label": "Synthetic release 1",
+      "releasedOn": "2022-01-01"
+    },
+    "measureType": "count",
+    "estimateKind": "survey",
+    "points": [
+      {
+        "observationId": "00000000-0000-4000-8000-000000000045",
+        "period": "2019",
+        "value": 25,
+        "confidenceLevel": "estimate",
+        "marginOfError": 2
+      },
+      {
+        "observationId": "00000000-0000-4000-8000-000000000046",
+        "period": "2020",
+        "value": null,
+        "confidenceLevel": "estimate",
+        "marginOfError": null
+      },
+      {
+        "observationId": "00000000-0000-4000-8000-000000000047",
+        "period": "2021",
+        "value": 31,
+        "confidenceLevel": "estimate",
+        "marginOfError": 3
+      }
+    ],
+    "methodology": "Synthetic data with an intentional missing observation.",
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
