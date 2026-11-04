@@ -41,3 +41,19 @@ Read the fixture by `kind` from bundled assets in debug/development builds and d
 ## Validation and ownership
 
 The fixtures should be validated locally (e.g., with any Draft 2020-12 JSON Schema validator plus JSON parsing) and checked again when adapter models change. GitHub repository writes alone do not execute the local TypeScript/Flutter test suite. The database engine remains owner of canonical seed data; these fixtures must never be imported as official records.
+
+## Additional schema-driven previews (2026-11-05)
+
+Five more explicitly fictional fixture datasets are available under both `fixtures/mobile/data/` (contract examples) and `source/apps/mobile/assets/sample_data/` (bundled Flutter files):
+
+| Fixture | Presentation kind | Canonical schemas used to shape its fields |
+| --- | --- | --- |
+| `governance-structure.json` | `governance.structure` | `governance.institutions`, `offices`, `holders`, `relationships`; `person.individuals` soft links |
+| `political-party.json` | `political.party` | `political.parties`, `units`, `memberships`, `positions`, `holders`, `ideologies` |
+| `legal-instrument.json` | `legal.instrument` | `legal.instruments`, `provisions`, `amendments`, `changes`, `links` |
+| `procurement-contract.json` | `procurement.contract` | `procurement.tenders`, `bids`, `contracts`, `milestones`, `variations` |
+| `public-service.json` | `civic.service` | `civic.services`, `amenities`, `posts`, `deliveries` |
+
+These represent composed **mobile presentation documents**, not additional PostgreSQL tables, government facts, live API data or published election/financial outcomes. Their sample codes, names, money values, people and dates are fictional. Verification remains `unverified`, and no official source is asserted.
+
+The sample explorer now supports **ten** topic choices. All five new domains are reachable from both Home and Explore. The Flutter fixture loader checks `fixture`, `schemaVersion` and synthetic provenance metadata before rendering. `test/sample_domain_topics_test.dart` exercises asset loading and screen titles. Do not deploy fixtures as real-data fallback or import them into the canonical database.
