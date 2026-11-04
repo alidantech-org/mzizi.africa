@@ -63,6 +63,7 @@ flutter:
     - assets/map/index.html
     - assets/map/globe.js
     - assets/onboarding/
+    - assets/sample_data/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
