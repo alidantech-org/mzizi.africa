@@ -1,0 +1,68 @@
+{
+  "fixture": true,
+  "schemaVersion": "1.0.0",
+  "kind": "political.party",
+  "data": {
+    "party": {
+      "id": "00000000-0000-4000-8000-000000000201",
+      "ref": {
+        "kind": "political.parties",
+        "id": "00000000-0000-4000-8000-000000000201"
+      },
+      "name": "Sample Civic Party",
+      "abbreviation": "SCP",
+      "code": "demo/party",
+      "status": "active",
+      "jurisdictionId": "00000000-0000-4000-8000-000000000001"
+    },
+    "units": [
+      {
+        "id": "00000000-0000-4000-8000-000000000202",
+        "partyId": "00000000-0000-4000-8000-000000000201",
+        "name": "Example Regional Branch",
+        "code": "demo/party/region",
+        "levelId": "00000000-0000-4000-8000-000000000203",
+        "geoUnitId": "00000000-0000-4000-8000-000000000011"
+      }
+    ],
+    "memberships": [
+      {
+        "id": "00000000-0000-4000-8000-000000000204",
+        "partyId": "00000000-0000-4000-8000-000000000201",
+        "personId": "00000000-0000-4000-8000-000000000205",
+        "personName": "Example Member A",
+        "roleTitle": "Regional organizer",
+        "validFrom": "2020-01-01",
+        "validTo": null
+      }
+    ],
+    "positions": [
+      {
+        "id": "00000000-0000-4000-8000-000000000206",
+        "unitId": "00000000-0000-4000-8000-000000000202",
+        "title": "Branch Coordinator",
+        "holder": {
+          "personId": "00000000-0000-4000-8000-000000000205",
+          "displayName": "Example Member A",
+          "isActing": false
+        }
+      }
+    ],
+    "ideologies": [
+      {
+        "id": "00000000-0000-4000-8000-000000000207",
+        "label": "Example civic reform",
+        "description": "Fictional classification used solely for UI preview."
+      }
+    ],
+    "evidence": {
+      "verificationState": "unverified",
+      "sources": []
+    }
+  },
+  "meta": {
+    "source": "synthetic-mobile-preview",
+    "accuracy": "fictional-not-for-publication",
+    "verified": false
+  }
+}
