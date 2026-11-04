@@ -39,3 +39,18 @@ This is a **design and contract/fixture handoff**, not an assertion that all API
 ## Current limitations
 
 The repository integration can commit files but cannot run the MZIZI checkout's Task CLI or connect to the running dashboard. Task records in `.docs/todo/` have deliberately not been forged via GitHub writes. These artifacts should be linked to the corresponding Taskcode records through `task` in the development checkout.
+
+## Implemented Flutter offline preview (2026-11-04)
+
+The mobile client now bundles `assets/sample_data/*.json`, registered in `source/apps/mobile/pubspec.yaml`, with a validated `SampleDataStore` asset loader and `SampleDataScreen`. The screen displays geographic relationships, public-person-style records, election candidate vote bars, statistical period charts including missing observations, and fiscal breakdowns. A visible synthetic series panel is present on Home, and navigation to the sample explorer is available from Home, Explore and Public Money. The synthetic values are deliberately segregated from the live API screens and prominently marked fictional.
+
+Implementation files:
+- `source/apps/mobile/lib/data/sample_data_store.dart`
+- `source/apps/mobile/lib/screens/sample_data_screen.dart`
+- `source/apps/mobile/lib/widgets/sample_overview_panel.dart`
+- `source/apps/mobile/assets/sample_data/`
+- `source/apps/mobile/test/sample_data_screen_test.dart`
+
+**Not implemented:** generic live API adapters for every presentation type, real record population, operational Map/finance/elections backend aggregations and production data verification. When the NestJS API is unavailable, Home's **live** events and finance sections still show their own error/empty states; the sample dashboard is distinct and never presented as live data. This prevents misinformation.
+
+The repository connection cannot execute `flutter analyze`, `flutter test` or `task validate`. Run these explicitly from the appropriate MZIZI checkout before claiming verified build status. Changes were committed on `develop` and no Taskcode-managed todo files were forged.
