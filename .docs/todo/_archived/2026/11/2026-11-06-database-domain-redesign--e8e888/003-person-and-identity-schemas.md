@@ -1,5 +1,5 @@
 ---
-{id: TSK-EDD0990C97E9,name: Person and identity schemas,type: task,status: completed,priority: medium,created_at: 2026-11-02T06:41:22.494Z,updated_at: 2026-11-02T06:59:00.417Z,due_at: 2026-11-02,order: 1280,extra: {status_history: [{from: planned,to: completed,at: 2026-11-02T06:59:00.417Z}]}}
+{id: TSK-EDD0990C97E9,name: Person and identity schemas,type: task,status: completed,priority: medium,created_at: 2026-11-02T06:41:22.494Z,updated_at: 2026-11-02T06:59:00.417Z,due_at: 2026-11-02,order: 1280,extra: {status_history: [{from: planned,to: completed,at: 2026-11-02T06:59:00.417Z}]},archived_at: 2026-11-06T12:50:48.210Z}
 ---
 
 # Person and identity schemas

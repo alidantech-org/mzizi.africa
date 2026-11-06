@@ -1,5 +1,5 @@
 ---
-{id: TSK-9D555B563153,name: Source schema and removal of embedded provenance,type: task,status: completed,priority: medium,created_at: 2026-11-02T06:41:22.356Z,updated_at: 2026-11-02T06:59:00.053Z,due_at: 2026-11-02,order: 2048,extra: {status_history: [{from: planned,to: completed,at: 2026-11-02T06:59:00.053Z}]}}
+{id: TSK-9D555B563153,name: Source schema and removal of embedded provenance,type: task,status: completed,priority: medium,created_at: 2026-11-02T06:41:22.356Z,updated_at: 2026-11-02T06:59:00.053Z,due_at: 2026-11-02,order: 2048,extra: {status_history: [{from: planned,to: completed,at: 2026-11-02T06:59:00.053Z}]},archived_at: 2026-11-06T12:50:48.210Z}
 ---
 
 # Source schema and removal of embedded provenance

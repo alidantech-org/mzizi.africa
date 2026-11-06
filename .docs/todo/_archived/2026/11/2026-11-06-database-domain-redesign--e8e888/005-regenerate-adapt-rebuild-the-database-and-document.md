@@ -1,5 +1,5 @@
 ---
-{id: TSK-C9C28F18E04D,name: "Regenerate, adapt, rebuild the database and document",type: task,status: completed,priority: medium,created_at: 2026-11-02T06:41:22.755Z,updated_at: 2026-11-02T06:59:01.169Z,due_at: 2026-11-02,order: 1536,extra: {status_history: [{from: planned,to: completed,at: 2026-11-02T06:59:01.169Z}]}}
+{id: TSK-C9C28F18E04D,name: "Regenerate, adapt, rebuild the database and document",type: task,status: completed,priority: medium,created_at: 2026-11-02T06:41:22.755Z,updated_at: 2026-11-02T06:59:01.169Z,due_at: 2026-11-02,order: 1536,extra: {status_history: [{from: planned,to: completed,at: 2026-11-02T06:59:01.169Z}]},archived_at: 2026-11-06T12:50:48.210Z}
 ---
 
 # Regenerate, adapt, rebuild the database and document
