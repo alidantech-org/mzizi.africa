@@ -1,5 +1,5 @@
 ---
-{id: TSK-8CB0574383EB,name: "County assembly members (MCAs), nominated seats, speakers and clerks",type: task,status: planned,priority: medium,created_at: 2026-11-03T11:45:10.805Z,updated_at: 2026-11-03T11:45:10.805Z,order: 47104}
+{id: TSK-8CB0574383EB,name: "County assembly members (MCAs), nominated seats, speakers and clerks",type: task,status: planned,priority: medium,created_at: 2026-11-03T11:45:10.805Z,updated_at: 2026-11-04T05:27:26.403Z,order: 47104,due_at: 2026-11-05}
 ---
 
 # County assembly members (MCAs), nominated seats, speakers and clerks

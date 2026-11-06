@@ -1,5 +1,5 @@
 ---
-{id: TSK-0DB63553ABBA,name: Generate all domain code and validate,type: task,status: completed,priority: medium,created_at: 2026-11-02T05:14:40.368Z,updated_at: 2026-11-02T05:31:24.103Z,order: 15360,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:20:42.965Z},{from: in-progress,to: completed,at: 2026-11-02T05:31:24.103Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-0DB63553ABBA/1793596842966-start,started_at: 2026-11-02T05:20:43.036Z,end_ref: refs/tracking/TSK-0DB63553ABBA/1793597484105-end,ended_at: 2026-11-02T05:31:24.103Z,summary: {files: 2022,insertions: 132084,deletions: 1153}}]}}}
+{id: TSK-0DB63553ABBA,name: Generate all domain code and validate,type: task,status: completed,priority: medium,created_at: 2026-11-02T05:14:40.368Z,updated_at: 2026-11-02T05:31:24.103Z,order: 15360,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:20:42.965Z},{from: in-progress,to: completed,at: 2026-11-02T05:31:24.103Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-0DB63553ABBA/1793596842966-start,started_at: 2026-11-02T05:20:43.036Z,end_ref: refs/tracking/TSK-0DB63553ABBA/1793597484105-end,ended_at: 2026-11-02T05:31:24.103Z,summary: {files: 2022,insertions: 132084,deletions: 1153}}]}},archived_at: 2026-11-04T05:47:26.861Z}
 ---
 
 # Generate all domain code and validate

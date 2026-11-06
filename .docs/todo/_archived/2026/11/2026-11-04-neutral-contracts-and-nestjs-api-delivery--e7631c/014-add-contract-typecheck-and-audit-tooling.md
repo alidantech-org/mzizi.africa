@@ -1,5 +1,5 @@
 ---
-{id: TSK-2879CE30E0F5,name: Add contract typecheck and audit tooling,type: task,status: completed,priority: medium,created_at: 2026-11-02T05:14:40.252Z,updated_at: 2026-11-02T05:15:52.916Z,order: 14336,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:14:47.186Z},{from: in-progress,to: completed,at: 2026-11-02T05:15:52.916Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-2879CE30E0F5/1793596487188-start,started_at: 2026-11-02T05:14:47.269Z,end_ref: refs/tracking/TSK-2879CE30E0F5/1793596552918-end,ended_at: 2026-11-02T05:15:52.916Z,summary: {files: 5,insertions: 149,deletions: 12}}]}}}
+{id: TSK-2879CE30E0F5,name: Add contract typecheck and audit tooling,type: task,status: completed,priority: medium,created_at: 2026-11-02T05:14:40.252Z,updated_at: 2026-11-02T05:15:52.916Z,order: 14336,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:14:47.186Z},{from: in-progress,to: completed,at: 2026-11-02T05:15:52.916Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-2879CE30E0F5/1793596487188-start,started_at: 2026-11-02T05:14:47.269Z,end_ref: refs/tracking/TSK-2879CE30E0F5/1793596552918-end,ended_at: 2026-11-02T05:15:52.916Z,summary: {files: 5,insertions: 149,deletions: 12}}]}},archived_at: 2026-11-04T05:47:26.861Z}
 ---
 
 # Add contract typecheck and audit tooling

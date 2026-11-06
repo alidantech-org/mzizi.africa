@@ -1,5 +1,5 @@
 ---
-{id: TSK-3D6EAF7A8E89,name: Author legal domain contracts,type: task,status: completed,priority: medium,created_at: 2026-11-02T04:56:58.604Z,updated_at: 2026-11-02T05:17:40.897Z,order: 6144,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:17:11.070Z},{from: in-progress,to: completed,at: 2026-11-02T05:17:40.897Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-3D6EAF7A8E89/1793596631072-start,started_at: 2026-11-02T05:17:11.145Z,end_ref: refs/tracking/TSK-3D6EAF7A8E89/1793596660899-end,ended_at: 2026-11-02T05:17:40.898Z,summary: {files: 3,insertions: 223,deletions: 1}}]}}}
+{id: TSK-3D6EAF7A8E89,name: Author legal domain contracts,type: task,status: completed,priority: medium,created_at: 2026-11-02T04:56:58.604Z,updated_at: 2026-11-02T05:17:40.897Z,order: 6144,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:17:11.070Z},{from: in-progress,to: completed,at: 2026-11-02T05:17:40.897Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-3D6EAF7A8E89/1793596631072-start,started_at: 2026-11-02T05:17:11.145Z,end_ref: refs/tracking/TSK-3D6EAF7A8E89/1793596660899-end,ended_at: 2026-11-02T05:17:40.898Z,summary: {files: 3,insertions: 223,deletions: 1}}]}},archived_at: 2026-11-04T05:47:26.861Z}
 ---
 
 # Author legal domain contracts

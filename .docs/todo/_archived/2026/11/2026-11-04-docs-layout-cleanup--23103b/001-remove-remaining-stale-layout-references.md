@@ -1,5 +1,5 @@
 ---
-{id: TSK-759681C7441F,name: Remove remaining stale layout references,type: task,status: completed,priority: medium,created_at: 2026-11-02T04:43:37.181Z,updated_at: 2026-11-02T04:43:46.007Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T04:43:45.819Z},{from: in-progress,to: completed,at: 2026-11-02T04:43:46.007Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-759681C7441F/1793594625820-start,started_at: 2026-11-02T04:43:45.878Z,end_ref: refs/tracking/TSK-759681C7441F/1793594626010-end,ended_at: 2026-11-02T04:43:46.008Z,summary: {files: 0,insertions: 0,deletions: 0}}]}}}
+{id: TSK-759681C7441F,name: Remove remaining stale layout references,type: task,status: completed,priority: medium,created_at: 2026-11-02T04:43:37.181Z,updated_at: 2026-11-02T04:43:46.007Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T04:43:45.819Z},{from: in-progress,to: completed,at: 2026-11-02T04:43:46.007Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-759681C7441F/1793594625820-start,started_at: 2026-11-02T04:43:45.878Z,end_ref: refs/tracking/TSK-759681C7441F/1793594626010-end,ended_at: 2026-11-02T04:43:46.008Z,summary: {files: 0,insertions: 0,deletions: 0}}]}},archived_at: 2026-11-04T04:46:53.765Z}
 ---
 
 # Remove remaining stale layout references from docs

@@ -1,5 +1,5 @@
 ---
-{id: TSK-6B688516A6C3,name: Author statistics and services contracts,type: task,status: completed,priority: medium,created_at: 2026-11-02T04:56:58.962Z,updated_at: 2026-11-02T05:20:21.165Z,order: 10240,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:19:58.487Z},{from: in-progress,to: completed,at: 2026-11-02T05:20:21.165Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-6B688516A6C3/1793596798489-start,started_at: 2026-11-02T05:19:58.560Z,end_ref: refs/tracking/TSK-6B688516A6C3/1793596821167-end,ended_at: 2026-11-02T05:20:21.165Z,summary: {files: 2,insertions: 209,deletions: 1}}]}}}
+{id: TSK-6B688516A6C3,name: Author statistics and services contracts,type: task,status: completed,priority: medium,created_at: 2026-11-02T04:56:58.962Z,updated_at: 2026-11-02T05:20:21.165Z,order: 10240,due_at: 2026-11-02,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-02T05:19:58.487Z},{from: in-progress,to: completed,at: 2026-11-02T05:20:21.165Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-6B688516A6C3/1793596798489-start,started_at: 2026-11-02T05:19:58.560Z,end_ref: refs/tracking/TSK-6B688516A6C3/1793596821167-end,ended_at: 2026-11-02T05:20:21.165Z,summary: {files: 2,insertions: 209,deletions: 1}}]}},archived_at: 2026-11-04T05:47:26.861Z}
 ---
 
 # Author statistics and services contracts
