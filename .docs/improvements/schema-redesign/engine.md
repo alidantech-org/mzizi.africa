@@ -108,3 +108,31 @@ Audit all migration-created tables and live rows, TypeORM/engine writer paths an
 **References:** [Master register](../mzizi-data-schema-storage-and-pipelines-redesign.md) · [Pattern classes](../data-categories-and-patterns.md) · [Pipelines](../independent-data-pipelines.md) · [Audit](audit.md).
 
 **Status: future architecture under discussion, not ready for implementation.**
+
+## Human review — editable user notes and design sign-off
+
+**Review status:** `NOT REVIEWED` — AI-authored proposals in this document are not final approval.
+
+**In my own words, what this schema should represent and exclude:**
+
+> _My understanding and questions:_
+
+**Tables/columns I want to keep, rename, move, merge, split, remove or add (and why):**
+
+> _My proposed changes and alternative names:_
+
+**Hard foreign keys, geographical and legal scope, pattern generation, classification and evidence I want changed or explained:**
+
+> _My technical feedback, disagreements and alternatives:_
+
+**Real data and queries I want to use to validate this design:**
+
+> _My examples and expected results:_
+
+**Unresolved decisions I want to discuss further:**
+
+> _My remaining questions:_
+
+**Final user decision:** `NOT DECIDED` / `NEEDS CHANGES` / `DESIGN VALIDATED BY USER` / `APPROVED FOR TASK PLANNING`.
+
+**Approval reference and date:** _None. Only record explicit later user authorization. Even design validation does not authorize code, migration or Taskcode task creation._
