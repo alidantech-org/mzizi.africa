@@ -131,3 +131,11 @@ Legal **obligation** to have premises is not always proof of a specific **actual
 Future pattern/watch source: mostly DB-managed rules in proposed `reference` with `engine` gap and watcher execution, source evidence and versioned filesystem manifests. Reconsider `place.expectations` migration/adoption without losing historical provenance, stable IDs or resolved occupancies. **OPEN**: nullable FK vs separate presence table, mandatory/optional physical presence, exact evidence threshold, multiple premises, cardinality and site identity.
 
 See [Pattern graph and materialization modes](../data-categories-and-patterns.md).
+
+## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
+
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](README.md).
+
+**Domain-specific guidance:** Stable geographical units may derive applicable status from administrative/legal relations; boundaries, names, changing parent relationships and real occupancies may need independent dated intervals. A confirmed place need not have exact coordinates. Do not soft-delete historical geographical units/boundaries. Evaluate physical-presence relationships independently of office-rule applicability.
+
+**OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.

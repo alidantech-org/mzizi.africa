@@ -98,3 +98,11 @@ See [master register](../mzizi-data-schema-storage-and-pipelines-redesign.md), [
 **Final user decision:** `NOT DECIDED` / `NEEDS CHANGES` / `DESIGN VALIDATED BY USER` / `APPROVED FOR TASK PLANNING`.
 
 **Approval reference and date:** _None. Only record explicit later user authorization. Even design validation does not authorize code, migration or Taskcode task creation._
+
+## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
+
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](README.md).
+
+**Domain-specific guidance:** Canonical organization identity is stable; registration, dissolution, merger and renaming have specific lifecycles, not automatically valid_from/to everywhere. Issued identifiers and ownerships may have real validity intervals; ordinary entity names may require history. Avoid soft-delete for canonical public bodies/suppliers and use domain retirement or supersession instead.
+
+**OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.

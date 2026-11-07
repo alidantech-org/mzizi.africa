@@ -114,3 +114,11 @@ The **hierarchical/cascading input model** starts with existing `reference.juris
 **Human review questions added:** Does this scope overload `reference`? Which patterns are definitional (reference-owned) versus domain-specific legal/governance facts? What is the approved dependency-graph/target binding and lineage FK structure? Which watcher definitions belong beside patterns? What source/jurisdiction-specific rules can stay in versioned manifests without introducing country-specific core code?
 
 Full detailed proposal: [Data classes and pattern graph](../data-categories-and-patterns.md). The former suggestion of a dedicated `pattern` schema is **an alternative, not a decision**.
+
+## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
+
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](README.md).
+
+**Domain-specific guidance:** Jurisdiction and classification identities should not inherit four validity/precision fields by template. Effective applicability belongs to genuinely versioned patterns, jurisdictions or classifications where justified. An authorized pattern can establish records; review whether those records need their own independent lifecycle. Do not soft-delete approved definitions as though they were drafts.
+
+**OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
