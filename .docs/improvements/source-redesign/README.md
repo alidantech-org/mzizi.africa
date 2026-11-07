@@ -84,3 +84,10 @@ Research findings **do not** approve the source/website merge, any new SQL table
 | [11 — Tool integration and contracts](11-tool-integration-and-contracts.md) | How fetch, link discovery, parsers, S3, retrieval, ML and review connect |
 | [12 — Artifacts and lineage](12-artifact-lifecycle-and-lineage.md) | Capture/observation/file/derivative identities, storage, versioning and replay |
 | [13 — Research and benchmarks](13-benchmarks-and-research-questions.md) | Held-out Kenyan/African sites, baseline comparisons, stop/go criteria |
+
+
+## New cross-workstream trigger and freshness requirements (2026-11-07)
+
+Source/site discovery and readable Markdown extraction should serve the **same shared event-driven freshness pipeline**, not invent an independent news-watcher scheduler. Approved site-specific source manifests can select which official pages/sections to monitor for elections, census releases, parliamentary schedules, budgets and appointments. Meaningful changed DOM/Markdown sections create sourced **activity candidates and targeted re-verification triggers**; downloading a page or seeing a new source hash is not proof that the real-world event occurred or a canonical fact changed. Admin-initiated research uses the same bounded engine queue and source permissions.
+
+**Further planning:** [activity](../schema-redesign/activity.md), [reference schedules](../schema-redesign/reference.md), [engine verification](../schema-redesign/engine.md), and [single orchestration boundary](11-tool-integration-and-contracts.md). No change to site collection permission, schema, scheduled workers or tools is authorized.

@@ -46,3 +46,13 @@ The user rejected automatically adding `valid_from/to`, `valid_from_precision/to
 ## Source redesign — deep research follow-up
 
 The [source-redesign index](source-redesign/README.md) now links [prior art/build-versus-reuse](source-redesign/10-prior-art-and-build-vs-reuse.md), [tool integration contracts](source-redesign/11-tool-integration-and-contracts.md), [artifact storage/lineage](source-redesign/12-artifact-lifecycle-and-lineage.md), and [research experiments](source-redesign/13-benchmarks-and-research-questions.md). These are **planning only**, not approval of source/website consolidation, a pattern schema, new tables or deployed tools.
+
+
+## 2026-11-07 design findings: semantic fields, freshness and activity-triggered research
+
+The user directed **documentation of the two most recent architecture discussions without implementation**:
+
+1. **Understandable column naming and data freshness:** [Schema-wide naming/freshness review](schema-redesign/README.md) now requires domain-specific column names (e.g. `joined_on`, `appointed_on`, `commenced_on` when they represent actual facts), justified instead of generic `valid_from/to`, and centralized, explainable per-table-default/field-group/relationship/record verification histories. [Reference](schema-redesign/reference.md) covers policy; [engine](schema-redesign/engine.md) records attempted versus successful verification; [source](schema-redesign/source.md) distinguishes changed downloads from verified facts.
+2. **Schedules, real events and agent/admin triggers:** [Activity](schema-redesign/activity.md) and [reference](schema-redesign/reference.md) now plan jurisdiction/legal recurrence and reporting schedules, announcements, cancellations, verified occurrences and links to canonical election/census/parliamentary/budget records. [Independent pipeline design](independent-data-pipelines.md) covers authorized official-site monitoring, a single engine scheduling boundary, targeted refresh, and admin-submitted event/recheck requests.
+
+[Master register sections 27–28](mzizi-data-schema-storage-and-pipelines-redesign.md) preserve the user's specific concerns, repository findings, recommendations, unresolved decisions and non-implementation status. No additional planning files were created; all existing 18 schema-review files remain available for the user's eventual one-by-one approval. **No Taskcode tasks, migrations, schema edits or application code changes were authorized.**
