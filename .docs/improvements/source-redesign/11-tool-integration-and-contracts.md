@@ -75,3 +75,11 @@ The site homepage links to a budget PDF at two URLs and to the Treasury website.
 Implementation would need an approved DTO/version schema, test fixtures, failure taxonomy, retries, outbox or reconciliation strategy, and capability registry. Avoid coupling the engine to named Kenyan ministries/agencies; manifests and domain adapters should carry source-specific assumptions.
 
 See [09 pipelines](09-pipelines-autonomy-and-decisions.md), [12 artifacts](12-artifact-lifecycle-and-lineage.md), [13 tests](13-benchmarks-and-research-questions.md), and [existing architecture](../../docs/ARCHITECTURE.md). **No runtime integration, vendor selection or new service authorized.**
+
+## Additional candidate contracts: media and human refinement
+
+The image/media adapter should emit a candidate asset descriptor containing the original/resolved URL, referring page/capture, stylesheet URL/hash when relevant, DOM/CSS locator, discovery method, MIME/size/hash after fetch, rights/policy decision, file-version reference and any person/profile block context. It should not itself decide that an image depicts a named person.
+
+The association stage should emit a reviewable person-to-portrait proposal with source locators, profile/card context, temporal suitability and uncertainty. On approval, use the existing `filesystem.attachments` portrait relationship and existing S3-backed file service; do not create a duplicate media store.
+
+A participation/review adapter may receive a proposed correction or identity pair, the relevant source evidence, contributor type/verified institutional scope, community feedback summary and agent recommendations. It returns an attributable decision or unresolved status. It must not grant the crawler, LLM or contributor direct write access to canonical person records. See [person identity, media and community refinement](../person-identity-media-and-community-refinement.md).

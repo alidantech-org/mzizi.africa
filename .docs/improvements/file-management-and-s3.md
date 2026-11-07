@@ -123,3 +123,9 @@ See [source redesign and adaptive website intelligence](source-redesign/README.m
 ## Research artifact integration (planning)
 
 See [source artifact lifecycle](source-redesign/12-artifact-lifecycle-and-lineage.md) and [integration contracts](source-redesign/11-tool-integration-and-contracts.md). Preserve the deployed S3 backend: raw bytes, logical filesystem file/version, URL capture, derived Markdown/table, reusable YAML and vector index point have different lifecycles, but need not each receive their own SQL table. Review manifest fields, provenance, replay, public/private URL policy and retention against existing source/filesystem implementation before deciding changes. **No second storage service approved.**
+
+## Person portraits and CSS-discovered media
+
+Person portraits are already represented by `filesystem.attachments` with a portrait role; image bytes belong in the existing S3-backed files service. The website extractor should discover images in HTML attributes, responsive/lazy-loading attributes, inline CSS, linked stylesheets and optional rendered DOM, preserving the page/CSS locator and source capture. Relative CSS URLs resolve against the stylesheet URL. Download only within the existing source assessment and publication/rights scope.
+
+Exact byte hashes can reuse identical objects while preserving each source sighting. Perceptual hashes may suggest duplicate image files but do not establish person identity. The reviewed person-to-portrait relationship belongs in the existing attachment mechanism, not a new avatar URL or media schema. See [person identity/media/community refinement](person-identity-media-and-community-refinement.md) and [artifact lineage](source-redesign/12-artifact-lifecycle-and-lineage.md).

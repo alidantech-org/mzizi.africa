@@ -91,3 +91,12 @@ Research findings **do not** approve the source/website merge, any new SQL table
 Source/site discovery and readable Markdown extraction should serve the **same shared event-driven freshness pipeline**, not invent an independent news-watcher scheduler. Approved site-specific source manifests can select which official pages/sections to monitor for elections, census releases, parliamentary schedules, budgets and appointments. Meaningful changed DOM/Markdown sections create sourced **activity candidates and targeted re-verification triggers**; downloading a page or seeing a new source hash is not proof that the real-world event occurred or a canonical fact changed. Admin-initiated research uses the same bounded engine queue and source permissions.
 
 **Further planning:** [activity](../schema-redesign/activity.md), [reference schedules](../schema-redesign/reference.md), [engine verification](../schema-redesign/engine.md), and [single orchestration boundary](11-tool-integration-and-contracts.md). No change to site collection permission, schema, scheduled workers or tools is authorized.
+
+## Cross-cutting people, media and prominence proposals
+
+Website discovery is connected to person identity and research prioritization, but these concerns should not be collapsed into the website schema:
+
+- [Person identity, media enrichment and community-assisted data refinement](../person-identity-media-and-community-refinement.md) records the Mzizi Swipe concept, citizen/local-watcher submissions, verified official attestations, administrator review, reversible person merges/splits, thorough portrait discovery (including CSS background images), existing filesystem/S3 storage, and the separate legal gate for biometric processing.
+- [Cross-domain entity prominence, ambiguity and research discoverability](../entity-prominence-and-discoverability.md) records 0–1 contextual prominence for people and places, office/geography significance derived from reference-owned definitions and generated office patterns, separate ambiguity/evidence/source credibility measures, and how prominence may guide research breadth without making Wikipedia or search results trusted automatically.
+
+These are cross-domain improvement proposals, not approval to add a new schema or change the current `person`, `filesystem`, `source`, `website`, `reference`, `governance` or `geography` contracts. The current person design already places portraits in `filesystem.attachments`; review that contract before proposing any extension.

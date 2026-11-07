@@ -78,3 +78,16 @@ Measure precision/recall on **site-held-out** page labels, link recall@K and pre
 ## Research-to-design: narrow the LLM funnel
 
 [AutoScraper](https://aclanthology.org/2024.emnlp-main.141/), [Co-Scraper](https://arxiv.org/abs/2606.14821) and [SchemaRAG](https://aclanthology.org/2026.acl-industry.78/) support pruning DOM and target schema before LLM mapping, and producing reusable extraction strategies where possible. Start with exact/fuzzy/site-context ranking + BM25, then compare embeddings and hybrid recall on judged queries. Train one specialist classifier only after reviewed labels exist, splitting training/test by **whole site and unseen CMS family**, with out-of-country checks. Store score components, evidence locators and model/prompt versions, never treating relevance as factual proof. See [10](10-prior-art-and-build-vs-reuse.md), [11](11-tool-integration-and-contracts.md), [13](13-benchmarks-and-research-questions.md).
+
+## Person ambiguity, prominence and evidence confidence are different model outputs
+
+When ranking people or matching records, do not collapse these dimensions:
+
+- **Prominence (0–1):** likely public/structural visibility within a declared geographic and temporal context; useful for estimating search breadth.
+- **Identity ambiguity (0–1):** difficulty distinguishing a record from plausible people with similar names or incomplete identifiers.
+- **Evidence confidence (0–1):** strength of evidence for a specific identity match or claim.
+- **Source credibility:** whether a source is suitable for a particular claim and scope.
+
+An AI agent may rank a batch of people by likely prominence and ambiguity, explain collision drivers, suggest external profile matches and propose next research sources. It must retain inputs, evidence, model/prompt version, explanation and abstention. The engine/reference rules remain the explainable scoring baseline; AI output is a proposal, not a canonical score or identity decision.
+
+Prominence can guide whether to search broad media/knowledge bases or concentrate on county, ward and institutional sources. It must never make Wikipedia, a search snippet, a high view count or a facial-similarity result automatically trustworthy. See [entity prominence and discoverability](../entity-prominence-and-discoverability.md) and [person identity/media refinement](../person-identity-media-and-community-refinement.md).

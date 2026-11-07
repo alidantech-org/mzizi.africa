@@ -72,3 +72,20 @@ These figures are **ideas for acceptance discussion**; small samples cannot just
 - Shared reference pattern definitions and watcher dependency graphs, with verified legal existence vs merely predicted site/office presence.
 
 See [10 prior art](10-prior-art-and-build-vs-reuse.md), [11 integration](11-tool-integration-and-contracts.md), [12 artifact storage](12-artifact-lifecycle-and-lineage.md), and [02 schema review](02-source-schema-and-human-review.md).
+
+## Additional proposed experiments: portraits, community review and prominence
+
+These are proposed evaluation work, not approved collection, biometric experiments or acceptance targets.
+
+| Experiment | Compare | Measure |
+|---|---|---|
+| E9 image discovery | Static HTML/CSS parsing vs optional browser fallback on the same saved captures | Recall of real content images, false decorative-image candidates, CSS URL resolution and processing cost |
+| E10 portrait association | Card/profile context rules vs human-reviewed labels | Correct person-to-portrait precision, wrong-person association rate, source/rights completeness |
+| E11 media dedup/refresh | SHA-256 and optional perceptual hashes across dated captures | Exact object reuse, false duplicate suggestions, correct replacement detection and source-sighting preservation |
+| E12 community review | Independent contributors, county watchers and verified institutional attestations | Agreement with evidence-reviewed outcomes, false-merge risk, brigading resistance, time to resolution and appeal quality |
+| E13 prominence | Structural reference baseline vs recognition/attention features and AI-assisted ranking | Contextual ranking quality, local-vs-national relevance, calibration, stability and fairness across regions/office types |
+| E14 ambiguity | Name-only matching vs aliases, offices, geography, dates, source links and optional approved signals | False merges, false splits, abstention quality and reviewer workload |
+
+Facial-recognition evaluation is **not authorized by these experiments**. Any proposal to process biometric templates must first pass a separate legal/privacy/security decision, including review of the Kenya Data Protection Act and ODPC biometric/DPIA guidance. The initial benchmark should use non-biometric source context and image-file deduplication only.
+
+Prominence metrics must not reward view manipulation, duplicated/syndicated coverage or popularity at the expense of local discoverability. See [person identity/media/community refinement](../person-identity-media-and-community-refinement.md) and [entity prominence/discoverability](../entity-prominence-and-discoverability.md).

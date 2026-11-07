@@ -60,3 +60,9 @@ Measure relevant-page recall@K, hybrid search improvement over lexical baseline,
 ## Research-to-design: storage and vector choice
 
 [Qdrant hybrid retrieval](https://qdrant.tech/documentation/hybrid-queries/) is a useful isolated benchmark; compare [LanceDB](https://github.com/lancedb/lancedb), a **separate** [pgvector](https://github.com/pgvector/pgvector) instance, and Milvus only when scale merits it. **Zero new services** remains valid. Store source observation/capture identity in existing relational domains after human review; store original and derivative content as versioned files through the **already deployed S3-compatible filesystem**; vector points are replaceable and carry stable block IDs, text hashes, access scope, model versions. Rebuild indexes from retained S3 artifacts, not by recrawling. Evaluate lexical vs semantic lift, filtered recall, cost, backups and restoration before selection. See [12 artifacts](12-artifact-lifecycle-and-lineage.md), [11 contracts](11-tool-integration-and-contracts.md), [13 benchmarks](13-benchmarks-and-research-questions.md).
+
+## Person portraits and biometric data are not ordinary vector content
+
+Store original portraits and permitted derivatives through the existing filesystem/S3 boundary, with source capture, URL, hash, licence/rights evidence and person attachment context. Exact/perceptual image hashes used for file deduplication are not facial identity embeddings.
+
+Do not put face embeddings or biometric templates into the general-purpose semantic vector index. The current proposal does not authorize biometric processing. Any future facial verification/identification requires a separate legal/privacy/security assessment and isolated controls; see [person identity, media and community refinement](../person-identity-media-and-community-refinement.md).

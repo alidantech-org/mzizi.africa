@@ -56,3 +56,14 @@ The user directed **documentation of the two most recent architecture discussion
 2. **Schedules, real events and agent/admin triggers:** [Activity](schema-redesign/activity.md) and [reference](schema-redesign/reference.md) now plan jurisdiction/legal recurrence and reporting schedules, announcements, cancellations, verified occurrences and links to canonical election/census/parliamentary/budget records. [Independent pipeline design](independent-data-pipelines.md) covers authorized official-site monitoring, a single engine scheduling boundary, targeted refresh, and admin-submitted event/recheck requests.
 
 [Master register sections 27–28](mzizi-data-schema-storage-and-pipelines-redesign.md) preserve the user's specific concerns, repository findings, recommendations, unresolved decisions and non-implementation status. No additional planning files were created; all existing 18 schema-review files remain available for the user's eventual one-by-one approval. **No Taskcode tasks, migrations, schema edits or application code changes were authorized.**
+
+## Person identity, participation and entity prominence
+
+Two additional cross-cutting proposals record the recent design discussion. Both are planning-only and preserve the user's review/approval of schemas and implementation:
+
+| Document | Purpose |
+|---|---|
+| [Person identity, media enrichment and community-assisted data refinement](person-identity-media-and-community-refinement.md) | Mzizi Swipe, citizen and county-watcher feedback, verified official submissions, admin review, reversible identity resolution, CSS/HTML portrait discovery, existing filesystem/S3 storage and the legal gate for any facial biometrics |
+| [Cross-domain entity prominence, ambiguity and research discoverability](entity-prominence-and-discoverability.md) | Explainable 0–1 prominence for people, geographic units and institutions; reference-driven office categories; contextual ranking; separate ambiguity/evidence/source credibility; AI-assisted research prioritization |
+
+The existing person model already uses filesystem attachments for portraits. These proposals do not approve a new participation, media, prominence or biometric schema. See also the [source-redesign index](source-redesign/README.md).
