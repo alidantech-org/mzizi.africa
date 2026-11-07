@@ -10,14 +10,14 @@ extra: {status: planning_only, task_creation: user_directed_only}
 
 **Planning and discussion only. Not approved for code changes, migrations, infrastructure work, or Taskcode task creation.**
 
-The user explicitly requested **few, useful documents** rather than dozens of thin files. This is an organized reference library for a user-led schema redesign, data acquisition/generation improvements, a file manager backed by an **already deployed S3-compatible service**, and modular concurrent pipelines. The project will create Taskcode groups/tasks **one by one only when and how the user directs**, after discussing and approving design details. The user, not this document, determines implementation order.
+The user wants **few, useful cross-cutting documents**, but explicitly requested an individual detailed document for each of the 18 proposed schema domains. This is an organized reference library for a user-led schema redesign, data acquisition/generation improvements, a file manager backed by an **already deployed S3-compatible service**, and modular concurrent pipelines. The project will create Taskcode groups/tasks **one by one only when and how the user directs**, after discussing and approving design details. The user, not this document, determines implementation order.
 
 ## Read in this order
 
 | Document | Role |
 |---|---|
 | [Master planning register](mzizi-data-schema-storage-and-pipelines-redesign.md) | Full record of all user concerns, 18 answers, 22 open decisions, recommendations, current 24-schema/141-table inventory and handoff constraints. **Do not discard this register.** |
-| [Schema redesign folder](schema-redesign/README.md) | Audit method, scope, candidate regroupings, per-table/per-column decision template. **Future individual schema design files will be added only when the user chooses to review those schemas**, not in bulk. |
+| [Schema redesign folder](schema-redesign/README.md) | Audit method, scope, candidate regroupings, per-table/per-column decision template. **All 18 requested domain design files now exist following the user's explicit request; no additional placeholder files will be created automatically.** |
 | [Data classification and pattern generation](data-categories-and-patterns.md) | Seeded/static, seeded/pattern, collected, derived; eligible table/class tags; pattern ownership, versions, corrections, sync, lineage and UI. |
 | [File manager and external S3](file-management-and-s3.md) | Logical folders/tags, clear structure, hashes/dedup, source files/derivatives, URLs and integration with the user's existing service. |
 | [Site structure, content hashing and Markdown conversion](site-structure-and-markdown-extraction.md) | HTML/CSS/JavaScript-aware discovery, rendered content → readable Markdown, site/tree/section change detection, accurate extraction and mapping. |

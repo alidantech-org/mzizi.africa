@@ -552,3 +552,12 @@ The master register remains the **complete archive of prior decisions and concer
 6. [Independent data pipelines](independent-data-pipelines.md): concurrent goals, reusable packages, orchestration, workers and competing architecture options.
 
 **Status unchanged:** Documents are proposals. The user has not approved the final table/column designs, pattern storage model, procurement roles, live S3 integration, Markdown extraction implementation, worker topology, task creation or repository code changes.
+
+
+## 24. User-directed creation of all 18 schema planning documents
+
+The user subsequently requested that `.docs/improvements/schema-redesign/` actually contain the **full named set of 18 detailed schema design documents** (reference, geography, legal, person, organization, governance, political, electoral, finance, procurement, statistical, activity, filesystem, source, auth, participation, audit and engine). Those are now present and linked from [schema redesign README](schema-redesign/README.md).
+
+This **supersedes** the earlier documentation-file preference to create domain-specific review files only when each schema is selected. It does **not** supersede the user's restrictions on implementation: they have requested documentation, **not** a final approved schema DDL, task group, automated Taskcode tasks, migrations, code or deployment. The files deliberately distinguish current table inventories, suggestions, confirmed direction and pending user approval. Column details based on old migrations are explicitly baseline evidence rather than a verified live-current column-by-column audit.
+
+The user's preference for **only a few non-schema cross-cutting documents** remains in effect.

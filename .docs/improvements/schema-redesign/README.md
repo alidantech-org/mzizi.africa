@@ -8,7 +8,37 @@ extra: {status: planning_only, no_bulk_task_creation: true}
 
 # Database schema redesign — review folder
 
-**PLANNING ONLY — NOT READY TO IMPLEMENT.** The user specifically prefers schema-specific design work in a separate folder, **but does not want dozens of placeholder documents created in advance**. Start with this guide. Create a detailed `<schema>.md` here **when that schema is actually selected for discussion**, then update it iteratively through user review; avoid a burst of artificial schema files.
+**PLANNING ONLY — NOT READY TO IMPLEMENT.** The user subsequently **explicitly requested all eighteen named schema design documents**, which have now been written as substantive planning proposals, not empty placeholders. This folder contains the domain design files below; update them iteratively under user direction. The user's preference for only a few cross-cutting files still applies outside this folder.
+
+
+## Domain design documents — all 18 explicitly requested
+
+The filenames describe **proposed target domains**, not necessarily existing PostgreSQL schema names. Several cover multiple existing schemas or a new proposed schema. Each file identifies actual current tables, ownership questions, direct-FK requirements, data classes, recommended alternatives, risks and unresolved decisions. **The documents are planning references; none is final DDL approval.**
+
+| Design document | Current schema(s) and major question |
+|---|---|
+| [reference.md](reference.md) | `reference` — jurisdiction identity, classification schemes, typed reference FKs |
+| [geography.md](geography.md) | `geography` + `place`, assess `contact` — root units, physical sites, hierarchy, presence |
+| [legal.md](legal.md) | `legal` — global-neutral constitutions, laws, provisions, procedures, patterns |
+| [person.md](person.md) | `person` — individual identity, names, public profiles and holders |
+| [organization.md](organization.md) | `organization` — canonical legal entities, suppliers, identifiers, affiliations |
+| [governance.md](governance.md) | `governance` + `civic` — offices, officials, institutions, public services, generation |
+| [political.md](political.md) | `political` — parties, memberships, party positions and history |
+| [electoral.md](electoral.md) | `electoral` — candidates, electorates, referendums, votes and results |
+| [finance.md](finance.md) | `finance` + `debt` — public budgets, funds, borrowing, payments |
+| [procurement.md](procurement.md) | `procurement` — buyer/supplier roles, awards/contracts, spatial links (**unapproved**) |
+| [statistical.md](statistical.md) | `statistical` — clear indicators, dimensions, vintages and derivations |
+| [activity.md](activity.md) | `calendar` → `activity` — events, actions, news/official updates |
+| [filesystem.md](filesystem.md) | `filesystem` — logical files/folders/tags linked to existing external S3 |
+| [source.md](source.md) | `source` + possibly `website` — publishers, site structures, Markdown and provenance |
+| [auth.md](auth.md) | `identity` + `access` → `auth` — accounts, roles, permissions |
+| [participation.md](participation.md) | Proposed new `participation` — public/official consultation and feedback |
+| [audit.md](audit.md) | `audit` — immutable decisions and actor history, separate from participation |
+| [engine.md](engine.md) | `engine` + possibly `staging` — jobs, candidates, pattern runs and pipelines |
+
+**Also audit rather than silently lose:** `website` website/DNS tables, `contact.points`, `geography.boundary_shapes`, `access.account_permissions`, internal `engine.migrations`, current staging tables, and retired legacy `organization.locations` references. Their disposition belongs in these design documents rather than a new superficial target file.
+
+**Important:** Existing migration-derived column lists and selected current-field examples in the domain files are only **review baselines**, not a verified live PostgreSQL column-by-column audit. Do not treat proposed tables/columns as existing or approved; complete the exact entity/constraint/index/data audit during user-directed review.
 
 ## Confirmed user requirements
 
