@@ -37,3 +37,8 @@ The user wants **few, useful cross-cutting documents**, but explicitly requested
 - This layout is itself provisional. Do not proliferate documents without a clear new scope and user direction.
 
 **Status:** Comprehensive planning preserved; detailed user-led schema/column review and architectural approval remain pending.
+
+
+## Required schema-column simplification review (2026-11-07)
+
+The user rejected automatically adding `valid_from/to`, `valid_from_precision/to_precision`, `is_current` and other generic rigid columns everywhere. The [schema redesign README](schema-redesign/README.md) now defines a **mandatory per-table KEEP/REMOVE/DERIVE/MOVE/RENAME/ADD review** across all 18 domain designs. It also evaluates selective `deleted_at` soft deletion for recoverable user-managed records, separately from real-world retirement, source evidence, corrections and privacy erasure. **No final per-table decisions or migrations are approved.** The older broad date-precision convention must be reconciled during a separately authorized code/docs migration, not modified silently now.

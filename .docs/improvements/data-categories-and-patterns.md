@@ -188,3 +188,12 @@ The manifest specifies: registered target table and allowed columns; canonical/j
 - Runtime approvals, negative findings/known absence, stale refresh policy, budgets and safe automatic correction thresholds.
 
 **No migrations, engine refactor, task creation or program changes are authorized by this discussion.**
+
+
+## Pattern inheritance versus record lifetime (2026-11-07 planning clarification)
+
+**USER REQUIREMENT:** Do not attach `valid_from`/`valid_to`, two precision columns and `is_current` to every generated record as a convenience. An approved reference-owned pattern and its supporting legal provision may define the period during which a structurally generated entity should exist, while many details of that canonical row remain unknown and are watched by engine. **Assistant qualification:** a real entity may have an independent opening/closure, and a person holding that office has an independent appointment/tenure interval. Preserve these independently evidenced facts and do not assume structural applicability = actual lifecycle.
+
+Pattern outputs, domain status and research completeness are **distinct axes**. A pattern version has rule applicability and approval/retirement; a generated office has canonical identity; an office holder has actual term dates; a missing holder is a gap; the deletion/archival status of a draft is neither legal expiry nor a historical termination. Keep temporal metadata **where its meaning genuinely belongs**, using named dates and dated relationship tables rather than blanket precision/status/validity columns.
+
+**Selective `deleted_at`** may make sense for recoverable deletion of user-managed folders or unapproved drafts, but verified canonical rows, immutable evidence and audit generally require correction, retirement, supersession or explicit retention/erasure policy. The database-wide, user-mandated keep/remove/derive field audit is detailed in [schema redesign README](schema-redesign/README.md) and included in all 18 schema design files. Exact column removals and soft-delete targets are still **OPEN** for human signoff and **not yet approved to implement**.
