@@ -3,6 +3,8 @@
 ---
 # MZIZI Africa — Proposed Architecture Redesign
 
+> **Later clarification (2026-11-07):** The following schema catalogue and any references to merging `source` and `website` are **unapproved alternatives**, not user-approved decisions. A dedicated cross-domain `pattern` schema is also only under evaluation. See [source redesign and adaptive website intelligence](source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
+
 Status: Planning only — no repository changes authorized.
 
 Your 18 decisions establish a clear direction: MZIZI should become a simpler, strongly connected PostgreSQL system, with explainable tables, enforceable relationships, reusable data-generation patterns, and independently running acquisition pipelines.

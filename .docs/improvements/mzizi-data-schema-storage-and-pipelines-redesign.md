@@ -561,3 +561,7 @@ The user subsequently requested that `.docs/improvements/schema-redesign/` actua
 This **supersedes** the earlier documentation-file preference to create domain-specific review files only when each schema is selected. It does **not** supersede the user's restrictions on implementation: they have requested documentation, **not** a final approved schema DDL, task group, automated Taskcode tasks, migrations, code or deployment. The files deliberately distinguish current table inventories, suggestions, confirmed direction and pending user approval. Column details based on old migrations are explicitly baseline evidence rather than a verified live-current column-by-column audit.
 
 The user's preference for **only a few non-schema cross-cutting documents** remains in effect.
+
+## Related source redesign planning
+
+See [source redesign and adaptive website intelligence](source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**

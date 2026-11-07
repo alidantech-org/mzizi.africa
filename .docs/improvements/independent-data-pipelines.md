@@ -158,3 +158,7 @@ A pattern-generator pipeline may produce only *expected* office structures. A le
 - Define observability, job cancellation, emergency stop, retries/recoverability, deployment and resource quotas.
 
 **Not a Taskcode task and not an implementation plan. The user will instruct the agent how to create tasks one by one when the architectural review is complete.**
+
+## Related source redesign planning
+
+See [source redesign and adaptive website intelligence](source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**

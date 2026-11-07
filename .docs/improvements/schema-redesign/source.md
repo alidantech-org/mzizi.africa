@@ -8,6 +8,8 @@ extra: {status: planning_only, merge: undecided}
 
 # Source — evidence, publishers, website registry and provenance (with website simplification)
 
+> **2026-11-07 clarification:** The user has **NOT** approved merging `website` into `source`. The concept of `source.websites`, domains, pages, paths, links, visits and TLD/zones is an alternative to assess **table by table**, not an accepted target schema. Also evaluate a separate shared `pattern` schema. See [source redesign and adaptive website intelligence](../source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
+
 **PLANNING ONLY.** The user wants `source` and `website` meaningfully linked or potentially consolidated, **not aggressively** or by losing functionality. Existing website tables are too complicated to understand in places; `filesystem`, `source`, `website` and `staging` have overlapping concerns. The user wants clear custody and extraction contracts, reusable site structures and readable Markdown derivatives with fine-grained content change hashing.
 
 ## Four concepts that must never be confused

@@ -85,3 +85,7 @@ Reuse existing `engine.claims`, `staging.candidates`, `engine.match_candidates`,
 7. Domain-specific correction policies and coverage status vocabulary.
 
 **Hand-off:** This is an evaluation plan, not authority to add database tables or create Taskcode tasks. The user decides the review/task sequence later.
+
+## Related source redesign planning
+
+See [source redesign and adaptive website intelligence](source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**

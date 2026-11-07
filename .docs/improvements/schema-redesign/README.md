@@ -175,3 +175,7 @@ For **each current table**, capture:
 Run a read-only live schema and data inventory, reconcile drift, confirm orphan/duplicate counts, and benchmark representative SQL before proposing final DDL. Validate true FK support in Dryv/TypeORM generator. Use non-destructive migrations, staged constraint validation, stable IDs, versioning and compatibility/rollback plans. Database actions, code, tests and tasks are **not authorized by this planning guide**.
 
 **Status: no schema design has been approved for implementation.**
+
+## Related source redesign planning
+
+See [source redesign and adaptive website intelligence](../source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**

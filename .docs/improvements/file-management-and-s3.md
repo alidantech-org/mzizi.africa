@@ -115,3 +115,7 @@ Existing `filesystem` models already include `stores`, `formats`, `folders`, `ob
 9. What operations remain the S3 provider's responsibility, rather than recreating it in MZIZI.
 
 **No integration or filesystem migrations are authorized. Future Taskcode planning requires explicit user direction.**
+
+## Related source redesign planning
+
+See [source redesign and adaptive website intelligence](source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**

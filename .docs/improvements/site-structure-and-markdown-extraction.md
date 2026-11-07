@@ -182,3 +182,7 @@ Metadata belongs in an appropriate structured manifest/schema, not necessarily a
 Which rendering library/process is supported and where it runs; static-first vs mandatory rendering; the Markdown dialect/quality standard and frontmatter vs sidecar metadata; raw HTML retention policy and S3 cost; stable content section identity; reliable hashing normalization policy; page/site manifest storage; section-level vs page-level Markdown versioning; site structure authorship/editor and inheritance; official source/legal gate; recheck cadence; how site changes invalidate downstream candidates; human quality review triggers; high-volume concurrency and source rate limits. These require the user's later direction.
 
 **Not permission to alter the current crawler, store, schema or Taskcode tracker.**
+
+## Related source redesign planning
+
+See [source redesign and adaptive website intelligence](source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
