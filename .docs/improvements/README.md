@@ -42,3 +42,7 @@ The user wants **few, useful cross-cutting documents**, but explicitly requested
 ## Required schema-column simplification review (2026-11-07)
 
 The user rejected automatically adding `valid_from/to`, `valid_from_precision/to_precision`, `is_current` and other generic rigid columns everywhere. The [schema redesign README](schema-redesign/README.md) now defines a **mandatory per-table KEEP/REMOVE/DERIVE/MOVE/RENAME/ADD review** across all 18 domain designs. It also evaluates selective `deleted_at` soft deletion for recoverable user-managed records, separately from real-world retirement, source evidence, corrections and privacy erasure. **No final per-table decisions or migrations are approved.** The older broad date-precision convention must be reconciled during a separately authorized code/docs migration, not modified silently now.
+
+## Source redesign — deep research follow-up
+
+The [source-redesign index](source-redesign/README.md) now links [prior art/build-versus-reuse](source-redesign/10-prior-art-and-build-vs-reuse.md), [tool integration contracts](source-redesign/11-tool-integration-and-contracts.md), [artifact storage/lineage](source-redesign/12-artifact-lifecycle-and-lineage.md), and [research experiments](source-redesign/13-benchmarks-and-research-questions.md). These are **planning only**, not approval of source/website consolidation, a pattern schema, new tables or deployed tools.

@@ -74,3 +74,7 @@ LLMs should not:
 Measure precision/recall on **site-held-out** page labels, link recall@K and precision@K, ranking NDCG/MRR, source coverage, field extraction exact match/F1, grounded schema mapping precision, citation/locator completeness, change-detection miss rate, token cost per verified fact, embedding index cost, latency and fairness across languages/platforms/countries. Define benchmark versions and thresholds before automated promotion.
 
 **Open:** training corpus and annotation policy; model/provider choice; semantic taxonomy; embedding/LLM costs; score fusion and calibrated thresholds; offline vs managed serving; acceptance review rules. **No model or vector product is approved.**
+
+## Research-to-design: narrow the LLM funnel
+
+[AutoScraper](https://aclanthology.org/2024.emnlp-main.141/), [Co-Scraper](https://arxiv.org/abs/2606.14821) and [SchemaRAG](https://aclanthology.org/2026.acl-industry.78/) support pruning DOM and target schema before LLM mapping, and producing reusable extraction strategies where possible. Start with exact/fuzzy/site-context ranking + BM25, then compare embeddings and hybrid recall on judged queries. Train one specialist classifier only after reviewed labels exist, splitting training/test by **whole site and unseen CMS family**, with out-of-country checks. Store score components, evidence locators and model/prompt versions, never treating relevance as factual proof. See [10](10-prior-art-and-build-vs-reuse.md), [11](11-tool-integration-and-contracts.md), [13](13-benchmarks-and-research-questions.md).

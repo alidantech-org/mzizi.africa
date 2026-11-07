@@ -73,3 +73,14 @@ A prospective review record should contain current purpose; all columns and cons
 - [Existing website contracts](../../../dryv/contracts/domains/website/index.ts), [site structure specification](../../docs/SITE_STRUCTURE_SPEC.md), [website design](../../docs/WEBSITE_DESIGN.md).
 
 **Scope:** architectural analysis and documentation only; no migration design is final.
+
+## Research integration (2026-11-07)
+
+Research findings **do not** approve the source/website merge, any new SQL tables, a vector service, ML training, crawler replacement or automatic task creation. The newer pattern option **reference-owned definitions + engine execution** remains a candidate for human review.
+
+| New focused document | Purpose |
+|---|---|
+| [10 — Prior art and build vs reuse](10-prior-art-and-build-vs-reuse.md) | Literature, production precedents, tool candidates, avoidable duplication |
+| [11 — Tool integration and contracts](11-tool-integration-and-contracts.md) | How fetch, link discovery, parsers, S3, retrieval, ML and review connect |
+| [12 — Artifacts and lineage](12-artifact-lifecycle-and-lineage.md) | Capture/observation/file/derivative identities, storage, versioning and replay |
+| [13 — Research and benchmarks](13-benchmarks-and-research-questions.md) | Held-out Kenyan/African sites, baseline comparisons, stop/go criteria |

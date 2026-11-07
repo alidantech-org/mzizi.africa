@@ -162,3 +162,7 @@ A pattern-generator pipeline may produce only *expected* office structures. A le
 ## Related source redesign planning
 
 See [source redesign and adaptive website intelligence](source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
+
+## Research adapter integration (planning)
+
+See [replaceable adapters and one engine-owned scheduling boundary](source-redesign/11-tool-integration-and-contracts.md), [existing S3 artifact lineage](source-redesign/12-artifact-lifecycle-and-lineage.md) and [benchmark gates](source-redesign/13-benchmarks-and-research-questions.md). Do not independently deploy multiple crawler schedulers or refresh loops (current engine, Scrapy, Crawlee, changedetection.io, browser agents) without shared host admission, leases, budgets, dedup and source policy. All tool adoption and Taskcode tasks remain unapproved.

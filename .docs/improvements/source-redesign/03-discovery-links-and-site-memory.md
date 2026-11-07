@@ -82,3 +82,7 @@ Budget number of pages, bytes, depth, redirects and browser executions; per-host
 A site with no YAML is mapped at root; the same file linked from three sites is stored once but has three sightings; a redirected hostname retains its history; two query-param pages remain distinct; a JS listing yields paginated detail links; an external link is recorded but not automatically fetched; restricted URLs are never bypassed; repeated visits reuse unchanged artifacts and revisit after refresh policy.
 
 **Status:** Functional requirements and data-model options only; no accepted `source` schema DDL.
+
+## Research-to-design: crawling tools and correct connections
+
+[Scrapy](https://docs.scrapy.org/en/master/topics/architecture.html) and [Crawlee](https://github.com/apify/crawlee) are alternative mature crawl primitives, not production choices. Benchmark **current Mzizi engine against one** on the same legally approved site set before replacing a working scheduler. Keep a single engine-owned host budget, source permission gate, URL/link memory and request idempotency across all pipelines. Store link *occurrences* including navigation anchor context even if main-text cleaning removes navigation; resolve internal/associated/related/external using registered site identity, not hostname alone. Preserve query params carrying fiscal year or page state. Refer to [11 adapters](11-tool-integration-and-contracts.md), [12 artifacts](12-artifact-lifecycle-and-lineage.md), [13 benchmarks](13-benchmarks-and-research-questions.md).

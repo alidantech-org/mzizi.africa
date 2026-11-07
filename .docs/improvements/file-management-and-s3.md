@@ -119,3 +119,7 @@ Existing `filesystem` models already include `stores`, `formats`, `folders`, `ob
 ## Related source redesign planning
 
 See [source redesign and adaptive website intelligence](source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
+
+## Research artifact integration (planning)
+
+See [source artifact lifecycle](source-redesign/12-artifact-lifecycle-and-lineage.md) and [integration contracts](source-redesign/11-tool-integration-and-contracts.md). Preserve the deployed S3 backend: raw bytes, logical filesystem file/version, URL capture, derived Markdown/table, reusable YAML and vector index point have different lifecycles, but need not each receive their own SQL table. Review manifest fields, provenance, replay, public/private URL policy and retention against existing source/filesystem implementation before deciding changes. **No second storage service approved.**

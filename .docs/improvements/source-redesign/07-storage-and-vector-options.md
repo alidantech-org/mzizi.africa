@@ -56,3 +56,7 @@ Capture is authoritative evidence; a Markdown transformation is replaceable; an 
 Measure relevant-page recall@K, hybrid search improvement over lexical baseline, cross-lingual precision, filter correctness, memory/storage growth, cost per indexed block, and end-to-end LLM token reduction. Select topology and service only after measuring real representative datasets.
 
 **Status:** Dedicated vector storage is a direction to evaluate; neither Qdrant nor a new operational datastore is approved.
+
+## Research-to-design: storage and vector choice
+
+[Qdrant hybrid retrieval](https://qdrant.tech/documentation/hybrid-queries/) is a useful isolated benchmark; compare [LanceDB](https://github.com/lancedb/lancedb), a **separate** [pgvector](https://github.com/pgvector/pgvector) instance, and Milvus only when scale merits it. **Zero new services** remains valid. Store source observation/capture identity in existing relational domains after human review; store original and derivative content as versioned files through the **already deployed S3-compatible filesystem**; vector points are replaceable and carry stable block IDs, text hashes, access scope, model versions. Rebuild indexes from retained S3 artifacts, not by recrawling. Evaluate lexical vs semantic lift, filtered recall, cost, backups and restoration before selection. See [12 artifacts](12-artifact-lifecycle-and-lineage.md), [11 contracts](11-tool-integration-and-contracts.md), [13 benchmarks](13-benchmarks-and-research-questions.md).

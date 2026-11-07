@@ -81,3 +81,7 @@ Avoid collapsing a page version into a mutable `pages.html` field, deleting old 
 Audit the seven current `source` and twenty current `website` tables **with their actual columns**; then compare each with the conceptual model above. Only afterward decide boundary, table names, FK mapping and staged migrations. The detailed [existing inventory](01-current-inventory-and-boundaries.md) is a starting list, **not** live column verification.
 
 **Decision:** `website` collapse = NOT APPROVED. Exact `source.*` table set = OPEN.
+
+## Research-informed schema review
+
+[Common Crawl](https://www.commoncrawl.org/about), [WARC](https://www.iso.org/standard/68004.html) and [W3C PROV](https://www.w3.org/TR/prov-o/) distinguish URL, observation, raw capture, derived representation and provenance, but **do not imply one relational table per noun**. Test actual existing capture, filesystem, engine and source rows for independent lifecycles before adding physical page/block/visit tables. For each table test 304 without a new body, shared PDF bytes with two sightings, redirects, fiscal-year query variants, reprocessed Markdown, history retention and known FK enforcement. Preserve the user's unapproved status for any consolidation. See [10](10-prior-art-and-build-vs-reuse.md), [12](12-artifact-lifecycle-and-lineage.md).
