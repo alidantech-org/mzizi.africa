@@ -133,3 +133,22 @@ Audit all 27 combined source+website entity tables, actual columns, cardinalitie
 **Domain-specific guidance:** Captures need retrieval time, documents publication/version context, verifications decision times. Website domain relationships may genuinely be temporally valid; site checks and crawl visits are point-in-time. Avoid generic is_current and soft-delete on immutable evidence, and keep original capture and derived Markdown versions.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+
+## 2026-11-07 freshness provenance and announcement detection (planning)
+
+**Separate detection, retrieval, assertion and verification.** `source.captures` fetched today is not proof the captured claim is accurate today. A `website` Markdown section may have a new semantic hash without changing any canonical fact; a user may ask a recheck even though the source HTML hash remains unchanged. The fact that a publisher is official does not itself guarantee each extracted assertion is correct or applicable.
+
+**Existing code evidence on `develop`:** `source/backend/api/src/modules/source/entities/verification.entity.ts` has a verification state, review decision references and generic `target_kind` + `target_id`; it does **not** by itself provide a robust per-field freshness ledger or an enforced FK from generic target to arbitrary domain rows. The existing source capture/crawl/Markdown extraction planning should be reused rather than copied.
+
+A site watcher for news/announcements should:
+1. Confirm collection permission, jurisdiction/source profile and bounded refresh policy.
+2. Revalidate page and detect changed meaningful DOM sections (not only raw HTML noise); preserve source and Markdown versions in filesystem/S3.
+3. Extract **event candidates**, distinguish an official notice from commentary and deduplicate with existing `activity` records.
+4. Retain publication date, announced effective date, time of retrieval, capture/version and exact section citation separately.
+5. Trigger only matching reference-owned watch rules; processing may return `unchanged`, `new evidence`, `conflicting` or `unavailable`, with evidence and review gate.
+6. Advance fact-level `last_verified_at` only after verifier policy is genuinely satisfied. `last_source_seen_at` or `last_checked_at` should reflect their narrower meaning.
+
+**Candidate linkage:** source publication/capture ↔ proposed or confirmed event ↔ watcher rule evaluation ↔ engine job/verification outcome ↔ affected canonical row/field group. The user still requires real FKs; generic evidence targets need a typed association/validated-record design, not ordinary unconstrained `target_kind` and ID. A manual administrator-submitted URL becomes evidence to evaluate, not automatic fact approval.
+
+**Open:** What is a successful independent fact check? May the same publisher's unchanged page constitute renewed verification, or must there be another corroborating source for sensitive fields? How are source corrections/retractions mapped to existing activities and records? Which verification state belongs in `source` versus the operational engine? No tables or scripts approved.

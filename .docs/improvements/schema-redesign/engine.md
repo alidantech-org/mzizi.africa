@@ -163,3 +163,50 @@ Full discussion: [Data classes and pattern graph](../data-categories-and-pattern
 **Domain-specific guidance:** Jobs, runs, gaps, candidates, attempts, claims and quality findings need created/queued/started/completed/rechecked timestamps and explicit workflow state, not real-world validity or is_current by convention. Approved patterns may have applicability periods in reference; their engine executions do not inherit them as event validity. Operational retention/cleanup should be planned independently of public history.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+
+## 2026-11-07 proposal: evidence-backed freshness, scheduled/event/manual triggers
+
+**USER IDEA:** An engine should continuously identify facts that require revalidation, react to meaningful scheduled or actual `activity` changes, and accept authorized ad-hoc agent/admin research requests. This expands—not replaces—the existing shared patterns and fill-in-the-gaps watcher design. All schema proposals remain OPEN.
+
+### Distinguish freshness from canonical modification
+
+- `last_checked_at`: an attempt was made; a failed request may legitimately update this but does **not** confirm accuracy.
+- `last_verified_at`: evidence satisfying the applicable verifier policy reaffirmed the particular fact or relationship; it may advance without any domain row update.
+- `last_source_seen_at`: a source/webpage was seen or revalidated; this is not independent fact verification.
+- `last_changed_at`: a detected or accepted fact change **with precisely documented meaning**; do not conflate source HTML change, source claim change and accepted canonical mutation.
+- `next_check_at`: computed or scheduled follow-up from applicable rule, risk and observed outcomes.
+
+**These are semantic metadata concepts, not five automatically required columns on each domain row.** Favor centralized verification histories linked to a **field group, relationship or relevant canonical record/version**, with row-level exceptions where necessary. A broad `table was refreshed` watermark is not proof that every field or row was verified.
+
+### Candidate responsibilities (avoid premature tables)
+
+| Owner | Candidate responsibility | Existing structure to inspect |
+|---|---|---|
+| `reference` | `freshness_policies`, schedule/pattern/watch definitions and versions | Existing reference classes and approved pattern planning |
+| `activity` | Schedule instances, sourced official announcements/real-world occurrences, rescheduling and cancellations | `calendar.events`/`links` |
+| `engine` | Due-check evaluation, triggering/dedup, `verification_checks` / `refresh_requests` / schedule firings if needed, workers, gaps and candidates | `engine.jobs`, `gaps`, `gap_attempts`, `claims`, `quality_findings`, `staging` |
+| `source` | Verified claim evidence, captures, source observability, review and provenance | `source.verifications`/`captures`/`attributions` |
+| `audit` / `auth` | Actor identity, permissions, human submissions, review decisions and correction history | Current account/role and audit entities |
+
+### Event-driven + periodic + manual scheduling in one control plane
+
+Accepted input types: (1) a scheduled due window or legal reporting deadline, (2) an approved announcement or verified occurrence, (3) a new/changed official-source page or Markdown section, (4) a canonical/legal/pattern or geographic dependency change, (5) an authorized admin request or agent-directed monitoring instruction, (6) a previously unresolved coverage gap that becomes due.
+
+Proposed flow: **receive trigger → resolve immutable rule/policy version → evaluate jurisdiction/geo/temporal scope → identify affected domain rows and field groups → deduplicate `(rule_version, subject, target_field_group, cause/evidence_version, due_window)` → enforce source permissions and source-host admission → run bounded verification → record checks and source evidence → unchanged / new candidate / contradiction / unknown / inaccessible / deferred → review/promotion as applicable → next_check/retry.**
+
+**Avoid runaway loops:** trigger provenance and dependency graph, depth/fan-out limits, trigger ID ancestry, cooldown/debounce, bounded retries, one job lease per dedup key, stop on proven unchanged result, and no event notification loop just because `last_verified_at` advances. One authoritative engine scheduler/lease/admission system must govern all third-party crawlers/agents; do not let each external tool launch an independent refresh scheduler.
+
+### Hotness is granular and adaptive, not just a table flag
+
+Start with classifications such as `hot` (active leadership/elections/tenders), `warm` (contacts/current budgets), `cold` (stable historical definitions), and `event-driven` (official releases and disputed/historic facts). **Exact cadences are NOT approved.** The same table can have hot office-holder relationships and cold party identity fields. Evaluate scope at table default → field group/relationship → exceptional record. Factors: age since successful verification, expected change rate, source confidence/availability, severity of stale information, official calendar/event signals, observed content-tree change, source access budgets and review priority.
+
+A new source fetch should not change a canonical fact just because it is new; a check can result in verified **unchanged** with an updated verification event. A stale indicator is **not a claim of falsity**. A scheduled event passing its planned date is not proof that it occurred. Keep data quality/research state separate from real-world entity lifecycle and workflow status.
+
+### Manual submission and agent-driven monitoring
+
+An authorized admin can: (a) propose activity with evidence, (b) request re-verification without claiming a change, (c) approve a verified event according to RBAC, or (d) configure a scoped recurring monitor under approved capabilities/budgets. Agent tasks such as "watch these approved official sites for announcements about this institution" must become a persisted, bounded rule/monitor with source policy and an execution audit; not an unbounded conversational instruction. Human/agent action has account/service identity and traceable decision/validation.
+
+**Research outcomes:** successful no-change verification; supported new canonical candidate; conflicting evidence requiring review; missing relationship; source unavailable; publisher-reported withdrawal; deliberate known-absence or not-applicable; canceled/overdue event schedule. Do not falsely advance `last_verified_at` when only a failed check or a source download occurred.
+
+**Unresolved design decisions:** whether the verification ledger physically lives under `engine` or `source`; how to enforce hard FK lineage for generic field-group checks; table/field-group policy registry representation; schedule-rule recurrence and timezone/legal exceptions; scheduler dedup keys; what source events are trusted to auto-trigger; cost/volume retention; which updates bypass human review. **No code/migration/task authorization.**

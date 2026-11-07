@@ -102,3 +102,50 @@ For one county, show actual appointment and inauguration dates with people, offi
 **Domain-specific guidance:** Events require meaningful scheduled/occurred/cancelled times, not blanket valid_from/to. Historical imprecision may justify date-specific precision only where evidenced. News has publication time distinct from event time and fetch time. Activity links ordinarily do not need validity unless they independently start/end; public history is corrected, not trash-deleted.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+
+## 2026-11-07 proposal: schedules, agent-discovered announcements and admin-entered activities
+
+**USER DIRECTION FOR DESIGN REVIEW:** Make `activity` a bridge from **expected schedules** to **real announced, postponed, cancelled or completed occurrences**, and from those occurrences to narrowly targeted freshness/research triggers. Government announcements, election dates and results, census release notices, parliamentary proceedings, budget cycles, public appointments and procurement decisions all fit as activity **links/timelines**—but the full canonical election, budget, statistical observation, holder or contract must remain in its owning domain. A scheduled event is **not** evidence that it actually happened.
+
+### Three distinct identities and explicit links
+
+| Layer | Owns | Does not own |
+|---|---|---|
+| `reference` schedule/pattern | Versioned generic timing or trigger definition, legal/jurisdiction applicability, expected activity category | The real occurrence, official declaration or executed job |
+| `activity` event/action/update | Announced or scheduled instance, amendments/rescheduling, verified occurrence and evidence-linked chronology | Numerical election result, vote count, budget amount, official appointment tenure or scientific observation |
+| Domain tables (e.g. `electoral.elections`, `finance.budgets`) | Domain-specific truth and dates, status/version and records | Duplicate independently conflicting public calendar state |
+
+An event may be **derived as an expected schedule entry** only when its schedule is valid; its existence in `activity` must be marked as scheduled/expected until official evidence confirms the announcement or occurrence. A legally required event may be overdue or cancelled; passage of time alone never means completion.
+
+**Current repo evidence on `develop`:** `source/backend/api/src/modules/events/entities/event.entity.ts` defines `calendar.events` with `starts_on`, optional `ends_on`, `is_recurring`, `status`, `is_current` and generic `valid_from/to` plus precision fields. `event-link.entity.ts` stores `target_kind` + `target_id`. The separate `electoral.elections` entity already has `scheduled_date` and `held_date`. This is an **entity/code inspection, not a validated live database audit**. The redesign should decide which of those fields to retain, derive or replace and how to enforce **real target FKs**; avoid redundant event/domain dates being independently edited without reconciliation.
+
+### Real administrative and external input workflows
+
+1. **Official-source agent:** Authorized site watcher detects a relevant announcement or date change, captures original evidence and Markdown derivative, extracts an event candidate and recognizes existing activities by real-world identity, source/publication identifiers and semantic linkage.
+2. **Admin records an event:** Authenticated, authorized admin chooses event type, jurisdiction, responsible entity, real domain subject, date/precision if appropriate, source/evidence and the assertion being made. Actions must distinguish **submit candidate**, **approve verified activity** and **request refresh**; editing a title should not secretly change an election result.
+3. **Admin requests verification independently of an event:** An authorized person can ask the engine to verify a holder, budget release, census publication or official website even when no event has been asserted. Include justification, scope, target, source preference and optional recurrence.
+4. **Event is evaluated:** Rule/watcher checks applicability, effective rule version, required evidence, matched domain record and allowed tools; triggers `engine` jobs for affected fields/relationships only. A source announcement can require review before it becomes a verified event or triggers sensitive updates.
+5. **Domain facts are verified and reconciled:** An event can cause rechecking, but does not by itself imply a canonical row change. Preserve old official dates and supersessions, and record successful unchanged verification separately from publication and modification timestamps.
+
+### Representative trigger examples
+
+- Scheduled general election → refresh nominated candidates and voter registration **according to applicable election phase**; official vote declaration → check result releases, geography rollups and holder transitions. Avoid asserting a winner from a predicted polling date.
+- Census plan → watch for enumeration and publication notices; official dataset release → refresh `statistical.datasets`, vintages/observations and derivations. Census *occurrence* and *data publication* may be separate activities years apart.
+- Parliamentary calendar → watch official agendas/readings/committee proceedings; confirmed Bill passage or Act assent → evaluate `legal` and dependent governance/pattern links.
+- Budget timetable → expected submission/approval/report dates; actual budget amendment/publication → recheck `finance` units, versions and measurements, never copy approval amounts into expenditure.
+- Appointment announcement → update `activity` with source-backed proposal, run holder/office verification, recognize no-change or disputed evidence, then update tenure when reviewed.
+- Tender closing/award/contract publication → watch `procurement` lifecycle and relevant source notices rather than bulk-refreshing every procurement row.
+
+### Design safeguards
+
+- **Do not create one event per reporting website**; deduplicate by real-world occurrence identity while retaining multiple independent source captures.
+- **Do not equate schedule firing with occurrence:** a missed deadline creates an overdue/investigation condition, not a synthetic completed action.
+- **Do not infer canonical values solely from human submission or AI news extraction:** record assertion/source/review status and avoid privileged auto-promotion.
+- An event might trigger several watchers, but they must use **stable idempotency keys and affected-field scopes** to prevent duplicate cascades.
+- The public UI must distinguish `expected`, `officially announced`, `verified occurred`, `postponed`, `cancelled`, `reported/disputed`, and the actual source date. Exact status words and tables remain open; do not add overlapping Booleans.
+- Source collection permission and S3 file access policy still apply, as do RBAC, manual submission audit, correction history, versioned schedules and source citations.
+
+### Decisions reserved for the user
+
+Whether `activity.updates` and `activity.actions` need distinct tables; whether `is_recurring` should be derived from a schedule FK; whether announced event and completed occurrence are one versioned event identity or related records; how canonical domain dates and event dates are reconciled; whether a manually recorded event can bypass review; typed FK association design, and which trigger levels can refresh automatically. **Planning only; no database/API/UI changes or tasks approved.**
