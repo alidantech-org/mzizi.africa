@@ -66,3 +66,31 @@ For one county, show actual appointment and inauguration dates with people, offi
 5. What public moderation and review are necessary for activity notes or user-submitted corrections?
 
 **Links:** [Schema index](README.md), [Master register](../mzizi-data-schema-storage-and-pipelines-redesign.md), [Site Markdown extraction](../site-structure-and-markdown-extraction.md).
+
+## Human review — editable user notes and design sign-off
+
+**Review status:** `NOT REVIEWED` — AI-authored proposals in this document are not final approval.
+
+**In my own words, what this schema should represent and exclude:**
+
+> _My understanding and questions:_
+
+**Tables/columns I want to keep, rename, move, merge, split, remove or add (and why):**
+
+> _My proposed changes and alternative names:_
+
+**Hard foreign keys, geographical and legal scope, pattern generation, classification and evidence I want changed or explained:**
+
+> _My technical feedback, disagreements and alternatives:_
+
+**Real data and queries I want to use to validate this design:**
+
+> _My examples and expected results:_
+
+**Unresolved decisions I want to discuss further:**
+
+> _My remaining questions:_
+
+**Final user decision:** `NOT DECIDED` / `NEEDS CHANGES` / `DESIGN VALIDATED BY USER` / `APPROVED FOR TASK PLANNING`.
+
+**Approval reference and date:** _None. Only record explicit later user authorization. Even design validation does not authorize code, migration or Taskcode task creation._

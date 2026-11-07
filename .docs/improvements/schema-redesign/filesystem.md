@@ -64,3 +64,31 @@ Current Python `source/backend/engine/data/src/mzizi_data/files.py` uses `LocalD
 **OPEN:** exact S3 API/URL configuration; folder multiple placements vs one parent; tag schema; file retention and legal hold; attachment FK model; `formats/uploads/events` ownership; cache and integrity checks; default public/private policy by source classification; UI operations; migration of existing local objects. See [file-management plan](../file-management-and-s3.md), [site Markdown plan](../site-structure-and-markdown-extraction.md), and [master register](../mzizi-data-schema-storage-and-pipelines-redesign.md).
 
 **Status: proposals, no approved DDL.**
+
+## Human review — editable user notes and design sign-off
+
+**Review status:** `NOT REVIEWED` — AI-authored proposals in this document are not final approval.
+
+**In my own words, what this schema should represent and exclude:**
+
+> _My understanding and questions:_
+
+**Tables/columns I want to keep, rename, move, merge, split, remove or add (and why):**
+
+> _My proposed changes and alternative names:_
+
+**Hard foreign keys, geographical and legal scope, pattern generation, classification and evidence I want changed or explained:**
+
+> _My technical feedback, disagreements and alternatives:_
+
+**Real data and queries I want to use to validate this design:**
+
+> _My examples and expected results:_
+
+**Unresolved decisions I want to discuss further:**
+
+> _My remaining questions:_
+
+**Final user decision:** `NOT DECIDED` / `NEEDS CHANGES` / `DESIGN VALIDATED BY USER` / `APPROVED FOR TASK PLANNING`.
+
+**Approval reference and date:** _None. Only record explicit later user authorization. Even design validation does not authorize code, migration or Taskcode task creation._
