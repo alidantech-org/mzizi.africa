@@ -11,6 +11,81 @@ extra: {status: planning_only, no_bulk_task_creation: true}
 **PLANNING ONLY — NOT READY TO IMPLEMENT.** The user subsequently **explicitly requested all eighteen named schema design documents**, which have now been written as substantive planning proposals, not empty placeholders. This folder contains the domain design files below; update them iteratively under user direction. The user's preference for only a few cross-cutting files still applies outside this folder.
 
 
+## Final schema count: NOT DECIDED — all current schemas accounted for
+
+**This folder has 19 Markdown files: 18 proposed target-schema plans plus this README. They are NOT 19 PostgreSQL schemas.** The repository currently defines 24 application/runtime PostgreSQL schemas; an 18-schema target is one provisional option, **not a user-approved physical design**. A domain planning file may account for several existing schemas. No merge, rename or removal is approved merely because its destination appears here.
+
+### Eighteen proposed domains for one-by-one human review
+
+| # | Planning document | Purpose |
+|---:|---|---|
+| 1 | [`reference.md`](reference.md) | Jurisdictions and controlled vocabulary |
+| 2 | [`geography.md`](geography.md) | Territorial geography and physical places |
+| 3 | [`legal.md`](legal.md) | Laws, legal procedures and authority |
+| 4 | [`person.md`](person.md) | Real individuals and public profiles |
+| 5 | [`organization.md`](organization.md) | Canonical organization identities |
+| 6 | [`governance.md`](governance.md) | Institutions, offices, holders and public services |
+| 7 | [`political.md`](political.md) | Political parties and affiliations |
+| 8 | [`electoral.md`](electoral.md) | Elections, candidates, voters and results |
+| 9 | [`finance.md`](finance.md) | Budgets, debt and public funds |
+| 10 | [`procurement.md`](procurement.md) | Purchasing, bidders, contracts and suppliers |
+| 11 | [`statistical.md`](statistical.md) | Indicators, datasets and observations |
+| 12 | [`activity.md`](activity.md) | Events, public actions and news |
+| 13 | [`filesystem.md`](filesystem.md) | Files, folders, tags and external S3 references |
+| 14 | [`source.md`](source.md) | Evidence, publishers, websites and captures |
+| 15 | [`auth.md`](auth.md) | Accounts, identities, roles and permissions |
+| 16 | [`participation.md`](participation.md) | Public and official feedback (NEW) |
+| 17 | [`audit.md`](audit.md) | Immutable decisions and action history |
+| 18 | [`engine.md`](engine.md) | Pipeline runs, staging and generation |
+
+### Complete old-to-possible-new mapping (all 24 current schemas)
+
+| Current schema | Review document | Tentative direction; nothing silently discarded |
+|---|---|---|
+| `reference` | [`reference.md`](reference.md) | Keep, simplify types/jurisdictions |
+| `geography` | [`geography.md`](geography.md) | Keep; possible place integration |
+| `legal` | [`legal.md`](legal.md) | Keep; global-neutral redesign |
+| `person` | [`person.md`](person.md) | Keep distinct from accounts |
+| `identity` | [`auth.md`](auth.md) | Combine with access |
+| `governance` | [`governance.md`](governance.md) | Keep |
+| `electoral` | [`electoral.md`](electoral.md) | Keep distinct from political |
+| `political` | [`political.md`](political.md) | Keep distinct from electoral |
+| `calendar` | [`activity.md`](activity.md) | Rename |
+| `organization` | [`organization.md`](organization.md) | Keep |
+| `finance` | [`finance.md`](finance.md) | Keep; absorb debt |
+| `debt` | [`finance.md`](finance.md) | Merge into finance |
+| `procurement` | [`procurement.md`](procurement.md) | Keep; detailed participant model OPEN |
+| `statistical` | [`statistical.md`](statistical.md) | Keep and clarify |
+| `civic` | [`governance.md`](governance.md) | Proposed public-service move, not final |
+| `filesystem` | [`filesystem.md`](filesystem.md) | Keep; external object storage |
+| `source` | [`source.md`](source.md) | Keep and simplify |
+| `website` | [`source.md`](source.md) | Possible consolidation; may stay separate |
+| `place` | [`geography.md`](geography.md) | Possible consolidation; physical places remain distinct tables |
+| `contact` | [`geography.md`](geography.md) | HOME UNDECIDED: may remain separate contact schema |
+| `audit` | [`audit.md`](audit.md) | Keep separate from participation |
+| `engine` | [`engine.md`](engine.md) | Keep processing domain |
+| `staging` | [`engine.md`](engine.md) | Possible consolidation; may stay separate |
+| `access` | [`auth.md`](auth.md) | Combine with identity |
+
+**Three possible retained extra schemas:** `contact`, `website` and `staging` may remain physically separate. If all three remain, the provisional 18-target design could instead have **21 schemas**, before any further justified additions or splits. The final count is whatever your approved table-by-table review determines. The new `participation` schema is proposed, not yet created.
+
+**Other current objects:** `geography.boundary_shapes` (migration-managed PostGIS table, not a new schema), `access.account_permissions` (a view), historical retired `organization.locations` (not current) and internal `engine.migrations` all require accounting during their owning-domain audit. Current counts come from the repository definitions, not a checked live database.
+
+### Human review and validation process — one schema at a time
+
+1. **Understand and explain:** Read the domain purpose and current tables. Write, in your own words, what the schema owns, excludes and should mean.
+2. **Inspect real tables and columns:** Compare the current TypeORM/Dryv models, migrations and eventually the actual database. Record exact types, nullability, FKs, indexes, constraints and existing data; historical migration columns alone are insufficient.
+3. **Test relationships:** Review real cross-schema FKs, jurisdiction/country-root geography, historical and legal scope, query directions, four acquisition classes, pattern eligibility, evidence and corrections.
+4. **Add your ideas:** Keep/rename/merge/split/remove/add proposals, columns you find confusing, missing capabilities and **free-text alternatives**. Challenge recommendations rather than accepting them by default.
+5. **Resolve open decisions:** Record the choice, alternatives and reasons, existing-data migration dependencies, query examples and consistency with all other domains.
+6. **Personally validate:** Mark `DESIGN VALIDATED BY USER` only after you have reviewed and accepted the concept. **This is not implementation approval.** You will separately specify Taskcode task creation and order.
+
+**Approval vocabulary:** `NOT REVIEWED` → `UNDER HUMAN REVIEW` → `NEEDS CHANGES` or `DESIGN VALIDATED BY USER` → `APPROVED FOR TASK PLANNING` only by direct user instruction. **Every schema starts NOT REVIEWED** for final design, regardless of how detailed its AI-authored document is.
+
+**Recommended free-text prompts in each schema document:** “How I understand it”; “What feels unnecessary or unclear”; “My table/column changes”; “My FK/geo/legal/pattern suggestions”; “What I disagree with”; “Example real queries I want”; “Remaining TBDs”; “My approval status and date.” Agents must not fill these in on your behalf.
+
+---
+
 ## Domain design documents — all 18 explicitly requested
 
 The filenames describe **proposed target domains**, not necessarily existing PostgreSQL schema names. Several cover multiple existing schemas or a new proposed schema. Each file identifies actual current tables, ownership questions, direct-FK requirements, data classes, recommended alternatives, risks and unresolved decisions. **The documents are planning references; none is final DDL approval.**
