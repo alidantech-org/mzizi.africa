@@ -527,3 +527,28 @@ This file is the **discussion and planning record**. It captures decisions up th
 6. Only after separate implementation approval, update the actual rule/docs/contracts/migrations and run permitted verification. Apply changes directly on `develop`, never `main`.
 
 **Final handoff status: PLANNED / UNDER DISCUSSION / NOT READY FOR IMPLEMENTATION.**
+
+
+## 23. Subsequent user clarification (2026-11-07): keep the documentation compact; website-to-Markdown and semantic change detection
+
+**User's newer direction, after this master register was written:** They like a dedicated `schema-redesign/` folder for individual database designs, but explicitly **do not want too many documentation files**. The remaining cross-cutting concerns should fit into a **few** coherent planning documents. They also reiterated that the discussion contained many other important hotspots and must not be reduced to only one topic.
+
+The user now specifically wants:
+
+- A clearly documented **two-category / four-subcategory classification** including table eligibility, schema planning tags, domain patterns, generation/sync lineage, correction and review.
+- A file manager integrating their **already deployed self-hosted S3-compatible instance**: clear logical files/folders, grouped tags, metadata and hashing, public URLs where appropriate, private access only when justified, no home-made replacement of the storage provider.
+- A materially stronger **site structure and extraction design**. Convert useful site/page content from HTML/JavaScript-rendered pages into **well-structured, human/agent-readable Markdown** rather than treating huge HTML/CSS/JS source files as the primary research output. Preserve accurate dates, headings, tables, links, attachments and citations. CSS and JavaScript inform visible/rendered content; they are not themselves mechanically rewritten as Markdown.
+- **Site-level, page-level and DOM/section/tree-level hashing** to detect meaningful changes, avoid repeated downloads and processing of unchanged content, and correctly remap changed sections into Markdown and structured candidates.
+- Independently executable/concurrent pipelines with reusable agent, scraper, renderer, file-client, extraction, matching, validation and pattern-generation features. The exact architecture still awaits the user's decision.
+- **No wholesale creation of Taskcode groups/tasks or schema-specific placeholder files.** The user will guide the detailed reviews and tasks one at a time, in sequence.
+
+The master register remains the **complete archive of prior decisions and concerns**. Focused documents were added instead of splitting every paragraph into separate files:
+
+1. [Improvements index](README.md): explanation and compact cross-reference.
+2. [Schema redesign folder](schema-redesign/README.md): per-schema/table/column review template; add new schema files **only when selected by user**.
+3. [Data classes and patterns](data-categories-and-patterns.md): seeded/static, seeded/pattern, collected, derived and their controlled life cycles.
+4. [Filesystem and external S3](file-management-and-s3.md): logical folder/tag/file management and integration boundaries.
+5. [Website structure, hashing and Markdown extraction](site-structure-and-markdown-extraction.md): content/rendering/tree hashes, conversion, evidence and change-aware mapping.
+6. [Independent data pipelines](independent-data-pipelines.md): concurrent goals, reusable packages, orchestration, workers and competing architecture options.
+
+**Status unchanged:** Documents are proposals. The user has not approved the final table/column designs, pattern storage model, procurement roles, live S3 integration, Markdown extraction implementation, worker topology, task creation or repository code changes.
