@@ -170,6 +170,77 @@ For **each current table**, capture:
 - Same official name across separate institutions/time periods without incorrect person merge.
 - A source publication linked to one immutable file, several captures, several extracted Markdown sections and one or more candidates.
 
+
+## Database-wide column necessity, temporal validity and deletion policy — 2026-11-07
+
+**USER REQUIREMENT — for the upcoming schema-by-schema redesign, not an instruction to run DDL now.**
+
+> **No column is universal by convention.** A column must describe a fact, constraint, operational behavior, or query requirement **belonging to the table**. If it duplicates a parent pattern, law, immutable version, source artifact, related row or reliably derived state, **propose removing it** unless the domain has a demonstrated need for an independent value. No automatic blanket \`valid_from\`/\`valid_to\`, \`valid_from_precision\`/\`valid_to_precision\`, \`is_current\`, \`status\`, \`version\`, \`updated_at\`, \`deleted_at\` or convenience Boolean convention.
+
+### Verified reason for revisiting the current template
+
+Read-only examination of \`source/backend/engine/database/migrations/1793607856459-initial.ts\` found **103 original CREATE TABLE statements**, of which **73** contain \`valid_from\` and \`valid_to\`, **70** contain the pair of date-precision columns, **70** contain \`is_current\`, **103** contain \`version\`, \`created_at\` and \`updated_at\`, and **none** contain \`deleted_at\`. This is **only the original migration baseline**: later migrations introduce/move/remove tables and fields, so these counts must **not** be presented as current/live production coverage. They establish evidence for an overly broad historical column template, not a mandate to drop all occurrences.
+
+### Opt-in temporal modeling: which fact does a date describe?
+
+| Category | When a date/interval belongs on the record | Example and recommended design |
+|---|---|---|
+| **Stable identity / structurally established row** | No independent time interval just because the table has an ID | \`governance.offices\`: an office definition can derive applicable existence from its legally backed \`pattern\`/rule and geo scope. Avoid a redundant copy of the rule's effective period. **Exception:** an office can actually open/close, be abolished, renamed or transition independently of the rule; model that evidence explicitly, via a real status event/instance validity if needed. |
+| **Actual relationship / tenure** | The relationship independently begins/ends in the world | \`governance.holders\`: appointment/term \`started_on\`, \`ended_on\` (names subject to review); \`political.memberships\`, \`organization.ownerships\`, \`geography.occupancies\`: relevant intervals. |
+| **Legal authority / temporal rule** | Effective period is intrinsic to the law/rule and is a query input | \`legal.instruments\` enacted/commenced/repealed dates, \`legal.provisions\` amendments, approved \`reference.pattern_versions\` applicability windows and exceptions. Do **not** assume enactment = commencement or legal basis dates = real office usage dates. |
+| **Geographical boundary or dated association** | Boundary, name, hierarchy or usage actually changed over time | \`geography.boundaries\`, \`geography.relationships\`, \`geography.names\`, occupancy/physical presence, historical jurisdictions. |
+| **One-time event/publication** | One timestamp has the correct domain meaning | \`source.captures.fetched_at\`, \`filesystem.versions.created_at\`, \`activity.events.occurred_at\`, \`procurement.bids.submitted_at\`; generic \`valid_from/to\` adds no meaning. |
+| **Financial/contract obligation** | Explicit legal/financial dates have different meanings | Contract signed/effective/expiry dates, loans maturity, expenditure paid date; avoid one \`valid_from/to\` pair standing for several different events. |
+| **Statistical measurement** | Reference period, reporting period and vintage are distinct identities | \`statistical.observations\` → \`statistical.periods\` / \`vintages\`; do not add another arbitrary row-validity interval without a unique purpose. |
+| **Application/engine operational work** | Work created, started, completed, retried or reviewed | Jobs, claims, runs, gap attempts, drafts; timestamps describe those actions, not real-world validity. |
+
+**Pattern inheritance nuance:** The user prefers an office's establishment/applicability to be traceable to the establishing law/pattern. A **real office record may still have independent historical lifecycle** not identical to the law's effective interval (exception, delayed establishment, administrative abolition). Resolve this per table: (A) derive as-of applicability from pattern/version, (B) explicit domain lifecycle events/typed relations, or (C) keep an independently justified interval. Do not infer that an existing office disappeared simply because a pattern definition changed.
+
+### Date precision is NOT an automatic pair of fields
+
+The user's preference is to **remove \`valid_from_precision\` and \`valid_to_precision\` by default**, including many tables where ordinary exact appointment or contract dates suffice. Preserve precision/uncertainty only where the *domain has a real use case* (e.g., approximate/partially known historical events, ancient historical names/territories, a source dating an event only to a month/year). Possible narrowly scoped techniques include date-specific precision, source-claim metadata, a historical date representation, or a specialized date-value table; **select based on query behavior**, not a global template. If a value is known only to year/month, never invent January 1 or a false exact date just to fit a conventional \`date\` column. Exact modern dates need no companion precision enum.
+
+### \`is_current\` and other rigid booleans: prove nonredundancy
+
+- Default proposal: **remove \`is_current\` when reliably derivable** from applicable effective interval, entity/relationship lifecycle or the current accepted version. A materialized view/index may be evaluated for performance, but one authoritative state must be maintained.
+- Current at **which date**? Use an explicit as-of time and temporal/authority context. An undated \`is_current\` is not enough to answer historical queries; \`valid_to IS NULL\` alone is not proof that a future-dated or unapproved row is current.
+- Review conflicts such as \`is_current=true\` + ended period, or a \`status=closed\` + \`is_current=true\`. If lifecycle state cannot be safely derived, model it **once**, with an explicit meaning and transition rules.
+- Review \`status\`, \`is_singleton\`, \`active\`, \`version\`, \`created_at\`, \`updated_at\`, type flags, copied counts, duplicated jurisdiction/geo/legal fields and every other default copied column. **Do not drop valid \`created_at\`/versions blindly**: provenance, optimistic concurrency and immutable artifact identity may require them, but justify their presence and ownership explicitly.
+- Separate factual/real-world states (appointed/vacant/retired), data-quality/research states (incomplete/disputed/verified), workflow states (queued/approved), and visibility states (published/archived/deleted). They must not be represented as one ambiguous \`status\` or redundant Booleans.
+
+### Soft deletion: optional, targeted, and distinct from historical validity
+
+**USER QUESTION / OPEN DECISION:** Should some tables use \`deleted_at\` for recoverable soft deletion? **ASSISTANT RECOMMENDATION:** Yes for suitable mutable, user-managed **operational objects**, not a blanket column everywhere.
+
+| Kind of record | Proposed deletion/retirement policy |
+|---|---|
+| Draft pattern or watcher (not approved and unreferenced) | Allow recoverable \`deleted_at\` if useful, subject to permissions and audit; approved historical definitions should be versioned/retired, not silently erased. |
+| Logical folder, file alias or editable user-managed UI record | Evaluate \`deleted_at\`/trash/restore, but preserved source-backed file versions and object retention may constrain deletion. |
+| Canonical public office, geographical unit, legal text, official holder, supplier/organization | **Do not use \`deleted_at\` as a substitute for historical retirement, abolition, correction, merger or validity.** Keep canonical identity, source and history; use domain lifecycle and supersession. |
+| Procurement transaction, financial record, electoral result, official statistical observation | Preserve history, version/supersession and evidence; corrections are not user-trash actions. |
+| Source capture, file version, immutable evidence, audit event | Generally append-only and retained per retention/legal policy; use explicit lawful purge/redaction workflow when required, not casual soft deletion. |
+| Sensitive/auth account or participation submission | Determine privacy, retention, consent and legal obligations; soft delete alone is **not** erasure. Anonymization or actual deletion may be required. |
+| Engine run/job/gap | Use terminal status, outcome and retention; rarely needs \`deleted_at\`. |
+
+Where adopted: define who may delete/restore, whether parent/child items are hidden or restorable, what happens to referencing FK rows, whether \`deleted_at\` uses UTC \`timestamptz\`, and if partial unique indexes such as \`WHERE deleted_at IS NULL\` are appropriate. Remember soft-deleted rows still exist, still satisfy FKs, and may still be seen in joins unless query/API policies filter them. Unique constraints, reusing natural keys, restore conflicts, audit reasons, retention and hard purges require explicit design. **Do not add both \`is_deleted\` and \`deleted_at\`** when the latter already describes the state.
+
+Technical options to benchmark: PostgreSQL \`daterange\`/\`tstzrange\` and non-overlap constraints for genuinely temporal relationships (https://www.postgresql.org/docs/current/rangetypes.html), and filtered/partial unique indexes for recoverably deleted rows (https://www.postgresql.org/docs/current/indexes-partial.html). Neither is required on all tables, and PostgreSQL deployment version must be confirmed before relying on advanced temporal constraints.
+
+### Mandatory per-table/column review and evidence before approved DDL
+
+For **every** existing and proposed table, reviewers must record:
+
+1. **Temporal question:** Does the entity or relationship itself have an independent real-world interval? Or is applicability inherited from a law, versioned pattern, source, parent or linked occurrence? Specify which.
+2. **Every field disposition:** \`valid_from\`, \`valid_to\`, \`valid_from_precision\`, \`valid_to_precision\`, \`is_current\`, \`status\`, \`version\`, \`created_at\`, \`updated_at\`, \`deleted_at\`, lifecycle flags and duplicated helper columns: **KEEP, REMOVE, RENAME, DERIVE, MOVE TO RELATED TABLE, ADD (only if justified)**, with reasons.
+3. **Meaningful named dates:** If specific dates belong to the record, prefer domain names (e.g. \`appointed_on\`, \`left_office_on\`, \`signed_on\`, \`commenced_on\`) and document uncertain or open-ended dates explicitly.
+4. **As-of and history test:** Show current and historical queries before removing a field. Verify time boundaries, exceptions, amendments, overlapping roles and future scheduled starts.
+5. **Deletion decision:** \`none / domain retirement / supersession / soft delete / restricted purge\`, with rationale, user visibility, authorizations and FK/unique effects.
+6. **Lineage/integrity:** Identify the actual FK path to legal/pattern/geographic authority, and authoritative lifecycle event. Never replace hard FKs with a generic \`target_kind,target_id\`.
+7. **Before/after SQL + preservation:** Measure non-null values and contradictory columns; reconcile imported data and version history; plan reversible migrations and API/Dryv updates. **No physical removals until expressly approved**.
+8. **Human signoff:** Keep this decision as **OPEN** until the user reviews the specific table/columns and confirms intended meaning. An AI-created table matrix is not approval.
+
+**This rule applies to all 18 schema redesign files** and to every additional retained physical schema (\`website\`, \`contact\`, \`staging\` etc.). The current accepted legacy schema and earlier database documentation are **not edited** until a separately approved coordinated code/DDL migration. See the original [master planning register](../mzizi-data-schema-storage-and-pipelines-redesign.md).
+
 ## Implementation safeguards (later, only after approval)
 
 Run a read-only live schema and data inventory, reconcile drift, confirm orphan/duplicate counts, and benchmark representative SQL before proposing final DDL. Validate true FK support in Dryv/TypeORM generator. Use non-destructive migrations, staged constraint validation, stable IDs, versioning and compatibility/rollback plans. Database actions, code, tests and tasks are **not authorized by this planning guide**.
