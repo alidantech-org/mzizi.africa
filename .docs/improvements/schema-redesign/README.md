@@ -250,3 +250,52 @@ Run a read-only live schema and data inventory, reconcile drift, confirm orphan/
 ## Related source redesign planning
 
 See [source redesign and adaptive website intelligence](../source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
+
+
+## 2026-11-07 addition: meaningful column names and centrally monitored data freshness
+
+**USER REQUIREMENT FOR HUMAN REVIEW, NOT APPROVED DDL:** Prefer names that tell the reader what the column represents **in its own table**. Do not rename all `valid_from`/`valid_to` columns mechanically to an equally vague pair, and do not create a second per-table blanket of `last_checked_at`, `last_verified_at`, `hot` or `next_refresh_at` fields. Extend the prior temporal/minimal-field review with these two tests.
+
+### Semantic naming convention: meaning first, consistent syntax second
+
+| Existing generic pattern | Better **domain example**, subject to source semantics | Distinction to validate |
+|---|---|---|
+| `political.memberships.valid_from/to` | `joined_on` / `left_on` | Joining date may differ from registration/approval/announcement |
+| `governance.holders.valid_from/to` | `appointed_on`, `assumed_office_on`, `left_office_on` | Legal appointment, assumption and departure are distinct events |
+| `legal.instruments.valid_from/to` | `enacted_on` / `commenced_on` / `repealed_on` | Publication, assent and force of law may differ |
+| `procurement.tenders.valid_from/to` | `published_at` / `closes_at` | Tender issuance is not contract effective period |
+| `procurement.contracts.valid_from/to` | `signed_on` / `effective_from` / `expires_on` | Signature, effective date and termination differ |
+| `geography.boundaries.valid_from/to` | `effective_from` / `effective_until` | Dated boundary relation is not necessarily legal jurisdiction's existence |
+| `participation.submissions.valid_from/to` | `submitted_at` / `withdrawn_at` | Submission/withdrawal is an action, not generic truth-validity |
+| `source.captures` | `fetched_at` / `captured_at` | Retrieval is not successful verification |
+
+**Suffix guidance:** `_on` ordinarily means calendar date, `_at` precise timezone-aware timestamp, and `_from` / `_until` an interval with documented inclusive/exclusive boundaries. Apply only where actual facts match. Exact modern dates normally need no companion `from_precision` / `to_precision`. Historical/partial dates should preserve uncertainty without manufacturing a precise day. A generic validity interval remains legitimate **if the relation itself genuinely has interval validity** and this terminology is clearest.
+
+**Mandatory column decision per table:** (1) the exact fact and source meaning; (2) whether a parent pattern/legal provision already owns applicability; (3) KEEP / RENAME / REMOVE / DERIVE / MOVE / ADD; (4) user-facing example row; (5) real as-of/current query; (6) hard-FK and migration consequences; (7) user validation. Names are **examples**, not approved column mappings.
+
+### Data freshness is cross-cutting monitoring metadata, not real-world status
+
+**USER PROPOSAL:** Classify the changing nature of data and continuously track last check, last successful verification, source observation, due time and refresh history. **ASSISTANT RECOMMENDATION:** Use versioned rules under proposed `reference` ownership and operational verification/check records in `engine`, supported by `source` evidence. A table-level freshness default must be overridable for **field groups, relationships, specific canonical records and sources**; some office identities are cold even while holder relations are hot.
+
+Policy labels `hot` / `warm` / `cold` / `event-driven` describe *monitoring priority*, not fact truth, source authority or the existing seeded/collected/derived origin class. Exact labels and intervals are OPEN. Schedule/freshness priority may adapt to upcoming legal deadlines, elections, procurement closing dates, source change rates, source trust, cost and risk.
+
+| Monitoring concept | Meaning; recommended owner |
+|---|---|
+| `last_checked_at` | Last attempted check, successful or failed; engine run/check ledger |
+| `last_verified_at` | Last evidence-backed confirmation **of this particular fact or relationship**, even if its value is unchanged; verification history |
+| `last_source_seen_at` | Last source availability/response/observed publication; source/crawl history |
+| `last_changed_at` | Last **clearly defined** source/claim/canonical change—not one ambiguous timestamp for all three |
+| `next_check_at` | Scheduler policy result or queued check, recalculable when rule/priority changes |
+| `verification_status` | Verified/overdue/unknown/conflicted/unavailable states; distinguish current fact accuracy from workflow status |
+
+A website downloaded today may be stale as an authority for a public appointment. A legal text written decades ago may still be authoritative. **Stale means the evidence has exceeded a verification policy, not that the canonical fact is false.** An unchanged confirmed result advances successful verification, not the canonical row's factual modification time. An inaccessible page advances the attempt timestamp but must not masquerade as verification.
+
+### Schedules/events/manual triggers must work through one control plane
+
+The proposed sequence is: `reference` schedule and watch policy → planned/announced/verified `activity` occurrence or verified source change → `engine` scheduler/admission and dedup → bounded research pipeline → `source` proof → controlled candidate/review/promotion → freshness record or corrected canonical fact. An admin/agent can additionally request a scoped recheck **without asserting an event**. Scheduled time passing is never proof a real-world event happened. Admin event submissions require permissions and evidence; approval state must be distinguishable.
+
+Reuse existing `engine.jobs`, `gaps`, `staging` and `source.verifications` before adding new records. Reuse a **single scheduler/lease/host admission boundary** across third-party tool adapters; never spawn multiple competing independent polling loops. All event-to-domain links and target fact/field-group associations must eventually satisfy the user's **hard cross-schema FK** integrity policy.
+
+**Example validation:** a scheduled election triggers candidate monitoring but not fictitious results; an officially published census report refreshes relevant `statistical` vintages; parliamentary schedule changes trigger legal agenda research; a budget submission deadline triggers verification rather than auto-approval; an admin adding an appointment announcement creates a sourced proposal and holder recheck, not an unverified appointment.
+
+**Approval status:** naming policy and freshness/event-driven requirements are newly recorded planning directions. Specific table sets, physical column names, monitoring cadence, source verification threshold, role permissions and approval/promotion rules remain for the user's schema-by-schema sign-off. See [activity](activity.md), [reference](reference.md), [engine](engine.md), [source](source.md), [independent pipelines](../independent-data-pipelines.md).

@@ -166,3 +166,24 @@ See [source redesign and adaptive website intelligence](source-redesign/README.m
 ## Research adapter integration (planning)
 
 See [replaceable adapters and one engine-owned scheduling boundary](source-redesign/11-tool-integration-and-contracts.md), [existing S3 artifact lineage](source-redesign/12-artifact-lifecycle-and-lineage.md) and [benchmark gates](source-redesign/13-benchmarks-and-research-questions.md). Do not independently deploy multiple crawler schedulers or refresh loops (current engine, Scrapy, Crawlee, changedetection.io, browser agents) without shared host admission, leases, budgets, dedup and source policy. All tool adoption and Taskcode tasks remain unapproved.
+
+
+## 2026-11-07 event-driven monitoring and admin/agent refresh execution
+
+**USER IDEAS; planning only:** Allow agents to watch authorized official websites for **announcements/news** that cause specific data rechecks; allow authenticated admins to record event information or issue direct refresh/research requests; combine legally prescribed schedules, real activity occurrences, source change detection and manual requests in one system. The engine must be able to track a verified no-change result separately from a discovered difference.
+
+### One reusable pipeline contract, many trigger sources
+
+Trigger context (proposed fields, not finalized schema): `trigger_type` (schedule_due, activity_announced/verified, source_section_changed, dependency_changed, manual_admin, approved_agent_monitor), `trigger_id`, `rule_version`, `jurisdiction_id`, `subject/entity`, `target field_group`, `source assessment`, `source/document hash`, `requested_by`, `approved_by` (when applicable), `due_at`, `idempotency_key`, and budget limits. These are **contract concepts**, not a requirement for columns on each table.
+
+An approved agent may run a registered generic capability such as `discover_official_announcement` or `verify_current_holder` with a source profile selected from data. A country-specific parser (e.g. for an official election or statistics publisher) is a replaceable adapter under a jurisdiction manifest, never a hardcoded branch in the universal watcher. Verify official source access before fetching. Reuse site structure/Markdown hashing to avoid unnecessary downloads, while still scheduling revalidation when sources are stale even if content hashes match.
+
+**Pipeline outcomes**: successful verified unchanged; supported changed value/relationship → staged candidate and controlled promotion; conflicting sources → claim/review; unknown/not-applicable; blocked legal collection; unavailable/failed check; postponed/cancelled activity. “New HTML/Markdown” ≠ “changed canonical fact”; “no changed website content” ≠ “fact independently verified”.
+
+**Admin input requirements (design to validate):** Separate commands for (A) submit an activity candidate with source and event date, (B) request a one-time scoped refresh without stating a new fact, (C) create a bounded recurring monitor or schedule exception, (D) approve/reject reviewed activity/candidate when RBAC allows. Include actor identity, reason, source, jurisdiction, target, rate/budget and audit trail. Don't silently give any logged-in administrator permission to mutate highly sensitive canonical facts. Admin actions need explicit review depending on source sensitivity, event kind and consequences.
+
+**Systemic safeguards**: only one engine scheduler/leases/host admission boundary; rule/versioned dependencies, rate limits, retries, cancellation and cooldown; dedup by rule/target/event/source version/due window; prevent event→verification→event infinite loops; only refresh affected domains/field groups, and recompute derived results only when accepted upstream facts change. Avoid independent polling services secretly bypassing the engine.
+
+**Cross-domain examples**: `electoral` official date/nomination/result updates; `statistical` census data release/vintage; `legal` parliament readings and Acts; `finance` budget timetables/versions; `governance` appointments; `procurement` tender deadline/award. Each action follows schedule → activity/source evidence → engine → candidates/verifications → reviewed domain changes, without duplicating canonical subject identities.
+
+**Still open:** executable manifest grammar, one source of truth for verification status, verification ledger FK target design, scheduler/job reuse, cadence/tier thresholds, agent permissions, administrator form workflow, schedule rules vs real-world event statuses, UI status vocabulary and legal/source constraints. These require user validation and separate implementation/task approval. See [schema-wide freshness rule](schema-redesign/README.md) and [activity](schema-redesign/activity.md).

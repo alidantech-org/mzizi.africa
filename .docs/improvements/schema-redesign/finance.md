@@ -104,3 +104,12 @@ Before consolidation, audit which downstream tables and API contracts reference 
 **Domain-specific guidance:** Fiscal periods already have explicit dates; budget revisions need edition/approval dates, transactions need paid/booked times, loans need agreement/maturity dates, disbursements and repayments need occurrence dates. These are different semantics, not one blanket valid_from/to pair. Keep finance history and correct via versioning/reconciliation, not soft-delete or generic current flags.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+
+## 2026-11-07 public budget schedules, announcement events and verification
+
+**Planning only:** Under `reference`, evaluate generic legally based budget/fiscal schedule definitions and watcher rules (submission deadlines, debates, approval, supplementary budgets, Treasury/public reports). `activity` records expected/announced/completed stages and amendments with evidence; `finance` retains budgets, fiscal units, money amounts, source editions, expenditures/transfers and true financial events. The existence of a budget deadline or debate **does not prove approval, appropriation or payment**.
+
+**Meaningful fields:** `finance.years.starts_on/ends_on` already defines fiscal periods. A budget `submitted_on`, `approved_on` and `revised_on` are different facts; expenses have `paid_at` or `booked_at` only if they mean actual transactions. Do not replace generic `valid_from/to` with unrelated renamed dates by template. An active fiscal process can have frequent monitoring but its prior approved edition and historical payment ledger remain cold unless an official correction or new source appears.
+
+**Agent/admin flow:** An official-source announcement or admin-submitted budget event becomes a sourced `activity` candidate, may trigger budget publication checks by finance unit/jurisdiction and period, then create staged comparisons against approved `finance.budgets` and `statistical` derived measures. Advance verification history for unchanged facts, not their value timestamps. Preserve published versions and legal authority. Source selection and schedules must be jurisdiction-manifest driven, never embedded Kenya-specific constants. Final tables, columns and review thresholds remain **OPEN**.

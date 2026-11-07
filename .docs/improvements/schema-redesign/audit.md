@@ -87,3 +87,8 @@ Audit the exact three current TypeORM entity fields and their generic target ref
 **Domain-specific guidance:** Audits and accountable decisions are immutable time-stamped events rather than indefinitely valid entities. Keep recorded_at/decided_at and versioned correction events where necessary; no is_current toggling of history or blanket soft deletion. Distinguish public participation withdrawal from permanent audit evidence.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+
+## 2026-11-07 accountability for event-triggered updates (planning)
+
+Admin-created activities, approved source announcements, schedule-rule changes, ad-hoc refresh requests, agent monitoring authorizations and canonical value promotions require durable actor/decision lineage. **Do not treat engine verification attempts or source downloads as official decisions.** An admin may submit a proposal without approving it, and an unchanged successful recheck need not be a canonical edit. The audit model should show who authorized a monitor, who approved an activity, source evidence, which event/rule caused a job, whether a candidate was rejected/promoted, and old/new canonical version when modified. Retain history and privacy-safe access to internal audit events. Final FK actor/target links, retention and whether audit consumes engine job outcomes remain OPEN.

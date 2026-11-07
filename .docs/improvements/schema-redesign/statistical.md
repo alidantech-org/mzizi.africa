@@ -110,3 +110,14 @@ Audit `fields` vs `datasets` and `categories` vs `reference.classifications` fir
 **Domain-specific guidance:** Observations already reference reporting periods and release vintages; generic validity windows and is_current may duplicate period/vintage/source editions. Dimension membership and indicator definitions need dates only if definitions genuinely change. Preserve all official revisions and derived-input lineage; soft-delete belongs to optional import drafts, not published observations.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+
+## 2026-11-07 census/publication calendars and statistical freshness
+
+**Planning only:** Distinguish a **census enumeration event**, planned release, actual publication of preliminary tables and later revised statistical vintages. `reference` can define jurisdiction/source-specific census/reporting schedules and release watch policies; `activity` can record announced and actual milestones. The published statistical figures, indicator meanings, observed geography, periods and release versions remain canonical in `statistical`, not duplicated into the event.
+
+A verified official KNBS or equivalent provider release should trigger focused dataset/vintage/distribution refresh, provenance capture, dimensional validation and recomputation of affected derived measures. A predicted release date merely creates a due check; it must not generate made-up population figures. A newly downloaded file is not necessarily a new vintage or verified observation.
+
+**Hotness granularity:** A historical census observation can be a cold fact but have an event-driven recheck if the publisher issues corrections. A rapidly updated projection series may be warm/hot by release policy. Field groups like measured value, classification/methodology, data release/vintage and source availability have different verification clocks; avoid per-observation copies of every monitoring timestamp or a meaningless `is_current` flag. Link verification history to canonical observation identity, vintage, field group and supporting source with enforceable relationships.
+
+**Column semantics:** `statistical.periods.starts_on/ends_on` already expresses a reporting period. Do not add universal `valid_from/to/precision` to every observation. Distinguish `released_on`, `reported_period_id`, `verified_at`, `computed_at` as separate concepts only if their owning table/workflow needs them. Exact physical fields, aggregation rules and appropriate hotness thresholds remain **OPEN**.
