@@ -565,3 +565,14 @@ The user's preference for **only a few non-schema cross-cutting documents** rema
 ## Related source redesign planning
 
 See [source redesign and adaptive website intelligence](source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
+
+
+## 25. Human pattern decisions: reference ownership, cascaded canonical data and DB watchers (2026-11-07)
+
+Newest user input qualifies the prior suggestion of a dedicated \`pattern\` schema. **USER LEAN:** manage shared, DB-backed **pattern and watcher definitions in \`reference\`** alongside jurisdictional/classification data. **USER DIRECTION:** patterns derive from existing verified jurisdiction/geography/legal and other relevant records, can produce **real incomplete canonical rows** instead of default \`expectations\` output, and those outputs may become prerequisites for further pattern applications. These dependencies need versioning, verified establishment thresholds, stable IDs, non-destructive reconciliation and traceable provenance.
+
+**OPEN:** exact hard-FK mechanism linking generated rows and multiple contributing patterns; real physical place/presence row versus an unresolved address/occupancy gap; whether a separate \`pattern\` schema is still justified after reference-domain review. The user prefers **mostly database-managed manifests with approved immutable filesystem versions**.
+
+**USER REQUIREMENT:** generic pattern/watch code must be country-neutral: IEBC, KNBS, ORPP, Kenya law and country counts are **manifest/seed/source-adapter context**, not hardcoded branches in universal scheduling, gap-checking, pattern evaluation or repair. Existing \`reinforcement.py\`, \`gapclose.py\` and \`patterns.ts\` are concrete code points to assess in a future approved refactor.
+
+No schema-count change is implied by placing patterns in \`reference\`. No code change, migration or Taskcode task is authorized. Detailed plan: [Data classes and pattern DAG](data-categories-and-patterns.md); [reference schema review](schema-redesign/reference.md), [geography schema review](schema-redesign/geography.md), and [engine schema review](schema-redesign/engine.md).

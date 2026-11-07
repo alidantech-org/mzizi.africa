@@ -140,3 +140,18 @@ Audit all migration-created tables and live rows, TypeORM/engine writer paths an
 ## Related source redesign planning
 
 See [source redesign and adaptive website intelligence](../source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
+
+
+## 2026-11-07 refinement: reference-owned pattern/watch definitions, engine-owned work
+
+**User lean (not approved DDL):** Instead of defining independent pattern tables in every domain or necessarily creating a new \`pattern\` schema, investigate \`reference\` as the home for shared **long-lived pattern and watcher definitions**. \`engine\` remains the home for execution, retries, gaps and claims. The pattern is established by real jurisdiction/geography/legal records; a generated canonical record may activate further *preapproved* pattern applications.
+
+**Engine runtime concepts to evaluate:** a versioned pattern application/run, generated-output reconcile result, dependency invalidation, one pending research job per deduplicated gap/trigger, watcher evaluation log, source capability selection, claim/quality/review and eventual controlled update. Much of this already exists in \`engine.jobs\`, \`engine.gaps\`, \`gap_attempts\`, \`claims\`, \`claim_standings\`, \`staging.candidates\` and \`promotions\`; reuse before adding tables.
+
+**Watcher manifests mostly DB-managed:** \`reference\` definition and file version; engine compiles approved conditions from validated Dryv/table metadata and runs field/relationship/coverage/freshness/conflict checks. A rule can trigger on established row creation, missing FK relation, upstream source change, legal amendment, geo unit change or age of verification. Unknown/not-applicable/known-absent/verified/conflicted states prevent endless retries. Pipeline tools produce candidates with evidence; policy-controlled reviewer promotion fills real domain fields/relationships and preserves history.
+
+**Core neutrality defect observed in repository:** \`source/backend/engine/data/src/mzizi_data/reinforcement.py\` hardcodes a \`RULES\` dictionary naming \`knbs\`, \`iebc\`, \`orpp\`, \`kenya_law\`; \`gapclose.py\` has \`orpp_refill\` and Kenya-specific party code values; \`source/backend/engine/database/src/patterns.ts\` defaults to \`ke\`, knows county numbers and uses \`ke-office-patterns.json\`. Their generic orchestration behavior should become context-free; country facts and official adapter choices should be loaded via source/jurisdiction manifests and registered tools. Dedicated IEBC/KNBS adapters can still exist as **plugins**, just not as conditions hardcoded into the universal watcher. No tests/code/refactor are authorized yet.
+
+**Dependency safety:** a directed acyclic prerequisite graph, bounded fan-out, stable natural keys and input-version hashes, dry-run/preview/diff before apply, non-destructive sync, independent legal/geo applicability tests and transaction-controlled promotion. Source changes trigger re-evaluation of **affected** rows, not a whole-database rescan. The chosen generated-output hard-FK mechanism remains OPEN.
+
+Full discussion: [Data classes and pattern graph](../data-categories-and-patterns.md). **No tasks or runtime changes authorized.**

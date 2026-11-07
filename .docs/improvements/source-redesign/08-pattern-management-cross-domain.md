@@ -88,3 +88,16 @@ Propose a diff: new, adopted, unchanged, missing, superseded expectation, confli
 8. How will pattern registry UI and future Taskcode implementation be sequenced under user direction?
 
 **No pattern schema/table/runtime is approved.**
+
+
+## 2026-11-07 preference update: pattern registry under reference (candidate), not a new schema by default
+
+The user subsequently suggested that the **existing \`reference\` schema**, alongside jurisdictions and classifications, could own cross-domain pattern definitions, tool/target manifests, categories, dependencies and watcher definitions. Their reason: patterns should **originate from real existing jurisdiction, geographic and legal facts** and then generate canonical rows that enable subsequent approved patterns. They have **not decided** how generated-row lineage should use hard FKs, or when an unknown physical presence should materialize as a place/occupancy.
+
+This changes the priority of the previously listed alternatives: **\`reference\` definitions + \`engine\` execution is now a user-proposed option to evaluate first**, versus a dedicated \`pattern\` schema, all definitions in \`engine\`, or per-domain pattern managers. Do not interpret the prior assistant preference for a new \`pattern\` schema as user approval.
+
+The default outcome for an established entity is now proposed to be a **real incomplete canonical row**, with watcher gaps for unknown attributes/relationships; merely possible entities produce a **discovery job**, not a false canonical row. Evaluate retiring/consolidating \`place.expectations\` *only after* a safe migration and explicit design decision, respecting the difference between a mandated physical premises and an actually observed site.
+
+Watch manifests are **mostly database-managed**, with approved immutable file versions in \`filesystem\`. Generic engine logic must not branch on IEBC/KNBS/ORPP/Kenya; resolve jurisdiction/source-specific config and specialized adapters through manifests and a registered capability interface.
+
+See [central pattern/fill-in-the-gaps proposal](../data-categories-and-patterns.md) for DAG dependencies, real-row criteria, physical presence alternatives, watch rules, neutral core and unresolved hard-FK decisions. **No implementation approved.**
