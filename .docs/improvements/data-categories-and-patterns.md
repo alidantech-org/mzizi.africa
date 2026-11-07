@@ -93,35 +93,35 @@ See [source redesign and adaptive website intelligence](source-redesign/README.m
 
 ## New user direction, 2026-11-07 — reference-owned pattern graph and real-row fill-in-the-gaps
 
-**Status: planning discussion, NOT an approved schema or runtime.** This section records the user's newest preferences, which refine earlier suggestions that each domain should have its own pattern tables or that \`place.expectations\` should be the default output.
+**Status: planning discussion, NOT an approved schema or runtime.** This section records the user's newest preferences, which refine earlier suggestions that each domain should have its own pattern tables or that `place.expectations` should be the default output.
 
 ### Decisions and unanswered questions, verbatim in meaning
 
-- **USER LEAN — pattern ownership:** Explore managing shared cross-domain pattern definitions **inside \`reference\`**, alongside jurisdiction, classifications and the other established data required by pattern evaluation. Do **not** create a dedicated \`pattern\` schema on the basis of the prior recommendation.
+- **USER LEAN — pattern ownership:** Explore managing shared cross-domain pattern definitions **inside `reference`**, alongside jurisdiction, classifications and the other established data required by pattern evaluation. Do **not** create a dedicated `pattern` schema on the basis of the prior recommendation.
 - **USER DIRECTION — dependency chain:** Pattern establishment should start from **existing, real** records, usually jurisdictions, geographical units, legal instruments/provisions and rules. A pattern can produce canonical records that in turn become inputs for **subsequent pattern applications**. This may branch or merge: one versioned dependency graph, not a Kenya-specific fixed linear hierarchy.
-- **OPEN — generated-row link implementation:** No exact lineage/FK structure selected. Evaluate FK-backed associations, direct origin links where genuinely single-origin, and alternatives that still enforce referenced-record existence. Do not accept \`target_kind + target_id\` alone as a hard FK.
+- **OPEN — generated-row link implementation:** No exact lineage/FK structure selected. Evaluate FK-backed associations, direct origin links where genuinely single-origin, and alternatives that still enforce referenced-record existence. Do not accept `target_kind + target_id` alone as a hard FK.
 - **OPEN — physical place materialization:** Patterns may establish geographically scoped presence or occupation relationships associated with actual offices, while exact premises, address or coordinates are found later. Determine when a **real presence** is established versus only a legal **obligation to maintain premises**; never manufacture a specific building, address or actual occupant.
-- **USER LEAN — manifest management:** Watcher and pattern definitions should be **mostly database-managed**, with approved immutable/versioned files stored in \`filesystem\` for large/complex rule bodies, source manifests and site structures.
+- **USER LEAN — manifest management:** Watcher and pattern definitions should be **mostly database-managed**, with approved immutable/versioned files stored in `filesystem` for large/complex rule bodies, source manifests and site structures.
 - **USER REQUIREMENT — jurisdiction neutrality:** Generic engine and pattern/watcher logic must not directly encode IEBC, KNBS, ORPP, Kenya law or fixed Kenyan administrative counts. Such particulars belong in jurisdiction-specific *data/manifests/source adapters*, with reusable capability interfaces.
 
 ### Proposed coherent schema ownership (not yet accepted)
 
 | Schema | Proposed ownership |
 |---|---|
-| \`reference\` | Definition registry: pattern identity, immutable versions, categories, graph dependencies, applicability, validated target/field bindings, watch definitions, source-selection requirements and activation rules |
-| \`geography\`, \`legal\`, \`governance\`, etc. | Canonical inputs and outputs, including partially researched real-world entities; domain-specific business rules remain in owning domain |
-| \`engine\` | Evaluations, generation runs, output reconciliation, gaps, watcher state, discovery jobs, retries, candidates, claim reviews and promotion |
-| \`filesystem\` | Immutable file versions: large rule/CSV/YAML/JSON bundles, source-site structures, generated discovery plans and pipeline evidence artifacts, stored with existing external S3 |
-| \`source\` | Verified publishers and site/source profiles, captures, research methods and evidence |
-| \`audit\` | Accountable human/agent approval, corrections, pattern activation and record-change decisions |
+| `reference` | Definition registry: pattern identity, immutable versions, categories, graph dependencies, applicability, validated target/field bindings, watch definitions, source-selection requirements and activation rules |
+| `geography`, `legal`, `governance`, etc. | Canonical inputs and outputs, including partially researched real-world entities; domain-specific business rules remain in owning domain |
+| `engine` | Evaluations, generation runs, output reconciliation, gaps, watcher state, discovery jobs, retries, candidates, claim reviews and promotion |
+| `filesystem` | Immutable file versions: large rule/CSV/YAML/JSON bundles, source-site structures, generated discovery plans and pipeline evidence artifacts, stored with existing external S3 |
+| `source` | Verified publishers and site/source profiles, captures, research methods and evidence |
+| `audit` | Accountable human/agent approval, corrections, pattern activation and record-change decisions |
 
-Keep \`reference\` for long-lived **reusable definitions**; \`engine\` for transient **operational state**. The reference schema must not become a generic opaque dumping ground, and the table catalogue must reflect validated, versioned Dryv/PostgreSQL contracts rather than executable arbitrary SQL.
+Keep `reference` for long-lived **reusable definitions**; `engine` for transient **operational state**. The reference schema must not become a generic opaque dumping ground, and the table catalogue must reflect validated, versioned Dryv/PostgreSQL contracts rather than executable arbitrary SQL.
 
 ### Pattern hierarchy is a directed acyclic dependency graph (DAG)
 
 Example dependency shape (conceptual):
 
-\`\`\`text
+```text
 reference.jurisdictions              legal.provisions
         |                                   |
         v                                   |
@@ -140,7 +140,7 @@ geography.units + geo relationships         |
         independently verified records/relations
                         |
         may enable another applicable pattern
-\`\`\`
+```
 
 Other inputs can include a verified organization, finance unit, period, website structure, or evidence-backed institution. Country-specific instance values stay in seed data, registries and manifests. An existing child record may activate a *preapproved* downstream pattern definition; that does **not** mean it can automatically author and execute unapproved new rule code.
 
@@ -150,40 +150,40 @@ Versioned dependency edges must specify input/output data contracts, applicabili
 
 | Establishment level | Canonical write | Gap or discovery action |
 |---|---|---|
-| **Existence established** by verified legal/structural authority and correct applicability | Create or adopt the **real domain row** (e.g. \`governance.offices\`) even if attributes are null or related rows unknown | Watch missing holder, date, place, contact, supporting evidence and freshness according to rules |
+| **Existence established** by verified legal/structural authority and correct applicability | Create or adopt the **real domain row** (e.g. `governance.offices`) even if attributes are null or related rows unknown | Watch missing holder, date, place, contact, supporting evidence and freshness according to rules |
 | **Entity/presence independently established, details unknown** | Create or adopt canonical entity or proven presence relationship; leave unknown attributes nullable with explicit state/provenance | Investigate address, geocoding, full naming or the real related entity |
 | **Only plausible/hypothetical** | **NO new canonical fact** | Emit deduplicated research/discovery job; optionally store a file-backed research plan and evidence; promote a canonical row only after establishment |
 
-\`place.expectations\` should not be the default place for guaranteed entities. Its existing migration and accepted historical design must be **reevaluated**, but not removed just because this new option looks preferable. If a place is actually established, use \`geography.places\` even when the address/coordinates are missing; if merely required by an office rule, create a **gap for physical premises**, not an invented occupied building or an asserted occupancy.
+`place.expectations` should not be the default place for guaranteed entities. Its existing migration and accepted historical design must be **reevaluated**, but not removed just because this new option looks preferable. If a place is actually established, use `geography.places` even when the address/coordinates are missing; if merely required by an office rule, create a **gap for physical premises**, not an invented occupied building or an asserted occupancy.
 
 ### Physical presence nuance — preserve the user's option without false claims
 
 A known office may have a legal obligation to provide a physical service point while MZIZI lacks its address. Possible designs to compare:
 
-1. **Office + relationship gap (minimal):** real office; watched gap says locate physical presence; create \`place\` and an occupancy FK only after site existence is supported.
-2. **Real geo-scoped presence, place unresolved:** a verified presence record/occupancy concept with FK to office and geo unit, **nullable place FK**, and explicit \`location_unknown\` state; later link verified \`place.id\`. This is appropriate when an actual presence is established, not solely legally expected.
+1. **Office + relationship gap (minimal):** real office; watched gap says locate physical presence; create `place` and an occupancy FK only after site existence is supported.
+2. **Real geo-scoped presence, place unresolved:** a verified presence record/occupancy concept with FK to office and geo unit, **nullable place FK**, and explicit `location_unknown` state; later link verified `place.id`. This is appropriate when an actual presence is established, not solely legally expected.
 3. **Verified named site, incomplete physical details:** real place row with known name or other stable identity, geo scope/precision and null street/coordinates, plus real occupancy link.
 
 Do not prefill an arbitrary address string. Keep geospatial scope, physical site, occupancy, statutory obligation and research completeness distinct, and model one/many physical premises correctly.
 
 ### Mostly DB-managed pattern and watcher manifests
 
-Potential **\`reference\` definition concepts**: \`patterns\`, \`pattern_versions\`, \`pattern_dependencies\`, \`pattern_bindings\`, \`watch_rules\`, \`watch_versions\`, plus shared classifications **only if** they have genuine unique semantics. These are **candidate table names**, not approved DDL. Tags, categories and cross-domain links should support discoverability, but must not replace real FKs with an unconstrained EAV graph. Pattern bodies may be a validated declarative DB structure or an approved \`filesystem.versions\` object reference. \`engine\` uses approved versions and records runs and outcomes. APIs/admin UI eventually allow draft/edit/preview/diff/approve/activate/sync, with clear permissions and audit.
+Potential **`reference` definition concepts**: `patterns`, `pattern_versions`, `pattern_dependencies`, `pattern_bindings`, `watch_rules`, `watch_versions`, plus shared classifications **only if** they have genuine unique semantics. These are **candidate table names**, not approved DDL. Tags, categories and cross-domain links should support discoverability, but must not replace real FKs with an unconstrained EAV graph. Pattern bodies may be a validated declarative DB structure or an approved `filesystem.versions` object reference. `engine` uses approved versions and records runs and outcomes. APIs/admin UI eventually allow draft/edit/preview/diff/approve/activate/sync, with clear permissions and audit.
 
-**Watch rule scope** can be table/field, missing relationship, missing entity, stale evidence, conflicting claim or incomplete required coverage. Evaluate applicability before queueing; accepted states may be \`unknown\`, \`known_absent\`, \`not_applicable\`, \`disputed\`, \`stale\` or \`verified\`, distinct from entity identity and historical life-cycle status.
+**Watch rule scope** can be table/field, missing relationship, missing entity, stale evidence, conflicting claim or incomplete required coverage. Evaluate applicability before queueing; accepted states may be `unknown`, `known_absent`, `not_applicable`, `disputed`, `stale` or `verified`, distinct from entity identity and historical life-cycle status.
 
 The manifest specifies: registered target table and allowed columns; canonical/jurisdiction/geo scope; predicate and condition kind; required relationship cardinality; source selection by publisher role/capabilities; bounded pipeline operations; review/promotion policy; triggers (on materialization, dependent update, new source, freshness deadline); retry policy and dedup key. Use validated manifests and registered implementations, not arbitrary user-authored SQL/Python executed as a privileged worker.
 
-**User-neutrality rule:** generic capabilities like \`lookup_official_registry\`, \`extract_election_results\`, \`extract_statistical_dataset\`, \`find_current_office_holder\`, \`resolve_physical_premises\` receive source-specific adapters and scope manifests at runtime. \`iebc\`, \`knbs\`, \`orpp\`, \`kenya_law\` are **configuration data, named adapters or jurisdiction fixtures**, never branching logic in the universal watch engine.
+**User-neutrality rule:** generic capabilities like `lookup_official_registry`, `extract_election_results`, `extract_statistical_dataset`, `find_current_office_holder`, `resolve_physical_premises` receive source-specific adapters and scope manifests at runtime. `iebc`, `knbs`, `orpp`, `kenya_law` are **configuration data, named adapters or jurisdiction fixtures**, never branching logic in the universal watch engine.
 
 ### Unresolved matters (explicitly not approved)
 
-- Final placement of pattern definitions in \`reference\` versus a dedicated schema, after checking if \`reference\` becomes conceptually overloaded.
+- Final placement of pattern definitions in `reference` versus a dedicated schema, after checking if `reference` becomes conceptually overloaded.
 - Exact pattern version/applicability/dependency/target table design and typed **hard-FK lineage** to any generated row.
 - How much source evidence is sufficient to establish a real entity versus authorize only a research task.
-- Whether an unknown-place occupancy should use nullable \`place_id\`, a separate confirmed \`presence\` identity, or no row until independently located.
-- Watcher rule ownership (\`reference\` definitions/\`engine\` evaluation), SQL compilation/query safety, permissions and change propagation.
-- How to reconcile previous \`place.expectations\`, historical office patterns, existing seed fixtures and claims without losing provenance.
+- Whether an unknown-place occupancy should use nullable `place_id`, a separate confirmed `presence` identity, or no row until independently located.
+- Watcher rule ownership (`reference` definitions/`engine` evaluation), SQL compilation/query safety, permissions and change propagation.
+- How to reconcile previous `place.expectations`, historical office patterns, existing seed fixtures and claims without losing provenance.
 - Exact country-neutral manifest schema, adapter discovery and no-Kenya-hardcoding refactor boundaries.
 - Runtime approvals, negative findings/known absence, stale refresh policy, budgets and safe automatic correction thresholds.
 

@@ -117,17 +117,17 @@ See [master register](../mzizi-data-schema-storage-and-pipelines-redesign.md), [
 
 ## 2026-11-07 human proposal: canonical physical presence without expectation tables as a default
 
-**Planning only:** The user does not want \`place.expectations\` to be the usual destination for pattern-generated guarantees. If an entity is truly established, it should become a real row with unknown fields left unfilled and monitored. This **reopens** the earlier accepted expectation/occupancy design for user review; it does not automatically delete or rename an existing table.
+**Planning only:** The user does not want `place.expectations` to be the usual destination for pattern-generated guarantees. If an entity is truly established, it should become a real row with unknown fields left unfilled and monitored. This **reopens** the earlier accepted expectation/occupancy design for user review; it does not automatically delete or rename an existing table.
 
-An established governor office belongs in \`governance.offices\` with a proper scope FK and no invented holder. A physical place is a different entity. Consider the following:
+An established governor office belongs in `governance.offices` with a proper scope FK and no invented holder. A physical place is a different entity. Consider the following:
 
-- **Established office, actual premises not established:** keep the real office and a gap requiring research of its location/physical presence; do not fabricate a \`place\` or claim verified occupancy.
-- **Independently established physical presence but its site unknown:** consider a dated geo-scoped \`presence\`/occupancy link with a real office/institution FK, real \`geo_unit_id\` FK and nullable \`place_id\`, a visible \`location_unknown\` state, and source evidence. Evaluate whether this breaks the present meaning of \`occupancies\`.
-- **Established site with incomplete coordinates/address:** create/reuse a real \`geography.places\` row with stable identity and nullable missing fields; link with FK to a proven occupancy, preserving history.
-- **Only an unverified possible site:** \`engine\` discovery job/file plan, not a canonical place row.
+- **Established office, actual premises not established:** keep the real office and a gap requiring research of its location/physical presence; do not fabricate a `place` or claim verified occupancy.
+- **Independently established physical presence but its site unknown:** consider a dated geo-scoped `presence`/occupancy link with a real office/institution FK, real `geo_unit_id` FK and nullable `place_id`, a visible `location_unknown` state, and source evidence. Evaluate whether this breaks the present meaning of `occupancies`.
+- **Established site with incomplete coordinates/address:** create/reuse a real `geography.places` row with stable identity and nullable missing fields; link with FK to a proven occupancy, preserving history.
+- **Only an unverified possible site:** `engine` discovery job/file plan, not a canonical place row.
 
 Legal **obligation** to have premises is not always proof of a specific **actual building/occupancy**. Country-root geographic scope does not equate to precise building location. A row's completeness state is separate from current/retired and independently evidenced/structurally mandated status.
 
-Future pattern/watch source: mostly DB-managed rules in proposed \`reference\` with \`engine\` gap and watcher execution, source evidence and versioned filesystem manifests. Reconsider \`place.expectations\` migration/adoption without losing historical provenance, stable IDs or resolved occupancies. **OPEN**: nullable FK vs separate presence table, mandatory/optional physical presence, exact evidence threshold, multiple premises, cardinality and site identity.
+Future pattern/watch source: mostly DB-managed rules in proposed `reference` with `engine` gap and watcher execution, source evidence and versioned filesystem manifests. Reconsider `place.expectations` migration/adoption without losing historical provenance, stable IDs or resolved occupancies. **OPEN**: nullable FK vs separate presence table, mandatory/optional physical presence, exact evidence threshold, multiple premises, cardinality and site identity.
 
 See [Pattern graph and materialization modes](../data-categories-and-patterns.md).
