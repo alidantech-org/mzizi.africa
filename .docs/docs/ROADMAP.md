@@ -51,7 +51,7 @@ Understand what exists before replacing it.
 
 ## Work
 
-- inventory all models in `source/backend/api-legacy`;
+- inventory all models in `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy`;
 - inventory Alembic migrations;
 - inventory seed datasets/scripts;
 - inventory scraper/extractor code;
@@ -95,7 +95,7 @@ Create trustworthy source-artifact custody before scaling extraction.
 
 ## Build
 
-`source/backend/files`
+`.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/files`
 
 Initial capabilities:
 
@@ -132,7 +132,7 @@ Separate extraction from the application API.
 
 ## Build
 
-`source/backend/engine/data` in Python.
+`.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data` in Python.
 
 Initial extractors:
 
@@ -162,7 +162,7 @@ Introduce AI where it creates leverage while preserving attribution and reviewab
 
 ## Build
 
-`source/backend/intelligence`
+`.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/intelligence`
 
 First tools:
 
@@ -203,7 +203,7 @@ Extract schema/migration/seed responsibility from the Python API.
 
 ## Build
 
-`source/backend/engine/database`
+`.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database`
 
 Initial commands/capabilities:
 
@@ -277,7 +277,7 @@ Replace FastAPI as the product API boundary.
 
 ## Build
 
-The NestJS service lives at `source/backend/api`; the old Python code was moved to `source/backend/api-legacy`.
+The NestJS service lives at `source/apps/api`; the old Python code was moved to `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy`.
 
 **Progress (2026-11-02):** generated from `dryv/` contracts for geography, legal, governance, elections, political, events, entities, finance, debt, procurement, statistics, services, reference and audit (about 135 operations); read use cases, the audit write paths with a contract-driven auth guard, Kenya and South Africa neutrality fixtures, and the contract and boundary checks are in place with 506 test files passing. Still open: data migration through database engine, the map and governance clients, heritage, linguistics, migration, colonial and pre-colonial domains, and an external auth provider integration.
 

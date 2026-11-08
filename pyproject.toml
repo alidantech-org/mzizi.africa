@@ -1,0 +1,22 @@
+# Python workspace root (uv). Members: the reusable packages under source/packages and the engine under source/backend/engine.
+# Install everything reproducibly with `uv sync --all-packages` (writes .venv, resolves from uv.lock). Run tools with `uv run`.
+# Tooling choice: uv was already installed in the environment and the old engine used pyproject/setuptools; uv adds one lock for all members.
+[project]
+name = "mzizi-workspace"
+version = "0.0.0"
+description = "Workspace root for the Mzizi Python packages and engine (not published)."
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv.workspace]
+members = ["source/packages/*", "source/backend/engine"]
+
+[dependency-groups]
+dev = ["pytest", "pytest-asyncio"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+# The archive under .docs is historical and must never be collected or executed.
+testpaths = ["source"]
+norecursedirs = [".docs", ".venv", "node_modules", "seed"]
+asyncio_default_fixture_loop_scope = "function"

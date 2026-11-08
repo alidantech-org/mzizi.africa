@@ -57,7 +57,7 @@ Use content hashes, portal IDs, stable aliases, dated records, reviewed conflict
 
 ## Grounded implementation starting points and risks
 
-The repository importer `source/backend/engine/data/src/mzizi_data/imports/procurement.py` already stages procuring entities and organizations, optional official county data, tender and contracts. Audit exactly when it writes the organization's geo_unit_id, the source address and the procuring unit's service scope; previous code risks conflating location and jurisdiction. Compare portal outputs to canonical target relationships and hard FKs, then plan non-destructive reconciliation, not silent reseeding.
+The repository importer `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/src/mzizi_data/imports/procurement.py` already stages procuring entities and organizations, optional official county data, tender and contracts. Audit exactly when it writes the organization's geo_unit_id, the source address and the procuring unit's service scope; previous code risks conflating location and jurisdiction. Compare portal outputs to canonical target relationships and hard FKs, then plan non-destructive reconciliation, not silent reseeding.
 
 Test: Same supplier bidding for contracts in different counties, joint award recipients, national procurer with local contract site, contract variation to date/value, explicit winning vs losing bidders, and provenance-based correction of a wrongly assigned county.
 

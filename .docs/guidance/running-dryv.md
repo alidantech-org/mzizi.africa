@@ -4,7 +4,7 @@
 
 # Running Dryv in this repository
 
-Dryv generates the NestJS API in `source/backend/api` from the contracts in `dryv/contracts`. It does run on this machine: the Dryv checkout is at `~/Projects/personal/alidantech-org/codepot/dryv` (pinned engine `6dba3100`), `uv` and `bun` are installed, and a full generation takes about three minutes. If a session reports that Dryv "cannot run here", the engine API was not started: follow the steps below before concluding anything.
+Dryv generates the NestJS API in `source/apps/api` from the contracts in `dryv/contracts`. It does run on this machine: the Dryv checkout is at `~/Projects/personal/alidantech-org/codepot/dryv` (pinned engine `6dba3100`), `uv` and `bun` are installed, and a full generation takes about three minutes. If a session reports that Dryv "cannot run here", the engine API was not started: follow the steps below before concluding anything.
 
 ## Steps
 
@@ -18,11 +18,11 @@ Dryv generates the NestJS API in `source/backend/api` from the contracts in `dry
 
    Wait about 20 seconds until the log shows `Running on http://127.0.0.1:8750`. A request to `/` answers 404; that is normal.
 3. **Generate** from the repository root: `DRYV_HOME=~/Projects/personal/alidantech-org/codepot/dryv bun $DRYV_HOME/source/apps/cli/bin/dryv.ts --api http://127.0.0.1:8750 --yes --no-input generate`. The first time on a machine run the same command with `trust --yes` instead of `generate`.
-4. **The run ends "failed" at the typecheck stage whenever a new operation was added.** That is expected: use cases are scaffolded, but the feature's `*.service.impl.ts` is project-owned and never regenerated. Run `cd source/backend/api && bunx tsc -p tsconfig.json --noEmit`, and for each missing method add, in `src/modules/<group>/<feature>/<feature>.service.impl.ts`, the use case import, the constructor parameter and a method that returns `this.<name>UseCase.execute(input)`. The abstract class in `<feature>.service.ts` lists every method required. Repeat until the typecheck is clean.
+4. **The run ends "failed" at the typecheck stage whenever a new operation was added.** That is expected: use cases are scaffolded, but the feature's `*.service.impl.ts` is project-owned and never regenerated. Run `cd source/apps/api && bunx tsc -p tsconfig.json --noEmit`, and for each missing method add, in `src/modules/<group>/<feature>/<feature>.service.impl.ts`, the use case import, the constructor parameter and a method that returns `this.<name>UseCase.execute(input)`. The abstract class in `<feature>.service.ts` lists every method required. Repeat until the typecheck is clean.
 5. **Adopt the shared list helper and verify**: `cd dryv && bun run adopt:list && bun run generated:check && bun run access:export`. A message "cannot adopt ... unexpected scaffold shape" for a hand-edited use case (such as `find-structure-versions`) is harmless.
-6. **Test**: `cd source/backend/api && bun run test` (about 15,900 unit tests); integration specs with `TEST_DATABASE_URL` pointing at `mzizi_test`, one file at a time.
+6. **Test**: `cd source/apps/api && bun run test` (about 15,900 unit tests); integration specs with `TEST_DATABASE_URL` pointing at `mzizi_test`, one file at a time.
 7. **Stop the server by PID**: `fuser -k 8750/tcp`. Never use `pkill -f` from the agent's shell; it matches the shell's own command line and kills it (exit 144).
-8. Commit the contracts, the generated output and the hand-added service methods together. Generated output under `source/backend/api` is tracked; Dryv state (`.dryv`, `dryv/staging`) is ignored.
+8. Commit the contracts, the generated output and the hand-added service methods together. Generated output under `source/apps/api` is tracked; Dryv state (`.dryv`, `dryv/staging`) is ignored.
 
 ## Traps
 

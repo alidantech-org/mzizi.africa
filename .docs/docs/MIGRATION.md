@@ -8,7 +8,7 @@
 
 The repository is consolidated, but the architecture is not yet consolidated around the final Mzizi system boundaries.
 
-`source/backend/api-legacy` contains the inherited Python political-governance backend. It is valuable because it contains domain thinking, SQLAlchemy models, Alembic migrations, seed data, file routes, scraping/extraction utilities and early API behavior.
+`.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy` contains the inherited Python political-governance backend. It is valuable because it contains domain thinking, SQLAlchemy models, Alembic migrations, seed data, file routes, scraping/extraction utilities and early API behavior.
 
 It should be treated as **source material to decompose**, not as the long-term backend shape.
 
@@ -61,22 +61,22 @@ No old module should be deleted simply because a new directory exists.
 
 | Current concern in Python service | Target owner |
 | --- | --- |
-| Web/document discovery | `source/backend/engine/data` |
-| Web fetching/scraping | `source/backend/engine/data` |
-| PDF/text/table extraction | `source/backend/engine/data` |
-| OCR and document parsing | `source/backend/engine/data` |
-| Source file metadata/storage routes | `source/backend/files` |
-| Raw/derived artifact lifecycle | `source/backend/files` |
-| AI classification | `source/backend/intelligence` |
-| AI-assisted cleaning | `source/backend/intelligence` |
-| Entity resolution suggestions | `source/backend/intelligence` |
-| Contradiction/evidence evaluation | `source/backend/intelligence` |
+| Web/document discovery | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data` |
+| Web fetching/scraping | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data` |
+| PDF/text/table extraction | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data` |
+| OCR and document parsing | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data` |
+| Source file metadata/storage routes | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/files` |
+| Raw/derived artifact lifecycle | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/files` |
+| AI classification | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/intelligence` |
+| AI-assisted cleaning | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/intelligence` |
+| Entity resolution suggestions | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/intelligence` |
+| Contradiction/evidence evaluation | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/intelligence` |
 | SQLAlchemy domain models | design input for canonical schema/contracts |
-| Alembic migrations | `source/backend/engine/database` migration source |
-| Seed scripts/data | `source/backend/engine/database` after classification by seed type |
-| Data repair/backfill scripts | `source/backend/engine/database` |
-| Public/query HTTP endpoints | NestJS `source/backend/api` |
-| Dashboard workflow endpoints | NestJS `source/backend/api` |
+| Alembic migrations | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database` migration source |
+| Seed scripts/data | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database` after classification by seed type |
+| Data repair/backfill scripts | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database` |
+| Public/query HTTP endpoints | NestJS `source/apps/api` |
+| Dashboard workflow endpoints | NestJS `source/apps/api` |
 | Authentication/authorization | future NestJS API / platform auth design |
 
 ## Phase 1 — Freeze architectural expansion inside FastAPI
@@ -245,7 +245,7 @@ Initial API responsibilities:
 
 Avoid generic CRUD-first design. Prefer domain/query/workflow endpoints that express Mzizi concepts.
 
-**Status (2026-11-02):** the NestJS API exists at `source/backend/api` with read endpoints for every contracted domain and the audit write paths; see the responsibility accounting at the end of this file.
+**Status (2026-11-02):** the NestJS API exists at `source/apps/api` with read endpoints for every contracted domain and the audit write paths; see the responsibility accounting at the end of this file.
 
 ## Phase 9 — Migrate applications
 
@@ -332,17 +332,17 @@ Dashboard researches/reviews
 
 # Responsibility accounting (2026-11-02)
 
-What the legacy Python service (`source/backend/api-legacy`) did, where each responsibility now lives, and whether the legacy code can go. AGENTS.md section 3 allows removal only after equivalent responsibilities are accounted for.
+What the legacy Python service (`.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy`) did, where each responsibility now lives, and whether the legacy code can go. AGENTS.md section 3 allows removal only after equivalent responsibilities are accounted for.
 
 | Legacy responsibility | New owner | Status | Can the legacy code be removed? |
 | --- | --- | --- | --- |
 | Geographic endpoints and mobile geography contract (`routes/geographic`) | NestJS `geography` group | Contracts, read use cases and tests done, including search, boundaries, children, hierarchy, map context, history, governance by place | Endpoints yes once clients switch; geo seed data (units, relationships, boundaries) not yet migrated |
 | Legal endpoints (`routes/legal`) | NestJS `legal` group | Contracts and read use cases done | Endpoints yes once clients switch; constitution seed data not migrated |
 | Models without endpoints: governance, offices, people, elections, political, events, entities, finance, debt, procurement, statistics, services | NestJS domain groups | Neutral contracts and read use cases done; inventory dispositions applied | The models can be retired as design reference, but their CSV seeds (below) are still the only data |
-| CSV seeds under `routes/*/_seed` | `source/backend/engine/database` | Not started | No |
-| Alembic migrations 001 to 016 (schema mixed with seed loading) | `source/backend/engine/database` | Not started; the generated entities define the neutral schema but database engine must own DDL and the missing `services` migration | No |
-| Files models, S3 client, files routes | `source/backend/files` writes bytes; metadata model is the `filesystem` schema (`FILESYSTEM_DESIGN.md`), replacing archived directories, files and file_types; formats seeded from the archived file types | Schema, contracts and read endpoints done; the files service (upload, download, scanning) not built | No |
-| Scraper models, web search scraper, crawlers, converters | `source/backend/engine/data`; retrieval records become `source.captures` and results `source.attributions` (`SOURCING_DESIGN.md`) | Schema done; engine not built | No |
+| CSV seeds under `routes/*/_seed` | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database` | Not started | No |
+| Alembic migrations 001 to 016 (schema mixed with seed loading) | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database` | Not started; the generated entities define the neutral schema but database engine must own DDL and the missing `services` migration | No |
+| Files models, S3 client, files routes | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/files` writes bytes; metadata model is the `filesystem` schema (`FILESYSTEM_DESIGN.md`), replacing archived directories, files and file_types; formats seeded from the archived file types | Schema, contracts and read endpoints done; the files service (upload, download, scanning) not built | No |
+| Scraper models, web search scraper, crawlers, converters | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data`; retrieval records become `source.captures` and results `source.attributions` (`SOURCING_DESIGN.md`) | Schema done; engine not built | No |
 | PDF extractor, OCR, NLP | data engine (extraction) and intelligence (classification) | Not started | No |
 | Archived justice, land, constitution amendments, legal instruments, `person_*` models | Review for later contracts | Investigate list in the inventory | Keep as reference |
 

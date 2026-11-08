@@ -1,0 +1,6 @@
+# Ordered SQL applied by `mzizi-db init` to the disposable rewrite database (mzizi_new). Each schema owns a folder.
+# engine/ is PROVISIONAL (see its header). Add a schema's files here when its design is approved.
+migrations:
+  - auth/0001_auth.sql
+  - auth/0002_auth_functions.sql
+  - engine/0001_engine.sql

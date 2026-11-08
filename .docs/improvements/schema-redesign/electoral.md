@@ -107,7 +107,7 @@ Reconcile results/states/aggregation and historical geo unit links; test registe
 
 ## 2026-11-07 calendar and freshness integration — elections as domain facts, activity as timeline
 
-**Not approved for DDL.** Existing `source/backend/api/src/modules/elections/entities/election.entity.ts` already distinguishes `scheduled_date` and `held_date`. `calendar.events` separately has `starts_on`, `ends_on` and `is_recurring`. Review an authoritative mapping so those two models do not create independently conflicting "election date" sources.
+**Not approved for DDL.** Existing `source/apps/api/src/modules/elections/entities/election.entity.ts` already distinguishes `scheduled_date` and `held_date`. `calendar.events` separately has `starts_on`, `ends_on` and `is_recurring`. Review an authoritative mapping so those two models do not create independently conflicting "election date" sources.
 
 **Proposal:** `reference` owns legally applicable electoral cycle/schedule definitions and dependent watcher rules; `activity` stores planned/announced/postponed/held/declaration occurrences, with source and timestamps; `electoral.elections` remains the canonical election identity and election-specific facts. A planned general election triggers checks for commission announcements, seats, registrations and nominations. An official result publication triggers result/turnout/candidate revalidation and dependent `statistical` rollup verification. An announced election date changing must not be reported as a held event, nor should a theoretical cycle generate voters or results.
 

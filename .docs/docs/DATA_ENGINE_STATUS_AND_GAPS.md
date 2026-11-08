@@ -10,7 +10,7 @@ What exists, how it is verified, and what is not done or not safe to assume. Wri
 
 | Area | State | Verified by |
 | --- | --- | --- |
-| Layout | `source/backend/engine/{data,database}`, contracts in `source/backend/contracts` | references updated, API tests |
+| Layout | `source/backend/engine/{data,database}`, contracts in `source/schema/contracts` | references updated, API tests |
 | Contracts | five layer contracts in Dryv, JSON Schema export with staleness check, generated Pydantic models | `bun run check`, example validation |
 | Website schema | sites, dated domains, publisher links, structures and versions, families, patterns, members, subjects, traits, relations, fingerprints, assessments, dossiers; read endpoints (not for assessments or dossiers) | Dryv check, generated check, API unit tests |
 | Database engine | generated migrations with drift check, hand-written staging, engine, PostGIS shape and job migrations, seeds (reference, research, fixtures), integrity checks, grants, collection gate, validation, review application, controlled promotion | 81 bun tests against PostGIS |
@@ -292,7 +292,7 @@ Wikipedia list pages are read through the MediaWiki API (`en.wikipedia.org` join
 
 ### Lane P3, third pass (3 November 2026)
 
-Gazette appointment extractor `gazette-appointments` (OCR text, tolerant regexes, rapidfuzz institution match from 85) ran over every Gazette issue in the registry after a bounded harvest of 37 more issues from the Parliament library (83 files): only one issue gave readable names (6 tribunal members, promoted unverified); other appointment notices were rejected for corrupt OCR names, so the real source for Principal Secretaries, board chairs and CEOs remains Gazette scans with better OCR or the agencies' own pages. API: `GET /v1/governance/office-holders/search` (filters q, office, institution, party, county, officeId, institutionId, personId, current; rows carry person, office, institution, place and party names). The guessed seat links for Dagoretti North/South and Mwingi Central are `under_review` with the guess in the rationale. Importer note: the first runs wrote preserved sources to a stray `source/backend/engine/data/.data/objects`; they were copied into `.data/objects` and the script now passes an absolute `--store`.
+Gazette appointment extractor `gazette-appointments` (OCR text, tolerant regexes, rapidfuzz institution match from 85) ran over every Gazette issue in the registry after a bounded harvest of 37 more issues from the Parliament library (83 files): only one issue gave readable names (6 tribunal members, promoted unverified); other appointment notices were rejected for corrupt OCR names, so the real source for Principal Secretaries, board chairs and CEOs remains Gazette scans with better OCR or the agencies' own pages. API: `GET /v1/governance/office-holders/search` (filters q, office, institution, party, county, officeId, institutionId, personId, current; rows carry person, office, institution, place and party names). The guessed seat links for Dagoretti North/South and Mwingi Central are `under_review` with the guess in the rationale. Importer note: the first runs wrote preserved sources to a stray `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/.data/objects`; they were copied into `.data/objects` and the script now passes an absolute `--store`.
 
 ## Lane P2: county assembly members (3 November 2026)
 

@@ -7,7 +7,7 @@ import { createElement } from 'react';
 import { DATA_CATALOG } from '../src/lib/review/data-catalog';
 import { ago, Badge, Pager } from '../src/app/review/ui';
 
-const controllers = join(import.meta.dir, '../../../backend/api/src/modules');
+const controllers = join(import.meta.dir, '../../api/src/modules');
 
 function listRoutes(): Set<string> {
   const found = new Set<string>();

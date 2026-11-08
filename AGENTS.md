@@ -40,13 +40,11 @@ Do not place a responsibility in the nearest convenient service merely because c
 - **The current Python FastAPI service is not the target API.**
 - **The future product API is NestJS.**
 
-## 3. Treat the current Python API as migration source material
+## 3. The old Python implementations are archived, not active
 
-`source/backend/api-legacy` contains valuable domain design, schema work, migrations, seeds and extraction-related code inherited from the previous political-governance project.
+The inherited Python API and the old data and database engines were archived on 8 November 2026 at `.docs/_archives/2026-11-08-rewrite-snapshot/` (historical, non-executable; start with its README and `RELOCATION_INVENTORY.md`). Active layout: reusable capabilities in `source/packages/`, the one Python engine in `source/backend/engine/`, the NestJS product API in `source/apps/api/`, input schemas and SQL in `source/schema/`, prepared inputs and test fixtures in `seed/`, thin commands in `scripts/`. Install and test with `uv sync --all-packages` and `uv run pytest source`. Never import, build, generate or run anything from the archive.
 
-Do not deepen it as the long-term public API unless explicitly instructed.
-
-When replacing it:
+The replacement rules below remain the guide for reimplementing what the inventory marks as a remaining gap:
 
 1. inventory useful models and behavior;
 2. extract domain concepts and constraints;
@@ -219,7 +217,7 @@ This project manages its work with Task (`taskcode`; `task` and `tc` are aliases
 
 ## Root seed input convention (user direction, 2026-11-08)
 
-Read `seed/README.md` before adding any curated or AI-prepared seed data, baseline auth definitions, site structure, folder/file-type catalog, pattern definition or seed-specific source artifact. Keep all system seed inputs in root `seed/`, with global/system/jurisdiction separation and a manifest describing recognized DB loader/target, dependencies, content identity and S3 registration. Runtime loaders and contracts retain their existing code ownership. Do not introduce scattered per-service seed payloads or duplicate sources of truth. Do not treat the disabled example manifest as executable. The existing scattered payloads were relocated on 8 November 2026 (inventory: `.docs/docs/SEED_RELOCATION_INVENTORY.md`); loaders read `seed/` through `seedRoot` (TypeScript) and `seedroot.py` (Python). Origin, preparation and access are recorded per folder in `_folder.yaml`; run `bun src/seed.ts check` in `source/backend/engine/database` after changing anything under `seed/`, and `bun src/seed.ts lock` to refresh the lock. Runtime registration in S3 and the filesystem registry is still planned. Synthetic test-only fixtures may remain beside tests; anything applied as a real system seed follows the root convention. Only `public/` in bucket `mzizi` is anonymously readable; other prefixes remain private. The disposable database rewrite does not authorize deleting existing S3 artifacts.
+Read `seed/README.md` before adding any curated or AI-prepared seed data, baseline auth definitions, site structure, folder/file-type catalog, pattern definition or seed-specific source artifact. Keep all system seed inputs in root `seed/`, with global/system/jurisdiction separation and a manifest describing recognized DB loader/target, dependencies, content identity and S3 registration. Runtime loaders and contracts retain their existing code ownership. Do not introduce scattered per-service seed payloads or duplicate sources of truth. Do not treat the disabled example manifest as executable. The existing scattered payloads were relocated on 8 November 2026 (inventory: `.docs/docs/SEED_RELOCATION_INVENTORY.md`); loaders read `seed/` through `seedRoot` (TypeScript) and `seedroot.py` (Python). Origin, preparation and access are recorded per folder in `_folder.yaml`; run `uv run mzizi-manifest check` after changing anything under `seed/`, and `uv run mzizi-manifest lock` to refresh the lock. Runtime registration in S3 and the filesystem registry is still planned. Synthetic test-only fixtures may remain beside tests; anything applied as a real system seed follows the root convention. Only `public/` in bucket `mzizi` is anonymously readable; other prefixes remain private. The disposable database rewrite does not authorize deleting existing S3 artifacts.
 
 ## Manifest-driven input contracts (2026-11-08)
 

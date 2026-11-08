@@ -697,6 +697,6 @@ If the architecture cannot answer that question, the data lifecycle is incomplet
 
 # Where the product API sits in the lifecycle
 
-The NestJS API (`source/backend/api`) is downstream of canonical promotion. It reads reviewed canonical records through a SELECT-only database role and serves them with their provenance, valid time, record time and verification state. By default lists return current records only; superseded versions stay reachable by id and with `includeHistory`, so the version chain is never hidden.
+The NestJS API (`source/apps/api`) is downstream of canonical promotion. It reads reviewed canonical records through a SELECT-only database role and serves them with their provenance, valid time, record time and verification state. By default lists return current records only; superseded versions stay reachable by id and with `includeHistory`, so the version chain is never hidden.
 
 The API takes no part in discovery, capture, extraction, normalisation, classification or promotion. Its only writes are append-only audit records (comments, evidence references, review decisions) through a separate INSERT-only role. A review decision proposes a verification state; applying it to a canonical record is a controlled promotion step owned by the database management engine, so the API never mutates canonical data.

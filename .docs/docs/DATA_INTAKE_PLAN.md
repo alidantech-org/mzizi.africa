@@ -127,7 +127,7 @@ Runbook (operator, with the database engine and data engine installed; the revie
 ```bash
 # 1. download the simplified ADM0 and ADM1 GeoJSON and the API metadata for KEN from geoBoundaries (samples are in seed/fixtures/extraction/geoboundaries)
 export DATABASE_URL=postgres://postgres@localhost:5432/mzizi_dev
-cd source/backend/engine/database && bun src/cli.ts reset                     # migrations, reference seeds (incl. Kenya levels), fixtures
+cd .docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database && bun src/cli.ts reset                     # migrations, reference seeds (incl. Kenya levels), fixtures
 cd ../data && .venv/bin/mzizi-data import-geoboundaries tests/data/geoboundaries   # preserve, register, extract, stage (prints the four run ids)
 cd ../database
 bun src/cli.ts validate <unit-adm0-run>; # a reviewer records approvals through the API (audit decision on staging.candidates)

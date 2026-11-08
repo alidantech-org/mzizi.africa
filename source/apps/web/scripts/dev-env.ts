@@ -24,7 +24,7 @@ if (!existsSync(privatePath)) {
 }
 
 const publicKey = readFileSync(publicPath, "utf8").trim().replace(/\n/g, "\\n");
-console.log(`# API (source/backend/api)
+console.log(`# API (source/apps/api)
 AUTH_ISSUER=https://dev.mzizi.local
 AUTH_PUBLIC_KEY="${publicKey}"
 # Web (source/apps/web): REVIEW_API_URL defaults to http://127.0.0.1:3000`);

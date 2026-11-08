@@ -13,13 +13,13 @@ extra: {status: implemented_in_mzizi_new}
 | When | Instruction | Effect on this document |
 |---|---|---|
 | Before 2026-11-08 (**former policy**) | Plan only; preserve account/role/grant IDs and login continuity; migrate `identity`/`access` to `auth` after approval. | Recorded in the "Earlier planning record" at the end of this file. Kept as history, not deleted. |
-| 2026-11-08 (**current policy**, `DEC-CLEAN-REWRITE-MZIZI-NEW`) | Clean rewrite in a disposable database `mzizi_new`: no legacy IDs, data migration, dual writes, compatibility views or old API compatibility; task `TSK-1AC8F3754DAE` authorized to design and build. | The design below is implemented in `source/backend/engine/database/rewrite/` and proven by `test/rewrite-auth.test.ts`. The old `identity`/`access` objects are reference material only. |
+| 2026-11-08 (**current policy**, `DEC-CLEAN-REWRITE-MZIZI-NEW`) | Clean rewrite in a disposable database `mzizi_new`: no legacy IDs, data migration, dual writes, compatibility views or old API compatibility; task `TSK-1AC8F3754DAE` authorized to design and build. | The design below is implemented in `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database/rewrite/` and proven by `test/rewrite-auth.test.ts`. The old `identity`/`access` objects are reference material only. |
 
 Where the earlier record and the implemented design disagree (for example "preserve IDs", "migration strategy", "unresolved decisions"), the implemented design governs. The decisions that had been open are answered in "Resolved questions".
 
 ## Implemented design (small on purpose)
 
-An earlier build of this slice had 19 tables (delegation ceilings, field groups, an operations registry, MFA flags, invitations, decision log). The user judged it too much, so it was dropped and rebuilt in `mzizi_new` with nine tables. Files: `source/backend/engine/database/rewrite/0001_auth.sql` (tables) and `0002_auth_functions.sql` (checks, helpers, seeds). Rebuild with `bun src/rewrite.ts reset`; checks in `test/rewrite-auth.test.ts` (18 tests).
+An earlier build of this slice had 19 tables (delegation ceilings, field groups, an operations registry, MFA flags, invitations, decision log). The user judged it too much, so it was dropped and rebuilt in `mzizi_new` with nine tables. Files: `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database/rewrite/0001_auth.sql` (tables) and `0002_auth_functions.sql` (checks, helpers, seeds). Rebuild with `bun src/rewrite.ts reset`; checks in `test/rewrite-auth.test.ts` (18 tests).
 
 ### The idea in four lines
 
@@ -63,7 +63,7 @@ A generic `(table, id)` pair cannot carry a foreign key, so integrity comes from
 
 ### Backend
 
-`source/backend/api/src/auth/`: `createIdentityVerifier` (issuer, signature, expiry, opaque subject), `PgAccessAuthority` (wraps the functions above), `DatabaseAuthGuard` (maps each contract policy to a platform permission, e.g. promote → `pipeline.publish`, then 401/403), `installDatabaseAuth`. `main.ts` uses it when `AUTH_DATABASE_URL` is set; otherwise the legacy roles-claim guard runs until other domains are rewritten. Use cases touching governed records call `can` / `canChange` with the table and record id.
+`source/apps/api/src/auth/`: `createIdentityVerifier` (issuer, signature, expiry, opaque subject), `PgAccessAuthority` (wraps the functions above), `DatabaseAuthGuard` (maps each contract policy to a platform permission, e.g. promote → `pipeline.publish`, then 401/403), `installDatabaseAuth`. `main.ts` uses it when `AUTH_DATABASE_URL` is set; otherwise the legacy roles-claim guard runs until other domains are rewritten. Use cases touching governed records call `can` / `canChange` with the table and record id.
 
 ### Deferred until needed
 

@@ -139,7 +139,7 @@ Audit all 27 combined source+website entity tables, actual columns, cardinalitie
 
 **Separate detection, retrieval, assertion and verification.** `source.captures` fetched today is not proof the captured claim is accurate today. A `website` Markdown section may have a new semantic hash without changing any canonical fact; a user may ask a recheck even though the source HTML hash remains unchanged. The fact that a publisher is official does not itself guarantee each extracted assertion is correct or applicable.
 
-**Existing code evidence on `develop`:** `source/backend/api/src/modules/source/entities/verification.entity.ts` has a verification state, review decision references and generic `target_kind` + `target_id`; it does **not** by itself provide a robust per-field freshness ledger or an enforced FK from generic target to arbitrary domain rows. The existing source capture/crawl/Markdown extraction planning should be reused rather than copied.
+**Existing code evidence on `develop`:** `source/apps/api/src/modules/source/entities/verification.entity.ts` has a verification state, review decision references and generic `target_kind` + `target_id`; it does **not** by itself provide a robust per-field freshness ledger or an enforced FK from generic target to arbitrary domain rows. The existing source capture/crawl/Markdown extraction planning should be reused rather than copied.
 
 A site watcher for news/announcements should:
 1. Confirm collection permission, jurisdiction/source profile and bounded refresh policy.

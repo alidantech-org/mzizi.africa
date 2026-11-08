@@ -1,5 +1,5 @@
 ---
-{id: TSK-3EA8C40B0F60,name: Design filesystem tables and existing S3 integration,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:26.845Z,updated_at: 2026-11-08T08:05:59.578Z,depends_on: [TSK-1AC8F3754DAE,TSK-0F4398B91D38],order: 2048}
+{id: TSK-3EA8C40B0F60,name: Design filesystem tables and existing S3 integration,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:26.845Z,updated_at: 2026-11-08T09:00:27.403Z,depends_on: [TSK-1AC8F3754DAE,TSK-0F4398B91D38,TSK-A5D7B8F87A9D],order: 2048}
 ---
 
 # 02 — Design filesystem tables and existing S3 integration

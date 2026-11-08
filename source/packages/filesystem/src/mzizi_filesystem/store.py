@@ -1,0 +1,139 @@
+"""Object stores: the interface, an in-memory store for tests and the S3 (SeaweedFS) store.
+
+Configuration comes from the existing environment only (never from files in Git):
+  S3_ENDPOINT          endpoint this process reaches the store at (laptop http://192.168.100.13:18333, Docker http://object-storage:8333)
+  S3_PUBLIC_ENDPOINT   endpoint clients must use in presigned URLs (an internal Docker hostname is refused for presigning)
+  S3_ACCESS_KEY, S3_SECRET_KEY, S3_BUCKET (default mzizi), S3_REGION (default us-east-1)
+"""
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass
+from typing import Protocol
+from urllib.parse import urlparse
+
+from .access import BUCKET, REGION
+from .hashing import sha256_hex
+
+
+@dataclass(frozen=True)
+class ObjectHead:
+    size: int
+    sha256: str | None
+    content_type: str | None = None
+
+
+class StoreError(RuntimeError):
+    pass
+
+
+class ObjectStore(Protocol):
+    bucket: str
+
+    def head(self, key: str) -> ObjectHead | None: ...
+    def put(self, key: str, data: bytes, content_type: str, sha256: str, cache_control: str | None = None) -> None: ...
+    def get(self, key: str) -> bytes: ...
+    def presign_get(self, key: str, expires_seconds: int = 900) -> str: ...
+
+
+class MemoryObjectStore:
+    """Deterministic in-memory store with fault injection, used by the mocked-S3 tests."""
+
+    def __init__(self, bucket: str = BUCKET, public_endpoint: str = "https://res.alidantech.org") -> None:
+        self.bucket = bucket
+        self.public_endpoint = public_endpoint
+        self.objects: dict[str, tuple[bytes, str, str, str | None]] = {}
+        self.puts: list[str] = []
+        self.fail_next_puts = 0
+        self.corrupt_next_puts = 0
+
+    def head(self, key: str) -> ObjectHead | None:
+        found = self.objects.get(key)
+        return ObjectHead(len(found[0]), found[2], found[1]) if found else None
+
+    def put(self, key: str, data: bytes, content_type: str, sha256: str, cache_control: str | None = None) -> None:
+        if self.fail_next_puts:
+            self.fail_next_puts -= 1
+            raise StoreError("injected put failure")
+        if self.corrupt_next_puts:
+            self.corrupt_next_puts -= 1
+            data = data[:-1]
+        self.puts.append(key)
+        self.objects[key] = (data, content_type, sha256, cache_control)
+
+    def get(self, key: str) -> bytes:
+        if key not in self.objects:
+            raise StoreError(f"no such key {key}")
+        return self.objects[key][0]
+
+    def presign_get(self, key: str, expires_seconds: int = 900) -> str:
+        return f"{self.public_endpoint}/{self.bucket}/{key}?expires={expires_seconds}"
+
+
+def _internal_host(host: str) -> bool:
+    """A single-label hostname (such as the Docker service name object-storage) cannot be reached by outside clients."""
+    return "." not in host and host not in ("localhost",) and not host.replace(":", "").isdigit()
+
+
+class S3ObjectStore:
+    """boto3-backed store for the existing SeaweedFS S3 service. Never creates buckets or changes configuration."""
+
+    def __init__(self, client=None, presign_client=None, bucket: str | None = None, public_endpoint: str | None = None, environ: dict | None = None) -> None:
+        env = environ if environ is not None else os.environ
+        self.bucket = bucket or env.get("S3_BUCKET", BUCKET)
+        if self.bucket != BUCKET:
+            raise StoreError(f"only the existing bucket {BUCKET!r} may be used, not {self.bucket!r}")
+        self.public_endpoint = public_endpoint or env.get("S3_PUBLIC_ENDPOINT")
+        self._client = client or self._make_client(env, env.get("S3_ENDPOINT"))
+        self._presign_client = presign_client or (self._make_client(env, self.public_endpoint) if self.public_endpoint else None)
+
+    @staticmethod
+    def _make_client(env, endpoint: str | None):
+        import boto3
+        from botocore.config import Config
+
+        if not endpoint or not env.get("S3_ACCESS_KEY") or not env.get("S3_SECRET_KEY"):
+            raise StoreError("S3_ENDPOINT, S3_ACCESS_KEY and S3_SECRET_KEY must be set in the environment")
+        return boto3.client("s3", endpoint_url=endpoint, aws_access_key_id=env["S3_ACCESS_KEY"], aws_secret_access_key=env["S3_SECRET_KEY"], region_name=env.get("S3_REGION", REGION),
+                            config=Config(signature_version="s3v4", s3={"addressing_style": "path"}, retries={"max_attempts": 3, "mode": "standard"}))
+
+    def head(self, key: str) -> ObjectHead | None:
+        from botocore.exceptions import ClientError
+
+        try:
+            response = self._client.head_object(Bucket=self.bucket, Key=key)
+        except ClientError as error:
+            if error.response.get("Error", {}).get("Code") in ("404", "NoSuchKey", "NotFound"):
+                return None
+            raise StoreError(str(error)) from error
+        return ObjectHead(int(response["ContentLength"]), (response.get("Metadata") or {}).get("sha256"), response.get("ContentType"))
+
+    def put(self, key: str, data: bytes, content_type: str, sha256: str, cache_control: str | None = None) -> None:
+        extra = {"CacheControl": cache_control} if cache_control else {}
+        self._client.put_object(Bucket=self.bucket, Key=key, Body=data, ContentType=content_type, Metadata={"sha256": sha256}, **extra)
+
+    def get(self, key: str) -> bytes:
+        return self._client.get_object(Bucket=self.bucket, Key=key)["Body"].read()
+
+    def presign_get(self, key: str, expires_seconds: int = 900) -> str:
+        """A presigned download URL signed against the public endpoint, so the host is reachable by the intended client."""
+        if self._presign_client is None:
+            raise StoreError("S3_PUBLIC_ENDPOINT is not set: refusing to sign a URL with the internal endpoint")
+        host = urlparse(self.public_endpoint or "").hostname or ""
+        if _internal_host(host):
+            raise StoreError(f"public endpoint host {host!r} looks like an internal service name; clients cannot reach it")
+        return self._presign_client.generate_presigned_url("get_object", Params={"Bucket": self.bucket, "Key": key}, ExpiresIn=expires_seconds)
+
+
+def verify_upload(store: ObjectStore, key: str, data: bytes, mode: str = "head") -> None:
+    """Confirms a stored object is what was meant: length and recorded hash (head), or the bytes themselves (get)."""
+    expected = sha256_hex(data)
+    head = store.head(key)
+    if head is None:
+        raise StoreError(f"verification failed: {key} is not in the store")
+    if head.size != len(data):
+        raise StoreError(f"verification failed: {key} has {head.size} bytes, expected {len(data)}")
+    if head.sha256 is not None and head.sha256 != expected:
+        raise StoreError(f"verification failed: {key} records hash {head.sha256}, expected {expected}")
+    if mode == "get" and sha256_hex(store.get(key)) != expected:
+        raise StoreError(f"verification failed: bytes read back from {key} do not match")

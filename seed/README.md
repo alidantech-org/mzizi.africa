@@ -6,18 +6,27 @@ On 8 November 2026 the scattered system seeds were relocated here (task `TSK-0F4
 
 ## Entry points
 
-Run from `source/backend/engine/database`:
+Run from the repository root after `uv sync --all-packages` (see `source/packages/README.md`):
 
 ```bash
-bun src/seed.ts check     # validate folder metadata, manifest, dependencies, consumers and the lock (no writes)
-bun src/seed.ts lock      # regenerate manifest.lock.json after changing a seed file or the manifest
-bun src/seed.ts report    # effective metadata per artifact
-bun src/rewrite.ts init   # create/update mzizi_new and apply seed/global/auth/ (idempotent, additive)
-bun src/rewrite.ts bootstrap-admin   # first administrator; identity comes from the AUTH_BOOTSTRAP_* variables named in global/auth/bootstrap.yaml
-bun test test/seed-registry.test.ts  # inheritance, manifest and auth-seed checks
+uv run mzizi-manifest check      # validate folder metadata, manifest, dependencies, consumers and the lock (no writes)
+uv run mzizi-manifest lock       # regenerate manifest.lock.json after changing a seed file or the manifest
+uv run mzizi-manifest report     # effective metadata per artifact
+uv run mzizi-db init             # create/update mzizi_new and apply seed/global/auth (idempotent, additive)
+uv run mzizi-db bootstrap-admin  # first administrator; identity from the AUTH_BOOTSTRAP_* variables named in global/auth/bootstrap.yaml
+uv run mzizi-publish-seed        # dry run of seed publication through the filesystem package (see below)
+uv run pytest source/packages/manifest source/packages/filesystem source/packages/database   # registry, publication and auth checks
 ```
 
-Loaders that read these files stay under `source/`: `engine/database/src/{seed-auth,seeds,catalogue,governance-catalogue,patterns,media,assessments}.ts` (shared root: `seedRoot` in `config.ts`, override with `MZIZI_SEED_ROOT`) and `engine/data/src/mzizi_data/` (shared root: `seedroot.py`). Only `auth.*` entries target the rewrite database; the others still load the existing Dryv-entity database until the owning rewrite schemas exist, and their manifest entries say `legacy_dev_only`.
+`scripts/seed_check.py`, `scripts/db.py` and `scripts/publish_seeds.py` are thin wrappers over the same package APIs; the engine exposes the same operations (`POST /v1/manifests/validate`, `POST /v1/seed/publish`).
+
+Code that reads these files stays under `source/`: the manifest/registry code in `source/packages/manifest`, the auth baseline loader in `source/packages/database` (`mzizi_database.loaders.auth`) and publication in `source/packages/filesystem`. The loaders that applied the other seeds to the old Dryv-entity database were archived with the old engines (`.docs/_archives/2026-11-08-rewrite-snapshot`); their manifest entries say `loader_status: archived` and must be reimplemented against the rewrite schema by the owning milestone. Override locations with `MZIZI_SEED_ROOT`, `MZIZI_SCHEMA_ROOT`, `MZIZI_REPO_ROOT`.
+
+## Publication to the filesystem registry
+
+`mzizi_filesystem.publish_seeds` (CLI `mzizi-publish-seed`, engine capability `filesystem.publish_seeds`) validates the manifest and folder metadata, then plans or performs publication of every adopted artifact: bytes go to bucket `mzizi` under the hash-qualified key from the lock (`internal/seeds/...`; key prefix must equal the effective access), the upload is verified (length and recorded hash; `--verify get` re-reads the bytes), and an item is registered with provenance (seed flag, artifact role, acquisition class, preparation, scope, review state, the descriptor each field was resolved from, manifest release and checksum, artifact checksum, input references, generator information with unknown model left unknown, intended access, object reference). Dry run is the default and writes nothing.
+
+Outcomes: `created`, `deduplicated` (identical bytes reused inside the same access boundary; public, internal, restricted and private are never merged), `recovered` (bytes were already stored but unregistered after an interrupted run), `unchanged`, `updated`, `conflict`, `failed`, and `planned` for dry runs. Modes per manifest entry (`publication_mode`): `versioned` (default; an immutable release per manifest release, same release with different bytes is a conflict, earlier releases are never changed), `current` (stable logical identity with a current-object pointer and revision check; changed bytes become a new immutable object and the pointer moves; old bytes stay), `fixed_key` (explicit overwrite of a declared key with `allow_overwrite: true`, refused if another record uses the key, journaled so an interrupted overwrite resumes, `Cache-Control: no-cache` set). No object is ever deleted and no garbage collection runs. The registry port has in-memory and local-ledger adapters (`seed/local/registry-ledger.json`, ignored by Git); the PostgreSQL adapter waits for the filesystem schema task. Live use needs the existing environment (`S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, optional `S3_PUBLIC_ENDPOINT` for presigned URLs): nothing has been uploaded yet and no live S3 smoke test has been run.
 
 ## Folder metadata (`_folder.yaml`)
 
@@ -35,7 +44,7 @@ Origin and access are recorded once per folder, not per file. Keep these dimensi
 | `allow_weaker_children` | boolean | Whether deeper folders may be less restrictive than this one (root: true so that an explicitly authorized public folder is possible) |
 | `overrides` | `{file name: {fields, reason}}` | Explicit per-file exceptions in the containing folder, each with a reason; cannot set `public` |
 
-Inheritance, in order: (1) resolve descriptors from the seed root down to the containing folder; (2) for each field the nearest folder that sets it wins; (3) a deeper folder may set a more specific classification; (4) a per-file override applies last and only if listed with a reason; (5) a missing access policy resolves to `internal` and is warned; a missing role, acquisition class, preparation or scope is an error before registration; (6) nothing is inferred from folder names such as `generated` or `public`; (7) a folder cannot be less restrictive than an ancestor unless that ancestor sets `allow_weaker_children`, and `public` always needs its own `authorization`. Prefer a small correctly classified deeper folder over many overrides. `bun src/seed.ts check` enforces all of this; the root `_folder.yaml` sets `access: internal`.
+Inheritance, in order: (1) resolve descriptors from the seed root down to the containing folder; (2) for each field the nearest folder that sets it wins; (3) a deeper folder may set a more specific classification; (4) a per-file override applies last and only if listed with a reason; (5) a missing access policy resolves to `internal` and is warned; a missing role, acquisition class, preparation or scope is an error before registration; (6) nothing is inferred from folder names such as `generated` or `public`; (7) a folder cannot be less restrictive than an ancestor unless that ancestor sets `allow_weaker_children`, and `public` always needs its own `authorization`. Prefer a small correctly classified deeper folder over many overrides. `uv run mzizi-manifest check` enforces all of this; the root `_folder.yaml` sets `access: internal`.
 
 ## Manifest and lock
 
@@ -43,7 +52,7 @@ Inheritance, in order: (1) resolve descriptors from the seed root down to the co
 
 ## Test fixtures (`seed/fixtures/`)
 
-Everything that is only test or sample data lives here, grouped by purpose, so source code stays free of fixtures, samples, example payloads and test data. Fixtures have the role `test_fixture` and a system scope, are classified by `_folder.yaml` like every other folder, but are **not seeds**: they have no manifest entry and are never applied, registered or uploaded. `seed check` fails if a fixture appears in the manifest or lacks effective metadata.
+Everything that is only test or sample data lives here, grouped by purpose, so source code stays free of fixtures, samples, example payloads and test data. Fixtures have the role `test_fixture` and a system scope, are classified by `_folder.yaml` like every other folder, but are **not seeds**: they have no manifest entry and are never applied, registered or uploaded. `mzizi-manifest check` fails if a fixture appears in the manifest or lacks effective metadata.
 
 | Folder | Contents | Read by |
 |---|---|---|
@@ -56,15 +65,15 @@ Rules: no copy of a fixture may sit beside code; a fixture that is also applied 
 
 ## Ignored and generated inputs
 
-`generated/`, `cache/`, `local/` are ignored by `seed/.gitignore`; none exists yet because nothing is generated. A generated seed output must get a descriptor with `preparation: programmatically_generated`, a manifest entry naming its generator and input entries, and a regeneration command in this README. Only the lock is a generated tracked file here (regenerate with `bun src/seed.ts lock`).
+`generated/`, `cache/`, `local/` are ignored by `seed/.gitignore`; none exists yet because nothing is generated. A generated seed output must get a descriptor with `preparation: programmatically_generated`, a manifest entry naming its generator and input entries, and a regeneration command in this README. Only the lock is a generated tracked file here (regenerate with `uv run mzizi-manifest lock`).
 
 ## Known limitations
 
-- Preparation is `unknown` for `global/reference`, `system/mappings`, `system/policy`, `ke/reference` and the site bundles because the files do not say who prepared them; each carries `review.status: needs_review`. `bun src/seed.ts check` lists the warnings.
-- Nothing is uploaded or registered: the filesystem milestone must implement descriptor inheritance in the registry and materialize effective provenance at registration (see task `TSK-3EA8C40B0F60`).
+- Preparation is `unknown` for `global/reference`, `system/mappings`, `system/policy`, `ke/reference` and the site bundles because the files do not say who prepared them; each carries `review.status: needs_review`. `uv run mzizi-manifest check` lists the warnings.
+- Nothing is uploaded or registered in S3 or PostgreSQL yet: publication is implemented and tested against mocked S3, but the PostgreSQL registry (descriptor inheritance as stored metadata) is the filesystem milestone (task `TSK-3EA8C40B0F60`).
 - `ke-iebc-catalogue.json` has no loader; `ke-orpp-catalogue.json` and `ke-priority-publishers-catalogue.json` are read only by tests.
 - `global/filesystem/file-types.csv` and `ke/filesystem/folders.csv` do not exist yet. File formats are held by `global/reference/media-formats.json` (the authoritative source chosen over the legacy CSVs); the filesystem and reference tasks derive the CSV contracts and folder patterns.
-- Non-auth loaders still target the legacy Dryv-entity database.
+- Non-auth loaders were archived with the old engines (`loader_status: archived` in the manifest).
 
 ## Layout
 

@@ -1,0 +1,47 @@
+{
+  "name": "@mzizi/api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "bun@1.4.2",
+  "description": "Mzizi product API (NestJS): serves canonical knowledge, read-mostly. Generated from the Dryv contracts in ../../../dryv.",
+  "scripts": {
+    "start": "bun src/main.ts",
+    "dev": "bun --watch src/main.ts",
+    "typecheck": "bunx --bun tsc --noEmit -p src/tsconfig.json",
+    "test": "vitest run --root src",
+    "db:reset": "cd ../../.. && uv run mzizi-db reset",
+    "db:init": "cd ../../.. && uv run mzizi-db init"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11",
+    "@nestjs/core": "^11",
+    "@nestjs/platform-express": "^11.1.12",
+    "@nestjs/typeorm": "^11",
+    "class-transformer": "^0.5",
+    "class-validator": "^0.14",
+    "jose": "^6.2.15",
+    "pg": "^8",
+    "reflect-metadata": "^0.2",
+    "rxjs": "^7",
+    "typeorm": "^0.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@nestjs/testing": "^11",
+    "@swc/core": "^1",
+    "@types/bun": "latest",
+    "@types/node": "latest",
+    "@types/pg": "^8.23.1",
+    "pg-mem": "^3",
+    "prettier": "^3.9.10",
+    "randexp": "^0.5",
+    "typescript": "^5",
+    "unplugin-swc": "^1",
+    "vite-tsconfig-paths": "^5",
+    "vitest": "^3"
+  },
+  "imports": {
+    "#/*": "./src/*"
+  }
+}

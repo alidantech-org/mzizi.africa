@@ -181,7 +181,7 @@ For **each current table**, capture:
 
 ### Verified reason for revisiting the current template
 
-Read-only examination of \`source/backend/engine/database/migrations/1793607856459-initial.ts\` found **103 original CREATE TABLE statements**, of which **73** contain \`valid_from\` and \`valid_to\`, **70** contain the pair of date-precision columns, **70** contain \`is_current\`, **103** contain \`version\`, \`created_at\` and \`updated_at\`, and **none** contain \`deleted_at\`. This is **only the original migration baseline**: later migrations introduce/move/remove tables and fields, so these counts must **not** be presented as current/live production coverage. They establish evidence for an overly broad historical column template, not a mandate to drop all occurrences.
+Read-only examination of \`.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database/migrations/1793607856459-initial.ts\` found **103 original CREATE TABLE statements**, of which **73** contain \`valid_from\` and \`valid_to\`, **70** contain the pair of date-precision columns, **70** contain \`is_current\`, **103** contain \`version\`, \`created_at\` and \`updated_at\`, and **none** contain \`deleted_at\`. This is **only the original migration baseline**: later migrations introduce/move/remove tables and fields, so these counts must **not** be presented as current/live production coverage. They establish evidence for an overly broad historical column template, not a mandate to drop all occurrences.
 
 ### Opt-in temporal modeling: which fact does a date describe?
 

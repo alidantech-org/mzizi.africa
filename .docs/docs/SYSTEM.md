@@ -30,7 +30,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### File management service
 
-**Target path:** `source/backend/files`
+**Target path:** `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/files`
 
 **Role:** custody of source artifacts and derived files.
 
@@ -38,7 +38,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Data engine
 
-**Target path:** `source/backend/engine/data`
+**Target path:** `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data`
 
 **Role:** source acquisition, extraction, OCR, parsing and low-risk normalization.
 
@@ -46,7 +46,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Intelligence layer
 
-**Target path:** `source/backend/intelligence`
+**Target path:** `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/intelligence`
 
 **Role:** explicit AI/tool-assisted classification, cleaning, entity resolution, contradiction detection and evaluation.
 
@@ -54,7 +54,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Database management engine
 
-**Target path:** `source/backend/engine/database`
+**Target path:** `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database`
 
 **Role:** schema, migrations, seeds, backfills, integrity validation and controlled promotion into canonical storage.
 
@@ -62,7 +62,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Product API
 
-**Target path:** `source/backend/api`
+**Target path:** `source/apps/api`
 
 **Target technology:** NestJS.
 

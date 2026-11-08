@@ -4,11 +4,11 @@
 
 # Filesystem design
 
-The `filesystem` schema is the single place that knows about files and media: source PDFs, scans, avatars, logos, gallery images, derived text and thumbnails. It stores metadata and addresses only; bytes live in an S3-compatible object store (or a local directory behind the same interface). The files service (`source/backend/files`) owns the bytes and is the writer of this schema; the product API reads it.
+The `filesystem` schema is the single place that knows about files and media: source PDFs, scans, avatars, logos, gallery images, derived text and thumbnails. It stores metadata and addresses only; bytes live in an S3-compatible object store (or a local directory behind the same interface). The files service (`.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/files`) owns the bytes and is the writer of this schema; the product API reads it.
 
 ## What the legacy model taught
 
-`source/backend/api-legacy/_archives/files` had `directories` (self-referencing tree with `path`, `depth`, and per-directory `file_count`, `total_size_bytes`, `last_file_at`), `files` (one row per upload with `s3_key`, `s3_bucket`, `checksum`, `status` of uploaded, processing, failed or completed, and a free JSON `file_metadata`) and `file_types` (mime type, extension, category, previewable flag, maximum size, processing strategy). Endpoints: search, types, analytics, folders, upload, delete by key.
+`.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy/_archives/files` had `directories` (self-referencing tree with `path`, `depth`, and per-directory `file_count`, `total_size_bytes`, `last_file_at`), `files` (one row per upload with `s3_key`, `s3_bucket`, `checksum`, `status` of uploaded, processing, failed or completed, and a free JSON `file_metadata`) and `file_types` (mime type, extension, category, previewable flag, maximum size, processing strategy). Endpoints: search, types, analytics, folders, upload, delete by key.
 
 Problems carried forward and fixed: one row conflates the logical file with its stored bytes, so replacing a file or deduplicating is impossible; no versions; per-folder counters that every upload would update (a write hot spot); the object key is derived from the name instead of the content; processing state is a string on the file row; JSON metadata with no typed home for media dimensions or pages; no link from a file to the records that use it.
 

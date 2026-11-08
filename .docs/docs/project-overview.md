@@ -11,8 +11,8 @@ Mzizi Africa is an evidence-first platform for exploring African heritage, histo
 - `source/apps/www`: public atlas and knowledge exploration experience.
 - `source/apps/web`: research, review, and stewardship workbench.
 - `source/apps/mobile`: Flutter client for map and civic evidence exploration.
-- `source/backend/api`: NestJS product API (read-mostly).
-- `source/backend/api-legacy`: inherited Python FastAPI service and migration source material.
+- `source/apps/api`: NestJS product API (read-mostly).
+- `source/backend/engine`: Python orchestration engine; `source/packages`: reusable capability packages; `source/schema`: input schemas and rewrite SQL; `seed/`: prepared inputs and fixtures; replaced implementations are archived under `.docs/_archives/2026-11-08-rewrite-snapshot/`.
 
 ## Work areas
 

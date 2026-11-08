@@ -1,5 +1,5 @@
 {
-  "note": "Shared test vectors for the collection gate. Both implementations (engine/database/src/gate.ts and engine/data/src/mzizi_data/gate.py) must produce the same allowed/denied answer and a reason containing the given text. Overrides are merged over the base records; an assessment of null means no assessment exists.",
+  "note": "Shared test vectors for the collection gate. Both implementations (source/packages/source (mzizi_source.gate, the active implementation; the earlier TypeScript implementation is archived)) must produce the same allowed/denied answer and a reason containing the given text. Overrides are merged over the base records; an assessment of null means no assessment exists.",
   "now": "2026-11-02T10:00:00Z",
   "base": {
     "assessment": {

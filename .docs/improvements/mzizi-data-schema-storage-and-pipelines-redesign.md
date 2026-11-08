@@ -115,7 +115,7 @@ Each table must receive a **full column-by-column audit**: purpose, naming, type
 
 Extra engine-managed table: `geography.boundary_shapes`. Extra view: `access.account_permissions`. **Deprecated:** `organization.locations` was retired; an older document still lists it. Beware other documentation tables counts lag active contracts. A DB inventory query and migration/status reconciliation are required.
 
-Repositories/docs that must inform subsequent work: `AGENTS.md`; `.docs/README.md`; `.docs/rules/branching-and-task-usage.md`; `.docs/rules/task-writing.md`; `.docs/rules/database-naming.md`; `.docs/docs/DATABASE_DESIGN.md`; `.docs/docs/DOMAINS.md`; `.docs/docs/DATA_LIFECYCLE.md`; `.docs/docs/ARCHITECTURE.md`; `.docs/docs/WEBSITE_DESIGN.md`; `.docs/docs/geography-model.md`; `.docs/docs/PLACES_AND_PRESENCE_ASSESSMENT.md`; `dryv/contracts/`; `source/backend/api/src/modules/`; `source/backend/engine/database/migrations/`; and current pipeline/source mappings.
+Repositories/docs that must inform subsequent work: `AGENTS.md`; `.docs/README.md`; `.docs/rules/branching-and-task-usage.md`; `.docs/rules/task-writing.md`; `.docs/rules/database-naming.md`; `.docs/docs/DATABASE_DESIGN.md`; `.docs/docs/DOMAINS.md`; `.docs/docs/DATA_LIFECYCLE.md`; `.docs/docs/ARCHITECTURE.md`; `.docs/docs/WEBSITE_DESIGN.md`; `.docs/docs/geography-model.md`; `.docs/docs/PLACES_AND_PRESENCE_ASSESSMENT.md`; `dryv/contracts/`; `source/backend/api/src/modules/`; `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database/migrations/`; and current pipeline/source mappings.
 
 ## 5. Recorded answers to all 18 architectural questions — preserve uncertainty
 
@@ -199,7 +199,7 @@ Necessary distinctions:
 
 **User concern:** Kenyan public procurement sources identify procuring entities and suppliers, but often lack direct geo unit IDs. MZIZI must place **both** in a correct geographic and organizational context; extend tender/contract information; connect applicable law, institution, finance unit, procurement parties, award and delivery geography.
 
-Current repository evidence: `source/backend/engine/data/src/mzizi_data/imports/procurement.py` imports public-procurement portal entities (including county/city/address where available), OCDS parties, tenders, suppliers and contracts into staged canonical candidates. `organization.entities`, `organization.identifiers`, `finance.units`, `place.places` and `place.occupancies` already participate. The importer links county where it has information; it does **not** establish verified supplier county coverage from a mere supplier name.
+Current repository evidence: `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/src/mzizi_data/imports/procurement.py` imports public-procurement portal entities (including county/city/address where available), OCDS parties, tenders, suppliers and contracts into staged canonical candidates. `organization.entities`, `organization.identifiers`, `finance.units`, `place.places` and `place.occupancies` already participate. The importer links county where it has information; it does **not** establish verified supplier county coverage from a mere supplier name.
 
 **Critical different facts:** buyer, procuring entity, finance/contracting unit, bidder, awardee, supplier, registered legal entity, headquarters location, contract implementation site, service area, legal jurisdiction and procurement-law applicability. A supplier registered in Nairobi may fulfill a contract in Turkana; a Nairobi-based national ministry's activity may be nationwide. Do not impose company headquarters on its procurement/project geography.
 
@@ -344,7 +344,7 @@ For reference, audit the overloaded `reference.classifications` scheme/key patte
 
 **User wants:** Instead of a monolithic current data engine, have multiple data pipelines, each independently runnable and concurrently working toward the **same shared goal** or completely **different goals**. Reusable packages should implement standalone capabilities such as **agent orchestration/AI, scraping, file management client, extraction, normalization, geographic matching, deduplication, pattern generation, legal/source compliance and validation**. User said exact architecture was **not decided** and needs explanation, examples and alternatives.
 
-Current repo: `source/backend/engine/data` is Python with many importers and extractors; `source/backend/engine/database` is Bun/TypeScript with migrations/seeding/validation/promotion; `source/backend/files` and `source/backend/intelligence` are largely README scaffolds. `engine.jobs` already provides hash-based idempotency, worker claims and retries. Preserve working capabilities in any reorganization.
+Current repo: `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data` is Python with many importers and extractors; `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database` is Bun/TypeScript with migrations/seeding/validation/promotion; `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/files` and `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/intelligence` are largely README scaffolds. `engine.jobs` already provides hash-based idempotency, worker claims and retries. Preserve working capabilities in any reorganization.
 
 Concepts to separate:
 

@@ -100,7 +100,7 @@ Determine with user: endpoint and auth (without exposing secrets in docs); bucke
 
 ## Present implementation notes / gaps
 
-Existing `filesystem` models already include `stores`, `formats`, `folders`, `objects`, `files`, `versions`, `variants`, `attachments`, `uploads` and `events`. `source/backend/engine/data/src/mzizi_data/files.py` currently uses `LocalDirectoryStore`, hash-based keys and logical file versions, and its local file creation path defaults to `restricted` visibility. User rejects unjustified universal restriction for public documents; the correct public/private policy should be agreed before changing defaults. `source/backend/files/README.md` is primarily architecture scaffolding, so integration work must first inventory all actual writers/readers and current data.
+Existing `filesystem` models already include `stores`, `formats`, `folders`, `objects`, `files`, `versions`, `variants`, `attachments`, `uploads` and `events`. `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/src/mzizi_data/files.py` currently uses `LocalDirectoryStore`, hash-based keys and logical file versions, and its local file creation path defaults to `restricted` visibility. User rejects unjustified universal restriction for public documents; the correct public/private policy should be agreed before changing defaults. `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/files/README.md` is primarily architecture scaffolding, so integration work must first inventory all actual writers/readers and current data.
 
 ## Unresolved user decisions / acceptance questions
 

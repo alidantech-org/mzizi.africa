@@ -170,8 +170,8 @@ Authenticated sites, CAPTCHAs, anti-bot evasion, JavaScript execution beyond dec
 
 ## Implementation (engine/data)
 
-- JSON Schemas: `source/backend/engine/data/schemas/site/v1` (`manifest`, `module`, `mapping`, `tags`, `common`). All are closed; `policy.auth` is the constant `none`; `robots` is `respect`.
-- Validator: `mzizi_data.structure.validate` (`mzizi-data validate <dir> [--family <dir>]`). It runs the schema, the static checks (module files and names, listed modules, overlay, mapping module and target, mapped fields exist in `source/backend/contracts/targets.json`, key fields mapped, transforms in the library, tags in the `site-tag` vocabulary or proposed in `tags.yml`, URLs inside `policy.scope.paths`), the secret lint, the NOTES.md requirement and the dry run against `examples/`.
+- JSON Schemas: `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/schemas/site/v1` (`manifest`, `module`, `mapping`, `tags`, `common`). All are closed; `policy.auth` is the constant `none`; `robots` is `respect`.
+- Validator: `mzizi_data.structure.validate` (`mzizi-data validate <dir> [--family <dir>]`). It runs the schema, the static checks (module files and names, listed modules, overlay, mapping module and target, mapped fields exist in `source/schema/contracts/targets.json`, key fields mapped, transforms in the library, tags in the `site-tag` vocabulary or proposed in `tags.yml`, URLs inside `policy.scope.paths`), the secret lint, the NOTES.md requirement and the dry run against `examples/`.
 - `targets.json` is exported from the entities by `bun src/cli.ts export-targets` in the database package.
 - Selectors: `css` (BeautifulSoup), `xpath` (lxml), `jsonpath` (a minimal built-in subset: `$`, `.key`, `['key']`, `[n]`, `[*]`; recursive descent is rejected) and `regex`; a list is tried in confidence order and the matching index is recorded.
 - Transform library: `trim`, `collapse_whitespace`, `nfc`, `upper`, `lower`, `normalise_name`, `date`, `decimal`, `fiscal_year`, `fy_start`, `regex`, `lookup`. An unknown transform is an error; a failed transform is reported on the field, never guessed.

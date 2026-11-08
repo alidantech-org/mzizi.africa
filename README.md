@@ -31,36 +31,24 @@ Read [.docs/docs/WHY.md](.docs/docs/WHY.md), [.docs/docs/GOALS.md](.docs/docs/GO
 mzizi.africa/
 ├── source/
 │   ├── apps/
+│   │   ├── api/        NestJS product API (Dryv-generated, finished auth included)
 │   │   ├── www/        Public atlas, heritage museum and exploration experience
 │   │   ├── web/        Research, curation, review and data-stewardship dashboard
 │   │   └── mobile/     Flutter mobile client
+│   ├── packages/       Reusable Python capabilities: filesystem, database, source, scraping, extraction, ocr, agent, manifest
+│   ├── schema/         Input-artifact schemas and rewrite SQL (database/auth active, database/engine provisional)
 │   └── backend/
-│       └── api/        Current Python code; source material during architecture migration
-│
-└── .docs/              Task workspace plus product, system and research documentation
+│       └── engine/     One Python orchestration project: operational API, workers, events, callback outbox
+├── seed/               Prepared seed data, patterns, manifests and test fixtures
+├── scripts/            Thin commands calling package APIs
+└── .docs/              Task workspace, product docs, and _archives/ (historical, non-executable snapshot of the replaced implementations)
 ```
 
 The current repository is consolidated, but the target service architecture is intentionally broader than the code that exists today.
 
-## Target repository shape
+## Repository shape
 
-```text
-mzizi.africa/
-├── source/
-│   ├── apps/
-│   │   ├── www/
-│   │   ├── web/        Research dashboard
-│   │   └── mobile/
-│   └── backend/
-│       ├── files/          Evidence artifact lifecycle
-│       ├── engine/
-│       │   ├── data/       Discovery, extraction and parsing
-│       │   └── database/   Migrations, seeds, validation and promotion
-│       ├── intelligence/   AI/tool classification, cleaning and evaluation
-│       └── api/            Future NestJS product API
-├── packages/           Shared contracts/taxonomies when justified
-└── .docs/
-```
+The layout above is the active structure since the 8 November 2026 restructuring. Responsibilities: packages hold reusable capability, the engine orchestrates them, the NestJS API owns product decisions, canonical database writes and the UI contract, `seed/` holds prepared inputs, and `source/schema/` holds input schemas and rewrite SQL. Later milestones (domain schemas, source intelligence, pipelines) are not complete merely because their folders exist.
 
 ## Target system layers
 

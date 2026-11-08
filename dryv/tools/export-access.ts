@@ -6,7 +6,7 @@
  *  - target kinds: the schema-qualified tables of every domain fact (plus files and source documents), so comments, evidence and review
  *    decisions can only point at records that exist in a known table.
  *
- *   bun tools/export-access.ts           write source/backend/api/src/auth/access-rules.generated.ts
+ *   bun tools/export-access.ts           write source/apps/api/src/auth/access-rules.generated.ts
  *   bun tools/export-access.ts --check   fail when the file is stale
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -61,7 +61,7 @@ export const accessRules = ${JSON.stringify(sorted, null, 2)} as const satisfies
 export const targetKinds = ${JSON.stringify(targetKinds, null, 2)} as const;
 `;
 
-const file = join(dryvRoot, "..", "source/backend/api/src/auth/access-rules.generated.ts");
+const file = join(dryvRoot, "..", "source/apps/api/src/auth/access-rules.generated.ts");
 if (process.argv.includes("--check")) {
   if (!existsSync(file) || readFileSync(file, "utf8") !== output) {
     console.error("access-rules.generated.ts is stale. Run: bun run access:export");

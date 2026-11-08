@@ -1,7 +1,7 @@
 version: dryv/v1alpha1
 
 # Dryv project for the Mzizi API. The project root is the repository root so generated output can
-# land in source/backend/api (destinations may not leave the root). Contracts and project packs live
+# land in source/apps/api (destinations may not leave the root). Contracts and project packs live
 # in dryv/. Pin: Dryv engine 6dba3100f02ada9dfd061e5100112c1d01760e3b, packs 7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a.
 
 sources:
@@ -32,23 +32,23 @@ actions:
 destinations:
   ir:
     compiled: { path: dryv/.dryv/ir/dryv.ir.yaml }
-  # Injected NestJS modules: source/backend/api/src/modules/<group>/...
+  # Injected NestJS modules: source/apps/api/src/modules/<group>/...
   modules:
-    path: source/backend/api/src/modules
-    imports: { path: source/backend/api/src, prefix: "#/" }
+    path: source/apps/api/src/modules
+    imports: { path: source/apps/api/src, prefix: "#/" }
     choose: { js.package_manager: bun }
     actions:
       - { $ref: "#/actions/imports" }
       - { $ref: "#/actions/typecheck" }
   # app.module.ts and the database/ scaffold.
   app:
-    path: source/backend/api/src
-    imports: { path: source/backend/api/src, prefix: "#/" }
+    path: source/apps/api/src
+    imports: { path: source/apps/api/src, prefix: "#/" }
     choose: { js.package_manager: bun }
-  # Shared framework-free declarations: source/backend/api/src/types/<group>/...
+  # Shared framework-free declarations: source/apps/api/src/types/<group>/...
   types:
-    path: source/backend/api/src/types
-    imports: { path: source/backend/api/src, prefix: "#/" }
+    path: source/apps/api/src/types
+    imports: { path: source/apps/api/src, prefix: "#/" }
     choose: { js.package_manager: bun }
 
 authoring:

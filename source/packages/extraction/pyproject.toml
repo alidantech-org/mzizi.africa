@@ -1,0 +1,22 @@
+[project]
+name = "mzizi-extraction"
+version = "0.1.0"
+description = "Reusable extraction of PDF text and tables, GeoJSON, CSV and JSON into segments with honest diagnostics."
+requires-python = ">=3.12"
+dependencies = ["pdfplumber", "pypdfium2", "shapely", "mzizi-ocr"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[tool.uv.sources]
+mzizi-ocr = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

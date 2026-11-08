@@ -1,6 +1,6 @@
 /**
  * Exports the `exchange` group (layer-to-layer contracts) as JSON Schema so TypeScript and Python
- * share one source. Output: source/backend/contracts/exchange.schema.json.
+ * share one source. Output: source/schema/contracts/exchange.schema.json.
  *
  *   bun tools/export-json-schema.ts          write the file
  *   bun tools/export-json-schema.ts --check  fail if the committed file is stale
@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { compileIr, dryvRoot, type Json } from "./lib/ir.ts";
 
 const group = "exchange";
-const outPath = join(dryvRoot, "..", "source", "backend", "contracts", `${group}.schema.json`);
+const outPath = join(dryvRoot, "..", "source", "schema", "contracts", `${group}.schema.json`);
 const items = compileIr();
 const byName = new Map(items.map((i) => [`${i.kind.startsWith("property") ? "p" : i.kind}:${i.name}`, i]));
 

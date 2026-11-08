@@ -1,1 +1,1 @@
-description: "Example payloads that validate against source/backend/contracts/exchange.schema.json and the gate decision vectors shared by the Python and TypeScript engines."
+description: "Example payloads that validate against source/schema/contracts/exchange.schema.json and the gate decision vectors shared by the Python and TypeScript engines."

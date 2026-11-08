@@ -1,4 +1,4 @@
-# Functional seed manifest (release 2026-11-08.1). Authored by hand; checksums, effective folder metadata and S3 key mappings are generated into manifest.lock.json by 'bun src/seed.ts lock'.
+# Functional seed manifest (release 2026-11-08.1). Authored by hand; checksums, effective folder metadata and S3 key mappings are generated into manifest.lock.json by 'uv run mzizi-manifest lock'.
 # See README.md for the entry contract. The disabled illustrative example is examples/manifest.example.json.
 schema_version: 1
 release: 2026-11-08.1
@@ -15,7 +15,7 @@ entries:
   - namespace
   depends_on: []
   consumers:
-  - source/backend/engine/database/src/seed-auth.ts
+  - source/packages/database/src/mzizi_database/loaders/auth.py
   relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
   sync_policy: preview_then_apply_no_implicit_delete
 - id: global.auth.roles
@@ -28,7 +28,7 @@ entries:
   - code
   depends_on: []
   consumers:
-  - source/backend/engine/database/src/seed-auth.ts
+  - source/packages/database/src/mzizi_database/loaders/auth.py
   relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
   sync_policy: preview_then_apply_no_implicit_delete
 - id: global.auth.role-permissions
@@ -44,7 +44,7 @@ entries:
   - global.auth.roles
   - global.auth.namespaces
   consumers:
-  - source/backend/engine/database/src/seed-auth.ts
+  - source/packages/database/src/mzizi_database/loaders/auth.py
   relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
   sync_policy: preview_then_apply_no_implicit_delete
 - id: global.auth.scope-targets
@@ -57,7 +57,7 @@ entries:
   - table_name
   depends_on: []
   consumers:
-  - source/backend/engine/database/src/seed-auth.ts
+  - source/packages/database/src/mzizi_database/loaders/auth.py
   relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
   sync_policy: preview_then_apply_no_implicit_delete
 - id: global.auth.bootstrap
@@ -69,8 +69,8 @@ entries:
   depends_on:
   - global.auth.roles
   consumers:
-  - source/backend/engine/database/src/seed-auth.ts
-  - source/backend/engine/database/src/rewrite.ts
+  - source/packages/database/src/mzizi_database/loaders/auth.py
+  - source/packages/database/src/mzizi_database/cli.py
   relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
   sync_policy: preview_then_apply_no_implicit_delete
 - id: global.reference.site-tags
@@ -82,11 +82,11 @@ entries:
   key_columns:
   - key
   depends_on: []
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
-  - source/backend/engine/data/src/mzizi_data/structure/validate.py
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: global.reference.media-formats
   path: global/reference/media-formats.json
   media_type: application/json
@@ -96,14 +96,13 @@ entries:
   key_columns:
   - key
   depends_on: []
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
-  - source/backend/api/src/neutral/website-model.integration.spec.ts
-  - source/backend/api/src/neutral/neutral-model.integration.spec.ts
+  consumers: []
   relocated_from: null
   notes: 'Duplicate resolution: authoritative payload for file formats. Derived from the legacy files-service CSV (api-legacy/app/routes/files/_seed/file_types.csv is byte-identical to _archives/files/_seed/file_types.csv).
-    The filesystem task derives global file-types.csv/extension aliases from this file; legacy CSVs are superseded and are not adopted.'
+    The filesystem task derives global file-types.csv/extension aliases from this file; legacy CSVs are superseded and are not adopted. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot);
+    it must be reimplemented against the rewrite schema by the owning milestone task.'
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: global.reference.source-kinds
   path: global/reference/source-kinds.json
   media_type: application/json
@@ -114,10 +113,11 @@ entries:
   - key
   depends_on:
   - global.reference.site-tags
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: global.reference.poc-countries
   path: global/reference/poc-countries.json
   media_type: application/json
@@ -128,10 +128,11 @@ entries:
   - key
   depends_on:
   - global.reference.site-tags
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.reference.kenya-reference
   path: ke/reference/kenya-reference.json
   media_type: application/json
@@ -142,10 +143,11 @@ entries:
   - key
   depends_on:
   - global.reference.site-tags
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.reference.ke-legal-kinds
   path: ke/reference/ke-legal-kinds.json
   media_type: application/json
@@ -156,10 +158,11 @@ entries:
   - key
   depends_on:
   - ke.reference.kenya-reference
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: global.research.dossiers
   path: global/research/dossiers.json
   media_type: application/json
@@ -171,10 +174,11 @@ entries:
   depends_on:
   - ke.reference.kenya-reference
   - global.reference.poc-countries
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.research.ke-pilot-sites
   path: ke/research/ke-pilot-sites.json
   media_type: application/json
@@ -186,10 +190,11 @@ entries:
   depends_on:
   - ke.reference.kenya-reference
   - global.reference.source-kinds
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.research.ke-site-families
   path: ke/research/ke-site-families.json
   media_type: application/json
@@ -200,10 +205,11 @@ entries:
   - key
   depends_on:
   - ke.research.ke-pilot-sites
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.policy.trusted-domains
   path: system/policy/trusted-domains.json
   media_type: application/json
@@ -211,12 +217,11 @@ entries:
   target: assessment auto-approval policy (read, no table)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/database/src/assessments.ts
-  - source/backend/engine/data/src/mzizi_data/probe_domains.py
-  - source/backend/engine/data/src/mzizi_data/crawl.py
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.policy.domain-spellings
   path: ke/policy/domain-spellings.json
   media_type: application/json
@@ -224,10 +229,11 @@ entries:
   target: domain pattern spellings (read, no table)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/patterns.py
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.policy.never-crawl
   path: system/policy/never-crawl.json
   media_type: application/json
@@ -235,11 +241,12 @@ entries:
   target: crawler host exclusions (read, no table)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/crawl.py
+  consumers: []
   relocated_from: constant in source/backend/engine/data/src/mzizi_data/crawl.py (moved 2026-11-08)
-  notes: Data extracted from a code constant.
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: system.policy.wikimedia
   path: system/policy/wikimedia.json
   media_type: application/json
@@ -247,11 +254,12 @@ entries:
   target: Wikimedia API hosts (read, no table)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/wikimedia.py
+  consumers: []
   relocated_from: constant in source/backend/engine/data/src/mzizi_data/wikimedia.py (moved 2026-11-08)
-  notes: Data extracted from a code constant.
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: ke.policy.non-party-codes
   path: ke/policy/non-party-codes.json
   media_type: application/json
@@ -259,11 +267,12 @@ entries:
   target: party register check exclusions (read, no table)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/gapclose.py
+  consumers: []
   relocated_from: constant in source/backend/engine/data/src/mzizi_data/gapclose.py (moved 2026-11-08)
-  notes: Data extracted from a code constant.
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: ke.reference.county-census-order
   path: ke/reference/county-census-order.json
   media_type: application/json
@@ -271,11 +280,12 @@ entries:
   target: census county table order (read, no table)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/census_breakdowns.py
+  consumers: []
   relocated_from: constant in source/backend/engine/data/src/mzizi_data/imports/census_breakdowns.py (moved 2026-11-08)
-  notes: Data extracted from a code constant.
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: ke.reference.wikidata-ids
   path: ke/reference/wikidata-ids.json
   media_type: application/json
@@ -283,11 +293,12 @@ entries:
   target: Wikidata ids for Kenyan items (read, no table)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/wikimedia.py
+  consumers: []
   relocated_from: constant in source/backend/engine/data/src/mzizi_data/wikimedia.py (moved 2026-11-08)
-  notes: Data extracted from a code constant.
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: ke.governance.ke-governance-structure
   path: ke/governance/ke-governance-structure.json
   media_type: application/json
@@ -296,11 +307,11 @@ entries:
   database_target_state: legacy_dev_only
   depends_on:
   - ke.reference.kenya-reference
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
-  - source/backend/engine/database/src/governance-catalogue.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.governance.ke-office-holders-curated
   path: ke/governance/ke-office-holders-curated.json
   media_type: application/json
@@ -309,10 +320,11 @@ entries:
   database_target_state: legacy_dev_only
   depends_on:
   - ke.governance.ke-governance-structure
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/office_holders.py
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.patterns.ke-office-patterns
   path: ke/patterns/ke-office-patterns.json
   media_type: application/json
@@ -321,10 +333,11 @@ entries:
   database_target_state: legacy_dev_only
   depends_on:
   - ke.governance.ke-governance-structure
-  consumers:
-  - source/backend/engine/database/src/patterns.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.catalogues.ke-statistical-catalogue
   path: ke/catalogues/ke-statistical-catalogue.json
   media_type: application/json
@@ -333,10 +346,11 @@ entries:
   database_target_state: legacy_dev_only
   depends_on:
   - ke.reference.kenya-reference
-  consumers:
-  - source/backend/engine/database/src/catalogue.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.catalogues.ke-iebc-catalogue
   path: ke/catalogues/ke-iebc-catalogue.json
   media_type: application/json
@@ -355,11 +369,12 @@ entries:
   target: none (read only by DB engine tests)
   database_target_state: test_only
   depends_on: []
-  consumers:
-  - source/backend/engine/database/test/orpp-seed.test.ts
+  consumers: []
   relocated_from: null
-  notes: Only a test reads this file; no production loader exists yet.
+  notes: Only a test reads this file; no production loader exists yet. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented
+    against the rewrite schema by the owning milestone task. The test that read it was archived.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: ke.catalogues.ke-priority-publishers-catalogue
   path: ke/catalogues/ke-priority-publishers-catalogue.json
   media_type: application/json
@@ -367,11 +382,12 @@ entries:
   target: none (read only by DB engine tests)
   database_target_state: test_only
   depends_on: []
-  consumers:
-  - source/backend/engine/database/test/priority-publishers-seed.test.ts
+  consumers: []
   relocated_from: null
-  notes: Only a test reads this file; no production loader exists yet.
+  notes: Only a test reads this file; no production loader exists yet. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented
+    against the rewrite schema by the owning milestone task. The test that read it was archived.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: ke.registry.ke-expected-sites
   path: ke/registry/ke-expected-sites.json
   media_type: application/json
@@ -380,10 +396,11 @@ entries:
   database_target_state: legacy_dev_only
   depends_on:
   - ke.governance.ke-governance-structure
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.registry.ke-domain-zones
   path: ke/registry/ke-domain-zones.json
   media_type: application/json
@@ -392,10 +409,11 @@ entries:
   database_target_state: legacy_dev_only
   depends_on:
   - ke.reference.kenya-reference
-  consumers:
-  - source/backend/engine/database/src/seeds.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.registry.ke-site-sections
   path: ke/registry/ke-site-sections.json
   media_type: application/json
@@ -403,11 +421,11 @@ entries:
   target: site section expectations (read, no table)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/crawl.py
-  - source/backend/engine/data/tests/test_structure.py
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.registry.ke-media-expectations
   path: ke/registry/ke-media-expectations.json
   media_type: application/json
@@ -416,10 +434,11 @@ entries:
   database_target_state: legacy_dev_only
   depends_on:
   - ke.governance.ke-governance-structure
-  consumers:
-  - source/backend/engine/database/src/media.ts
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.places.ke-landmark-places
   path: ke/places/ke-landmark-places.json
   media_type: application/json
@@ -428,10 +447,11 @@ entries:
   database_target_state: legacy_dev_only
   depends_on:
   - ke.reference.kenya-reference
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/landmarks.py
+  consumers: []
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.budget
   glob: system/mappings/budget/*.yml
   media_type: application/yaml
@@ -439,13 +459,14 @@ entries:
   target: importer mapping bundle budget (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/budget_table.py
+  consumers: []
   relocated_from:
     system/mappings/budget/budget.yml: source/backend/engine/data/mappings/budget/budget.yml
     system/mappings/budget/fiscal_year.yml: source/backend/engine/data/mappings/budget/fiscal_year.yml
     system/mappings/budget/unit.yml: source/backend/engine/data/mappings/budget/unit.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.constitution
   glob: system/mappings/constitution/*.yml
   media_type: application/yaml
@@ -453,13 +474,14 @@ entries:
   target: importer mapping bundle constitution (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/constitution.py
+  consumers: []
   relocated_from:
     system/mappings/constitution/article.yml: source/backend/engine/data/mappings/constitution/article.yml
     system/mappings/constitution/chapter.yml: source/backend/engine/data/mappings/constitution/chapter.yml
     system/mappings/constitution/instrument.yml: source/backend/engine/data/mappings/constitution/instrument.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.county-assembly
   glob: system/mappings/county-assembly/*.yml
   media_type: application/yaml
@@ -467,14 +489,15 @@ entries:
   target: importer mapping bundle county-assembly (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/county_assembly_members.py
+  consumers: []
   relocated_from:
     system/mappings/county-assembly/holder.yml: source/backend/engine/data/mappings/county-assembly/holder.yml
     system/mappings/county-assembly/individual.yml: source/backend/engine/data/mappings/county-assembly/individual.yml
     system/mappings/county-assembly/membership.yml: source/backend/engine/data/mappings/county-assembly/membership.yml
     system/mappings/county-assembly/office.yml: source/backend/engine/data/mappings/county-assembly/office.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.county-executives
   glob: system/mappings/county-executives/*.yml
   media_type: application/yaml
@@ -482,13 +505,14 @@ entries:
   target: importer mapping bundle county-executives (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/county_executives.py
+  consumers: []
   relocated_from:
     system/mappings/county-executives/holder.yml: source/backend/engine/data/mappings/county-executives/holder.yml
     system/mappings/county-executives/individual.yml: source/backend/engine/data/mappings/county-executives/individual.yml
     system/mappings/county-executives/membership.yml: source/backend/engine/data/mappings/county-executives/membership.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.county-leaders
   glob: system/mappings/county-leaders/*.yml
   media_type: application/yaml
@@ -496,12 +520,13 @@ entries:
   target: importer mapping bundle county-leaders (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/county_leaders.py
+  consumers: []
   relocated_from:
     system/mappings/county-leaders/holder.yml: source/backend/engine/data/mappings/county-leaders/holder.yml
     system/mappings/county-leaders/individual.yml: source/backend/engine/data/mappings/county-leaders/individual.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.geoadmin
   glob: system/mappings/geoadmin/*.yml
   media_type: application/yaml
@@ -509,12 +534,13 @@ entries:
   target: importer mapping bundle geoadmin (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/geo_admin.py
+  consumers: []
   relocated_from:
     system/mappings/geoadmin/boundary.yml: source/backend/engine/data/mappings/geoadmin/boundary.yml
     system/mappings/geoadmin/unit.yml: source/backend/engine/data/mappings/geoadmin/unit.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.geoboundaries
   glob: system/mappings/geoboundaries/*.yml
   media_type: application/yaml
@@ -522,14 +548,15 @@ entries:
   target: importer mapping bundle geoboundaries (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/geoboundaries.py
+  consumers: []
   relocated_from:
     system/mappings/geoboundaries/boundary-adm0.yml: source/backend/engine/data/mappings/geoboundaries/boundary-adm0.yml
     system/mappings/geoboundaries/boundary-adm1.yml: source/backend/engine/data/mappings/geoboundaries/boundary-adm1.yml
     system/mappings/geoboundaries/unit-adm0.yml: source/backend/engine/data/mappings/geoboundaries/unit-adm0.yml
     system/mappings/geoboundaries/unit-adm1.yml: source/backend/engine/data/mappings/geoboundaries/unit-adm1.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.iebc
   glob: system/mappings/iebc/*.yml
   media_type: application/yaml
@@ -537,13 +564,14 @@ entries:
   target: importer mapping bundle iebc (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/iebc.py
+  consumers: []
   relocated_from:
     system/mappings/iebc/holder.yml: source/backend/engine/data/mappings/iebc/holder.yml
     system/mappings/iebc/individual.yml: source/backend/engine/data/mappings/iebc/individual.yml
     system/mappings/iebc/office.yml: source/backend/engine/data/mappings/iebc/office.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.legal
   glob: system/mappings/legal/*.yml
   media_type: application/yaml
@@ -551,12 +579,13 @@ entries:
   target: importer mapping bundle legal (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/legal_documents.py
+  consumers: []
   relocated_from:
     system/mappings/legal/instrument.yml: source/backend/engine/data/mappings/legal/instrument.yml
     system/mappings/legal/provision.yml: source/backend/engine/data/mappings/legal/provision.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.members
   glob: system/mappings/members/*.yml
   media_type: application/yaml
@@ -564,8 +593,7 @@ entries:
   target: importer mapping bundle members (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/members.py
+  consumers: []
   relocated_from:
     system/mappings/members/holder.yml: source/backend/engine/data/mappings/members/holder.yml
     system/mappings/members/individual.yml: source/backend/engine/data/mappings/members/individual.yml
@@ -574,6 +602,8 @@ entries:
     system/mappings/members/office.yml: source/backend/engine/data/mappings/members/office.yml
     system/mappings/members/party.yml: source/backend/engine/data/mappings/members/party.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.ngcdf
   glob: system/mappings/ngcdf/*.yml
   media_type: application/yaml
@@ -581,14 +611,15 @@ entries:
   target: importer mapping bundle ngcdf (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/ngcdf.py
+  consumers: []
   relocated_from:
     system/mappings/ngcdf/budget.yml: source/backend/engine/data/mappings/ngcdf/budget.yml
     system/mappings/ngcdf/fiscal_year.yml: source/backend/engine/data/mappings/ngcdf/fiscal_year.yml
     system/mappings/ngcdf/transfer.yml: source/backend/engine/data/mappings/ngcdf/transfer.yml
     system/mappings/ngcdf/unit.yml: source/backend/engine/data/mappings/ngcdf/unit.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.office_holders
   glob: system/mappings/office_holders/*.yml
   media_type: application/yaml
@@ -596,8 +627,7 @@ entries:
   target: importer mapping bundle office_holders (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/office_holders.py
+  consumers: []
   relocated_from:
     system/mappings/office_holders/holder.yml: source/backend/engine/data/mappings/office_holders/holder.yml
     system/mappings/office_holders/individual.yml: source/backend/engine/data/mappings/office_holders/individual.yml
@@ -605,6 +635,8 @@ entries:
     system/mappings/office_holders/office.yml: source/backend/engine/data/mappings/office_holders/office.yml
     system/mappings/office_holders/party.yml: source/backend/engine/data/mappings/office_holders/party.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.orpp
   glob: system/mappings/orpp/*.yml
   media_type: application/yaml
@@ -612,11 +644,12 @@ entries:
   target: importer mapping bundle orpp (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/orpp_parties.py
+  consumers: []
   relocated_from:
     system/mappings/orpp/party.yml: source/backend/engine/data/mappings/orpp/party.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.ppf
   glob: system/mappings/ppf/*.yml
   media_type: application/yaml
@@ -624,12 +657,13 @@ entries:
   target: importer mapping bundle ppf (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/ppf.py
+  consumers: []
   relocated_from:
     system/mappings/ppf/transfer.yml: source/backend/engine/data/mappings/ppf/transfer.yml
     system/mappings/ppf/unit.yml: source/backend/engine/data/mappings/ppf/unit.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.procurement
   glob: system/mappings/procurement/*.yml
   media_type: application/yaml
@@ -637,8 +671,7 @@ entries:
   target: importer mapping bundle procurement (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/procurement.py
+  consumers: []
   relocated_from:
     system/mappings/procurement/contact.yml: source/backend/engine/data/mappings/procurement/contact.yml
     system/mappings/procurement/contract.yml: source/backend/engine/data/mappings/procurement/contract.yml
@@ -649,6 +682,8 @@ entries:
     system/mappings/procurement/place.yml: source/backend/engine/data/mappings/procurement/place.yml
     system/mappings/procurement/tender.yml: source/backend/engine/data/mappings/procurement/tender.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.sitting
   glob: system/mappings/sitting/*.yml
   media_type: application/yaml
@@ -656,11 +691,12 @@ entries:
   target: importer mapping bundle sitting (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/sittings.py
+  consumers: []
   relocated_from:
     system/mappings/sitting/event.yml: source/backend/engine/data/mappings/sitting/event.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: system.mappings.worldbank
   glob: system/mappings/worldbank/*.yml
   media_type: application/yaml
@@ -668,8 +704,7 @@ entries:
   target: importer mapping bundle worldbank (staging candidates)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/src/mzizi_data/imports/worldbank.py
+  consumers: []
   relocated_from:
     system/mappings/worldbank/category.yml: source/backend/engine/data/mappings/worldbank/category.yml
     system/mappings/worldbank/dataset.yml: source/backend/engine/data/mappings/worldbank/dataset.yml
@@ -677,6 +712,8 @@ entries:
     system/mappings/worldbank/observation.yml: source/backend/engine/data/mappings/worldbank/observation.yml
     system/mappings/worldbank/period.yml: source/backend/engine/data/mappings/worldbank/period.yml
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
 - id: ke.sites.ke-iebc
   glob: ke/sites/ke-iebc/**
   media_type: application/yaml
@@ -684,16 +721,17 @@ entries:
   target: site structure bundle ke-iebc (registered via the data engine batch submit)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/tests/test_batch.py
+  consumers: []
   relocated_from:
     ke/sites/ke-iebc/NOTES.md: source/backend/engine/data/pilots/ke-iebc/NOTES.md
     ke/sites/ke-iebc/examples/party-list.html: source/backend/engine/data/pilots/ke-iebc/examples/party-list.html
     ke/sites/ke-iebc/manifest.yml: source/backend/engine/data/pilots/ke-iebc/manifest.yml
     ke/sites/ke-iebc/mappings/party-list.yml: source/backend/engine/data/pilots/ke-iebc/mappings/party-list.yml
     ke/sites/ke-iebc/modules/party-list.yml: source/backend/engine/data/pilots/ke-iebc/modules/party-list.yml
-  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension.
+  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension. The loader that read this file was archived with the
+    old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: ke.sites.ke-parliament
   glob: ke/sites/ke-parliament/**
   media_type: application/yaml
@@ -701,16 +739,17 @@ entries:
   target: site structure bundle ke-parliament (registered via the data engine batch submit)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/tests/test_batch.py
+  consumers: []
   relocated_from:
     ke/sites/ke-parliament/NOTES.md: source/backend/engine/data/pilots/ke-parliament/NOTES.md
     ke/sites/ke-parliament/examples/budget-documents.html: source/backend/engine/data/pilots/ke-parliament/examples/budget-documents.html
     ke/sites/ke-parliament/manifest.yml: source/backend/engine/data/pilots/ke-parliament/manifest.yml
     ke/sites/ke-parliament/mappings/budget-documents.yml: source/backend/engine/data/pilots/ke-parliament/mappings/budget-documents.yml
     ke/sites/ke-parliament/modules/budget-documents.yml: source/backend/engine/data/pilots/ke-parliament/modules/budget-documents.yml
-  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension.
+  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension. The loader that read this file was archived with the
+    old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived
 - id: global.sites.world-geoboundaries
   glob: global/sites/world-geoboundaries/**
   media_type: application/yaml
@@ -718,13 +757,14 @@ entries:
   target: site structure bundle world-geoboundaries (registered via the data engine batch submit)
   database_target_state: legacy_dev_only
   depends_on: []
-  consumers:
-  - source/backend/engine/data/tests/test_batch.py
+  consumers: []
   relocated_from:
     global/sites/world-geoboundaries/NOTES.md: source/backend/engine/data/pilots/world-geoboundaries/NOTES.md
     global/sites/world-geoboundaries/examples/releases.json: source/backend/engine/data/pilots/world-geoboundaries/examples/releases.json
     global/sites/world-geoboundaries/manifest.yml: source/backend/engine/data/pilots/world-geoboundaries/manifest.yml
     global/sites/world-geoboundaries/mappings/releases.yml: source/backend/engine/data/pilots/world-geoboundaries/mappings/releases.yml
     global/sites/world-geoboundaries/modules/releases.yml: source/backend/engine/data/pilots/world-geoboundaries/modules/releases.yml
-  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension.
+  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension. The loader that read this file was archived with the
+    old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
   sync_policy: preview_then_apply_no_implicit_delete
+  loader_status: archived

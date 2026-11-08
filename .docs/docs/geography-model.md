@@ -42,7 +42,7 @@ Gaps still open:
 
 ## Legacy Python comparison (shape only)
 
-Compared with `source/backend/api-legacy/app/routes/geographic/models/mobile_api.py` by reading, not by a live run:
+Compared with `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy/app/routes/geographic/models/mobile_api.py` by reading, not by a live run:
 
 - Same: entity metadata, verified boundary provenance (source, reference, licence, year, retrieved-at, version), valid time, GeoJSON Feature and FeatureCollection with `geography_id` in properties.
 - Different: field names are camelCase here; boundary and child boundaries are wrapped as `{ geojson, boundaryVerified }` with the GeoJSON as text instead of returning the GeoJSON object directly; ids are UUIDs, not ULIDs; `country` filters by jurisdiction code.

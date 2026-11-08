@@ -1,0 +1,25 @@
+[project]
+name = "mzizi-manifest"
+version = "0.1.0"
+description = "Shared input contracts: seed manifest and folder metadata resolution, site-structure bundle validation against source/schema."
+requires-python = ">=3.12"
+dependencies = ["pyyaml", "jsonschema", "referencing", "mzizi-scraping"]
+
+[project.scripts]
+mzizi-manifest = "mzizi_manifest.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[tool.uv.sources]
+mzizi-scraping = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

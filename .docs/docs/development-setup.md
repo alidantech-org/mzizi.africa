@@ -25,4 +25,4 @@ Use `source/apps/mobile/README.md` as the source for SDK and platform setup. The
 
 ## API and sites
 
-Follow each application README and package scripts. The legacy Python service may require environment and database configuration; inspect `source/backend/api-legacy/README.md` before starting it. The public and research sites have separate ownership and scripts; consult their package manifests rather than assuming one root command covers both.
+Follow each application README and package scripts. The legacy Python service may require environment and database configuration; inspect `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy/README.md` before starting it. The public and research sites have separate ownership and scripts; consult their package manifests rather than assuming one root command covers both.

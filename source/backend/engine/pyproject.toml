@@ -1,0 +1,44 @@
+[project]
+name = "mzizi-engine"
+version = "0.1.0"
+description = "Mzizi Python orchestration engine: operational API, job/run lifecycle, workers, event stream and callback outbox. Orchestrates the packages; never writes domain schemas."
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi",
+  "uvicorn",
+  "httpx",
+  "pyjwt[crypto]",
+  "pyyaml",
+  "psycopg[binary]",
+  "mzizi-database",
+  "mzizi-filesystem",
+  "mzizi-manifest",
+  "mzizi-source",
+  "mzizi-scraping",
+  "mzizi-extraction",
+  "mzizi-ocr",
+  "mzizi-agent",
+]
+
+[project.scripts]
+mzizi-engine = "mzizi_engine.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.uv.sources]
+mzizi-database = { workspace = true }
+mzizi-filesystem = { workspace = true }
+mzizi-manifest = { workspace = true }
+mzizi-source = { workspace = true }
+mzizi-scraping = { workspace = true }
+mzizi-extraction = { workspace = true }
+mzizi-ocr = { workspace = true }
+mzizi-agent = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

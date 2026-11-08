@@ -158,9 +158,9 @@ Metadata belongs in an appropriate structured manifest/schema, not necessarily a
 
 ## How this fits existing code / uncovered gaps
 
-- `source/backend/engine/data/src/mzizi_data/crawl.py` already has bounded section crawling and document sightings. Its comments and behavior indicate a **known URL may be skipped without re-fetch**, which is useful for a one-off crawl but insufficient for ongoing website change monitoring. Review refresh/conditional fetch behavior before building incremental pipelines.
+- `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/src/mzizi_data/crawl.py` already has bounded section crawling and document sightings. Its comments and behavior indicate a **known URL may be skipped without re-fetch**, which is useful for a one-off crawl but insufficient for ongoing website change monitoring. Review refresh/conditional fetch behavior before building incremental pipelines.
 - `structure/sections.py` recognizes semantic section types; `SITE_STRUCTURE_SPEC.md` supports reusable site/family structure bundles and mapping modules.
-- `source/backend/engine/data/src/mzizi_data/fingerprint.py` computes site similarity digests from navigation, assets, classes, generators, element types and document formats. This is **site structural fingerprinting, not a content-tree diff**.
+- `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/src/mzizi_data/fingerprint.py` computes site similarity digests from navigation, assets, classes, generators, element types and document formats. This is **site structural fingerprinting, not a content-tree diff**.
 - `filesystem` and `source.captures` already preserve raw/versioned artifacts; however, `files.py` currently uses a local-directory object adapter rather than the user's existing S3-compatible service.
 - As inspected, a complete **HTML → faithful Markdown conversion plus semantic DOM subtree change index** is **proposed**, not confirmed as already implemented. Inspect any newer pipeline code before planning tasks.
 

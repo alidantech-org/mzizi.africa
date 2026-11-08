@@ -4,7 +4,7 @@
 
 # Legacy seed quality findings (2026-11-02)
 
-The CSV seeds under `source/backend/api-legacy/app/routes/*/_seed` were measured before any import (`mzizi_data.imports.legacy_seeds`, regression-tested in `tests/test_structure.py`). The seeds name no sources, were written for the previous project and are mostly sample-sized (most files hold fewer than 30 rows). They are **not** bulk-copied into canonical tables; at most a reviewer promotes a curated candidate that has been checked against a real source.
+The CSV seeds under `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy/app/routes/*/_seed` were measured before any import (`mzizi_data.imports.legacy_seeds`, regression-tested in `tests/test_structure.py`). The seeds name no sources, were written for the previous project and are mostly sample-sized (most files hold fewer than 30 rows). They are **not** bulk-copied into canonical tables; at most a reviewer promotes a curated candidate that has been checked against a real source.
 
 ## Geographic units (`geo_units.csv`)
 

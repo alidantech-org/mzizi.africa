@@ -54,7 +54,7 @@ Tags are `namespace:value` and must be in the vocabulary (reference scheme `site
 
 ## Mappings
 
-A mapping names the target table (`schema.table`, see `source/backend/contracts/targets.json`), the natural `key` fields used for idempotency, per-field `from`, `const` or `transform`, and a provenance `locator`. Required target fields you cannot fill from the page (a publisher, a document kind) are given as `const` references. Never invent a value; an unreadable value stays empty and the candidate is flagged.
+A mapping names the target table (`schema.table`, see `source/schema/contracts/targets.json`), the natural `key` fields used for idempotency, per-field `from`, `const` or `transform`, and a provenance `locator`. Required target fields you cannot fill from the page (a publisher, a document kind) are given as `const` references. Never invent a value; an unreadable value stays empty and the candidate is flagged.
 
 ## NOTES.md template
 

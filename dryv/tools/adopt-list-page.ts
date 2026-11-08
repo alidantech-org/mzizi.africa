@@ -1,6 +1,6 @@
 /**
  * Dryv scaffolds each Find* use case once with its own paging and filter code. This idempotent tool
- * rewrites any scaffold that has not adopted the shared helper (source/backend/api/src/read/list-page.ts)
+ * rewrites any scaffold that has not adopted the shared helper (source/apps/api/src/read/list-page.ts)
  * so every list shares bounded paging, q search, current-only default and deterministic order.
  *
  *   bun dryv/tools/adopt-list-page.ts
@@ -9,7 +9,7 @@ import { Glob } from "bun";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const api = join(import.meta.dir, "..", "..", "source/backend/api");
+const api = join(import.meta.dir, "..", "..", "source/apps/api");
 let adopted = 0;
 for await (const file of new Glob("src/modules/*/*/use-cases/find-*.usecase.ts").scan({ cwd: api, absolute: true })) {
   const source = readFileSync(file, "utf8");

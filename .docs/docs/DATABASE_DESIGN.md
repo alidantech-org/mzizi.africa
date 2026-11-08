@@ -18,7 +18,7 @@ The canonical PostgreSQL database is organised into domain schemas that are desi
 
 ## Engine-owned objects outside the catalogue
 
-`staging` (runs, candidates, issues, promotions: validation and review before promotion), `engine` (migration history and the data engine job queue) and `geography.boundary_shapes` (PostGIS shapes derived from the GeoJSON text by a trigger). They are created by hand-written migrations in `source/backend/engine/database/migrations`, are not Dryv entities, and are not served by the API (the API role may see staging candidate ids only, for review decisions). The catalogue below lists the Dryv-generated schemas (21 including `website`, `place` and `contact`).
+`staging` (runs, candidates, issues, promotions: validation and review before promotion), `engine` (migration history and the data engine job queue) and `geography.boundary_shapes` (PostGIS shapes derived from the GeoJSON text by a trigger). They are created by hand-written migrations in `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database/migrations`, are not Dryv entities, and are not served by the API (the API role may see staging candidate ids only, for review decisions). The catalogue below lists the Dryv-generated schemas (21 including `website`, `place` and `contact`).
 
 ## Schema catalogue
 

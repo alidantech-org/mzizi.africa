@@ -1,7 +1,7 @@
 {
   "release": "2026-11-08.1",
-  "manifest_sha256": "a7adc55ab4bce833ab730646d3bf2e15f41770fb8a71e6e65a9b6ed499ef530c",
-  "generated_by": "bun src/seed.ts lock (source/backend/engine/database); programmatic, no model involved",
+  "manifest_sha256": "de81dd40e558ac67e81a87d13aa36ef4654e5a11abab65b465b8594a9e41c479",
+  "generated_by": "mzizi-manifest lock (source/packages/manifest); programmatic, no model involved",
   "bucket": "mzizi",
   "region": "us-east-1",
   "note": "upload_status is always not_uploaded here: no artifact has been uploaded or verified in S3 by this lock. Object keys are mappings only.",
@@ -16,8 +16,8 @@
       "files": [
         {
           "path": "global/auth/namespaces.csv",
-          "sha256": "50b9ac703a16c360c1ed3af3c0d1fd855df6546ecfb9dc9e219458b9e27ca7e1",
-          "bytes": 432,
+          "sha256": "2d848135f93c47f948a181c33f8377c584e939cacd01d2fc1175c850c777d145",
+          "bytes": 499,
           "media_type": "text/csv",
           "relocated_from": "new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)",
           "effective": {
@@ -44,7 +44,7 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/auth/namespaces/2026-11-08.1/namespaces.50b9ac703a16c360.csv",
+          "object_key": "internal/seeds/global/auth/namespaces/2026-11-08.1/namespaces.2d848135f93c47f9.csv",
           "upload_status": "not_uploaded"
         }
       ]
