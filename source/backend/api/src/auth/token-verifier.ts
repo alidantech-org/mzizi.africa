@@ -31,6 +31,34 @@ export function configFromEnv(env: Record<string, string | undefined>): Verifier
   return { issuer: env.AUTH_ISSUER, audience: env.AUTH_AUDIENCE, jwksUrl: env.AUTH_JWKS_URL, publicKeyPem: env.AUTH_PUBLIC_KEY };
 }
 
+/** What a verified OIDC token proves: who issued it and the opaque subject (never assumed to be a UUID). */
+export interface VerifiedToken {
+  issuer: string;
+  subject: string;
+}
+
+/**
+ * Verifies a bearer token (issuer, signature, expiry) and returns its issuer and subject. Used with database
+ * authorization: who the subject is and what it may do come from the `auth` schema, never from claims.
+ */
+export function createIdentityVerifier(config: VerifierConfig): (token: string) => Promise<VerifiedToken> {
+  const algorithms = config.algorithms ?? ["RS256", "ES256", "EdDSA"];
+  let key: JWTVerifyGetKey | CryptoKey | KeyObject | undefined;
+  if (config.jwksUrl) key = createRemoteJWKSet(new URL(config.jwksUrl));
+  const pem = config.publicKeyPem;
+  return async (token) => {
+    if (!config.issuer || (!config.jwksUrl && !pem)) throw new ServiceUnavailableException("authentication is not configured");
+    try {
+      const resolved = key ?? (await importSPKI(pem as string, algorithms[0] as string));
+      const { payload } = await jwtVerify(token, resolved as never, { issuer: config.issuer, audience: config.audience, algorithms });
+      if (!payload.sub || payload.sub.length > 255) throw new Error("missing subject");
+      return { issuer: config.issuer, subject: payload.sub };
+    } catch {
+      throw new UnauthorizedException("invalid or expired token");
+    }
+  };
+}
+
 export function createTokenVerifier(config: VerifierConfig): TokenVerifier {
   const algorithms = config.algorithms ?? ["RS256", "ES256", "EdDSA"];
   let key: JWTVerifyGetKey | CryptoKey | KeyObject | undefined;

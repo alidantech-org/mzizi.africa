@@ -32,6 +32,22 @@ export function targetUrl(options: { destructive?: boolean } = {}): { url: strin
   return { url, database };
 }
 
+/**
+ * The clean-rewrite database (DEC-CLEAN-REWRITE-MZIZI-NEW). It is disposable and managed only by `src/rewrite.ts`,
+ * which accepts exactly this name on a local host. This does not relax `targetUrl`: the legacy commands still
+ * refuse any database whose name does not end in _dev or _test for destructive work.
+ */
+export const REWRITE_DATABASE = "mzizi_new";
+
+export function rewriteTargetUrl(): { url: string; adminUrl: string; database: string } {
+  const url = process.env.REWRITE_DATABASE_URL ?? "postgres://postgres@localhost:5432/mzizi_new";
+  const parsed = new URL(url);
+  const database = parsed.pathname.slice(1);
+  if (database !== REWRITE_DATABASE) throw new Error(`the rewrite tooling manages only ${REWRITE_DATABASE}, not ${database}`);
+  if (!LOCAL_HOSTS.includes(parsed.hostname)) throw new Error(`refusing the rewrite database on a non-local host: ${parsed.hostname}`);
+  return { url, adminUrl: withDatabase(url, "postgres"), database };
+}
+
 /** The generated Dryv entities are the schema source of truth; this package reads them, it never edits them. */
 export async function loadEntities(): Promise<Function[]> {
   const entities: Function[] = [];

@@ -23,6 +23,18 @@ bun src/cli.ts reset                   # _dev and _test only: drop everything, m
 TEST_DATABASE_URL=postgres://postgres@localhost:5432/postgres bun test test
 ```
 
+## Clean-rewrite database (`mzizi_new`)
+
+Since 2026-11-08 (`.docs/decisions/clean-rewrite-mzizi-new.md`) new schemas are built from scratch in a disposable database, separate from the Dryv-entity migrations above. Plain SQL lives in `rewrite/`, applied by `src/rewrite.ts`, which accepts exactly the database name `mzizi_new` on a local host and checks `current_database()` before any reset. The `_dev`/`_test` rule of the legacy commands is unchanged.
+
+```bash
+bun src/rewrite.ts status | init | reset            # reset drops and recreates mzizi_new only
+bun src/rewrite.ts bootstrap-admin <issuer> <subject> "<name>" [email]   # first platform administrator
+bun test test/rewrite-auth.test.ts                  # auth schema checks (rolled-back transactions)
+```
+
+Currently built: the `auth` schema (`.docs/improvements/schema-redesign/auth.md`). Override the connection with `REWRITE_DATABASE_URL` (default `postgres://postgres@localhost:5432/mzizi_new`).
+
 ## Collection gate
 
 `src/gate.ts` decides whether a request may be made, from the site's current legal/source assessment and its jurisdiction dossier, and fails closed (see `.docs/docs/WEBSITE_DESIGN.md`, "The gate"). The data engine must call it before every fetch and record the returned `assessmentId` on the capture.

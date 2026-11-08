@@ -11,6 +11,8 @@ extra: {status: planning_only, no_bulk_task_creation: true}
 **PLANNING ONLY — NOT READY TO IMPLEMENT.** The user subsequently **explicitly requested all eighteen named schema design documents**, which have now been written as substantive planning proposals, not empty placeholders. This folder contains the domain design files below; update them iteratively under user direction. The user's preference for only a few cross-cutting files still applies outside this folder.
 
 
+> **2026-11-08 update:** the user approved a clean rewrite in the disposable database `mzizi_new` (`.docs/decisions/clean-rewrite-mzizi-new.md`). The `auth` design is implemented (see [auth.md](auth.md)); other schema documents remain planning records. Statements elsewhere in this folder about preserving IDs, data migration or compatibility are the former policy and are superseded for the rewrite.
+
 ## Final schema count: NOT DECIDED — all current schemas accounted for
 
 **This folder has 19 Markdown files: 18 proposed target-schema plans plus this README. They are NOT 19 PostgreSQL schemas.** The repository currently defines 24 application/runtime PostgreSQL schemas; an 18-schema target is one provisional option, **not a user-approved physical design**. A domain planning file may account for several existing schemas. No merge, rename or removal is approved merely because its destination appears here.

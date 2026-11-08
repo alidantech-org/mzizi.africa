@@ -3,12 +3,85 @@ id: DOC-86A3B019F5C2
 name: Authentication and access control schema redesign
 type: documentation
 tags: [improvements, schema-redesign, auth, rbac, planning]
-extra: {status: planning_only}
+extra: {status: implemented_in_mzizi_new}
 ---
 
 # Auth — unified accounts, authentication, roles and permissions
 
-**PLANNING ONLY. The user's explicit requested direction is `identity` + `access` → a simpler `auth` schema.**
+## Status and policy (read this first)
+
+| When | Instruction | Effect on this document |
+|---|---|---|
+| Before 2026-11-08 (**former policy**) | Plan only; preserve account/role/grant IDs and login continuity; migrate `identity`/`access` to `auth` after approval. | Recorded in the "Earlier planning record" at the end of this file. Kept as history, not deleted. |
+| 2026-11-08 (**current policy**, `DEC-CLEAN-REWRITE-MZIZI-NEW`) | Clean rewrite in a disposable database `mzizi_new`: no legacy IDs, data migration, dual writes, compatibility views or old API compatibility; task `TSK-1AC8F3754DAE` authorized to design and build. | The design below is implemented in `source/backend/engine/database/rewrite/` and proven by `test/rewrite-auth.test.ts`. The old `identity`/`access` objects are reference material only. |
+
+Where the earlier record and the implemented design disagree (for example "preserve IDs", "migration strategy", "unresolved decisions"), the implemented design governs. The decisions that had been open are answered in "Resolved questions".
+
+## Implemented design (small on purpose)
+
+An earlier build of this slice had 19 tables (delegation ceilings, field groups, an operations registry, MFA flags, invitations, decision log). The user judged it too much, so it was dropped and rebuilt in `mzizi_new` with nine tables. Files: `source/backend/engine/database/rewrite/0001_auth.sql` (tables) and `0002_auth_functions.sql` (checks, helpers, seeds). Rebuild with `bun src/rewrite.ts reset`; checks in `test/rewrite-auth.test.ts` (18 tests).
+
+### The idea in four lines
+
+1. **Namespaced permissions:** `namespace.action`, e.g. `electoral.edit`. The namespace matches a data schema; actions are fixed: `read, edit, review, publish, export, delete`.
+2. **Roles** bundle permissions. Roles are rows, so they are dynamic. `auth.create_role('electoral_manager', ..., ['electoral.*'])`.
+3. **Scoped grants:** an account holds a role either platform-wide, or scoped to one record `(schema.table, id)` of an allowed target table, which also covers everything below it (children via the table's parent column).
+4. **Governed tables** say how records link to a scope target: `electoral.results` belongs to an institution, `finance.budgets` to a jurisdiction. Grants match only through that one link.
+
+### Tables (schema `auth`)
+
+| Table | Columns | Notes |
+|---|---|---|
+| `accounts` | `id`, `display_name`, `status` (active/suspended/closed), `created_at` | Never deleted. Not a person record. |
+| `identities` | `id`, `account_id` FK, `issuer`, `subject`; unique `(issuer, subject)` | OIDC login. Subject is opaque, never assumed to be a UUID. No sessions table. |
+| `permissions` | PK `(namespace, action)` | Created by `auth.register_namespace`. |
+| `roles` | `id`, `code` unique, `name` | |
+| `role_permissions` | PK `(role_id, namespace, action)`, FKs to roles and permissions | |
+| `institutions` | `id`, `code` unique, `name`, `parent_id` self FK, `country_code` | Owners of data (IEBC, a county and its departments). A scope target. Cycles rejected. |
+| `scope_targets` | PK `table_name`, `parent_column` | Allow-list of tables a grant may point at. Registered by `auth.register_scope_target`, which checks the table, `id` and parent column exist. Seeded with `auth.institutions`. |
+| `governed_tables` | PK `table_name`, `namespace`, `link_table` FK, `link_column` | One link per data table. Registered by `auth.register_governed_table`, which checks columns and namespace. |
+| `role_assignments` | `id`, `account_id` FK, `role_id` FK, `scope_table` FK (null = platform-wide), `scope_id`, `expires_at` (null = no end), `granted_by` FK, `revoked_at`, `created_at` | Scope table and id are both set or both null. A trigger checks the scope record exists. Grants cannot be edited, extended or deleted; only revoked. |
+
+A generic `(table, id)` pair cannot carry a foreign key, so integrity comes from three guards: `scope_table` is an FK to the allow-list; a trigger checks the id exists in that table; and registration refuses tables or columns that do not exist (build the table first, then register it).
+
+### How the examples work
+
+- **Manage all electoral data for a jurisdiction:** role with `electoral.*` + scope `(geography.jurisdictions, id)`. Works for any registered electoral table linked to jurisdictions.
+- **Manage all data in a geo unit:** a role with every namespace + scope `(geography.units, id)`; sub-units are covered.
+- **IEBC official vs county official:** `electoral.results` is registered with link `auth.institutions` via its steward column. A grant on IEBC matches; a grant on the Nairobi jurisdiction does not, even for results about Nairobi, because geography is not the table's link.
+- **Membership alone grants nothing:** only role assignments do.
+
+### Functions
+
+- `auth.resolve_identity(issuer, subject)` → account id and `ok` / `unknown_identity` / `account_not_active`.
+- `auth.can(account, 'electoral.edit', 'schema.table', record_id)` → `{allowed, reason, assignment_id}`. Needs an active account and a live (unrevoked, unexpired) grant whose role holds the permission; platform-wide grants allow, scoped grants need the record's link to be the scope record or below it. Reasons: `account_not_active`, `table_not_governed`, `namespace_mismatch`, `no_grant`, `out_of_scope`, `record_not_found`. Default deny.
+- `auth.can_link(account, permission, table, link_id)` for creating a record (no row yet); `auth.can_change(..., new_link_id)` for updates that may move ownership: the existing and the proposed owner must both allow it.
+- `auth.can_platform(account, permission)` for permissions not tied to a record (`pipeline.read`, `auth.edit`).
+- `auth.allowed_links(account, permission, table)` → link ids (with descendants) or "all", joined in list queries so filtering happens before pagination and totals.
+- `auth.grant_role(grantor, account, role, scope_table, scope_id, expires_at)` and `auth.revoke_grant(actor, id)`: only accounts with platform-wide `auth.edit` (the admin role).
+- `auth.bootstrap_admin(issuer, subject, name)`: first administrator, run by the database engine.
+
+### Backend
+
+`source/backend/api/src/auth/`: `createIdentityVerifier` (issuer, signature, expiry, opaque subject), `PgAccessAuthority` (wraps the functions above), `DatabaseAuthGuard` (maps each contract policy to a platform permission, e.g. promote → `pipeline.publish`, then 401/403), `installDatabaseAuth`. `main.ts` uses it when `AUTH_DATABASE_URL` is set; otherwise the legacy roles-claim guard runs until other domains are rewritten. Use cases touching governed records call `can` / `canChange` with the table and record id.
+
+### Deferred until needed
+
+Invitations and verified memberships; delegation of access management with limits (today only admins grant); field-group restrictions; MFA and separation-of-duties flags; a registry of enforced operations; an access change log and decision log; token revocation timestamps and multiple providers; service-account ownership; account anonymization; account-to-person link (`person_id`) once the person schema exists. Admin screens and the review workbench switch to database auth are also later.
+
+### Current-to-target design map (reference only; nothing is migrated)
+
+| Old | New |
+|---|---|
+| `identity.accounts` (`issuer`, `subject`, `status`) | `accounts` + `identities` |
+| `identity.grants` (role enum, `jurisdiction_id`, validity, `is_current`) | `role_assignments` with a real scope pointer and optional expiry; `is_current` and precision columns dropped |
+| `access.roles/permissions/role_permissions` | same names; permissions are `namespace.action` |
+| `access.account_permissions` view | `auth.can*` and `auth.allowed_links` functions |
+| JWT `roles` claim | ignored in database mode |
+
+## Earlier planning record (superseded, kept for history)
+
+**HISTORICAL PLANNING TEXT (superseded by the implemented design above).** The user's requested direction was `identity` + `access` → a simpler `auth` schema.
 
 ## Domain boundaries
 
