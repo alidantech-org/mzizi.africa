@@ -1,5 +1,8 @@
 import { describe, expect, test } from "bun:test";
 
+import { join } from "node:path";
+
+import { seedRoot } from "../src/config.ts";
 import { evaluate, type AssessmentRecord, type GateRequest } from "../src/gate.ts";
 
 const now = new Date("2026-11-02T10:00:00Z");
@@ -116,7 +119,7 @@ describe("collection gate: conditions", () => {
 
 describe("collection gate: shared vectors (same file the Python gate is tested with)", () => {
   const { readFileSync } = require("node:fs") as typeof import("node:fs");
-  const file = JSON.parse(readFileSync(new URL("../../../contracts/gate-vectors.json", import.meta.url), "utf8"));
+  const file = JSON.parse(readFileSync(Bun.pathToFileURL(join(seedRoot, "fixtures", "contracts", "gate-vectors.json")), "utf8"));
   for (const vector of file.vectors) {
     test(vector.name, () => {
       const assessment = vector.assessment === null ? undefined : { ...file.base.assessment, ...(vector.assessment ?? {}) };

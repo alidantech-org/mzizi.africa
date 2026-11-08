@@ -4,6 +4,7 @@ register and preserve -> extract -> stage candidates -> validate -> review -> pr
 engine) -> serve (API use cases). The reviewer is a test account created here; in real use a human
 reviewer records the decisions through the API.
 """
+from mzizi_data.seedroot import FIXTURES_ROOT
 import json
 import os
 import subprocess
@@ -14,7 +15,7 @@ import pytest
 from mzizi_data.imports import geoboundaries
 
 BACKEND = Path(__file__).resolve().parents[2]  # source/backend/engine
-DATA = Path(__file__).resolve().parent / "data" / "geoboundaries"
+DATA = FIXTURES_ROOT / "extraction" / "geoboundaries"
 
 
 @pytest.fixture(scope="module")

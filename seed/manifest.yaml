@@ -228,6 +228,66 @@ entries:
   - source/backend/engine/data/src/mzizi_data/patterns.py
   relocated_from: null
   sync_policy: preview_then_apply_no_implicit_delete
+- id: system.policy.never-crawl
+  path: system/policy/never-crawl.json
+  media_type: application/json
+  loader: engine.crawl-policy
+  target: crawler host exclusions (read, no table)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/crawl.py
+  relocated_from: constant in source/backend/engine/data/src/mzizi_data/crawl.py (moved 2026-11-08)
+  notes: Data extracted from a code constant.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.policy.wikimedia
+  path: system/policy/wikimedia.json
+  media_type: application/json
+  loader: engine.wikimedia-config
+  target: Wikimedia API hosts (read, no table)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/wikimedia.py
+  relocated_from: constant in source/backend/engine/data/src/mzizi_data/wikimedia.py (moved 2026-11-08)
+  notes: Data extracted from a code constant.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.policy.non-party-codes
+  path: ke/policy/non-party-codes.json
+  media_type: application/json
+  loader: engine.party-rules
+  target: party register check exclusions (read, no table)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/gapclose.py
+  relocated_from: constant in source/backend/engine/data/src/mzizi_data/gapclose.py (moved 2026-11-08)
+  notes: Data extracted from a code constant.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.reference.county-census-order
+  path: ke/reference/county-census-order.json
+  media_type: application/json
+  loader: engine.census-order
+  target: census county table order (read, no table)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/census_breakdowns.py
+  relocated_from: constant in source/backend/engine/data/src/mzizi_data/imports/census_breakdowns.py (moved 2026-11-08)
+  notes: Data extracted from a code constant.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.reference.wikidata-ids
+  path: ke/reference/wikidata-ids.json
+  media_type: application/json
+  loader: engine.wikimedia-config
+  target: Wikidata ids for Kenyan items (read, no table)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/wikimedia.py
+  relocated_from: constant in source/backend/engine/data/src/mzizi_data/wikimedia.py (moved 2026-11-08)
+  notes: Data extracted from a code constant.
+  sync_policy: preview_then_apply_no_implicit_delete
 - id: ke.governance.ke-governance-structure
   path: ke/governance/ke-governance-structure.json
   media_type: application/json

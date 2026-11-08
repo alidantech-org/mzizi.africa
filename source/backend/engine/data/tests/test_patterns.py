@@ -7,6 +7,7 @@ import pytest
 
 from mzizi_data import compliance, fetch, fingerprint, gate, patterns
 from tests.helpers import UA
+from mzizi_data.seedroot import FIXTURES_ROOT
 
 COUNTY_HOME = """<html><head><meta name="generator" content="WordPress 6.4"><link href="https://fonts.googleapis.com/x.css" rel="stylesheet"><script src="https://cdn.example.org/jq.js"></script></head>
 <body class="wp-site"><header class="site-header"><nav class="main-nav"><a href="/about">About Us</a><a href="/tenders">Tenders</a><a href="/downloads">Downloads</a><a href="/news">News</a><a href="/contact">Contact</a></nav></header>
@@ -178,7 +179,7 @@ def test_fingerprints_rank_similar_sites_and_suggest_family_and_relation(conn):
 def test_all_47_published_county_names_expand_to_unique_valid_hostnames():
     from pathlib import Path
 
-    data = json.loads((Path(__file__).parent / "data" / "geoboundaries" / "KEN-ADM1-simplified.geojson").read_text())
+    data = json.loads((FIXTURES_ROOT / "extraction" / "geoboundaries" / "KEN-ADM1-simplified.geojson").read_text())
     names = [f["properties"]["shapeName"] for f in data["features"]]
     assert len(names) == 47
     hosts = [h for n in names for h in patterns.hostnames("{county}.go.ke", {"county": patterns.slug_variants(n, "lowercase-strip-county")})]

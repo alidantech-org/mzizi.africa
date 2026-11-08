@@ -11,7 +11,7 @@ from jsonschema import Draft202012Validator
 here = Path(__file__).parent
 schema = json.loads((here / "exchange.schema.json").read_text())
 failed = 0
-for example in sorted((here / "examples").glob("*.json")):
+for example in sorted((here.parents[2] / "seed" / "fixtures" / "contracts" / "examples").glob("*.json")):
     validator = Draft202012Validator({**schema, "$ref": f"#/$defs/{example.stem}"}, format_checker=Draft202012Validator.FORMAT_CHECKER)
     errors = list(validator.iter_errors(json.loads(example.read_text())))
     print(("ok   " if not errors else "FAIL ") + example.name)

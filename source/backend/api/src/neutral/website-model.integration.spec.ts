@@ -10,7 +10,7 @@ import { loadFixtures, readFixture, readSeed } from "#/neutral/fixture-loader";
 /**
  * Sites are identified by their own id, not by a domain: a hostname can belong to different sites
  * over time, families own domain patterns, and sites link to the places and bodies they are about.
- * Fixture: engine/database/fixtures/neutral-model/kenya-sites.json; media formats: seed/global/reference/media-formats.json (worked examples).
+ * Fixture: seed/fixtures/neutral-model/kenya-sites.json; media formats: seed/global/reference/media-formats.json (worked examples).
  */
 const adminUrl = process.env.TEST_DATABASE_URL;
 const entities = Object.values(

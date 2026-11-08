@@ -5,8 +5,9 @@ from pathlib import Path
 import pytest
 
 from mzizi_data.gate import evaluate
+from mzizi_data.seedroot import FIXTURES_ROOT
 
-VECTORS = json.loads((Path(__file__).resolve().parents[3] / "contracts" / "gate-vectors.json").read_text())
+VECTORS = json.loads((FIXTURES_ROOT / "contracts" / "gate-vectors.json").read_text())
 
 
 @pytest.mark.parametrize("vector", VECTORS["vectors"], ids=[v["name"] for v in VECTORS["vectors"]])

@@ -176,4 +176,4 @@ Authenticated sites, CAPTCHAs, anti-bot evasion, JavaScript execution beyond dec
 - Selectors: `css` (BeautifulSoup), `xpath` (lxml), `jsonpath` (a minimal built-in subset: `$`, `.key`, `['key']`, `[n]`, `[*]`; recursive descent is rejected) and `regex`; a list is tried in confidence order and the matching index is recorded.
 - Transform library: `trim`, `collapse_whitespace`, `nfc`, `upper`, `lower`, `normalise_name`, `date`, `decimal`, `fiscal_year`, `fy_start`, `regex`, `lookup`. An unknown transform is an error; a failed transform is reported on the field, never guessed.
 - Family inheritance: one level; `effective_modules` and `substitute` resolve the overlay and `${var}` variables, and an undefined variable is an error.
-- Samples: `engine/data/samples` (an HTML listing, a JSON API, a family and a site extending it), all on fictional hosts. They validate technically and remain unusable until an assessment is approved.
+- Samples: `seed/fixtures/site-structures` (an HTML listing, a JSON API, a family and a site extending it), all on fictional hosts. They validate technically and remain unusable until an assessment is approved.

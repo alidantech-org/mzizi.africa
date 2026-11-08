@@ -3,6 +3,7 @@
 The point is country neutrality: nothing in the data engine or the database engine is specific to a
 country; only reference data (the jurisdiction and its level names) and the mapping variables differ.
 """
+from mzizi_data.seedroot import FIXTURES_ROOT
 import os
 import subprocess
 from pathlib import Path
@@ -12,7 +13,7 @@ import pytest
 from mzizi_data.imports import geoboundaries
 
 BACKEND = Path(__file__).resolve().parents[2]
-DATA = Path(__file__).resolve().parent / "data" / "geoboundaries"
+DATA = FIXTURES_ROOT / "extraction" / "geoboundaries"
 # jurisdiction, ADM1 count, ADM1 boundaries that pass validation, containment findings
 EXPECTED = {"ZAF": ("za", 9, 9, 0), "NGA": ("ng", 37, 37, 0), "TZA": ("tz", 30, 19, 11)}
 

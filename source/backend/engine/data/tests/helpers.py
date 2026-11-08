@@ -9,8 +9,9 @@ import httpx
 from mzizi_data import compliance, fetch, gate, registry
 from mzizi_data.structure import bundle as bundle_mod
 from mzizi_data.structure.validate import validate
+from mzizi_data.seedroot import FIXTURES_ROOT
 
-SAMPLES = Path(__file__).resolve().parents[1] / "samples"
+SAMPLES = FIXTURES_ROOT / "site-structures"
 HOST = "treasury.example.org"
 UA = "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)"
 

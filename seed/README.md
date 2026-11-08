@@ -41,6 +41,19 @@ Inheritance, in order: (1) resolve descriptors from the seed root down to the co
 
 `manifest.yaml` is authored: entry `id`, `path` or `glob`, `loader` (allowlisted in `src/seed-manifest.ts`), `target`, `database_target_state`, `key_columns`, `depends_on`, `consumers` (files that must mention the path), `relocated_from` (historical origin path), `notes`, `sync_policy`. `manifest.lock.json` is generated and tracked: per file the SHA-256, size, media type, effective metadata, the descriptor each field was resolved from (`resolved_from`), `relocated_from`, bucket `mzizi` and a mapping `object_key` such as `internal/seeds/global/auth/roles/2026-11-08.1/roles.<sha16>.csv`, and `upload_status: not_uploaded`. A move never rewrites `relocated_from` or checksums retroactively: a new manifest release records the new location and the lock history stays in Git. Generator information is recorded as the tool, never a fabricated model or author.
 
+## Test fixtures (`seed/fixtures/`)
+
+Everything that is only test or sample data lives here, grouped by purpose, so source code stays free of fixtures, samples, example payloads and test data. Fixtures have the role `test_fixture` and a system scope, are classified by `_folder.yaml` like every other folder, but are **not seeds**: they have no manifest entry and are never applied, registered or uploaded. `seed check` fails if a fixture appears in the manifest or lacks effective metadata.
+
+| Folder | Contents | Read by |
+|---|---|---|
+| `fixtures/neutral-model/` | Country-neutral model rows (Kenya, South Africa, illustrative Kenyan sites) | API and DB engine tests through `readFixture` (`fixturesDir` in `api/src/neutral/fixture-loader.ts`) |
+| `fixtures/site-structures/` | Four illustrative site-structure bundles (manifest, modules, mappings, example pages) | Python structure tests (`FIXTURES_ROOT` in `seedroot.py`) |
+| `fixtures/extraction/` | Crawl pages, geoBoundaries slices, World Bank responses | Python extractor and importer tests |
+| `fixtures/contracts/` | Contract example payloads and the shared gate decision vectors | `source/backend/contracts/validate_examples.py`, Python and Bun gate tests |
+
+Rules: no copy of a fixture may sit beside code; a fixture that is also applied as a real seed belongs in the seed folders with a manifest entry instead. Nothing in `source/` may embed Kenya-, site- or Wikipedia-specific data: such constants live under `seed/system/policy` or `seed/ke/{policy,reference}` and are read through `seedRoot` / `read_seed_json`.
+
 ## Ignored and generated inputs
 
 `generated/`, `cache/`, `local/` are ignored by `seed/.gitignore`; none exists yet because nothing is generated. A generated seed output must get a descriptor with `preparation: programmatically_generated`, a manifest entry naming its generator and input entries, and a regeneration command in this README. Only the lock is a generated tracked file here (regenerate with `bun src/seed.ts lock`).
@@ -149,7 +162,7 @@ The rewrite target database is `mzizi_new`; its schemas/data are disposable, wit
 | `ke/reference/`, `ke/policy/`, `ke/patterns/`, `ke/governance/`, `ke/catalogues/`, `ke/registry/`, `ke/places/`, `ke/research/` | Kenya vocabularies, spellings, office patterns, governance structure, catalogues, registries, landmark places, site registry rows | see each `_folder.yaml` |
 | `ke/sites/ke-iebc/`, `ke/sites/ke-parliament/` | site-structure bundles | externally collected, preparation unknown |
 
-Test-only fixtures (`engine/database/fixtures/neutral-model`, `engine/data/samples`, `engine/data/tests/data`) deliberately stay beside tests; legacy `api-legacy` CSVs stay with the legacy service. The per-file inventory, duplicate decisions and embedded-payload findings are in `.docs/docs/SEED_RELOCATION_INVENTORY.md`. No compatibility copies or symlinks exist at the old paths.
+Test-only fixtures, samples and contract examples moved to `seed/fixtures/` (see above); legacy `api-legacy` CSVs stay with the legacy service. The per-file inventory, duplicate decisions and embedded-payload findings are in `.docs/docs/SEED_RELOCATION_INVENTORY.md`. No compatibility copies or symlinks exist at the old paths.
 
 ## Manifest-driven input contracts (2026-11-08)
 

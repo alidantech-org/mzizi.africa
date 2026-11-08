@@ -1,0 +1,7 @@
+{
+  "note": "Party codes that are not real parties (independents, a coalition label); excluded from party register checks. Moved from a constant in gapclose.py on 2026-11-08.",
+  "codes": [
+    "ke/party/ind",
+    "ke/party/odm-azimio-la-umoja-one-kenya-coalition"
+  ]
+}

@@ -125,7 +125,7 @@ Aliases go in the domain's `names` table with a validity period. Fuzzy matches a
 Runbook (operator, with the database engine and data engine installed; the reviewer step is human):
 
 ```bash
-# 1. download the simplified ADM0 and ADM1 GeoJSON and the API metadata for KEN from geoBoundaries (samples are in engine/data/tests/data/geoboundaries)
+# 1. download the simplified ADM0 and ADM1 GeoJSON and the API metadata for KEN from geoBoundaries (samples are in seed/fixtures/extraction/geoboundaries)
 export DATABASE_URL=postgres://postgres@localhost:5432/mzizi_dev
 cd source/backend/engine/database && bun src/cli.ts reset                     # migrations, reference seeds (incl. Kenya levels), fixtures
 cd ../data && .venv/bin/mzizi-data import-geoboundaries tests/data/geoboundaries   # preserve, register, extract, stage (prints the four run ids)

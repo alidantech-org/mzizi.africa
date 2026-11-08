@@ -1,0 +1,8 @@
+{
+  "note": "Hosts and API paths of the Wikimedia sites read through their official APIs. Moved from constants in wikimedia.py on 2026-11-08.",
+  "hosts": [
+    "www.wikidata.org",
+    "commons.wikimedia.org",
+    "upload.wikimedia.org"
+  ]
+}

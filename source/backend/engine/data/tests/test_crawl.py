@@ -1,4 +1,5 @@
 """Section crawler tests: recorded pages and files, a mock transport, no live requests."""
+from mzizi_data.seedroot import FIXTURES_ROOT
 import io
 import json
 import uuid
@@ -12,7 +13,7 @@ from mzizi_data.crawl import CrawlConfig, SectionCrawler
 from tests.helpers import UA, make_fetcher, make_site
 from tests.pdfmaker import make_pdf
 
-PAGES = Path(__file__).parent / "data" / "crawl"
+PAGES = FIXTURES_ROOT / "extraction" / "crawl"
 PDF_A = make_pdf([{"text": [(72, 720, "Approved Budget Estimates 2023/24")]}])
 PDF_TENDER = make_pdf([{"text": [(72, 720, "Tender Notice")]}])
 PDF_ANNUAL = make_pdf([{"text": [(72, 720, "Annual report")]}])

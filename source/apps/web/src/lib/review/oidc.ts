@@ -3,7 +3,7 @@ import 'server-only';
 import { createHash, randomBytes } from 'node:crypto';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
-/** OpenID Connect against the configured issuer (Keycloak in development). Public client, authorization code with PKCE. */
+/** OpenID Connect against the configured issuer (any provider). Public client, authorization code with PKCE. */
 const issuer = () => (process.env.OIDC_ISSUER as string).replace(/\/$/, '');
 const clientId = () => process.env.OIDC_CLIENT_ID as string;
 

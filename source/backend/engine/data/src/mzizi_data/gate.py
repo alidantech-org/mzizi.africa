@@ -1,5 +1,5 @@
 """Collection gate, Python side. Mirrors engine/database/src/gate.ts; both are tested against
-source/backend/contracts/gate-vectors.json so they cannot drift.
+seed/fixtures/contracts/gate-vectors.json so they cannot drift.
 
 Fails closed: missing, overdue, restricted or out-of-scope approvals deny the request. Independent of
 structure validity and site health (LEGALITY_SAFETY_AND_COMPLIANCE.md sections 8 and 9.3).

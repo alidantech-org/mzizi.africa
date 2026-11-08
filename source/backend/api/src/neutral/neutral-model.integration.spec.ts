@@ -20,7 +20,7 @@ import { loadFixtures, readFixture, readSeed } from "#/neutral/fixture-loader";
 /**
  * The model is country-neutral if two structurally different countries load as records over one
  * schema with no schema change, and each reads back its own structure. Fixtures:
- * source/backend/engine/database/fixtures/neutral-model (Kenya and South Africa).
+ * seed/fixtures/neutral-model (Kenya and South Africa).
  */
 const adminUrl = process.env.TEST_DATABASE_URL;
 const READER = "mzizi_neutral_reader";

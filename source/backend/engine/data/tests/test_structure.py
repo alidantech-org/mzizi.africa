@@ -6,8 +6,9 @@ from mzizi_data.structure import bundle as b
 from mzizi_data.structure import transforms
 from mzizi_data.structure.effective import effective_modules, substitute
 from mzizi_data.structure.validate import validate
+from mzizi_data.seedroot import FIXTURES_ROOT
 
-SAMPLES = Path(__file__).resolve().parents[1] / "samples"
+SAMPLES = FIXTURES_ROOT / "site-structures"
 
 
 def load(name):
@@ -120,7 +121,7 @@ def test_legacy_geography_seed_is_not_fit_to_import_as_is():
     root = Path(__file__).resolve().parents[2]
     report = legacy_seeds.analyse_geo_units(
         root.parent.parent / "backend" / "api-legacy" / "app" / "routes" / "geographic" / "_seed" / "geo_units.csv",
-        [f["properties"]["shapeName"] for f in json.loads((Path(__file__).parent / "data" / "geoboundaries" / "KEN-ADM1-simplified.geojson").read_text())["features"]],
+        [f["properties"]["shapeName"] for f in json.loads((FIXTURES_ROOT / "extraction" / "geoboundaries" / "KEN-ADM1-simplified.geojson").read_text())["features"]],
     ) if (root.parent.parent / "backend" / "api-legacy").exists() else None
     if report is None:
         pytest.skip("legacy seeds not present")

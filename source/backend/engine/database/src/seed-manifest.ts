@@ -12,7 +12,7 @@ import { seedRoot } from "./config.ts";
 
 export const ACCESS_RANK = { public: 0, internal: 1, restricted: 2, private: 3 } as const;
 export type Access = keyof typeof ACCESS_RANK;
-export const ROLES = ["seed_input", "pattern_definition", "site_structure", "import_mapping", "policy_definition", "research_registry", "generated_output"] as const;
+export const ROLES = ["test_fixture", "seed_input", "pattern_definition", "site_structure", "import_mapping", "policy_definition", "research_registry", "generated_output"] as const;
 export const ACQUISITION = ["static_curated", "pattern_generated", "externally_collected", "internally_derived"] as const;
 export const PREPARATION = ["human_prepared", "ai_prepared", "human_and_ai_assisted", "programmatically_generated", "unknown"] as const;
 
@@ -35,6 +35,10 @@ export const LOADERS = new Set([
   "engine.office-holders",
   "engine.probe-policy",
   "engine.tag-vocabulary",
+  "engine.crawl-policy",
+  "engine.wikimedia-config",
+  "engine.party-rules",
+  "engine.census-order",
   "test.catalogue-checks",
   "none.unconsumed",
 ]);
@@ -43,6 +47,8 @@ const INHERITED = ["role", "acquisition_class", "preparation", "access", "scope"
 const OVERRIDABLE = new Set(["role", "acquisition_class", "preparation", "access", "review"]);
 const NOT_ARTIFACTS = new Set(["README.md", "_folder.yaml", "manifest.yaml", "manifest.lock.json", ".gitignore"]);
 const IGNORED_DIRS = new Set(["generated", "local", "cache", "examples"]);
+/** Test fixtures live under seed/fixtures: classified by folder metadata but not seeds (no manifest entry, never registered). */
+const FIXTURES_DIR = "fixtures";
 const MAX_BYTES = 2 * 1024 * 1024;
 const SECRET = /(BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}|aws_secret_access_key|password\s*[:=]\s*\S+|client_secret\s*[:=]\s*\S+)/i;
 
@@ -151,7 +157,7 @@ export function resolveEffective(path: string, root = seedRoot): { effective?: E
   const top = path.split("/")[0];
   if (scope) {
     const expected = scope.kind === "global" ? "global" : scope.kind === "system" ? "system" : scope.code;
-    if (top !== expected) errors.push(`${path}: scope ${scope.kind}${scope.code ? ":" + scope.code : ""} does not match its top-level folder ${top}`);
+    if (top !== expected && !(top === FIXTURES_DIR && scope.kind === "system")) errors.push(`${path}: scope ${scope.kind}${scope.code ? ":" + scope.code : ""} does not match its top-level folder ${top}`);
   }
   if (errors.length) return { errors };
   const access = ((values.access as Access | undefined) ?? "internal") as Access;
@@ -196,6 +202,15 @@ function listFiles(dir: string): string[] {
 
 /** All adoptable artifacts under the seed root, posix-relative and sorted. */
 export function artifactFiles(root = seedRoot): string[] {
+  return allFiles(root).filter((path) => path.split("/")[0] !== FIXTURES_DIR);
+}
+
+/** Every file under seed/fixtures (test-only; classified but not part of the manifest). */
+export function fixtureFiles(root = seedRoot): string[] {
+  return allFiles(root).filter((path) => path.split("/")[0] === FIXTURES_DIR);
+}
+
+function allFiles(root: string): string[] {
   return listFiles(root)
     .map((file) => relative(root, file).split(sep).join("/"))
     .filter((path) => !IGNORED_DIRS.has(path.split("/")[0] as string) && !NOT_ARTIFACTS.has(path.split("/").pop() as string))
@@ -299,6 +314,11 @@ export function validateManifest(root = seedRoot, repoRoot = resolve(root, "..")
   };
   for (const id of ids) visit(id, []);
   for (const file of artifactFiles(root)) if (!covered.has(file)) errors.push(`${file}: not covered by any manifest entry`);
+  for (const file of fixtureFiles(root)) {
+    if (covered.has(file)) errors.push(`${file}: test fixtures must not be manifest entries`);
+    errors.push(...resolveEffective(file, root).errors);
+    if (SECRET.test(readFileSync(join(root, file), "utf8"))) errors.push(`${file}: looks like it contains a secret`);
+  }
   return { errors, warnings, manifest };
 }
 

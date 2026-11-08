@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type { DataSource } from "typeorm";
 
 /**
- * Loads fixture-format rows: test fixtures from source/backend/engine/database/fixtures/neutral-model (readFixture) and system seeds from the root `seed/` (readSeed). Rows are written in
+ * Loads fixture-format rows: test fixtures from seed/fixtures/neutral-model (readFixture) and system seeds from the root `seed/` (readSeed). Rows are written in
  * dependency order; a string value "@key" refers to the id of the row with that key.
  *
  * Data rows carry no provenance, so the loader records it where it belongs: one source document
@@ -17,11 +17,11 @@ export interface FixtureRow {
   values: Record<string, unknown>;
 }
 
-export const fixturesRoot = join(import.meta.dirname, "../../../engine/database/fixtures");
-export const fixturesDir = join(fixturesRoot, "neutral-model");
-
 /** Root of the system seed inputs (repository-root `seed/`); override with MZIZI_SEED_ROOT. */
 export const seedRoot = process.env.MZIZI_SEED_ROOT ?? join(import.meta.dirname, "../../../../../seed");
+/** Test fixtures live beside the seeds, grouped under seed/fixtures (never inside source code). */
+export const fixturesRoot = join(seedRoot, "fixtures");
+export const fixturesDir = join(fixturesRoot, "neutral-model");
 
 /** Reads a JSON seed input by its path under `seed/`, e.g. "global/reference/media-formats.json". */
 export function readSeed<T = { country: string; rows: FixtureRow[] }>(path: string): T {

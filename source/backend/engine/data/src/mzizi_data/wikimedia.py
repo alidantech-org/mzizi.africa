@@ -26,13 +26,14 @@ import psycopg
 
 from . import pipeline, register
 from .reinforcement import Finding, Unsupported
+from .seedroot import read_seed_json
 
 WIKIDATA_API = "https://www.wikidata.org/w/api.php"
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 API_PATHS = ("/w/api.php",)  # documented API endpoints: exempt from the crawler rules in robots.txt (DEC-WIKIMEDIA-API-ACCESS)
-HOSTS = ("www.wikidata.org", "commons.wikimedia.org", "upload.wikimedia.org")
+HOSTS = tuple(read_seed_json("system/policy/wikimedia.json")["hosts"])
 SITE_CODE = "wikimedia"
-KENYA = "Q114"
+KENYA = read_seed_json("ke/reference/wikidata-ids.json")["jurisdiction"]
 HUMAN = "Q5"
 TOOL = "mzizi-data wikimedia"
 TOOL_VERSION = "0.1.0"

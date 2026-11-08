@@ -13,13 +13,14 @@ from pathlib import Path
 
 from .. import statload
 from ..geo_link import GeoResolver, norm
+from ..seedroot import read_seed_json
 from ..statload import Group, ref, stable_id
 from .census import COUNTY_ALIAS, PERIOD, read_pages
 
 DATASET = "knbs/census-2019/vol-4"
 VINTAGE = "knbs/census-2019/vol-4-2019-11"
 NUMS = r"(\d[\d,]*(?:\.\d)?)"
-ORDER = "mombasa kwale kilifi tanariver lamu taitataveta garissa wajir mandera marsabit isiolo meru tharaka embu kitui machakos makueni nyandarua nyeri kirinyaga muranga kiambu turkana westpokot samburu transnzoia uasingishu elgeyomarakwet nandi baringo laikipia nakuru narok kajiado kericho bomet kakamega vihiga bungoma busia siaya kisumu homabay migori kisii nyamira nairobi".split()
+ORDER = read_seed_json("ke/reference/county-census-order.json")["order"]
 RELIGIONS = [("catholic", "Catholic"), ("protestant", "Protestant"), ("evangelical", "Evangelical Churches"), ("african-instituted", "African Instituted Churches"), ("orthodox", "Orthodox"), ("other-christian", "Other Christian"), ("islam", "Islam"), ("hindu", "Hindu"), ("traditionists", "Traditionists"), ("other-religion", "Other Religion"), ("no-religion", "No Religion / Atheists"), ("dont-know", "Don't Know"), ("not-stated", "Not Stated")]
 ICT = {"2.32": ("census.ict.mobile-owners", "Population aged 3 and above owning a mobile phone", 3), "2.33": ("census.ict.internet-users", "Population aged 3 and above using the internet", 3)}
 COMPUTER = ("census.ict.computer-users", "Population aged 3 and above using a desktop, laptop or tablet computer")

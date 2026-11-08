@@ -22,9 +22,10 @@ from psycopg import sql
 
 from . import jobs, reinforcement
 from .reinforcement import Finding, Unsupported
+from .seedroot import read_seed_json
 
 ORPP_FIELDS = {"registry_identifier": "registryIdentifier", "abbreviation": "abbreviation", "valid_from": "validFrom"}
-NON_PARTY_CODES = ("ke/party/ind", "ke/party/odm-azimio-la-umoja-one-kenya-coalition")
+NON_PARTY_CODES = tuple(read_seed_json("ke/policy/non-party-codes.json")["codes"])
 
 
 def payload_value(payload: dict[str, Any], field: str) -> Any:

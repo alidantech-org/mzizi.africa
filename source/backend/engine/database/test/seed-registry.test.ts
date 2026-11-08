@@ -3,7 +3,7 @@
  * and absence of stale paths. The auth application checks need the rewrite database (bun src/rewrite.ts init).
  */
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import pg from "pg";
@@ -11,7 +11,7 @@ import pg from "pg";
 import { packageRoot, rewriteTargetUrl, seedRoot } from "../src/config.ts";
 import { initRewrite } from "../src/rewrite.ts";
 import { applyAuthSeed } from "../src/seed-auth.ts";
-import { artifactFiles, buildLock, expandEntry, loadManifest, resolveEffective, validateDescriptors, validateManifest } from "../src/seed-manifest.ts";
+import { artifactFiles, buildLock, fixtureFiles, expandEntry, loadManifest, resolveEffective, validateDescriptors, validateManifest } from "../src/seed-manifest.ts";
 
 const repoRoot = resolve(seedRoot, "..");
 
@@ -57,13 +57,40 @@ describe("the real seed registry", () => {
     expect(moved.every((f) => !f.relocated_from!.startsWith("seed/"))).toBe(true);
   });
   test("no removed seed path is referenced by source code or loaders", () => {
-    const stale = [/fixtures\/(seed|reference|policy|patterns|research)\b/, /engine\/data\/(mappings|pilots)\b/, /["']pilots["']/, /parents\[\d\] \/ "mappings"/];
+    const stale = [/engine\/database\/fixtures/, /engine\/data\/samples/, /backend\/contracts\/(gate-vectors|examples)/, /fixtures\/(seed|reference|policy|patterns|research)\b/, /engine\/data\/(mappings|pilots)\b/, /["']pilots["']/, /parents\[\d\] \/ "mappings"/];
     const walk = (dir: string): string[] => readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
       if (["node_modules", ".venv", "__pycache__", ".git", "dist"].includes(e.name)) return [];
       return e.isDirectory() ? walk(join(dir, e.name)) : /\.(ts|py|sh|json|toml|ya?ml)$/.test(e.name) ? [join(dir, e.name)] : [];
     });
     const hits = walk(join(repoRoot, "source")).filter((f) => !f.endsWith("seed-registry.test.ts") && stale.some((re) => re.test(readFileSync(f, "utf8"))));
     expect(hits).toEqual([]);
+  });
+  test("test fixtures sit under seed/fixtures, are classified and are not manifest entries", () => {
+    const files = fixtureFiles();
+    expect(files.length).toBeGreaterThan(50);
+    for (const file of files) {
+      const { effective, errors } = resolveEffective(file);
+      expect(errors).toEqual([]);
+      expect(effective!.role).toBe("test_fixture");
+      expect(effective!.access).toBe("internal");
+    }
+    expect(resolveEffective("fixtures/extraction/geoboundaries/KEN-ADM1-metadata.json").effective!.acquisition_class).toBe("externally_collected");
+    const covered = new Set(loadManifest().entries.flatMap((entry) => expandEntry(entry)));
+    expect(files.filter((file) => covered.has(file))).toEqual([]);
+  });
+  test("no fixture, sample, example or test-data directory remains inside source code", () => {
+    const names = new Set(["fixtures", "samples", "examples", "pilots", "mappings"]);
+    const offenders: string[] = [];
+    const walk = (dir: string): void => {
+      for (const e of readdirSync(dir, { withFileTypes: true })) {
+        if (!e.isDirectory() || ["node_modules", ".venv", "__pycache__", ".git"].includes(e.name)) continue;
+        if (names.has(e.name) || (e.name === "data" && dir.endsWith("/tests"))) offenders.push(join(dir, e.name));
+        walk(join(dir, e.name));
+      }
+    };
+    walk(join(repoRoot, "source", "backend", "engine"));
+    walk(join(repoRoot, "source", "backend", "contracts"));
+    expect(offenders).toEqual([]);
   });
   test("no secrets and no large file sit under seed/ in Git", () => {
     for (const file of artifactFiles()) expect(statSync(join(seedRoot, file)).size).toBeLessThan(2 * 1024 * 1024);
@@ -167,8 +194,8 @@ describe("auth seed application (mzizi_new)", () => {
       rmSync(root, { recursive: true, force: true });
     }
   });
-  test("packageRoot is untouched by the relocation", () => {
-    expect(readdirSync(join(packageRoot, "fixtures"))).toEqual(["neutral-model"]);
+  test("no fixtures directory remains inside the database engine", () => {
+    expect(existsSync(join(packageRoot, "fixtures"))).toBe(false);
     expect(expandEntry(loadManifest().entries[0]!).length).toBe(1);
   });
 });

@@ -1,0 +1,6 @@
+{
+  "note": "Hosts the crawler never contacts and never bypasses (bot challenge). Moved from a constant in crawl.py on 2026-11-08.",
+  "hosts": [
+    "kenyalaw.org"
+  ]
+}

@@ -33,7 +33,7 @@ import httpx
 import psycopg
 from bs4 import BeautifulSoup
 
-from .seedroot import SEED_ROOT
+from .seedroot import SEED_ROOT, read_seed_json
 from . import register, registry
 from .compliance import Denied, StopRun
 from .fetch import FetchResult, PoliteFetcher, RobotsDisallowed, TooLarge
@@ -42,7 +42,7 @@ from .probe_domains import POLICY_FILE, is_trusted, load_trusted
 from .structure.sections import match_rule, validate_sections
 
 FILE_TYPES = frozenset({"pdf", "xlsx", "csv", "docx", "zip"})
-NEVER_CRAWL = ("kenyalaw.org",)  # bot challenge: never contacted by this crawler, never bypassed
+NEVER_CRAWL = tuple(read_seed_json("system/policy/never-crawl.json")["hosts"])  # bot challenge: never contacted by this crawler, never bypassed
 SENSITIVE_HEADERS = {"set-cookie", "authorization", "proxy-authorization", "cookie"}
 REDIRECTS = (301, 302, 303, 307, 308)
 PAGE_EXTENSIONS = {"", "html", "htm", "php", "aspx", "asp", "jsp"}

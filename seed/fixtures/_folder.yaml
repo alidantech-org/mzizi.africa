@@ -1,0 +1,6 @@
+description: "Test fixtures, site-structure samples, example payloads and captured sample data used only by tests. Not system seeds: they are excluded from manifest.yaml and are never applied, registered or uploaded as seeds. Source code must read them from here, never keep copies beside the code."
+role: test_fixture
+scope: {kind: system}
+acquisition_class: static_curated
+preparation: unknown
+review: {status: needs_review, note: "Fixture files state their purpose but not who prepared them; confirm before any fixture is ever promoted to a seed."}
