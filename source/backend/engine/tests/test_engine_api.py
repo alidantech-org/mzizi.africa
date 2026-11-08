@@ -10,7 +10,7 @@ import time
 
 import httpx
 import pytest
-from conftest import settings, wait_for
+from engine_helpers import settings, wait_for
 
 from mzizi_engine.app import create_app
 from mzizi_engine.capabilities import Capability, CapabilityRegistry, build_default_registry
@@ -32,7 +32,7 @@ def test_health_and_capabilities_list_the_registered_package_capabilities(make_c
     health = client.get("/health").json()
     assert health["status"] == "ok" and health["service"] == "mzizi-engine" and health["capabilities"] >= 10
     names = [c["name"] for c in client.get("/capabilities").json()["capabilities"]]
-    for expected in ("extraction.pdf", "extraction.csv", "scraping.links", "manifest.check_seeds", "filesystem.publish_seeds", "source.gate", "engine.process_info"):
+    for expected in ("extraction.pdf", "extraction.csv", "scraping.links", "manifest.check_seeds", "filesystem.sync", "source.gate", "engine.process_info"):
         assert expected in names
     capability = next(c for c in client.get("/capabilities").json()["capabilities"] if c["name"] == "extraction.pdf")
     assert capability["package"] == "mzizi-extraction" and capability["cpu_bound"] is True
@@ -217,15 +217,19 @@ def test_authentication_and_authorization_use_the_auth_schema_contract(make_clie
     assert client.post("/v1/jobs", json={"kind": "extraction.csv", "input": csv_payload("a\n1\n")}, headers=bearer("reader")).status_code == 403
     submitted = client.post("/v1/jobs", json={"kind": "extraction.csv", "input": csv_payload("a\n1\n")}, headers=bearer("editor"))
     assert submitted.status_code == 202 and submitted.json()["requested_by"] == "acct-e"
-    # applying a seed publication needs engine.publish, which the editor lacks
-    assert client.post("/v1/seed/publish", json={"apply": True, "store": "memory"}, headers=bearer("editor")).status_code == 403
 
 
-def test_seed_publication_through_the_engine_is_a_dry_run_by_default(make_client):
-    client = make_client()
-    job = client.post("/v1/seed/publish", json={}).json()
+def test_a_sync_through_the_engine_is_a_dry_run_by_default_and_the_actor_cannot_be_spoofed(make_client):
+    from mzizi_database import rewrite_url
+
+    client = make_client(settings=settings(database_url=rewrite_url()))
+    job = client.post("/v1/filesystem/sync", json={"manifest": "manifest.yaml"}).json()
     done = job_done(client, job["id"])
-    assert done["status"] == "succeeded" and done["result"]["dry_run"] is True and done["result"]["ok"] is True and done["result"]["summary"]["planned"] > 100
+    assert done["status"] == "succeeded" and done["result"]["dry_run"] is True and done["result"]["ok"] is True and done["result"]["files"]
+    assert done["input"]["actor"] is None
+    spoof = client.post("/v1/jobs", json={"kind": "filesystem.sync", "input": {"manifest": str(__import__("mzizi_manifest").paths.SEED_ROOT / "manifest.yaml"), "actor": "someone-else"}}).json()
+    assert job_done(client, spoof["id"])["input"]["actor"] is None
+    assert client.post("/v1/filesystem/sync", json={"manifest": "../../etc/passwd"}).status_code == 422
     check = client.post("/v1/manifests/validate").json()
     assert check["ok"] is True and check["entries"] > 40
 

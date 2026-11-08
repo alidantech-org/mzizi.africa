@@ -17,7 +17,7 @@ import yaml
 from .paths import SEED_ROOT
 
 ACCESS_RANK = {"public": 0, "internal": 1, "restricted": 2, "private": 3}
-ROLES = ("test_fixture", "seed_input", "pattern_definition", "site_structure", "import_mapping", "policy_definition", "research_registry", "generated_output")
+ROLES = ("test_fixture", "seed_input", "pattern_definition", "site_structure", "import_mapping", "policy_definition", "research_registry", "generated_output", "evidence", "backup", "report", "log", "certificate", "object_store")
 ACQUISITION = ("static_curated", "pattern_generated", "externally_collected", "internally_derived")
 PREPARATION = ("human_prepared", "ai_prepared", "human_and_ai_assisted", "programmatically_generated", "unknown")
 
@@ -33,8 +33,9 @@ LOADERS = frozenset({
 INHERITED = ("role", "acquisition_class", "preparation", "access", "scope", "review")
 OVERRIDABLE = {"role", "acquisition_class", "preparation", "access", "review"}
 NOT_ARTIFACTS = {"README.md", "_folder.yaml", "manifest.yaml", "manifest.lock.json", ".gitignore"}
-IGNORED_DIRS = {"generated", "local", "cache", "examples"}
+IGNORED_DIRS = {"generated", "local", "cache", "examples", "manifests"}  # manifests/ holds sync instructions, not seed artifacts
 FIXTURES_DIR = "fixtures"  # classified by folder metadata but not seeds: no manifest entry, never registered
+SYSTEM_TOP_LEVELS = {"fixtures", "generated"}  # top-level folders that may carry a system scope
 MAX_BYTES = 2 * 1024 * 1024
 SECRET = re.compile(r"(BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}|aws_secret_access_key|password\s*[:=]\s*\S+|client_secret\s*[:=]\s*\S+)", re.I)
 ACCESS_PREFIX = {"public": "public", "internal": "internal", "restricted": "restricted", "private": "private"}
@@ -135,7 +136,7 @@ def resolve_effective(path: str, root: Path = SEED_ROOT) -> tuple[dict | None, l
     if scope:
         kind = scope.get("kind")
         expected = "global" if kind == "global" else "system" if kind == "system" else scope.get("code")
-        if top != expected and not (top == FIXTURES_DIR and kind == "system"):
+        if top != expected and not (top in SYSTEM_TOP_LEVELS and kind == "system"):
             errors.append(f"{path}: scope {kind}{':' + scope['code'] if scope.get('code') else ''} does not match its top-level folder {top}")
     if errors:
         return None, errors
@@ -331,15 +332,15 @@ def build_lock(manifest: dict, root: Path = SEED_ROOT) -> dict:
                 "path": file, "sha256": digest, "bytes": (root / file).stat().st_size, "media_type": entry["media_type"],
                 "relocated_from": reloc if isinstance(reloc, str) else (reloc or {}).get(file),
                 "effective": effective, "bucket": manifest["bucket"],
-                "object_key": f"{ACCESS_PREFIX[effective['access']]}/seeds/{entry['id'].replace('.', '/')}/{manifest['release']}/{base}.{digest[:16]}.{ext}",
-                "upload_status": "not_uploaded",
+                "object_key": f"{ACCESS_PREFIX[effective['access']]}/content/sha256/{digest[:2]}/{digest[2:4]}/{digest}",
+                "upload_status": "not_recorded_here",
             })
         entries.append({"id": entry["id"], "loader": entry["loader"], "target": entry["target"], "database_target_state": entry["database_target_state"], "depends_on": entry["depends_on"], "sync_policy": entry["sync_policy"], "files": files})
     return {
         "release": manifest["release"], "manifest_sha256": hashlib.sha256(manifest_text.encode()).hexdigest(),
         "generated_by": "mzizi-manifest lock (source/packages/manifest); programmatic, no model involved",
         "bucket": manifest["bucket"], "region": manifest["region"],
-        "note": "upload_status is always not_uploaded here: no artifact has been uploaded or verified in S3 by this lock. Object keys are mappings only.",
+        "note": "The lock plans identities and content-addressed keys; it records no upload state. Publication state lives in the filesystem registry (mzizi_filesystem sync); nothing here claims an artifact is uploaded.",
         "entries": entries,
     }
 

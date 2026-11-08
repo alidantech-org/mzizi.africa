@@ -10,3 +10,4 @@ legal,Legal instruments
 person,Public person records
 source,"Publishers, documents and captures"
 engine,"Python engine jobs, runs and operator actions"
+filesystem,"Folders, files, versions, tags, extractions and uploads"

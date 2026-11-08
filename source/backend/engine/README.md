@@ -26,7 +26,8 @@ The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (develo
 | `POST /v1/runs`, `GET /v1/runs/{id}` | group jobs into a run | `engine.edit` / `engine.read` |
 | `GET /v1/events?after=&job_id=&once=` | SSE stream with `id` = event `seq`; resume with `after` or `Last-Event-ID`; `once=true` ends after replay | `engine.read` |
 | `POST /v1/manifests/validate` | validate the seed registry | `engine.read` |
-| `POST /v1/seed/publish` | seed publication job (dry run by default; `apply` needs `engine.publish`) | `engine.edit` |
+| `POST /v1/filesystem/sync` | manifest sync job (preview by default; the actor is the authenticated principal) | any authenticated actor; folder-scoped `filesystem.*` checks in the `auth` schema |
+| `GET/POST /v1/filesystem/folders...`, `GET /v1/filesystem/files/{id}`, `GET .../versions/{id}/download`, `POST .../folders/{id}/access`, `POST .../uploads`, `POST .../uploads/{id}/complete`, `POST .../uploads/cleanup`, `POST/GET .../extractions...`, `GET .../versions/{id}/lineage` | the filesystem operations (see `.docs/docs/FILESYSTEM_SCHEMA.md`) | folder-scoped `filesystem.read`/`edit`/`publish`/`delete` |
 
 ## Execution boundary
 
@@ -36,4 +37,4 @@ Delivery to NestJS: every event is also written to an outbox row; a dispatcher P
 
 ## Honest status
 
-Built and tested: health, capability registry and calls, queue/limits/retries/cancel, worker processes, SSE replay, outbox delivery and retry, restart recovery, authorization contract, PostgreSQL and in-memory stores, seed publication dry run. **Gaps:** the `engine` schema is provisional and not final (`source/schema/database/engine/0001_engine.sql`); no scheduler or recurring workflows; no NestJS callback endpoint yet (the engine only delivers to a configured URL); a job already inside a worker process cannot be killed mid-run (its result is discarded); no source-specific extractors, candidate staging or promotion (those are later pipeline milestones); the agent package has no model provider; the filesystem registry has no PostgreSQL adapter until the filesystem schema task.
+Built and tested: health, capability registry and calls, queue/limits/retries/cancel, worker processes, SSE replay, outbox delivery and retry, restart recovery, authorization contract, PostgreSQL and in-memory stores, filesystem endpoints and sync job. **Gaps:** the `engine` schema is provisional and not final (`source/schema/database/engine/0001_engine.sql`); no scheduler or recurring workflows; no NestJS callback endpoint yet (the engine only delivers to a configured URL); a job already inside a worker process cannot be killed mid-run (its result is discarded); no source-specific extractors, candidate staging or promotion (those are later pipeline milestones); the agent package has no model provider; no SSE events for filesystem changes yet.

@@ -705,14 +705,20 @@ version = "0.1.0"
 source = { editable = "source/packages/filesystem" }
 dependencies = [
     { name = "boto3" },
+    { name = "jsonschema" },
+    { name = "mzizi-database" },
     { name = "mzizi-manifest" },
+    { name = "psycopg", extra = ["binary"] },
     { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "boto3" },
+    { name = "jsonschema" },
+    { name = "mzizi-database", editable = "source/packages/database" },
     { name = "mzizi-manifest", editable = "source/packages/manifest" },
+    { name = "psycopg", extras = ["binary"] },
     { name = "pyyaml" },
 ]
 

@@ -61,3 +61,7 @@ Filesystem package APIs must support seed manifest/folder provenance, registry u
 
 - [ ] Integrate the approved source/packages and Python engine contracts; remove active dependencies on archived implementations and preserve working auth/resource authorization.
 - [ ] Use the filesystem package for seed registry publication, deduplication, provenance and explicitly non-versioned current-item updates without mutating pinned releases.
+
+## Filesystem integration interface (recorded 8 November 2026)
+
+The filesystem is implemented (`TSK-3EA8C40B0F60`, `.docs/docs/FILESYSTEM_SCHEMA.md`). Source work must map learned or discovered sources to folders through manifests, resource relationships and approved reference-owned patterns, then register content through the neutral package interface (`FilesystemService.register`, `run_sync` with a sync manifest, `begin_extraction`/`register_output` for extraction lineage with exact file versions). The package contains no Kenya, KNBS, IEBC or per-site logic and must not gain any: publisher, jurisdiction and site identity stay in manifests and database records, and the folder classification (access, role, acquisition class, preparation, seed flag, jurisdiction) is supplied by the caller or inherited from folders. Source evidence must pin the exact file versions it cites (`file_versions.pinned`), and capture access classes must respect the placement-equals-access rule.

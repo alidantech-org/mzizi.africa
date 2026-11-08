@@ -20,6 +20,7 @@ from .auth import Authority, DatabaseAuthority, Principal, TokenVerifier, oidc_v
 from .capabilities import CapabilityRegistry, build_default_registry
 from .config import Settings
 from .executor import Executor
+from .filesystem_api import router as filesystem_router
 from .store import MemoryStore, PostgresStore, Store
 
 
@@ -84,8 +85,12 @@ def create_app(settings: Settings | None = None, store: Store | None = None, reg
 
     @app.post("/v1/jobs", status_code=202)
     async def submit_job(body: JobRequest, principal: Principal = require("engine.edit")) -> dict:
+        payload = dict(body.input)
+        if body.kind.startswith("filesystem."):
+            payload["actor"] = principal.account_id  # the actor is the authenticated principal, never a client-supplied value
+            payload["database_url"] = settings.database_url
         try:
-            job, created = await app.state.executor.submit(body.kind, body.input, body.idempotency_key, principal.account_id, body.run_id)
+            job, created = await app.state.executor.submit(body.kind, payload, body.idempotency_key, principal.account_id, body.run_id)
         except KeyError:
             raise HTTPException(422, f"unknown capability {body.kind!r}; see GET /capabilities") from None
         return {**job, "created": created}
@@ -113,16 +118,6 @@ def create_app(settings: Settings | None = None, store: Store | None = None, reg
         from .capabilities import manifest_check_seeds
 
         return await asyncio.to_thread(manifest_check_seeds, {})
-
-    @app.post("/v1/seed/publish", status_code=202)
-    async def publish_seeds(body: dict = Body(default_factory=dict), principal: Principal = require("engine.edit")) -> dict:
-        """Dry run unless {"apply": true}. Applying needs the stronger engine.publish permission."""
-        if body.get("apply") and settings.auth != "off":
-            # Applying is a stronger decision than dry-running: require engine.publish explicitly.
-            if not principal.account_id or not await app.state.authority.can(principal.account_id, "engine.publish"):
-                raise HTTPException(403, "engine.publish is required to apply a seed publication")
-        job, created = await app.state.executor.submit("filesystem.publish_seeds", body, body.pop("idempotency_key", None), principal.account_id)
-        return {**job, "created": created}
 
     @app.get("/v1/events")
     async def events(request: Request, after: int | None = None, job_id: str | None = None, once: bool = False, last_event_id: str | None = Header(default=None), _: Principal = require("engine.read")):
@@ -155,4 +150,5 @@ def create_app(settings: Settings | None = None, store: Store | None = None, reg
 
         return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
+    app.include_router(filesystem_router)
     return app

@@ -4,3 +4,4 @@ migrations:
   - auth/0001_auth.sql
   - auth/0002_auth_functions.sql
   - engine/0001_engine.sql
+  - filesystem/0001_filesystem.sql

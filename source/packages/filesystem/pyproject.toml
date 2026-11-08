@@ -3,10 +3,10 @@ name = "mzizi-filesystem"
 version = "0.1.0"
 description = "Reusable filesystem capability: S3 object access, hashing, deduplication, artifact metadata and seed publication to a registry."
 requires-python = ">=3.12"
-dependencies = ["boto3", "pyyaml", "mzizi-manifest"]
+dependencies = ["boto3", "pyyaml", "jsonschema", "psycopg[binary]", "mzizi-manifest", "mzizi-database"]
 
 [project.scripts]
-mzizi-publish-seed = "mzizi_filesystem.cli:main"
+mzizi-filesystem = "mzizi_filesystem.cli:main"
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -20,6 +20,7 @@ where = ["src"]
 
 [tool.uv.sources]
 mzizi-manifest = { workspace = true }
+mzizi-database = { workspace = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

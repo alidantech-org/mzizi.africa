@@ -1,0 +1,3 @@
+table_name,namespace,link_table,link_column
+filesystem.folders,filesystem,filesystem.folders,id
+filesystem.files,filesystem,filesystem.folders,folder_id

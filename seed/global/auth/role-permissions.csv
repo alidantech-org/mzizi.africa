@@ -27,3 +27,4 @@ reviewer,pipeline.read
 reviewer,pipeline.edit
 reviewer,pipeline.review
 reviewer,pipeline.publish
+filesystem_manager,filesystem.*

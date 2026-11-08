@@ -33,7 +33,7 @@ class AuthSeedResult:
 
 def _counts(conn: psycopg.Connection) -> tuple[int, int, int, int]:
     q = lambda sql: conn.execute(sql).fetchone()["n"]  # noqa: E731
-    return (q("SELECT count(*) AS n FROM auth.roles"), q("SELECT count(DISTINCT namespace) AS n FROM auth.permissions"), q("SELECT count(*) AS n FROM auth.role_permissions"), q("SELECT count(*) AS n FROM auth.scope_targets"))
+    return (q("SELECT count(*) AS n FROM auth.roles"), q("SELECT count(DISTINCT namespace) AS n FROM auth.permissions"), q("SELECT count(*) AS n FROM auth.role_permissions"), q("SELECT count(*) AS n FROM auth.scope_targets") + q("SELECT count(*) AS n FROM auth.governed_tables"))
 
 
 def apply_auth_seed(conn: psycopg.Connection, root: Path | None = None) -> AuthSeedResult:
@@ -42,6 +42,7 @@ def apply_auth_seed(conn: psycopg.Connection, root: Path | None = None) -> AuthS
     namespaces = read_records(directory / "namespaces.csv")
     bundles = read_records(directory / "role-permissions.csv")
     targets = read_records(directory / "scope-targets.csv")
+    governed = read_records(directory / "governed-tables.csv")
     before = _counts(conn)
     with conn.transaction():
         for role in roles:
@@ -60,6 +61,9 @@ def apply_auth_seed(conn: psycopg.Connection, root: Path | None = None) -> AuthS
         for target in targets:
             if not conn.execute("SELECT 1 FROM auth.scope_targets WHERE table_name = %s", (target["table_name"],)).fetchone():
                 conn.execute("SELECT auth.register_scope_target(%s, %s)", (target["table_name"], target["parent_column"] or None))
+        for table in governed:
+            if not conn.execute("SELECT 1 FROM auth.governed_tables WHERE table_name = %s", (table["table_name"],)).fetchone():
+                conn.execute("SELECT auth.register_governed_table(%s, %s, %s, %s)", (table["table_name"], table["namespace"], table["link_table"], table["link_column"]))
     after = _counts(conn)
     return AuthSeedResult(*(a - b for a, b in zip(after, before)))
 

@@ -1,0 +1,52 @@
+"""Authorization port. The package never reimplements access rules: it asks the `auth` schema (auth.can_link, auth.can, auth.can_change).
+
+Permissions (namespace `filesystem`): edit = create folders, upload, replace content, move files; read = read and download;
+publish = change a folder's access class; delete = remove files or content; export reserved. Folder scopes follow the folder
+hierarchy (a grant on a folder covers everything below it). Operator mode (no actor) exists for local repository tooling only.
+"""
+from __future__ import annotations
+
+from typing import Protocol
+
+import psycopg
+
+from .repository import PermissionDenied
+
+
+class Authorizer(Protocol):
+    def for_new_child(self, actor: str | None, permission: str, table: str, parent_folder_id: str | None) -> None: ...
+    def for_record(self, actor: str | None, permission: str, table: str, record_id: str) -> None: ...
+    def for_move(self, actor: str | None, permission: str, table: str, record_id: str, new_link_id: str | None) -> None: ...
+
+
+class OperatorAuthorizer:
+    """Allows everything. Only for local repository commands run by the operator against the disposable database."""
+
+    def for_new_child(self, actor, permission, table, parent_folder_id): return None
+    def for_record(self, actor, permission, table, record_id): return None
+    def for_move(self, actor, permission, table, record_id, new_link_id): return None
+
+
+class DatabaseAuthorizer:
+    def __init__(self, conn: psycopg.Connection) -> None:
+        self.conn = conn
+
+    def _check(self, decision: dict, what: str) -> None:
+        if not decision["allowed"]:
+            raise PermissionDenied(f"{what} denied: {decision['reason']}" + (f" ({decision.get('failed_on')})" if decision.get("failed_on") else ""))
+
+    def for_new_child(self, actor, permission, table, parent_folder_id):
+        if actor is None:
+            raise PermissionDenied("an authenticated actor is required")
+        row = self.conn.execute("SELECT auth.can_link(%s, %s, %s, %s) AS r", (actor, permission, table, parent_folder_id)).fetchone()
+        self._check(row["r"], f"{permission} on {table}")
+
+    def for_record(self, actor, permission, table, record_id):
+        if actor is None:
+            raise PermissionDenied("an authenticated actor is required")
+        self._check(self.conn.execute("SELECT auth.can(%s, %s, %s, %s) AS r", (actor, permission, table, record_id)).fetchone()["r"], f"{permission} on {table}")
+
+    def for_move(self, actor, permission, table, record_id, new_link_id):
+        if actor is None:
+            raise PermissionDenied("an authenticated actor is required")
+        self._check(self.conn.execute("SELECT auth.can_change(%s, %s, %s, %s, %s) AS r", (actor, permission, table, record_id, new_link_id)).fetchone()["r"], f"move on {table}")

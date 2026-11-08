@@ -32,8 +32,15 @@ class ObjectStore(Protocol):
 
     def head(self, key: str) -> ObjectHead | None: ...
     def put(self, key: str, data: bytes, content_type: str, sha256: str, cache_control: str | None = None) -> None: ...
+    def put_path(self, key: str, path: str, content_type: str, sha256: str) -> None: ...
     def get(self, key: str) -> bytes: ...
+    def open_stream(self, key: str): ...
+    def copy(self, source_key: str, dest_key: str, content_type: str, sha256: str) -> None: ...
+    def delete(self, key: str) -> None: ...
     def presign_get(self, key: str, expires_seconds: int = 900) -> str: ...
+    def presign_put(self, key: str, content_type: str, expires_seconds: int = 900) -> str: ...
+    def list_multipart(self, prefix: str) -> list[dict]: ...
+    def abort_multipart(self, key: str, upload_id: str) -> None: ...
 
 
 class MemoryObjectStore:
@@ -44,6 +51,9 @@ class MemoryObjectStore:
         self.public_endpoint = public_endpoint
         self.objects: dict[str, tuple[bytes, str, str, str | None]] = {}
         self.puts: list[str] = []
+        self.deleted: list[str] = []
+        self.aborted: list[tuple[str, str]] = []
+        self.multiparts: list[dict] = []
         self.fail_next_puts = 0
         self.corrupt_next_puts = 0
 
@@ -61,13 +71,39 @@ class MemoryObjectStore:
         self.puts.append(key)
         self.objects[key] = (data, content_type, sha256, cache_control)
 
+    def put_path(self, key: str, path: str, content_type: str, sha256: str) -> None:
+        with open(path, "rb") as handle:
+            self.put(key, handle.read(), content_type, sha256)
+
     def get(self, key: str) -> bytes:
         if key not in self.objects:
             raise StoreError(f"no such key {key}")
         return self.objects[key][0]
 
+    def open_stream(self, key: str):
+        import io
+
+        return io.BytesIO(self.get(key))
+
+    def copy(self, source_key: str, dest_key: str, content_type: str, sha256: str) -> None:
+        self.put(dest_key, self.get(source_key), content_type, sha256)
+
+    def delete(self, key: str) -> None:
+        self.deleted.append(key)
+        self.objects.pop(key, None)
+
     def presign_get(self, key: str, expires_seconds: int = 900) -> str:
         return f"{self.public_endpoint}/{self.bucket}/{key}?expires={expires_seconds}"
+
+    def presign_put(self, key: str, content_type: str, expires_seconds: int = 900) -> str:
+        return f"{self.public_endpoint}/{self.bucket}/{key}?upload=1&expires={expires_seconds}"
+
+    def list_multipart(self, prefix: str) -> list[dict]:
+        return [m for m in self.multiparts if m["Key"].startswith(prefix)]
+
+    def abort_multipart(self, key: str, upload_id: str) -> None:
+        self.multiparts = [m for m in self.multiparts if not (m["Key"] == key and m["UploadId"] == upload_id)]
+        self.aborted.append((key, upload_id))
 
 
 def _internal_host(host: str) -> bool:
@@ -112,16 +148,43 @@ class S3ObjectStore:
         extra = {"CacheControl": cache_control} if cache_control else {}
         self._client.put_object(Bucket=self.bucket, Key=key, Body=data, ContentType=content_type, Metadata={"sha256": sha256}, **extra)
 
+    def put_path(self, key: str, path: str, content_type: str, sha256: str) -> None:
+        """Streaming upload (multipart automatically for large files); the file is never loaded into memory."""
+        self._client.upload_file(path, self.bucket, key, ExtraArgs={"ContentType": content_type, "Metadata": {"sha256": sha256}})
+
     def get(self, key: str) -> bytes:
         return self._client.get_object(Bucket=self.bucket, Key=key)["Body"].read()
 
-    def presign_get(self, key: str, expires_seconds: int = 900) -> str:
-        """A presigned download URL signed against the public endpoint, so the host is reachable by the intended client."""
+    def open_stream(self, key: str):
+        return self._client.get_object(Bucket=self.bucket, Key=key)["Body"]
+
+    def copy(self, source_key: str, dest_key: str, content_type: str, sha256: str) -> None:
+        self._client.copy({"Bucket": self.bucket, "Key": source_key}, self.bucket, dest_key, ExtraArgs={"ContentType": content_type, "Metadata": {"sha256": sha256}, "MetadataDirective": "REPLACE"})
+
+    def delete(self, key: str) -> None:
+        self._client.delete_object(Bucket=self.bucket, Key=key)
+
+    def list_multipart(self, prefix: str) -> list[dict]:
+        out = self._client.list_multipart_uploads(Bucket=self.bucket, Prefix=prefix)
+        return [{"Key": u["Key"], "UploadId": u["UploadId"], "Initiated": u.get("Initiated")} for u in out.get("Uploads", [])]
+
+    def abort_multipart(self, key: str, upload_id: str) -> None:
+        self._client.abort_multipart_upload(Bucket=self.bucket, Key=key, UploadId=upload_id)
+
+    def presign_put(self, key: str, content_type: str, expires_seconds: int = 900) -> str:
+        self._require_public_endpoint()
+        return self._presign_client.generate_presigned_url("put_object", Params={"Bucket": self.bucket, "Key": key, "ContentType": content_type}, ExpiresIn=expires_seconds)
+
+    def _require_public_endpoint(self) -> None:
         if self._presign_client is None:
             raise StoreError("S3_PUBLIC_ENDPOINT is not set: refusing to sign a URL with the internal endpoint")
         host = urlparse(self.public_endpoint or "").hostname or ""
         if _internal_host(host):
             raise StoreError(f"public endpoint host {host!r} looks like an internal service name; clients cannot reach it")
+
+    def presign_get(self, key: str, expires_seconds: int = 900) -> str:
+        """A presigned download URL signed against the public endpoint, so the host is reachable by the intended client."""
+        self._require_public_endpoint()
         return self._presign_client.generate_presigned_url("get_object", Params={"Bucket": self.bucket, "Key": key}, ExpiresIn=expires_seconds)
 
 

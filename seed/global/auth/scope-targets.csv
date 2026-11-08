@@ -1,2 +1,3 @@
 table_name,parent_column
 auth.institutions,parent_id
+filesystem.folders,parent_id

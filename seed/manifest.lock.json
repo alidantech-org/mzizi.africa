@@ -1,10 +1,10 @@
 {
   "release": "2026-11-08.1",
-  "manifest_sha256": "de81dd40e558ac67e81a87d13aa36ef4654e5a11abab65b465b8594a9e41c479",
+  "manifest_sha256": "bc22d2cccbc80b8e29ddb42f6723483aa6c84e9a0e58bae8b8cdf6946c10b074",
   "generated_by": "mzizi-manifest lock (source/packages/manifest); programmatic, no model involved",
   "bucket": "mzizi",
   "region": "us-east-1",
-  "note": "upload_status is always not_uploaded here: no artifact has been uploaded or verified in S3 by this lock. Object keys are mappings only.",
+  "note": "The lock plans identities and content-addressed keys; it records no upload state. Publication state lives in the filesystem registry (mzizi_filesystem sync); nothing here claims an artifact is uploaded.",
   "entries": [
     {
       "id": "global.auth.namespaces",
@@ -16,8 +16,8 @@
       "files": [
         {
           "path": "global/auth/namespaces.csv",
-          "sha256": "2d848135f93c47f948a181c33f8377c584e939cacd01d2fc1175c850c777d145",
-          "bytes": 499,
+          "sha256": "45c468c0f331a6f5a9a0e576700a01a1b056420c5d56395cd1a3d83dedb6791c",
+          "bytes": 568,
           "media_type": "text/csv",
           "relocated_from": "new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)",
           "effective": {
@@ -44,8 +44,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/auth/namespaces/2026-11-08.1/namespaces.2d848135f93c47f9.csv",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/45/c4/45c468c0f331a6f5a9a0e576700a01a1b056420c5d56395cd1a3d83dedb6791c",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -59,8 +59,8 @@
       "files": [
         {
           "path": "global/auth/roles.csv",
-          "sha256": "fc8552349ea96521d88f95b736527db323a59e0d4bef3a2a05196def98255172",
-          "bytes": 104,
+          "sha256": "049db74dfa39cb66401398547c6429f77ed7b6df45aa439642f8a6fd3798c6f1",
+          "bytes": 142,
           "media_type": "text/csv",
           "relocated_from": "new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)",
           "effective": {
@@ -87,8 +87,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/auth/roles/2026-11-08.1/roles.fc8552349ea96521.csv",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/04/9d/049db74dfa39cb66401398547c6429f77ed7b6df45aa439642f8a6fd3798c6f1",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -105,8 +105,8 @@
       "files": [
         {
           "path": "global/auth/role-permissions.csv",
-          "sha256": "08d8b9e084964bf6b9206892978610785840907bf6418a98c521e6e5faca42e2",
-          "bytes": 661,
+          "sha256": "e7f5432a84c63d87733aa6904d2dae7a2a06d7d5b63945da1e986e5d07e39f05",
+          "bytes": 693,
           "media_type": "text/csv",
           "relocated_from": "new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)",
           "effective": {
@@ -133,8 +133,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/auth/role-permissions/2026-11-08.1/role-permissions.08d8b9e084964bf6.csv",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/e7/f5/e7f5432a84c63d87733aa6904d2dae7a2a06d7d5b63945da1e986e5d07e39f05",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -148,8 +148,8 @@
       "files": [
         {
           "path": "global/auth/scope-targets.csv",
-          "sha256": "7cdb0ddbbb347d5e3db9f1cc9e15a886fe4e79b4b1dbb324ac8c5fe46f7f52d7",
-          "bytes": 53,
+          "sha256": "d523f0778e23f64c82b58df954701851d65c53ffe0e2a1abf8ec7c83d6d2b025",
+          "bytes": 82,
           "media_type": "text/csv",
           "relocated_from": "new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)",
           "effective": {
@@ -176,8 +176,54 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/auth/scope-targets/2026-11-08.1/scope-targets.7cdb0ddbbb347d5e.csv",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/d5/23/d523f0778e23f64c82b58df954701851d65c53ffe0e2a1abf8ec7c83d6d2b025",
+          "upload_status": "not_recorded_here"
+        }
+      ]
+    },
+    {
+      "id": "global.auth.governed-tables",
+      "loader": "auth.baseline",
+      "target": "auth.governed_tables",
+      "database_target_state": "mzizi_new",
+      "depends_on": [
+        "global.auth.scope-targets",
+        "global.auth.namespaces"
+      ],
+      "sync_policy": "preview_then_apply_no_implicit_delete",
+      "files": [
+        {
+          "path": "global/auth/governed-tables.csv",
+          "sha256": "4bc109b22a0aa81cf91595846ceb6626affa2b091df82b17884c996d9ffcadac",
+          "bytes": 153,
+          "media_type": "text/csv",
+          "relocated_from": "new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)",
+          "effective": {
+            "role": "seed_input",
+            "acquisition_class": "static_curated",
+            "preparation": "human_and_ai_assisted",
+            "access": "internal",
+            "access_defaulted": false,
+            "scope": {
+              "kind": "global"
+            },
+            "review": {
+              "status": "reviewed",
+              "note": "Prepared by a coding agent under the user's design direction on 2026-11-08; role names and bundles mirror the previous reviewer/contributor/admin model."
+            },
+            "resolved_from": {
+              "access": "_folder.yaml",
+              "scope": "global/_folder.yaml",
+              "role": "global/auth/_folder.yaml",
+              "acquisition_class": "global/auth/_folder.yaml",
+              "preparation": "global/auth/_folder.yaml",
+              "review": "global/auth/_folder.yaml"
+            },
+            "file_override": null
+          },
+          "bucket": "mzizi",
+          "object_key": "internal/content/sha256/4b/c1/4bc109b22a0aa81cf91595846ceb6626affa2b091df82b17884c996d9ffcadac",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -221,8 +267,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/auth/bootstrap/2026-11-08.1/bootstrap.bbb8380436927cb3.yaml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/bb/b8/bbb8380436927cb3652cc53f8147718afe31b0f8b5e0192ad9b8bf48473b2c37",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -264,8 +310,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/reference/site-tags/2026-11-08.1/site-tags.8b7cc8f5dd7260f2.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/8b/7c/8b7cc8f5dd7260f2026390b34f777322329dfbf7c306b3d32c60f983d0e6b695",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -310,8 +356,8 @@
             ]
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/reference/media-formats/2026-11-08.1/media-formats.952005f90fed6bd3.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/95/20/952005f90fed6bd3123723c30361d07a462d17056297f53faaef1ef8ccf877b7",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -355,8 +401,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/reference/source-kinds/2026-11-08.1/source-kinds.8c0784293de1ce4f.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/8c/07/8c0784293de1ce4fcfe356ce4a19e9139c967b1728a6d3c03446f124653e4ac5",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -400,8 +446,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/reference/poc-countries/2026-11-08.1/poc-countries.abdd1c66ac5484fd.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/ab/dd/abdd1c66ac5484fd7c75e56c7a0b94538876013e3f148b6dca8fd3c6d021183b",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -446,8 +492,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/reference/kenya-reference/2026-11-08.1/kenya-reference.779564b41303d684.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/77/95/779564b41303d68405a4c136c3b33931edee159b919f5900b1a369e1f781ce80",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -492,8 +538,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/reference/ke-legal-kinds/2026-11-08.1/ke-legal-kinds.f228a3e15103abca.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/f2/28/f228a3e15103abca907f36b9ec041d51dadaa5bab50a6485f888e5ffc6289068",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -538,8 +584,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/research/dossiers/2026-11-08.1/dossiers.018d02ecbcd59719.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/01/8d/018d02ecbcd59719035bff96ce42f274234ca04b5ef5caac8ec5e087270c43f7",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -585,8 +631,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/research/ke-pilot-sites/2026-11-08.1/ke-pilot-sites.99b3c3edb9670f4d.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/99/b3/99b3c3edb9670f4db3cbfe0bfd59be67d2d1a24f6eeae863b8898ccf0ed70c31",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -631,8 +677,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/research/ke-site-families/2026-11-08.1/ke-site-families.eaf7a808a3afd595.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/ea/f7/eaf7a808a3afd59541dcfdb29df821973bf37cf685682a07fcaa42c55f570f8e",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -674,8 +720,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/policy/trusted-domains/2026-11-08.1/trusted-domains.30cd568526748733.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/30/cd/30cd568526748733d141e9a45bd716fe077f2f2d0775f939cb5aad54fb66df34",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -718,8 +764,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/policy/domain-spellings/2026-11-08.1/domain-spellings.0600499d35c32995.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/06/00/0600499d35c32995423c5752ca7c53648448e7a1b6cc1fefbe7fb844be8c1187",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -761,8 +807,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/policy/never-crawl/2026-11-08.1/never-crawl.c70f2aba1cb5a0bd.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/c7/0f/c70f2aba1cb5a0bdb643592c90e809e51997f4a3717ad153e950c9c4f051639b",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -804,8 +850,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/policy/wikimedia/2026-11-08.1/wikimedia.f9fdab91b8eb5320.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/f9/fd/f9fdab91b8eb5320ad9f7b9c73776fe736d219940c5c075a6fb97f3ec0e91ef6",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -848,8 +894,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/policy/non-party-codes/2026-11-08.1/non-party-codes.716df3f179dee5aa.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/71/6d/716df3f179dee5aa88797ab94ca772badcdd07a3a40ac170c7a84b5ddef04f5a",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -892,8 +938,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/reference/county-census-order/2026-11-08.1/county-census-order.6aae090af513dc23.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/6a/ae/6aae090af513dc23c88aa4769c21f193b8861f4b9985a43ad08f438ce493921c",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -936,8 +982,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/reference/wikidata-ids/2026-11-08.1/wikidata-ids.236e3365933f362c.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/23/6e/236e3365933f362cb8cd270290026ba793ac0305d22bf356b8590e25ef236a85",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -982,8 +1028,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/governance/ke-governance-structure/2026-11-08.1/ke-governance-structure.35731fd7ef7e6102.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/35/73/35731fd7ef7e61029560e908fa5dfc6dc6fc88f98f9d6ce0062609bb02b74137",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1028,8 +1074,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/governance/ke-office-holders-curated/2026-11-08.1/ke-office-holders-curated.457bc6cd16608710.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/45/7b/457bc6cd166087108d4456fb7625aa28503d5d6ae56bd02e7dc1437e69bf8554",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1074,8 +1120,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/patterns/ke-office-patterns/2026-11-08.1/ke-office-patterns.ea49ec494be5c4ae.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/ea/49/ea49ec494be5c4ae53af6b4082cce4360dab6484a5081d4fccf0108edb1c8790",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1120,8 +1166,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/catalogues/ke-statistical-catalogue/2026-11-08.1/ke-statistical-catalogue.6428ab9b28435dc2.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/64/28/6428ab9b28435dc2d9e3ece9e13133e7e4d310abefa40f26ea2188c236f7e86d",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1164,8 +1210,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/catalogues/ke-iebc-catalogue/2026-11-08.1/ke-iebc-catalogue.f6ad69d0a765eddd.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/f6/ad/f6ad69d0a765eddd628446a4ce226def64d97b052ca61d4f11e2be55a6d5b53e",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1208,8 +1254,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/catalogues/ke-orpp-catalogue/2026-11-08.1/ke-orpp-catalogue.42766c42a02952ba.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/42/76/42766c42a02952ba4860fadcae2b8849b091d60e15d15b781151c0bf83f1bb8b",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1252,8 +1298,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/catalogues/ke-priority-publishers-catalogue/2026-11-08.1/ke-priority-publishers-catalogue.0e3390e26f54b07e.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/0e/33/0e3390e26f54b07ec174f2cfcfdc569780b69f6057d9e000cd16ec96f242fcfa",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1298,8 +1344,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/registry/ke-expected-sites/2026-11-08.1/ke-expected-sites.f83383af6b81fc15.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/f8/33/f83383af6b81fc15f9707475332050c27210d6b3e4e012a058bd7de3926aff3f",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1344,8 +1390,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/registry/ke-domain-zones/2026-11-08.1/ke-domain-zones.e3546f7fcf30c9f1.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/e3/54/e3546f7fcf30c9f12d14d5490e0e9c12d11762d45837385906903bf27e266a16",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1388,8 +1434,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/registry/ke-site-sections/2026-11-08.1/ke-site-sections.ae7fae20ae8ac17c.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/ae/7f/ae7fae20ae8ac17c94342c7747e4480c752db764151657ba621c9a942c66ff73",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1434,8 +1480,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/registry/ke-media-expectations/2026-11-08.1/ke-media-expectations.d2a22dca9ad3c56d.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/d2/a2/d2a22dca9ad3c56da7bfd8cd63d1efbdf0030a5bd32792334a4a2db7017ad7e0",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1480,8 +1526,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/places/ke-landmark-places/2026-11-08.1/ke-landmark-places.3570f9fcfc626179.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/35/70/3570f9fcfc62617932800e124d704576fcc726c243b6d971dc227ed817931b93",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1523,8 +1569,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/budget/2026-11-08.1/budget.ac963ca20ef7842e.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/ac/96/ac963ca20ef7842ee071f30e876ea4176702c3d0bb6f64b432883b8f767777de",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/budget/fiscal_year.yml",
@@ -1556,8 +1602,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/budget/2026-11-08.1/fiscal_year.f1640bfb92244763.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/f1/64/f1640bfb9224476382d8fc64466e7368980a2c17872c7a816aa00889327f7e8f",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/budget/unit.yml",
@@ -1589,8 +1635,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/budget/2026-11-08.1/unit.dba2c6b30a2fa79d.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/db/a2/dba2c6b30a2fa79daac5b9f371ec8e53eb441b6b6c024edc4b9ed4991a90d3f8",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1632,8 +1678,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/constitution/2026-11-08.1/article.a69367234bd90d3d.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/a6/93/a69367234bd90d3d0453092a30d3e3e90daefbcec54f8387514c893ad6a2d566",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/constitution/chapter.yml",
@@ -1665,8 +1711,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/constitution/2026-11-08.1/chapter.848837ce7b15784d.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/84/88/848837ce7b15784db11c0fff559ac8e09ac405d896728f6b0556135360699541",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/constitution/instrument.yml",
@@ -1698,8 +1744,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/constitution/2026-11-08.1/instrument.bc0dcf8000141f4f.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/bc/0d/bc0dcf8000141f4f3faf7659e584122cff0e1bd639b52f27bf930bc8f114ff4b",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1741,8 +1787,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/county-assembly/2026-11-08.1/holder.8110f4f41ede7bbb.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/81/10/8110f4f41ede7bbbccd39663e67f34c893d0a0842996efd7e97c69cb1a0ca363",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/county-assembly/individual.yml",
@@ -1774,8 +1820,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/county-assembly/2026-11-08.1/individual.cee08be1d94865f9.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/ce/e0/cee08be1d94865f9d274588d16714ab38c23e4fc04e5f1e6b5b7e62e99b19676",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/county-assembly/membership.yml",
@@ -1807,8 +1853,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/county-assembly/2026-11-08.1/membership.63cf01477742a386.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/63/cf/63cf01477742a386dc0a1f2c8a6d839e4ee70888d737cb83248b444718b6a523",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/county-assembly/office.yml",
@@ -1840,8 +1886,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/county-assembly/2026-11-08.1/office.f28938f13ffc74ae.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/f2/89/f28938f13ffc74ae61a829099762dd61b375db83bb49465ae9d750fdf3e1a69e",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1883,8 +1929,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/county-executives/2026-11-08.1/holder.6c9bd63224779fed.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/6c/9b/6c9bd63224779fed7277a109cd047f966fee17de023ea5de55c870523ea36ff0",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/county-executives/individual.yml",
@@ -1916,8 +1962,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/county-executives/2026-11-08.1/individual.7bf0f05655c2263c.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/7b/f0/7bf0f05655c2263cbf257df1d3290c00abc089a696eb0d391364311af619b41f",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/county-executives/membership.yml",
@@ -1949,8 +1995,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/county-executives/2026-11-08.1/membership.97050f5145152ee3.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/97/05/97050f5145152ee3827843b481a9e61d09788ae0f6d317f2d3a1886d37d32516",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -1992,8 +2038,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/county-leaders/2026-11-08.1/holder.aa445f3dc137aaa8.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/aa/44/aa445f3dc137aaa8587f05f1cea4fda7fbf592208159215bab5a666bb5edc63d",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/county-leaders/individual.yml",
@@ -2025,8 +2071,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/county-leaders/2026-11-08.1/individual.d4b2d0656ee6e57f.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/d4/b2/d4b2d0656ee6e57f9c0fab7d5d5115106763f2e39f0c443d6993de74b7049890",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -2068,8 +2114,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/geoadmin/2026-11-08.1/boundary.dfcfbef99aeb54a1.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/df/cf/dfcfbef99aeb54a19992c7a50d94992802e0c2fdb1b553adf30fafee83243e30",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/geoadmin/unit.yml",
@@ -2101,8 +2147,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/geoadmin/2026-11-08.1/unit.07d6a0e647c31ebe.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/07/d6/07d6a0e647c31ebeaa2cf0b8eee2dfd672574314ca5f37784baf67b39eff45d5",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -2144,8 +2190,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/geoboundaries/2026-11-08.1/boundary-adm0.c7e593fe3af28782.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/c7/e5/c7e593fe3af287826dcbb4a47c3a5c77436ae0c3d3fb2152bee4f4271973ed67",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/geoboundaries/boundary-adm1.yml",
@@ -2177,8 +2223,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/geoboundaries/2026-11-08.1/boundary-adm1.95de921d7a0aae7f.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/95/de/95de921d7a0aae7f6f353900989a284aed935e2b8861742a5b6c918cec589c25",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/geoboundaries/unit-adm0.yml",
@@ -2210,8 +2256,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/geoboundaries/2026-11-08.1/unit-adm0.0fbf9ba8d5039426.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/0f/bf/0fbf9ba8d503942635cac54be6546b4b8baef13eeb4bba399832cfd8b1364d2b",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/geoboundaries/unit-adm1.yml",
@@ -2243,8 +2289,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/geoboundaries/2026-11-08.1/unit-adm1.98df1b84387748fa.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/98/df/98df1b84387748fa90ede0610b22e3756d4afeb223b6bfae2f03da5d82fc1beb",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -2286,8 +2332,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/iebc/2026-11-08.1/holder.2bd9c9a9480df8ca.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/2b/d9/2bd9c9a9480df8ca3c19cebe191a9c3e20428be5a6ab7b3b92fc72e20253363b",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/iebc/individual.yml",
@@ -2319,8 +2365,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/iebc/2026-11-08.1/individual.652197b03d42922a.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/65/21/652197b03d42922a4370a45ca9870f815b7e9e526a8266f4fd134d320d6eca90",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/iebc/office.yml",
@@ -2352,8 +2398,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/iebc/2026-11-08.1/office.f250d45aaae9cb27.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/f2/50/f250d45aaae9cb27b95f92fb662ea2feb01252f79bcfb420273e58194ed3f399",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -2395,8 +2441,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/legal/2026-11-08.1/instrument.8af294f6aadbf0dd.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/8a/f2/8af294f6aadbf0dd3418ff869ea66aec4d588b284b6cb0b3cc532cc04246b916",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/legal/provision.yml",
@@ -2428,8 +2474,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/legal/2026-11-08.1/provision.bf4b016cfc9dcf6a.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/bf/4b/bf4b016cfc9dcf6a28e994719448175b28237014d2913c9e43207b88a0b10b3c",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -2471,8 +2517,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/members/2026-11-08.1/holder.cfe7c2f93b740159.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/cf/e7/cfe7c2f93b740159f04a6ec9fe94c8258836783547558d2d8fa6eed6c5485513",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/members/individual.yml",
@@ -2504,8 +2550,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/members/2026-11-08.1/individual.fdcd3e9fd837c9da.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/fd/cd/fdcd3e9fd837c9da5bcc79b6af88584269795e4d31a1950c2f8d1d5896d265c8",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/members/institution.yml",
@@ -2537,8 +2583,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/members/2026-11-08.1/institution.551aa43d8630594d.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/55/1a/551aa43d8630594d7ab7a41a78ae4ad2676e2349d2ef89eee6652c5e6cdb2b82",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/members/membership.yml",
@@ -2570,8 +2616,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/members/2026-11-08.1/membership.95f69a5d154abac7.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/95/f6/95f69a5d154abac76c794f8bd3e8a567ddaa0dbfab7b61518d156155f063495c",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/members/office.yml",
@@ -2603,8 +2649,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/members/2026-11-08.1/office.798b020c636a92dd.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/79/8b/798b020c636a92dd7c45b191d654d3d917df90a8cbe3afa177de485787e08bed",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/members/party.yml",
@@ -2636,8 +2682,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/members/2026-11-08.1/party.89e22db80cc3ca7b.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/89/e2/89e22db80cc3ca7b09ee7caa63ad1bad7fcb1fece832860dcbbbcc7641c17895",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -2679,8 +2725,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/ngcdf/2026-11-08.1/budget.776fd42cd2bca8ab.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/77/6f/776fd42cd2bca8ab7e072a896d73b36626440fd7d146fe4f96c3037d55292b70",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/ngcdf/fiscal_year.yml",
@@ -2712,8 +2758,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/ngcdf/2026-11-08.1/fiscal_year.f703960cd335d02c.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/f7/03/f703960cd335d02c3e44f90e08013e0dec3f48dc2457835271e6977e794f3436",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/ngcdf/transfer.yml",
@@ -2745,8 +2791,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/ngcdf/2026-11-08.1/transfer.19fe2088a69606a1.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/19/fe/19fe2088a69606a124efb9cef4a4869448b3f1beb5626b197979f7ee8b7850b6",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/ngcdf/unit.yml",
@@ -2778,8 +2824,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/ngcdf/2026-11-08.1/unit.27ffb897a0bb0842.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/27/ff/27ffb897a0bb0842c3da662cd11f8e75938942d7f4f522c4e7dfd62ff002d03d",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -2821,8 +2867,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/office_holders/2026-11-08.1/holder.e2de5d904daabe34.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/e2/de/e2de5d904daabe34f893a4f846ebaff2d9df737582945d47f874cd05692bb62c",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/office_holders/individual.yml",
@@ -2854,8 +2900,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/office_holders/2026-11-08.1/individual.843fd6d095aa5698.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/84/3f/843fd6d095aa569800f0cc956301c08c03d2d93c37a8db50724f402ea13674ad",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/office_holders/membership.yml",
@@ -2887,8 +2933,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/office_holders/2026-11-08.1/membership.8a6b3993bfe242d2.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/8a/6b/8a6b3993bfe242d2679824b415902eb5e271df4a09e40f407efa2703b14327bb",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/office_holders/office.yml",
@@ -2920,8 +2966,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/office_holders/2026-11-08.1/office.5bb4a2b54b7a346a.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/5b/b4/5bb4a2b54b7a346a65bf630a99e3a055844f39d86d66e7524f68b622475fd86d",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/office_holders/party.yml",
@@ -2953,8 +2999,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/office_holders/2026-11-08.1/party.ac604278c5b36b33.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/ac/60/ac604278c5b36b338684f36680faaa445b720ff7a0097c407d16e4635ba010fb",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -2996,8 +3042,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/orpp/2026-11-08.1/party.d1772b5feaf790ac.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/d1/77/d1772b5feaf790ac88e6e6d773666a0c76ebf7faf8ae6f592981c63b32ac02fa",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -3039,8 +3085,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/ppf/2026-11-08.1/transfer.aa3c14f340df65e4.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/aa/3c/aa3c14f340df65e4db9d90cf0bbc00bde693a2b12e40d9184c7bbde66549d0c2",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/ppf/unit.yml",
@@ -3072,8 +3118,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/ppf/2026-11-08.1/unit.bbd163ce6dc5ec15.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/bb/d1/bbd163ce6dc5ec1598ea01d86499b91d3c170ce016b3922f9a66cbe36f443844",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -3115,8 +3161,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/procurement/2026-11-08.1/contact.5945ce2fe0180010.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/59/45/5945ce2fe0180010d427950ecbc3e00d2e7a95c38d12fe4c176cc837cee6059b",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/procurement/contract.yml",
@@ -3148,8 +3194,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/procurement/2026-11-08.1/contract.348cfdb483c9a00d.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/34/8c/348cfdb483c9a00ddea938d793a4c7040c20d2cca2a063714d6aca979b901883",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/procurement/entity.yml",
@@ -3181,8 +3227,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/procurement/2026-11-08.1/entity.3df994413d994081.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/3d/f9/3df994413d9940812c42e31900cc2c935a99218828c178d4234a9c508148f3f6",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/procurement/identifier.yml",
@@ -3214,8 +3260,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/procurement/2026-11-08.1/identifier.039e24ae68ac1d39.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/03/9e/039e24ae68ac1d39d04066af496f248a75498109ecfc8bfead77e06fca54f08c",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/procurement/occupancy.yml",
@@ -3247,8 +3293,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/procurement/2026-11-08.1/occupancy.4f02663c7f8cf0b1.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/4f/02/4f02663c7f8cf0b1436e75fa86d23ed64c9b9df3e06339a05ed27fec8b76910f",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/procurement/pe_unit.yml",
@@ -3280,8 +3326,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/procurement/2026-11-08.1/pe_unit.5bc600a86c1ef0b3.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/5b/c6/5bc600a86c1ef0b341428ee658feed679bc5b1f540cc37633d7b2c13aef927cd",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/procurement/place.yml",
@@ -3313,8 +3359,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/procurement/2026-11-08.1/place.74ca128e77d4e11f.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/74/ca/74ca128e77d4e11f441baa712d99e8a343cd3c0e199cb42da69e6406db0391cc",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/procurement/tender.yml",
@@ -3346,8 +3392,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/procurement/2026-11-08.1/tender.1479b2f1295f7573.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/14/79/1479b2f1295f7573da8028d03165f8b658cde98b90a671893839e34c6b26d4a0",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -3389,8 +3435,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/sitting/2026-11-08.1/event.14b5102dba202444.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/14/b5/14b5102dba20244443b1c56e25ae8e51710a9efa2f84579124b802420942f910",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -3432,8 +3478,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/worldbank/2026-11-08.1/category.bcb931137a6159e8.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/bc/b9/bcb931137a6159e8b2f0200c4e02641ea2048c1de7cc13d5004d8439ce2c67f5",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/worldbank/dataset.yml",
@@ -3465,8 +3511,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/worldbank/2026-11-08.1/dataset.19b1242c6ae5aa2e.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/19/b1/19b1242c6ae5aa2ebd56f435f61e665f8a4a9938a473aac8634298fdba3a33fe",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/worldbank/indicator.yml",
@@ -3498,8 +3544,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/worldbank/2026-11-08.1/indicator.888dba0fb69d7967.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/88/8d/888dba0fb69d7967df2123e57535b5b42c721ce73c93369b03663555cb8b9722",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/worldbank/observation.yml",
@@ -3531,8 +3577,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/worldbank/2026-11-08.1/observation.46e3023c682983d2.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/46/e3/46e3023c682983d2a01fb74155571ed78e1c7acbf3c5d84e4c80d4a9281c88e7",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "system/mappings/worldbank/period.yml",
@@ -3564,8 +3610,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/system/mappings/worldbank/2026-11-08.1/period.ad3c08b9999cfb27.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/ad/3c/ad3c08b9999cfb27bd19fa5b488ecbabcd2309c12d00647e1ba1c50f81b56c8d",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -3608,8 +3654,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-iebc/2026-11-08.1/NOTES.d610b048205106e2.md",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/d6/10/d610b048205106e2a7ad38b06a9e40c4c2148292e79e041c0d7be8cbc48c49be",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "ke/sites/ke-iebc/examples/party-list.html",
@@ -3642,8 +3688,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-iebc/2026-11-08.1/examples/party-list.582f12bd382a3e39.html",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/58/2f/582f12bd382a3e398bdc7d1de63c23514d6f730f61066a79ed1c0eba9679c302",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "ke/sites/ke-iebc/manifest.yml",
@@ -3676,8 +3722,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-iebc/2026-11-08.1/manifest.2f720d4ebdb6f776.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/2f/72/2f720d4ebdb6f7766f274463fe9e3888ce11fa5245210b14196de432f8b730cd",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "ke/sites/ke-iebc/mappings/party-list.yml",
@@ -3710,8 +3756,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-iebc/2026-11-08.1/mappings/party-list.398a86fd820c3b4f.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/39/8a/398a86fd820c3b4fd3a39b5496fd69547d25aa84b37a128464b3613d1c1663cd",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "ke/sites/ke-iebc/modules/party-list.yml",
@@ -3744,8 +3790,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-iebc/2026-11-08.1/modules/party-list.b98e0acf6338fee8.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/b9/8e/b98e0acf6338fee8bbdfbfb444a791ec667aa9e697d53318c2ff1c3a5f59e392",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -3788,8 +3834,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-parliament/2026-11-08.1/NOTES.4fd35b78963fa154.md",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/4f/d3/4fd35b78963fa154ace4a295ba7aea0ab85ccad848fea337d2d38116c1ed257b",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "ke/sites/ke-parliament/examples/budget-documents.html",
@@ -3822,8 +3868,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-parliament/2026-11-08.1/examples/budget-documents.d4a3bfe9a6b2e779.html",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/d4/a3/d4a3bfe9a6b2e7792a919becacce8d1153e9c2467969a9d68ef4169a3fbc903f",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "ke/sites/ke-parliament/manifest.yml",
@@ -3856,8 +3902,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-parliament/2026-11-08.1/manifest.3760b9e2cacc9c85.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/37/60/3760b9e2cacc9c850d293afeac3502f2587fe5864a2f0d332e85794e15c59a05",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "ke/sites/ke-parliament/mappings/budget-documents.yml",
@@ -3890,8 +3936,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-parliament/2026-11-08.1/mappings/budget-documents.a41d2ed45f3c7a2e.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/a4/1d/a41d2ed45f3c7a2ea0c269a9a92ff54c456c3e59d4cf89c513b5dc866231acf4",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "ke/sites/ke-parliament/modules/budget-documents.yml",
@@ -3924,8 +3970,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/ke/sites/ke-parliament/2026-11-08.1/modules/budget-documents.bf82653c53f7c1da.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/bf/82/bf82653c53f7c1da739359db15961bdcaad85a4ca993a2564fd1f33f2cc2e05f",
+          "upload_status": "not_recorded_here"
         }
       ]
     },
@@ -3967,8 +4013,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/sites/world-geoboundaries/2026-11-08.1/NOTES.13ef65f9877bdfcc.md",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/13/ef/13ef65f9877bdfccc4c04a28096fcf2d9ab0388161d04738638cd2f31a410a86",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "global/sites/world-geoboundaries/examples/releases.json",
@@ -4000,8 +4046,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/sites/world-geoboundaries/2026-11-08.1/examples/releases.fd14563ea85bd690.json",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/fd/14/fd14563ea85bd6906e3db4957b9133792bc4d9861eaca93b663163d54be71da7",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "global/sites/world-geoboundaries/manifest.yml",
@@ -4033,8 +4079,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/sites/world-geoboundaries/2026-11-08.1/manifest.ae4717525ff3b0c0.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/ae/47/ae4717525ff3b0c082f4231041965ff91357284d796ec13ba71794f1141443ff",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "global/sites/world-geoboundaries/mappings/releases.yml",
@@ -4066,8 +4112,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/sites/world-geoboundaries/2026-11-08.1/mappings/releases.3de0c1ad479b90a6.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/3d/e0/3de0c1ad479b90a64122d3bd524db1a30d934d33f2dacf29b1f3d70066bc791b",
+          "upload_status": "not_recorded_here"
         },
         {
           "path": "global/sites/world-geoboundaries/modules/releases.yml",
@@ -4099,8 +4145,8 @@
             "file_override": null
           },
           "bucket": "mzizi",
-          "object_key": "internal/seeds/global/sites/world-geoboundaries/2026-11-08.1/modules/releases.7cf904d156a88435.yml",
-          "upload_status": "not_uploaded"
+          "object_key": "internal/content/sha256/7c/f9/7cf904d156a8843546e3cfa46acbd74e162ce4d30fc75c55d04e64149766f369",
+          "upload_status": "not_recorded_here"
         }
       ]
     }

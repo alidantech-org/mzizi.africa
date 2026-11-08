@@ -92,7 +92,7 @@ def w(db):
 
 # ---------------------------------------------------------------------------- initialization and keys
 def test_migrations_are_recorded_and_the_nine_auth_tables_exist(db):
-    assert [r["name"] for r in db.execute("SELECT name FROM public.migrations ORDER BY name").fetchall()] == ["auth/0001_auth.sql", "auth/0002_auth_functions.sql", "engine/0001_engine.sql"]
+    assert [r["name"] for r in db.execute("SELECT name FROM public.migrations ORDER BY name").fetchall()] == ["auth/0001_auth.sql", "auth/0002_auth_functions.sql", "engine/0001_engine.sql", "filesystem/0001_filesystem.sql"]
     tables = [r["table_name"] for r in db.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'auth' AND table_type = 'BASE TABLE' ORDER BY 1").fetchall()]
     assert tables == ["accounts", "governed_tables", "identities", "institutions", "permissions", "role_assignments", "role_permissions", "roles", "scope_targets"]
     assert {r["table_name"] for r in db.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'").fetchall()} == {"migrations"}
@@ -108,8 +108,8 @@ def test_the_seed_is_applied_from_files_idempotently_and_namespaces_extend_the_a
     assert auth_loader.apply_auth_seed(db) == auth_loader.AuthSeedResult(0, 0, 0, 0)
     db.rollback()
     assert one(db, "SELECT count(*) AS n FROM auth.permissions WHERE namespace = 'electoral'")["n"] == 6
-    assert one(db, "SELECT count(*) AS n FROM auth.roles")["n"] == 4
-    assert one(db, "SELECT count(*) AS n FROM auth.role_permissions rp JOIN auth.roles r ON r.id = rp.role_id WHERE r.code = 'admin'")["n"] == 66
+    assert one(db, "SELECT count(*) AS n FROM auth.roles")["n"] == 5
+    assert one(db, "SELECT count(*) AS n FROM auth.role_permissions rp JOIN auth.roles r ON r.id = rp.role_id WHERE r.code = 'admin'")["n"] == 72
     assert rejected(db, "INSERT INTO auth.permissions VALUES ('electoral', 'approve')").sqlstate == "23514"
     db.execute("SELECT auth.register_namespace('newarea')")
     assert one(db, "SELECT count(*) AS n FROM auth.role_permissions rp JOIN auth.roles r ON r.id = rp.role_id WHERE r.code = 'admin' AND namespace = 'newarea'")["n"] == 6
@@ -120,7 +120,7 @@ def test_a_bad_bundle_row_is_rejected_without_partial_change(db, tmp_path):
 
     target = tmp_path / "global" / "auth"
     target.mkdir(parents=True)
-    for name in ("roles.csv", "namespaces.csv", "scope-targets.csv"):
+    for name in ("roles.csv", "namespaces.csv", "scope-targets.csv", "governed-tables.csv"):
         shutil.copy(auth_loader.seed_root() / "global" / "auth" / name, target / name)
     (target / "role-permissions.csv").write_text("role_code,permission\nreader,nonexistent.read\n")
     before = one(db, "SELECT count(*) AS n FROM auth.role_permissions")["n"]

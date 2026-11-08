@@ -29,14 +29,14 @@ def test_real_manifest_folder_metadata_consumers_and_dependencies_validate():
     assert len(result.manifest["entries"]) > 40
 
 
-def test_the_lock_is_current_and_never_claims_an_upload():
+def test_the_lock_is_current_and_records_no_upload_state():
     result = reg.validate_manifest()
     lock = reg.build_lock(result.manifest)
     assert reg.dump_lock(lock) == (SEED_ROOT / "manifest.lock.json").read_text(encoding="utf-8")
     for entry in lock["entries"]:
         for file in entry["files"]:
-            assert file["upload_status"] == "not_uploaded"
-            assert file["object_key"].startswith(f"{file['effective']['access']}/seeds/")
+            assert file["upload_status"] == "not_recorded_here"
+            assert file["object_key"] == f"{file['effective']['access']}/content/sha256/{file['sha256'][:2]}/{file['sha256'][2:4]}/{file['sha256']}"
 
 
 def test_every_adopted_artifact_has_effective_origin_preparation_and_access():

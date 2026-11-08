@@ -100,3 +100,21 @@ def require(permission: str):
         return Principal(account_id)
 
     return Depends(dependency)
+
+
+async def authenticated(request: Request) -> Principal:
+    """Authenticated principal without a platform permission: record-level checks happen in the package against the `auth` schema."""
+    state = request.app.state
+    if state.settings.auth == "off":
+        return Principal(None)
+    header = request.headers.get("authorization", "")
+    scheme, _, token = header.partition(" ")
+    if scheme.lower() != "bearer" or not token:
+        raise HTTPException(401, "a bearer token is required")
+    issuer, subject = await state.verifier(token)
+    account_id, outcome = await state.authority.resolve(issuer, subject)
+    if outcome == "account_not_active":
+        raise HTTPException(403, "account_not_active")
+    if outcome != "ok" or not account_id:
+        raise HTTPException(401, outcome)
+    return Principal(account_id)

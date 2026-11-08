@@ -121,16 +121,24 @@ def source_gate(payload: dict) -> dict:
     return {"allowed": decision.allowed, "reasons": decision.reasons, "assessment_id": decision.assessment_id, "requests_per_second": decision.requests_per_second}
 
 
-def filesystem_publish_seeds(payload: dict) -> dict:
-    """Dry run unless `apply` is true. `store` is `memory` (rehearsal) or `s3` (existing S3 environment); the ledger is local."""
-    from mzizi_filesystem import JsonLedgerRegistry, MemoryObjectStore, MemoryRegistry, S3ObjectStore, publish_seeds
-    from mzizi_manifest.paths import SEED_ROOT
+def filesystem_sync(payload: dict) -> dict:
+    """Plan (default) or apply a manifest sync. The actor is set by the engine from the authenticated principal. Needs DATABASE_URL and S3 settings."""
+    import os
 
-    apply = bool(payload.get("apply"))
-    store = S3ObjectStore() if payload.get("store") == "s3" else MemoryObjectStore()
-    registry = JsonLedgerRegistry(payload.get("ledger") or SEED_ROOT / "local" / "registry-ledger.json") if apply and payload.get("store") == "s3" else MemoryRegistry()
-    report = publish_seeds(store, registry, dry_run=not apply, entry_ids=set(payload.get("entries") or []) or None, verify=payload.get("verify", "head"))
-    return {"release": report.release, "dry_run": report.dry_run, "ok": report.ok, "summary": report.summary(), "problems": [vars(o) for o in report.outcomes if o.outcome in ("failed", "conflict")]}
+    from mzizi_database import connect
+    from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, MemoryObjectStore, OperatorAuthorizer, Repository, S3ObjectStore, load_plan, run_sync
+
+    have_s3 = all(os.environ.get(k) for k in ("S3_ENDPOINT", "S3_ACCESS_KEY", "S3_SECRET_KEY"))
+    if payload.get("apply") and not have_s3 and os.environ.get("ENGINE_STORE_MEMORY") != "1":
+        raise ValueError("object storage is not configured: refusing to apply a sync without S3 credentials")
+    store = S3ObjectStore() if have_s3 else MemoryObjectStore()
+    plan = load_plan(Path(payload["manifest"]), entry_ids=set(payload.get("entries") or []) or None)
+    with connect(payload.get("database_url") or os.environ.get("DATABASE_URL"), autocommit=True) as conn:
+        actor = payload.get("actor")
+        service = FilesystemService(Repository(conn), store, DatabaseAuthorizer(conn) if actor else OperatorAuthorizer())
+        report = run_sync(plan, service, actor=actor, dry_run=not payload.get("apply"))
+    return {"manifest": plan.name, "dry_run": report.dry_run, "ok": report.ok, "folders": report.summary("folder"), "files": report.summary("file"),
+            "problems": [{"path": i.path, "outcome": i.outcome, "detail": i.detail} for i in report.problems()[:50]]}
 
 
 def process_info(payload: dict) -> dict:
@@ -149,5 +157,5 @@ def build_default_registry() -> CapabilityRegistry:
     reg.register(Capability("manifest.check_seeds", "0.1.0", "mzizi-manifest", "Validate seed manifest, folder metadata and lock", manifest_check_seeds, {"type": "object"}))
     reg.register(Capability("manifest.validate_structure", "0.1.0", "mzizi-manifest", "Validate a site-structure bundle directory", manifest_validate_structure, {"type": "object", "required": ["directory"]}))
     reg.register(Capability("source.gate", "0.1.0", "mzizi-source", "Collection-gate decision for a request and assessment", source_gate, {"type": "object", "required": ["request"]}))
-    reg.register(Capability("filesystem.publish_seeds", "0.1.0", "mzizi-filesystem", "Publish prepared seed inputs (dry run by default)", filesystem_publish_seeds, {"type": "object"}, concurrency=1))
+    reg.register(Capability("filesystem.sync", "0.2.0", "mzizi-filesystem", "Plan or apply a manifest sync into the filesystem registry (dry run by default)", filesystem_sync, {"type": "object", "required": ["manifest"]}, concurrency=1))
     return reg

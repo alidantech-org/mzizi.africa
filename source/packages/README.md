@@ -4,7 +4,7 @@ Reusable Python capability libraries. They are libraries, not services: no packa
 
 | Package (import) | Owns | Does not own |
 |---|---|---|
-| `mzizi-filesystem` (`mzizi_filesystem`) | S3 object store (existing bucket `mzizi`), hashing, access-prefix rules, deduplication within access boundaries, registry port and adapters, **seed publication** (`mzizi-publish-seed`) | The filesystem schema (task TSK-3EA8C40B0F60); a PostgreSQL registry adapter |
+| `mzizi-filesystem` (`mzizi_filesystem`) | The filesystem capability: S3 store (existing bucket `mzizi`), streaming hashing, content-addressed deduplication, PostgreSQL repository for folders/files/versions/tags/extractions/uploads, synchronization (`mzizi-filesystem sync`), uploads and cleanup, extraction lineage, access transitions, authorized downloads | The schema SQL (`source/schema/database/filesystem`); authorization rules (it calls the `auth` schema) |
 | `mzizi-database` (`mzizi_database`) | Safe connections and transactions, ordered SQL application, verified reset of `mzizi_new`, the `auth.baseline` seed loader, `mzizi-db` | Schema definitions: those live in `source/schema/database/<schema>` |
 | `mzizi-source` (`mzizi_source`) | Polite identified fetching, rate limits, challenge detection, the collection-gate rule | Source policy and approvals (data, DB records) |
 | `mzizi-scraping` (`mzizi_scraping`) | css/xpath/jsonpath/regex selection, field extraction, transforms, link discovery | Any site's structure (manifests) |
@@ -23,6 +23,6 @@ One uv workspace (root `pyproject.toml`, `uv.lock` committed) covers the package
 uv sync --all-packages              # reproducible install from uv.lock
 uv run pytest source                # every package and engine test (the archive under .docs is never collected)
 uv run mzizi-manifest check         # seed registry validation
-uv run mzizi-publish-seed           # seed publication dry run
+uv run mzizi-filesystem sync        # seed sync preview (writes nothing)
 uv run mzizi-db init                # mzizi_new schemas and auth seed (local PostgreSQL)
 ```

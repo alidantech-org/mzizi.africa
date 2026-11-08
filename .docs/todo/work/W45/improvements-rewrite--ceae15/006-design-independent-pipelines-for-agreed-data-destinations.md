@@ -61,3 +61,7 @@ Filesystem package APIs must support seed manifest/folder provenance, registry u
 
 - [ ] Integrate the approved source/packages and Python engine contracts; remove active dependencies on archived implementations and preserve working auth/resource authorization.
 - [ ] Use the filesystem package for seed registry publication, deduplication, provenance and explicitly non-versioned current-item updates without mutating pinned releases.
+
+## Filesystem integration interface (recorded 8 November 2026)
+
+Pipelines register every artifact (downloaded, converted, extracted, derived) through the filesystem package so hashing, deduplication, verified upload and provenance snapshots are uniform. Extraction steps record `filesystem.extractions` rows linking exact input and output file versions with capability and tool versions and a configuration hash; engine runs and jobs link by `engine_run_id` and `engine_job_id` while scheduling, retries and cancellation stay in the engine schema. Processing status per operation is derived from extraction history, never stored as a flag. Engine endpoints for the filesystem exist under `/v1/filesystem` with folder-scoped authorization from the `auth` schema; SSE events for filesystem changes and the NestJS callback for registered artifacts are still to be designed with the pipeline contracts.

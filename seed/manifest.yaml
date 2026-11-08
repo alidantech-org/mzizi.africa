@@ -56,8 +56,22 @@ entries:
   key_columns:
   - table_name
   depends_on: []
-  consumers:
+  consumers: &id001
   - source/packages/database/src/mzizi_database/loaders/auth.py
+  relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.auth.governed-tables
+  path: global/auth/governed-tables.csv
+  media_type: text/csv
+  loader: auth.baseline
+  target: auth.governed_tables
+  database_target_state: mzizi_new
+  key_columns:
+  - table_name
+  depends_on:
+  - global.auth.scope-targets
+  - global.auth.namespaces
+  consumers: *id001
   relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
   sync_policy: preview_then_apply_no_implicit_delete
 - id: global.auth.bootstrap
