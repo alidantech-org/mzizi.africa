@@ -21,9 +21,23 @@ Inspect current Dryv contracts, generated entities, migration history, runtime r
 - [schema-redesign/participation.md](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/schema-redesign/participation.md)
 - [schema-redesign/README.md](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/schema-redesign/README.md)
 
+## Agreed scope — 8 November 2026
+
+The user accepted scoped RBAC and requests an exact, advanced but understandable auth schema design before giving implementation go-ahead. Use the dated direction in the auth source document as the controlling requirements. Plan authenticated administration, OIDC account mapping, verified institutional onboarding, bounded delegation, dynamic roles, action/field-group permissions and resource-linked scopes. Reference actual institution, geography, jurisdiction, dataset and ownership/stewardship relationships with hard FKs. An account/person link and institutional membership never confer universal access. Editing, reviewing, publishing and assigning access are separate permissions. IEBC-managed electoral records and county-stewarded records must remain distinct even when geographically overlapping. Folder/source/pipeline implementation remains in later tasks.
+
+Produce the design in the existing auth document: exact current and target table/column dictionaries with types, nullability, defaults, PKs, FKs, checks, uniqueness, indexes, lifecycle and comments; annotated relationship diagram; example data and allow/deny decisions; admin/mobile/API and worker enforcement contracts; migration mapping and a focused validation matrix. Verify actual missing keys instead of assuming their absence. Account permissions must be evaluated from current database grants and authoritative resource relationships, including scope/ownership changes, expiry and revocation. No permission-plus-scope mixing across unrelated grants; prevent granting beyond delegation ceilings and self-escalation. Explain the design in plain language and identify dependencies on later domain modeling explicitly.
+
+This task remains planned. This update only documents the agreed direction and future deliverables; do not start implementation, migrate data, provision login infrastructure or mark design acceptance complete. Return the final design to the user for the next go-ahead.
+
 ## Acceptance checklist
 
 - [ ] Inventory every current identity/access table, view, key and runtime consumer; list verified defects.
 - [ ] Specify complete auth tables and columns, PKs, FKs, uniqueness, scope and lifecycle rules with representative queries.
 - [ ] Document OIDC identity-to-account mapping, roles/permissions enforcement and mobile/API contracts.
 - [ ] Prepare data-preserving migration mapping, targeted validation and explicit user design-review decisions.
+- [ ] Specify accounts, provider identities, roles, permission bundles, verified memberships, invitations, scoped assignments and justified delegation/session tables with exact columns and enforceable links.
+- [ ] Explain person versus account versus institution versus resource ownership, using a relationship diagram and concrete IEBC/county examples.
+- [ ] Define row and field-group restrictions, scope inheritance/intersection, dynamic resource/ownership synchronization, delegation ceilings and multi-steward publication rules.
+- [ ] Define unified backend enforcement across admin/mobile/API, list filtering, bulk operations, exports, workers and promotion; deny unmatched protected operations.
+- [ ] Document MFA/login/session behavior, disable/revoke propagation, current and proposed ownership checks and auditable access explanations.
+- [ ] Provide meaningful allow/deny and concurrency verification scenarios, and present the exact design for user review before implementation.
