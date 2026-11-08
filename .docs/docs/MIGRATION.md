@@ -75,8 +75,8 @@ No old module should be deleted simply because a new directory exists.
 | Alembic migrations | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database` migration source |
 | Seed scripts/data | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database` after classification by seed type |
 | Data repair/backfill scripts | `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database` |
-| Public/query HTTP endpoints | NestJS `source/apps/api` |
-| Dashboard workflow endpoints | NestJS `source/apps/api` |
+| Public/query HTTP endpoints | NestJS `source/backend/api` |
+| Dashboard workflow endpoints | NestJS `source/backend/api` |
 | Authentication/authorization | future NestJS API / platform auth design |
 
 ## Phase 1 — Freeze architectural expansion inside FastAPI
@@ -245,7 +245,7 @@ Initial API responsibilities:
 
 Avoid generic CRUD-first design. Prefer domain/query/workflow endpoints that express Mzizi concepts.
 
-**Status (2026-11-02):** the NestJS API exists at `source/apps/api` with read endpoints for every contracted domain and the audit write paths; see the responsibility accounting at the end of this file.
+**Status (2026-11-02):** the NestJS API exists at `source/backend/api` with read endpoints for every contracted domain and the audit write paths; see the responsibility accounting at the end of this file.
 
 ## Phase 9 — Migrate applications
 

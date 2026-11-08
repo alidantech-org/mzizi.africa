@@ -27,7 +27,7 @@ export async function api<T>(path: string, init: { method?: 'GET' | 'POST'; quer
       cache: 'no-store',
     });
   } catch {
-    throw new ApiError(0, `The API is not reachable at ${API}. Start it with bun run dev in source/apps/api.`);
+    throw new ApiError(0, `The API is not reachable at ${API}. Start it with bun run dev in source/backend/api.`);
   }
   if (!response.ok) {
     const detail = await response.json().catch(() => ({}));

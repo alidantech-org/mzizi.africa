@@ -9,7 +9,7 @@ import { Glob } from "bun";
 import { readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const api = join(import.meta.dir, "..", "..", "source/apps/api");
+const api = join(import.meta.dir, "..", "..", "source/backend/api");
 const violations: string[] = [];
 
 // 1. Dependencies that belong to other services.

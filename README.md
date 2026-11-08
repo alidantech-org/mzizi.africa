@@ -31,13 +31,13 @@ Read [.docs/docs/WHY.md](.docs/docs/WHY.md), [.docs/docs/GOALS.md](.docs/docs/GO
 mzizi.africa/
 ├── source/
 │   ├── apps/
-│   │   ├── api/        NestJS product API (Dryv-generated, finished auth included)
 │   │   ├── www/        Public atlas, heritage museum and exploration experience
 │   │   ├── web/        Research, curation, review and data-stewardship dashboard
 │   │   └── mobile/     Flutter mobile client
 │   ├── packages/       Reusable Python capabilities: filesystem, database, source, scraping, extraction, ocr, agent, manifest
 │   ├── schema/         Input-artifact schemas and rewrite SQL (database/auth active, database/engine provisional)
 │   └── backend/
+│       ├── api/        NestJS product API (Dryv-generated, finished auth included)
 │       └── engine/     One Python orchestration project: operational API, workers, events, callback outbox
 ├── seed/               Prepared seed data, patterns, manifests and test fixtures
 ├── scripts/            Thin commands calling package APIs

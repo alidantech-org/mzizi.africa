@@ -277,7 +277,7 @@ Replace FastAPI as the product API boundary.
 
 ## Build
 
-The NestJS service lives at `source/apps/api`; the old Python code was moved to `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy`.
+The NestJS service lives at `source/backend/api`; the old Python code was moved to `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy`.
 
 **Progress (2026-11-02):** generated from `dryv/` contracts for geography, legal, governance, elections, political, events, entities, finance, debt, procurement, statistics, services, reference and audit (about 135 operations); read use cases, the audit write paths with a contract-driven auth guard, Kenya and South Africa neutrality fixtures, and the contract and boundary checks are in place with 506 test files passing. Still open: data migration through database engine, the map and governance clients, heritage, linguistics, migration, colonial and pre-colonial domains, and an external auth provider integration.
 

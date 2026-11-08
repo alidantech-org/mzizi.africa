@@ -253,3 +253,7 @@ Done now: the layout above exists. Packages (`source/packages`): filesystem (S3 
 
 Not done (remaining milestones, not completed by these directories): domain schemas, source custody design, manifest-driven site/API extraction and per-source pipelines, candidate staging and promotion, scheduling and recurring workflows, a NestJS callback endpoint and SSE relay, an agent model provider, the PostgreSQL filesystem registry adapter, live S3 smoke testing. Details: engine README, packages README, archive inventory.
 
+### Decision update (2026-11-08): the NestJS API stays at source/backend/api
+
+After the restructuring the user directed that the NestJS product API live at `source/backend/api`, not `source/apps/api`. This supersedes the `source/apps/api` rows above; the rest of the layout is unchanged. `source/backend` therefore holds `api/` (NestJS) and `engine/` (Python). Dryv destinations, tools, documentation and the layout test were updated accordingly.
+

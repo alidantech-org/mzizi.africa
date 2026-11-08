@@ -21,7 +21,7 @@ const expected = new Set(
 );
 const groups = new Set(items.filter((item) => item.kind === "group").map((item) => item.name));
 
-const api = join(import.meta.dir, "..", "..", "source/apps/api/src/modules");
+const api = join(import.meta.dir, "..", "..", "source/backend/api/src/modules");
 const stale: string[] = [];
 for await (const file of new Glob("*/entities/*.entity.ts").scan({ cwd: api, absolute: true })) {
   const match = readFileSync(file, "utf8").match(/@Entity\(\{ schema: "(\w+)", name: "(\w+)" \}\)/);

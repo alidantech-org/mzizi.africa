@@ -63,7 +63,7 @@ A generic `(table, id)` pair cannot carry a foreign key, so integrity comes from
 
 ### Backend
 
-`source/apps/api/src/auth/`: `createIdentityVerifier` (issuer, signature, expiry, opaque subject), `PgAccessAuthority` (wraps the functions above), `DatabaseAuthGuard` (maps each contract policy to a platform permission, e.g. promote → `pipeline.publish`, then 401/403), `installDatabaseAuth`. `main.ts` uses it when `AUTH_DATABASE_URL` is set; otherwise the legacy roles-claim guard runs until other domains are rewritten. Use cases touching governed records call `can` / `canChange` with the table and record id.
+`source/backend/api/src/auth/`: `createIdentityVerifier` (issuer, signature, expiry, opaque subject), `PgAccessAuthority` (wraps the functions above), `DatabaseAuthGuard` (maps each contract policy to a platform permission, e.g. promote → `pipeline.publish`, then 401/403), `installDatabaseAuth`. `main.ts` uses it when `AUTH_DATABASE_URL` is set; otherwise the legacy roles-claim guard runs until other domains are rewritten. Use cases touching governed records call `can` / `canChange` with the table and record id.
 
 ### Deferred until needed
 

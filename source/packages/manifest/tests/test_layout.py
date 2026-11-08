@@ -11,7 +11,7 @@ SUFFIXES = {".py", ".ts", ".tsx", ".json", ".yaml", ".yml", ".toml", ".sh", ".mj
 SKIP_DIRS = {"node_modules", ".venv", "__pycache__", ".git", "dist", ".next", ".dryv"}
 SKIP_FILES = {"manifest.lock.json", "manifest.yaml", "bun.lock", "uv.lock", "package-lock.json"}  # the manifest records historical relocated_from paths
 FORBIDDEN = [
-    re.compile(r"\.docs/_archives"), re.compile(r"source/backend/api-legacy"), re.compile(r"source/backend/api(?!-legacy)\b"), re.compile(r"backend/engine/(data|database)\b"),
+    re.compile(r"\.docs/_archives"), re.compile(r"source/backend/api-legacy"), re.compile(r"source/apps/api"), re.compile(r"source/backend/api-legacy/"), re.compile(r"backend/engine/(data|database)\b"),
     re.compile(r"source/backend/(files|intelligence|contracts)\b"), re.compile(r"\bmzizi_data\b"), re.compile(r"fixtures/(seed|reference|policy|patterns|research)\b"),
 ]
 
@@ -37,11 +37,11 @@ def test_no_active_file_references_archived_or_removed_paths():
     assert hits == []
 
 
-def test_the_backend_holds_only_the_engine_and_the_old_implementations_are_gone():
-    assert sorted(p.name for p in (REPO_ROOT / "source" / "backend").iterdir() if p.is_dir()) == ["engine"]
-    for gone in ("source/backend/api", "source/backend/api-legacy", "source/backend/files", "source/backend/intelligence", "source/backend/contracts", "source/backend/engine/data", "source/backend/engine/database"):
+def test_the_backend_holds_the_api_and_the_engine_and_the_old_implementations_are_gone():
+    assert sorted(p.name for p in (REPO_ROOT / "source" / "backend").iterdir() if p.is_dir()) == ["api", "engine"]
+    for gone in ("source/apps/api", "source/backend/api-legacy", "source/backend/files", "source/backend/intelligence", "source/backend/contracts", "source/backend/engine/data", "source/backend/engine/database"):
         assert not (REPO_ROOT / gone).exists(), gone
-    assert (REPO_ROOT / "source" / "apps" / "api" / "package.json").exists()
+    assert (REPO_ROOT / "source" / "backend" / "api" / "package.json").exists()
 
 
 def test_the_archive_is_marked_historical_and_excluded_from_test_collection():

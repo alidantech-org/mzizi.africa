@@ -28,7 +28,7 @@ Source commit: `3e2f8c5d7a6f12d1c44851951e752a0ccf1db7fb`. Columns: old path, ar
 | `source/backend/files/README.md` | `source/backend/files/README.md` | Evidence-artifact custody responsibilities | `source/packages/filesystem` | Retention/archival lifecycle not implemented |
 | `source/backend/intelligence/README.md` | `source/backend/intelligence/README.md` | AI-assisted classification/cleaning tool families | `source/packages/agent` (proposal and tool interfaces) | No provider or classification tools yet |
 | `source/backend/contracts/*` (moved, not archived) | n/a | Exchange schema, targets, examples, gate vectors | `source/schema/contracts`, `seed/fixtures/contracts` | none |
-| `source/backend/api` (moved, not archived) | n/a | NestJS product API with auth | `source/apps/api` | none |
+| `source/backend/api` (moved, not archived) | n/a | NestJS product API with auth | `source/backend/api` | none |
 
 ## Manifests and seeds inside the archive
 

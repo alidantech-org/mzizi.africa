@@ -62,7 +62,7 @@ Transform fragmented African historical and public evidence into structured, ver
 
 ### Product API
 
-**Target path:** `source/apps/api`
+**Target path:** `source/backend/api`
 
 **Target technology:** NestJS.
 

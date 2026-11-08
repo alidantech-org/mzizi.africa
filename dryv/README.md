@@ -1,6 +1,6 @@
 # Mzizi Dryv contracts
 
-TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv compiles them to Runtime IR and the packs generate the NestJS API in `source/apps/api`, using the same structure and packs as the Alidantech backend. Only the project-owned use cases and service implementations are hand-written.
+TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv compiles them to Runtime IR and the packs generate the NestJS API in `source/backend/api`, using the same structure and packs as the Alidantech backend. Only the project-owned use cases and service implementations are hand-written.
 
 ## Layout
 
@@ -11,7 +11,7 @@ TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv co
 - `contracts/foundation/geography`: the pilot domain.
 - `packs/type-files`, `packs/use-cases`: project packs that scaffold shared types and per-operation use cases.
 
-Generated output lands in `source/apps/api/src/modules/<group>/...`, `src/types/<group>/...`, `src/app.module.ts` and `src/database/`. Do not edit managed files; files marked "Scaffolded by Dryv once" belong to the project.
+Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/types/<group>/...`, `src/app.module.ts` and `src/database/`. Do not edit managed files; files marked "Scaffolded by Dryv once" belong to the project.
 
 ## Contract rules
 
@@ -31,7 +31,7 @@ bun run check                        # typecheck, contract audit, doctor, compil
 bun run generated:check              # after generating: fails if a plan would still change files (needs the Dryv API)
 # start the Dryv API (from the Dryv checkout): uv run --project source/engine/python/api dryv-api serve --port 8750 --template-server source/engine/python/api/dryv.server.yaml
 cd .. && bun $DRYV_HOME/source/apps/cli/bin/dryv.ts --api http://127.0.0.1:8750 generate
-cd source/apps/api && bun run typecheck && bun run test
+cd source/backend/api && bun run typecheck && bun run test
 ```
 
 `bun run test` in the API runs the generated specs. The PostgreSQL integration test runs when `TEST_DATABASE_URL` points at a scratch PostGIS database, for example `postgres://postgres:test@localhost:55432/mzizi`.
@@ -80,7 +80,7 @@ cd .. && bun $DRYV_HOME/source/apps/cli/bin/dryv.ts --api http://127.0.0.1:8750 
 
 # 4. API: typecheck and test; the PostgreSQL suites need a PostGIS server
 docker run -d --name mzizi-test-pg -e POSTGRES_PASSWORD=test -p 55432:5432 postgis/postgis:18-3.6
-cd source/apps/api && bun install && bun run typecheck
+cd source/backend/api && bun install && bun run typecheck
 TEST_DATABASE_URL=postgres://postgres:test@localhost:55432/postgres bun run test
 ```
 

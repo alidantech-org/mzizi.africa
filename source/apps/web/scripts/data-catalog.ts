@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 
-const root = join(here, '../../api/src/modules');
+const root = join(here, '../../../backend/api/src/modules');
 const routes = new Set<string>();
 const walk = (dir: string) => {
   for (const name of readdirSync(dir)) {

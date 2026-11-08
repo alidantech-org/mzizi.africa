@@ -70,7 +70,7 @@ def test_test_fixtures_are_classified_but_are_not_manifest_entries():
 
 def test_no_fixture_sample_example_or_data_directory_sits_inside_source_code():
     offenders = []
-    for root in (REPO_ROOT / "source" / "packages", REPO_ROOT / "source" / "backend", REPO_ROOT / "source" / "apps" / "api"):
+    for root in (REPO_ROOT / "source" / "packages", REPO_ROOT / "source" / "backend", REPO_ROOT / "source" / "backend" / "api"):
         for path in root.rglob("*"):
             if not path.is_dir() or {"node_modules", ".venv", "__pycache__", ".git"} & set(path.parts):
                 continue
