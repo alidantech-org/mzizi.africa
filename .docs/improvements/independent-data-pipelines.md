@@ -195,3 +195,54 @@ The user now requires all manually or AI-prepared seed inputs, including auth ba
 Existing SeaweedFS configuration is fixed: bucket `mzizi`, region `us-east-1`, existing environment credentials, laptop endpoint `http://192.168.100.13:18333`, Docker endpoint `http://object-storage:8333` on `home-services`, public origin `https://res.alidantech.org/mzizi/`. Only `public/` allows anonymous reads; every other prefix is private. Do not provision storage, regenerate credentials, use per-object public ACLs or change infrastructure. Local logical folder paths need not mirror object keys. Seed CSV bytes normally go under `internal/seeds/` even when their rows define public folders.
 
 This approves documentation and the directory convention; bulk legacy relocation, actual catalog content, production folder generation, runtime manifest support and S3 uploads remain future work. Existing objects require inspection; disposable `mzizi_new` does not imply disposable S3. No backward compatibility is needed for the approved database rewrite. Earlier per-service seed locations and preservation/compatibility statements are historical and are superseded for this rewrite by the newer user direction.
+
+## 2026-11-08 — Approved package-first layout and single Python engine
+
+The user now authorizes the local agent to establish the new structure, move reusable code, and archive the previous implementations before the later source/pipeline milestones. This supersedes the earlier unresolved package/runtime topology. It does not authorize all later domain features. Work remains on develop; no .github or home-infrastructure changes.
+
+### Target ownership
+
+| Path | Responsibility |
+|---|---|
+| source/packages/ | Reusable capability packages with independent contracts, metadata, tests and documentation. |
+| source/backend/engine/ | One complete Python project: orchestration, job/run lifecycle, scheduling/admission, workers and its own operational API. |
+| source/apps/api/ | Existing NestJS product/domain API, relocated from source/backend/api so backend contains only engine; preserve finished auth behavior and update Dryv/build paths atomically. |
+| source/apps/web, source/apps/www, source/apps/mobile | Existing application surfaces. |
+| source/schema/ | Shared input-artifact schemas and validation contracts, with deliberate package exports. |
+| seed/ | All prepared seed artifacts, patterns and source manifests; reusable code does not move into seed/. |
+| scripts/ | Thin repository/operator entry points using package APIs instead of duplicating filesystem/database/network logic. |
+| .docs/_archives/<dated-rewrite-snapshot>/ | Clearly marked historical learning material, excluded from active imports, discovery, builds, generators and execution. |
+
+source/apps/api is the chosen destination for preserving the existing product API while enforcing the requested backend-only-engine layout. Update root configuration, Dryv outputs/tooling, relative imports and commands consistently. The engine API is for jobs, runs, packages/capabilities, manifest validation/activation, registry publication and operator actions; it does not silently replace or duplicate the public NestJS domain API or invent a second user-account system. Reuse the agreed auth identity/authorization contract for engine operations, including service actors and scoped actions.
+
+### Packages and Python project
+
+Start with capabilities actually reused: filesystem (S3, registry, hashing, access and publication), database (connection/transactions/schema lifecycle primitives), source-client (polite fetching/HTTP/API admission), scraping (HTML/link extraction/render adapters), extraction (PDF/tables/JSON/CSV/GeoJSON/text), OCR, agent (model/provider/tool interactions with attributable proposals), and shared manifest/schema validation. Refine names and combine tiny capabilities when justified; do not scaffold a separate service per package. Jurisdiction/publisher specifics remain in seed manifests and DB records.
+
+Use Python packages (pyproject metadata, src layout, declared dependencies/exports) for Python capabilities and a pyproject-based engine with a documented reproducible workspace/install/lock strategy. Select tooling from actual environment/repository constraints and record the choice. Do not add competing toolchains needlessly. Cross-language consumers, especially the NestJS product API, use explicit supported interfaces/contracts; no importing Python internals from TypeScript or copying a full capability implementation without justification.
+
+The engine depends on packages, packages must not import engine internals, and reusable capabilities should not import each other's private modules. Orchestration controls retries, leases, scheduling, limits and cancellation. Packages perform capabilities and expose progress/results with versioned contracts. Use one coordinated queue/admission boundary even if multiple workers execute concurrently. Package-specific HTTP wrappers live at the engine boundary, not separate daemons per package. Source rules, API structures, indicator selections and country facts remain data.
+
+### Archive and remove old active paths
+
+Archive source/backend/api-legacy and the old source/backend/engine/data and source/backend/engine/database implementations under .docs/_archives/<dated-rewrite-snapshot>/, preserving their original relative paths and a relocation inventory. Snapshot/archive first, extract reusable code into new packages with recorded origins, then remove old active directories. Remove source/backend/files and source/backend/intelligence after their useful responsibilities/docs are accounted for in filesystem and agent/extraction packages and the archive as appropriate. No compatibility copies or symlinks remain in active source.
+
+Before moving engine/database, audit newly completed auth work: retain the functioning auth schema/setup, role seeds and checks as active rewrite code, not only historical archive. The database package owns generic infrastructure; new schema-specific definitions remain in their documented owner. Do not replay old migrations into mzizi_new merely to retain a command. Preserve root seed consolidation and current source/schema definitions.
+
+Archive README must say historical, non-authoritative, not executable, and explain lessons to reuse. Record old path -> archive path -> extracted active capability/remaining knowledge, with the source commit. Inventory archived manifests and do not reintroduce duplicate authoritative seed payloads outside seed/. Existing archive-relative references may be historical, but active documentation must resolve current paths. Integrate the archive with Taskcode/document validation using documented supported exclusions or compliant metadata, without weakening validation of current tasks or editing every historical artifact indiscriminately.
+
+### Seed publication through filesystem package
+
+Scripts and engine operations use one reusable filesystem package API for seed registry publication. Inputs come from seed manifests/folder metadata; preserve artifact role, seed flag, acquisition class, preparation method, source identity and effective access. Do not use a raw S3 script that bypasses registration or provenance.
+
+Support dry-run, upload/verify/register, idempotent retry and reconciliation. Deduplicate using byte hash/length within compatible visibility/security boundaries, not global public/private merging. Keep each seed/document identity distinct even when bytes can be reused. Existing S3 service remains bucket mzizi with public/ anonymous only; other prefixes private. Existing S3 objects are not disposable even though mzizi_new is.
+
+Support both immutable versioned releases and explicitly non-versioned current content. For a non-versioned registry item use a stable logical identity/alias with a current-object pointer and conditional revision/hash checks; changed bytes update current state without requiring a new public logical version. Prefer immutable physical objects plus pointer replacement for dedup safety. If a fixed physical key must be overwritten, declare that mode, prevent shared-object corruption, and account for caches and failed partial writes. Non-versioned input must not silently alter historical evidence or a manifest release pinned by an existing run. Record publication/update events and return created/unchanged/updated/conflict outcomes. Do not run automatic garbage collection over the existing bucket.
+
+### Execution and acceptance boundary
+
+The local agent is authorized now to implement structure/package extraction, archive relocation, thin engine API skeleton and seed-publication capability needed by this restructure. It must create/refine a detailed Taskcode restructuring task and record that this enabling work runs before later source/pipeline feature implementation. Exact later schema tasks retain their user review/order; directory setup is not completion of those milestones.
+
+Deliver working imports, package installation, engine startup/health and registered capability contracts, preserved auth checks after relocation, package-level publication tests (mocked S3 first), and a bounded explicit live smoke only where credentials and test namespace are available. Validate that no active code/build/generation references archived paths. Do not start real collectors, migrate existing objects, provision services, erase unrelated databases or implement bespoke country extractors. Record actual gaps rather than declare a scaffold fully implemented.
+
+Document the final tree, package ownership, package/engine/API commands, archive learning index, auth preservation, seed registry behavior and focused verification. Commit and push to develop after checks. Database operations target only the approved disposable mzizi_new.
