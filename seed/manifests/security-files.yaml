@@ -1,0 +1,34 @@
+# Security files relocated from the git-ignored .data directory (8 November 2026): the development token signing key pair and the old
+# environment files. They are stored only in the private area of the object store; code reads them through
+# `uv run mzizi-filesystem secure-get <path>` (or mzizi_filesystem.secure.fetch_secure_file), which caches them under .local/secure.
+# Live environment values belong in the repository-root .env, never in the registry.
+schema_version: 1
+kind: filesystem-sync
+name: security-files
+release: "2026-11-08.1"
+root: generated/security
+logical_root: /security
+defaults: {retention: replace_current}
+folders:
+  - path: /security
+    code: security
+    description: "Private security files: signing keys and retired environment files. Never public."
+    classification:
+      access: private
+      allow_weaker_children: false
+      is_seed: false
+      artifact_role: certificate
+      acquisition_class: internally_derived
+      preparation: programmatically_generated
+      review: {status: needs_review, note: "Credential-bearing material; access is limited to platform administrators."}
+entries:
+  - id: security-files
+    source: {path: .}
+    description: "Development signing key pair (dev-auth) and the retired dev.env, env.local, p4-scratch.env and real.env files."
+    allow_sensitive: true
+    classification:
+      access: private
+      artifact_role: certificate
+      acquisition_class: internally_derived
+      preparation: programmatically_generated
+      review: {status: needs_review, note: "Development credentials created locally; rotate before any shared use."}

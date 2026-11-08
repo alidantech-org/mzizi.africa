@@ -1,17 +1,22 @@
--- Filesystem schema for the disposable rewrite database (mzizi_new). Eight tables; see .docs/docs/FILESYSTEM_SCHEMA.md.
+-- Filesystem schema for the disposable rewrite database (mzizi_new). Seven tables and one view; see .docs/docs/FILESYSTEM_SCHEMA.md.
 -- Decisions (2026-11-08): explicit file versions hold the S3 key, hash, size, extension and content type directly (no objects table);
 -- no file-type or extension tables; paths are derived from the folder hierarchy; classification is inherited by folders and resolved
 -- deterministically; S3 configuration (bucket, region, endpoint) is never stored in rows; no credentials or presigned URLs are stored.
 
 CREATE SCHEMA filesystem;
-COMMENT ON SCHEMA filesystem IS 'Logical folders, files, exact content versions with S3 keys, tags, extraction lineage and upload sessions. Bucket/region/endpoint live in configuration, never in rows.';
+COMMENT ON SCHEMA filesystem IS 'Logical folders, files, exact content versions with S3 keys, tags, derivation relations between file versions and upload sessions. Bucket/region/endpoint live in configuration, never in rows.';
+
+-- Codes follow .docs/rules/code-columns.md: dot-separated lowercase segments, hierarchical by prefix.
+CREATE FUNCTION filesystem.code_segment(p_text text) RETURNS text LANGUAGE sql IMMUTABLE STRICT AS $$
+  SELECT btrim(regexp_replace(lower(p_text), '[^a-z0-9]+', '_', 'g'), '_') $$;
+COMMENT ON FUNCTION filesystem.code_segment(text) IS 'The one reproducible way to turn a name into a code segment: lowercase, every run outside a-z0-9 becomes one underscore, outer underscores removed. Mirrored by mzizi_filesystem.codes.code_segment.';
 
 -- ------------------------------------------------------------------------------------------------ folders
 CREATE TABLE filesystem.folders (
   id                   uuid PRIMARY KEY DEFAULT uuidv7(),
   parent_id            uuid REFERENCES filesystem.folders (id) ON DELETE RESTRICT,
   name                 text NOT NULL CHECK (name = btrim(name) AND length(name) BETWEEN 1 AND 255 AND name !~ '[/[:cntrl:]]' AND name NOT IN ('.', '..')),
-  seed_code            text UNIQUE CHECK (seed_code ~ '^[a-z0-9][a-z0-9._/-]*$'),
+  code                 text UNIQUE CHECK (code ~ '^[a-z0-9][a-z0-9_]*(\.[a-z0-9][a-z0-9_]*)*$' AND length(code) <= 255 AND cardinality(string_to_array(code, '.')) <= 16),
   description          text,
   access               text CHECK (access IN ('public', 'internal', 'restricted', 'private')),
   access_authorization jsonb,
@@ -34,7 +39,7 @@ CREATE UNIQUE INDEX folders_sibling_names ON filesystem.folders (parent_id, name
 CREATE INDEX folders_parent ON filesystem.folders (parent_id) WHERE parent_id IS NOT NULL;
 COMMENT ON CONSTRAINT folders_no_root_raw ON filesystem.folders IS 'The historical raw collection is not re-created as a logical root; it awaits separate reconciliation.';
 COMMENT ON TABLE filesystem.folders IS 'Concrete logical hierarchy. The path is derived (filesystem.folder_path), never stored. Classification columns are NULL to inherit from the nearest ancestor that sets them (filesystem.effective_folder).';
-COMMENT ON COLUMN filesystem.folders.seed_code IS 'Stable identity of a seeded folder (unique); NULL for folders created at run time.';
+COMMENT ON COLUMN filesystem.folders.code IS 'Stable unique code of a folder; any folder may carry one and manifests use it as the folder's identity. NULL when the folder has none.';
 COMMENT ON COLUMN filesystem.folders.access IS 'Explicit access class; NULL inherits; no effective value defaults to internal (non-public). Only public/ is anonymously readable in S3; a deeper folder may not widen access unless the ancestor setting it has allow_weaker_children, and public needs access_authorization.';
 COMMENT ON COLUMN filesystem.folders.access_authorization IS 'Required for public: {by, date, reference}.';
 COMMENT ON COLUMN filesystem.folders.allow_weaker_children IS 'Whether folders below may be less restrictive than this folder''s access.';
@@ -51,7 +56,7 @@ CREATE TABLE filesystem.files (
   id                 uuid PRIMARY KEY DEFAULT uuidv7(),
   folder_id          uuid NOT NULL REFERENCES filesystem.folders (id) ON DELETE RESTRICT,
   name               text NOT NULL CHECK (name = btrim(name) AND length(name) BETWEEN 1 AND 255 AND name !~ '[/[:cntrl:]]' AND name NOT IN ('.', '..')),
-  registry_code      text UNIQUE CHECK (registry_code ~ '^[A-Za-z0-9][A-Za-z0-9._:/@=+-]*$'),
+  code               text UNIQUE CHECK (code ~ '^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*)*$' AND length(code) <= 255 AND cardinality(string_to_array(code, '.')) <= 16),
   retention          text NOT NULL DEFAULT 'preserve_history' CHECK (retention IN ('preserve_history', 'replace_current')),
   last_revision      integer NOT NULL DEFAULT 0 CHECK (last_revision >= 0),
   current_version_id uuid,
@@ -63,7 +68,7 @@ CREATE TABLE filesystem.files (
 );
 CREATE INDEX files_folder ON filesystem.files (folder_id);
 COMMENT ON TABLE filesystem.files IS 'Stable logical file identity and placement. Content lives in file_versions; moving or renaming a file never touches S3.';
-COMMENT ON COLUMN filesystem.files.registry_code IS 'Stable identity from a manifest or seed (unique). A renamed local file keeps its code; there is no path-based identity.';
+COMMENT ON COLUMN filesystem.files.code IS 'Stable unique hierarchical code (.docs/rules/code-columns.md): the code of its folder plus the file name segment. Set when the file is registered from a manifest or seed; NULL when none.';
 COMMENT ON COLUMN filesystem.files.retention IS 'preserve_history: changed bytes add a retained version. replace_current: changed bytes replace the current content; unpinned superseded versions are dropped, pinned ones never.';
 COMMENT ON COLUMN filesystem.files.last_revision IS 'Highest revision number issued, so numbers stay monotonic when replace_current drops old rows.';
 COMMENT ON COLUMN filesystem.files.current_version_id IS 'The current content. Must belong to this file (composite FK) and exists by commit (deferred check).';
@@ -98,7 +103,7 @@ COMMENT ON COLUMN filesystem.file_versions.sha256 IS 'SHA-256 of the exact bytes
 COMMENT ON COLUMN filesystem.file_versions.extension IS 'Normalized lower-case extension without dot, validated against the shared media catalog; not a file-type table.';
 COMMENT ON COLUMN filesystem.file_versions.content_type IS 'Verified MIME type of these exact bytes (a revision may change format).';
 COMMENT ON COLUMN filesystem.file_versions.provenance IS 'Resolved historical provenance snapshot at registration: seed flag, artifact role, acquisition class, preparation, intended access, which folder/manifest definition supplied each field, manifest release. Never rewritten by later moves.';
-COMMENT ON COLUMN filesystem.file_versions.pinned IS 'Pinned by a manifest release, evidence reference or run: never pruned. Extraction participation also protects a version (extraction_files FK).';
+COMMENT ON COLUMN filesystem.file_versions.pinned IS 'Pinned by a manifest release, evidence reference or run: never pruned. Taking part in a file relation also protects a version (file_relations FK).';
 
 ALTER TABLE filesystem.files
   ADD CONSTRAINT files_current_version_belongs_to_file FOREIGN KEY (id, current_version_id) REFERENCES filesystem.file_versions (file_id, id) DEFERRABLE INITIALLY DEFERRED;
@@ -127,40 +132,23 @@ CREATE INDEX taggings_file ON filesystem.taggings (file_id) WHERE file_id IS NOT
 CREATE INDEX taggings_folder ON filesystem.taggings (folder_id) WHERE folder_id IS NOT NULL;
 COMMENT ON TABLE filesystem.taggings IS 'Typed tag association: exactly one of file_id or folder_id, real FKs, no duplicate assignment. Removed with its target.';
 
--- ----------------------------------------------------------------------------------------- extractions
-CREATE TABLE filesystem.extractions (
+-- ------------------------------------------------------------------------------------ file_relations
+-- Only the relationship is stored here. What ran, with which tool, configuration and schedule belongs to the engine (engine_job_id links).
+CREATE TABLE filesystem.file_relations (
   id                 uuid PRIMARY KEY DEFAULT uuidv7(),
-  operation          text NOT NULL CHECK (operation ~ '^[a-z][a-z0-9_.-]*$'),
-  capability         text NOT NULL,
-  capability_version text NOT NULL,
-  tool               jsonb NOT NULL DEFAULT '{}'::jsonb,
-  config_hash        text NOT NULL CHECK (config_hash ~ '^[0-9a-f]{64}$'),
-  config             jsonb,
-  state              text NOT NULL DEFAULT 'pending' CHECK (state IN ('pending', 'running', 'succeeded', 'partial', 'failed', 'cancelled')),
-  started_at         timestamptz,
-  finished_at        timestamptz,
-  requested_by       uuid REFERENCES auth.accounts (id),
-  engine_run_id      uuid REFERENCES engine.runs (id),
+  source_version_id  uuid NOT NULL REFERENCES filesystem.file_versions (id) ON DELETE RESTRICT,
+  derived_version_id uuid NOT NULL REFERENCES filesystem.file_versions (id) ON DELETE RESTRICT,
+  relation           text NOT NULL DEFAULT 'derived_from' CHECK (relation ~ '^[a-z][a-z0-9_.-]*$'),
   engine_job_id      uuid REFERENCES engine.jobs (id),
-  error              text,
+  created_by         uuid REFERENCES auth.accounts (id),
   created_at         timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT extractions_finished_after_started CHECK (finished_at IS NULL OR started_at IS NULL OR finished_at >= started_at)
+  CONSTRAINT file_relations_distinct CHECK (source_version_id <> derived_version_id),
+  CONSTRAINT file_relations_once UNIQUE (source_version_id, derived_version_id, relation)
 );
-CREATE INDEX extractions_operation ON filesystem.extractions (operation, state);
-CREATE INDEX extractions_run ON filesystem.extractions (engine_run_id) WHERE engine_run_id IS NOT NULL;
-COMMENT ON TABLE filesystem.extractions IS 'A lasting extraction operation: what ran, with which capability and tool versions and configuration identity. Scheduling, retries and queue state stay in the engine (engine_run_id / engine_job_id link only).';
-COMMENT ON COLUMN filesystem.extractions.config_hash IS 'SHA-256 of the canonical configuration: same capability, version, configuration and input versions reproduce the same operation.';
-COMMENT ON COLUMN filesystem.extractions.engine_run_id IS 'Optional link to the engine run (provisional engine schema).';
-
-CREATE TABLE filesystem.extraction_files (
-  extraction_id   uuid NOT NULL REFERENCES filesystem.extractions (id) ON DELETE CASCADE,
-  role            text NOT NULL CHECK (role IN ('input', 'output')),
-  file_version_id uuid NOT NULL REFERENCES filesystem.file_versions (id) ON DELETE RESTRICT,
-  ordinal         integer NOT NULL DEFAULT 0 CHECK (ordinal >= 0),
-  PRIMARY KEY (extraction_id, role, file_version_id)
-);
-CREATE INDEX extraction_files_version ON filesystem.extraction_files (file_version_id, role);
-COMMENT ON TABLE filesystem.extraction_files IS 'Exact file versions that took part in an extraction as inputs or outputs: many of each, reproducible chains. A version that participates is never pruned. Processing status is derived (filesystem.version_operations), not stored.';
+CREATE INDEX file_relations_derived ON filesystem.file_relations (derived_version_id);
+CREATE INDEX file_relations_job ON filesystem.file_relations (engine_job_id) WHERE engine_job_id IS NOT NULL;
+COMMENT ON TABLE filesystem.file_relations IS 'Exact file version derived_version_id was derived from exact version source_version_id (converted, extracted, split...). A version that takes part is never pruned. Tools, configuration, status and scheduling are engine concerns; engine_job_id is an optional pointer only.';
+COMMENT ON COLUMN filesystem.file_relations.relation IS 'Kind of derivation, a lowercase slug (default derived_from).';
 
 -- ------------------------------------------------------------------------------------------- uploads
 CREATE TABLE filesystem.uploads (
@@ -201,9 +189,11 @@ CREATE FUNCTION filesystem.folder_path(p_id uuid) RETURNS text LANGUAGE sql STAB
   SELECT '/' || string_agg(name, '/' ORDER BY depth DESC) FROM up $$;
 CREATE FUNCTION filesystem.file_path(p_id uuid) RETURNS text LANGUAGE sql STABLE AS $$
   SELECT filesystem.folder_path(folder_id) || '/' || name FROM filesystem.files WHERE id = p_id $$;
-CREATE VIEW filesystem.folder_paths AS SELECT id, filesystem.folder_path(id) AS path FROM filesystem.folders;
-CREATE VIEW filesystem.file_paths AS SELECT id, filesystem.file_path(id) AS path FROM filesystem.files;
-COMMENT ON VIEW filesystem.folder_paths IS 'Derived folder paths. There is no competing stored path identity.';
+CREATE VIEW filesystem.paths AS
+  SELECT 'folder'::text AS kind, id, filesystem.folder_path(id) AS path FROM filesystem.folders
+  UNION ALL
+  SELECT 'file'::text, id, filesystem.file_path(id) FROM filesystem.files;
+COMMENT ON VIEW filesystem.paths IS 'Derived paths of every folder and file (kind = folder|file). There is no competing stored path identity.';
 
 CREATE FUNCTION filesystem.access_rank(p_access text) RETURNS int LANGUAGE sql IMMUTABLE AS $$
   SELECT CASE p_access WHEN 'public' THEN 0 WHEN 'internal' THEN 1 WHEN 'restricted' THEN 2 WHEN 'private' THEN 3 END $$;
@@ -230,8 +220,24 @@ END $$;
 COMMENT ON FUNCTION filesystem.effective_folder(uuid) IS 'Effective classification of a folder: nearest explicit value per field; access defaults to internal; resolved_from names the folder that supplied each field.';
 
 -- Cycles, depth, and the access-widening rule for inserts, moves and access changes.
+CREATE FUNCTION filesystem.nearest_code(p_folder uuid) RETURNS text LANGUAGE sql STABLE AS $$
+  WITH RECURSIVE up(id, parent_id, code, depth) AS (
+    SELECT id, parent_id, code, 0 FROM filesystem.folders WHERE id = p_folder
+    UNION ALL SELECT f.id, f.parent_id, f.code, up.depth + 1 FROM filesystem.folders f JOIN up ON f.id = up.parent_id WHERE up.depth < 32)
+  SELECT code FROM up WHERE code IS NOT NULL ORDER BY depth LIMIT 1 $$;
+COMMENT ON FUNCTION filesystem.nearest_code(uuid) IS 'Code of the folder or of its nearest coded ancestor; NULL when none.';
+
+CREATE FUNCTION filesystem.files_code_guard() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE folder_code text;
+BEGIN
+  folder_code := filesystem.nearest_code(NEW.folder_id);
+  IF NEW.code IS NOT NULL AND folder_code IS NOT NULL AND left(NEW.code, length(folder_code) + 1) <> folder_code || '.' THEN
+    RAISE EXCEPTION 'file code % must sit under its folder code %', NEW.code, folder_code USING ERRCODE = 'MZ002';
+  END IF;
+  RETURN NEW;
+END $$;
 CREATE FUNCTION filesystem.folders_guard() RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE cur uuid := NEW.parent_id; depth int := 1; anc record; parent_eff text; setter record;
+DECLARE cur uuid := NEW.parent_id; depth int := 1; anc record; parent_eff text; setter record; parent_code text;
 BEGIN
   WHILE cur IS NOT NULL LOOP
     IF TG_OP = 'UPDATE' AND cur = NEW.id THEN RAISE EXCEPTION 'folder hierarchy cannot contain a cycle' USING ERRCODE = 'MZ002'; END IF;
@@ -239,6 +245,12 @@ BEGIN
     IF depth > 16 THEN RAISE EXCEPTION 'folders may be nested at most 16 deep' USING ERRCODE = 'MZ002'; END IF;
     SELECT parent_id INTO cur FROM filesystem.folders WHERE id = cur;
   END LOOP;
+  IF NEW.code IS NOT NULL AND NEW.parent_id IS NOT NULL THEN
+    parent_code := filesystem.nearest_code(NEW.parent_id);
+    IF parent_code IS NOT NULL AND left(NEW.code, length(parent_code) + 1) <> parent_code || '.' THEN
+      RAISE EXCEPTION 'folder code % must sit under its ancestor code %', NEW.code, parent_code USING ERRCODE = 'MZ002';
+    END IF;
+  END IF;
   IF NEW.parent_id IS NOT NULL AND NEW.access IS NOT NULL THEN
     SELECT access INTO parent_eff FROM filesystem.effective_folder(NEW.parent_id);
     IF filesystem.access_rank(NEW.access) < filesystem.access_rank(parent_eff) THEN
@@ -253,7 +265,8 @@ BEGIN
   END IF;
   RETURN NEW;
 END $$;
-CREATE TRIGGER folders_guard BEFORE INSERT OR UPDATE OF parent_id, access ON filesystem.folders FOR EACH ROW EXECUTE FUNCTION filesystem.folders_guard();
+CREATE TRIGGER files_code_guard BEFORE INSERT OR UPDATE OF code ON filesystem.files FOR EACH ROW EXECUTE FUNCTION filesystem.files_code_guard();
+CREATE TRIGGER folders_guard BEFORE INSERT OR UPDATE OF parent_id, access, code ON filesystem.folders FOR EACH ROW EXECUTE FUNCTION filesystem.folders_guard();
 
 -- A parent's stricter access must not leave an explicitly weaker descendant that is not allowed to be weaker.
 CREATE FUNCTION filesystem.folders_subtree_guard() RETURNS trigger LANGUAGE plpgsql AS $$
@@ -350,25 +363,16 @@ BEGIN
 END $$;
 CREATE CONSTRAINT TRIGGER files_have_current_version AFTER INSERT OR UPDATE ON filesystem.files DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION filesystem.check_current_version();
 
--- Extraction rules: a version cannot be both input and output of one extraction; outputs never feed back into their own inputs.
-CREATE FUNCTION filesystem.extraction_files_guard() RETURNS trigger LANGUAGE plpgsql AS $$
+-- Relation rule: derivation chains never loop (a version cannot be derived, directly or not, from its own descendant).
+CREATE FUNCTION filesystem.file_relations_guard() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM filesystem.extraction_files WHERE extraction_id = NEW.extraction_id AND file_version_id = NEW.file_version_id AND role <> NEW.role) THEN
-    RAISE EXCEPTION 'a file version cannot be both input and output of one extraction' USING ERRCODE = 'MZ002';
+  IF EXISTS (WITH RECURSIVE up(id, depth) AS (SELECT NEW.source_version_id, 0 UNION SELECT r.source_version_id, up.depth + 1 FROM filesystem.file_relations r JOIN up ON r.derived_version_id = up.id WHERE up.depth < 64)
+             SELECT 1 FROM up WHERE id = NEW.derived_version_id) THEN
+    RAISE EXCEPTION 'derivation would create a cycle' USING ERRCODE = 'MZ002';
   END IF;
   RETURN NEW;
 END $$;
-CREATE TRIGGER extraction_files_guard BEFORE INSERT ON filesystem.extraction_files FOR EACH ROW EXECUTE FUNCTION filesystem.extraction_files_guard();
-
--- Derived processing status: which operations touched a version, in which role, and how the latest one ended. Not stored.
-CREATE VIEW filesystem.version_operations AS
-  SELECT ef.file_version_id, e.operation, ef.role,
-         count(*) AS runs, max(e.created_at) AS last_at,
-         (array_agg(e.state ORDER BY e.created_at DESC))[1] AS last_state,
-         bool_or(e.state IN ('succeeded', 'partial')) AS has_result
-    FROM filesystem.extraction_files ef JOIN filesystem.extractions e ON e.id = ef.extraction_id
-   GROUP BY ef.file_version_id, e.operation, ef.role;
-COMMENT ON VIEW filesystem.version_operations IS 'Processing status by operation, derived from extraction history. There is no processed flag and no extracted_from column.';
+CREATE TRIGGER file_relations_guard BEFORE INSERT ON filesystem.file_relations FOR EACH ROW EXECUTE FUNCTION filesystem.file_relations_guard();
 
 -- Referenced content: a key is in use while any retained version or open upload references it.
 CREATE FUNCTION filesystem.key_in_use(p_key text) RETURNS boolean LANGUAGE sql STABLE AS $$

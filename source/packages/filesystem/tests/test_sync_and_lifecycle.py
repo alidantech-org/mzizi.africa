@@ -8,8 +8,9 @@ import pytest
 import yaml
 from fs_helpers import CLASS, new_account, purge, sub
 
-from mzizi_filesystem import (Conflict, DatabaseAuthorizer, FilesystemService, ManifestError, MemoryObjectStore, PermissionDenied, ancestry, begin_extraction, cleanup_uploads, complete_upload,
-                              create_upload, delete_unreferenced_keys, finish_extraction, plan_seed, plan_sync_manifest, register_output, run_sync, transition_folder_access)
+from mzizi_filesystem.codes import code_segment
+from mzizi_filesystem import (Conflict, DatabaseAuthorizer, FilesystemService, ManifestError, MemoryObjectStore, PermissionDenied, ancestry, cleanup_uploads, complete_upload,
+                              create_upload, delete_unreferenced_keys, plan_seed, plan_sync_manifest, register_derived, relate, run_sync, transition_folder_access)
 from mzizi_filesystem.access import is_anonymously_readable
 from mzizi_filesystem.download import download_url
 from mzizi_filesystem.hashing import content_key, sha256_hex
@@ -19,7 +20,13 @@ from mzizi_filesystem.hashing import content_key, sha256_hex
 class Tree:
     def __init__(self, tmp: Path) -> None:
         self.seed_root = tmp
-        self.logical = f"/pytest-{uuid.uuid4().hex[:8]}"
+        token = uuid.uuid4().hex[:8]
+        self.logical = f"/pytest-{token}"
+        self.code = f"pytest_{token}"
+
+    def fc(self, rel: str) -> str:
+        """Derived code of the file at a relative path under the tree root."""
+        return ".".join([self.code, *[code_segment(p) for p in rel.split("/")]])
 
     def write(self, rel: str, data: bytes | str) -> None:
         path = self.seed_root / "tree" / rel
@@ -27,7 +34,7 @@ class Tree:
         path.write_bytes(data if isinstance(data, bytes) else data.encode())
 
     def manifest(self, **entry) -> Path:
-        entry = {"id": "t", "source": {"path": "."}, **entry}
+        entry = {"id": "t", "source": {"path": "."}, "code": self.code, **entry}
         doc = {"schema_version": 1, "kind": "filesystem-sync", "name": "pytest", "release": "r1", "root": "tree", "logical_root": self.logical,
                "entries": [entry]}
         doc["entries"][0].setdefault("classification", dict(CLASS))
@@ -69,7 +76,7 @@ def test_preview_writes_nothing_then_apply_creates_folders_parent_first_and_file
     report = sync(plan, service)
     assert report.ok and report.summary("folder") == {"created": 3 + 0} or report.summary("folder")["created"] >= 3
     assert report.summary("file") == {"created": 2}
-    f = repo.file_by_code("t/docs/deep/b.txt")
+    f = repo.file_by_code(tree.fc("docs/deep/b.txt"))
     version = repo.get_version(f["current_version_id"])
     assert version["s3_key"] == content_key("internal", sha256_hex(b"beta\n")) and store.objects[version["s3_key"]][0] == b"beta\n"
     assert version["extension"] == "txt" and version["content_type"] == "text/plain" and version["original_filename"] == "b.txt"
@@ -108,11 +115,12 @@ def test_include_and_exclude_rules_and_sensitive_files_are_never_published(tree,
 
 def test_a_missing_local_file_is_never_deleted_remotely_and_a_rename_keeps_its_identity(tree, service, repo, conn):
     tree.write("old-name.txt", "same bytes\n")
-    sync(tree.plan(identities={"old-name.txt": "stable/doc-1", "new-name.txt": "stable/doc-1"}), service)
+    stable = f"{tree.code}.doc_1"
+    sync(tree.plan(identities={"old-name.txt": stable, "new-name.txt": stable}), service)
     (tree.seed_root / "tree" / "old-name.txt").rename(tree.seed_root / "tree" / "new-name.txt")
-    report = sync(tree.plan(identities={"old-name.txt": "stable/doc-1", "new-name.txt": "stable/doc-1"}), service)
+    report = sync(tree.plan(identities={"old-name.txt": stable, "new-name.txt": stable}), service)
     assert report.summary("file") == {"unchanged": 1} and counts(conn, tree.logical, repo) == (1, 1)
-    assert repo.file_by_code("stable/doc-1")["name"] == "old-name.txt"  # renaming the remote file is an explicit operation, not an accident
+    assert repo.file_by_code(stable)["name"] == "old-name.txt"  # renaming the remote file is an explicit operation, not an accident
     (tree.seed_root / "tree" / "new-name.txt").unlink()
     gone = sync(tree.plan(), service)
     assert gone.ok and counts(conn, tree.logical, repo) == (1, 1)
@@ -128,16 +136,16 @@ def test_preserve_history_retains_a_version_per_change_and_nothing_for_unchanged
     assert sync(plan, service).summary("file") == {"updated": 1}
     tree.write("a.txt", "v3\n")
     sync(plan, service)
-    file = repo.file_by_code("t/a.txt")
+    file = repo.file_by_code(tree.fc("a.txt"))
     versions = repo.versions(file["id"])
     assert [v["revision"] for v in versions] == [1, 2, 3] and file["current_version_id"] == versions[-1]["id"] and file["retention"] == "preserve_history"
 
 
-def test_replace_current_drops_unpinned_history_but_never_pinned_or_extraction_referenced_versions(tree, service, repo, store, conn):
+def test_replace_current_drops_unpinned_history_but_never_pinned_or_relation_referenced_versions(tree, service, repo, store, conn):
     tree.write("a.txt", "v1\n")
     plan = tree.plan(retention="replace_current")
     sync(plan, service)
-    f = repo.file_by_code("t/a.txt")
+    f = repo.file_by_code(tree.fc("a.txt"))
     v1 = repo.versions(f["id"])[0]
     repo.set_pin(v1["id"], "manifest release r1")
     tree.write("a.txt", "v2\n")
@@ -147,13 +155,12 @@ def test_replace_current_drops_unpinned_history_but_never_pinned_or_extraction_r
     revs = [v["revision"] for v in repo.versions(f["id"])]
     assert revs == [1, 3] and repo.get_file(f["id"])["last_revision"] == 3  # revision numbers stay monotonic; pinned v1 survives, unpinned v2 dropped
     assert repo.get_version(v1["id"])["s3_key"] in store.objects
-    # an extraction input is protected too
-    ex = begin_extraction(service, "text.copy", "test", "1", [repo.versions(f["id"])[-1]["id"]])
+    # a version that is the source of a relation is protected too
+    derived = register_derived(service, [repo.versions(f["id"])[-1]["id"]], f["folder_id"], "a.copy", b"v3\n")
     tree.write("a.txt", "v4\n")
     sync(plan, service)
     assert [v["revision"] for v in repo.versions(f["id"])] == [1, 3, 4]
-    finish_extraction(service, ex["id"], "succeeded")
-    assert r3.ok
+    assert r3.ok and derived.outcome == "created"
 
 
 def test_superseded_content_is_deleted_only_by_explicit_cleanup_and_never_while_referenced(tree, service, repo, store):
@@ -161,7 +168,7 @@ def test_superseded_content_is_deleted_only_by_explicit_cleanup_and_never_while_
     tree.write("b.txt", "one\n")  # shares the physical key with a.txt
     plan = tree.plan(retention="replace_current")
     sync(plan, service)
-    shared = repo.get_version(repo.file_by_code("t/a.txt")["current_version_id"])["s3_key"]
+    shared = repo.get_version(repo.file_by_code(tree.fc("a.txt"))["current_version_id"])["s3_key"]
     tree.write("a.txt", "two\n")
     sync(plan, service)
     assert shared in store.objects  # nothing is deleted by publication
@@ -180,7 +187,7 @@ def test_identical_bytes_share_one_physical_key_inside_an_access_boundary_but_st
     tree.write("b.txt", "shared\n")
     report = sync(tree.plan(), service)
     assert report.summary("file") == {"created": 2} and sum(1 for i in report.items if i.reused_storage) == 1
-    a, b = repo.file_by_code("t/a.txt"), repo.file_by_code("t/b.txt")
+    a, b = repo.file_by_code(tree.fc("a.txt")), repo.file_by_code(tree.fc("b.txt"))
     assert a["id"] != b["id"] and repo.get_version(a["current_version_id"])["s3_key"] == repo.get_version(b["current_version_id"])["s3_key"] and len(store.objects) == 1
 
 
@@ -200,7 +207,7 @@ def test_a_stale_revision_is_a_conflict_and_a_racing_registration_loses_cleanly(
     tree.write("a.txt", "one\n")
     plan = tree.plan()
     sync(plan, service)
-    f = repo.file_by_code("t/a.txt")
+    f = repo.file_by_code(tree.fc("a.txt"))
     with pytest.raises(Conflict):
         repo.add_version(f["id"], f["revision"] + 7, {"s3_key": "internal/content/sha256/aa/bb/x", "sha256": "a" * 64, "size_bytes": 1, "content_type": "text/plain", "provenance": {}}, None)
     original = repo.add_version
@@ -228,7 +235,7 @@ def test_an_upload_interrupted_before_registration_is_recovered_by_the_next_run_
 
     repo.create_file_with_version = crash
     first = sync(plan, service)
-    assert first.summary("file") == {"failed": 1} and len(store.puts) == 1 and repo.file_by_code("t/a.txt") is None
+    assert first.summary("file") == {"failed": 1} and len(store.puts) == 1 and repo.file_by_code(tree.fc("a.txt")) is None
     repo.create_file_with_version = original
     second = sync(plan, service)
     assert second.summary("file") == {"created": 1} and sum(1 for i in second.items if i.recovered) == 1 and len(store.puts) == 1
@@ -238,10 +245,10 @@ def test_a_failed_or_corrupted_upload_registers_nothing_and_a_retry_succeeds(tre
     tree.write("a.txt", "payload\n")
     plan = tree.plan()
     store.fail_next_puts = 1
-    assert sync(plan, service).summary("file") == {"failed": 1} and repo.file_by_code("t/a.txt") is None
+    assert sync(plan, service).summary("file") == {"failed": 1} and repo.file_by_code(tree.fc("a.txt")) is None
     store.corrupt_next_puts = 1
     bad = sync(plan, service)
-    assert bad.summary("file") == {"failed": 1} and "verification" in bad.problems()[0].detail and repo.file_by_code("t/a.txt") is None
+    assert bad.summary("file") == {"failed": 1} and "verification" in bad.problems()[0].detail and repo.file_by_code(tree.fc("a.txt")) is None
     assert not [k for k in store.objects if len(store.objects[k][0]) != 8] or True
     store.objects.clear()
     assert sync(plan, service).summary("file") == {"created": 1}
@@ -259,29 +266,23 @@ def test_unchanged_registered_content_missing_from_the_store_is_repaired(tree, s
 
 
 # -------------------------------------------------------------------------------------------------- lineage
-def test_extractions_link_exact_input_and_output_versions_with_derived_status_and_ancestry(tree, service, repo, conn, store):
+def test_relations_link_exact_versions_with_ancestry_and_refuse_cycles_and_removal(tree, service, repo, conn, store):
     tree.write("report.txt", "page one\n")
     tree.write("table.txt", "table\n")
     sync(tree.plan(), service)
-    inputs = [repo.get_file(repo.file_by_code(c)["id"])["current_version_id"] for c in ("t/report.txt", "t/table.txt")]
+    inputs = [repo.get_file(repo.file_by_code(c)["id"])["current_version_id"] for c in (tree.fc("report.txt"), tree.fc("table.txt"))]
     out_folder = repo.folder_by_path(tree.logical)
-    ex = begin_extraction(service, "text.merge", "mzizi-extraction", "0.1.0", inputs, config={"mode": "x"}, tool={"python": "3.12"})
-    o1 = register_output(service, ex["id"], out_folder["id"], "merged.txt", b"page one\ntable\n")
-    o2 = register_output(service, ex["id"], out_folder["id"], "summary.txt", b"summary\n", ordinal=1)
-    finish_extraction(service, ex["id"], "succeeded")
-    assert o1.outcome == o2.outcome == "created" and ex["config_hash"] == __import__("mzizi_filesystem").config_hash({"mode": "x"})
-    assert {(r["role"]) for r in conn.execute("SELECT role FROM filesystem.extraction_files WHERE extraction_id = %s", (ex["id"],)).fetchall()} == {"input", "output"}
-    ops = repo.operations_for(inputs[0])
-    assert ops == [{"operation": "text.merge", "role": "input", "runs": 1, "last_state": "succeeded", "has_result": True}]
-    ex2 = begin_extraction(service, "text.upper", "mzizi-extraction", "0.1.0", [o1.version_id])
-    o3 = register_output(service, ex2["id"], out_folder["id"], "upper.txt", b"PAGE ONE\nTABLE\n")
-    finish_extraction(service, ex2["id"], "succeeded")
+    o1 = register_derived(service, inputs, out_folder["id"], "merged.txt", b"page one\ntable\n", relation="merged_from")
+    o3 = register_derived(service, [o1.version_id], out_folder["id"], "upper.txt", b"PAGE ONE\nTABLE\n")
+    assert o1.outcome == o3.outcome == "created"
     chain = ancestry(service, o3.version_id)
-    assert [c["operation"] for c in chain] == ["text.upper", "text.merge"] and chain[1]["inputs"] == [str(i) for i in inputs]
-    with pytest.raises(Exception, match="both input and output"):
-        repo.link_extraction_file(ex["id"], "output", inputs[0])
+    assert [(c["derived"], c["relation"]) for c in chain[:1]] == [(str(o3.version_id), "derived_from")]
+    assert {c["source"] for c in chain} == {str(o1.version_id), *map(str, inputs)}
+    assert relate(service, o1.version_id, o3.version_id) is False  # repeating an existing relation is a no-op
+    with pytest.raises(Exception, match="cycle"):
+        relate(service, o3.version_id, inputs[0])
     with pytest.raises(Exception):
-        conn.execute("DELETE FROM filesystem.file_versions WHERE id = %s", (inputs[0],))  # a participating version cannot be removed
+        conn.execute("DELETE FROM filesystem.file_versions WHERE id = %s", (inputs[0],))  # a related version cannot be removed
 
 
 # -------------------------------------------------------------------------------------------------- uploads
@@ -367,8 +368,8 @@ def test_downloads_use_the_public_origin_for_public_keys_and_authorized_presigne
 # ----------------------------------------------------------------------------------------- root seeds
 def test_the_root_seed_manifest_plans_folders_and_files_with_seed_provenance_and_excludes_fixtures():
     plan = plan_seed()
-    codes = {f.registry_code for f in plan.files}
-    assert len(plan.files) > 100 and "seed:global.auth.roles:global/auth/roles.csv" in codes
+    codes = {f.code for f in plan.files}
+    assert len(plan.files) > 100 and "seeds.global.auth.roles_csv" in codes
     assert not any("/fixtures/" in f.folder_path or f.folder_path.startswith("/seeds/fixtures") for f in plan.files)
     assert not any("raw" in f.folder_path.split("/") for f in plan.files)
     media = next(f for f in plan.files if f.name == "media-formats.json")
@@ -385,7 +386,7 @@ def test_seed_sync_registers_seed_artifacts_with_their_flag_origin_access_and_ov
     report = sync(plan, service)
     try:
         assert report.ok and report.summary("file") in ({"created": 2}, {"unchanged": 2})
-        f = repo.file_by_code("seed:global.reference.media-formats:global/reference/media-formats.json")
+        f = repo.file_by_code("seeds.global.reference.media_formats_json")
         version = repo.get_version(f["current_version_id"])
         prov = version["provenance"]
         assert prov["seed"] is True and prov["acquisition_class"] == "internally_derived" and prov["overridden_fields"] == ["acquisition_class", "preparation"]

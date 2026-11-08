@@ -1,4 +1,4 @@
-"""Authorized filesystem operations of the engine: folders, files, versions, uploads, extractions, access transitions, downloads and sync.
+"""Authorized filesystem operations of the engine: folders, files, versions, uploads, derivation relations, access transitions, downloads and sync.
 
 All behavior lives in the filesystem package; these routes only authenticate, open a database connection, and call it. Record-level
 authorization is the package's `DatabaseAuthorizer` over the `auth` schema (scoped to folders), so the engine adds no access rules of its
@@ -11,11 +11,12 @@ import base64
 from pathlib import Path
 from typing import Any
 
+import psycopg
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from mzizi_filesystem import (Conflict, DatabaseAuthorizer, FilesystemService, ManifestError, MemoryObjectStore, OperatorAuthorizer, PermissionDenied, Repository, S3ObjectStore, StoreError, ancestry,
-                              begin_extraction, cleanup_uploads, complete_upload, create_upload, finish_extraction, load_plan, register_output, run_sync, transition_folder_access)
+                              cleanup_uploads, complete_upload, create_upload, derivatives, load_plan, register_derived, relate, run_sync, transition_folder_access)
 from mzizi_filesystem.download import download_url
 from mzizi_manifest.paths import SEED_ROOT
 
@@ -59,6 +60,12 @@ def _call(request: Request, principal: Principal, fn):
         raise HTTPException(422, str(error)) from None
     except StoreError as error:
         raise HTTPException(502, str(error)) from None
+    except psycopg.errors.IntegrityError as error:  # unique/check/foreign-key violations and the schema's own guard rules
+        raise HTTPException(409, str(error).splitlines()[0]) from None
+    except psycopg.DatabaseError as error:
+        if getattr(error, "sqlstate", "") and error.sqlstate.startswith("MZ"):
+            raise HTTPException(409, str(error).splitlines()[0]) from None
+        raise
     finally:
         conn.close()
 
@@ -98,33 +105,26 @@ class UploadIn(BaseModel):
 
 
 class CompleteIn(BaseModel):
-    registry_code: str | None = None
+    code: str | None = None
     retention: str = "preserve_history"
 
 
-class ExtractionIn(BaseModel):
-    operation: str
-    capability: str
-    capability_version: str
-    inputs: list[str]
-    config: dict[str, Any] | None = None
-    tool: dict[str, Any] = Field(default_factory=dict)
-    engine_run_id: str | None = None
+class RelationIn(BaseModel):
+    source_version_id: str
+    derived_version_id: str
+    relation: str = "derived_from"
     engine_job_id: str | None = None
 
 
-class OutputIn(BaseModel):
+class DerivedIn(BaseModel):
+    sources: list[str]
     folder_id: str
     name: str
     content_base64: str
-    ordinal: int = 0
-    registry_code: str | None = None
+    relation: str = "derived_from"
+    engine_job_id: str | None = None
+    code: str | None = None
     retention: str = "preserve_history"
-
-
-class FinishIn(BaseModel):
-    state: str
-    error: str | None = None
 
 
 class SyncIn(BaseModel):
@@ -203,7 +203,7 @@ async def start_upload(body: UploadIn, request: Request, principal: Principal = 
 @router.post("/uploads/{upload_id}/complete")
 async def finish_upload(upload_id: str, body: CompleteIn, request: Request, principal: Principal = Depends(authenticated)) -> dict:
     def work(service, repo, actor):
-        reg = complete_upload(service, upload_id, actor=actor, registry_code=body.registry_code, retention=body.retention)
+        reg = complete_upload(service, upload_id, actor=actor, code=body.code, retention=body.retention)
         if reg.outcome in ("failed", "conflict", "denied", "blocked"):
             raise HTTPException(409 if reg.outcome != "denied" else 403, reg.detail or reg.outcome)
         return {"outcome": reg.outcome, "file_id": reg.file_id, "version_id": reg.version_id, "revision": reg.revision, "verified": reg.verified}
@@ -223,29 +223,20 @@ async def cleanup(request: Request, apply: bool = False, principal: Principal = 
     return await asyncio.to_thread(_call, request, principal, work)
 
 
-@router.post("/extractions", status_code=201)
-async def start_extraction(body: ExtractionIn, request: Request, principal: Principal = Depends(authenticated)) -> dict:
+@router.post("/relations", status_code=201)
+async def add_relation(body: RelationIn, request: Request, principal: Principal = Depends(authenticated)) -> dict:
+    return await asyncio.to_thread(_call, request, principal, lambda service, repo, actor: {"created": relate(service, body.source_version_id, body.derived_version_id, relation=body.relation, actor=actor, engine_job_id=body.engine_job_id)})
+
+
+@router.post("/derived", status_code=201)
+async def add_derived(body: DerivedIn, request: Request, principal: Principal = Depends(authenticated)) -> dict:
     def work(service, repo, actor):
-        row = begin_extraction(service, body.operation, body.capability, body.capability_version, body.inputs, config=body.config, tool=body.tool, actor=actor, engine_run_id=body.engine_run_id, engine_job_id=body.engine_job_id)
-        return {"extraction": _public(row)}
-
-    return await asyncio.to_thread(_call, request, principal, work)
-
-
-@router.post("/extractions/{extraction_id}/outputs", status_code=201)
-async def add_output(extraction_id: str, body: OutputIn, request: Request, principal: Principal = Depends(authenticated)) -> dict:
-    def work(service, repo, actor):
-        reg = register_output(service, extraction_id, body.folder_id, body.name, base64.b64decode(body.content_base64), ordinal=body.ordinal, actor=actor, registry_code=body.registry_code, retention=body.retention)
+        reg = register_derived(service, body.sources, body.folder_id, body.name, base64.b64decode(body.content_base64), relation=body.relation, actor=actor, engine_job_id=body.engine_job_id, code=body.code, retention=body.retention)
         if reg.outcome in ("failed", "conflict", "denied", "blocked"):
             raise HTTPException(403 if reg.outcome == "denied" else 409, reg.detail or reg.outcome)
         return {"outcome": reg.outcome, "file_id": reg.file_id, "version_id": reg.version_id, "revision": reg.revision}
 
     return await asyncio.to_thread(_call, request, principal, work)
-
-
-@router.post("/extractions/{extraction_id}/finish")
-async def end_extraction(extraction_id: str, body: FinishIn, request: Request, principal: Principal = Depends(authenticated)) -> dict:
-    return await asyncio.to_thread(_call, request, principal, lambda service, repo, actor: {"extraction": _public(finish_extraction(service, extraction_id, body.state, body.error))})
 
 
 @router.get("/versions/{version_id}/lineage")
@@ -255,7 +246,7 @@ async def lineage(version_id: str, request: Request, principal: Principal = Depe
         if version is None:
             raise LookupError("no such version")
         service.authorizer.for_record(actor, "filesystem.read", "filesystem.files", version["file_id"])
-        return {"operations": repo.operations_for(version_id), "ancestry": ancestry(service, version_id)}
+        return {"ancestry": ancestry(service, version_id), "derived": derivatives(service, version_id)}
 
     return await asyncio.to_thread(_call, request, principal, work)
 

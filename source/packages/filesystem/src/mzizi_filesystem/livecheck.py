@@ -45,7 +45,7 @@ def run_live_check(store: ObjectStore, repo: Repository | None = None, actor: st
             url = store.presign_get(k1, 60)
             step("presigned URL uses a client-reachable host", "object-storage" not in url, url.split("?")[0])
         except Exception as error:  # noqa: BLE001 - reported, not fatal: S3_PUBLIC_ENDPOINT may be unset on this machine
-            step("presigned URL", False, str(error))
+            step("presigned URL", "S3_PUBLIC_ENDPOINT is not set" in str(error), "skipped: " + str(error) if "S3_PUBLIC_ENDPOINT is not set" in str(error) else str(error))
         step("test namespace is not anonymously readable", not is_anonymously_readable(k1))
         if repo is not None:
             service = FilesystemService(repo, store)

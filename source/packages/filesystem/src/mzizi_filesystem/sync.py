@@ -22,6 +22,7 @@ from mzizi_manifest.paths import SCHEMA_ROOT, SEED_ROOT
 
 from .authz import Authorizer, OperatorAuthorizer
 from .repository import Conflict, PermissionDenied, Repository
+from .codes import child_code, is_code
 from .service import FilesystemService, Registration
 
 SENSITIVE_NAMES = ("*.env", ".env", ".env.*", "*.key", "id_rsa*", "id_ed25519*", "private.pem", "*.p12", "*.pfx", "credentials*", "*secret*")
@@ -35,7 +36,7 @@ class ManifestError(ValueError):
 @dataclass
 class FolderSpec:
     path: str
-    seed_code: str | None = None
+    code: str | None = None
     fields: dict = field(default_factory=dict)
 
 
@@ -44,7 +45,7 @@ class FileSpec:
     local: Path
     folder_path: str
     name: str
-    registry_code: str
+    code: str | None
     retention: str = "preserve_history"
     pin_reason: str | None = None
     provenance_extra: dict = field(default_factory=dict)
@@ -143,6 +144,34 @@ def _descriptor_fields(directory: str, root: Path) -> dict:
     return fields
 
 
+def assign_codes(plan: Plan) -> Plan:
+    """Derives every code from the root codes (.docs/rules/code-columns.md): a folder takes its parent's code plus the segment of its name, a file takes
+    its folder's code plus the segment of its name. Explicit codes are kept and must already sit under their parent. Colliding derived codes are an error."""
+    by_path: dict[str, FolderSpec] = {}
+    for spec in sorted(plan.folders, key=lambda f: f.path.count("/")):
+        parent = spec.path.rsplit("/", 1)[0]
+        parent_spec = by_path.get(parent)
+        if spec.code is None and parent_spec is not None:
+            spec.code = child_code(parent_spec.code, spec.path.rsplit("/", 1)[1])
+        by_path[spec.path] = spec
+    for f in plan.files:
+        folder = by_path.get(f.folder_path)
+        if f.code is None and folder is not None:
+            f.code = child_code(folder.code, f.name)
+    seen: dict[str, str] = {}
+    for label, items in (("folder", [(s.code, s.path) for s in plan.folders]), ("file", [(f.code, f"{f.folder_path}/{f.name}") for f in plan.files])):
+        for code, where in items:
+            if code is None:
+                continue
+            if not is_code(code):
+                raise ManifestError(f"{label} {where}: {code!r} is not a valid code (see .docs/rules/code-columns.md)")
+            key = f"{label}:{code}"
+            if key in seen:
+                raise ManifestError(f"{label} codes collide: {seen[key]} and {where} both become {code}; rename one")
+            seen[key] = where
+    return plan
+
+
 def plan_seed(root: Path | None = None, entry_ids: set[str] | None = None) -> Plan:
     """Plan from the root seed manifest: folders mirror the seed directories and carry their descriptor classification; files come from the lock."""
     root = root or SEED_ROOT
@@ -154,7 +183,7 @@ def plan_seed(root: Path | None = None, entry_ids: set[str] | None = None) -> Pl
     plan = Plan("seed")
     seen: set[str] = set()
     root_fields = {**_descriptor_fields("", root), "is_seed": True, "description": "Prepared seed artifacts (root seed registry)"}
-    plan.folders.append(FolderSpec("/seeds", "seeds", root_fields))
+    plan.folders.append(FolderSpec("/seeds", "seeds", root_fields))  # the only explicit code; everything below derives from it
     for locked in lock["entries"]:
         if entry_ids and locked["id"] not in entry_ids:
             continue
@@ -167,13 +196,13 @@ def plan_seed(root: Path | None = None, entry_ids: set[str] | None = None) -> Pl
                 logical = "/seeds/" + directory
                 if logical not in seen:
                     seen.add(logical)
-                    plan.folders.append(FolderSpec(logical, f"seeds/{directory}", _descriptor_fields(directory, root)))
+                    plan.folders.append(FolderSpec(logical, None, _descriptor_fields(directory, root)))
             eff = f["effective"]
             overrides = {k: eff[k] for k in (eff.get("file_override") or []) if k in eff}
             if "role" in (eff.get("file_override") or []):
                 overrides["artifact_role"] = overrides.pop("role")
             plan.files.append(FileSpec(
-                root / f["path"], "/seeds/" + "/".join(parts[:-1]), parts[-1], f"seed:{locked['id']}:{f['path']}",
+                root / f["path"], "/seeds/" + "/".join(parts[:-1]), parts[-1], None,
                 retention="replace_current" if mode == "current" else "preserve_history",
                 pin_reason=None if mode == "current" else f"manifest release {manifest['release']}",
                 provenance_extra={"manifest_entry": locked["id"], "manifest_release": manifest["release"], "manifest_sha256": lock["manifest_sha256"], "artifact_sha256": f["sha256"],
@@ -181,7 +210,7 @@ def plan_seed(root: Path | None = None, entry_ids: set[str] | None = None) -> Pl
                                   "generator": {"tool": "mzizi-filesystem sync", "model": None, "note": "no model or generator version is recorded: none is known"},
                                   "effective_overrides": overrides},
                 declared_type=None))
-    return plan
+    return assign_codes(plan)
 
 
 def _validator() -> Draft202012Validator:
@@ -205,7 +234,7 @@ def plan_sync_manifest(path: Path, seed_root: Path | None = None) -> Plan:
     folders: dict[str, FolderSpec] = {}
     logical_root = doc["logical_root"]
     for f in doc.get("folders", []):
-        folders[f["path"]] = FolderSpec(f["path"], f.get("seed_code"), _classification(f.get("classification", {}), f.get("description")))
+        folders[f["path"]] = FolderSpec(f["path"], f.get("code"), _classification(f.get("classification", {}), f.get("description")))
     for entry in doc["entries"]:
         src = entry["source"]
         top = (base / src["path"]).resolve()
@@ -215,7 +244,7 @@ def plan_sync_manifest(path: Path, seed_root: Path | None = None) -> Plan:
         entry_folder = entry.get("folder") or f"{logical_root.rstrip('/')}{suffix}"
         cls = entry.get("classification", {})
         if entry_folder not in folders:
-            folders[entry_folder] = FolderSpec(entry_folder, entry.get("seed_code"), _classification(cls, entry.get("description")))
+            folders[entry_folder] = FolderSpec(entry_folder, entry.get("code"), _classification(cls, entry.get("description")))
         parts_ = [p for p in entry_folder.split("/") if p]
         for i in range(1, len(parts_)):  # every ancestor of the entry folder exists (inheriting) so folders are always created parent-first
             folders.setdefault("/" + "/".join(parts_[:i]), FolderSpec("/" + "/".join(parts_[:i])))
@@ -227,7 +256,7 @@ def plan_sync_manifest(path: Path, seed_root: Path | None = None) -> Plan:
             rel = local.name if top.is_file() else local.relative_to(top).as_posix()
             if not selected(rel, src.get("include"), src.get("exclude")):
                 continue
-            reason = sensitive_reason(local)
+            reason = None if (entry.get("allow_sensitive") and cls.get("access") == "private") else sensitive_reason(local)
             if reason:
                 plan.blocked.append((local.relative_to(seed_root).as_posix(), reason))
                 continue
@@ -238,11 +267,11 @@ def plan_sync_manifest(path: Path, seed_root: Path | None = None) -> Plan:
                     folder = f"{entry_folder}/" + "/".join(parts[:i])
                     folders.setdefault(folder, FolderSpec(folder))
                 folder = f"{entry_folder}/" + "/".join(parts[:-1])
-            code = entry.get("identities", {}).get(rel) or f"{entry.get('registry_prefix', entry['id'])}/{rel}"
+            code = entry.get("identities", {}).get(rel)  # explicit override only; otherwise derived from the folder code
             plan.files.append(FileSpec(local, folder, parts[-1], code, entry.get("retention") or doc.get("defaults", {}).get("retention", "preserve_history"),
                                        entry.get("pin_reason"), {"manifest": doc["name"], "manifest_release": doc.get("release"), "manifest_entry": entry["id"], "review": cls.get("review"), "note": entry.get("note")}))
     plan.folders = sorted(folders.values(), key=lambda f: f.path.count("/"))
-    return plan
+    return assign_codes(plan)
 
 
 def _touches_raw(doc: dict) -> bool:
@@ -284,7 +313,7 @@ def _ensure_folder(repo: Repository, authorizer: Authorizer, actor: str | None, 
     parent_id = ids.get(parent_path) if parent_path else None
     if parent_path and parent_id is None and parent_path not in ids:
         return SyncItem("folder", spec.path, "failed", "parent folder is not planned")
-    existing = repo.folder_by_seed_code(spec.seed_code) if spec.seed_code else None
+    existing = repo.folder_by_code(spec.code) if spec.code else None
     if existing is None and (parent_id is not None or not parent_path):
         existing = repo.find_folder(parent_id, parts[-1])
     if existing:
@@ -310,7 +339,7 @@ def _ensure_folder(repo: Repository, authorizer: Authorizer, actor: str | None, 
     try:
         authorizer.for_new_child(actor, "filesystem.edit", "filesystem.folders", parent_id)
         with repo.transaction():
-            row = repo.create_folder(parent_id, parts[-1], {**spec.fields, "seed_code": spec.seed_code}, actor)
+            row = repo.create_folder(parent_id, parts[-1], {**spec.fields, "code": spec.code}, actor)
     except PermissionDenied as error:
         ids[spec.path] = None
         return SyncItem("folder", spec.path, "denied", str(error))
@@ -342,7 +371,7 @@ def run_sync(plan: Plan, service: FilesystemService, *, actor: str | None = None
             else:
                 report.items.append(SyncItem("file", path, "failed", "folder unavailable (see folder results)"))
             continue
-        r: Registration = service.register(folder_id, f.name, f.local, registry_code=f.registry_code, retention=f.retention, actor=actor, provenance_extra=f.provenance_extra,
+        r: Registration = service.register(folder_id, f.name, f.local, code=f.code, retention=f.retention, actor=actor, provenance_extra=f.provenance_extra,
                                            declared_type=f.declared_type, pin_reason=f.pin_reason, dry_run=dry_run)
         report.items.append(SyncItem("file", f"{f.folder_path}/{f.name}", r.outcome, r.detail, r.action, r.key, r.reused_storage, r.recovered, r.verified, r.revision))
     return report

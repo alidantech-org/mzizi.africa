@@ -17,9 +17,9 @@ def rejected(conn, sql, params=()):
     raise AssertionError(f"expected rejection: {sql}")
 
 
-def test_the_schema_has_exactly_the_eight_tables_and_no_objects_or_file_type_tables(conn):
+def test_the_schema_has_exactly_the_seven_tables_and_no_objects_or_file_type_tables(conn):
     tables = [r["table_name"] for r in conn.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'filesystem' AND table_type = 'BASE TABLE' ORDER BY 1").fetchall()]
-    assert tables == ["extraction_files", "extractions", "file_versions", "files", "folders", "taggings", "tags", "uploads"]
+    assert tables == ["file_relations", "file_versions", "files", "folders", "taggings", "tags", "uploads"]
     assert not conn.execute("SELECT 1 FROM information_schema.columns c JOIN information_schema.tables t USING (table_schema, table_name) WHERE c.table_schema = 'filesystem' AND t.table_type = 'BASE TABLE' AND column_name IN ('path', 'extracted_from_file_id', 'processed', 'bucket', 'endpoint', 'presigned_url', 'file_type_id')").fetchone()
     assert conn.execute("SELECT count(*) AS n FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace AND n.nspname = 'filesystem' WHERE c.relkind = 'r' AND (obj_description(c.oid) IS NULL OR NOT EXISTS (SELECT 1 FROM pg_constraint k WHERE k.conrelid = c.oid AND k.contype = 'p'))").fetchone()["n"] == 0
     cols = {r["column_name"] for r in conn.execute("SELECT column_name FROM information_schema.columns WHERE table_schema = 'filesystem' AND table_name = 'file_versions'").fetchall()}

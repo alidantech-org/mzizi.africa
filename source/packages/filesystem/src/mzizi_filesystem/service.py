@@ -1,6 +1,6 @@
 """Content registration: stream-hash, find compatible stored bytes, upload, verify, register file and version.
 
-Every path that creates content (sync, direct uploads, generated extraction outputs) goes through `FilesystemService.register`.
+Every path that creates content (sync, direct uploads, derived files) goes through `FilesystemService.register`.
 S3 and PostgreSQL do not share a transaction. The order makes interruption safe: content is written to an immutable
 hash-addressed key and verified first; the registry rows then commit atomically. A crash between the two leaves an unreferenced
 key that the next run finds by hash and registers (outcome `recovered`); nothing is ever deleted by registration.
@@ -50,7 +50,7 @@ class FilesystemService:
         resolved = {}
         for fld, fid in (eff["resolved_from"] or {}).items():
             folder = self.repo.get_folder(fid)
-            resolved[fld] = {"folder_id": fid, "seed_code": folder["seed_code"] if folder else None}
+            resolved[fld] = {"folder_id": fid, "code": folder["code"] if folder else None}
         snap = {
             "seed": eff["is_seed"], "artifact_role": eff["artifact_role"], "acquisition_class": eff["acquisition_class"], "preparation": eff["preparation"],
             "intended_access": eff["access"], "access_defaulted": eff["access_defaulted"], "jurisdiction_code": eff["jurisdiction_code"],
@@ -65,7 +65,7 @@ class FilesystemService:
         return snap
 
     # ---- registration -------------------------------------------------------------------------------------
-    def register(self, folder_id: str, name: str, source: Path | bytes, *, registry_code: str | None = None, retention: str = "preserve_history", actor: str | None = None,
+    def register(self, folder_id: str, name: str, source: Path | bytes, *, code: str | None = None, retention: str = "preserve_history", actor: str | None = None,
                  provenance_extra: dict | None = None, declared_type: str | None = None, pin_reason: str | None = None, dry_run: bool = False,
                  require_classification: bool = True, original_filename: str | None = None) -> Registration:
         out = Registration("failed")
@@ -91,11 +91,11 @@ class FilesystemService:
             except catalog.ContentTypeError as error:
                 out.outcome, out.detail = "failed", str(error)
                 return out
-            file = self.repo.file_by_code(registry_code) if registry_code else None
+            file = self.repo.file_by_code(code) if code else None
             if file is None:
                 file = self.repo.find_file(folder_id, name)
-                if file is not None and registry_code and file["registry_code"] not in (None, registry_code):
-                    out.outcome, out.detail = "conflict", f"{name} already exists in the folder with a different identity ({file['registry_code']})"
+                if file is not None and code and file["code"] not in (None, code):
+                    out.outcome, out.detail = "conflict", f"{name} already exists in the folder with a different identity ({file['code']})"
                     return out
             self._authorize(actor, folder_id, file)
             current = self.repo.get_version(file["current_version_id"]) if file and file["current_version_id"] else None
@@ -114,7 +114,7 @@ class FilesystemService:
             version = {"s3_key": key, "sha256": sha, "size_bytes": size, "extension": ext, "content_type": ctype, "original_filename": original_filename or name,
                        "provenance": self.provenance(folder_id, provenance_extra), "pin_reason": pin_reason}
             if file is None:
-                file, ver = self.repo.create_file_with_version(folder_id, name, registry_code, retention, version, actor)
+                file, ver = self.repo.create_file_with_version(folder_id, name, code, retention, version, actor)
                 out.outcome = "created"
             else:
                 file, ver, pruned = self.repo.add_version(file["id"], file["revision"], version, actor)

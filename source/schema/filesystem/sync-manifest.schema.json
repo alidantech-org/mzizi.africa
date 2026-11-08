@@ -14,7 +14,7 @@
     "root": {"type": "string", "description": "Directory relative to the seed root; never absolute and never containing .."},
     "logical_root": {"type": "string", "pattern": "^/[^/]+(/[^/]+)*$"},
     "defaults": {"type": "object", "additionalProperties": false, "properties": {"retention": {"enum": ["preserve_history", "replace_current"]}}},
-    "folders": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["path"], "properties": {"path": {"type": "string", "pattern": "^/[^/]+(/[^/]+)*$"}, "seed_code": {"type": "string"}, "description": {"type": "string"}, "classification": {"$ref": "#/$defs/classification"}}}},
+    "folders": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["path"], "properties": {"path": {"type": "string", "pattern": "^/[^/]+(/[^/]+)*$"}, "code": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*)*$", "maxLength": 255}, "description": {"type": "string"}, "classification": {"$ref": "#/$defs/classification"}}}},
     "entries": {"type": "array", "minItems": 1, "items": {
       "type": "object", "additionalProperties": false, "required": ["id", "source"],
       "properties": {
@@ -24,9 +24,9 @@
           "include": {"type": "array", "items": {"type": "string"}},
           "exclude": {"type": "array", "items": {"type": "string"}}}},
         "folder": {"type": "string", "pattern": "^/[^/]+(/[^/]+)*$"},
-        "seed_code": {"type": "string"},
-        "registry_prefix": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._/-]*$"},
-        "identities": {"type": "object", "description": "Stable registry codes for specific relative paths, so a local rename keeps its logical file.", "additionalProperties": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/@=+-]*$"}},
+        "code": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*)*$", "maxLength": 255, "description": "Explicit hierarchical code for the entry folder (.docs/rules/code-columns.md); normally omitted so it derives from the parent code."},
+        "identities": {"type": "object", "description": "Stable registry codes for specific relative paths, so a local rename keeps its logical file.", "additionalProperties": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*)*$", "maxLength": 255}},
+        "allow_sensitive": {"type": "boolean", "description": "Permit credential-like files (keys, env files). Honoured only when the entry classification access is private."},
         "flatten": {"type": "boolean", "description": "Register every selected file directly in the entry folder (names must be unique)."},
         "retention": {"enum": ["preserve_history", "replace_current"]},
         "pin_reason": {"type": "string"},

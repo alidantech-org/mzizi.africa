@@ -153,14 +153,20 @@ def load_manifest(root: Path = SEED_ROOT) -> dict:
 
 
 def _all_files(root: Path) -> list[str]:
+    """Every artifact file under the seed root. Ignored top-level directories (generated, local, cache, examples, manifests) are never entered."""
+    import os
+
     out = []
-    for file in sorted(root.rglob("*")):
-        if not file.is_file():
-            continue
-        rel = file.relative_to(root).as_posix()
-        if rel.split("/")[0] in IGNORED_DIRS or file.name in NOT_ARTIFACTS:
-            continue
-        out.append(rel)
+    for current, dirs, files in os.walk(root):
+        here = Path(current)
+        if here == root:
+            dirs[:] = [d for d in dirs if d not in IGNORED_DIRS]
+        for name in files:
+            if name in NOT_ARTIFACTS:
+                continue
+            path = here / name
+            if path.is_file():
+                out.append(path.relative_to(root).as_posix())
     return sorted(out)
 
 

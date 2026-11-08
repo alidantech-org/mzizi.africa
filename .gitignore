@@ -10,4 +10,6 @@ __pycache__/
 *.egg-info/
 .data/
 .env.venv/
+.env.local/
 .env
+pub.auth.key

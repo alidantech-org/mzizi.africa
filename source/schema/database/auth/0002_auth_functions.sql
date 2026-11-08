@@ -2,13 +2,19 @@
 
 -- ------------------------------------------------------------------ integrity
 CREATE FUNCTION auth.institutions_guard() RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE cur uuid := NEW.parent_id; depth int := 0;
+DECLARE cur uuid := NEW.parent_id; depth int := 0; parent_code text;
 BEGIN
   WHILE cur IS NOT NULL AND depth < 32 LOOP
     IF cur = NEW.id THEN RAISE EXCEPTION 'institution hierarchy cannot contain a cycle'; END IF;
     SELECT parent_id INTO cur FROM auth.institutions WHERE id = cur;
     depth := depth + 1;
   END LOOP;
+  IF NEW.parent_id IS NOT NULL THEN
+    SELECT code INTO parent_code FROM auth.institutions WHERE id = NEW.parent_id;
+    IF left(NEW.code, length(parent_code) + 1) <> parent_code || '.' THEN
+      RAISE EXCEPTION 'institution code % must sit under its parent code %', NEW.code, parent_code;
+    END IF;
+  END IF;
   RETURN NEW;
 END $$;
 CREATE TRIGGER institutions_guard BEFORE INSERT OR UPDATE ON auth.institutions FOR EACH ROW EXECUTE FUNCTION auth.institutions_guard();

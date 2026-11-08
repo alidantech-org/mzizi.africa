@@ -36,7 +36,7 @@ def create_upload(service: FilesystemService, folder_id: str, filename: str, *, 
     return row
 
 
-def complete_upload(service: FilesystemService, upload_id: str, *, actor: str | None, registry_code: str | None = None, retention: str = "preserve_history", provenance_extra: dict | None = None) -> Registration:
+def complete_upload(service: FilesystemService, upload_id: str, *, actor: str | None, code: str | None = None, retention: str = "preserve_history", provenance_extra: dict | None = None) -> Registration:
     repo, store = service.repo, service.store
     up = repo.get_upload(upload_id)
     if up is None or up["status"] not in ("pending", "uploaded"):
@@ -63,7 +63,7 @@ def complete_upload(service: FilesystemService, upload_id: str, *, actor: str | 
     else:
         source = data_head
     try:
-        reg = service.register(up["folder_id"], up["filename"], source, registry_code=registry_code, retention=retention, actor=actor, provenance_extra=provenance_extra, original_filename=up["filename"])
+        reg = service.register(up["folder_id"], up["filename"], source, code=code, retention=retention, actor=actor, provenance_extra=provenance_extra, original_filename=up["filename"])
     finally:
         if isinstance(source, Path):
             source.unlink(missing_ok=True)

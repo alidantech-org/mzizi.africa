@@ -8,13 +8,15 @@ Implemented in `mzizi_new` by task `TSK-3EA8C40B0F60`. SQL: `source/schema/datab
 
 ## Decisions
 
-- **Eight tables only:** `folders`, `files`, `file_versions`, `tags`, `taggings`, `extractions`, `extraction_files`, `uploads`. No objects table: each version holds its S3 key, SHA-256, size, extension and content type directly. No file-type or extension tables: the normalized extension and the verified MIME type live on the version, validated against the shared catalog (`seed/global/reference/media-formats.json`) and file signatures.
+- **Codes follow one rule** (`.docs/rules/code-columns.md`): the column is always `code`; dot-separated lowercase segments; a child's code is its parent's code plus one segment computed by `filesystem.code_segment` (Python mirror `mzizi_filesystem.codes.code_segment`). Only root folders carry a hand-written code (`seeds`, `security`, `legacy_artifacts`); every folder and file below derives its code, so seed and manifest identities are reproducible. `filesystem.nearest_code` and the `files_code_guard` / `folders_guard` triggers check the prefix when a code is set.
+
+- **Seven tables and one view:** tables `folders`, `files`, `file_versions`, `tags`, `taggings`, `file_relations`, `uploads`; view `paths`. No objects table: each version holds its S3 key, SHA-256, size, extension and content type directly. No file-type or extension tables: the normalized extension and the verified MIME type live on the version, validated against the shared catalog (`seed/global/reference/media-formats.json`) and file signatures.
 - **Several versions may reference one physical key.** Keys are content-addressed per access prefix (`<access>/content/sha256/aa/bb/<sha256>`), so equal bytes in one access class share a key and different access classes never do. A key is never deleted while any retained version or live upload references it (`filesystem.key_in_use`).
-- **Paths are derived**, never stored (`filesystem.folder_path`, views `folder_paths` and `file_paths`). Moving or renaming a folder or file changes no S3 object.
+- **Paths are derived**, never stored (`filesystem.folder_path`, `filesystem.file_path` and the single view `filesystem.paths` with `kind` folder or file). Moving or renaming a folder or file changes no S3 object.
 - **Classification is inherited by folders** (access, artifact role, seed flag, acquisition class, preparation, jurisdiction): each field takes the nearest ancestor that sets it (`filesystem.effective_folder`, which also reports which folder supplied each field). Files carry no classification columns. No effective access defaults to `internal`.
 - **Provenance is a snapshot on each version** (seed flag, artifact role, acquisition class, preparation, intended access, which folder or manifest definition supplied each field, manifest release, input references). Moving a file later never rewrites it.
 - **Configuration is not data:** bucket, region and endpoint are never stored; no credentials or presigned URLs are stored.
-- **Extraction lineage links exact file versions** (`extraction_files` with input/output roles). There is no `extracted_from_file_id` and no processed flag: status by operation is derived (`filesystem.version_operations`). Engine scheduling and retries stay in the engine (`engine_run_id` and `engine_job_id` only link).
+- **Derivation links exact file versions** (`file_relations`: source version, derived version, relation kind). There is no `extracted_from_file_id`, no processed flag and no operations view: what ran, with which tool and configuration, and the status, are engine concerns (`engine_job_id` is an optional pointer).
 
 ## Tables
 
@@ -29,7 +31,7 @@ Concrete logical hierarchy. The path is derived (filesystem.folder_path), never 
 | `id` | `uuid` | no | `uuidv7()` |  |
 | `parent_id` | `uuid` | yes |  |  |
 | `name` | `text` | no |  |  |
-| `seed_code` | `text` | yes |  | Stable identity of a seeded folder (unique); NULL for folders created at run time. |
+| `code` | `text` | yes |  | Stable unique hierarchical code (`.docs/rules/code-columns.md`); a coded folder sits under the nearest coded ancestor's code. Manifests use it as the folder identity. NULL when none. |
 | `description` | `text` | yes |  |  |
 | `access` | `text` | yes |  | Explicit access class; NULL inherits; no effective value defaults to internal (non-public). Only public/ is anonymously readable in S3; a deeper folder may not widen access unless the ancestor setting it has allow_weaker_children, and public needs access_authorization. |
 | `access_authorization` | `jsonb` | yes |  | Required for public: {by, date, reference}. |
@@ -57,11 +59,11 @@ Concrete logical hierarchy. The path is derived (filesystem.folder_path), never 
 - Check `folders_preparation_check`: `CHECK ((preparation = ANY (ARRAY['human_prepared'::text, 'ai_prepared'::text, 'human_and_ai_assisted'::text, 'programmatically_generated'::text, 'unknown'::text])))`
 - Check `folders_public_is_authorized`: `CHECK (((access IS DISTINCT FROM 'public'::text) OR COALESCE(((access_authorization ? 'by'::text) AND (access_authorization ? 'date'::text) AND (access_authorization ? 'reference'::text)), false)))`
 - Check `folders_revision_check`: `CHECK ((revision >= 1))`
-- Check `folders_seed_code_check`: `CHECK ((seed_code ~ '^[a-z0-9][a-z0-9._/-]*$'::text))`
+- Check `folders_code_check`: `CHECK (code ~ '^[a-z0-9][a-z0-9_]*(\.[a-z0-9][a-z0-9_]*)*$' AND length(code) <= 255 AND at most 16 segments)`
 - Foreign key `folders_created_by_fkey`: `FOREIGN KEY (created_by) REFERENCES auth.accounts(id)`
 - Foreign key `folders_parent_id_fkey`: `FOREIGN KEY (parent_id) REFERENCES filesystem.folders(id) ON DELETE RESTRICT`
 - Primary key `folders_pkey`: `PRIMARY KEY (id)`
-- Unique `folders_seed_code_key`: `UNIQUE (seed_code)`
+- Unique `folders_code_key`: `UNIQUE (code)`
 
 **Indexes**
 
@@ -79,7 +81,7 @@ Stable logical file identity and placement. Content lives in file_versions; movi
 | `id` | `uuid` | no | `uuidv7()` |  |
 | `folder_id` | `uuid` | no |  |  |
 | `name` | `text` | no |  |  |
-| `registry_code` | `text` | yes |  | Stable identity from a manifest or seed (unique). A renamed local file keeps its code; there is no path-based identity. |
+| `code` | `text` | yes |  | Stable unique hierarchical code (`.docs/rules/code-columns.md`): the code of its folder plus the file name segment (`seeds.global.auth.roles_csv`). NULL when its folders have no code. |
 | `retention` | `text` | no | `'preserve_history'::text` | preserve_history: changed bytes add a retained version. replace_current: changed bytes replace the current content; unpinned superseded versions are dropped, pinned ones never. |
 | `last_revision` | `integer` | no | `0` | Highest revision number issued, so numbers stay monotonic when replace_current drops old rows. |
 | `current_version_id` | `uuid` | yes |  | The current content. Must belong to this file (composite FK) and exists by commit (deferred check). |
@@ -92,7 +94,7 @@ Stable logical file identity and placement. Content lives in file_versions; movi
 
 - Check `files_last_revision_check`: `CHECK ((last_revision >= 0))`
 - Check `files_name_check`: `CHECK (((name = btrim(name)) AND ((length(name) >= 1) AND (length(name) <= 255)) AND (name !~ '[/[:cntrl:]]'::text) AND (name <> ALL (ARRAY['.'::text, '..'::text]))))`
-- Check `files_registry_code_check`: `CHECK ((registry_code ~ '^[A-Za-z0-9][A-Za-z0-9._:/@=+-]*$'::text))`
+- Check `files_code_check`: `CHECK (code ~ '^[a-z0-9][a-z0-9_]*(\.[a-z0-9][a-z0-9_]*)*$' AND length(code) <= 255 AND at most 16 segments)`
 - Check `files_retention_check`: `CHECK ((retention = ANY (ARRAY['preserve_history'::text, 'replace_current'::text])))`
 - Check `files_revision_check`: `CHECK ((revision >= 1))`
 - Foreign key `files_created_by_fkey`: `FOREIGN KEY (created_by) REFERENCES auth.accounts(id)`
@@ -100,7 +102,7 @@ Stable logical file identity and placement. Content lives in file_versions; movi
 - Foreign key `files_folder_id_fkey`: `FOREIGN KEY (folder_id) REFERENCES filesystem.folders(id) ON DELETE RESTRICT`
 - Primary key `files_pkey`: `PRIMARY KEY (id)`
 - Unique `files_folder_id_name_key`: `UNIQUE (folder_id, name)`
-- Unique `files_registry_code_key`: `UNIQUE (registry_code)`
+- Unique `files_code_key`: `UNIQUE (code)`
 
 **Indexes**
 
@@ -124,7 +126,7 @@ Exact content revisions. Several versions may reference one physical key (conten
 | `content_type` | `text` | no |  | Verified MIME type of these exact bytes (a revision may change format). |
 | `original_filename` | `text` | yes |  |  |
 | `provenance` | `jsonb` | no |  | Resolved historical provenance snapshot at registration: seed flag, artifact role, acquisition class, preparation, intended access, which folder/manifest definition supplied each field, manifest release. Never rewritten by later moves. |
-| `pinned` | `boolean` | no | `false` | Pinned by a manifest release, evidence reference or run: never pruned. Extraction participation also protects a version (extraction_files FK). |
+| `pinned` | `boolean` | no | `false` | Pinned by a manifest release, evidence reference or run: never pruned. Taking part in a file relation also protects a version (file_relations FK). |
 | `pin_reason` | `text` | yes |  |  |
 | `created_by` | `uuid` | yes |  |  |
 | `created_at` | `timestamp with time zone` | no | `now()` |  |
@@ -199,68 +201,23 @@ Typed tag association: exactly one of file_id or folder_id, real FKs, no duplica
 - `CREATE INDEX taggings_folder ON taggings USING btree (folder_id) WHERE (folder_id IS NOT NULL)`
 - `CREATE UNIQUE INDEX taggings_folder_once ON taggings USING btree (tag_id, folder_id) WHERE (folder_id IS NOT NULL)`
 
-### `filesystem.extractions`
+### `filesystem.file_relations`
 
-A lasting extraction operation: what ran, with which capability and tool versions and configuration identity. Scheduling, retries and queue state stay in the engine (engine_run_id / engine_job_id link only).
+Exact file version `derived_version_id` was derived from exact version `source_version_id` (converted, extracted, split, merged...). Only the relationship is stored; tools, configuration, status and scheduling are engine concerns. A version that takes part is never pruned.
 
 | Column | SQL type | Null | Default | Meaning |
 |---|---|---|---|---|
 | `id` | `uuid` | no | `uuidv7()` |  |
-| `operation` | `text` | no |  |  |
-| `capability` | `text` | no |  |  |
-| `capability_version` | `text` | no |  |  |
-| `tool` | `jsonb` | no | `'{}'::jsonb` |  |
-| `config_hash` | `text` | no |  | SHA-256 of the canonical configuration: same capability, version, configuration and input versions reproduce the same operation. |
-| `config` | `jsonb` | yes |  |  |
-| `state` | `text` | no | `'pending'::text` |  |
-| `started_at` | `timestamp with time zone` | yes |  |  |
-| `finished_at` | `timestamp with time zone` | yes |  |  |
-| `requested_by` | `uuid` | yes |  |  |
-| `engine_run_id` | `uuid` | yes |  | Optional link to the engine run (provisional engine schema). |
-| `engine_job_id` | `uuid` | yes |  |  |
-| `error` | `text` | yes |  |  |
-| `created_at` | `timestamp with time zone` | no | `now()` |  |
+| `source_version_id` | `uuid` | no |  | The version the derived one came from. |
+| `derived_version_id` | `uuid` | no |  | The version produced from the source. |
+| `relation` | `text` | no | `'derived_from'` | Kind of derivation, a lowercase slug. |
+| `engine_job_id` | `uuid` | yes |  | Optional pointer to the engine job that produced it. |
+| `created_by` | `uuid` | yes |  |  |
+| `created_at` | `timestamptz` | no | `now()` |  |
 
-**Constraints**
+**Constraints**: primary key `id`; foreign keys to `file_versions` (RESTRICT), `engine.jobs` and `auth.accounts`; `source_version_id <> derived_version_id`; unique `(source_version_id, derived_version_id, relation)`.
 
-- Check `extractions_config_hash_check`: `CHECK ((config_hash ~ '^[0-9a-f]{64}$'::text))`
-- Check `extractions_finished_after_started`: `CHECK (((finished_at IS NULL) OR (started_at IS NULL) OR (finished_at >= started_at)))`
-- Check `extractions_operation_check`: `CHECK ((operation ~ '^[a-z][a-z0-9_.-]*$'::text))`
-- Check `extractions_state_check`: `CHECK ((state = ANY (ARRAY['pending'::text, 'running'::text, 'succeeded'::text, 'partial'::text, 'failed'::text, 'cancelled'::text])))`
-- Foreign key `extractions_engine_job_id_fkey`: `FOREIGN KEY (engine_job_id) REFERENCES engine.jobs(id)`
-- Foreign key `extractions_engine_run_id_fkey`: `FOREIGN KEY (engine_run_id) REFERENCES engine.runs(id)`
-- Foreign key `extractions_requested_by_fkey`: `FOREIGN KEY (requested_by) REFERENCES auth.accounts(id)`
-- Primary key `extractions_pkey`: `PRIMARY KEY (id)`
-
-**Indexes**
-
-- `CREATE INDEX extractions_operation ON extractions USING btree (operation, state)`
-- `CREATE INDEX extractions_run ON extractions USING btree (engine_run_id) WHERE (engine_run_id IS NOT NULL)`
-
-### `filesystem.extraction_files`
-
-Exact file versions that took part in an extraction as inputs or outputs: many of each, reproducible chains. A version that participates is never pruned. Processing status is derived (filesystem.version_operations), not stored.
-
-| Column | SQL type | Null | Default | Meaning |
-|---|---|---|---|---|
-| `extraction_id` | `uuid` | no |  |  |
-| `role` | `text` | no |  |  |
-| `file_version_id` | `uuid` | no |  |  |
-| `ordinal` | `integer` | no | `0` |  |
-
-**Constraints**
-
-- Check `extraction_files_ordinal_check`: `CHECK ((ordinal >= 0))`
-- Check `extraction_files_role_check`: `CHECK ((role = ANY (ARRAY['input'::text, 'output'::text])))`
-- Foreign key `extraction_files_extraction_id_fkey`: `FOREIGN KEY (extraction_id) REFERENCES filesystem.extractions(id) ON DELETE CASCADE`
-- Foreign key `extraction_files_file_version_id_fkey`: `FOREIGN KEY (file_version_id) REFERENCES filesystem.file_versions(id) ON DELETE RESTRICT`
-- Primary key `extraction_files_pkey`: `PRIMARY KEY (extraction_id, role, file_version_id)`
-
-**Indexes**
-
-- `CREATE INDEX extraction_files_version ON extraction_files USING btree (file_version_id, role)`
-
-**Triggers**: `extraction_files_guard`
+**Triggers**: `file_relations_guard` refuses a derivation that would create a cycle.
 
 ### `filesystem.uploads`
 
@@ -312,16 +269,16 @@ Temporary upload sessions (direct-to-S3 or sync staging). temp_key is always und
 - **File/version cycle:** a file is created without a current pointer, its first version is inserted, and the pointer is set in one transaction; the deferred composite foreign key proves the current version belongs to the same file, and a deferred trigger rejects a committed file without a current version.
 - **Versions** are immutable except pinning and key relocation; revisions are monotonic per file (`files.last_revision`); the current version, pinned versions and versions used by an extraction cannot be deleted.
 - **Tagging:** exactly one of file or folder, no duplicates (partial unique indexes), real foreign keys, removed with the target.
-- **Deletion behavior:** `folders` and `files` use RESTRICT; versions are removed only through the retention paths (replace-current pruning or `Repository.delete_file`); taggings cascade with their target; `extraction_files` cascade with their extraction but RESTRICT the version.
+- **Deletion behavior:** `folders` and `files` use RESTRICT; versions are removed only through the retention paths (replace-current pruning or `Repository.delete_file`); taggings cascade with their target; `file_relations` RESTRICT both versions they link.
 
 ## Version retention and replacement
 
 Per logical file (`files.retention`, defaulted from the sync manifest):
 
 - `preserve_history` (default): changed bytes add a retained version; unchanged bytes add nothing.
-- `replace_current`: changed bytes become the current version and superseded versions are dropped unless pinned or used by an extraction. Their S3 keys are returned for explicit cleanup and are never deleted by publication.
+- `replace_current`: changed bytes become the current version and superseded versions are dropped unless pinned or used by a file relation. Their S3 keys are returned for explicit cleanup and are never deleted by publication.
 
-Anything pinned (manifest-release pins set by the seed sync, `pin_reason`) or referenced by an extraction survives both modes. Updates are conditional on `files.revision`; a lost race is reported as a conflict.
+Anything pinned (manifest-release pins set by the seed sync, `pin_reason`) or taking part in a file relation survives both modes. Updates are conditional on `files.revision`; a lost race is reported as a conflict.
 
 ## Hashing and deduplication
 
@@ -347,7 +304,7 @@ Bucket `mzizi`, region `us-east-1`, path-style addressing, credentials from the 
 
 ## Source-linking interface (for later source work)
 
-`Repository.ensure`-style primitives take neutral inputs (folder id, name, registry code, classification, provenance extras); nothing in the package names KNBS, IEBC, Kenya or a website. Later source tasks resolve a learned source to folders through manifests, resource relationships and approved reference-owned patterns and call the same service (`FilesystemService.register`, `run_sync`, `begin_extraction`).
+`Repository.ensure`-style primitives take neutral inputs (folder id, name, code, classification, provenance extras); nothing in the package names KNBS, IEBC, Kenya or a website. Later source tasks resolve a learned source to folders through manifests, resource relationships and approved reference-owned patterns and call the same service (`FilesystemService.register`, `run_sync`, `begin_extraction`).
 
 ## Known gaps
 

@@ -260,6 +260,8 @@ See [source redesign and adaptive website intelligence](../source-redesign/READM
 
 ### Semantic naming convention: meaning first, consistent syntax second
 
+**Exception (user direction, 2026-11-08):** identity codes are always a column named exactly `code`, with the single hierarchical shape defined in `.docs/rules/code-columns.md`. Do not prefix it (`registry_code`, `seed_code`); the "meaning first" guidance below applies to every other column.
+
 | Existing generic pattern | Better **domain example**, subject to source semantics | Distinction to validate |
 |---|---|---|
 | `political.memberships.valid_from/to` | `joined_on` / `left_on` | Joining date may differ from registration/approval/announcement |

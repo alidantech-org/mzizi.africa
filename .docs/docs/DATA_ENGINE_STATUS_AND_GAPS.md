@@ -35,7 +35,7 @@ Counts at the end of this run: API 14,149 unit tests, database engine 81, data e
 **Approvals (DEC-AUTO-APPROVAL: a person or an AI agent may do these, recorded against the account)**
 - Source assessments and dossier stages: sites under a trusted suffix (`.go.ke`) are approved by `auto-assess`; the Kenya dossier was moved to pilot by the agent account on 2 November 2026. Other suffixes need an entry in `seed/system/policy/trusted-domains.json` or an explicit approval.
 - Licences are still recorded as unconfirmed for imported documents; counsel review of the Kenya dossier, ODPC registration and the DPIA remain open questions in the dossier, now carried by rules and the audit trail rather than a gate.
-- The production contact and bot page for `MZIZI_USER_AGENT` (development uses `.data/env.local`).
+- The production contact and bot page for `MZIZI_USER_AGENT` (development reads it from the root `.env`).
 
 **Engineering gaps (tasks exist)**
 - Tier B extractors: PDF (text, tables, scan detection) and HTML legal text exist (DEC-PDF-EXTRACTION); OCR is not performed, table column alignment is left to mappings, and the legacy pdf_extractor was never run.

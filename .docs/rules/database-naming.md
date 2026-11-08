@@ -16,7 +16,7 @@ Applies to every table the Dryv contracts define. The contract audit (`dryv/tool
 6. A table name is unique within its schema; the same word may be reused across schemas (`geography.changes`, `legal.changes`).
 7. **No foreign key crosses a schema.** Inside a schema tables may use real foreign keys; between schemas a record refers to another by plain id. Integrity across schemas is checked by the database engine, not the database. This keeps every schema separable into its own database.
 8. **Provenance is not a column.** Data tables carry valid time, record time and version; where a record came from is in the `source` schema.
-9. Columns, enums and index names are unchanged by this rule. Entity classes keep descriptive names (`GeoUnitEntity` is `geography.units`).
+9. Columns, enums and index names are unchanged by this rule, except that an identity code column is always named exactly `code` and follows `.docs/rules/code-columns.md`. Entity classes keep descriptive names (`GeoUnitEntity` is `geography.units`).
 10. Audit target kinds are schema-qualified table names (`geography.units`).
 
 ## Map

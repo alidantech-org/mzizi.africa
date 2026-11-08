@@ -6,7 +6,7 @@
   uv run mzizi-filesystem tree [/path]            uv run mzizi-filesystem cleanup-uploads [--apply]
   uv run mzizi-filesystem transition-access /path internal --apply --actor <id>      uv run mzizi-filesystem live-check --apply
 
-S3 comes from the environment (S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY, optional S3_PUBLIC_ENDPOINT); S3_* lines in the git-ignored .data/env.local are loaded when unset; the database is mzizi_new
+S3 comes from the environment (S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY, optional S3_PUBLIC_ENDPOINT); the repository-root .env (git-ignored) is loaded when variables are unset; AWS_* names alias S3_*; the database is mzizi_new
 (REWRITE_DATABASE_URL). Apply needs --actor (an account of the auth schema) unless --operator is given for local repository tooling.
 """
 from __future__ import annotations
@@ -22,23 +22,13 @@ from mzizi_manifest.paths import SEED_ROOT
 
 from .authz import DatabaseAuthorizer, OperatorAuthorizer
 from .repository import Repository
+from .env import load_environment
+from .secure import fetch_secure_file
 from .service import FilesystemService
 from .store import MemoryObjectStore, S3ObjectStore, StoreError
 from .sync import ManifestError, load_plan, run_sync
 from .transitions import transition_folder_access
 from .uploads import cleanup_uploads
-
-
-def _load_env_file(path: Path | None = None) -> None:
-    """Loads S3_* and MZIZI_ACTOR assignments from the git-ignored .data/env.local (or MZIZI_ENV_FILE) when they are not already set. Values are never printed."""
-    candidate = path or Path(os.environ.get("MZIZI_ENV_FILE") or SEED_ROOT.parent / ".data" / "env.local")
-    if not candidate.is_file():
-        return
-    for line in candidate.read_text(encoding="utf-8").splitlines():
-        line = line.strip().removeprefix("export ").strip()
-        key, sep, value = line.partition("=")
-        if sep and (key.startswith("S3_") or key == "MZIZI_ACTOR") and key not in os.environ:
-            os.environ[key] = value.strip().strip('"').strip("'")
 
 
 def _store(kind: str, apply: bool):
@@ -78,9 +68,10 @@ def main(argv: list[str] | None = None) -> int:
     t = sub.add_parser("tree"); t.add_argument("path", nargs="?", default="/")
     c = sub.add_parser("cleanup-uploads"); c.add_argument("--apply", action="store_true"); c.add_argument("--store", choices=["auto", "s3", "memory"], default="auto")
     a = sub.add_parser("transition-access"); a.add_argument("path"); a.add_argument("access"); a.add_argument("--apply", action="store_true"); a.add_argument("--actor"); a.add_argument("--operator", action="store_true"); a.add_argument("--store", choices=["auto", "s3", "memory"], default="auto")
+    sg = sub.add_parser("secure-get", help="download a registered security file into the git-ignored local cache and print its path"); sg.add_argument("path"); sg.add_argument("--refresh", action="store_true"); sg.add_argument("--store", choices=["auto", "s3", "memory"], default="s3")
     lv = sub.add_parser("live-check"); lv.add_argument("--apply", action="store_true"); lv.add_argument("--actor")
     args = p.parse_args(argv)
-    _load_env_file()
+    load_environment()
     with connect(rewrite_url(), autocommit=True) as conn:
         repo = Repository(conn)
         if args.command == "tree":
@@ -101,6 +92,9 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(report, indent=2))
             return 0 if report["ok"] else 1
         store = _store(getattr(args, "store", "auto"), getattr(args, "apply", False))
+        if args.command == "secure-get":
+            print(fetch_secure_file(conn, store, args.path, refresh=args.refresh))
+            return 0
         if args.command == "cleanup-uploads":
             service = FilesystemService(repo, store, OperatorAuthorizer())
             rep = cleanup_uploads(service, dry_run=not args.apply)

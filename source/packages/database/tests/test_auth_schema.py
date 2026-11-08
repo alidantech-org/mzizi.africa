@@ -70,8 +70,8 @@ class World:
 def w(db):
     x = World()
     x.admin = one(db, "SELECT auth.bootstrap_admin(%s, 'admin-sub', 'Admin', 'admin') AS id", (ISSUER,))["id"]
-    x.iebc, x.nairobi_gov = institution(db, "iebc"), institution(db, "nairobi-county")
-    x.nairobi_health = institution(db, "nairobi-health", x.nairobi_gov)
+    x.iebc, x.nairobi_gov = institution(db, "iebc"), institution(db, "nairobi_county")
+    x.nairobi_health = institution(db, "nairobi_county.health", x.nairobi_gov)
     db.execute("CREATE SCHEMA geo")
     db.execute("CREATE TABLE geo.units (id uuid PRIMARY KEY DEFAULT uuidv7(), name text, parent_id uuid REFERENCES geo.units(id))")
     unit = lambda name, parent=None: one(db, "INSERT INTO geo.units (name, parent_id) VALUES (%s, %s) RETURNING id", (name, parent))["id"]  # noqa: E731

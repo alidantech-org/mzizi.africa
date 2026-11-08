@@ -34,7 +34,7 @@ COMMENT ON TABLE auth.permissions IS 'Named access: namespace.action, e.g. elect
 
 CREATE TABLE auth.roles (
   id   uuid PRIMARY KEY DEFAULT uuidv7(),
-  code text NOT NULL UNIQUE CHECK (code ~ '^[a-z][a-z0-9_]*$'),
+  code text NOT NULL UNIQUE CHECK (code ~ '^[a-z0-9][a-z0-9_]*(\.[a-z0-9][a-z0-9_]*)*$' AND length(code) <= 255 AND cardinality(string_to_array(code, '.')) <= 16),
   name text NOT NULL
 );
 COMMENT ON TABLE auth.roles IS 'A named bundle of permissions. Where it applies is decided by each assignment.';
@@ -49,7 +49,7 @@ CREATE TABLE auth.role_permissions (
 
 CREATE TABLE auth.institutions (
   id           uuid PRIMARY KEY DEFAULT uuidv7(),
-  code         text NOT NULL UNIQUE CHECK (code ~ '^[a-z0-9][a-z0-9_-]*$'),
+  code         text NOT NULL UNIQUE CHECK (code ~ '^[a-z0-9][a-z0-9_]*(\.[a-z0-9][a-z0-9_]*)*$' AND length(code) <= 255 AND cardinality(string_to_array(code, '.')) <= 16),
   name         text NOT NULL,
   parent_id    uuid REFERENCES auth.institutions (id),
   country_code char(2) NOT NULL CHECK (country_code ~ '^[A-Z]{2}$'),

@@ -26,3 +26,12 @@ The user authorized moving useful old artifacts out of the git-ignored `.data/` 
 ## Registration status
 
 The plan resolves (7 logical folders, 18,167 files; credential-like names and private keys are blocked) and previews cleanly. Whether the bytes have been uploaded and registered is recorded in the task `TSK-3EA8C40B0F60` progress notes: it requires the existing S3 environment variables, which must be present when `uv run mzizi-filesystem sync --manifest seed/manifests/legacy-artifacts.yaml --apply --actor <account>` runs.
+
+
+## Final disposition (8 November 2026, later)
+
+The `.data` directory is retired. Rules now in force:
+
+- **Environment values live only in the repository-root `.env`** (git-ignored). `dev.env` and `env.local` were merged into it (existing keys win); `p4-scratch.env` and `real.env` were not merged because they conflict with `dev.env`.
+- **Security files** (`dev-auth/private.pem`, `public.pem`, and the four retired env files) were published through `seed/manifests/security-files.yaml` into the private `/security` folder (`private/` prefix, role `certificate`, `allow_sensitive` honoured only for private entries). Read them with `uv run mzizi-filesystem secure-get <path>` or `mzizi_filesystem.secure.fetch_secure_file`, which verifies the hash and caches the file with mode 0600 under the git-ignored `.local/secure/` (override with `MZIZI_SECURE_DIR`). The web dev signer reads `.local/secure/dev-auth/`.
+- **`.data/raw`** (4 GB historical collection) was never uploaded; on the user's explicit instruction of 8 November 2026 it was deleted locally. The six security files were verified byte-identical in S3 before the whole `.data` directory was removed. `.data` no longer exists.

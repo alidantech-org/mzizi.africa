@@ -83,20 +83,18 @@ def test_folders_uploads_downloads_and_transitions_through_the_engine(api):
     assert cleanup["dry_run"] is True
 
 
-def test_extractions_record_exact_version_lineage_through_the_engine(api):
+def test_derived_files_record_exact_version_relations_through_the_engine(api):
     root = make_root(api)
-    reg = lambda name, data: api.post("/v1/filesystem/uploads", json={"folder_id": root, "filename": name}).json()  # noqa: E731
     from mzizi_filesystem import FilesystemService, Repository
 
     with connect(rewrite_url(), autocommit=True) as conn:
         svc = FilesystemService(Repository(conn), api.store)
         src = svc.register(root, "source.txt", b"source text\n")
-    ex = api.post("/v1/filesystem/extractions", json={"operation": "text.upper", "capability": "test", "capability_version": "1", "inputs": [str(src.version_id)], "config": {"k": 1}}).json()["extraction"]
-    out = api.post(f"/v1/filesystem/extractions/{ex['id']}/outputs", json={"folder_id": root, "name": "upper.txt", "content_base64": b64(b"SOURCE TEXT\n")}).json()
-    api.post(f"/v1/filesystem/extractions/{ex['id']}/finish", json={"state": "succeeded"})
+    out = api.post("/v1/filesystem/derived", json={"sources": [str(src.version_id)], "folder_id": root, "name": "upper.txt", "content_base64": b64(b"SOURCE TEXT\n"), "relation": "converted_from"}).json()
     lin = api.get(f"/v1/filesystem/versions/{out['version_id']}/lineage").json()
-    assert [a["operation"] for a in lin["ancestry"]] == ["text.upper"] and lin["ancestry"][0]["inputs"] == [str(src.version_id)]
-    assert api.get(f"/v1/filesystem/versions/{src.version_id}/lineage").json()["operations"][0]["role"] == "input"
+    assert [(a["source"], a["relation"]) for a in lin["ancestry"]] == [(str(src.version_id), "converted_from")]
+    assert api.get(f"/v1/filesystem/versions/{src.version_id}/lineage").json()["derived"] == [{"derived": out["version_id"], "relation": "converted_from"}]
+    assert api.post("/v1/filesystem/relations", json={"source_version_id": out["version_id"], "derived_version_id": str(src.version_id)}).status_code >= 400  # cycle refused
 
 
 def test_scoped_authorization_guards_every_filesystem_endpoint():

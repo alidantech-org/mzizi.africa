@@ -11,7 +11,7 @@ from typing import Any
 import psycopg
 from psycopg.types.json import Jsonb
 
-FOLDER_FIELDS = ("access", "access_authorization", "allow_weaker_children", "artifact_role", "is_seed", "acquisition_class", "preparation", "jurisdiction_code", "description", "metadata", "seed_code")
+FOLDER_FIELDS = ("access", "access_authorization", "allow_weaker_children", "artifact_role", "is_seed", "acquisition_class", "preparation", "jurisdiction_code", "description", "metadata", "code")
 
 
 class Conflict(Exception):
@@ -44,8 +44,8 @@ class Repository:
     def find_folder(self, parent_id: str | None, name: str) -> dict | None:
         return self.conn.execute("SELECT * FROM filesystem.folders WHERE parent_id IS NOT DISTINCT FROM %s AND name = %s", (parent_id, name)).fetchone()
 
-    def folder_by_seed_code(self, code: str) -> dict | None:
-        return self.conn.execute("SELECT * FROM filesystem.folders WHERE seed_code = %s", (code,)).fetchone()
+    def folder_by_code(self, code: str) -> dict | None:
+        return self.conn.execute("SELECT * FROM filesystem.folders WHERE code = %s", (code,)).fetchone()
 
     def folder_path(self, folder_id: str) -> str:
         return self.conn.execute("SELECT filesystem.folder_path(%s) AS p", (folder_id,)).fetchone()["p"]
@@ -86,7 +86,7 @@ class Repository:
         return self.conn.execute("SELECT * FROM filesystem.files WHERE id = %s", (file_id,)).fetchone()
 
     def file_by_code(self, code: str) -> dict | None:
-        return self.conn.execute("SELECT * FROM filesystem.files WHERE registry_code = %s", (code,)).fetchone()
+        return self.conn.execute("SELECT * FROM filesystem.files WHERE code = %s", (code,)).fetchone()
 
     def find_file(self, folder_id: str, name: str) -> dict | None:
         return self.conn.execute("SELECT * FROM filesystem.files WHERE folder_id = %s AND name = %s", (folder_id, name)).fetchone()
@@ -111,17 +111,17 @@ class Repository:
                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING *""",
             (file_id, revision, v["s3_key"], v["sha256"], v["size_bytes"], v.get("extension"), v["content_type"], v.get("original_filename"), Jsonb(v["provenance"]), bool(v.get("pin_reason")), v.get("pin_reason"), actor)).fetchone()
 
-    def create_file_with_version(self, folder_id: str, name: str, registry_code: str | None, retention: str, version: dict, actor: str | None) -> tuple[dict, dict]:
+    def create_file_with_version(self, folder_id: str, name: str, code: str | None, retention: str, version: dict, actor: str | None) -> tuple[dict, dict]:
         """The file/version creation cycle in one transaction: file without a current pointer, first version, pointer set, deferred checks run."""
         with self.transaction():
-            file = self.conn.execute("INSERT INTO filesystem.files (folder_id, name, registry_code, retention, created_by) VALUES (%s, %s, %s, %s, %s) RETURNING *", (folder_id, name, registry_code, retention, actor)).fetchone()
+            file = self.conn.execute("INSERT INTO filesystem.files (folder_id, name, code, retention, created_by) VALUES (%s, %s, %s, %s, %s) RETURNING *", (folder_id, name, code, retention, actor)).fetchone()
             created = self._insert_version(file["id"], 1, version, actor)
             file = self.conn.execute("UPDATE filesystem.files SET current_version_id = %s WHERE id = %s RETURNING *", (created["id"], file["id"])).fetchone()
         return file, created
 
     def add_version(self, file_id: str, expected_revision: int, version: dict, actor: str | None, retention: str | None = None) -> tuple[dict, dict, list[dict]]:
         """A new current version under optimistic concurrency. Returns (file, version, pruned versions). replace_current drops unpinned
-        superseded versions that no extraction references; their S3 keys are returned for explicit cleanup, never deleted here."""
+        superseded versions that no relation references; their S3 keys are returned for explicit cleanup, never deleted here."""
         with self.transaction():
             file = self.conn.execute("SELECT * FROM filesystem.files WHERE id = %s AND revision = %s FOR UPDATE", (file_id, expected_revision)).fetchone()
             if file is None:
@@ -133,7 +133,7 @@ class Repository:
             if policy == "replace_current":
                 old = self.conn.execute(
                     """SELECT v.* FROM filesystem.file_versions v WHERE v.file_id = %s AND v.id <> %s AND NOT v.pinned
-                         AND NOT EXISTS (SELECT 1 FROM filesystem.extraction_files ef WHERE ef.file_version_id = v.id)""", (file_id, new["id"])).fetchall()
+                         AND NOT EXISTS (SELECT 1 FROM filesystem.file_relations r WHERE r.source_version_id = v.id OR r.derived_version_id = v.id)""", (file_id, new["id"])).fetchall()
                 for row in old:
                     self.conn.execute("DELETE FROM filesystem.file_versions WHERE id = %s", (row["id"],))
                     pruned.append(row)
@@ -148,15 +148,15 @@ class Repository:
 
     def delete_file(self, file_id: str, expected_revision: int) -> list[dict]:
         """Removes a file and its unpinned, unreferenced versions in one transaction; returns the removed versions (their keys await explicit cleanup).
-        Refuses when any version is pinned or participates in an extraction."""
+        Refuses when any version is pinned or takes part in a relation."""
         with self.transaction():
             file = self.conn.execute("SELECT * FROM filesystem.files WHERE id = %s AND revision = %s FOR UPDATE", (file_id, expected_revision)).fetchone()
             if file is None:
                 raise Conflict(f"file {file_id} changed concurrently")
             versions = self.versions(file_id)
-            blocked = [v for v in versions if v["pinned"] or self.conn.execute("SELECT 1 FROM filesystem.extraction_files WHERE file_version_id = %s", (v["id"],)).fetchone()]
+            blocked = [v for v in versions if v["pinned"] or self.conn.execute("SELECT 1 FROM filesystem.file_relations WHERE source_version_id = %s OR derived_version_id = %s", (v["id"], v["id"])).fetchone()]
             if blocked:
-                raise Conflict(f"file {file_id} has pinned or extraction-referenced versions ({len(blocked)}) and cannot be deleted")
+                raise Conflict(f"file {file_id} has pinned or relation-referenced versions ({len(blocked)}) and cannot be deleted")
             self.conn.execute("UPDATE filesystem.files SET current_version_id = NULL WHERE id = %s", (file_id,))
             for v in versions:
                 self.conn.execute("DELETE FROM filesystem.file_versions WHERE id = %s", (v["id"],))
@@ -175,21 +175,11 @@ class Repository:
         col = "file_id" if target_kind == "file" else "folder_id"
         return self.conn.execute(f"INSERT INTO filesystem.taggings (tag_id, {col}, tagged_by) VALUES (%s, %s, %s) ON CONFLICT DO NOTHING", (tag["id"], target_id, actor)).rowcount == 1
 
-    # --------------------------------------------------------------------------------------- extractions
-    def create_extraction(self, operation: str, capability: str, capability_version: str, config_hash: str, config: dict | None, tool: dict, requested_by: str | None, engine_run_id: str | None = None, engine_job_id: str | None = None) -> dict:
+    # ----------------------------------------------------------------------------------------- relations
+    def link_relation(self, source_version_id: str, derived_version_id: str, relation: str = "derived_from", engine_job_id: str | None = None, actor: str | None = None) -> bool:
         return self.conn.execute(
-            """INSERT INTO filesystem.extractions (operation, capability, capability_version, tool, config_hash, config, requested_by, engine_run_id, engine_job_id, state, started_at)
-               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'running', now()) RETURNING *""",
-            (operation, capability, capability_version, Jsonb(tool), config_hash, Jsonb(config) if config is not None else None, requested_by, engine_run_id, engine_job_id)).fetchone()
-
-    def link_extraction_file(self, extraction_id: str, role: str, version_id: str, ordinal: int = 0) -> None:
-        self.conn.execute("INSERT INTO filesystem.extraction_files (extraction_id, role, file_version_id, ordinal) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING", (extraction_id, role, version_id, ordinal))
-
-    def finish_extraction(self, extraction_id: str, state: str, error: str | None = None) -> dict:
-        return self.conn.execute("UPDATE filesystem.extractions SET state = %s, error = %s, finished_at = now() WHERE id = %s RETURNING *", (state, error, extraction_id)).fetchone()
-
-    def operations_for(self, version_id: str) -> list[dict]:
-        return self.conn.execute("SELECT operation, role, runs, last_state, has_result FROM filesystem.version_operations WHERE file_version_id = %s ORDER BY operation, role", (version_id,)).fetchall()
+            "INSERT INTO filesystem.file_relations (source_version_id, derived_version_id, relation, engine_job_id, created_by) VALUES (%s, %s, %s, %s, %s) ON CONFLICT DO NOTHING",
+            (source_version_id, derived_version_id, relation, engine_job_id, actor)).rowcount == 1
 
     # ---------------------------------------------------------------------------------------- uploads
     def create_upload(self, folder_id: str, filename: str, temp_key: str, lease_seconds: int, ttl_seconds: int, declared_size: int | None, declared_sha256: str | None, multipart_id: str | None, actor: str | None) -> dict:
