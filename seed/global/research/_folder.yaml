@@ -1,0 +1,5 @@
+description: Jurisdiction dossier registry rows assembled by agent research.
+role: research_registry
+acquisition_class: externally_collected
+preparation: ai_prepared
+review: {status: needs_review, note: "The file states the law lists were assembled by an agent on 2026-11-02 and are not verified against official texts."}

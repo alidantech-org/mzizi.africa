@@ -1,0 +1,5 @@
+description: Kenya reference vocabularies, jurisdiction and administrative hierarchy in fixture-row format.
+role: seed_input
+acquisition_class: static_curated
+preparation: unknown
+review: {status: needs_review, note: "kenya-reference.json states the vocabularies are curated, unsourced and need a domain review before being treated as authoritative."}

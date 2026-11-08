@@ -24,14 +24,14 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT, SEED_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..files import LocalDirectoryStore
 from ..geo_link import GeoResolver, norm as geo_norm
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 from .members import slug
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "office_holders"
+MAPPINGS = MAPPINGS_ROOT / "office_holders"
 STAGES = {"A": ["office", "party"], "B": ["individual"], "C": ["holder", "membership"]}
 KEYS = {"party": ("partyCode",), "office": ("officeCode",), "individual": ("personCode",), "holder": ("officeCode", "personCode", "termNumber"), "membership": ("partyCode", "personCode", "isCurrent")}
 PAGES = {
@@ -521,7 +521,7 @@ def import_office_holders(conn: psycopg.Connection, store: LocalDirectoryStore, 
             raise RuntimeError(f"extraction of {title} did not succeed: {job['status']} {job['error']}")
         result = pipeline.load_result(store, job["fv"])
         pages.append((capture_id, str(result.id), [json.loads(s.content) for s in result.segments]))
-    curated = Path(__file__).resolve().parents[4] / "database" / "fixtures" / "seed" / "ke-office-holders-curated.json"
+    curated = SEED_ROOT / "ke" / "governance" / "ke-office-holders-curated.json"
     if curated.exists():
         cpub = register.ensure_publisher(conn, "mzizi-curated-research", "Mzizi curated research (manual preparation)", kind="institution")
         cspec = register.DocumentSpec(cpub, "Curated national office holders (ke-office-holders-curated.json)", "curated_seed", url=None, licence="Project-authored research seed", citation="Custom-prepared from manual research; unverified until confirmed by Kenya Gazette notices.", jurisdiction_id=row["id"] if row else None)

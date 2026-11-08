@@ -2,7 +2,7 @@
 
 The PDF is preserved first, extracted with the `pdf` extractor and the `tables` (and optionally `ocr`)
 profile, each table is realigned and its unit and scale read (see tables.py), and the rows become
-candidates through the mapping files in mappings/budget. Nothing canonical is written. Stage `fiscal_year` and `unit`
+candidates through the mapping files in seed/system/mappings/budget. Nothing canonical is written. Stage `fiscal_year` and `unit`
 first, promote them after review, then stage `budget` (it references them by code); the second call is
 idempotent on the document, capture and extraction. Promote in that order. The licence is recorded as unconfirmed; a human
 reviewer decides before promotion.
@@ -18,11 +18,12 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register, tables
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
 
-MAPPINGS = Path(__file__).resolve().parents[3] / "mappings" / "budget"
+MAPPINGS = MAPPINGS_ROOT / "budget"
 ORDER = ["fiscal_year", "unit", "budget"]
 AMOUNT_COLUMNS = {"recurrent", "development"}  # "total" is derived and only cross-checked
 

@@ -1,0 +1,10 @@
+description: Jurisdiction-neutral reference vocabularies in fixture-row format (media formats, site tags, source kinds, proof-of-concept jurisdictions).
+role: seed_input
+acquisition_class: static_curated
+preparation: unknown
+review: {status: needs_review, note: "Files state their content but not who prepared them; preparation method must be confirmed before registration."}
+overrides:
+  media-formats.json:
+    acquisition_class: internally_derived
+    preparation: human_and_ai_assisted
+    reason: "Converted from the archived files service CSV (api-legacy/_archives/files/_seed/file_types.csv), as the file's own note states."

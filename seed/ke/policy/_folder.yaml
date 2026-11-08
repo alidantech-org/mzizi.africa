@@ -1,0 +1,5 @@
+description: Kenya-specific collection policy inputs.
+role: seed_input
+acquisition_class: externally_collected
+preparation: human_and_ai_assisted
+review: {status: needs_review, note: "domain-spellings.json was read from a public directory page (retrieved 2026-11-02, checksum in the file) and custom-prepared; low-confidence entries are flagged inside the file."}

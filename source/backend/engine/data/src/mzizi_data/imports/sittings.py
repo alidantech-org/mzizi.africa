@@ -14,13 +14,13 @@ from dataclasses import dataclass, field
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline
 from ..extractors import sitting_pdf
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "sitting"
+MAPPINGS = MAPPINGS_ROOT / "sitting"
 TYPE_CODE = "calendar/event-type/parliamentary-sitting"
 HOUSES = {"national-assembly": "National Assembly", "senate": "Senate"}
 

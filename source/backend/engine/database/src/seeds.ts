@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DataSource } from "typeorm";
 
-import { loadFixtures, readFixture } from "../../../api/src/neutral/fixture-loader.ts";
+import { loadFixtures, readFixture, readSeed, seedRoot } from "../../../api/src/neutral/fixture-loader.ts";
 
 /**
  * Seed classes (README): reference seeds are stable system vocabularies; fixtures are synthetic
@@ -12,12 +12,12 @@ import { loadFixtures, readFixture } from "../../../api/src/neutral/fixture-load
 const PLACEHOLDER_KIND = "00000000-0000-4000-8000-000000000001";
 
 export async function seedReference(db: DataSource): Promise<Map<string, string>> {
-  const ids = await loadFixtures(db, readFixture("reference/media-formats").rows);
-  await loadFixtures(db, readFixture("reference/site-tags").rows, ids);
-  await loadFixtures(db, readFixture("reference/source-kinds").rows, ids);
-  await loadFixtures(db, readFixture("reference/kenya-reference").rows, ids);
-  await loadFixtures(db, readFixture("reference/ke-legal-kinds").rows, ids);
-  await loadFixtures(db, readFixture("reference/poc-countries").rows, ids);
+  const ids = await loadFixtures(db, readSeed("global/reference/media-formats.json").rows);
+  await loadFixtures(db, readSeed("global/reference/site-tags.json").rows, ids);
+  await loadFixtures(db, readSeed("global/reference/source-kinds.json").rows, ids);
+  await loadFixtures(db, readSeed("ke/reference/kenya-reference.json").rows, ids);
+  await loadFixtures(db, readSeed("ke/reference/ke-legal-kinds.json").rows, ids);
+  await loadFixtures(db, readSeed("global/reference/poc-countries.json").rows, ids);
   await repairProvenanceKinds(db);
   return ids;
 }
@@ -51,13 +51,13 @@ export async function seedResearch(db: DataSource): Promise<number> {
   if (!ke) throw new Error("seed the reference data first (jurisdiction ke is missing)");
   ids.set("ke", ke.id);
   const before = ids.size;
-  await loadFixtures(db, readFixture("research/ke-pilot-sites").rows, ids, { provenance: false });
-  await loadFixtures(db, readFixture("research/ke-site-families").rows, ids, { provenance: false });
+  await loadFixtures(db, readSeed("ke/research/ke-pilot-sites.json").rows, ids, { provenance: false });
+  await loadFixtures(db, readSeed("ke/research/ke-site-families.json").rows, ids, { provenance: false });
   for (const code of ["za", "ng", "tz"]) {
     const [row] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [code]);
     if (row) ids.set(code, row.id);
   }
-  await loadFixtures(db, readFixture("research/dossiers").rows, ids, { provenance: false });
+  await loadFixtures(db, readSeed("global/research/dossiers.json").rows, ids, { provenance: false });
   return ids.size - before;
 }
 
@@ -104,7 +104,7 @@ interface StructureRow {
 
 /**
  * Seeds Kenya's governance structure (arms of government, ministries, constitutional commissions, independent offices,
- * state corporations and regulators) from `fixtures/seed/ke-governance-structure.json`, which is custom-prepared from
+ * state corporations and regulators) from `seed/ke/governance/ke-governance-structure.json`, which is custom-prepared from
  * manual research and says so in its `_meta`. Also creates one county government and one county assembly per county unit
  * already in the geography schema. Idempotent: an institution that exists by code is left alone.
  */
@@ -116,7 +116,7 @@ export async function rootUnitId(db: DataSource, jurisdictionId: string): Promis
 }
 
 export async function seedGovernanceStructure(db: DataSource, jurisdictionCode = "ke"): Promise<{ institutions: number; relationships: number; counties: number }> {
-  const file = JSON.parse(readFileSync(join(import.meta.dir, "..", "fixtures", "seed", "ke-governance-structure.json"), "utf8")) as { _meta: { label: string; caveat: string }; institutions: StructureRow[] };
+  const file = JSON.parse(readFileSync(join(seedRoot, "ke", "governance", "ke-governance-structure.json"), "utf8")) as { _meta: { label: string; caveat: string }; institutions: StructureRow[] };
   const [jurisdiction] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [jurisdictionCode]);
   if (!jurisdiction) throw new Error(`jurisdiction ${jurisdictionCode} is not seeded`);
   const ensureClass = async (scheme: string, name: string): Promise<string> => {
@@ -179,13 +179,13 @@ export async function seedGovernanceStructure(db: DataSource, jurisdictionCode =
 }
 
 /**
- * Registers the sites of Kenyan government bodies from `fixtures/seed/ke-expected-sites.json` (custom-prepared from manual
+ * Registers the sites of Kenyan government bodies from `seed/ke/registry/ke-expected-sites.json` (custom-prepared from manual
  * research): one `expected` site per entry, linked to the institution it serves, with its candidate hostnames kept in an
  * `expected` reachability check (a domain row is only created once a probe confirms the host). No request is made.
  * Idempotent by site code.
  */
 export async function seedExpectedSites(db: DataSource, jurisdictionCode = "ke"): Promise<{ sites: number; linked: number; domains: number }> {
-  const file = JSON.parse(readFileSync(join(import.meta.dir, "..", "fixtures", "seed", "ke-expected-sites.json"), "utf8")) as { _meta: { label: string }; sites: { code: string; institution: string; name: string; hosts: string[] }[] };
+  const file = JSON.parse(readFileSync(join(seedRoot, "ke", "registry", "ke-expected-sites.json"), "utf8")) as { _meta: { label: string }; sites: { code: string; institution: string; name: string; hosts: string[] }[] };
   const [jurisdiction] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [jurisdictionCode]);
   if (!jurisdiction) throw new Error(`jurisdiction ${jurisdictionCode} is not seeded`);
   let sites = 0;
@@ -239,11 +239,11 @@ async function ensureCandidateDomains(db: DataSource, siteId: string, hosts: str
 }
 
 /**
- * Registers the registry zones in use from `fixtures/seed/ke-domain-zones.json` (custom-prepared from manual research).
+ * Registers the registry zones in use from `seed/ke/registry/ke-domain-zones.json` (custom-prepared from manual research).
  * Idempotent by suffix; existing zones are left as they are. No request is made.
  */
 export async function seedDomainZones(db: DataSource): Promise<{ zones: number }> {
-  const file = JSON.parse(readFileSync(join(import.meta.dir, "..", "fixtures", "seed", "ke-domain-zones.json"), "utf8")) as { _meta: { label: string }; zones: { suffix: string; parentSuffix: string | null; operator: string; purpose: string; secondLevelOpen: boolean }[] };
+  const file = JSON.parse(readFileSync(join(seedRoot, "ke", "registry", "ke-domain-zones.json"), "utf8")) as { _meta: { label: string }; zones: { suffix: string; parentSuffix: string | null; operator: string; purpose: string; secondLevelOpen: boolean }[] };
   let zones = 0;
   for (const zone of file.zones) {
     const inserted = await db.query(

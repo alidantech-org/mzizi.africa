@@ -1,11 +1,12 @@
 import { join } from "node:path";
 import type { DataSource } from "typeorm";
 
+import { seedRoot } from "./config.ts";
 import { CONFIDENCE, attribute, curatedMethod, ensureClassification, readJson, registerCuratedDocument } from "./curated.ts";
 import { rootUnitId, seedGovernanceStructure } from "./seeds.ts";
 
 /**
- * Loads the extended governance catalogue (TSK-0FDD5A808362): `fixtures/seed/ke-governance-structure.json` is the single catalogue.
+ * Loads the extended governance catalogue (TSK-0FDD5A808362): `seed/ke/governance/ke-governance-structure.json` is the single catalogue.
  * Institutions come from `seedGovernanceStructure`; this adds each institution's scope (required), offices with their cardinality,
  * appointing authority, term and legal basis, headquarters and other expectations, and national facilities. The file is registered
  * as a source document (publisher "Mzizi curated research") and every row it creates is attributed to it with method curated.
@@ -57,7 +58,7 @@ export interface CatalogueFile {
   facilities?: FacilitySeed[];
 }
 
-export const catalogueFile = join(import.meta.dir, "..", "fixtures", "seed", "ke-governance-structure.json");
+export const catalogueFile = join(seedRoot, "ke", "governance", "ke-governance-structure.json");
 
 /** Pure validation: returns every problem found, empty when the file is sound. Scope is required on every institution. */
 export function validateCatalogue(file: CatalogueFile): string[] {
@@ -123,7 +124,7 @@ export async function seedGovernanceCatalogue(db: DataSource, jurisdictionCode =
   };
 
   const title = `Kenya governance structure seed (ke-governance-structure.json), version ${file._meta.version ?? 1}`;
-  const documentId = await registerCuratedDocument(db, j, title, `${file._meta.label}. Fixture file fixtures/seed/ke-governance-structure.json; rows are attributed to this document with method curated.`);
+  const documentId = await registerCuratedDocument(db, j, title, `${file._meta.label}. Seed file seed/ke/governance/ke-governance-structure.json; rows are attributed to this document with method curated.`);
   const method = await curatedMethod(db);
   const report: CatalogueReport = { institutions: 0, officesCreated: 0, officesExisting: 0, rules: 0, procedures: 0, expectations: 0, facilities: 0, attributions: 0, scopesSet: 0 };
   const attr = async (kind: string, id: string, confidence: string, locator: string) => {

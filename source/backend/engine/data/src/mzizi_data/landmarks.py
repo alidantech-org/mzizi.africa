@@ -1,6 +1,6 @@
 """Landmark institutional places: headquarters of the national bodies and of every county government and assembly.
 
-The seed `fixtures/seed/ke-landmark-places.json` is custom-prepared from manual research: a name and a text address for well-known
+The seed `seed/ke/places/ke-landmark-places.json` is custom-prepared from manual research: a name and a text address for well-known
 public institutions, and the county capital for each county government and assembly. It asserts no coordinates. Each place is
 created with an attribution to the seed document and a verification of `unverified`, and the institution's occupancy is recorded
 in the headquarters role - but the placement expectation is **not** resolved here: that waits for corroboration by claims
@@ -15,10 +15,11 @@ from pathlib import Path
 
 import psycopg
 
+from .seedroot import SEED_ROOT
 from . import register
 from .imports.constituency_offices import _decide
 
-SEED = Path(__file__).resolve().parents[3] / "database" / "fixtures" / "seed" / "ke-landmark-places.json"
+SEED = SEED_ROOT / "ke" / "places" / "ke-landmark-places.json"
 CURATED_CODE = "mzizi-curated"
 HQ_ROLE = "place/occupancy-role/headquarters"
 
@@ -50,7 +51,7 @@ def _curated(conn: psycopg.Connection, title: str, citation: str) -> tuple[str, 
 def load_landmarks(conn: psycopg.Connection, seed: Path = SEED) -> LandmarkReport:
     data = json.loads(seed.read_text())
     report = LandmarkReport()
-    document_id, method_id = _curated(conn, "Landmark institutional places seed version 1", f"{data['_meta']['label']} Fixture file fixtures/seed/ke-landmark-places.json.")
+    document_id, method_id = _curated(conn, "Landmark institutional places seed version 1", f"{data['_meta']['label']} Fixture file seed/ke/places/ke-landmark-places.json.")
     role = conn.execute("SELECT id::text AS id FROM reference.classifications WHERE code = %s", (HQ_ROLE,)).fetchone()
     if role is None:
         raise LookupError(f"{HQ_ROLE} is not seeded")

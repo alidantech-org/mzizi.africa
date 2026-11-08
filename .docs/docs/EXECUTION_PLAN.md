@@ -8,7 +8,7 @@ Written 3 November 2026 after reconciling every open task. Task dependencies are
 
 ## Rules for every lane
 
-- **One writer per table set.** A lane owns its schemas; no other lane writes them. Shared surfaces (Dryv contract files, migrations folder, `fixtures/seed`) are touched through short, sequential commits: pull nothing, commit often, never reorder.
+- **One writer per table set.** A lane owns its schemas; no other lane writes them. Shared surfaces (Dryv contract files, migrations folder, root `seed/`) are touched through short, sequential commits: pull nothing, commit often, never reorder.
 - **Migrations:** each lane uses its own timestamp range (A 1793900…, H 1794000…, B 1794100…, C 1794200…, D 1794300…, F 1794400…, G 1794500…) and runs the full database engine tests plus the drift check before committing.
 - **Real database `mzizi`:** full autonomy as `mzizi-agent` with a rationale; take a `pg_dump` snapshot before large promotions; stop on a failed validation or any gate stop (401, 403, 429, challenge).
 - **Requests:** only through the gate, 0.2 requests per second, robots.txt, trusted `.go.ke` and named exact hosts, depth 2, size caps. Kenya Law is never bypassed.

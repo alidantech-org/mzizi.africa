@@ -1,0 +1,5 @@
+description: Site-structure bundles for sources that are not tied to one country.
+role: site_structure
+acquisition_class: externally_collected
+preparation: unknown
+review: {status: needs_review, note: "Bundle NOTES record the observation date but not the preparer; confirm before registration."}

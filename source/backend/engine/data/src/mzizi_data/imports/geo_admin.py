@@ -21,13 +21,13 @@ import yaml
 from shapely.geometry import shape
 from shapely.strtree import STRtree
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 from .members import slug
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "geoadmin"
+MAPPINGS = MAPPINGS_ROOT / "geoadmin"
 LEVELS = {0: ("ADM0", "geography/level/country"), 1: ("ADM1", "geography/level/county"), 2: ("ADM2", "geography/level/constituency"), 3: ("ADM3", "geography/level/ward")}
 
 

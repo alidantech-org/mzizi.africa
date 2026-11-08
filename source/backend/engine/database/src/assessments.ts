@@ -1,6 +1,6 @@
 import type { DataSource } from "typeorm";
 
-import { readFixture } from "../../../api/src/neutral/fixture-loader.ts";
+import { readSeed } from "../../../api/src/neutral/fixture-loader.ts";
 
 /**
  * Decides a site's legal and source assessment (LEGALITY_SAFETY_AND_COMPLIANCE.md section 9).
@@ -93,7 +93,7 @@ interface TrustedSuffix {
 }
 
 function trustedSuffixes(): TrustedSuffix[] {
-  return (readFixture("policy/trusted-domains") as unknown as { suffixes: TrustedSuffix[] }).suffixes;
+  return (readSeed("system/policy/trusted-domains.json") as unknown as { suffixes: TrustedSuffix[] }).suffixes;
 }
 
 /**

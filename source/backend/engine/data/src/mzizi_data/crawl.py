@@ -6,7 +6,7 @@ content (that is `semantics.py`) and writes no canonical domain table.
 
 Policy set by the product owner, enforced here and not relaxed by any option:
  - only hosts the gate has an approved scope for, and only trusted `.go.ke` hosts or exact hosts named in
-   fixtures/policy/trusted-domains.json (a link to any other host is recorded as skipped, not followed);
+   seed/system/policy/trusted-domains.json (a link to any other host is recorded as skipped, not followed);
  - the gate, robots.txt and the 0.2 requests per second limit apply to every request (the PoliteFetcher does this);
  - depth 2 (home page -> section page -> detail page; files are leaves), pagination bounded per section;
  - file types pdf, xlsx, csv, docx and zip, with a per-file size cap;
@@ -33,6 +33,7 @@ import httpx
 import psycopg
 from bs4 import BeautifulSoup
 
+from .seedroot import SEED_ROOT
 from . import register, registry
 from .compliance import Denied, StopRun
 from .fetch import FetchResult, PoliteFetcher, RobotsDisallowed, TooLarge
@@ -45,7 +46,7 @@ NEVER_CRAWL = ("kenyalaw.org",)  # bot challenge: never contacted by this crawle
 SENSITIVE_HEADERS = {"set-cookie", "authorization", "proxy-authorization", "cookie"}
 REDIRECTS = (301, 302, 303, 307, 308)
 PAGE_EXTENSIONS = {"", "html", "htm", "php", "aspx", "asp", "jsp"}
-SEED_FILE = Path(__file__).resolve().parents[3] / "database" / "fixtures" / "seed" / "ke-site-sections.json"
+SEED_FILE = SEED_ROOT / "ke" / "registry" / "ke-site-sections.json"
 
 
 @dataclass

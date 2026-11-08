@@ -130,7 +130,9 @@ def test_legacy_geography_seed_is_not_fit_to_import_as_is():
 
 # --- content sections -------------------------------------------------------------------------
 
-SECTION_SEED = Path(__file__).resolve().parents[2] / "database" / "fixtures" / "seed" / "ke-site-sections.json"
+from mzizi_data.seedroot import SEED_ROOT
+
+SECTION_SEED = SEED_ROOT / "ke" / "registry" / "ke-site-sections.json"
 
 
 def with_sections(text):

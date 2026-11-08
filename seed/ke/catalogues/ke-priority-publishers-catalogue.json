@@ -3,7 +3,7 @@
     "label": "Custom-prepared from manual research",
     "preparedBy": "coding agent (Claude, Lane E), after bounded gated fetches on 2026-11-03",
     "task": "TSK-2A15C7E9908D",
-    "access": "All hosts are .go.ke, covered by the suffix rule in fixtures/policy/trusted-domains.json; no exact-host rule was needed. Each site has an approved assessment by the agent account (DEC-AUTO-APPROVAL) limited to the hosts listed; 0.2 requests per second; robots.txt read by the gate; the run stops on a challenge, 401, 403 or 429. Kenya Law (kenyalaw.org, new.kenyalaw.org) answers with a bot challenge and is never contacted by the crawler: Acts are taken only from official PDFs on allowed hosts. gazettes.africa (a third-party mirror alias of the Gazette site) is outside every assessment scope.",
+    "access": "All hosts are .go.ke, covered by the suffix rule in seed/system/policy/trusted-domains.json; no exact-host rule was needed. Each site has an approved assessment by the agent account (DEC-AUTO-APPROVAL) limited to the hosts listed; 0.2 requests per second; robots.txt read by the gate; the run stops on a challenge, 401, 403 or 429. Kenya Law (kenyalaw.org, new.kenyalaw.org) answers with a bot challenge and is never contacted by the crawler: Acts are taken only from official PDFs on allowed hosts. gazettes.africa (a third-party mirror alias of the Gazette site) is outside every assessment scope.",
     "scope": "Every record from these publishers is national: legal.instruments carries the Kenya jurisdiction (the root of the geography tree, DEC-JURISDICTION-WIDE-SCOPE) and has no finer geography column; institutions are national bodies scoped to the root unit by the governance seed."
   },
   "publishers": [

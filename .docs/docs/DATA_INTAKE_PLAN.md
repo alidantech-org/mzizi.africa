@@ -41,7 +41,7 @@ Licences are **to verify**, not claims.
 | Order | Schema group | Kenya candidates | ZA / NG / TZ (light) | Format | Route |
 | --- | --- | --- | --- | --- | --- |
 | 1 | `reference` | Kenyan levels, institution and election types, fiscal stages authored as classification records; ISO 3166 codes | one jurisdiction row each, ISO codes | JSON seed | reference seed in the database package |
-| 1 | `source`, `filesystem` bootstrap | publishers for each source below; stores and formats (`fixtures/reference/media-formats.json`) | publishers per source | JSON seed | reference seed |
+| 1 | `source`, `filesystem` bootstrap | publishers for each source below; stores and formats (`seed/global/reference/media-formats.json`) | publishers per source | JSON seed | reference seed |
 | 2 | `geography` | county, constituency and ward boundaries: HDX common operational datasets, geoBoundaries (CC-BY), OpenStreetMap derived (ODbL); IEBC boundary documents for provenance. Avoid GADM (non-commercial). Legacy `geo_units.csv` (about 550 rows) for names and codes | HDX COD-AB or geoBoundaries levels 1 and 2 per country | GeoJSON, shapefile | file import, extraction, candidates |
 | 3 | `legal` | Constitution of Kenya 2010, selected Acts from Kenya Law, Kenya Gazette notices | national constitutions (public texts) | PDF, HTML | document extraction with pinpoint structure (article, clause) |
 | 4 | `person`, `governance`, `political`, `electoral` | State institutions and office holders from official sites and Gazette; IEBC results and candidate lists; Registrar of Political Parties list | none in the proof of concept | HTML, PDF, XLSX | extraction plus entity resolution |
@@ -172,7 +172,7 @@ The seeds are small (the largest, `geo_units.csv`, is about 550 rows) and carry 
 | debt, procurement | `debt.*`, `procurement.*` | samples; replace with real notices |
 | statistics indicators, periods, tables | `statistical.*` | keep indicator definitions; re-import values from KNBS |
 | events | `calendar.*` | |
-| files `file_types`, `directories` | `fixtures/reference/media-formats.json`, `filesystem.folders` | already moved |
+| files `file_types`, `directories` | `seed/global/reference/media-formats.json`, `filesystem.folders` | already moved |
 | scraper models (sources, queries, runs, processing, seed log) | none | replaced by the data engine job and source registry |
 
 Drop: anti-detection and TLS-verification-disabled code paths in the legacy scrapers, Kenya-specific schema fields, and any seed value with no source.

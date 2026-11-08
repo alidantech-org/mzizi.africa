@@ -2,7 +2,9 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 
-import { openDataSource, withDatabase } from "../src/config.ts";
+import { join } from "node:path";
+
+import { openDataSource, seedRoot, withDatabase } from "../src/config.ts";
 import { advanceDossier, autoAssess, decideAssessment, draftAssessment } from "../src/assessments.ts";
 import { checkCollection } from "../src/gate.ts";
 import { checkIntegrity } from "../src/integrity.ts";
@@ -137,7 +139,7 @@ run("database engine", () => {
     expect(first.relationships).toBeGreaterThan(60);
     const second = await seedGovernanceStructure(db);
     expect(second).toEqual({ institutions: 0, relationships: 0, counties: 0 });
-    const file = JSON.parse(await Bun.file(new URL("../fixtures/seed/ke-governance-structure.json", import.meta.url)).text());
+    const file = JSON.parse(await Bun.file(Bun.pathToFileURL(join(seedRoot, "ke/governance/ke-governance-structure.json"))).text());
     expect(file._meta.label).toBe("Custom-prepared from manual research");
     const codes = new Set<string>(file.institutions.map((row: { code: string }) => row.code));
     expect(codes.size).toBe(file.institutions.length);

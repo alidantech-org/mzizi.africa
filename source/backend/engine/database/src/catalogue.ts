@@ -2,9 +2,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DataSource } from "typeorm";
 
+import { seedRoot } from "./config.ts";
+
 /**
  * Registers the Kenyan statistical publishers, their sites (as `expected`, hostnames as candidate domains) and one
- * `source.documents` row per publication from `fixtures/seed/ke-statistical-catalogue.json` (custom-prepared from manual
+ * `source.documents` row per publication from `seed/ke/catalogues/ke-statistical-catalogue.json` (custom-prepared from manual
  * research). No request is made; every licence is recorded as unassessed. Idempotent: publishers by code, sites by code,
  * documents by (publisher, title). Existing rows are never changed.
  */
@@ -20,7 +22,7 @@ function documentKind(p: Publication): string {
 }
 
 export async function seedStatisticalCatalogue(db: DataSource, jurisdictionCode = "ke"): Promise<{ publishers: number; sites: number; domains: number; documents: number }> {
-  const file = JSON.parse(readFileSync(join(import.meta.dir, "..", "fixtures", "seed", "ke-statistical-catalogue.json"), "utf8")) as { _meta: { label: string }; publishers: Publisher[]; publications: Publication[] };
+  const file = JSON.parse(readFileSync(join(seedRoot, "ke", "catalogues", "ke-statistical-catalogue.json"), "utf8")) as { _meta: { label: string }; publishers: Publisher[]; publications: Publication[] };
   const [jurisdiction] = await db.query(`SELECT id FROM reference.jurisdictions WHERE code = $1`, [jurisdictionCode]);
   if (!jurisdiction) throw new Error(`jurisdiction ${jurisdictionCode} is not seeded`);
   const counts = { publishers: 0, sites: 0, domains: 0, documents: 0 };

@@ -26,12 +26,13 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..extractors import county_assembly_members as extractor  # noqa: F401  (registers the extractor)
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
 
-MAPPINGS = Path(__file__).resolve().parents[3] / "mappings" / "county-assembly"
+MAPPINGS = MAPPINGS_ROOT / "county-assembly"
 STAGES = {"A": ["office", "individual"], "B": ["holder", "membership"]}
 KEYS = {"office": ("officeCode",), "individual": ("personCode",), "holder": ("officeCode", "personCode"), "membership": ("partyCode", "personCode")}
 OLD_TERM = re.compile(r"1st|first|2nd|second|prev|previous|2013|2017|past|former|archive", re.I)

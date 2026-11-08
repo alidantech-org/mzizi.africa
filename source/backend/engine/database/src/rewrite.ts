@@ -4,9 +4,10 @@
  *   bun src/rewrite.ts status                       applied rewrite migrations
  *   bun src/rewrite.ts init                         create mzizi_new if missing and apply pending rewrite migrations
  *   bun src/rewrite.ts reset                        drop and recreate mzizi_new, then init (verifies host and current_database())
- *   bun src/rewrite.ts bootstrap-admin <issuer> <subject> <name>   create the first platform administrator
+ *   bun src/rewrite.ts bootstrap-admin [issuer subject name]   create the first administrator (defaults from the AUTH_BOOTSTRAP_* variables named in seed/global/auth/bootstrap.yaml)
  *
  * Migrations are plain SQL in ../rewrite, applied in file-name order and recorded with a checksum in public.migrations.
+ * After the migrations, `init` applies the auth baseline from the root seed/global/auth/ (idempotent, additive).
  */
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
@@ -14,6 +15,7 @@ import { join } from "node:path";
 import pg from "pg";
 
 import { packageRoot, REWRITE_DATABASE, rewriteTargetUrl } from "./config.ts";
+import { applyAuthSeed, readBootstrap } from "./seed-auth.ts";
 
 const migrationsDir = join(packageRoot, "rewrite");
 
@@ -76,6 +78,7 @@ export async function initRewrite(): Promise<string[]> {
       }
       applied.push(migration.name);
     }
+    await applyAuthSeed(client);
   } finally {
     await client.end();
   }
@@ -130,13 +133,16 @@ if (import.meta.main) {
       console.log(JSON.stringify({ applied: await resetRewrite() }));
       break;
     case "bootstrap-admin": {
-      const [issuer, subject, name] = args;
-      if (!issuer || !subject || !name) throw new Error("usage: bootstrap-admin <issuer> <subject> <display name>");
+      const definition = readBootstrap();
+      const issuer = args[0] ?? process.env[definition.identity.issuer_env];
+      const subject = args[1] ?? process.env[definition.identity.subject_env];
+      const name = args[2] ?? process.env[definition.identity.display_name_env];
+      if (!issuer || !subject || !name) throw new Error(`usage: bootstrap-admin <issuer> <subject> <display name> (or set ${definition.identity.issuer_env}, ${definition.identity.subject_env}, ${definition.identity.display_name_env})`);
       const client = new pg.Client({ connectionString: rewriteTargetUrl().url });
       await client.connect();
       try {
         await assertRewriteConnection(client);
-        const id = (await client.query(`SELECT auth.bootstrap_admin($1, $2, $3) AS id`, [issuer, subject, name])).rows[0].id;
+        const id = (await client.query(`SELECT auth.bootstrap_admin($1, $2, $3, $4) AS id`, [issuer, subject, name, definition.role])).rows[0].id;
         console.log(JSON.stringify({ accountId: id }));
       } finally {
         await client.end();

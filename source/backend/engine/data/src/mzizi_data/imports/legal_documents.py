@@ -22,14 +22,14 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline
 from ..extractors import legal_pdf
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 from .members import slug
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "legal"
+MAPPINGS = MAPPINGS_ROOT / "legal"
 KINDS = {"act": "act", "bill": "bill", "regulation": "regulation", "notice": "gazette-notice"}
 CLASSIFICATIONS = {"legal/instrument-kind/act": "Act of Parliament", "legal/instrument-kind/bill": "Bill", "legal/instrument-kind/regulation": "Regulations, rules or order", "legal/instrument-kind/gazette-notice": "Kenya Gazette notice"}
 DOCUMENT_KINDS = ("act", "bill", "gazette_notice")

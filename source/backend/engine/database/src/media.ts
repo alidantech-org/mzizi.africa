@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DataSource } from "typeorm";
 
-import { packageRoot } from "./config.ts";
+import { seedRoot } from "./config.ts";
 
 /**
  * Flag and emblem expectation per geography level (TSK-A6C9B9251A15). Sets `flag_expected` and `emblem_expected`
@@ -11,7 +11,7 @@ import { packageRoot } from "./config.ts";
  * history, so the row is updated in place (its id is referenced by every unit of the level).
  */
 export async function seedMediaExpectations(db: DataSource, jurisdictionCode = "ke"): Promise<{ levels: number }> {
-  const file = JSON.parse(readFileSync(join(packageRoot, "fixtures", "seed", "ke-media-expectations.json"), "utf8")) as { levels: { code: string; flag: string; emblem: string }[] };
+  const file = JSON.parse(readFileSync(join(seedRoot, "ke", "registry", "ke-media-expectations.json"), "utf8")) as { levels: { code: string; flag: string; emblem: string }[] };
   let levels = 0;
   for (const level of file.levels) {
     const updated = await db.query(

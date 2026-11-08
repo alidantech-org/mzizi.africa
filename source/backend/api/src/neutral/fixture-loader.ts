@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type { DataSource } from "typeorm";
 
 /**
- * Loads database engine fixtures (source/backend/engine/database/fixtures) for tests. Rows are written in
+ * Loads fixture-format rows: test fixtures from source/backend/engine/database/fixtures/neutral-model (readFixture) and system seeds from the root `seed/` (readSeed). Rows are written in
  * dependency order; a string value "@key" refers to the id of the row with that key.
  *
  * Data rows carry no provenance, so the loader records it where it belongs: one source document
@@ -20,11 +20,20 @@ export interface FixtureRow {
 export const fixturesRoot = join(import.meta.dirname, "../../../engine/database/fixtures");
 export const fixturesDir = join(fixturesRoot, "neutral-model");
 
+/** Root of the system seed inputs (repository-root `seed/`); override with MZIZI_SEED_ROOT. */
+export const seedRoot = process.env.MZIZI_SEED_ROOT ?? join(import.meta.dirname, "../../../../../seed");
+
+/** Reads a JSON seed input by its path under `seed/`, e.g. "global/reference/media-formats.json". */
+export function readSeed<T = { country: string; rows: FixtureRow[] }>(path: string): T {
+  return JSON.parse(readFileSync(join(seedRoot, path), "utf8")) as T;
+}
+
 /** Fixed placeholder for the vocabulary ids a fixture document needs but does not model. */
 const PLACEHOLDER_KIND = "00000000-0000-4000-8000-000000000001";
 
+/** Test-only fixtures (neutral-model); system seeds are read with readSeed. */
 export function readFixture(name: string): { country: string; rows: FixtureRow[] } {
-  return JSON.parse(readFileSync(join(name.includes("/") ? fixturesRoot : fixturesDir, `${name}.json`), "utf8"));
+  return JSON.parse(readFileSync(join(fixturesDir, `${name}.json`), "utf8"));
 }
 
 interface Provenance {

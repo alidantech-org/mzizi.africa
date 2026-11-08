@@ -1,0 +1,4 @@
+# Root descriptor. Every seed folder inherits from here; see seed/README.md "Folder metadata".
+description: Mzizi system seed inputs.
+access: internal
+allow_weaker_children: true   # a deeper folder may be public only with an explicit authorization block

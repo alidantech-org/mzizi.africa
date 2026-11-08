@@ -1,0 +1,5 @@
+description: Collection and assessment policy lists read by the database and data engines.
+role: policy_definition
+acquisition_class: static_curated
+preparation: unknown
+review: {status: needs_review, note: "Policy basis is DEC-AUTO-APPROVAL; the preparer of the suffix list is not recorded."}

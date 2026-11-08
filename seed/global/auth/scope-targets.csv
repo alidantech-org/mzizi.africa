@@ -1,0 +1,2 @@
+table_name,parent_column
+auth.institutions,parent_id

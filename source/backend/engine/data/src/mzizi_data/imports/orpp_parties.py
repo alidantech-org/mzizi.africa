@@ -26,14 +26,14 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..extractors import orpp_parties
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 from .members import slug
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "orpp"
+MAPPINGS = MAPPINGS_ROOT / "orpp"
 AUTHORITY = "ke/registrar-of-political-parties"
 LICENCE = "Not confirmed (public register published by the Office of the Registrar of Political Parties under Political Parties Act s.34(e); reuse terms unassessed)"
 CONTACT_FIELDS = ("email", "postalAddress", "headOffice")

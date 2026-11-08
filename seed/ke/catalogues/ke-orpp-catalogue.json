@@ -5,7 +5,7 @@
     "site": "ke/orpp",
     "institution": "ke/registrar-of-political-parties",
     "host": "orpp.or.ke",
-    "access": "Exact-host rule in fixtures/policy/trusted-domains.json (orpp.or.ke is .or.ke, not covered by the .go.ke suffix rule); assessment decided by the agent account under DEC-AUTO-APPROVAL; 0.2 requests per second; robots.txt read by the gate; stop on challenge, 401, 403 or 429. Subdomains (ippms.orpp.or.ke self-service portal, opac.orpp.or.ke, outlook.orpp.or.ke) are NOT in scope and are never requested.",
+    "access": "Exact-host rule in seed/system/policy/trusted-domains.json (orpp.or.ke is .or.ke, not covered by the .go.ke suffix rule); assessment decided by the agent account under DEC-AUTO-APPROVAL; 0.2 requests per second; robots.txt read by the gate; stop on challenge, 401, 403 or 429. Subdomains (ippms.orpp.or.ke self-service portal, opac.orpp.or.ke, outlook.orpp.or.ke) are NOT in scope and are never requested.",
     "terms": "No licence or reuse statement was found on the site (the footer carries only a copyright line). The register, fund notices and Gazette notices are public statutory notices (Political Parties Act, Cap. 7D, s.34(e) register; Gazette notices); reuse terms are unassessed and recorded as such on every document.",
     "placement": "The institution carries no location columns by design (places redesign). The Registrar's offices (Lion Place, Waiyaki Way, Nairobi, per the Fund PDF letterhead) are an expected placement to be created by the places lane."
   },

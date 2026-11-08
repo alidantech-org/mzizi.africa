@@ -33,7 +33,7 @@ bun src/rewrite.ts bootstrap-admin <issuer> <subject> "<name>" [email]   # first
 bun test test/rewrite-auth.test.ts                  # auth schema checks (rolled-back transactions)
 ```
 
-Currently built: the `auth` schema (`.docs/improvements/schema-redesign/auth.md`). Override the connection with `REWRITE_DATABASE_URL` (default `postgres://postgres@localhost:5432/mzizi_new`).
+System seed inputs live in the root `seed/` (see `seed/README.md`); `bun src/seed.ts check|lock|report` validates and locks them. Currently built: the `auth` schema (`.docs/improvements/schema-redesign/auth.md`). Override the connection with `REWRITE_DATABASE_URL` (default `postgres://postgres@localhost:5432/mzizi_new`).
 
 ## Collection gate
 

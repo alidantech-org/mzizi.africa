@@ -15,12 +15,12 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "members"
+MAPPINGS = MAPPINGS_ROOT / "members"
 STAGES = {"A": ["institution", "party"], "B": ["office", "individual"], "C": ["holder", "membership"]}
 KEYS = {"institution": ("institutionCode",), "party": ("partyCode",), "office": ("officeCode",), "individual": ("personCode",), "holder": ("officeCode", "personCode"), "membership": ("partyCode", "personCode")}
 INSTITUTIONS = {"national-assembly": ("ke/national-assembly", "National Assembly of Kenya"), "senate": ("ke/senate", "Senate of Kenya")}

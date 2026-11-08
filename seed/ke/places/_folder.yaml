@@ -1,0 +1,5 @@
+description: Kenya landmark institutional places (name and text address only).
+role: seed_input
+acquisition_class: static_curated
+preparation: ai_prepared
+review: {status: needs_review, note: "The file states it was written by a coding agent from public postal and street descriptions."}

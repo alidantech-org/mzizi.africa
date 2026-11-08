@@ -18,14 +18,14 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..files import LocalDirectoryStore
 from ..geo_link import GeoResolver
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 from .members import slug
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "procurement"
+MAPPINGS = MAPPINGS_ROOT / "procurement"
 STAGES = {"A": ["pe_unit", "entity"], "B": ["identifier", "place", "contact"], "C": ["tender", "occupancy"], "D": ["contract"]}
 ROLE_BY_TYPE = {"school": "school-campus", "tertiary-institution": "school-campus", "hospital": "service-site"}
 METHODS = {"open": "open", "selective": "restricted", "direct": "direct"}

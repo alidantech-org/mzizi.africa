@@ -1,0 +1,11 @@
+namespace,description
+auth,Accounts, roles and grants
+pipeline,Staging candidates, runs, jobs and assessments
+audit,Comments, evidence references and review decisions
+electoral,Elections, candidates and results
+governance,Institutions, offices and office holders
+finance,Budgets and expenditure
+geography,Geographic units and boundaries
+legal,Legal instruments
+person,Public person records
+source,Publishers, documents and captures

@@ -11,13 +11,13 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 from .members import KEYS, MembersImport, slug
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "iebc"
+MAPPINGS = MAPPINGS_ROOT / "iebc"
 STAGES = {"B": ["office", "individual"], "C": ["holder"]}
 INSTITUTION = "ke/electoral-commission"
 

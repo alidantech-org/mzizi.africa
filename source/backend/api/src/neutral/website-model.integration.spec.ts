@@ -5,12 +5,12 @@ import { DataSource } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { scratchDatabase, synchronizeDomainSchemas } from "#/database/scratch-database";
-import { loadFixtures, readFixture } from "#/neutral/fixture-loader";
+import { loadFixtures, readFixture, readSeed } from "#/neutral/fixture-loader";
 
 /**
  * Sites are identified by their own id, not by a domain: a hostname can belong to different sites
  * over time, families own domain patterns, and sites link to the places and bodies they are about.
- * Fixture: engine/database/fixtures/neutral-model/kenya-sites.json (worked examples).
+ * Fixture: engine/database/fixtures/neutral-model/kenya-sites.json; media formats: seed/global/reference/media-formats.json (worked examples).
  */
 const adminUrl = process.env.TEST_DATABASE_URL;
 const entities = Object.values(
@@ -25,7 +25,7 @@ describe.skipIf(!adminUrl)("website model (Kenyan site families)", () => {
     db = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await db.initialize();
     await synchronizeDomainSchemas(db);
-    const ids = await loadFixtures(db, readFixture("reference/media-formats").rows);
+    const ids = await loadFixtures(db, readSeed("global/reference/media-formats.json").rows);
     await loadFixtures(db, readFixture("kenya").rows, ids);
     await loadFixtures(db, readFixture("kenya-sites").rows, ids);
   });

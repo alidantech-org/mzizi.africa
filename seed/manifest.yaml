@@ -1,0 +1,670 @@
+# Functional seed manifest (release 2026-11-08.1). Authored by hand; checksums, effective folder metadata and S3 key mappings are generated into manifest.lock.json by 'bun src/seed.ts lock'.
+# See README.md for the entry contract. The disabled illustrative example is examples/manifest.example.json.
+schema_version: 1
+release: 2026-11-08.1
+bucket: mzizi
+region: us-east-1
+entries:
+- id: global.auth.namespaces
+  path: global/auth/namespaces.csv
+  media_type: text/csv
+  loader: auth.baseline
+  target: auth.permissions
+  database_target_state: mzizi_new
+  key_columns:
+  - namespace
+  depends_on: []
+  consumers:
+  - source/backend/engine/database/src/seed-auth.ts
+  relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.auth.roles
+  path: global/auth/roles.csv
+  media_type: text/csv
+  loader: auth.baseline
+  target: auth.roles
+  database_target_state: mzizi_new
+  key_columns:
+  - code
+  depends_on: []
+  consumers:
+  - source/backend/engine/database/src/seed-auth.ts
+  relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.auth.role-permissions
+  path: global/auth/role-permissions.csv
+  media_type: text/csv
+  loader: auth.baseline
+  target: auth.role_permissions
+  database_target_state: mzizi_new
+  key_columns:
+  - role_code
+  - permission
+  depends_on:
+  - global.auth.roles
+  - global.auth.namespaces
+  consumers:
+  - source/backend/engine/database/src/seed-auth.ts
+  relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.auth.scope-targets
+  path: global/auth/scope-targets.csv
+  media_type: text/csv
+  loader: auth.baseline
+  target: auth.scope_targets
+  database_target_state: mzizi_new
+  key_columns:
+  - table_name
+  depends_on: []
+  consumers:
+  - source/backend/engine/database/src/seed-auth.ts
+  relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.auth.bootstrap
+  path: global/auth/bootstrap.yaml
+  media_type: application/yaml
+  loader: auth.baseline
+  target: first administrator definition (read by rewrite.ts bootstrap-admin; identity from environment, never stored)
+  database_target_state: mzizi_new
+  depends_on:
+  - global.auth.roles
+  consumers:
+  - source/backend/engine/database/src/seed-auth.ts
+  - source/backend/engine/database/src/rewrite.ts
+  relocated_from: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.reference.site-tags
+  path: global/reference/site-tags.json
+  media_type: application/json
+  loader: fixtures.entities
+  target: reference.classifications (site-tag scheme) via the Dryv entities
+  database_target_state: legacy_dev_only
+  key_columns:
+  - key
+  depends_on: []
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  - source/backend/engine/data/src/mzizi_data/structure/validate.py
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.reference.media-formats
+  path: global/reference/media-formats.json
+  media_type: application/json
+  loader: fixtures.entities
+  target: media formats (FormatEntity)
+  database_target_state: legacy_dev_only
+  key_columns:
+  - key
+  depends_on: []
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  - source/backend/api/src/neutral/website-model.integration.spec.ts
+  - source/backend/api/src/neutral/neutral-model.integration.spec.ts
+  relocated_from: null
+  notes: 'Duplicate resolution: authoritative payload for file formats. Derived from the legacy files-service CSV (api-legacy/app/routes/files/_seed/file_types.csv is byte-identical to _archives/files/_seed/file_types.csv).
+    The filesystem task derives global file-types.csv/extension aliases from this file; legacy CSVs are superseded and are not adopted.'
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.reference.source-kinds
+  path: global/reference/source-kinds.json
+  media_type: application/json
+  loader: fixtures.entities
+  target: reference.classifications (source kinds)
+  database_target_state: legacy_dev_only
+  key_columns:
+  - key
+  depends_on:
+  - global.reference.site-tags
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.reference.poc-countries
+  path: global/reference/poc-countries.json
+  media_type: application/json
+  loader: fixtures.entities
+  target: reference.jurisdictions and hierarchy (za, ng, tz)
+  database_target_state: legacy_dev_only
+  key_columns:
+  - key
+  depends_on:
+  - global.reference.site-tags
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.reference.kenya-reference
+  path: ke/reference/kenya-reference.json
+  media_type: application/json
+  loader: fixtures.entities
+  target: reference.jurisdictions, geography hierarchy and Kenya vocabularies
+  database_target_state: legacy_dev_only
+  key_columns:
+  - key
+  depends_on:
+  - global.reference.site-tags
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.reference.ke-legal-kinds
+  path: ke/reference/ke-legal-kinds.json
+  media_type: application/json
+  loader: fixtures.entities
+  target: reference.classifications (legal kinds)
+  database_target_state: legacy_dev_only
+  key_columns:
+  - key
+  depends_on:
+  - ke.reference.kenya-reference
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.research.dossiers
+  path: global/research/dossiers.json
+  media_type: application/json
+  loader: fixtures.entities
+  target: website.dossiers
+  database_target_state: legacy_dev_only
+  key_columns:
+  - key
+  depends_on:
+  - ke.reference.kenya-reference
+  - global.reference.poc-countries
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.research.ke-pilot-sites
+  path: ke/research/ke-pilot-sites.json
+  media_type: application/json
+  loader: fixtures.entities
+  target: website sites registry
+  database_target_state: legacy_dev_only
+  key_columns:
+  - key
+  depends_on:
+  - ke.reference.kenya-reference
+  - global.reference.source-kinds
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.research.ke-site-families
+  path: ke/research/ke-site-families.json
+  media_type: application/json
+  loader: fixtures.entities
+  target: website site families and traits
+  database_target_state: legacy_dev_only
+  key_columns:
+  - key
+  depends_on:
+  - ke.research.ke-pilot-sites
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.policy.trusted-domains
+  path: system/policy/trusted-domains.json
+  media_type: application/json
+  loader: database.assessment-policy
+  target: assessment auto-approval policy (read, no table)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/database/src/assessments.ts
+  - source/backend/engine/data/src/mzizi_data/probe_domains.py
+  - source/backend/engine/data/src/mzizi_data/crawl.py
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.policy.domain-spellings
+  path: ke/policy/domain-spellings.json
+  media_type: application/json
+  loader: engine.domain-spellings
+  target: domain pattern spellings (read, no table)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/patterns.py
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.governance.ke-governance-structure
+  path: ke/governance/ke-governance-structure.json
+  media_type: application/json
+  loader: database.governance-catalogue
+  target: governance institutions and relationships
+  database_target_state: legacy_dev_only
+  depends_on:
+  - ke.reference.kenya-reference
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  - source/backend/engine/database/src/governance-catalogue.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.governance.ke-office-holders-curated
+  path: ke/governance/ke-office-holders-curated.json
+  media_type: application/json
+  loader: engine.office-holders
+  target: staged office holdings (unverified)
+  database_target_state: legacy_dev_only
+  depends_on:
+  - ke.governance.ke-governance-structure
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/office_holders.py
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.patterns.ke-office-patterns
+  path: ke/patterns/ke-office-patterns.json
+  media_type: application/json
+  loader: database.office-patterns
+  target: governance offices generated from patterns
+  database_target_state: legacy_dev_only
+  depends_on:
+  - ke.governance.ke-governance-structure
+  consumers:
+  - source/backend/engine/database/src/patterns.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.catalogues.ke-statistical-catalogue
+  path: ke/catalogues/ke-statistical-catalogue.json
+  media_type: application/json
+  loader: database.statistical-catalogue
+  target: source publishers and documents
+  database_target_state: legacy_dev_only
+  depends_on:
+  - ke.reference.kenya-reference
+  consumers:
+  - source/backend/engine/database/src/catalogue.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.catalogues.ke-iebc-catalogue
+  path: ke/catalogues/ke-iebc-catalogue.json
+  media_type: application/json
+  loader: none.unconsumed
+  target: none (no loader or test reads this file)
+  database_target_state: pending_rewrite_schema
+  depends_on: []
+  consumers: []
+  relocated_from: null
+  notes: No consumer found by repository search; kept for custody until the source schema task decides how publications are seeded.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.catalogues.ke-orpp-catalogue
+  path: ke/catalogues/ke-orpp-catalogue.json
+  media_type: application/json
+  loader: test.catalogue-checks
+  target: none (read only by DB engine tests)
+  database_target_state: test_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/database/test/orpp-seed.test.ts
+  relocated_from: null
+  notes: Only a test reads this file; no production loader exists yet.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.catalogues.ke-priority-publishers-catalogue
+  path: ke/catalogues/ke-priority-publishers-catalogue.json
+  media_type: application/json
+  loader: test.catalogue-checks
+  target: none (read only by DB engine tests)
+  database_target_state: test_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/database/test/priority-publishers-seed.test.ts
+  relocated_from: null
+  notes: Only a test reads this file; no production loader exists yet.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.registry.ke-expected-sites
+  path: ke/registry/ke-expected-sites.json
+  media_type: application/json
+  loader: database.expected-sites
+  target: website sites and domains
+  database_target_state: legacy_dev_only
+  depends_on:
+  - ke.governance.ke-governance-structure
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.registry.ke-domain-zones
+  path: ke/registry/ke-domain-zones.json
+  media_type: application/json
+  loader: database.domain-zones
+  target: website domain zones
+  database_target_state: legacy_dev_only
+  depends_on:
+  - ke.reference.kenya-reference
+  consumers:
+  - source/backend/engine/database/src/seeds.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.registry.ke-site-sections
+  path: ke/registry/ke-site-sections.json
+  media_type: application/json
+  loader: engine.crawl-sections
+  target: site section expectations (read, no table)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/crawl.py
+  - source/backend/engine/data/tests/test_structure.py
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.registry.ke-media-expectations
+  path: ke/registry/ke-media-expectations.json
+  media_type: application/json
+  loader: database.media-expectations
+  target: media expectations by governance level
+  database_target_state: legacy_dev_only
+  depends_on:
+  - ke.governance.ke-governance-structure
+  consumers:
+  - source/backend/engine/database/src/media.ts
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.places.ke-landmark-places
+  path: ke/places/ke-landmark-places.json
+  media_type: application/json
+  loader: engine.landmark-places
+  target: places (text addresses only)
+  database_target_state: legacy_dev_only
+  depends_on:
+  - ke.reference.kenya-reference
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/landmarks.py
+  relocated_from: null
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.budget
+  glob: system/mappings/budget/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle budget (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/budget_table.py
+  relocated_from:
+    system/mappings/budget/budget.yml: source/backend/engine/data/mappings/budget/budget.yml
+    system/mappings/budget/fiscal_year.yml: source/backend/engine/data/mappings/budget/fiscal_year.yml
+    system/mappings/budget/unit.yml: source/backend/engine/data/mappings/budget/unit.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.constitution
+  glob: system/mappings/constitution/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle constitution (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/constitution.py
+  relocated_from:
+    system/mappings/constitution/article.yml: source/backend/engine/data/mappings/constitution/article.yml
+    system/mappings/constitution/chapter.yml: source/backend/engine/data/mappings/constitution/chapter.yml
+    system/mappings/constitution/instrument.yml: source/backend/engine/data/mappings/constitution/instrument.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.county-assembly
+  glob: system/mappings/county-assembly/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle county-assembly (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/county_assembly_members.py
+  relocated_from:
+    system/mappings/county-assembly/holder.yml: source/backend/engine/data/mappings/county-assembly/holder.yml
+    system/mappings/county-assembly/individual.yml: source/backend/engine/data/mappings/county-assembly/individual.yml
+    system/mappings/county-assembly/membership.yml: source/backend/engine/data/mappings/county-assembly/membership.yml
+    system/mappings/county-assembly/office.yml: source/backend/engine/data/mappings/county-assembly/office.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.county-executives
+  glob: system/mappings/county-executives/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle county-executives (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/county_executives.py
+  relocated_from:
+    system/mappings/county-executives/holder.yml: source/backend/engine/data/mappings/county-executives/holder.yml
+    system/mappings/county-executives/individual.yml: source/backend/engine/data/mappings/county-executives/individual.yml
+    system/mappings/county-executives/membership.yml: source/backend/engine/data/mappings/county-executives/membership.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.county-leaders
+  glob: system/mappings/county-leaders/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle county-leaders (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/county_leaders.py
+  relocated_from:
+    system/mappings/county-leaders/holder.yml: source/backend/engine/data/mappings/county-leaders/holder.yml
+    system/mappings/county-leaders/individual.yml: source/backend/engine/data/mappings/county-leaders/individual.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.geoadmin
+  glob: system/mappings/geoadmin/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle geoadmin (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/geo_admin.py
+  relocated_from:
+    system/mappings/geoadmin/boundary.yml: source/backend/engine/data/mappings/geoadmin/boundary.yml
+    system/mappings/geoadmin/unit.yml: source/backend/engine/data/mappings/geoadmin/unit.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.geoboundaries
+  glob: system/mappings/geoboundaries/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle geoboundaries (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/geoboundaries.py
+  relocated_from:
+    system/mappings/geoboundaries/boundary-adm0.yml: source/backend/engine/data/mappings/geoboundaries/boundary-adm0.yml
+    system/mappings/geoboundaries/boundary-adm1.yml: source/backend/engine/data/mappings/geoboundaries/boundary-adm1.yml
+    system/mappings/geoboundaries/unit-adm0.yml: source/backend/engine/data/mappings/geoboundaries/unit-adm0.yml
+    system/mappings/geoboundaries/unit-adm1.yml: source/backend/engine/data/mappings/geoboundaries/unit-adm1.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.iebc
+  glob: system/mappings/iebc/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle iebc (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/iebc.py
+  relocated_from:
+    system/mappings/iebc/holder.yml: source/backend/engine/data/mappings/iebc/holder.yml
+    system/mappings/iebc/individual.yml: source/backend/engine/data/mappings/iebc/individual.yml
+    system/mappings/iebc/office.yml: source/backend/engine/data/mappings/iebc/office.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.legal
+  glob: system/mappings/legal/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle legal (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/legal_documents.py
+  relocated_from:
+    system/mappings/legal/instrument.yml: source/backend/engine/data/mappings/legal/instrument.yml
+    system/mappings/legal/provision.yml: source/backend/engine/data/mappings/legal/provision.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.members
+  glob: system/mappings/members/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle members (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/members.py
+  relocated_from:
+    system/mappings/members/holder.yml: source/backend/engine/data/mappings/members/holder.yml
+    system/mappings/members/individual.yml: source/backend/engine/data/mappings/members/individual.yml
+    system/mappings/members/institution.yml: source/backend/engine/data/mappings/members/institution.yml
+    system/mappings/members/membership.yml: source/backend/engine/data/mappings/members/membership.yml
+    system/mappings/members/office.yml: source/backend/engine/data/mappings/members/office.yml
+    system/mappings/members/party.yml: source/backend/engine/data/mappings/members/party.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.ngcdf
+  glob: system/mappings/ngcdf/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle ngcdf (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/ngcdf.py
+  relocated_from:
+    system/mappings/ngcdf/budget.yml: source/backend/engine/data/mappings/ngcdf/budget.yml
+    system/mappings/ngcdf/fiscal_year.yml: source/backend/engine/data/mappings/ngcdf/fiscal_year.yml
+    system/mappings/ngcdf/transfer.yml: source/backend/engine/data/mappings/ngcdf/transfer.yml
+    system/mappings/ngcdf/unit.yml: source/backend/engine/data/mappings/ngcdf/unit.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.office_holders
+  glob: system/mappings/office_holders/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle office_holders (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/office_holders.py
+  relocated_from:
+    system/mappings/office_holders/holder.yml: source/backend/engine/data/mappings/office_holders/holder.yml
+    system/mappings/office_holders/individual.yml: source/backend/engine/data/mappings/office_holders/individual.yml
+    system/mappings/office_holders/membership.yml: source/backend/engine/data/mappings/office_holders/membership.yml
+    system/mappings/office_holders/office.yml: source/backend/engine/data/mappings/office_holders/office.yml
+    system/mappings/office_holders/party.yml: source/backend/engine/data/mappings/office_holders/party.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.orpp
+  glob: system/mappings/orpp/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle orpp (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/orpp_parties.py
+  relocated_from:
+    system/mappings/orpp/party.yml: source/backend/engine/data/mappings/orpp/party.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.ppf
+  glob: system/mappings/ppf/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle ppf (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/ppf.py
+  relocated_from:
+    system/mappings/ppf/transfer.yml: source/backend/engine/data/mappings/ppf/transfer.yml
+    system/mappings/ppf/unit.yml: source/backend/engine/data/mappings/ppf/unit.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.procurement
+  glob: system/mappings/procurement/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle procurement (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/procurement.py
+  relocated_from:
+    system/mappings/procurement/contact.yml: source/backend/engine/data/mappings/procurement/contact.yml
+    system/mappings/procurement/contract.yml: source/backend/engine/data/mappings/procurement/contract.yml
+    system/mappings/procurement/entity.yml: source/backend/engine/data/mappings/procurement/entity.yml
+    system/mappings/procurement/identifier.yml: source/backend/engine/data/mappings/procurement/identifier.yml
+    system/mappings/procurement/occupancy.yml: source/backend/engine/data/mappings/procurement/occupancy.yml
+    system/mappings/procurement/pe_unit.yml: source/backend/engine/data/mappings/procurement/pe_unit.yml
+    system/mappings/procurement/place.yml: source/backend/engine/data/mappings/procurement/place.yml
+    system/mappings/procurement/tender.yml: source/backend/engine/data/mappings/procurement/tender.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.sitting
+  glob: system/mappings/sitting/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle sitting (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/sittings.py
+  relocated_from:
+    system/mappings/sitting/event.yml: source/backend/engine/data/mappings/sitting/event.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: system.mappings.worldbank
+  glob: system/mappings/worldbank/*.yml
+  media_type: application/yaml
+  loader: engine.import-mappings
+  target: importer mapping bundle worldbank (staging candidates)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/src/mzizi_data/imports/worldbank.py
+  relocated_from:
+    system/mappings/worldbank/category.yml: source/backend/engine/data/mappings/worldbank/category.yml
+    system/mappings/worldbank/dataset.yml: source/backend/engine/data/mappings/worldbank/dataset.yml
+    system/mappings/worldbank/indicator.yml: source/backend/engine/data/mappings/worldbank/indicator.yml
+    system/mappings/worldbank/observation.yml: source/backend/engine/data/mappings/worldbank/observation.yml
+    system/mappings/worldbank/period.yml: source/backend/engine/data/mappings/worldbank/period.yml
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.sites.ke-iebc
+  glob: ke/sites/ke-iebc/**
+  media_type: application/yaml
+  loader: engine.site-structure
+  target: site structure bundle ke-iebc (registered via the data engine batch submit)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/tests/test_batch.py
+  relocated_from:
+    ke/sites/ke-iebc/NOTES.md: source/backend/engine/data/pilots/ke-iebc/NOTES.md
+    ke/sites/ke-iebc/examples/party-list.html: source/backend/engine/data/pilots/ke-iebc/examples/party-list.html
+    ke/sites/ke-iebc/manifest.yml: source/backend/engine/data/pilots/ke-iebc/manifest.yml
+    ke/sites/ke-iebc/mappings/party-list.yml: source/backend/engine/data/pilots/ke-iebc/mappings/party-list.yml
+    ke/sites/ke-iebc/modules/party-list.yml: source/backend/engine/data/pilots/ke-iebc/modules/party-list.yml
+  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: ke.sites.ke-parliament
+  glob: ke/sites/ke-parliament/**
+  media_type: application/yaml
+  loader: engine.site-structure
+  target: site structure bundle ke-parliament (registered via the data engine batch submit)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/tests/test_batch.py
+  relocated_from:
+    ke/sites/ke-parliament/NOTES.md: source/backend/engine/data/pilots/ke-parliament/NOTES.md
+    ke/sites/ke-parliament/examples/budget-documents.html: source/backend/engine/data/pilots/ke-parliament/examples/budget-documents.html
+    ke/sites/ke-parliament/manifest.yml: source/backend/engine/data/pilots/ke-parliament/manifest.yml
+    ke/sites/ke-parliament/mappings/budget-documents.yml: source/backend/engine/data/pilots/ke-parliament/mappings/budget-documents.yml
+    ke/sites/ke-parliament/modules/budget-documents.yml: source/backend/engine/data/pilots/ke-parliament/modules/budget-documents.yml
+  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.sites.world-geoboundaries
+  glob: global/sites/world-geoboundaries/**
+  media_type: application/yaml
+  loader: engine.site-structure
+  target: site structure bundle world-geoboundaries (registered via the data engine batch submit)
+  database_target_state: legacy_dev_only
+  depends_on: []
+  consumers:
+  - source/backend/engine/data/tests/test_batch.py
+  relocated_from:
+    global/sites/world-geoboundaries/NOTES.md: source/backend/engine/data/pilots/world-geoboundaries/NOTES.md
+    global/sites/world-geoboundaries/examples/releases.json: source/backend/engine/data/pilots/world-geoboundaries/examples/releases.json
+    global/sites/world-geoboundaries/manifest.yml: source/backend/engine/data/pilots/world-geoboundaries/manifest.yml
+    global/sites/world-geoboundaries/mappings/releases.yml: source/backend/engine/data/pilots/world-geoboundaries/mappings/releases.yml
+    global/sites/world-geoboundaries/modules/releases.yml: source/backend/engine/data/pilots/world-geoboundaries/modules/releases.yml
+  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension.
+  sync_policy: preview_then_apply_no_implicit_delete

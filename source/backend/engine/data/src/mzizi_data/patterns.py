@@ -17,12 +17,13 @@ from urllib.parse import urlparse
 
 import psycopg
 
+from .seedroot import SEED_ROOT
 from . import domains, incidents
 from .compliance import Denied, StopRun
 from .fetch import PoliteFetcher, RobotsDisallowed
 
 SLOT = re.compile(r"\{([a-z_][a-z0-9_]*)\}")
-SPELLINGS_FILE = Path(__file__).resolve().parents[3] / "database" / "fixtures" / "policy" / "domain-spellings.json"
+SPELLINGS_FILE = SEED_ROOT / "ke" / "policy" / "domain-spellings.json"
 
 
 def load_spellings(path: Path = SPELLINGS_FILE) -> dict:

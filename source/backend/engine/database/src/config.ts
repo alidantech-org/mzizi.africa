@@ -5,6 +5,8 @@ import { join } from "node:path";
 import { DataSource } from "typeorm";
 
 export const packageRoot = join(import.meta.dir, "..");
+/** Repository-root `seed/` (system seed inputs); one definition shared with the API fixture loader. */
+export { seedRoot } from "../../../api/src/neutral/fixture-loader.ts";
 const apiRoot = join(packageRoot, "..", "..", "api");
 
 /** History of applied migrations lives here so nothing is placed in `public`. */

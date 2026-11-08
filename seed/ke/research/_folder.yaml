@@ -1,0 +1,5 @@
+description: Kenya site registry rows and site families from agent research (profiled, unverified, never active).
+role: research_registry
+acquisition_class: externally_collected
+preparation: ai_prepared
+review: {status: needs_review, note: "File notes state the rows are agent-collected from one manual GET per page on 2026-11-02 and are unverified."}

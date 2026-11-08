@@ -1,0 +1,8 @@
+# Definition of the first administrator. The identity itself is deployment-specific and never stored in Git:
+# supply it through these environment variable names (or command arguments) when running the bootstrap.
+role: admin
+scope: platform
+identity:
+  issuer_env: AUTH_BOOTSTRAP_ISSUER
+  subject_env: AUTH_BOOTSTRAP_SUBJECT
+  display_name_env: AUTH_BOOTSTRAP_NAME

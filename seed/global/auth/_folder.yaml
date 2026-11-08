@@ -1,0 +1,5 @@
+description: Baseline access definitions applied to the auth schema (roles, namespaces, role bundles, scope targets, bootstrap definition). No credentials or user exports.
+role: seed_input
+acquisition_class: static_curated
+preparation: human_and_ai_assisted
+review: {status: reviewed, note: "Prepared by a coding agent under the user's design direction on 2026-11-08; role names and bundles mirror the previous reviewer/contributor/admin model."}

@@ -1,0 +1,5 @@
+description: Import mapping YAML for the data engine importers. Mappings are jurisdiction-parameterised (the {jurisdiction} variable is supplied at run time).
+role: import_mapping
+acquisition_class: static_curated
+preparation: unknown
+review: {status: needs_review, note: "Mapping files carry no preparation statement; confirm before registration."}

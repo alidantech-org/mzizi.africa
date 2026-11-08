@@ -4,7 +4,7 @@
 
 # Kenya site catalogue
 
-The catalogue records which kinds of Kenyan public sites Mzizi knows about, the domain patterns that suggest where more of them are, and the sites actually seen. Data: `engine/database/fixtures/research/ke-site-families.json` and `ke-pilot-sites.json`, loaded with `bun src/cli.ts seed research`. Everything here is agent research dated 2026-11-02 and **unverified and legally unassessed**; no site is `active` and none has an assessment, so the collection gate refuses all of them.
+The catalogue records which kinds of Kenyan public sites Mzizi knows about, the domain patterns that suggest where more of them are, and the sites actually seen. Data: `seed/ke/research/ke-site-families.json` and `ke-pilot-sites.json`, loaded with `bun src/cli.ts seed research`. Everything here is agent research dated 2026-11-02 and **unverified and legally unassessed**; no site is `active` and none has an assessment, so the collection gate refuses all of them.
 
 ## Families and patterns
 

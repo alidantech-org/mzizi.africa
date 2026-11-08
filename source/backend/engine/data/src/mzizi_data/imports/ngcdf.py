@@ -17,13 +17,14 @@ import psycopg
 import yaml
 from lxml import html
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS, fiscal_year_dates
+from .budget_table import fiscal_year_dates
 from .members import slug
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "ngcdf"
+MAPPINGS = MAPPINGS_ROOT / "ngcdf"
 STAGES = {"A": ["fiscal_year", "unit"], "B": ["budget", "transfer"]}
 KEYS = {"fiscal_year": ("fiscalYearCode",), "unit": ("unitCode",), "budget": ("unitCode", "fiscalYearCode"), "transfer": ("unitCode", "fiscalYearCode", "date", "amount")}
 BOARD_CODE = "ke/ngcdf/board"

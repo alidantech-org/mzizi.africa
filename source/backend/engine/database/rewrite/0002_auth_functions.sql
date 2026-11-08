@@ -192,21 +192,15 @@ BEGIN
 END $$;
 
 -- First administrator (run by the database management engine, not by the application).
-CREATE FUNCTION auth.bootstrap_admin(p_issuer text, p_subject text, p_display_name text) RETURNS uuid LANGUAGE plpgsql AS $$
+CREATE FUNCTION auth.bootstrap_admin(p_issuer text, p_subject text, p_display_name text, p_role_code text DEFAULT 'admin') RETURNS uuid LANGUAGE plpgsql AS $$
 DECLARE v_account uuid;
 BEGIN
   INSERT INTO auth.accounts (display_name) VALUES (p_display_name) RETURNING id INTO v_account;
   INSERT INTO auth.identities (account_id, issuer, subject) VALUES (v_account, p_issuer, p_subject);
-  INSERT INTO auth.role_assignments (account_id, role_id, granted_by) SELECT v_account, id, v_account FROM auth.roles WHERE code = 'admin';
+  INSERT INTO auth.role_assignments (account_id, role_id, granted_by) SELECT v_account, id, v_account FROM auth.roles WHERE code = p_role_code;
+  IF NOT FOUND THEN RAISE EXCEPTION 'unknown role % (apply the auth seed first)', p_role_code; END IF;
   RETURN v_account;
 END $$;
-REVOKE ALL ON FUNCTION auth.bootstrap_admin(text, text, text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION auth.bootstrap_admin(text, text, text, text) FROM PUBLIC;
 
--- ---------------------------------------------------------------------- seeds
-INSERT INTO auth.roles (code, name) VALUES ('admin', 'Platform administrator');
-SELECT auth.register_namespace(n) FROM unnest(ARRAY['auth', 'pipeline', 'audit', 'electoral', 'governance', 'finance', 'geography', 'legal', 'person', 'source']) n;
-SELECT auth.create_role('reader', 'Reader', ARRAY['electoral.read', 'governance.read', 'finance.read', 'geography.read', 'legal.read', 'person.read', 'source.read']);
-SELECT auth.create_role('contributor', 'Contributor', ARRAY['electoral.read', 'governance.read', 'finance.read', 'geography.read', 'legal.read', 'person.read', 'source.read', 'audit.edit']);
-SELECT auth.create_role('reviewer', 'Platform reviewer', ARRAY['electoral.read', 'governance.read', 'finance.read', 'geography.read', 'legal.read', 'person.read', 'source.read',
-  'audit.edit', 'audit.review', 'pipeline.read', 'pipeline.edit', 'pipeline.review', 'pipeline.publish']);
-SELECT auth.register_scope_target('auth.institutions', 'parent_id');
+-- Seed rows (roles, namespaces, role bundles, scope targets) live in the root seed/global/auth/ and are applied by src/seed-auth.ts.

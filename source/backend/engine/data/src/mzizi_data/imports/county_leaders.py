@@ -10,6 +10,7 @@ import json
 import re
 from pathlib import Path
 
+from ..seedroot import MAPPINGS_ROOT
 from . import county_sites
 from .county_executives import slug
 
@@ -74,7 +75,7 @@ from ..files import LocalDirectoryStore
 from ..geo_link import GeoResolver
 from ..structure.effective import substitute
 
-MAPPINGS = Path(__file__).resolve().parents[3] / "mappings" / "county-leaders"
+MAPPINGS = MAPPINGS_ROOT / "county-leaders"
 DEFINITION = {"governor": "county-executive:governor", "deputy-governor": "county-executive:deputy-governor", "county-secretary": "county-executive:county-secretary", "cec-member": "county-executive:county-executive-committee-member", "speaker": "county-assembly:speaker"}
 MAX_CEC = 10
 STAGES = {"A": ["individual"], "B": ["holder"]}

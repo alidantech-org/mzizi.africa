@@ -7,9 +7,14 @@ import httpx
 import pytest
 
 from mzizi_data import batch, compliance, fetch, registry, runner
+from mzizi_data.seedroot import SEED_ROOT
 from tests.helpers import UA, Site, make_fetcher
 
-PILOTS = Path(__file__).resolve().parents[1] / "pilots"
+PILOTS = {
+    "ke-iebc": SEED_ROOT / "ke" / "sites" / "ke-iebc",
+    "ke-parliament": SEED_ROOT / "ke" / "sites" / "ke-parliament",
+    "world-geoboundaries": SEED_ROOT / "global" / "sites" / "world-geoboundaries",
+}
 DATABASE_ENGINE = Path(__file__).resolve().parents[2] / "database"
 
 
@@ -33,7 +38,7 @@ def test_pilot_bundles_validate_and_the_dry_runs_find_real_items():
         from mzizi_data.structure import bundle as b
         from mzizi_data.structure.validate import validate
 
-        report = validate(b.load(PILOTS / name))
+        report = validate(b.load(PILOTS[name]))
         assert report.ok, report.errors
         assert report.dry_run[module]["items"] >= minimum and report.dry_run[module]["fieldErrors"] == 0
 
@@ -46,7 +51,7 @@ def test_registry_seed_holds_the_pilot_sites_with_their_domains(conn, pilots_db)
 
 
 def test_submit_activate_demote_and_the_gate_stays_closed(conn, store, pilots_db):
-    first = batch.submit(conn, store, PILOTS / "ke-iebc", agent="test-agent", model="test-model")
+    first = batch.submit(conn, store, PILOTS["ke-iebc"], agent="test-agent", model="test-model")
     conn.commit()
     assert (first.status, first.number) == ("validated", 1) and first.version_id
     method = conn.execute("SELECT m.kind, m.model, m.tool FROM website.structure_versions v JOIN source.methods m ON m.id = v.method_id WHERE v.id = %s", (first.version_id,)).fetchone()
@@ -60,7 +65,7 @@ def test_submit_activate_demote_and_the_gate_stays_closed(conn, store, pilots_db
     ctx = runner.build_context(conn, store, "ke/iebc", make_fetcher(conn, Site({})))
     report = runner.run_module(ctx, "party-list")
     assert report.status == "denied" and "legal status is not_reviewed" in report.stopped  # active, valid, and still not allowed to collect
-    second = batch.submit(conn, store, PILOTS / "ke-iebc", agent="test-agent")
+    second = batch.submit(conn, store, PILOTS["ke-iebc"], agent="test-agent")
     assert second.number == 2
     batch.demote(conn, second.version_id, "superseded by a better recipe")
     assert [v["status"] for v in batch.list_versions(conn, "ke/iebc")][-1] == "rejected"
@@ -70,7 +75,7 @@ def test_an_invalid_bundle_is_kept_as_a_rejected_version_with_its_reasons(conn, 
     import shutil
 
     broken = tmp_path / "ke-parliament"
-    shutil.copytree(PILOTS / "ke-parliament", broken)
+    shutil.copytree(PILOTS["ke-parliament"], broken)
     text = (broken / "modules" / "budget-documents.yml").read_text().replace("kind:budget", "kind:unicorn")
     (broken / "modules" / "budget-documents.yml").write_text(text)
     result = batch.submit(conn, store, broken, agent="test-agent")
@@ -86,7 +91,7 @@ def test_an_unregistered_site_is_skipped_not_invented(conn, store, pilots_db, tm
     import shutil
 
     copy = tmp_path / "ghost"
-    shutil.copytree(PILOTS / "world-geoboundaries", copy)
+    shutil.copytree(PILOTS["world-geoboundaries"], copy)
     (copy / "manifest.yml").write_text((copy / "manifest.yml").read_text().replace("site: world/geoboundaries", "site: world/ghost"))
     assert batch.submit(conn, store, copy, agent="test-agent").status == "skipped"
 
@@ -94,7 +99,7 @@ def test_an_unregistered_site_is_skipped_not_invented(conn, store, pilots_db, tm
 def test_the_iebc_pilot_runs_end_to_end_once_a_human_approves_the_source(conn, store, pilots_db):
     """With an approved assessment (test fixture), the real recipe reads the saved IEBC markup into absolute-URL candidates."""
     site = conn.execute("SELECT id::text AS id, jurisdiction_id::text AS jid FROM website.sites WHERE code = 'ke/iebc'").fetchone()
-    version = batch.submit(conn, store, PILOTS / "ke-iebc", agent="test-agent")
+    version = batch.submit(conn, store, PILOTS["ke-iebc"], agent="test-agent")
     batch.activate(conn, version.version_id)
     conn.execute("UPDATE website.assessments SET is_current = false WHERE site_id = %s", (site["id"],))
     conn.execute(
@@ -104,7 +109,7 @@ def test_the_iebc_pilot_runs_end_to_end_once_a_human_approves_the_source(conn, s
     if conn.execute("UPDATE website.dossiers SET launch_stage = 'pilot' WHERE jurisdiction_id = %s AND is_current", (site["jid"],)).rowcount == 0:
         conn.execute("INSERT INTO website.dossiers (jurisdiction_id, applicable_laws, launch_stage, is_current, created_at, updated_at, version) VALUES (%s, '[]', 'pilot', true, now(), now(), 1)", (site["jid"],))
     conn.commit()
-    listing = (PILOTS / "ke-iebc" / "examples" / "party-list.html").read_text()
+    listing = (PILOTS["ke-iebc"] / "examples" / "party-list.html").read_text()
     web = Site({"/resources/?Party_list": listing, "/resources/?Party_list&page=2": "<html></html>"}, robots=None)
     ctx = runner.build_context(conn, store, "ke/iebc", make_fetcher(conn, lambda request: web(request) if request.url.query != b"Party_list" or True else None))
     report = runner.run_module(ctx, "party-list")

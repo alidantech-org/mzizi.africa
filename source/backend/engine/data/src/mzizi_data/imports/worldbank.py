@@ -14,12 +14,13 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
 from .geoboundaries import COUNTRIES
 
-MAPPINGS = Path(__file__).resolve().parents[3] / "mappings" / "worldbank"
+MAPPINGS = MAPPINGS_ROOT / "worldbank"
 ORDER = ["category", "indicator", "period", "dataset", "observation"]
 
 

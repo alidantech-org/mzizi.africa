@@ -1,0 +1,5 @@
+description: Seeded site structures (manifest, modules, mappings, example inputs) for Kenyan sources; one folder per site code.
+role: site_structure
+acquisition_class: externally_collected
+preparation: unknown
+review: {status: needs_review, note: "NOTES record the observation (one manual GET, 2026-11-02) but not the preparer; confirm before registration."}

@@ -20,13 +20,13 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
-from .budget_table import MAPPINGS as _BUDGET_MAPPINGS
 from .members import slug
 
-MAPPINGS = _BUDGET_MAPPINGS.parent / "ppf"
+MAPPINGS = MAPPINGS_ROOT / "ppf"
 AUTHORITY = "ke/registrar-of-political-parties"
 FUND_CODE = "ke/fund/political-parties-fund"
 LEGAL_BASIS = "Political Parties Act (Cap. 7D), sections 23, 25 and 34(b); Political Parties (Funding) Regulations, 2019"

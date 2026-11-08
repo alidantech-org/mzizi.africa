@@ -15,11 +15,12 @@ from pathlib import Path
 import psycopg
 import yaml
 
+from ..seedroot import MAPPINGS_ROOT
 from .. import candidates, jobs, pipeline, register
 from ..structure.effective import substitute
 from ..files import LocalDirectoryStore
 
-MAPPINGS = Path(__file__).resolve().parents[3] / "mappings" / "geoboundaries"
+MAPPINGS = MAPPINGS_ROOT / "geoboundaries"
 CITATION = "Runfola, D. et al. (2020) geoBoundaries: A global database of political administrative boundaries. PLoS ONE 15(4): e0231866."
 
 

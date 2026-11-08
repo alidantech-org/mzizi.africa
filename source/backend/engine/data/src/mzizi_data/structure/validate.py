@@ -14,6 +14,7 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+from ..seedroot import SEED_ROOT
 from . import extract, sections, transforms
 from .bundle import Bundle
 from .effective import effective_modules
@@ -21,7 +22,7 @@ from .effective import effective_modules
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_DIR = ROOT / "schemas" / "site" / "v1"
 CONTRACTS = ROOT.parents[1] / "contracts"
-TAG_VOCABULARY = ROOT.parent / "database" / "fixtures" / "reference" / "site-tags.json"
+TAG_VOCABULARY = SEED_ROOT / "global" / "reference" / "site-tags.json"
 
 SECRET_PATTERNS = [
     (re.compile(r"(?i)\b(password|passwd|secret|api[_-]?key|access[_-]?token|auth[_-]?token|bearer)\b\s*[:=]\s*\S+"), "credential-like key"),

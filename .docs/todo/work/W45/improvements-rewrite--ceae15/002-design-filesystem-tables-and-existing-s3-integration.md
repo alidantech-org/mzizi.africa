@@ -1,5 +1,5 @@
 ---
-{id: TSK-3EA8C40B0F60,name: Design filesystem tables and existing S3 integration,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:26.845Z,updated_at: 2026-11-08T06:46:26.845Z,depends_on: [TSK-1AC8F3754DAE],order: 2048}
+{id: TSK-3EA8C40B0F60,name: Design filesystem tables and existing S3 integration,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:26.845Z,updated_at: 2026-11-08T08:05:59.578Z,depends_on: [TSK-1AC8F3754DAE,TSK-0F4398B91D38],order: 2048}
 ---
 
 # 02 — Design filesystem tables and existing S3 integration
@@ -37,4 +37,16 @@ The clean database target is mzizi_new: schema/data disposal and fresh identitie
 - [ ] Specify global file_types and extension aliases, concrete folders, files/versions and object references with exact PK/FK/type/nullability/uniqueness rules; distinguish format from document role.
 - [ ] Document fixed Kenyan folder CSV and global file-type CSV contracts, system/jurisdiction pattern inputs, explicit access classes and stable code resolution; do not generate production seed rows yet.
 - [ ] Define staged manifest validation, immutable S3 registration, fresh bootstrap dependency handling, parameterized seed application and recovery across non-transactional S3/DB operations.
-- [ ] Inventory scattered real system seeds and their consumers for later root relocation; test-only fixtures are explicitly classified and no duplicate authoritative payloads remain after adoption.
+- [ ] Build on the completed seed relocation (task `TSK-0F4398B91D38`, inventory in `.docs/docs/SEED_RELOCATION_INVENTORY.md`): derive the global file-type CSV and extension aliases from the authoritative `seed/global/reference/media-formats.json`, and keep one authoritative payload per output.
+
+## Folder-level provenance and access requirements (added after the seed relocation, 8 November 2026)
+
+The seed consolidation task (`TSK-0F4398B91D38`) moved the real system seeds under root `seed/`, recorded origin and access in `_folder.yaml` descriptors and prepared `seed/manifest.yaml` plus a generated `seed/manifest.lock.json` (per file: SHA-256, effective metadata, the descriptor each field was resolved from, historical `relocated_from` path, mapping S3 key, `upload_status: not_uploaded`). Nothing is uploaded or registered. This task must turn that contract into the filesystem design; the rules and tool behavior are specified in `seed/README.md` and implemented for validation in `source/backend/engine/database/src/seed-manifest.ts`.
+
+- [ ] Model folder-level source, preparation and access metadata (role, acquisition class, preparation method, access class, scope, review state) with deterministic inheritance: nearest explicit folder value per field, more specific deeper folders, per-file override only when explicit and justified, missing access defaults to non-public, missing origin classification is flagged before registration, no inference from names such as generated or public, public access requires explicit authorization and a nested folder cannot silently weaken a parent's enforced restriction.
+- [ ] Record effective provenance when a seed artifact is registered: seed flag, effective acquisition class and preparation method, the folder or manifest definition each field was resolved from, manifest release and artifact checksum, source input references, generator/model/tool information (never fabricated; unknown stays unknown and flagged for review), intended access class and the durable S3 object reference.
+- [ ] Keep current folder placement and access separate from immutable historical origin: moving a file or reclassifying a folder must not rewrite the registered preparation provenance, and each has its own lifecycle and audit trail.
+- [ ] Link files to concrete folders and file types, enforce S3 prefix consistency with effective access (only `public/` is anonymous; `restricted/`, `private/`, `internal/` and all other prefixes are private), and treat the access of a seed artifact separately from the records or folders it generates.
+- [ ] Specify generation of jurisdiction and system folders from reference-owned patterns (`seed/system/patterns`, `seed/<jurisdiction>/patterns`), preview before apply, idempotent concrete folder creation, and no implicit deletion of folders or objects.
+
+These items stay planned: filesystem implementation is not authorized until the user starts this milestone.

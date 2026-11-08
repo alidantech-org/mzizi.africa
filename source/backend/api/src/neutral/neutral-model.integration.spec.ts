@@ -15,7 +15,7 @@ import { FindSelectionStagesUseCase } from "#/modules/governance/governance-read
 import { FindClassificationRecordsUseCase } from "#/modules/reference/reference-read/use-cases/find-classification-records.usecase";
 import { FindJurisdictionsUseCase } from "#/modules/reference/reference-read/use-cases/find-jurisdictions.usecase";
 import { FindFormatsUseCase } from "#/modules/filesystem/filesystem-read/use-cases/find-formats.usecase";
-import { loadFixtures, readFixture } from "#/neutral/fixture-loader";
+import { loadFixtures, readFixture, readSeed } from "#/neutral/fixture-loader";
 
 /**
  * The model is country-neutral if two structurally different countries load as records over one
@@ -45,7 +45,7 @@ describe.skipIf(!adminUrl)("country-neutral model (Kenya and South Africa)", () 
     admin = new DataSource({ type: "postgres", url: dbUrl, entities, synchronize: false });
     await admin.initialize();
     await synchronizeDomainSchemas(admin);
-    ids = await loadFixtures(admin, readFixture("reference/media-formats").rows);
+    ids = await loadFixtures(admin, readSeed("global/reference/media-formats.json").rows);
     await loadFixtures(admin, readFixture("kenya").rows, ids);
     await loadFixtures(admin, readFixture("south-africa").rows, ids);
 

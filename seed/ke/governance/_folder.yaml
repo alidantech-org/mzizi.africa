@@ -1,0 +1,5 @@
+description: Kenya governance structure and curated public-office holders.
+role: seed_input
+acquisition_class: static_curated
+preparation: human_and_ai_assisted
+review: {status: needs_review, note: "_meta states custom-prepared from manual research; office holders are analyst knowledge not yet verified against Gazette notices."}

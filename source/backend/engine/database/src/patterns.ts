@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import type { DataSource } from "typeorm";
 
+import { seedRoot } from "./config.ts";
 import { CONFIDENCE, attribute, curatedMethod, ensureClassification, readJson, registerCuratedDocument } from "./curated.ts";
 import { currentUnits, type Unit } from "./scope.ts";
 import { rootUnitId } from "./seeds.ts";
@@ -54,7 +55,7 @@ export interface PatternFile {
   patterns: Pattern[];
 }
 
-export const patternFile = join(import.meta.dir, "..", "fixtures", "patterns", "ke-office-patterns.json");
+export const patternFile = join(seedRoot, "ke", "patterns", "ke-office-patterns.json");
 const LEVELS = ["national", "county", "constituency", "ward"];
 
 export function validatePatterns(file: PatternFile): string[] {
@@ -140,7 +141,7 @@ export async function generateFromPatterns(db: DataSource, jurisdictionCode = "k
   for (const p of file.patterns) {
     report.patterns++;
     const docTitle = `Office pattern ${p.id} version ${p.version}`;
-    const documentId = await registerCuratedDocument(db, j, docTitle, `${file._meta.label}. Fixture file fixtures/patterns/ke-office-patterns.json, pattern ${p.id} version ${p.version}: ${p.description ?? ""}`);
+    const documentId = await registerCuratedDocument(db, j, docTitle, `${file._meta.label}. Seed file seed/ke/patterns/ke-office-patterns.json, pattern ${p.id} version ${p.version}: ${p.description ?? ""}`);
     const locator = `pattern ${p.id}@${p.version}`;
     const justified = { offices: new Set<string>(), units: new Set<string>(), expectations: new Set<string>() };
     const targets = p.level === "national" ? [units.find((u) => u.id === root)!] : units.filter((u) => u.level === p.level);

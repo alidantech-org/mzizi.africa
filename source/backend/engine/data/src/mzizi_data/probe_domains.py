@@ -1,7 +1,7 @@
 """Probe candidate domains through the collection gate and record DNS snapshots.
 
 Only hosts the engine may assess without a person are probed: a suffix or an exact host from
-fixtures/policy/trusted-domains.json. Every other host is skipped and reported as needing an assessment.
+seed/system/policy/trusted-domains.json. Every other host is skipped and reported as needing an assessment.
 Each probe is one robots.txt request and one bounded GET of the home page, paced globally (0.2 requests per
 second), identified, and stopped for that host on a challenge, 401, 403 or 429 (status `refused`).
 
@@ -21,13 +21,14 @@ import dns.resolver
 import httpx
 import psycopg
 
+from .seedroot import SEED_ROOT
 from . import compliance, domains, fetch, fingerprint, gate
 from .fetch import Denied, RobotsDisallowed, StopRun
 
 CONSECUTIVE_FAILURES = 3
 RECORD_TYPES = ("A", "AAAA", "CNAME", "NS", "MX", "TXT", "SOA")
 CONFIRMED = ("reachable", "redirects", "moved")
-POLICY_FILE = Path(__file__).resolve().parents[3] / "database" / "fixtures" / "policy" / "trusted-domains.json"
+POLICY_FILE = SEED_ROOT / "system" / "policy" / "trusted-domains.json"
 
 
 def load_trusted(path: Path = POLICY_FILE) -> tuple[list[str], set[str]]:

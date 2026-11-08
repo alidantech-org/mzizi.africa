@@ -14,7 +14,7 @@
 | `dryv/` | Dryv contracts (TypeScript), project packs and contract tooling; the semantic source of the API. `dryv.yaml` at the repository root pins the engine and packs and maps output into `source/backend/api`. |
 | `source/backend/api-legacy` | Legacy Python/FastAPI behavior, schema, migrations, seeds, and migration input. |
 | `source/backend/engine/data` | Target owner for discovery, ingestion, and extraction. |
-| `source/backend/engine/database` | Target owner for migrations, seeds, imports, and database lifecycle. Holds the neutral-model fixtures (`fixtures/neutral-model`: Kenya and South Africa). |
+| `source/backend/engine/database` | Target owner for migrations, seeds, imports, and database lifecycle. Holds the neutral-model test fixtures (`fixtures/neutral-model`: Kenya and South Africa); system seeds live in root `seed/`. |
 | `source/backend/files` | Target owner for raw and derived evidence artifact custody. |
 | `source/backend/intelligence` | Target owner for reviewable AI/tool-assisted classification and evaluation. |
 | `.docs` | Task workspace (`task.yaml` points here): product docs in `docs/`, `rules/`, `guidance/`, `decisions/`, `handoffs/`, and `todo/` task groups. |

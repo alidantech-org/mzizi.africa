@@ -1,0 +1,5 @@
+description: Kenya versioned generation rules (office patterns).
+role: pattern_definition
+acquisition_class: static_curated
+preparation: human_and_ai_assisted
+review: {status: needs_review, note: "File _meta says custom-prepared from manual research; individual authorship is not recorded."}

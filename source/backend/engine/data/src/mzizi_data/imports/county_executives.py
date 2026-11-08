@@ -14,6 +14,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+from ..seedroot import MAPPINGS_ROOT
 from ..geo_link import norm
 from ..wikimedia import WIKIDATA_API, Wikimedia
 
@@ -63,7 +64,7 @@ from .. import candidates, jobs, pipeline, register
 from ..files import LocalDirectoryStore
 from ..structure.effective import substitute
 
-MAPPINGS = Path(__file__).resolve().parents[3] / "mappings" / "county-executives"
+MAPPINGS = MAPPINGS_ROOT / "county-executives"
 STAGES = {"A": ["individual"], "B": ["holder", "membership"]}
 KEYS = {"individual": ("personCode",), "holder": ("officeCode", "personCode"), "membership": ("partyCode", "personCode")}
 DEFINITION = {"governor": "county-executive:governor", "deputy-governor": "county-executive:deputy-governor"}
