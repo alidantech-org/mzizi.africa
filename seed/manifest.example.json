@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "enabled": false,
+  "description": "Illustrative contract only; future source files and loaders are not implemented.",
+  "bucket": "mzizi",
+  "entries": [
+    {
+      "id": "global.filesystem.file-types",
+      "version": "example-only",
+      "path": "global/filesystem/file-types.csv",
+      "media_type": "text/csv",
+      "scope": { "kind": "global" },
+      "acquisition_class": "curated_seed",
+      "loader": "filesystem.file-types",
+      "target": "filesystem.file_types",
+      "key_columns": ["code"],
+      "depends_on": [],
+      "sha256": null,
+      "access_class": "internal",
+      "object_key_template": "internal/seeds/{id}/{version}/{sha256}.csv",
+      "sync_policy": "preview_then_apply_no_implicit_delete"
+    },
+    {
+      "id": "ke.filesystem.folders",
+      "version": "example-only",
+      "path": "ke/filesystem/folders.csv",
+      "media_type": "text/csv",
+      "scope": { "kind": "jurisdiction", "code": "ke" },
+      "acquisition_class": "curated_seed",
+      "loader": "filesystem.folders",
+      "target": "filesystem.folders",
+      "key_columns": ["code"],
+      "depends_on": ["global.jurisdictions"],
+      "sha256": null,
+      "access_class": "internal",
+      "object_key_template": "internal/seeds/{id}/{version}/{sha256}.csv",
+      "sync_policy": "preview_then_apply_no_implicit_delete"
+    }
+  ]
+}

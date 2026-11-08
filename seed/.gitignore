@@ -1,0 +1,5 @@
+# Curated inputs/manifests stay tracked; reproducible or local outputs do not.
+/generated/
+/cache/
+/local/
+*.tmp

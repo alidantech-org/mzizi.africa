@@ -22,3 +22,7 @@
 All code lives under `source/`. Older docs and diagrams showing top-level `apps/` and `services/` mean `source/apps/` and `source/backend/`.
 
 The target product API is NestJS. Confirm actual service/package presence before planning implementation work; do not infer that a target directory exists just because it appears in architecture documentation.
+
+## Root seed registry
+
+`seed/` owns curated/manual/AI-prepared bootstrap artifacts, global auth/file-type/jurisdiction definitions, system rules, jurisdiction folders and site-structure/pattern payloads. See [seed registry](../../seed/README.md) for the target directory contract, manifests and S3 mapping. Existing fixture directories listed above describe the legacy layout; their system-seed payloads must be classified and relocated during rewrite adoption, with runtime loaders updated together. Loader implementation remains under `source/` and canonical Dryv schema contracts under `dryv/`. This documentation change does not relocate runtime payloads.

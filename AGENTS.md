@@ -216,3 +216,7 @@ This project manages its work with Task (`taskcode`; `task` and `tc` are aliases
 - **Branch rule:** work only on `develop`; never create branches or worktrees (`.docs/rules/branching-and-task-usage.md`).
 - Record meaningful decisions in `.docs/decisions/` and agent handoffs in `.docs/handoffs/`.
 <!-- END TASK MANAGED TASK-TOOL -->
+
+## Root seed input convention (user direction, 2026-11-08)
+
+Read `seed/README.md` before adding any curated or AI-prepared seed data, baseline auth definitions, site structure, folder/file-type catalog, pattern definition or seed-specific source artifact. Keep all system seed inputs in root `seed/`, with global/system/jurisdiction separation and a manifest describing recognized DB loader/target, dependencies, content identity and S3 registration. Runtime loaders and contracts retain their existing code ownership. Do not introduce scattered per-service seed payloads or duplicate sources of truth. Do not treat the disabled example manifest as executable. Existing payload relocation/runtime adoption is not yet implemented. Synthetic test-only fixtures may remain beside tests; anything applied as a real system seed follows the root convention. Only `public/` in bucket `mzizi` is anonymously readable; other prefixes remain private. The disposable database rewrite does not authorize deleting existing S3 artifacts.

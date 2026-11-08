@@ -31,3 +31,11 @@ Inspect current Dryv contracts, generated entities, migration history, runtime r
 - [ ] Define concurrency-safe promotion, retries/resume, deduplication, lineage, freshness and affected-dependency invalidation.
 - [ ] Plan county leadership proof with preserved evidence and a second independent workload to verify isolation and bounded concurrency.
 - [ ] Document baseline comparisons, measurable acceptance checks, deployment alternatives and staged implementation tasks for later explicit authorization.
+
+## Root seed registry requirement — 8 November 2026
+
+All manually/AI-prepared bootstrap inputs now belong under root `seed/`, including baseline auth permissions/roles, global file types and jurisdictions, curated folders, system and jurisdiction patterns, site structures and seed-specific source artifacts. Read [seed registry convention](https://github.com/alidantech-org/mzizi.africa/blob/develop/seed/README.md). Preserve global/system/jurisdiction separation; curated `seed/ke/...` inputs are distinct from ignored regeneratable `seed/generated/ke/...` outputs. Manifests map every adopted input to its immutable S3 artifact identity and recognized loader/domain target, natural keys, dependencies, hash and explicit access. Do not create another seed schema or filesystem registry without demonstrated need. Runtime loaders remain under source; Dryv schema contracts remain under dryv.
+
+The clean database target is mzizi_new: schema/data disposal and fresh identities are approved, with no legacy compatibility or migration requirement. Existing S3 objects are not disposable. This task update documents requirements; actual content, manifest runtime support, bulk relocation and application remain gated by the owning implementation task. Folder/type seed production is still deferred until its model and reference/geography prerequisites are ready.
+
+- [ ] Design shared manifest loading, code/foreign-key resolution, preview/apply/replay, artifact upload verification and dependency ordering for root seed inputs without an independent competing queue or seed runtime.

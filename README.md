@@ -200,3 +200,7 @@ This project manages its work with Task (`taskcode`; `task` and `tc` are aliases
 - **Branch rule:** work only on `develop`; never create branches or worktrees (`.docs/rules/branching-and-task-usage.md`).
 - Record meaningful decisions in `.docs/decisions/` and agent handoffs in `.docs/handoffs/`.
 <!-- END TASK MANAGED TASK-TOOL -->
+
+## Root seed registry — rewrite convention
+
+All manually/AI-prepared system seed inputs belong in [`seed/`](seed/README.md): auth baselines, global file types and jurisdictions, fixed folders, reference-owned patterns and site structures in CSV/YAML/JSON or seed-specific code. Global definitions live under `seed/global/`, system definitions under `seed/system/`, and country-specific definitions under `seed/ke/` or another jurisdiction code. Versioned manifests map inputs to existing S3 bucket `mzizi`, recognized loaders and database targets. Reproducible/local outputs have explicit ignore rules; curated inputs remain tracked. Runtime loaders stay in `source/`, contracts in `dryv/`. The convention is documented; relocation of legacy scattered inputs and runtime manifest support remain planned. See [`seed/README.md`](seed/README.md) for table ownership, lazy folder patterns, access and adoption rules.
