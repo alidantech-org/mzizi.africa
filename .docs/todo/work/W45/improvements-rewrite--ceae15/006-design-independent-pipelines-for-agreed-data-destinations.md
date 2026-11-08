@@ -39,3 +39,16 @@ All manually/AI-prepared bootstrap inputs now belong under root `seed/`, includi
 The clean database target is mzizi_new: schema/data disposal and fresh identities are approved, with no legacy compatibility or migration requirement. Existing S3 objects are not disposable. This task update documents requirements; actual content, manifest runtime support, bulk relocation and application remain gated by the owning implementation task. Folder/type seed production is still deferred until its model and reference/geography prerequisites are ready.
 
 - [ ] Design shared manifest loading, code/foreign-key resolution, preview/apply/replay, artifact upload verification and dependency ordering for root seed inputs without an independent competing queue or seed runtime.
+
+## Manifest-driven source requirement — 8 November 2026
+
+Design execution of websites and APIs as first-class sources, with api.structure.yaml and website structures prepared under root seed/. Source-specific knowledge must move from Python extractors into versioned manifests and DB configuration. Preserve generic parsing/standards/protocol packages; prohibit country/publisher branches and per-source engine modules. The full controlling requirements, input-schema catalog, DB/YAML synchronization, manifest contract, current-module inventory and acceptance cases are in [source design](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/schema-redesign/source.md#2026-11-08--manifest-driven-api-and-website-sources-user-direction).
+
+- [ ] Specify API and website manifest fields, resource/destination mappings, pagination, secret references, evidence and source-gate bindings using reusable capabilities.
+- [ ] Centralize input artifact schemas and validator bindings in source/schema/ for seed/folder manifests, API/site structures, patterns, mappings and consumed JSON/YAML/CSV; reconcile generated exports with Dryv rather than duplicate truth.
+- [ ] Specify DB-held source/manifest release identities and immutable YAML artifact FKs, version/hash conflict checks, import/export, reviewed activation and run pinning.
+- [ ] Inventory all named legacy extractors/importers; move source facts to seed manifests and identify generic capability gaps before retiring bespoke modules.
+- [ ] Prove source-neutral onboarding and replay across multiple APIs/websites/jurisdictions without adding source-specific Python; test invalid manifests, drift, checkpoint errors, authorization and abstention.
+- [ ] Document learned manifest proposals, validation/review and reproducible inputs without promising universal extraction or bypassing canonical promotion.
+
+This is a future milestone requirement; keep the task planned and preserve dependency order. No source-specific modules are removed by this documentation change.
