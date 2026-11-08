@@ -1,0 +1,27 @@
+{
+      "files.exclude": {
+            "**/node_modules": true,
+            "**/__pycache__": true,
+            "**/*.pyc": true,
+            "**/*.egg-info": true,
+            "**/.venv": true,
+            "**/venv": true,
+            "**/.pytest_cache": true,
+            "**/.mypy_cache": true,
+            "**/.ruff_cache": true,
+            "**/.next": true,
+            "**/dist": true,
+            "**/build": true,
+            "**/coverage": true
+      },
+      "search.exclude": {
+            "**/node_modules": true,
+            "**/.venv": true,
+            "**/venv": true,
+            "**/__pycache__": true,
+            "**/.next": true,
+            "**/dist": true,
+            "**/build": true,
+            "**/.docs/_archives": true
+      }
+}
