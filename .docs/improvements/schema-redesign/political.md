@@ -6,6 +6,8 @@ tags: [improvements, schema-redesign, political, planning]
 extra: {status: planning_only}
 ---
 
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+
 # Political — parties, party organizations, affiliations and internal leadership
 
 **PLANNING ONLY. No table/schema change or Taskcode task is authorized.**
@@ -97,3 +99,11 @@ Preserve existing party and member identifiers, API contracts, source attributio
 **Domain-specific guidance:** Political parties may have dated registration/dissolution events, but membership and internal position holding are independent dated relationships. Ideologies and party position definitions should not automatically carry validity/precision/is_current fields. Genuine mergers, splits, changes of affiliation and disputed histories need explicit lifecycle evidence rather than soft delete.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+## 2026-11-11 — Connected foundation direction (controlling for task 03)
+
+Parties, coalitions and memberships are actual political/organization-domain records, not reference labels. Link classifications to schemes and actual affiliations to people/organizations with periods and evidence. Candidacy affiliation in an election does not establish timeless party membership; local presence/branches and geographic coverage require their own evidence. Legal registration and other requirements use typed links to exact provisions/rules, without treating citation as compliance.
+
+Task 03 specifies the political/electoral/governance integration contract; task 04 finalizes political identity, membership, coalition and legal-rule relationships. Cross-border movements and historical organizations must not be forced into single-country ownership or inferred territorial control.
+
+Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.

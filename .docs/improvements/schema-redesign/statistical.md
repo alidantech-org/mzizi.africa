@@ -6,6 +6,8 @@ tags: [improvements, schema-redesign, statistical, data, planning]
 extra: {status: planning_only}
 ---
 
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+
 # Statistical — understandable but powerful measures, dimensions, periods and vintages
 
 **PLANNING ONLY. The user's priority is clarity, understandability and **more statistical power**, not merely fewer tables.**
@@ -121,3 +123,11 @@ A verified official KNBS or equivalent provider release should trigger focused d
 **Hotness granularity:** A historical census observation can be a cold fact but have an event-driven recheck if the publisher issues corrections. A rapidly updated projection series may be warm/hot by release policy. Field groups like measured value, classification/methodology, data release/vintage and source availability have different verification clocks; avoid per-observation copies of every monitoring timestamp or a meaningless `is_current` flag. Link verification history to canonical observation identity, vintage, field group and supporting source with enforceable relationships.
 
 **Column semantics:** `statistical.periods.starts_on/ends_on` already expresses a reporting period. Do not add universal `valid_from/to/precision` to every observation. Distinguish `released_on`, `reported_period_id`, `verified_at`, `computed_at` as separate concepts only if their owning table/workflow needs them. Exact physical fields, aggregation rules and appropriate hotness thresholds remain **OPEN**.
+
+## 2026-11-11 — Connected foundation direction (controlling for task 03)
+
+The accepted model preserves shared observations/releases/units/time/provenance while requiring domain-specific meaning and typed relationships. Reject a design that stores values but cannot explain census population versus a revised estimate, a language-use survey or an approximate historical population estimate. Record who is counted, definition, method, reference period/date, spatial/boundary coverage, release/revision and uncertainty. Country context is not observation coverage.
+
+Unknown boundary coverage remains explicit. No silent summation of overlapping areas/incompatible definitions, no national value copied to counties, no missing-as-zero. Language and community identities differ from distributions and territorial rights. An analytics capability describes supported filters, aggregation and presentation based on actual data; a topic label cannot authorize arbitrary calculations. Task 03 owns foundation contracts and these semantic test cases; task 04 owns the final statistical domain model. Future land/goods/prices/inflation/history work reuses place/time/evidence without being implemented here.
+
+Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.

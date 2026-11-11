@@ -6,6 +6,8 @@ tags: [improvements, schema-redesign, reference, planning]
 extra: {status: planning_only, implementation: not_approved}
 ---
 
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+
 # Reference and jurisdiction redesign
 
 **Planning only. Not approved for code changes or Taskcode task creation.** The user will direct the order of final design review and later tasks. All physical table/column changes below are proposals, not authorized migrations.
@@ -139,3 +141,11 @@ A rule should express: applicable jurisdiction and dated legal/pattern basis; wh
 **Open design questions for human review:** Should schedules belong to `reference` as pattern subtypes or have distinct tables? How should legally established timing, official announcement and administrative override rank? How does a scheduled item link by real FK to a future `activity` occurrence or a domain election/budget/census? What policy hierarchy governs cadence at field-group and row level? Which version of a schedule applied when an earlier event was planned? How to express jurisdiction scope, timezone, business/calendar dates and legal holidays without embedding Kenya-specific assumptions? How is one authoritative scheduler enforced?
 
 **No DDL, engine changes or Taskcode tasks authorized.** See [activity](activity.md), [engine](engine.md), [schema-wide semantic naming](README.md), and [data classes](../data-categories-and-patterns.md).
+
+## 2026-11-11 — Connected foundation direction (controlling for task 03)
+
+The accepted direction replaces the overloaded country/vocabulary/legal use of `jurisdictions`: modern country identities organize governance discovery, while actual territories belong to geography and legal authority/applicability is explicit. Do not retain `world` as a legal jurisdiction or make every county a new top-level context. Evaluate `countries`, `schemes`, `values`, semantic value relations, topics and reference-owned pattern/version definitions. Enforce scheme membership with database keys, not UUID existence alone. Global applicability, country-specific definition and historical applicability are separate.
+
+Domain-specific office/power/selection definitions remain in governance and cite legal provisions. Reference is not a generic container for real organizations, languages' distribution or geographic units. Candidate names in the discussion are not final SQL. Capability discovery connects topics to registered handlers/contracts; its physical ownership must be decided, not assumed to require another schema. Follow the universal `code` rule; prefixes do not replace spatial relationships. Task 03 must specify bootstrap dependencies and real cross-schema keys.
+
+Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.

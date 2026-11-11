@@ -6,6 +6,8 @@ tags: [improvements, schema-redesign, governance, planning]
 extra: {status: planning_only, implementation: not_approved}
 ---
 
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+
 # Institutions, offices, holders, public services and rule patterns
 
 **Planning only. Not approved for code changes or Taskcode task creation.** The user will direct the order of final design review and later tasks. All physical table/column changes below are proposals, not authorized migrations.
@@ -118,3 +120,11 @@ See [master register](../mzizi-data-schema-storage-and-pipelines-redesign.md), [
 **Domain-specific guidance:** Key example: governance.offices should generally derive structural/legal applicability from the referenced pattern and law, rather than duplicating its validity period. An office may still independently open/close or be abolished, requiring a real history/exception. governance.holders DOES need appointment/tenure boundaries; exact modern dates rarely need precision columns. Institution and civic-service existence, operational status and source completeness are separate. Retirement is not deletion.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+## 2026-11-11 — Connected foundation direction (controlling for task 03)
+
+Distinguish broad office classification, country/system-specific office definition, actual office, institution and dated holder. Link actual offices/institutions and rules to precise legal bases and separately to typed territorial mandates. An office can remain vacant; law establishing it does not identify a holder, premise or operational service. Multiple legal bases may explain establishment, powers and selection. Organization identity must not be duplicated merely to create a governance profile.
+
+The county-governor proof case separates Articles 176, 179 and 180 and their roles. A contest targets an office; declaration and beginning an officeholding term are separate. Regional organizations have real organs/posts and mandates; a continent unit does not appoint a continental leader. Task 03 establishes contracts and query traces; task 04 owns full governance schema/rule/holder implementation. Reference patterns generate only established structure and preserve independent factual edits.
+
+Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.

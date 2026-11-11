@@ -6,6 +6,8 @@ tags: [improvements, schema-redesign, legal, planning]
 extra: {status: planning_only, implementation: not_approved}
 ---
 
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+
 # Neutral global legal domain and law-driven generation
 
 **Planning only. Not approved for code changes or Taskcode task creation.** The user will direct the order of final design review and later tasks. All physical table/column changes below are proposals, not authorized migrations.
@@ -111,3 +113,11 @@ See [master register](../mzizi-data-schema-storage-and-pipelines-redesign.md), [
 **Domain-specific guidance:** A law may have enacted, commenced, amended, repealed and published dates with distinct meanings; avoid generic valid_from/to on every provision. Provision versions can inherit effective context from the instrument but may have independent amendment history. Legal currentness is an as-of legal query; historical or approximate dates merit precision only where evidenced. No ordinary trash deletion of enacted legal history.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+## 2026-11-11 — Connected foundation direction (controlling for task 03)
+
+Separate stable legal instruments/provisions, their textual versions/languages, legal effect periods and exact filesystem evidence. Typed domain-specific associations can link offices, institutions, structured rules, electoral rules, political requirements and geographic changes to multiple precise provision versions. Basis roles distinguish establishment, powers, selection and boundary alteration. Do not duplicate contradictory legal support through both rule and entity links without an authority policy; do not claim `target_kind + target_id` provides referential integrity.
+
+Territorial, personal, subject and temporal applicability differ. Spatial inclusion alone cannot establish applicable law, and cited support is not proof of compliance or settled interpretation. Extracted text is not executable behavior; reviewed structured rules and registered handlers implement supported behavior. Historical/customary/de facto institutions may have non-statutory documented bases and must not be assigned invented constitutional support. Task 03 defines the minimal legal interface/bootstrap order and proof cases; task 04 finalizes full instruments/provisions/processes and downstream legal associations.
+
+Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.

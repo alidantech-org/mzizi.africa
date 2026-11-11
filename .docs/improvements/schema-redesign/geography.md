@@ -6,6 +6,8 @@ tags: [improvements, schema-redesign, geography, planning]
 extra: {status: planning_only, implementation: not_approved}
 ---
 
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+
 # Geography, places and geographic scope
 
 **Planning only. Not approved for code changes or Taskcode task creation.** The user will direct the order of final design review and later tasks. All physical table/column changes below are proposals, not authorized migrations.
@@ -139,3 +141,11 @@ See [Pattern graph and materialization modes](../data-categories-and-patterns.md
 **Domain-specific guidance:** Stable geographical units may derive applicable status from administrative/legal relations; boundaries, names, changing parent relationships and real occupancies may need independent dated intervals. A confirmed place need not have exact coordinates. Do not soft-delete historical geographical units/boundaries. Evaluate physical-presence relationships independently of office-rule applicability.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+## 2026-11-11 — Connected foundation direction (controlling for task 03)
+
+Geography is the spatial foundation for Africa, country territories, administrative/electoral/statistical units, settlements, regional membership coverage and historical/reconstructed/hypothetical areas. Modern country context is not mandatory ownership for cross-border or historical records. Use typed dated relationship systems, not an independently editable universal parent chain. Derived closures must preserve system/date semantics. Names, political control, geographic containment and legal applicability are different relationships.
+
+Specify each geometry representation's source/version, applicable period, method and uncertainty. Distinguish official boundaries, disputed claims, reconstructions, linguistic distributions and hypothetical scenarios. A member-territory union must pin membership and boundary inputs and must not imply sovereignty or uniform legal applicability. Headquarters, serves-area, authority-area, electoral coverage and statistical coverage require explicit roles. Known nationwide reach links to the country territorial unit; unknown is not automatically national. GPS resolves location candidates and uncertainty, not citizenship/residence. Resolve place/presence/contact ownership without inventing buildings from legal duties.
+
+Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.

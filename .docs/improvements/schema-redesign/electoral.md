@@ -6,6 +6,8 @@ tags: [improvements, schema-redesign, electoral, planning]
 extra: {status: planning_only}
 ---
 
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+
 # Electoral — elections, electorates, candidates, vote results and referendums
 
 **PLANNING ONLY — detailed design review required; not authorized to implement.**
@@ -114,3 +116,11 @@ Reconcile results/states/aggregation and historical geo unit links; test registe
 **Field semantics and monitoring:** A seat definition or historical identity may be cold, whereas live nominations and provisional results may be hot near official phases. Freshness policies should target the **actual field group and reporting geography**; a national election announcement doesn't verify every county result. “Last checked” must be distinct from "last verified" and source publication/retrieval time. Source-backed correction/vintage history prevents a previous declaration from disappearing.
 
 **Admin/agent use cases:** Admin records a sourced nomination announcement or submits a scoped refresh request; registered source agents observe official statements and propose `activity` instances; engine deduplicates triggers and sends targeted checks rather than blindly overwriting `electoral`. Exact schedule shape, target FKs, trust thresholds, status words and refresh frequency remain **OPEN**.
+
+## 2026-11-11 — Connected foundation direction (controlling for task 03)
+
+Connect an election contest to the office(s) it fills, its electoral area/reporting coverage and reviewed legal rules. Candidacy identifies the person and dated electoral party affiliation; results/declarations and assumption of office are distinct records/events. Selection procedures may differ even within one paired office: do not reduce all selection to a single elected boolean. Exact legal provision versions support rules and interpretations.
+
+Boundaries and reporting areas are dated and need not follow an administrative parent chain. Voter counts belong to a defined registration release/coverage, not a generic current local number. Task 03 supplies interfaces and a contest-to-office-to-holder fixture; task 04 finalizes real tables and full electoral rule/version semantics. No fabricated results or terms from pattern expectations.
+
+Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
