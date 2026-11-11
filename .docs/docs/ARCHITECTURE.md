@@ -639,3 +639,9 @@ structure version (files in filesystem) --> structure runner (data engine, deter
 ```
 
 Packages: `engine/data` (Python: structures, runner, polite fetcher, compliance controls, extractors, imports, jobs, patterns, fingerprints) and `engine/database` (Bun: migrations generated from the Dryv entities with a drift check, seeds, integrity checks, grants, the gate, staging validation, review application, promotion). Contracts between the layers live in `source/schema/contracts` and are generated from `dryv/contracts/domains/exchange`.
+
+## 2026-11-11 — Connected semantic and spatial foundation
+
+For task 03, follow [the connected foundation](../improvements/connected-reference-geography-legal-foundation.md). Reference defines vocabularies, topics and pattern definitions; geography defines actual areas and sourced dated representations; legal defines instruments/provisions and their versions; domain-owned FK relationships connect real entities to territorial mandates, coverage and precise legal support. Reference is not an entity registry for all domains or a mandatory intermediate link.
+
+Modern country context does not restrict historical/cross-border identity. UI requests use registered backend capability contracts, requested place/date/topic, actual data availability and explainable methodology. Spatial containment cannot establish legal authority, citizenship or a statistical rollup. Pattern definitions differ from engine execution and domain rules. This is accepted design direction; exact SQL and broad downstream implementation remain the work of tasks 03/04, not completed runtime claims.

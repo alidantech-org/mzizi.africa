@@ -11,7 +11,7 @@ extra: {status: planning_only, no_bulk_task_creation: true}
 **PLANNING ONLY — NOT READY TO IMPLEMENT.** The user subsequently **explicitly requested all eighteen named schema design documents**, which have now been written as substantive planning proposals, not empty placeholders. This folder contains the domain design files below; update them iteratively under user direction. The user's preference for only a few cross-cutting files still applies outside this folder.
 
 
-> **2026-11-08 update:** the user approved a clean rewrite in the disposable database `mzizi_new` (`.docs/decisions/clean-rewrite-mzizi-new.md`). The `auth` design is implemented (see [auth.md](auth.md)); other schema documents remain planning records. Statements elsewhere in this folder about preserving IDs, data migration or compatibility are the former policy and are superseded for the rewrite.
+> **2026-11-08 update:** the user approved a clean rewrite in the disposable database `mzizi_new` (`.docs/decisions/clean-rewrite-mzizi-new.md`). The `auth` design is implemented (see [auth.md](auth.md)); filesystem implementation is also recorded in task 02; task 03 is now prepared for detailed design, and remaining schema documents remain planning records. Statements elsewhere in this folder about preserving IDs, data migration or compatibility are the former policy and are superseded for the rewrite.
 
 ## Final schema count: NOT DECIDED — all current schemas accounted for
 
@@ -21,7 +21,7 @@ extra: {status: planning_only, no_bulk_task_creation: true}
 
 | # | Planning document | Purpose |
 |---:|---|---|
-| 1 | [`reference.md`](reference.md) | Jurisdictions and controlled vocabulary |
+| 1 | [`reference.md`](reference.md) | Countries, controlled meanings and reference-owned patterns |
 | 2 | [`geography.md`](geography.md) | Territorial geography and physical places |
 | 3 | [`legal.md`](legal.md) | Laws, legal procedures and authority |
 | 4 | [`person.md`](person.md) | Real individuals and public profiles |
@@ -303,3 +303,7 @@ Reuse existing `engine.jobs`, `gaps`, `staging` and `source.verifications` befor
 **Example validation:** a scheduled election triggers candidate monitoring but not fictitious results; an officially published census report refreshes relevant `statistical` vintages; parliamentary schedule changes trigger legal agenda research; a budget submission deadline triggers verification rather than auto-approval; an admin adding an appointment announcement creates a sourced proposal and holder recheck, not an unverified appointment.
 
 **Approval status:** naming policy and freshness/event-driven requirements are newly recorded planning directions. Specific table sets, physical column names, monitoring cadence, source verification threshold, role permissions and approval/promotion rules remain for the user's schema-by-schema sign-off. See [activity](activity.md), [reference](reference.md), [engine](engine.md), [source](source.md), [independent pipelines](../independent-data-pipelines.md).
+
+## 2026-11-11 — Foundation integration
+
+Read [connected reference/geography/legal foundation](../connected-reference-geography-legal-foundation.md) before interpreting historical jurisdiction or generic statistics proposals. The country umbrella, spatial foundation, legal-basis links, domain ownership, regional/historical cases and capability-driven UI are accepted direction. Exact physical tables are candidates until task 03 completes its detailed specifications. Follow [the local-agent handoff](../../handoffs/task03-connected-foundation-local-agent.md).

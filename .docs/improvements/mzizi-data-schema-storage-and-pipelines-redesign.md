@@ -659,3 +659,11 @@ The user asked if `activity` can model official and scheduled happenings—**new
 - Which table/column additions or removals are actually justified; full live DB/contract audit and user-by-user schema sign-off **before** DDL.
 
 **Related planning details:** [activity](schema-redesign/activity.md), [reference](schema-redesign/reference.md), [engine](schema-redesign/engine.md), [electoral](schema-redesign/electoral.md), [finance](schema-redesign/finance.md), [statistical](schema-redesign/statistical.md), [independent pipelines](independent-data-pipelines.md). **No Taskcode tasks or implementation authorized by these notes.**
+
+## 2026-11-11 — Accepted connected foundation; task 03 ready for detailed design
+
+The user accepted the November reference/geography/legal/domain explanation and requested recording it and preparing the local agent. The controlling account is [connected reference, geography, legal and domain foundation](connected-reference-geography-legal-foundation.md); it consolidates decisions, candidate tables, legal links, regional/historical areas, statistical semantics, patterns, UI interpretation and primary research. The same task-03 record is expanded; no parallel task set is created.
+
+Superseded: using jurisdiction as country + vocabulary scope + legal authority; a fictional world legal jurisdiction; legacy ID/data-preservation requirements for the disposable `mzizi_new`; one geographic parent tree; generic statistics without domain meaning; reference as an obligatory bridge between all entities. Retained: explicit cross-schema FKs, scoped RBAC, source/evidence/version integrity, per-table semantic dates, reference-owned pattern definitions, engine-owned execution and existing S3 protection.
+
+Candidate physical tables and exact implementation remain subject to detailed design. Task 03 establishes minimal legal/domain connection contracts; task 04 finalizes downstream schemas. Read [the local-agent handoff](../handoffs/task03-connected-foundation-local-agent.md). The current filesystem task's final notes report seven tables/file_relations and completed publication/live checks; older planning/upload-pending statements do not override that later account.
