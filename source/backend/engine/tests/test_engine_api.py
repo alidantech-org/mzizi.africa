@@ -267,9 +267,10 @@ def test_authentication_and_authorization_use_the_auth_schema_contract(make_clie
     assert submitted.status_code == 202 and submitted.json()["requested_by"] == "acct-e"
 
 
-def test_a_sync_through_the_engine_is_a_dry_run_by_default_and_the_actor_cannot_be_spoofed(make_client):
+def test_a_sync_through_the_engine_is_a_dry_run_by_default_and_the_actor_cannot_be_spoofed(make_client, monkeypatch):
     from mzizi_database import rewrite_url
 
+    monkeypatch.setenv("ENGINE_FILESYSTEM_LEGACY_DATABASE_URL", rewrite_url())
     client = make_client(settings=settings(database_url=rewrite_url()))
     job = client.post("/v1/filesystem/sync", json={"manifest": "manifest.yaml"}).json()
     done = job_done(client, job["id"])
@@ -303,3 +304,7 @@ def test_settings_refuse_unauthenticated_mode_off_loopback():
     assert Settings.from_env(
         {"ENGINE_CAPABILITY_LIMITS": "extraction.pdf=2,scraping.links=5", "DATABASE_URL": "postgres://x/mzizi_new"}
     ).limits == {"extraction.pdf": 2, "scraping.links": 5}
+    assert Settings.from_env({"DATABASE_URL": "postgres://api_reader/mzizi_new"}).database_url is None
+    assert Settings.from_env({"DATABASE_SERVICE_URL": "http://127.0.0.1:3301", "DATABASE_SERVICE_TOKEN": "local"}).store == "database_service"
+    with pytest.raises(ValueError, match="Python PostgreSQL persistence has been removed"):
+        Settings(store="postgres").check()

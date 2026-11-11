@@ -13,11 +13,22 @@ from mzizi_database import connect, rewrite_url
 from mzizi_engine.app import create_app
 from mzizi_engine.capabilities import build_default_registry
 from mzizi_engine.store import MemoryStore
-from mzizi_filesystem import MemoryObjectStore
+from mzizi_filesystem import DatabaseAuthorizer, MemoryObjectStore
 from mzizi_filesystem.hashing import sha256_hex
 
 ISSUER = "https://pytest.mzizi.local"
 b64 = lambda data: base64.b64encode(data).decode()
+
+
+class StubAuthority:
+    def __init__(self, account_id: str) -> None:
+        self.account_id = account_id
+
+    async def resolve(self, issuer: str, subject: str) -> tuple[str, str]:
+        return self.account_id, "ok"
+
+    async def can(self, account_id: str, permission: str) -> bool:
+        return True
 
 
 def _purge(folder_ids):
@@ -28,11 +39,72 @@ def _purge(folder_ids):
             purge_tree(conn, fid)
 
 
+class TestDatabaseOwner:
+    async def create_upload(self, actor, folder_id, filename, size, sha256, lease_seconds, ttl_seconds):
+        import uuid
+
+        from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, OperatorAuthorizer, Repository
+        from mzizi_filesystem.uploads import temp_key_for
+
+        with connect(rewrite_url(), autocommit=True) as conn:
+            repo = Repository(conn)
+            authorizer = DatabaseAuthorizer(conn) if actor is not None else OperatorAuthorizer()
+            service = FilesystemService(repo, MemoryObjectStore(), authorizer)
+            service.authorizer.for_new_child(actor, "filesystem.edit", "filesystem.files", folder_id)
+            return repo.create_upload(folder_id, filename, temp_key_for(uuid.uuid4().hex, filename), lease_seconds,
+                ttl_seconds, size, sha256, None, actor)
+
+    async def get_file(self, actor, file_id):
+        from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, Repository
+
+        with connect(rewrite_url(), autocommit=True) as conn:
+            repo = Repository(conn)
+            service = FilesystemService(repo, MemoryObjectStore(), DatabaseAuthorizer(conn))
+            file = repo.get_file(file_id)
+            if file is None:
+                raise LookupError("no such file")
+            if actor is not None:
+                service.authorizer.for_record(actor, "filesystem.read", "filesystem.files", file_id)
+            versions = [{key: value for key, value in row.items() if key != "s3_key"} for row in repo.versions(file_id)]
+            path = conn.execute("SELECT filesystem.file_path(%s) AS p", (file_id,)).fetchone()["p"]
+            return {"file": file, "path": path, "versions": versions}
+
+    async def get_folder(self, actor, folder_id):
+        from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, Repository
+
+        with connect(rewrite_url(), autocommit=True) as conn:
+            repo = Repository(conn)
+            service = FilesystemService(repo, MemoryObjectStore(), DatabaseAuthorizer(conn))
+            folder = repo.get_folder(folder_id)
+            if folder is None:
+                raise LookupError("no such folder")
+            if actor is not None:
+                service.authorizer.for_record(actor, "filesystem.read", "filesystem.folders", folder_id)
+            children = conn.execute("SELECT id,name FROM filesystem.folders WHERE parent_id=%s ORDER BY name", (folder_id,)).fetchall()
+            files = conn.execute("SELECT id,name,current_version_id FROM filesystem.files WHERE folder_id=%s ORDER BY name", (folder_id,)).fetchall()
+            return {"folder": folder, "path": repo.folder_path(folder_id), "effective": repo.effective(folder_id), "folders": children, "files": files}
+
+    async def create_folder(self, actor, parent_id, name, fields):
+        from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, Repository
+
+        with connect(rewrite_url(), autocommit=True) as conn:
+            repo = Repository(conn)
+            service = FilesystemService(repo, MemoryObjectStore(), DatabaseAuthorizer(conn))
+            if actor is not None:
+                service.authorizer.for_new_child(actor, "filesystem.edit", "filesystem.folders", parent_id)
+                if fields.get("access") is not None:
+                    service.authorizer.for_new_child(actor, "filesystem.publish", "filesystem.folders", parent_id)
+            with repo.transaction():
+                folder = repo.create_folder(parent_id, name, fields, actor)
+            return {"folder": folder, "path": repo.folder_path(folder["id"])}
+
+
 @pytest.fixture(scope="module", autouse=True)
 def database():
-    from mzizi_database.cli import init
-
-    init()
+    # Database lifecycle belongs to the TypeScript owner. Integration test setup runs
+    # `bun run db migrate`; Python tests only verify the disposable schema is present.
+    with connect(rewrite_url()) as conn:
+        conn.execute("SELECT 1 FROM filesystem.folders LIMIT 0")
 
 
 @pytest.fixture
@@ -40,6 +112,9 @@ def api():
     store = MemoryObjectStore()
     app = create_app(settings(database_url=rewrite_url()), store=MemoryStore(), registry=build_default_registry())
     app.state.filesystem_store = lambda: store
+
+    # This fixture stands in for the named TypeScript operation; production has no Python SQL fallback.
+    app.state.filesystem_database_client = TestDatabaseOwner()
     created: list[str] = []
     with TestClient(app) as client:
         client.store, client.created = store, created
@@ -174,16 +249,16 @@ def test_scoped_authorization_guards_every_filesystem_endpoint():
     async def verifier(token):
         return ISSUER, token
 
-    from mzizi_engine.auth import DatabaseAuthority
-
     app = create_app(
         settings(auth="oidc", issuer=ISSUER, database_url=rewrite_url()),
         store=MemoryStore(),
         registry=build_default_registry(),
-        authority=DatabaseAuthority(rewrite_url()),
+        authority=StubAuthority(str(worker)),
         verifier=verifier,
     )
+    app.state.filesystem_authorizer_factory = DatabaseAuthorizer
     app.state.filesystem_store = lambda: store
+    app.state.filesystem_database_client = TestDatabaseOwner()
     try:
         with TestClient(app) as client:
             bearer = {"Authorization": f"Bearer {subject}"}

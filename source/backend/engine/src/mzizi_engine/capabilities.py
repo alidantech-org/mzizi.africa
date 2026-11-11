@@ -142,7 +142,7 @@ def source_gate(payload: dict) -> dict:
 
 
 def filesystem_sync(payload: dict) -> dict:
-    """Plan (default) or apply a manifest sync. The actor is set by the engine from the authenticated principal. Needs DATABASE_URL and S3 settings."""
+    """Plan (default) or apply a manifest sync. The actor is set by the engine from the authenticated principal. This legacy path requires ENGINE_FILESYSTEM_LEGACY_DATABASE_URL and S3 settings."""
     import os
 
     from mzizi_database import connect
@@ -162,7 +162,7 @@ def filesystem_sync(payload: dict) -> dict:
         raise ValueError("object storage is not configured: refusing to apply a sync without S3 credentials")
     store = S3ObjectStore() if have_s3 else MemoryObjectStore()
     plan = load_plan(Path(payload["manifest"]), entry_ids=set(payload.get("entries") or []) or None)
-    with connect(payload.get("database_url") or os.environ.get("DATABASE_URL"), autocommit=True) as conn:
+    with connect(os.environ.get("ENGINE_FILESYSTEM_LEGACY_DATABASE_URL"), autocommit=True) as conn:
         actor = payload.get("actor")
         service = FilesystemService(
             Repository(conn), store, DatabaseAuthorizer(conn) if actor else OperatorAuthorizer()

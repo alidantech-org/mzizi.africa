@@ -257,3 +257,8 @@ Not done (remaining milestones, not completed by these directories): domain sche
 
 After the restructuring the user directed that the NestJS product API live at `source/backend/api`, not `source/apps/api`. This supersedes the `source/apps/api` rows above; the rest of the layout is unchanged. `source/backend` therefore holds `api/` (NestJS) and `engine/` (Python). Dryv destinations, tools, documentation and the layout test were updated accordingly.
 
+
+
+## 2026-11-11 — Two database boundary
+
+Python pipelines may use native disposable vector stores for scraping/NLP/mapping. Durable jobs, runs and candidates belong to Operations via Rust; workers hold no relational credentials. Accepted data and verified evidence publish to Main through typed Rust/Dryv contracts. Preserve idempotency, checkpoints, actor attribution, exact input versions and S3 integrity. Do not hold database locks during network, OCR or ML work. See [two database rules](knowledge-platform/two-database-rules.md).

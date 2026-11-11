@@ -1,4 +1,216 @@
 ---
+id: DOC-MZIZI-SCHEMA-FILESYSTEM-20261111
+name: filesystem schema review proposal
+type: schema-review
+tags: [database, schema-redesign, main, user-review]
+extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+---
+
+# filesystem schema — review and approval proposal
+
+> **PROPOSED — USER REVIEW REQUIRED.** This is the review authority for whether the schema should exist and which tables/columns it owns. No SQL or migration is authorized.
+
+## Purpose and ownership
+
+**Target:** Main. **Purpose:** Published immutable file catalog with S3 object references. This separate schema is a proposal based on distinct lifecycle, vocabulary and queries; merging or rejection remains open. Related owners: source,geography,heritage.
+
+## Current implementation and gaps
+
+The active manifest has 30 manifest migrations and 49 distinct CREATE TABLE declarations (49 distinct current table names) in schemas `audit`, `auth`, `engine`, `filesystem`, `geography`, `legal`, `objects`, `reference`. Generated Dryv has 124 entities (digest `e0087da9cf5b00e91f283a5501c368c7696bdd841ea30629231dc9c590f7c1ee`). Counts describe current artifacts, not target design; SQL and Dryv diverge.
+
+- SQL declarations: `filesystem.folders` (filesystem/0001_filesystem.sql), `filesystem.files` (filesystem/0001_filesystem.sql), `filesystem.file_versions` (filesystem/0001_filesystem.sql), `filesystem.tags` (filesystem/0001_filesystem.sql), `filesystem.taggings` (filesystem/0001_filesystem.sql), `filesystem.file_relations` (filesystem/0001_filesystem.sql), `filesystem.uploads` (filesystem/0001_filesystem.sql)
+- Dryv entities: `filesystem.files` (filesystem.File), `filesystem.attachments` (filesystem.FileAttachment), `filesystem.events` (filesystem.FileEvent), `filesystem.variants` (filesystem.FileVariant), `filesystem.versions` (filesystem.FileVersion), `filesystem.folders` (filesystem.Folder), `filesystem.formats` (filesystem.Format), `filesystem.stores` (filesystem.Store), `filesystem.objects` (filesystem.StoredObject), `filesystem.uploads` (filesystem.UploadSession)
+
+The inventory does not establish live database state and may miss ALTER-only changes. Before implementation, reconcile migrations, Dryv, generated output and callers.
+
+## Proposed relationship map
+
+> All nodes and edges are proposals. Main schemas may use local cross-schema foreign keys; no edge crosses the Main/Operations database boundary.
+
+```mermaid
+flowchart LR
+  filesystem_file_relations["filesystem.file_relations"]
+  filesystem_file_versions["filesystem.file_versions"]
+  filesystem_files["filesystem.files"]
+  filesystem_folders["filesystem.folders"]
+  filesystem_taggings["filesystem.taggings"]
+  filesystem_tags["filesystem.tags"]
+  reference_values["reference.values"]
+  filesystem_folders -->|parent_id| filesystem_folders
+  filesystem_files -->|folder_id| filesystem_folders
+  filesystem_file_versions -->|file_id| filesystem_files
+  filesystem_file_relations -->|source_version_id| filesystem_file_versions
+  filesystem_file_relations -->|derived_version_id| filesystem_file_versions
+  filesystem_file_relations -->|kind_id| reference_values
+  filesystem_taggings -->|tag_id| filesystem_tags
+  filesystem_taggings -->|file_id| filesystem_files
+  filesystem_taggings -->|folder_id| filesystem_folders
+```
+
+## Proposed table and column review
+
+All tables and fields are hypothetical. Every proposed business column is listed; UUIDv7 `id` is a candidate default and remains open. Record every existing field disposition: KEEP / REMOVE / RENAME / MOVE / MERGE / SPLIT / DERIVE / ADD.
+
+### `filesystem.folders` — Logical published artifact hierarchy
+
+- **Example:** Official documents
+- **Profile:** entity; planning envelope below.
+
+| Column | Proposed type | Meaning | Nullable | Default | Relationship | Units / validation | Proposed disposition |
+|---|---|---|---|---|---|---|---|
+| `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `parent_id` | `uuid` | Parent | Yes | — | FK → `filesystem.folders` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `name` | `text` | Folder label | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `access` | `text` | public internal restricted private | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `authorization` | `jsonb` | Public release authority | Yes | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
+| `role` | `text` | Artifact purpose | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
+
+- **Current SQL/Dryv fields without a proposed same-name column:** `access_authorization`, `acquisition_class`, `allow_weaker_children`, `artifact_role`, `code`, `created_at`, `created_by`, `depth`, `description`, `is_seed`, `jurisdiction_code`, `metadata`, `path`, `preparation`, `revision`, `updated_at`, `version`, `visibility`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
+- **Constraints:** Sibling identity unique; access cannot weaken without authorization. Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `parent_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
+- **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
+- **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 1,000, +200/year, peak 20/day; five-year 2,000 rows ≈ 2.0 MiB live row+index budget; Expected: initial 10,000, +2,000/year, peak 200/day; five-year 20,000 rows ≈ 19.5 MiB live row+index budget; High: initial 100,000, +20,000/year, peak 2,000/day; five-year 200,000 rows ≈ 195.3 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
+- **Workload:** Interactive lookup by identity and approved foreign keys; batch scans for import/reconciliation. Peak-day figure above is a scenario assumption, not a service-level commitment.
+- **Partitioning:** None proposed initially; decide from measured scale/query plans. Check late data and partition count.
+- **Files:** originals, full-resolution geometry, arrays, media and large exports may be immutable S3 objects. Keep searchable identity, required facts, hashes, coverage, access and provenance in PostgreSQL; use manifests and selective reads.
+- **Retention/risks/benchmark:** preserve accepted evidence and corrections. Review late arrivals, contention, index/partition growth and recovery. Benchmark joins, filters, spatial access, ingestion bursts, concurrent access and interrupted publication.
+### `filesystem.files` — Stable logical file identity
+
+- **Example:** Official census PDF
+- **Profile:** entity; planning envelope below.
+
+| Column | Proposed type | Meaning | Nullable | Default | Relationship | Units / validation | Proposed disposition |
+|---|---|---|---|---|---|---|---|
+| `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `folder_id` | `uuid` | Folder | No | — | FK → `filesystem.folders` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `name` | `text` | Display name | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `retention` | `text` | preserve_history or replace_current | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `current_version_id` | `uuid` | Selected version | Yes | — | — | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+
+- **Current SQL/Dryv fields without a proposed same-name column:** `code`, `created_at`, `created_by`, `is_legal_hold`, `last_revision`, `owner_account_id`, `revision`, `status`, `trashed_at`, `updated_at`, `version`, `visibility`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
+- **Constraints:** Unique folder/name; current version belongs to file. Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `folder_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
+- **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
+- **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 1,000, +200/year, peak 20/day; five-year 2,000 rows ≈ 2.0 MiB live row+index budget; Expected: initial 10,000, +2,000/year, peak 200/day; five-year 20,000 rows ≈ 19.5 MiB live row+index budget; High: initial 100,000, +20,000/year, peak 2,000/day; five-year 200,000 rows ≈ 195.3 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
+- **Workload:** Interactive lookup by identity and approved foreign keys; batch scans for import/reconciliation. Peak-day figure above is a scenario assumption, not a service-level commitment.
+- **Partitioning:** None proposed initially; decide from measured scale/query plans. Check late data and partition count.
+- **Files:** originals, full-resolution geometry, arrays, media and large exports may be immutable S3 objects. Keep searchable identity, required facts, hashes, coverage, access and provenance in PostgreSQL; use manifests and selective reads.
+- **Retention/risks/benchmark:** preserve accepted evidence and corrections. Review late arrivals, contention, index/partition growth and recovery. Benchmark joins, filters, spatial access, ingestion bursts, concurrent access and interrupted publication.
+### `filesystem.file_versions` — Exact immutable content version
+
+- **Example:** PDF exact bytes
+- **Profile:** release; planning envelope below.
+
+| Column | Proposed type | Meaning | Nullable | Default | Relationship | Units / validation | Proposed disposition |
+|---|---|---|---|---|---|---|---|
+| `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `file_id` | `uuid` | Logical file | No | — | FK → `filesystem.files` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `revision` | `integer` | Monotonic revision | No | — | — | Type checked; domain constraints and units must be approved for this field | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `s3_key` | `text` | Private/public object key | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `sha256` | `text` | Content hash | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `size_bytes` | `bigint` | Byte count | No | — | — | Type checked; domain constraints and units must be approved for this field | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `content_type` | `text` | Verified media type | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `provenance` | `jsonb` | Origin and release identity | No | — | — | Type checked; domain constraints and units must be approved for this field | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `pinned` | `boolean` | Retention protection | No | — | — | Type checked; domain constraints and units must be approved for this field | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+
+- **Current SQL/Dryv fields without a proposed same-name column:** `created_at`, `created_by`, `extension`, `original_filename`, `pin_reason`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
+- **Constraints:** UNIQUE(file_id,revision); hash format/size validate; S3 key access policy. Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `file_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
+- **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
+- **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 100, +20/year, peak 10/day; five-year 200 rows ≈ 0.4 MiB live row+index budget; Expected: initial 1,000, +200/year, peak 100/day; five-year 2,000 rows ≈ 3.9 MiB live row+index budget; High: initial 10,000, +2,000/year, peak 1,000/day; five-year 20,000 rows ≈ 39.1 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 2 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
+- **Workload:** Interactive lookup by identity and approved foreign keys; batch scans for import/reconciliation. Peak-day figure above is a scenario assumption, not a service-level commitment.
+- **Partitioning:** No partition approved. Benchmark first; time range is a candidate for append-heavy observations, and keys must include partition columns. Releases are normally unpartitioned unless measured need appears. Check late data and partition count.
+- **Files:** originals, full-resolution geometry, arrays, media and large exports may be immutable S3 objects. Keep searchable identity, required facts, hashes, coverage, access and provenance in PostgreSQL; use manifests and selective reads.
+- **Retention/risks/benchmark:** preserve accepted evidence and corrections. Review late arrivals, contention, index/partition growth and recovery. Benchmark joins, filters, spatial access, ingestion bursts, concurrent access and interrupted publication.
+### `filesystem.file_relations` — Typed derivative lineage
+
+- **Example:** PDF OCR derivative relation
+- **Profile:** relation; planning envelope below.
+
+| Column | Proposed type | Meaning | Nullable | Default | Relationship | Units / validation | Proposed disposition |
+|---|---|---|---|---|---|---|---|
+| `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `source_version_id` | `uuid` | Input | No | — | FK → `filesystem.file_versions` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `derived_version_id` | `uuid` | Output | No | — | FK → `filesystem.file_versions` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `kind_id` | `uuid` | Derivative kind | No | — | FK → `reference.values` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
+
+- **Current SQL/Dryv fields without a proposed same-name column:** `created_at`, `created_by`, `engine_job_id`, `relation`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
+- **Constraints:** Different versions; acyclic. Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `source_version_id`, `derived_version_id`, `kind_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
+- **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
+- **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 1,000, +2,000/year, peak 100/day; five-year 11,000 rows ≈ 10.7 MiB live row+index budget; Expected: initial 10,000, +20,000/year, peak 1,000/day; five-year 110,000 rows ≈ 107.4 MiB live row+index budget; High: initial 100,000, +200,000/year, peak 10,000/day; five-year 1,100,000 rows ≈ 1,074.2 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
+- **Workload:** Interactive lookup by identity and approved foreign keys; batch scans for import/reconciliation. Peak-day figure above is a scenario assumption, not a service-level commitment.
+- **Partitioning:** None proposed initially; decide from measured scale/query plans. Check late data and partition count.
+- **Files:** originals, full-resolution geometry, arrays, media and large exports may be immutable S3 objects. Keep searchable identity, required facts, hashes, coverage, access and provenance in PostgreSQL; use manifests and selective reads.
+- **Retention/risks/benchmark:** preserve accepted evidence and corrections. Review late arrivals, contention, index/partition growth and recovery. Benchmark joins, filters, spatial access, ingestion bursts, concurrent access and interrupted publication.
+### `filesystem.tags` — Controlled file catalog labels
+
+- **Example:** Official publication
+- **Profile:** catalog; planning envelope below.
+
+| Column | Proposed type | Meaning | Nullable | Default | Relationship | Units / validation | Proposed disposition |
+|---|---|---|---|---|---|---|---|
+| `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `code` | `text` | Tag identity | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
+| `title` | `text` | Meaning | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
+
+- **Current SQL/Dryv fields without a proposed same-name column:** `created_at`, `description`, `name`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
+- **Constraints:** UNIQUE(code). Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
+- **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
+- **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 100, +100/year, peak 5/day; five-year 600 rows ≈ 0.6 MiB live row+index budget; Expected: initial 1,000, +500/year, peak 25/day; five-year 3,500 rows ≈ 3.4 MiB live row+index budget; High: initial 10,000, +5,000/year, peak 250/day; five-year 35,000 rows ≈ 34.2 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
+- **Workload:** Interactive lookup by identity and approved foreign keys; batch scans for import/reconciliation. Peak-day figure above is a scenario assumption, not a service-level commitment.
+- **Partitioning:** None proposed initially; decide from measured scale/query plans. Check late data and partition count.
+- **Files:** originals, full-resolution geometry, arrays, media and large exports may be immutable S3 objects. Keep searchable identity, required facts, hashes, coverage, access and provenance in PostgreSQL; use manifests and selective reads.
+- **Retention/risks/benchmark:** preserve accepted evidence and corrections. Review late arrivals, contention, index/partition growth and recovery. Benchmark joins, filters, spatial access, ingestion bursts, concurrent access and interrupted publication.
+### `filesystem.taggings` — File or folder classification
+
+- **Example:** Geographic source tag
+- **Profile:** relation; planning envelope below.
+
+| Column | Proposed type | Meaning | Nullable | Default | Relationship | Units / validation | Proposed disposition |
+|---|---|---|---|---|---|---|---|
+| `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `tag_id` | `uuid` | Tag | No | — | FK → `filesystem.tags` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `file_id` | `uuid` | File | Yes | — | FK → `filesystem.files` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `folder_id` | `uuid` | Folder | Yes | — | FK → `filesystem.folders` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+
+- **Current SQL/Dryv fields without a proposed same-name column:** `created_at`, `tagged_by`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
+- **Constraints:** Exactly one target; target-specific FKs. Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `tag_id`, `file_id`, `folder_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
+- **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
+- **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 1,000, +2,000/year, peak 100/day; five-year 11,000 rows ≈ 10.7 MiB live row+index budget; Expected: initial 10,000, +20,000/year, peak 1,000/day; five-year 110,000 rows ≈ 107.4 MiB live row+index budget; High: initial 100,000, +200,000/year, peak 10,000/day; five-year 1,100,000 rows ≈ 1,074.2 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
+- **Workload:** Interactive lookup by identity and approved foreign keys; batch scans for import/reconciliation. Peak-day figure above is a scenario assumption, not a service-level commitment.
+- **Partitioning:** None proposed initially; decide from measured scale/query plans. Check late data and partition count.
+- **Files:** originals, full-resolution geometry, arrays, media and large exports may be immutable S3 objects. Keep searchable identity, required facts, hashes, coverage, access and provenance in PostgreSQL; use manifests and selective reads.
+- **Retention/risks/benchmark:** preserve accepted evidence and corrections. Review late arrivals, contention, index/partition growth and recovery. Benchmark joins, filters, spatial access, ingestion bursts, concurrent access and interrupted publication.
+
+
+## Queries, lifecycle, capacity and approval
+
+**Representative query:** Which exact bytes and rights support this published record?
+
+Lifecycle: preserve source bytes; extract into candidate revisions; validate; review or use approved deterministic checks; atomically publish; serve. Corrections create explicit versions/supersession. Preserve disagreement and uncertainty.
+
+Capacity is unmeasured. Use low/expected/high input scenarios, explicit formulas and workload benchmarks; do not assume sizes or universal partitions.
+
+**Status:** NOT REVIEWED. Schema existence, tables, columns, relationships, partitioning and S3 choices require user approval. Feedback: none. Approval reference/date/revision: none. Implementation authorization: not granted. Material changes reopen approval.
+<details>
+<summary>Earlier schema proposal preserved for history; superseded and not an approval</summary>
+
+---
 id: DOC-15FC8B06ED43
 name: Filesystem schema redesign and external object storage mapping
 type: documentation
@@ -116,3 +328,5 @@ Task `TSK-0F4398B91D38` relocated the real system seeds to root `seed/` (invento
 ## 2026-11-11 — System-expansion alignment
 
 The expansion reuses immutable filesystem versions for original/derived spatial and heritage assets; domain identity, access policy, derivation lineage and canonical metadata remain separate concerns. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+
+</details>

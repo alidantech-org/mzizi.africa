@@ -352,3 +352,7 @@ This document does not authorize:
 - Infrastructure or deployment work.
 
 The purpose is to establish the complete knowledge architecture before the final relational specification and implementation planning.
+
+## 2026-11-11 — Two database direction
+
+Main stores accepted cross-domain knowledge, verified sources/evidence and published file metadata; Operations stores auth, acquisition, runs, staging, analytical work and operational audit. S3 stores file bytes. Python-native scraping/NLP vectors are disposable. Rust owns relational access and Dryv owns contracts. Earlier database groupings are superseded. See [two database rules](two-database-rules.md) and [schema review catalogue](../schema-redesign/README.md). All schema/table proposals remain unapproved.

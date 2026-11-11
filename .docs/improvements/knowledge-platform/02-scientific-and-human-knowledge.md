@@ -648,3 +648,7 @@ Before SQL approval, investigate:
 - Cross-domain foreign-key and deletion rules.
 
 All candidate tables remain subject to KEEP, REMOVE, DERIVE, MOVE, RENAME or ADD review.
+
+## 2026-11-11 — Storage boundary
+
+Scientific and human knowledge are proposed Main schemas so accepted facts connect to geography, people, organizations, statistical releases and evidence through local relationships. Large grids, imagery, arrays and media remain versioned S3 objects with searchable coverage, lineage and hashes in Main. High-rate observations require measured capacity and per-table partition review. Unreviewed mappings remain in Operations staging; disposable Python vectors are not canonical. See [capacity and partitioning](capacity-partitioning-storage.md) and the schema review files.

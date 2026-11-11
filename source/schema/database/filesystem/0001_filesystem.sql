@@ -39,7 +39,7 @@ CREATE UNIQUE INDEX folders_sibling_names ON filesystem.folders (parent_id, name
 CREATE INDEX folders_parent ON filesystem.folders (parent_id) WHERE parent_id IS NOT NULL;
 COMMENT ON CONSTRAINT folders_no_root_raw ON filesystem.folders IS 'The historical raw collection is not re-created as a logical root; it awaits separate reconciliation.';
 COMMENT ON TABLE filesystem.folders IS 'Concrete logical hierarchy. The path is derived (filesystem.folder_path), never stored. Classification columns are NULL to inherit from the nearest ancestor that sets them (filesystem.effective_folder).';
-COMMENT ON COLUMN filesystem.folders.code IS 'Stable unique code of a folder; any folder may carry one and manifests use it as the folder's identity. NULL when the folder has none.';
+COMMENT ON COLUMN filesystem.folders.code IS 'Stable unique code of a folder; any folder may carry one and manifests use it as the folder''s identity. NULL when the folder has none.';
 COMMENT ON COLUMN filesystem.folders.access IS 'Explicit access class; NULL inherits; no effective value defaults to internal (non-public). Only public/ is anonymously readable in S3; a deeper folder may not widen access unless the ancestor setting it has allow_weaker_children, and public needs access_authorization.';
 COMMENT ON COLUMN filesystem.folders.access_authorization IS 'Required for public: {by, date, reference}.';
 COMMENT ON COLUMN filesystem.folders.allow_weaker_children IS 'Whether folders below may be less restrictive than this folder''s access.';

@@ -1,0 +1,27 @@
+{
+  "name": "@mzizi/database",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "bun@1.4.2",
+  "scripts": {
+    "start": "bun src/main.ts",
+    "dev": "bun --watch src/main.ts",
+    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
+    "db": "bun src/cli.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11",
+    "@nestjs/core": "^11",
+    "@nestjs/platform-express": "^11.1.12",
+    "pg": "^8",
+    "reflect-metadata": "^0.2",
+    "typeorm": "0.3.31",
+    "yaml": "2.8.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "@types/pg": "^8.23.1",
+    "typescript": "^5"
+  }
+}

@@ -1,12 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import type { DataSource, DeepPartial } from 'typeorm';
+import type { DataSource } from 'typeorm';
 import { requireActor } from '#/auth/actor-context';
-import { writeDataSource } from '#/database/write-database';
+import { writeDatabase } from '#/database/write-database';
 import { assertTarget } from '#/modules/audit/audit/target';
 import type { CommentResponseDto } from '#/modules/audit/dto/comment-response.dto';
 import type { CreateCommentBodyDto } from '#/modules/audit/dto/create-comment-body.dto';
-import { CommentEntity } from '#/modules/audit/entities/comment.entity';
 
 /**
  * Project-owned. Writes with the restricted-writer connection; the actor comes from the verified
@@ -25,12 +24,6 @@ export class CreateCommentUseCase {
         throw new BadRequestException('parentCommentId must be a comment on the same record');
       }
     }
-    const stamped = { actorId: actor.actorId };
-    const repository = (await writeDataSource()).getRepository(CommentEntity);
-    const now = new Date();
-    const saved = await repository.save(
-      repository.create({ ...input, ...stamped, createdAt: now, updatedAt: now, version: 1 } as DeepPartial<CommentEntity>),
-    );
-    return { comment: saved } as unknown as CommentResponseDto;
+    return writeDatabase<CommentResponseDto>("comments", { ...input, actorId: actor.actorId });
   }
 }

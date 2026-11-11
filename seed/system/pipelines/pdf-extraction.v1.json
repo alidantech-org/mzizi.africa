@@ -1,0 +1,16 @@
+{
+  "schema_version": "pipeline/v1",
+  "id": "system.pdf-extraction",
+  "version": 1,
+  "steps": [
+    {
+      "id": "extract",
+      "capability": "extraction.pdf",
+      "capability_version": "0.1.0",
+      "input": { "artifact_ref": "${input.artifact_ref}", "profile": "default" },
+      "timeout_seconds": 1800,
+      "max_attempts": 3,
+      "review_gate": true
+    }
+  ]
+}

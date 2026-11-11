@@ -9,9 +9,7 @@
     "start": "bun src/main.ts",
     "dev": "bun --watch src/main.ts",
     "typecheck": "bunx --bun tsc --noEmit -p src/tsconfig.json",
-    "test": "vitest run --root src",
-    "db:reset": "cd ../../.. && uv run mzizi-db reset",
-    "db:init": "cd ../../.. && uv run mzizi-db init"
+    "test": "vitest run --root src"
   },
   "dependencies": {
     "@nestjs/common": "^11",
@@ -24,7 +22,7 @@
     "pg": "^8",
     "reflect-metadata": "^0.2",
     "rxjs": "^7",
-    "typeorm": "^0.3"
+    "typeorm": "0.3.31"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",

@@ -2,7 +2,7 @@
 # It plans identities and readable object keys; it records no upload state (that lives in the filesystem registry).
 schema_version: 2
 release: 2026-11-11.1
-manifest_sha256: ee95db0df3f495e57c3adf45d53922fa2480a06e74760faf24b126a7285a16e3
+manifest_sha256: 6f3251d7b390d06667a0adfbce63d2fafeb90561563492fd5b4a8e93b2cd6496
 bucket: mzizi
 region: us-east-1
 logical_root: /seed
@@ -154,6 +154,7 @@ files:
   "global/sites/world-geoboundaries/manifest.yml": {"entry": "global.sites.world-geoboundaries", "sha256": "ae4717525ff3b0c082f4231041965ff91357284d796ec13ba71794f1141443ff", "bytes": 739, "media_type": "application/yaml", "access": "internal", "versioning": "versioned", "key": "internal/seed/global/sites/world-geoboundaries/manifest.yml"}
   "global/sites/world-geoboundaries/mappings/releases.yml": {"entry": "global.sites.world-geoboundaries", "sha256": "3de0c1ad479b90a64122d3bd524db1a30d934d33f2dacf29b1f3d70066bc791b", "bytes": 521, "media_type": "application/yaml", "access": "internal", "versioning": "versioned", "key": "internal/seed/global/sites/world-geoboundaries/mappings/releases.yml"}
   "global/sites/world-geoboundaries/modules/releases.yml": {"entry": "global.sites.world-geoboundaries", "sha256": "7cf904d156a8843546e3cfa46acbd74e162ce4d30fc75c55d04e64149766f369", "bytes": 518, "media_type": "application/yaml", "access": "internal", "versioning": "versioned", "key": "internal/seed/global/sites/world-geoboundaries/modules/releases.yml"}
+  "system/pipelines/pdf-extraction.v1.json": {"entry": "system.pipeline.pdf-extraction-v1", "sha256": "af1bedb4637e71f9bcee5cf1d668066b7ed2c848b7f9a3e8803879f6fda586ac", "bytes": 379, "media_type": "application/json", "access": "internal", "versioning": "versioned", "key": "internal/seed/system/pipelines/pdf-extraction.v1.json"}
   "system/policy/never-crawl.json": {"entry": "system.policy.never-crawl", "sha256": "c70f2aba1cb5a0bdb643592c90e809e51997f4a3717ad153e950c9c4f051639b", "bytes": 171, "media_type": "application/json", "access": "internal", "versioning": "versioned", "key": "internal/seed/system/policy/never-crawl.json"}
   "system/policy/trusted-domains.json": {"entry": "system.policy.trusted-domains", "sha256": "30cd568526748733d141e9a45bd716fe077f2f2d0775f939cb5aad54fb66df34", "bytes": 15820, "media_type": "application/json", "access": "internal", "versioning": "versioned", "key": "internal/seed/system/policy/trusted-domains.json"}
   "system/policy/wikimedia.json": {"entry": "system.policy.wikimedia", "sha256": "f9fdab91b8eb5320ad9f7b9c73776fe736d219940c5c075a6fb97f3ec0e91ef6", "bytes": 243, "media_type": "application/json", "access": "internal", "versioning": "versioned", "key": "internal/seed/system/policy/wikimedia.json"}

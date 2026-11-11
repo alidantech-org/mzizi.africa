@@ -35,6 +35,14 @@ const passthrough = (program: string, summary: string): Command => ({
 
 const postgres = (): string => process.env.MZIZI_PG_CONTAINER ?? "postgis";
 
+/** Every application schema command enters the TypeScript database owner. */
+const databaseCli = async ({ rest }: Context): Promise<boolean> => {
+  const result = await Bun.spawn(["bun", "src/cli.ts", ...rest], {
+    cwd: `${root}/source/backend/database`, stdout: "inherit", stderr: "inherit", stdin: "inherit",
+  }).exited;
+  return result === 0;
+};
+
 /** The stages of `check`: everything that must pass before a commit. */
 const checkStages = (only: string | undefined): [string, ReturnType<typeof qualitySteps>][] => {
   const selected = select(only);
@@ -121,7 +129,16 @@ export const commands: Record<string, Command> = {
     summary: "stop the local PostGIS container",
     run: () => group("db:down", [rootStep("docker stop", ["docker", "stop", postgres()])]),
   },
-  db: passthrough("mzizi-db", "database management: db status | init | reset | bootstrap-admin"),
+  "infra:up": {
+    summary: "start persistent local Temporal and object-store services",
+    run: () => group("infra:up", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "up", "-d"])]),
+  },
+  "infra:down": {
+    summary: "stop local Temporal and object-store services while preserving their volumes",
+    run: () => group("infra:down", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "down"])]),
+  },
+  db: { summary: "TypeScript database owner: status | migrate | verify | provision-local-roles | seed | guarded reset | release operations", run: databaseCli },
+  "db:ts": { summary: "alias for the TypeScript database owner command", run: databaseCli },
   seed: passthrough("mzizi-manifest", "seed registry: seed check | lock | report | validate-structure <dir>"),
   fs: passthrough("mzizi-filesystem", "filesystem registry: fs sync --manifest <file> | tree | ..."),
   engine: passthrough("mzizi-engine", "engine: engine serve | capabilities | check"),

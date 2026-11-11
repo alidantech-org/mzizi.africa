@@ -4,7 +4,7 @@
 
 # Filesystem schema and operations
 
-Implemented in `mzizi_new` by task `TSK-3EA8C40B0F60`. SQL: `source/schema/database/filesystem/0001_filesystem.sql` (applied by `uv run mzizi-db init`). Package: `source/packages/filesystem`. Engine endpoints: `source/backend/engine` (`/v1/filesystem/...`). Command: `uv run mzizi-filesystem`. These decisions supersede the earlier object/file-type/variant/attachment proposals.
+Implemented in local `mzizi_new` by task `TSK-3EA8C40B0F60`. SQL: `source/schema/database/filesystem/0001_filesystem.sql` (applied through `bun run db migrate`). Package: `source/packages/filesystem`. Engine endpoints: `source/backend/engine` (`/v1/filesystem/...`). Command: `uv run mzizi-filesystem`. The Python package still owns direct PostgreSQL filesystem persistence during the TypeScript database-owner migration. These decisions supersede the earlier object/file-type/variant/attachment proposals.
 
 ## Decisions
 
@@ -296,7 +296,7 @@ S3 and PostgreSQL do not share a transaction. Order of operations makes interrup
 
 ## Authorization
 
-The `filesystem` namespace (`read`, `edit`, `review`, `publish`, `export`, `delete`) is registered in the `auth` seed; `filesystem.folders` is a scope target (a grant on a folder covers it and everything below) and `filesystem.folders` and `filesystem.files` are governed tables linked through the folder. Edit covers folder creation, uploads, replacement and moves (both ends checked with `auth.can_change`); read covers downloads and lineage; publish covers access changes; delete covers cleanup. The package never reimplements these rules: it calls `auth.can_link`, `auth.can` and `auth.can_change`. Role `filesystem_manager` bundles all six actions. Operator mode (no actor) exists only for local repository commands.
+The `filesystem` namespace (`read`, `edit`, `review`, `publish`, `export`, `delete`) is registered in the `auth` seed; `filesystem.folders` is a scope target (a grant on a folder covers it and everything below) and `filesystem.folders` and `filesystem.files` are governed tables linked through the folder. Edit covers folder creation, uploads, replacement and moves (both ends checked with `auth.can_change`); read covers downloads and lineage; publish covers access changes; delete covers cleanup. The rules remain in the PostgreSQL `auth` functions. Runtime filesystem API authorization now calls named TypeScript database-service operations that wrap `auth.can_link`, `auth.can` and `auth.can_change`; metadata access still uses the Python repository pending its owner migration. Role `filesystem_manager` bundles all six actions. Operator mode (no actor) exists only for local repository commands.
 
 ## S3 contract
 

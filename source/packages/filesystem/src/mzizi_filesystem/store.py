@@ -260,7 +260,16 @@ class S3ObjectStore:
         ]
 
     def abort_multipart(self, key: str, upload_id: str) -> None:
-        self._client.abort_multipart_upload(Bucket=self.bucket, Key=key, UploadId=upload_id)
+        try:
+            self._client.abort_multipart_upload(Bucket=self.bucket, Key=key, UploadId=upload_id)
+        except Exception as error:
+            # Cleanup retries may repeat after the store accepted the first abort but
+            # the database acknowledgement was lost. Missing uploads are already clean.
+            response = getattr(error, "response", {})
+            code = response.get("Error", {}).get("Code") if isinstance(response, Mapping) else None
+            status = response.get("ResponseMetadata", {}).get("HTTPStatusCode") if isinstance(response, Mapping) else None
+            if code not in ("NoSuchUpload", "NoSuchKey", "NotFound", "404") and status != 404:
+                raise
 
     def presign_put(self, key: str, content_type: str, expires_seconds: int = 900) -> str:
         return self._require_public_endpoint().generate_presigned_url(

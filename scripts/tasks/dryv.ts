@@ -45,7 +45,10 @@ const inDryv = (name: string, script: string): Step => step(name, at("dryv"), ["
 export const linkSteps = (): Step[] => [inDryv("Link local Dryv checkout", "link")];
 
 /** Typecheck, audit, doctor and compile the contracts, and check the exported access rules, API boundary and schema. */
-export const checkSteps = (): Step[] => [inDryv("Contract checks", "check")];
+export const checkSteps = (): Step[] => [
+  inDryv("Contract checks", "check"),
+  step("Database catalog stability", at("source/backend/database"), ["bun", "src/cli.ts", "schema-check"]),
+];
 
 /** Re-export the access rules and the JSON schema derived from the contracts. */
 export const exportSteps = (): Step[] => [inDryv("Export access rules", "access:export"), inDryv("Export JSON schema", "schema:export")];

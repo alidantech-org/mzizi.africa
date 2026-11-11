@@ -1,0 +1,9 @@
+{
+  "name": "@mzizi/pipelines",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": { "start": "bun dist/worker.js", "dev": "bun --watch src/worker.ts", "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json", "build": "bunx --bun tsc -p tsconfig.json", "verify:bun-runtime": "bun src/verify-bun-runtime.ts" },
+  "dependencies": { "@temporalio/activity": "1.25.0", "@temporalio/client": "1.25.0", "@temporalio/common": "1.25.0", "@temporalio/worker": "1.25.0", "@temporalio/workflow": "1.25.0" },
+  "devDependencies": { "@types/bun": "1.4.4", "typescript": "^5.9.0" }
+}

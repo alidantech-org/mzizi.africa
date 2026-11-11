@@ -1,0 +1,37 @@
+services:
+  temporal:
+    image: temporalio/temporal:1.5.1
+    user: "0:0"
+    command:
+      - server
+      - start-dev
+      - --ip
+      - 0.0.0.0
+      - --db-filename
+      - /var/lib/temporal/temporal.db
+      - --ui-port
+      - "8233"
+    ports:
+      - "127.0.0.1:7233:7233"
+      - "127.0.0.1:8233:8233"
+    volumes:
+      - temporal-data:/var/lib/temporal
+
+  object-store:
+    image: chrislusf/seaweedfs:4.39
+    command:
+      - server
+      - -dir=/data
+      - -s3
+      - -s3.port=9000
+      - -master.port=9333
+      - -volume.port=8080
+      - -filer.port=8888
+    ports:
+      - "127.0.0.1:9000:9000"
+    volumes:
+      - object-store-data:/data
+
+volumes:
+  temporal-data:
+  object-store-data:

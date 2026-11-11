@@ -1,0 +1,5 @@
+description: Versioned workflow definitions approved for execution by the pipeline service.
+role: pipeline_manifest
+acquisition_class: static_curated
+preparation: human_prepared
+review: {status: proposed, note: "Definitions are immutable inputs; each must be proposed and activated through the database service before execution."}

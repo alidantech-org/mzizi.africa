@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import secrets
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Any
@@ -18,12 +19,13 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from . import __version__
-from .auth import Authority, DatabaseAuthority, Principal, TokenVerifier, oidc_verifier, require
+from .auth import Authority, DatabaseServiceAuthority, Principal, TokenVerifier, oidc_verifier, require
 from .capabilities import CapabilityRegistry, build_default_registry
 from .config import Settings
 from .executor import Executor
 from .filesystem_api import router as filesystem_router
-from .store import MemoryStore, PostgresStore, Store
+from .database_store import DatabaseServiceStore
+from .store import MemoryStore, Store
 
 
 class JobRequest(BaseModel):
@@ -38,11 +40,8 @@ class RunRequest(BaseModel):
 
 
 def _store(settings: Settings) -> Store:
-    if settings.store == "postgres":
-        from mzizi_database import connect
-
-        url = settings.database_url
-        return PostgresStore(lambda: connect(url, autocommit=True))
+    if settings.store == "database_service":
+        return DatabaseServiceStore(settings.database_service_url or "", settings.database_service_token or "")
     return MemoryStore()
 
 
@@ -66,9 +65,17 @@ def create_app(
         yield
         await app.state.executor.stop()
 
+    selected_authority = authority or (
+        DatabaseServiceAuthority(settings.database_service_url, settings.database_service_token)
+        if settings.database_service_url and settings.database_service_token
+        else None
+    )
+    if settings.auth != "off" and selected_authority is None:
+        raise ValueError("authenticated engine mode requires DATABASE_SERVICE_URL and DATABASE_SERVICE_TOKEN")
+
     app = FastAPI(title="Mzizi engine", version=__version__, lifespan=lifespan)
     app.state.settings, app.state.registry, app.state.store = settings, registry, store
-    app.state.authority = authority or (DatabaseAuthority(settings.database_url) if settings.database_url else None)
+    app.state.authority = selected_authority
     app.state.verifier = verifier or oidc_verifier(settings)
 
     @app.get("/health")
@@ -88,6 +95,24 @@ def create_app(
     async def capabilities(_: Principal = require("engine.read")) -> dict:
         return {"capabilities": registry.describe()}
 
+    @app.post("/internal/v1/capabilities/execute")
+    async def execute_internal_capability(body: JobRequest, request: Request) -> dict:
+        """Service-token endpoint for Temporal activities; accepts registered compute capabilities only."""
+        expected = settings.service_token
+        supplied = request.headers.get("authorization", "")
+        if not expected:
+            raise HTTPException(503, "Temporal capability service token is not configured")
+        if not secrets.compare_digest(supplied, f"Bearer {expected}"):
+            raise HTTPException(403, "invalid service credential")
+        allowed = {"extraction.pdf", "extraction.csv", "extraction.json", "extraction.geojson", "scraping.links", "manifest.validate_structure", "manifest.check_seeds"}
+        if body.kind not in allowed:
+            raise HTTPException(422, "unregistered Temporal capability")
+        try:
+            result = await app.state.executor._call(body.kind, body.input)
+        except KeyError:
+            raise HTTPException(422, "capability is not installed") from None
+        return {"run_id": body.run_id, "idempotency_key": body.idempotency_key, "result": result}
+
     @app.post("/v1/runs", status_code=201)
     async def create_run(body: RunRequest, principal: Principal = require("engine.edit")) -> dict:
         return await asyncio.to_thread(store.create_run, body.name, principal.account_id)
@@ -106,7 +131,6 @@ def create_app(
             payload["actor"] = (
                 principal.account_id
             )  # the actor is the authenticated principal, never a client-supplied value
-            payload["database_url"] = settings.database_url
         try:
             job, created = await app.state.executor.submit(
                 body.kind, payload, body.idempotency_key, principal.account_id, body.run_id

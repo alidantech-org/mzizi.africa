@@ -12,7 +12,7 @@ import { AppModule } from "#/app.module";
 import { createTokenVerifier, installAuth } from "#/auth";
 import { DatabaseModule } from "#/database/database.module";
 import { grantReadOnly, scratchDatabase, synchronizeDomainSchemas } from "#/database/scratch-database";
-import { setWriteDataSource } from "#/database/write-database";
+import { setDatabaseOperationTransportForTesting } from "#/database/write-database";
 import { CommentEntity } from "#/modules/audit/entities/comment.entity";
 import { EvidenceReferenceEntity } from "#/modules/audit/entities/evidence-reference.entity";
 import { ReviewDecisionEntity } from "#/modules/audit/entities/review-decision.entity";
@@ -79,7 +79,19 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
 
     writer = new DataSource({ type: "postgres", url: urlFor(dbUrl, WRITER), entities: [CommentEntity, EvidenceReferenceEntity, ReviewDecisionEntity] });
     await writer.initialize();
-    setWriteDataSource(writer);
+    setDatabaseOperationTransportForTesting(async (operation, payload) => {
+      const now = new Date();
+      if (operation === "comments") {
+        const [row] = await writer.query(`INSERT INTO audit.comments(actor_id,target_id,target_kind,body,parent_comment_id,created_at,updated_at,version) VALUES($1,$2,$3,$4,$5,$6,$6,1) RETURNING id,actor_id AS "actorId",target_id AS "targetId",target_kind AS "targetKind",body,parent_comment_id AS "parentCommentId",created_at AS "createdAt",updated_at AS "updatedAt",version`, [payload.actorId, payload.targetId, payload.targetKind, payload.body, payload.parentCommentId ?? null, now]);
+        return { comment: row } as never;
+      }
+      if (operation === "evidence") {
+        const [row] = await writer.query(`INSERT INTO audit.evidence(actor_id,target_id,target_kind,file_id,note,created_at,updated_at,version) VALUES($1,$2,$3,$4,$5,$6,$6,1) RETURNING id,actor_id AS "actorId",target_id AS "targetId",target_kind AS "targetKind",file_id AS "fileId",note,created_at AS "createdAt",updated_at AS "updatedAt",version`, [payload.actorId, payload.targetId, payload.targetKind, payload.fileId, payload.note ?? null, now]);
+        return { evidence: row } as never;
+      }
+      const [row] = await writer.query(`INSERT INTO audit.decisions(reviewer_id,target_id,target_kind,decision,proposed_state,rationale,created_at,updated_at,version) VALUES($1,$2,$3,$4,$5,$6,$7,$7,1) RETURNING id,reviewer_id AS "reviewerId",target_id AS "targetId",target_kind AS "targetKind",decision,proposed_state AS "proposedState",rationale,created_at AS "createdAt",updated_at AS "updatedAt",version`, [payload.actorId, payload.targetId, payload.targetKind, payload.decision, payload.proposedState, payload.rationale, now]);
+      return { decision: row } as never;
+    });
 
     @Module({ imports: [TypeOrmModule.forRoot({ type: "postgres", url: urlFor(dbUrl, READER), autoLoadEntities: true, synchronize: false })] })
     class ReaderDatabaseModule {}
@@ -93,7 +105,7 @@ describe.skipIf(!adminUrl)("audit write paths (HTTP, PostgreSQL)", () => {
 
   afterAll(async () => {
     await app?.close();
-    setWriteDataSource(undefined);
+    setDatabaseOperationTransportForTesting(undefined);
     await writer?.destroy();
     for (const role of [READER, WRITER]) {
       await admin?.query(`DROP OWNED BY ${role}`);

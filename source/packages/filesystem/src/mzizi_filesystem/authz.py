@@ -15,6 +15,7 @@ from .repository import PermissionDenied
 
 
 class Authorizer(Protocol):
+    def for_platform(self, actor: str | None, permission: str) -> None: ...
     def for_new_child(self, actor: str | None, permission: str, table: str, parent_folder_id: str | None) -> None: ...
     def for_record(self, actor: str | None, permission: str, table: str, record_id: str) -> None: ...
     def for_move(
@@ -24,6 +25,9 @@ class Authorizer(Protocol):
 
 class OperatorAuthorizer:
     """Allows everything. Only for local repository commands run by the operator against the disposable database."""
+
+    def for_platform(self, actor: str | None, permission: str) -> None:
+        return None
 
     def for_new_child(self, actor: str | None, permission: str, table: str, parent_folder_id: str | None) -> None:
         return None
@@ -46,6 +50,15 @@ class DatabaseAuthorizer:
                 + (f" ({decision.get('failed_on')})" if decision.get("failed_on") else "")
             )
 
+    def for_platform(self, actor: str | None, permission: str) -> None:
+        if actor is None:
+            raise PermissionDenied("an authenticated actor is required")
+        allowed = required(
+            self.conn.execute("SELECT auth.can_platform(%s, %s) AS allowed", (actor, permission)).fetchone()
+        )["allowed"]
+        if not allowed:
+            raise PermissionDenied(f"{permission} is required")
+
     def for_new_child(self, actor: str | None, permission: str, table: str, parent_folder_id: str | None) -> None:
         if actor is None:
             raise PermissionDenied("an authenticated actor is required")
@@ -67,7 +80,6 @@ class DatabaseAuthorizer:
             )["r"],
             f"{permission} on {table}",
         )
-
     def for_move(self, actor: str | None, permission: str, table: str, record_id: str, new_link_id: str | None) -> None:
         if actor is None:
             raise PermissionDenied("an authenticated actor is required")

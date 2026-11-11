@@ -262,6 +262,17 @@ entries:
   database_target_state: legacy_dev_only
   media_type: application/json
   notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.pipeline.pdf-extraction-v1
+  path: system/pipelines/pdf-extraction.v1.json
+  loader: database.pipeline-release
+  target: engine.pipeline_releases
+  database_target_state: mzizi_new
+  media_type: application/json
+  key_columns:
+  - id
+  - version
+  origin: authored as a versioned pipeline input for the durable Temporal migration
+  notes: Proposal only; activation requires an explicit expected content hash and immutable release version.
 - id: ke.policy.domain-spellings
   path: countries/ke/policy/domain-spellings.json
   loader: engine.domain-spellings

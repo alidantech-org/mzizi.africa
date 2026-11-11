@@ -64,6 +64,12 @@ describe("steps", () => {
     expect(pick(["api"]).map((service) => service.name)).toEqual(["api"]);
     expect(() => pick(["nope"])).toThrow("unknown service");
   });
+  test("TypeScript services use Bun for development and production entrypoints", () => {
+    for (const service of services.filter(({ name }) => name !== "engine")) {
+      expect(service.dev[0]).toBe("bun");
+      expect(service.start[0]).toBe("bun");
+    }
+  });
 });
 
 describe("exec", () => {

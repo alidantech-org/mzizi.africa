@@ -6,9 +6,7 @@
 
 ## Status
 
-This document describes the **target architecture**, not the current directory layout.
-
-The repository has been consolidated, but several responsibilities still live inside legacy code. The next stage is to separate those responsibilities into durable system boundaries.
+This document describes the target architecture and records the active migration state. The target is represented by the current `source/` layout; Python extraction and filesystem capabilities remain during the gradual database cutover.
 
 ## Architecture goal
 
@@ -33,23 +31,25 @@ mzizi.africa/
 │   │   ├── www/                # Public atlas / heritage / exploration product
 │   │   ├── web/                # Research, review, stewardship and operations dashboard
 │   │   └── mobile/             # Flutter mobile client
+│   ├── schema/                  # Dryv contracts and PostgreSQL input schemas
+│   ├── packages/                # Reusable Python capability libraries
 │   └── backend/
-│       ├── engine/
-│       │   ├── data/           # Discovery, ingestion, extraction, parsing
-│       │   └── database/       # Schema, migrations, seeds, imports, promotion
-│       ├── intelligence/       # AI/tool-assisted classification and evaluation
-│       ├── files/              # Source artifact and file lifecycle service
-│       └── api/                # Target NestJS product API (legacy Python lives here until migrated)
+│       ├── api/                 # NestJS product API; SELECT-only database role
+│       ├── database/            # Bun TypeScript owner, named writes and admin CLI
+│       ├── pipelines/           # Bun Temporal coordinator and workflow definitions
+│       └── engine/              # Python capability API/workers; no target DB credentials
 │
-├── packages/                   # Future shared contracts/taxonomies when justified
-│   ├── contracts/
-│   └── domain/
+├── seed/                        # Versioned prepared inputs and pipeline manifests
 │
 ├── .docs/
 └── AGENTS.md
 ```
 
 The exact package tooling can evolve. The ownership boundaries should not be collapsed casually.
+
+## Active migration state — 2026-11-11
+
+The Bun database CLI applies checksummed SQL releases to the disposable local `mzizi_new` database. The database service now owns named audit, auth, pipeline, engine job/event/outbox, and filesystem folder/file reads, download-key authorization, folder creation, upload reservation, bounded upload-cleanup metadata operations, and file-lineage writes. Its local runtime role cannot administer the database; filesystem upload and lineage writes have insert-only grants with the minimum column reads their PostgreSQL constraints require. Cleanup uses bounded security-definer functions so the runtime role does not have broad upload update/delete grants, and failed object cleanup remains retryable before metadata trim. The API role is read-only. The Python filesystem API still mutates other filesystem metadata directly, and manifest synchronization retains a PostgreSQL path. Temporal, versioned pipeline releases, and local PostGIS/object-store/Temporal services exist, but the complete workflow migration, evidence review, promotion, and fresh-schema parity are still in progress. TypeScript tooling and services use Bun as the sole runtime.
 
 ---
 
@@ -650,6 +650,10 @@ Modern country context does not restrict historical/cross-border identity. UI re
 
 The product vision now groups exploration into Civic and Society; Geography and Nature; History and Heritage; Statistics and Demographics; and Economics and Production. These groupings do not prescribe database schemas. Candidate domain work includes environment, biodiversity, agriculture, economy, history, heritage and infrastructure; see [the system-expansion proposal](../improvements/advancement-and-system-expansion.md) and its [domain briefs](../improvements/schema-redesign/README.md#seven-system-expansion-domain-briefs-hypothetical).
 
-Current active SQL definitions are under `source/schema/database/`; the ordered migrations define `auth`, `engine`, `filesystem`, `geography`, `legal` and `reference`. Active source layout is `source/packages/`, the Python engine in `source/backend/engine/`, the NestJS product API in `source/backend/api/`, and input schemas in `source/schema/`. Dryv contains contracts for additional domains, which are not equivalent to fully implemented database schemas or API capabilities. This is a repository snapshot, not a statement about a live deployment.
+Current active SQL definitions are under `source/schema/database/`; the ordered migrations define `audit`, `auth`, `engine`, `filesystem`, `geography`, `legal` and `reference`. Active source layout is `source/packages/`, the Python engine in `source/backend/engine/`, the NestJS product API in `source/backend/api/`, and input schemas in `source/schema/`. Dryv contains contracts for additional domains, which are not equivalent to fully implemented database schemas or API capabilities. The TypeScript database CLI can compile Dryv persistence entities into a stable catalog and compare their physical table names with SQL migrations. That audit currently reports extensive divergence; it does not generate replacement DDL until active domain models and migration-owned PostgreSQL behavior have been reconciled. This is a repository snapshot, not a statement about a live deployment.
 
 All proposals continue to honor the system boundaries: source custody preserves original artifacts, extraction produces representations, intelligence assists classification/evaluation, database management owns migrations/seeding/promotion, canonical storage records reviewed/versioned facts, and NestJS exposes stable product/query contracts. No candidate domain may collapse those responsibilities.
+
+## 2026-11-11 — TypeScript database and Temporal implementation status
+
+The intended database owner is `source/backend/database` (TypeScript). The current increment provides a TypeORM migration CLI restricted to local `mzizi_new`, named HTTP operations for API audit writes, auth resolution, platform checks, and scoped filesystem authorization checks. Python auth now requires the named database-service client and no longer has a direct-PostgreSQL fallback. The filesystem API routes scoped authorization through those operations, but its metadata repository still connects directly to PostgreSQL. Engine job persistence and filesystem seed sync also remain Python database users. The TypeScript database CLI now provisions separate local runtime/API-reader logins and verifies that the product API cannot mutate application tables or execute auth mutation functions, while the runtime login cannot create schema or write migration history. Dryv-to-SQL generation and schema reconciliation, full seed migration, Python writer replacement, and candidate promotion remain incomplete. `source/backend/pipelines` contains an initial TypeScript Temporal worker and capability adapter; TypeScript services run with Bun. Temporal workflow execution under Bun has been smoke-verified; the SDK logs that V8 promise-hook stack collection is unavailable. The existing Python engine job store remains active until durable submission, result persistence, and recovery are fully wired. These are migration-in-progress facts, not a completed service cutover.

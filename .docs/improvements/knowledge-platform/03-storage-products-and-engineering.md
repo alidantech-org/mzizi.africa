@@ -707,3 +707,7 @@ The objective is not to store every file or create a table for every subject.
 The objective is to create a coherent, expandable system that understands how African places, people, nature, societies, institutions and economies relate across time.
 
 All implementation, infrastructure purchases and database changes require their own explicit approval.
+
+## 2026-11-11 — Two database direction
+
+Main holds accepted knowledge, verified sources/evidence and published file metadata; Operations holds authentication, pipelines, staging, analytical work and operational data. Official documents and large scientific products are S3 bytes registered by version/checksum in Main. Python-native vectors are disposable. Rust exclusively accesses relational stores; Dryv is authoritative. Earlier database counts are superseded. Per-table capacity/partition choices remain unapproved; see the [schema catalogue](../schema-redesign/README.md).

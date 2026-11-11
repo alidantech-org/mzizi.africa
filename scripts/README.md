@@ -9,7 +9,7 @@ bun run check        # format check, lint, typecheck, structure and tests
 bun run dev          # API, engine, dashboard and public site together
 ```
 
-Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS), `flutter` (mobile app), `task` (work tracking), a Dryv checkout at `DRYV_HOME` (generation). `bun run doctor` reports what is present.
+Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object store), `flutter` (mobile app), `task` (work tracking), a Dryv checkout at `DRYV_HOME` (generation). TypeScript services, including the Temporal worker, run with Bun; no Node.js runtime is required. `bun run doctor` reports what is present.
 
 ## Commands
 
@@ -38,7 +38,9 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS), `flutter` (mob
 | `bun scripts/mz.ts dryv:trust` | trusts the project packs (once per machine) |
 | `bun run catalog` | regenerates the dashboard's data catalog from the API list routes |
 | `bun run db:up` / `db:down` | starts or stops the local PostGIS container (`MZIZI_PG_CONTAINER`, default `postgis`) |
-| `bun run db -- status` | `mzizi-db`: `status`, `init`, `reset`, `bootstrap-admin` (the disposable `mzizi_new` only) |
+| `bun run db generate` / `bun run db plan` | regenerates the Dryv persistence catalog and reports table-name coverage against current SQL migrations |
+| `bun run db status` | TypeScript owner: `status`, `migrate`, `verify`, local role provisioning, `seed`, guarded reset, admin bootstrap and pipeline release operations |
+| `bun run infra:up` / `infra:down` | starts or stops local Temporal and S3-compatible SeaweedFS; named volumes preserve development history and test objects |
 | `bun run seed -- check` | `mzizi-manifest`: `check`, `lock`, `report`, `validate-structure <dir>` |
 | `bun run fs -- tree` | `mzizi-filesystem`: `sync --manifest <file>`, `tree`, `verify`, `cleanup-uploads` and the rest |
 | `bun run engine -- check` | `mzizi-engine`: `serve`, `capabilities`, `check` |
@@ -70,9 +72,17 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 
 `dev` and `start` give every service the values of the git-ignored root `.env` and its own port, prefix each output line with the service name and stop every service when the runner stops or when one service exits. `PORT` from `.env` is deliberately not passed through, because it would put two services on one port.
 
+### Local data and workflow infrastructure
+
+On a new checkout, copy `.env.example` to `.env` and set local-only service tokens. Keep an existing `.env` intact. The database administrator connection `MZIZI_DATABASE_URL` is reserved for the Bun database CLI; the TypeScript database service uses `DATABASE_RUNTIME_URL`, and the NestJS API uses read-only `DATABASE_URL`.
+
+The local PostGIS container is managed separately so a database reset cannot remove other local databases. Start it with `bun run db:up`, then start the persistent Temporal development service and isolated S3-compatible SeaweedFS object store with `bun run infra:up`. Temporal listens on `127.0.0.1:7233` and its UI on `http://127.0.0.1:8233`; its SQLite history is in the named `temporal-data` volume. SeaweedFS exposes its local S3 endpoint on `127.0.0.1:9000`; object bytes remain in the named `object-store-data` volume. The local endpoint is bound to loopback and configured for local development only. These services never connect to the existing `mzizi` S3 bucket.
+
+The development sequence is `bun run db:up`, `bun run infra:up`, `bun run db reset --confirm mzizi_new`, `bun run db provision-local-roles`, and `bun run db verify`, then run the database, pipeline, engine, and API services with local URLs and tokens from `.env`. `bun run db status` reports schema migration state; `bun run db seed` reapplies the idempotent auth and reference seeds. Proposed workflow definitions can be imported with `bun run db seed pipelines <actor-uuid>`; they stay inactive until separately approved by hash. Stop application processes, then use `bun run infra:down` and `bun run db:down`. The infra down command retains its named volumes. To erase only local Temporal/SeaweedFS development data, explicitly run `docker compose -f compose.local.yaml down --volumes`; to rebuild application schema/data use only the guarded `mzizi_new` reset command. This stack provides local infrastructure; application service configuration and full end-to-end workflow acceptance remain in progress.
+
 ## Dryv
 
-Generation stays connected through Dryv: the contracts in `dryv/contracts` generate the NestJS API, the access rules and JSON schema are exported from the same contracts, and the dashboard catalog is derived from the generated routes. `dryv:generate` runs that whole chain.
+Generation stays connected through Dryv: the contracts in `dryv/contracts` generate the NestJS API, the access rules and JSON schema are exported from the same contracts, and the dashboard catalog is derived from the generated routes. `dryv:generate` runs that whole chain. `dryv:check` also checks the committed Dryv database catalog; `bun run db plan` reports the current entity/table-name gaps against ordered SQL migrations. This report is diagnostic and does not yet emit replacement SQL: current active models and SQL differ, so reconciliation is required first.
 
 `dryv:generate` and `dryv:verify` need the Dryv engine API. They start it from `DRYV_HOME` when nothing answers on its port and stop it afterwards; an engine that was already running is left alone. The engine is bound to `127.0.0.1` and started in Dryv's development mode, so no Dryv Platform login is needed. If port 8750 is taken by a different Dryv service, choose another: `DRYV_API_PORT=8751 bun run dryv:verify`. The log is `.local/dryv-api.log`. Traps and the manual steps are in `.docs/guidance/running-dryv.md`.
 
