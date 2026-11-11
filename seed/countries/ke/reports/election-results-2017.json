@@ -1,0 +1,3520 @@
+{
+ "sources": {
+  "2017": {
+   "report": {
+    "checks": [],
+    "held": [
+     "fresh presidential KISUMU: position 41 does not agree with the county list",
+     "fresh presidential MIGORI: position 42 does not agree with the county list",
+     "fresh presidential KISII: position 43 does not agree with the county list",
+     "fresh presidential NYAMIRA: position 44 does not agree with the county list"
+    ],
+    "president_aug": {
+     "done": 45,
+     "held": [
+      "UASIN GISHU: figures not readable",
+      "KISUMU: candidates add to 378,903, valid votes 439,419"
+     ]
+    },
+    "president_fresh": {
+     "done": 41,
+     "held": []
+    },
+    "seats": {
+     "2017/woman_rep": 47,
+     "2017/senator": 47,
+     "2017/governor": 47,
+     "2017/mp": 286
+    },
+    "candidates": {
+     "2017/woman_rep": 297,
+     "2017/senator": 256,
+     "2017/governor": 211,
+     "2017/mp": 1877
+    }
+   },
+   "runs": {
+    "classification": "55aaebac-846d-4ffd-832f-4023e07cbc6c",
+    "election": "062e01ff-6aa6-4f27-8afe-dfe721d0606a",
+    "party": "5ac52a57-1a88-4be5-98d4-7ab12719a619",
+    "person": "c363bcdf-a419-4bfc-a688-d51bfc8aab86",
+    "seat": "2e465f4e-56eb-4902-a024-2aad63a039e5",
+    "candidate": "5427262f-a6a5-4a08-be90-056df59e3cfa",
+    "result": "0a6d79e0-1edd-4902-bd70-fd9c50d2ffbd",
+    "electorate": "0ac58487-60e1-45a2-84ee-7e30f2b90d1f"
+   },
+   "stats": {
+    "classification": {
+     "created": 0,
+     "unchanged": 3,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "election": {
+     "created": 1,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "party": {
+     "created": 14,
+     "unchanged": 1,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "person": {
+     "created": 1840,
+     "unchanged": 384,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "seat": {
+     "created": 429,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "candidate": {
+     "created": 2656,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "result": {
+     "created": 3329,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "electorate": {
+     "created": 513,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    }
+   }
+  }
+ },
+ "flags": [
+  {
+   "new": "ke/person/uhuru-kenyatta-president-president",
+   "other": "ke/person/uhuru-kenyatta",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (president None against None None)"
+  },
+  {
+   "new": "ke/person/amina-abdalla-mombasa-woman-rep",
+   "other": "ke/person/amina-abdalla",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/asha-hussein-mohamed-mombasa-woman-rep",
+   "other": "ke/person/asha-hussein-mohamed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/zamzam-chimba-mohamed",
+   "other": "ke/person/mohammed-zamzam-chimba",
+   "score": 97.67441860465117,
+   "reason": "name agrees (98) but seat or place differs (woman_rep ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/zainab-kalekye-chidzuga",
+   "other": "ke/person/zainab-kalekye",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kwale against mp None)"
+  },
+  {
+   "new": "ke/person/zuleikha-ju-ma-hassan",
+   "other": "ke/person/zulekha-hassan-juma",
+   "score": 95.0,
+   "reason": "name agrees (95) but seat or place differs (woman_rep ke/kwale against None None)"
+  },
+  {
+   "new": "ke/person/zuleikha-ju-ma-hassan",
+   "other": "ke/person/zuleikha-juma-hassan",
+   "score": 97.5609756097561,
+   "reason": "name agrees (98) but seat or place differs (woman_rep ke/kwale against mp None)"
+  },
+  {
+   "new": "ke/person/amina-laura-mnyazi",
+   "other": "ke/person/mnyazi-amina-laura",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kilifi against mp ke/kilifi/malindi)"
+  },
+  {
+   "new": "ke/person/gertrude-mbeyu-mwanyanje-kilifi-woman-rep",
+   "other": "ke/person/mwanyanje-gertrude-mbeyu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kilifi against mp None)"
+  },
+  {
+   "new": "ke/person/gertrude-mbeyu-mwanyanje-kilifi-woman-rep",
+   "other": "ke/person/gertrude-mbeyu-mwanyanje",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kilifi against mp None)"
+  },
+  {
+   "new": "ke/person/halima-ware-duri",
+   "other": "ke/person/halima-ware",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/tana-river against mp None)"
+  },
+  {
+   "new": "ke/person/rehema-hassan-tana-river-woman-rep",
+   "other": "ke/person/rehema-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/tana-river against mp None)"
+  },
+  {
+   "new": "ke/person/rukia-abdi-mohamed",
+   "other": "ke/person/abdi-mohamed-abdi-mca-wajir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/tana-river against None None)"
+  },
+  {
+   "new": "ke/person/shakila-abdalla-mohamed",
+   "other": "ke/person/abdalla-shakilla-mohamed",
+   "score": 97.87234042553192,
+   "reason": "name agrees (98) but seat or place differs (woman_rep ke/lamu against None None)"
+  },
+  {
+   "new": "ke/person/shakila-abdalla-mohamed",
+   "other": "ke/person/shakila-abdalla",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/lamu against mp None)"
+  },
+  {
+   "new": "ke/person/ruweida-mohamed-obo-lamu-woman-rep",
+   "other": "ke/person/obo-ruweida-mohamed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/lamu against None None)"
+  },
+  {
+   "new": "ke/person/ruweida-mohamed-obo-lamu-woman-rep",
+   "other": "ke/person/ruweida-mohamed-obo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/lamu against mp None)"
+  },
+  {
+   "new": "ke/person/lydia-haika-mnene-mizighi",
+   "other": "ke/person/mizighi-lydia-haika",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/taita-taveta against mp None)"
+  },
+  {
+   "new": "ke/person/lydia-haika-mnene-mizighi",
+   "other": "ke/person/lydia-haika",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/taita-taveta against mp None)"
+  },
+  {
+   "new": "ke/person/hope-anisa-mwakio",
+   "other": "ke/person/hope-anisa-sanguli-mwakio-mca-taita-taveta",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/taita-taveta against None None)"
+  },
+  {
+   "new": "ke/person/anab-mohamed-gure-garissa-woman-rep",
+   "other": "ke/person/anab-mohamed-gure",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/garissa against mp None)"
+  },
+  {
+   "new": "ke/person/shukra-hussein-gure",
+   "other": "ke/person/shukran-hussein-gure",
+   "score": 97.43589743589743,
+   "reason": "name agrees (97) but seat or place differs (woman_rep ke/garissa against mp None)"
+  },
+  {
+   "new": "ke/person/amina-mohamed-keinan",
+   "other": "ke/person/amina-mohamed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/garissa against None None)"
+  },
+  {
+   "new": "ke/person/amina-mohamed-keinan",
+   "other": "ke/person/amina-mohamed-wp-cabinet-secretary",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/garissa against None None)"
+  },
+  {
+   "new": "ke/person/fatuma-gedi-ali-wajir-woman-rep",
+   "other": "ke/person/fatuma-gedi-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/wajir against mp None)"
+  },
+  {
+   "new": "ke/person/oray-adan-hussein",
+   "other": "ke/person/adan-hussein-rahoy-mca-mandera",
+   "score": 91.42857142857143,
+   "reason": "name agrees (91) but seat or place differs (woman_rep ke/wajir against None None)"
+  },
+  {
+   "new": "ke/person/halima-abdille-mohamud-wajir-woman-rep",
+   "other": "ke/person/halima-abdille-mohamud",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/wajir against None None)"
+  },
+  {
+   "new": "ke/person/amina-gedow-hassan-mandera-woman-rep",
+   "other": "ke/person/amina-gedow-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/mandera against mp None)"
+  },
+  {
+   "new": "ke/person/safia-sheikh-adan-marsabit-woman-rep",
+   "other": "ke/person/safia-sheikh-adan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/marsabit against mp None)"
+  },
+  {
+   "new": "ke/person/nasra-ibrahim-ibren-marsabit-woman-rep",
+   "other": "ke/person/nasra-ibrahim-ibren",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/marsabit against mp None)"
+  },
+  {
+   "new": "ke/person/tiyah-galgalo-ali",
+   "other": "ke/person/tiyah-galgalo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/isiolo against mp None)"
+  },
+  {
+   "new": "ke/person/rehema-dida-jaldesa-isiolo-woman-rep",
+   "other": "ke/person/rehema-dida-jaldesa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/isiolo against mp None)"
+  },
+  {
+   "new": "ke/person/elizabeth-karambu-kailemia",
+   "other": "ke/person/kailemia-elizabeth-karambu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/meru against mp None)"
+  },
+  {
+   "new": "ke/person/florence-kajuju-meru-woman-rep",
+   "other": "ke/person/florence-kajuju",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/meru against mp None)"
+  },
+  {
+   "new": "ke/person/kawira-mwangaza-meru-woman-rep",
+   "other": "ke/person/kawira-mwangaza",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/meru against mp None)"
+  },
+  {
+   "new": "ke/person/kawira-mwangaza-meru-woman-rep",
+   "other": "ke/person/kawira-mwangaza-q47490058",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/meru against None None)"
+  },
+  {
+   "new": "ke/person/beatrice-nkatha-nyaga",
+   "other": "ke/person/beatrice-nkatha",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/beatrice-nkatha-nyaga",
+   "other": "ke/person/beatrice-nkatha",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/beatrice-nkatha-nyaga",
+   "other": "ke/person/beatrice-nkatha",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/beatrice-nkatha-nyaga",
+   "other": "ke/person/beatrice-nkatha",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/rose-rwamba-mitaru-embu-woman-rep",
+   "other": "ke/person/rose-rwamba-mitaru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/embu against mp None)"
+  },
+  {
+   "new": "ke/person/jane-wanjuki-njiru-embu-woman-rep",
+   "other": "ke/person/jane-wanjuki-njiru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/embu against mp None)"
+  },
+  {
+   "new": "ke/person/irene-muthoni-kasalu-kitui-woman-rep",
+   "other": "ke/person/irene-muthoni-kasalu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kitui against mp None)"
+  },
+  {
+   "new": "ke/person/irene-muthoni-kasalu-kitui-woman-rep",
+   "other": "ke/person/irene-muthoni-kasalu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kitui against mp None)"
+  },
+  {
+   "new": "ke/person/irene-muthoni-kasalu-kitui-woman-rep",
+   "other": "ke/person/irene-muthoni-kasalu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kitui against mp None)"
+  },
+  {
+   "new": "ke/person/irene-muthoni-kasalu-kitui-woman-rep",
+   "other": "ke/person/irene-muthoni-kasalu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kitui against mp None)"
+  },
+  {
+   "new": "ke/person/agnes-kavindu-mbuku-muthama",
+   "other": "ke/person/muthama-agnes-kavindu-mbuku",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/machakos against senator ke/machakos)"
+  },
+  {
+   "new": "ke/person/agnes-kavindu-mbuku-muthama",
+   "other": "ke/person/agnes-kavindu-muthama",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/machakos against senator ke/machakos)"
+  },
+  {
+   "new": "ke/person/joyce-kamene-machakos-woman-rep",
+   "other": "ke/person/joyce-kamene",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/machakos against mp None)"
+  },
+  {
+   "new": "ke/person/joyce-kamene-machakos-woman-rep",
+   "other": "ke/person/joyce-kamene",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/machakos against mp None)"
+  },
+  {
+   "new": "ke/person/joyce-kamene-machakos-woman-rep",
+   "other": "ke/person/joyce-kamene",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/machakos against mp None)"
+  },
+  {
+   "new": "ke/person/joyce-kamene-machakos-woman-rep",
+   "other": "ke/person/joyce-kamene",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/machakos against mp None)"
+  },
+  {
+   "new": "ke/person/susan-mbinya-musyoka",
+   "other": "ke/person/susan-musyoka",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/machakos against mp None)"
+  },
+  {
+   "new": "ke/person/rose-museo-mumo-makueni-woman-rep",
+   "other": "ke/person/rose-museo-mumo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/makueni against None None)"
+  },
+  {
+   "new": "ke/person/rose-museo-mumo-makueni-woman-rep",
+   "other": "ke/person/rose-museo-mumo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/makueni against None None)"
+  },
+  {
+   "new": "ke/person/rose-museo-mumo-makueni-woman-rep",
+   "other": "ke/person/rose-mumo-museo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/makueni against None None)"
+  },
+  {
+   "new": "ke/person/rose-museo-mumo-makueni-woman-rep",
+   "other": "ke/person/rose-museo-mumo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/makueni against None None)"
+  },
+  {
+   "new": "ke/person/rose-museo-mumo-makueni-woman-rep",
+   "other": "ke/person/rose-museo-mumo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/makueni against None None)"
+  },
+  {
+   "new": "ke/person/faith-wairimu-gitau",
+   "other": "ke/person/gitau-faith-wairimu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyandarua against mp None)"
+  },
+  {
+   "new": "ke/person/faith-wairimu-gitau",
+   "other": "ke/person/faith-gitau",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyandarua against mp None)"
+  },
+  {
+   "new": "ke/person/priscilla-nyokabi-kanyua",
+   "other": "ke/person/priscilla-nyokabi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyeri against None None)"
+  },
+  {
+   "new": "ke/person/rahab-mukami-wachira-nyeri-woman-rep",
+   "other": "ke/person/rahab-mukami-wachira",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyeri against None None)"
+  },
+  {
+   "new": "ke/person/rahab-mukami-wachira-nyeri-woman-rep",
+   "other": "ke/person/rahab-mukami-wachira",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyeri against None None)"
+  },
+  {
+   "new": "ke/person/rahab-mukami-wachira-nyeri-woman-rep",
+   "other": "ke/person/rahab-mukami-wachira",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyeri against None None)"
+  },
+  {
+   "new": "ke/person/rahab-mukami-wachira-nyeri-woman-rep",
+   "other": "ke/person/rahab-mukami-wachira",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyeri against None None)"
+  },
+  {
+   "new": "ke/person/purity-wangui-ngirici-kirinyaga-woman-rep",
+   "other": "ke/person/purity-wangui-ngirici",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kirinyaga against mp None)"
+  },
+  {
+   "new": "ke/person/winnie-karimi-njuguna",
+   "other": "ke/person/winnie-karimi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kirinyaga against mp None)"
+  },
+  {
+   "new": "ke/person/maitu-sabina-wanjiru-chege",
+   "other": "ke/person/chege-sabina-wanjiru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/muranga against None None)"
+  },
+  {
+   "new": "ke/person/maitu-sabina-wanjiru-chege",
+   "other": "ke/person/sabina-wanjiru-chege",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/muranga against mp None)"
+  },
+  {
+   "new": "ke/person/maitu-sabina-wanjiru-chege",
+   "other": "ke/person/wanjiru-chege",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/muranga against mp None)"
+  },
+  {
+   "new": "ke/person/jane-wanjiru-chege",
+   "other": "ke/person/jane-wanjiru-mca-nairobi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kiambu against None None)"
+  },
+  {
+   "new": "ke/person/jane-wanjiru-chege",
+   "other": "ke/person/wanjiru-chege",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kiambu against mp None)"
+  },
+  {
+   "new": "ke/person/jane-wanjiru-chege",
+   "other": "ke/person/jane-wanjiru-mca-nairobi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kiambu against None None)"
+  },
+  {
+   "new": "ke/person/gathoni-wamuchomba-kiambu-woman-rep",
+   "other": "ke/person/gathoni-wamuchomba",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kiambu against mp ke/kiambu/githunguri)"
+  },
+  {
+   "new": "ke/person/joyce-akai-emanikor-turkana-woman-rep",
+   "other": "ke/person/joyce-akai-emanikor",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/turkana against mp None)"
+  },
+  {
+   "new": "ke/person/joyce-akai-emanikor-turkana-woman-rep",
+   "other": "ke/person/joyce-emanikor",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/turkana against mp None)"
+  },
+  {
+   "new": "ke/person/lilian-cheptoo-tomitom",
+   "other": "ke/person/lilian-tomitom",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/west-pokot against mp None)"
+  },
+  {
+   "new": "ke/person/pauline-lenguris",
+   "other": "ke/person/lenguris-pauline",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/samburu against mp None)"
+  },
+  {
+   "new": "ke/person/maison-leshoomo-samburu-woman-rep",
+   "other": "ke/person/maison-leshoomo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/samburu against mp None)"
+  },
+  {
+   "new": "ke/person/maison-leshoomo-samburu-woman-rep",
+   "other": "ke/person/maison-leshoomo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/samburu against mp None)"
+  },
+  {
+   "new": "ke/person/maison-leshoomo-samburu-woman-rep",
+   "other": "ke/person/maison-leshoomo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/samburu against mp None)"
+  },
+  {
+   "new": "ke/person/maison-leshoomo-samburu-woman-rep",
+   "other": "ke/person/maison-leshoomo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/samburu against mp None)"
+  },
+  {
+   "new": "ke/person/janet-nangabo-wanyama-trans-nzoia-woman-rep",
+   "other": "ke/person/janet-nangabo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/trans-nzoia against mp None)"
+  },
+  {
+   "new": "ke/person/janet-nangabo-wanyama-trans-nzoia-woman-rep",
+   "other": "ke/person/janet-nangabo-wanyama",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/trans-nzoia against mp None)"
+  },
+  {
+   "new": "ke/person/gladys-jepkosgei-boss-shollei",
+   "other": "ke/person/boss-gladys-jepkosgei",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/uasin-gishu against mp None)"
+  },
+  {
+   "new": "ke/person/gladys-jepkosgei-boss-shollei",
+   "other": "ke/person/gladys-boss-shollei",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/uasin-gishu against mp None)"
+  },
+  {
+   "new": "ke/person/jane-jepkorir-kiptoo-chebaibai-elgeyo-marakwet-woman-rep",
+   "other": "ke/person/jane-jepkorir-kiptoo-chebaibai",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/elgeyo-marakwet against mp None)"
+  },
+  {
+   "new": "ke/person/susan-kipketer-chebet",
+   "other": "ke/person/susan-chebet",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/elgeyo-marakwet against mp None)"
+  },
+  {
+   "new": "ke/person/tecla-chebet-tum",
+   "other": "ke/person/tecla-tum",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nandi against None None)"
+  },
+  {
+   "new": "ke/person/gladwell-jesire-cheruiyot-cheruiyot",
+   "other": "ke/person/gladwell-jesire-cheruiyot",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/baringo against mp None)"
+  },
+  {
+   "new": "ke/person/catherine-wanjiku-waruguru-laikipia-woman-rep",
+   "other": "ke/person/catherine-wanjiku-waruguru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/laikipia against mp None)"
+  },
+  {
+   "new": "ke/person/chelule-chepkorir-liza",
+   "other": "ke/person/liza-chepkorir-chelule",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nakuru against mp None)"
+  },
+  {
+   "new": "ke/person/chelule-chepkorir-liza",
+   "other": "ke/person/chelule-liza",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nakuru against mp None)"
+  },
+  {
+   "new": "ke/person/chelule-chepkorir-liza",
+   "other": "ke/person/chelule-liza",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nakuru against mp None)"
+  },
+  {
+   "new": "ke/person/chelule-chepkorir-liza",
+   "other": "ke/person/chelule-liza",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nakuru against None None)"
+  },
+  {
+   "new": "ke/person/chelule-chepkorir-liza",
+   "other": "ke/person/chelule-liza",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nakuru against None None)"
+  },
+  {
+   "new": "ke/person/rebecca-noonaishi-tonkei",
+   "other": "ke/person/tonkei-rebecca-noonaishi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/narok against mp None)"
+  },
+  {
+   "new": "ke/person/roselinda-soipan-tuya",
+   "other": "ke/person/soipan-tuya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/narok against mp None)"
+  },
+  {
+   "new": "ke/person/roselinda-soipan-tuya",
+   "other": "ke/person/soipan-tuya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/narok against None None)"
+  },
+  {
+   "new": "ke/person/roselinda-soipan-tuya",
+   "other": "ke/person/soipan-tuya-982",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/narok against None None)"
+  },
+  {
+   "new": "ke/person/roselinda-soipan-tuya",
+   "other": "ke/person/roselinda-soipan-tuiya",
+   "score": 97.67441860465117,
+   "reason": "name agrees (98) but seat or place differs (woman_rep ke/narok against mp None)"
+  },
+  {
+   "new": "ke/person/roselinda-soipan-tuya",
+   "other": "ke/person/soipan-tuya-wp-cabinet-secretary",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/narok against None None)"
+  },
+  {
+   "new": "ke/person/martha-kerubo-marwa",
+   "other": "ke/person/martha-kembo-marwa-mca-nyamira",
+   "score": 91.89189189189189,
+   "reason": "name agrees (92) but seat or place differs (woman_rep ke/kajiado against None None)"
+  },
+  {
+   "new": "ke/person/janet-marania-teyiaa-kajiado-woman-rep",
+   "other": "ke/person/janet-marania-teiyaa",
+   "score": 95.0,
+   "reason": "name agrees (95) but seat or place differs (woman_rep ke/kajiado against None None)"
+  },
+  {
+   "new": "ke/person/janet-marania-teyiaa-kajiado-woman-rep",
+   "other": "ke/person/janet-marania-teyiaa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kajiado against mp None)"
+  },
+  {
+   "new": "ke/person/beatrice-chepngeno-kemei-kericho-woman-rep",
+   "other": "ke/person/beatrice-chepngeno-kemei",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kericho against mp None)"
+  },
+  {
+   "new": "ke/person/beatrice-chepkemoi",
+   "other": "ke/person/beatrice-chepkemoi-mca-kericho",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/bomet against None None)"
+  },
+  {
+   "new": "ke/person/joyce-korir-chepkoech",
+   "other": "ke/person/joyce-chepkoech-korir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/bomet against None None)"
+  },
+  {
+   "new": "ke/person/joyce-korir-chepkoech",
+   "other": "ke/person/joyce-chepkoech-korir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/bomet against None None)"
+  },
+  {
+   "new": "ke/person/joyce-korir-chepkoech",
+   "other": "ke/person/joyce-chepkoech-korir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/bomet against mp None)"
+  },
+  {
+   "new": "ke/person/joyce-korir-chepkoech",
+   "other": "ke/person/joyce-chepkoech-korir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/bomet against mp None)"
+  },
+  {
+   "new": "ke/person/mercy-shitsugane-luseno",
+   "other": "ke/person/luseno-mercy-shitsugane-mca-kakamega",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kakamega against None None)"
+  },
+  {
+   "new": "ke/person/elsie-busihile-muhanda-kakamega-woman-rep",
+   "other": "ke/person/muhanda-elsie-busihile",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kakamega against mp None)"
+  },
+  {
+   "new": "ke/person/elsie-busihile-muhanda-kakamega-woman-rep",
+   "other": "ke/person/elsie-busihile-muhanda",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kakamega against mp None)"
+  },
+  {
+   "new": "ke/person/consalata-nabwire-wakwabubi",
+   "other": "ke/person/consolata-nabwire-wakwabubi",
+   "score": 96.29629629629629,
+   "reason": "name agrees (96) but seat or place differs (woman_rep ke/bungoma against None None)"
+  },
+  {
+   "new": "ke/person/catherine-nanjala-wambilianga",
+   "other": "ke/person/wambilianga-catherine-nanjala",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/bungoma against mp None)"
+  },
+  {
+   "new": "ke/person/catherine-nanjala-wambilianga",
+   "other": "ke/person/catherine-wambilianga",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/bungoma against mp None)"
+  },
+  {
+   "new": "ke/person/reginalda-nakhumicha-wanyonyi",
+   "other": "ke/person/reginalda-wanyonyi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/bungoma against mp None)"
+  },
+  {
+   "new": "ke/person/florence-mwikali-mutua-busia-woman-rep",
+   "other": "ke/person/florence-mwikali-mutua",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/busia against None None)"
+  },
+  {
+   "new": "ke/person/florence-mwikali-mutua-busia-woman-rep",
+   "other": "ke/person/florence-mwikali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/busia against None None)"
+  },
+  {
+   "new": "ke/person/ombaka-christine-oduor",
+   "other": "ke/person/ombaka-oduor-christine",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/siaya against mp None)"
+  },
+  {
+   "new": "ke/person/ombaka-christine-oduor",
+   "other": "ke/person/christine-ombaka",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/siaya against mp None)"
+  },
+  {
+   "new": "ke/person/ombaka-christine-oduor",
+   "other": "ke/person/christine-ombaka",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/siaya against mp None)"
+  },
+  {
+   "new": "ke/person/gladys-atieno-nyasuna-wanga",
+   "other": "ke/person/gladys-wanga",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/homa-bay against None None)"
+  },
+  {
+   "new": "ke/person/gladys-atieno-nyasuna-wanga",
+   "other": "ke/person/gladys-wanga",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/homa-bay against None None)"
+  },
+  {
+   "new": "ke/person/gladys-atieno-nyasuna-wanga",
+   "other": "ke/person/gladys-wanga-q47489052",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/homa-bay against None None)"
+  },
+  {
+   "new": "ke/person/fatuma-zainab-mohammed",
+   "other": "ke/person/mohammed-fatuma-zainab",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/migori against mp None)"
+  },
+  {
+   "new": "ke/person/pamela-awuor-ochieng-migori-woman-rep",
+   "other": "ke/person/pamela-awuor-ochieng",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/migori against mp None)"
+  },
+  {
+   "new": "ke/person/aburi-dorice",
+   "other": "ke/person/aburi-donya-dorice",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kisii against mp None)"
+  },
+  {
+   "new": "ke/person/janet-ongera-kisii-woman-rep",
+   "other": "ke/person/janet-ongera-janet-ongera",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/kisii against None None)"
+  },
+  {
+   "new": "ke/person/alice-nyanchoka-chae",
+   "other": "ke/person/alice-chae",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyamira against mp None)"
+  },
+  {
+   "new": "ke/person/jerusha-mongina-momanyi-nyamira-woman-rep",
+   "other": "ke/person/mongina-jerusha-momanyi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyamira against mp None)"
+  },
+  {
+   "new": "ke/person/jerusha-mongina-momanyi-nyamira-woman-rep",
+   "other": "ke/person/jerusha-mongina-momanyi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nyamira against mp None)"
+  },
+  {
+   "new": "ke/person/esther-muthoni-rosanna-passaris-nairobi-woman-rep",
+   "other": "ke/person/passaris-esther-muthoni",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nairobi against mp None)"
+  },
+  {
+   "new": "ke/person/esther-muthoni-rosanna-passaris-nairobi-woman-rep",
+   "other": "ke/person/esther-muthoni-rosanna-passaris",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nairobi against mp None)"
+  },
+  {
+   "new": "ke/person/rachel-wambui-shebesh",
+   "other": "ke/person/rachel-shebesh",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (woman_rep ke/nairobi against mp None)"
+  },
+  {
+   "new": "ke/person/mohdhar-ali-mohamed",
+   "other": "ke/person/mohamed-mohamed-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/lamu against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/joyce-wanjalah-lay",
+   "other": "ke/person/joyce-wanjala-lay",
+   "score": 97.14285714285714,
+   "reason": "name agrees (97) but seat or place differs (senator ke/taita-taveta against mp None)"
+  },
+  {
+   "new": "ke/person/hussein-abdi-barre",
+   "other": "ke/person/barre-hussein-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/wajir against mp ke/wajir/tarbaj)"
+  },
+  {
+   "new": "ke/person/adan-noor-hussein",
+   "other": "ke/person/nur-hussein-adan-mca-mandera",
+   "score": 90.9090909090909,
+   "reason": "name agrees (91) but seat or place differs (senator ke/wajir against None None)"
+  },
+  {
+   "new": "ke/person/abdi-khalif-mohamed",
+   "other": "ke/person/abdi-mohamed-abdi-mca-wajir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/wajir against None None)"
+  },
+  {
+   "new": "ke/person/hassan-aden-osman-mandera-senator",
+   "other": "ke/person/hassan-aden-osman",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/mandera against None None)"
+  },
+  {
+   "new": "ke/person/kithure-kindiki-ak",
+   "other": "ke/person/kithure-a-kindiki",
+   "score": 97.14285714285714,
+   "reason": "name agrees (97) but seat or place differs (senator ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/kithure-kindiki-ak",
+   "other": "ke/person/kithure-kindiki",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/kithure-kindiki-ak",
+   "other": "ke/person/kithure-kindiki",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/kithure-kindiki-ak",
+   "other": "ke/person/kithure-kindiki-959",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/kithure-kindiki-ak",
+   "other": "ke/person/kithure-kindiki-965",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/kithure-kindiki-ak",
+   "other": "ke/person/kithure-kindiki-wp-cabinet-secretary",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/winfred-nunuva-mutua",
+   "other": "ke/person/winfred-mutua-mca-machakos",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/machakos against None None)"
+  },
+  {
+   "new": "ke/person/david-mwole-kimaiyo",
+   "other": "ke/person/david-kimaiyo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/elgeyo-marakwet against None None)"
+  },
+  {
+   "new": "ke/person/simon-kiprono-chelugui-chelugui",
+   "other": "ke/person/simon-chelugui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/baringo against None None)"
+  },
+  {
+   "new": "ke/person/daniel-rono",
+   "other": "ke/person/daniel-kipkogei-rono",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/nakuru against mp ke/elgeyo-marakwet/keiyo-south)"
+  },
+  {
+   "new": "ke/person/moses-masika-wetangula",
+   "other": "ke/person/moses-wetangula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/bungoma against senator None)"
+  },
+  {
+   "new": "ke/person/moses-masika-wetangula",
+   "other": "ke/person/moses-wetangula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/bungoma against senator None)"
+  },
+  {
+   "new": "ke/person/moses-masika-wetangula",
+   "other": "ke/person/moses-wetangula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/bungoma against senator None)"
+  },
+  {
+   "new": "ke/person/moses-masika-wetangula",
+   "other": "ke/person/moses-wetangula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/bungoma against senator None)"
+  },
+  {
+   "new": "ke/person/moses-masika-wetangula",
+   "other": "ke/person/moses-wetangula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/bungoma against senator None)"
+  },
+  {
+   "new": "ke/person/moses-masika-wetangula",
+   "other": "ke/person/moses-wetangula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/bungoma against senator None)"
+  },
+  {
+   "new": "ke/person/moses-masika-wetangula",
+   "other": "ke/person/moses-wetangula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/bungoma against mp None)"
+  },
+  {
+   "new": "ke/person/moses-masika-wetangula",
+   "other": "ke/person/moses-wetangula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/bungoma against mp None)"
+  },
+  {
+   "new": "ke/person/moses-masika-wetangula",
+   "other": "ke/person/moses-wetangula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/bungoma against mp None)"
+  },
+  {
+   "new": "ke/person/ali-noor-abdi",
+   "other": "ke/person/abdi-ali-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/busia against mp ke/garissa/ijara)"
+  },
+  {
+   "new": "ke/person/ali-noor-abdi",
+   "other": "ke/person/abdi-noor-mohammed-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (senator ke/busia against None None)"
+  },
+  {
+   "new": "ke/person/hezron-awiti-bollo-mombasa-governor",
+   "other": "ke/person/hezron-awiti-bollo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/ahmed-maalim-hassan-alio",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp ke/mandera/banissa)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-noor-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/amina-hassan-bwanamkuu-mca-lamu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/mariam-mohamed-hassan-mca-garissa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/zamzam-mohamed-hassan-mca-garissa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/aden-hassan-odhowa-mca-garissa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-dahir-noor-mca-garissa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/mohamed-ulheir-hassan-mca-mombasa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-mwanyoha",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp ke/kwale/matuga)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi-wp-constituency",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/zulekha-hassan-juma",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-aden-osman",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-oda-hulufo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp ke/isiolo/isiolo-north)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/omar-mohamed-maalim-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp ke/mandera/mandera-east)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/rehema-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/amina-gedow-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/zuleikha-juma-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-omar",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against senator ke/mombasa)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/ali-hassan-joho",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-dukicha",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp ke/tana-river/galole)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/kulow-maalim-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp ke/mandera/banissa)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusufu-hassan-mubwana-mca-kwale",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-mohamed-said-mca-kilifi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/omar-abdi-hassan-mca-garissa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-aden-kolosho-mca-garissa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-marian-mohamed-mca-garissa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hamud-abdi-hassan-mca-wajir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/abdullahi-maalim-hassan-mca-mandera",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-hussein-adan-mca-mandera",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/abdihakim-ali-hassan-mca-mandera",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/mahat-ibrahim-hassan-mca-mandera",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/fardosa-mohamed-hassan-mca-mandera",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/samia-hassan-abdi-mca-mandera",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/zeituna-abdi-hassan-mca-mandera",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-asha-mohamed-mca-samburu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-saida-chepkoech-mca-uasin-gishu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-majani-kagoni-mca-nandi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/ali-hassan-abdi-mca-nakuru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/isaack-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/abdi-hassan-guyo-q114352867",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-ali-joho-q5679565",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/zuleikha-ju-ma-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against woman_rep ke/kwale)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/rehema-hassan-tana-river-woman-rep",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against woman_rep ke/tana-river)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/amina-hassan-ahmed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against woman_rep ke/mandera)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/amina-gedow-hassan-mandera-woman-rep",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against woman_rep ke/mandera)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/nuru-lula-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against senator ke/kwale)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-rashid-mzinga",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against senator ke/kwale)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-abdalla-albeity",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against senator ke/lamu)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/abdia-hassan-baraka",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against senator ke/wajir)"
+  },
+  {
+   "new": "ke/person/hassan-hassan",
+   "other": "ke/person/hassan-aden-osman-mandera-senator",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mombasa against senator ke/mandera)"
+  },
+  {
+   "new": "ke/person/salim-mvurya-mgala",
+   "other": "ke/person/salim-mvurya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kwale against None None)"
+  },
+  {
+   "new": "ke/person/salim-mvurya-mgala",
+   "other": "ke/person/salim-mvurya-979",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kwale against None None)"
+  },
+  {
+   "new": "ke/person/salim-mvurya-mgala",
+   "other": "ke/person/salim-mvurya-wp-cabinet-secretary",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kwale against None None)"
+  },
+  {
+   "new": "ke/person/salim-mvurya-mgala",
+   "other": "ke/person/salim-mvurya-q16212428",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kwale against None None)"
+  },
+  {
+   "new": "ke/person/amason-jeffah-kingi",
+   "other": "ke/person/amason-kingi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kilifi against senator None)"
+  },
+  {
+   "new": "ke/person/amason-jeffah-kingi",
+   "other": "ke/person/amason-kingi-q16730244",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kilifi against None None)"
+  },
+  {
+   "new": "ke/person/tuneya-hussein-dado",
+   "other": "ke/person/tuneya-dado-q111235141",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/tana-river against None None)"
+  },
+  {
+   "new": "ke/person/dhadho-gaddae-godhana",
+   "other": "ke/person/godhana-dhadho-gaddae-q16213140",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/tana-river against None None)"
+  },
+  {
+   "new": "ke/person/danson-buya-mungatana",
+   "other": "ke/person/mungatana-danson-buya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/tana-river against senator ke/tana-river)"
+  },
+  {
+   "new": "ke/person/danson-buya-mungatana",
+   "other": "ke/person/danson-mungatana",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/tana-river against senator ke/tana-river)"
+  },
+  {
+   "new": "ke/person/swaleh-swaleh",
+   "other": "ke/person/swaleh-ibrahim-mca-embu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/lamu against None None)"
+  },
+  {
+   "new": "ke/person/swaleh-swaleh",
+   "other": "ke/person/baya-swaleh-kibwana-mca-mombasa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/lamu against None None)"
+  },
+  {
+   "new": "ke/person/swaleh-swaleh",
+   "other": "ke/person/mote-fatuma-swaleh-mca-mombasa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/lamu against None None)"
+  },
+  {
+   "new": "ke/person/issa-abdalla-timamy",
+   "other": "ke/person/issa-timamy-q23883198",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/lamu against None None)"
+  },
+  {
+   "new": "ke/person/fahim-yasin-twaha",
+   "other": "ke/person/fahim-yasin-twaha-q5429550",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/lamu against None None)"
+  },
+  {
+   "new": "ke/person/nathif-jama-adan",
+   "other": "ke/person/nathif-jama-adam-q17305588",
+   "score": 93.75,
+   "reason": "name agrees (94) but seat or place differs (governor ke/garissa against None None)"
+  },
+  {
+   "new": "ke/person/ali-bunow-korane",
+   "other": "ke/person/ali-korane-q107529095",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/garissa against None None)"
+  },
+  {
+   "new": "ke/person/ahmed-abdullahi-mohamad",
+   "other": "ke/person/ahmed-abdullahi-mohamad-q111235158",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/wajir against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan-noor",
+   "other": "ke/person/hassan-noor-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mandera against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan-noor",
+   "other": "ke/person/hassan-dahir-noor-mca-garissa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mandera against None None)"
+  },
+  {
+   "new": "ke/person/hassan-hassan-noor",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mandera against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/ali-ibrahim-roba",
+   "other": "ke/person/roba-ali-ibrahim",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mandera against senator ke/mandera)"
+  },
+  {
+   "new": "ke/person/ali-ibrahim-roba",
+   "other": "ke/person/ali-roba",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mandera against senator ke/mandera)"
+  },
+  {
+   "new": "ke/person/ali-ibrahim-roba",
+   "other": "ke/person/ibrahim-roba-ali-q111235173",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mandera against None None)"
+  },
+  {
+   "new": "ke/person/ali-ibrahim-roba",
+   "other": "ke/person/ali-roba-q30636922",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/mandera against None None)"
+  },
+  {
+   "new": "ke/person/mohamud-mohamed-ali",
+   "other": "ke/person/mohamed-mohamed-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/marsabit against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/mohamud-mohamed-ali",
+   "other": "ke/person/asli-muhamud-mohamed-mca-nairobi",
+   "score": 92.3076923076923,
+   "reason": "name agrees (92) but seat or place differs (governor ke/marsabit against None None)"
+  },
+  {
+   "new": "ke/person/mohamud-mohamed-ali",
+   "other": "ke/person/mohamed-maalim-mohamud",
+   "score": 92.6829268292683,
+   "reason": "name agrees (93) but seat or place differs (governor ke/marsabit against mp ke/mandera/mandera-west)"
+  },
+  {
+   "new": "ke/person/mohamud-mohamed-ali",
+   "other": "ke/person/mohamed-ali-mohammed",
+   "score": 92.3076923076923,
+   "reason": "name agrees (92) but seat or place differs (governor ke/marsabit against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/mohamud-mohamed-ali",
+   "other": "ke/person/asli-muhamud-mohamed-mca-nairobi",
+   "score": 92.3076923076923,
+   "reason": "name agrees (92) but seat or place differs (governor ke/marsabit against None None)"
+  },
+  {
+   "new": "ke/person/mohamud-mohamed-ali",
+   "other": "ke/person/ali-mohamud-mohamed-q4725044",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/marsabit against None None)"
+  },
+  {
+   "new": "ke/person/ukur-yatani-kanacho",
+   "other": "ke/person/ukur-yatani",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/marsabit against None None)"
+  },
+  {
+   "new": "ke/person/ukur-yatani-kanacho",
+   "other": "ke/person/ukur-yatani-kanacho-q48472383",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/marsabit against None None)"
+  },
+  {
+   "new": "ke/person/mohamed-abdi-kuti",
+   "other": "ke/person/abdi-mohamed-abdi-mca-wajir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/isiolo against None None)"
+  },
+  {
+   "new": "ke/person/bonface-kinoti-gatobu",
+   "other": "ke/person/kinoti-gatobu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/meru against None None)"
+  },
+  {
+   "new": "ke/person/peter-gatirau-munya",
+   "other": "ke/person/peter-munya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/meru against None None)"
+  },
+  {
+   "new": "ke/person/peter-gatirau-munya",
+   "other": "ke/person/peter-munya-q7175990",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/meru against None None)"
+  },
+  {
+   "new": "ke/person/kiraitu-murungi-meru-governor",
+   "other": "ke/person/kiraitu-murungi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/meru against senator ke/meru)"
+  },
+  {
+   "new": "ke/person/kiraitu-murungi-meru-governor",
+   "other": "ke/person/kiraitu-murungi-q6414781",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/meru against None None)"
+  },
+  {
+   "new": "ke/person/onesmus-muthomi-njuki",
+   "other": "ke/person/muthomi-njuki",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/tharaka against None None)"
+  },
+  {
+   "new": "ke/person/lenny-maxwell-kivuti",
+   "other": "ke/person/lenny-kivuti",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/embu against senator ke/embu)"
+  },
+  {
+   "new": "ke/person/martin-nyaga-wambora",
+   "other": "ke/person/martin-nyaga-wambora-q16150817",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/embu against None None)"
+  },
+  {
+   "new": "ke/person/dr-julius-malombe",
+   "other": "ke/person/julius-malombe-q32541499",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kitui against None None)"
+  },
+  {
+   "new": "ke/person/david-musila-kitui-governor",
+   "other": "ke/person/david-musila",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kitui against senator ke/kitui)"
+  },
+  {
+   "new": "ke/person/charity-kaluki-ngilu",
+   "other": "ke/person/charity-ngilu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kitui against None None)"
+  },
+  {
+   "new": "ke/person/charity-kaluki-ngilu",
+   "other": "ke/person/charity-ngilu-q539821",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kitui against None None)"
+  },
+  {
+   "new": "ke/person/alfred-nganga-mutua",
+   "other": "ke/person/alfred-mutua",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/machakos against None None)"
+  },
+  {
+   "new": "ke/person/alfred-nganga-mutua",
+   "other": "ke/person/alfred-nganga-mutua-q16212421",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/machakos against None None)"
+  },
+  {
+   "new": "ke/person/wavinya-ndeti",
+   "other": "ke/person/wavinya-ndeti-q30323725",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/machakos against None None)"
+  },
+  {
+   "new": "ke/person/kivutha-kibwana",
+   "other": "ke/person/kivutha-kibwana-q6418829",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/makueni against None None)"
+  },
+  {
+   "new": "ke/person/francis-thuita-kimemia",
+   "other": "ke/person/francis-kimemia-q5481626",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nyandarua against None None)"
+  },
+  {
+   "new": "ke/person/daniel-waithaka-mwangi",
+   "other": "ke/person/daniel-waithaka-q16886396",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nyandarua against None None)"
+  },
+  {
+   "new": "ke/person/samwel-wamathai-githaiga",
+   "other": "ke/person/wamathai-samuel-githaiga-q28837057",
+   "score": 95.83333333333333,
+   "reason": "name agrees (96) but seat or place differs (governor ke/nyeri against None None)"
+  },
+  {
+   "new": "ke/person/patrick-munene",
+   "other": "ke/person/ntwiga-patrick-munene",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nyeri against mp None)"
+  },
+  {
+   "new": "ke/person/patrick-munene",
+   "other": "ke/person/ntwiga-patrick-munene",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nyeri against None None)"
+  },
+  {
+   "new": "ke/person/patrick-munene",
+   "other": "ke/person/patrick-munene-ntwiga",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nyeri against None None)"
+  },
+  {
+   "new": "ke/person/joseph-kathuri-ndathi",
+   "other": "ke/person/joseph-ndathi-q59726037",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kirinyaga against None None)"
+  },
+  {
+   "new": "ke/person/anne-mumbi-waiguru",
+   "other": "ke/person/anne-waiguru-q16886393",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kirinyaga against None None)"
+  },
+  {
+   "new": "ke/person/wa-iria-mwangi",
+   "other": "ke/person/mwangi-wa-iria-q16730058",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/muranga against None None)"
+  },
+  {
+   "new": "ke/person/william-kabogo-gitau-kiambu-governor",
+   "other": "ke/person/william-kabogo-gitau",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kiambu against None None)"
+  },
+  {
+   "new": "ke/person/william-kabogo-gitau-kiambu-governor",
+   "other": "ke/person/william-kabogo-gitau-q8013849",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kiambu against None None)"
+  },
+  {
+   "new": "ke/person/john-munyes-kiyonga",
+   "other": "ke/person/john-munyes",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/turkana against senator ke/turkana)"
+  },
+  {
+   "new": "ke/person/john-munyes-kiyonga",
+   "other": "ke/person/john-munyes",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/turkana against senator ke/turkana)"
+  },
+  {
+   "new": "ke/person/josphat-koli-nanok",
+   "other": "ke/person/josphat-nanok-q16846944",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/turkana against None None)"
+  },
+  {
+   "new": "ke/person/simon-kachapin-kitalei",
+   "other": "ke/person/simon-kitalei-q111235132",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/west-pokot against None None)"
+  },
+  {
+   "new": "ke/person/simon-kachapin-kitalei",
+   "other": "ke/person/simon-kachapin-q59656160",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/west-pokot against None None)"
+  },
+  {
+   "new": "ke/person/moses-lenolkula",
+   "other": "ke/person/moses-lenolkula-kasaine-q16215853",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/samburu against None None)"
+  },
+  {
+   "new": "ke/person/maurice-kakai-bisau-trans-nzoia-governor",
+   "other": "ke/person/maurice-kakai-bisau",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/trans-nzoia against mp ke/trans-nzoia/kiminini)"
+  },
+  {
+   "new": "ke/person/patrick-khaemba",
+   "other": "ke/person/patrick-khaemba-q59656119",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/trans-nzoia against None None)"
+  },
+  {
+   "new": "ke/person/jackson-kiplagat-mandago",
+   "other": "ke/person/kiplagat-jackson-mandago",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/uasin-gishu against senator ke/uasin-gishu)"
+  },
+  {
+   "new": "ke/person/jackson-kiplagat-mandago",
+   "other": "ke/person/jackson-mandago",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/uasin-gishu against senator ke/uasin-gishu)"
+  },
+  {
+   "new": "ke/person/jackson-kiplagat-mandago",
+   "other": "ke/person/jackson-mandago-q48009463",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/uasin-gishu against None None)"
+  },
+  {
+   "new": "ke/person/alex-tanui-tolgos",
+   "other": "ke/person/alex-tolgos-q48472534",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/elgeyo-marakwet against None None)"
+  },
+  {
+   "new": "ke/person/stephen-kipyego-sang",
+   "other": "ke/person/stephen-sang",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nandi against senator ke/nandi)"
+  },
+  {
+   "new": "ke/person/stephen-kipyego-sang",
+   "other": "ke/person/stephen-sang-q48472394",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nandi against None None)"
+  },
+  {
+   "new": "ke/person/stanley-k-kiptis",
+   "other": "ke/person/stanley-kiptis-q111232892",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/baringo against None None)"
+  },
+  {
+   "new": "ke/person/joshua-wakahora-irungu",
+   "other": "ke/person/joshua-irungu-q18001353",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/laikipia against None None)"
+  },
+  {
+   "new": "ke/person/ndiritu-muriithi",
+   "other": "ke/person/ndiritu-muriithi-q6983763",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/laikipia against None None)"
+  },
+  {
+   "new": "ke/person/paul-njoroge-ben",
+   "other": "ke/person/ben-njoroge",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nakuru against None None)"
+  },
+  {
+   "new": "ke/person/james-kiarie-mungai-nakuru-governor",
+   "other": "ke/person/james-kiarie-mungai",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nakuru against senator ke/nakuru)"
+  },
+  {
+   "new": "ke/person/keturet-ntutu-ole",
+   "other": "ke/person/patrick-keturet-ole-ntutu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/narok against mp ke/narok/narok-west)"
+  },
+  {
+   "new": "ke/person/keturet-ntutu-ole",
+   "other": "ke/person/patrick-keturet-ole-ntutu-q111188318",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/narok against None None)"
+  },
+  {
+   "new": "ke/person/joseph-jama-ole-lenku",
+   "other": "ke/person/joseph-ole-lenku",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kajiado against None None)"
+  },
+  {
+   "new": "ke/person/joseph-jama-ole-lenku",
+   "other": "ke/person/joseph-ole-lenku-q16733690",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kajiado against None None)"
+  },
+  {
+   "new": "ke/person/paul-chepkwon",
+   "other": "ke/person/paul-chepkwony-q59660303",
+   "score": 96.29629629629629,
+   "reason": "name agrees (96) but seat or place differs (governor ke/kericho against None None)"
+  },
+  {
+   "new": "ke/person/joyce-cherono-laboso",
+   "other": "ke/person/joyce-cherono-abonyo-laboso",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/bomet against mp ke/bomet/sotik)"
+  },
+  {
+   "new": "ke/person/boni-khalwale",
+   "other": "ke/person/khalwale-boni",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kakamega against senator ke/kakamega)"
+  },
+  {
+   "new": "ke/person/epainitous-moses-akaranga",
+   "other": "ke/person/moses-akaranga-q6915674",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/vihiga against None None)"
+  },
+  {
+   "new": "ke/person/yusuf-kifuma-chanzu",
+   "other": "ke/person/yusuf-chanzu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/vihiga against mp ke/vihiga/vihiga)"
+  },
+  {
+   "new": "ke/person/kenneth-makelo-lusaka",
+   "other": "ke/person/kenneth-lusaka",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/bungoma against senator None)"
+  },
+  {
+   "new": "ke/person/wycliffe-wangamati",
+   "other": "ke/person/wycliffe-wangamati-q96627361",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/bungoma against None None)"
+  },
+  {
+   "new": "ke/person/otuoma-paul-nyongesa",
+   "other": "ke/person/paul-otuoma",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/busia against mp ke/busia/funyula)"
+  },
+  {
+   "new": "ke/person/otuoma-paul-nyongesa",
+   "other": "ke/person/paul-otuoma-q7152844",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/busia against None None)"
+  },
+  {
+   "new": "ke/person/cornel-rasanga-amoth",
+   "other": "ke/person/cornel-rasanga-amoth-q19938253",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/siaya against None None)"
+  },
+  {
+   "new": "ke/person/nicolas-o-gumbo-siaya-governor",
+   "other": "ke/person/nicolas-o-gumbo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/siaya against mp ke/siaya/rarieda)"
+  },
+  {
+   "new": "ke/person/cyprian-archelius-awiti",
+   "other": "ke/person/cyprian-awiti-q59656082",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/homa-bay against None None)"
+  },
+  {
+   "new": "ke/person/joseph-o-magwanga-homa-bay-governor",
+   "other": "ke/person/joseph-o-magwanga",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/homa-bay against mp ke/homa-bay/kasipul)"
+  },
+  {
+   "new": "ke/person/manson-oyongo-nyamweya",
+   "other": "ke/person/manson-nyamweya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kisii against mp ke/kisii/south-mugirango)"
+  },
+  {
+   "new": "ke/person/james-elvis-omariba-ongwae",
+   "other": "ke/person/james-ongwae-q60544883",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/kisii against None None)"
+  },
+  {
+   "new": "ke/person/john-obiero-nyagarama",
+   "other": "ke/person/john-obiero-nyagarama-q62570988",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nyamira against None None)"
+  },
+  {
+   "new": "ke/person/james-gesami-ondicho",
+   "other": "ke/person/james-gesami",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nyamira against mp ke/nyamira/west-mugirango)"
+  },
+  {
+   "new": "ke/person/kidero-evans",
+   "other": "ke/person/evans-kidero-q16189345",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nairobi against None None)"
+  },
+  {
+   "new": "ke/person/mike-sonko-mbuvi-kioko",
+   "other": "ke/person/mike-sonko-q6848880",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (governor ke/nairobi against None None)"
+  },
+  {
+   "new": "ke/person/patrick-k-ngugi",
+   "other": "ke/person/patrick-mwiberi-ngugi-mca-kiambu",
+   "score": 92.85714285714286,
+   "reason": "name agrees (93) but seat or place differs (mp ke/mombasa/changamwe against None None)"
+  },
+  {
+   "new": "ke/person/ashraf-hassan-awadh-bayusuf",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/mombasa/nyali against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/omar-mahmud-mohamed-shallo",
+   "other": "ke/person/mohamed-omar-mca-taita-taveta",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/mombasa/mvita against None None)"
+  },
+  {
+   "new": "ke/person/suleiman-dori-ramadhani-kwale-msambweni-mp",
+   "other": "ke/person/suleiman-dori",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kwale/msambweni against None None)"
+  },
+  {
+   "new": "ke/person/suleiman-dori-ramadhani-kwale-msambweni-mp",
+   "other": "ke/person/suleiman-dori-ramadhani",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kwale/msambweni against None None)"
+  },
+  {
+   "new": "ke/person/said-mbovu-hassan-wanin-mwadzaya",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kwale/lunga-lunga against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/gertrude-emma-mbura",
+   "other": "ke/person/emma-mbura-getrude",
+   "score": 97.29729729729729,
+   "reason": "name agrees (97) but seat or place differs (mp ke/kilifi/rabai against None None)"
+  },
+  {
+   "new": "ke/person/rashid-othiambo-ogelo",
+   "other": "ke/person/rashid-odhiambo-ogelo-mca-kilifi",
+   "score": 95.23809523809524,
+   "reason": "name agrees (95) but seat or place differs (mp ke/kilifi/malindi against None None)"
+  },
+  {
+   "new": "ke/person/abdi-ali-weli",
+   "other": "ke/person/abdi-ali-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/tana-river/garsen against mp ke/garissa/ijara)"
+  },
+  {
+   "new": "ke/person/mohamed-hassan-dube",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/tana-river/bura against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/shariff-athman-ali",
+   "other": "ke/person/ali-sharif-athman",
+   "score": 97.14285714285714,
+   "reason": "name agrees (97) but seat or place differs (mp ke/lamu/lamu-east against None None)"
+  },
+  {
+   "new": "ke/person/shariff-athman-ali",
+   "other": "ke/person/ali-sharif-athman",
+   "score": 97.14285714285714,
+   "reason": "name agrees (97) but seat or place differs (mp ke/lamu/lamu-east against None None)"
+  },
+  {
+   "new": "ke/person/shariff-athman-ali",
+   "other": "ke/person/ali-sharif-athman",
+   "score": 97.14285714285714,
+   "reason": "name agrees (97) but seat or place differs (mp ke/lamu/lamu-east against None None)"
+  },
+  {
+   "new": "ke/person/shariff-athman-ali",
+   "other": "ke/person/ali-sharif-athman",
+   "score": 97.14285714285714,
+   "reason": "name agrees (97) but seat or place differs (mp ke/lamu/lamu-east against None None)"
+  },
+  {
+   "new": "ke/person/ahmed-mohamed-ali-loo",
+   "other": "ke/person/mohamed-mohamed-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/lamu/lamu-east against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/aden-bare-duale-garissa-dujis-mp",
+   "other": "ke/person/aden-duale-970",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/garissa/dujis against None None)"
+  },
+  {
+   "new": "ke/person/aden-bare-duale-garissa-dujis-mp",
+   "other": "ke/person/aden-bare-duale",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/garissa/dujis against None None)"
+  },
+  {
+   "new": "ke/person/aden-bare-duale-garissa-dujis-mp",
+   "other": "ke/person/aden-duale",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/garissa/dujis against None None)"
+  },
+  {
+   "new": "ke/person/aden-bare-duale-garissa-dujis-mp",
+   "other": "ke/person/aden-duale",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/garissa/dujis against None None)"
+  },
+  {
+   "new": "ke/person/aden-bare-duale-garissa-dujis-mp",
+   "other": "ke/person/aden-duale-wp-cabinet-secretary",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/garissa/dujis against None None)"
+  },
+  {
+   "new": "ke/person/aden-bare-duale-garissa-dujis-mp",
+   "other": "ke/person/aden-duale-wp-party-leader",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/garissa/dujis against mp None)"
+  },
+  {
+   "new": "ke/person/farah-maalim-garissa-dujis-mp",
+   "other": "ke/person/farah-maalim",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/garissa/dujis against mp ke/garissa/dadaab)"
+  },
+  {
+   "new": "ke/person/abdi-yare-mohamed",
+   "other": "ke/person/abdi-mohamed-abdi-mca-wajir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/garissa/dujis against None None)"
+  },
+  {
+   "new": "ke/person/mohamed-osman-ali",
+   "other": "ke/person/mohamed-mohamed-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/wajir-north against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/mohamed-osman-ali",
+   "other": "ke/person/omar-mohamed-ali-mca-wajir",
+   "score": 90.9090909090909,
+   "reason": "name agrees (91) but seat or place differs (mp ke/wajir/wajir-north against None None)"
+  },
+  {
+   "new": "ke/person/ibrahim-ali-hussein",
+   "other": "ke/person/ibrahim-hussein-abdi-mca-wajir",
+   "score": 92.3076923076923,
+   "reason": "name agrees (92) but seat or place differs (mp ke/wajir/wajir-north against None None)"
+  },
+  {
+   "new": "ke/person/ahmed-abdisalan-ibrahim-wajir-wajir-north-mp",
+   "other": "ke/person/ahmed-abdisalan-ibrahim",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/wajir-north against None None)"
+  },
+  {
+   "new": "ke/person/mohamud-hassan-mahad",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/wajir-north against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/ibrahim-abdi-saney-wajir-wajir-north-mp",
+   "other": "ke/person/saney-ibrahim-adbi",
+   "score": 94.44444444444444,
+   "reason": "name agrees (94) but seat or place differs (mp ke/wajir/wajir-north against None None)"
+  },
+  {
+   "new": "ke/person/ibrahim-abdi-saney-wajir-wajir-north-mp",
+   "other": "ke/person/ibrahim-abdi-saney",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/wajir-north against None None)"
+  },
+  {
+   "new": "ke/person/ali-maalim-mohamed",
+   "other": "ke/person/mohamed-mohamed-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/wajir-east against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/mohamed-ali-mursal",
+   "other": "ke/person/mohamed-mohamed-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/wajir-east against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/fatuma-ibrahim-ali-wajir-tarbaj-mp",
+   "other": "ke/person/fartuma-ibrahim-alio-mca-kisii",
+   "score": 94.73684210526315,
+   "reason": "name agrees (95) but seat or place differs (mp ke/wajir/tarbaj against None None)"
+  },
+  {
+   "new": "ke/person/fatuma-ibrahim-ali-wajir-tarbaj-mp",
+   "other": "ke/person/fatuma-ibrahim-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/tarbaj against mp None)"
+  },
+  {
+   "new": "ke/person/mohamed-yusuf-elmi",
+   "other": "ke/person/mohamed-elmi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/wajir-west against mp ke/wajir/tarbaj)"
+  },
+  {
+   "new": "ke/person/khalif-abdi-ali",
+   "other": "ke/person/abdi-ali-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/wajir-south against mp ke/garissa/ijara)"
+  },
+  {
+   "new": "ke/person/hussein-hassan-muhumed",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/wajir/wajir-south against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/mohamed-ibrahim-abdi",
+   "other": "ke/person/abdi-mohamed-abdi-mca-wajir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/mandera/mandera-north against None None)"
+  },
+  {
+   "new": "ke/person/mohamed-ibrahim-abdi",
+   "other": "ke/person/mohamed-ibrahim-edin-mca-mandera",
+   "score": 90.0,
+   "reason": "name agrees (90) but seat or place differs (mp ke/mandera/mandera-north against None None)"
+  },
+  {
+   "new": "ke/person/abdullahi-mohame-ahmed",
+   "other": "ke/person/ahmed-abdullahi-mohamad-q111235158",
+   "score": 93.33333333333333,
+   "reason": "name agrees (93) but seat or place differs (mp ke/mandera/mandera-north against None None)"
+  },
+  {
+   "new": "ke/person/abdullahi-mohame-ahmed",
+   "other": "ke/person/ahmed-abdullahi-mohamad",
+   "score": 93.33333333333333,
+   "reason": "name agrees (93) but seat or place differs (mp ke/mandera/mandera-north against governor ke/wajir)"
+  },
+  {
+   "new": "ke/person/abdi-ali-mohamed",
+   "other": "ke/person/mohamed-mohamed-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/mandera/mandera-north against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/abdi-ali-mohamed",
+   "other": "ke/person/abdi-ali-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/mandera/mandera-north against mp ke/garissa/ijara)"
+  },
+  {
+   "new": "ke/person/abdi-ali-mohamed",
+   "other": "ke/person/mohamed-abdi-haji-mohamed",
+   "score": 90.9090909090909,
+   "reason": "name agrees (91) but seat or place differs (mp ke/mandera/mandera-north against mp ke/mandera/banissa)"
+  },
+  {
+   "new": "ke/person/abdi-ali-mohamed",
+   "other": "ke/person/abdi-mohamed-abdi-mca-wajir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/mandera/mandera-north against None None)"
+  },
+  {
+   "new": "ke/person/abdi-ali-mohamed",
+   "other": "ke/person/abdi-khalif-mohamed",
+   "score": 91.42857142857143,
+   "reason": "name agrees (91) but seat or place differs (mp ke/mandera/mandera-north against senator ke/wajir)"
+  },
+  {
+   "new": "ke/person/mohamed-issack-hassan",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/mandera/mandera-south against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/abdikadir-sheikh-hassan",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/mandera/mandera-east against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/ali-salat-hassan",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/mandera/mandera-east against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/mohamed-sharamo-ali",
+   "other": "ke/person/mohamed-mohamed-ali",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/marsabit/moyale against mp ke/mombasa/nyali)"
+  },
+  {
+   "new": "ke/person/billow-issack-hassan",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/marsabit/moyale against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/dido-ali-raso-marsabit-saku-mp",
+   "other": "ke/person/dido-ali-raso",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/marsabit/saku against None None)"
+  },
+  {
+   "new": "ke/person/dido-ali-raso-marsabit-saku-mp",
+   "other": "ke/person/ali-rasso-dido",
+   "score": 96.29629629629629,
+   "reason": "name agrees (96) but seat or place differs (mp ke/marsabit/saku against None None)"
+  },
+  {
+   "new": "ke/person/dido-ali-raso-marsabit-saku-mp",
+   "other": "ke/person/dido-ali-raso",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/marsabit/saku against None None)"
+  },
+  {
+   "new": "ke/person/mohamed-abdullahi",
+   "other": "ke/person/fardowsa-abdullahi-mohamed-mca-wajir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against None None)"
+  },
+  {
+   "new": "ke/person/mohamed-abdullahi",
+   "other": "ke/person/khadra-abdullahi-mohamed-mca-mandera",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against None None)"
+  },
+  {
+   "new": "ke/person/mohamed-abdullahi",
+   "other": "ke/person/mohamed-abdullahi-aden",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against mp ke/garissa/dujis)"
+  },
+  {
+   "new": "ke/person/mohamed-abdullahi",
+   "other": "ke/person/mohamed-abdullahi-ogle",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against mp ke/wajir/wajir-south)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/abdirahman-mohamed-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against mp ke/mandera/lafey)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/mohamed-abdi-farah-mca-garissa",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against None None)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/mohamed-abdi-haji-mohamed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against mp ke/mandera/banissa)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/abdi-mohamed-abdi-mca-wajir",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against None None)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/rukia-abdi-mohamed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against woman_rep ke/tana-river)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/abdi-khalif-mohamed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against senator ke/wajir)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/mohamed-abdi-kuti",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against governor ke/isiolo)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/abdi-yare-mohamed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against mp ke/garissa/dujis)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/mohamed-ibrahim-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against mp ke/mandera/mandera-north)"
+  },
+  {
+   "new": "ke/person/abdi-mohamed",
+   "other": "ke/person/abdi-ali-mohamed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-north against mp ke/mandera/mandera-north)"
+  },
+  {
+   "new": "ke/person/abdullahi-jaldesa-banticha",
+   "other": "ke/person/abdullahi-banticha",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-south against None None)"
+  },
+  {
+   "new": "ke/person/abdi-koropu-tepo-isiolo-isiolo-south-mp",
+   "other": "ke/person/abdi-koropu-tepo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/isiolo/isiolo-south against None None)"
+  },
+  {
+   "new": "ke/person/karithi-david-sylvia",
+   "other": "ke/person/david-karithi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/meru/tigania-east against mp ke/meru/tigania-west)"
+  },
+  {
+   "new": "ke/person/mugambi-murwithania-rindikiri-meru-buuri-mp",
+   "other": "ke/person/mugambi-murwithania-rindikiri",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/meru/buuri against None None)"
+  },
+  {
+   "new": "ke/person/gideon-mwiti-irea",
+   "other": "ke/person/gideon-mwiti",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/meru/cental-imenti against mp None)"
+  },
+  {
+   "new": "ke/person/moses-nguchine-kirima-meru-cental-imenti-mp",
+   "other": "ke/person/kirima-moses-nguchine",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/meru/cental-imenti against mp None)"
+  },
+  {
+   "new": "ke/person/moses-nguchine-kirima-meru-cental-imenti-mp",
+   "other": "ke/person/moses-nguchine-kirima",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/meru/cental-imenti against mp None)"
+  },
+  {
+   "new": "ke/person/hassan-martin-kithinji-reche",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/tharaka/maara against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/patrick-munene-ntwiga-tharaka-nithi-mp",
+   "other": "ke/person/ntwiga-patrick-munene",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/tharaka/nithi against mp None)"
+  },
+  {
+   "new": "ke/person/patrick-munene-ntwiga-tharaka-nithi-mp",
+   "other": "ke/person/ntwiga-patrick-munene",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/tharaka/nithi against None None)"
+  },
+  {
+   "new": "ke/person/patrick-munene-ntwiga-tharaka-nithi-mp",
+   "other": "ke/person/patrick-munene-ntwiga",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/tharaka/nithi against None None)"
+  },
+  {
+   "new": "ke/person/patrick-munene-ntwiga-tharaka-nithi-mp",
+   "other": "ke/person/patrick-munene",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/tharaka/nithi against governor ke/nyeri)"
+  },
+  {
+   "new": "ke/person/nebart-bernard-muriuki",
+   "other": "ke/person/muriuki-nebart-bernard",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/embu/gachoka against mp None)"
+  },
+  {
+   "new": "ke/person/nebart-bernard-muriuki",
+   "other": "ke/person/muriuki-nebart-bernard",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/embu/gachoka against None None)"
+  },
+  {
+   "new": "ke/person/mutava-musyimi-embu-gachoka-mp",
+   "other": "ke/person/mutava-musyimi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/embu/gachoka against None None)"
+  },
+  {
+   "new": "ke/person/geoffrey-kingagi-muturi-embu-gachoka-mp",
+   "other": "ke/person/geoffrey-kingagi-muturi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/embu/gachoka against None None)"
+  },
+  {
+   "new": "ke/person/charles-muriuki-njagagua",
+   "other": "ke/person/muriuki-njagagua",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/embu/siakago against None None)"
+  },
+  {
+   "new": "ke/person/charles-muriuki-njagagua",
+   "other": "ke/person/muriuki-njagagua",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/embu/siakago against None None)"
+  },
+  {
+   "new": "ke/person/charles-muriuki-njagagua",
+   "other": "ke/person/muriuki-njagagua",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/embu/siakago against None None)"
+  },
+  {
+   "new": "ke/person/charles-muriuki-njagagua",
+   "other": "ke/person/muriuki-njagagua",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/embu/siakago against None None)"
+  },
+  {
+   "new": "ke/person/geoffrey-kariuki-kiringa-ruku",
+   "other": "ke/person/geoffrey-kiringa-ruku",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/embu/siakago against None None)"
+  },
+  {
+   "new": "ke/person/paul-musyimi-nzengu-kitui-mwingi-north-mp",
+   "other": "ke/person/paul-musyimi-nzengu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/mwingi-north against None None)"
+  },
+  {
+   "new": "ke/person/paul-musyimi-nzengu-kitui-mwingi-north-mp",
+   "other": "ke/person/paul-musyimi-nzengu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/mwingi-north against None None)"
+  },
+  {
+   "new": "ke/person/paul-musyimi-nzengu-kitui-mwingi-north-mp",
+   "other": "ke/person/paul-musyimi-nzengu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/mwingi-north against None None)"
+  },
+  {
+   "new": "ke/person/paul-musyimi-nzengu-kitui-mwingi-north-mp",
+   "other": "ke/person/paul-musyimi-nzengu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/mwingi-north against None None)"
+  },
+  {
+   "new": "ke/person/robert-mutemi-mutua-kitui-mwingi-west-mp",
+   "other": "ke/person/robert-mutemi-mutua",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/mwingi-west against None None)"
+  },
+  {
+   "new": "ke/person/david-mwalika-mboni-kitui-kitui-rural-mp",
+   "other": "ke/person/david-mwalika-mboni",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/kitui-rural against None None)"
+  },
+  {
+   "new": "ke/person/david-mwalika-mboni-kitui-kitui-rural-mp",
+   "other": "ke/person/david-mwalika-mboni",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/kitui-rural against None None)"
+  },
+  {
+   "new": "ke/person/david-mwalika-mboni-kitui-kitui-rural-mp",
+   "other": "ke/person/david-mwalika-mboni",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/kitui-rural against None None)"
+  },
+  {
+   "new": "ke/person/david-mwalika-mboni-kitui-kitui-rural-mp",
+   "other": "ke/person/david-mwalika-mboni",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/kitui-rural against None None)"
+  },
+  {
+   "new": "ke/person/charles-mutisya-nyamai-kitui-kitui-rural-mp",
+   "other": "ke/person/charles-mutisya-nyamai",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kitui/kitui-rural against None None)"
+  },
+  {
+   "new": "ke/person/paul-muoki-musila",
+   "other": "ke/person/muoki-musila-mca-machakos",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/machakos/masinga against None None)"
+  },
+  {
+   "new": "ke/person/charles-kyalo-kilonzo",
+   "other": "ke/person/charles-kilonzo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/machakos/matungulu against mp ke/machakos/yatta)"
+  },
+  {
+   "new": "ke/person/robert-mbui-machakos-kathiani-mp",
+   "other": "ke/person/robert-mbui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/machakos/kathiani against None None)"
+  },
+  {
+   "new": "ke/person/robert-mbui-machakos-kathiani-mp",
+   "other": "ke/person/robert-mbui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/machakos/kathiani against None None)"
+  },
+  {
+   "new": "ke/person/robert-mbui-machakos-kathiani-mp",
+   "other": "ke/person/robert-mbui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/machakos/kathiani against None None)"
+  },
+  {
+   "new": "ke/person/robert-mbui-machakos-kathiani-mp",
+   "other": "ke/person/robert-mbui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/machakos/kathiani against None None)"
+  },
+  {
+   "new": "ke/person/robert-mbui-machakos-kathiani-mp",
+   "other": "ke/person/robert-mbui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/machakos/kathiani against None None)"
+  },
+  {
+   "new": "ke/person/robert-mbui-machakos-kathiani-mp",
+   "other": "ke/person/robert-mbui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/machakos/kathiani against None None)"
+  },
+  {
+   "new": "ke/person/john-warutere-kiragu",
+   "other": "ke/person/john-kiragu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nyeri/tetu against mp ke/kiambu/limuru)"
+  },
+  {
+   "new": "ke/person/kabando-wa-kabando-nyeri-mukurweni-mp",
+   "other": "ke/person/kabando-wa-kabando",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nyeri/mukurweni against mp None)"
+  },
+  {
+   "new": "ke/person/anthony-githiaka-kiai-nyeri-mukurweni-mp",
+   "other": "ke/person/anthony-githiaka-kiai",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nyeri/mukurweni against mp None)"
+  },
+  {
+   "new": "ke/person/alice-muthoni-wahome-muranga-kandara-mp",
+   "other": "ke/person/alice-muthoni-wahome",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/muranga/kandara against None None)"
+  },
+  {
+   "new": "ke/person/alice-muthoni-wahome-muranga-kandara-mp",
+   "other": "ke/person/alice-wahome",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/muranga/kandara against None None)"
+  },
+  {
+   "new": "ke/person/alice-muthoni-wahome-muranga-kandara-mp",
+   "other": "ke/person/alice-wahome-972",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/muranga/kandara against None None)"
+  },
+  {
+   "new": "ke/person/alice-muthoni-wahome-muranga-kandara-mp",
+   "other": "ke/person/alice-wahome",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/muranga/kandara against None None)"
+  },
+  {
+   "new": "ke/person/paul-kamau-mwangi",
+   "other": "ke/person/paul-mwangi-kamau",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kiambu/gatundu-south against mp ke/muranga/kigumo)"
+  },
+  {
+   "new": "ke/person/dorcas-wanjiru-chege",
+   "other": "ke/person/wanjiru-chege",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kiambu/juja against mp None)"
+  },
+  {
+   "new": "ke/person/lucas-chege-mwaura",
+   "other": "ke/person/mwaura-chege-mca-nairobi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kiambu/juja against None None)"
+  },
+  {
+   "new": "ke/person/david-njuguna-mwaura",
+   "other": "ke/person/njuguna-mwaura-mca-nakuru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kiambu/lari against None None)"
+  },
+  {
+   "new": "ke/person/todosia-ruto-richard",
+   "other": "ke/person/richard-ruto-todosia-mca-west-pokot",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/west-pokot/kapenguria against None None)"
+  },
+  {
+   "new": "ke/person/david-losiakou-pkosing-west-pokot-pokot-south-mp",
+   "other": "ke/person/david-pkosing",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/west-pokot/pokot-south against None None)"
+  },
+  {
+   "new": "ke/person/david-losiakou-pkosing-west-pokot-pokot-south-mp",
+   "other": "ke/person/david-pkosing-losiakou",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/west-pokot/pokot-south against None None)"
+  },
+  {
+   "new": "ke/person/david-losiakou-pkosing-west-pokot-pokot-south-mp",
+   "other": "ke/person/david-losiakou-pkosing",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/west-pokot/pokot-south against None None)"
+  },
+  {
+   "new": "ke/person/allan-kiprotich-chesang",
+   "other": "ke/person/chesang-allan-kiprotich",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/trans-nzoia/kwanza against senator ke/trans-nzoia)"
+  },
+  {
+   "new": "ke/person/allan-kiprotich-chesang",
+   "other": "ke/person/allan-chesang",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/trans-nzoia/kwanza against senator ke/trans-nzoia)"
+  },
+  {
+   "new": "ke/person/caleb-amisi-luyai-trans-nzoia-saboti-mp",
+   "other": "ke/person/caleb-amisi-luyai",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/trans-nzoia/saboti against None None)"
+  },
+  {
+   "new": "ke/person/caleb-amisi-luyai-trans-nzoia-saboti-mp",
+   "other": "ke/person/caleb-amisi-luyai",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/trans-nzoia/saboti against None None)"
+  },
+  {
+   "new": "ke/person/caleb-amisi-luyai-trans-nzoia-saboti-mp",
+   "other": "ke/person/caleb-amisi-luyai",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/trans-nzoia/saboti against None None)"
+  },
+  {
+   "new": "ke/person/caleb-amisi-luyai-trans-nzoia-saboti-mp",
+   "other": "ke/person/caleb-amisi-luyai",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/trans-nzoia/saboti against None None)"
+  },
+  {
+   "new": "ke/person/robert-wamalwa",
+   "other": "ke/person/robert-wamalwa-romborah-simiyu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/trans-nzoia/kiminini against mp ke/trans-nzoia/endebess)"
+  },
+  {
+   "new": "ke/person/jonathan-kimeli-bii",
+   "other": "ke/person/jonathan-bii-q114352790",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/uasin-gishu/soy against None None)"
+  },
+  {
+   "new": "ke/person/gilbert-kipsang-koskei",
+   "other": "ke/person/gilbert-kipsang-koskei-mca-uasin-gishu",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/uasin-gishu/kesses against None None)"
+  },
+  {
+   "new": "ke/person/david-kipkorir-kiplagat",
+   "other": "ke/person/kiplagat-david",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/baringo/baringo-central against mp ke/uasin-gishu/soy)"
+  },
+  {
+   "new": "ke/person/hellen-jepkemoi-sambili",
+   "other": "ke/person/hellen-sambili",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/baringo/mogotio against None None)"
+  },
+  {
+   "new": "ke/person/daniel-kamuren-tuitoek-baringo-mogotio-mp",
+   "other": "ke/person/daniel-kamuren-tuitoek",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/baringo/mogotio against None None)"
+  },
+  {
+   "new": "ke/person/jayne-njeri-wanjiru-kihara-nakuru-naivasha-mp",
+   "other": "ke/person/jayne-njeri-wanjiru-kihara",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nakuru/naivasha against None None)"
+  },
+  {
+   "new": "ke/person/japheth-kiplangat-mutai-bomet-buret-mp",
+   "other": "ke/person/japheth-kiplangat-mutai",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/buret against mp None)"
+  },
+  {
+   "new": "ke/person/leonard-kipkosgei-sang-bomet-buret-mp",
+   "other": "ke/person/leonard-kipkosgei-sang",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/buret against mp None)"
+  },
+  {
+   "new": "ke/person/dominic-kipkirui-mutai",
+   "other": "ke/person/dominic-mutai-mca-kericho",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kericho/belgut against None None)"
+  },
+  {
+   "new": "ke/person/kiprotich-rogony",
+   "other": "ke/person/kiprotich-rogony-mca-kericho",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kericho/sigowet-soin against None None)"
+  },
+  {
+   "new": "ke/person/vincent-kirui",
+   "other": "ke/person/vincent-kirui-mca-kericho",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/sotik against None None)"
+  },
+  {
+   "new": "ke/person/vincent-kirui",
+   "other": "ke/person/vincent-kipngeno-kirui-mca-kericho",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/sotik against None None)"
+  },
+  {
+   "new": "ke/person/kimutai-rotich-benard",
+   "other": "ke/person/kimutai-rotich-benard-mca-bomet",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/chepalungu against None None)"
+  },
+  {
+   "new": "ke/person/dancel-kipngeno-kirui",
+   "other": "ke/person/kipngeno-kirui-mca-kericho",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/bomet-central against None None)"
+  },
+  {
+   "new": "ke/person/dancel-kipngeno-kirui",
+   "other": "ke/person/dancel-kipngeno-kirui-mca-bomet",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/bomet-central against None None)"
+  },
+  {
+   "new": "ke/person/ronald-kiprotich-tonui-bomet-bomet-central-mp",
+   "other": "ke/person/ronald-kiprotich-tonui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/bomet-central against None None)"
+  },
+  {
+   "new": "ke/person/ronald-kiprotich-tonui-bomet-bomet-central-mp",
+   "other": "ke/person/ronald-kiprotich-tonui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/bomet-central against None None)"
+  },
+  {
+   "new": "ke/person/ronald-kiprotich-tonui-bomet-bomet-central-mp",
+   "other": "ke/person/ronald-kiprotich-tonui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/bomet-central against None None)"
+  },
+  {
+   "new": "ke/person/ronald-kiprotich-tonui-bomet-bomet-central-mp",
+   "other": "ke/person/ronald-kiprotich-tonui",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/bomet-central against None None)"
+  },
+  {
+   "new": "ke/person/sammy-cheruiyot-koech-bomet-konoin-mp",
+   "other": "ke/person/sammy-cheruiyot-koech",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/konoin against None None)"
+  },
+  {
+   "new": "ke/person/yegon-brighton-leonard-bomet-konoin-mp",
+   "other": "ke/person/yegon-brighton-leonard",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/konoin against None None)"
+  },
+  {
+   "new": "ke/person/yegon-brighton-leonard-bomet-konoin-mp",
+   "other": "ke/person/yegon-brighton-leonard",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/konoin against None None)"
+  },
+  {
+   "new": "ke/person/yegon-brighton-leonard-bomet-konoin-mp",
+   "other": "ke/person/yegon-brighton-leonard",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/konoin against None None)"
+  },
+  {
+   "new": "ke/person/yegon-brighton-leonard-bomet-konoin-mp",
+   "other": "ke/person/yegon-brighton-leonard",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bomet/konoin against None None)"
+  },
+  {
+   "new": "ke/person/dorcas-luvalitsa-kedogo",
+   "other": "ke/person/dorcas-kedogo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/vihiga/vihiga against None None)"
+  },
+  {
+   "new": "ke/person/fred-kapondi-chesebe-bungoma-mt-elgon-mp",
+   "other": "ke/person/chesebe-fred-kapondi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bungoma/mt-elgon against None None)"
+  },
+  {
+   "new": "ke/person/fred-kapondi-chesebe-bungoma-mt-elgon-mp",
+   "other": "ke/person/fred-kapondi-chesebe",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bungoma/mt-elgon against None None)"
+  },
+  {
+   "new": "ke/person/john-bomett-serut",
+   "other": "ke/person/john-serut",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bungoma/mt-elgon against None None)"
+  },
+  {
+   "new": "ke/person/john-wafula-wanjala",
+   "other": "ke/person/john-kennedy-wanjala-wafula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/bungoma/webuye-west against senator ke/trans-nzoia)"
+  },
+  {
+   "new": "ke/person/denzil-edunglot-musumba",
+   "other": "ke/person/denzil-edungot-musumba-mca-busia",
+   "score": 97.87234042553192,
+   "reason": "name agrees (98) but seat or place differs (mp ke/busia/teso-south against None None)"
+  },
+  {
+   "new": "ke/person/catherine-nakhabi-omanyo-busia-matayos-mp",
+   "other": "ke/person/catherine-nakhabi-omanyo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/busia/matayos against None None)"
+  },
+  {
+   "new": "ke/person/michael-aringo-onyura-busia-butula-mp",
+   "other": "ke/person/michael-aringo-onyura",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/busia/butula against None None)"
+  },
+  {
+   "new": "ke/person/joseph-h-maero-oyula-busia-butula-mp",
+   "other": "ke/person/joseph-h-maero-oyula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/busia/butula against None None)"
+  },
+  {
+   "new": "ke/person/joseph-h-maero-oyula-busia-butula-mp",
+   "other": "ke/person/joseph-h-maero-oyula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/busia/butula against None None)"
+  },
+  {
+   "new": "ke/person/joseph-h-maero-oyula-busia-butula-mp",
+   "other": "ke/person/joseph-h-maero-oyula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/busia/butula against None None)"
+  },
+  {
+   "new": "ke/person/joseph-h-maero-oyula-busia-butula-mp",
+   "other": "ke/person/joseph-h-maero-oyula",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/busia/butula against None None)"
+  },
+  {
+   "new": "ke/person/washington-jakoyo-midiwo-siaya-gem-mp",
+   "other": "ke/person/washington-jakoyo-midiwo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/siaya/gem against None None)"
+  },
+  {
+   "new": "ke/person/elisha-ochieng-odhiambo-siaya-gem-mp",
+   "other": "ke/person/elisha-ochieng-odhiambo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/siaya/gem against None None)"
+  },
+  {
+   "new": "ke/person/elisha-ochieng-odhiambo-siaya-gem-mp",
+   "other": "ke/person/elisha-ochieng-odhiambo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/siaya/gem against None None)"
+  },
+  {
+   "new": "ke/person/elisha-ochieng-odhiambo-siaya-gem-mp",
+   "other": "ke/person/elisha-ochieng-odhiambo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/siaya/gem against None None)"
+  },
+  {
+   "new": "ke/person/elisha-ochieng-odhiambo-siaya-gem-mp",
+   "other": "ke/person/elisha-ochieng-odhiambo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/siaya/gem against None None)"
+  },
+  {
+   "new": "ke/person/joy-adhiambo-gwendo-kisumu-kisumu-east-mp",
+   "other": "ke/person/joy-adhiambo-gwendo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kisumu/kisumu-east against None None)"
+  },
+  {
+   "new": "ke/person/joshua-aduma-owuor-kisumu-nyakach-mp",
+   "other": "ke/person/joshua-aduma-owuor",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kisumu/nyakach against None None)"
+  },
+  {
+   "new": "ke/person/joshua-aduma-owuor-kisumu-nyakach-mp",
+   "other": "ke/person/joshua-aduma-owuor",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kisumu/nyakach against None None)"
+  },
+  {
+   "new": "ke/person/joshua-aduma-owuor-kisumu-nyakach-mp",
+   "other": "ke/person/aduma-owuor",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kisumu/nyakach against None None)"
+  },
+  {
+   "new": "ke/person/joshua-aduma-owuor-kisumu-nyakach-mp",
+   "other": "ke/person/joshua-aduma-owuor",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kisumu/nyakach against None None)"
+  },
+  {
+   "new": "ke/person/joshua-aduma-owuor-kisumu-nyakach-mp",
+   "other": "ke/person/joshua-aduma-owuor",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kisumu/nyakach against None None)"
+  },
+  {
+   "new": "ke/person/martin-peters-owino-homa-bay-ndhiwa-mp",
+   "other": "ke/person/martin-peters-owino",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/homa-bay/ndhiwa against None None)"
+  },
+  {
+   "new": "ke/person/martin-peters-owino-homa-bay-ndhiwa-mp",
+   "other": "ke/person/martin-peters-owino",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/homa-bay/ndhiwa against None None)"
+  },
+  {
+   "new": "ke/person/martin-peters-owino-homa-bay-ndhiwa-mp",
+   "other": "ke/person/martin-peters-owino",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/homa-bay/ndhiwa against None None)"
+  },
+  {
+   "new": "ke/person/martin-peters-owino-homa-bay-ndhiwa-mp",
+   "other": "ke/person/martin-peters-owino",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/homa-bay/ndhiwa against None None)"
+  },
+  {
+   "new": "ke/person/oyugi-aghostinho-neto",
+   "other": "ke/person/aghostinho-neto-oyugi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/homa-bay/ndhiwa against None None)"
+  },
+  {
+   "new": "ke/person/millie-grace-akoth-odhiambo-homa-bay-suba-north-mp",
+   "other": "ke/person/millie-grace-akoth-odhiambo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/homa-bay/suba-north against None None)"
+  },
+  {
+   "new": "ke/person/millie-grace-akoth-odhiambo-homa-bay-suba-north-mp",
+   "other": "ke/person/millie-odhiambo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/homa-bay/suba-north against None None)"
+  },
+  {
+   "new": "ke/person/millie-grace-akoth-odhiambo-homa-bay-suba-north-mp",
+   "other": "ke/person/millie-grace-akoth-odhiambo",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/homa-bay/suba-north against None None)"
+  },
+  {
+   "new": "ke/person/michael-otieno-ondiek",
+   "other": "ke/person/michael-omondi-otieno-mca-siaya",
+   "score": 90.47619047619048,
+   "reason": "name agrees (90) but seat or place differs (mp ke/migori/rongo against None None)"
+  },
+  {
+   "new": "ke/person/micah-omondi-otieno",
+   "other": "ke/person/michael-omondi-otieno-mca-siaya",
+   "score": 90.0,
+   "reason": "name agrees (90) but seat or place differs (mp ke/migori/awendo against None None)"
+  },
+  {
+   "new": "ke/person/junet-sheikh-nuh-migori-suna-east-mp",
+   "other": "ke/person/junet-sheikh-nuh-mohamed",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/migori/suna-east against None None)"
+  },
+  {
+   "new": "ke/person/junet-sheikh-nuh-migori-suna-east-mp",
+   "other": "ke/person/junet-sheikh-nuh",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/migori/suna-east against None None)"
+  },
+  {
+   "new": "ke/person/junet-sheikh-nuh-migori-suna-east-mp",
+   "other": "ke/person/junet-sheikh-nuh-junet-sheikh-nuh",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/migori/suna-east against None None)"
+  },
+  {
+   "new": "ke/person/junet-sheikh-nuh-migori-suna-east-mp",
+   "other": "ke/person/junet-sheikh-nuh",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/migori/suna-east against None None)"
+  },
+  {
+   "new": "ke/person/samson-olima-obonyo",
+   "other": "ke/person/samson-olima-obonyo-mca-migori",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/migori/nyatike against None None)"
+  },
+  {
+   "new": "ke/person/wilfred-gisuka-machage",
+   "other": "ke/person/wilfred-machage",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/migori/kuria-west against senator ke/migori)"
+  },
+  {
+   "new": "ke/person/julius-migos-ogamba-kisii-kitutu-chache-north-mp",
+   "other": "ke/person/julius-migos-ogamba",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/kisii/kitutu-chache-north against None None)"
+  },
+  {
+   "new": "ke/person/paul-simba-arati-nairobi-dagoretti-mp",
+   "other": "ke/person/paul-simba-arati",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/paul-simba-arati-nairobi-dagoretti-mp",
+   "other": "ke/person/simba-arati",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/paul-simba-arati-nairobi-dagoretti-mp",
+   "other": "ke/person/simba-arati",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/paul-simba-arati-nairobi-dagoretti-mp",
+   "other": "ke/person/paul-simba-arati-q47493974",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/beatrice-kadeveresia-elachi",
+   "other": "ke/person/elachi-beatrice-kadeveresia",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against mp None)"
+  },
+  {
+   "new": "ke/person/beatrice-kadeveresia-elachi",
+   "other": "ke/person/beatrice-elachi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/beatrice-kadeveresia-elachi",
+   "other": "ke/person/elachi-beatrice-kadeveresia",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/dennis-kariuki-waweru-nairobi-dagoretti-mp",
+   "other": "ke/person/dennis-kariuki-waweru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/john-kiarie-waweru-nairobi-dagoretti-mp",
+   "other": "ke/person/john-kiarie-waweru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against mp None)"
+  },
+  {
+   "new": "ke/person/john-kiarie-waweru-nairobi-dagoretti-mp",
+   "other": "ke/person/john-kiarie-waweru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against mp None)"
+  },
+  {
+   "new": "ke/person/john-kiarie-waweru-nairobi-dagoretti-mp",
+   "other": "ke/person/john-kiarie-waweru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/john-kiarie-waweru-nairobi-dagoretti-mp",
+   "other": "ke/person/john-kiarie-waweru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/john-kiarie-waweru-nairobi-dagoretti-mp",
+   "other": "ke/person/john-kiarie-waweru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/john-kiarie-waweru-nairobi-dagoretti-mp",
+   "other": "ke/person/john-kiarie-waweru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/john-kiarie-waweru-nairobi-dagoretti-mp",
+   "other": "ke/person/john-kiarie-waweru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/john-kiarie-waweru-nairobi-dagoretti-mp",
+   "other": "ke/person/john-kiarie-waweru",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/dagoretti against None None)"
+  },
+  {
+   "new": "ke/person/judith-achieng-sijeny-nairobi-langata-mp",
+   "other": "ke/person/judith-achieng-sijeny",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/langata against None None)"
+  },
+  {
+   "new": "ke/person/stephen-mugo-kimani",
+   "other": "ke/person/stephen-mugo-kimani-mca-nairobi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/roysambu against None None)"
+  },
+  {
+   "new": "ke/person/john-njoroge-chege-nairobi-kasarani-mp",
+   "other": "ke/person/john-njoroge-chege",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kasarani against None None)"
+  },
+  {
+   "new": "ke/person/mercy-wanjiku-gakuya",
+   "other": "ke/person/mercy-gakuya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kasarani against None None)"
+  },
+  {
+   "new": "ke/person/kajwang-tom-joseph-francis-nairobi-ruaraka-mp",
+   "other": "ke/person/francis-tom-joseph-kajwang",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/ruaraka against None None)"
+  },
+  {
+   "new": "ke/person/kajwang-tom-joseph-francis-nairobi-ruaraka-mp",
+   "other": "ke/person/tom-kajwang",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/ruaraka against None None)"
+  },
+  {
+   "new": "ke/person/kajwang-tom-joseph-francis-nairobi-ruaraka-mp",
+   "other": "ke/person/kajwang-tom-joseph-francis",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/ruaraka against None None)"
+  },
+  {
+   "new": "ke/person/julius-musili-mawathe-nairobi-embakasi-south-mp",
+   "other": "ke/person/mawathe-julius-musili",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-south against None None)"
+  },
+  {
+   "new": "ke/person/julius-musili-mawathe-nairobi-embakasi-south-mp",
+   "other": "ke/person/julius-musili-mawathe",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-south against None None)"
+  },
+  {
+   "new": "ke/person/irshadali-mohamed-sumra",
+   "other": "ke/person/irshadali-sumra",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-south against None None)"
+  },
+  {
+   "new": "ke/person/james-mwangi-gakuya-nairobi-embakasi-north-mp",
+   "other": "ke/person/gakuya-james-mwangi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-north against mp None)"
+  },
+  {
+   "new": "ke/person/james-mwangi-gakuya-nairobi-embakasi-north-mp",
+   "other": "ke/person/james-mwangi-gakuya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-north against mp None)"
+  },
+  {
+   "new": "ke/person/james-mwangi-gakuya-nairobi-embakasi-north-mp",
+   "other": "ke/person/james-mwangi-gakuya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-north against mp None)"
+  },
+  {
+   "new": "ke/person/james-mwangi-gakuya-nairobi-embakasi-north-mp",
+   "other": "ke/person/james-mwangi-gakuya-james-mwangi-gakuya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-north against mp None)"
+  },
+  {
+   "new": "ke/person/james-mwangi-gakuya-nairobi-embakasi-north-mp",
+   "other": "ke/person/james-mwangi-gakuya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-north against mp None)"
+  },
+  {
+   "new": "ke/person/james-mwangi-gakuya-nairobi-embakasi-north-mp",
+   "other": "ke/person/james-mwangi-gakuya",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-north against mp None)"
+  },
+  {
+   "new": "ke/person/moses-kuria",
+   "other": "ke/person/moses-kiarie-kuria",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/embakasi-west against mp ke/kiambu/gatundu-south)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi-wp-constituency",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/yusuf-hassan-abdi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp None)"
+  },
+  {
+   "new": "ke/person/yusuf-hassan-abdi-nairobi-kamukunji-mp",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/ahmed-ibrahim",
+   "other": "ke/person/ahmed-abdisalan-ibrahim",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against None None)"
+  },
+  {
+   "new": "ke/person/ahmed-ibrahim",
+   "other": "ke/person/ahmed-abdisalan-ibrahim-wajir-wajir-north-mp",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp ke/wajir/wajir-north)"
+  },
+  {
+   "new": "ke/person/ahmed-ibrahim",
+   "other": "ke/person/ahmed-ibrahim-haji",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against mp ke/mandera/mandera-west)"
+  },
+  {
+   "new": "ke/person/abdiaziz-hassan-mahamud",
+   "other": "ke/person/hassan-hassan",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/kamukunji against governor ke/mombasa)"
+  },
+  {
+   "new": "ke/person/john-mwaniki-kwenya",
+   "other": "ke/person/john-mwaniki-kwenya-mca-nairobi",
+   "score": 100.0,
+   "reason": "name agrees (100) but seat or place differs (mp ke/nairobi/starehe against None None)"
+  }
+ ],
+ "new_people": 2224,
+ "created_parties": 15,
+ "unlinked": [
+  "2017 mp 15/69: no geography unit",
+  "2017 mp 15/69: no geography unit",
+  "2017 mp 15/69: no geography unit",
+  "2017 mp 15/69: no geography unit",
+  "2017 mp 15/69: no geography unit",
+  "2017 mp 15/69: no geography unit",
+  "2017 mp 15/69: no geography unit",
+  "2017 mp 15/69: no geography unit"
+ ]
+}

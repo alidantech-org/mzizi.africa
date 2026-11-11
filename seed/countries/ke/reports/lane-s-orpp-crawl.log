@@ -1,0 +1,28 @@
+ke/orpp: sections from seed sections of family ke/regulator (custom-prepared, unverified)
+{
+ "site": "ke/orpp",
+ "requests": 62,
+ "pages": 34,
+ "documents_new": 0,
+ "documents_duplicate": 0,
+ "documents_known_url": 89,
+ "skipped": 0,
+ "errors": 0,
+ "stop": null,
+ "sections": {
+  "press": {
+   "pages": 32,
+   "items": 32
+  },
+  "tenders": {
+   "pages": 1,
+   "items": 5
+  }
+ },
+ "statuses": {
+  "200": 34,
+  "301": 28
+ },
+ "skipped_sample": [],
+ "errors_sample": []
+}

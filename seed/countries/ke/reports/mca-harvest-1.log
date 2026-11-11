@@ -1,0 +1,16 @@
+{"site": "ke/county-assembly/bomet", "pages": 0, "error": "gate refused: host www.bometassembly.go.ke is outside the approved scope", "hosts": ["bometassembly.go.ke"]}
+{"site": "ke/county-assembly/elgeyo-marakwet", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/homa-bay", "pages": 0, "error": "gate refused: host www.homabayassembly.go.ke is outside the approved scope", "hosts": ["homabayassembly.go.ke"]}
+{"site": "ke/county-assembly/kakamega", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/kilifi", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/kisumu", "pages": 9, "error": null, "hosts": ["kisumuassembly.go.ke"]}
+{"site": "ke/county-assembly/laikipia", "pages": 1, "error": null, "hosts": ["laikipiaassembly.go.ke"]}
+{"site": "ke/county-assembly/makueni", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/meru", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/muranga", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/nandi", "pages": 0, "error": "gate refused: host www.nandiassembly.go.ke is outside the approved scope", "hosts": ["nandiassembly.go.ke"]}
+{"site": "ke/county-assembly/nyandarua", "pages": 7, "error": null, "hosts": ["nyandaruaassembly.go.ke"]}
+{"site": "ke/county-assembly/siaya", "pages": 9, "error": null, "hosts": ["siayaassembly.go.ke"]}
+{"site": "ke/county-assembly/tharaka", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/uasin-gishu", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/west-pokot", "pages": 0, "error": "no reachable domain", "hosts": []}

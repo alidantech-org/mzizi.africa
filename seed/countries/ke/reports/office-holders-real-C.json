@@ -1,0 +1,3464 @@
+{
+ "unmatched_places": [
+  {
+   "link": "ke/national-assembly/tharaka-nithi",
+   "person": "ke/person/nduyo-susan-ngugi"
+  },
+  {
+   "link": "ke/national-assembly/saku/dido-ali-raso",
+   "person": "ke/person/dido-ali-raso"
+  },
+  {
+   "link": "ke/national-assembly/elect/francis-tom-joseph-kajwang",
+   "person": "ke/person/francis-tom-joseph-kajwang"
+  },
+  {
+   "link": "ke/national-assembly/majority-leader",
+   "person": "ke/person/kimani-ichungwah-wp-party-leader"
+  },
+  {
+   "link": "ke/national-assembly/minority-leader",
+   "person": "ke/person/junet-mohamed"
+  },
+  {
+   "link": "ke/senate/majority-leader",
+   "person": "ke/person/aaron-cheruiyot-wp-party-leader"
+  },
+  {
+   "link": "ke/senate/minority-leader",
+   "person": "ke/person/stewart-madzayo-wp-party-leader"
+  }
+ ],
+ "unmatched_parties": {
+  "Party": 1,
+  "New Democrats": 1
+ },
+ "new_people": 137,
+ "reused_people": 867,
+ "reuse_reasons": {
+  "already holds this seat": 866,
+  "already holds an office in the same institution": 1
+ },
+ "flagged": [
+  {
+   "name": "Maina Kamanda",
+   "existing": "ke/person/maina-kamanda",
+   "new": "ke/person/maina-kamanda-wp-nominated",
+   "seat": "nominated",
+   "area": null
+  },
+  {
+   "name": "Naisula Lesuuda",
+   "existing": "ke/person/naisula-lesuuda",
+   "new": "ke/person/naisula-lesuuda-wp-nominated-senator-women",
+   "seat": "nominated-senator-women",
+   "area": null
+  },
+  {
+   "name": "Kithure Kindiki",
+   "existing": "ke/person/kithure-kindiki",
+   "new": "ke/person/kithure-kindiki-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Mutahi Kagwe",
+   "existing": "ke/person/mutahi-kagwe",
+   "new": "ke/person/mutahi-kagwe-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Aden Duale",
+   "existing": "ke/person/aden-duale",
+   "new": "ke/person/aden-duale-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Mithika Linturi",
+   "existing": "ke/person/mithika-linturi",
+   "new": "ke/person/mithika-linturi-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Florence Bore",
+   "existing": "ke/person/florence-bore",
+   "new": "ke/person/florence-bore-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Aisha Jumwa",
+   "existing": "ke/person/aisha-jumwa",
+   "new": "ke/person/aisha-jumwa-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Salim Mvurya",
+   "existing": "ke/person/salim-mvurya",
+   "new": "ke/person/salim-mvurya-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Kipchumba Murkomen",
+   "existing": "ke/person/kipchumba-murkomen",
+   "new": "ke/person/kipchumba-murkomen-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Davis Chirchir",
+   "existing": "ke/person/davis-chirchir",
+   "new": "ke/person/davis-chirchir-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Soipan Tuya",
+   "existing": "ke/person/soipan-tuya",
+   "new": "ke/person/soipan-tuya-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Fred Matiang'i",
+   "existing": "ke/person/fred-matiangi",
+   "new": "ke/person/fred-matiangi-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Amina Mohamed",
+   "existing": "ke/person/amina-mohamed",
+   "new": "ke/person/amina-mohamed-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "Fred Matiang'i",
+   "existing": "ke/person/fred-matiangi",
+   "new": "ke/person/fred-matiangi-wp-cabinet-secretary",
+   "seat": "cabinet-secretary",
+   "area": null
+  },
+  {
+   "name": "David Maraga",
+   "existing": "ke/person/david-maraga",
+   "new": "ke/person/david-maraga-wp-appointee",
+   "seat": "appointee",
+   "area": null
+  },
+  {
+   "name": "Martha Koome",
+   "existing": "ke/person/martha-koome",
+   "new": "ke/person/martha-koome-wp-appointee",
+   "seat": "appointee",
+   "area": null
+  },
+  {
+   "name": "Aden Duale",
+   "existing": "ke/person/aden-duale",
+   "new": "ke/person/aden-duale-wp-party-leader",
+   "seat": "party-leader",
+   "area": null
+  },
+  {
+   "name": "Amos Kimunya",
+   "existing": "ke/person/amos-kimunya",
+   "new": "ke/person/amos-kimunya-wp-party-leader",
+   "seat": "party-leader",
+   "area": null
+  },
+  {
+   "name": "Kimani Ichung'wah",
+   "existing": "ke/person/kimani-ichungwah",
+   "new": "ke/person/kimani-ichungwah-wp-party-leader",
+   "seat": "party-leader",
+   "area": null
+  },
+  {
+   "name": "John Mbadi",
+   "existing": "ke/person/john-mbadi",
+   "new": "ke/person/john-mbadi-wp-party-leader",
+   "seat": "party-leader",
+   "area": null
+  },
+  {
+   "name": "Opiyo Wandayi",
+   "existing": "ke/person/opiyo-wandayi",
+   "new": "ke/person/opiyo-wandayi-wp-party-leader",
+   "seat": "party-leader",
+   "area": null
+  },
+  {
+   "name": "Kipchumba Murkomen",
+   "existing": "ke/person/kipchumba-murkomen",
+   "new": "ke/person/kipchumba-murkomen-wp-party-leader",
+   "seat": "party-leader",
+   "area": null
+  },
+  {
+   "name": "Aaron Cheruiyot",
+   "existing": "ke/person/aaron-cheruiyot",
+   "new": "ke/person/aaron-cheruiyot-wp-party-leader",
+   "seat": "party-leader",
+   "area": null
+  },
+  {
+   "name": "James Orengo",
+   "existing": "ke/person/james-orengo",
+   "new": "ke/person/james-orengo-wp-party-leader",
+   "seat": "party-leader",
+   "area": null
+  },
+  {
+   "name": "Stewart Madzayo",
+   "existing": "ke/person/stewart-madzayo",
+   "new": "ke/person/stewart-madzayo-wp-party-leader",
+   "seat": "party-leader",
+   "area": null
+  },
+  {
+   "name": "Isaac Kiprono Rutto",
+   "existing": "ke/person/isaac-kiprono-rutto",
+   "new": "ke/person/isaac-kiprono-rutto-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Dorcas Oduor",
+   "existing": "ke/person/dorcas-oduor",
+   "new": "ke/person/dorcas-oduor-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Richard Lesiyampe",
+   "existing": "ke/person/richard-lesiyampe",
+   "new": "ke/person/richard-lesiyampe-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Richard Lesiyampe",
+   "existing": "ke/person/richard-lesiyampe",
+   "new": "ke/person/richard-lesiyampe-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Richard Lesiyampe",
+   "existing": "ke/person/richard-lesiyampe",
+   "new": "ke/person/richard-lesiyampe-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Abdul Bahari Ali",
+   "existing": "ke/person/abdul-bahari-ali",
+   "new": "ke/person/abdul-bahari-ali-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Tiyah Galgalo",
+   "existing": "ke/person/tiyah-galgalo",
+   "new": "ke/person/tiyah-galgalo-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Mary Yiane Seneta",
+   "existing": "ke/person/mary-yiane-seneta",
+   "new": "ke/person/mary-yiane-seneta-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Michael Thoyah Kingi",
+   "existing": "ke/person/michael-thoyah-kingi",
+   "new": "ke/person/michael-thoyah-kingi-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Justin Bedan Njoka Muturi",
+   "existing": "ke/person/justin-bedan-njoka-muturi",
+   "new": "ke/person/justin-bedan-njoka-muturi-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Dalmas Otieno",
+   "existing": "ke/person/dalmas-otieno",
+   "new": "ke/person/dalmas-otieno-wp-x",
+   "seat": null,
+   "area": null
+  },
+  {
+   "name": "Wilson Sossion",
+   "existing": "ke/person/wilson-sossion",
+   "new": "ke/person/wilson-sossion-wp-x",
+   "seat": null,
+   "area": null
+  }
+ ],
+ "links": [
+  {
+   "area": "Central Imenti",
+   "to": "ke/national-assembly/central-imenti",
+   "score": 0.8,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Maara",
+   "to": "ke/national-assembly/maara",
+   "score": 0.9,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Chuka/Igambang'ombe",
+   "to": "ke/constituency/tharaka/nithi/constituency-mp",
+   "score": 0.85,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Tharaka",
+   "to": "ke/national-assembly/tharaka",
+   "score": 0.9,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Mbeere South",
+   "to": "ke/constituency/embu/gachoka/constituency-mp",
+   "score": 0.85,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Mbeere North",
+   "to": "ke/constituency/embu/siakago/constituency-mp",
+   "score": 0.85,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Mwingi Central",
+   "to": "ke/constituency/kitui/mwingi-east/constituency-mp",
+   "score": 0.85,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Mukurweini",
+   "to": "ke/national-assembly/mukurweini",
+   "score": 0.8,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Bureti",
+   "to": "ke/national-assembly/bureti",
+   "score": 0.8,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Mbita",
+   "to": "ke/national-assembly/suba-north/millie-grace-akoth-odhiambo",
+   "score": 0.85,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Suba",
+   "to": "ke/national-assembly/suba-south",
+   "score": 0.85,
+   "period": "2013-2017"
+  },
+  {
+   "area": "Ainabkoi",
+   "to": "ke/national-assembly/ainabkoi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ainamoi",
+   "to": "ke/national-assembly/ainamoi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Aldai",
+   "to": "ke/national-assembly/aldai",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Alego Usonga",
+   "to": "ke/national-assembly/alego-usonga",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Awendo",
+   "to": "ke/national-assembly/awendo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bahati",
+   "to": "ke/national-assembly/bahati",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Balamballa",
+   "to": "ke/national-assembly/balambala",
+   "score": 0.8,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Banissa",
+   "to": "ke/national-assembly/banissa",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Baringo Central",
+   "to": "ke/national-assembly/baringo-central",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Baringo North",
+   "to": "ke/national-assembly/baringo-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Baringo South",
+   "to": "ke/national-assembly/baringo-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Baringo South",
+   "to": "ke/national-assembly/baringo-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Belgut",
+   "to": "ke/national-assembly/belgut",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bobasi",
+   "to": "ke/national-assembly/bobasi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bomachoge Borabu",
+   "to": "ke/national-assembly/bomachoge-borabu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bomachoge Chache",
+   "to": "ke/national-assembly/bomachoge-chache",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bomet Central",
+   "to": "ke/national-assembly/bomet-central/richard-cheruiyot-kilel",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bomet East",
+   "to": "ke/national-assembly/bomet-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bonchari",
+   "to": "ke/national-assembly/bonchari",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bondo",
+   "to": "ke/national-assembly/bondo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Borabu",
+   "to": "ke/national-assembly/borabu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Budalangi",
+   "to": "ke/national-assembly/budalangi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bumula",
+   "to": "ke/national-assembly/bumula",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bura",
+   "to": "ke/national-assembly/bura",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Bureti",
+   "to": "ke/national-assembly/bureti",
+   "score": 0.8,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Butere",
+   "to": "ke/national-assembly/butere",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Butula",
+   "to": "ke/national-assembly/butula/joseph-h-maero-oyula",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Buuri",
+   "to": "ke/constituency/meru/buuri/constituency-mp",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Central Imenti",
+   "to": "ke/national-assembly/central-imenti",
+   "score": 0.8,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Changamwe",
+   "to": "ke/national-assembly/changamwe",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Chepalungu",
+   "to": "ke/national-assembly/chepalungu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Cherangany",
+   "to": "ke/national-assembly/cherangany",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Chesumei",
+   "to": "ke/national-assembly/chesumei",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Chuka Igambang'ombe",
+   "to": "ke/constituency/tharaka/nithi/constituency-mp",
+   "score": 0.85,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Dadaab",
+   "to": "ke/national-assembly/dadaab",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Dagoretti North",
+   "to": "ke/constituency/nairobi/dagoretti/constituency-mp",
+   "score": 0.85,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Dagoretti South",
+   "to": "ke/constituency/nairobi/dagoretti/constituency-mp",
+   "score": 0.85,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Eldama Ravine",
+   "to": "ke/national-assembly/eldama-ravine",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Eldas",
+   "to": "ke/national-assembly/eldas",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Embakasi Central",
+   "to": "ke/national-assembly/embakasi-central",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Embakasi East",
+   "to": "ke/national-assembly/embakasi-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Embakasi North",
+   "to": "ke/national-assembly/embakassi-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Embakasi South",
+   "to": "ke/constituency/nairobi/embakasi-south/constituency-mp",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Embakasi West",
+   "to": "ke/national-assembly/embakasi-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Emgwen",
+   "to": "ke/national-assembly/emgwen",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Emuhaya",
+   "to": "ke/national-assembly/emuhaya",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Emurua Dikirr",
+   "to": "ke/national-assembly/emurua-dikirr",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Endebess",
+   "to": "ke/national-assembly/endebess",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Fafi",
+   "to": "ke/national-assembly/fafi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Funyula",
+   "to": "ke/national-assembly/funyula",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Galole",
+   "to": "ke/national-assembly/galole",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ganze",
+   "to": "ke/national-assembly/ganze",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Garissa Township",
+   "to": "ke/constituency/garissa/dujis/constituency-mp",
+   "score": 0.85,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Garsen",
+   "to": "ke/national-assembly/garsen",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Gatanga",
+   "to": "ke/national-assembly/gatanga",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Gatundu North",
+   "to": "ke/national-assembly/gatundu-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Gatundu South",
+   "to": "ke/national-assembly/gatundu-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Gem",
+   "to": "ke/national-assembly/gem/elisha-ochieng-odhiambo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Gichugu",
+   "to": "ke/national-assembly/gichugu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Gilgil",
+   "to": "ke/national-assembly/gilgil",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Githunguri",
+   "to": "ke/national-assembly/githunguri",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Hamisi",
+   "to": "ke/national-assembly/hamisi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Homa Bay Town",
+   "to": "ke/national-assembly/homa-bay",
+   "score": 0.85,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Igembe Central",
+   "to": "ke/national-assembly/igembe-central",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Igembe North",
+   "to": "ke/national-assembly/igembe-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Igembe South",
+   "to": "ke/national-assembly/igembe-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ijara",
+   "to": "ke/national-assembly/ijara",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ikolomani",
+   "to": "ke/national-assembly/ikolomani",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Isiolo North",
+   "to": "ke/national-assembly/isiolo-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Isiolo South",
+   "to": "ke/constituency/isiolo/isiolo-south/constituency-mp",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Jomvu",
+   "to": "ke/national-assembly/jomvu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Juja",
+   "to": "ke/national-assembly/juja",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kabete",
+   "to": "ke/national-assembly/kabete",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kabondo Kasipul",
+   "to": "ke/national-assembly/kabondo-kasipul",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kabuchai",
+   "to": "ke/national-assembly/kabuchai",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kacheliba",
+   "to": "ke/national-assembly/kacheliba",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kaiti",
+   "to": "ke/national-assembly/kaiti",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kajiado Central",
+   "to": "ke/national-assembly/kajiado-central",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kajiado East",
+   "to": "ke/national-assembly/kajiado-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kajiado North",
+   "to": "ke/national-assembly/kajiado-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kajiado South",
+   "to": "ke/national-assembly/kajiado-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kajiado West",
+   "to": "ke/national-assembly/kajiado-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kaloleni",
+   "to": "ke/national-assembly/kaloleni",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kamukunji",
+   "to": "ke/national-assembly/kamkunji",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kandara",
+   "to": "ke/constituency/muranga/kandara/constituency-mp",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kanduyi",
+   "to": "ke/national-assembly/kanduyi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kangema",
+   "to": "ke/national-assembly/kangema",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kangundo",
+   "to": "ke/national-assembly/kangundo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kapenguria",
+   "to": "ke/national-assembly/kapenguria",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kapseret",
+   "to": "ke/national-assembly/kapseret",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Karachuonyo",
+   "to": "ke/national-assembly/karachuonyo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kasarani",
+   "to": "ke/national-assembly/kasarani/ronald-kamwiko-karauri",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kasipul",
+   "to": "ke/national-assembly/kasipul",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kathiani",
+   "to": "ke/national-assembly/kathiani/robert-mbui",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Keiyo North",
+   "to": "ke/national-assembly/keiyo-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Keiyo South",
+   "to": "ke/national-assembly/keiyo-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kesses",
+   "to": "ke/national-assembly/kesses",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Khwisero",
+   "to": "ke/national-assembly/khwisero",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kiambaa",
+   "to": "ke/national-assembly/kiambaa",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kiambu",
+   "to": "ke/national-assembly/kiambu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kibra",
+   "to": "ke/national-assembly/kibra",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kibwezi East",
+   "to": "ke/national-assembly/kibwezi-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kibwezi West",
+   "to": "ke/national-assembly/kibwezi-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kieni",
+   "to": "ke/national-assembly/kieni",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kigumo",
+   "to": "ke/national-assembly/kigumo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kiharu",
+   "to": "ke/national-assembly/kiharu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kikuyu",
+   "to": "ke/national-assembly/kikuyu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kilgoris",
+   "to": "ke/national-assembly/kilgoris",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kilifi North",
+   "to": "ke/national-assembly/kilifi-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kilifi South",
+   "to": "ke/national-assembly/kilifi-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kilome",
+   "to": "ke/national-assembly/kilome",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kimilili",
+   "to": "ke/national-assembly/kimilili",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kiminini",
+   "to": "ke/national-assembly/kiminini",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kinango",
+   "to": "ke/national-assembly/kinango",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kinangop",
+   "to": "ke/national-assembly/kinangop",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kipipiri",
+   "to": "ke/national-assembly/kipipiri",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kipkelion East",
+   "to": "ke/national-assembly/kipkelion-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kipkelion West",
+   "to": "ke/national-assembly/kipkelion-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kirinyaga Central",
+   "to": "ke/national-assembly/kirinyaga-central",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kisauni",
+   "to": "ke/national-assembly/kisauni",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kisumu Central",
+   "to": "ke/national-assembly/kisumu-central",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kisumu East",
+   "to": "ke/national-assembly/kisumu-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kisumu West",
+   "to": "ke/national-assembly/kisumu-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kitui Central",
+   "to": "ke/national-assembly/kitui-central",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kitui East",
+   "to": "ke/national-assembly/kitui-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kitui Rural",
+   "to": "ke/national-assembly/kitui-rural/david-mwalika-mboni",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kitui South",
+   "to": "ke/national-assembly/kitui-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kitui West",
+   "to": "ke/national-assembly/kitui-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kitutu Chache North",
+   "to": "ke/national-assembly/kitutu-chache-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kitutu Chache South",
+   "to": "ke/national-assembly/kitutu-chache-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kitutu Masaba",
+   "to": "ke/national-assembly/kitutu-masaba",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Konoin",
+   "to": "ke/national-assembly/konoin/yegon-brighton-leonard",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kuresoi North",
+   "to": "ke/national-assembly/kuresoi-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kuresoi South",
+   "to": "ke/national-assembly/kuresoi-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kuria East",
+   "to": "ke/national-assembly/kuria-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kuria West",
+   "to": "ke/national-assembly/kuria-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Kwanza",
+   "to": "ke/national-assembly/kwanza",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Lafey",
+   "to": "ke/national-assembly/lafey",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Lagdera",
+   "to": "ke/national-assembly/lagdera",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Laikipia East",
+   "to": "ke/national-assembly/laikipia-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Laikipia North",
+   "to": "ke/national-assembly/laikipia-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Laikipia West",
+   "to": "ke/national-assembly/laikipia-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Laisamis",
+   "to": "ke/national-assembly/laisamis",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Lamu East",
+   "to": "ke/national-assembly/lamu-east/obo-ruweida-mohamed",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Lamu West",
+   "to": "ke/national-assembly/lamu-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Langata",
+   "to": "ke/national-assembly/langata",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Lari",
+   "to": "ke/national-assembly/lari",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Likoni",
+   "to": "ke/national-assembly/likoni",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Likuyani",
+   "to": "ke/national-assembly/likuyani",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Limuru",
+   "to": "ke/national-assembly/limuru",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Loima",
+   "to": "ke/national-assembly/loima",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Luanda",
+   "to": "ke/national-assembly/luanda",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Lugari",
+   "to": "ke/national-assembly/lugari",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Lunga Lunga",
+   "to": "ke/national-assembly/lunga-lunga",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Lurambi",
+   "to": "ke/national-assembly/lurambi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Maara",
+   "to": "ke/national-assembly/maara",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Machakos Town",
+   "to": "ke/national-assembly/machakos-town",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Magarini",
+   "to": "ke/national-assembly/magarini",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Makadara",
+   "to": "ke/national-assembly/makadara",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Makueni",
+   "to": "ke/national-assembly/makueni",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Malava",
+   "to": "ke/national-assembly/malava",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Malindi",
+   "to": "ke/national-assembly/malindi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mandera East",
+   "to": "ke/national-assembly/mandera-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mandera North",
+   "to": "ke/national-assembly/mandera-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mandera South",
+   "to": "ke/national-assembly/mandera-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mandera West",
+   "to": "ke/national-assembly/mandera-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Manyatta",
+   "to": "ke/national-assembly/manyatta",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Maragwa",
+   "to": "ke/national-assembly/maragwa",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Marakwet East",
+   "to": "ke/national-assembly/marakwet-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Marakwet West",
+   "to": "ke/national-assembly/marakwet-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Masinga",
+   "to": "ke/national-assembly/masinga",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Matayos",
+   "to": "ke/national-assembly/matayos",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mathare",
+   "to": "ke/national-assembly/mathare",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mathioya",
+   "to": "ke/national-assembly/mathioya",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mathira",
+   "to": "ke/national-assembly/mathira",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Matuga",
+   "to": "ke/national-assembly/matuga",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Matungu",
+   "to": "ke/national-assembly/matungu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Matungulu",
+   "to": "ke/national-assembly/matungulu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mavoko",
+   "to": "ke/national-assembly/mavoko",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mbeere North",
+   "to": "ke/constituency/embu/siakago/constituency-mp",
+   "score": 0.85,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mbeere South",
+   "to": "ke/constituency/embu/gachoka/constituency-mp",
+   "score": 0.85,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mbooni",
+   "to": "ke/national-assembly/mbooni",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mogotio",
+   "to": "ke/national-assembly/mogotio/reuben-kiborek",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Moiben",
+   "to": "ke/national-assembly/moiben",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Molo",
+   "to": "ke/national-assembly/molo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mosop",
+   "to": "ke/national-assembly/mosop",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Moyale",
+   "to": "ke/national-assembly/moyale",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Msambweni",
+   "to": "ke/national-assembly/msambweni/salim-feisal-abdallah-bader",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Msambweni",
+   "to": "ke/national-assembly/msambweni/salim-feisal-abdallah-bader",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mt. Elgon",
+   "to": "ke/national-assembly/mt-elgon/chesebe-fred-kapondi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Muhoroni",
+   "to": "ke/national-assembly/muhoroni",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mukurweini",
+   "to": "ke/national-assembly/mukurweini",
+   "score": 0.8,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mumias East",
+   "to": "ke/national-assembly/mumias-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mumias West",
+   "to": "ke/national-assembly/mumias-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mvita",
+   "to": "ke/national-assembly/mvita",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mwala",
+   "to": "ke/national-assembly/mwala",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mwatate",
+   "to": "ke/national-assembly/mwatate",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mwea",
+   "to": "ke/national-assembly/mwea",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mwingi Central",
+   "to": "ke/constituency/kitui/mwingi-east/constituency-mp",
+   "score": 0.85,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mwingi North",
+   "to": "ke/national-assembly/mwingi-north/paul-musyimi-nzengu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Mwingi West",
+   "to": "ke/national-assembly/mwingi-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Naivasha",
+   "to": "ke/national-assembly/naivasha/jayne-n-w-kihara",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nakuru Town East",
+   "to": "ke/national-assembly/nakuru-town-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nakuru Town West",
+   "to": "ke/national-assembly/nakuru-town-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nambale",
+   "to": "ke/national-assembly/nambale",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nandi Hills",
+   "to": "ke/national-assembly/nandi-hills",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Narok East",
+   "to": "ke/national-assembly/narok-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Narok North",
+   "to": "ke/national-assembly/narok-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Narok South",
+   "to": "ke/national-assembly/narok-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Narok West",
+   "to": "ke/national-assembly/narok-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Navakholo",
+   "to": "ke/national-assembly/navakholo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ndaragwa",
+   "to": "ke/national-assembly/ndaragwa",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ndhiwa",
+   "to": "ke/national-assembly/ndhiwa/martin-peters-owino",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ndia",
+   "to": "ke/national-assembly/ndia",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Njoro",
+   "to": "ke/national-assembly/njoro",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "North Horr",
+   "to": "ke/national-assembly/north-horr",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "North Imenti",
+   "to": "ke/national-assembly/north-imenti",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "North Mugirango",
+   "to": "ke/national-assembly/north-mugirango",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nyakach",
+   "to": "ke/national-assembly/nyakach/joshua-aduma-owuor",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nyali",
+   "to": "ke/national-assembly/nyali",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nyando",
+   "to": "ke/national-assembly/nyando",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nyaribari Chache",
+   "to": "ke/national-assembly/nyaribari-chache",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nyaribari Masaba",
+   "to": "ke/national-assembly/nyaribari-masaba",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nyatike",
+   "to": "ke/national-assembly/nyatike",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Nyeri Town",
+   "to": "ke/national-assembly/nyeri-town",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ol Jorok",
+   "to": "ke/national-assembly/ol-jorok",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ol Kalou",
+   "to": "ke/national-assembly/ol-kalou",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Othaya",
+   "to": "ke/national-assembly/othaya",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Pokot South",
+   "to": "ke/national-assembly/pokot-south/david-pkosing",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Rabai",
+   "to": "ke/national-assembly/rabai",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Rangwe",
+   "to": "ke/national-assembly/rangwe",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Rarieda",
+   "to": "ke/national-assembly/rarieda",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Rongai",
+   "to": "ke/national-assembly/rongai",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Rongo",
+   "to": "ke/national-assembly/rongo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Roysambu",
+   "to": "ke/national-assembly/roysambu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ruaraka",
+   "to": "ke/constituency/nairobi/ruaraka/constituency-mp",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ruiru",
+   "to": "ke/national-assembly/ruiru",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Runyenjes",
+   "to": "ke/national-assembly/runyenjes",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Sabatia",
+   "to": "ke/national-assembly/sabatia",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Saboti",
+   "to": "ke/national-assembly/saboti/caleb-amisi-luyai",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Saku",
+   "to": "ke/constituency/marsabit/saku/constituency-mp",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Samburu East",
+   "to": "ke/national-assembly/samburu-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Samburu North",
+   "to": "ke/national-assembly/samburu-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Samburu West",
+   "to": "ke/national-assembly/samburu-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Seme",
+   "to": "ke/national-assembly/seme",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Shinyalu",
+   "to": "ke/national-assembly/shinyalu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Sigor",
+   "to": "ke/national-assembly/sigor",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Sigowet Soin",
+   "to": "ke/national-assembly/sigowet-soin",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Sirisia",
+   "to": "ke/national-assembly/sirisia",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Sotik",
+   "to": "ke/national-assembly/sotik",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "South Imenti",
+   "to": "ke/national-assembly/south-imenti",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "South Mugirango",
+   "to": "ke/national-assembly/south-mugirango",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Soy",
+   "to": "ke/national-assembly/soy",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Starehe",
+   "to": "ke/national-assembly/starehe",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Suba North",
+   "to": "ke/national-assembly/suba-north/millie-grace-akoth-odhiambo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Suba South",
+   "to": "ke/national-assembly/suba-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Subukia",
+   "to": "ke/national-assembly/subukia",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Suna East",
+   "to": "ke/constituency/migori/suna-east/constituency-mp",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Suna West",
+   "to": "ke/national-assembly/suna-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Tarbaj",
+   "to": "ke/national-assembly/tarbaj",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Taveta",
+   "to": "ke/national-assembly/taveta",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Teso North",
+   "to": "ke/national-assembly/teso-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Teso South",
+   "to": "ke/national-assembly/teso-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Tetu",
+   "to": "ke/national-assembly/tetu",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Tharaka",
+   "to": "ke/national-assembly/tharaka",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Thika Town",
+   "to": "ke/national-assembly/thika-town",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Tiaty",
+   "to": "ke/national-assembly/tiaty",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Tigania East",
+   "to": "ke/national-assembly/tigania-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Tigania West",
+   "to": "ke/national-assembly/tigania-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Tinderet",
+   "to": "ke/national-assembly/tinderet",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Tongaren",
+   "to": "ke/national-assembly/tongaren",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Turbo",
+   "to": "ke/national-assembly/turbo",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Turkana Central",
+   "to": "ke/national-assembly/turkana-central",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Turkana East",
+   "to": "ke/national-assembly/turkana-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Turkana North",
+   "to": "ke/national-assembly/turkana-north",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Turkana South",
+   "to": "ke/national-assembly/turkana-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Turkana West",
+   "to": "ke/national-assembly/turkana-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ugenya",
+   "to": "ke/national-assembly/ugenya",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ugenya",
+   "to": "ke/national-assembly/ugenya",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Ugunja",
+   "to": "ke/national-assembly/ugunja",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Uriri",
+   "to": "ke/national-assembly/uriri",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Vihiga",
+   "to": "ke/national-assembly/vihiga",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Voi",
+   "to": "ke/national-assembly/voi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Wajir East",
+   "to": "ke/national-assembly/wajir-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Wajir North",
+   "to": "ke/national-assembly/wajir-north/saney-ibrahim-adbi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Wajir South",
+   "to": "ke/national-assembly/wajir-south",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Wajir West",
+   "to": "ke/national-assembly/wajir-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Wajir West",
+   "to": "ke/national-assembly/wajir-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Webuye East",
+   "to": "ke/national-assembly/webuye-east",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Webuye West",
+   "to": "ke/national-assembly/webuye-west",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "West Mugirango",
+   "to": "ke/national-assembly/west-mugirango",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Westlands",
+   "to": "ke/national-assembly/westlands",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Wundanyi",
+   "to": "ke/national-assembly/wundanyi",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "area": "Yatta",
+   "to": "ke/national-assembly/yatta",
+   "score": 0.9,
+   "period": "2017-2022"
+  },
+  {
+   "person": "ke/person/leo-wa-muthende-njeru",
+   "from": "ke/national-assembly/mbeere-north",
+   "to": "ke/constituency/embu/siakago/constituency-mp",
+   "why": "documented rename",
+   "score": 0.85
+  },
+  {
+   "person": "ke/person/gideon-mutemi-mulyungi",
+   "from": "ke/national-assembly/mwingi-central",
+   "to": "ke/constituency/kitui/mwingi-east/constituency-mp",
+   "why": "documented rename",
+   "score": 0.85
+  },
+  {
+   "person": "ke/person/ntwiga-patrick-munene",
+   "from": "ke/national-assembly/chuka-igambangombe",
+   "to": "ke/constituency/tharaka/nithi/constituency-mp",
+   "why": "documented rename",
+   "score": 0.85
+  },
+  {
+   "person": "ke/person/kaluma-george-peter-opondo",
+   "from": "ke/national-assembly/homa-bay-town",
+   "to": "ke/national-assembly/homa-bay",
+   "why": "constituency by name within county",
+   "score": 1.0
+  },
+  {
+   "person": "ke/person/muriuki-nebart-bernard",
+   "from": "ke/national-assembly/mbeere-south",
+   "to": "ke/constituency/embu/gachoka/constituency-mp",
+   "why": "documented rename",
+   "score": 0.85
+  },
+  {
+   "person": "ke/person/elachi-beatrice-kadeveresia",
+   "from": "ke/national-assembly/dagoretti-north",
+   "to": "ke/constituency/nairobi/dagoretti/constituency-mp",
+   "why": "constituency by name within county",
+   "score": 1.0
+  },
+  {
+   "person": "ke/person/chege-njuguna",
+   "from": "ke/national-assembly/kandara",
+   "to": "ke/constituency/muranga/kandara/constituency-mp",
+   "why": "constituency by name within county",
+   "score": 1.0
+  },
+  {
+   "person": "ke/person/col-dido-ali-cbs-rasso",
+   "from": "ke/national-assembly/saku",
+   "to": "ke/constituency/marsabit/saku/constituency-mp",
+   "why": "constituency by name within county",
+   "score": 1.0
+  },
+  {
+   "person": "ke/person/john-kiarie-waweru",
+   "from": "ke/national-assembly/dagoretti-south",
+   "to": "ke/constituency/nairobi/dagoretti/constituency-mp",
+   "why": "constituency by name within county",
+   "score": 1.0
+  },
+  {
+   "person": "ke/person/mwenda-gataya-mo-fire",
+   "from": "ke/senate/tharaka-nithi",
+   "to": "ke/county/013/county-senator",
+   "why": "county senator by county name",
+   "score": 1.0
+  }
+ ],
+ "low_confidence_people": [
+  "June Teclar Chepkemei",
+  "Rosemary Wacera Kuria",
+  "Vivienne A. Namadoa",
+  "Paticnce Nyange",
+  "Timothy K. Toroney",
+  "James Mbugua Mwaura",
+  "Timothy Olweny"
+ ],
+ "gazette_links": [
+  {
+   "institution": "Kenya Tourism Board",
+   "to": "ke/kenya-tourism-board",
+   "score": 1.0,
+   "role": "Chief Executive Officer",
+   "person": "June Teclar Chepkemei"
+  },
+  {
+   "institution": "Communications and Multimedia Appeals Tribunal",
+   "to": "ke/communications-and-multimedia-appeals-tribunal",
+   "score": 1.0,
+   "role": "Chairperson",
+   "person": "Rosemary Wacera Kuria"
+  },
+  {
+   "institution": "Communications and Multimedia Appeals Tribunal",
+   "to": "ke/communications-and-multimedia-appeals-tribunal",
+   "score": 1.0,
+   "role": "Members",
+   "person": "Vivienne A. Namadoa"
+  },
+  {
+   "institution": "Communications and Multimedia Appeals Tribunal",
+   "to": "ke/communications-and-multimedia-appeals-tribunal",
+   "score": 1.0,
+   "role": "Members",
+   "person": "Manyura Tibcrius Nyangau"
+  },
+  {
+   "institution": "Communications and Multimedia Appeals Tribunal",
+   "to": "ke/communications-and-multimedia-appeals-tribunal",
+   "score": 1.0,
+   "role": "Members",
+   "person": "Paticnce Nyange"
+  },
+  {
+   "institution": "Communications and Multimedia Appeals Tribunal",
+   "to": "ke/communications-and-multimedia-appeals-tribunal",
+   "score": 1.0,
+   "role": "Members",
+   "person": "Ruth Okowa"
+  },
+  {
+   "institution": "Communications and Multimedia Appeals Tribunal",
+   "to": "ke/communications-and-multimedia-appeals-tribunal",
+   "score": 1.0,
+   "role": "Members",
+   "person": "Timothy K. Toroney"
+  },
+  {
+   "institution": "Communications and Multimedia Appeals Tribunal",
+   "to": "ke/communications-and-multimedia-appeals-tribunal",
+   "score": 1.0,
+   "role": "Members",
+   "person": "Samson Wambua Kitonyi"
+  }
+ ],
+ "name_corrections": [
+  {
+   "ocr": "Manyura Tiberius Nyangau",
+   "known": "Manyura Tibcrius Nyangau",
+   "score": 95.83333333333334
+  }
+ ],
+ "gazette_unmatched": [
+  {
+   "institution": "Kenyatta International Convention Centre",
+   "person": "James Mbugua Mwaura",
+   "role": "Chief Executive Officer",
+   "notice": "3753"
+  },
+  {
+   "institution": "National Cancer Institute",
+   "person": "Timothy Olweny",
+   "role": "Chairperson",
+   "notice": "11820"
+  }
+ ],
+ "leadership_skipped": [
+  {
+   "person": "Mercy Wanjau",
+   "title": "Secretary to the Cabinet"
+  },
+  {
+   "person": "Patrick Kamore",
+   "title": "Director, Budget Implementation, National Government"
+  },
+  {
+   "person": "Mohamed Issack Hassan",
+   "title": "Director, Planning, Research and Knowledge Management"
+  },
+  {
+   "person": "Finance and Accounts",
+   "title": "Director"
+  },
+  {
+   "person": "Irene Arimi",
+   "title": "Director, Human Resource Management and Administration Services"
+  },
+  {
+   "person": "Lineth Oyugi",
+   "title": "Director - Economic Affairs"
+  },
+  {
+   "person": "Joseph Kuria",
+   "title": "Director - ICT Services"
+  },
+  {
+   "person": "John K. Korir",
+   "title": "Secretary Administration"
+  },
+  {
+   "person": "Joseph Oketch",
+   "title": "Director Electricity & Renewable Energy"
+  },
+  {
+   "person": "Marona K. Cheplel",
+   "title": "Director, Corporate Services"
+  },
+  {
+   "person": "John M. Mutua",
+   "title": "Director, Economic Regulation & Planning"
+  },
+  {
+   "person": "Cyprian M. Nyakundi",
+   "title": "Director, Compliance and Consumer Protection"
+  },
+  {
+   "person": "Internal Audit and Risk Assurance",
+   "title": "Director"
+  },
+  {
+   "person": "Elizabeth Kalei",
+   "title": "Director, Human Resource Management and Administration"
+  },
+  {
+   "person": "Charity Musila",
+   "title": "Director/ Alternate Representative ICAO Mission"
+  },
+  {
+   "person": "Anne Gitau",
+   "title": "Director Air Navigation Services"
+  },
+  {
+   "person": "Serah Waitiki",
+   "title": "Director East African School of Aviation"
+  },
+  {
+   "person": "Mary Keter",
+   "title": "Director Aviation Safety"
+  },
+  {
+   "person": "Kennedy Ondede",
+   "title": "Director, Surgical Services"
+  },
+  {
+   "person": "Rose Nyabanda",
+   "title": "Director, Diagnostic Services & Health Information"
+  },
+  {
+   "person": "therine Naliaka Nyongesa",
+   "title": "Director, Medical Services"
+  },
+  {
+   "person": "Richard Binga",
+   "title": "Director, Facilities and Services"
+  },
+  {
+   "person": "Alfred Birichi",
+   "title": "Director, Pharmaceutical Services"
+  },
+  {
+   "person": "Michael Kihuga",
+   "title": "Director, Finance"
+  },
+  {
+   "person": "Chrp Winnie Mwangi",
+   "title": "Director, Human Resource"
+  },
+  {
+   "person": "Health Care Quality",
+   "title": "Director"
+  },
+  {
+   "person": "Naomi Wambugu Nyarangi",
+   "title": "Director \u2013 Nursing Services"
+  },
+  {
+   "person": "Rose Njoroge",
+   "title": "Director, Supply Chain Management"
+  },
+  {
+   "person": "Research and Innovation Centre",
+   "title": "Director Training"
+  },
+  {
+   "person": "Planning and Strategy",
+   "title": "Director"
+  },
+  {
+   "person": "Internal Audit",
+   "title": "Director"
+  },
+  {
+   "person": "John Mbadi Ng'ongo",
+   "title": "Director of the Board"
+  },
+  {
+   "person": "Alex Wachira",
+   "title": "Director of the Board"
+  },
+  {
+   "person": "Logan Christi Hambrick",
+   "title": "Director of the Board"
+  },
+  {
+   "person": "Albert Mugo",
+   "title": "Director of the Board"
+  },
+  {
+   "person": "Fa. Stephen Ikikii",
+   "title": "Director of the Board"
+  },
+  {
+   "person": "Ezekiel Saina",
+   "title": "Director of the Board"
+  },
+  {
+   "person": "leb Bwauma",
+   "title": "Director of the Board"
+  },
+  {
+   "person": "James Kwanya Rege",
+   "title": "Director of the Board"
+  },
+  {
+   "person": "Ruth Muiruri",
+   "title": "Director of the Board"
+  },
+  {
+   "person": "Joyce Nyambura Mundara",
+   "title": "Director Representing ACGOK"
+  },
+  {
+   "person": "Kenneth Wando Odhiambo",
+   "title": "Director Representing Institute of Surveyors of Kenya"
+  },
+  {
+   "person": "Mathew Yatich Tarus",
+   "title": "Director Representing PS State Department for Roads"
+  },
+  {
+   "person": "Micah Origa",
+   "title": "Director Representing PS National Treasury"
+  },
+  {
+   "person": "Joe Muganda",
+   "title": "Director Representing Kenya Association Of Manufacturers (KAM)"
+  },
+  {
+   "person": "Jayne K. Asuma",
+   "title": "Director Representing PS State Department for Devolution"
+  },
+  {
+   "person": "Reuben Mayienda",
+   "title": "Director, Urban Roads Planning & Design (URPD)"
+  },
+  {
+   "person": "Reuben Mayienda",
+   "title": "Director, Corporate Services"
+  },
+  {
+   "person": "Mike Telieny",
+   "title": "Director, Roads Assets Corridor Management (RACM)"
+  },
+  {
+   "person": "Florence Amoit",
+   "title": "Secretary Administration"
+  },
+  {
+   "person": "Monica Obongo",
+   "title": "Director NLIMS"
+  },
+  {
+   "person": "Kennedy Njenga",
+   "title": "Director Land Adjudication and Settlement"
+  },
+  {
+   "person": "Weldon Maritim",
+   "title": "Director Surveys"
+  },
+  {
+   "person": "Gordon Ochieng\u2019",
+   "title": "Director, Land Administration"
+  },
+  {
+   "person": "Herbert Were",
+   "title": "Director of Valuation"
+  },
+  {
+   "person": "Leonard Maritim",
+   "title": "Director ICT"
+  },
+  {
+   "person": "Cyrus Mbogo",
+   "title": "Director CPPMD"
+  },
+  {
+   "person": "Jesse W Waithaka",
+   "title": "Director, Kenya Institute of Surveying and Mapping (KISM)"
+  },
+  {
+   "person": "Renson M. Ingonga",
+   "title": "Director Public Prosecutions"
+  },
+  {
+   "person": "Renson M. Ingonga",
+   "title": "Director Public Prosecutions"
+  },
+  {
+   "person": "Renson M. Ingonga",
+   "title": "Director of Public Prosecutions"
+  },
+  {
+   "person": "Noordin M. Haji",
+   "title": "Director of Public Prosecutions"
+  },
+  {
+   "person": "Keriako Tobiko",
+   "title": "Director of Public Prosecutions"
+  },
+  {
+   "person": "Philip K. Murgor",
+   "title": "Director of Public Prosecutions"
+  },
+  {
+   "person": "Pamela Uniter Kidullah",
+   "title": "Director of Public Prosecutions"
+  },
+  {
+   "person": "Bernard Chunga",
+   "title": "Director of Public Prosecutions"
+  },
+  {
+   "person": "Transboundary Waters",
+   "title": "Director"
+  },
+  {
+   "person": "Elizabeth Diego Lusimba",
+   "title": "Director Community Engagement and Resource Mobilization"
+  }
+ ],
+ "leadership_links": [
+  {
+   "person": "Margaret N. Nyakang\u2019o",
+   "title": "Controller of Budget",
+   "office": "ke/office-of-the-controller-of-budget/controller-of-budget",
+   "created": false
+  },
+  {
+   "person": "Jacinta Masila",
+   "title": "Director General, Corporate Services",
+   "office": "ke/office-of-the-controller-of-budget/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "Margaret N. Nyakang\u2019o",
+   "title": "Controller of Budget of the Republic of Kenya",
+   "office": "ke/office-of-the-controller-of-budget/controller-of-budget-of-the-republic-of-kenya",
+   "created": true
+  },
+  {
+   "person": "Cpm Koitamet Ole Kina",
+   "title": "Vice Chairperson",
+   "office": "ke/commission-on-revenue-allocation/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "Roble Said Nuno",
+   "title": "Commission Secretary / CEO",
+   "office": "ke/commission-on-revenue-allocation/secretary",
+   "created": false
+  },
+  {
+   "person": "John Lekakeny Ololtuaa",
+   "title": "Principal Secretary",
+   "office": "ke/ministry/education/principal-secretary",
+   "created": true
+  },
+  {
+   "person": "John Lekakeny Ololtuaa",
+   "title": "PRINCIPAL SECRETARY, STATE DEPARTMENT FOR BASIC EDUCATION.",
+   "office": "ke/ministry/education/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "Esther Thaara Muoria",
+   "title": "Principal Secretary, State Department for Technical, Vocational Education and Training",
+   "office": "ke/ministry/education/tvet/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "J. Opiyo Wandayi",
+   "title": "Cabinet Secretary - Ministry of Energy and Petroleum",
+   "office": "ke/ministry/energy/cabinet-secretary",
+   "created": false
+  },
+  {
+   "person": "Alex Kamau Wachira",
+   "title": "Principal Secretary - State Department for Energy",
+   "office": "ke/ministry/energy/energy/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "Deborah Mlongo Barasa",
+   "title": "Cabinet Secretary - Ministry of Environment, Climate Change and Forestry",
+   "office": "ke/ministry/environment/cabinet-secretary",
+   "created": false
+  },
+  {
+   "person": "Selly Jemutai Kimosop",
+   "title": "Principal Secretary",
+   "office": "ke/ministry/environment/principal-secretary",
+   "created": true
+  },
+  {
+   "person": "Alex Kamau Wachira",
+   "title": "Principal Secretary, State Department for Energy",
+   "office": "ke/epra/principal-secretary",
+   "created": true
+  },
+  {
+   "person": "Chris K. Kiptoo",
+   "title": "Principal Secretary at the National Treasury",
+   "office": "ke/epra/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "Joseph Oketch",
+   "title": "Director General",
+   "office": "ke/epra/chief-executive",
+   "created": true
+  },
+  {
+   "person": "ensuring effective governance through",
+   "title": "The Chairperson leads the Board",
+   "office": "ke/epra/chairperson",
+   "created": true
+  },
+  {
+   "person": "Aden Duale",
+   "title": "Cabinet Secretary, Ministry of Health",
+   "office": "ke/ministry/health/cabinet-secretary",
+   "created": false
+  },
+  {
+   "person": "Ouma Oluga",
+   "title": "Principal Secretary, State Department for Medical Services, Ministry of Health",
+   "office": "ke/ministry/health/principal-secretary",
+   "created": true
+  },
+  {
+   "person": "Mary Muriuki",
+   "title": "the Principal Secretary",
+   "office": "ke/ministry/health/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "Patrick Amoth",
+   "title": "Principal Secretary for Public Health and Professional Standards",
+   "office": "ke/ministry/health/public-health-and-professional-standards/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "Patrick Amoth",
+   "title": "Director General Ministry of Health",
+   "office": "ke/ministry/health/chief-executive",
+   "created": true
+  },
+  {
+   "person": "Martha K. Koome",
+   "title": "Chairperson and Chief Justice",
+   "office": "ke/judicial-service-commission/chairperson",
+   "created": false
+  },
+  {
+   "person": "Isaac Kiprono Rutto",
+   "title": "Vice Chairperson, Public Representative",
+   "office": "ke/judicial-service-commission/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "Dorcas Oduor",
+   "title": "Attorney General",
+   "office": "ke/judicial-service-commission/attorney-general",
+   "created": true
+  },
+  {
+   "person": "Winfridah Boyani Mokaya",
+   "title": "Chief Registrar of the Judiciary & Secretary to the Commission",
+   "office": "ke/judicial-service-commission/secretary",
+   "created": false
+  },
+  {
+   "person": "Martha K. Koome",
+   "title": "Chief Justice",
+   "office": "ke/judiciary/chief-justice",
+   "created": false
+  },
+  {
+   "person": "Winfridah Boyani Mokaya",
+   "title": "Chief Registrar",
+   "office": "ke/judiciary/chief-registrar",
+   "created": false
+  },
+  {
+   "person": "Brown M. M. Ondego",
+   "title": "Chairman, Board of Directors",
+   "office": "ke/kcaa/chairperson",
+   "created": true
+  },
+  {
+   "person": "Ann Too",
+   "title": "Board Member",
+   "office": "ke/kcaa/member",
+   "created": true
+  },
+  {
+   "person": "Eliud Jela",
+   "title": "Registrar Finance & Administration",
+   "office": "ke/kcaa/registrar-finance-administration",
+   "created": true
+  },
+  {
+   "person": "Oliver Sindabi",
+   "title": "Registrar Academic Services",
+   "office": "ke/kcaa/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "Charles Ochieng\u2019 Ong\u2019ondo",
+   "title": "Chief Executive Officer/ Director",
+   "office": "ke/kicd/chief-executive",
+   "created": true
+  },
+  {
+   "person": "Mutahi Kagwe",
+   "title": "Cabinet Secretary- Ministry of Agriculture and Livestock Development",
+   "office": "ke/ministry/agriculture/cabinet-secretary",
+   "created": false
+  },
+  {
+   "person": "Kipronoh Ronoh Paul",
+   "title": "Principal Secretary - State Department for Agriculture",
+   "office": "ke/ministry/agriculture/agriculture/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "Jonathan Mueke",
+   "title": "Principal Secretary - State Department for Livestock Development",
+   "office": "ke/ministry/agriculture/livestock-development/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "Abbas Gulett",
+   "title": "Chair, Board Of Management",
+   "office": "ke/knh/chairperson",
+   "created": true
+  },
+  {
+   "person": "Richard Lesiyampe",
+   "title": "Chief Executive Officer",
+   "office": "ke/knh/chief-executive",
+   "created": true
+  },
+  {
+   "person": "Abbas Gullet",
+   "title": "Chairman of the Board",
+   "office": "ke/knh/chairperson",
+   "created": false
+  },
+  {
+   "person": "Richard Lesiyampe",
+   "title": "Chief Executive Officer",
+   "office": "ke/knh/chief-executive",
+   "created": false
+  },
+  {
+   "person": "Patrick Amoth",
+   "title": "Director General For Health, Ministry Of Health",
+   "office": "ke/knh/chief-executive",
+   "created": false
+  },
+  {
+   "person": "therine Kathure",
+   "title": "Board Member",
+   "office": "ke/knh/member",
+   "created": true
+  },
+  {
+   "person": "Thomas Kipkoskei",
+   "title": "Board Member",
+   "office": "ke/knh/member",
+   "created": false
+  },
+  {
+   "person": "Nazim Mitha",
+   "title": "Board Member",
+   "office": "ke/knh/member",
+   "created": false
+  },
+  {
+   "person": "Richard Lesiyampe",
+   "title": "Chief Executive Officer",
+   "office": "ke/knh/chief-executive",
+   "created": false
+  },
+  {
+   "person": "Abdul Bahari Ali",
+   "title": "Chairperson",
+   "office": "ke/konza/chairperson",
+   "created": true
+  },
+  {
+   "person": "Bertha Dena",
+   "title": "Chief Executive Officer",
+   "office": "ke/konza/chief-executive",
+   "created": true
+  },
+  {
+   "person": "Raphael Munavu",
+   "title": "Chairperson",
+   "office": "ke/konza/chairperson",
+   "created": false
+  },
+  {
+   "person": "Annah Musyimi",
+   "title": "Chief Executive Officer",
+   "office": "ke/konza/chief-executive",
+   "created": false
+  },
+  {
+   "person": "Joy Brenda Masinde",
+   "title": "Chairman of the Board (Independent Non-Executive Director)",
+   "office": "ke/kplc/chairperson",
+   "created": true
+  },
+  {
+   "person": "Abdillahi Saggaf Alawy",
+   "title": "Chairperson",
+   "office": "ke/national-land-commission/chairperson",
+   "created": false
+  },
+  {
+   "person": "Cs. Julie Ouma Oseko",
+   "title": "Vice Chairperson",
+   "office": "ke/national-land-commission/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "Daniel Murithi Muriungi",
+   "title": "Commissioner",
+   "office": "ke/national-land-commission/member",
+   "created": false
+  },
+  {
+   "person": "Chrp. Kigen Vincent Cheruiyot",
+   "title": "Commissioner",
+   "office": "ke/national-land-commission/member",
+   "created": false
+  },
+  {
+   "person": "Susan Oyatsi",
+   "title": "Commissioner",
+   "office": "ke/national-land-commission/member",
+   "created": false
+  },
+  {
+   "person": "Mohamed Abdi Mohamed",
+   "title": "Commissioner",
+   "office": "ke/national-land-commission/member",
+   "created": false
+  },
+  {
+   "person": "Tiyah Galgalo",
+   "title": "Commissioner",
+   "office": "ke/national-land-commission/member",
+   "created": false
+  },
+  {
+   "person": "Mary Yiane Seneta",
+   "title": "Commissioner",
+   "office": "ke/national-land-commission/member",
+   "created": false
+  },
+  {
+   "person": "Esther M. Mathenge",
+   "title": "Commissioner",
+   "office": "ke/national-land-commission/member",
+   "created": false
+  },
+  {
+   "person": "H.e Hassan Ali Joho",
+   "title": "Cabinet Secretary - Mining, Blue Economy & Maritime Affairs",
+   "office": "ke/ministry/mining/cabinet-secretary",
+   "created": false
+  },
+  {
+   "person": "Harry Kimtai",
+   "title": "Principal Secretary - State Department for Mining",
+   "office": "ke/ministry/mining/mining/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "What We're Thinking",
+   "title": "Director General",
+   "office": "ke/nema/chief-executive",
+   "created": true
+  },
+  {
+   "person": "What We're Thinking",
+   "title": "Director General",
+   "office": "ke/nema/chief-executive",
+   "created": false
+  },
+  {
+   "person": "What We're Thinking",
+   "title": "Director General",
+   "office": "ke/nema/chief-executive",
+   "created": false
+  },
+  {
+   "person": "Mamo B. Mamo",
+   "title": "Director General",
+   "office": "ke/nema/chief-executive",
+   "created": false
+  },
+  {
+   "person": "Sophia Takaria Matura",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": true
+  },
+  {
+   "person": "Lilian Apadet",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": false
+  },
+  {
+   "person": "John Muthusi Kimondiu",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": false
+  },
+  {
+   "person": "Wafula O.a Mutacho",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": false
+  },
+  {
+   "person": "Linah Gakii Meeme",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": false
+  },
+  {
+   "person": "Karen Kandie",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": false
+  },
+  {
+   "person": "Chrisologus Makokha",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": false
+  },
+  {
+   "person": "Judith A. Chimau",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": false
+  },
+  {
+   "person": "Maclean Sitati Nangalama",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": false
+  },
+  {
+   "person": "Sheila Chepkorir Kosgei",
+   "title": "Board Member",
+   "office": "ke/nema/member",
+   "created": false
+  },
+  {
+   "person": "What We're Thinking",
+   "title": "Director General",
+   "office": "ke/nema/chief-executive",
+   "created": false
+  },
+  {
+   "person": "What We're Thinking",
+   "title": "Director General",
+   "office": "ke/nema/chief-executive",
+   "created": false
+  },
+  {
+   "person": "What We're Thinking",
+   "title": "Director General",
+   "office": "ke/nema/chief-executive",
+   "created": false
+  },
+  {
+   "person": "Rehema Jaldesa",
+   "title": "Chairperson",
+   "office": "ke/national-gender-and-equality-commission/chairperson",
+   "created": false
+  },
+  {
+   "person": "Thomas Okoth Koyier",
+   "title": "Vice Chairperson",
+   "office": "ke/national-gender-and-equality-commission/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "roline N. Lentupuru",
+   "title": "Commissioner",
+   "office": "ke/national-gender-and-equality-commission/member",
+   "created": false
+  },
+  {
+   "person": "Margaret Karungaru",
+   "title": "Commissioner",
+   "office": "ke/national-gender-and-equality-commission/member",
+   "created": false
+  },
+  {
+   "person": "Alloys Kemo",
+   "title": "Secretary, Prosecution Services",
+   "office": "ke/office-of-the-director-of-public-prosecutions/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "Alloys Kemo",
+   "title": "Chairperson",
+   "office": "ke/office-of-the-director-of-public-prosecutions/chairperson",
+   "created": true
+  },
+  {
+   "person": "Alloys Kemo",
+   "title": "Secretary, Prosecution Services",
+   "office": "ke/office-of-the-director-of-public-prosecutions/vice-chairperson",
+   "created": false
+  },
+  {
+   "person": "Winfrida Mokaya",
+   "title": "Secretary",
+   "office": "ke/office-of-the-director-of-public-prosecutions/chief-executive",
+   "created": true
+  },
+  {
+   "person": "Charles Dulo",
+   "title": "CHAIRPERSON OF THE COMMISSION",
+   "office": "ke/commission-on-administrative-justice/chairperson",
+   "created": false
+  },
+  {
+   "person": "Dorothy Jemator Kimengech",
+   "title": "Vice Chairperson",
+   "office": "ke/commission-on-administrative-justice/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "Charles Njagua Kanyi",
+   "title": "COMMISSIONER IN CHARGE OF ACCESS TO INFORMATION",
+   "office": "ke/commission-on-administrative-justice/member",
+   "created": false
+  },
+  {
+   "person": "Charles Njagua Kanyi",
+   "title": "COMMISSIONER IN-CHARGE OF COMPLAINTS & INVESTIGATIONS",
+   "office": "ke/commission-on-administrative-justice/member",
+   "created": false
+  },
+  {
+   "person": "Naisiae Paloshe Tobiko",
+   "title": "COMMISSION SECRETARY/CEO",
+   "office": "ke/commission-on-administrative-justice/secretary",
+   "created": false
+  },
+  {
+   "person": "John Cox Lorionokou",
+   "title": "Registrar of Political Parties/CEO",
+   "office": "ke/registrar-of-political-parties/chief-executive",
+   "created": true
+  },
+  {
+   "person": "Cs. Agatha W. Wahome",
+   "title": "Registrar of Political Parties/CEO",
+   "office": "ke/registrar-of-political-parties/chief-executive",
+   "created": false
+  },
+  {
+   "person": "Ali Mohamed",
+   "title": "Board Member",
+   "office": "ke/ppra/member",
+   "created": true
+  },
+  {
+   "person": "Linda Susan Ingari",
+   "title": "Board Member",
+   "office": "ke/ppra/member",
+   "created": false
+  },
+  {
+   "person": "Allan Kamau",
+   "title": "Board Member",
+   "office": "ke/ppra/member",
+   "created": false
+  },
+  {
+   "person": "Amos Simiyu",
+   "title": "Board Member",
+   "office": "ke/ppra/member",
+   "created": false
+  },
+  {
+   "person": "Eric Korir",
+   "title": "Board Member",
+   "office": "ke/ppra/member",
+   "created": false
+  },
+  {
+   "person": "Lucy Chepkemoi",
+   "title": "Board Member",
+   "office": "ke/ppra/member",
+   "created": false
+  },
+  {
+   "person": "Patrick Kimemia",
+   "title": "Board Member",
+   "office": "ke/ppra/member",
+   "created": false
+  },
+  {
+   "person": "Joseph Mbugua",
+   "title": "Principal Secretary for Roads",
+   "office": "ke/ministry/roads/roads/principal-secretary",
+   "created": false
+  },
+  {
+   "person": "agement with Hon. Soipan Tuya",
+   "title": "Cabinet Secretary for Defence, on 29 September 2026, at Defence Headquarters.",
+   "office": "ke/salaries-and-remuneration-commission/cabinet-secretary",
+   "created": true
+  },
+  {
+   "person": "Sammy Chepkwony",
+   "title": "Chairperson",
+   "office": "ke/salaries-and-remuneration-commission/chairperson",
+   "created": false
+  },
+  {
+   "person": "Gilda Odera",
+   "title": "Vice Chairperson",
+   "office": "ke/salaries-and-remuneration-commission/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "Chrp. Ali Abdullahi Surraw",
+   "title": "Commission Secretary/CEO",
+   "office": "ke/salaries-and-remuneration-commission/secretary",
+   "created": false
+  },
+  {
+   "person": "Jane Gatakaa Njage",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Leonid Ashindu",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Elizabeth Wangui Muchiri",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Abdiwahab Abdullahi Abdi",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Isaac Kipkemboi Melly",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Geoffrey Apollo Omondi",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "or General",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Michael Thoyah Kingi",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "John Mbadi Ng'ongo",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Dorcas Agik Oduor",
+   "title": "Attorney General",
+   "office": "ke/salaries-and-remuneration-commission/attorney-general",
+   "created": true
+  },
+  {
+   "person": "Geoffrey K. Kiringa Ruku",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Lyn Cherop Mengich",
+   "title": "Chairperson",
+   "office": "ke/salaries-and-remuneration-commission/chairperson",
+   "created": false
+  },
+  {
+   "person": "Nelly Peris Ashubwe",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Sophie Moturi",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Margaret Sawe",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Justin Bedan Njoka Muturi",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Dalmas Otieno",
+   "title": "Vice Chairperson",
+   "office": "ke/salaries-and-remuneration-commission/vice-chairperson",
+   "created": false
+  },
+  {
+   "person": "James Muhoro",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Amina A. Abdalla",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Moses K. Kuria",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Daniel O. Ogutu",
+   "title": "Vice Chairperson",
+   "office": "ke/salaries-and-remuneration-commission/vice-chairperson",
+   "created": false
+  },
+  {
+   "person": "Serah Kinyua",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Peter O. Aringo",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Jacqueline Mugo",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Jason Namasake",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Sellestine Kiuluku",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Anne Elizabeth Owuor",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Isaiah Kubai",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Kamau Thugge",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Njee Muturi",
+   "title": "Commissioner",
+   "office": "ke/salaries-and-remuneration-commission/member",
+   "created": false
+  },
+  {
+   "person": "Anne R. Gitau",
+   "title": "Commission Secretary/CEO",
+   "office": "ke/salaries-and-remuneration-commission/secretary",
+   "created": false
+  },
+  {
+   "person": "agement with Hon. Soipan Tuya",
+   "title": "Cabinet Secretary for Defence, on 29 September 2026, at Defence Headquarters. - Salaries and Remuneration Commission (SRC)",
+   "office": "ke/salaries-and-remuneration-commission/cabinet-secretary",
+   "created": false
+  },
+  {
+   "person": "agement with Hon. Soipan Tuya",
+   "title": "Cabinet Secretary for Defence, on 29 September 2026, at Defence Headquarters.",
+   "office": "ke/salaries-and-remuneration-commission/cabinet-secretary",
+   "created": false
+  },
+  {
+   "person": "CS Sharon Kisire",
+   "title": "Vice Chairperson",
+   "office": "ke/teachers-service-commission/vice-chairperson",
+   "created": true
+  },
+  {
+   "person": "Annceta Wafukho",
+   "title": "Commissioner",
+   "office": "ke/teachers-service-commission/member",
+   "created": false
+  },
+  {
+   "person": "Timon Oyucho",
+   "title": "Commissioner",
+   "office": "ke/teachers-service-commission/member",
+   "created": false
+  },
+  {
+   "person": "Christine Kahindi",
+   "title": "Commissioner",
+   "office": "ke/teachers-service-commission/member",
+   "created": false
+  },
+  {
+   "person": "His Eminence Salesa Abudo",
+   "title": "Commissioner",
+   "office": "ke/teachers-service-commission/member",
+   "created": false
+  },
+  {
+   "person": "Nicodemus Anyang",
+   "title": "Commissioner",
+   "office": "ke/teachers-service-commission/member",
+   "created": false
+  },
+  {
+   "person": "Antonina Lentoijoni",
+   "title": "Commissioner",
+   "office": "ke/teachers-service-commission/member",
+   "created": false
+  },
+  {
+   "person": "Wilson Sossion",
+   "title": "Commissioner",
+   "office": "ke/teachers-service-commission/member",
+   "created": false
+  },
+  {
+   "person": "Unicore Simon Nganga",
+   "title": "Board Member",
+   "office": "ke/wra/member",
+   "created": true
+  },
+  {
+   "person": "James Sitieney",
+   "title": "Board Member",
+   "office": "ke/wra/member",
+   "created": false
+  },
+  {
+   "person": "Nancy Gathungu",
+   "title": "Auditor-General",
+   "office": "ke/office-of-the-auditor-general/auditor",
+   "created": true
+  }
+ ]
+}

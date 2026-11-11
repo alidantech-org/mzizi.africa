@@ -1,0 +1,5 @@
+individuals|1991
+holders|2156
+memberships|1340
+parties|156
+offices|4138

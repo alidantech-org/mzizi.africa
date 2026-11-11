@@ -1,0 +1,450 @@
+baringo: 3 pages, 44 people, 30 linked, 12 nominated, 1 speaker, 1 unlinked
+office: 14 new, 0 unchanged, 0 invalid, 0 quarantined (run d98a04d8-4088-452b-9f42-5c8501e6f47d)
+individual: 44 new, 0 unchanged, 0 invalid, 0 quarantined (run 6113336d-9026-404a-b705-3c82b9517885)
+{"checked":14,"invalid":0,"inReview":14}
+{"approved":14,"skipped":0}
+{"approved":14,"rejected":0,"held":0,"ignored":0}
+promoted 2674519a-5a9d-40e5-b379-625f87db33e7 -> governance.offices 125a2be6-0c15-41ab-bbb5-000989c9c022
+13 promoted, 1 deferred
+{"checked":44,"invalid":0,"inReview":44}
+{"approved":44,"skipped":0}
+{"approved":44,"rejected":0,"held":0,"ignored":0}
+promoted e988f3f8-72d3-4de9-a5f7-a98b1ca3994b -> person.individuals 9b024100-7608-4ef2-96d8-dbcc1368c203
+44 promoted, 0 deferred
+baringo: 3 pages, 44 people, 30 linked, 12 nominated, 1 speaker, 1 unlinked
+holder: 44 new, 0 unchanged, 0 invalid, 0 quarantined (run c3cfafef-74bf-4173-adbb-cb88a63912b9)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 2c1fbb72-62c5-4699-bd6c-9034854faa36)
+{"checked":44,"invalid":0,"inReview":44}
+{"approved":44,"skipped":0}
+{"approved":44,"rejected":0,"held":0,"ignored":0}
+promoted b1990b94-1c9e-4ba7-8f8f-d84850f7627f -> governance.holders 1510b1e3-869a-4ca2-9031-9551f631a214
+44 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+busia: 1 pages, 9 people, 7 linked, 2 nominated, 0 speaker, 0 unlinked
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 6db13b9b-4d31-43d1-bb47-95cb128fbc54)
+individual: 9 new, 0 unchanged, 0 invalid, 0 quarantined (run f2c45674-83ac-4ecc-906a-ed1e1f387e0e)
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":9,"invalid":0,"inReview":9}
+{"approved":9,"skipped":0}
+{"approved":9,"rejected":0,"held":0,"ignored":0}
+promoted 24665c8a-e67f-4add-b8fb-5ee5585813e5 -> person.individuals ebb54f40-f4ce-42cb-9d37-b8f1152fbb22
+9 promoted, 0 deferred
+busia: 1 pages, 9 people, 7 linked, 2 nominated, 0 speaker, 0 unlinked
+holder: 9 new, 0 unchanged, 0 invalid, 0 quarantined (run b0f973b0-c987-4619-b8ba-3e143a7d4c55)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 47eb7297-a831-4479-9c30-452b56387f64)
+{"checked":9,"invalid":0,"inReview":9}
+{"approved":9,"skipped":0}
+{"approved":9,"rejected":0,"held":0,"ignored":0}
+promoted 0f092039-58af-4030-941d-2720e71fd59a -> governance.holders 555d0402-2b9d-47b9-906e-0ff12fbce48c
+9 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+embu: 6 pages, 28 people, 17 linked, 10 nominated, 0 speaker, 1 unlinked
+office: 10 new, 0 unchanged, 0 invalid, 0 quarantined (run f16f7ccc-b1d7-4daf-b49d-6445ab3aa234)
+individual: 28 new, 0 unchanged, 0 invalid, 0 quarantined (run 48cbf740-c853-405a-b891-bc16b2f43f6e)
+{"checked":10,"invalid":0,"inReview":10}
+{"approved":10,"skipped":0}
+{"approved":10,"rejected":0,"held":0,"ignored":0}
+promoted c30b3526-0b4d-4295-a470-a0f61a021bfd -> governance.offices 51589c93-6425-4c4f-8d1c-219b8bb0519c
+10 promoted, 0 deferred
+{"checked":28,"invalid":0,"inReview":28}
+{"approved":28,"skipped":0}
+{"approved":28,"rejected":0,"held":0,"ignored":0}
+promoted e72c6b30-6710-432c-b40e-008dde710bd2 -> person.individuals 3f17a4be-0360-4491-9870-3143d4a3a8ca
+28 promoted, 0 deferred
+embu: 6 pages, 28 people, 17 linked, 10 nominated, 0 speaker, 1 unlinked
+holder: 28 new, 0 unchanged, 0 invalid, 0 quarantined (run 05aa6074-0477-430f-8fac-8e2f8a0377b9)
+membership: 4 new, 0 unchanged, 0 invalid, 0 quarantined (run 9e399a99-3c33-4287-8622-1777266a7cc8)
+{"checked":28,"invalid":0,"inReview":28}
+{"approved":28,"skipped":0}
+{"approved":28,"rejected":0,"held":0,"ignored":0}
+promoted 98aac5bb-1542-42e8-8ef5-0f827ff6df3d -> governance.holders 67d160be-6347-48ca-a973-cc62267ab1fd
+28 promoted, 0 deferred
+{"checked":4,"invalid":0,"inReview":4}
+{"approved":4,"skipped":0}
+{"approved":4,"rejected":0,"held":0,"ignored":0}
+promoted 2d40611a-8750-4269-af71-deacf11c3ea2 -> political.memberships df4ecec0-b2ef-4566-a2b4-4b4f8efb2867
+4 promoted, 0 deferred
+garissa: 2 pages, 31 people, 22 linked, 8 nominated, 0 speaker, 1 unlinked
+office: 9 new, 0 unchanged, 0 invalid, 0 quarantined (run f01c93d3-5b22-4f02-bfc5-3a2518921dd9)
+individual: 31 new, 0 unchanged, 0 invalid, 0 quarantined (run 4a5c3ce8-cfaf-4398-9b3b-3bf4ea720d12)
+{"checked":9,"invalid":0,"inReview":9}
+{"approved":9,"skipped":0}
+{"approved":9,"rejected":0,"held":0,"ignored":0}
+promoted f2ef106c-fd94-45bf-8e3d-a6fcb5a48c3f -> governance.offices d94501ff-14fc-466e-bc13-b1cad7db07b3
+9 promoted, 0 deferred
+{"checked":31,"invalid":0,"inReview":31}
+{"approved":31,"skipped":0}
+{"approved":31,"rejected":0,"held":0,"ignored":0}
+promoted 51235b7f-216b-4462-987b-3cae0ac5acc8 -> person.individuals 005bf64a-397b-4cd6-a555-27351f8ae43c
+31 promoted, 0 deferred
+garissa: 2 pages, 31 people, 22 linked, 8 nominated, 0 speaker, 1 unlinked
+holder: 31 new, 0 unchanged, 0 invalid, 0 quarantined (run 2daeccfe-60e4-48ed-91a2-4bc5da26b43d)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 6f652679-3307-4a5f-9f19-8c3f6a3ac5db)
+{"checked":31,"invalid":0,"inReview":31}
+{"approved":31,"skipped":0}
+{"approved":31,"rejected":0,"held":0,"ignored":0}
+promoted 510b2635-6e14-4c3e-846d-30ae5afd865a -> governance.holders 60131593-ff9c-4b09-b343-3d744133dc08
+31 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+kericho: 1 pages, 47 people, 23 linked, 16 nominated, 0 speaker, 8 unlinked
+office: 24 new, 0 unchanged, 0 invalid, 0 quarantined (run a17b9680-b35b-4a70-8145-25c232c78657)
+individual: 47 new, 0 unchanged, 0 invalid, 0 quarantined (run 0a192509-f077-42ec-ad21-e9b1bce3c455)
+{"checked":24,"invalid":0,"inReview":24}
+{"approved":24,"skipped":0}
+{"approved":24,"rejected":0,"held":0,"ignored":0}
+promoted f75c04da-2e6e-4980-985d-dac5742a2af2 -> governance.offices 99abb28f-1d84-4803-a6b7-d3647390f3fb
+24 promoted, 0 deferred
+{"checked":47,"invalid":0,"inReview":47}
+{"approved":47,"skipped":0}
+{"approved":47,"rejected":0,"held":0,"ignored":0}
+promoted e848a670-a709-4ea5-8435-7275b2882363 -> person.individuals 46a2ac35-017a-4106-8a62-a28dcff275a3
+47 promoted, 0 deferred
+kericho: 1 pages, 47 people, 23 linked, 16 nominated, 0 speaker, 8 unlinked
+holder: 47 new, 0 unchanged, 0 invalid, 0 quarantined (run 99eb16d7-b417-4708-9cc2-98e90877cb29)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 81e1f6be-0605-45e8-8910-510b3d8c9aa6)
+{"checked":47,"invalid":0,"inReview":47}
+{"approved":47,"skipped":0}
+{"approved":47,"rejected":0,"held":0,"ignored":0}
+promoted f88178cf-ee1b-484c-9ec5-c4e652fd8877 -> governance.holders 698502f4-cb67-448d-a85f-8da0c1958463
+47 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+kiambu: 3 pages, 85 people, 59 linked, 25 nominated, 0 speaker, 1 unlinked
+office: 25 new, 0 unchanged, 0 invalid, 0 quarantined (run 469077d4-0139-40ce-9c21-bc234a46d560)
+individual: 85 new, 0 unchanged, 0 invalid, 0 quarantined (run b1b3db16-1321-4bfe-998c-ef7fedef2dea)
+{"checked":25,"invalid":0,"inReview":25}
+{"approved":25,"skipped":0}
+{"approved":25,"rejected":0,"held":0,"ignored":0}
+promoted 4565f4e6-0308-4c84-9193-f1a0acb9ce3d -> governance.offices bedc0a49-b5ea-4076-afa3-fbe5885d892e
+25 promoted, 0 deferred
+{"checked":85,"invalid":0,"inReview":85}
+{"approved":85,"skipped":0}
+{"approved":85,"rejected":0,"held":0,"ignored":0}
+promoted f7fa7de6-2ba5-4033-aaa8-828fc9588621 -> person.individuals 4b516319-c4db-461d-bda6-054c034e02a1
+85 promoted, 0 deferred
+kiambu: 3 pages, 85 people, 59 linked, 25 nominated, 0 speaker, 1 unlinked
+holder: 85 new, 0 unchanged, 0 invalid, 0 quarantined (run 4f30ee32-dc9a-480d-8c15-836231d3f17d)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run f900a25f-c567-4a50-afca-84cedf11e7f1)
+{"checked":85,"invalid":0,"inReview":85}
+{"approved":85,"skipped":0}
+{"approved":85,"rejected":0,"held":0,"ignored":0}
+promoted 824df028-2b98-42d9-80d1-c084876ca181 -> governance.holders f998938f-762f-43c7-be18-5213f9fe286e
+85 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+kisii: 2 pages, 65 people, 38 linked, 26 nominated, 1 speaker, 0 unlinked
+office: 23 new, 0 unchanged, 0 invalid, 0 quarantined (run a86718f1-96db-4063-92fa-74b22cb421d3)
+individual: 65 new, 0 unchanged, 0 invalid, 0 quarantined (run 985b047f-381a-4697-97cd-cc2144adeecd)
+{"checked":23,"invalid":0,"inReview":23}
+{"approved":23,"skipped":0}
+{"approved":23,"rejected":0,"held":0,"ignored":0}
+promoted e00e3357-d29b-405d-bcc1-eaa6dcbebab9 -> governance.offices 71571ff6-bbe9-4d0e-8232-536d9cb98acb
+22 promoted, 1 deferred
+{"checked":65,"invalid":0,"inReview":65}
+{"approved":65,"skipped":0}
+{"approved":65,"rejected":0,"held":0,"ignored":0}
+promoted 3fc89dfc-d02d-476b-abd4-65cf14fa9de5 -> person.individuals 0299b0f8-77cd-43b6-9a73-b586b258cd2d
+65 promoted, 0 deferred
+kisii: 2 pages, 65 people, 38 linked, 26 nominated, 1 speaker, 0 unlinked
+holder: 65 new, 0 unchanged, 0 invalid, 0 quarantined (run 90acc780-f806-496b-b148-2703ff592773)
+membership: 51 new, 0 unchanged, 0 invalid, 0 quarantined (run 522b8194-a358-4fc0-8c81-9ddebee811c1)
+{"checked":65,"invalid":0,"inReview":65}
+{"approved":65,"skipped":0}
+{"approved":65,"rejected":0,"held":0,"ignored":0}
+promoted 8cb8fe33-70c4-424d-abd5-2b905d89d2af -> governance.holders 80f68516-ff51-4d9a-8eae-1a27f908a76e
+65 promoted, 0 deferred
+{"checked":51,"invalid":0,"inReview":51}
+{"approved":51,"skipped":0}
+{"approved":51,"rejected":0,"held":0,"ignored":0}
+promoted 42cd4a06-7dc3-4f04-a967-56abf2a7a337 -> political.memberships 76e2eab2-2b15-4651-b4ac-b915d3583a16
+51 promoted, 0 deferred
+kisumu: 5 pages, 48 people, 34 linked, 12 nominated, 1 speaker, 1 unlinked
+office: 12 new, 0 unchanged, 0 invalid, 0 quarantined (run 3b76f17d-8e2c-4986-b554-74eb4b2b8fde)
+individual: 48 new, 0 unchanged, 0 invalid, 0 quarantined (run 1006b50d-bfbf-456f-ba46-c29c0604decd)
+{"checked":12,"invalid":0,"inReview":12}
+{"approved":12,"skipped":0}
+{"approved":12,"rejected":0,"held":0,"ignored":0}
+promoted 8effb4cf-ff87-4ffa-a933-93b367d47622 -> governance.offices 0c3f047a-3a61-4bff-9745-ffb7e9bf2291
+11 promoted, 1 deferred
+{"checked":48,"invalid":0,"inReview":48}
+{"approved":48,"skipped":0}
+{"approved":48,"rejected":0,"held":0,"ignored":0}
+promoted 2eb3c02f-3985-4f49-8e7d-66135445e142 -> person.individuals 6906db10-e957-41d1-9f96-f6f6b9707851
+48 promoted, 0 deferred
+kisumu: 5 pages, 48 people, 34 linked, 12 nominated, 1 speaker, 1 unlinked
+holder: 48 new, 0 unchanged, 0 invalid, 0 quarantined (run 44185c2b-649f-49c4-abc2-7c12687851ed)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 6b30f295-3ca7-48d5-a601-5a4399cd9d79)
+{"checked":48,"invalid":0,"inReview":48}
+{"approved":48,"skipped":0}
+{"approved":48,"rejected":0,"held":0,"ignored":0}
+promoted c1156464-5ed7-49b6-9536-6b3b9c2c8f09 -> governance.holders cde9c700-6c27-4c91-89dd-5a4d88a73c34
+48 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+machakos: 6 pages, 58 people, 37 linked, 20 nominated, 0 speaker, 1 unlinked
+office: 21 new, 0 unchanged, 0 invalid, 0 quarantined (run c62039d0-a7a7-4d4a-b749-d7f3631ebac3)
+individual: 58 new, 0 unchanged, 0 invalid, 0 quarantined (run dccb8ee6-3820-4b6e-ab14-10114a8922d2)
+{"checked":21,"invalid":0,"inReview":21}
+{"approved":21,"skipped":0}
+{"approved":21,"rejected":0,"held":0,"ignored":0}
+promoted bc2b7309-743b-4564-9ad4-cbb6e62558ef -> governance.offices 3b0058cf-3cb6-478b-825f-4528122ff4ad
+21 promoted, 0 deferred
+{"checked":58,"invalid":0,"inReview":58}
+{"approved":58,"skipped":0}
+{"approved":58,"rejected":0,"held":0,"ignored":0}
+promoted b1532bee-2b1b-4958-b1e6-5980582b8126 -> person.individuals 45aa97dd-04ec-4df6-9027-c4a142a606f7
+58 promoted, 0 deferred
+machakos: 6 pages, 58 people, 37 linked, 20 nominated, 0 speaker, 1 unlinked
+holder: 58 new, 0 unchanged, 0 invalid, 0 quarantined (run 6dd63054-78b7-4383-b71e-d21d37b22abc)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 338b5142-795b-4984-a2e9-844eaf43697d)
+{"checked":58,"invalid":0,"inReview":58}
+{"approved":58,"skipped":0}
+{"approved":58,"rejected":0,"held":0,"ignored":0}
+promoted 428382c7-311d-41cc-8ebc-dc0eaa4e43a9 -> governance.holders bbef038f-87fd-4caf-b3f0-92f6cc20350e
+58 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+mombasa: 3 pages, 41 people, 29 linked, 11 nominated, 0 speaker, 1 unlinked
+office: 12 new, 0 unchanged, 0 invalid, 0 quarantined (run efdd34d5-c3fa-4a3a-99cf-813bb83729fc)
+individual: 41 new, 0 unchanged, 0 invalid, 0 quarantined (run 1870a2fe-315f-4368-926a-a3c8bd93e600)
+{"checked":12,"invalid":0,"inReview":12}
+{"approved":12,"skipped":0}
+{"approved":12,"rejected":0,"held":0,"ignored":0}
+promoted a07d0fba-8f64-42c1-b37e-ce415d28571b -> governance.offices 84f01a64-a61f-4d1e-9148-5cd88a09cf47
+12 promoted, 0 deferred
+{"checked":41,"invalid":0,"inReview":41}
+{"approved":41,"skipped":0}
+{"approved":41,"rejected":0,"held":0,"ignored":0}
+promoted 83339283-1e07-470c-a05c-6c7e22d5eecb -> person.individuals f9632f67-6a4b-4ce4-9332-7bc4d118e8bf
+41 promoted, 0 deferred
+mombasa: 3 pages, 41 people, 29 linked, 11 nominated, 0 speaker, 1 unlinked
+holder: 41 new, 0 unchanged, 0 invalid, 0 quarantined (run aaba71bb-85fc-4375-bdf6-0bf8771d851d)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run a78ade5e-741d-4483-b65a-b3af7903f7a5)
+{"checked":41,"invalid":0,"inReview":41}
+{"approved":41,"skipped":0}
+{"approved":41,"rejected":0,"held":0,"ignored":0}
+promoted bff76e23-b152-43e8-9d6a-bb457b4a0c64 -> governance.holders ed32e723-ec29-4e67-9aad-fd219bc12d1e
+41 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+nairobi: 14 pages, 125 people, 84 linked, 0 nominated, 1 speaker, 40 unlinked
+office: 41 new, 0 unchanged, 0 invalid, 0 quarantined (run 3a2b6eb7-10b0-485b-9291-11ecf026e6a3)
+individual: 125 new, 0 unchanged, 0 invalid, 0 quarantined (run 58ddf870-496b-41fd-97cd-906f470dad3f)
+{"checked":41,"invalid":0,"inReview":41}
+{"approved":41,"skipped":0}
+{"approved":41,"rejected":0,"held":0,"ignored":0}
+promoted 09a1a1cf-d7fb-42fd-8c6a-975ed0687349 -> governance.offices 534a6518-05c6-491a-be4d-8d97459e34ba
+40 promoted, 1 deferred
+{"checked":125,"invalid":0,"inReview":125}
+{"approved":125,"skipped":0}
+{"approved":125,"rejected":0,"held":0,"ignored":0}
+promoted 438a03cb-c7ae-418b-a2f8-b4806a54af04 -> person.individuals 91d5bb6b-e828-4a3f-b288-1e38069127c6
+125 promoted, 0 deferred
+nairobi: 14 pages, 125 people, 84 linked, 0 nominated, 1 speaker, 40 unlinked
+holder: 125 new, 0 unchanged, 0 invalid, 0 quarantined (run dd9ade6b-76d1-40a1-83c1-975c04ab12dc)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 17e7d6f9-d1e1-4741-ac10-c611e1ca858a)
+{"checked":125,"invalid":0,"inReview":125}
+{"approved":125,"skipped":0}
+{"approved":125,"rejected":0,"held":0,"ignored":0}
+promoted 60e665a9-3ae4-499c-b755-b6373a20f400 -> governance.holders 5af41d8f-3554-4479-8759-af3c3da70ebd
+125 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+nakuru: 6 pages, 56 people, 52 linked, 40 nominated, 0 speaker, 4 unlinked
+office: 4 new, 0 unchanged, 0 invalid, 0 quarantined (run 841887ee-a391-40b4-b328-66e0b2a7cbb2)
+individual: 56 new, 0 unchanged, 0 invalid, 0 quarantined (run 8b5f48c2-e96e-43d3-8306-c185cd15b29f)
+{"checked":4,"invalid":0,"inReview":4}
+{"approved":4,"skipped":0}
+{"approved":4,"rejected":0,"held":0,"ignored":0}
+promoted c574b4d0-14f3-443b-b9e0-613ff56744d7 -> governance.offices 1702f931-f27e-4902-a807-3a04b7f3e316
+4 promoted, 0 deferred
+{"checked":56,"invalid":0,"inReview":56}
+{"approved":56,"skipped":0}
+{"approved":56,"rejected":0,"held":0,"ignored":0}
+promoted 6025fea6-f957-41c3-9c78-61b5619cdfa8 -> person.individuals fab6df7e-b46b-4549-96da-348c93cd054f
+56 promoted, 0 deferred
+nakuru: 6 pages, 56 people, 52 linked, 40 nominated, 0 speaker, 4 unlinked
+holder: 56 new, 0 unchanged, 0 invalid, 0 quarantined (run 1bfe2371-9288-4743-94a7-4a0cfa6f05db)
+membership: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 73a5aa93-91b9-4847-837a-803c8b4fb080)
+{"checked":56,"invalid":0,"inReview":56}
+{"approved":56,"skipped":0}
+{"approved":56,"rejected":0,"held":0,"ignored":0}
+promoted e9c6dd96-2b1e-421f-b087-5841f20b6806 -> governance.holders 337624e7-28be-4c91-a84b-7acefaf80fbf
+56 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted d2ef595c-de88-4e92-83fb-a06b98565f1b -> political.memberships 9fbbad4a-7b74-4de5-9c76-24cad0d70100
+1 promoted, 0 deferred
+nyamira: 5 pages, 19 people, 19 linked, 0 nominated, 0 speaker, 0 unlinked
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 7ec54f08-596d-4ea5-b6fb-c48053e586a5)
+individual: 19 new, 0 unchanged, 0 invalid, 0 quarantined (run fcf75843-3d92-456d-aed5-7ce775f80955)
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":19,"invalid":0,"inReview":19}
+{"approved":19,"skipped":0}
+{"approved":19,"rejected":0,"held":0,"ignored":0}
+promoted 86959e89-e1e1-4555-bc23-05ed2aa1f8f6 -> person.individuals 4afb518b-f6e8-4442-9f01-1d50fe55ba2c
+19 promoted, 0 deferred
+nyamira: 5 pages, 19 people, 19 linked, 0 nominated, 0 speaker, 0 unlinked
+holder: 19 new, 0 unchanged, 0 invalid, 0 quarantined (run b962200a-69e5-49b3-84ea-bd7d07d88387)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run d8ee0690-df56-4cb9-84da-c1fd4d3eda97)
+{"checked":19,"invalid":0,"inReview":19}
+{"approved":19,"skipped":0}
+{"approved":19,"rejected":0,"held":0,"ignored":0}
+promoted 4ad031d7-ee73-4910-bff0-0af4b4873f74 -> governance.holders 05a24ac9-d51e-4a32-b9ee-226cad3684ef
+19 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+nyeri: 7 pages, 30 people, 25 linked, 22 nominated, 0 speaker, 5 unlinked
+office: 5 new, 0 unchanged, 0 invalid, 0 quarantined (run 93ee5d6d-31c5-4481-8da3-2f7e7fbf33da)
+individual: 30 new, 0 unchanged, 0 invalid, 0 quarantined (run 5879ef4f-dbe7-44f0-8fc6-10c4c440191b)
+{"checked":5,"invalid":0,"inReview":5}
+{"approved":5,"skipped":0}
+{"approved":5,"rejected":0,"held":0,"ignored":0}
+promoted fe047849-da8d-427d-8498-3595f7734615 -> governance.offices 4e6aa8d5-fc05-4799-b3fe-22aaa3195b69
+5 promoted, 0 deferred
+{"checked":30,"invalid":0,"inReview":30}
+{"approved":30,"skipped":0}
+{"approved":30,"rejected":0,"held":0,"ignored":0}
+promoted b8d43432-ec69-413b-a3b0-7190e7398448 -> person.individuals e2473781-beb0-407f-a71b-b5635390ab86
+30 promoted, 0 deferred
+nyeri: 7 pages, 30 people, 25 linked, 22 nominated, 0 speaker, 5 unlinked
+holder: 30 new, 0 unchanged, 0 invalid, 0 quarantined (run 1d9e8112-b30e-4adc-a69b-69dedde87e68)
+membership: 30 new, 0 unchanged, 0 invalid, 0 quarantined (run dc0bfe2f-f67c-4f9f-bc5c-dbb3d4de8fe4)
+{"checked":30,"invalid":0,"inReview":30}
+{"approved":30,"skipped":0}
+{"approved":30,"rejected":0,"held":0,"ignored":0}
+promoted 75fe50a6-87a2-461a-8109-abab9a526d32 -> governance.holders 3ee78dde-2db1-455e-bcc6-7beb6a5e9d29
+30 promoted, 0 deferred
+{"checked":30,"invalid":0,"inReview":30}
+{"approved":30,"skipped":0}
+{"approved":30,"rejected":0,"held":0,"ignored":0}
+promoted 09bbe6b0-977e-4c81-bb9a-773b527d45d1 -> political.memberships 60791435-5f41-4a66-904a-9421c2159efc
+30 promoted, 0 deferred
+siaya: 4 pages, 36 people, 30 linked, 12 nominated, 0 speaker, 6 unlinked
+office: 6 new, 0 unchanged, 0 invalid, 0 quarantined (run 3e346d49-67c1-43b2-9327-5388acbacc1c)
+individual: 36 new, 0 unchanged, 0 invalid, 0 quarantined (run bdddb0a8-a528-4421-b06e-4585ff1a2b34)
+{"checked":6,"invalid":0,"inReview":6}
+{"approved":6,"skipped":0}
+{"approved":6,"rejected":0,"held":0,"ignored":0}
+promoted de13b09f-db58-4bdb-9998-5f028e708bee -> governance.offices 1710992c-5628-4d36-a42b-947d6e9436bc
+6 promoted, 0 deferred
+{"checked":36,"invalid":0,"inReview":36}
+{"approved":36,"skipped":0}
+{"approved":36,"rejected":0,"held":0,"ignored":0}
+promoted c4801153-e86f-4411-8ae4-e37ffcf3ed6b -> person.individuals 4d39505d-fd67-46d3-bb1d-30a1d63be256
+36 promoted, 0 deferred
+siaya: 4 pages, 36 people, 30 linked, 12 nominated, 0 speaker, 6 unlinked
+holder: 36 new, 0 unchanged, 0 invalid, 0 quarantined (run 2f2aabe0-cca1-4a04-afda-b07a3cb76616)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 3ce443bd-e1dd-44cc-a240-ed03afde0fcb)
+{"checked":36,"invalid":0,"inReview":36}
+{"approved":36,"skipped":0}
+{"approved":36,"rejected":0,"held":0,"ignored":0}
+promoted bdbc1f89-6581-4ca6-84d8-23a30e9c1d3d -> governance.holders 1e9413cf-5c08-464c-9a33-e237318ac27e
+36 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+taita-taveta: 12 pages, 6 people, 5 linked, 5 nominated, 1 speaker, 0 unlinked
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 73e0101f-4874-4d99-a3b2-a85ed9689ee1)
+individual: 6 new, 0 unchanged, 0 invalid, 0 quarantined (run 20cbb659-640f-4634-b0d3-cb0c0fc7ca02)
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+deferred 434116b6-3142-41de-b023-4ef05ac3ad05 (a record with the same key already exists (Key (code)=(ke/county/006/assembly/speaker) already exists.); it was not overwritten)
+0 promoted, 1 deferred
+{"checked":6,"invalid":0,"inReview":6}
+{"approved":6,"skipped":0}
+{"approved":6,"rejected":0,"held":0,"ignored":0}
+promoted 0a1726d5-1ea9-4924-a44f-e1c98920a5d2 -> person.individuals f69c0e20-958e-4129-97b3-e1c19e0178b3
+6 promoted, 0 deferred
+taita-taveta: 12 pages, 6 people, 5 linked, 5 nominated, 1 speaker, 0 unlinked
+holder: 6 new, 0 unchanged, 0 invalid, 0 quarantined (run 3410e49a-77d3-46c9-a03b-2fa6eb561436)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 5bdc5fa2-f891-4178-897a-93869aabd882)
+{"checked":6,"invalid":0,"inReview":6}
+{"approved":6,"skipped":0}
+{"approved":6,"rejected":0,"held":0,"ignored":0}
+promoted 5be5f8b6-9e52-414b-8337-38b78b32da77 -> governance.holders 22088b14-6a55-4de2-9db1-9c400ea51775
+6 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+trans-nzoia: 3 pages, 0 people, 0 linked, 8 nominated, 0 speaker, 0 unlinked
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run e6a10af3-0002-4e60-a740-4f14ca018064)
+individual: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 1926fa4c-abd6-4672-9231-42f397363aec)
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+trans-nzoia: 3 pages, 0 people, 0 linked, 8 nominated, 0 speaker, 0 unlinked
+holder: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run d033c567-5988-408e-a564-470beb511948)
+membership: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 545d36eb-9907-4102-a347-5cebe07359ab)
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+turkana: 5 pages, 30 people, 29 linked, 22 nominated, 0 speaker, 1 unlinked
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 70ad3d0d-c778-47ed-9032-aadc29f82ff5)
+individual: 30 new, 0 unchanged, 0 invalid, 0 quarantined (run a3fef843-f988-4b8d-95b4-402b7a44bb96)
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted 4d20a9af-3ee9-4f1e-b90f-b7c6258f4b09 -> governance.offices cfcfa0a4-ea5c-4b0a-b29d-3aef1cc83ce4
+1 promoted, 0 deferred
+{"checked":30,"invalid":0,"inReview":30}
+{"approved":30,"skipped":0}
+{"approved":30,"rejected":0,"held":0,"ignored":0}
+promoted 9f428abc-8e6e-4ec3-8599-87ef0be9baff -> person.individuals 8a4d0261-d50d-41b5-9ad9-fa8dc3475fc2
+30 promoted, 0 deferred
+turkana: 5 pages, 30 people, 29 linked, 22 nominated, 0 speaker, 1 unlinked
+holder: 30 new, 0 unchanged, 0 invalid, 0 quarantined (run 751f80f0-1842-48b2-8367-665146e87ac4)
+membership: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 53f29e3f-ea82-4f62-bd5c-516a2fe69554)
+{"checked":30,"invalid":0,"inReview":30}
+{"approved":30,"skipped":0}
+{"approved":30,"rejected":0,"held":0,"ignored":0}
+promoted 58af9bce-48e2-4f45-a38c-553f8890c477 -> governance.holders 5c87c914-5b26-4ca5-b9f1-f19ab4e6f527
+30 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted 2d3dba8a-27ea-4bfc-9141-c995bab9d0d0 -> political.memberships 1f2e0bdd-9fd1-4d9d-909b-de19a9f83de8
+1 promoted, 0 deferred

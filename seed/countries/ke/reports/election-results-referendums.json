@@ -1,0 +1,68 @@
+{
+ "sources": {
+  "referendums": {
+   "report": {
+    "2010": {
+     "yes": 6092593,
+     "no": 2795059,
+     "invalid": 218633,
+     "registered": 12616627
+    },
+    "2005": {
+     "yes": 2578831,
+     "no": 3579241
+    }
+   },
+   "runs": {
+    "classification": "842a1d73-614c-4455-b798-a608be7769c7",
+    "election": "1fde72c7-169f-4115-a45c-6a092322f9d8",
+    "question": "0ad692e1-50ef-41a5-b226-055b63bc1bc5",
+    "option": "ec0399ed-5a67-4327-b5ef-815af41d88ed",
+    "refresult": "2458949c-1b39-4aa6-8565-670d807d7d4f",
+    "referendum-electorate": "f192c4bc-eeaf-493d-b6b3-5af5c4607c13"
+   },
+   "stats": {
+    "classification": {
+     "created": 0,
+     "unchanged": 3,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "election": {
+     "created": 2,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "question": {
+     "created": 2,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "option": {
+     "created": 4,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "refresult": {
+     "created": 4,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    },
+    "referendum-electorate": {
+     "created": 2,
+     "unchanged": 0,
+     "invalid": 0,
+     "quarantined": 0
+    }
+   }
+  }
+ },
+ "flags": [],
+ "new_people": 0,
+ "created_parties": 0,
+ "unlinked": []
+}

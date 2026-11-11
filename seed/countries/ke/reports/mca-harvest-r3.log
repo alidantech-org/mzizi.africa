@@ -1,0 +1,4 @@
+{"site": "ke/county-assembly/bomet", "pages": 6, "error": null, "hosts": ["www.bometassembly.go.ke", "bometassembly.go.ke"]}
+{"site": "ke/county-assembly/homa-bay", "pages": 5, "error": null, "hosts": ["www.homabayassembly.go.ke", "homabayassembly.go.ke"]}
+{"site": "ke/county-assembly/marsabit", "pages": 0, "error": "stopped: https://www.marsabitassembly.go.ke/ looks like an access challenge (marker 'captcha')", "hosts": ["www.marsabitassembly.go.ke", "marsabitassembly.go.ke"]}
+{"site": "ke/county-assembly/nandi", "pages": 3, "error": null, "hosts": ["www.nandiassembly.go.ke", "nandiassembly.go.ke"]}

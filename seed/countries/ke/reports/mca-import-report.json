@@ -1,0 +1,596 @@
+{
+ "lamu": {
+  "pages": 3,
+  "people": 19,
+  "linked": 10,
+  "nominated": 8,
+  "speakers": 0,
+  "unlinked": 1,
+  "unmatched": [],
+  "conflicts": [
+   {
+    "person": "Azhar Ali Mbarak Speaker Lamu Assembly",
+    "ward": "ke/ward/lamu/lamu-west/mkunumbi/mca",
+    "heldBy": "ke/person/paul-kimani-njuguna-mca-lamu"
+   }
+  ]
+ },
+ "baringo": {
+  "pages": 3,
+  "people": 32,
+  "linked": 30,
+  "nominated": 12,
+  "speakers": 1,
+  "unlinked": 1,
+  "unmatched": [],
+  "conflicts": [
+   {
+    "person": "Maria Losile",
+    "ward": "ke/ward/baringo/tiaty/loiyamorock/mca",
+    "heldBy": "ke/person/marial-losile-mca-baringo"
+   }
+  ]
+ },
+ "busia": {
+  "pages": 1,
+  "people": 9,
+  "linked": 7,
+  "nominated": 2,
+  "speakers": 0,
+  "unlinked": 0,
+  "unmatched": [],
+  "conflicts": []
+ },
+ "embu": {
+  "pages": 6,
+  "people": 28,
+  "linked": 17,
+  "nominated": 10,
+  "speakers": 0,
+  "unlinked": 1,
+  "unmatched": [
+   {
+    "person": "Duncan Muratia Nyaga",
+    "wardText": "Evurori",
+    "bestScore": 0.857
+   }
+  ],
+  "conflicts": []
+ },
+ "garissa": {
+  "pages": 2,
+  "people": 31,
+  "linked": 22,
+  "nominated": 8,
+  "speakers": 0,
+  "unlinked": 1,
+  "unmatched": [
+   {
+    "person": "Hajir Mahad Farah",
+    "wardText": "FAFI",
+    "bestScore": 1.0
+   }
+  ],
+  "conflicts": []
+ },
+ "kericho": {
+  "pages": 1,
+  "people": 47,
+  "linked": 23,
+  "nominated": 16,
+  "speakers": 0,
+  "unlinked": 8,
+  "unmatched": [
+   {
+    "person": "Gilbert Ngetich",
+    "wardText": "Kisiara",
+    "bestScore": 0.533
+   },
+   {
+    "person": "Kipngeno Kirui",
+    "wardText": "Tebesonik",
+    "bestScore": 0.471
+   },
+   {
+    "person": "Francis Terer",
+    "wardText": "Cheboin",
+    "bestScore": 0.667
+   },
+   {
+    "person": "Anita Mibey",
+    "wardText": "Chemosot",
+    "bestScore": 0.5
+   },
+   {
+    "person": "Vincent Kirui",
+    "wardText": "Litein",
+    "bestScore": 0.5
+   },
+   {
+    "person": "Hillary Bosuben",
+    "wardText": "Cheplanget",
+    "bestScore": 0.556
+   },
+   {
+    "person": "Amos Birir",
+    "wardText": "Kapkatet",
+    "bestScore": 0.737
+   },
+   {
+    "person": "Opile Noela Omolo",
+    "wardText": "Nomiated",
+    "bestScore": 0.571
+   }
+  ],
+  "conflicts": []
+ },
+ "kiambu": {
+  "pages": 3,
+  "people": 85,
+  "linked": 59,
+  "nominated": 25,
+  "speakers": 0,
+  "unlinked": 1,
+  "unmatched": [
+   {
+    "person": "Donna Kendi Anampiu",
+    "wardText": "Mwiki",
+    "bestScore": 0.667
+   }
+  ],
+  "conflicts": []
+ },
+ "kisii": {
+  "pages": 2,
+  "people": 39,
+  "linked": 38,
+  "nominated": 26,
+  "speakers": 1,
+  "unlinked": 0,
+  "unmatched": [],
+  "conflicts": []
+ },
+ "kisumu": {
+  "pages": 5,
+  "people": 36,
+  "linked": 34,
+  "nominated": 24,
+  "speakers": 1,
+  "unlinked": 1,
+  "unmatched": [
+   {
+    "person": "Rakwach Reuben",
+    "wardText": "Kolwa",
+    "bestScore": 0.92
+   }
+  ],
+  "conflicts": []
+ },
+ "machakos": {
+  "pages": 6,
+  "people": 58,
+  "linked": 37,
+  "nominated": 20,
+  "speakers": 0,
+  "unlinked": 1,
+  "unmatched": [
+   {
+    "person": "Daniel Ndwiki",
+    "wardText": "Mlolongo",
+    "bestScore": 0.615
+   }
+  ],
+  "conflicts": []
+ },
+ "mombasa": {
+  "pages": 3,
+  "people": 41,
+  "linked": 29,
+  "nominated": 11,
+  "speakers": 0,
+  "unlinked": 1,
+  "unmatched": [
+   {
+    "person": "Kambi Mwalimu Juma",
+    "wardText": "SHIKADABU",
+    "bestScore": 0.533
+   }
+  ],
+  "conflicts": []
+ },
+ "nairobi": {
+  "pages": 14,
+  "people": 125,
+  "linked": 84,
+  "nominated": 0,
+  "speakers": 1,
+  "unlinked": 40,
+  "unmatched": [
+   {
+    "person": "Njathi Ciciliah Wairimu",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Virginia Waitherero",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Diana Mwangangi Katile",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Joy Muthoni Mwangi",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Agnes Njeri Muthoni",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Nancy Nyambura Mwaura",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Rachel Wanjiru Maina",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Grace Kaheti Mungai",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Lydia Akoth Otieno",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Beatrice Wandai Khungwa",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Jane Waruguru Kanyi",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Doreen Mugambi",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Umuro Kame Adano",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Tricer Jeptoo Ayabei",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Jane Wanjiru",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Jane Musangi Muthembwa",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Jane Muasya",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Catherine Apiyo Okoth",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Joyce Muthoni Kamau",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Emily Ondeje Oduor",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Asli Muhamud Mohamed",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Mary Wanjiku Kariuki",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Samuel Kanyi Kago",
+    "wardText": "Mwiki",
+    "bestScore": 1.0
+   },
+   {
+    "person": "Jeckoniah Junga Onyango",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Nasra Nanda",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Farhiya Daud Aden",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Brian Ndavua Itenya",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Benter Juma Obiero",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Joyce Jamosa Lugonzo",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Hannah Wanjiru Muriuki",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Hellen Awuor Okello",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Emmy Khatemeshi Isalambo",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Malyun Ali Abdi",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Ami Peres Auma Ambala",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Naomi Kerubo Bosire",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Perpetua Mponjiwa",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Fatuma Abdiwahid Abey",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Fathiya Abdilahi Mohamed",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Lily Akoth Kidenda",
+    "wardText": null,
+    "bestScore": 0.0
+   },
+   {
+    "person": "Agnes Wambui Njeri",
+    "wardText": null,
+    "bestScore": 0.0
+   }
+  ],
+  "conflicts": []
+ },
+ "nakuru": {
+  "pages": 6,
+  "people": 56,
+  "linked": 52,
+  "nominated": 40,
+  "speakers": 0,
+  "unlinked": 4,
+  "unmatched": [
+   {
+    "person": "Keziah Akinyi Okumu",
+    "wardText": "Biashara",
+    "bestScore": 1.0
+   },
+   {
+    "person": "Neto Sakwa Alukutsa",
+    "wardText": "Rep Kaptembwa",
+    "bestScore": 0.727
+   },
+   {
+    "person": "Robert Kipyegon Langat",
+    "wardText": "Biashara",
+    "bestScore": 1.0
+   },
+   {
+    "person": "Ann Wanjiru Njaguara",
+    "wardText": "Userful Links",
+    "bestScore": 0.417
+   }
+  ],
+  "conflicts": []
+ },
+ "nyamira": {
+  "pages": 5,
+  "people": 19,
+  "linked": 19,
+  "nominated": 0,
+  "speakers": 0,
+  "unlinked": 0,
+  "unmatched": [],
+  "conflicts": []
+ },
+ "nyeri": {
+  "pages": 7,
+  "people": 30,
+  "linked": 25,
+  "nominated": 22,
+  "speakers": 0,
+  "unlinked": 5,
+  "unmatched": [
+   {
+    "person": "Kabatha David Mwangi",
+    "wardText": "Iria-ini",
+    "bestScore": 1.0
+   },
+   {
+    "person": "Ndegwa Clement Warutere",
+    "wardText": "Gatitu Muruguru",
+    "bestScore": 1.0
+   },
+   {
+    "person": "Nyaga Wilfred Wambari",
+    "wardText": "Iria-ini",
+    "bestScore": 1.0
+   },
+   {
+    "person": "Macharia Agnes Wanjiru",
+    "wardText": "Ethnicity",
+    "bestScore": 0.381
+   },
+   {
+    "person": "Maina Patrick Karanja",
+    "wardText": "Ethnicity",
+    "bestScore": 0.381
+   }
+  ],
+  "conflicts": []
+ },
+ "siaya": {
+  "pages": 4,
+  "people": 36,
+  "linked": 30,
+  "nominated": 12,
+  "speakers": 0,
+  "unlinked": 6,
+  "unmatched": [],
+  "conflicts": [
+   {
+    "person": "Okwiry Susan Achieng",
+    "ward": "ke/ward/siaya/gem/west-gem/mca",
+    "heldBy": "ke/person/okwirry-susan-achieng-mca-siaya"
+   },
+   {
+    "person": "Masidis Scholastica Madowo",
+    "ward": "ke/ward/siaya/alego-usonga/south-east-alego/mca",
+    "heldBy": "ke/person/masidis-scolastica-madowo-mca-siaya"
+   },
+   {
+    "person": "Onyango William Kinyanyi",
+    "ward": "ke/ward/siaya/gem/yala-township/mca",
+    "heldBy": "ke/person/kinyanyi-william-onyango-mca-siaya"
+   },
+   {
+    "person": "Adalla Bernard Onyango",
+    "ward": "ke/ward/siaya/ugenya/north-ugenya/mca",
+    "heldBy": "ke/person/adalla-benard-onyango-mca-siaya"
+   },
+   {
+    "person": "Angule Simon",
+    "ward": "ke/ward/siaya/bondo/west-yimbo/mca",
+    "heldBy": "ke/person/angule-simeon-mca-siaya"
+   },
+   {
+    "person": "Olang\u2019o Bismark Otieno",
+    "ward": "ke/ward/siaya/bondo/central-sakwa/mca",
+    "heldBy": "ke/person/otieno-joseph-bismarck-olango-mca-siaya"
+   }
+  ]
+ },
+ "taita-taveta": {
+  "pages": 12,
+  "people": 6,
+  "linked": 5,
+  "nominated": 5,
+  "speakers": 1,
+  "unlinked": 0,
+  "unmatched": [],
+  "conflicts": []
+ },
+ "trans-nzoia": {
+  "pages": 3,
+  "people": 0,
+  "linked": 0,
+  "nominated": 8,
+  "speakers": 0,
+  "unlinked": 0,
+  "unmatched": [],
+  "conflicts": []
+ },
+ "turkana": {
+  "pages": 5,
+  "people": 30,
+  "linked": 29,
+  "nominated": 22,
+  "speakers": 0,
+  "unlinked": 1,
+  "unmatched": [],
+  "conflicts": [
+   {
+    "person": "Itabo Ruth Kuya",
+    "ward": "ke/ward/turkana/turkana-central/lodwar-township/mca",
+    "heldBy": "ke/person/emaase-michael-ewoi-mca-turkana"
+   }
+  ]
+ },
+ "bomet": {
+  "pages": 2,
+  "people": 25,
+  "linked": 25,
+  "nominated": 13,
+  "speakers": 0,
+  "unlinked": 0,
+  "unmatched": [],
+  "conflicts": []
+ },
+ "homa-bay": {
+  "pages": 1,
+  "people": 1,
+  "linked": 1,
+  "nominated": 1,
+  "speakers": 0,
+  "unlinked": 0,
+  "unmatched": [],
+  "conflicts": []
+ },
+ "nandi": {
+  "pages": 1,
+  "people": 1,
+  "linked": 0,
+  "nominated": 0,
+  "speakers": 1,
+  "unlinked": 0,
+  "unmatched": [],
+  "conflicts": []
+ }
+}

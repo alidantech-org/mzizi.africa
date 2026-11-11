@@ -1,0 +1,579 @@
+mombasa: 1 linked, 0 unplaced, 29 corroborated, 0 differ, 7 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run fbfe840a-f37a-4fb2-8af2-f868e209cefb)
+individual: 8 new, 0 unchanged, 0 invalid, 0 quarantined (run e4bec289-8856-4726-b78f-72d0ac07b1f9)
+kwale: 20 linked, 0 unplaced, 0 corroborated, 0 differ, 10 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 50459e25-68c2-4e06-a396-677ee1a0386a)
+individual: 30 new, 0 unchanged, 0 invalid, 0 quarantined (run 40d28d15-ed9a-4310-b4bf-25f44ed9ecdf)
+kilifi: 35 linked, 0 unplaced, 0 corroborated, 0 differ, 16 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run dda5afd6-1abf-4a21-bb8d-613031d9c56d)
+individual: 51 new, 0 unchanged, 0 invalid, 0 quarantined (run 4ce15894-5181-48eb-ab18-15edb786ed49)
+tana-river: 14 linked, 1 unplaced, 0 corroborated, 0 differ, 11 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 2148ef7b-84e1-4c10-a597-9224aea3b261)
+individual: 26 new, 0 unchanged, 0 invalid, 0 quarantined (run 8f4aeb0f-16a6-4703-a097-0246aa2cc42e)
+lamu: 0 linked, 0 unplaced, 8 corroborated, 2 differ, 5 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 0428aa85-1423-4d75-afec-b14dda3a746c)
+individual: 0 new, 5 unchanged, 0 invalid, 0 quarantined (run 3e02bda7-f166-47d9-a20b-21a25bd96113)
+taita-taveta: 14 linked, 2 unplaced, 4 corroborated, 0 differ, 12 nominated
+office: 2 new, 0 unchanged, 0 invalid, 0 quarantined (run f6b931fc-9544-4db8-9a91-83dbf2e1fe91)
+individual: 28 new, 0 unchanged, 0 invalid, 0 quarantined (run cc394b48-da9d-47f3-8e1c-5a780507f798)
+garissa: 8 linked, 0 unplaced, 21 corroborated, 1 differ, 14 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 0f0e70a4-0757-4261-9fc3-18b5ae3d312e)
+individual: 22 new, 0 unchanged, 0 invalid, 0 quarantined (run 023a654f-d807-4b29-868c-8734fd6970eb)
+wajir: 29 linked, 1 unplaced, 0 corroborated, 0 differ, 15 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 78f15162-1a44-4d99-916e-849321ea8db1)
+individual: 45 new, 0 unchanged, 0 invalid, 0 quarantined (run 992422ba-09de-49bf-8977-b2a036acb381)
+mandera: 29 linked, 1 unplaced, 0 corroborated, 0 differ, 20 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 8ec4df34-fb90-4094-b0fc-81430816025b)
+individual: 50 new, 0 unchanged, 0 invalid, 0 quarantined (run d722e301-4d53-4e33-8157-262d6b38afba)
+marsabit: 20 linked, 0 unplaced, 0 corroborated, 0 differ, 13 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 593cdf73-045d-407d-a0be-76e5c7b9f8c6)
+individual: 33 new, 0 unchanged, 0 invalid, 0 quarantined (run cf768891-39f9-4c69-a2d2-f5a39ec9447b)
+isiolo: 10 linked, 0 unplaced, 0 corroborated, 0 differ, 8 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 2ebd4c6a-1ef4-49e9-a9c6-20f762e8a466)
+individual: 18 new, 0 unchanged, 0 invalid, 0 quarantined (run bcc7e89d-f3dc-45e7-b56b-584a4dbf362c)
+meru: 44 linked, 0 unplaced, 0 corroborated, 0 differ, 24 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 1557d439-66d2-42c9-95b5-45d32f00bfd5)
+individual: 68 new, 0 unchanged, 0 invalid, 0 quarantined (run 95c47262-9a84-45a5-b08b-427b0e928a50)
+tharaka: 15 linked, 0 unplaced, 0 corroborated, 0 differ, 8 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 32553f53-6a1d-4694-a4b9-ede4a3f63da1)
+individual: 23 new, 0 unchanged, 0 invalid, 0 quarantined (run dfcbb672-1d99-4f0c-b8ee-309a4f54096a)
+embu: 3 linked, 0 unplaced, 16 corroborated, 1 differ, 4 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run f0bd2fc2-fb9b-402f-a8e9-3fb2d5d158dd)
+individual: 7 new, 0 unchanged, 0 invalid, 0 quarantined (run 1f54a29a-7921-4ffb-a40b-cb247126edf3)
+kitui: 39 linked, 0 unplaced, 0 corroborated, 0 differ, 18 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 293cbb61-a2d1-4d84-9776-996d2b441d6c)
+individual: 57 new, 0 unchanged, 0 invalid, 0 quarantined (run 0fe065b3-2403-4cdb-a398-208d7a3a6f12)
+machakos: 3 linked, 0 unplaced, 34 corroborated, 3 differ, 20 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 3e395b44-cd1d-40c9-9e21-dde5fd77108a)
+individual: 23 new, 0 unchanged, 0 invalid, 0 quarantined (run 0586ef3f-af9e-484e-a0be-f45d021103a5)
+makueni: 30 linked, 0 unplaced, 0 corroborated, 0 differ, 18 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run ece11852-ba73-4ee7-af6a-6c45b34abef1)
+individual: 48 new, 0 unchanged, 0 invalid, 0 quarantined (run 0e415ca4-94eb-419a-8490-ca715b2903bb)
+nyandarua: 24 linked, 1 unplaced, 0 corroborated, 0 differ, 16 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run f35300e1-e7ef-48d3-8804-9a16d76e07fc)
+individual: 41 new, 0 unchanged, 0 invalid, 0 quarantined (run 810ee25b-0610-4804-ba23-a352c82b81ed)
+nyeri: 5 linked, 0 unplaced, 25 corroborated, 0 differ, 12 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run f7072a83-4b0c-4537-80a7-7e8a3ae43c00)
+individual: 16 new, 1 unchanged, 0 invalid, 0 quarantined (run f6eaee0b-263f-4c79-9684-e5d1d90cae10)
+kirinyaga: 20 linked, 0 unplaced, 0 corroborated, 0 differ, 12 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 89387eb0-5a06-4311-b021-a996af0d13ad)
+individual: 32 new, 0 unchanged, 0 invalid, 0 quarantined (run d918ba1e-a51e-424f-ade5-edbe9a50344d)
+muranga: 35 linked, 0 unplaced, 0 corroborated, 0 differ, 11 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 34648f06-9b9b-4095-a96e-79e8f4731887)
+individual: 46 new, 0 unchanged, 0 invalid, 0 quarantined (run 03a0926d-8cbc-490d-99fd-a0b0dcd051f8)
+kiambu: 0 linked, 1 unplaced, 59 corroborated, 0 differ, 22 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run c7547d0c-723d-4d6e-aba8-f26ef17178c8)
+individual: 21 new, 2 unchanged, 0 invalid, 0 quarantined (run a4ca7234-0701-4ae6-8d48-2dabaaf60f61)
+turkana: 1 linked, 0 unplaced, 25 corroborated, 4 differ, 16 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 5cc705fe-7f6c-48e1-9154-a01003ae02c0)
+individual: 17 new, 0 unchanged, 0 invalid, 0 quarantined (run e62cfa98-7fb0-4dec-912a-faa1e578a440)
+west-pokot: 19 linked, 1 unplaced, 0 corroborated, 0 differ, 12 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 7dd88887-8e94-4575-980b-10e6583c561a)
+individual: 32 new, 0 unchanged, 0 invalid, 0 quarantined (run a03226c2-9a48-435d-be07-4429111420ef)
+samburu: 15 linked, 0 unplaced, 0 corroborated, 0 differ, 11 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 1b95d3a4-72ad-403c-84f3-753a40c25e34)
+individual: 26 new, 0 unchanged, 0 invalid, 0 quarantined (run 17de650c-18e4-4980-93d3-0e901f936d4e)
+trans-nzoia: 25 linked, 0 unplaced, 0 corroborated, 0 differ, 8 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 6b7afe7e-3b9c-4415-9b41-5a6baf736833)
+individual: 33 new, 0 unchanged, 0 invalid, 0 quarantined (run 4d275d82-7c07-4781-b502-75c942ae0c3e)
+uasin-gishu: 29 linked, 1 unplaced, 0 corroborated, 0 differ, 14 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run fcc67d89-81da-4cd9-91dc-fc4f86e3bf84)
+individual: 44 new, 0 unchanged, 0 invalid, 0 quarantined (run 07377eb2-c586-4bee-bf25-93049ace9f94)
+elgeyo-marakwet: 18 linked, 2 unplaced, 0 corroborated, 0 differ, 12 nominated
+office: 2 new, 0 unchanged, 0 invalid, 0 quarantined (run d3b9232b-e339-4fe5-8a5e-1247f1f47001)
+individual: 32 new, 0 unchanged, 0 invalid, 0 quarantined (run 98003da4-392f-4a8a-9699-d39161fc3794)
+nandi: 29 linked, 1 unplaced, 0 corroborated, 0 differ, 14 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 62114a24-815c-42a5-a37c-52547bc2e7d2)
+individual: 44 new, 0 unchanged, 0 invalid, 0 quarantined (run 31c1873b-0534-4e4a-af70-2e49053d023f)
+baringo: 0 linked, 0 unplaced, 29 corroborated, 1 differ, 15 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 71847497-9057-40f1-bff3-0da4b182a127)
+individual: 15 new, 0 unchanged, 0 invalid, 0 quarantined (run 431185c4-36f1-4227-800b-f3403de275e6)
+laikipia: 15 linked, 0 unplaced, 0 corroborated, 0 differ, 6 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run ce8106d6-c84b-4283-b082-46bc1938a4fe)
+individual: 21 new, 0 unchanged, 0 invalid, 0 quarantined (run ec19259d-fac3-4586-a2c5-3626d985e147)
+nakuru: 3 linked, 1 unplaced, 0 corroborated, 51 differ, 20 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run daf14edb-6dc5-4240-958a-9512e147769b)
+individual: 17 new, 7 unchanged, 0 invalid, 0 quarantined (run ee4789a2-01cc-43fb-abbe-6715a3c4cc5c)
+narok: 29 linked, 0 unplaced, 0 corroborated, 0 differ, 19 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 119d844e-a6c6-421a-a0ab-55d60c5ffc92)
+individual: 48 new, 0 unchanged, 0 invalid, 0 quarantined (run f7d53641-f343-42e0-8193-913835c8de09)
+kajiado: 25 linked, 0 unplaced, 0 corroborated, 0 differ, 15 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run c5c56118-4b2d-4978-959c-277752c97ab1)
+individual: 40 new, 0 unchanged, 0 invalid, 0 quarantined (run 0c673663-fae4-4910-8ac1-281b5ead41df)
+kericho: 0 linked, 8 unplaced, 22 corroborated, 0 differ, 6 nominated
+office: 8 new, 0 unchanged, 0 invalid, 0 quarantined (run 80d9d043-6e59-4b7e-a565-1f2f69a16b65)
+individual: 13 new, 1 unchanged, 0 invalid, 0 quarantined (run c9c59abe-0063-46cf-b290-9e6d427f9d1d)
+bomet: 25 linked, 0 unplaced, 0 corroborated, 0 differ, 13 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 96be5650-54f1-4eec-8f82-14c3c4db0278)
+individual: 38 new, 0 unchanged, 0 invalid, 0 quarantined (run 4950cccb-13f4-495f-8116-14296251f10d)
+kakamega: 59 linked, 0 unplaced, 0 corroborated, 0 differ, 29 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run f5fac11f-d4d2-4da9-82a6-d90c97ed20dc)
+individual: 88 new, 0 unchanged, 0 invalid, 0 quarantined (run fc225e5c-3d8d-4429-bd2b-15d7f9a84e3a)
+vihiga: 25 linked, 0 unplaced, 0 corroborated, 0 differ, 11 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run ea14838d-73bf-452d-8573-6cf267261e59)
+individual: 36 new, 0 unchanged, 0 invalid, 0 quarantined (run a88773d1-1a9d-4973-af62-459fa3827bb5)
+bungoma: 45 linked, 0 unplaced, 0 corroborated, 0 differ, 16 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run c4dc1cb9-8f14-4ba5-8621-27a59309e6c2)
+individual: 61 new, 0 unchanged, 0 invalid, 0 quarantined (run e734386c-e23c-4810-a88b-8d4b80603566)
+busia: 28 linked, 0 unplaced, 6 corroborated, 1 differ, 15 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 4e6f426c-22e2-4f6d-9c04-311d3d582a23)
+individual: 43 new, 0 unchanged, 0 invalid, 0 quarantined (run aed1ba8f-c59f-4617-a0b3-1c7336453da4)
+siaya: 0 linked, 3 unplaced, 25 corroborated, 1 differ, 11 nominated
+office: 3 new, 0 unchanged, 0 invalid, 0 quarantined (run 43b75e9f-322a-49d6-b132-b5df9c1aa631)
+individual: 14 new, 0 unchanged, 0 invalid, 0 quarantined (run cb04c917-3d83-4c35-a816-e3c49ec0a0c7)
+kisumu: 1 linked, 0 unplaced, 27 corroborated, 7 differ, 6 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 0f8fc3f5-e030-4136-8c3c-dba48cadcc57)
+individual: 6 new, 1 unchanged, 0 invalid, 0 quarantined (run 6873c1da-738a-4f9f-9b9c-3e108069e833)
+homa-bay: 40 linked, 0 unplaced, 0 corroborated, 0 differ, 14 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 5bf8b2a5-6638-4b10-ae14-0587338ace4e)
+individual: 54 new, 0 unchanged, 0 invalid, 0 quarantined (run 7432ba5b-c000-49b0-a278-95eb63d0e9c5)
+migori: 40 linked, 0 unplaced, 0 corroborated, 0 differ, 19 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run fd410db7-9e76-43fd-8cf9-4e3c9f06d7b8)
+individual: 59 new, 0 unchanged, 0 invalid, 0 quarantined (run a30b0e25-d55a-452d-b592-1987ec901741)
+kisii: 7 linked, 1 unplaced, 37 corroborated, 0 differ, 12 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run 26fd710f-f0d4-4fd3-b09b-f159b5c4e07b)
+individual: 16 new, 4 unchanged, 0 invalid, 0 quarantined (run 1871c372-a6ec-44e5-b5f2-f609c3473f5f)
+nyamira: 1 linked, 1 unplaced, 6 corroborated, 13 differ, 15 nominated
+office: 1 new, 0 unchanged, 0 invalid, 0 quarantined (run d43d5635-b2e9-42dc-954a-3b14e0128251)
+individual: 17 new, 0 unchanged, 0 invalid, 0 quarantined (run 44ad9db0-54e1-463d-a833-5477c219993c)
+nairobi: 0 linked, 5 unplaced, 78 corroborated, 0 differ, 39 nominated
+office: 5 new, 0 unchanged, 0 invalid, 0 quarantined (run de585544-6a77-44a1-9c3a-1d99bbfd7466)
+individual: 19 new, 25 unchanged, 0 invalid, 0 quarantined (run 2c5b5d78-6322-4baa-a120-172696b7e6bb)
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":8,"invalid":0,"inReview":8}
+{"approved":8,"skipped":0}
+{"approved":8,"rejected":0,"held":0,"ignored":0}
+promoted 30d3eeb4-f3d1-45fe-9598-f6be53378fb9 -> person.individuals b19247fb-aa1f-4098-b2d7-e2c2abf0f3d0
+8 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":30,"invalid":0,"inReview":30}
+{"approved":30,"skipped":0}
+{"approved":30,"rejected":0,"held":0,"ignored":0}
+promoted acd82e4f-7378-4098-8b83-ef545c86fe05 -> person.individuals f39fa16c-5453-47a7-9f6a-03e59e75f083
+30 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":51,"invalid":0,"inReview":51}
+{"approved":51,"skipped":0}
+{"approved":51,"rejected":0,"held":0,"ignored":0}
+promoted 3b6ef913-91fd-49cb-8d3c-14ac78403a3d -> person.individuals ca907ffd-a731-41a8-8551-fcc1532f0456
+51 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted b22f16d2-adab-4c5b-8454-cfece9591921 -> governance.offices e52b5e19-f10e-4439-8260-da09fa00622c
+1 promoted, 0 deferred
+{"checked":26,"invalid":0,"inReview":26}
+{"approved":26,"skipped":0}
+{"approved":26,"rejected":0,"held":0,"ignored":0}
+promoted 5e1cb9cf-f647-45e0-b4a8-76c633f3b133 -> person.individuals c738eac8-6ef7-4c62-8631-b8965282e09c
+26 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":2,"invalid":0,"inReview":2}
+{"approved":2,"skipped":0}
+{"approved":2,"rejected":0,"held":0,"ignored":0}
+promoted 36ba7fb4-c6d6-4ace-ab69-d3ada9ed161d -> governance.offices eeb6302f-bcb5-4cbd-910a-ef0599acc2b6
+2 promoted, 0 deferred
+{"checked":28,"invalid":0,"inReview":28}
+{"approved":28,"skipped":0}
+{"approved":28,"rejected":0,"held":0,"ignored":0}
+promoted 2c74db91-10a2-4e12-a1a8-aeef33f1a5b6 -> person.individuals 1149288f-98a7-47c5-b42c-6084d7238b7f
+28 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":22,"invalid":0,"inReview":22}
+{"approved":22,"skipped":0}
+{"approved":22,"rejected":0,"held":0,"ignored":0}
+promoted a2205458-2a65-473b-bb43-95ea8b30308a -> person.individuals 0f328456-d2fc-4345-a571-7ef0aea41777
+22 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted e9f3b15e-c2f5-402f-9836-3982fb51ff0b -> governance.offices fe72b49a-ee1f-44d0-88d7-91ca7ab53b90
+1 promoted, 0 deferred
+{"checked":45,"invalid":0,"inReview":45}
+{"approved":45,"skipped":0}
+{"approved":45,"rejected":0,"held":0,"ignored":0}
+promoted 397280f0-9e69-4201-b8d0-2f3b39b7ea08 -> person.individuals c2f18b39-fe2c-4c01-8552-07bb9d48284f
+45 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted 7d656981-6922-40f1-929f-10731499b152 -> governance.offices ac345ce7-47c5-42da-ba9a-d72f8540631a
+1 promoted, 0 deferred
+{"checked":50,"invalid":0,"inReview":50}
+{"approved":50,"skipped":0}
+{"approved":50,"rejected":0,"held":0,"ignored":0}
+promoted 12855df2-658d-400c-bc3f-696287e0bd3c -> person.individuals 26445bb4-ba05-45a5-ac05-a2a67f322575
+50 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":33,"invalid":0,"inReview":33}
+{"approved":33,"skipped":0}
+{"approved":33,"rejected":0,"held":0,"ignored":0}
+promoted 8d64336f-9e65-4cf7-9d11-e36d4fb47cea -> person.individuals 7ff64807-7552-456f-b407-4e117a33d7c3
+33 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":18,"invalid":0,"inReview":18}
+{"approved":18,"skipped":0}
+{"approved":18,"rejected":0,"held":0,"ignored":0}
+promoted f3a8e272-e989-4157-b5a8-f92f2d32a606 -> person.individuals a72138fc-e48e-4e41-807a-dbebeb106acf
+18 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":68,"invalid":0,"inReview":68}
+{"approved":68,"skipped":0}
+{"approved":68,"rejected":0,"held":0,"ignored":0}
+promoted e38e232c-71ee-4475-b003-186dc8c49f9a -> person.individuals 2143dae2-6853-4cb6-a44d-a560f8c058f1
+68 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":23,"invalid":0,"inReview":23}
+{"approved":23,"skipped":0}
+{"approved":23,"rejected":0,"held":0,"ignored":0}
+promoted 1cb0bbbd-9ea3-480d-8e80-9f4cbfe1dde5 -> person.individuals 269e426f-51dd-47a5-825d-ff69454d7338
+23 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":7,"invalid":0,"inReview":7}
+{"approved":7,"skipped":0}
+{"approved":7,"rejected":0,"held":0,"ignored":0}
+promoted 9c21c714-609b-4d85-8abd-c7609b717de2 -> person.individuals 0239c3ff-6388-4399-9dbb-22346fa3cb17
+7 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":57,"invalid":0,"inReview":57}
+{"approved":57,"skipped":0}
+{"approved":57,"rejected":0,"held":0,"ignored":0}
+promoted e24f1195-da51-4429-a533-d3eae13d957d -> person.individuals 0fc6e1ff-c534-48b4-8dd3-1727f384af86
+57 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":23,"invalid":0,"inReview":23}
+{"approved":23,"skipped":0}
+{"approved":23,"rejected":0,"held":0,"ignored":0}
+promoted 48867e4d-f1ca-47b9-86fd-7d12acc3f068 -> person.individuals 16fa2192-2d28-49b8-8ea0-9dde308b8edb
+23 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":48,"invalid":0,"inReview":48}
+{"approved":48,"skipped":0}
+{"approved":48,"rejected":0,"held":0,"ignored":0}
+promoted 2466ffc2-fba3-484b-9eaa-567450a84bc3 -> person.individuals b99760ef-78cb-49c1-bf99-5b6826a15704
+48 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted 691328e6-690e-471d-ace1-cbccd88bc04e -> governance.offices 377a535a-5ab2-4da7-9295-b6c2a5e39540
+1 promoted, 0 deferred
+{"checked":41,"invalid":0,"inReview":41}
+{"approved":41,"skipped":0}
+{"approved":41,"rejected":0,"held":0,"ignored":0}
+promoted 982aa2f2-86c3-41cb-9228-be09b94eaeb3 -> person.individuals 06f0f3e7-2325-4597-be62-6f30d27e805c
+41 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":16,"invalid":0,"inReview":16}
+{"approved":16,"skipped":0}
+{"approved":16,"rejected":0,"held":0,"ignored":0}
+promoted 4072f536-53d3-4789-b3cd-ce164c0bb616 -> person.individuals a78e8d28-bb55-43ac-88ee-c09f7569cd53
+16 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":32,"invalid":0,"inReview":32}
+{"approved":32,"skipped":0}
+{"approved":32,"rejected":0,"held":0,"ignored":0}
+promoted dfdad7fd-c35c-406d-8731-c5d7743f89a5 -> person.individuals 96873401-e710-497a-af07-0083b960962a
+32 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":46,"invalid":0,"inReview":46}
+{"approved":46,"skipped":0}
+{"approved":46,"rejected":0,"held":0,"ignored":0}
+promoted a8951e99-866d-4832-bd11-7db5ba3aecff -> person.individuals d1a0a4e5-8998-4cc4-b494-d486c0f7b3f4
+46 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+deferred b461e864-bb67-49e8-8de6-6b535c087a66 (a record with the same key already exists (Key (code)=(ke/county/022/assembly/mca-unplaced/donna-kendi-anampiu) already exists.); it was not overwritten)
+0 promoted, 1 deferred
+{"checked":21,"invalid":0,"inReview":21}
+{"approved":21,"skipped":0}
+{"approved":21,"rejected":0,"held":0,"ignored":0}
+promoted 95519855-4f80-4875-af19-2c2eee3aafc5 -> person.individuals c7274d53-9299-4645-aaea-2bd93bf5a432
+21 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":17,"invalid":0,"inReview":17}
+{"approved":17,"skipped":0}
+{"approved":17,"rejected":0,"held":0,"ignored":0}
+promoted 072f6a3f-d26a-4490-acda-ac8498ad012a -> person.individuals e219f8c1-af8c-4b0c-a2c4-8855df99d56c
+17 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted 84355747-a04a-4f26-ae08-7e26cdde87b4 -> governance.offices d66e5b1f-f4ca-47f1-81ca-88824055d7f9
+1 promoted, 0 deferred
+{"checked":32,"invalid":0,"inReview":32}
+{"approved":32,"skipped":0}
+{"approved":32,"rejected":0,"held":0,"ignored":0}
+promoted 88e524aa-e0fb-4162-ab7f-24fb46227f46 -> person.individuals 677a5648-bfc5-4642-a5dd-75abd56023c6
+32 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":26,"invalid":0,"inReview":26}
+{"approved":26,"skipped":0}
+{"approved":26,"rejected":0,"held":0,"ignored":0}
+promoted bbcb4b31-89b1-4058-9629-9acdcf01cc3b -> person.individuals 2f0237c6-eac7-44ec-87c5-b06377f83a2b
+26 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":33,"invalid":0,"inReview":33}
+{"approved":33,"skipped":0}
+{"approved":33,"rejected":0,"held":0,"ignored":0}
+promoted 4c640985-f275-4092-a691-e863a092ab75 -> person.individuals cd26fd81-f75a-4f1d-8573-dbd5d6ccfcc8
+33 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted 7af3a2c6-2b1a-4394-8815-dd25b85b5bd1 -> governance.offices ec8d51bf-90b4-4348-b92b-400348e3a077
+1 promoted, 0 deferred
+{"checked":44,"invalid":0,"inReview":44}
+{"approved":44,"skipped":0}
+{"approved":44,"rejected":0,"held":0,"ignored":0}
+promoted 21aff6e9-c42a-4326-be64-97e4f630f935 -> person.individuals 6f12b389-4ec6-49d9-b750-12e921de84f7
+44 promoted, 0 deferred
+{"checked":2,"invalid":0,"inReview":2}
+{"approved":2,"skipped":0}
+{"approved":2,"rejected":0,"held":0,"ignored":0}
+promoted eae2c509-de0b-4e23-a8b2-4009556d7c31 -> governance.offices 93bbf211-6677-4ac9-9f0b-8be3bad60696
+2 promoted, 0 deferred
+{"checked":32,"invalid":0,"inReview":32}
+{"approved":32,"skipped":0}
+{"approved":32,"rejected":0,"held":0,"ignored":0}
+promoted 482dd4e7-e85f-46b0-b68a-b07d297305de -> person.individuals 90f2513e-4182-455c-a8f4-03c1e31110ca
+32 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted a312d327-0580-4a92-9255-7adf7613e6a2 -> governance.offices b9b41feb-2a84-41cd-be72-716fac89fafc
+1 promoted, 0 deferred
+{"checked":44,"invalid":0,"inReview":44}
+{"approved":44,"skipped":0}
+{"approved":44,"rejected":0,"held":0,"ignored":0}
+promoted 084d64e6-7a7c-4e1e-a092-fd9d4ff275a8 -> person.individuals b445c45c-fbff-4efb-a706-ac80a9af4a69
+44 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":15,"invalid":0,"inReview":15}
+{"approved":15,"skipped":0}
+{"approved":15,"rejected":0,"held":0,"ignored":0}
+promoted 88a0d955-4537-424b-9cd5-502bce6d4889 -> person.individuals 159bd1af-24d2-454c-868a-373b40221187
+15 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":21,"invalid":0,"inReview":21}
+{"approved":21,"skipped":0}
+{"approved":21,"rejected":0,"held":0,"ignored":0}
+promoted f4f30d85-e9f4-427f-81bc-811fd0514986 -> person.individuals 74192f10-e395-4ac2-9a45-1930115ee2dc
+21 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted ee65a095-86f6-4a17-af24-a13caa2771ca -> governance.offices 0a72ad35-e187-41a4-aff7-b61308ad09b2
+1 promoted, 0 deferred
+{"checked":17,"invalid":0,"inReview":17}
+{"approved":17,"skipped":0}
+{"approved":17,"rejected":0,"held":0,"ignored":0}
+promoted 113376ac-2f3e-4824-a76e-ad9be60f9d15 -> person.individuals 6b9ab1c0-1585-48d6-8cc8-9b5b2e81eaa6
+17 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":48,"invalid":0,"inReview":48}
+{"approved":48,"skipped":0}
+{"approved":48,"rejected":0,"held":0,"ignored":0}
+promoted 563f48ec-671e-465a-8669-aed1924ffd5f -> person.individuals 47bca777-a2d4-4345-8a86-7bc52f8a8ae3
+48 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":40,"invalid":0,"inReview":40}
+{"approved":40,"skipped":0}
+{"approved":40,"rejected":0,"held":0,"ignored":0}
+promoted 1ccf57f6-ef27-47f9-b1ff-84dba079158f -> person.individuals 0b021a4c-155e-4e23-b61c-cc82b2e369b9
+40 promoted, 0 deferred
+{"checked":8,"invalid":0,"inReview":8}
+{"approved":8,"skipped":0}
+{"approved":8,"rejected":0,"held":0,"ignored":0}
+promoted 888cc72a-14f0-4d1f-a930-ce702d2e7741 -> governance.offices 58e3d88a-f1e6-4771-bea1-b4127b3b05a0
+7 promoted, 1 deferred
+{"checked":13,"invalid":0,"inReview":13}
+{"approved":13,"skipped":0}
+{"approved":13,"rejected":0,"held":0,"ignored":0}
+promoted a997bfd8-d3e4-4f3b-93e0-2e1cfbebe562 -> person.individuals 17f640d7-ca99-4512-8817-be9e5f94f93a
+13 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":38,"invalid":0,"inReview":38}
+{"approved":38,"skipped":0}
+{"approved":38,"rejected":0,"held":0,"ignored":0}
+promoted 898ae52a-6691-4bca-bcba-9e8a2c4dc718 -> person.individuals 680a1d07-8e3d-4b3b-97c6-f0ef570491cc
+38 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":88,"invalid":0,"inReview":88}
+{"approved":88,"skipped":0}
+{"approved":88,"rejected":0,"held":0,"ignored":0}
+promoted 144e2c2e-2646-4bc0-9581-6a0e80df337f -> person.individuals 67c634c8-0472-421f-91f3-b1099cffecf5
+88 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":36,"invalid":0,"inReview":36}
+{"approved":36,"skipped":0}
+{"approved":36,"rejected":0,"held":0,"ignored":0}
+promoted c88a3e4b-a8be-461e-97e1-e1bb983bee42 -> person.individuals da036e5f-c0b6-4bdf-95de-90d01fdc1cb5
+36 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":61,"invalid":0,"inReview":61}
+{"approved":61,"skipped":0}
+{"approved":61,"rejected":0,"held":0,"ignored":0}
+promoted b946b441-e610-4a22-a0ad-33dfc48ced90 -> person.individuals 0f9c445a-2793-4be9-963f-55ad6a493ce9
+61 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":43,"invalid":0,"inReview":43}
+{"approved":43,"skipped":0}
+{"approved":43,"rejected":0,"held":0,"ignored":0}
+promoted 419b8541-c2c6-4f89-9165-fbaa9285b137 -> person.individuals 5b14aab8-f1d4-4f5e-a4bc-48318560db09
+43 promoted, 0 deferred
+{"checked":3,"invalid":0,"inReview":3}
+{"approved":3,"skipped":0}
+{"approved":3,"rejected":0,"held":0,"ignored":0}
+promoted abbc6470-0de0-436b-b2a0-9b63b20ae1bd -> governance.offices 4a06cc93-a318-4570-925d-5647d920c009
+3 promoted, 0 deferred
+{"checked":14,"invalid":0,"inReview":14}
+{"approved":14,"skipped":0}
+{"approved":14,"rejected":0,"held":0,"ignored":0}
+promoted 38ea12d8-7289-4603-b6aa-065637f14388 -> person.individuals 961a15fe-2425-473d-afd9-e87329a40a42
+14 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":6,"invalid":0,"inReview":6}
+{"approved":6,"skipped":0}
+{"approved":6,"rejected":0,"held":0,"ignored":0}
+promoted 8c3aace3-1971-4293-bd60-ca586759a1fe -> person.individuals 80d890bf-a690-47ca-b14d-29afa07b9b59
+5 promoted, 1 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":54,"invalid":0,"inReview":54}
+{"approved":54,"skipped":0}
+{"approved":54,"rejected":0,"held":0,"ignored":0}
+promoted 3a97fc92-cf75-44db-9c0f-afab810a0aa9 -> person.individuals 47bb9ef5-ffb9-4057-9e34-9b6b4de78e52
+54 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":59,"invalid":0,"inReview":59}
+{"approved":59,"skipped":0}
+{"approved":59,"rejected":0,"held":0,"ignored":0}
+promoted 48895622-5fa5-49c1-9752-74e8dd30e76a -> person.individuals 2d161350-f555-4dd5-bab6-d4620ac73733
+59 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted f57c1dc0-1f45-4691-a5fb-ba6a2fe6b9fc -> governance.offices e0971275-b592-4fe1-bfd3-37512f648b5c
+1 promoted, 0 deferred
+{"checked":16,"invalid":0,"inReview":16}
+{"approved":16,"skipped":0}
+{"approved":16,"rejected":0,"held":0,"ignored":0}
+promoted 4b0b2836-f328-43fe-b8e2-b60db74d0013 -> person.individuals fc0fb5dc-aa16-49fd-94eb-d28410662375
+16 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted 46a40be4-4923-461b-bb83-d81e99e7bda6 -> governance.offices 0db938da-19f7-4f7b-8d71-9ef82e586e9f
+1 promoted, 0 deferred
+{"checked":17,"invalid":0,"inReview":17}
+{"approved":17,"skipped":0}
+{"approved":17,"rejected":0,"held":0,"ignored":0}
+promoted e35adfca-c5f2-4894-a68d-c01fd8217335 -> person.individuals 7bdc082a-6cb7-4d5d-ae7a-c7a4bc01a5e5
+17 promoted, 0 deferred
+{"checked":5,"invalid":0,"inReview":5}
+{"approved":5,"skipped":0}
+{"approved":5,"rejected":0,"held":0,"ignored":0}
+promoted 7b4fbf62-a951-4617-91a0-cbdf867979a9 -> governance.offices f0d1d639-e2af-4a2a-a951-725872656d42
+5 promoted, 0 deferred
+{"checked":19,"invalid":0,"inReview":19}
+{"approved":19,"skipped":0}
+{"approved":19,"rejected":0,"held":0,"ignored":0}
+promoted 06815998-d652-48c0-b3d5-8934d8382161 -> person.individuals c1241f0b-c4ac-4313-9e05-673c8733706f
+19 promoted, 0 deferred

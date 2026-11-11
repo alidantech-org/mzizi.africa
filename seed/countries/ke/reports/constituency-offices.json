@@ -1,0 +1,122 @@
+{
+ "rows": 293,
+ "matched": 276,
+ "county_offices": 6,
+ "unlinked": [
+  {
+   "county": "Garissa",
+   "constituency": "Garissa Township",
+   "page": 3,
+   "status": "unmatched",
+   "score": 30.0,
+   "runnerUp": 27.3,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Tharaka-Nithi",
+   "constituency": "Chuka/ Igambang'ombe",
+   "page": 5,
+   "status": "unmatched",
+   "score": 33.3,
+   "runnerUp": 27.3,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Embu",
+   "constituency": "Mbeere South",
+   "page": 6,
+   "status": "unmatched",
+   "score": 30.0,
+   "runnerUp": 22.2,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Embu",
+   "constituency": "Mbeere North",
+   "page": 6,
+   "status": "unmatched",
+   "score": 31.6,
+   "runnerUp": 30.0,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Kitui",
+   "constituency": "Mwingi Central",
+   "page": 6,
+   "status": "unmatched",
+   "score": 74.1,
+   "runnerUp": 72.0,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Nandi",
+   "constituency": "Tindiret",
+   "page": 12,
+   "status": "unmatched",
+   "score": 87.5,
+   "runnerUp": 42.1,
+   "wardHint": "Tindiret",
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Kericho",
+   "constituency": "Bureti",
+   "page": 15,
+   "status": "unmatched",
+   "score": 50.0,
+   "runnerUp": 35.3,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Bungoma",
+   "constituency": "Sisiria",
+   "page": 17,
+   "status": "unmatched",
+   "score": 71.4,
+   "runnerUp": 40.0,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Homabay",
+   "constituency": "Homa Bay Town",
+   "page": 19,
+   "status": "unmatched",
+   "score": 77.8,
+   "runnerUp": 36.4,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Nairobi",
+   "constituency": "Dagoretti North",
+   "page": 21,
+   "status": "unmatched",
+   "score": 78.3,
+   "runnerUp": 55.2,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  },
+  {
+   "county": "Nairobi",
+   "constituency": "Dagoretti South",
+   "page": 21,
+   "status": "unmatched",
+   "score": 78.3,
+   "runnerUp": 55.2,
+   "wardHint": null,
+   "reason": "no constituency of the county is close enough"
+  }
+ ],
+ "places_created": 293,
+ "places_existing": 0,
+ "occupancies": 280,
+ "expectations_resolved": 280,
+ "expectations_missing": []
+}

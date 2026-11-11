@@ -1,0 +1,592 @@
+{
+ "resolved": [
+  {
+   "person": "Dahaba Yussuf Farah",
+   "ward": "ke/ward/wajir/wajir-south/benane/mca",
+   "score": 0.833,
+   "text": "Benand"
+  },
+  {
+   "person": "John Thuo Gachino",
+   "ward": "ke/ward/nyandarua/ol-jorok/kanjuiri-ridge/mca",
+   "score": 0.846,
+   "text": "Kanjuiri Range"
+  },
+  {
+   "person": "Yerer Peter Lokor",
+   "ward": "ke/ward/west-pokot/kacheliba/kapckok/mca",
+   "score": 0.857,
+   "text": "Kapchok"
+  },
+  {
+   "person": "Paul Kipchumba Kipyatich",
+   "ward": "ke/ward/elgeyo-marakwet/marakwet-east/embobut-embulot/mca",
+   "score": 0.857,
+   "text": "Embobur/Embolo t"
+  },
+  {
+   "person": "Evans Kimutai Kosgei",
+   "ward": "ke/ward/elgeyo-marakwet/marakwet-west/cherangany-chebororwa/mca",
+   "score": 0.976,
+   "text": "Cherang\u2019any/Che bororowa"
+  },
+  {
+   "person": "Julius Kipruto Keter",
+   "ward": "ke/ward/nandi/chesumei/chemundu-kapngetuny/mca",
+   "score": 0.944,
+   "text": "Chemundu/Kapn getung"
+  }
+ ],
+ "underReview": [
+  {
+   "person": "Dahaba Yussuf Farah",
+   "ward": "ke/ward/wajir/wajir-south/benane/mca",
+   "score": 0.833,
+   "text": "Benand"
+  },
+  {
+   "person": "John Thuo Gachino",
+   "ward": "ke/ward/nyandarua/ol-jorok/kanjuiri-ridge/mca",
+   "score": 0.846,
+   "text": "Kanjuiri Range"
+  },
+  {
+   "person": "Yerer Peter Lokor",
+   "ward": "ke/ward/west-pokot/kacheliba/kapckok/mca",
+   "score": 0.857,
+   "text": "Kapchok"
+  },
+  {
+   "person": "Paul Kipchumba Kipyatich",
+   "ward": "ke/ward/elgeyo-marakwet/marakwet-east/embobut-embulot/mca",
+   "score": 0.857,
+   "text": "Embobur/Embolo t"
+  },
+  {
+   "person": "Julius Kipruto Keter",
+   "ward": "ke/ward/nandi/chesumei/chemundu-kapngetuny/mca",
+   "score": 0.944,
+   "text": "Chemundu/Kapn getung"
+  }
+ ],
+ "duplicateOfHolder": [
+  {
+   "person": "Maria Losile",
+   "ward": "ke/ward/baringo/tiaty/loiyamorock/mca",
+   "score": 0.9
+  },
+  {
+   "person": "Hajir Mahad Farah",
+   "ward": "ke/ward/garissa/lagdera/maalimin/mca",
+   "score": 1.0
+  },
+  {
+   "person": "Kambi Mwalimu Juma",
+   "ward": "ke/ward/mombasa/likoni/shika-adabu/mca",
+   "score": 0.947
+  },
+  {
+   "person": "Neto Sakwa Alukutsa",
+   "ward": "ke/ward/nakuru/nakuru-town-west/kaptembwo/mca",
+   "score": 0.889
+  },
+  {
+   "person": "Ndegwa Clement Warutere",
+   "ward": "ke/ward/nyeri/kieni/gatarakwa/mca",
+   "score": 1.0
+  },
+  {
+   "person": "Okwiry Susan Achieng",
+   "ward": "ke/ward/siaya/gem/west-gem/mca",
+   "score": 1.0
+  },
+  {
+   "person": "Masidis Scholastica Madowo",
+   "ward": "ke/ward/siaya/alego-usonga/south-east-alego/mca",
+   "score": 1.0
+  },
+  {
+   "person": "Onyango William Kinyanyi",
+   "ward": "ke/ward/siaya/gem/yala-township/mca",
+   "score": 1.0
+  },
+  {
+   "person": "Adalla Bernard Onyango",
+   "ward": "ke/ward/siaya/ugenya/north-ugenya/mca",
+   "score": 1.0
+  },
+  {
+   "person": "Angule Simon",
+   "ward": "ke/ward/siaya/bondo/west-yimbo/mca",
+   "score": 1.0
+  },
+  {
+   "person": "Olang\u2019o Bismark Otieno",
+   "ward": "ke/ward/siaya/bondo/central-sakwa/mca",
+   "score": 0.957
+  },
+  {
+   "person": "Itabo Ruth Kuya",
+   "ward": "ke/ward/turkana/turkana-central/lodwar-township/mca",
+   "score": 1.0
+  },
+  {
+   "person": "Crispus Metinyoki Masaga Tondoo",
+   "ward": "ke/ward/taita-taveta/taveta/bomeni/mca",
+   "score": 0.833
+  },
+  {
+   "person": "Eliud Kamau Chege",
+   "ward": "ke/ward/nakuru/naivasha/maai-mahiu/mca",
+   "score": 0.941
+  },
+  {
+   "person": "Washington Booker Bonyo",
+   "ward": "ke/ward/siaya/rarieda/north-uyoma/mca",
+   "score": 0.842
+  },
+  {
+   "person": "Justus Oguta Obuya",
+   "ward": "ke/ward/siaya/rarieda/west-uyoma/mca",
+   "score": 0.824
+  },
+  {
+   "person": "Michael Omondi Otieno",
+   "ward": "ke/ward/siaya/rarieda/south-uyoma/mca",
+   "score": 0.842
+  },
+  {
+   "person": "Henry Moracha",
+   "ward": "ke/ward/kisii/bobasi/bobasi-central/mca",
+   "score": 0.833
+  },
+  {
+   "person": "Duke Oyagi Masira",
+   "ward": "ke/ward/nyamira/west-mugirango/township/mca",
+   "score": 1.0
+  },
+  {
+   "person": "Namunyu Shadrack Machanje",
+   "ward": "ke/ward/nairobi/embakasi-west/umoja-i/mca",
+   "score": 0.833
+  },
+  {
+   "person": "Juma Nicholas Okwacho",
+   "ward": "ke/ward/nairobi/kamukunji/eastleigh-north/mca",
+   "score": 0.857
+  },
+  {
+   "person": "Kevin Mark Mugambi Macharia",
+   "ward": "ke/ward/nairobi/embakasi-west/umoja-i/mca",
+   "score": 0.833
+  }
+ ],
+ "missingFromTree": [
+  {
+   "person": "Gilbert Ngetich",
+   "county": "kericho",
+   "ward": "Kisiara",
+   "constituency": null,
+   "bestScore": 0.533,
+   "bestCandidate": "Kamasian"
+  },
+  {
+   "person": "Kipngeno Kirui",
+   "county": "kericho",
+   "ward": "Tebesonik",
+   "constituency": null,
+   "bestScore": 0.471,
+   "bestCandidate": "Chepseon"
+  },
+  {
+   "person": "Francis Terer",
+   "county": "kericho",
+   "ward": "Cheboin",
+   "constituency": null,
+   "bestScore": 0.667,
+   "bestCandidate": "Chepseon"
+  },
+  {
+   "person": "Anita Mibey",
+   "county": "kericho",
+   "ward": "Chemosot",
+   "constituency": null,
+   "bestScore": 0.5,
+   "bestCandidate": "Chepseon"
+  },
+  {
+   "person": "Vincent Kirui",
+   "county": "kericho",
+   "ward": "Litein",
+   "constituency": null,
+   "bestScore": 0.5,
+   "bestCandidate": "Soliat"
+  },
+  {
+   "person": "Hillary Bosuben",
+   "county": "kericho",
+   "ward": "Cheplanget",
+   "constituency": null,
+   "bestScore": 0.556,
+   "bestCandidate": "Chepseon"
+  },
+  {
+   "person": "Amos Birir",
+   "county": "kericho",
+   "ward": "Kapkatet",
+   "constituency": null,
+   "bestScore": 0.737,
+   "bestCandidate": "Kaplelartet"
+  },
+  {
+   "person": "Donna Kendi Anampiu",
+   "county": "kiambu",
+   "ward": "Mwiki",
+   "constituency": null,
+   "bestScore": 0.667,
+   "bestCandidate": "Mwihoko"
+  },
+  {
+   "person": "Rakwach Reuben",
+   "county": "kisumu",
+   "ward": "Kolwa",
+   "constituency": null,
+   "bestScore": 0.9,
+   "bestCandidate": "Kolwa East"
+  },
+  {
+   "person": "Daniel Ndwiki",
+   "county": "machakos",
+   "ward": "Mlolongo",
+   "constituency": null,
+   "bestScore": 0.64,
+   "bestCandidate": "Syokimau/Mulolongo"
+  },
+  {
+   "person": "Samuel Kanyi Kago",
+   "county": "nairobi",
+   "ward": "Mwiki",
+   "constituency": null,
+   "bestScore": 1.0,
+   "bestCandidate": "Mwiki"
+  },
+  {
+   "person": "Keziah Akinyi Okumu",
+   "county": "nakuru",
+   "ward": "Biashara",
+   "constituency": null,
+   "bestScore": 1.0,
+   "bestCandidate": "Biashara"
+  },
+  {
+   "person": "Robert Kipyegon Langat",
+   "county": "nakuru",
+   "ward": "Biashara",
+   "constituency": null,
+   "bestScore": 1.0,
+   "bestCandidate": "Biashara"
+  },
+  {
+   "person": "Kabatha David Mwangi",
+   "county": "nyeri",
+   "ward": "Iria-ini",
+   "constituency": null,
+   "bestScore": 1.0,
+   "bestCandidate": "Iria-Ini"
+  },
+  {
+   "person": "Nyaga Wilfred Wambari",
+   "county": "nyeri",
+   "ward": "Iria-ini",
+   "constituency": null,
+   "bestScore": 1.0,
+   "bestCandidate": "Iria-Ini"
+  },
+  {
+   "person": "Ismael Bodha Kodobo",
+   "county": "tana-river",
+   "ward": "Hirimani",
+   "constituency": "Bura",
+   "bestScore": 0.333,
+   "bestCandidate": "Bura"
+  },
+  {
+   "person": "Newton Kifuso Salim",
+   "county": "taita-taveta",
+   "ward": "Wumingu/ Kishushe",
+   "constituency": "Wundanyi",
+   "bestScore": 0.37,
+   "bestCandidate": "Mwanda/Mgange"
+  },
+  {
+   "person": "Abdihakim Ali Hassan",
+   "county": "mandera",
+   "ward": "Sala",
+   "constituency": "Lafey",
+   "bestScore": 0.462,
+   "bestCandidate": "Alango Gof"
+  },
+  {
+   "person": "Thomas Kipyego Rugut",
+   "county": "uasin-gishu",
+   "ward": "Tarakwa",
+   "constituency": "Kesses",
+   "bestScore": 1.0,
+   "bestCandidate": "Tarakwa"
+  },
+  {
+   "person": "Francis Kiplangat Terer",
+   "county": "kericho",
+   "ward": "Cheboin",
+   "constituency": "Bureti",
+   "bestScore": 0.667,
+   "bestCandidate": "Chepseon"
+  },
+  {
+   "person": "Hillary Kibet Bosuben",
+   "county": "kericho",
+   "ward": "Cheplanget",
+   "constituency": "Bureti",
+   "bestScore": 0.556,
+   "bestCandidate": "Chepseon"
+  },
+  {
+   "person": "Amos Kimutai Birir",
+   "county": "kericho",
+   "ward": "Kapkatet",
+   "constituency": "Bureti",
+   "bestScore": 0.737,
+   "bestCandidate": "Kaplelartet"
+  },
+  {
+   "person": "Naaman Kipsigei Rop",
+   "county": "kericho",
+   "ward": "SoinWard",
+   "constituency": "Sigowet/Soin",
+   "bestScore": 0.667,
+   "bestCandidate": "Soin"
+  },
+  {
+   "person": "Ngetich Gilbert Kiprob",
+   "county": "kericho",
+   "ward": "Kisiara",
+   "constituency": "Bureti",
+   "bestScore": 0.533,
+   "bestCandidate": "Kamasian"
+  },
+  {
+   "person": "Anita Cherono Mibey",
+   "county": "kericho",
+   "ward": "Chemosot",
+   "constituency": "Bureti",
+   "bestScore": 0.5,
+   "bestCandidate": "Chepseon"
+  },
+  {
+   "person": "Vincent Kipngeno Kirui",
+   "county": "kericho",
+   "ward": "Litein",
+   "constituency": "Bureti",
+   "bestScore": 0.5,
+   "bestCandidate": "Soliat"
+  },
+  {
+   "person": "Kanyi Samuel Kago",
+   "county": "nairobi",
+   "ward": "Mwiki",
+   "constituency": "Kasarani",
+   "bestScore": 1.0,
+   "bestCandidate": "Mwiki"
+  },
+  {
+   "person": "Robert Mbatia",
+   "county": "nairobi",
+   "ward": "K.South",
+   "constituency": "Embakasi West",
+   "bestScore": 0.706,
+   "bestCandidate": "Kayole South"
+  }
+ ],
+ "notAWard": [
+  {
+   "person": "Azhar Ali Mbarak Speaker Lamu Assembly",
+   "text": "Seat as listed on the assembly site:  | Recent Posts | PUBLIC PARTICIPATION FOR "
+  },
+  {
+   "person": "Duncan Muratia Nyaga",
+   "text": "Seat as listed on the assembly site: Evurori Ward"
+  },
+  {
+   "person": "Opile Noela Omolo",
+   "text": "Seat as listed on the assembly site:  | Nomiated"
+  },
+  {
+   "person": "Hellen Awuor Okello",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Njathi Ciciliah Wairimu",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Virginia Waitherero",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Diana Mwangangi Katile",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Joy Muthoni Mwangi",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Agnes Njeri Muthoni",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Nancy Nyambura Mwaura",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Rachel Wanjiru Maina",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Grace Kaheti Mungai",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Lydia Akoth Otieno",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Beatrice Wandai Khungwa",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Jane Waruguru Kanyi",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Doreen Mugambi",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Umuro Kame Adano",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Tricer Jeptoo Ayabei",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Jane Wanjiru",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Jane Musangi Muthembwa",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Jane Muasya",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Catherine Apiyo Okoth",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Joyce Muthoni Kamau",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Emily Ondeje Oduor",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Asli Muhamud Mohamed",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Mary Wanjiku Kariuki",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Jeckoniah Junga Onyango",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Nasra Nanda",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Farhiya Daud Aden",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Brian Ndavua Itenya",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Benter Juma Obiero",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Joyce Jamosa Lugonzo",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Hannah Wanjiru Muriuki",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Emmy Khatemeshi Isalambo",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Malyun Ali Abdi",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Ami Peres Auma Ambala",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Naomi Kerubo Bosire",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Perpetua Mponjiwa",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Fatuma Abdiwahid Abey",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Fathiya Abdilahi Mohamed",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Lily Akoth Kidenda",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Agnes Wambui Njeri",
+   "text": "Seat as listed on the assembly site: "
+  },
+  {
+   "person": "Ann Wanjiru Njaguara",
+   "text": "Seat as listed on the assembly site:  | STAY TUNED WITH US | Sign up for our new"
+  },
+  {
+   "person": "Macharia Agnes Wanjiru",
+   "text": "Seat as listed on the assembly site:  | MCA Ethnicity, UDA"
+  },
+  {
+   "person": "Maina Patrick Karanja",
+   "text": "Seat as listed on the assembly site:  | MCA Ethnicity, UDA"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{"site": "ke/county-assembly/baringo", "pages": 5, "error": null, "hosts": ["baringoassembly.go.ke"]}
+{"site": "ke/county-assembly/busia", "pages": 3, "error": null, "hosts": ["busiaassembly.go.ke"]}
+{"site": "ke/county-assembly/garissa", "pages": 4, "error": null, "hosts": ["garissaassembly.go.ke"]}
+{"site": "ke/county-assembly/kajiado", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/kiambu", "pages": 12, "error": null, "hosts": ["kiambuassembly.go.ke"]}
+{"site": "ke/county-assembly/kisii", "pages": 9, "error": null, "hosts": ["kisiiassembly.go.ke"], "skipped": [["http://kisiiassembly.go.ke/hon-speaker/", "Denied"], ["http://kisiiassembly.go.ke/clerk-of-the-county-assembly/", "Denied"]]}
+{"site": "ke/county-assembly/kwale", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/machakos", "pages": 15, "error": null, "hosts": ["machakosassembly.go.ke"]}
+{"site": "ke/county-assembly/marsabit", "pages": 0, "error": "gate refused: host www.marsabitassembly.go.ke is outside the approved scope", "hosts": ["marsabitassembly.go.ke"]}
+{"site": "ke/county-assembly/mombasa", "pages": 7, "error": null, "hosts": ["mombasaassembly.go.ke"]}
+{"site": "ke/county-assembly/nakuru", "pages": 7, "error": null, "hosts": ["nakuruassembly.go.ke"]}
+{"site": "ke/county-assembly/nyamira", "pages": 10, "error": null, "hosts": ["nyamiraassembly.go.ke"]}
+{"site": "ke/county-assembly/samburu", "pages": 0, "error": "no reachable domain", "hosts": []}
+{"site": "ke/county-assembly/tana-river", "pages": 1, "error": null, "hosts": ["tanariverassembly.go.ke"]}
+{"site": "ke/county-assembly/turkana", "pages": 15, "error": null, "hosts": ["turkanaassembly.go.ke"]}
+{"site": "ke/county-assembly/wajir", "pages": 0, "error": "stopped: https://wajirassembly.go.ke/cgi-sys/suspendedpage.cgi answered 403; stopping (no retry around a restriction)", "hosts": ["wajirassembly.go.ke"]}

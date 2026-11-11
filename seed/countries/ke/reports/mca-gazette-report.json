@@ -1,0 +1,978 @@
+{
+ "mombasa": {
+  "linked": 1,
+  "unplaced": [],
+  "corroborated": 29,
+  "different": [],
+  "nominated": 7
+ },
+ "kwale": {
+  "linked": 20,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 10
+ },
+ "kilifi": {
+  "linked": 35,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 16
+ },
+ "tana-river": {
+  "linked": 14,
+  "unplaced": [
+   {
+    "person": "Ismael Bodha Kodobo",
+    "ward": "Hirimani",
+    "constituency": "Bura",
+    "bestScore": 0.533
+   }
+  ],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 11
+ },
+ "lamu": {
+  "linked": 0,
+  "unplaced": [],
+  "corroborated": 8,
+  "different": [
+   {
+    "ward": "ke/ward/lamu/lamu-west/shella/mca",
+    "gazette": "Azhar Ali Mbarak",
+    "siteHolder": "Atwaa Salim Mohamed"
+   },
+   {
+    "ward": "ke/ward/lamu/lamu-west/mkomani/mca",
+    "gazette": "Shekhuna Abbas Shekhuna",
+    "siteHolder": "Shekhuna Abbasss Shekhuna"
+   }
+  ],
+  "nominated": 5
+ },
+ "taita-taveta": {
+  "linked": 14,
+  "unplaced": [
+   {
+    "person": "Crispus Metinyoki Masaga Tondoo",
+    "ward": "Bomani",
+    "constituency": "Taveta",
+    "bestScore": 0.833
+   },
+   {
+    "person": "Newton Kifuso Salim",
+    "ward": "Wumingu/ Kishushe",
+    "constituency": "Wundanyi",
+    "bestScore": 0.552
+   }
+  ],
+  "corroborated": 4,
+  "different": [],
+  "nominated": 12
+ },
+ "garissa": {
+  "linked": 8,
+  "unplaced": [],
+  "corroborated": 21,
+  "different": [
+   {
+    "ward": "ke/ward/garissa/ijara/sangailu/mca",
+    "gazette": "Abdi Muhyadin Abdi",
+    "siteHolder": "Abdi Muhidin Abdi"
+   }
+  ],
+  "nominated": 14
+ },
+ "wajir": {
+  "linked": 29,
+  "unplaced": [
+   {
+    "person": "Dahaba Yussuf Farah",
+    "ward": "Benand",
+    "constituency": "Wajir South",
+    "bestScore": 0.833
+   }
+  ],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 15
+ },
+ "mandera": {
+  "linked": 29,
+  "unplaced": [
+   {
+    "person": "Abdihakim Ali Hassan",
+    "ward": "Sala",
+    "constituency": "Lafey",
+    "bestScore": 0.5
+   }
+  ],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 20
+ },
+ "marsabit": {
+  "linked": 20,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 13
+ },
+ "isiolo": {
+  "linked": 10,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 8
+ },
+ "meru": {
+  "linked": 44,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 24
+ },
+ "tharaka": {
+  "linked": 15,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 8
+ },
+ "embu": {
+  "linked": 3,
+  "unplaced": [],
+  "corroborated": 16,
+  "different": [
+   {
+    "ward": "ke/ward/embu/siakago/muminji/mca",
+    "gazette": "Newton Kariuki Ndwiga",
+    "siteHolder": "Peterson Njeru Njiru"
+   }
+  ],
+  "nominated": 4
+ },
+ "kitui": {
+  "linked": 39,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 18
+ },
+ "machakos": {
+  "linked": 3,
+  "unplaced": [],
+  "corroborated": 34,
+  "different": [
+   {
+    "ward": "ke/ward/machakos/masinga/kivaa/mca",
+    "gazette": "Aliphonce Mutinda Nzioka",
+    "siteHolder": "Alphonce Mutinda"
+   },
+   {
+    "ward": "ke/ward/machakos/kangundo/kangundo-east/mca",
+    "gazette": "Everlyne Ndunge Nguli Nzeki",
+    "siteHolder": "Everlyn Kavila"
+   },
+   {
+    "ward": "ke/ward/machakos/mwala/masii/mca",
+    "gazette": "Doughlas Muema Musyoka",
+    "siteHolder": "Douglas Muema"
+   }
+  ],
+  "nominated": 20
+ },
+ "makueni": {
+  "linked": 0,
+  "unplaced": [],
+  "corroborated": 30,
+  "different": [],
+  "nominated": 19,
+  "replacedByAddendum": [
+   "ke/person/janet-kanini-kioko-mca-makueni"
+  ]
+ },
+ "nyandarua": {
+  "linked": 24,
+  "unplaced": [
+   {
+    "person": "John Thuo Gachino",
+    "ward": "Kanjuiri Range",
+    "constituency": "Ol Kalou",
+    "bestScore": 0.857
+   }
+  ],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 16
+ },
+ "nyeri": {
+  "linked": 5,
+  "unplaced": [],
+  "corroborated": 25,
+  "different": [],
+  "nominated": 12
+ },
+ "kirinyaga": {
+  "linked": 20,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 12
+ },
+ "muranga": {
+  "linked": 0,
+  "unplaced": [],
+  "corroborated": 35,
+  "different": [],
+  "nominated": 12,
+  "replacedByAddendum": []
+ },
+ "kiambu": {
+  "linked": 0,
+  "unplaced": [
+   {
+    "person": "Donna Kendi Anampiu",
+    "ward": "Mwiki",
+    "constituency": "Ruiru",
+    "bestScore": 0.667
+   }
+  ],
+  "corroborated": 59,
+  "different": [],
+  "nominated": 22
+ },
+ "turkana": {
+  "linked": 0,
+  "unplaced": [],
+  "corroborated": 26,
+  "different": [
+   {
+    "ward": "ke/ward/turkana/turkana-north/lake-zone/mca",
+    "gazette": "Michael Egelan Ekwar",
+    "siteHolder": "John Namesek"
+   },
+   {
+    "ward": "ke/ward/turkana/turkana-west/nanaam/mca",
+    "gazette": "Philip Lomoria Ekuwam",
+    "siteHolder": "Cosmas Longor"
+   },
+   {
+    "ward": "ke/ward/turkana/turkana-central/lodwar-township/mca",
+    "gazette": "Ruth Kuya Itabo",
+    "siteHolder": "Emaase Michael Ewoi"
+   },
+   {
+    "ward": "ke/ward/turkana/loima/kotaruk-lobei/mca",
+    "gazette": "Anarclet Esekhon Lemuya",
+    "siteHolder": "Lemuya Anaclet Esekon"
+   }
+  ],
+  "nominated": 17,
+  "replacedByAddendum": []
+ },
+ "west-pokot": {
+  "linked": 19,
+  "unplaced": [
+   {
+    "person": "Yerer Peter Lokor",
+    "ward": "Kapchok",
+    "constituency": "Kacheliba",
+    "bestScore": 0.857
+   }
+  ],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 12
+ },
+ "samburu": {
+  "linked": 15,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 11
+ },
+ "trans-nzoia": {
+  "linked": 25,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 8
+ },
+ "uasin-gishu": {
+  "linked": 29,
+  "unplaced": [
+   {
+    "person": "Thomas Kipyego Rugut",
+    "ward": "Tarakwa",
+    "constituency": "Kesses",
+    "bestScore": 1.0
+   }
+  ],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 14
+ },
+ "elgeyo-marakwet": {
+  "linked": 18,
+  "unplaced": [
+   {
+    "person": "Paul Kipchumba Kipyatich",
+    "ward": "Embobur/Embolo t",
+    "constituency": "Marakwet East",
+    "bestScore": 0.839
+   },
+   {
+    "person": "Evans Kimutai Kosgei",
+    "ward": "Cherang\u2019any/Che bororowa",
+    "constituency": "Marakwet West",
+    "bestScore": 0.818
+   }
+  ],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 12
+ },
+ "nandi": {
+  "linked": 29,
+  "unplaced": [
+   {
+    "person": "Julius Kipruto Keter",
+    "ward": "Chemundu/Kapn getung",
+    "constituency": "Chesumei",
+    "bestScore": 0.718
+   }
+  ],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 14
+ },
+ "baringo": {
+  "linked": 0,
+  "unplaced": [],
+  "corroborated": 29,
+  "different": [
+   {
+    "ward": "ke/ward/baringo/tiaty/loiyamorock/mca",
+    "gazette": "Losile Maria Cheporiot",
+    "siteHolder": "Marial Losile"
+   }
+  ],
+  "nominated": 15
+ },
+ "laikipia": {
+  "linked": 15,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 6
+ },
+ "nakuru": {
+  "linked": 3,
+  "unplaced": [
+   {
+    "person": "Eliud Kamau Chege",
+    "ward": "Mai Mahiu",
+    "constituency": "Naivasha",
+    "bestScore": 0.526
+   }
+  ],
+  "corroborated": 0,
+  "different": [
+   {
+    "ward": "ke/ward/nakuru/molo/mariashoni/mca",
+    "gazette": "Bernard Kipngetich Langat",
+    "siteHolder": "Nixon Kiprotich Morogo"
+   },
+   {
+    "ward": "ke/ward/nakuru/molo/elburgon/mca",
+    "gazette": "Njuguna Mwaura",
+    "siteHolder": "Leah Wambui Nganga"
+   },
+   {
+    "ward": "ke/ward/nakuru/molo/turi/mca",
+    "gazette": "John Mwangi Macharia",
+    "siteHolder": "Peter Mwamba Kajwang"
+   },
+   {
+    "ward": "ke/ward/nakuru/molo/molo/mca",
+    "gazette": "Joseph Ngware Nganga",
+    "siteHolder": "Rose Gathoni Njoroge"
+   },
+   {
+    "ward": "ke/ward/nakuru/njoro/maunarok/mca",
+    "gazette": "Cyrus Dida Ndegwa",
+    "siteHolder": "John Kipngetich Maritim"
+   },
+   {
+    "ward": "ke/ward/nakuru/njoro/mauche/mca",
+    "gazette": "Moses Ngeny Koros",
+    "siteHolder": "Rose Chepkoech"
+   },
+   {
+    "ward": "ke/ward/nakuru/njoro/kihingo/mca",
+    "gazette": "Simon Kamau Karanja",
+    "siteHolder": "Cyrus Dida Ndegwa"
+   },
+   {
+    "ward": "ke/ward/nakuru/njoro/nessuit/mca",
+    "gazette": "Samwel Kipkemoi Tonui",
+    "siteHolder": "Benard Kiprotich Kirui"
+   },
+   {
+    "ward": "ke/ward/nakuru/njoro/lare/mca",
+    "gazette": "Philip Wanjohi Ndiritu",
+    "siteHolder": "Kagecha Loise Njeri"
+   },
+   {
+    "ward": "ke/ward/nakuru/njoro/njoro/mca",
+    "gazette": "Ezekiah Kung'u Kariuki Hezy",
+    "siteHolder": "Wilson Mwangi Wachira"
+   },
+   {
+    "ward": "ke/ward/nakuru/naivasha/hells-gate/mca",
+    "gazette": "Viginia Wamaitha Gicanga",
+    "siteHolder": "Serem Leah Jepkoech"
+   },
+   {
+    "ward": "ke/ward/nakuru/naivasha/lakeview/mca",
+    "gazette": "Alex Ndungu Mbugua",
+    "siteHolder": "Degeulle Elibas Naburuki"
+   },
+   {
+    "ward": "ke/ward/nakuru/naivasha/maiella/mca",
+    "gazette": "Jane Wanjiru Gituku",
+    "siteHolder": "Grace Wambui Mwathi"
+   },
+   {
+    "ward": "ke/ward/nakuru/naivasha/olkaria/mca",
+    "gazette": "Peter Wanjala M. Palanga",
+    "siteHolder": "John Macharia Gachiri"
+   },
+   {
+    "ward": "ke/ward/nakuru/naivasha/naivasha-east/mca",
+    "gazette": "Stanley Karanja",
+    "siteHolder": "Joseph Mwangi Muraya"
+   },
+   {
+    "ward": "ke/ward/nakuru/naivasha/viwandani/mca",
+    "gazette": "Joseph Mwangi Muraya",
+    "siteHolder": "David Kihumba Muraya"
+   },
+   {
+    "ward": "ke/ward/nakuru/gilgil/gilgil/mca",
+    "gazette": "Rose Gathoni Njoroge",
+    "siteHolder": "William Mutai"
+   },
+   {
+    "ward": "ke/ward/nakuru/gilgil/elementaita/mca",
+    "gazette": "George Wang'ang'a Nene",
+    "siteHolder": "David Wathiai Macharia"
+   },
+   {
+    "ward": "ke/ward/nakuru/gilgil/mbaruk-eburu/mca",
+    "gazette": "Michael Gathanwa Ngigi",
+    "siteHolder": "Peter Wanjala Palanga Manyonge"
+   },
+   {
+    "ward": "ke/ward/nakuru/gilgil/malewa-west/mca",
+    "gazette": "Francis Mungai Kuria",
+    "siteHolder": "Samuel Mwangi Kamau Ngarama"
+   },
+   {
+    "ward": "ke/ward/nakuru/gilgil/murindati/mca",
+    "gazette": "Peter Njoroge Maina",
+    "siteHolder": "Alex Ndungu Mbugua"
+   },
+   {
+    "ward": "ke/ward/nakuru/kuresoi-south/amalo/mca",
+    "gazette": "Robert Kipyegon Langat",
+    "siteHolder": "Eliud K Chege"
+   },
+   {
+    "ward": "ke/ward/nakuru/kuresoi-south/keringet/mca",
+    "gazette": "William Mutai",
+    "siteHolder": "Chemutai Hellen Megek"
+   },
+   {
+    "ward": "ke/ward/nakuru/kuresoi-south/kiptagich/mca",
+    "gazette": "Rose Chepkoech",
+    "siteHolder": "Njuguna Mwaura"
+   },
+   {
+    "ward": "ke/ward/nakuru/kuresoi-south/tinet/mca",
+    "gazette": "Paul Kipkorir Lang 'at",
+    "siteHolder": "Elijah Mwangi Murage"
+   },
+   {
+    "ward": "ke/ward/nakuru/kuresoi-north/kiptororo/mca",
+    "gazette": "Alex Bor",
+    "siteHolder": "Francis Mungai Kuria"
+   },
+   {
+    "ward": "ke/ward/nakuru/kuresoi-north/nyota/mca",
+    "gazette": "Wesley Kipkurui Langat",
+    "siteHolder": "Emmanuel Langat"
+   },
+   {
+    "ward": "ke/ward/nakuru/kuresoi-north/sirikwa/mca",
+    "gazette": "Emmanuel Langat",
+    "siteHolder": "Bethseba Kerubo Onkoba"
+   },
+   {
+    "ward": "ke/ward/nakuru/kuresoi-north/kamara/mca",
+    "gazette": "John Kipngetich Maritim",
+    "siteHolder": "Michael Gathanwa Ngigi"
+   },
+   {
+    "ward": "ke/ward/nakuru/subukia/subukia/mca",
+    "gazette": "Isabella Kerubo Makori",
+    "siteHolder": "ALex Bor"
+   },
+   {
+    "ward": "ke/ward/nakuru/subukia/waseges/mca",
+    "gazette": "Elijah Mwangi Murage",
+    "siteHolder": "George Wanganga Nene"
+   },
+   {
+    "ward": "ke/ward/nakuru/subukia/kabazi/mca",
+    "gazette": "George Cheruiyot Tallam",
+    "siteHolder": "Peter Njoroge Maina"
+   },
+   {
+    "ward": "ke/ward/nakuru/rongai/menengai-west/mca",
+    "gazette": "Isaac Kiptisya Rottok",
+    "siteHolder": "Benard Maina Kariuki Gatuso"
+   },
+   {
+    "ward": "ke/ward/nakuru/rongai/soin/mca",
+    "gazette": "Degaulle Elibas Naburuki",
+    "siteHolder": "Robert Kiplangat Ruto"
+   },
+   {
+    "ward": "ke/ward/nakuru/rongai/visoi/mca",
+    "gazette": "Chemutai Hellen Megek",
+    "siteHolder": "Wesley Kipkurui Langat"
+   },
+   {
+    "ward": "ke/ward/nakuru/rongai/mosop/mca",
+    "gazette": "Alex Kipkoech Arap Langat",
+    "siteHolder": "Antony Charles Kamau Kanyere"
+   },
+   {
+    "ward": "ke/ward/nakuru/rongai/solai/mca",
+    "gazette": "Nixon Kiprotich Morogo",
+    "siteHolder": "Paul Kipkorir Langat"
+   },
+   {
+    "ward": "ke/ward/nakuru/bahati/dundori/mca",
+    "gazette": "James Gathuita Mwangi",
+    "siteHolder": "Ezekiah Kungu Kariuki Hezy"
+   },
+   {
+    "ward": "ke/ward/nakuru/bahati/kabatini/mca",
+    "gazette": "Leah Wambui Ng'ang'a",
+    "siteHolder": "George Cheruiyot Tallaama"
+   },
+   {
+    "ward": "ke/ward/nakuru/bahati/kiamaina/mca",
+    "gazette": "Paul Waweru Warege",
+    "siteHolder": "John Mwangi Macharia"
+   },
+   {
+    "ward": "ke/ward/nakuru/bahati/lanet-umoja/mca",
+    "gazette": "Samuel Mwangi Kamau Ngarama",
+    "siteHolder": "Jane Wanjiru Gituku"
+   },
+   {
+    "ward": "ke/ward/nakuru/bahati/bahati/mca",
+    "gazette": "Grace Wambui Mwathi",
+    "siteHolder": "Paul Waweru Warege"
+   },
+   {
+    "ward": "ke/ward/nakuru/nakuru-town-west/barut/mca",
+    "gazette": "Benard Kiprotich Kirui",
+    "siteHolder": "Isabella Kerubo Makori"
+   },
+   {
+    "ward": "ke/ward/nakuru/nakuru-town-west/london/mca",
+    "gazette": "Benard Maina Kariuki Gatuso",
+    "siteHolder": "Moses Ngeny Koros"
+   },
+   {
+    "ward": "ke/ward/nakuru/nakuru-town-west/kapkures/mca",
+    "gazette": "Robert Kiplangat Rutto",
+    "siteHolder": "Samuel Kipkemoi Tonui"
+   },
+   {
+    "ward": "ke/ward/nakuru/nakuru-town-west/rhoda/mca",
+    "gazette": "John Macharia Gachiri",
+    "siteHolder": "Isaac Kiptisya Rottok"
+   },
+   {
+    "ward": "ke/ward/nakuru/nakuru-town-west/shaabab/mca",
+    "gazette": "David Wathiai Macharia",
+    "siteHolder": "Mwangi Catherine Wanjeri"
+   },
+   {
+    "ward": "ke/ward/nakuru/nakuru-town-east/kivumbini/mca",
+    "gazette": "Neto Sakwa Alukutsa",
+    "siteHolder": "Stanley Karanja"
+   },
+   {
+    "ward": "ke/ward/nakuru/nakuru-town-east/flamingo/mca",
+    "gazette": "David Kihumba Muraya",
+    "siteHolder": "Benard Kipngetich Langat"
+   },
+   {
+    "ward": "ke/ward/nakuru/nakuru-town-east/menengai/mca",
+    "gazette": "Wajeff Wilson Mwangi Wachira",
+    "siteHolder": "Simon Kamau Karanja"
+   },
+   {
+    "ward": "ke/ward/nakuru/nakuru-town-east/nakuru-east/mca",
+    "gazette": "Antony Charles Kamau Kanyere",
+    "siteHolder": "Joel Karuri Maina"
+   }
+  ],
+  "nominated": 20
+ },
+ "narok": {
+  "linked": 29,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 19
+ },
+ "kajiado": {
+  "linked": 0,
+  "unplaced": [],
+  "corroborated": 25,
+  "different": [],
+  "nominated": 15,
+  "replacedByAddendum": []
+ },
+ "kericho": {
+  "linked": 0,
+  "unplaced": [
+   {
+    "person": "Ngetich Gilbert Kiprob",
+    "ward": "Kisiara",
+    "constituency": "Bureti",
+    "bestScore": 0.533
+   },
+   {
+    "person": "Kipngeno Kirui",
+    "ward": "Tebesonik",
+    "constituency": "Bureti",
+    "bestScore": 0.471
+   },
+   {
+    "person": "Francis Kiplangat Terer",
+    "ward": "Cheboin",
+    "constituency": "Bureti",
+    "bestScore": 0.667
+   },
+   {
+    "person": "Anita Cherono Mibey",
+    "ward": "Chemosot",
+    "constituency": "Bureti",
+    "bestScore": 0.5
+   },
+   {
+    "person": "Vincent Kipngeno Kirui",
+    "ward": "Litein",
+    "constituency": "Bureti",
+    "bestScore": 0.5
+   },
+   {
+    "person": "Hillary Kibet Bosuben",
+    "ward": "Cheplanget",
+    "constituency": "Bureti",
+    "bestScore": 0.556
+   },
+   {
+    "person": "Amos Kimutai Birir",
+    "ward": "Kapkatet",
+    "constituency": "Bureti",
+    "bestScore": 0.737
+   },
+   {
+    "person": "Naaman Kipsigei Rop",
+    "ward": "SoinWard",
+    "constituency": "Sigowet/Soin",
+    "bestScore": 0.667
+   }
+  ],
+  "corroborated": 22,
+  "different": [],
+  "nominated": 6
+ },
+ "bomet": {
+  "linked": 25,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 13
+ },
+ "kakamega": {
+  "linked": 59,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 29
+ },
+ "vihiga": {
+  "linked": 25,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 11
+ },
+ "bungoma": {
+  "linked": 0,
+  "unplaced": [],
+  "corroborated": 45,
+  "different": [],
+  "nominated": 16,
+  "replacedByAddendum": []
+ },
+ "busia": {
+  "linked": 0,
+  "unplaced": [],
+  "corroborated": 34,
+  "different": [
+   {
+    "ward": "ke/ward/busia/butula/marachi-north/mca",
+    "gazette": "Zaccheaus Adukeyi Kubasu",
+    "siteHolder": "Zacchaeus Kubasu"
+   }
+  ],
+  "nominated": 18,
+  "replacedByAddendum": []
+ },
+ "siaya": {
+  "linked": 0,
+  "unplaced": [
+   {
+    "person": "Washington Booker Bonyo",
+    "ward": "North Woma",
+    "constituency": "Rarieda",
+    "bestScore": 0.857
+   },
+   {
+    "person": "Michael Omondi Otieno",
+    "ward": "South Woma",
+    "constituency": "Rarieda",
+    "bestScore": 0.857
+   },
+   {
+    "person": "Justus Oguta Obuya",
+    "ward": "West Woma",
+    "constituency": "Rarieda",
+    "bestScore": 0.632
+   }
+  ],
+  "corroborated": 25,
+  "different": [
+   {
+    "ward": "ke/ward/siaya/bondo/west-yimbo/mca",
+    "gazette": "Simon Otieno Angule",
+    "siteHolder": "Angule Simeon"
+   }
+  ],
+  "nominated": 12,
+  "replacedByAddendum": []
+ },
+ "kisumu": {
+  "linked": 1,
+  "unplaced": [],
+  "corroborated": 27,
+  "different": [
+   {
+    "ward": "ke/ward/kisumu/kisumu-east/nyalenda-b/mca",
+    "gazette": "Ratib Ahmed Boitone",
+    "siteHolder": "Were James"
+   },
+   {
+    "ward": "ke/ward/kisumu/kisumu-west/west-kisumu/mca",
+    "gazette": "Kenedy Odhiambo Ouko",
+    "siteHolder": "Ouko Kennedy"
+   },
+   {
+    "ward": "ke/ward/kisumu/kisumu-central/railways/mca",
+    "gazette": "Samwel Onyango Omollo",
+    "siteHolder": "Omollo Samuel"
+   },
+   {
+    "ward": "ke/ward/kisumu/kisumu-east/shaurimoyo-kaloleni/mca",
+    "gazette": "Carren Ajwang Odhiambo",
+    "siteHolder": "Odhiambo Caren"
+   },
+   {
+    "ward": "ke/ward/kisumu/kisumu-central/kondele/mca",
+    "gazette": "Oketch Joachim Omieno",
+    "siteHolder": "Joakim Oketch"
+   },
+   {
+    "ward": "ke/ward/kisumu/kisumu-central/nyalenda-a/mca",
+    "gazette": "James Oyugi Were",
+    "siteHolder": "Boitone Ratib"
+   },
+   {
+    "ward": "ke/ward/kisumu/nyakach/west-nyakach/mca",
+    "gazette": "James Ochieng Omolo",
+    "siteHolder": "Omollo James"
+   }
+  ],
+  "nominated": 6
+ },
+ "homa-bay": {
+  "linked": 40,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 14
+ },
+ "migori": {
+  "linked": 40,
+  "unplaced": [],
+  "corroborated": 0,
+  "different": [],
+  "nominated": 19
+ },
+ "kisii": {
+  "linked": 7,
+  "unplaced": [
+   {
+    "person": "Henry Moracha",
+    "ward": "Basi Cenrtal",
+    "constituency": "Bobasi",
+    "bestScore": 0.846
+   }
+  ],
+  "corroborated": 37,
+  "different": [],
+  "nominated": 12
+ },
+ "nyamira": {
+  "linked": 1,
+  "unplaced": [
+   {
+    "person": "Duke Oyagi Masira",
+    "ward": "Township",
+    "constituency": "West Mugirango",
+    "bestScore": 1.0
+   }
+  ],
+  "corroborated": 6,
+  "different": [
+   {
+    "ward": "ke/ward/nyamira/kitutu-masaba/rigoma/mca",
+    "gazette": "Emmanuel Nyambega Gisesa",
+    "siteHolder": "Benson Sironga"
+   },
+   {
+    "ward": "ke/ward/nyamira/kitutu-masaba/gachuba/mca",
+    "gazette": "Henry Onsinyo Obwaya",
+    "siteHolder": "Gilbert Nchore"
+   },
+   {
+    "ward": "ke/ward/nyamira/kitutu-masaba/kemera/mca",
+    "gazette": "James Matinga Nyachaki",
+    "siteHolder": "Nyachae George Morara"
+   },
+   {
+    "ward": "ke/ward/nyamira/kitutu-masaba/magombo/mca",
+    "gazette": "Reuben Miinda Riechi",
+    "siteHolder": "Richard Onyinkwa"
+   },
+   {
+    "ward": "ke/ward/nyamira/kitutu-masaba/gesima/mca",
+    "gazette": "Kenneth Atuth Nyameino",
+    "siteHolder": "Charles Mokaya Maroko"
+   },
+   {
+    "ward": "ke/ward/nyamira/west-mugirango/nyamaiya/mca",
+    "gazette": "Elijah Osiemo Thomas",
+    "siteHolder": "Daniel Raban Benards Masira -"
+   },
+   {
+    "ward": "ke/ward/nyamira/west-mugirango/bonyamatuta/mca",
+    "gazette": "Julius Kimwom Matwere",
+    "siteHolder": "Robinson Mocheche"
+   },
+   {
+    "ward": "ke/ward/nyamira/north-mugirango/itibo/mca",
+    "gazette": "Lameck Nyakianga Sikweya",
+    "siteHolder": "Samuel Nyangau Nyanchama"
+   },
+   {
+    "ward": "ke/ward/nyamira/north-mugirango/bomwagamo/mca",
+    "gazette": "Julius Obonyo Nyangana",
+    "siteHolder": "Barongo Charles Getabu"
+   },
+   {
+    "ward": "ke/ward/nyamira/north-mugirango/bokeira/mca",
+    "gazette": "Joel Ombongi Nyang'au",
+    "siteHolder": "Callen Kemuma Atuya"
+   },
+   {
+    "ward": "ke/ward/nyamira/north-mugirango/magwagwa/mca",
+    "gazette": "Abel Mokaya Mose",
+    "siteHolder": "Fred Nyachae Omayio"
+   },
+   {
+    "ward": "ke/ward/nyamira/borabu/kiabonyoru/mca",
+    "gazette": "Thomas Vincent Benecha",
+    "siteHolder": "Duke Omoti"
+   },
+   {
+    "ward": "ke/ward/nyamira/borabu/esise/mca",
+    "gazette": "Josiah Obegi Mang'era",
+    "siteHolder": "Joseph Nyarang'o"
+   }
+  ],
+  "nominated": 15
+ },
+ "nairobi": {
+  "linked": 0,
+  "unplaced": [
+   {
+    "person": "Kanyi Samuel Kago",
+    "ward": "Mwiki",
+    "constituency": "Kasarani",
+    "bestScore": 1.0
+   },
+   {
+    "person": "Kevin Mark Mugambi Macharia",
+    "ward": "Umoja 1",
+    "constituency": "Embakasi West",
+    "bestScore": 0.857
+   },
+   {
+    "person": "Namunyu Shadrack Machanje",
+    "ward": "Umoja 2",
+    "constituency": "Embakasi West",
+    "bestScore": 0.857
+   },
+   {
+    "person": "Robert Mbatia",
+    "ward": "K.South",
+    "constituency": "Embakasi West",
+    "bestScore": 0.857
+   },
+   {
+    "person": "Juma Nicholas Okwacho",
+    "ward": "Eastleigh South",
+    "constituency": "Kamukunji",
+    "bestScore": 0.867
+   }
+  ],
+  "corroborated": 78,
+  "different": [],
+  "nominated": 39
+ }
+}

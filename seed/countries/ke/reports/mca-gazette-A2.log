@@ -1,0 +1,95 @@
+busia: 0 linked, 0 unplaced, 34 corroborated, 1 differ, 18 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 4c0808df-8e8e-44b4-9bb5-b63585e651cf)
+individual: 0 new, 18 unchanged, 0 invalid, 0 quarantined (run d73e2299-4c61-493f-b159-e893f827d5e1)
+bungoma: 0 linked, 0 unplaced, 45 corroborated, 0 differ, 16 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 050b3393-8fd7-419f-ae02-6289947ab761)
+individual: 0 new, 16 unchanged, 0 invalid, 0 quarantined (run a17f7a6e-2a09-4b58-86d5-7c313485696e)
+siaya: 0 linked, 3 unplaced, 25 corroborated, 1 differ, 12 nominated
+office: 0 new, 3 unchanged, 0 invalid, 0 quarantined (run a5d305be-820e-4b33-bfaa-f468a057fe9e)
+individual: 0 new, 15 unchanged, 0 invalid, 0 quarantined (run 4d320daa-4b4b-4e29-9c99-3206b7dc5c3c)
+muranga: 0 linked, 0 unplaced, 35 corroborated, 0 differ, 12 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 05fbe466-fda3-4bab-afb5-8855f5a9432b)
+individual: 0 new, 12 unchanged, 0 invalid, 0 quarantined (run 8eb104cf-c4ca-4828-b5d5-f515efc0f3aa)
+kajiado: 0 linked, 0 unplaced, 25 corroborated, 0 differ, 15 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 4b91670d-fb09-44d6-915e-afa72ac51723)
+individual: 0 new, 15 unchanged, 0 invalid, 0 quarantined (run fbc664d0-1817-4897-9eec-de2b251e4fc6)
+makueni: 0 linked, 0 unplaced, 30 corroborated, 0 differ, 19 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run 8e2aaedf-d9bb-4072-971c-55573b5e8ac6)
+individual: 0 new, 19 unchanged, 0 invalid, 0 quarantined (run 557e1b2c-253a-4b9d-ab59-cde32fc595b9)
+turkana: 0 linked, 0 unplaced, 26 corroborated, 4 differ, 17 nominated
+office: 0 new, 0 unchanged, 0 invalid, 0 quarantined (run d3e3353e-15ed-48c4-9045-3f608b416376)
+individual: 0 new, 17 unchanged, 0 invalid, 0 quarantined (run d08e5c9e-f6e2-43da-8776-e3027296f4af)
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+nReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":1,"invalid":0,"inReview":1}
+{"approved":1,"skipped":0}
+{"approved":1,"rejected":0,"held":0,"ignored":0}
+promoted 2f616dcd-1746-402c-b541-f65006dc95a6 -> person.individuals 9278f7e8-f863-480b-9141-070eda71ba68
+1 promoted, 0 deferred
+{"checked":0,"invalid":0,"inReview":0}
+{"approved":0,"skipped":0}
+{"approved":0,"rejected":0,"held":0,"ignored":0}
+0 promoted, 0 deferred
+{"checked":2,"invalid":0,"inReview":2}
+{"approved":2,"skipped":0}
+{"approved":2,"rejected":0,"held":0,"ignored":0}
+promoted 73009b14-ac03-47d8-91bb-6bf30c8c3f60 -> person.individuals 0ac9e7c4-d9f6-428f-a26f-c5ee03186acd
+2 promoted, 0 deferred

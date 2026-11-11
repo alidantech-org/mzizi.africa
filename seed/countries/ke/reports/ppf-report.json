@@ -1,0 +1,51 @@
+{
+ "years": [
+  "fy/ke/2013/14",
+  "fy/ke/2014/15",
+  "fy/ke/2015/16",
+  "fy/ke/2016/17",
+  "fy/ke/2017/18",
+  "fy/ke/2018/19",
+  "fy/ke/2019/20",
+  "fy/ke/2020/21",
+  "fy/ke/2021/22",
+  "fy/ke/2022/23",
+  "fy/ke/2023/24",
+  "fy/ke/2026/27"
+ ],
+ "rows": 167,
+ "tablesRefused": [],
+ "linkedBy": {
+  "unlinked": 3,
+  "name": 48,
+  "former-name": 3,
+  "spelling-variant": 1,
+  "party-code": 48
+ },
+ "unlinkedParties": [
+  "The National Alliance (TNA )",
+  "The National Alliance (TNA)",
+  "United Republican Party (URP)"
+ ],
+ "spellingVariants": [
+  "Mabandiliko Party of Kenya"
+ ],
+ "totalByYear": {
+  "fy/ke/2013/14": 194940000.0,
+  "fy/ke/2014/15": 342000000.0,
+  "fy/ke/2015/16": 348840000.0,
+  "fy/ke/2016/17": 351979560.0,
+  "fy/ke/2017/18": 352630500.0,
+  "fy/ke/2018/19": 637630500.0,
+  "fy/ke/2019/20": 827630500.0,
+  "fy/ke/2020/21": 945478000.0,
+  "fy/ke/2021/22": 2351497000.0,
+  "fy/ke/2022/23": 840136299.0,
+  "fy/ke/2023/24": 577885002.0,
+  "fy/ke/2026/27": 1336175001.0
+ },
+ "reconciliation": "not possible: no national budget or Controller of Budget lines for the Fund are loaded; the documents state no totals",
+ "runs": {
+  "transfer": "7683f270-7935-431f-9936-0cfbdf0d36dd"
+ }
+}
