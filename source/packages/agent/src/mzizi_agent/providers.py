@@ -1,4 +1,5 @@
 """Provider-neutral model interface. Concrete providers (hosted models, local models) implement `complete`."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

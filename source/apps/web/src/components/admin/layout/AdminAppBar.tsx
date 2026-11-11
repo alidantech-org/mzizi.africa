@@ -33,7 +33,7 @@ export default function AdminAppBar({ setSidebarOpen }: AdminAppBarProps) {
         </div>
         <div className="flex items-center gap-x-2 lg:gap-x-3">
           <AppBarNotifications />
-          <AppBarThemeToggle /> 
+          <AppBarThemeToggle />
           <AppBarSearch />
         </div>
       </div>

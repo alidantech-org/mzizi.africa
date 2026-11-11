@@ -3,11 +3,15 @@
 `public/raw/` is an archive that predates this registry. Nothing here lists it for deletion, and the stores refuse to write or
 delete a key under it. Every operation is a dry run unless `apply` is given.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
 
 import psycopg
+
+from mzizi_database import Connection, required
 
 from .keys import PROTECTED_PREFIXES, TMP_PREFIX, is_protected
 from .store import ObjectStore, StoreError
@@ -24,7 +28,9 @@ def bucket_summary(store: ObjectStore) -> dict:
     """Objects and bytes per two-segment prefix, split into protected and removable."""
     out: dict = {"protected": {}, "removable": {}}
     for key, size in store.list_keys(""):
-        bucket = out["protected" if is_protected(key) else "removable"].setdefault(_prefix(key), {"objects": 0, "bytes": 0})
+        bucket = out["protected" if is_protected(key) else "removable"].setdefault(
+            _prefix(key), {"objects": 0, "bytes": 0}
+        )
         bucket["objects"] += 1
         bucket["bytes"] += size
     return out
@@ -33,7 +39,13 @@ def bucket_summary(store: ObjectStore) -> dict:
 def wipe_bucket(store: ObjectStore, *, dry_run: bool = True) -> dict:
     """Deletes every object outside the protected prefixes. The protected set is counted before and after and must not change."""
     before = bucket_summary(store)
-    report = {"dry_run": dry_run, "protected_prefixes": list(PROTECTED_PREFIXES), "protected": before["protected"], "removable": before["removable"], "deleted": 0}
+    report = {
+        "dry_run": dry_run,
+        "protected_prefixes": list(PROTECTED_PREFIXES),
+        "protected": before["protected"],
+        "removable": before["removable"],
+        "deleted": 0,
+    }
     if dry_run:
         return report
     batch: list[str] = []
@@ -53,27 +65,30 @@ def wipe_bucket(store: ObjectStore, *, dry_run: bool = True) -> dict:
     return report
 
 
-def external_references(conn: psycopg.Connection) -> list[dict]:
+def external_references(conn: Connection) -> list[dict]:
     """Tables outside the filesystem schema whose rows point at filesystem rows (they block a registry wipe)."""
     rows = conn.execute(
         """SELECT c.conrelid::regclass::text AS tbl, a.attname AS col FROM pg_constraint c JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = c.conkey[1]
-            WHERE c.contype = 'f' AND c.confrelid::regclass::text LIKE 'filesystem.%%' AND c.conrelid::regclass::text NOT LIKE 'filesystem.%%' ORDER BY 1, 2""").fetchall()
+            WHERE c.contype = 'f' AND c.confrelid::regclass::text LIKE 'filesystem.%%' AND c.conrelid::regclass::text NOT LIKE 'filesystem.%%' ORDER BY 1, 2"""
+    ).fetchall()
     out = []
     for r in rows:
-        n = conn.execute(f"SELECT count(*) AS n FROM {r['tbl']} WHERE {r['col']} IS NOT NULL").fetchone()["n"]
+        n = required(conn.execute(f"SELECT count(*) AS n FROM {r['tbl']} WHERE {r['col']} IS NOT NULL").fetchone())["n"]
         if n:
             out.append({"table": r["tbl"], "column": r["col"], "rows": n})
     return out
 
 
-def wipe_registry(conn: psycopg.Connection, *, dry_run: bool = True, drop_dependents: bool = False) -> dict:
+def wipe_registry(conn: Connection, *, dry_run: bool = True, drop_dependents: bool = False) -> dict:
     """Deletes every filesystem row in one transaction. Rows of other schemas that reference file versions block the wipe unless
     `drop_dependents` is given, in which case exactly those rows are deleted too (they must be reloaded from seed afterwards)."""
-    counts = {t: conn.execute(f"SELECT count(*) AS n FROM filesystem.{t}").fetchone()["n"] for t in TABLES}
+    counts = {t: required(conn.execute(f"SELECT count(*) AS n FROM filesystem.{t}").fetchone())["n"] for t in TABLES}
     refs = external_references(conn)
-    report = {"dry_run": dry_run, "rows": counts, "dependents": refs, "deleted_dependents": {}}
+    report: dict[str, Any] = {"dry_run": dry_run, "rows": counts, "dependents": refs, "deleted_dependents": {}}
     if refs and not drop_dependents:
-        report["error"] = "rows in other schemas reference file versions; pass --drop-dependents to delete them and reload them from seed afterwards"
+        report["error"] = (
+            "rows in other schemas reference file versions; pass --drop-dependents to delete them and reload them from seed afterwards"
+        )
         return report
     if dry_run:
         return report
@@ -85,7 +100,9 @@ def wipe_registry(conn: psycopg.Connection, *, dry_run: bool = True, drop_depend
                 try:
                     with conn.transaction():
                         done = conn.execute(f"DELETE FROM {ref['table']} WHERE {ref['column']} IS NOT NULL").rowcount
-                    report["deleted_dependents"][ref["table"]] = report["deleted_dependents"].get(ref["table"], 0) + done
+                    report["deleted_dependents"][ref["table"]] = (
+                        report["deleted_dependents"].get(ref["table"], 0) + done
+                    )
                 except psycopg.errors.ForeignKeyViolation:
                     still.append(ref)
             pending = still
@@ -100,10 +117,14 @@ def wipe_registry(conn: psycopg.Connection, *, dry_run: bool = True, drop_depend
         conn.execute("UPDATE filesystem.files SET current_version_id = NULL")
         conn.execute("DELETE FROM filesystem.file_versions")
         conn.execute("DELETE FROM filesystem.files")
-        while conn.execute("DELETE FROM filesystem.folders WHERE id NOT IN (SELECT parent_id FROM filesystem.folders WHERE parent_id IS NOT NULL)").rowcount:
+        while conn.execute(
+            "DELETE FROM filesystem.folders WHERE id NOT IN (SELECT parent_id FROM filesystem.folders WHERE parent_id IS NOT NULL)"
+        ).rowcount:
             pass
         conn.execute("DELETE FROM filesystem.tags")
-    report["remaining"] = {t: conn.execute(f"SELECT count(*) AS n FROM filesystem.{t}").fetchone()["n"] for t in TABLES}
+    report["remaining"] = {
+        t: required(conn.execute(f"SELECT count(*) AS n FROM filesystem.{t}").fetchone())["n"] for t in TABLES
+    }
     return report
 
 
@@ -122,13 +143,15 @@ class VerifyReport:
         return not (self.missing or self.mismatched or self.misplaced or self.unregistered)
 
 
-def verify_registry(conn: psycopg.Connection, store: ObjectStore) -> VerifyReport:
+def verify_registry(conn: Connection, store: ObjectStore) -> VerifyReport:
     """Registry against bucket: every version's object exists at its computed key with the registered size and hash, and no object
     outside the protected archive and the temporary upload area is unregistered."""
     report = VerifyReport()
     listed = dict(store.list_keys(""))
     registered: dict[str, dict] = {}
-    for row in conn.execute("SELECT id, s3_key, sha256, size_bytes, filesystem.version_key(id) AS expected FROM filesystem.file_versions").fetchall():
+    for row in conn.execute(
+        "SELECT id, s3_key, sha256, size_bytes, filesystem.version_key(id) AS expected FROM filesystem.file_versions"
+    ).fetchall():
         report.versions += 1
         registered[row["s3_key"]] = row
         if row["s3_key"] != row["expected"]:

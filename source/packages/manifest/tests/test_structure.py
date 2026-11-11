@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pytest
 
 from mzizi_manifest import bundle as b
@@ -8,7 +6,7 @@ from mzizi_manifest.paths import SEED_ROOT
 from mzizi_manifest.validate import validate
 from mzizi_scraping import transforms
 
-FIXTURES_ROOT = SEED_ROOT / "fixtures"
+FIXTURES_ROOT = SEED_ROOT / "_fixtures"
 
 SAMPLES = FIXTURES_ROOT / "site-structures"
 
@@ -37,7 +35,10 @@ def test_site_extending_a_family_resolves_modules_and_variables():
     assert report.ok, report.errors
     modules = effective_modules(site, family)
     assert "tenders" in modules
-    assert substitute(modules["tenders"]["discover"]["listing"]["url"], {"tenders_path": "/tenders/open"}) == "/tenders/open"
+    assert (
+        substitute(modules["tenders"]["discover"]["listing"]["url"], {"tenders_path": "/tenders/open"})
+        == "/tenders/open"
+    )
     with pytest.raises(KeyError):
         substitute("${missing}", {})
 
@@ -51,15 +52,21 @@ def mutate(name, path, text):
 
 def test_unknown_tag_is_rejected():
     original = (SAMPLES / "html-publications/modules/budgets.yml").read_text()
-    report = validate(mutate("html-publications", "modules/budgets.yml", original.replace("kind:budget", "kind:unicorn")))
+    report = validate(
+        mutate("html-publications", "modules/budgets.yml", original.replace("kind:budget", "kind:unicorn"))
+    )
     assert any("unknown tag 'kind:unicorn'" in e for e in report.errors)
 
 
 def test_unknown_transform_and_unknown_mapping_field_are_rejected():
     mapping = (SAMPLES / "html-publications/mappings/budgets.yml").read_text()
-    report = validate(mutate("html-publications", "mappings/budgets.yml", mapping.replace("collapse_whitespace", "shell_exec")))
+    report = validate(
+        mutate("html-publications", "mappings/budgets.yml", mapping.replace("collapse_whitespace", "shell_exec"))
+    )
     assert any("unknown transform 'shell_exec'" in e for e in report.errors)
-    report = validate(mutate("html-publications", "mappings/budgets.yml", mapping.replace("publishedOn:", "madeUpField:")))
+    report = validate(
+        mutate("html-publications", "mappings/budgets.yml", mapping.replace("publishedOn:", "madeUpField:"))
+    )
     assert any("has no field 'madeUpField'" in e for e in report.errors)
 
 
@@ -94,7 +101,9 @@ def test_notes_are_required():
 
 def test_url_outside_policy_scope_is_rejected():
     original = (SAMPLES / "html-publications/modules/budgets.yml").read_text()
-    report = validate(mutate("html-publications", "modules/budgets.yml", original.replace("/publications/budgets", "/admin/budgets")))
+    report = validate(
+        mutate("html-publications", "modules/budgets.yml", original.replace("/publications/budgets", "/admin/budgets"))
+    )
     assert any("outside policy.scope.paths.allow" in e for e in report.errors)
 
 
@@ -111,14 +120,20 @@ def test_transform_library():
 
 def test_an_invalid_selector_is_a_validation_error_not_a_crash():
     original = (SAMPLES / "html-publications/modules/budgets.yml").read_text()
-    report = validate(mutate("html-publications", "modules/budgets.yml", original.replace('css: "article.pub"', 'css: "div:has(> a > b)"')))
+    report = validate(
+        mutate(
+            "html-publications",
+            "modules/budgets.yml",
+            original.replace('css: "article.pub"', 'css: "div:has(> a > b)"'),
+        )
+    )
     assert any("selector error" in e for e in report.errors)
 
 
 # --- content sections -------------------------------------------------------------------------
 
 
-SECTION_SEED = SEED_ROOT / "ke" / "registry" / "ke-site-sections.json"
+SECTION_SEED = SEED_ROOT / "countries" / "ke" / "registry" / "ke-site-sections.json"
 
 
 def with_sections(text):
@@ -156,7 +171,14 @@ def test_seeded_sections_are_valid_and_matchable():
 
     seed = json.loads(SECTION_SEED.read_text())
     assert seed["_meta"]["label"] == "Custom-prepared from manual research"
-    assert {"ke/county-government", "ke/county-assembly", "ke/ngcdf", "ke/ministry", "ke/commission", "ke/regulator"} <= set(seed["families"])
+    assert {
+        "ke/county-government",
+        "ke/county-assembly",
+        "ke/ngcdf",
+        "ke/ministry",
+        "ke/commission",
+        "ke/regulator",
+    } <= set(seed["families"])
     for family, sections in seed["families"].items():
         assert validate_sections({"sections": sections}) == [], family
     hit = match_rule(seed["families"]["ke/county-government"], "/tenders/2025")

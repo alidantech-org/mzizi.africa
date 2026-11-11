@@ -5,6 +5,7 @@ the object key is the registry path, the object `<access><logical_root>/<path>`.
 `_folder.yaml`; files carry the versioning stated by their manifest entry. Identity is the registry code derived from the path. A
 file that disappears locally is reported by nothing and deleted nowhere.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -15,9 +16,9 @@ import psycopg
 from mzizi_manifest import seed_registry as seeds
 from mzizi_manifest.paths import SEED_ROOT
 
-from .authz import Authorizer, OperatorAuthorizer
-from .repository import Conflict, PermissionDenied, Repository
+from .authz import Authorizer
 from .codes import child_code, is_code
+from .repository import Conflict, PermissionDenied, Repository
 from .service import FilesystemService, Registration
 
 
@@ -99,7 +100,12 @@ def _descriptor_fields(directory: str, root: Path) -> dict:
         fields["access_authorization"] = {k: str(v) for k, v in d["authorization"].items()}
     if d.get("allow_weaker_children"):
         fields["allow_weaker_children"] = True
-    for src, dst in (("role", "artifact_role"), ("acquisition_class", "acquisition_class"), ("preparation", "preparation"), ("description", "description")):
+    for src, dst in (
+        ("role", "artifact_role"),
+        ("acquisition_class", "acquisition_class"),
+        ("preparation", "preparation"),
+        ("description", "description"),
+    ):
         if d.get(src):
             fields[dst] = d[src]
     if d.get("seed") is not None:
@@ -131,7 +137,10 @@ def assign_codes(plan: Plan) -> Plan:
         if f.code is None and folder is not None:
             f.code = child_code(folder.code, f.name)
     seen: dict[str, str] = {}
-    for label, items in (("folder", [(s.code, s.path) for s in plan.folders]), ("file", [(f.code, f"{f.folder_path}/{f.name}") for f in plan.files])):
+    for label, items in (
+        ("folder", [(s.code, s.path) for s in plan.folders]),
+        ("file", [(f.code, f"{f.folder_path}/{f.name}") for f in plan.files]),
+    ):
         for code, where in items:
             if code is None:
                 continue
@@ -154,8 +163,14 @@ def plan_seed(root: Path | None = None, entry_ids: set[str] | None = None) -> Pl
     logical_root, manifest_hash = manifest["logical_root"], seeds.manifest_sha256(root)
     plan = Plan("seed")
     seen: set[str] = set()
-    root_fields = {**_descriptor_fields("", root), "is_seed": True, "description": "Prepared seed artifacts (root seed registry)"}
-    plan.folders.append(FolderSpec(logical_root, manifest["root_code"], root_fields))  # the only explicit code; everything below derives from it
+    root_fields = {
+        **_descriptor_fields("", root),
+        "is_seed": True,
+        "description": "Prepared seed artifacts (root seed registry)",
+    }
+    plan.folders.append(
+        FolderSpec(logical_root, manifest["root_code"], root_fields)
+    )  # the only explicit code; everything below derives from it
     for f in seeds.resolve_files(manifest, root):
         if entry_ids and f["entry"] not in entry_ids:
             continue
@@ -170,15 +185,33 @@ def plan_seed(root: Path | None = None, entry_ids: set[str] | None = None) -> Pl
         overrides = {k: eff[k] for k in (eff.get("file_override") or []) if k in eff}
         if "role" in overrides:
             overrides["artifact_role"] = overrides.pop("role")
-        plan.files.append(FileSpec(
-            root / f["path"], f"{logical_root}/" + "/".join(parts[:-1]), parts[-1], None,
-            retention="replace_current" if f["versioning"] == "current" else "preserve_history",
-            pin_reason=f"manifest release {manifest['release']}" if f["pin"] else None,
-            provenance_extra={"manifest_entry": f["entry"], "manifest_release": manifest["release"], "manifest_sha256": manifest_hash, "artifact_sha256": f["sha256"],
-                              "input_refs": [f["origin"]] if f.get("origin") else [], "loader": f["loader"], "review": eff.get("review"), "local_path": f"seed/{f['path']}",
-                              "generator": {"tool": "mzizi-filesystem sync", "model": None, "note": "no model or generator version is recorded: none is known"},
-                              "effective_overrides": overrides},
-            expected_key=f["key"]))
+        plan.files.append(
+            FileSpec(
+                root / f["path"],
+                f"{logical_root}/" + "/".join(parts[:-1]),
+                parts[-1],
+                None,
+                retention="replace_current" if f["versioning"] == "current" else "preserve_history",
+                pin_reason=f"manifest release {manifest['release']}" if f["pin"] else None,
+                provenance_extra={
+                    "manifest_entry": f["entry"],
+                    "manifest_release": manifest["release"],
+                    "manifest_sha256": manifest_hash,
+                    "artifact_sha256": f["sha256"],
+                    "input_refs": [f["origin"]] if f.get("origin") else [],
+                    "loader": f["loader"],
+                    "review": eff.get("review"),
+                    "local_path": f"seed/{f['path']}",
+                    "generator": {
+                        "tool": "mzizi-filesystem sync",
+                        "model": None,
+                        "note": "no model or generator version is recorded: none is known",
+                    },
+                    "effective_overrides": overrides,
+                },
+                expected_key=f["key"],
+            )
+        )
     return assign_codes(plan)
 
 
@@ -191,7 +224,14 @@ def load_plan(manifest: Path, seed_root: Path | None = None, entry_ids: set[str]
 
 
 # --------------------------------------------------------------------------------------------- execution
-def _ensure_folder(repo: Repository, authorizer: Authorizer, actor: str | None, spec: FolderSpec, ids: dict[str, str | None], dry_run: bool) -> SyncItem:
+def _ensure_folder(
+    repo: Repository,
+    authorizer: Authorizer,
+    actor: str | None,
+    spec: FolderSpec,
+    ids: dict[str, str | None],
+    dry_run: bool,
+) -> SyncItem:
     parts = [p for p in spec.path.split("/") if p]
     parent_path = "/" + "/".join(parts[:-1]) if len(parts) > 1 else ""
     parent_id = ids.get(parent_path) if parent_path else None
@@ -204,7 +244,12 @@ def _ensure_folder(repo: Repository, authorizer: Authorizer, actor: str | None, 
         ids[spec.path] = existing["id"]
         changed = {k: v for k, v in spec.fields.items() if v is not None and existing.get(k) != v and k != "metadata"}
         if "access" in changed and existing.get("access") not in (None, changed["access"]):
-            return SyncItem("folder", spec.path, "conflict", f"access is {existing['access']} and the spec asks {changed['access']}: use an explicit access transition")
+            return SyncItem(
+                "folder",
+                spec.path,
+                "conflict",
+                f"access is {existing['access']} and the spec asks {changed['access']}: use an explicit access transition",
+            )
         if spec.fields.get("metadata") and existing["metadata"] != spec.fields["metadata"]:
             changed["metadata"] = spec.fields["metadata"]
         if not changed:
@@ -215,7 +260,12 @@ def _ensure_folder(repo: Repository, authorizer: Authorizer, actor: str | None, 
             authorizer.for_record(actor, "filesystem.edit", "filesystem.folders", existing["id"])
             repo.update_folder(existing["id"], existing["revision"], changed)
         except (Conflict, PermissionDenied, psycopg.Error) as error:
-            return SyncItem("folder", spec.path, "denied" if isinstance(error, PermissionDenied) else "conflict", str(error).splitlines()[0])
+            return SyncItem(
+                "folder",
+                spec.path,
+                "denied" if isinstance(error, PermissionDenied) else "conflict",
+                str(error).splitlines()[0],
+            )
         return SyncItem("folder", spec.path, "updated")
     if dry_run:
         ids[spec.path] = None
@@ -234,7 +284,14 @@ def _ensure_folder(repo: Repository, authorizer: Authorizer, actor: str | None, 
     return SyncItem("folder", spec.path, "created")
 
 
-def run_sync(plan: Plan, service: FilesystemService, *, actor: str | None = None, dry_run: bool = True, authorizer: Authorizer | None = None) -> SyncReport:
+def run_sync(
+    plan: Plan,
+    service: FilesystemService,
+    *,
+    actor: str | None = None,
+    dry_run: bool = True,
+    authorizer: Authorizer | None = None,
+) -> SyncReport:
     repo = service.repo
     authorizer = authorizer or service.authorizer
     report = SyncReport(plan.name, dry_run)
@@ -255,9 +312,41 @@ def run_sync(plan: Plan, service: FilesystemService, *, actor: str | None = None
             else:
                 report.items.append(SyncItem("file", path, "failed", "folder unavailable (see folder results)"))
             continue
-        r: Registration = service.register(folder_id, f.name, f.local, code=f.code, retention=f.retention, actor=actor, provenance_extra=f.provenance_extra,
-                                           declared_type=f.declared_type, pin_reason=f.pin_reason, dry_run=dry_run)
-        if f.expected_key and r.key and r.key != f.expected_key and r.outcome not in ("failed", "conflict", "denied", "blocked"):
-            r.outcome, r.detail = "failed", f"registered key {r.key} differs from the key planned by the lock ({f.expected_key})"
-        report.items.append(SyncItem("file", f"{f.folder_path}/{f.name}", r.outcome, r.detail, r.action, r.key, r.duplicate_of, r.server_copied, r.recovered, r.verified, r.revision))
+        r: Registration = service.register(
+            folder_id,
+            f.name,
+            f.local,
+            code=f.code,
+            retention=f.retention,
+            actor=actor,
+            provenance_extra=f.provenance_extra,
+            declared_type=f.declared_type,
+            pin_reason=f.pin_reason,
+            dry_run=dry_run,
+        )
+        if (
+            f.expected_key
+            and r.key
+            and r.key != f.expected_key
+            and r.outcome not in ("failed", "conflict", "denied", "blocked")
+        ):
+            r.outcome, r.detail = (
+                "failed",
+                f"registered key {r.key} differs from the key planned by the lock ({f.expected_key})",
+            )
+        report.items.append(
+            SyncItem(
+                "file",
+                f"{f.folder_path}/{f.name}",
+                r.outcome,
+                r.detail,
+                r.action,
+                r.key,
+                r.duplicate_of,
+                r.server_copied,
+                r.recovered,
+                r.verified,
+                r.revision,
+            )
+        )
     return report

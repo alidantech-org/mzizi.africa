@@ -7,7 +7,7 @@ export default function SidebarWidthManager() {
     const handleSidebarWidthChange = () => {
       const sidebar = document.querySelector('[data-sidebar]');
       const mainContent = document.getElementById('main-content');
-      
+
       if (sidebar && mainContent) {
         const sidebarWidth = sidebar.classList.contains('minimized') ? '4rem' : '16rem';
         mainContent.style.paddingLeft = sidebarWidth;
@@ -16,13 +16,13 @@ export default function SidebarWidthManager() {
 
     // Observe sidebar width changes
     const observer = new MutationObserver(handleSidebarWidthChange);
-    
+
     // Start observing the sidebar
     const sidebar = document.querySelector('[data-sidebar]');
     if (sidebar) {
       observer.observe(sidebar, {
         attributes: true,
-        attributeFilter: ['class']
+        attributeFilter: ['class'],
       });
     }
 

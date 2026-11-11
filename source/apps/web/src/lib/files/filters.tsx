@@ -1,8 +1,13 @@
 import { GetFilesQuery } from '@/app/admin/storage/types/request';
 
 // Update URL when filters change
-export const updateURL = (newFilters: Partial<GetFilesQuery> & { viewMode?: string }, searchParams: any, router: any, pathname: string) => {
-  const params = new URLSearchParams(searchParams);
+export const updateURL = (
+  newFilters: Partial<GetFilesQuery> & { viewMode?: string },
+  searchParams: URLSearchParams | { toString(): string },
+  router: { replace: (href: string, options?: { scroll?: boolean }) => void },
+  pathname: string,
+) => {
+  const params = new URLSearchParams(searchParams.toString());
 
   // Update search params
   if (newFilters.search !== undefined) {

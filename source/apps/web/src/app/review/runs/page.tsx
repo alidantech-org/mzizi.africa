@@ -1,10 +1,13 @@
 import type { Meta } from '@/lib/review/api';
+
+/** An import run as listed by the review API. */
+type Run = { id: string; dataset: string; mappingVersion: string; status: string; candidates: number; createdAt: string };
 import { ago, Badge, Empty, load, Notice, Pager, requireRole } from '../ui';
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   await requireRole();
   const params = await searchParams;
-  const { data, error } = await load<{ runs: Record<string, any>[]; meta: Meta }>('/pipeline/runs', { page: params.page });
+  const { data, error } = await load<{ runs: Run[]; meta: Meta }>('/pipeline/runs', { page: params.page });
   return (
     <>
       <h1>Runs</h1>
@@ -15,10 +18,26 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         <>
           <div className="rv-table-wrap">
             <table>
-              <thead><tr><th>Dataset</th><th>Mapping</th><th>Status</th><th>Candidates</th><th>Started</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Dataset</th>
+                  <th>Mapping</th>
+                  <th>Status</th>
+                  <th>Candidates</th>
+                  <th>Started</th>
+                </tr>
+              </thead>
               <tbody>
                 {data.runs.map((r) => (
-                  <tr key={r.id}><td>{r.dataset}</td><td>{r.mappingVersion}</td><td><Badge value={r.status} /></td><td>{r.candidates}</td><td>{ago(r.createdAt)}</td></tr>
+                  <tr key={r.id}>
+                    <td>{r.dataset}</td>
+                    <td>{r.mappingVersion}</td>
+                    <td>
+                      <Badge value={r.status} />
+                    </td>
+                    <td>{r.candidates}</td>
+                    <td>{ago(r.createdAt)}</td>
+                  </tr>
                 ))}
               </tbody>
             </table>

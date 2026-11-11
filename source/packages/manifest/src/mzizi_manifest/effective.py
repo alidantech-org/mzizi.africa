@@ -1,7 +1,9 @@
 """Family inheritance: the effective module set of a site bundle that extends a family bundle."""
+
 from __future__ import annotations
 
 import copy
+from typing import Any
 
 from .bundle import Bundle
 
@@ -15,7 +17,9 @@ def effective_modules(site: Bundle, family: Bundle | None) -> dict[str, dict]:
     if not extends or family is None:
         return copy.deepcopy(site.modules)
     overlay = (site.manifest.get("overlay") or {}).get("modules") or {}
-    modules = {name: copy.deepcopy(module) for name, module in family.modules.items() if name not in overlay.get("remove", [])}
+    modules = {
+        name: copy.deepcopy(module) for name, module in family.modules.items() if name not in overlay.get("remove", [])
+    }
     for name in [*overlay.get("replace", []), *overlay.get("add", [])]:
         if name in site.modules:
             modules[name] = copy.deepcopy(site.modules[name])
@@ -26,12 +30,13 @@ def effective_vars(site: Bundle) -> dict:
     return dict(site.manifest.get("vars") or {})
 
 
-def substitute(value, variables: dict):
+def substitute(value: Any, variables: dict) -> Any:
     """Replaces ${name} in strings with variables; an unknown variable is an error, never an empty string."""
     import re
 
     if isinstance(value, str):
-        def repl(match):
+
+        def repl(match: re.Match[str]) -> str:
             key = match.group(1)
             if key not in variables:
                 raise KeyError(f"undefined variable ${{{key}}}")

@@ -1,4 +1,5 @@
 """The universal `code` column rule (.docs/rules/code-columns.md): one name, one shape, hierarchical by prefix, reproducible."""
+
 from __future__ import annotations
 
 import pytest
@@ -14,23 +15,57 @@ def test_every_code_column_is_named_code_and_carries_the_universal_shape_check(c
         JOIN information_schema.tables t USING (table_schema, table_name)
         WHERE t.table_type = 'BASE TABLE' AND c.table_schema IN ('auth', 'engine', 'filesystem')
           AND (c.column_name = 'code' OR c.column_name LIKE '%\\_code' ESCAPE '\\')""").fetchall()
-    assert {(c["table_schema"], c["table_name"]) for c in cols if c["column_name"] == "code"} == {("auth", "roles"), ("auth", "institutions"), ("filesystem", "folders"), ("filesystem", "files")}
+    assert {(c["table_schema"], c["table_name"]) for c in cols if c["column_name"] == "code"} == {
+        ("auth", "roles"),
+        ("auth", "institutions"),
+        ("filesystem", "folders"),
+        ("filesystem", "files"),
+    }
     for c in cols:
         if c["column_name"] == "code":
-            checks = [r["def"] for r in conn.execute("SELECT pg_get_constraintdef(oid) AS def FROM pg_constraint WHERE contype = 'c' AND conrelid = %s::regclass", (f"{c['table_schema']}.{c['table_name']}",)).fetchall()]
-            assert any("code ~" in d and "[a-z0-9_]*" in d and "string_to_array" in d and "<= 255" in d for d in checks), f"{c['table_schema']}.{c['table_name']} lacks the code shape check"
+            checks = [
+                r["def"]
+                for r in conn.execute(
+                    "SELECT pg_get_constraintdef(oid) AS def FROM pg_constraint WHERE contype = 'c' AND conrelid = %s::regclass",
+                    (f"{c['table_schema']}.{c['table_name']}",),
+                ).fetchall()
+            ]
+            assert any(
+                "code ~" in d and "[a-z0-9_]*" in d and "string_to_array" in d and "<= 255" in d for d in checks
+            ), f"{c['table_schema']}.{c['table_name']} lacks the code shape check"
         else:
-            assert c["column_name"] in ("country_code", "jurisdiction_code"), f"unexpected qualified code column {c['column_name']}"
+            assert c["column_name"] in ("country_code", "jurisdiction_code"), (
+                f"unexpected qualified code column {c['column_name']}"
+            )
 
 
 def test_code_segments_are_reproducible_and_python_matches_sql(conn):
     for name in ["legacy-artifacts", "roles.csv", "World GeoBoundaries (v2).json", "__x__", "A--B", "2fe4cc"]:
         assert code_segment(name) == conn.execute("SELECT filesystem.code_segment(%s) AS s", (name,)).fetchone()["s"]
     assert code_segment("legacy-artifacts") == "legacy_artifacts" and code_segment("roles.csv") == "roles_csv"
-    assert child_code("seeds.global", "auth") == "seeds.global.auth" and child_code(None, "x") is None and child_code("a", "---") is None
+    assert (
+        child_code("seeds.global", "auth") == "seeds.global.auth"
+        and child_code(None, "x") is None
+        and child_code("a", "---") is None
+    )
 
 
-@pytest.mark.parametrize("value,ok", [("seeds", True), ("seeds.global.auth.roles_csv", True), ("2fe.a_b", True), ("Seeds", False), ("a-b", False), ("a/b", False), ("a..b", False), (".a", False), ("a.", False), ("a" * 256, False), (".".join(["a"] * 17), False)])
+@pytest.mark.parametrize(
+    "value,ok",
+    [
+        ("seeds", True),
+        ("seeds.global.auth.roles_csv", True),
+        ("2fe.a_b", True),
+        ("Seeds", False),
+        ("a-b", False),
+        ("a/b", False),
+        ("a..b", False),
+        (".a", False),
+        ("a.", False),
+        ("a" * 256, False),
+        (".".join(["a"] * 17), False),
+    ],
+)
 def test_code_shape(value, ok):
     assert is_code(value) is ok
 
@@ -47,7 +82,10 @@ def test_database_refuses_bad_codes_and_codes_that_leave_their_parent(conn, repo
         mid = repo.create_folder(child["id"], "mid", dict(CLASS), None)
         with pytest.raises(Exception, match="must sit under"):
             repo.create_folder(mid["id"], "deep", {**CLASS, "code": "codetest.deep"}, None)
-        assert repo.create_folder(mid["id"], "deep", {**CLASS, "code": "codetest.kid.deep"}, None)["code"] == "codetest.kid.deep"
+        assert (
+            repo.create_folder(mid["id"], "deep", {**CLASS, "code": "codetest.kid.deep"}, None)["code"]
+            == "codetest.kid.deep"
+        )
     finally:
         purge(conn, top["id"])
 

@@ -12,10 +12,19 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * method, from a document and the capture of it that was actually read. Verification state is an
  * append-only ledger kept here too.
  */
-export const source = dryv.group({ name: "source" }).description("Publishers, documents, captures, methods, attributions and the verification ledger.").tags("public", "source").facets({ storage: { namespace: "source" } });
+export const source = dryv
+  .group({ name: "source" })
+  .description("Publishers, documents, captures, methods, attributions and the verification ledger.")
+  .tags("public", "source")
+  .facets({ storage: { namespace: "source" } });
 
 export const sourceProperties = source.properties({
-  AttributionRelation: dryv.property.enum({ supports: "supports", contradicts: "contradicts", derivedFrom: "derived_from", mentions: "mentions" }),
+  AttributionRelation: dryv.property.enum({
+    supports: "supports",
+    contradicts: "contradicts",
+    derivedFrom: "derived_from",
+    mentions: "mentions",
+  }),
   Locator: dryv.property.string().length({ min: 1, max: 500 }),
   HttpStatus: dryv.property.number.integer({ range: { min: 100, max: 599 } }),
   ToolName: dryv.property.string().length({ min: 1, max: 200 }),
@@ -47,7 +56,11 @@ const documents = source.schemas({
       jurisdictionId: optionalId(),
       kindId: plainId(),
       title: dryv.field(sharedProperties.Name).query(searchable),
-      publishedOn: dryv.field(sharedProperties.Date).optional().nullable().query({ filter: ["between"], sort: true }),
+      publishedOn: dryv
+        .field(sharedProperties.Date)
+        .optional()
+        .nullable()
+        .query({ filter: ["between"], sort: true }),
       publishedOnPrecision: dryv.field(sharedProperties.DatePrecision).optional().nullable(),
       language: dryv.field(sharedProperties.Label).optional().nullable(),
       url: dryv.field(sharedProperties.Url).optional().nullable(),
@@ -56,7 +69,10 @@ const documents = source.schemas({
       siteId: optionalId(),
     },
     "documents",
-    [{ name: "idx_document_publisher", fields: ["publisherId"] }, { name: "idx_document_published", fields: ["publishedOn"] }],
+    [
+      { name: "idx_document_publisher", fields: ["publisherId"] },
+      { name: "idx_document_published", fields: ["publishedOn"] },
+    ],
   ),
 
   Method: systemRecord(
@@ -168,11 +184,81 @@ const links = source.schemas({
 const id = () => dryv.field(sharedProperties.Id).optional();
 const sourceRead = source.feature("SourceRead").description("Public read access to where claims come from.").tags("public");
 const surfaces = [
-  readSurface(source, { singular: "Publisher", plural: "Publishers", itemKey: "publisher", listKey: "publishers", path: "/source/publishers", idParam: "publisherId", entity: publishers.Publisher, description: "publishers", filters: { jurisdictionId: id(), q: dryv.field(sharedProperties.Name).optional() } }),
-  readSurface(source, { singular: "Document", plural: "Documents", itemKey: "document", listKey: "documents", path: "/source/documents", idParam: "documentId", entity: documents.Document, description: "source documents", filters: { publisherId: id(), jurisdictionId: id(), kindId: id(), q: dryv.field(sharedProperties.Name).optional() } }),
-  readSurface(source, { singular: "Method", plural: "Methods", itemKey: "method", listKey: "methods", path: "/source/methods", idParam: "methodId", entity: documents.Method, description: "sourcing methods", filters: { kind: dryv.field(sharedProperties.ProvenanceMethod).optional(), q: dryv.field(sharedProperties.Name).optional() } }),
-  readSurface(source, { singular: "Capture", plural: "Captures", itemKey: "capture", listKey: "captures", path: "/source/captures", idParam: "captureId", entity: captures.Capture, description: "captures of source documents", filters: { documentId: id() } }),
-  readSurface(source, { singular: "Attribution", plural: "Attributions", itemKey: "attribution", listKey: "attributions", path: "/source/attributions", idParam: "attributionId", entity: links.Attribution, description: "attributions", filters: { targetKind: dryv.field(sharedProperties.TargetKind).optional(), targetId: id(), documentId: id(), methodId: id(), relation: dryv.field(sourceProperties.AttributionRelation).optional() } }),
-  readSurface(source, { singular: "Verification", plural: "Verifications", itemKey: "verification", listKey: "verifications", path: "/source/verifications", idParam: "verificationId", entity: links.Verification, description: "verifications", filters: { targetKind: dryv.field(sharedProperties.TargetKind).optional(), targetId: id(), isCurrent: dryv.field(sharedProperties.Flag).optional() } }),
+  readSurface(source, {
+    singular: "Publisher",
+    plural: "Publishers",
+    itemKey: "publisher",
+    listKey: "publishers",
+    path: "/source/publishers",
+    idParam: "publisherId",
+    entity: publishers.Publisher,
+    description: "publishers",
+    filters: { jurisdictionId: id(), q: dryv.field(sharedProperties.Name).optional() },
+  }),
+  readSurface(source, {
+    singular: "Document",
+    plural: "Documents",
+    itemKey: "document",
+    listKey: "documents",
+    path: "/source/documents",
+    idParam: "documentId",
+    entity: documents.Document,
+    description: "source documents",
+    filters: { publisherId: id(), jurisdictionId: id(), kindId: id(), q: dryv.field(sharedProperties.Name).optional() },
+  }),
+  readSurface(source, {
+    singular: "Method",
+    plural: "Methods",
+    itemKey: "method",
+    listKey: "methods",
+    path: "/source/methods",
+    idParam: "methodId",
+    entity: documents.Method,
+    description: "sourcing methods",
+    filters: { kind: dryv.field(sharedProperties.ProvenanceMethod).optional(), q: dryv.field(sharedProperties.Name).optional() },
+  }),
+  readSurface(source, {
+    singular: "Capture",
+    plural: "Captures",
+    itemKey: "capture",
+    listKey: "captures",
+    path: "/source/captures",
+    idParam: "captureId",
+    entity: captures.Capture,
+    description: "captures of source documents",
+    filters: { documentId: id() },
+  }),
+  readSurface(source, {
+    singular: "Attribution",
+    plural: "Attributions",
+    itemKey: "attribution",
+    listKey: "attributions",
+    path: "/source/attributions",
+    idParam: "attributionId",
+    entity: links.Attribution,
+    description: "attributions",
+    filters: {
+      targetKind: dryv.field(sharedProperties.TargetKind).optional(),
+      targetId: id(),
+      documentId: id(),
+      methodId: id(),
+      relation: dryv.field(sourceProperties.AttributionRelation).optional(),
+    },
+  }),
+  readSurface(source, {
+    singular: "Verification",
+    plural: "Verifications",
+    itemKey: "verification",
+    listKey: "verifications",
+    path: "/source/verifications",
+    idParam: "verificationId",
+    entity: links.Verification,
+    description: "verifications",
+    filters: {
+      targetKind: dryv.field(sharedProperties.TargetKind).optional(),
+      targetId: id(),
+      isCurrent: dryv.field(sharedProperties.Flag).optional(),
+    },
+  }),
 ];
 export const sourceReadOperations = sourceRead.operations(Object.assign({}, ...surfaces.map((surface) => surface.operations)));

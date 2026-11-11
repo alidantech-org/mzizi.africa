@@ -9,7 +9,10 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * and Python models. Free-form documents (a candidate's payload, a locator) travel as serialised JSON
  * text and are validated against the contract of their target by the database engine.
  */
-export const exchange = dryv.group({ name: "exchange" }).description("Layer-to-layer exchange contracts: artifact reference, extraction result, candidate, evaluation, promotion decision.").tags("internal");
+export const exchange = dryv
+  .group({ name: "exchange" })
+  .description("Layer-to-layer exchange contracts: artifact reference, extraction result, candidate, evaluation, promotion decision.")
+  .tags("internal");
 
 export const exchangeProperties = exchange.properties({
   /** Serialised JSON document; the consumer validates it against the contract it targets. */

@@ -3,15 +3,16 @@
 No stealth, no proxies, no identity rotation, no credential use. A refusal or challenge stops the run
 and trips the circuit breaker; nothing here retries around a restriction.
 """
+
 from __future__ import annotations
 
 import hashlib
 import json
 import random
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
 from urllib import robotparser
 from urllib.parse import urlparse
 
@@ -62,12 +63,23 @@ class PoliteFetcher:
     _consecutive_5xx: int = 0
     tripped: StopRun | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.client = self.client or httpx.Client(follow_redirects=False)
 
     # ------------------------------------------------------------------------------------------
     def _gate(self, host: str, scheme: str, path: str, purpose: str) -> Decision:
-        decision = self.gate({"siteId": self.site_id, "host": host, "scheme": scheme, "path": path, "method": "GET", "fetchMode": self.fetch_mode, "purpose": purpose, "requestsPerSecond": self.limits.requests_per_second})
+        decision = self.gate(
+            {
+                "siteId": self.site_id,
+                "host": host,
+                "scheme": scheme,
+                "path": path,
+                "method": "GET",
+                "fetchMode": self.fetch_mode,
+                "purpose": purpose,
+                "requestsPerSecond": self.limits.requests_per_second,
+            }
+        )
         if not decision.allowed:
             raise Denied(decision.reasons, decision.assessment_id)
         return decision
@@ -110,7 +122,10 @@ class PoliteFetcher:
             if "etag" in {k.lower() for k in cached["headers"]}:
                 headers["If-None-Match"] = next(v for k, v in cached["headers"].items() if k.lower() == "etag")
             if "last-modified" in {k.lower() for k in cached["headers"]}:
-                headers["If-Modified-Since"] = next(v for k, v in cached["headers"].items() if k.lower() == "last-modified")
+                headers["If-Modified-Since"] = next(
+                    v for k, v in cached["headers"].items() if k.lower() == "last-modified"
+                )
+        assert self.client is not None  # set in __post_init__
         with self.client.stream("GET", url, headers=headers, timeout=self.limits.timeout_seconds) as response:
             declared = int(response.headers.get("content-length", "0") or 0)
             if declared > self.limits.max_response_bytes:
@@ -122,7 +137,7 @@ class PoliteFetcher:
                     raise TooLarge(f"response exceeds {self.limits.max_response_bytes} bytes")
                 chunks.append(chunk)
             response._content = b"".join(chunks)
-        response.cached = cached  # type: ignore[attr-defined]
+        response.extensions["mzizi_cached"] = cached
         return response
 
     # ------------------------------------------------------------------------------------------
@@ -134,10 +149,12 @@ class PoliteFetcher:
             try:
                 result = self.get(f"{scheme}://{host}/robots.txt", purpose="assess", _robots=True)
                 if result.status in (404, 410):
+                    parser = robotparser.RobotFileParser()
                     parser.parse([])  # no robots file: nothing is disallowed
                 elif result.status >= 500:
                     parser = None  # robots unavailable: treat as disallow all
                 else:
+                    parser = robotparser.RobotFileParser()
                     parser.parse(result.body.decode("utf-8", errors="ignore").splitlines())
             except StopRun:
                 raise
@@ -151,7 +168,11 @@ class PoliteFetcher:
         parsed = urlparse(url)
         host, path = parsed.netloc, parsed.path or "/"
         decision = self._gate(host, parsed.scheme, path, purpose)
-        if not _robots and not path.startswith(self.robots_exempt_paths or ("\0",)) and not self.robots_allows(parsed.scheme, host, path):
+        if (
+            not _robots
+            and not path.startswith(self.robots_exempt_paths or ("\0",))
+            and not self.robots_allows(parsed.scheme, host, path)
+        ):
             self.log.append({"event": "robots_disallowed", "url": url})
             raise RobotsDisallowed(url)
         limiter = self._limiter(host, decision)
@@ -161,13 +182,16 @@ class PoliteFetcher:
             attempts += 1
             try:
                 response = self._request(url, conditional=True)
-            except (httpx.TimeoutException, httpx.TransportError) as error:
+            except (httpx.TimeoutException, httpx.TransportError):
                 if attempts > self.limits.max_retries:
                     raise
-                self.sleep(min(60.0, 2 ** attempts) * random.uniform(0.5, 1.5))
+                self.sleep(min(60.0, 2**attempts) * random.uniform(0.5, 1.5))
                 continue
             status = response.status_code
-            if _robots and status in (401, 403):  # RFC 9309: a robots.txt that is unavailable to us means no rules were published
+            if _robots and status in (
+                401,
+                403,
+            ):  # RFC 9309: a robots.txt that is unavailable to us means no rules were published
                 return FetchResult(url, 404, {}, b"", False, decision.assessment_id)
             if status in (401, 403, 429):
                 raise self._trip(str(status), f"{url} answered {status}; stopping (no retry around a restriction)")
@@ -177,16 +201,23 @@ class PoliteFetcher:
                     raise self._trip("repeated_5xx", f"{url} answered {status} repeatedly")
                 if attempts > self.limits.max_retries:
                     raise httpx.HTTPStatusError(f"{status} from {url}", request=response.request, response=response)
-                self.sleep(min(60.0, 2 ** attempts) * random.uniform(0.5, 1.5))
+                self.sleep(min(60.0, 2**attempts) * random.uniform(0.5, 1.5))
                 continue
             self._consecutive_5xx = 0
             headers = dict(response.headers)
             reason = detect_challenge(status, headers, response.content[:8000])
             if reason:
                 raise self._trip("access_challenge", f"{url} looks like an access challenge ({reason})")
-            if status == 304 and response.cached:  # type: ignore[attr-defined]
+            if status == 304 and response.extensions.get("mzizi_cached"):
                 self.log.append({"event": "cache_hit", "url": url})
-                return FetchResult(url, 200, response.cached["headers"], response.cached["body"], True, decision.assessment_id)  # type: ignore[attr-defined]
+                return FetchResult(
+                    url,
+                    200,
+                    response.extensions["mzizi_cached"]["headers"],
+                    response.extensions["mzizi_cached"]["body"],
+                    True,
+                    decision.assessment_id,
+                )
             result = FetchResult(url, status, headers, response.content, False, decision.assessment_id)
             if status == 200:
                 self._store_cache(url, result)

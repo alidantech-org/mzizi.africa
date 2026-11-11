@@ -19,6 +19,8 @@ def test_json_arrays_become_records_and_invalid_json_fails_honestly():
 def test_pdf_text_extraction_and_an_honest_result_for_garbage():
     from pdfmaker import make_pdf
 
-    out = extract_pdf(make_pdf([{"text": [(72, 720, "Hello Mzizi: a page with enough text to count as a text layer")]}]))
+    out = extract_pdf(
+        make_pdf([{"text": [(72, 720, "Hello Mzizi: a page with enough text to count as a text layer")]}])
+    )
     assert out.status in ("succeeded", "partial") and any("Hello Mzizi" in json.dumps(s) for s in out.segments)
     assert extract_pdf(b"definitely not a pdf").status == "failed"

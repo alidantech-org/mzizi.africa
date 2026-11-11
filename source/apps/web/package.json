@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "lint": "eslint",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\""
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "catalog": "bun scripts/data-catalog.ts && prettier --write src/lib/review/data-catalog.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",

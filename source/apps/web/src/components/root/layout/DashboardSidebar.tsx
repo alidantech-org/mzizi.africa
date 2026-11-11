@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { Shield } from 'lucide-react';
+import { Shield, type LucideIcon } from 'lucide-react';
 import { Home, Users, Building2, FileText, Database, BarChart3, Activity } from 'lucide-react';
 
-interface SidebarItem {
+export interface SidebarItem {
   name: string;
   href: string;
-  icon: any;
+  icon: LucideIcon;
   current: boolean;
 }
 
@@ -18,7 +18,7 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ navigation, isMobile = false, onClose }: DashboardSidebarProps) {
-  const SidebarContent = () => (
+  const renderContent = () => (
     <div className="flex flex-col flex-grow border-r bg-card">
       {/* Logo */}
       <div className="flex items-center space-x-3">
@@ -45,12 +45,8 @@ export function DashboardSidebar({ navigation, isMobile = false, onClose }: Dash
   );
 
   if (isMobile) {
-    return (
-      <div className="flex h-full flex-col">
-        <SidebarContent />
-      </div>
-    );
+    return <div className="flex h-full flex-col">{renderContent()}</div>;
   }
 
-  return <SidebarContent />;
+  return renderContent();
 }

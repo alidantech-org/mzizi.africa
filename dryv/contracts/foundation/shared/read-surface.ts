@@ -28,7 +28,12 @@ export interface ReadSurfaceSpec {
   description: string;
 }
 
-const standardFailures = [sharedFailures.BadRequest, sharedFailures.NotFound, sharedFailures.ValidationError, sharedFailures.InternalError] as const;
+const standardFailures = [
+  sharedFailures.BadRequest,
+  sharedFailures.NotFound,
+  sharedFailures.ValidationError,
+  sharedFailures.InternalError,
+] as const;
 
 export function withStandardHttpFailures(exposure: ReturnType<typeof dryv.http>) {
   return exposure

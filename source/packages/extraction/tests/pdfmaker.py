@@ -1,4 +1,5 @@
 """Builds tiny valid PDFs for tests: text pages, a ruled table, and an image-only (scanned) page."""
+
 from __future__ import annotations
 
 
@@ -40,11 +41,29 @@ def make_pdf(pages: list[dict]) -> bytes:
     objs.append(_obj(3, b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"))
     extra: list[tuple[int, bytes]] = []
     for content_id, stream, page_id, resources, image_id in page_objs:
-        extra.append((content_id, b"<< /Length " + str(len(stream)).encode() + b" >>\nstream\n" + stream + b"endstream"))
-        extra.append((page_id, b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents " + f"{content_id} 0 R".encode() + b" /Resources " + resources + b" >>"))
+        extra.append(
+            (content_id, b"<< /Length " + str(len(stream)).encode() + b" >>\nstream\n" + stream + b"endstream")
+        )
+        extra.append(
+            (
+                page_id,
+                b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents "
+                + f"{content_id} 0 R".encode()
+                + b" /Resources "
+                + resources
+                + b" >>",
+            )
+        )
         if image_id:
             pixel = bytes([200, 200, 200])
-            extra.append((image_id, b"<< /Type /XObject /Subtype /Image /Width 1 /Height 1 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Length 3 >>\nstream\n" + pixel + b"\nendstream"))
+            extra.append(
+                (
+                    image_id,
+                    b"<< /Type /XObject /Subtype /Image /Width 1 /Height 1 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Length 3 >>\nstream\n"
+                    + pixel
+                    + b"\nendstream",
+                )
+            )
     extra += [(n, b"null") for n in filler]
     for n, body in sorted(extra):
         objs.append(_obj(n, body))

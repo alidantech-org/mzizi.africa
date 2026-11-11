@@ -1,4 +1,5 @@
 """Polite fetching with a mocked transport: gate, identity, rate limit, robots, challenge handling."""
+
 from __future__ import annotations
 
 import httpx
@@ -17,8 +18,20 @@ def fetcher(handler, allow=True, sleeps=None, rps=2.0):
         if sleeps is not None:
             sleeps.append(seconds)
 
-    gate = (lambda request: Decision(True, [], "a-1", rps)) if allow else (lambda request: Decision(False, ["no approved assessment"]))
-    return PoliteFetcher(user_agent=UA, limits=effective_limits({"limits": {"requests_per_second": rps}}), gate=gate, site_id="site", client=httpx.Client(transport=httpx.MockTransport(handler)), sleep=sleep, clock=lambda: clock["t"])
+    gate = (
+        (lambda request: Decision(True, [], "a-1", rps))
+        if allow
+        else (lambda request: Decision(False, ["no approved assessment"]))
+    )
+    return PoliteFetcher(
+        user_agent=UA,
+        limits=effective_limits({"limits": {"requests_per_second": rps}}),
+        gate=gate,
+        site_id="site",
+        client=httpx.Client(transport=httpx.MockTransport(handler)),
+        sleep=sleep,
+        clock=lambda: clock["t"],
+    )
 
 
 def ok_handler(request: httpx.Request) -> httpx.Response:

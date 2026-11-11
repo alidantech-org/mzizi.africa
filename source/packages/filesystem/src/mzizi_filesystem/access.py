@@ -4,6 +4,7 @@ Bucket `mzizi`, region `us-east-1`. Only the `public/` prefix is anonymously rea
 `private/` and every other prefix are private. An object's key prefix must agree with the effective access of the
 artifact it holds, and deduplication never merges objects across access boundaries.
 """
+
 from __future__ import annotations
 
 BUCKET = "mzizi"
@@ -30,4 +31,6 @@ def check_key_matches_access(key: str, access: str) -> None:
     if key.startswith("/") or ".." in key.split("/"):
         raise AccessError(f"invalid object key {key!r}")
     if prefix_of(key) != access:
-        raise AccessError(f"object key {key!r} sits under {prefix_of(key)!r} but the artifact's effective access is {access!r}")
+        raise AccessError(
+            f"object key {key!r} sits under {prefix_of(key)!r} but the artifact's effective access is {access!r}"
+        )

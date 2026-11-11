@@ -3,15 +3,17 @@
 It exposes health, capabilities, jobs, runs, an SSE event stream and manifest/seed operations. It makes no product
 decisions, has no UI and no user accounts, and never writes domain schemas: results flow to NestJS through the outbox.
 """
+
 from __future__ import annotations
 
 import asyncio
 import json
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Any
 
 import httpx
-from fastapi import Body, FastAPI, Header, HTTPException, Query, Request
+from fastapi import FastAPI, Header, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -44,15 +46,21 @@ def _store(settings: Settings) -> Store:
     return MemoryStore()
 
 
-def create_app(settings: Settings | None = None, store: Store | None = None, registry: CapabilityRegistry | None = None, authority: Authority | None = None,
-               verifier: TokenVerifier | None = None, callback_client: httpx.AsyncClient | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None,
+    store: Store | None = None,
+    registry: CapabilityRegistry | None = None,
+    authority: Authority | None = None,
+    verifier: TokenVerifier | None = None,
+    callback_client: httpx.AsyncClient | None = None,
+) -> FastAPI:
     settings = settings or Settings.from_env()
     settings.check()
     registry = registry or build_default_registry()
     store = store or _store(settings)
 
     @asynccontextmanager
-    async def lifespan(app: FastAPI):
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.executor = Executor(store, registry, settings, callback_client)
         await app.state.executor.start()
         yield
@@ -66,7 +74,15 @@ def create_app(settings: Settings | None = None, store: Store | None = None, reg
     @app.get("/health")
     async def health() -> dict:
         ex: Executor = app.state.executor
-        return {"status": "ok", "service": "mzizi-engine", "version": __version__, "store": settings.store, "auth": settings.auth, "capabilities": len(registry.names()), "active_jobs": ex.active}
+        return {
+            "status": "ok",
+            "service": "mzizi-engine",
+            "version": __version__,
+            "store": settings.store,
+            "auth": settings.auth,
+            "capabilities": len(registry.names()),
+            "active_jobs": ex.active,
+        }
 
     @app.get("/capabilities")
     async def capabilities(_: Principal = require("engine.read")) -> dict:
@@ -87,16 +103,22 @@ def create_app(settings: Settings | None = None, store: Store | None = None, reg
     async def submit_job(body: JobRequest, principal: Principal = require("engine.edit")) -> dict:
         payload = dict(body.input)
         if body.kind.startswith("filesystem."):
-            payload["actor"] = principal.account_id  # the actor is the authenticated principal, never a client-supplied value
+            payload["actor"] = (
+                principal.account_id
+            )  # the actor is the authenticated principal, never a client-supplied value
             payload["database_url"] = settings.database_url
         try:
-            job, created = await app.state.executor.submit(body.kind, payload, body.idempotency_key, principal.account_id, body.run_id)
+            job, created = await app.state.executor.submit(
+                body.kind, payload, body.idempotency_key, principal.account_id, body.run_id
+            )
         except KeyError:
             raise HTTPException(422, f"unknown capability {body.kind!r}; see GET /capabilities") from None
         return {**job, "created": created}
 
     @app.get("/v1/jobs")
-    async def list_jobs(status: str | None = None, limit: int = Query(100, le=500), _: Principal = require("engine.read")) -> dict:
+    async def list_jobs(
+        status: str | None = None, limit: int = Query(100, le=500), _: Principal = require("engine.read")
+    ) -> dict:
         return {"jobs": await asyncio.to_thread(store.list_jobs, status, limit)}
 
     @app.get("/v1/jobs/{job_id}")
@@ -120,7 +142,14 @@ def create_app(settings: Settings | None = None, store: Store | None = None, reg
         return await asyncio.to_thread(manifest_check_seeds, {})
 
     @app.get("/v1/events")
-    async def events(request: Request, after: int | None = None, job_id: str | None = None, once: bool = False, last_event_id: str | None = Header(default=None), _: Principal = require("engine.read")):
+    async def events(
+        request: Request,
+        after: int | None = None,
+        job_id: str | None = None,
+        once: bool = False,
+        last_event_id: str | None = Header(default=None),
+        _: Principal = require("engine.read"),
+    ) -> StreamingResponse:
         """Server-sent events. Resume with `after` or the Last-Event-ID header: missed events replay from the store first. `once=true` ends after the replay (for scripts and tests)."""
         cursor = after if after is not None else int(last_event_id) if last_event_id and last_event_id.isdigit() else 0
         queue = app.state.executor.subscribe()
@@ -128,7 +157,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, reg
         def frame(event: dict) -> str:
             return f"id: {event['seq']}\nevent: {event['kind']}\ndata: {json.dumps(event, default=str)}\n\n"
 
-        async def stream():
+        async def stream() -> AsyncIterator[str]:
             nonlocal cursor
             try:
                 yield ": connected\n\n"
@@ -138,7 +167,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, reg
                 while not once and not await request.is_disconnected():
                     try:
                         event = await asyncio.wait_for(queue.get(), timeout=15)
-                    except asyncio.TimeoutError:
+                    except TimeoutError:
                         yield ": keepalive\n\n"
                         continue
                     if event["seq"] <= cursor or (job_id and event["job_id"] != job_id):
@@ -148,7 +177,9 @@ def create_app(settings: Settings | None = None, store: Store | None = None, reg
             finally:
                 app.state.executor.unsubscribe(queue)
 
-        return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+        return StreamingResponse(
+            stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+        )
 
     app.include_router(filesystem_router)
     return app

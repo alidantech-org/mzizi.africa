@@ -5,9 +5,16 @@ import type { Meta } from '@/lib/review/api';
 import { Empty, load, Notice, Pager, requireRole } from '../../../ui';
 
 const SKIP = new Set(['createdAt', 'updatedAt', 'version']);
-const text = (value: unknown) => (value === null || value === undefined ? '' : typeof value === 'object' ? JSON.stringify(value) : String(value));
+const text = (value: unknown) =>
+  value === null || value === undefined ? '' : typeof value === 'object' ? JSON.stringify(value) : String(value);
 
-export default async function Page({ params, searchParams }: { params: Promise<{ group: string; entity: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ group: string; entity: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   await requireRole();
   const { group, entity } = await params;
   if (!DATA_CATALOG[group]?.includes(entity)) notFound();
@@ -26,10 +33,22 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         <>
           <div className="rv-table-wrap">
             <table>
-              <thead><tr>{columns.map((c) => <th key={c}>{c}</th>)}</tr></thead>
+              <thead>
+                <tr>
+                  {columns.map((c) => (
+                    <th key={c}>{c}</th>
+                  ))}
+                </tr>
+              </thead>
               <tbody>
                 {rows.map((row, i) => (
-                  <tr key={String(row.id ?? i)}>{columns.map((c) => <td key={c} className="mono">{text(row[c])}</td>)}</tr>
+                  <tr key={String(row.id ?? i)}>
+                    {columns.map((c) => (
+                      <td key={c} className="mono">
+                        {text(row[c])}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
               </tbody>
             </table>

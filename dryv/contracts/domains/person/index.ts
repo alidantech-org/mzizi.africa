@@ -13,12 +13,27 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * platform accounts and grants; it is private and has no public endpoints. They link by plain id.
  * Portraits and other media are filesystem attachments, not columns here.
  */
-export const person = dryv.group({ name: "person" }).description("Real people: individuals, names, profiles, contacts and public handles.").tags("public", "person").facets({ storage: { namespace: "person" } });
-export const identity = dryv.group({ name: "identity" }).description("Platform accounts and role grants. Private: no public endpoints.").tags("identity").facets({ storage: { namespace: "identity" } });
+export const person = dryv
+  .group({ name: "person" })
+  .description("Real people: individuals, names, profiles, contacts and public handles.")
+  .tags("public", "person")
+  .facets({ storage: { namespace: "person" } });
+export const identity = dryv
+  .group({ name: "identity" })
+  .description("Platform accounts and role grants. Private: no public endpoints.")
+  .tags("identity")
+  .facets({ storage: { namespace: "identity" } });
 
 export const personProperties = person.properties({
   LifeStatus: dryv.property.enum({ alive: "alive", deceased: "deceased", unknown: "unknown" }),
-  NameKind: dryv.property.enum({ legal: "legal", common: "common", honorific: "honorific", alias: "alias", transliteration: "transliteration", birth: "birth" }),
+  NameKind: dryv.property.enum({
+    legal: "legal",
+    common: "common",
+    honorific: "honorific",
+    alias: "alias",
+    transliteration: "transliteration",
+    birth: "birth",
+  }),
   ContactKind: dryv.property.enum({ email: "email", phone: "phone", postal: "postal", website: "website", messaging: "messaging" }),
   /** Who may be shown the value. The public API serves only `public`. */
   Exposure: dryv.property.enum({ public: "public", restricted: "restricted", private: "private" }),
@@ -42,14 +57,26 @@ const individuals = person.schemas({
       displayName: dryv.field(sharedProperties.Name).query(searchable),
       givenName: dryv.field(sharedProperties.Name).optional().nullable(),
       familyName: dryv.field(sharedProperties.Name).optional().nullable(),
-      birthDate: dryv.field(sharedProperties.Date).optional().nullable().query({ filter: ["between"] }),
+      birthDate: dryv
+        .field(sharedProperties.Date)
+        .optional()
+        .nullable()
+        .query({ filter: ["between"] }),
       birthDatePrecision: dryv.field(sharedProperties.DatePrecision).optional().nullable(),
       deathDate: dryv.field(sharedProperties.Date).optional().nullable(),
       deathDatePrecision: dryv.field(sharedProperties.DatePrecision).optional().nullable(),
       lifeStatus: dryv.field(personProperties.LifeStatus).query({ filter: ["equal"] }),
       birthPlaceId: optionalId(),
-      wikidataId: dryv.field(sharedProperties.WikidataId).optional().nullable().query({ filter: ["equal"] }),
-      portraitMarker: dryv.field(sharedProperties.MediaMarker).optional().nullable().query({ filter: ["equal"] }),
+      wikidataId: dryv
+        .field(sharedProperties.WikidataId)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"] }),
+      portraitMarker: dryv
+        .field(sharedProperties.MediaMarker)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"] }),
     },
     "individuals",
     [{ name: "idx_individual_code", fields: ["code"], unique: true }],
@@ -73,7 +100,11 @@ const details = person.schemas({
       personId: relationTo(() => individuals.Person.field("id")),
       summary: dryv.field(sharedProperties.Description).optional().nullable(),
       biography: dryv.field(sharedProperties.LongText).optional().nullable(),
-      occupation: dryv.field(personProperties.Occupation).optional().nullable().query({ filter: ["contains"], search: true }),
+      occupation: dryv
+        .field(personProperties.Occupation)
+        .optional()
+        .nullable()
+        .query({ filter: ["contains"], search: true }),
       nationalityId: optionalId(),
       language: dryv.field(sharedProperties.Label).optional().nullable(),
     },
@@ -111,13 +142,66 @@ const details = person.schemas({
 });
 
 const id = () => dryv.field(sharedProperties.Id).optional();
-const personRead = person.feature("PersonRead").description("Public read access to people, names, profiles, public contacts and public handles.").tags("public");
+const personRead = person
+  .feature("PersonRead")
+  .description("Public read access to people, names, profiles, public contacts and public handles.")
+  .tags("public");
 const personSurfaces = [
-  readSurface(person, { singular: "Person", plural: "People", itemKey: "person", listKey: "people", path: "/people/individuals", idParam: "personId", entity: individuals.Person, description: "people", filters: { lifeStatus: dryv.field(personProperties.LifeStatus).optional(), q: dryv.field(sharedProperties.Name).optional() } }),
-  readSurface(person, { singular: "PersonName", plural: "PersonNames", itemKey: "personName", listKey: "personNames", path: "/people/names", idParam: "personNameId", entity: details.PersonName, description: "person names", filters: { personId: id(), kind: dryv.field(personProperties.NameKind).optional(), q: dryv.field(sharedProperties.Name).optional() } }),
-  readSurface(person, { singular: "PersonProfile", plural: "PersonProfiles", itemKey: "profile", listKey: "profiles", path: "/people/profiles", idParam: "profileId", entity: details.PersonProfile, description: "person profiles", filters: { personId: id(), q: dryv.field(sharedProperties.Name).optional() } }),
-  readSurface(person, { singular: "PersonContact", plural: "PersonContacts", itemKey: "contact", listKey: "contacts", path: "/people/contacts", idParam: "contactId", entity: details.PersonContact, description: "public person contacts", filters: { personId: id(), officeId: id(), kind: dryv.field(personProperties.ContactKind).optional() } }),
-  readSurface(person, { singular: "PersonHandle", plural: "PersonHandles", itemKey: "handle", listKey: "handles", path: "/people/handles", idParam: "handleId", entity: details.PersonHandle, description: "public person handles", filters: { personId: id(), platformId: id() } }),
+  readSurface(person, {
+    singular: "Person",
+    plural: "People",
+    itemKey: "person",
+    listKey: "people",
+    path: "/people/individuals",
+    idParam: "personId",
+    entity: individuals.Person,
+    description: "people",
+    filters: { lifeStatus: dryv.field(personProperties.LifeStatus).optional(), q: dryv.field(sharedProperties.Name).optional() },
+  }),
+  readSurface(person, {
+    singular: "PersonName",
+    plural: "PersonNames",
+    itemKey: "personName",
+    listKey: "personNames",
+    path: "/people/names",
+    idParam: "personNameId",
+    entity: details.PersonName,
+    description: "person names",
+    filters: { personId: id(), kind: dryv.field(personProperties.NameKind).optional(), q: dryv.field(sharedProperties.Name).optional() },
+  }),
+  readSurface(person, {
+    singular: "PersonProfile",
+    plural: "PersonProfiles",
+    itemKey: "profile",
+    listKey: "profiles",
+    path: "/people/profiles",
+    idParam: "profileId",
+    entity: details.PersonProfile,
+    description: "person profiles",
+    filters: { personId: id(), q: dryv.field(sharedProperties.Name).optional() },
+  }),
+  readSurface(person, {
+    singular: "PersonContact",
+    plural: "PersonContacts",
+    itemKey: "contact",
+    listKey: "contacts",
+    path: "/people/contacts",
+    idParam: "contactId",
+    entity: details.PersonContact,
+    description: "public person contacts",
+    filters: { personId: id(), officeId: id(), kind: dryv.field(personProperties.ContactKind).optional() },
+  }),
+  readSurface(person, {
+    singular: "PersonHandle",
+    plural: "PersonHandles",
+    itemKey: "handle",
+    listKey: "handles",
+    path: "/people/handles",
+    idParam: "handleId",
+    entity: details.PersonHandle,
+    description: "public person handles",
+    filters: { personId: id(), platformId: id() },
+  }),
 ];
 export const personReadOperations = personRead.operations(Object.assign({}, ...personSurfaces.map((surface) => surface.operations)));
 
@@ -133,7 +217,10 @@ const accounts = identity.schemas({
       lastSeenAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
     },
     "accounts",
-    [{ name: "idx_account_issuer_subject", fields: ["issuer", "subject"], unique: true }, { name: "idx_account_person", fields: ["personId"] }],
+    [
+      { name: "idx_account_issuer_subject", fields: ["issuer", "subject"], unique: true },
+      { name: "idx_account_person", fields: ["personId"] },
+    ],
   ),
 });
 

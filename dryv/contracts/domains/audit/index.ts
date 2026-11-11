@@ -14,7 +14,10 @@ import { baseEntitySchemas, sharedFailures, sharedProperties } from "../../found
  * database management engine. Actor identity and role come from the verified token, never the body.
  * Evidence points at a file in the filesystem schema (DEC-EVIDENCE-VIA-FILES).
  */
-export const audit = dryv.group({ name: "audit" }).description("Comments, evidence references and review decisions about canonical records.").tags("public", "audit")
+export const audit = dryv
+  .group({ name: "audit" })
+  .description("Comments, evidence references and review decisions about canonical records.")
+  .tags("public", "audit")
   .facets({ storage: { namespace: "audit" } });
 
 export const auditProperties = audit.properties({
@@ -35,7 +38,11 @@ function appendOnly(fields: Record<string, any>, table: string, indexes: Array<{
     .facets({ storage: dryv.storage(table).indexes(...indexes) });
 }
 
-const actor = () => dryv.field(sharedProperties.Id).system().query({ filter: ["equal"] });
+const actor = () =>
+  dryv
+    .field(sharedProperties.Id)
+    .system()
+    .query({ filter: ["equal"] });
 const target = {
   targetKind: dryv.field(sharedProperties.TargetKind).query({ filter: ["equal"] }),
   targetId: plainId(),
@@ -62,7 +69,10 @@ const records = audit.schemas({
       actorId: actor(),
     },
     "evidence",
-    [{ name: "idx_evidence_target", fields: ["targetKind", "targetId"] }, { name: "idx_evidence_file", fields: ["fileId"] }],
+    [
+      { name: "idx_evidence_target", fields: ["targetKind", "targetId"] },
+      { name: "idx_evidence_file", fields: ["fileId"] },
+    ],
   ),
 
   ReviewDecision: appendOnly(
@@ -100,9 +110,39 @@ const bodies = audit.schemas({
 const filters = { targetKind: dryv.field(sharedProperties.TargetKind).optional(), targetId: dryv.field(sharedProperties.Id).optional() };
 const audited = audit.feature("Audit").description("Read and append comments, evidence references and review decisions.").tags("public");
 
-const comments = readSurface(audit, { singular: "Comment", plural: "Comments", itemKey: "comment", listKey: "comments", path: "/audit/comments", idParam: "commentId", entity: records.Comment, description: "comments", filters });
-const evidence = readSurface(audit, { singular: "EvidenceReference", plural: "EvidenceReferences", itemKey: "evidence", listKey: "evidenceReferences", path: "/audit/evidence", idParam: "evidenceId", entity: records.EvidenceReference, description: "evidence references", filters });
-const decisions = readSurface(audit, { singular: "ReviewDecision", plural: "ReviewDecisions", itemKey: "decision", listKey: "decisions", path: "/audit/decisions", idParam: "decisionId", entity: records.ReviewDecision, description: "review decisions", filters });
+const comments = readSurface(audit, {
+  singular: "Comment",
+  plural: "Comments",
+  itemKey: "comment",
+  listKey: "comments",
+  path: "/audit/comments",
+  idParam: "commentId",
+  entity: records.Comment,
+  description: "comments",
+  filters,
+});
+const evidence = readSurface(audit, {
+  singular: "EvidenceReference",
+  plural: "EvidenceReferences",
+  itemKey: "evidence",
+  listKey: "evidenceReferences",
+  path: "/audit/evidence",
+  idParam: "evidenceId",
+  entity: records.EvidenceReference,
+  description: "evidence references",
+  filters,
+});
+const decisions = readSurface(audit, {
+  singular: "ReviewDecision",
+  plural: "ReviewDecisions",
+  itemKey: "decision",
+  listKey: "decisions",
+  path: "/audit/decisions",
+  idParam: "decisionId",
+  entity: records.ReviewDecision,
+  description: "review decisions",
+  filters,
+});
 
 function createOperation(description: string, path: string, body: any, response: any, policy: any) {
   const op = dryv
@@ -114,7 +154,9 @@ function createOperation(description: string, path: string, body: any, response:
     .authenticated()
     .requires(policy);
   op.facets({
-    http: withStandardHttpFailures(dryv.http("POST", `/v1${path}`).description(description).input(op.in, dryv.body()).output(op.out, dryv.respond(201)))
+    http: withStandardHttpFailures(
+      dryv.http("POST", `/v1${path}`).description(description).input(op.in, dryv.body()).output(op.out, dryv.respond(201)),
+    )
       .failure(sharedFailures.Unauthorized, 401)
       .failure(sharedFailures.Forbidden, 403),
   });
@@ -125,7 +167,25 @@ export const auditOperations = audited.operations({
   ...comments.operations,
   ...evidence.operations,
   ...decisions.operations,
-  CreateComment: createOperation("Add a comment to a record.", "/audit/comments", bodies.CreateCommentBody, comments.responses.CommentResponse, accessPolicies.ContributorAccess),
-  CreateEvidenceReference: createOperation("Attach an evidence reference (a file artifact held by the files service) to a record.", "/audit/evidence", bodies.CreateEvidenceReferenceBody, evidence.responses.EvidenceReferenceResponse, accessPolicies.ContributorAccess),
-  CreateReviewDecision: createOperation("Record a review decision about a record.", "/audit/decisions", bodies.CreateReviewDecisionBody, decisions.responses.ReviewDecisionResponse, accessPolicies.ReviewerAccess),
+  CreateComment: createOperation(
+    "Add a comment to a record.",
+    "/audit/comments",
+    bodies.CreateCommentBody,
+    comments.responses.CommentResponse,
+    accessPolicies.ContributorAccess,
+  ),
+  CreateEvidenceReference: createOperation(
+    "Attach an evidence reference (a file artifact held by the files service) to a record.",
+    "/audit/evidence",
+    bodies.CreateEvidenceReferenceBody,
+    evidence.responses.EvidenceReferenceResponse,
+    accessPolicies.ContributorAccess,
+  ),
+  CreateReviewDecision: createOperation(
+    "Record a review decision about a record.",
+    "/audit/decisions",
+    bodies.CreateReviewDecisionBody,
+    decisions.responses.ReviewDecisionResponse,
+    accessPolicies.ReviewerAccess,
+  ),
 });

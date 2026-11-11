@@ -1,4 +1,5 @@
 """Codes follow `.docs/rules/code-columns.md`: dot-separated lowercase segments, hierarchical by prefix, reproducible from names."""
+
 from __future__ import annotations
 
 import re

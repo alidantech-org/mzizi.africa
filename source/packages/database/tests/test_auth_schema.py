@@ -3,6 +3,7 @@
 Ported from the earlier Bun checks. Every test runs inside a transaction that is rolled back; stand-in data tables
 (geography, results, budgets) are created inside that transaction in a throwaway schema.
 """
+
 from __future__ import annotations
 
 import psycopg
@@ -46,16 +47,24 @@ def rejected(db, sql, params=()):
 def account(db, name, subject=None):
     acct = one(db, "INSERT INTO auth.accounts (display_name) VALUES (%s) RETURNING id", (name,))["id"]
     if subject:
-        db.execute("INSERT INTO auth.identities (account_id, issuer, subject) VALUES (%s, %s, %s)", (acct, ISSUER, subject))
+        db.execute(
+            "INSERT INTO auth.identities (account_id, issuer, subject) VALUES (%s, %s, %s)", (acct, ISSUER, subject)
+        )
     return acct
 
 
 def institution(db, code, parent=None):
-    return one(db, "INSERT INTO auth.institutions (code, name, parent_id, country_code) VALUES (%s, %s, %s, 'KE') RETURNING id", (code, code, parent))["id"]
+    return one(
+        db,
+        "INSERT INTO auth.institutions (code, name, parent_id, country_code) VALUES (%s, %s, %s, 'KE') RETURNING id",
+        (code, code, parent),
+    )["id"]
 
 
 def grant(db, grantor, to, role, table=None, scope_id=None, expires=None):
-    return one(db, "SELECT auth.grant_role(%s, %s, %s, %s, %s, %s) AS id", (grantor, to, role, table, scope_id, expires))["id"]
+    return one(
+        db, "SELECT auth.grant_role(%s, %s, %s, %s, %s, %s) AS id", (grantor, to, role, table, scope_id, expires)
+    )["id"]
 
 
 def decide(db, acct, permission, table, record):
@@ -73,30 +82,63 @@ def w(db):
     x.iebc, x.nairobi_gov = institution(db, "iebc"), institution(db, "nairobi_county")
     x.nairobi_health = institution(db, "nairobi_county.health", x.nairobi_gov)
     db.execute("CREATE SCHEMA geo")
-    db.execute("CREATE TABLE geo.units (id uuid PRIMARY KEY DEFAULT uuidv7(), name text, parent_id uuid REFERENCES geo.units(id))")
-    unit = lambda name, parent=None: one(db, "INSERT INTO geo.units (name, parent_id) VALUES (%s, %s) RETURNING id", (name, parent))["id"]  # noqa: E731
+    db.execute(
+        "CREATE TABLE geo.units (id uuid PRIMARY KEY DEFAULT uuidv7(), name text, parent_id uuid REFERENCES geo.units(id))"
+    )
+    unit = lambda name, parent=None: one(
+        db, "INSERT INTO geo.units (name, parent_id) VALUES (%s, %s) RETURNING id", (name, parent)
+    )["id"]
     x.kenya = unit("kenya")
     x.nairobi, x.kisumu = unit("nairobi", x.kenya), unit("kisumu", x.kenya)
     x.westlands = unit("westlands", x.nairobi)
-    db.execute("CREATE TABLE geo.budgets (id uuid PRIMARY KEY DEFAULT uuidv7(), unit_id uuid NOT NULL REFERENCES geo.units(id))")
-    db.execute("CREATE TABLE geo.results (id uuid PRIMARY KEY DEFAULT uuidv7(), steward_id uuid NOT NULL REFERENCES auth.institutions(id), unit_id uuid REFERENCES geo.units(id))")
+    db.execute(
+        "CREATE TABLE geo.budgets (id uuid PRIMARY KEY DEFAULT uuidv7(), unit_id uuid NOT NULL REFERENCES geo.units(id))"
+    )
+    db.execute(
+        "CREATE TABLE geo.results (id uuid PRIMARY KEY DEFAULT uuidv7(), steward_id uuid NOT NULL REFERENCES auth.institutions(id), unit_id uuid REFERENCES geo.units(id))"
+    )
     db.execute("SELECT auth.register_scope_target('geo.units', 'parent_id')")
     db.execute("SELECT auth.register_governed_table('geo.budgets', 'finance', 'geo.units', 'unit_id')")
     db.execute("SELECT auth.register_governed_table('geo.results', 'electoral', 'auth.institutions', 'steward_id')")
     db.execute("SELECT auth.create_role('finance_manager', 'Finance manager', ARRAY['finance.*'])")
     db.execute("SELECT auth.create_role('electoral_manager', 'Electoral manager', ARRAY['electoral.*'])")
     x.budget = lambda unit_id: one(db, "INSERT INTO geo.budgets (unit_id) VALUES (%s) RETURNING id", (unit_id,))["id"]
-    x.result = lambda steward, unit_id=None: one(db, "INSERT INTO geo.results (steward_id, unit_id) VALUES (%s, %s) RETURNING id", (steward, unit_id))["id"]
+    x.result = lambda steward, unit_id=None: one(
+        db, "INSERT INTO geo.results (steward_id, unit_id) VALUES (%s, %s) RETURNING id", (steward, unit_id)
+    )["id"]
     return x
 
 
 # ---------------------------------------------------------------------------- initialization and keys
 def test_migrations_are_recorded_and_the_nine_auth_tables_exist(db):
     from mzizi_database.migrate import migration_files
-    assert [r["name"] for r in db.execute("SELECT name FROM public.migrations ORDER BY name").fetchall()] == sorted(n for n, _, _ in migration_files())
-    tables = [r["table_name"] for r in db.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'auth' AND table_type = 'BASE TABLE' ORDER BY 1").fetchall()]
-    assert tables == ["accounts", "governed_tables", "identities", "institutions", "permissions", "role_assignments", "role_permissions", "roles", "scope_targets"]
-    assert {r["table_name"] for r in db.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'").fetchall()} == {"migrations", "spatial_ref_sys"}
+
+    assert [r["name"] for r in db.execute("SELECT name FROM public.migrations ORDER BY name").fetchall()] == sorted(
+        n for n, _, _ in migration_files()
+    )
+    tables = [
+        r["table_name"]
+        for r in db.execute(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'auth' AND table_type = 'BASE TABLE' ORDER BY 1"
+        ).fetchall()
+    ]
+    assert tables == [
+        "accounts",
+        "governed_tables",
+        "identities",
+        "institutions",
+        "permissions",
+        "role_assignments",
+        "role_permissions",
+        "roles",
+        "scope_targets",
+    ]
+    assert {
+        r["table_name"]
+        for r in db.execute(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
+        ).fetchall()
+    } == {"migrations", "spatial_ref_sys"}
 
 
 def test_every_auth_table_has_a_primary_key_and_a_comment(db):
@@ -110,10 +152,22 @@ def test_the_seed_is_applied_from_files_idempotently_and_namespaces_extend_the_a
     db.rollback()
     assert one(db, "SELECT count(*) AS n FROM auth.permissions WHERE namespace = 'electoral'")["n"] == 6
     assert one(db, "SELECT count(*) AS n FROM auth.roles")["n"] == 5
-    assert one(db, "SELECT count(*) AS n FROM auth.role_permissions rp JOIN auth.roles r ON r.id = rp.role_id WHERE r.code = 'admin'")["n"] == 72
+    assert (
+        one(
+            db,
+            "SELECT count(*) AS n FROM auth.role_permissions rp JOIN auth.roles r ON r.id = rp.role_id WHERE r.code = 'admin'",
+        )["n"]
+        == 72
+    )
     assert rejected(db, "INSERT INTO auth.permissions VALUES ('electoral', 'approve')").sqlstate == "23514"
     db.execute("SELECT auth.register_namespace('newarea')")
-    assert one(db, "SELECT count(*) AS n FROM auth.role_permissions rp JOIN auth.roles r ON r.id = rp.role_id WHERE r.code = 'admin' AND namespace = 'newarea'")["n"] == 6
+    assert (
+        one(
+            db,
+            "SELECT count(*) AS n FROM auth.role_permissions rp JOIN auth.roles r ON r.id = rp.role_id WHERE r.code = 'admin' AND namespace = 'newarea'",
+        )["n"]
+        == 6
+    )
 
 
 def test_a_bad_bundle_row_is_rejected_without_partial_change(db, tmp_path):
@@ -133,9 +187,21 @@ def test_a_bad_bundle_row_is_rejected_without_partial_change(db, tmp_path):
 
 def test_foreign_keys_uniqueness_and_scope_pairing_are_enforced(db, w):
     a = account(db, "A", "same")
-    assert rejected(db, "INSERT INTO auth.identities (account_id, issuer, subject) VALUES (%s, %s, 'same')", (a, ISSUER)).sqlstate == "23505"
+    assert (
+        rejected(
+            db, "INSERT INTO auth.identities (account_id, issuer, subject) VALUES (%s, %s, 'same')", (a, ISSUER)
+        ).sqlstate
+        == "23505"
+    )
     assert rejected(db, "INSERT INTO auth.role_permissions VALUES (uuidv7(), 'electoral', 'read')").sqlstate == "23503"
-    assert rejected(db, "INSERT INTO auth.role_assignments (account_id, role_id, scope_table, granted_by) SELECT %s, id, 'geo.units', %s FROM auth.roles WHERE code = 'reader'", (a, a)).sqlstate == "23514"
+    assert (
+        rejected(
+            db,
+            "INSERT INTO auth.role_assignments (account_id, role_id, scope_table, granted_by) SELECT %s, id, 'geo.units', %s FROM auth.roles WHERE code = 'reader'",
+            (a, a),
+        ).sqlstate
+        == "23514"
+    )
 
 
 # -------------------------------------------------------------------------------------- OIDC identity
@@ -143,10 +209,17 @@ def test_opaque_non_uuid_subjects_resolve_and_unknown_or_suspended_are_distingui
     for s in ("auth0|65f1c3", "kc:7b/x y", "plain"):
         account(db, f"u {s}", s)
         assert one(db, "SELECT outcome FROM auth.resolve_identity(%s, %s)", (ISSUER, s))["outcome"] == "ok"
-    assert one(db, "SELECT outcome FROM auth.resolve_identity(%s, 'nobody')", (ISSUER,))["outcome"] == "unknown_identity"
-    assert one(db, "SELECT outcome FROM auth.resolve_identity('https://other.example', 'plain')")["outcome"] == "unknown_identity"
+    assert (
+        one(db, "SELECT outcome FROM auth.resolve_identity(%s, 'nobody')", (ISSUER,))["outcome"] == "unknown_identity"
+    )
+    assert (
+        one(db, "SELECT outcome FROM auth.resolve_identity('https://other.example', 'plain')")["outcome"]
+        == "unknown_identity"
+    )
     db.execute("UPDATE auth.accounts SET status = 'suspended' WHERE display_name = 'u plain'")
-    assert one(db, "SELECT outcome FROM auth.resolve_identity(%s, 'plain')", (ISSUER,))["outcome"] == "account_not_active"
+    assert (
+        one(db, "SELECT outcome FROM auth.resolve_identity(%s, 'plain')", (ISSUER,))["outcome"] == "account_not_active"
+    )
 
 
 # ----------------------------------------------------------------------------------------- scoped access
@@ -198,7 +271,9 @@ def test_expiry_revocation_and_suspension_deny_immediately(db, w):
     timed = account(db, "Timed")
     grant(db, w.admin, timed, "finance_manager", "geo.units", w.kenya, "2099-01-01")
     assert decide(db, timed, "finance.edit", "geo.budgets", budget)["allowed"]
-    db.execute("UPDATE auth.role_assignments SET expires_at = now() - interval '1 second' WHERE account_id = %s", (timed,))
+    db.execute(
+        "UPDATE auth.role_assignments SET expires_at = now() - interval '1 second' WHERE account_id = %s", (timed,)
+    )
     assert decide(db, timed, "finance.edit", "geo.budgets", budget)["reason"] == "no_grant"
     revoked = account(db, "Revoked")
     g = grant(db, w.admin, revoked, "finance_manager", "geo.units", w.kenya)
@@ -222,33 +297,53 @@ def test_only_a_platform_auth_editor_grants_or_revokes(db, w):
 
 def test_invalid_scopes_are_rejected_and_grants_cannot_be_edited_extended_or_deleted(db, w):
     user = account(db, "User")
-    assert "does not exist" in str(rejected(db, "SELECT auth.grant_role(%s, %s, 'reader', 'geo.units', uuidv7())", (w.admin, user)))
-    assert "not an allowed scope target" in str(rejected(db, "SELECT auth.grant_role(%s, %s, 'reader', 'geo.budgets', uuidv7())", (w.admin, user)))
+    assert "does not exist" in str(
+        rejected(db, "SELECT auth.grant_role(%s, %s, 'reader', 'geo.units', uuidv7())", (w.admin, user))
+    )
+    assert "not an allowed scope target" in str(
+        rejected(db, "SELECT auth.grant_role(%s, %s, 'reader', 'geo.budgets', uuidv7())", (w.admin, user))
+    )
     g = grant(db, w.admin, user, "reader", "geo.units", w.nairobi, "2099-01-01")
-    assert "cannot be extended" in str(rejected(db, "UPDATE auth.role_assignments SET expires_at = expires_at + interval '1 day' WHERE id = %s", (g,)))
-    assert "cannot be edited" in str(rejected(db, "UPDATE auth.role_assignments SET role_id = (SELECT id FROM auth.roles WHERE code = 'admin') WHERE id = %s", (g,)))
+    assert "cannot be extended" in str(
+        rejected(db, "UPDATE auth.role_assignments SET expires_at = expires_at + interval '1 day' WHERE id = %s", (g,))
+    )
+    assert "cannot be edited" in str(
+        rejected(
+            db,
+            "UPDATE auth.role_assignments SET role_id = (SELECT id FROM auth.roles WHERE code = 'admin') WHERE id = %s",
+            (g,),
+        )
+    )
     assert "never deleted" in str(rejected(db, "DELETE FROM auth.role_assignments WHERE id = %s", (g,)))
 
 
 def test_registration_needs_real_tables_and_columns(db, w):
     assert "does not exist" in str(rejected(db, "SELECT auth.register_scope_target('geo.missing')"))
-    assert "not registered" in str(rejected(db, "SELECT auth.register_governed_table('geo.budgets', 'nonamespace', 'geo.units', 'unit_id')"))
+    assert "not registered" in str(
+        rejected(db, "SELECT auth.register_governed_table('geo.budgets', 'nonamespace', 'geo.units', 'unit_id')")
+    )
     db.execute("CREATE TABLE geo.other (id uuid PRIMARY KEY)")
-    assert "not found" in str(rejected(db, "SELECT auth.register_governed_table('geo.other', 'finance', 'geo.units', 'unit_id')"))
+    assert "not found" in str(
+        rejected(db, "SELECT auth.register_governed_table('geo.other', 'finance', 'geo.units', 'unit_id')")
+    )
 
 
 def test_moving_a_records_owner_is_checked_against_both_existing_and_proposed_owner(db, w):
     manager = account(db, "Nairobi finance")
     grant(db, w.admin, manager, "finance_manager", "geo.units", w.nairobi)
     budget, outside = w.budget(w.westlands), w.budget(w.kisumu)
-    change = lambda record, to: one(db, "SELECT auth.can_change(%s, 'finance.edit', 'geo.budgets', %s, %s) AS r", (manager, record, to))["r"]  # noqa: E731
+    change = lambda record, to: one(
+        db, "SELECT auth.can_change(%s, 'finance.edit', 'geo.budgets', %s, %s) AS r", (manager, record, to)
+    )["r"]
     assert change(budget, w.nairobi)["allowed"]
     assert change(budget, w.kisumu)["failed_on"] == "proposed_owner"
     assert change(outside, w.nairobi)["failed_on"] == "existing_owner"
 
 
 def test_institution_parents_cannot_form_a_cycle(db, w):
-    assert "cycle" in str(rejected(db, "UPDATE auth.institutions SET parent_id = %s WHERE id = %s", (w.nairobi_health, w.nairobi_gov)))
+    assert "cycle" in str(
+        rejected(db, "UPDATE auth.institutions SET parent_id = %s WHERE id = %s", (w.nairobi_health, w.nairobi_gov))
+    )
 
 
 def test_allowed_links_filter_before_pagination_and_totals(db, w):
@@ -260,5 +355,14 @@ def test_allowed_links_filter_before_pagination_and_totals(db, w):
     assert one(db, f"SELECT count(*) AS n {visible}", (manager,))["n"] == 4
     page = db.execute(f"SELECT b.id {visible} ORDER BY b.id LIMIT 3 OFFSET 2", (manager,)).fetchall()
     assert len(page) == 2 and {r["id"] for r in page} <= {ids[0], ids[2], ids[5], ids[7]}
-    assert one(db, "SELECT count(*) AS n FROM auth.allowed_links(%s, 'finance.read', 'geo.budgets') WHERE all_records", (w.admin,))["n"] == 1
-    assert db.execute("SELECT 1 FROM auth.allowed_links(%s, 'electoral.read', 'geo.budgets')", (manager,)).fetchall() == []
+    assert (
+        one(
+            db,
+            "SELECT count(*) AS n FROM auth.allowed_links(%s, 'finance.read', 'geo.budgets') WHERE all_records",
+            (w.admin,),
+        )["n"]
+        == 1
+    )
+    assert (
+        db.execute("SELECT 1 FROM auth.allowed_links(%s, 'electoral.read', 'geo.budgets')", (manager,)).fetchall() == []
+    )

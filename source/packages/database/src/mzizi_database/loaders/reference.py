@@ -1,17 +1,18 @@
 """Apply reviewed structural vocabulary from the root seed registry to mzizi_new."""
+
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-from ..connection import assert_rewrite_session
+from ..connection import Connection, assert_rewrite_session, required
 
 SEED_PATH = "global/reference/foundation-baseline.json"
 COUNTRY_SEED_PATH = "global/reference/african-countries-au-un-2026-11-11.json"
 SEED_ROOT = Path(__file__).resolve().parents[6] / "seed"
 
 
-def apply_reference_seed(conn, path: Path | None = None) -> dict[str, int]:
+def apply_reference_seed(conn: Connection, path: Path | None = None) -> dict[str, int]:
     assert_rewrite_session(conn)
     data = json.loads((path or SEED_ROOT / SEED_PATH).read_text(encoding="utf-8"))
     if data.get("schema_version") != 1 or data.get("review") != "structure_only":
@@ -19,8 +20,15 @@ def apply_reference_seed(conn, path: Path | None = None) -> dict[str, int]:
     counts = {"schemes": 0, "values": 0, "topics": 0}
     with conn.transaction():
         for row in data["schemes"]:
-            current = conn.execute("SELECT name,description,owner,country_id FROM reference.schemes WHERE code=%s", (row["code"],)).fetchone()
-            if current and (current["name"], current["description"], current["owner"], current["country_id"]) != (row["name"], row["description"], row["owner"], None):
+            current = conn.execute(
+                "SELECT name,description,owner,country_id FROM reference.schemes WHERE code=%s", (row["code"],)
+            ).fetchone()
+            if current and (current["name"], current["description"], current["owner"], current["country_id"]) != (
+                row["name"],
+                row["description"],
+                row["owner"],
+                None,
+            ):
                 raise ValueError(f"reference scheme conflict: {row['code']}")
             result = conn.execute(
                 "INSERT INTO reference.schemes(code,name,description,owner) VALUES (%s,%s,%s,%s) "
@@ -30,8 +38,14 @@ def apply_reference_seed(conn, path: Path | None = None) -> dict[str, int]:
             counts["schemes"] += bool(result)
         scheme_ids = {r["code"]: r["id"] for r in conn.execute("SELECT id,code FROM reference.schemes")}
         for row in data["values"]:
-            current = conn.execute("SELECT scheme_id,label,description FROM reference.values WHERE code=%s", (row["code"],)).fetchone()
-            if current and (current["scheme_id"], current["label"], current["description"]) != (scheme_ids[row["scheme"]], row["label"], row["description"]):
+            current = conn.execute(
+                "SELECT scheme_id,label,description FROM reference.values WHERE code=%s", (row["code"],)
+            ).fetchone()
+            if current and (current["scheme_id"], current["label"], current["description"]) != (
+                scheme_ids[row["scheme"]],
+                row["label"],
+                row["description"],
+            ):
                 raise ValueError(f"reference value conflict: {row['code']}")
             result = conn.execute(
                 "INSERT INTO reference.values(code,scheme_id,label,description) VALUES (%s,%s,%s,%s) "
@@ -40,7 +54,9 @@ def apply_reference_seed(conn, path: Path | None = None) -> dict[str, int]:
             ).fetchone()
             counts["values"] += bool(result)
         for row in data["topics"]:
-            current = conn.execute("SELECT name,description FROM reference.topics WHERE code=%s", (row["code"],)).fetchone()
+            current = conn.execute(
+                "SELECT name,description FROM reference.topics WHERE code=%s", (row["code"],)
+            ).fetchone()
             if current and (current["name"], current["description"]) != (row["name"], row["description"]):
                 raise ValueError(f"reference topic conflict: {row['code']}")
             result = conn.execute(
@@ -52,7 +68,7 @@ def apply_reference_seed(conn, path: Path | None = None) -> dict[str, int]:
     return counts
 
 
-def apply_country_seed(conn, path: Path | None = None) -> int:
+def apply_country_seed(conn: Connection, path: Path | None = None) -> int:
     """Apply the 55-source reconciliation only after exact AU and UN page versions are registered and pinned."""
     assert_rewrite_session(conn)
     data = json.loads((path or SEED_ROOT / COUNTRY_SEED_PATH).read_text(encoding="utf-8"))
@@ -65,6 +81,7 @@ def apply_country_seed(conn, path: Path | None = None) -> int:
     for filename, item in sources.items():
         local = SEED_ROOT / item["path"]
         import hashlib
+
         if hashlib.sha256(local.read_bytes()).hexdigest() != item["sha256"]:
             raise ValueError(f"source snapshot hash changed: {filename}")
         entry = "global.reference.au-members-source" if filename.startswith("au-") else "global.reference.un-m49-source"
@@ -79,23 +96,40 @@ def apply_country_seed(conn, path: Path | None = None) -> int:
     added = 0
     with conn.transaction():
         for row in data["rows"]:
-            current = conn.execute("SELECT name,iso_alpha2,recognition_status,source_file_version_id FROM reference.countries WHERE code=%s", (row["code"],)).fetchone()
-            wanted = (row["name"], row["iso_alpha2"], row["recognition_status"], version_ids["au-member-states-2026-11-11.html"])
+            current = conn.execute(
+                "SELECT name,iso_alpha2,recognition_status,source_file_version_id FROM reference.countries WHERE code=%s",
+                (row["code"],),
+            ).fetchone()
+            wanted = (
+                row["name"],
+                row["iso_alpha2"],
+                row["recognition_status"],
+                version_ids["au-member-states-2026-11-11.html"],
+            )
             if current:
-                if (current["name"], current["iso_alpha2"], current["recognition_status"], current["source_file_version_id"]) != wanted:
+                if (
+                    current["name"],
+                    current["iso_alpha2"],
+                    current["recognition_status"],
+                    current["source_file_version_id"],
+                ) != wanted:
                     raise ValueError(f"country identity conflict: {row['code']}")
                 continue
-            conn.execute("INSERT INTO reference.countries(code,name,iso_alpha2,recognition_status,source_file_version_id) VALUES (%s,%s,%s,%s,%s)", (row["code"], *wanted))
+            conn.execute(
+                "INSERT INTO reference.countries(code,name,iso_alpha2,recognition_status,source_file_version_id) VALUES (%s,%s,%s,%s,%s)",
+                (row["code"], *wanted),
+            )
             added += 1
     return added
 
 
-def apply_geography_roots(conn) -> dict[str, int]:
+def apply_geography_roots(conn: Connection) -> dict[str, int]:
     """Create Africa and AU-member M49 area identities without inventing boundaries or administrative ancestry."""
     assert_rewrite_session(conn)
     data = json.loads((SEED_ROOT / COUNTRY_SEED_PATH).read_text(encoding="utf-8"))
     source = next(s for s in data["source_artifacts"] if s["path"].endswith("un-m49-overview-2026-11-11.html"))
     import hashlib
+
     if hashlib.sha256((SEED_ROOT / source["path"]).read_bytes()).hexdigest() != source["sha256"]:
         raise ValueError("UN M49 source snapshot hash changed")
     evidence = conn.execute(
@@ -105,35 +139,49 @@ def apply_geography_roots(conn) -> dict[str, int]:
     if not evidence:
         raise ValueError("UN M49 source artifact is not registered and pinned")
     file_id = evidence["id"]
-    scheme = conn.execute("SELECT id FROM reference.schemes WHERE code='geo_unit_type'").fetchone()["id"]
-    types = {r["code"]: r["id"] for r in conn.execute("SELECT id,code FROM reference.values WHERE scheme_id=%s", (scheme,))}
+    scheme = required(conn.execute("SELECT id FROM reference.schemes WHERE code='geo_unit_type'").fetchone())["id"]
+    types = {
+        r["code"]: r["id"] for r in conn.execute("SELECT id,code FROM reference.values WHERE scheme_id=%s", (scheme,))
+    }
     counts = {"units": 0, "country_links": 0}
     with conn.transaction():
         items = [("geo.africa", "Africa", "geo_unit_type.continent", None)]
         items += [(f"geo.{r['code']}", r["un_m49_label"], "geo_unit_type.country_territory", r) for r in data["rows"]]
         for code, name, type_code, country in items:
-            current = conn.execute("SELECT id,name,type_value_id,source_file_version_id FROM geography.units WHERE code=%s", (code,)).fetchone()
+            current = conn.execute(
+                "SELECT id,name,type_value_id,source_file_version_id FROM geography.units WHERE code=%s", (code,)
+            ).fetchone()
             wanted = (name, types[type_code], file_id)
             if current:
                 if (current["name"], current["type_value_id"], current["source_file_version_id"]) != wanted:
                     raise ValueError(f"geography root conflict: {code}")
                 unit_id = current["id"]
             else:
-                unit_id = conn.execute(
-                    "INSERT INTO geography.units(code,name,type_scheme_id,type_value_id,existence_status,source_file_version_id) VALUES (%s,%s,%s,%s,'established',%s) RETURNING id",
-                    (code, name, scheme, types[type_code], file_id),
-                ).fetchone()["id"]
+                unit_id = required(
+                    conn.execute(
+                        "INSERT INTO geography.units(code,name,type_scheme_id,type_value_id,existence_status,source_file_version_id) VALUES (%s,%s,%s,%s,'established',%s) RETURNING id",
+                        (code, name, scheme, types[type_code], file_id),
+                    ).fetchone()
+                )["id"]
                 counts["units"] += 1
             if country:
-                identity = conn.execute("SELECT id FROM reference.countries WHERE code=%s", (country["code"],)).fetchone()
+                identity = conn.execute(
+                    "SELECT id FROM reference.countries WHERE code=%s", (country["code"],)
+                ).fetchone()
                 if not identity:
                     raise ValueError(f"country identity absent: {country['code']}")
                 kind = "statistical_area"
-                existing = conn.execute("SELECT id,relation_kind,evidence_file_version_id FROM geography.country_territories WHERE country_id=%s AND unit_id=%s AND period IS NULL", (identity["id"], unit_id)).fetchone()
+                existing = conn.execute(
+                    "SELECT id,relation_kind,evidence_file_version_id FROM geography.country_territories WHERE country_id=%s AND unit_id=%s AND period IS NULL",
+                    (identity["id"], unit_id),
+                ).fetchone()
                 if existing:
                     if (existing["relation_kind"], existing["evidence_file_version_id"]) != (kind, file_id):
                         raise ValueError(f"country territory link conflict: {code}")
                 else:
-                    conn.execute("INSERT INTO geography.country_territories(country_id,unit_id,relation_kind,evidence_file_version_id) VALUES (%s,%s,%s,%s)", (identity["id"], unit_id, kind, file_id))
+                    conn.execute(
+                        "INSERT INTO geography.country_territories(country_id,unit_id,relation_kind,evidence_file_version_id) VALUES (%s,%s,%s,%s)",
+                        (identity["id"], unit_id, kind, file_id),
+                    )
                     counts["country_links"] += 1
     return counts

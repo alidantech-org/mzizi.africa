@@ -1,4 +1,5 @@
 """CSV and JSON extraction into the same segment/diagnostic shape as the other extractors."""
+
 from __future__ import annotations
 
 import csv
@@ -31,8 +32,10 @@ def extract_csv(data: bytes, profile: str | None = None) -> Output:
         if not any(cell.strip() for cell in row):
             continue
         if len(row) != len(header):
-            diagnostics.append(_diag("warning", "ragged_row", f"line {number} has {len(row)} cells, header has {len(header)}"))
-        segments.append({"kind": "row", "line": number, "content": dict(zip(header, row))})
+            diagnostics.append(
+                _diag("warning", "ragged_row", f"line {number} has {len(row)} cells, header has {len(header)}")
+            )
+        segments.append({"kind": "row", "line": number, "content": dict(zip(header, row, strict=False))})
     return Output("partial" if diagnostics else "succeeded", segments, diagnostics)
 
 

@@ -12,6 +12,27 @@ interface FileTypeChartProps {
   loading?: boolean;
 }
 
+/** Tooltip for a slice: the file type with its file count and size. Recharts supplies `active` and `payload`. */
+function CustomTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: { payload: { type: string; count?: number; size?: number } }[];
+}) {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-background p-3 border rounded shadow-lg">
+        <p className="font-semibold">{data.type}</p>
+        <p className="text-sm">Files: {Number(data.count || 0).toLocaleString()}</p>
+        <p className="text-sm">Size: {Number(data.size || 0).toLocaleString()} MB</p>
+      </div>
+    );
+  }
+  return null;
+}
+
 export default function FileTypeChart({ data, loading = false }: FileTypeChartProps) {
   // File type to color mapping using reasonable common colors
   const getFileTypeColor = (fileType: string): string => {
@@ -142,20 +163,6 @@ export default function FileTypeChart({ data, loading = false }: FileTypeChartPr
     ...item,
     color: getFileTypeColor(item.type),
   }));
-
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="bg-background p-3 border rounded shadow-lg">
-          <p className="font-semibold">{data.type}</p>
-          <p className="text-sm">Files: {Number(data.count || 0).toLocaleString()}</p>
-          <p className="text-sm">Size: {Number(data.size || 0).toLocaleString()} MB</p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   if (loading) {
     return (

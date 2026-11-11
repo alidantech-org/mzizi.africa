@@ -3,6 +3,7 @@
 Technical validity says nothing about legal approval: a valid bundle is still refused by the
 collection gate unless its source has a current approved assessment.
 """
+
 from __future__ import annotations
 
 import json
@@ -26,7 +27,10 @@ CONTRACTS = SCHEMA_ROOT / "contracts"
 TAG_VOCABULARY = SEED_ROOT / "global" / "reference" / "site-tags.json"
 
 SECRET_PATTERNS = [
-    (re.compile(r"(?i)\b(password|passwd|secret|api[_-]?key|access[_-]?token|auth[_-]?token|bearer)\b\s*[:=]\s*\S+"), "credential-like key"),
+    (
+        re.compile(r"(?i)\b(password|passwd|secret|api[_-]?key|access[_-]?token|auth[_-]?token|bearer)\b\s*[:=]\s*\S+"),
+        "credential-like key",
+    ),
     (re.compile(r"(?i)\bauthorization\s*:\s*\S+"), "authorization header"),
     (re.compile(r"(?i)\b(set-)?cookie\s*:\s*\S+"), "cookie"),
     (re.compile(r"\b(eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{5,})\b"), "JWT-like token"),
@@ -53,7 +57,9 @@ def _registry() -> Registry:
     registry: Registry = Registry()
     for path in SCHEMA_DIR.glob("*.json"):
         schema = json.loads(path.read_text())
-        registry = registry.with_resource(f"https://mzizi.africa/schemas/site/v1/{path.stem.replace('.schema', '')}", Resource.from_contents(schema))
+        registry = registry.with_resource(
+            f"https://mzizi.africa/schemas/site/v1/{path.stem.replace('.schema', '')}", Resource.from_contents(schema)
+        )
         registry = registry.with_resource(path.name, Resource.from_contents(schema))
     return registry
 
@@ -75,7 +81,10 @@ def targets() -> dict[str, dict]:
 
 
 def _schema_errors(validator: Draft202012Validator, document: Any, where: str) -> list[str]:
-    return [f"{where}: {'/'.join(str(p) for p in error.absolute_path) or '<root>'}: {error.message}" for error in sorted(validator.iter_errors(document), key=lambda e: list(e.absolute_path))]
+    return [
+        f"{where}: {'/'.join(str(p) for p in error.absolute_path) or '<root>'}: {error.message}"
+        for error in sorted(validator.iter_errors(document), key=lambda e: list(e.absolute_path))
+    ]
 
 
 def _collect_tags(value: Any) -> list[str]:
@@ -107,7 +116,9 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
     for name, mapping in bundle.mappings.items():
         report.errors += _schema_errors(_validator("mapping"), mapping, f"mappings/{name}.yml")
         if mapping.get("mapping") != name:
-            report.errors.append(f"mappings/{name}.yml: mapping name {mapping.get('mapping')!r} must equal the file name")
+            report.errors.append(
+                f"mappings/{name}.yml: mapping name {mapping.get('mapping')!r} must equal the file name"
+            )
     if bundle.tags:
         report.errors += _schema_errors(_validator("tags"), bundle.tags, "tags.yml")
     if bundle.sections:
@@ -122,13 +133,17 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
     if extends and manifest.get("kind") == "family":
         report.errors.append("manifest.yml: a family cannot extend another family (one level of inheritance only)")
     if extends and family is None:
-        report.warnings.append(f"extends {extends['family']} but no family bundle was supplied; inherited modules were not checked")
+        report.warnings.append(
+            f"extends {extends['family']} but no family bundle was supplied; inherited modules were not checked"
+        )
     modules = effective_modules(bundle, family)
     for name in manifest["modules"]:
         if name not in modules:
             report.errors.append(f"manifest.yml: module {name!r} is listed but no module file defines it")
     for name in bundle.modules:
-        if name not in manifest["modules"] and name not in ((manifest.get("overlay") or {}).get("modules") or {}).get("add", []):
+        if name not in manifest["modules"] and name not in ((manifest.get("overlay") or {}).get("modules") or {}).get(
+            "add", []
+        ):
             report.warnings.append(f"modules/{name}.yml is not listed in the manifest")
     overlay = (manifest.get("overlay") or {}).get("modules") or {}
     for name in [*overlay.get("replace", []), *overlay.get("add", [])]:
@@ -136,7 +151,9 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             report.errors.append(f"overlay names module {name!r} but modules/{name}.yml does not exist")
     for name, mapping in bundle.mappings.items():
         if "module" not in mapping and "extractor" not in mapping:
-            report.errors.append(f"mappings/{name}.yml: needs a module (structure mapping) or an extractor (dataset import)")
+            report.errors.append(
+                f"mappings/{name}.yml: needs a module (structure mapping) or an extractor (dataset import)"
+            )
         elif "module" in mapping and mapping["module"] not in modules:
             report.errors.append(f"mappings/{name}.yml: module {mapping['module']!r} does not exist")
         target = known_targets.get(mapping["target_kind"])
@@ -151,26 +168,45 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
                     report.errors.append(f"mappings/{name}.yml: key {key!r} is not a mapped field")
             missing = [f for f in target["required"] if f not in mapping["fields"] and f not in ("isCurrent",)]
             if missing:
-                report.warnings.append(f"mappings/{name}.yml: required fields not mapped (supplied by the engine or defaults?): {', '.join(missing)}")
+                report.warnings.append(
+                    f"mappings/{name}.yml: required fields not mapped (supplied by the engine or defaults?): {', '.join(missing)}"
+                )
         module_fields = set(modules.get(mapping.get("module", ""), {}).get("extract", {}).get("fields", {}))
         for key, spec in mapping["fields"].items():
             if "from" in spec and module_fields and spec["from"].split(".")[0] not in module_fields:
-                report.errors.append(f"mappings/{name}.yml: field {key!r} reads {spec['from']!r}, which module {mapping['module']!r} does not extract")
+                report.errors.append(
+                    f"mappings/{name}.yml: field {key!r} reads {spec['from']!r}, which module {mapping['module']!r} does not extract"
+                )
             if "transform" in spec and not transforms.known(spec["transform"]):
-                report.errors.append(f"mappings/{name}.yml: unknown transform {transforms.split(spec['transform'])[0]!r}")
+                report.errors.append(
+                    f"mappings/{name}.yml: unknown transform {transforms.split(spec['transform'])[0]!r}"
+                )
     for name, module in modules.items():
         for field_name, spec in module.get("extract", {}).get("fields", {}).items():
             if "parse" in spec and not transforms.known(spec["parse"]):
-                report.errors.append(f"module {name}: field {field_name}: unknown transform {transforms.split(spec['parse'])[0]!r}")
+                report.errors.append(
+                    f"module {name}: field {field_name}: unknown transform {transforms.split(spec['parse'])[0]!r}"
+                )
         if module.get("fetch", {}).get("resource") == "html" and manifest.get("fetch", {}).get("mode") == "api":
             report.warnings.append(f"module {name}: html resource in an api-mode site")
 
     proposed = {entry["tag"] for entry in bundle.tags.get("tags", [])} if bundle.tags else set()
     namespaces = {tag.split(":")[0] for tag in vocab}
-    for tag in {*_collect_tags(manifest), *[t for m in modules.values() for t in _collect_tags(m)], *[t for m in bundle.mappings.values() for t in _collect_tags(m)]}:
+    for tag in {
+        *_collect_tags(manifest),
+        *[t for m in modules.values() for t in _collect_tags(m)],
+        *[t for m in bundle.mappings.values() for t in _collect_tags(m)],
+    }:
         if tag in vocab or tag in proposed:
             continue
-        report.errors.append(f"unknown tag {tag!r}" + (" (the namespace is known; add it to tags.yml to propose a new value)" if tag.split(":")[0] in namespaces else " (unknown namespace)"))
+        report.errors.append(
+            f"unknown tag {tag!r}"
+            + (
+                " (the namespace is known; add it to tags.yml to propose a new value)"
+                if tag.split(":")[0] in namespaces
+                else " (unknown namespace)"
+            )
+        )
     for tag in proposed:
         if tag.split(":")[0] not in namespaces:
             report.errors.append(f"tags.yml proposes {tag!r} in an unknown namespace")
@@ -181,7 +217,9 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             continue
         for pattern, label in SECRET_PATTERNS:
             if pattern.search(text):
-                report.errors.append(f"{path}: contains a {label}; structure bundles never hold secrets, cookies or tokens")
+                report.errors.append(
+                    f"{path}: contains a {label}; structure bundles never hold secrets, cookies or tokens"
+                )
     if len(bundle.notes.strip()) < 80:
         report.errors.append("NOTES.md is missing or too short: record findings, gaps and limitations")
     scope = manifest["policy"]["scope"]
@@ -194,7 +232,9 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             if url.startswith("/") and any(url.startswith(prefix) for prefix in scope.get("paths", {}).get("deny", [])):
                 report.errors.append(f"module {name}: {key} url {url} is in policy.scope.paths.deny")
     if "assessment" not in manifest["policy"]:
-        report.warnings.append("policy.assessment is not set: the collection gate will deny this recipe until an assessment is linked")
+        report.warnings.append(
+            "policy.assessment is not set: the collection gate will deny this recipe until an assessment is linked"
+        )
 
     # 4. Dry run against saved examples
     if run_dry and not report.errors:
@@ -210,16 +250,26 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
                 continue
             records = [extract.extract_item(item, module["extract"]["fields"]) for item in match.items]
             expect = module.get("expect", {})
-            result = {"items": len(match.items), "selector": match.selector_index, "fieldErrors": sum(len(e) for _, e in records)}
+            result = {
+                "items": len(match.items),
+                "selector": match.selector_index,
+                "fieldErrors": sum(len(e) for _, e in records),
+            }
             report.dry_run[name] = result
             if "min_items" in expect and len(match.items) < expect["min_items"]:
-                report.errors.append(f"module {name}: dry run found {len(match.items)} items, expected at least {expect['min_items']}")
+                report.errors.append(
+                    f"module {name}: dry run found {len(match.items)} items, expected at least {expect['min_items']}"
+                )
             if "max_items" in expect and len(match.items) > expect["max_items"]:
-                report.errors.append(f"module {name}: dry run found {len(match.items)} items, expected at most {expect['max_items']}")
+                report.errors.append(
+                    f"module {name}: dry run found {len(match.items)} items, expected at most {expect['max_items']}"
+                )
             for required in expect.get("required_fields", []):
                 empty = sum(1 for record, _ in records if record.get(required) in (None, ""))
                 if empty:
-                    report.errors.append(f"module {name}: required field {required!r} is empty in {empty} of {len(records)} items")
+                    report.errors.append(
+                        f"module {name}: required field {required!r} is empty in {empty} of {len(records)} items"
+                    )
             if records and result["fieldErrors"]:
                 report.warnings.append(f"module {name}: {result['fieldErrors']} field errors in the dry run")
     return report

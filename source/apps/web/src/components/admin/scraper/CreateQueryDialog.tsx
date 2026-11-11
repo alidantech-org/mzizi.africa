@@ -2,43 +2,20 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
 interface CreateQueryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreateQuery: (query: {
-    name: string;
-    url: string;
-    frequency: string;
-    selectors: string;
-  }) => Promise<void>;
+  onCreateQuery: (query: { name: string; url: string; frequency: string; selectors: string }) => Promise<void>;
   isLoading?: boolean;
 }
 
-export default function CreateQueryDialog({
-  open,
-  onOpenChange,
-  onCreateQuery,
-  isLoading = false,
-}: CreateQueryDialogProps) {
+export default function CreateQueryDialog({ open, onOpenChange, onCreateQuery, isLoading = false }: CreateQueryDialogProps) {
   const [newQuery, setNewQuery] = useState({
     name: '',
     url: '',
@@ -49,7 +26,7 @@ export default function CreateQueryDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newQuery.name || !newQuery.url) return;
-    
+
     await onCreateQuery(newQuery);
     setNewQuery({ name: '', url: '', frequency: 'daily', selectors: '' });
   };
@@ -59,9 +36,7 @@ export default function CreateQueryDialog({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Create New Scraping Query</DialogTitle>
-          <DialogDescription>
-            Configure a new web scraping task to collect political finance data.
-          </DialogDescription>
+          <DialogDescription>Configure a new web scraping task to collect political finance data.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
@@ -88,10 +63,7 @@ export default function CreateQueryDialog({
             </div>
             <div className="grid gap-2">
               <Label htmlFor="frequency">Scraping Frequency</Label>
-              <Select 
-                value={newQuery.frequency} 
-                onValueChange={(value) => setNewQuery({ ...newQuery, frequency: value })}
-              >
+              <Select value={newQuery.frequency} onValueChange={(value) => setNewQuery({ ...newQuery, frequency: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -115,12 +87,7 @@ export default function CreateQueryDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isLoading}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
               Cancel
             </Button>
             <Button type="submit" disabled={isLoading || !newQuery.name || !newQuery.url}>

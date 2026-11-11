@@ -9,11 +9,18 @@ export default async function QueuePage({ searchParams }: { searchParams: Promis
   await requireRole();
   const params = await searchParams;
   const status = params.status ?? 'in_review';
-  const { data, error } = await load<{ candidates: Candidate[]; meta: Meta }>('/pipeline/candidates', { status: status === 'all' ? undefined : status, targetKind: params.targetKind, page: params.page });
+  const { data, error } = await load<{ candidates: Candidate[]; meta: Meta }>('/pipeline/candidates', {
+    status: status === 'all' ? undefined : status,
+    targetKind: params.targetKind,
+    page: params.page,
+  });
   return (
     <>
       <h1>Review queue</h1>
-      <p className="sub">Staged candidates waiting for a decision from a reviewer, a person or an AI agent. Nothing here is canonical until a reviewer approves it and it is promoted; each decision names the approving account.</p>
+      <p className="sub">
+        Staged candidates waiting for a decision from a reviewer, a person or an AI agent. Nothing here is canonical until a reviewer
+        approves it and it is promoted; each decision names the approving account.
+      </p>
       <Notice bad={error} />
       <div className="rv-filters" role="group" aria-label="Filter by status">
         {[...STATUSES, 'all'].map((s) => (
@@ -28,18 +35,34 @@ export default async function QueuePage({ searchParams }: { searchParams: Promis
           <div className="rv-table-wrap">
             <table>
               <thead>
-                <tr><th>Target</th><th>Status</th><th>Method</th><th>Confidence</th><th>Issues</th><th>Staged</th><th /></tr>
+                <tr>
+                  <th>Target</th>
+                  <th>Status</th>
+                  <th>Method</th>
+                  <th>Confidence</th>
+                  <th>Issues</th>
+                  <th>Staged</th>
+                  <th />
+                </tr>
               </thead>
               <tbody>
                 {data.candidates.map((c) => (
                   <tr key={c.id}>
                     <td className="mono">{c.targetKind}</td>
-                    <td><Badge value={c.status} /></td>
+                    <td>
+                      <Badge value={c.status} />
+                    </td>
                     <td>{c.method.replaceAll('_', ' ')}</td>
                     <td>{c.confidence === null ? 'n/a' : `${Math.round(c.confidence * 100)}%`}</td>
-                    <td>{c.issueCount ? <Badge value="warning" /> : null} {c.issueCount}</td>
+                    <td>
+                      {c.issueCount ? <Badge value="warning" /> : null} {c.issueCount}
+                    </td>
                     <td className="nowrap">{ago(c.createdAt)}</td>
-                    <td><Link className="btn" href={`/review/candidates/${c.id}`}>Open</Link></td>
+                    <td>
+                      <Link className="btn" href={`/review/candidates/${c.id}`}>
+                        Open
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>

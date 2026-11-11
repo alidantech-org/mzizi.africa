@@ -1,14 +1,15 @@
-"""Collection gate decision (pure function). Tested against seed/fixtures/contracts/gate-vectors.json.
+"""Collection gate decision (pure function). Tested against seed/_fixtures/contracts/gate-vectors.json.
 Loading the assessment from a database is the caller's job (the engine); this package holds only the rule.
 
 Fails closed: missing, overdue, restricted or out-of-scope approvals deny the request. Independent of
 structure validity and site health (LEGALITY_SAFETY_AND_COMPLIANCE.md sections 8 and 9.3).
 """
+
 from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 ENFORCEABLE = {"max_requests_per_second", "no_publish", "attribution_required", "excluded_paths"}
@@ -27,7 +28,7 @@ def _when(value: Any) -> datetime | None:
     if value is None:
         return None
     if isinstance(value, datetime):
-        return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
+        return value if value.tzinfo else value.replace(tzinfo=UTC)
     return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
 
 
@@ -45,8 +46,10 @@ def _starts(path: str, prefixes: list[str]) -> bool:
     return any(path.startswith(p) for p in prefixes)
 
 
-def evaluate(assessment: dict | None, dossier_stage: str | None, request: dict, now: datetime | None = None) -> Decision:
-    now = now or _when(request.get("now")) or datetime.now(timezone.utc)
+def evaluate(
+    assessment: dict | None, dossier_stage: str | None, request: dict, now: datetime | None = None
+) -> Decision:
+    now = now or _when(request.get("now")) or datetime.now(UTC)
     aid = assessment.get("id") if assessment else None
 
     def deny(*reasons: str) -> Decision:
@@ -62,15 +65,24 @@ def evaluate(assessment: dict | None, dossier_stage: str | None, request: dict, 
         if effective in ASSESS_STATUSES:
             if str(request.get("method", "GET")).upper() not in ("GET", "HEAD"):
                 return deny("assessment requests are limited to GET and HEAD")
-            return Decision(True, [f"bounded assessment under status {effective}"], aid, min(request.get("requestsPerSecond") or 0.5, 0.5))
+            return Decision(
+                True,
+                [f"bounded assessment under status {effective}"],
+                aid,
+                min(request.get("requestsPerSecond") or 0.5, 0.5),
+            )
         return deny(f"status {effective} does not permit contact with the source")
 
     if effective not in ("approved", "approved_with_conditions"):
-        return deny("the assessment review is overdue" if effective == "expired" and overdue else f"legal status is {effective}")
+        return deny(
+            "the assessment review is overdue" if effective == "expired" and overdue else f"legal status is {effective}"
+        )
     if not assessment:
         return deny("no assessment")
     if not assessment.get("reviewedBy") or not assessment.get("reviewedAt"):
-        return deny("an approval must name an accountable approving account (a person or an AI agent) and a review date")
+        return deny(
+            "an approval must name an accountable approving account (a person or an AI agent) and a review date"
+        )
 
     reasons: list[str] = []
     scope = _parse(assessment.get("approvedScope"), "approved scope", reasons)

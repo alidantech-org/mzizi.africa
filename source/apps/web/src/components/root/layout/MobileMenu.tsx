@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { DashboardSidebar } from './DashboardSidebar';
+import { DashboardSidebar, type SidebarItem } from './DashboardSidebar';
 
 interface MobileMenuProps {
-  navigation: any[];
+  navigation: SidebarItem[];
 }
 
 export function MobileMenu({ navigation }: MobileMenuProps) {

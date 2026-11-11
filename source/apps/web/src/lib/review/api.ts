@@ -14,10 +14,14 @@ export class ApiError extends Error {
 }
 
 /** Calls the NestJS API as the signed-in reviewer. Only used from server components and actions. */
-export async function api<T>(path: string, init: { method?: 'GET' | 'POST'; query?: Record<string, string | number | undefined>; body?: unknown } = {}): Promise<T> {
+export async function api<T>(
+  path: string,
+  init: { method?: 'GET' | 'POST'; query?: Record<string, string | number | undefined>; body?: unknown } = {},
+): Promise<T> {
   const token = await mintToken();
   const url = new URL(`/v1${path}`, API);
-  for (const [key, value] of Object.entries(init.query ?? {})) if (value !== undefined && value !== '') url.searchParams.set(key, String(value));
+  for (const [key, value] of Object.entries(init.query ?? {}))
+    if (value !== undefined && value !== '') url.searchParams.set(key, String(value));
   let response: Response;
   try {
     response = await fetch(url, {

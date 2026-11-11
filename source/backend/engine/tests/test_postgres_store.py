@@ -1,4 +1,5 @@
 """PostgresStore against the provisional engine schema in mzizi_new (skipped when the database is not initialised)."""
+
 from __future__ import annotations
 
 import uuid
@@ -25,7 +26,10 @@ def store():
     s.created = created
     yield s
     with connect(rewrite_url(), autocommit=True) as conn:
-        conn.execute("DELETE FROM engine.outbox WHERE event_seq IN (SELECT seq FROM engine.events WHERE job_id = ANY(%s::uuid[]))", (created,))
+        conn.execute(
+            "DELETE FROM engine.outbox WHERE event_seq IN (SELECT seq FROM engine.events WHERE job_id = ANY(%s::uuid[]))",
+            (created,),
+        )
         conn.execute("DELETE FROM engine.events WHERE job_id = ANY(%s::uuid[])", (created,))
         conn.execute("DELETE FROM engine.jobs WHERE id = ANY(%s::uuid[])", (created,))
 

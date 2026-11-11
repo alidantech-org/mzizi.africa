@@ -1,4 +1,5 @@
 """Database safety rules that need no server."""
+
 import pytest
 
 from mzizi_database import DatabaseSafetyError, connect, rewrite_url
@@ -6,7 +7,11 @@ from mzizi_database.migrate import migration_files
 
 
 def test_only_mzizi_databases_may_be_touched():
-    for url in ("postgres://postgres@localhost/postgres", "postgres://postgres@localhost/defytickets", "postgres://postgres@localhost/other_mzizi"):
+    for url in (
+        "postgres://postgres@localhost/postgres",
+        "postgres://postgres@localhost/defytickets",
+        "postgres://postgres@localhost/other_mzizi",
+    ):
         with pytest.raises(DatabaseSafetyError, match="only mzizi"):
             connect(url)
     with pytest.raises(DatabaseSafetyError, match="DATABASE_URL"):
@@ -26,6 +31,11 @@ def test_the_rewrite_url_must_be_exactly_mzizi_new_on_a_local_host(monkeypatch):
 
 def test_the_ordered_migration_list_resolves_with_checksums():
     names = [n for n, _, _ in migration_files()]
-    assert names[:4] == ["auth/0001_auth.sql", "auth/0002_auth_functions.sql", "engine/0001_engine.sql", "filesystem/0001_filesystem.sql"]
+    assert names[:4] == [
+        "auth/0001_auth.sql",
+        "auth/0002_auth_functions.sql",
+        "engine/0001_engine.sql",
+        "filesystem/0001_filesystem.sql",
+    ]
     assert len(names) == len(set(names))
     assert all(len(checksum) == 64 for _, _, checksum in migration_files())

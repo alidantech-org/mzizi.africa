@@ -92,10 +92,22 @@ export const sharedProperties = shared.properties({
 export const baseEntitySchemas = shared.schemas({
   BaseEntity: dryv
     .schema({
-      id: dryv.field(sharedProperties.Id).system().query({ filter: ["equal"], select: "default" }),
-      createdAt: dryv.field(sharedProperties.DateTime).system().query({ filter: ["between"], sort: true, select: "default" }),
-      updatedAt: dryv.field(sharedProperties.DateTime).system().query({ filter: ["between"], sort: true }),
-      version: dryv.field(sharedProperties.Version).system().query({ filter: ["between"], sort: true, select: "never" }),
+      id: dryv
+        .field(sharedProperties.Id)
+        .system()
+        .query({ filter: ["equal"], select: "default" }),
+      createdAt: dryv
+        .field(sharedProperties.DateTime)
+        .system()
+        .query({ filter: ["between"], sort: true, select: "default" }),
+      updatedAt: dryv
+        .field(sharedProperties.DateTime)
+        .system()
+        .query({ filter: ["between"], sort: true }),
+      version: dryv
+        .field(sharedProperties.Version)
+        .system()
+        .query({ filter: ["between"], sort: true, select: "never" }),
     })
     .abstract()
     .facets({
@@ -107,8 +119,16 @@ export const baseEntitySchemas = shared.schemas({
 export const historicalEntitySchemas = shared.schemas({
   HistoricalEntity: dryv
     .schema({
-      validFrom: dryv.field(sharedProperties.Date).optional().nullable().query({ filter: ["between"], sort: true }),
-      validTo: dryv.field(sharedProperties.Date).optional().nullable().query({ filter: ["between"], sort: true }),
+      validFrom: dryv
+        .field(sharedProperties.Date)
+        .optional()
+        .nullable()
+        .query({ filter: ["between"], sort: true }),
+      validTo: dryv
+        .field(sharedProperties.Date)
+        .optional()
+        .nullable()
+        .query({ filter: ["between"], sort: true }),
       validFromPrecision: dryv.field(sharedProperties.DatePrecision).optional().nullable(),
       validToPrecision: dryv.field(sharedProperties.DatePrecision).optional().nullable(),
       isCurrent: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
@@ -160,11 +180,23 @@ export const sharedSchemas = shared.schemas({
 
 export const sharedFailures = shared.failures({
   BadRequest: dryv.failure("bad_request").description("The request is invalid.").payload(dryv.ref(transportSchemas.ApiError)),
-  Unauthorized: dryv.failure("unauthorized").description("Authentication is required or invalid.").payload(dryv.ref(transportSchemas.ApiError)),
-  Forbidden: dryv.failure("forbidden").description("The caller's role does not permit this action.").payload(dryv.ref(transportSchemas.ApiError)),
+  Unauthorized: dryv
+    .failure("unauthorized")
+    .description("Authentication is required or invalid.")
+    .payload(dryv.ref(transportSchemas.ApiError)),
+  Forbidden: dryv
+    .failure("forbidden")
+    .description("The caller's role does not permit this action.")
+    .payload(dryv.ref(transportSchemas.ApiError)),
   NotFound: dryv.failure("not_found").description("The requested resource does not exist.").payload(dryv.ref(transportSchemas.ApiError)),
-  ValidationError: dryv.failure("validation_error").description("The request failed semantic validation.").payload(dryv.ref(transportSchemas.ApiError)),
-  InternalError: dryv.failure("internal_error").description("The operation failed because of an internal server error.").payload(dryv.ref(transportSchemas.ApiError)),
+  ValidationError: dryv
+    .failure("validation_error")
+    .description("The request failed semantic validation.")
+    .payload(dryv.ref(transportSchemas.ApiError)),
+  InternalError: dryv
+    .failure("internal_error")
+    .description("The operation failed because of an internal server error.")
+    .payload(dryv.ref(transportSchemas.ApiError)),
 });
 
 /* -------------------------------------------------------------------------- */

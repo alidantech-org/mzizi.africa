@@ -1,4 +1,5 @@
 """The neutral result every extractor returns: a status, segments and diagnostics. Extractors never touch a database."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

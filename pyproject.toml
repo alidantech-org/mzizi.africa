@@ -12,7 +12,18 @@ dependencies = []
 members = ["source/packages/*", "source/backend/engine"]
 
 [dependency-groups]
-dev = ["pytest", "pytest-asyncio"]
+dev = [
+    "boto3-stubs>=1.44.0",
+    "lxml-stubs>=0.5.1",
+    "mypy>=2.4.1",
+    "pytest",
+    "pytest-asyncio",
+    "ruff>=0.17.4",
+    "types-beautifulsoup4>=4.12.0.20250516",
+    "types-jsonschema>=4.26.0.20261006",
+    "types-pyyaml>=6.0.12.20261111",
+    "types-shapely>=2.1.0.20261030",
+]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -20,3 +31,46 @@ asyncio_mode = "auto"
 testpaths = ["source"]
 norecursedirs = [".docs", ".venv", "node_modules", "seed"]
 asyncio_default_fixture_loop_scope = "function"
+
+# ── Code quality (run from the root: `bun run format`, `bun run lint`, `bun run typecheck`) ──
+# One configuration for every workspace member; members do not carry their own.
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = [".docs", "seed", "node_modules", "source/apps", "source/backend/api", "dryv"]
+
+[tool.ruff.lint]
+# E/W pycodestyle, F pyflakes, I import order, UP modern syntax, B bugbear, SIM simplifications, RUF ruff rules.
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "RUF"]
+# E501: the formatter owns line length; long strings and SQL are left intact.
+# UP042: `(str, Enum)` members are compared and serialized as plain strings; StrEnum would change their formatting.
+ignore = ["E501", "UP042"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI declares dependencies as argument defaults by design.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "fastapi.Header", "mzizi_engine.auth.require"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests may assert on any exception, use short names and inline lambdas.
+"**/tests/**" = ["B017", "E731", "E741"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mzizi_agent", "mzizi_database", "mzizi_engine", "mzizi_extraction", "mzizi_filesystem", "mzizi_manifest", "mzizi_ocr", "mzizi_scraping", "mzizi_source"]
+
+[tool.mypy]
+python_version = "3.12"
+# Sources only: tests are covered by ruff and pytest.
+files = ["source/packages/*/src", "source/backend/engine/src", "scripts"]
+namespace_packages = true
+explicit_package_bases = false
+warn_unused_ignores = true
+warn_redundant_casts = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+# Published without type information.
+module = ["pypdfium2.*", "pdfplumber.*"]
+ignore_missing_imports = true

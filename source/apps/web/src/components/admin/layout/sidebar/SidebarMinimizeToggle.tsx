@@ -16,11 +16,7 @@ export default function SidebarMinimizeToggle({ isMinimized, onToggle }: Sidebar
       onClick={onToggle}
       className="absolute -right-3 top-6 h-6 w-6 rounded-full border border-border bg-card shadow-sm hover:bg-accent"
     >
-      {isMinimized ? (
-        <ChevronRight className="h-3 w-3" />
-      ) : (
-        <ChevronLeft className="h-3 w-3" />
-      )}
+      {isMinimized ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
       <span className="sr-only">Toggle sidebar</span>
     </Button>
   );

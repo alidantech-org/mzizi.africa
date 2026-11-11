@@ -2,12 +2,17 @@
 
 The root `.env` is the only place environment values live. Standard AWS names are accepted as aliases for the S3_* names the store
 reads. Values are never printed or logged."""
+
 from __future__ import annotations
 
 import os
 from pathlib import Path
 
-ALIASES = {"S3_ACCESS_KEY": "AWS_ACCESS_KEY_ID", "S3_SECRET_KEY": "AWS_SECRET_ACCESS_KEY", "S3_REGION": "AWS_DEFAULT_REGION"}
+ALIASES = {
+    "S3_ACCESS_KEY": "AWS_ACCESS_KEY_ID",
+    "S3_SECRET_KEY": "AWS_SECRET_ACCESS_KEY",
+    "S3_REGION": "AWS_DEFAULT_REGION",
+}
 
 
 def repo_root() -> Path:

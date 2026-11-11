@@ -21,7 +21,15 @@ export function Nav() {
   return (
     <>
       {LINKS.map(([href, label]) => (
-        <Link key={href} href={href} aria-current={path === href || (href !== '/review' && path.startsWith(href)) || (href === '/review' && path.startsWith('/review/candidates')) ? 'page' : undefined}>
+        <Link
+          key={href}
+          href={href}
+          aria-current={
+            path === href || (href !== '/review' && path.startsWith(href)) || (href === '/review' && path.startsWith('/review/candidates'))
+              ? 'page'
+              : undefined
+          }
+        >
           {label}
         </Link>
       ))}

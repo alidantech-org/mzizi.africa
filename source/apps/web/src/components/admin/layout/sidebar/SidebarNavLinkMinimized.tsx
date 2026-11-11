@@ -20,9 +20,7 @@ export default function SidebarNavLinkMinimized({ item }: SidebarNavLinkMinimize
     <Link
       href={item.href}
       className={cn(
-        isActive
-          ? 'bg-primary text-primary-foreground'
-          : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+        isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
         'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 justify-center',
       )}
       title={item.name}

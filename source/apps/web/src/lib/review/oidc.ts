@@ -29,7 +29,15 @@ export function newFlow() {
 
 export async function authorizationUrl(redirectUri: string, flow: { state: string; challenge: string }): Promise<string> {
   const url = new URL((await discover()).authorization_endpoint);
-  url.search = new URLSearchParams({ response_type: 'code', client_id: clientId(), redirect_uri: redirectUri, scope: 'openid profile', state: flow.state, code_challenge: flow.challenge, code_challenge_method: 'S256' }).toString();
+  url.search = new URLSearchParams({
+    response_type: 'code',
+    client_id: clientId(),
+    redirect_uri: redirectUri,
+    scope: 'openid profile',
+    state: flow.state,
+    code_challenge: flow.challenge,
+    code_challenge_method: 'S256',
+  }).toString();
   return url.toString();
 }
 
@@ -39,7 +47,13 @@ export async function exchange(code: string, redirectUri: string, verifier: stri
   const response = await fetch(found.token_endpoint, {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'authorization_code', code, redirect_uri: redirectUri, client_id: clientId(), code_verifier: verifier }),
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: redirectUri,
+      client_id: clientId(),
+      code_verifier: verifier,
+    }),
     cache: 'no-store',
   });
   if (!response.ok) throw new Error('the identity provider refused the sign-in code');

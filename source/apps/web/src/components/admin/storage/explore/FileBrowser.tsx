@@ -33,7 +33,7 @@ export default function FileBrowser({ files, viewMode }: FileBrowserProps) {
   };
 
   // Grid View Component
-  const GridView = () => (
+  const renderGridView = () => (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
       {files.map((file) => (
         <Card key={file.id} className="group p-2 gap-2 cursor-pointer hover:shadow-md transition-shadow duration-200 overflow-hidden">
@@ -70,7 +70,7 @@ export default function FileBrowser({ files, viewMode }: FileBrowserProps) {
   );
 
   // Table View Component
-  const TableView = () => (
+  const renderTableView = () => (
     <Card className="p-0 hidden md:block">
       <CardContent className="py-2 px-2 space-y-2 gap-0 my-0">
         <Table className="border-none">
@@ -115,7 +115,7 @@ export default function FileBrowser({ files, viewMode }: FileBrowserProps) {
   );
 
   // Compressed List View Component for mobile
-  const ListView = () => (
+  const renderListView = () => (
     <Card className="p-0 md:hidden">
       <CardContent className="p-0">
         {files.map((file, index) => (
@@ -174,10 +174,10 @@ export default function FileBrowser({ files, viewMode }: FileBrowserProps) {
       ) : (
         <>
           {/* Mobile: Always use compressed list view */}
-          <div className="md:hidden">{viewMode === 'table' ? <ListView /> : <GridView />}</div>
+          <div className="md:hidden">{viewMode === 'table' ? renderListView() : renderGridView()}</div>
 
           {/* Desktop: Use grid or table view based on selection */}
-          <div className="hidden md:block">{viewMode === 'grid' ? <GridView /> : <TableView />}</div>
+          <div className="hidden md:block">{viewMode === 'grid' ? renderGridView() : renderTableView()}</div>
         </>
       )}
 

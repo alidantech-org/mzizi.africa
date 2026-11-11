@@ -54,7 +54,10 @@ for (const item of items.filter((i) => i.kind === "schema" && i.name.startsWith(
     type: "object",
     additionalProperties: false,
     properties: Object.fromEntries(Object.entries(fields).map(([k, f]) => [k, fieldSchema(f)])),
-    required: Object.entries(fields).filter(([, f]) => !f.optional).map(([k]) => k).sort(),
+    required: Object.entries(fields)
+      .filter(([, f]) => !f.optional)
+      .map(([k]) => k)
+      .sort(),
   };
 }
 

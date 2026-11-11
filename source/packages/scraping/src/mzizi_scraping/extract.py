@@ -1,4 +1,5 @@
 """Field extraction from a discovered item, shared by the dry-run validator and the runner."""
+
 from __future__ import annotations
 
 import re
@@ -11,7 +12,9 @@ TOKENS = {"link_text", "link_href", "item_text"}
 
 def _token(item: Any, token: str) -> Any:
     if token == "item_text":
-        return item.get_text(" ", strip=True) if hasattr(item, "get_text") else (item if isinstance(item, str) else None)
+        return (
+            item.get_text(" ", strip=True) if hasattr(item, "get_text") else (item if isinstance(item, str) else None)
+        )
     anchor = item if getattr(item, "name", None) == "a" else (item.find("a") if hasattr(item, "find") else None)
     if token == "link_text":
         return anchor.get_text(" ", strip=True) if anchor else None
@@ -46,7 +49,11 @@ def extract_item(item: Any, fields: dict[str, dict]) -> tuple[dict[str, Any], li
                     value = None
                 if "regex" in spec and value is not None:
                     found_match = re.search(spec["regex"], str(value))
-                    value = (found_match.group(1) if found_match and found_match.groups() else found_match.group(0)) if found_match else None
+                    value = (
+                        (found_match.group(1) if found_match and found_match.groups() else found_match.group(0))
+                        if found_match
+                        else None
+                    )
             if "parse" in spec and value is not None:
                 value = transforms.apply(spec["parse"], value)
             record[name] = value

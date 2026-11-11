@@ -45,7 +45,7 @@ export default function Pagination({ pagination }: PaginationProps) {
         <div className="flex items-center space-x-2">
           <span className="text-sm text-muted-foreground">Items per page:</span>
           <Select value={pagination.limit.toString()} onValueChange={handleLimitChange}>
-            <SelectTrigger className="w-[80px]" size='sm'>
+            <SelectTrigger className="w-[80px]" size="sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

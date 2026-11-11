@@ -1,4 +1,5 @@
 """OCR through the system Tesseract. A missing engine or language pack is a clear error, never an empty page."""
+
 from . import ocr
 from .ocr import DEFAULT_LANGUAGES, OcrUnavailable, check, recognise, render_png, version
 

@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import uuid
-from pathlib import Path
 
 import pytest
+from fs_helpers import CLASS, ISSUER, Tree, purge
 
 from mzizi_database import connect, rewrite_url
 from mzizi_database.cli import init
-from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, MemoryObjectStore, Repository
-
-from fs_helpers import CLASS, ISSUER, purge
+from mzizi_filesystem import FilesystemService, MemoryObjectStore, Repository
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -45,14 +43,28 @@ def admin_id():
         row = c.execute("SELECT account_id FROM auth.resolve_identity(%s, 'fs-admin')", (ISSUER,)).fetchone()
         if row["account_id"]:
             return str(row["account_id"])
-        return str(c.execute("SELECT auth.bootstrap_admin(%s, 'fs-admin', 'Filesystem test admin', 'admin') AS id", (ISSUER,)).fetchone()["id"])
+        return str(
+            c.execute(
+                "SELECT auth.bootstrap_admin(%s, 'fs-admin', 'Filesystem test admin', 'admin') AS id", (ISSUER,)
+            ).fetchone()["id"]
+        )
 
 
 @pytest.fixture
 def root(conn, repo):
     """An explicitly classified internal test folder; its whole tree is purged afterwards."""
-    folder = repo.create_folder(None, f"pytest-{uuid.uuid4().hex[:8]}", dict(CLASS, description="test root", allow_weaker_children=True), None)
+    folder = repo.create_folder(
+        None, f"pytest-{uuid.uuid4().hex[:8]}", dict(CLASS, description="test root", allow_weaker_children=True), None
+    )
     yield folder
     purge(conn, folder["id"])
 
 
+@pytest.fixture
+def tree(tmp_path, conn, repo):
+    """A synthetic seed root; whatever it registered is purged afterwards."""
+    t = Tree(tmp_path)
+    yield t
+    top = repo.folder_by_path(t.logical)
+    if top:
+        purge(conn, top["id"])

@@ -14,13 +14,25 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * methods and entity types are classification ids. Ledger entries reference their source record by
  * kind and id so spend can be traced from budget through commitment, payment and contract.
  */
-export const entities = dryv.group({ name: "entities" }).description("Legal entities, identifiers and ownership.").tags("public", "entities")
+export const entities = dryv
+  .group({ name: "entities" })
+  .description("Legal entities, identifiers and ownership.")
+  .tags("public", "entities")
   .facets({ storage: { namespace: "organization" } });
-export const finance = dryv.group({ name: "finance" }).description("Fiscal years, budgets, transfers, revenue, expenditure and the ledger.").tags("public", "finance")
+export const finance = dryv
+  .group({ name: "finance" })
+  .description("Fiscal years, budgets, transfers, revenue, expenditure and the ledger.")
+  .tags("public", "finance")
   .facets({ storage: { namespace: "finance" } });
-export const debt = dryv.group({ name: "debt" }).description("Loans, disbursements and repayments.").tags("public", "debt")
+export const debt = dryv
+  .group({ name: "debt" })
+  .description("Loans, disbursements and repayments.")
+  .tags("public", "debt")
   .facets({ storage: { namespace: "debt" } });
-export const procurement = dryv.group({ name: "procurement" }).description("Tenders, bids, contracts, milestones and variations.").tags("public", "procurement")
+export const procurement = dryv
+  .group({ name: "procurement" })
+  .description("Tenders, bids, contracts, milestones and variations.")
+  .tags("public", "procurement")
   .facets({ storage: { namespace: "procurement" } });
 
 export const entityProperties = entities.properties({
@@ -47,12 +59,25 @@ export const financeProperties = finance.properties({
 });
 
 export const debtProperties = debt.properties({
-  LoanStatus: dryv.property.enum({ proposed: "proposed", active: "active", repaid: "repaid", defaulted: "defaulted", cancelled: "cancelled" }),
+  LoanStatus: dryv.property.enum({
+    proposed: "proposed",
+    active: "active",
+    repaid: "repaid",
+    defaulted: "defaulted",
+    cancelled: "cancelled",
+  }),
   TermMonths: dryv.property.number.integer({ range: { min: 0 } }),
 });
 
 export const procurementProperties = procurement.properties({
-  TenderStatus: dryv.property.enum({ published: "published", open: "open", closed: "closed", evaluated: "evaluated", awarded: "awarded", cancelled: "cancelled" }),
+  TenderStatus: dryv.property.enum({
+    published: "published",
+    open: "open",
+    closed: "closed",
+    evaluated: "evaluated",
+    awarded: "awarded",
+    cancelled: "cancelled",
+  }),
   BidStatus: dryv.property.enum({
     submitted: "submitted",
     underEvaluation: "under_evaluation",
@@ -62,7 +87,14 @@ export const procurementProperties = procurement.properties({
     winning: "winning",
     rejected: "rejected",
   }),
-  ContractStatus: dryv.property.enum({ pending: "pending", active: "active", completed: "completed", terminated: "terminated", suspended: "suspended", expired: "expired" }),
+  ContractStatus: dryv.property.enum({
+    pending: "pending",
+    active: "active",
+    completed: "completed",
+    terminated: "terminated",
+    suspended: "suspended",
+    expired: "expired",
+  }),
 });
 
 const amount = () => dryv.field(sharedProperties.Amount);
@@ -83,7 +115,10 @@ const legalEntities = entities.schemas({
       status: dryv.field(entityProperties.EntityStatus).query({ filter: ["equal", "in"] }),
     },
     "entities",
-    [{ name: "idx_legal_entity_code", fields: ["code"], unique: true }, { name: "idx_legal_entity_jurisdiction", fields: ["jurisdictionId"] }],
+    [
+      { name: "idx_legal_entity_code", fields: ["code"], unique: true },
+      { name: "idx_legal_entity_jurisdiction", fields: ["jurisdictionId"] },
+    ],
   ),
 });
 
@@ -97,7 +132,10 @@ const entityDetails = entities.schemas({
       issuingAuthorityId: optionalId(),
     },
     "identifiers",
-    [{ name: "idx_entity_identifier_entity", fields: ["entityId"] }, { name: "idx_entity_identifier_value", fields: ["schemeId", "value"] }],
+    [
+      { name: "idx_entity_identifier_entity", fields: ["entityId"] },
+      { name: "idx_entity_identifier_value", fields: ["schemeId", "value"] },
+    ],
   ),
 
   EntityOwnership: recorded(
@@ -140,7 +178,10 @@ const fiscalYears = finance.schemas({
       partyId: optionalId(),
     },
     "units",
-    [{ name: "idx_budgetary_unit_code", fields: ["code"], unique: true }, { name: "idx_budgetary_unit_party", fields: ["partyId"] }],
+    [
+      { name: "idx_budgetary_unit_code", fields: ["code"], unique: true },
+      { name: "idx_budgetary_unit_party", fields: ["partyId"] },
+    ],
   ),
 });
 
@@ -149,7 +190,11 @@ const budgets = finance.schemas({
     {
       unitId: relationTo(() => fiscalYears.BudgetaryUnit.field("id")),
       fiscalYearId: plainId(),
-      programCode: dryv.field(financeProperties.ProgramCode).optional().nullable().query({ filter: ["equal"] }),
+      programCode: dryv
+        .field(financeProperties.ProgramCode)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"] }),
       kind: dryv.field(financeProperties.BudgetKind).query({ filter: ["equal"] }),
       approvedAmount: amount().query({ filter: ["between"], sort: true }),
       currencyCode: currency(),
@@ -174,7 +219,10 @@ const flows = finance.schemas({
       legalBasisId: optionalId(),
     },
     "transfers",
-    [{ name: "idx_transfer_from", fields: ["fromUnitId", "fiscalYearId"] }, { name: "idx_transfer_to", fields: ["toUnitId"] }],
+    [
+      { name: "idx_transfer_from", fields: ["fromUnitId", "fiscalYearId"] },
+      { name: "idx_transfer_to", fields: ["toUnitId"] },
+    ],
   ),
 
   RevenueRecord: recorded(
@@ -219,7 +267,10 @@ const flows = finance.schemas({
       postedOn: dryv.field(sharedProperties.Date).query({ filter: ["between"], sort: true }),
     },
     "entries",
-    [{ name: "idx_ledger_unit", fields: ["unitId", "postedOn"] }, { name: "idx_ledger_reference", fields: ["referenceKind", "referenceId"] }],
+    [
+      { name: "idx_ledger_unit", fields: ["unitId", "postedOn"] },
+      { name: "idx_ledger_reference", fields: ["referenceKind", "referenceId"] },
+    ],
   ),
 });
 
@@ -239,7 +290,10 @@ const loans = debt.schemas({
       legalBasisId: optionalId(),
     },
     "loans",
-    [{ name: "idx_loan_code", fields: ["code"], unique: true }, { name: "idx_loan_borrower", fields: ["borrowerUnitId"] }],
+    [
+      { name: "idx_loan_code", fields: ["code"], unique: true },
+      { name: "idx_loan_borrower", fields: ["borrowerUnitId"] },
+    ],
   ),
 });
 
@@ -283,9 +337,16 @@ const tenders = procurement.schemas({
       title: dryv.field(sharedProperties.Name).query(searchable),
       kindId: plainId(),
       methodId: plainId(),
-      estimatedValue: amount().optional().nullable().query({ filter: ["between"] }),
+      estimatedValue: amount()
+        .optional()
+        .nullable()
+        .query({ filter: ["between"] }),
       currencyCode: currency(),
-      publishedOn: dryv.field(sharedProperties.Date).optional().nullable().query({ filter: ["between"], sort: true }),
+      publishedOn: dryv
+        .field(sharedProperties.Date)
+        .optional()
+        .nullable()
+        .query({ filter: ["between"], sort: true }),
       closesOn: dryv.field(sharedProperties.Date).optional().nullable(),
       status: dryv.field(procurementProperties.TenderStatus).query({ filter: ["equal", "in"] }),
       procuringOfficeId: optionalId(),
@@ -293,7 +354,11 @@ const tenders = procurement.schemas({
       legalBasisId: optionalId(),
     },
     "tenders",
-    [{ name: "idx_tender_code", fields: ["code"] }, { name: "uq_tender_code_version", fields: ["code", "versionNumber"], unique: true }, { name: "idx_tender_issuer", fields: ["issuingUnitId", "status"] }],
+    [
+      { name: "idx_tender_code", fields: ["code"] },
+      { name: "uq_tender_code_version", fields: ["code", "versionNumber"], unique: true },
+      { name: "idx_tender_issuer", fields: ["issuingUnitId", "status"] },
+    ],
   ),
 });
 
@@ -326,7 +391,10 @@ const bidsAndContracts = procurement.schemas({
       status: dryv.field(procurementProperties.ContractStatus).query({ filter: ["equal", "in"] }),
     },
     "contracts",
-    [{ name: "idx_contract_code", fields: ["code"], unique: true }, { name: "idx_contract_tender", fields: ["tenderId"] }],
+    [
+      { name: "idx_contract_code", fields: ["code"], unique: true },
+      { name: "idx_contract_tender", fields: ["tenderId"] },
+    ],
   ),
 });
 
@@ -361,35 +429,234 @@ const contractDetails = procurement.schemas({
 
 function register(group: any, feature: string, description: string, specs: Parameters<typeof readSurface>[1][]) {
   const surfaces = specs.map((spec) => readSurface(group, spec));
-  return group.feature(feature).description(description).tags("public").operations(Object.assign({}, ...surfaces.map((surface) => surface.operations)));
+  return group
+    .feature(feature)
+    .description(description)
+    .tags("public")
+    .operations(Object.assign({}, ...surfaces.map((surface) => surface.operations)));
 }
 
-export const entitiesReadOperations = register(entities, "EntitiesRead", "Public read access to legal entities, identifiers and ownership.", [
-  { singular: "LegalEntity", plural: "LegalEntities", itemKey: "entity", listKey: "entities", path: "/entities/legal-entities", idParam: "entityId", entity: legalEntities.LegalEntity, description: "legal entities", filters: { jurisdictionId: id(), status: dryv.field(entityProperties.EntityStatus).optional(), q: q() } },
-  { singular: "EntityIdentifier", plural: "EntityIdentifiers", itemKey: "identifier", listKey: "identifiers", path: "/entities/identifiers", idParam: "identifierId", entity: entityDetails.EntityIdentifier, description: "entity identifiers", filters: { entityId: id(), schemeId: id() } },
-  { singular: "EntityOwnership", plural: "EntityOwnerships", itemKey: "ownership", listKey: "ownerships", path: "/entities/ownerships", idParam: "ownershipId", entity: entityDetails.EntityOwnership, description: "entity ownerships", filters: { entityId: id(), ownerPersonId: id(), ownerEntityId: id() } },
-]);
+export const entitiesReadOperations = register(
+  entities,
+  "EntitiesRead",
+  "Public read access to legal entities, identifiers and ownership.",
+  [
+    {
+      singular: "LegalEntity",
+      plural: "LegalEntities",
+      itemKey: "entity",
+      listKey: "entities",
+      path: "/entities/legal-entities",
+      idParam: "entityId",
+      entity: legalEntities.LegalEntity,
+      description: "legal entities",
+      filters: { jurisdictionId: id(), status: dryv.field(entityProperties.EntityStatus).optional(), q: q() },
+    },
+    {
+      singular: "EntityIdentifier",
+      plural: "EntityIdentifiers",
+      itemKey: "identifier",
+      listKey: "identifiers",
+      path: "/entities/identifiers",
+      idParam: "identifierId",
+      entity: entityDetails.EntityIdentifier,
+      description: "entity identifiers",
+      filters: { entityId: id(), schemeId: id() },
+    },
+    {
+      singular: "EntityOwnership",
+      plural: "EntityOwnerships",
+      itemKey: "ownership",
+      listKey: "ownerships",
+      path: "/entities/ownerships",
+      idParam: "ownershipId",
+      entity: entityDetails.EntityOwnership,
+      description: "entity ownerships",
+      filters: { entityId: id(), ownerPersonId: id(), ownerEntityId: id() },
+    },
+  ],
+);
 
-export const financeReadOperations = register(finance, "FinanceRead", "Public read access to fiscal years, budgets, transfers, revenue, expenditure and the ledger.", [
-  { singular: "FiscalYear", plural: "FiscalYears", itemKey: "fiscalYear", listKey: "fiscalYears", path: "/finance/fiscal-years", idParam: "fiscalYearId", entity: fiscalYears.FiscalYear, description: "fiscal years", filters: { jurisdictionId: id() } },
-  { singular: "BudgetaryUnit", plural: "BudgetaryUnits", itemKey: "unit", listKey: "units", path: "/finance/units", idParam: "unitId", entity: fiscalYears.BudgetaryUnit, description: "budgetary units", filters: { jurisdictionId: id(), parentUnitId: id(), q: q() } },
-  { singular: "Budget", plural: "Budgets", itemKey: "budget", listKey: "budgets", path: "/finance/budgets", idParam: "budgetId", entity: budgets.Budget, description: "budgets", filters: { unitId: id(), fiscalYearId: id() } },
-  { singular: "Transfer", plural: "Transfers", itemKey: "transfer", listKey: "transfers", path: "/finance/transfers", idParam: "transferId", entity: flows.Transfer, description: "transfers", filters: { fromUnitId: id(), toUnitId: id(), fiscalYearId: id() } },
-  { singular: "RevenueRecord", plural: "RevenueRecords", itemKey: "revenue", listKey: "revenues", path: "/finance/revenue", idParam: "revenueId", entity: flows.RevenueRecord, description: "revenue records", filters: { unitId: id(), fiscalYearId: id(), categoryId: id() } },
-  { singular: "Expenditure", plural: "Expenditures", itemKey: "expenditure", listKey: "expenditures", path: "/finance/expenditures", idParam: "expenditureId", entity: flows.Expenditure, description: "expenditures", filters: { budgetId: id(), unitId: id(), stageId: id() } },
-  { singular: "LedgerEntry", plural: "LedgerEntries", itemKey: "entry", listKey: "entries", path: "/finance/ledger-entries", idParam: "entryId", entity: flows.LedgerEntry, description: "ledger entries", filters: { unitId: id(), referenceId: id() } },
-]);
+export const financeReadOperations = register(
+  finance,
+  "FinanceRead",
+  "Public read access to fiscal years, budgets, transfers, revenue, expenditure and the ledger.",
+  [
+    {
+      singular: "FiscalYear",
+      plural: "FiscalYears",
+      itemKey: "fiscalYear",
+      listKey: "fiscalYears",
+      path: "/finance/fiscal-years",
+      idParam: "fiscalYearId",
+      entity: fiscalYears.FiscalYear,
+      description: "fiscal years",
+      filters: { jurisdictionId: id() },
+    },
+    {
+      singular: "BudgetaryUnit",
+      plural: "BudgetaryUnits",
+      itemKey: "unit",
+      listKey: "units",
+      path: "/finance/units",
+      idParam: "unitId",
+      entity: fiscalYears.BudgetaryUnit,
+      description: "budgetary units",
+      filters: { jurisdictionId: id(), parentUnitId: id(), q: q() },
+    },
+    {
+      singular: "Budget",
+      plural: "Budgets",
+      itemKey: "budget",
+      listKey: "budgets",
+      path: "/finance/budgets",
+      idParam: "budgetId",
+      entity: budgets.Budget,
+      description: "budgets",
+      filters: { unitId: id(), fiscalYearId: id() },
+    },
+    {
+      singular: "Transfer",
+      plural: "Transfers",
+      itemKey: "transfer",
+      listKey: "transfers",
+      path: "/finance/transfers",
+      idParam: "transferId",
+      entity: flows.Transfer,
+      description: "transfers",
+      filters: { fromUnitId: id(), toUnitId: id(), fiscalYearId: id() },
+    },
+    {
+      singular: "RevenueRecord",
+      plural: "RevenueRecords",
+      itemKey: "revenue",
+      listKey: "revenues",
+      path: "/finance/revenue",
+      idParam: "revenueId",
+      entity: flows.RevenueRecord,
+      description: "revenue records",
+      filters: { unitId: id(), fiscalYearId: id(), categoryId: id() },
+    },
+    {
+      singular: "Expenditure",
+      plural: "Expenditures",
+      itemKey: "expenditure",
+      listKey: "expenditures",
+      path: "/finance/expenditures",
+      idParam: "expenditureId",
+      entity: flows.Expenditure,
+      description: "expenditures",
+      filters: { budgetId: id(), unitId: id(), stageId: id() },
+    },
+    {
+      singular: "LedgerEntry",
+      plural: "LedgerEntries",
+      itemKey: "entry",
+      listKey: "entries",
+      path: "/finance/ledger-entries",
+      idParam: "entryId",
+      entity: flows.LedgerEntry,
+      description: "ledger entries",
+      filters: { unitId: id(), referenceId: id() },
+    },
+  ],
+);
 
 export const debtReadOperations = register(debt, "DebtRead", "Public read access to loans, disbursements and repayments.", [
-  { singular: "Loan", plural: "Loans", itemKey: "loan", listKey: "loans", path: "/debt/loans", idParam: "loanId", entity: loans.Loan, description: "loans", filters: { borrowerUnitId: id(), lenderEntityId: id(), status: dryv.field(debtProperties.LoanStatus).optional() } },
-  { singular: "LoanDisbursement", plural: "LoanDisbursements", itemKey: "disbursement", listKey: "disbursements", path: "/debt/disbursements", idParam: "disbursementId", entity: loanFlows.LoanDisbursement, description: "loan disbursements", filters: { loanId: id() } },
-  { singular: "LoanRepayment", plural: "LoanRepayments", itemKey: "repayment", listKey: "repayments", path: "/debt/repayments", idParam: "repaymentId", entity: loanFlows.LoanRepayment, description: "loan repayments", filters: { loanId: id() } },
+  {
+    singular: "Loan",
+    plural: "Loans",
+    itemKey: "loan",
+    listKey: "loans",
+    path: "/debt/loans",
+    idParam: "loanId",
+    entity: loans.Loan,
+    description: "loans",
+    filters: { borrowerUnitId: id(), lenderEntityId: id(), status: dryv.field(debtProperties.LoanStatus).optional() },
+  },
+  {
+    singular: "LoanDisbursement",
+    plural: "LoanDisbursements",
+    itemKey: "disbursement",
+    listKey: "disbursements",
+    path: "/debt/disbursements",
+    idParam: "disbursementId",
+    entity: loanFlows.LoanDisbursement,
+    description: "loan disbursements",
+    filters: { loanId: id() },
+  },
+  {
+    singular: "LoanRepayment",
+    plural: "LoanRepayments",
+    itemKey: "repayment",
+    listKey: "repayments",
+    path: "/debt/repayments",
+    idParam: "repaymentId",
+    entity: loanFlows.LoanRepayment,
+    description: "loan repayments",
+    filters: { loanId: id() },
+  },
 ]);
 
-export const procurementReadOperations = register(procurement, "ProcurementRead", "Public read access to tenders, bids, contracts, milestones and variations.", [
-  { singular: "Tender", plural: "Tenders", itemKey: "tender", listKey: "tenders", path: "/procurement/tenders", idParam: "tenderId", entity: tenders.Tender, description: "tenders", filters: { issuingUnitId: id(), status: dryv.field(procurementProperties.TenderStatus).optional(), q: q() } },
-  { singular: "Bid", plural: "Bids", itemKey: "bid", listKey: "bids", path: "/procurement/bids", idParam: "bidId", entity: bidsAndContracts.Bid, description: "bids", filters: { tenderId: id(), bidderEntityId: id() } },
-  { singular: "ProcurementContract", plural: "ProcurementContracts", itemKey: "contract", listKey: "contracts", path: "/procurement/contracts", idParam: "contractId", entity: bidsAndContracts.ProcurementContract, description: "contracts", filters: { tenderId: id(), awardedEntityId: id(), contractingUnitId: id() } },
-  { singular: "ContractMilestone", plural: "ContractMilestones", itemKey: "milestone", listKey: "milestones", path: "/procurement/milestones", idParam: "milestoneId", entity: contractDetails.ContractMilestone, description: "contract milestones", filters: { contractId: id() } },
-  { singular: "ContractVariation", plural: "ContractVariations", itemKey: "variation", listKey: "variations", path: "/procurement/variations", idParam: "variationId", entity: contractDetails.ContractVariation, description: "contract variations", filters: { contractId: id() } },
-]);
+export const procurementReadOperations = register(
+  procurement,
+  "ProcurementRead",
+  "Public read access to tenders, bids, contracts, milestones and variations.",
+  [
+    {
+      singular: "Tender",
+      plural: "Tenders",
+      itemKey: "tender",
+      listKey: "tenders",
+      path: "/procurement/tenders",
+      idParam: "tenderId",
+      entity: tenders.Tender,
+      description: "tenders",
+      filters: { issuingUnitId: id(), status: dryv.field(procurementProperties.TenderStatus).optional(), q: q() },
+    },
+    {
+      singular: "Bid",
+      plural: "Bids",
+      itemKey: "bid",
+      listKey: "bids",
+      path: "/procurement/bids",
+      idParam: "bidId",
+      entity: bidsAndContracts.Bid,
+      description: "bids",
+      filters: { tenderId: id(), bidderEntityId: id() },
+    },
+    {
+      singular: "ProcurementContract",
+      plural: "ProcurementContracts",
+      itemKey: "contract",
+      listKey: "contracts",
+      path: "/procurement/contracts",
+      idParam: "contractId",
+      entity: bidsAndContracts.ProcurementContract,
+      description: "contracts",
+      filters: { tenderId: id(), awardedEntityId: id(), contractingUnitId: id() },
+    },
+    {
+      singular: "ContractMilestone",
+      plural: "ContractMilestones",
+      itemKey: "milestone",
+      listKey: "milestones",
+      path: "/procurement/milestones",
+      idParam: "milestoneId",
+      entity: contractDetails.ContractMilestone,
+      description: "contract milestones",
+      filters: { contractId: id() },
+    },
+    {
+      singular: "ContractVariation",
+      plural: "ContractVariations",
+      itemKey: "variation",
+      listKey: "variations",
+      path: "/procurement/variations",
+      idParam: "variationId",
+      entity: contractDetails.ContractVariation,
+      description: "contract variations",
+      filters: { contractId: id() },
+    },
+  ],
+);

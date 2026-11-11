@@ -4,6 +4,11 @@ import { cookies, headers } from 'next/headers';
 const BASE_URL = process.env.SERVER_URL;
 const NODE_ENV = process.env.NODE_ENV;
 
+/** The message of a caught value: an Error's message, otherwise its string form. */
+function messageOf(error: unknown): string {
+  return error instanceof Error && error.message ? error.message : String(error);
+}
+
 /**
  * Prefix for cookies set by the backend server.
  * This allows us to identify which cookies are from our backend.
@@ -169,11 +174,11 @@ class AppServerClass {
    * @template T
    * @param {string} method - HTTP method (GET, POST, etc.)
    * @param {string} path - API endpoint path
-   * @param {any} body - Request body (optional)
+   * @param {unknown} body - Request body (optional)
    * @param {RequestOptions} options - Request options (query, params, cache, isMultipart)
    * @returns {Promise<AppResponse<T>>} Promise resolving to a standardized response object.
    */
-  private async request<T>(method: string, path: string, body: any = {}, options: RequestOptions = {}): Promise<AppResponse<T>> {
+  private async request<T>(method: string, path: string, body: unknown = {}, options: RequestOptions = {}): Promise<AppResponse<T>> {
     // Initialize cookie store
     this.cookieStore = await cookies();
 
@@ -191,9 +196,9 @@ class AppServerClass {
 
       // Parse and return the response
       return await this.parseResponse<T>(response, url, method);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Log the error
-      const errorMessage = error.message || 'Unknown error';
+      const errorMessage = messageOf(error) || 'Unknown error';
       this.log(`Error on ${method.toUpperCase()} ${path}: ${errorMessage}`, undefined, false);
 
       // Return the error data
@@ -257,7 +262,7 @@ class AppServerClass {
    *
    * @param {string} method - HTTP method
    * @param {string} path - API endpoint path
-   * @param {any} body - Request body
+   * @param {unknown} body - Request body
    * @param {Record<string, string | number | boolean>} query - Query parameters
    * @param {string[]} params - Path parameters
    * @param {string} cache - Cache control option
@@ -268,7 +273,7 @@ class AppServerClass {
   private async prepareRequest(
     method: string,
     path: string,
-    body: any,
+    body: unknown,
     query: Record<string, string | number | boolean>,
     params: string[],
     cache: 'no-store' | 'force-cache' | 'only-if-cached',
@@ -327,7 +332,8 @@ class AppServerClass {
       method,
       cache: 'no-store',
       headers,
-      body: method === 'GET' ? undefined : isMultipart ? body : JSON.stringify(body ?? {}),
+      // A multipart body is a FormData built by the caller; everything else is sent as JSON.
+      body: method === 'GET' ? undefined : isMultipart ? (body as BodyInit) : JSON.stringify(body ?? {}),
       credentials: 'include',
     };
 
@@ -396,11 +402,11 @@ class AppServerClass {
           }
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Cookies can only be modified in Server Actions or Route Handlers.
       // If we're in a Server Component context, silently skip cookie handling.
       // This prevents the error from breaking the request.
-      const errorMessage = error?.message || String(error);
+      const errorMessage = messageOf(error);
       if (errorMessage.includes('Cookies can only be modified')) {
         // Silently skip - this is expected in Server Component contexts
         return;
@@ -484,10 +490,10 @@ class AppServerClass {
         this.cookieStore.delete(cookieName);
         this.log(`Set cookie: ${prefixedCookieName} (backend: ${cookieName})`, undefined, true);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Cookies can only be modified in Server Actions or Route Handlers.
       // If we're in a Server Component context, silently skip cookie handling.
-      const errorMessage = error?.message || String(error);
+      const errorMessage = messageOf(error);
       if (errorMessage.includes('Cookies can only be modified')) {
         // Silently skip - this is expected in Server Component contexts
         return;
@@ -605,8 +611,8 @@ class AppServerClass {
     let responseData = null;
     try {
       responseData = await response.json();
-    } catch (error: any) {
-      const errorMessage = error?.message || String(error) || 'Unknown error';
+    } catch (error: unknown) {
+      const errorMessage = messageOf(error) || 'Unknown error';
       this.log(`Error parsing JSON from ${url}: ${errorMessage}`);
     }
 
@@ -648,7 +654,7 @@ class AppServerClass {
    * @param {RequestOptions} [options] - Optional query, multipart and cache options.
    * @returns {Promise<AppResponse<T>>} Promise resolving to the response.
    */
-  async post<T>(path: string, body?: any, options?: RequestOptions): Promise<AppResponse<T>> {
+  async post<T>(path: string, body?: unknown, options?: RequestOptions): Promise<AppResponse<T>> {
     return this.request<T>('POST', path, body ?? {}, options);
   }
 
@@ -660,7 +666,7 @@ class AppServerClass {
    * @param {RequestOptions} [options] - Optional query, multipart and cache options.
    * @returns {Promise<AppResponse<T>>} Promise resolving to the response.
    */
-  async patch<T>(path: string, body?: any, options?: RequestOptions): Promise<AppResponse<T>> {
+  async patch<T>(path: string, body?: unknown, options?: RequestOptions): Promise<AppResponse<T>> {
     return this.request<T>('PATCH', path, body ?? {}, options);
   }
 
@@ -672,7 +678,7 @@ class AppServerClass {
    * @param {RequestOptions} [options] - Optional query, multipart and cache options.
    * @returns {Promise<AppResponse<T>>} Promise resolving to the response.
    */
-  async put<T>(path: string, body?: any, options?: RequestOptions): Promise<AppResponse<T>> {
+  async put<T>(path: string, body?: unknown, options?: RequestOptions): Promise<AppResponse<T>> {
     return this.request<T>('PUT', path, body ?? {}, options);
   }
 
@@ -684,7 +690,7 @@ class AppServerClass {
    * @param {RequestOptions} [options] - Optional query, multipart and cache options.
    * @returns {Promise<AppResponse<T>>} Promise resolving to the response.
    */
-  async delete<T>(path: string, body?: any, options?: RequestOptions): Promise<AppResponse<T>> {
+  async delete<T>(path: string, body?: unknown, options?: RequestOptions): Promise<AppResponse<T>> {
     return this.request<T>('DELETE', path, body ?? {}, options);
   }
 
@@ -716,10 +722,10 @@ class AppServerClass {
       cookieStore.delete(name);
 
       this.log(`Set cookie: ${prefixedName} (backend: ${name})`, undefined, true);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Cookies can only be modified in Server Actions or Route Handlers.
       // If we're in a Server Component context, silently skip cookie handling.
-      const errorMessage = error?.message || String(error);
+      const errorMessage = messageOf(error);
       if (errorMessage.includes('Cookies can only be modified')) {
         // Silently skip - this is expected in Server Component contexts
         return;

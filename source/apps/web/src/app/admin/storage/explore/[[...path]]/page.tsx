@@ -88,7 +88,7 @@ export default async function FilesPage({ params, searchParams }: ExploreStorage
   } else if (pathSegment === PathSegments.FOLDERS) {
     const depth = Math.max(0, segments.length - 1);
 
-    const query: any = {
+    const query: NonNullable<Parameters<typeof getFolders>[0]> = {
       ...searchParamsData,
       min_depth: depth,
       max_depth: depth,

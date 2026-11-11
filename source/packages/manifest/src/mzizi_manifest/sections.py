@@ -5,15 +5,32 @@ The rule's origin is recorded as provenance on the rule (method, label, referenc
 as a free-text source column. Rules found by crawling only ever arrive with method `discovered` or
 `ai-proposed` and are held for review.
 """
+
 from __future__ import annotations
 
 import re
 from typing import Any
 
-LABELS = frozenset({
-    "publications", "downloads", "media", "tenders", "notices", "legislation", "reports", "press",
-    "budgets", "bills", "gazettes", "careers", "projects", "events", "data", "contacts",
-})
+LABELS = frozenset(
+    {
+        "publications",
+        "downloads",
+        "media",
+        "tenders",
+        "notices",
+        "legislation",
+        "reports",
+        "press",
+        "budgets",
+        "bills",
+        "gazettes",
+        "careers",
+        "projects",
+        "events",
+        "data",
+        "contacts",
+    }
+)
 SLOTS = frozenset({"year", "county", "constituency", "ward", "number", "page", "month", "slug", "id"})
 SLOT = re.compile(r"\(\?P<([A-Za-z_][A-Za-z0-9_]*)>")
 

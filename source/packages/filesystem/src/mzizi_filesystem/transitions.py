@@ -6,9 +6,13 @@ longer equals its computed key is copied to the new key and verified, and the ve
 passes. If a copy fails the transaction rolls back and nothing changed. Old keys are not deleted here: they are returned, and
 `delete_unreferenced_keys` removes only those no retained version or live upload still references.
 """
+
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
+
+from mzizi_database import required
 
 from .keys import check_name, is_protected
 from .service import FilesystemService
@@ -32,7 +36,9 @@ _FOLDER_SQL = "SELECT * FROM filesystem.key_violations(%s)"
 _FILE_SQL = "SELECT v.id AS file_version_id, v.s3_key, filesystem.version_key(v.id) AS expected_key FROM filesystem.file_versions v WHERE v.file_id = %s AND v.s3_key <> filesystem.version_key(v.id)"
 
 
-def _relocate(service: FilesystemService, report: RelocationReport, change, violations_sql: str) -> RelocationReport:
+def _relocate(
+    service: FilesystemService, report: RelocationReport, change: Callable[[], object], violations_sql: str
+) -> RelocationReport:
     repo, store, dry_run = service.repo, service.store, report.dry_run
     try:
         with repo.conn.transaction(force_rollback=dry_run):
@@ -40,7 +46,7 @@ def _relocate(service: FilesystemService, report: RelocationReport, change, viol
             rows = repo.conn.execute(violations_sql, (report.target_id,)).fetchall()
             taken = {r["s3_key"] for r in rows}
             for row in rows:
-                version, new_key = repo.get_version(row["file_version_id"]), row["expected_key"]
+                version, new_key = required(repo.get_version(row["file_version_id"])), row["expected_key"]
                 if is_protected(new_key):
                     raise StoreError(f"{new_key} is inside a protected archive")
                 if not dry_run:
@@ -57,7 +63,7 @@ def _relocate(service: FilesystemService, report: RelocationReport, change, viol
             if not dry_run:
                 repo.conn.execute("SET CONSTRAINTS ALL IMMEDIATE")
                 repo.conn.execute("SET CONSTRAINTS ALL DEFERRED")
-    except Exception as error:  # noqa: BLE001 - a failed relocation leaves the registry unchanged (rolled back)
+    except Exception as error:
         report.error = f"{type(error).__name__}: {str(error).splitlines()[0]}"
         report.versions_relocated = 0
     if not dry_run and report.error is None:
@@ -65,7 +71,15 @@ def _relocate(service: FilesystemService, report: RelocationReport, change, viol
     return report
 
 
-def transition_folder_access(service: FilesystemService, folder_id: str, new_access: str, *, actor: str | None, authorization: dict | None = None, dry_run: bool = True) -> RelocationReport:
+def transition_folder_access(
+    service: FilesystemService,
+    folder_id: str,
+    new_access: str,
+    *,
+    actor: str | None,
+    authorization: dict | None = None,
+    dry_run: bool = True,
+) -> RelocationReport:
     repo = service.repo
     service.authorizer.for_record(actor, "filesystem.publish", "filesystem.folders", folder_id)
     report = RelocationReport(folder_id, f"access -> {new_access}", dry_run)
@@ -80,7 +94,16 @@ def transition_folder_access(service: FilesystemService, folder_id: str, new_acc
     return _relocate(service, report, lambda: repo.update_folder(folder_id, folder["revision"], fields), _FOLDER_SQL)
 
 
-def move_folder(service: FilesystemService, folder_id: str, *, new_parent_id: str | None = None, new_name: str | None = None, keep_parent: bool = True, actor: str | None, dry_run: bool = True) -> RelocationReport:
+def move_folder(
+    service: FilesystemService,
+    folder_id: str,
+    *,
+    new_parent_id: str | None = None,
+    new_name: str | None = None,
+    keep_parent: bool = True,
+    actor: str | None,
+    dry_run: bool = True,
+) -> RelocationReport:
     """Renames a folder and/or moves it under another parent (keep_parent=False with new_parent_id=None makes it a root)."""
     repo = service.repo
     service.authorizer.for_record(actor, "filesystem.edit", "filesystem.folders", folder_id)
@@ -97,10 +120,20 @@ def move_folder(service: FilesystemService, folder_id: str, *, new_parent_id: st
         report.error = str(error)
         return report
     report.change = f"folder -> {(repo.folder_path(parent) if parent else '')}/{name}"
-    return _relocate(service, report, lambda: repo.set_folder_place(folder_id, folder["revision"], parent, name), _FOLDER_SQL)
+    return _relocate(
+        service, report, lambda: repo.set_folder_place(folder_id, folder["revision"], parent, name), _FOLDER_SQL
+    )
 
 
-def move_file(service: FilesystemService, file_id: str, *, new_folder_id: str | None = None, new_name: str | None = None, actor: str | None, dry_run: bool = True) -> RelocationReport:
+def move_file(
+    service: FilesystemService,
+    file_id: str,
+    *,
+    new_folder_id: str | None = None,
+    new_name: str | None = None,
+    actor: str | None,
+    dry_run: bool = True,
+) -> RelocationReport:
     """Renames a file and/or moves it to another folder; every retained revision follows it."""
     repo = service.repo
     service.authorizer.for_record(actor, "filesystem.edit", "filesystem.files", file_id)

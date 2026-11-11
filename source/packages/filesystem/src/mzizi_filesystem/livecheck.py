@@ -4,9 +4,9 @@ Store level: everything lives under private/tmp/mzizi-live-check-<id>/. Service 
 match) are registered twice in a private test folder of the rewrite database; the second registration must reuse the first key.
 Cleanup removes only objects this check created and only while no retained version references them, then its own database rows.
 """
+
 from __future__ import annotations
 
-import os
 import secrets
 import uuid
 
@@ -44,21 +44,45 @@ def run_live_check(store: ObjectStore, repo: Repository | None = None, actor: st
         try:
             url = store.presign_get(k1, 60)
             step("presigned URL uses a client-reachable host", "object-storage" not in url, url.split("?")[0])
-        except Exception as error:  # noqa: BLE001 - reported, not fatal: S3_PUBLIC_ENDPOINT may be unset on this machine
-            step("presigned URL", "S3_PUBLIC_ENDPOINT is not set" in str(error), "skipped: " + str(error) if "S3_PUBLIC_ENDPOINT is not set" in str(error) else str(error))
+        except Exception as error:
+            step(
+                "presigned URL",
+                "S3_PUBLIC_ENDPOINT is not set" in str(error),
+                "skipped: " + str(error) if "S3_PUBLIC_ENDPOINT is not set" in str(error) else str(error),
+            )
         step("test namespace is not anonymously readable", not is_anonymously_readable(k1))
         if repo is not None:
             service = FilesystemService(repo, store)
             with repo.transaction():
-                folder = repo.create_folder(None, f"_live-check-{token}", {"access": "private", "artifact_role": "report", "acquisition_class": "internally_derived", "preparation": "programmatically_generated", "is_seed": False, "description": "live check (removed after the check)"}, actor)
+                folder = repo.create_folder(
+                    None,
+                    f"_live-check-{token}",
+                    {
+                        "access": "private",
+                        "artifact_role": "report",
+                        "acquisition_class": "internally_derived",
+                        "preparation": "programmatically_generated",
+                        "is_seed": False,
+                        "description": "live check (removed after the check)",
+                    },
+                    actor,
+                )
             a = service.register(folder["id"], "one.bin", payload, actor=actor)
             b = service.register(folder["id"], "two.bin", payload, actor=actor)
             for r in (a, b):
                 if r.key:
                     created_keys.append(r.key)
             step("registered twice", a.outcome == "created" and b.outcome == "created", f"{a.outcome}/{b.outcome}")
-            step("each file has its own readable key and the second was a server-side copy", bool(a.key) and bool(b.key) and a.key != b.key and a.key.endswith("/one.bin") and b.server_copied, f"{a.key} {b.key}")
-            step("registered key is private and verified", bool(a.key) and a.key.startswith("private/") and a.verified)
+            step(
+                "each file has its own readable key and the second was a server-side copy",
+                bool(a.key)
+                and bool(b.key)
+                and a.key != b.key
+                and (a.key or "").endswith("/one.bin")
+                and b.server_copied,
+                f"{a.key} {b.key}",
+            )
+            step("registered key is private and verified", (a.key or "").startswith("private/") and a.verified)
             for name in ("one.bin", "two.bin"):
                 f = repo.find_file(folder["id"], name)
                 if f:
@@ -75,8 +99,12 @@ def run_live_check(store: ObjectStore, repo: Repository | None = None, actor: st
             try:
                 store.delete(key)
                 removed.append(key)
-            except Exception as error:  # noqa: BLE001
+            except Exception as error:
                 kept.append(f"{key} ({error})")
         gone = all(store.head(k) is None for k in removed)
-        step("cleanup removed only objects created by this check", gone and not kept, f"removed {len(removed)}, kept {len(kept)}")
+        step(
+            "cleanup removed only objects created by this check",
+            gone and not kept,
+            f"removed {len(removed)}, kept {len(kept)}",
+        )
     return {"namespace": ns, "ok": all(s["ok"] for s in steps), "steps": steps}

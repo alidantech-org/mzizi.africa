@@ -3,6 +3,7 @@
 The repository root is found from this file (an editable workspace install keeps it in the checkout);
 set MZIZI_REPO_ROOT, MZIZI_SEED_ROOT or MZIZI_SCHEMA_ROOT to override.
 """
+
 from __future__ import annotations
 
 import os

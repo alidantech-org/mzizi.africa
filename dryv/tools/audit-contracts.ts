@@ -17,7 +17,19 @@ const schemas = new Map(items.filter((i) => i.kind === "schema").map((i) => [i.n
  * lives in the source schema (SOURCING_DESIGN.md).
  */
 const systemSchemas = new Set(["audit", "source", "filesystem", "identity", "website"]);
-const provenanceFields = ["sourceName", "sourceReference", "sourceUrl", "artifactId", "artifactChecksum", "retrievedAt", "licence", "method", "toolOrModel", "confidence", "verificationState"];
+const provenanceFields = [
+  "sourceName",
+  "sourceReference",
+  "sourceUrl",
+  "artifactId",
+  "artifactChecksum",
+  "retrievedAt",
+  "licence",
+  "method",
+  "toolOrModel",
+  "confidence",
+  "verificationState",
+];
 
 function ref(value: Json | undefined): string | undefined {
   return value?.$ref?.replace("#/schemas/", "");
@@ -36,11 +48,34 @@ function chain(name: string): string[] {
 /** Names the generated test helpers already use; a schema with one of these names breaks the example files. */
 const reservedSchemaNames = new Set(["Contract"]);
 for (const name of schemas.keys()) {
-  if (reservedSchemaNames.has(name.split(".").pop() ?? "")) violations.push(`${name}: reserved schema name (collides with a generated helper); rename it`);
+  if (reservedSchemaNames.has(name.split(".").pop() ?? ""))
+    violations.push(`${name}: reserved schema name (collides with a generated helper); rename it`);
 }
 
 /** Schema names are full words (rule: .docs/rules/database-naming.md). */
-const approvedSchemas = new Set(["reference", "geography", "legal", "person", "identity", "governance", "electoral", "political", "calendar", "organization", "finance", "debt", "procurement", "statistical", "civic", "filesystem", "source", "website", "place", "contact", "audit"]);
+const approvedSchemas = new Set([
+  "reference",
+  "geography",
+  "legal",
+  "person",
+  "identity",
+  "governance",
+  "electoral",
+  "political",
+  "calendar",
+  "organization",
+  "finance",
+  "debt",
+  "procurement",
+  "statistical",
+  "civic",
+  "filesystem",
+  "source",
+  "website",
+  "place",
+  "contact",
+  "audit",
+]);
 
 const tables = new Map<string, string>();
 for (const [name, schema] of schemas) {
@@ -50,7 +85,8 @@ for (const [name, schema] of schemas) {
   const owner = storageOf(items, schema).schema ?? "";
   const lineage = chain(name);
   if (!lineage.includes("shared.BaseEntity")) violations.push(`${name}: entity must extend shared.BaseEntity`);
-  if (!systemSchemas.has(owner) && !lineage.includes("shared.HistoricalEntity")) violations.push(`${name}: domain entity must extend shared.HistoricalEntity (valid time)`);
+  if (!systemSchemas.has(owner) && !lineage.includes("shared.HistoricalEntity"))
+    violations.push(`${name}: domain entity must extend shared.HistoricalEntity (valid time)`);
   for (const field of owner === "source" ? [] : Object.keys(schema.fields ?? {})) {
     if (provenanceFields.includes(field)) violations.push(`${name}.${field}: provenance belongs in the source schema, not on data rows`);
   }
@@ -62,7 +98,8 @@ for (const [name, schema] of schemas) {
     if (target) targets.set(target, [...(targets.get(target) ?? []), field]);
   }
   for (const [target, fields] of targets) {
-    if (fields.length > 1) violations.push(`${name}: fields ${fields.join(", ")} all relate to ${target}; keep one relation and make the others plain ids`);
+    if (fields.length > 1)
+      violations.push(`${name}: fields ${fields.join(", ")} all relate to ${target}; keep one relation and make the others plain ids`);
   }
 
   // 3. Storage follows .docs/rules/database-naming.md.
@@ -77,15 +114,18 @@ for (const [name, schema] of schemas) {
     const targetName = ref(spec.relation?.target);
     if (!targetName) continue;
     const target = storageOf(items, schemas.get(targetName) as Json);
-    if (target.schema !== dbSchema) violations.push(`${name}.${field}: relation to ${targetName} crosses from ${dbSchema} to ${target.schema}; use a plain id`);
+    if (target.schema !== dbSchema)
+      violations.push(`${name}.${field}: relation to ${targetName} crosses from ${dbSchema} to ${target.schema}; use a plain id`);
   }
   if (!approvedSchemas.has(dbSchema)) violations.push(`${name}: schema ${dbSchema} is not an approved full-word schema name`);
   if (dbSchema === "public") violations.push(`${name}: tables must not live in the public schema`);
   if (!/^[a-z][a-z0-9]*$/.test(dbSchema)) violations.push(`${name}: schema ${dbSchema} must be one lowercase word`);
   if (dbSchema.endsWith("s") && !["address"].includes(dbSchema)) violations.push(`${name}: schema ${dbSchema} must be singular`);
-  if (!/^[a-z][a-z0-9]*(_[a-z][a-z0-9]*)?$/.test(table)) violations.push(`${name}: table ${table} must be lowercase with at most one underscore`);
+  if (!/^[a-z][a-z0-9]*(_[a-z][a-z0-9]*)?$/.test(table))
+    violations.push(`${name}: table ${table} must be lowercase with at most one underscore`);
   if (table.startsWith(`${dbSchema}_`) || table === dbSchema) violations.push(`${name}: table ${table} repeats its schema ${dbSchema}`);
-  if (!table.endsWith("s") && !table.endsWith("people") && !table.endsWith("evidence")) violations.push(`${name}: table ${table} should be plural`);
+  if (!table.endsWith("s") && !table.endsWith("people") && !table.endsWith("evidence"))
+    violations.push(`${name}: table ${table} should be plural`);
   if (tables.has(qualified)) violations.push(`${name}: ${qualified} already used by ${tables.get(qualified)}`);
   else tables.set(qualified, name);
 }
@@ -93,7 +133,8 @@ for (const [name, schema] of schemas) {
 // 4. Strings longer than PostgreSQL's varchar limit must be unbounded text.
 for (const item of items.filter((i) => i.kind === "property-primitive")) {
   const max = item.value?.length?.max;
-  if (typeof max === "number" && max > 10_485_760) violations.push(`${item.name}: length max ${max} exceeds the varchar limit; omit max for text`);
+  if (typeof max === "number" && max > 10_485_760)
+    violations.push(`${item.name}: length max ${max} exceeds the varchar limit; omit max for text`);
 }
 
 // 5. Contracts never name a country: Kenya (and any other) is data scoped to a jurisdiction.

@@ -13,7 +13,10 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * classification record. Provisions carry pinpoint structure, so any other domain can cite the
  * exact provision that is its legal basis through LegalAuthorityLink.
  */
-export const legal = dryv.group({ name: "legal" }).description("Legal instruments, provisions, amendments and authority links.").tags("public", "legal")
+export const legal = dryv
+  .group({ name: "legal" })
+  .description("Legal instruments, provisions, amendments and authority links.")
+  .tags("public", "legal")
   .facets({ storage: { namespace: "legal" } });
 
 export const legalProperties = legal.properties({
@@ -75,7 +78,11 @@ export const legalProvisionSchemas = legal.schemas({
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       kind: dryv.field(legalProperties.ProvisionKind).query({ filter: ["equal", "in"] }),
       citation: dryv.field(legalProperties.Citation).query({ filter: ["contains"], search: true }),
-      heading: dryv.field(sharedProperties.Name).optional().nullable().query({ filter: ["contains"], search: true }),
+      heading: dryv
+        .field(sharedProperties.Name)
+        .optional()
+        .nullable()
+        .query({ filter: ["contains"], search: true }),
       content: dryv.field(sharedProperties.LongText).optional().nullable(),
       sortOrder: dryv.field(sharedProperties.Count).query({ sort: true }),
     },
@@ -131,11 +138,20 @@ export const legalChangeSchemas = legal.schemas({
 
 const entities = { ...legalEntitySchemas, ...legalProvisionSchemas, ...legalAmendmentSchemas, ...legalChangeSchemas };
 
-const legalRead = legal.feature("LegalRead").description("Public read access to legal instruments, provisions and amendments.").tags("public");
+const legalRead = legal
+  .feature("LegalRead")
+  .description("Public read access to legal instruments, provisions and amendments.")
+  .tags("public");
 
 const instruments = readSurface(legal, {
-  singular: "LegalInstrument", plural: "LegalInstruments", itemKey: "instrument", listKey: "instruments",
-  path: "/legal/instruments", idParam: "instrumentId", entity: entities.LegalInstrument, description: "legal instruments",
+  singular: "LegalInstrument",
+  plural: "LegalInstruments",
+  itemKey: "instrument",
+  listKey: "instruments",
+  path: "/legal/instruments",
+  idParam: "instrumentId",
+  entity: entities.LegalInstrument,
+  description: "legal instruments",
   filters: {
     jurisdictionId: dryv.field(sharedProperties.Id).optional(),
     status: dryv.field(legalProperties.InstrumentStatus).optional(),
@@ -143,8 +159,14 @@ const instruments = readSurface(legal, {
   },
 });
 const provisions = readSurface(legal, {
-  singular: "LegalProvision", plural: "LegalProvisions", itemKey: "provision", listKey: "provisions",
-  path: "/legal/provisions", idParam: "provisionId", entity: entities.LegalProvision, description: "legal provisions",
+  singular: "LegalProvision",
+  plural: "LegalProvisions",
+  itemKey: "provision",
+  listKey: "provisions",
+  path: "/legal/provisions",
+  idParam: "provisionId",
+  entity: entities.LegalProvision,
+  description: "legal provisions",
   filters: {
     instrumentId: dryv.field(sharedProperties.Id).optional(),
     parentId: dryv.field(sharedProperties.Id).optional(),
@@ -153,18 +175,36 @@ const provisions = readSurface(legal, {
   },
 });
 const amendments = readSurface(legal, {
-  singular: "LegalAmendment", plural: "LegalAmendments", itemKey: "amendment", listKey: "amendments",
-  path: "/legal/amendments", idParam: "amendmentId", entity: entities.LegalAmendment, description: "legal amendments",
+  singular: "LegalAmendment",
+  plural: "LegalAmendments",
+  itemKey: "amendment",
+  listKey: "amendments",
+  path: "/legal/amendments",
+  idParam: "amendmentId",
+  entity: entities.LegalAmendment,
+  description: "legal amendments",
   filters: { instrumentId: dryv.field(sharedProperties.Id).optional() },
 });
 const changes = readSurface(legal, {
-  singular: "LegalAmendmentChange", plural: "LegalAmendmentChanges", itemKey: "change", listKey: "changes",
-  path: "/legal/amendment-changes", idParam: "changeId", entity: entities.LegalAmendmentChange, description: "legal amendment changes",
+  singular: "LegalAmendmentChange",
+  plural: "LegalAmendmentChanges",
+  itemKey: "change",
+  listKey: "changes",
+  path: "/legal/amendment-changes",
+  idParam: "changeId",
+  entity: entities.LegalAmendmentChange,
+  description: "legal amendment changes",
   filters: { amendmentId: dryv.field(sharedProperties.Id).optional(), provisionId: dryv.field(sharedProperties.Id).optional() },
 });
 const links = readSurface(legal, {
-  singular: "LegalAuthorityLink", plural: "LegalAuthorityLinks", itemKey: "link", listKey: "links",
-  path: "/legal/authority-links", idParam: "linkId", entity: entities.LegalAuthorityLink, description: "legal authority links",
+  singular: "LegalAuthorityLink",
+  plural: "LegalAuthorityLinks",
+  itemKey: "link",
+  listKey: "links",
+  path: "/legal/authority-links",
+  idParam: "linkId",
+  entity: entities.LegalAuthorityLink,
+  description: "legal authority links",
   filters: {
     provisionId: dryv.field(sharedProperties.Id).optional(),
     targetKind: dryv.field(sharedProperties.TargetKind).optional(),

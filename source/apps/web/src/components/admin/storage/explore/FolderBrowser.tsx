@@ -39,7 +39,7 @@ export default function FolderBrowser({ folders, viewMode, segments, depth }: Fo
   };
 
   // Navigation Breadcrumb Component
-  const NavigationBreadcrumb = () => (
+  const renderNavigationBreadcrumb = () => (
     <Card className="p-0">
       <CardContent className="p-2 rounded-sm flex justify-between items-center">
         <Breadcrumb>
@@ -67,7 +67,7 @@ export default function FolderBrowser({ folders, viewMode, segments, depth }: Fo
   );
 
   // Grid View Component
-  const GridView = () => (
+  const renderGridView = () => (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
       {folders.map((folder) => (
         <Link key={folder.id} href={`/admin/storage/explore/folders/${folder.path}`} className="block">
@@ -109,7 +109,7 @@ export default function FolderBrowser({ folders, viewMode, segments, depth }: Fo
   );
 
   // Table View Component
-  const TableView = () => (
+  const renderTableView = () => (
     <Card className="p-0">
       <CardContent className="p-0">
         <Table>
@@ -168,7 +168,7 @@ export default function FolderBrowser({ folders, viewMode, segments, depth }: Fo
   return (
     <div className="space-y-2">
       {/* Navigation Breadcrumb */}
-      <NavigationBreadcrumb />
+      {renderNavigationBreadcrumb()}
 
       {/* Folders display */}
       {folders.length === 0 ? (
@@ -188,9 +188,9 @@ export default function FolderBrowser({ folders, viewMode, segments, depth }: Fo
           </CardContent>
         </Card>
       ) : viewMode === 'grid' ? (
-        <GridView />
+        renderGridView()
       ) : (
-        <TableView />
+        renderTableView()
       )}
     </div>
   );

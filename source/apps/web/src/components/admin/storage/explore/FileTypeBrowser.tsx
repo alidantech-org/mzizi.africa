@@ -36,7 +36,7 @@ export default function FileTypeBrowser({ fileTypes, viewMode }: FileTypeBrowser
   };
 
   // Grid View Component
-  const GridView = () => (
+  const renderGridView = () => (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
       {fileTypes.map((fileType) => (
         <Card key={fileType.id} className="group p-2 gap-2 cursor-pointer hover:shadow-md transition-shadow duration-200 overflow-hidden">
@@ -76,7 +76,7 @@ export default function FileTypeBrowser({ fileTypes, viewMode }: FileTypeBrowser
   );
 
   // Table View Component
-  const TableView = () => (
+  const renderTableView = () => (
     <Card className="p-0">
       <CardContent className="p-0">
         <Table>
@@ -144,9 +144,9 @@ export default function FileTypeBrowser({ fileTypes, viewMode }: FileTypeBrowser
           </CardContent>
         </Card>
       ) : viewMode === 'grid' ? (
-        <GridView />
+        renderGridView()
       ) : (
-        <TableView />
+        renderTableView()
       )}
     </>
   );

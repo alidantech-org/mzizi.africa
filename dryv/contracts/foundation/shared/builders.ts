@@ -35,7 +35,11 @@ export function plainId() {
 }
 
 export function optionalId() {
-  return dryv.field(sharedProperties.Id).optional().nullable().query({ filter: ["equal"] });
+  return dryv
+    .field(sharedProperties.Id)
+    .optional()
+    .nullable()
+    .query({ filter: ["equal"] });
 }
 
 export const searchable = { filter: ["startsWith", "contains"], sort: true, search: true } as const;

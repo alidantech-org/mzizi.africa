@@ -6,6 +6,7 @@
 The name is the official downloaded name or the local name, never a hash. `public/raw/` is a protected archive: this package
 never registers, writes or deletes a key under it.
 """
+
 from __future__ import annotations
 
 from pathlib import PurePosixPath
@@ -22,7 +23,14 @@ class NameError_(ValueError):
 
 
 def check_name(name: str, *, root: bool = False) -> None:
-    if not name or name != name.strip() or "/" in name or name in (".", "..") or any(ord(c) < 32 for c in name) or len(name) > 255:
+    if (
+        not name
+        or name != name.strip()
+        or "/" in name
+        or name in (".", "..")
+        or any(ord(c) < 32 for c in name)
+        or len(name) > 255
+    ):
         raise NameError_(f"invalid name {name!r}")
     if name in RESERVED_NAMES or (root and name in RESERVED_ROOTS):
         raise NameError_(f"{name!r} is a reserved name")

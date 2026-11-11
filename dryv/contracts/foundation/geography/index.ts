@@ -62,20 +62,38 @@ const geoOwnedSchemas = geography.schemas({
       // Other schemas are referenced by plain id: no foreign key crosses a schema (DATABASE_DESIGN.md).
       jurisdictionId: dryv.field(sharedProperties.Id).query({ filter: ["equal"] }),
       levelId: dryv.field(sharedProperties.Id).query({ filter: ["equal"] }),
-      parentId: dryv.field(sharedProperties.Id).optional().nullable().query({ filter: ["equal"], sort: true }),
+      parentId: dryv
+        .field(sharedProperties.Id)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"], sort: true }),
       isActive: dryv.field(sharedProperties.Flag).query({ filter: ["equal"] }),
-      wikidataId: dryv.field(sharedProperties.WikidataId).optional().nullable().query({ filter: ["equal"] }),
-      flagMarker: dryv.field(sharedProperties.MediaMarker).optional().nullable().query({ filter: ["equal"] }),
-      emblemMarker: dryv.field(sharedProperties.MediaMarker).optional().nullable().query({ filter: ["equal"] }),
+      wikidataId: dryv
+        .field(sharedProperties.WikidataId)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"] }),
+      flagMarker: dryv
+        .field(sharedProperties.MediaMarker)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"] }),
+      emblemMarker: dryv
+        .field(sharedProperties.MediaMarker)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"] }),
     })
     .role("entity")
     .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({
-      storage: dryv.storage("units").indexes(
-        { name: "idx_geo_unit_code", fields: ["code"], unique: true },
-        { name: "idx_geo_unit_parent", fields: ["parentId"] },
-        { name: "idx_geo_unit_jurisdiction_level", fields: ["jurisdictionId", "levelId"] },
-      ),
+      storage: dryv
+        .storage("units")
+        .indexes(
+          { name: "idx_geo_unit_code", fields: ["code"], unique: true },
+          { name: "idx_geo_unit_parent", fields: ["parentId"] },
+          { name: "idx_geo_unit_jurisdiction_level", fields: ["jurisdictionId", "levelId"] },
+        ),
     }),
 });
 
@@ -115,10 +133,12 @@ export const geographySchemas = geography.schemas({
     .role("entity")
     .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({
-      storage: dryv.storage("boundaries").indexes(
-        { name: "idx_geo_boundary_unit_current", fields: ["unitId", "isCurrent"] },
-        { name: "uq_geo_boundary_unit_version", fields: ["unitId", "versionNumber"], unique: true },
-      ),
+      storage: dryv
+        .storage("boundaries")
+        .indexes(
+          { name: "idx_geo_boundary_unit_current", fields: ["unitId", "isCurrent"] },
+          { name: "uq_geo_boundary_unit_version", fields: ["unitId", "versionNumber"], unique: true },
+        ),
     }),
 
   GeoUnitNameVersion: dryv
@@ -244,7 +264,12 @@ export const geographyCollectionSchemas = geography.schemas({
 /* Read operations                                                        */
 /* -------------------------------------------------------------------------- */
 
-const standardFailures = [sharedFailures.BadRequest, sharedFailures.NotFound, sharedFailures.ValidationError, sharedFailures.InternalError] as const;
+const standardFailures = [
+  sharedFailures.BadRequest,
+  sharedFailures.NotFound,
+  sharedFailures.ValidationError,
+  sharedFailures.InternalError,
+] as const;
 
 function withStandardHttpFailures(exposure: ReturnType<typeof dryv.http>) {
   return exposure

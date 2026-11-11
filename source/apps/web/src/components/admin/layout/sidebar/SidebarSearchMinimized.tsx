@@ -13,13 +13,7 @@ export default function SidebarSearchMinimized() {
   return (
     <>
       {/* Search Trigger */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setSearchOpen(true)}
-        className="w-full justify-center"
-        title="Search"
-      >
+      <Button variant="ghost" size="sm" onClick={() => setSearchOpen(true)} className="w-full justify-center" title="Search">
         <Search className="h-4 w-4" />
       </Button>
 
@@ -40,12 +34,7 @@ export default function SidebarSearchMinimized() {
               autoFocus
             />
             {searchQuery && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute right-2 top-1/2 -translate-y-1/2"
-                onClick={() => setSearchQuery('')}
-              >
+              <Button variant="ghost" size="sm" className="absolute right-2 top-1/2 -translate-y-1/2" onClick={() => setSearchQuery('')}>
                 <X className="h-4 w-4" />
               </Button>
             )}

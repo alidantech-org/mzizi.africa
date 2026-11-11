@@ -13,18 +13,39 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * hold no file columns and no foreign keys here. Stores, objects, uploads and events are private:
  * the public API shows file metadata, never object keys, buckets or store configuration.
  */
-export const filesystem = dryv.group({ name: "filesystem" }).description("Stores, formats, folders, objects, files, versions, variants, attachments, uploads and events.").tags("public", "filesystem").facets({ storage: { namespace: "filesystem" } });
+export const filesystem = dryv
+  .group({ name: "filesystem" })
+  .description("Stores, formats, folders, objects, files, versions, variants, attachments, uploads and events.")
+  .tags("public", "filesystem")
+  .facets({ storage: { namespace: "filesystem" } });
 
 export const filesystemProperties = filesystem.properties({
   StoreKind: dryv.property.enum({ objectStore: "object_store", localDirectory: "local_directory" }),
   StorageTier: dryv.property.enum({ hot: "hot", warm: "warm", cold: "cold", archive: "archive" }),
-  FormatCategory: dryv.property.enum({ document: "document", image: "image", audio: "audio", video: "video", archive: "archive", dataset: "dataset", other: "other" }),
+  FormatCategory: dryv.property.enum({
+    document: "document",
+    image: "image",
+    audio: "audio",
+    video: "video",
+    archive: "archive",
+    dataset: "dataset",
+    other: "other",
+  }),
   ScanStatus: dryv.property.enum({ pending: "pending", clean: "clean", infected: "infected", skipped: "skipped" }),
   FileStatus: dryv.property.enum({ active: "active", trashed: "trashed", purged: "purged" }),
   Visibility: dryv.property.enum({ public: "public", restricted: "restricted" }),
   VariantKind: dryv.property.enum({ thumbnail: "thumbnail", preview: "preview", resized: "resized", text: "text", ocr: "ocr" }),
   UploadState: dryv.property.enum({ pending: "pending", completed: "completed", expired: "expired", aborted: "aborted" }),
-  EventKind: dryv.property.enum({ created: "created", downloaded: "downloaded", versioned: "versioned", moved: "moved", renamed: "renamed", trashed: "trashed", restored: "restored", purged: "purged" }),
+  EventKind: dryv.property.enum({
+    created: "created",
+    downloaded: "downloaded",
+    versioned: "versioned",
+    moved: "moved",
+    renamed: "renamed",
+    trashed: "trashed",
+    restored: "restored",
+    purged: "purged",
+  }),
   MimeType: dryv.property.string().length({ min: 3, max: 200 }),
   Extension: dryv.property.string().length({ min: 1, max: 20 }),
   FileName: dryv.property.string().length({ min: 1, max: 255 }),
@@ -61,7 +82,10 @@ const stores = filesystem.schemas({
       processingStrategy: dryv.field(sharedProperties.Label).optional().nullable(),
     },
     "formats",
-    [{ name: "idx_format_code", fields: ["code"], unique: true }, { name: "idx_format_mime", fields: ["mimeType"] }],
+    [
+      { name: "idx_format_code", fields: ["code"], unique: true },
+      { name: "idx_format_mime", fields: ["mimeType"] },
+    ],
   ),
 
   Folder: systemRecord(
@@ -73,7 +97,10 @@ const stores = filesystem.schemas({
       visibility: dryv.field(filesystemProperties.Visibility).query({ filter: ["equal"] }),
     },
     "folders",
-    [{ name: "idx_folder_path", fields: ["path"], unique: true }, { name: "idx_folder_parent", fields: ["parentId"] }],
+    [
+      { name: "idx_folder_path", fields: ["path"], unique: true },
+      { name: "idx_folder_parent", fields: ["parentId"] },
+    ],
   ),
 });
 
@@ -113,7 +140,10 @@ const files = filesystem.schemas({
       trashedAt: dryv.field(sharedProperties.DateTime).optional().nullable(),
     },
     "files",
-    [{ name: "idx_file_folder_name", fields: ["folderId", "name"] }, { name: "idx_file_status", fields: ["status", "visibility"] }],
+    [
+      { name: "idx_file_folder_name", fields: ["folderId", "name"] },
+      { name: "idx_file_status", fields: ["status", "visibility"] },
+    ],
   ),
 });
 
@@ -127,7 +157,10 @@ const versions = filesystem.schemas({
       note: dryv.field(sharedProperties.Description).optional().nullable(),
     },
     "versions",
-    [{ name: "idx_version_file_number", fields: ["fileId", "versionNumber"], unique: true }, { name: "idx_version_object", fields: ["objectId"] }],
+    [
+      { name: "idx_version_file_number", fields: ["fileId", "versionNumber"], unique: true },
+      { name: "idx_version_object", fields: ["objectId"] },
+    ],
   ),
 
   /** A derived rendition of an object; the original is never modified. */
@@ -152,7 +185,10 @@ const versions = filesystem.schemas({
       position: dryv.field(sharedProperties.Count).query({ sort: true }),
     },
     "attachments",
-    [{ name: "idx_attachment_target", fields: ["targetKind", "targetId", "role"] }, { name: "idx_attachment_file", fields: ["fileId"] }],
+    [
+      { name: "idx_attachment_target", fields: ["targetKind", "targetId", "role"] },
+      { name: "idx_attachment_file", fields: ["fileId"] },
+    ],
   ),
 });
 
@@ -189,13 +225,71 @@ const flows = filesystem.schemas({
 });
 
 const id = () => dryv.field(sharedProperties.Id).optional();
-const filesystemRead = filesystem.feature("FilesystemRead").description("Public read access to file metadata, versions and attachments.").tags("public");
+const filesystemRead = filesystem
+  .feature("FilesystemRead")
+  .description("Public read access to file metadata, versions and attachments.")
+  .tags("public");
 const surfaces = [
-  readSurface(filesystem, { singular: "Format", plural: "Formats", itemKey: "format", listKey: "formats", path: "/filesystem/formats", idParam: "formatId", entity: stores.Format, description: "media formats", filters: { category: dryv.field(filesystemProperties.FormatCategory).optional(), q: dryv.field(sharedProperties.Name).optional() } }),
-  readSurface(filesystem, { singular: "Folder", plural: "Folders", itemKey: "folder", listKey: "folders", path: "/filesystem/folders", idParam: "folderId", entity: stores.Folder, description: "public folders", filters: { parentId: id(), q: dryv.field(sharedProperties.Name).optional() } }),
-  readSurface(filesystem, { singular: "File", plural: "Files", itemKey: "file", listKey: "files", path: "/filesystem/files", idParam: "fileId", entity: files.File, description: "public files", filters: { folderId: id(), q: dryv.field(sharedProperties.Name).optional() } }),
-  readSurface(filesystem, { singular: "FileVersion", plural: "FileVersions", itemKey: "version", listKey: "versions", path: "/filesystem/versions", idParam: "versionId", entity: versions.FileVersion, description: "versions of public files", filters: { fileId: id() } }),
-  readSurface(filesystem, { singular: "FileAttachment", plural: "FileAttachments", itemKey: "attachment", listKey: "attachments", path: "/filesystem/attachments", idParam: "attachmentId", entity: versions.FileAttachment, description: "attachments of public files", filters: { fileId: id(), targetKind: dryv.field(sharedProperties.TargetKind).optional(), targetId: id(), role: dryv.field(filesystemProperties.AttachmentRole).optional() } }),
+  readSurface(filesystem, {
+    singular: "Format",
+    plural: "Formats",
+    itemKey: "format",
+    listKey: "formats",
+    path: "/filesystem/formats",
+    idParam: "formatId",
+    entity: stores.Format,
+    description: "media formats",
+    filters: { category: dryv.field(filesystemProperties.FormatCategory).optional(), q: dryv.field(sharedProperties.Name).optional() },
+  }),
+  readSurface(filesystem, {
+    singular: "Folder",
+    plural: "Folders",
+    itemKey: "folder",
+    listKey: "folders",
+    path: "/filesystem/folders",
+    idParam: "folderId",
+    entity: stores.Folder,
+    description: "public folders",
+    filters: { parentId: id(), q: dryv.field(sharedProperties.Name).optional() },
+  }),
+  readSurface(filesystem, {
+    singular: "File",
+    plural: "Files",
+    itemKey: "file",
+    listKey: "files",
+    path: "/filesystem/files",
+    idParam: "fileId",
+    entity: files.File,
+    description: "public files",
+    filters: { folderId: id(), q: dryv.field(sharedProperties.Name).optional() },
+  }),
+  readSurface(filesystem, {
+    singular: "FileVersion",
+    plural: "FileVersions",
+    itemKey: "version",
+    listKey: "versions",
+    path: "/filesystem/versions",
+    idParam: "versionId",
+    entity: versions.FileVersion,
+    description: "versions of public files",
+    filters: { fileId: id() },
+  }),
+  readSurface(filesystem, {
+    singular: "FileAttachment",
+    plural: "FileAttachments",
+    itemKey: "attachment",
+    listKey: "attachments",
+    path: "/filesystem/attachments",
+    idParam: "attachmentId",
+    entity: versions.FileAttachment,
+    description: "attachments of public files",
+    filters: {
+      fileId: id(),
+      targetKind: dryv.field(sharedProperties.TargetKind).optional(),
+      targetId: id(),
+      role: dryv.field(filesystemProperties.AttachmentRole).optional(),
+    },
+  }),
 ];
 export const filesystemReadOperations = filesystemRead.operations(Object.assign({}, ...surfaces.map((surface) => surface.operations)));
 void objects;

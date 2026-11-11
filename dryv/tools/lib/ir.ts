@@ -1,3 +1,4 @@
+/** Shared helpers for the Dryv tools: compile the contracts to Runtime IR and walk its items. */
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 
@@ -8,9 +9,18 @@ export const dryvRoot = join(import.meta.dir, "..", "..");
 
 /** Compiles the contracts and returns the Runtime IR items; exits with the diagnostics on failure. */
 export function compileIr(): Item[] {
-  const compile = spawnSync("bun", ["x", "dryv-ts", "compile", "contracts/index.ts"], { cwd: dryvRoot, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+  const compile = spawnSync("bun", ["x", "dryv-ts", "compile", "contracts/index.ts"], {
+    cwd: dryvRoot,
+    encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024,
+  });
   if (compile.status !== 0) {
-    console.error(compile.stdout.split("\n").filter((l) => l.includes('"diagnostic"') || l.includes('"error"')).join("\n") || compile.stderr);
+    console.error(
+      compile.stdout
+        .split("\n")
+        .filter((l) => l.includes('"diagnostic"') || l.includes('"error"'))
+        .join("\n") || compile.stderr,
+    );
     process.exit(1);
   }
   const items: Item[] = [];

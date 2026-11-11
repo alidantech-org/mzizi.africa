@@ -4,13 +4,14 @@ Segment content is the feature's properties and geometry (WGS84 lon/lat). Diagno
 looks wrong (invalid or empty geometry, non-polygon geometry for boundaries, a non-WGS84 CRS,
 duplicate names, coordinate order that looks swapped) instead of repairing it silently.
 """
+
 from __future__ import annotations
 
 import json
 from collections import Counter
 
-from shapely.geometry import shape
 from shapely.errors import ShapelyError
+from shapely.geometry import shape
 
 from .result import Output
 
@@ -32,14 +33,24 @@ def _features(document: dict) -> list[dict] | None:
         return document["features"]
     if kind == "Feature":
         return [document]
-    if kind in {"Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection"}:
+    if kind in {
+        "Point",
+        "MultiPoint",
+        "LineString",
+        "MultiLineString",
+        "Polygon",
+        "MultiPolygon",
+        "GeometryCollection",
+    }:
         return [{"type": "Feature", "properties": {}, "geometry": document}]
     return None
 
 
 def extract_geojson(data: bytes, profile: str | None = None) -> Output:
     if len(data) > MAX_BYTES:
-        return Output("failed", diagnostics=[_diag("error", "too_large", f"{len(data)} bytes exceeds the {MAX_BYTES} byte limit")])
+        return Output(
+            "failed", diagnostics=[_diag("error", "too_large", f"{len(data)} bytes exceeds the {MAX_BYTES} byte limit")]
+        )
     try:
         document = json.loads(data)
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
@@ -48,10 +59,14 @@ def extract_geojson(data: bytes, profile: str | None = None) -> Output:
         return Output("failed", diagnostics=[_diag("error", "not_geojson", "the document is not a JSON object")])
     features = _features(document)
     if features is None:
-        return Output("failed", diagnostics=[_diag("error", "not_geojson", f"unsupported GeoJSON type {document.get('type')!r}")])
+        return Output(
+            "failed", diagnostics=[_diag("error", "not_geojson", f"unsupported GeoJSON type {document.get('type')!r}")]
+        )
 
     diagnostics: list[dict] = []
-    crs = (document.get("crs") or {}).get("properties", {}).get("name") if isinstance(document.get("crs"), dict) else None
+    crs = (
+        (document.get("crs") or {}).get("properties", {}).get("name") if isinstance(document.get("crs"), dict) else None
+    )
     if crs and "CRS84" not in crs and "4326" not in crs:
         diagnostics.append(_diag("warning", "crs_not_wgs84", f"declared CRS {crs}; coordinates were not reprojected"))
 
@@ -76,12 +91,28 @@ def extract_geojson(data: bytes, profile: str | None = None) -> Output:
             invalid += 1
             continue
         if not geom.is_valid:
-            diagnostics.append(_diag("warning", "invalid_geometry", "geometry is not valid (self-intersection or similar); it was kept as published", locator))
+            diagnostics.append(
+                _diag(
+                    "warning",
+                    "invalid_geometry",
+                    "geometry is not valid (self-intersection or similar); it was kept as published",
+                    locator,
+                )
+            )
         minx, miny, maxx, maxy = geom.bounds
         if not (-180 <= minx <= maxx <= 180 and -90 <= miny <= maxy <= 90):
-            diagnostics.append(_diag("warning", "outside_wgs84_range", f"bounds {geom.bounds} fall outside lon/lat range; a projected CRS or swapped axes is likely", locator))
+            diagnostics.append(
+                _diag(
+                    "warning",
+                    "outside_wgs84_range",
+                    f"bounds {geom.bounds} fall outside lon/lat range; a projected CRS or swapped axes is likely",
+                    locator,
+                )
+            )
         if expect_polygons and geometry.get("type") not in POLYGONAL:
-            diagnostics.append(_diag("warning", "not_polygonal", f"{geometry.get('type')} where a boundary was expected", locator))
+            diagnostics.append(
+                _diag("warning", "not_polygonal", f"{geometry.get('type')} where a boundary was expected", locator)
+            )
         name = next((str(properties[k]) for k in NAME_KEYS if properties.get(k)), None)
         if name:
             names[name] += 1
@@ -90,7 +121,11 @@ def extract_geojson(data: bytes, profile: str | None = None) -> Output:
                 "key": f"feature-{index}",
                 "kind": "feature",
                 "locator": json.dumps(locator, sort_keys=True),
-                "content": json.dumps({"properties": properties, "geometry": geometry, "bounds": list(geom.bounds), "name": name}, sort_keys=True, ensure_ascii=False),
+                "content": json.dumps(
+                    {"properties": properties, "geometry": geometry, "bounds": list(geom.bounds), "name": name},
+                    sort_keys=True,
+                    ensure_ascii=False,
+                ),
                 "confidence": 1,
             }
         )
@@ -101,5 +136,3 @@ def extract_geojson(data: bytes, profile: str | None = None) -> Output:
     if not segments:
         return Output("failed", diagnostics=diagnostics)
     return Output("partial" if invalid else "succeeded", segments, diagnostics)
-
-

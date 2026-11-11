@@ -77,8 +77,16 @@ const institutions = governance.schemas({
       scopeGeoUnitId: optionalId(),
       legalBasisId: optionalId(),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
-      wikidataId: dryv.field(sharedProperties.WikidataId).optional().nullable().query({ filter: ["equal"] }),
-      logoMarker: dryv.field(sharedProperties.MediaMarker).optional().nullable().query({ filter: ["equal"] }),
+      wikidataId: dryv
+        .field(sharedProperties.WikidataId)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"] }),
+      logoMarker: dryv
+        .field(sharedProperties.MediaMarker)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"] }),
     },
     "institutions",
     [
@@ -118,7 +126,11 @@ const relationships = governance.schemas({
       parentOfficeId: optionalId(),
       code: dryv.field(sharedProperties.BusinessCode).query(searchable),
       /** Reusable pattern the post was created from (for example county-executive/governor); definitions live in seed JSON, not a table. */
-      definitionCode: dryv.field(sharedProperties.BusinessCode).optional().nullable().query({ filter: ["equal"] }),
+      definitionCode: dryv
+        .field(sharedProperties.BusinessCode)
+        .optional()
+        .nullable()
+        .query({ filter: ["equal"] }),
       /** The geography unit this post represents (the constituency of an MP, the county of a governor). Null for national posts. */
       scopeGeoUnitId: optionalId(),
       name: dryv.field(sharedProperties.Name).query(searchable),
@@ -196,12 +208,21 @@ const officeHolders = governance.schemas({
 
 const entities = { ...institutions, ...relationships, ...officeDetails, ...procedureStages, ...officeHolders };
 
-const governanceRead = governance.feature("GovernanceRead").description("Public read access to institutions, offices, rules and office holders.").tags("public");
+const governanceRead = governance
+  .feature("GovernanceRead")
+  .description("Public read access to institutions, offices, rules and office holders.")
+  .tags("public");
 
 const surfaces = [
   readSurface(governance, {
-    singular: "Institution", plural: "Institutions", itemKey: "institution", listKey: "institutions",
-    path: "/governance/institutions", idParam: "institutionId", entity: entities.Institution, description: "institutions",
+    singular: "Institution",
+    plural: "Institutions",
+    itemKey: "institution",
+    listKey: "institutions",
+    path: "/governance/institutions",
+    idParam: "institutionId",
+    entity: entities.Institution,
+    description: "institutions",
     filters: {
       jurisdictionId: dryv.field(sharedProperties.Id).optional(),
       typeId: dryv.field(sharedProperties.Id).optional(),
@@ -211,8 +232,14 @@ const surfaces = [
     },
   }),
   readSurface(governance, {
-    singular: "InstitutionRelationship", plural: "InstitutionRelationships", itemKey: "relationship", listKey: "relationships",
-    path: "/governance/institution-relationships", idParam: "relationshipId", entity: entities.InstitutionRelationship, description: "institution relationships",
+    singular: "InstitutionRelationship",
+    plural: "InstitutionRelationships",
+    itemKey: "relationship",
+    listKey: "relationships",
+    path: "/governance/institution-relationships",
+    idParam: "relationshipId",
+    entity: entities.InstitutionRelationship,
+    description: "institution relationships",
     filters: {
       subjectKind: dryv.field(sharedProperties.TargetKind).optional(),
       subjectId: dryv.field(sharedProperties.Id).optional(),
@@ -222,28 +249,62 @@ const surfaces = [
     },
   }),
   readSurface(governance, {
-    singular: "Office", plural: "Offices", itemKey: "office", listKey: "offices",
-    path: "/governance/offices", idParam: "officeId", entity: entities.Office, description: "offices",
-    filters: { institutionId: dryv.field(sharedProperties.Id).optional(), scopeGeoUnitId: dryv.field(sharedProperties.Id).optional(), q: dryv.field(sharedProperties.Name).optional() },
+    singular: "Office",
+    plural: "Offices",
+    itemKey: "office",
+    listKey: "offices",
+    path: "/governance/offices",
+    idParam: "officeId",
+    entity: entities.Office,
+    description: "offices",
+    filters: {
+      institutionId: dryv.field(sharedProperties.Id).optional(),
+      scopeGeoUnitId: dryv.field(sharedProperties.Id).optional(),
+      q: dryv.field(sharedProperties.Name).optional(),
+    },
   }),
   readSurface(governance, {
-    singular: "OfficeRule", plural: "OfficeRules", itemKey: "rule", listKey: "rules",
-    path: "/governance/office-rules", idParam: "ruleId", entity: entities.OfficeRule, description: "office rules",
+    singular: "OfficeRule",
+    plural: "OfficeRules",
+    itemKey: "rule",
+    listKey: "rules",
+    path: "/governance/office-rules",
+    idParam: "ruleId",
+    entity: entities.OfficeRule,
+    description: "office rules",
     filters: { officeId: dryv.field(sharedProperties.Id).optional(), kind: dryv.field(governanceProperties.RuleKind).optional() },
   }),
   readSurface(governance, {
-    singular: "SelectionProcedure", plural: "SelectionProcedures", itemKey: "procedure", listKey: "procedures",
-    path: "/governance/selection-procedures", idParam: "procedureId", entity: entities.SelectionProcedure, description: "selection procedures",
+    singular: "SelectionProcedure",
+    plural: "SelectionProcedures",
+    itemKey: "procedure",
+    listKey: "procedures",
+    path: "/governance/selection-procedures",
+    idParam: "procedureId",
+    entity: entities.SelectionProcedure,
+    description: "selection procedures",
     filters: { officeId: dryv.field(sharedProperties.Id).optional() },
   }),
   readSurface(governance, {
-    singular: "SelectionStage", plural: "SelectionStages", itemKey: "stage", listKey: "stages",
-    path: "/governance/selection-stages", idParam: "stageId", entity: entities.SelectionStage, description: "selection stages",
+    singular: "SelectionStage",
+    plural: "SelectionStages",
+    itemKey: "stage",
+    listKey: "stages",
+    path: "/governance/selection-stages",
+    idParam: "stageId",
+    entity: entities.SelectionStage,
+    description: "selection stages",
     filters: { procedureId: dryv.field(sharedProperties.Id).optional() },
   }),
   readSurface(governance, {
-    singular: "OfficeHolder", plural: "OfficeHolders", itemKey: "holder", listKey: "holders",
-    path: "/governance/office-holders", idParam: "holderId", entity: entities.OfficeHolder, description: "office holders",
+    singular: "OfficeHolder",
+    plural: "OfficeHolders",
+    itemKey: "holder",
+    listKey: "holders",
+    path: "/governance/office-holders",
+    idParam: "holderId",
+    entity: entities.OfficeHolder,
+    description: "office holders",
     filters: {
       officeId: dryv.field(sharedProperties.Id).optional(),
       personId: dryv.field(sharedProperties.Id).optional(),

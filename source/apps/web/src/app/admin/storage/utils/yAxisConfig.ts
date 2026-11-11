@@ -121,7 +121,7 @@ interface Scale {
  * @param valueKey Key to extract numeric values from data objects
  * @returns Props object for Recharts YAxis component
  */
-export function getYAxisProps<T extends Record<string, any>>(
+export function getYAxisProps<T extends Record<string, unknown>>(
   data: T[],
   valueKey: keyof T,
 ): Omit<React.ComponentProps<typeof import('recharts').YAxis>, 'ref'> {

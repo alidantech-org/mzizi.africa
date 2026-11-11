@@ -23,7 +23,11 @@ function Diff({ payload, current }: { payload: Json; current: Json | null }) {
     <div className="rv-table-wrap">
       <table className="rv-diff">
         <thead>
-          <tr><th>Field</th><th>Staged</th>{current ? <th>Current record</th> : null}</tr>
+          <tr>
+            <th>Field</th>
+            <th>Staged</th>
+            {current ? <th>Current record</th> : null}
+          </tr>
         </thead>
         <tbody>
           {keys.map((key) => {
@@ -42,12 +46,25 @@ function Diff({ payload, current }: { payload: Json; current: Json | null }) {
   );
 }
 
-export default async function CandidatePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
+export default async function CandidatePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   const role = await requireRole();
   const { id } = await params;
   const notice = await searchParams;
   const { data, error } = await load<CandidateDetail>(`/pipeline/candidates/${id}`);
-  if (!data) return <><h1>Candidate</h1><Notice bad={error} /><Empty>This candidate could not be loaded.</Empty></>;
+  if (!data)
+    return (
+      <>
+        <h1>Candidate</h1>
+        <Notice bad={error} />
+        <Empty>This candidate could not be loaded.</Empty>
+      </>
+    );
   const { candidate } = data;
   const payload = parse(data.payload) ?? {};
   const current = parse(data.current);
@@ -69,10 +86,14 @@ export default async function CandidatePage({ params, searchParams }: { params: 
       <div className="rv-row">
         <div className="rv-card">
           <h2>Issues from validation ({data.issues.length})</h2>
-          {data.issues.length === 0 ? <p>No issues were raised.</p> : (
+          {data.issues.length === 0 ? (
+            <p>No issues were raised.</p>
+          ) : (
             <ul>
               {data.issues.map((issue, index) => (
-                <li key={index}><Badge value={issue.severity} /> <b>{issue.rule}</b>: {issue.message}</li>
+                <li key={index}>
+                  <Badge value={issue.severity} /> <b>{issue.rule}</b>: {issue.message}
+                </li>
               ))}
             </ul>
           )}
@@ -81,10 +102,22 @@ export default async function CandidatePage({ params, searchParams }: { params: 
           <h2>Where it came from</h2>
           <table>
             <tbody>
-              <tr><td>Extraction result</td><td className="mono">{data.extractionResultId}</td></tr>
-              <tr><td>Capture</td><td className="mono">{data.captureId ?? 'none recorded'}</td></tr>
-              <tr><td>Segment</td><td className="mono">{data.segmentKey ?? ''}</td></tr>
-              <tr><td>Locator</td><td className="mono">{data.locator ?? ''}</td></tr>
+              <tr>
+                <td>Extraction result</td>
+                <td className="mono">{data.extractionResultId}</td>
+              </tr>
+              <tr>
+                <td>Capture</td>
+                <td className="mono">{data.captureId ?? 'none recorded'}</td>
+              </tr>
+              <tr>
+                <td>Segment</td>
+                <td className="mono">{data.segmentKey ?? ''}</td>
+              </tr>
+              <tr>
+                <td>Locator</td>
+                <td className="mono">{data.locator ?? ''}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -92,15 +125,23 @@ export default async function CandidatePage({ params, searchParams }: { params: 
 
       <div className="rv-card">
         <h2>Your decision</h2>
-        {decided ? <p>This candidate is already {candidate.status}.</p> : (
+        {decided ? (
+          <p>This candidate is already {candidate.status}.</p>
+        ) : (
           <form>
             <input type="hidden" name="id" value={id} />
             <label htmlFor="rationale">Rationale (required, kept with the record)</label>
             <textarea id="rationale" name="rationale" rows={3} required />
             <div className="rv-actions">
-              <button className="primary" formAction={decideAction.bind(null, 'approve')} type="submit">Approve</button>
-              <button formAction={decideAction.bind(null, 'request_changes')} type="submit">Hold: request changes</button>
-              <button className="danger" formAction={decideAction.bind(null, 'reject')} type="submit">Reject</button>
+              <button className="primary" formAction={decideAction.bind(null, 'approve')} type="submit">
+                Approve
+              </button>
+              <button formAction={decideAction.bind(null, 'request_changes')} type="submit">
+                Hold: request changes
+              </button>
+              <button className="danger" formAction={decideAction.bind(null, 'reject')} type="submit">
+                Reject
+              </button>
             </div>
           </form>
         )}
@@ -108,7 +149,9 @@ export default async function CandidatePage({ params, searchParams }: { params: 
           <form action={promoteAction}>
             <input type="hidden" name="id" value={id} />
             <div className="rv-actions">
-              <button className="primary" type="submit" >Promote to canonical record</button>
+              <button className="primary" type="submit">
+                Promote to canonical record
+              </button>
             </div>
           </form>
         ) : null}

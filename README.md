@@ -166,6 +166,19 @@ Start with:
 - [.docs/docs/MIGRATION.md](.docs/docs/MIGRATION.md) — transition from the consolidated legacy code
 - [.docs/docs/ROADMAP.md](.docs/docs/ROADMAP.md) — build sequence
 
+## Running the repository
+
+Everything runs from the repository root with Bun; Python projects are driven through uv and JavaScript and TypeScript projects through Bun.
+
+```bash
+bun run setup     # install every dependency, link Dryv, create development sign-in keys
+bun run dev       # API, engine, dashboard and public site together
+bun run check     # format check, lint, typecheck, structure and tests
+bun run help      # every command
+```
+
+The full guide, including builds, start mode, Dryv generation, database and seed commands and the code quality rules, is in [`scripts/README.md`](scripts/README.md).
+
 ## Current state
 
 The repository contains valuable code from earlier projects, especially the public Mzizi experience, the dashboard and the Python political/governance backend. Consolidation is complete at the repository level; architectural consolidation is now the work.

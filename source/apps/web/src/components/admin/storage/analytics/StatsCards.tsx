@@ -11,13 +11,7 @@ interface StatsCardsProps {
   loading?: boolean;
 }
 
-export default function StatsCards({ 
-  totalFiles, 
-  totalSize, 
-  totalFolders, 
-  avgFileSize, 
-  loading = false 
-}: StatsCardsProps) {
+export default function StatsCards({ totalFiles, totalSize, totalFolders, avgFileSize, loading = false }: StatsCardsProps) {
   const formatSize = (sizeInMB: number) => {
     if (sizeInMB >= 1024) {
       return `${(sizeInMB / 1024).toFixed(2)} GB`;

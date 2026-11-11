@@ -24,7 +24,7 @@ describe('SearchOfficeHoldersUseCase', () => {
   it('binds every filter as a parameter, never into the SQL text', async () => {
     const { useCase, query } = build();
     await useCase.execute({ q: "Ruto'; DROP TABLE x;--", office: 'senator', institution: 'senate', county: 'Kisumu', party: 'odm', current: true, limit: 500, page: 2 } as never);
-    const [sql, params] = query.mock.calls[1]! as [string, unknown[]];
+    const [sql, params] = query.mock.calls[1]! as unknown as [string, unknown[]];
     expect(sql).not.toContain('DROP TABLE');
     expect(sql).toContain('h.is_current');
     expect(sql).toContain('LIMIT 200 OFFSET 200');

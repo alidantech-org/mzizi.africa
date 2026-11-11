@@ -38,7 +38,7 @@ export interface CreateSourceRequest {
   name: string;
   url: string;
   source_type: string;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
   enabled: boolean;
 }
 

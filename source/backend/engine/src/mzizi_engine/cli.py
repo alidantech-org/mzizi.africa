@@ -1,4 +1,5 @@
 """mzizi-engine: serve the operational API, list capabilities, check settings."""
+
 from __future__ import annotations
 
 import argparse
@@ -22,7 +23,9 @@ def main(argv: list[str] | None = None) -> int:
     settings = Settings.from_env()
     settings.check()
     if args.command == "check":
-        print(json.dumps({"host": settings.host, "port": settings.port, "auth": settings.auth, "store": settings.store}))
+        print(
+            json.dumps({"host": settings.host, "port": settings.port, "auth": settings.auth, "store": settings.store})
+        )
         return 0
     import uvicorn
 

@@ -3,6 +3,7 @@
 Each selector object may carry a confidence; a list of selectors is tried in confidence order
 and the first that yields items wins (the engine records which one matched).
 """
+
 from __future__ import annotations
 
 import json
@@ -11,7 +12,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from bs4 import BeautifulSoup
-from lxml import etree, html as lxml_html
+from lxml import etree
+from lxml import html as lxml_html
 
 
 @dataclass
@@ -68,12 +70,19 @@ def select(content: str | bytes | Any, selectors: Any) -> Match:
 def _run(content: Any, selector: dict) -> list[Any]:
     attr = selector.get("attr")
     if "css" in selector:
-        soup = content if isinstance(content, BeautifulSoup) or hasattr(content, "select") else BeautifulSoup(content, "lxml")
+        soup = (
+            content
+            if isinstance(content, BeautifulSoup) or hasattr(content, "select")
+            else BeautifulSoup(content, "lxml")
+        )
         return [_attr_or_text(node, attr) if attr else node for node in soup.select(selector["css"])]
     if "xpath" in selector:
         tree = content if isinstance(content, etree._Element) else lxml_html.fromstring(content)
-        found = tree.xpath(selector["xpath"])
-        return [item if not hasattr(item, "text_content") else (item.get(attr) if attr else item.text_content().strip()) for item in found]
+        found: Any = tree.xpath(selector["xpath"])
+        return [
+            item if not hasattr(item, "text_content") else (item.get(attr) if attr else item.text_content().strip())
+            for item in found
+        ]
     if "jsonpath" in selector:
         document = json.loads(content) if isinstance(content, (str, bytes)) else content
         return _jsonpath(document, selector["jsonpath"])

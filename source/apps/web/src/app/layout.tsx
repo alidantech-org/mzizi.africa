@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-  import { Inter } from 'next/font/google';
-// @ts-ignore
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from '@/components/theme/theme-provider';

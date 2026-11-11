@@ -6,12 +6,14 @@ languages and returned with the engine, version, languages and a per-page mean c
 a reviewer can see OCR text is machine-read. A missing engine or language pack is a clear error, never a
 silent empty page.
 """
+
 from __future__ import annotations
 
 import csv
 import io
 import shutil
 import subprocess
+from typing import Any
 
 DEFAULT_LANGUAGES = "eng+swa"
 # Page segmentation 4 (one column of variable-sized text) keeps table rows on one line, which 3 often splits.
@@ -27,7 +29,9 @@ class OcrUnavailable(RuntimeError):
 def version() -> str:
     binary = shutil.which("tesseract")
     if not binary:
-        raise OcrUnavailable("tesseract is not installed (dnf install tesseract tesseract-langpack-eng tesseract-langpack-swa)")
+        raise OcrUnavailable(
+            "tesseract is not installed (dnf install tesseract tesseract-langpack-eng tesseract-langpack-swa)"
+        )
     out = subprocess.run([binary, "--version"], capture_output=True, text=True, timeout=30)
     return (out.stdout or out.stderr).splitlines()[0].strip()
 
@@ -38,16 +42,27 @@ def check(languages: str = DEFAULT_LANGUAGES) -> str:
     listing = subprocess.run(["tesseract", "--list-langs"], capture_output=True, text=True, timeout=30).stdout.split()
     missing = [lang for lang in languages.split("+") if lang not in listing]
     if missing:
-        raise OcrUnavailable(f"tesseract language pack missing: {', '.join(missing)} (dnf install tesseract-langpack-{missing[0]})")
+        raise OcrUnavailable(
+            f"tesseract language pack missing: {', '.join(missing)} (dnf install tesseract-langpack-{missing[0]})"
+        )
     return found
 
 
 def recognise(png: bytes, languages: str = DEFAULT_LANGUAGES) -> tuple[str, float]:
     """Text and mean word confidence (0..1) for one page image."""
-    out = subprocess.run(["tesseract", "stdin", "stdout", "-l", languages, "--psm", PSM, "tsv"], input=png, capture_output=True, timeout=TIMEOUT_SECONDS)
+    out = subprocess.run(
+        ["tesseract", "stdin", "stdout", "-l", languages, "--psm", PSM, "tsv"],
+        input=png,
+        capture_output=True,
+        timeout=TIMEOUT_SECONDS,
+    )
     if out.returncode != 0:
         raise OcrUnavailable(out.stderr.decode(errors="replace")[:200])
-    rows = list(csv.DictReader(io.StringIO(out.stdout.decode("utf-8", errors="replace")), delimiter="\t", quoting=csv.QUOTE_NONE))
+    rows = list(
+        csv.DictReader(
+            io.StringIO(out.stdout.decode("utf-8", errors="replace")), delimiter="\t", quoting=csv.QUOTE_NONE
+        )
+    )
     lines: dict[tuple, list[str]] = {}
     confidences: list[float] = []
     for row in rows:
@@ -65,7 +80,7 @@ def recognise(png: bytes, languages: str = DEFAULT_LANGUAGES) -> tuple[str, floa
     return text, (sum(confidences) / len(confidences) / 100 if confidences else 0.0)
 
 
-def render_png(page) -> bytes:
+def render_png(page: Any) -> bytes:
     """A pypdfium2 page as PNG bytes."""
     image = page.render(scale=RENDER_SCALE).to_pil().convert("L")
     buffer = io.BytesIO()

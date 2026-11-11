@@ -4,11 +4,12 @@ The engine invents no accounts or permissions. A bearer token proves (issuer, su
 to an account and `auth.can_platform` checks a platform permission such as engine.read, engine.edit or engine.publish.
 Service actors (the NestJS API, scripts, agents) are ordinary accounts of the auth schema.
 """
+
 from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Protocol
 
 from fastapi import Depends, HTTPException, Request
 
@@ -31,23 +32,32 @@ class DatabaseAuthority:
     def __init__(self, database_url: str) -> None:
         self.url = database_url
 
-    def _resolve(self, issuer: str, subject: str):
+    def _resolve(self, issuer: str, subject: str) -> tuple[str | None, str]:
         from mzizi_database import connect
 
         with connect(self.url) as conn:
-            row = conn.execute("SELECT account_id, outcome FROM auth.resolve_identity(%s, %s)", (issuer, subject)).fetchone()
-        return (str(row["account_id"]) if row and row["account_id"] else None, row["outcome"] if row else "unknown_identity")
+            row = conn.execute(
+                "SELECT account_id, outcome FROM auth.resolve_identity(%s, %s)", (issuer, subject)
+            ).fetchone()
+        return (
+            str(row["account_id"]) if row and row["account_id"] else None,
+            row["outcome"] if row else "unknown_identity",
+        )
 
     def _can(self, account_id: str, permission: str) -> bool:
-        from mzizi_database import connect
+        from mzizi_database import connect, required
 
         with connect(self.url) as conn:
-            return bool(conn.execute("SELECT auth.can_platform(%s, %s) AS ok", (account_id, permission)).fetchone()["ok"])
+            return bool(
+                required(conn.execute("SELECT auth.can_platform(%s, %s) AS ok", (account_id, permission)).fetchone())[
+                    "ok"
+                ]
+            )
 
-    async def resolve(self, issuer, subject):
+    async def resolve(self, issuer: str, subject: str) -> tuple[str | None, str]:
         return await asyncio.to_thread(self._resolve, issuer, subject)
 
-    async def can(self, account_id, permission):
+    async def can(self, account_id: str, permission: str) -> bool:
         return await asyncio.to_thread(self._can, account_id, permission)
 
 
@@ -65,9 +75,16 @@ def oidc_verifier(settings: Settings) -> TokenVerifier:
         if not settings.issuer or client is None:
             raise HTTPException(503, "authentication is not configured (AUTH_ISSUER, AUTH_JWKS_URL)")
 
-        def decode():
+        def decode() -> dict[str, Any]:
             key = client.get_signing_key_from_jwt(token).key
-            return jwt.decode(token, key, algorithms=["RS256", "ES256", "EdDSA"], issuer=settings.issuer, audience=settings.audience, options={"require": ["exp", "sub"], "verify_aud": bool(settings.audience)})
+            return jwt.decode(
+                token,
+                key,
+                algorithms=["RS256", "ES256", "EdDSA"],
+                issuer=settings.issuer,
+                audience=settings.audience,
+                options={"require": ["exp", "sub"], "verify_aud": bool(settings.audience)},
+            )
 
         try:
             claims = await asyncio.to_thread(decode)
@@ -78,7 +95,7 @@ def oidc_verifier(settings: Settings) -> TokenVerifier:
     return verify
 
 
-def require(permission: str):
+def require(permission: str) -> Any:
     """FastAPI dependency: 401 without a valid token or known identity, 403 for a blocked account or missing permission."""
 
     async def dependency(request: Request) -> Principal:

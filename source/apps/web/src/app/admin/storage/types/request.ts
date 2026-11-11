@@ -29,6 +29,8 @@ export interface GetFileTypesQuery {
 
 export interface GetFoldersQuery {
   search?: string;
+  /** Folder path below the root, for listing one level of a nested folder. */
+  path?: string;
   max_depth?: number;
   min_depth?: number;
   limit?: number;
@@ -37,7 +39,7 @@ export interface GetFoldersQuery {
 
 export interface UploadFileRequest {
   description?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface DeleteFileRequest {

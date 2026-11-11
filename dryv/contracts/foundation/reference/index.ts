@@ -11,7 +11,9 @@ import { historicalEntitySchemas, sharedProperties } from "../shared/index.ts";
  * fiscal stages are ClassificationRecord rows scoped by jurisdiction and period, never enums or
  * columns.
  */
-export const reference = dryv.group({ name: "reference" }).description("Jurisdictions and jurisdiction-scoped classification records.")
+export const reference = dryv
+  .group({ name: "reference" })
+  .description("Jurisdictions and jurisdiction-scoped classification records.")
   .facets({ storage: { namespace: "reference" } });
 
 export const referenceProperties = reference.properties({
@@ -60,24 +62,39 @@ export const referenceSchemas = reference.schemas({
     .role("entity")
     .extends(historicalEntitySchemas.HistoricalEntity)
     .facets({
-      storage: dryv.storage("classifications").indexes(
-        { name: "idx_classification_scheme_code", fields: ["jurisdictionId", "scheme", "code"], unique: true },
-      ),
+      storage: dryv
+        .storage("classifications")
+        .indexes({ name: "idx_classification_scheme_code", fields: ["jurisdictionId", "scheme", "code"], unique: true }),
     }),
 });
 
 /* Reads: clients discover jurisdictions and the vocabularies (levels, institution types, election types ...) here. */
 
-const referenceRead = reference.feature("ReferenceRead").description("Public read access to jurisdictions and classification records.").tags("public");
+const referenceRead = reference
+  .feature("ReferenceRead")
+  .description("Public read access to jurisdictions and classification records.")
+  .tags("public");
 
 const jurisdictions = readSurface(reference, {
-  singular: "Jurisdiction", plural: "Jurisdictions", itemKey: "jurisdiction", listKey: "jurisdictions",
-  path: "/reference/jurisdictions", idParam: "jurisdictionId", entity: referenceSchemas.Jurisdiction, description: "jurisdictions",
+  singular: "Jurisdiction",
+  plural: "Jurisdictions",
+  itemKey: "jurisdiction",
+  listKey: "jurisdictions",
+  path: "/reference/jurisdictions",
+  idParam: "jurisdictionId",
+  entity: referenceSchemas.Jurisdiction,
+  description: "jurisdictions",
   filters: { kind: dryv.field(referenceProperties.JurisdictionKind).optional(), q: dryv.field(sharedProperties.Name).optional() },
 });
 const classifications = readSurface(reference, {
-  singular: "ClassificationRecord", plural: "ClassificationRecords", itemKey: "record", listKey: "records",
-  path: "/reference/classification-records", idParam: "recordId", entity: referenceSchemas.ClassificationRecord, description: "classification records",
+  singular: "ClassificationRecord",
+  plural: "ClassificationRecords",
+  itemKey: "record",
+  listKey: "records",
+  path: "/reference/classification-records",
+  idParam: "recordId",
+  entity: referenceSchemas.ClassificationRecord,
+  description: "classification records",
   filters: {
     jurisdictionId: dryv.field(sharedProperties.Id).optional(),
     scheme: dryv.field(referenceProperties.ClassificationScheme).optional(),

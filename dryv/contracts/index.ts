@@ -24,5 +24,30 @@ import { frontendSurfaces, shared } from "./foundation/shared/index.ts";
 export default dryv
   .app({ name: "mzizi-api" })
   .info({ title: "Mzizi API", version: "0.1.0" })
-  .groups(shared, reference, geography, legal, governance, elections, political, events, entities, finance, debt, procurement, statistics, services, person, identity, filesystem, source, website, place, contact, audit, exchange, pipeline)
+  .groups(
+    shared,
+    reference,
+    geography,
+    legal,
+    governance,
+    elections,
+    political,
+    events,
+    entities,
+    finance,
+    debt,
+    procurement,
+    statistics,
+    services,
+    person,
+    identity,
+    filesystem,
+    source,
+    website,
+    place,
+    contact,
+    audit,
+    exchange,
+    pipeline,
+  )
   .surfaces(frontendSurfaces.Web, frontendSurfaces.Mobile, frontendSurfaces.AdminWeb);

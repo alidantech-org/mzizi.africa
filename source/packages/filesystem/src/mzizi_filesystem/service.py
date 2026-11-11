@@ -6,6 +6,7 @@ holds the current bytes of the same file after those bytes were preserved. S3 an
 makes interruption safe: superseded bytes are copied to the version folder and verified, the new bytes are written and verified,
 then the registry rows commit atomically. Every step is repeatable, and a rerun after a crash finishes the registration.
 """
+
 from __future__ import annotations
 
 import io
@@ -48,7 +49,9 @@ class Registration:
 
 
 class FilesystemService:
-    def __init__(self, repo: Repository, store: ObjectStore, authorizer: Authorizer | None = None, verify: str = "head") -> None:
+    def __init__(
+        self, repo: Repository, store: ObjectStore, authorizer: Authorizer | None = None, verify: str = "head"
+    ) -> None:
         self.repo, self.store, self.authorizer, self.verify = repo, store, authorizer or OperatorAuthorizer(), verify
 
     # ---- provenance snapshot ----------------------------------------------------------------------------
@@ -59,9 +62,15 @@ class FilesystemService:
             folder = self.repo.get_folder(fid)
             resolved[fld] = {"folder_id": fid, "code": folder["code"] if folder else None}
         snap = {
-            "seed": eff["is_seed"], "artifact_role": eff["artifact_role"], "acquisition_class": eff["acquisition_class"], "preparation": eff["preparation"],
-            "intended_access": eff["access"], "access_defaulted": eff["access_defaulted"], "jurisdiction_code": eff["jurisdiction_code"],
-            "resolved_from": resolved, "registered_in_folder": self.repo.folder_path(folder_id),
+            "seed": eff["is_seed"],
+            "artifact_role": eff["artifact_role"],
+            "acquisition_class": eff["acquisition_class"],
+            "preparation": eff["preparation"],
+            "intended_access": eff["access"],
+            "access_defaulted": eff["access_defaulted"],
+            "jurisdiction_code": eff["jurisdiction_code"],
+            "resolved_from": resolved,
+            "registered_in_folder": self.repo.folder_path(folder_id),
         }
         extra = dict(extra or {})
         overrides = extra.pop("effective_overrides", None)
@@ -72,9 +81,24 @@ class FilesystemService:
         return snap
 
     # ---- registration -------------------------------------------------------------------------------------
-    def register(self, folder_id: str, name: str, source: Path | bytes, *, code: str | None = None, retention: str = "preserve_history", actor: str | None = None,
-                 provenance_extra: dict | None = None, declared_type: str | None = None, pin_reason: str | None = None, dry_run: bool = False,
-                 require_classification: bool = True, original_filename: str | None = None, on_duplicate: str = "keep_both", on_name_conflict: str = "new_version") -> Registration:
+    def register(
+        self,
+        folder_id: str,
+        name: str,
+        source: Path | bytes,
+        *,
+        code: str | None = None,
+        retention: str = "preserve_history",
+        actor: str | None = None,
+        provenance_extra: dict | None = None,
+        declared_type: str | None = None,
+        pin_reason: str | None = None,
+        dry_run: bool = False,
+        require_classification: bool = True,
+        original_filename: str | None = None,
+        on_duplicate: str = "keep_both",
+        on_name_conflict: str = "new_version",
+    ) -> Registration:
         """Registers `source` as the file `name` in the folder.
 
         on_duplicate (the same bytes already exist as another file of the same access class, and this would be a new file):
@@ -94,7 +118,10 @@ class FilesystemService:
             eff = self.repo.effective(folder_id)
             missing = [f for f in MANDATORY_CLASSIFICATION if eff[f] is None]
             if require_classification and missing:
-                out.outcome, out.detail = "blocked", f"no {', '.join(missing)} resolved for the folder; classify it before registration"
+                out.outcome, out.detail = (
+                    "blocked",
+                    f"no {', '.join(missing)} resolved for the folder; classify it before registration",
+                )
                 return out
             access = eff["access"]
             if isinstance(source, Path):
@@ -114,7 +141,10 @@ class FilesystemService:
             if file is None:
                 file = self.repo.find_file(folder_id, name)
                 if file is not None and code and file["code"] not in (None, code):
-                    out.outcome, out.detail = "conflict", f"{name} already exists in the folder with a different identity ({file['code']})"
+                    out.outcome, out.detail = (
+                        "conflict",
+                        f"{name} already exists in the folder with a different identity ({file['code']})",
+                    )
                     return out
             current = self.repo.get_version(file["current_version_id"]) if file and file["current_version_id"] else None
             same_bytes = bool(current and current["sha256"] == sha and current["size_bytes"] == size)
@@ -125,7 +155,9 @@ class FilesystemService:
                 original_filename, name, code = original_filename or name, sibling_name(name, sha), None
                 out.name = name
                 file = self.repo.find_file(folder_id, name)
-                current = self.repo.get_version(file["current_version_id"]) if file and file["current_version_id"] else None
+                current = (
+                    self.repo.get_version(file["current_version_id"]) if file and file["current_version_id"] else None
+                )
                 same_bytes = bool(current and current["sha256"] == sha and current["size_bytes"] == size)
             self._authorize(actor, folder_id, file)
             folder_path = self.repo.folder_path(folder_id) if file is None else self.repo.folder_path(file["folder_id"])
@@ -134,35 +166,61 @@ class FilesystemService:
             if is_protected(key):
                 raise StoreError(f"{key} is inside a protected archive and cannot be registered")
             out.key = key
-            if same_bytes:
+            if same_bytes and file is not None and current is not None:
                 return self._unchanged(out, file, current, source, ctype, dry_run)
             twin = self.repo.find_same_content(access, sha, size, file["id"] if file else None)
             if twin is not None:
                 out.duplicate_of = twin["path"]
                 if file is None and on_duplicate == "reuse_existing":
                     out.outcome, out.detail = "duplicate", f"identical content is already registered as {twin['path']}"
-                    out.file_id, out.version_id, out.revision, out.key, out.verified = twin["file_id"], twin["id"], twin["revision"], twin["s3_key"], True
+                    out.file_id, out.version_id, out.revision, out.key, out.verified = (
+                        twin["file_id"],
+                        twin["id"],
+                        twin["revision"],
+                        twin["s3_key"],
+                        True,
+                    )
                     return out
                 if file is None and on_duplicate == "reject":
                     out.outcome, out.detail = "conflict", f"identical content is already registered as {twin['path']}"
                     return out
-            keep_old = bool(current) and (file["retention"] == "preserve_history" or self.repo.version_protected(current["id"]))
-            old_key = archive_key(access, folder_path, file["name"], current["revision"]) if keep_old else None
+            old_key = None
+            if file is not None and current is not None:
+                keep_old = file["retention"] == "preserve_history" or self.repo.version_protected(current["id"])
+                old_key = archive_key(access, folder_path, file["name"], current["revision"]) if keep_old else None
             if dry_run:
                 out.outcome = "planned"
-                out.action = ("update" if file else "create") + (f" (server-side copy of {twin['path']})" if twin else "") + (f" (previous revision kept at {old_key})" if old_key else "")
+                out.action = (
+                    ("update" if file else "create")
+                    + (f" (server-side copy of {twin['path']})" if twin else "")
+                    + (f" (previous revision kept at {old_key})" if old_key else "")
+                )
                 return out
             out.recovered, out.server_copied = self._place(key, source, sha, size, ctype, current, old_key, twin)
             out.verified, out.archived_key = True, old_key
-            version = {"s3_key": key, "sha256": sha, "size_bytes": size, "extension": ext, "content_type": ctype, "original_filename": original_filename or name,
-                       "provenance": self.provenance(folder_id, provenance_extra), "pin_reason": pin_reason}
+            version = {
+                "s3_key": key,
+                "sha256": sha,
+                "size_bytes": size,
+                "extension": ext,
+                "content_type": ctype,
+                "original_filename": original_filename or name,
+                "provenance": self.provenance(folder_id, provenance_extra),
+                "pin_reason": pin_reason,
+            }
             if file is None:
                 file, ver = self.repo.create_file_with_version(folder_id, name, code, retention, version, actor)
                 out.outcome = "created"
             else:
                 # the superseded row always leaves the readable key; when it is not kept it is pruned in the same transaction
                 file_retention = file["retention"]
-                file, ver, pruned = self.repo.add_version(file["id"], file["revision"], version, actor, archive_key(access, folder_path, file["name"], current["revision"]) if current else None)
+                file, ver, pruned = self.repo.add_version(
+                    file["id"],
+                    file["revision"],
+                    version,
+                    actor,
+                    archive_key(access, folder_path, file["name"], current["revision"]) if current else None,
+                )
                 if file_retention != retention:
                     out.detail = f"stored retention {file_retention} kept (configuration asks for {retention}); change it explicitly"
                 out.outcome, out.pruned = "updated", pruned
@@ -176,19 +234,29 @@ class FilesystemService:
         except (StoreError, OSError) as error:
             out.outcome, out.detail = "failed", str(error)
         except psycopg.Error as error:
-            out.outcome, out.detail = ("conflict" if getattr(error, "sqlstate", "") in ("23505",) else "failed"), f"{type(error).__name__}: {error}".splitlines()[0]
-        except Exception as error:  # noqa: BLE001 - one artifact failing must never abort a whole run; it is reported and retried
+            out.outcome, out.detail = (
+                ("conflict" if getattr(error, "sqlstate", "") in ("23505",) else "failed"),
+                f"{type(error).__name__}: {error}".splitlines()[0],
+            )
+        except Exception as error:
             out.outcome, out.detail = "failed", f"{type(error).__name__}: {error}"
         return out
 
-    def _authorize(self, actor, folder_id, file) -> None:
+    def _authorize(self, actor: str | None, folder_id: str, file: dict | None) -> None:
         if file is None:
             self.authorizer.for_new_child(actor, "filesystem.edit", "filesystem.files", folder_id)
         else:
             self.authorizer.for_record(actor, "filesystem.edit", "filesystem.files", file["id"])
 
-    def _unchanged(self, out: Registration, file, current, source, ctype, dry_run) -> Registration:
-        out.file_id, out.version_id, out.revision, out.key = file["id"], current["id"], current["revision"], current["s3_key"]
+    def _unchanged(
+        self, out: Registration, file: dict, current: dict, source: Path | bytes, ctype: str, dry_run: bool
+    ) -> Registration:
+        out.file_id, out.version_id, out.revision, out.key = (
+            file["id"],
+            current["id"],
+            current["revision"],
+            current["s3_key"],
+        )
         if self._holds(current["s3_key"], current["sha256"], current["size_bytes"]):
             out.outcome, out.verified = "unchanged", True
             return out
@@ -196,7 +264,9 @@ class FilesystemService:
             out.outcome, out.action = "planned", "recover (registered content is missing from the store)"
             return out
         if self.store.head(current["s3_key"]) is not None:
-            raise StoreError(f"{current['s3_key']} holds bytes that differ from its registered version; run `mzizi-filesystem verify` and resolve it by hand")
+            raise StoreError(
+                f"{current['s3_key']} holds bytes that differ from its registered version; run `mzizi-filesystem verify` and resolve it by hand"
+            )
         self._write(current["s3_key"], source, current["sha256"], current["size_bytes"], ctype)
         out.outcome, out.recovered, out.verified = "unchanged", True, True
         out.detail = "registered content was missing from the store; re-uploaded and verified"
@@ -225,15 +295,31 @@ class FilesystemService:
                 if hash_stream(stream) != (sha, size):
                     raise StoreError(f"verification failed: bytes read back from {key} do not match")
 
-    def _place(self, key: str, source: Path | bytes, sha: str, size: int, ctype: str, current: dict | None, old_key: str | None, twin: dict | None) -> tuple[bool, bool]:
+    def _place(
+        self,
+        key: str,
+        source: Path | bytes,
+        sha: str,
+        size: int,
+        ctype: str,
+        current: dict | None,
+        old_key: str | None,
+        twin: dict | None,
+    ) -> tuple[bool, bool]:
         """Puts the new bytes at the readable key without ever losing or overwriting unknown bytes. Returns (recovered, server_copied)."""
         if self._holds(key, sha, size):  # an interrupted earlier run already wrote them
             if old_key and current and not self._holds(old_key, current["sha256"], current["size_bytes"]):
-                raise StoreError(f"{key} already holds the new bytes but the superseded revision is missing from {old_key}")
+                raise StoreError(
+                    f"{key} already holds the new bytes but the superseded revision is missing from {old_key}"
+                )
             return True, False
         if self.store.head(key) is not None:
-            if not (current and current["s3_key"] == key and self._holds(key, current["sha256"], current["size_bytes"])):
-                raise StoreError(f"{key} holds an object that is not the registered current version of this file; refusing to overwrite it")
+            if not (
+                current and current["s3_key"] == key and self._holds(key, current["sha256"], current["size_bytes"])
+            ):
+                raise StoreError(
+                    f"{key} holds an object that is not the registered current version of this file; refusing to overwrite it"
+                )
             if old_key and not self._holds(old_key, current["sha256"], current["size_bytes"]):
                 if self.store.head(old_key) is not None:
                     raise StoreError(f"{old_key} holds unexpected bytes; refusing to overwrite it")

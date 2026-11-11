@@ -12,7 +12,7 @@ export interface FileRecord {
   size_bytes: number;
   checksum: string;
   status: string; // uploaded, processing, failed, completed
-  file_metadata?: Record<string, any>;
+  file_metadata?: Record<string, unknown>;
   public_url?: string;
   created_at: string; // ISO datetime
   updated_at?: string; // ISO datetime

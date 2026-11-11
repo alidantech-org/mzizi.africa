@@ -24,7 +24,7 @@ export interface Source {
   name: string;
   url: string;
   source_type: string;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
   enabled: boolean;
   created_at: string;
   updated_at: string;
@@ -47,8 +47,8 @@ export interface QueryResult {
   id: string;
   run_id: string;
   query_id: string;
-  data: Record<string, any>;
-  metadata?: Record<string, any>;
+  data: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
   created_at: string;
 }
 

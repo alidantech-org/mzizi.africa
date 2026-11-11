@@ -1,8 +1,6 @@
 *node_modules/
 .dryv
 # Dryv local state is not tracked (.dryv is ignored above)
-/package.json
-/bun.lock
 /dryv/staging/
 __pycache__/
 *.pyc
@@ -16,3 +14,7 @@ pub.auth.key
 knbs-ca-bundle.pem
 # Local caches (downloaded security files, never tracked)
 .local/
+.venv/
+.ruff_cache/
+.mypy_cache/
+.next/

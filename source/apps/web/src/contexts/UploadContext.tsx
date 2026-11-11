@@ -4,7 +4,7 @@ import { ENDPOINTS } from '@/lib/endpoints';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from 'sonner';
 
-interface UploadFile {
+export interface UploadFile {
   id: string;
   file: File;
   name: string;
@@ -56,12 +56,12 @@ export function UploadProvider({ children }: { children: ReactNode }) {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        const parsedSessions = JSON.parse(stored);
+        const parsedSessions: UploadSession[] = JSON.parse(stored);
         // Convert date strings back to Date objects
-        const sessionsWithDates = parsedSessions.map((session: any) => ({
+        const sessionsWithDates = parsedSessions.map((session) => ({
           ...session,
           createdAt: new Date(session.createdAt),
-          files: session.files.map((file: any) => ({
+          files: session.files.map((file) => ({
             ...file,
             createdAt: new Date(file.createdAt),
           })),
@@ -84,7 +84,7 @@ export function UploadProvider({ children }: { children: ReactNode }) {
 
   // Get current active session or create new one
   const getCurrentSession = (): UploadSession => {
-    let currentSession = sessions.find((s) => s.isActive);
+    const currentSession = sessions.find((s) => s.isActive);
 
     if (!currentSession) {
       const newSession: UploadSession = {

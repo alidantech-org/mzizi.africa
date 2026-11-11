@@ -1,4 +1,5 @@
 """The engine API: health, capabilities, jobs (queue, retries, cancel, limits, worker processes), SSE replay, outbox, auth."""
+
 from __future__ import annotations
 
 import asyncio
@@ -12,15 +13,16 @@ import httpx
 import pytest
 from engine_helpers import settings, wait_for
 
-from mzizi_engine.app import create_app
-from mzizi_engine.capabilities import Capability, CapabilityRegistry, build_default_registry
+from mzizi_engine.capabilities import Capability, build_default_registry
 from mzizi_engine.config import Settings
 from mzizi_engine.executor import Executor
 from mzizi_engine.store import MemoryStore
 
 
 def job_done(client, job_id):
-    return wait_for(lambda: (j := client.get(f"/v1/jobs/{job_id}").json())["status"] in ("succeeded", "failed", "cancelled") and j)
+    return wait_for(
+        lambda: (j := client.get(f"/v1/jobs/{job_id}").json())["status"] in ("succeeded", "failed", "cancelled") and j
+    )
 
 
 def csv_payload(text: str) -> dict:
@@ -32,7 +34,15 @@ def test_health_and_capabilities_list_the_registered_package_capabilities(make_c
     health = client.get("/health").json()
     assert health["status"] == "ok" and health["service"] == "mzizi-engine" and health["capabilities"] >= 10
     names = [c["name"] for c in client.get("/capabilities").json()["capabilities"]]
-    for expected in ("extraction.pdf", "extraction.csv", "scraping.links", "manifest.check_seeds", "filesystem.sync", "source.gate", "engine.process_info"):
+    for expected in (
+        "extraction.pdf",
+        "extraction.csv",
+        "scraping.links",
+        "manifest.check_seeds",
+        "filesystem.sync",
+        "source.gate",
+        "engine.process_info",
+    ):
         assert expected in names
     capability = next(c for c in client.get("/capabilities").json()["capabilities"] if c["name"] == "extraction.pdf")
     assert capability["package"] == "mzizi-extraction" and capability["cpu_bound"] is True
@@ -44,7 +54,10 @@ def test_a_job_runs_a_package_capability_and_records_the_result(make_client):
     assert created.status_code == 202
     done = job_done(client, created.json()["id"])
     assert done["status"] == "succeeded" and done["result"]["segments"][0]["content"] == {"code": "A", "name": "Alpha"}
-    links = client.post("/v1/jobs", json={"kind": "scraping.links", "input": {"html": '<a href="/x">X</a>', "base_url": "https://example.org/"}}).json()
+    links = client.post(
+        "/v1/jobs",
+        json={"kind": "scraping.links", "input": {"html": '<a href="/x">X</a>', "base_url": "https://example.org/"}},
+    ).json()
     assert job_done(client, links["id"])["result"]["links"] == [{"url": "https://example.org/x", "text": "X"}]
 
 
@@ -89,7 +102,9 @@ def test_retryable_failures_retry_with_backoff_and_non_retryable_ones_fail_at_on
 def test_a_running_job_can_be_cancelled_and_a_queued_job_never_starts(make_client):
     gate = threading.Event()
     registry = build_default_registry()
-    registry.register(Capability("test.slow", "1", "tests", "blocks", lambda payload: gate.wait(5) or {}, {}, concurrency=1))
+    registry.register(
+        Capability("test.slow", "1", "tests", "blocks", lambda payload: gate.wait(5) or {}, {}, concurrency=1)
+    )
     client = make_client(registry)
     running = client.post("/v1/jobs", json={"kind": "test.slow"}).json()["id"]
     queued = client.post("/v1/jobs", json={"kind": "test.slow"}).json()["id"]
@@ -103,7 +118,9 @@ def test_a_running_job_can_be_cancelled_and_a_queued_job_never_starts(make_clien
 
 def test_per_capability_concurrency_limits_bound_parallelism(make_client):
     registry = build_default_registry()
-    registry.register(Capability("test.sleep", "1", "tests", "sleeps", lambda payload: time.sleep(0.15) or {}, {}, concurrency=2))
+    registry.register(
+        Capability("test.sleep", "1", "tests", "sleeps", lambda payload: time.sleep(0.15) or {}, {}, concurrency=2)
+    )
     client = make_client(registry)
     ids = [client.post("/v1/jobs", json={"kind": "test.sleep"}).json()["id"] for _ in range(6)]
     for i in ids:
@@ -118,7 +135,11 @@ def test_events_are_ordered_and_replay_from_a_cursor_for_watchers(make_client):
 
     def read(url):
         frames = client.get(url).text.split("\n\n")
-        return [dict(line.split(": ", 1) for line in f.split("\n") if ": " in line and not line.startswith(":")) for f in frames if f.strip() and not f.startswith(":")]
+        return [
+            dict(line.split(": ", 1) for line in f.split("\n") if ": " in line and not line.startswith(":"))
+            for f in frames
+            if f.strip() and not f.startswith(":")
+        ]
 
     events = read("/v1/events?after=0&once=true")
     kinds = [e["event"] for e in events]
@@ -162,7 +183,12 @@ def test_the_outbox_delivers_with_an_idempotency_key_retries_and_stops_after_the
 
     async def scenario():
         client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
-        ex = Executor(store, build_default_registry(), settings(callback_url="http://nestjs.local/callbacks", callback_token="svc-token", retry_base_seconds=0.0), client)
+        ex = Executor(
+            store,
+            build_default_registry(),
+            settings(callback_url="http://nestjs.local/callbacks", callback_token="svc-token", retry_base_seconds=0.0),
+            client,
+        )
         await ex._emit("job.succeeded", None, None, {"x": 1})
         first = await ex.deliver_due()
         second = await ex.deliver_due()
@@ -176,13 +202,20 @@ def test_the_outbox_delivers_with_an_idempotency_key_retries_and_stops_after_the
 
     async def always_failing():
         client = httpx.AsyncClient(transport=httpx.MockTransport(lambda r: httpx.Response(503)))
-        ex = Executor(dead_store, build_default_registry(), settings(callback_url="http://nestjs.local/callbacks", retry_base_seconds=0.0), client)
+        ex = Executor(
+            dead_store,
+            build_default_registry(),
+            settings(callback_url="http://nestjs.local/callbacks", retry_base_seconds=0.0),
+            client,
+        )
         await ex._emit("job.failed", None, None, {})
         for _ in range(10):
             await ex.deliver_due()
 
     asyncio.run(always_failing())
-    assert [o["status"] for o in dead_store.outbox.values()] == ["dead"] and next(iter(dead_store.outbox.values()))["attempts"] == 8
+    assert [o["status"] for o in dead_store.outbox.values()] == ["dead"] and next(iter(dead_store.outbox.values()))[
+        "attempts"
+    ] == 8
 
 
 class FakeAuthority:
@@ -204,18 +237,33 @@ def test_authentication_and_authorization_use_the_auth_schema_contract(make_clie
             raise HTTPException(401, "invalid or expired token")
         return "https://sso.example.test", token
 
-    authority = FakeAuthority({("https://sso.example.test", "reader"): ("acct-r", "ok"), ("https://sso.example.test", "editor"): ("acct-e", "ok"), ("https://sso.example.test", "blocked"): ("acct-b", "account_not_active")},
-                              {"acct-r": {"engine.read"}, "acct-e": {"engine.read", "engine.edit"}, "acct-b": {"engine.read"}})
-    client = make_client(settings=settings(auth="oidc", issuer="https://sso.example.test"), authority=authority, verifier=verifier)
-    bearer = lambda t: {"Authorization": f"Bearer {t}"}  # noqa: E731
+    authority = FakeAuthority(
+        {
+            ("https://sso.example.test", "reader"): ("acct-r", "ok"),
+            ("https://sso.example.test", "editor"): ("acct-e", "ok"),
+            ("https://sso.example.test", "blocked"): ("acct-b", "account_not_active"),
+        },
+        {"acct-r": {"engine.read"}, "acct-e": {"engine.read", "engine.edit"}, "acct-b": {"engine.read"}},
+    )
+    client = make_client(
+        settings=settings(auth="oidc", issuer="https://sso.example.test"), authority=authority, verifier=verifier
+    )
+    bearer = lambda t: {"Authorization": f"Bearer {t}"}
     assert client.get("/health").status_code == 200
     assert client.get("/capabilities").status_code == 401
     assert client.get("/capabilities", headers=bearer("bad")).status_code == 401
     assert client.get("/capabilities", headers=bearer("stranger")).status_code == 401
     assert client.get("/capabilities", headers=bearer("blocked")).status_code == 403
     assert client.get("/capabilities", headers=bearer("reader")).status_code == 200
-    assert client.post("/v1/jobs", json={"kind": "extraction.csv", "input": csv_payload("a\n1\n")}, headers=bearer("reader")).status_code == 403
-    submitted = client.post("/v1/jobs", json={"kind": "extraction.csv", "input": csv_payload("a\n1\n")}, headers=bearer("editor"))
+    assert (
+        client.post(
+            "/v1/jobs", json={"kind": "extraction.csv", "input": csv_payload("a\n1\n")}, headers=bearer("reader")
+        ).status_code
+        == 403
+    )
+    submitted = client.post(
+        "/v1/jobs", json={"kind": "extraction.csv", "input": csv_payload("a\n1\n")}, headers=bearer("editor")
+    )
     assert submitted.status_code == 202 and submitted.json()["requested_by"] == "acct-e"
 
 
@@ -225,9 +273,23 @@ def test_a_sync_through_the_engine_is_a_dry_run_by_default_and_the_actor_cannot_
     client = make_client(settings=settings(database_url=rewrite_url()))
     job = client.post("/v1/filesystem/sync", json={"manifest": "manifest.yaml"}).json()
     done = job_done(client, job["id"])
-    assert done["status"] == "succeeded" and done["result"]["dry_run"] is True and done["result"]["ok"] is True and done["result"]["files"]
+    assert (
+        done["status"] == "succeeded"
+        and done["result"]["dry_run"] is True
+        and done["result"]["ok"] is True
+        and done["result"]["files"]
+    )
     assert done["input"]["actor"] is None
-    spoof = client.post("/v1/jobs", json={"kind": "filesystem.sync", "input": {"manifest": str(__import__("mzizi_manifest").paths.SEED_ROOT / "manifest.yaml"), "actor": "someone-else"}}).json()
+    spoof = client.post(
+        "/v1/jobs",
+        json={
+            "kind": "filesystem.sync",
+            "input": {
+                "manifest": str(__import__("mzizi_manifest").paths.SEED_ROOT / "manifest.yaml"),
+                "actor": "someone-else",
+            },
+        },
+    ).json()
     assert job_done(client, spoof["id"])["input"]["actor"] is None
     assert client.post("/v1/filesystem/sync", json={"manifest": "../../etc/passwd"}).status_code == 422
     check = client.post("/v1/manifests/validate").json()
@@ -238,4 +300,6 @@ def test_settings_refuse_unauthenticated_mode_off_loopback():
     with pytest.raises(ValueError, match="loopback"):
         Settings(auth="off", host="0.0.0.0").check()
     Settings(auth="off", host="127.0.0.1").check()
-    assert Settings.from_env({"ENGINE_CAPABILITY_LIMITS": "extraction.pdf=2,scraping.links=5", "DATABASE_URL": "postgres://x/mzizi_new"}).limits == {"extraction.pdf": 2, "scraping.links": 5}
+    assert Settings.from_env(
+        {"ENGINE_CAPABILITY_LIMITS": "extraction.pdf=2,scraping.links=5", "DATABASE_URL": "postgres://x/mzizi_new"}
+    ).limits == {"extraction.pdf": 2, "scraping.links": 5}

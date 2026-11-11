@@ -33,15 +33,13 @@ export default async function StoragePage(props: StoragePageProps) {
   };
 
   const sizeData =
-    data?.size_distribution?.map((item: any) => ({
+    data?.size_distribution?.map((item) => ({
       range: item.range || 'Unknown',
       count: Number(item.count) || 0,
       percentage: Number(item.percentage) || 0,
     })) || [];
 
-  const growthData = data?.growth_metrics || [
-
-  ];
+  const growthData = data?.growth_metrics ?? { monthly: [], weekly: [], daily: [], yearly: [] };
 
   const fileTypesAnalytics =
     data?.file_type_distribution?.map((item) => ({
@@ -83,8 +81,8 @@ export default async function StoragePage(props: StoragePageProps) {
       {/* Trends Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Upload Trends */}
-        <UploadTrendsChart data={growthData as any} growthType={growthType} />
-        <StorageGrowthChart data={growthData as any} growthType={growthType} />
+        <UploadTrendsChart data={growthData} growthType={growthType} />
+        <StorageGrowthChart data={growthData} growthType={growthType} />
 
         {/* Storage Growth */}
       </div>

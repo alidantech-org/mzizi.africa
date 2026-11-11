@@ -1,7 +1,8 @@
 // Simple Chart Components
 const PieChartComponent = ({ data, colors, labels }: { data: number[]; colors: string[]; labels: string[] }) => {
   const total = data.reduce((sum, val) => sum + val, 0);
-  let currentAngle = 0;
+  // Where each slice starts: the sum of the angles of the slices before it.
+  const startAngles = data.map((_, index) => data.slice(0, index).reduce((sum, value) => sum + (value / total) * 360, 0));
 
   return (
     <div className="relative w-48 h-48 mx-auto">
@@ -9,8 +10,8 @@ const PieChartComponent = ({ data, colors, labels }: { data: number[]; colors: s
         {data.map((value, index) => {
           const percentage = (value / total) * 100;
           const angle = (percentage / 100) * 360;
-          const startAngle = currentAngle;
-          const endAngle = currentAngle + angle;
+          const startAngle = startAngles[index];
+          const endAngle = startAngle + angle;
 
           const x1 = 50 + 40 * Math.cos((startAngle * Math.PI) / 180);
           const y1 = 50 + 40 * Math.sin((startAngle * Math.PI) / 180);
@@ -18,8 +19,6 @@ const PieChartComponent = ({ data, colors, labels }: { data: number[]; colors: s
           const y2 = 50 + 40 * Math.sin((endAngle * Math.PI) / 180);
 
           const largeArcFlag = angle > 180 ? 1 : 0;
-
-          currentAngle += angle;
 
           return (
             <path

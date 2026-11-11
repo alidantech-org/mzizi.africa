@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useDropzone, type FileRejection } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Upload, File, X, CheckCircle, AlertCircle, Plus, Pause, Play, RotateCcw, FolderOpen, UploadCloud } from 'lucide-react';
 import { toast } from 'sonner';
-import { useUpload } from '@/contexts/UploadContext';
+import { useUpload, type UploadFile } from '@/contexts/UploadContext';
 import { cn } from '@/lib/utils';
 import { useRouter, usePathname } from 'next/navigation';
 
@@ -70,10 +70,10 @@ export default function FileUpload({
   }, [activeSession?.files, shouldReloadOnSuccess, onUploadComplete, router]);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[], rejectedFiles: any[]) => {
+    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file, errors }) => {
-          errors.forEach((error: any) => {
+          errors.forEach((error) => {
             if (error.code === 'file-too-large') {
               toast.error(`${file.name} is too large. Maximum size is ${maxSize / (1024 * 1024)}MB`);
             } else if (error.code === 'too-many-files') {
@@ -154,7 +154,7 @@ export default function FileUpload({
     }
   };
 
-  const getActionButton = (file: any, sessionId: string) => {
+  const getActionButton = (file: UploadFile, sessionId: string) => {
     switch (file.status) {
       case 'uploading':
         return (
@@ -288,7 +288,7 @@ export default function FileUpload({
                 ref={directoryInputRef}
                 type="file"
                 multiple
-                {...({ webkitdirectory: '' } as any)}
+                {...({ webkitdirectory: '' } as React.InputHTMLAttributes<HTMLInputElement>)}
                 onChange={handleDirectorySelect}
                 className="hidden"
               />

@@ -4,12 +4,14 @@ Global ceilings, the most-conservative-limit rule, rate limiting, access-challen
 stop exception that ends a run (no code path retries around a restriction) and the detector for
 unexpected personal data.
 """
+
 from __future__ import annotations
 
 import re
 import time
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from typing import Any, Callable, Iterable
+from typing import Any
 
 GLOBAL_MAX_RPS = 2.0
 GLOBAL_MAX_CONCURRENCY = 4
@@ -32,9 +34,19 @@ def resolve_user_agent(policy: dict, environ: dict[str, str] | None = None) -> s
     """
     import os
 
-    value = ((environ if environ is not None else os.environ).get("MZIZI_USER_AGENT") or (policy.get("identify") or {}).get("user_agent") or "").strip()
-    if not value or re.search(r"example\.(invalid|com|org|net)|\.invalid\b|\.test\b|localhost", value, re.I) or "@" not in value:
-        raise IdentityMissing("no monitored contact is configured: set MZIZI_USER_AGENT to a user agent with a real contact address and bot page")
+    value = (
+        (environ if environ is not None else os.environ).get("MZIZI_USER_AGENT")
+        or (policy.get("identify") or {}).get("user_agent")
+        or ""
+    ).strip()
+    if (
+        not value
+        or re.search(r"example\.(invalid|com|org|net)|\.invalid\b|\.test\b|localhost", value, re.I)
+        or "@" not in value
+    ):
+        raise IdentityMissing(
+            "no monitored contact is configured: set MZIZI_USER_AGENT to a user agent with a real contact address and bot page"
+        )
     return value
 
 
@@ -73,7 +85,9 @@ def effective_limits(policy: dict, gate_requests_per_second: float | None = None
     return Limits(
         requests_per_second=rps,
         max_concurrency=min(int(rate.get("max_concurrency", 1)), GLOBAL_MAX_CONCURRENCY),
-        max_response_bytes=min(int(limits.get("max_response_bytes", GLOBAL_MAX_RESPONSE_BYTES)), GLOBAL_MAX_RESPONSE_BYTES),
+        max_response_bytes=min(
+            int(limits.get("max_response_bytes", GLOBAL_MAX_RESPONSE_BYTES)), GLOBAL_MAX_RESPONSE_BYTES
+        ),
         timeout_seconds=min(float(limits.get("timeout_seconds", 30)), GLOBAL_MAX_TIMEOUT),
         max_retries=min(int((policy.get("retries") or {}).get("max", 2)), GLOBAL_MAX_RETRIES),
     )
@@ -82,7 +96,12 @@ def effective_limits(policy: dict, gate_requests_per_second: float | None = None
 class RateLimiter:
     """Spaces requests at least 1/rps seconds apart (per limiter instance, i.e. per host)."""
 
-    def __init__(self, requests_per_second: float, clock: Callable[[], float] = time.monotonic, sleep: Callable[[float], None] = time.sleep):
+    def __init__(
+        self,
+        requests_per_second: float,
+        clock: Callable[[], float] = time.monotonic,
+        sleep: Callable[[float], None] = time.sleep,
+    ):
         self.interval = 1.0 / requests_per_second
         self.clock, self.sleep = clock, sleep
         self._next = 0.0
@@ -97,8 +116,18 @@ class RateLimiter:
 
 
 CHALLENGE_MARKERS = (
-    "captcha", "g-recaptcha", "h-captcha", "cf-chl", "attention required! | cloudflare", "just a moment...", "verify you are human",
-    "access denied", "request blocked", "you have been blocked", "unusual traffic", "checking your browser",
+    "captcha",
+    "g-recaptcha",
+    "h-captcha",
+    "cf-chl",
+    "attention required! | cloudflare",
+    "just a moment...",
+    "verify you are human",
+    "access denied",
+    "request blocked",
+    "you have been blocked",
+    "unusual traffic",
+    "checking your browser",
 )
 
 

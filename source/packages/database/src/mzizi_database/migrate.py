@@ -1,4 +1,5 @@
 """Apply ordered SQL files with checksums (public.migrations) to the rewrite database; verified reset of that database only."""
+
 from __future__ import annotations
 
 import hashlib
@@ -13,7 +14,10 @@ from .connection import REWRITE_DATABASE, DatabaseSafetyError, assert_rewrite_se
 def schema_root() -> Path:
     import os
 
-    return Path(os.environ.get("MZIZI_SCHEMA_ROOT") or Path(__file__).resolve().parents[5] / "source" / "schema") / "database"
+    return (
+        Path(os.environ.get("MZIZI_SCHEMA_ROOT") or Path(__file__).resolve().parents[5] / "source" / "schema")
+        / "database"
+    )
 
 
 def migration_files(root: Path | None = None) -> list[tuple[str, str, str]]:
@@ -47,13 +51,19 @@ def apply_migrations(root: Path | None = None, url: str | None = None) -> list[s
     applied: list[str] = []
     with connect(url) as conn:
         assert_rewrite_session(conn)
-        conn.execute("CREATE TABLE IF NOT EXISTS public.migrations (name text PRIMARY KEY, checksum text NOT NULL, applied_at timestamptz NOT NULL DEFAULT now())")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS public.migrations (name text PRIMARY KEY, checksum text NOT NULL, applied_at timestamptz NOT NULL DEFAULT now())"
+        )
         conn.commit()
-        done = {r["name"]: r["checksum"] for r in conn.execute("SELECT name, checksum FROM public.migrations").fetchall()}
+        done = {
+            r["name"]: r["checksum"] for r in conn.execute("SELECT name, checksum FROM public.migrations").fetchall()
+        }
         for name, sql, checksum in migration_files(root):
             if name in done:
                 if done[name] != checksum:
-                    raise DatabaseSafetyError(f"{name} changed after it was applied; run reset (mzizi_new is disposable)")
+                    raise DatabaseSafetyError(
+                        f"{name} changed after it was applied; run reset (mzizi_new is disposable)"
+                    )
                 continue
             with conn.transaction():
                 conn.execute(sql)

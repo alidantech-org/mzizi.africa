@@ -1,11 +1,13 @@
 """The fixed transform library. A transform not listed here fails validation; nothing executes arbitrary code."""
+
 from __future__ import annotations
 
 import re
 import unicodedata
+from collections.abc import Callable
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
-from typing import Any, Callable
+from typing import Any
 
 
 def _trim(value: Any, _arg: Any = None) -> Any:
@@ -65,7 +67,7 @@ def _fiscal_year(value: Any, _arg: Any = None) -> str | None:
     """Normalises 2023/24, 2023-24, 2023/2024 and FY2023/24 to '2023/24'."""
     if value in (None, ""):
         return None
-    match = re.search(r"(\d{4})\s*[/\-–]\s*(\d{2,4})", str(value))
+    match = re.search(r"(\d{4})\s*[/\-–]\s*(\d{2,4})", str(value))  # noqa: RUF001 (an en dash is a real separator in fiscal years)
     if not match:
         raise ValueError(f"not a fiscal year: {value!r}")
     start, end = match.group(1), match.group(2)[-2:]
@@ -98,7 +100,14 @@ def _slug_code(value: Any, prefix: Any = "") -> str | None:
     """A hierarchical business code from a name: lowercase ASCII, apostrophes dropped, other runs of characters become hyphens."""
     if value in (None, ""):
         return None
-    text = unicodedata.normalize("NFKD", str(value)).encode("ascii", "ignore").decode().lower().replace("'", "").replace("\u2019", "")
+    text = (
+        unicodedata.normalize("NFKD", str(value))
+        .encode("ascii", "ignore")
+        .decode()
+        .lower()
+        .replace("'", "")
+        .replace("\u2019", "")
+    )
     return f"{prefix or ''}{re.sub(r'[^a-z0-9]+', '-', text).strip('-')}"
 
 
@@ -146,7 +155,7 @@ def split(spec: Any) -> tuple[str, Any]:
         return "pipeline", spec
     if isinstance(spec, str):
         return spec, None
-    (name, argument), = spec.items()
+    ((name, argument),) = spec.items()
     return name, argument
 
 

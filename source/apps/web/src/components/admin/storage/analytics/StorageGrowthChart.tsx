@@ -112,7 +112,7 @@ export default function StorageGrowthChart({ data, loading = false, growthType =
   const actualData = getCurrentData();
 
   const chartData = timelineData.map((timelineItem) => {
-    const match = actualData.find((d: any) => d.period === timelineItem.date);
+    const match = actualData.find((d) => d.period === timelineItem.date);
     if (match) {
       return {
         ...timelineItem,

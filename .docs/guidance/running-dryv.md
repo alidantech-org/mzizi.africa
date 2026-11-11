@@ -6,6 +6,10 @@
 
 Dryv generates the NestJS API in `source/backend/api` from the contracts in `dryv/contracts`. It does run on this machine: the Dryv checkout is at `~/Projects/personal/alidantech-org/codepot/dryv` (pinned engine `6dba3100`), `uv` and `bun` are installed, and a full generation takes about three minutes. If a session reports that Dryv "cannot run here", the engine API was not started: follow the steps below before concluding anything.
 
+## From the root
+
+`bun run dryv:check` checks the contracts. `bun run dryv:generate` starts the engine API if needed, generates, adopts the list helper, verifies the output, exports the access rules, regenerates the web catalog and stops the engine it started. `bun run dryv:verify` only checks that the tracked output is current. If port 8750 belongs to another Dryv service, set `DRYV_API_PORT`. The manual steps below are what those commands do and remain the reference when something fails.
+
 ## Steps
 
 1. **Check the contracts** (after editing anything in `dryv/contracts`): `cd dryv && bun run check`. It typechecks, audits, compiles and checks the access rules and the exchange schema. Fix it before generating.

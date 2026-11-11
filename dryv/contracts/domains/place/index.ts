@@ -17,12 +17,28 @@ import { sharedProperties } from "../../foundation/shared/index.ts";
  * kinds `place.places`, `place.occupancies`, `place.occupancy_links`, `place.expectations` and `contact.points`.
  * Subjects, scopes and geography units are plain ids (soft references checked by the database engine's integrity jobs).
  */
-export const place = dryv.group({ name: "place" }).description("Physical places, occupancy, expected presence.").tags("public", "place").facets({ storage: { namespace: "place" } });
-export const contact = dryv.group({ name: "contact" }).description("Contact points at any scope.").tags("public", "contact").facets({ storage: { namespace: "contact" } });
+export const place = dryv
+  .group({ name: "place" })
+  .description("Physical places, occupancy, expected presence.")
+  .tags("public", "place")
+  .facets({ storage: { namespace: "place" } });
+export const contact = dryv
+  .group({ name: "contact" })
+  .description("Contact points at any scope.")
+  .tags("public", "contact")
+  .facets({ storage: { namespace: "contact" } });
 
 export const placeProperties = place.properties({
   /** Position in the place tree. A site is a compound or plot; structures, floors, wings, rooms and units nest inside. */
-  PlaceKind: dryv.property.enum({ site: "site", structure: "structure", floor: "floor", wing: "wing", room: "room", unit: "unit", servicePoint: "service_point" }),
+  PlaceKind: dryv.property.enum({
+    site: "site",
+    structure: "structure",
+    floor: "floor",
+    wing: "wing",
+    room: "room",
+    unit: "unit",
+    servicePoint: "service_point",
+  }),
   /** Lifecycle of the place itself, independent of who occupies it. */
   PlaceStatus: dryv.property.enum({ planned: "planned", inUse: "in_use", vacant: "vacant", closed: "closed", demolished: "demolished" }),
   OccupancyStatus: dryv.property.enum({ expected: "expected", active: "active", moved: "moved", closed: "closed" }),

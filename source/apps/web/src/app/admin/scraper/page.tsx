@@ -36,7 +36,7 @@ export default async function WebScraperPage() {
   const queries =
     queriesData?.queries?.map((q) => ({
       ...q,
-      id: parseInt(q?.id as any, 10),
+      id: parseInt(String(q.id), 10),
       lastRun: q.last_run || q.lastRun || '-',
       nextRun: q.next_run || q.nextRun || '-',
     })) || [];

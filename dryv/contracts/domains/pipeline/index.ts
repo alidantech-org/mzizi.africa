@@ -10,7 +10,10 @@ import { sharedFailures, sharedProperties, sharedSchemas, transportSchemas } fro
  * none of it is stored by the API: the shapes are read-models over tables the database engine and the
  * data engine own (DEC-API-REVIEWER). Promotion stays owned by the database engine; the API only asks it.
  */
-export const pipeline = dryv.group({ name: "pipeline" }).description("Reviewer-only read models over staging, runs, jobs and the site registry, and the promote action.").tags("internal", "pipeline");
+export const pipeline = dryv
+  .group({ name: "pipeline" })
+  .description("Reviewer-only read models over staging, runs, jobs and the site registry, and the promote action.")
+  .tags("internal", "pipeline");
 
 export const pipelineProperties = pipeline.properties({
   /** Free-form JSON as text: a candidate payload, a locator, a job input. */
@@ -172,20 +175,32 @@ const registry = pipeline.schemas({
 });
 
 const lists = pipeline.schemas({
-  AssessmentListResponse: dryv.schema({ assessments: dryv.field(registry.AssessmentSummary).array() }).extends(sharedSchemas.PaginatedResponse),
+  AssessmentListResponse: dryv
+    .schema({ assessments: dryv.field(registry.AssessmentSummary).array() })
+    .extends(sharedSchemas.PaginatedResponse),
   DossierListResponse: dryv.schema({ dossiers: dryv.field(registry.DossierSummary).array() }).extends(sharedSchemas.PaginatedResponse),
-  CandidateListQuery: dryv.schema({
-    status: dryv.field(pipelineProperties.CandidateStatusFilter).optional(),
-    targetKind: dryv.field(pipelineProperties.TargetKind).optional(),
-    runId: dryv.field(sharedProperties.Id).optional(),
-  }).extends(transportSchemas.BaseQuery),
-  CandidateListResponse: dryv.schema({ candidates: dryv.field(pipelineSchemas.CandidateSummary).array() }).extends(sharedSchemas.PaginatedResponse),
+  CandidateListQuery: dryv
+    .schema({
+      status: dryv.field(pipelineProperties.CandidateStatusFilter).optional(),
+      targetKind: dryv.field(pipelineProperties.TargetKind).optional(),
+      runId: dryv.field(sharedProperties.Id).optional(),
+    })
+    .extends(transportSchemas.BaseQuery),
+  CandidateListResponse: dryv
+    .schema({ candidates: dryv.field(pipelineSchemas.CandidateSummary).array() })
+    .extends(sharedSchemas.PaginatedResponse),
   PageQuery: dryv.schema({}).extends(transportSchemas.BaseQuery),
   RunListResponse: dryv.schema({ runs: dryv.field(pipelineSchemas.RunSummary).array() }).extends(sharedSchemas.PaginatedResponse),
   JobListResponse: dryv.schema({ jobs: dryv.field(pipelineSchemas.JobSummary).array() }).extends(sharedSchemas.PaginatedResponse),
-  DocumentListResponse: dryv.schema({ documents: dryv.field(evidenceSchemas.DocumentSummary).array() }).extends(sharedSchemas.PaginatedResponse),
-  CaptureListResponse: dryv.schema({ captures: dryv.field(evidenceSchemas.CaptureSummary).array() }).extends(sharedSchemas.PaginatedResponse),
-  StructureVersionListResponse: dryv.schema({ structureVersions: dryv.field(evidenceSchemas.StructureVersionSummary).array() }).extends(sharedSchemas.PaginatedResponse),
+  DocumentListResponse: dryv
+    .schema({ documents: dryv.field(evidenceSchemas.DocumentSummary).array() })
+    .extends(sharedSchemas.PaginatedResponse),
+  CaptureListResponse: dryv
+    .schema({ captures: dryv.field(evidenceSchemas.CaptureSummary).array() })
+    .extends(sharedSchemas.PaginatedResponse),
+  StructureVersionListResponse: dryv
+    .schema({ structureVersions: dryv.field(evidenceSchemas.StructureVersionSummary).array() })
+    .extends(sharedSchemas.PaginatedResponse),
   CheckListResponse: dryv.schema({ checks: dryv.field(evidenceSchemas.CheckSummary).array() }).extends(sharedSchemas.PaginatedResponse),
   SiteListResponse: dryv.schema({ sites: dryv.field(pipelineSchemas.SiteSummary).array() }).extends(sharedSchemas.PaginatedResponse),
 });
@@ -193,9 +208,22 @@ const lists = pipeline.schemas({
 const failures = [...standardFailures, sharedFailures.Unauthorized, sharedFailures.Forbidden] as const;
 
 function read(description: string, path: string, input: any, output: any, policy: any) {
-  const op = dryv.operation().description(description).input(input).output(output).failures(...failures).authenticated().requires(policy);
+  const op = dryv
+    .operation()
+    .description(description)
+    .input(input)
+    .output(output)
+    .failures(...failures)
+    .authenticated()
+    .requires(policy);
   op.facets({
-    http: withStandardHttpFailures(dryv.http("GET", `/v1${path}`).description(description).input(path.includes("{") ? (op.in as any).candidateId : op.in, path.includes("{") ? dryv.path() : dryv.queryObject()).output(op.out, dryv.respond(200)))
+    http: withStandardHttpFailures(
+      dryv
+        .http("GET", `/v1${path}`)
+        .description(description)
+        .input(path.includes("{") ? (op.in as any).candidateId : op.in, path.includes("{") ? dryv.path() : dryv.queryObject())
+        .output(op.out, dryv.respond(200)),
+    )
       .failure(sharedFailures.Unauthorized, 401)
       .failure(sharedFailures.Forbidden, 403),
   });
@@ -203,45 +231,145 @@ function read(description: string, path: string, input: any, output: any, policy
 }
 
 function action(description: string, path: string, idParam: string | undefined, output: any, policy: any) {
-  const op = dryv.operation().description(description).input(idParam ? ({ [idParam]: sharedProperties.Id } as any) : registry.ApplyReviewsQuery).output(output).failures(...failures).authenticated().requires(policy);
+  const op = dryv
+    .operation()
+    .description(description)
+    .input(idParam ? ({ [idParam]: sharedProperties.Id } as any) : registry.ApplyReviewsQuery)
+    .output(output)
+    .failures(...failures)
+    .authenticated()
+    .requires(policy);
   op.facets({
-    http: withStandardHttpFailures(idParam ? dryv.http("POST", `/v1${path}`).description(description).input((op.in as any)[idParam], dryv.path()).output(op.out, dryv.respond(200)) : dryv.http("POST", `/v1${path}`).description(description).input(op.in, dryv.queryObject()).output(op.out, dryv.respond(200)))
+    http: withStandardHttpFailures(
+      idParam
+        ? dryv
+            .http("POST", `/v1${path}`)
+            .description(description)
+            .input((op.in as any)[idParam], dryv.path())
+            .output(op.out, dryv.respond(200))
+        : dryv.http("POST", `/v1${path}`).description(description).input(op.in, dryv.queryObject()).output(op.out, dryv.respond(200)),
+    )
       .failure(sharedFailures.Unauthorized, 401)
       .failure(sharedFailures.Forbidden, 403),
   });
   return op;
 }
 
-const promoteOperation = () => action("Promote an approved candidate to a canonical record through the database engine.", "/pipeline/candidates/{candidateId}/promote", "candidateId", detail.PromoteResponse, accessPolicies.CandidatePromoteAccess);
+const promoteOperation = () =>
+  action(
+    "Promote an approved candidate to a canonical record through the database engine.",
+    "/pipeline/candidates/{candidateId}/promote",
+    "candidateId",
+    detail.PromoteResponse,
+    accessPolicies.CandidatePromoteAccess,
+  );
 
 function draftOperation() {
   const description = "Draft a site assessment as in_review; a draft never authorises collection.";
-  const op = dryv.operation().description(description).input(evidenceSchemas.DraftAssessmentRequest).output(evidenceSchemas.DraftAssessmentResponse).failures(...failures).authenticated().requires(accessPolicies.AssessmentDraftAccess);
+  const op = dryv
+    .operation()
+    .description(description)
+    .input(evidenceSchemas.DraftAssessmentRequest)
+    .output(evidenceSchemas.DraftAssessmentResponse)
+    .failures(...failures)
+    .authenticated()
+    .requires(accessPolicies.AssessmentDraftAccess);
   op.facets({
-    http: withStandardHttpFailures(dryv.http("POST", "/v1/pipeline/assessments").description(description).input(op.in, dryv.body()).output(op.out, dryv.respond(201)))
+    http: withStandardHttpFailures(
+      dryv.http("POST", "/v1/pipeline/assessments").description(description).input(op.in, dryv.body()).output(op.out, dryv.respond(201)),
+    )
       .failure(sharedFailures.Unauthorized, 401)
       .failure(sharedFailures.Forbidden, 403),
   });
   return op;
 }
 
-const reviewer = pipeline.feature("PipelineReview").description("Reviewer-only reads over the pipeline and the promote action.").tags("internal");
+const reviewer = pipeline
+  .feature("PipelineReview")
+  .description("Reviewer-only reads over the pipeline and the promote action.")
+  .tags("internal");
 
 export const pipelineOperations = reviewer.operations({
-  FindCandidates: read("List staged candidates.", "/pipeline/candidates", lists.CandidateListQuery, lists.CandidateListResponse, accessPolicies.PipelineReadAccess),
-  GetCandidateDetail: read("Get a staged candidate with payload, issues, lineage and the current canonical record.", "/pipeline/candidates/{candidateId}", { candidateId: sharedProperties.Id } as any, detail.CandidateDetailResponse, accessPolicies.PipelineReadAccess),
+  FindCandidates: read(
+    "List staged candidates.",
+    "/pipeline/candidates",
+    lists.CandidateListQuery,
+    lists.CandidateListResponse,
+    accessPolicies.PipelineReadAccess,
+  ),
+  GetCandidateDetail: read(
+    "Get a staged candidate with payload, issues, lineage and the current canonical record.",
+    "/pipeline/candidates/{candidateId}",
+    { candidateId: sharedProperties.Id } as any,
+    detail.CandidateDetailResponse,
+    accessPolicies.PipelineReadAccess,
+  ),
   FindRuns: read("List staging runs.", "/pipeline/runs", lists.PageQuery, lists.RunListResponse, accessPolicies.PipelineReadAccess),
   FindJobs: read("List data engine jobs.", "/pipeline/jobs", lists.PageQuery, lists.JobListResponse, accessPolicies.PipelineReadAccess),
   FindSites: read("List registered sites.", "/pipeline/sites", lists.PageQuery, lists.SiteListResponse, accessPolicies.PipelineReadAccess),
   PromoteCandidate: promoteOperation(),
-  ApplyReviewDecisions: action("Apply recorded review decisions to their candidates (approved, rejected, held) through the database engine.", "/pipeline/reviews/apply", undefined, registry.ApplyReviewsResponse, accessPolicies.ReviewerAccess),
-  FindDocuments: read("List source documents with their capture counts.", "/pipeline/documents", lists.PageQuery, lists.DocumentListResponse, accessPolicies.PipelineReadAccess),
-  FindCaptures: read("List captures (retrievals of a document), newest first.", "/pipeline/captures", lists.PageQuery, lists.CaptureListResponse, accessPolicies.PipelineReadAccess),
-  FindStructureVersions: read("List site structure versions.", "/pipeline/structure-versions", lists.PageQuery, lists.StructureVersionListResponse, accessPolicies.PipelineReadAccess),
-  FindChecks: read("List site checks, newest first.", "/pipeline/checks", lists.PageQuery, lists.CheckListResponse, accessPolicies.PipelineReadAccess),
+  ApplyReviewDecisions: action(
+    "Apply recorded review decisions to their candidates (approved, rejected, held) through the database engine.",
+    "/pipeline/reviews/apply",
+    undefined,
+    registry.ApplyReviewsResponse,
+    accessPolicies.ReviewerAccess,
+  ),
+  FindDocuments: read(
+    "List source documents with their capture counts.",
+    "/pipeline/documents",
+    lists.PageQuery,
+    lists.DocumentListResponse,
+    accessPolicies.PipelineReadAccess,
+  ),
+  FindCaptures: read(
+    "List captures (retrievals of a document), newest first.",
+    "/pipeline/captures",
+    lists.PageQuery,
+    lists.CaptureListResponse,
+    accessPolicies.PipelineReadAccess,
+  ),
+  FindStructureVersions: read(
+    "List site structure versions.",
+    "/pipeline/structure-versions",
+    lists.PageQuery,
+    lists.StructureVersionListResponse,
+    accessPolicies.PipelineReadAccess,
+  ),
+  FindChecks: read(
+    "List site checks, newest first.",
+    "/pipeline/checks",
+    lists.PageQuery,
+    lists.CheckListResponse,
+    accessPolicies.PipelineReadAccess,
+  ),
   DraftAssessment: draftOperation(),
-  FindAssessments: read("List site legal and source assessments.", "/pipeline/assessments", lists.PageQuery, lists.AssessmentListResponse, accessPolicies.PipelineReadAccess),
-  FindDossiers: read("List jurisdiction legal dossiers.", "/pipeline/dossiers", lists.PageQuery, lists.DossierListResponse, accessPolicies.PipelineReadAccess),
-  ApproveAssessment: action("Approve a site assessment; only a named human account holding assessment.approve.", "/pipeline/assessments/{assessmentId}/approve", "assessmentId", registry.AssessmentDecisionResponse, accessPolicies.AssessmentApproveAccess),
-  RejectAssessment: action("Reject a site assessment; only a named human account holding assessment.approve.", "/pipeline/assessments/{assessmentId}/reject", "assessmentId", registry.AssessmentDecisionResponse, accessPolicies.AssessmentApproveAccess),
+  FindAssessments: read(
+    "List site legal and source assessments.",
+    "/pipeline/assessments",
+    lists.PageQuery,
+    lists.AssessmentListResponse,
+    accessPolicies.PipelineReadAccess,
+  ),
+  FindDossiers: read(
+    "List jurisdiction legal dossiers.",
+    "/pipeline/dossiers",
+    lists.PageQuery,
+    lists.DossierListResponse,
+    accessPolicies.PipelineReadAccess,
+  ),
+  ApproveAssessment: action(
+    "Approve a site assessment; only a named human account holding assessment.approve.",
+    "/pipeline/assessments/{assessmentId}/approve",
+    "assessmentId",
+    registry.AssessmentDecisionResponse,
+    accessPolicies.AssessmentApproveAccess,
+  ),
+  RejectAssessment: action(
+    "Reject a site assessment; only a named human account holding assessment.approve.",
+    "/pipeline/assessments/{assessmentId}/reject",
+    "assessmentId",
+    registry.AssessmentDecisionResponse,
+    accessPolicies.AssessmentApproveAccess,
+  ),
 });

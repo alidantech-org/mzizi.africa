@@ -76,5 +76,10 @@ export async function mintToken(): Promise<string> {
   if (!role) throw new Error('not signed in');
   if (!(await devSignInAllowed())) throw new Error('development sign-in is only available on localhost');
   const key = await importPKCS8(privateKeyPem(), 'RS256');
-  return new SignJWT({ roles: [role] }).setProtectedHeader({ alg: 'RS256' }).setIssuer(ISSUER).setSubject(ACCOUNTS[role]).setExpirationTime('10m').sign(key);
+  return new SignJWT({ roles: [role] })
+    .setProtectedHeader({ alg: 'RS256' })
+    .setIssuer(ISSUER)
+    .setSubject(ACCOUNTS[role])
+    .setExpirationTime('10m')
+    .sign(key);
 }

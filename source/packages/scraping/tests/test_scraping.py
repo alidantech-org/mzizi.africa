@@ -6,7 +6,10 @@ HTML = """<html><body><a href="/a.pdf">Annual   report</a><a href="https://other
 
 def test_links_are_absolute_deduplicated_and_web_only():
     links = extract_links(HTML, "https://example.org/dir/page")
-    assert [(l.url, l.text) for l in links] == [("https://example.org/a.pdf", "Annual report"), ("https://other.org/x", "Other")]
+    assert [(l.url, l.text) for l in links] == [
+        ("https://example.org/a.pdf", "Annual report"),
+        ("https://other.org/x", "Other"),
+    ]
 
 
 def test_css_selectors_return_matches_in_confidence_order():

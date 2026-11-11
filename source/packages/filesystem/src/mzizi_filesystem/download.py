@@ -4,9 +4,11 @@ Public keys resolve to the public origin (https://res.alidantech.org/mzizi/<key>
 `filesystem.read` permission and is served as a presigned URL signed against the client-reachable endpoint (refused when that is an internal
 Docker hostname) or streamed by the backend. URLs are returned to the caller and never stored.
 """
+
 from __future__ import annotations
 
 import os
+from typing import BinaryIO
 
 from .access import is_anonymously_readable
 from .service import FilesystemService
@@ -24,7 +26,7 @@ def download_url(service: FilesystemService, version_id: str, *, actor: str | No
     return {"kind": "presigned", "url": service.store.presign_get(key, expires_seconds), "expires_in": expires_seconds}
 
 
-def open_for_streaming(service: FilesystemService, version_id: str, *, actor: str | None):
+def open_for_streaming(service: FilesystemService, version_id: str, *, actor: str | None) -> tuple[BinaryIO, dict]:
     """(stream, version) for backend streaming of a private artifact after the same authorization check."""
     version = service.repo.get_version(version_id)
     if version is None:

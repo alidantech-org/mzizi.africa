@@ -171,7 +171,7 @@ const MarkdownPreview = ({ src }: { src: string }) => {
 };
 
 const JSONPreview = ({ src, filename }: { src: string; filename: string }) => {
-  const [jsonData, setJsonData] = useState<any>(null);
+  const [jsonData, setJsonData] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [displayMode, setDisplayMode] = useState<'pretty' | 'raw'>('pretty');
@@ -199,8 +199,8 @@ const JSONPreview = ({ src, filename }: { src: string; filename: string }) => {
     }
   }, [src]);
 
-  const isGeoJSON =
-    filename.toLowerCase().includes('geojson') || (jsonData && (jsonData.type === 'FeatureCollection' || jsonData.type === 'Feature'));
+  const jsonType = typeof jsonData === 'object' && jsonData !== null && 'type' in jsonData ? jsonData.type : undefined;
+  const isGeoJSON = filename.toLowerCase().includes('geojson') || jsonType === 'FeatureCollection' || jsonType === 'Feature';
 
   return (
     <div className="w-full h-full flex flex-col">

@@ -1,8 +1,10 @@
 """A small tool registry: named, described callables an agent may be offered. No ambient authority: tools are passed in explicitly."""
+
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
 
 @dataclass(frozen=True)

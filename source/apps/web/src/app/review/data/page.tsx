@@ -8,14 +8,18 @@ export default async function Page() {
   return (
     <>
       <h1>Canonical data</h1>
-      <p className="sub">Read-only view of the reviewed records, one list per entity. Changes only arrive through staging, review and promotion.</p>
+      <p className="sub">
+        Read-only view of the reviewed records, one list per entity. Changes only arrive through staging, review and promotion.
+      </p>
       <div className="rv-grid">
         {Object.entries(DATA_CATALOG).map(([group, entities]) => (
           <div className="rv-card" key={group}>
             <h2>{group.replaceAll('-', ' ')}</h2>
             <div className="rv-filters">
               {entities.map((entity) => (
-                <Link key={entity} href={`/review/data/${group}/${entity}`}>{entity.replaceAll('-', ' ')}</Link>
+                <Link key={entity} href={`/review/data/${group}/${entity}`}>
+                  {entity.replaceAll('-', ' ')}
+                </Link>
               ))}
             </div>
           </div>

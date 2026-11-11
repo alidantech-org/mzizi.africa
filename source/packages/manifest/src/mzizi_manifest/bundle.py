@@ -1,4 +1,5 @@
 """Loading a structure bundle from a directory (or from a mapping of path to text)."""
+
 from __future__ import annotations
 
 import hashlib

@@ -24,7 +24,7 @@ export interface FilesSearchResponse {
     avg: number;
     total: number;
   };
-  applied_filters?: Record<string, any>;
+  applied_filters?: Record<string, unknown>;
 }
 
 /**

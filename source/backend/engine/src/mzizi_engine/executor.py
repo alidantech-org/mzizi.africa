@@ -4,13 +4,14 @@ Everything that runs does so through `Executor.submit`. I/O-bound capabilities r
 CPU-bound ones run in worker processes (the GIL would serialize threads). Per-capability semaphores bound concurrency
 and a single queue feeds a fixed number of dispatch tasks. Packages never schedule themselves.
 """
+
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import multiprocessing
 from concurrent.futures import ProcessPoolExecutor
-from datetime import datetime, timezone
-from typing import Any
+from datetime import UTC, datetime
 
 import httpx
 
@@ -24,11 +25,18 @@ OUTBOX_MAX_ATTEMPTS = 8
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 class Executor:
-    def __init__(self, store: Store, registry: CapabilityRegistry, settings: Settings, callback_client: httpx.AsyncClient | None = None, dispatchers: int = 8) -> None:
+    def __init__(
+        self,
+        store: Store,
+        registry: CapabilityRegistry,
+        settings: Settings,
+        callback_client: httpx.AsyncClient | None = None,
+        dispatchers: int = 8,
+    ) -> None:
         self.store, self.registry, self.settings = store, registry, settings
         self._client = callback_client
         self._dispatchers = dispatchers
@@ -50,7 +58,9 @@ class Executor:
             await self._emit("engine.recovered", None, None, {"requeued": interrupted})
         for job in await asyncio.to_thread(self.store.queued_jobs):
             self._queue.put_nowait(job["id"])
-        self._pool = ProcessPoolExecutor(max_workers=self.settings.process_workers, mp_context=multiprocessing.get_context("spawn"))
+        self._pool = ProcessPoolExecutor(
+            max_workers=self.settings.process_workers, mp_context=multiprocessing.get_context("spawn")
+        )
         self._tasks = [asyncio.create_task(self._dispatch()) for _ in range(self._dispatchers)]
         if self.settings.callback_url or self._client:
             self._tasks.append(asyncio.create_task(self._outbox_loop()))
@@ -80,14 +90,25 @@ class Executor:
             try:
                 queue.put_nowait(event)
             except asyncio.QueueFull:
-                self._subscribers.discard(queue)  # a slow watcher reconnects with Last-Event-ID and replays from the store
+                self._subscribers.discard(
+                    queue
+                )  # a slow watcher reconnects with Last-Event-ID and replays from the store
         self._outbox_wake.set()
         return event
 
     # ---- submit / cancel -----------------------------------------------------------------------
-    async def submit(self, kind: str, payload: dict, idempotency_key: str | None = None, requested_by: str | None = None, run_id: str | None = None) -> tuple[dict, bool]:
+    async def submit(
+        self,
+        kind: str,
+        payload: dict,
+        idempotency_key: str | None = None,
+        requested_by: str | None = None,
+        run_id: str | None = None,
+    ) -> tuple[dict, bool]:
         self.registry.get(kind)  # KeyError for an unregistered capability
-        job, created = await asyncio.to_thread(self.store.create_job, kind, payload, idempotency_key, requested_by, run_id, self.settings.max_attempts)
+        job, created = await asyncio.to_thread(
+            self.store.create_job, kind, payload, idempotency_key, requested_by, run_id, self.settings.max_attempts
+        )
         if created:
             await self._emit("job.queued", job["id"], run_id, {"kind": kind})
             self._queue.put_nowait(job["id"])
@@ -148,7 +169,9 @@ class Executor:
             self.peak_active = max(self.peak_active, self.active)
             try:
                 for attempt in range(job["attempts"] + 1, job["max_attempts"] + 1):
-                    await asyncio.to_thread(self.store.update_job, job_id, status="running", attempts=attempt, started_at=_now())
+                    await asyncio.to_thread(
+                        self.store.update_job, job_id, status="running", attempts=attempt, started_at=_now()
+                    )
                     await self._emit("job.started", job_id, run_id, {"attempt": attempt})
                     try:
                         result = await self._call(job["kind"], job["input"])
@@ -156,15 +179,28 @@ class Executor:
                         await asyncio.to_thread(self.store.update_job, job_id, status="cancelled", finished_at=_now())
                         await self._emit("job.cancelled", job_id, run_id, {})
                         return
-                    except Exception as error:  # noqa: BLE001 - capability failures are job outcomes
+                    except Exception as error:
                         retry = attempt < job["max_attempts"] and not isinstance(error, NON_RETRYABLE)
-                        await self._emit("job.failed" if not retry else "job.retrying", job_id, run_id, {"attempt": attempt, "error": f"{type(error).__name__}: {error}"})
+                        await self._emit(
+                            "job.failed" if not retry else "job.retrying",
+                            job_id,
+                            run_id,
+                            {"attempt": attempt, "error": f"{type(error).__name__}: {error}"},
+                        )
                         if not retry:
-                            await asyncio.to_thread(self.store.update_job, job_id, status="failed", error=f"{type(error).__name__}: {error}", finished_at=_now())
+                            await asyncio.to_thread(
+                                self.store.update_job,
+                                job_id,
+                                status="failed",
+                                error=f"{type(error).__name__}: {error}",
+                                finished_at=_now(),
+                            )
                             return
                         await asyncio.sleep(self.settings.retry_base_seconds * 2 ** (attempt - 1))
                         continue
-                    await asyncio.to_thread(self.store.update_job, job_id, status="succeeded", result=result, finished_at=_now())
+                    await asyncio.to_thread(
+                        self.store.update_job, job_id, status="succeeded", result=result, finished_at=_now()
+                    )
                     await self._emit("job.succeeded", job_id, run_id, {"result": result})
                     return
             finally:
@@ -197,12 +233,10 @@ class Executor:
 
     async def _outbox_loop(self) -> None:
         while True:
-            try:
+            with contextlib.suppress(TimeoutError):
                 await asyncio.wait_for(self._outbox_wake.wait(), timeout=1.0)
-            except asyncio.TimeoutError:
-                pass
             self._outbox_wake.clear()
             try:
                 await self.deliver_due()
-            except Exception:  # noqa: BLE001 - the loop must survive transient failures
+            except Exception:
                 await asyncio.sleep(1.0)

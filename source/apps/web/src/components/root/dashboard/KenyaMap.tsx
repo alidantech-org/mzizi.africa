@@ -3,95 +3,90 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, AlertTriangle, Users } from 'lucide-react';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 // Kenya counties topojson from public folder - accessible via browser
 const KENYA_TOPO_JSON = '/kenyan-counties.geojson';
 
+type Risk = 'high' | 'medium' | 'low';
+type CountyStat = { risk: Risk | 'unknown'; value: number; candidates: number };
+
+/** Counties shown with placeholder figures until the dashboard reads them from the API. */
+const SAMPLE_COUNTIES = [
+  'Nairobi',
+  'Mombasa',
+  'Kisumu',
+  'Nakuru',
+  'Eldoret',
+  'Kisii',
+  'Kitui',
+  'Machakos',
+  'Garissa',
+  'Wajir',
+  'Mandera',
+  'Marsabit',
+  'Isiolo',
+  'Meru',
+  'Embu',
+  'Tharaka Nithi',
+  'Nyeri',
+  'Kirinyaga',
+  "Murang'a",
+  'Kiambu',
+  'Turkana',
+  'West Pokot',
+  'Samburu',
+  'Trans Nzoia',
+  'Uasin Gishu',
+  'Elgeyo Marakwet',
+  'Nandi',
+  'Baringo',
+  'Laikipia',
+  'Narok',
+  'Kajiado',
+  'Kwale',
+  'Kilifi',
+  'Tana River',
+  'Lamu',
+  'Taita Taveta',
+  'Taita Taveta',
+  'Bungoma',
+  'Busia',
+  'Kakamega',
+  'Vihiga',
+  'Siaya',
+  'Homa Bay',
+  'Migori',
+  'Kisii',
+  'Nyamira',
+  'Kericho',
+  'Bomet',
+  'Nyandarua',
+];
+
+/** A small stable hash, so the placeholder figures are the same on the server and in the browser. */
+function hash(text: string, salt: number): number {
+  let value = salt;
+  for (const char of text) value = (value * 31 + char.charCodeAt(0)) % 9973;
+  return value;
+}
+
+/** Placeholder figures for one county. They are illustrative only and derived from the name, not from any source. */
+function sampleCountyStat(countyName: string): CountyStat {
+  const risk = (['high', 'medium', 'low'] as const)[hash(countyName, 7) % 3];
+  const base = { high: 65, medium: 30, low: 15 }[risk];
+  const spread = risk === 'low' ? 15 : 20;
+  return { risk, value: base + (hash(countyName, 13) % spread), candidates: 5 + (hash(countyName, 17) % 25) };
+}
+
+const SAMPLE_COUNTY_DATA: Record<string, CountyStat> = Object.fromEntries(
+  SAMPLE_COUNTIES.map((county) => [county, sampleCountyStat(county)]),
+);
+
 export default function KenyaMap() {
   const [selectedCounty, setSelectedCounty] = useState<string | null>(null);
   const [hoveredCounty, setHoveredCounty] = useState<string | null>(null);
-  const [countyData, setCountyData] = useState<Record<string, any>>({});
-
-  // Generate sample political finance data for counties
-  const generateCountyData = (countyName: string) => {
-    const riskLevels = ['high', 'medium', 'low'];
-    const randomRisk = riskLevels[Math.floor(Math.random() * riskLevels.length)];
-    const riskValues = {
-      high: 65 + Math.floor(Math.random() * 20),
-      medium: 30 + Math.floor(Math.random() * 20),
-      low: 15 + Math.floor(Math.random() * 15),
-    };
-
-    return {
-      risk: randomRisk,
-      value: riskValues[randomRisk as keyof typeof riskValues],
-      candidates: Math.floor(Math.random() * 25) + 5,
-    };
-  };
-
-  // Initialize county data when component mounts
-  useEffect(() => {
-    // This would typically come from your API
-    const sampleCounties = [
-      'Nairobi',
-      'Mombasa',
-      'Kisumu',
-      'Nakuru',
-      'Eldoret',
-      'Kisii',
-      'Kitui',
-      'Machakos',
-      'Garissa',
-      'Wajir',
-      'Mandera',
-      'Marsabit',
-      'Isiolo',
-      'Meru',
-      'Embu',
-      'Tharaka Nithi',
-      'Nyeri',
-      'Kirinyaga',
-      "Murang'a",
-      'Kiambu',
-      'Turkana',
-      'West Pokot',
-      'Samburu',
-      'Trans Nzoia',
-      'Uasin Gishu',
-      'Elgeyo Marakwet',
-      'Nandi',
-      'Baringo',
-      'Laikipia',
-      'Narok',
-      'Kajiado',
-      'Kwale',
-      'Kilifi',
-      'Tana River',
-      'Lamu',
-      'Taita Taveta',
-      'Taita Taveta',
-      'Bungoma',
-      'Busia',
-      'Kakamega',
-      'Vihiga',
-      'Siaya',
-      'Homa Bay',
-      'Migori',
-      'Kisii',
-      'Nyamira',
-      'Kericho',
-      'Bomet',
-      'Nyandarua',
-    ];
-
-    const data: Record<string, any> = {};
-    sampleCounties.forEach((county) => {
-      data[county] = generateCountyData(county);
-    });
-
-    setCountyData(data);
-  }, []);
+  const countyData = SAMPLE_COUNTY_DATA;
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
@@ -114,7 +109,7 @@ export default function KenyaMap() {
     return '#e5e7eb';
   };
 
-  const getCountyData = (countyName: string) => {
+  const getCountyData = (countyName: string): CountyStat => {
     return (
       countyData[countyName] || {
         risk: 'unknown',

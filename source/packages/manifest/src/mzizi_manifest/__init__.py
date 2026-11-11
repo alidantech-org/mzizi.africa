@@ -1,4 +1,5 @@
 """Shared input-contract support: seed manifest and folder metadata, site-structure bundle validation."""
+
 from . import bundle, seed_registry
 from .validate import Report, validate
 

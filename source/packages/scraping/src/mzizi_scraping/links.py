@@ -1,4 +1,5 @@
 """Link discovery from HTML: absolute, de-duplicated, with link text, in document order."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

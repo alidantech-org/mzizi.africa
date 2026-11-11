@@ -37,7 +37,10 @@ export async function decideAction(decision: 'approve' | 'request_changes' | 're
   if (!rationale) back(path, 'bad', 'A rationale is required for every decision.');
   const proposedState = decision === 'approve' ? 'unverified' : decision === 'reject' ? 'rejected' : 'under_review';
   try {
-    await api('/audit/decisions', { method: 'POST', body: { targetKind: 'staging.candidates', targetId: id, decision, proposedState, rationale } });
+    await api('/audit/decisions', {
+      method: 'POST',
+      body: { targetKind: 'staging.candidates', targetId: id, decision, proposedState, rationale },
+    });
     await api('/pipeline/reviews/apply', { method: 'POST' });
   } catch (error) {
     back(path, 'bad', error instanceof ApiError ? error.message : 'The decision could not be recorded.');
@@ -76,9 +79,12 @@ export async function assessmentAction(verb: 'approve' | 'reject', formData: For
 /** A reviewer drafts an assessment. It is recorded as in_review and never authorises collection by itself. */
 export async function draftAssessmentAction(formData: FormData): Promise<void> {
   const field = (name: string) => String(formData.get(name) ?? '').trim();
-  const hosts = field('hosts').split(/[\s,]+/).filter(Boolean);
+  const hosts = field('hosts')
+    .split(/[\s,]+/)
+    .filter(Boolean);
   const rate = Number(field('rate') || '0.2');
-  if (!field('siteId') || !field('rightsHolder') || hosts.length === 0) back('/review/assessments', 'bad', 'Choose a site, name the rights holder and list at least one host.');
+  if (!field('siteId') || !field('rightsHolder') || hosts.length === 0)
+    back('/review/assessments', 'bad', 'Choose a site, name the rights holder and list at least one host.');
   try {
     await api('/pipeline/assessments', {
       method: 'POST',
