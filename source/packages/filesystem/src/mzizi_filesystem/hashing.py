@@ -25,7 +25,3 @@ def hash_file(path: str | Path, chunk_size: int = CHUNK) -> tuple[str, int]:
     with open(path, "rb") as handle:
         return hash_stream(handle, chunk_size)
 
-
-def content_key(access: str, sha256: str) -> str:
-    """The immutable physical key of content: per access prefix, addressed by hash. Equal bytes in one access class share one key."""
-    return f"{access}/content/sha256/{sha256[:2]}/{sha256[2:4]}/{sha256}"

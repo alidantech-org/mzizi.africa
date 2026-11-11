@@ -1,0 +1,699 @@
+# The one seed manifest (release 2026-11-11.1). Authored by hand; validated against source/schema/seed/manifest.schema.json.
+# It binds every uploadable file under global/, system/ and countries/ to a loader and says how the file is versioned.
+# Per-folder facts (role, access, preparation, scope, review) live in each folder's _folder.yaml and are inherited.
+# Hashes and object keys are generated into manifest.lock.yaml by `uv run mzizi-manifest lock`.
+#
+# Bucket mapping: seed/<path> is registered as <logical_root>/<path> and stored at <access><logical_root>/<path>,
+# for example seed/global/auth/roles.csv -> internal/seed/global/auth/roles.csv.
+# versioning: versioned (default) keeps a replaced revision at .../_versions/<name>/r<NNNN>/<name>; current keeps no history.
+# Folders whose name begins with "_" (_fixtures, _examples) are local-only and must not appear here.
+schema_version: 2
+release: 2026-11-11.1
+bucket: mzizi
+region: us-east-1
+logical_root: /seed
+root_code: seed
+defaults:
+  versioning: versioned
+  pin: true
+entries:
+- id: global.reference.au-members-source
+  path: global/reference/sources/au-member-states-2026-11-11.html
+  loader: none.unconsumed
+  target: reference country source artifact
+  database_target_state: evidence_only
+  media_type: text/html
+  origin: retrieved from official AU page 2026-11-11
+  notes: Exact official page snapshot; not an asserted country or boundary row.
+- id: global.reference.un-m49-source
+  path: global/reference/sources/un-m49-overview-2026-11-11.html
+  loader: none.unconsumed
+  target: reference country source artifact
+  database_target_state: evidence_only
+  media_type: text/html
+  origin: retrieved from official UN Statistics Division page 2026-11-11
+  notes: Exact official M49 page snapshot; includes territories and areas beyond AU members.
+- id: global.reference.au-m49-aliases
+  path: global/reference/au-m49-aliases.json
+  loader: none.unconsumed
+  target: reference country preparation mapping
+  database_target_state: preparation_only
+  media_type: application/json
+  depends_on:
+  - global.reference.au-members-source
+  - global.reference.un-m49-source
+  origin: new in task TSK-7E5E18758D9C
+  notes: Explicit source-label reconciliation, not an official assertion.
+- id: global.reference.african-countries
+  path: global/reference/african-countries-au-un-2026-11-11.json
+  loader: reference.countries
+  target: reference.countries
+  database_target_state: mzizi_new
+  media_type: application/json
+  key_columns:
+  - code
+  depends_on:
+  - global.reference.au-members-source
+  - global.reference.un-m49-source
+  - global.reference.au-m49-aliases
+  consumers:
+  - source/packages/database/src/mzizi_database/loaders/reference.py
+  origin: new in task TSK-7E5E18758D9C
+  notes: 55 AU members reconciled to UN M49 ISO codes; Sahrawi Republic is disputed.
+- id: global.reference.foundation-baseline
+  path: global/reference/foundation-baseline.json
+  loader: reference.foundation
+  target: reference.schemes,reference.values,reference.topics
+  database_target_state: mzizi_new
+  media_type: application/json
+  key_columns:
+  - code
+  consumers:
+  - source/packages/database/src/mzizi_database/loaders/reference.py
+  origin: new in task TSK-7E5E18758D9C
+  notes: Structural vocabulary only; no countries, boundaries, officeholders or legal facts.
+- id: global.auth.namespaces
+  path: global/auth/namespaces.csv
+  loader: auth.baseline
+  target: auth.permissions
+  database_target_state: mzizi_new
+  media_type: text/csv
+  key_columns:
+  - namespace
+  consumers:
+  - source/packages/database/src/mzizi_database/loaders/auth.py
+  origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+- id: global.auth.roles
+  path: global/auth/roles.csv
+  loader: auth.baseline
+  target: auth.roles
+  database_target_state: mzizi_new
+  media_type: text/csv
+  key_columns:
+  - code
+  consumers:
+  - source/packages/database/src/mzizi_database/loaders/auth.py
+  origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+- id: global.auth.role-permissions
+  path: global/auth/role-permissions.csv
+  loader: auth.baseline
+  target: auth.role_permissions
+  database_target_state: mzizi_new
+  media_type: text/csv
+  key_columns:
+  - role_code
+  - permission
+  depends_on:
+  - global.auth.roles
+  - global.auth.namespaces
+  consumers:
+  - source/packages/database/src/mzizi_database/loaders/auth.py
+  origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+- id: global.auth.scope-targets
+  path: global/auth/scope-targets.csv
+  loader: auth.baseline
+  target: auth.scope_targets
+  database_target_state: mzizi_new
+  media_type: text/csv
+  key_columns:
+  - table_name
+  consumers:
+  - source/packages/database/src/mzizi_database/loaders/auth.py
+  origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+- id: global.auth.governed-tables
+  path: global/auth/governed-tables.csv
+  loader: auth.baseline
+  target: auth.governed_tables
+  database_target_state: mzizi_new
+  media_type: text/csv
+  key_columns:
+  - table_name
+  depends_on:
+  - global.auth.scope-targets
+  - global.auth.namespaces
+  consumers:
+  - source/packages/database/src/mzizi_database/loaders/auth.py
+  origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+- id: global.auth.bootstrap
+  path: global/auth/bootstrap.yaml
+  loader: auth.baseline
+  target: first administrator definition (read by rewrite.ts bootstrap-admin; identity from environment, never stored)
+  database_target_state: mzizi_new
+  media_type: application/yaml
+  depends_on:
+  - global.auth.roles
+  consumers:
+  - source/packages/database/src/mzizi_database/loaders/auth.py
+  - source/packages/database/src/mzizi_database/cli.py
+  origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
+- id: global.reference.site-tags
+  path: global/reference/site-tags.json
+  loader: fixtures.entities
+  loader_status: archived
+  target: reference.classifications (site-tag scheme) via the Dryv entities
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  key_columns:
+  - key
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: global.reference.media-formats
+  path: global/reference/media-formats.json
+  loader: fixtures.entities
+  loader_status: archived
+  target: media formats (FormatEntity)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  key_columns:
+  - key
+  notes: 'Duplicate resolution: authoritative payload for file formats. Derived from the legacy files-service CSV (api-legacy/app/routes/files/_seed/file_types.csv is byte-identical to _archives/files/_seed/file_types.csv).
+    The filesystem task derives global file-types.csv/extension aliases from this file; legacy CSVs are superseded and are not adopted. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot);
+    it must be reimplemented against the rewrite schema by the owning milestone task.'
+- id: global.reference.source-kinds
+  path: global/reference/source-kinds.json
+  loader: fixtures.entities
+  loader_status: archived
+  target: reference.classifications (source kinds)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  key_columns:
+  - key
+  depends_on:
+  - global.reference.site-tags
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: global.reference.poc-countries
+  path: global/reference/poc-countries.json
+  loader: fixtures.entities
+  loader_status: archived
+  target: reference.jurisdictions and hierarchy (za, ng, tz)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  key_columns:
+  - key
+  depends_on:
+  - global.reference.site-tags
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.reference.kenya-reference
+  path: countries/ke/reference/kenya-reference.json
+  loader: fixtures.entities
+  loader_status: archived
+  target: reference.jurisdictions, geography hierarchy and Kenya vocabularies
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  key_columns:
+  - key
+  depends_on:
+  - global.reference.site-tags
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.reference.ke-legal-kinds
+  path: countries/ke/reference/ke-legal-kinds.json
+  loader: fixtures.entities
+  loader_status: archived
+  target: reference.classifications (legal kinds)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  key_columns:
+  - key
+  depends_on:
+  - ke.reference.kenya-reference
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: global.research.dossiers
+  path: global/research/dossiers.json
+  loader: fixtures.entities
+  loader_status: archived
+  target: website.dossiers
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  key_columns:
+  - key
+  depends_on:
+  - ke.reference.kenya-reference
+  - global.reference.poc-countries
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.research.ke-pilot-sites
+  path: countries/ke/research/ke-pilot-sites.json
+  loader: fixtures.entities
+  loader_status: archived
+  target: website sites registry
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  key_columns:
+  - key
+  depends_on:
+  - ke.reference.kenya-reference
+  - global.reference.source-kinds
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.research.ke-site-families
+  path: countries/ke/research/ke-site-families.json
+  loader: fixtures.entities
+  loader_status: archived
+  target: website site families and traits
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  key_columns:
+  - key
+  depends_on:
+  - ke.research.ke-pilot-sites
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.policy.trusted-domains
+  path: system/policy/trusted-domains.json
+  loader: database.assessment-policy
+  loader_status: archived
+  target: assessment auto-approval policy (read, no table)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.policy.domain-spellings
+  path: countries/ke/policy/domain-spellings.json
+  loader: engine.domain-spellings
+  loader_status: archived
+  target: domain pattern spellings (read, no table)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.policy.never-crawl
+  path: system/policy/never-crawl.json
+  loader: engine.crawl-policy
+  loader_status: archived
+  target: crawler host exclusions (read, no table)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  origin: constant in source/backend/engine/data/src/mzizi_data/crawl.py (moved 2026-11-08)
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
+- id: system.policy.wikimedia
+  path: system/policy/wikimedia.json
+  loader: engine.wikimedia-config
+  loader_status: archived
+  target: Wikimedia API hosts (read, no table)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  origin: constant in source/backend/engine/data/src/mzizi_data/wikimedia.py (moved 2026-11-08)
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
+- id: ke.policy.non-party-codes
+  path: countries/ke/policy/non-party-codes.json
+  loader: engine.party-rules
+  loader_status: archived
+  target: party register check exclusions (read, no table)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  origin: constant in source/backend/engine/data/src/mzizi_data/gapclose.py (moved 2026-11-08)
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
+- id: ke.reference.county-census-order
+  path: countries/ke/reference/county-census-order.json
+  loader: engine.census-order
+  loader_status: archived
+  target: census county table order (read, no table)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  origin: constant in source/backend/engine/data/src/mzizi_data/imports/census_breakdowns.py (moved 2026-11-08)
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
+- id: ke.reference.wikidata-ids
+  path: countries/ke/reference/wikidata-ids.json
+  loader: engine.wikimedia-config
+  loader_status: archived
+  target: Wikidata ids for Kenyan items (read, no table)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  origin: constant in source/backend/engine/data/src/mzizi_data/wikimedia.py (moved 2026-11-08)
+  notes: Data extracted from a code constant. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite
+    schema by the owning milestone task.
+- id: ke.governance.ke-governance-structure
+  path: countries/ke/governance/ke-governance-structure.json
+  loader: database.governance-catalogue
+  loader_status: archived
+  target: governance institutions and relationships
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  depends_on:
+  - ke.reference.kenya-reference
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.governance.ke-office-holders-curated
+  path: countries/ke/governance/ke-office-holders-curated.json
+  loader: engine.office-holders
+  loader_status: archived
+  target: staged office holdings (unverified)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  depends_on:
+  - ke.governance.ke-governance-structure
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.patterns.ke-office-patterns
+  path: countries/ke/patterns/ke-office-patterns.json
+  loader: database.office-patterns
+  loader_status: archived
+  target: governance offices generated from patterns
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  depends_on:
+  - ke.governance.ke-governance-structure
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.catalogues.ke-statistical-catalogue
+  path: countries/ke/catalogues/ke-statistical-catalogue.json
+  loader: database.statistical-catalogue
+  loader_status: archived
+  target: source publishers and documents
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  depends_on:
+  - ke.reference.kenya-reference
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.catalogues.ke-iebc-catalogue
+  path: countries/ke/catalogues/ke-iebc-catalogue.json
+  loader: none.unconsumed
+  target: none (no loader or test reads this file)
+  database_target_state: pending_rewrite_schema
+  media_type: application/json
+  notes: No consumer found by repository search; kept for custody until the source schema task decides how publications are seeded.
+- id: ke.catalogues.ke-orpp-catalogue
+  path: countries/ke/catalogues/ke-orpp-catalogue.json
+  loader: test.catalogue-checks
+  loader_status: archived
+  target: none (read only by DB engine tests)
+  database_target_state: test_only
+  media_type: application/json
+  notes: Only a test reads this file; no production loader exists yet. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented
+    against the rewrite schema by the owning milestone task. The test that read it was archived.
+- id: ke.catalogues.ke-priority-publishers-catalogue
+  path: countries/ke/catalogues/ke-priority-publishers-catalogue.json
+  loader: test.catalogue-checks
+  loader_status: archived
+  target: none (read only by DB engine tests)
+  database_target_state: test_only
+  media_type: application/json
+  notes: Only a test reads this file; no production loader exists yet. The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented
+    against the rewrite schema by the owning milestone task. The test that read it was archived.
+- id: ke.registry.ke-expected-sites
+  path: countries/ke/registry/ke-expected-sites.json
+  loader: database.expected-sites
+  loader_status: archived
+  target: website sites and domains
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  depends_on:
+  - ke.governance.ke-governance-structure
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.registry.ke-domain-zones
+  path: countries/ke/registry/ke-domain-zones.json
+  loader: database.domain-zones
+  loader_status: archived
+  target: website domain zones
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  depends_on:
+  - ke.reference.kenya-reference
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.registry.ke-site-sections
+  path: countries/ke/registry/ke-site-sections.json
+  loader: engine.crawl-sections
+  loader_status: archived
+  target: site section expectations (read, no table)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.registry.ke-media-expectations
+  path: countries/ke/registry/ke-media-expectations.json
+  loader: database.media-expectations
+  loader_status: archived
+  target: media expectations by governance level
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  depends_on:
+  - ke.governance.ke-governance-structure
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.places.ke-landmark-places
+  path: countries/ke/places/ke-landmark-places.json
+  loader: engine.landmark-places
+  loader_status: archived
+  target: places (text addresses only)
+  database_target_state: legacy_dev_only
+  media_type: application/json
+  depends_on:
+  - ke.reference.kenya-reference
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.budget
+  glob: countries/ke/mappings/budget/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle budget (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/budget/budget.yml: source/backend/engine/data/mappings/budget/budget.yml
+    countries/ke/mappings/budget/fiscal_year.yml: source/backend/engine/data/mappings/budget/fiscal_year.yml
+    countries/ke/mappings/budget/unit.yml: source/backend/engine/data/mappings/budget/unit.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.constitution
+  glob: countries/ke/mappings/constitution/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle constitution (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/constitution/article.yml: source/backend/engine/data/mappings/constitution/article.yml
+    countries/ke/mappings/constitution/chapter.yml: source/backend/engine/data/mappings/constitution/chapter.yml
+    countries/ke/mappings/constitution/instrument.yml: source/backend/engine/data/mappings/constitution/instrument.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.county-assembly
+  glob: countries/ke/mappings/county-assembly/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle county-assembly (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/county-assembly/holder.yml: source/backend/engine/data/mappings/county-assembly/holder.yml
+    countries/ke/mappings/county-assembly/individual.yml: source/backend/engine/data/mappings/county-assembly/individual.yml
+    countries/ke/mappings/county-assembly/membership.yml: source/backend/engine/data/mappings/county-assembly/membership.yml
+    countries/ke/mappings/county-assembly/office.yml: source/backend/engine/data/mappings/county-assembly/office.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.county-executives
+  glob: countries/ke/mappings/county-executives/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle county-executives (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/county-executives/holder.yml: source/backend/engine/data/mappings/county-executives/holder.yml
+    countries/ke/mappings/county-executives/individual.yml: source/backend/engine/data/mappings/county-executives/individual.yml
+    countries/ke/mappings/county-executives/membership.yml: source/backend/engine/data/mappings/county-executives/membership.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.county-leaders
+  glob: countries/ke/mappings/county-leaders/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle county-leaders (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/county-leaders/holder.yml: source/backend/engine/data/mappings/county-leaders/holder.yml
+    countries/ke/mappings/county-leaders/individual.yml: source/backend/engine/data/mappings/county-leaders/individual.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.geoadmin
+  glob: countries/ke/mappings/geoadmin/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle geoadmin (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/geoadmin/boundary.yml: source/backend/engine/data/mappings/geoadmin/boundary.yml
+    countries/ke/mappings/geoadmin/unit.yml: source/backend/engine/data/mappings/geoadmin/unit.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.geoboundaries
+  glob: countries/ke/mappings/geoboundaries/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle geoboundaries (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/geoboundaries/boundary-adm0.yml: source/backend/engine/data/mappings/geoboundaries/boundary-adm0.yml
+    countries/ke/mappings/geoboundaries/boundary-adm1.yml: source/backend/engine/data/mappings/geoboundaries/boundary-adm1.yml
+    countries/ke/mappings/geoboundaries/unit-adm0.yml: source/backend/engine/data/mappings/geoboundaries/unit-adm0.yml
+    countries/ke/mappings/geoboundaries/unit-adm1.yml: source/backend/engine/data/mappings/geoboundaries/unit-adm1.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.iebc
+  glob: countries/ke/mappings/iebc/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle iebc (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/iebc/holder.yml: source/backend/engine/data/mappings/iebc/holder.yml
+    countries/ke/mappings/iebc/individual.yml: source/backend/engine/data/mappings/iebc/individual.yml
+    countries/ke/mappings/iebc/office.yml: source/backend/engine/data/mappings/iebc/office.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.legal
+  glob: countries/ke/mappings/legal/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle legal (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/legal/instrument.yml: source/backend/engine/data/mappings/legal/instrument.yml
+    countries/ke/mappings/legal/provision.yml: source/backend/engine/data/mappings/legal/provision.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.members
+  glob: countries/ke/mappings/members/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle members (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/members/holder.yml: source/backend/engine/data/mappings/members/holder.yml
+    countries/ke/mappings/members/individual.yml: source/backend/engine/data/mappings/members/individual.yml
+    countries/ke/mappings/members/institution.yml: source/backend/engine/data/mappings/members/institution.yml
+    countries/ke/mappings/members/membership.yml: source/backend/engine/data/mappings/members/membership.yml
+    countries/ke/mappings/members/office.yml: source/backend/engine/data/mappings/members/office.yml
+    countries/ke/mappings/members/party.yml: source/backend/engine/data/mappings/members/party.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.ngcdf
+  glob: countries/ke/mappings/ngcdf/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle ngcdf (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/ngcdf/budget.yml: source/backend/engine/data/mappings/ngcdf/budget.yml
+    countries/ke/mappings/ngcdf/fiscal_year.yml: source/backend/engine/data/mappings/ngcdf/fiscal_year.yml
+    countries/ke/mappings/ngcdf/transfer.yml: source/backend/engine/data/mappings/ngcdf/transfer.yml
+    countries/ke/mappings/ngcdf/unit.yml: source/backend/engine/data/mappings/ngcdf/unit.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.office_holders
+  glob: countries/ke/mappings/office_holders/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle office_holders (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/office_holders/holder.yml: source/backend/engine/data/mappings/office_holders/holder.yml
+    countries/ke/mappings/office_holders/individual.yml: source/backend/engine/data/mappings/office_holders/individual.yml
+    countries/ke/mappings/office_holders/membership.yml: source/backend/engine/data/mappings/office_holders/membership.yml
+    countries/ke/mappings/office_holders/office.yml: source/backend/engine/data/mappings/office_holders/office.yml
+    countries/ke/mappings/office_holders/party.yml: source/backend/engine/data/mappings/office_holders/party.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.orpp
+  glob: countries/ke/mappings/orpp/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle orpp (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/orpp/party.yml: source/backend/engine/data/mappings/orpp/party.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.ppf
+  glob: countries/ke/mappings/ppf/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle ppf (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/ppf/transfer.yml: source/backend/engine/data/mappings/ppf/transfer.yml
+    countries/ke/mappings/ppf/unit.yml: source/backend/engine/data/mappings/ppf/unit.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.procurement
+  glob: countries/ke/mappings/procurement/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle procurement (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/procurement/contact.yml: source/backend/engine/data/mappings/procurement/contact.yml
+    countries/ke/mappings/procurement/contract.yml: source/backend/engine/data/mappings/procurement/contract.yml
+    countries/ke/mappings/procurement/entity.yml: source/backend/engine/data/mappings/procurement/entity.yml
+    countries/ke/mappings/procurement/identifier.yml: source/backend/engine/data/mappings/procurement/identifier.yml
+    countries/ke/mappings/procurement/occupancy.yml: source/backend/engine/data/mappings/procurement/occupancy.yml
+    countries/ke/mappings/procurement/pe_unit.yml: source/backend/engine/data/mappings/procurement/pe_unit.yml
+    countries/ke/mappings/procurement/place.yml: source/backend/engine/data/mappings/procurement/place.yml
+    countries/ke/mappings/procurement/tender.yml: source/backend/engine/data/mappings/procurement/tender.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.sitting
+  glob: countries/ke/mappings/sitting/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle sitting (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/sitting/event.yml: source/backend/engine/data/mappings/sitting/event.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: system.mappings.worldbank
+  glob: countries/ke/mappings/worldbank/*.yml
+  loader: engine.import-mappings
+  loader_status: archived
+  target: importer mapping bundle worldbank (staging candidates)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/mappings/worldbank/category.yml: source/backend/engine/data/mappings/worldbank/category.yml
+    countries/ke/mappings/worldbank/dataset.yml: source/backend/engine/data/mappings/worldbank/dataset.yml
+    countries/ke/mappings/worldbank/indicator.yml: source/backend/engine/data/mappings/worldbank/indicator.yml
+    countries/ke/mappings/worldbank/observation.yml: source/backend/engine/data/mappings/worldbank/observation.yml
+    countries/ke/mappings/worldbank/period.yml: source/backend/engine/data/mappings/worldbank/period.yml
+  notes: The loader that read this file was archived with the old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.sites.ke-iebc
+  glob: countries/ke/sites/ke-iebc/**
+  loader: engine.site-structure
+  loader_status: archived
+  target: site structure bundle ke-iebc (registered via the data engine batch submit)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/sites/ke-iebc/NOTES.md: source/backend/engine/data/pilots/ke-iebc/NOTES.md
+    countries/ke/sites/ke-iebc/examples/party-list.html: source/backend/engine/data/pilots/ke-iebc/examples/party-list.html
+    countries/ke/sites/ke-iebc/manifest.yml: source/backend/engine/data/pilots/ke-iebc/manifest.yml
+    countries/ke/sites/ke-iebc/mappings/party-list.yml: source/backend/engine/data/pilots/ke-iebc/mappings/party-list.yml
+    countries/ke/sites/ke-iebc/modules/party-list.yml: source/backend/engine/data/pilots/ke-iebc/modules/party-list.yml
+  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension. The loader that read this file was archived with the
+    old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.sites.ke-parliament
+  glob: countries/ke/sites/ke-parliament/**
+  loader: engine.site-structure
+  loader_status: archived
+  target: site structure bundle ke-parliament (registered via the data engine batch submit)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    countries/ke/sites/ke-parliament/NOTES.md: source/backend/engine/data/pilots/ke-parliament/NOTES.md
+    countries/ke/sites/ke-parliament/examples/budget-documents.html: source/backend/engine/data/pilots/ke-parliament/examples/budget-documents.html
+    countries/ke/sites/ke-parliament/manifest.yml: source/backend/engine/data/pilots/ke-parliament/manifest.yml
+    countries/ke/sites/ke-parliament/mappings/budget-documents.yml: source/backend/engine/data/pilots/ke-parliament/mappings/budget-documents.yml
+    countries/ke/sites/ke-parliament/modules/budget-documents.yml: source/backend/engine/data/pilots/ke-parliament/modules/budget-documents.yml
+  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension. The loader that read this file was archived with the
+    old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: global.sites.world-geoboundaries
+  glob: global/sites/world-geoboundaries/**
+  loader: engine.site-structure
+  loader_status: archived
+  target: site structure bundle world-geoboundaries (registered via the data engine batch submit)
+  database_target_state: legacy_dev_only
+  media_type: application/yaml
+  origin:
+    global/sites/world-geoboundaries/NOTES.md: source/backend/engine/data/pilots/world-geoboundaries/NOTES.md
+    global/sites/world-geoboundaries/examples/releases.json: source/backend/engine/data/pilots/world-geoboundaries/examples/releases.json
+    global/sites/world-geoboundaries/manifest.yml: source/backend/engine/data/pilots/world-geoboundaries/manifest.yml
+    global/sites/world-geoboundaries/mappings/releases.yml: source/backend/engine/data/pilots/world-geoboundaries/mappings/releases.yml
+    global/sites/world-geoboundaries/modules/releases.yml: source/backend/engine/data/pilots/world-geoboundaries/modules/releases.yml
+  notes: Bundle files mix YAML, Markdown notes and HTML/JSON examples; media_type is the manifest default and each file's own type is its extension. The loader that read this file was archived with the
+    old engines (.docs/_archives/2026-11-08-rewrite-snapshot); it must be reimplemented against the rewrite schema by the owning milestone task.
+- id: ke.reports
+  glob: countries/ke/reports/*
+  loader: none.unconsumed
+  target: run reports and logs of the retired Kenyan importers
+  database_target_state: evidence_only
+  origin: moved into seed/countries/ke/reports by the user on 2026-11-11 (previously under .data/reports)
+  notes: Generated outputs kept for reference; classified as reports, not seeds, by the folder descriptor.
+  pin: false

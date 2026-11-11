@@ -39,6 +39,8 @@ class ObjectStore(Protocol):
     def delete(self, key: str) -> None: ...
     def presign_get(self, key: str, expires_seconds: int = 900) -> str: ...
     def presign_put(self, key: str, content_type: str, expires_seconds: int = 900) -> str: ...
+    def list_keys(self, prefix: str = ""): ...
+    def delete_many(self, keys: list[str]) -> int: ...
     def list_multipart(self, prefix: str) -> list[dict]: ...
     def abort_multipart(self, key: str, upload_id: str) -> None: ...
 
@@ -62,6 +64,10 @@ class MemoryObjectStore:
         return ObjectHead(len(found[0]), found[2], found[1]) if found else None
 
     def put(self, key: str, data: bytes, content_type: str, sha256: str, cache_control: str | None = None) -> None:
+        from .keys import is_protected
+
+        if is_protected(key):
+            raise StoreError(f"refusing to write protected key {key}")
         if self.fail_next_puts:
             self.fail_next_puts -= 1
             raise StoreError("injected put failure")
@@ -89,8 +95,20 @@ class MemoryObjectStore:
         self.put(dest_key, self.get(source_key), content_type, sha256)
 
     def delete(self, key: str) -> None:
+        from .keys import is_protected
+
+        if is_protected(key):
+            raise StoreError(f"refusing to delete protected key {key}")
         self.deleted.append(key)
         self.objects.pop(key, None)
+
+    def list_keys(self, prefix: str = ""):
+        return iter(sorted((k, len(v[0])) for k, v in self.objects.items() if k.startswith(prefix)))
+
+    def delete_many(self, keys: list[str]) -> int:
+        for key in keys:
+            self.delete(key)
+        return len(keys)
 
     def presign_get(self, key: str, expires_seconds: int = 900) -> str:
         return f"{self.public_endpoint}/{self.bucket}/{key}?expires={expires_seconds}"
@@ -145,11 +163,13 @@ class S3ObjectStore:
         return ObjectHead(int(response["ContentLength"]), (response.get("Metadata") or {}).get("sha256"), response.get("ContentType"))
 
     def put(self, key: str, data: bytes, content_type: str, sha256: str, cache_control: str | None = None) -> None:
+        self._writable(key)
         extra = {"CacheControl": cache_control} if cache_control else {}
         self._client.put_object(Bucket=self.bucket, Key=key, Body=data, ContentType=content_type, Metadata={"sha256": sha256}, **extra)
 
     def put_path(self, key: str, path: str, content_type: str, sha256: str) -> None:
         """Streaming upload (multipart automatically for large files); the file is never loaded into memory."""
+        self._writable(key)
         self._client.upload_file(path, self.bucket, key, ExtraArgs={"ContentType": content_type, "Metadata": {"sha256": sha256}})
 
     def get(self, key: str) -> bytes:
@@ -158,11 +178,45 @@ class S3ObjectStore:
     def open_stream(self, key: str):
         return self._client.get_object(Bucket=self.bucket, Key=key)["Body"]
 
+    @staticmethod
+    def _writable(key: str) -> None:
+        from .keys import is_protected
+
+        if is_protected(key):
+            raise StoreError(f"refusing to write protected key {key}")
+
     def copy(self, source_key: str, dest_key: str, content_type: str, sha256: str) -> None:
+        self._writable(dest_key)
         self._client.copy({"Bucket": self.bucket, "Key": source_key}, self.bucket, dest_key, ExtraArgs={"ContentType": content_type, "Metadata": {"sha256": sha256}, "MetadataDirective": "REPLACE"})
 
     def delete(self, key: str) -> None:
+        from .keys import is_protected
+
+        if is_protected(key):
+            raise StoreError(f"refusing to delete protected key {key}")
         self._client.delete_object(Bucket=self.bucket, Key=key)
+
+    def list_keys(self, prefix: str = ""):
+        """(key, size) of every object under the prefix, paginated."""
+        for page in self._client.get_paginator("list_objects_v2").paginate(Bucket=self.bucket, Prefix=prefix):
+            for item in page.get("Contents", []):
+                yield item["Key"], int(item["Size"])
+
+    def delete_many(self, keys: list[str]) -> int:
+        """Batch delete (1000 per request). Refuses any key under a protected prefix before sending anything."""
+        from .keys import is_protected
+
+        protected = [k for k in keys if is_protected(k)]
+        if protected:
+            raise StoreError(f"refusing to delete protected keys, for example {protected[0]}")
+        done = 0
+        for start in range(0, len(keys), 1000):
+            batch = keys[start:start + 1000]
+            out = self._client.delete_objects(Bucket=self.bucket, Delete={"Objects": [{"Key": k} for k in batch], "Quiet": True})
+            if out.get("Errors"):
+                raise StoreError(f"delete failed for {len(out['Errors'])} keys, first: {out['Errors'][0]}")
+            done += len(batch)
+        return done
 
     def list_multipart(self, prefix: str) -> list[dict]:
         out = self._client.list_multipart_uploads(Bucket=self.bucket, Prefix=prefix)

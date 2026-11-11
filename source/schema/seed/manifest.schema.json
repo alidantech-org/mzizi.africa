@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/seed/manifest",
+  "title": "Mzizi seed manifest (seed/manifest.yaml)",
+  "description": "The one authored manifest of the root seed tree. It binds files to loaders and states how each is versioned; per-folder facts live in _folder.yaml; hashes and object keys are generated into seed/manifest.lock.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "release", "bucket", "region", "logical_root", "root_code", "entries"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "release": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}\\.[0-9]+$"},
+    "bucket": {"const": "mzizi"},
+    "region": {"const": "us-east-1"},
+    "logical_root": {"type": "string", "pattern": "^/[a-z0-9][a-z0-9_-]*$", "not": {"enum": ["/raw", "/tmp", "/content"]}, "description": "Registry root folder of the seed tree; object keys are <access><logical_root>/<path under seed/>."},
+    "root_code": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {"versioning": {"$ref": "#/$defs/versioning"}, "pin": {"type": "boolean"}}
+    },
+    "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}}
+  },
+  "$defs": {
+    "versioning": {
+      "enum": ["versioned", "current"],
+      "description": "versioned: changed bytes keep the previous revision under _versions/<name>/r<NNNN>/. current: the readable key is replaced and no history is kept."
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "loader"],
+      "oneOf": [{"required": ["path"]}, {"required": ["glob"]}],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+        "path": {"type": "string", "pattern": "^[^/].*$"},
+        "glob": {"type": "string", "pattern": "^[^/].*$"},
+        "loader": {"type": "string"},
+        "loader_status": {"type": "string"},
+        "target": {"type": "string"},
+        "database_target_state": {"type": "string"},
+        "media_type": {"type": "string"},
+        "key_columns": {"type": "array", "items": {"type": "string"}},
+        "depends_on": {"type": "array", "items": {"type": "string"}},
+        "consumers": {"type": "array", "items": {"type": "string"}},
+        "origin": {"description": "Where the content came from: one note for the entry, or a note per file path.", "type": ["string", "object"]},
+        "notes": {"type": "string"},
+        "versioning": {"$ref": "#/$defs/versioning"},
+        "pin": {"type": "boolean", "description": "Pin every registered revision to this manifest release (never pruned). Defaults to true for versioned entries."}
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 ---
-{id: TSK-3EA8C40B0F60,name: Design filesystem tables and existing S3 integration,type: task,status: completed,priority: medium,created_at: 2026-11-08T06:46:26.845Z,updated_at: 2026-11-11T04:29:40.735Z,depends_on: [TSK-1AC8F3754DAE,TSK-0F4398B91D38,TSK-A5D7B8F87A9D],order: 2432,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-08T09:39:48.836Z},{from: in-progress,to: completed,at: 2026-11-11T04:29:40.735Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-3EA8C40B0F60/1794130788847-start,started_at: 2026-11-08T09:39:51.343Z,end_ref: refs/tracking/TSK-3EA8C40B0F60/1794371380737-end,ended_at: 2026-11-11T04:29:40.735Z,summary: {files: 88,insertions: 4469,deletions: 1013}}]}}}
+{id: TSK-3EA8C40B0F60,name: Design filesystem tables and existing S3 integration,type: task,status: in-progress,priority: medium,created_at: 2026-11-08T06:46:26.845Z,updated_at: 2026-11-11T06:30:36.379Z,depends_on: [TSK-1AC8F3754DAE,TSK-0F4398B91D38,TSK-A5D7B8F87A9D],order: 2432,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-08T09:39:48.836Z},{from: in-progress,to: completed,at: 2026-11-11T04:29:40.735Z},{from: completed,to: in-progress,at: 2026-11-11T06:30:36.379Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-3EA8C40B0F60/1794130788847-start,started_at: 2026-11-08T09:39:51.343Z,end_ref: refs/tracking/TSK-3EA8C40B0F60/1794371380737-end,ended_at: 2026-11-11T04:29:40.735Z,summary: {files: 88,insertions: 4469,deletions: 1013}},{base_ref: refs/tracking/TSK-3EA8C40B0F60/1794378636380-start,started_at: 2026-11-11T06:30:37.098Z}]}}}
 ---
 
 ---
@@ -100,3 +100,39 @@ The user authorized end-to-end implementation: schema in `mzizi_new`, the shared
 Reviewed current SQL, registration, sync, provenance and lineage implementations against the final seven-table scope. Fresh verification: `uv run pytest -q source` passed 175 tests (one dependency deprecation warning); API `bun run test -- auth` passed 148 tests with 10 todo cases in matched legal suites; `uv lock --check` passed. `uv run mzizi-manifest check` validated 54 entries with 101 existing classification-review warnings. Unknown provenance remains explicitly unknown; this closeout does not certify those seeds as canonical data. Live S3 publication and bounded checks remain the recorded 8 November results; no live S3 write was repeated. Implementation commits 473cb5b and fdcd0ae are contained in the local origin/develop history.
 
 The implemented scope is complete. Presigned download behavior is covered by tests; the previously recorded live presign limitation remains. Future reference patterns, source/domain loaders, detailed engine extraction history, filesystem events and NestJS callbacks remain with their owning milestones.
+
+## Reopened 2026-11-11 — readable path keys, no overwrite, fresh start (user direction)
+
+The user reopened this task on 11 November 2026. The content-addressed key layout described above is **superseded** by `.docs/decisions/filesystem-readable-keys.md` (`DEC-FILESYSTEM-READABLE-KEYS`). Everything in this section is binding; where an earlier section disagrees, this section wins. The seven tables stay; no table is added.
+
+### Exact rules the implementation must follow
+
+- The key of a file's current version is `<effective access>/<folder path>/<file name>`; the key of a superseded retained version is `<effective access>/<folder path>/_versions/<file name>/r<NNNN>/<file name>` with a four-digit zero-padded revision. No other key shape may be registered. Temporary uploads stay under `private/tmp/uploads/`.
+- `file_versions.s3_key` is unique. A deferred constraint trigger rejects any commit in which a retained version's key differs from the computed key, so the bucket path and the registry path cannot drift through the database.
+- The service reads a key before writing it and writes only when the key is empty, holds the same hash, or holds the hash of the same file's current version after that version was copied to its version folder and verified. Anything else is a `StoreError`; nothing is overwritten.
+- Order for a changed versioned file: copy superseded bytes to the version folder, verify, write new bytes to the plain key, verify, then one transaction repoints the old row and inserts the new one. Every step is repeatable after a crash.
+- `on_duplicate` (`keep_both`, `reuse_existing`, `reject`) and `on_name_conflict` (`new_version`, `keep_both`, `reject`) are explicit parameters of `FilesystemService.register`; equal bytes are never looked up across access classes.
+- `_versions` is a reserved name; root folders named `raw`, `tmp` or `content` are rejected; a folder and a file in one folder cannot share a name. These are database checks, mirrored in Python.
+- Access changes, folder moves and renames, and file moves and renames go through one relocation routine: change rows, copy each affected object to its computed key, verify, repoint, commit; superseded keys are returned and deleted only by explicit cleanup when unreferenced.
+- `public/raw/` is never listed for deletion, never written and never registered. The wipe command refuses any prefix that reaches it.
+- The schema change is a new migration (`filesystem/0002_readable_keys.sql`); `0001` is not edited and the database is not reset.
+
+### Fresh start procedure (run once, in this order)
+
+1. Save the six registered `/security` files to the git-ignored `.local/secure/` cache so no credential is lost.
+2. Delete the rows loaded from the two pinned source snapshots (`geography.country_territories`, `geography.units`, `reference.countries`), then every `filesystem` row, in one transaction.
+3. Apply migration `0002`.
+4. Delete every object in bucket `mzizi` whose key does not start with `public/raw/`; record the counts before and after.
+5. Sync `seed/` from `seed/manifest.yaml` with `--apply`, then reload the deleted rows with `mzizi-db load-countries` and `mzizi-db load-geography-roots`.
+6. Verify: every registered key exists with the registered size and hash, no unregistered object exists outside `public/raw/` and `private/tmp/`, and `public/raw/` holds the same object count as before.
+
+### Acceptance checklist — readable keys (2026-11-11)
+
+- [ ] Decision `DEC-FILESYSTEM-READABLE-KEYS` is recorded and `.docs/docs/FILESYSTEM_SCHEMA.md` and the package README describe only the new layout.
+- [ ] Migration `filesystem/0002_readable_keys.sql` adds the unique key, the computed-key functions, the commit-time key check and the reserved-name rules, and is listed in `migrations.yaml`.
+- [ ] `register` stores current versions at readable keys, preserves superseded versioned bytes in `_versions/` before replacing, and refuses to overwrite an unregistered or foreign object (tested).
+- [ ] `on_duplicate` and `on_name_conflict` behave as specified, and `mzizi-filesystem duplicates` lists equal content (tested).
+- [ ] Access transition, folder rename or move and file rename or move relocate objects and leave no version at a stale key (tested).
+- [ ] `mzizi-filesystem wipe` is a dry run by default, cannot touch `public/raw/`, and `mzizi-filesystem verify` compares registry and bucket.
+- [ ] The fresh start procedure was run against the live bucket and `mzizi_new`, with before and after counts recorded below.
+- [ ] `uv run pytest source` passes and `task validate` is clean.

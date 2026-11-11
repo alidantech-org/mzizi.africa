@@ -1,32 +1,24 @@
-"""Local synchronization: plan and apply folders and files from a manifest through the filesystem service.
+"""Seed synchronization: plan and apply the folders and files of `seed/manifest.yaml` through the filesystem service.
 
-Two manifest kinds feed one planner: the root seed manifest (seed/manifest.yaml, classified by folder descriptors and the lock) and
-a generic sync manifest (kind: filesystem-sync, validated against source/schema/filesystem/sync-manifest.schema.json) that selects
-local trees by explicit include/exclude rules and states its classification. Identity is the registry code, never the local path, so
-a renamed local file keeps its logical file. A file that disappears locally is reported by nothing and deleted nowhere.
+There is one manifest. The plan mirrors the local tree: `seed/<path>` becomes the registry path `<logical_root>/<path>` and, because
+the object key is the registry path, the object `<access><logical_root>/<path>`. Folders carry the classification of their
+`_folder.yaml`; files carry the versioning stated by their manifest entry. Identity is the registry code derived from the path. A
+file that disappears locally is reported by nothing and deleted nowhere.
 """
 from __future__ import annotations
 
-import fnmatch
-import json
-import re
 from dataclasses import dataclass, field
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 import psycopg
-import yaml
-from jsonschema import Draft202012Validator
 
 from mzizi_manifest import seed_registry as seeds
-from mzizi_manifest.paths import SCHEMA_ROOT, SEED_ROOT
+from mzizi_manifest.paths import SEED_ROOT
 
 from .authz import Authorizer, OperatorAuthorizer
 from .repository import Conflict, PermissionDenied, Repository
 from .codes import child_code, is_code
 from .service import FilesystemService, Registration
-
-SENSITIVE_NAMES = ("*.env", ".env", ".env.*", "*.key", "id_rsa*", "id_ed25519*", "private.pem", "*.p12", "*.pfx", "credentials*", "*secret*")
-PRIVATE_KEY = re.compile(rb"-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----")
 
 
 class ManifestError(ValueError):
@@ -50,6 +42,7 @@ class FileSpec:
     pin_reason: str | None = None
     provenance_extra: dict = field(default_factory=dict)
     declared_type: str | None = None
+    expected_key: str | None = None  # the key the lock planned; the registered key must equal it
 
 
 @dataclass
@@ -68,7 +61,8 @@ class SyncItem:
     detail: str = ""
     action: str | None = None
     key: str | None = None
-    reused_storage: bool = False
+    duplicate_of: str | None = None
+    server_copied: bool = False
     recovered: bool = False
     verified: bool = False
     revision: int | None = None
@@ -95,31 +89,7 @@ class SyncReport:
         return [i for i in self.items if i.outcome in ("failed", "conflict", "denied", "blocked")]
 
 
-# --------------------------------------------------------------------------------------------- selection
-def glob_match(rel: str, pattern: str) -> bool:
-    regex = "^" + re.escape(pattern).replace(r"\*\*/", "(?:.*/)?").replace(r"\*\*", ".*").replace(r"\*", "[^/]*").replace(r"\?", "[^/]") + "$"
-    return re.match(regex, rel) is not None
-
-
-def selected(rel: str, include: list[str] | None, exclude: list[str] | None) -> bool:
-    if include and not any(glob_match(rel, p) for p in include):
-        return False
-    return not any(glob_match(rel, p) for p in (exclude or []))
-
-
-def sensitive_reason(path: Path) -> str | None:
-    if any(fnmatch.fnmatch(path.name.lower(), pat) for pat in SENSITIVE_NAMES):
-        return f"credential-like file name ({path.name}); not published through ordinary sync"
-    try:
-        with open(path, "rb") as handle:
-            if PRIVATE_KEY.search(handle.read(8192)):
-                return "contains a private key; not published through ordinary sync"
-    except OSError:
-        return None
-    return None
-
-
-# ------------------------------------------------------------------------------------------ manifests
+# ------------------------------------------------------------------------------------------ manifest
 def _descriptor_fields(directory: str, root: Path) -> dict:
     d = seeds.read_descriptor(directory, root) or {}
     fields: dict = {}
@@ -132,6 +102,8 @@ def _descriptor_fields(directory: str, root: Path) -> dict:
     for src, dst in (("role", "artifact_role"), ("acquisition_class", "acquisition_class"), ("preparation", "preparation"), ("description", "description")):
         if d.get(src):
             fields[dst] = d[src]
+    if d.get("seed") is not None:
+        fields["is_seed"] = bool(d["seed"])
     scope = d.get("scope")
     meta = {"definition": f"seed/{directory + '/' if directory else ''}_folder.yaml"}
     if scope:
@@ -173,137 +145,49 @@ def assign_codes(plan: Plan) -> Plan:
 
 
 def plan_seed(root: Path | None = None, entry_ids: set[str] | None = None) -> Plan:
-    """Plan from the root seed manifest: folders mirror the seed directories and carry their descriptor classification; files come from the lock."""
+    """Plan from the seed manifest: one folder per seed directory under the logical root, one file per manifest-covered file."""
     root = root or SEED_ROOT
     result = seeds.validate_manifest(root)
     if result.errors or not result.manifest:
         raise ManifestError("seed manifest is invalid: " + "; ".join(result.errors[:5]))
-    manifest, lock = result.manifest, seeds.build_lock(result.manifest, root)
-    by_id = {e["id"]: e for e in manifest["entries"]}
+    manifest = result.manifest
+    logical_root, manifest_hash = manifest["logical_root"], seeds.manifest_sha256(root)
     plan = Plan("seed")
     seen: set[str] = set()
     root_fields = {**_descriptor_fields("", root), "is_seed": True, "description": "Prepared seed artifacts (root seed registry)"}
-    plan.folders.append(FolderSpec("/seeds", "seeds", root_fields))  # the only explicit code; everything below derives from it
-    for locked in lock["entries"]:
-        if entry_ids and locked["id"] not in entry_ids:
+    plan.folders.append(FolderSpec(logical_root, manifest["root_code"], root_fields))  # the only explicit code; everything below derives from it
+    for f in seeds.resolve_files(manifest, root):
+        if entry_ids and f["entry"] not in entry_ids:
             continue
-        entry = by_id[locked["id"]]
-        mode = entry.get("publication_mode", "versioned")
-        for f in locked["files"]:
-            parts = f["path"].split("/")
-            for i in range(1, len(parts)):
-                directory = "/".join(parts[:i])
-                logical = "/seeds/" + directory
-                if logical not in seen:
-                    seen.add(logical)
-                    plan.folders.append(FolderSpec(logical, None, _descriptor_fields(directory, root)))
-            eff = f["effective"]
-            overrides = {k: eff[k] for k in (eff.get("file_override") or []) if k in eff}
-            if "role" in (eff.get("file_override") or []):
-                overrides["artifact_role"] = overrides.pop("role")
-            plan.files.append(FileSpec(
-                root / f["path"], "/seeds/" + "/".join(parts[:-1]), parts[-1], None,
-                retention="replace_current" if mode == "current" else "preserve_history",
-                pin_reason=None if mode == "current" else f"manifest release {manifest['release']}",
-                provenance_extra={"manifest_entry": locked["id"], "manifest_release": manifest["release"], "manifest_sha256": lock["manifest_sha256"], "artifact_sha256": f["sha256"],
-                                  "input_refs": [f["relocated_from"]] if f.get("relocated_from") else [], "loader": locked["loader"], "review": eff.get("review"),
-                                  "generator": {"tool": "mzizi-filesystem sync", "model": None, "note": "no model or generator version is recorded: none is known"},
-                                  "effective_overrides": overrides},
-                declared_type=None))
+        parts = f["path"].split("/")
+        for i in range(1, len(parts)):
+            directory = "/".join(parts[:i])
+            logical = f"{logical_root}/{directory}"
+            if logical not in seen:
+                seen.add(logical)
+                plan.folders.append(FolderSpec(logical, None, _descriptor_fields(directory, root)))
+        eff = f["effective"]
+        overrides = {k: eff[k] for k in (eff.get("file_override") or []) if k in eff}
+        if "role" in overrides:
+            overrides["artifact_role"] = overrides.pop("role")
+        plan.files.append(FileSpec(
+            root / f["path"], f"{logical_root}/" + "/".join(parts[:-1]), parts[-1], None,
+            retention="replace_current" if f["versioning"] == "current" else "preserve_history",
+            pin_reason=f"manifest release {manifest['release']}" if f["pin"] else None,
+            provenance_extra={"manifest_entry": f["entry"], "manifest_release": manifest["release"], "manifest_sha256": manifest_hash, "artifact_sha256": f["sha256"],
+                              "input_refs": [f["origin"]] if f.get("origin") else [], "loader": f["loader"], "review": eff.get("review"), "local_path": f"seed/{f['path']}",
+                              "generator": {"tool": "mzizi-filesystem sync", "model": None, "note": "no model or generator version is recorded: none is known"},
+                              "effective_overrides": overrides},
+            expected_key=f["key"]))
     return assign_codes(plan)
-
-
-def _validator() -> Draft202012Validator:
-    schema = json.loads((SCHEMA_ROOT / "filesystem" / "sync-manifest.schema.json").read_text(encoding="utf-8"))
-    return Draft202012Validator(schema, format_checker=Draft202012Validator.FORMAT_CHECKER)
-
-
-def plan_sync_manifest(path: Path, seed_root: Path | None = None) -> Plan:
-    """Plan from a generic sync manifest (validated against the schema; no executable expressions, only named fields and globs)."""
-    seed_root = seed_root or SEED_ROOT
-    doc = yaml.safe_load(path.read_text(encoding="utf-8"))
-    errors = sorted(_validator().iter_errors(doc), key=lambda e: list(e.absolute_path))
-    if errors:
-        raise ManifestError(f"{path}: " + "; ".join(f"{'/'.join(map(str, e.absolute_path)) or '<root>'}: {e.message}" for e in errors[:5]))
-    if _touches_raw(doc):
-        raise ManifestError("the historical raw collection is excluded from synchronization (it awaits separate reconciliation)")
-    base = (seed_root / doc["root"]).resolve()
-    if seed_root.resolve() not in base.parents and base != seed_root.resolve():
-        raise ManifestError("root escapes the seed root")
-    plan = Plan(doc["name"])
-    folders: dict[str, FolderSpec] = {}
-    logical_root = doc["logical_root"]
-    for f in doc.get("folders", []):
-        folders[f["path"]] = FolderSpec(f["path"], f.get("code"), _classification(f.get("classification", {}), f.get("description")))
-    for entry in doc["entries"]:
-        src = entry["source"]
-        top = (base / src["path"]).resolve()
-        if base not in top.parents and top != base:
-            raise ManifestError(f"{entry['id']}: source path escapes the manifest root")
-        suffix = "" if src["path"] in (".", "") else "/" + src["path"].strip("./").strip("/")
-        entry_folder = entry.get("folder") or f"{logical_root.rstrip('/')}{suffix}"
-        cls = entry.get("classification", {})
-        if entry_folder not in folders:
-            folders[entry_folder] = FolderSpec(entry_folder, entry.get("code"), _classification(cls, entry.get("description")))
-        parts_ = [p for p in entry_folder.split("/") if p]
-        for i in range(1, len(parts_)):  # every ancestor of the entry folder exists (inheriting) so folders are always created parent-first
-            folders.setdefault("/" + "/".join(parts_[:i]), FolderSpec("/" + "/".join(parts_[:i])))
-        if not top.exists():
-            plan.blocked.append((src["path"], "source path does not exist"))
-            continue
-        paths = [top] if top.is_file() else sorted(p for p in top.rglob("*") if p.is_file())
-        for local in paths:
-            rel = local.name if top.is_file() else local.relative_to(top).as_posix()
-            if not selected(rel, src.get("include"), src.get("exclude")):
-                continue
-            reason = None if (entry.get("allow_sensitive") and cls.get("access") == "private") else sensitive_reason(local)
-            if reason:
-                plan.blocked.append((local.relative_to(seed_root).as_posix(), reason))
-                continue
-            parts = rel.split("/")
-            folder = entry_folder
-            if not entry.get("flatten") and len(parts) > 1:
-                for i in range(1, len(parts)):
-                    folder = f"{entry_folder}/" + "/".join(parts[:i])
-                    folders.setdefault(folder, FolderSpec(folder))
-                folder = f"{entry_folder}/" + "/".join(parts[:-1])
-            code = entry.get("identities", {}).get(rel)  # explicit override only; otherwise derived from the folder code
-            plan.files.append(FileSpec(local, folder, parts[-1], code, entry.get("retention") or doc.get("defaults", {}).get("retention", "preserve_history"),
-                                       entry.get("pin_reason"), {"manifest": doc["name"], "manifest_release": doc.get("release"), "manifest_entry": entry["id"], "review": cls.get("review"), "note": entry.get("note")}))
-    plan.folders = sorted(folders.values(), key=lambda f: f.path.count("/"))
-    return assign_codes(plan)
-
-
-def _touches_raw(doc: dict) -> bool:
-    """`raw` (the old .data/raw collection) may not be a manifest root, a source path or a logical folder."""
-    def raw(path: str) -> bool:
-        return "raw" in [p for p in re.split(r"[/\\]", path) if p]
-
-    paths = [doc["root"], doc["logical_root"]] + [f["path"] for f in doc.get("folders", [])]
-    for e in doc["entries"]:
-        paths += [e["source"]["path"], e.get("folder") or ""] + e["source"].get("include", [])
-    return any(raw(p) for p in paths if p)
-
-
-def _classification(cls: dict, description: str | None) -> dict:
-    fields = {k: cls[k] for k in ("access", "artifact_role", "acquisition_class", "preparation", "is_seed", "jurisdiction_code", "allow_weaker_children") if k in cls}
-    if cls.get("access_authorization"):
-        fields["access_authorization"] = cls["access_authorization"]
-    if description:
-        fields["description"] = description
-    meta = {k: cls[k] for k in ("review", "scope", "origin_note") if k in cls}
-    if meta:
-        fields["metadata"] = meta
-    return fields
 
 
 def load_plan(manifest: Path, seed_root: Path | None = None, entry_ids: set[str] | None = None) -> Plan:
-    doc = yaml.safe_load(manifest.read_text(encoding="utf-8"))
-    if isinstance(doc, dict) and doc.get("kind") == "filesystem-sync":
-        return plan_sync_manifest(manifest, seed_root)
-    if manifest.resolve() != ((seed_root or SEED_ROOT) / "manifest.yaml").resolve():
-        raise ManifestError("not a sync manifest and not the root seed manifest")
-    return plan_seed(seed_root, entry_ids)
+    """Only the root seed manifest can be synchronized; there is no second manifest kind."""
+    root = seed_root or SEED_ROOT
+    if manifest.resolve() != (root / seeds.MANIFEST_NAME).resolve():
+        raise ManifestError(f"only {root / seeds.MANIFEST_NAME} can be synchronized")
+    return plan_seed(root, entry_ids)
 
 
 # --------------------------------------------------------------------------------------------- execution
@@ -373,5 +257,7 @@ def run_sync(plan: Plan, service: FilesystemService, *, actor: str | None = None
             continue
         r: Registration = service.register(folder_id, f.name, f.local, code=f.code, retention=f.retention, actor=actor, provenance_extra=f.provenance_extra,
                                            declared_type=f.declared_type, pin_reason=f.pin_reason, dry_run=dry_run)
-        report.items.append(SyncItem("file", f"{f.folder_path}/{f.name}", r.outcome, r.detail, r.action, r.key, r.reused_storage, r.recovered, r.verified, r.revision))
+        if f.expected_key and r.key and r.key != f.expected_key and r.outcome not in ("failed", "conflict", "denied", "blocked"):
+            r.outcome, r.detail = "failed", f"registered key {r.key} differs from the key planned by the lock ({f.expected_key})"
+        report.items.append(SyncItem("file", f"{f.folder_path}/{f.name}", r.outcome, r.detail, r.action, r.key, r.duplicate_of, r.server_copied, r.recovered, r.verified, r.revision))
     return report

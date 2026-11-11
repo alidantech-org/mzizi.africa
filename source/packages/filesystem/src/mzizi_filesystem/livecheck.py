@@ -57,7 +57,7 @@ def run_live_check(store: ObjectStore, repo: Repository | None = None, actor: st
                 if r.key:
                     created_keys.append(r.key)
             step("registered twice", a.outcome == "created" and b.outcome == "created", f"{a.outcome}/{b.outcome}")
-            step("second registration reused the stored bytes", bool(a.key) and a.key == b.key and b.reused_storage, f"{a.key}")
+            step("each file has its own readable key and the second was a server-side copy", bool(a.key) and bool(b.key) and a.key != b.key and a.key.endswith("/one.bin") and b.server_copied, f"{a.key} {b.key}")
             step("registered key is private and verified", bool(a.key) and a.key.startswith("private/") and a.verified)
             for name in ("one.bin", "two.bin"):
                 f = repo.find_file(folder["id"], name)

@@ -5,6 +5,7 @@ migrations:
   - auth/0002_auth_functions.sql
   - engine/0001_engine.sql
   - filesystem/0001_filesystem.sql
+  - filesystem/0002_readable_keys.sql
   - reference/0001_reference.sql
   - geography/0001_geography.sql
   - reference/0002_pattern_contracts.sql

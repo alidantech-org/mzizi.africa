@@ -1,7 +1,9 @@
 """Seed registry: folder metadata resolution, manifest validation and the manifest lock.
 
-Folder metadata (`_folder.yaml`) and `manifest.yaml` are described in seed/README.md. This module only reads and
-validates; it never uploads, applies or deletes anything. Object keys it computes are mappings, not claims.
+`seed/manifest.yaml` (authored) and `seed/manifest.lock.yaml` (generated) are the only seed manifests; per-folder facts live in
+`_folder.yaml`. Layout: `global/`, `system/`, `countries/<code>/`; top-level names beginning with `_` are local-only (fixtures,
+examples) and are never uploaded. This module only reads and validates; it never uploads, applies or deletes anything. The object
+keys it computes are the readable registry paths (`<access><logical_root>/<path>`), a plan, not a claim of publication.
 """
 from __future__ import annotations
 
@@ -14,7 +16,9 @@ from typing import Any
 
 import yaml
 
-from .paths import SEED_ROOT
+from jsonschema import Draft202012Validator
+
+from .paths import SCHEMA_ROOT, SEED_ROOT
 
 ACCESS_RANK = {"public": 0, "internal": 1, "restricted": 2, "private": 3}
 ROLES = ("test_fixture", "seed_input", "pattern_definition", "site_structure", "import_mapping", "policy_definition", "research_registry", "generated_output", "evidence", "backup", "report", "log", "certificate", "object_store")
@@ -32,12 +36,17 @@ LOADERS = frozenset({
     "engine.party-rules", "engine.census-order", "test.catalogue-checks", "none.unconsumed",
 })
 
-INHERITED = ("role", "acquisition_class", "preparation", "access", "scope", "review")
+INHERITED = ("role", "acquisition_class", "preparation", "access", "scope", "review", "seed")
 OVERRIDABLE = {"role", "acquisition_class", "preparation", "access", "review"}
-NOT_ARTIFACTS = {"README.md", "_folder.yaml", "manifest.yaml", "manifest.lock.json", ".gitignore"}
-IGNORED_DIRS = {"generated", "local", "cache", "examples", "manifests"}  # manifests/ holds sync instructions, not seed artifacts
-FIXTURES_DIR = "fixtures"  # classified by folder metadata but not seeds: no manifest entry, never registered
-SYSTEM_TOP_LEVELS = {"fixtures", "generated"}  # top-level folders that may carry a system scope
+MANIFEST_NAME, LOCK_NAME = "manifest.yaml", "manifest.lock.yaml"
+NOT_ARTIFACTS = {"README.md", "_folder.yaml", MANIFEST_NAME, LOCK_NAME, ".gitignore"}  # describe the tree; never uploaded
+IGNORED_DIRS = {"generated", "local", "cache"}  # git-ignored working directories
+LOCAL_ONLY_PREFIX = "_"  # top-level folders beginning with "_" stay local: never in the manifest, never uploaded
+FIXTURES_DIR = "_fixtures"  # classified by folder metadata but not seeds
+COUNTRIES_DIR = "countries"  # jurisdiction-scoped seeds live under countries/<code>/
+VERSIONING = ("versioned", "current")
+MEDIA_TYPES = {"json": "application/json", "geojson": "application/geo+json", "csv": "text/csv", "yaml": "application/yaml", "yml": "application/yaml", "html": "text/html",
+               "md": "text/markdown", "txt": "text/plain", "log": "text/plain", "xml": "application/xml", "pdf": "application/pdf"}
 MAX_BYTES = 2 * 1024 * 1024
 SECRET = re.compile(r"(BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}|aws_secret_access_key|password\s*[:=]\s*\S+|client_secret\s*[:=]\s*\S+)", re.I)
 ACCESS_PREFIX = {"public": "public", "internal": "internal", "restricted": "restricted", "private": "private"}
@@ -134,28 +143,32 @@ def resolve_effective(path: str, root: Path = SEED_ROOT) -> tuple[dict | None, l
         if values.get(field_name) is None:
             errors.append(f"{path}: no {field_name} resolved from any folder; classify it before registration")
     scope = values.get("scope")
-    top = path.split("/")[0]
+    parts = path.split("/")
+    top = parts[0]
     if scope:
         kind = scope.get("kind")
-        expected = "global" if kind == "global" else "system" if kind == "system" else scope.get("code")
-        if top != expected and not (top in SYSTEM_TOP_LEVELS and kind == "system"):
-            errors.append(f"{path}: scope {kind}{':' + scope['code'] if scope.get('code') else ''} does not match its top-level folder {top}")
+        if kind == "jurisdiction":
+            matches = top == COUNTRIES_DIR and len(parts) > 2 and parts[1] == scope.get("code")
+        else:
+            matches = top == kind or (kind == "system" and top.startswith(LOCAL_ONLY_PREFIX))
+        if not matches:
+            errors.append(f"{path}: scope {kind}{':' + scope['code'] if scope.get('code') else ''} does not match its location (global/, system/ or countries/<code>/)")
     if errors:
         return None, errors
     access = values.get("access") or "internal"
     return {
         "role": values["role"], "acquisition_class": values["acquisition_class"], "preparation": values["preparation"], "access": access,
-        "access_defaulted": values.get("access") is None, "scope": scope, "review": values.get("review"), "resolved_from": resolved_from, "file_override": file_override,
+        "access_defaulted": values.get("access") is None, "seed": values.get("seed", True) is not False, "scope": scope, "review": values.get("review"), "resolved_from": resolved_from, "file_override": file_override,
     }, errors
 
 
 # ---------------------------------------------------------------------- manifest
 def load_manifest(root: Path = SEED_ROOT) -> dict:
-    return _load_yaml(root / "manifest.yaml")
+    return _load_yaml(root / MANIFEST_NAME)
 
 
 def _all_files(root: Path) -> list[str]:
-    """Every artifact file under the seed root. Ignored top-level directories (generated, local, cache, examples, manifests) are never entered."""
+    """Every file under the seed root except the files that describe it. Git-ignored working directories are never entered."""
     import os
 
     out = []
@@ -173,7 +186,8 @@ def _all_files(root: Path) -> list[str]:
 
 
 def artifact_files(root: Path = SEED_ROOT) -> list[str]:
-    return [p for p in _all_files(root) if p.split("/")[0] != FIXTURES_DIR]
+    """Files that are uploaded: everything outside the local-only top-level folders."""
+    return [p for p in _all_files(root) if not p.split("/")[0].startswith(LOCAL_ONLY_PREFIX)]
 
 
 def fixture_files(root: Path = SEED_ROOT) -> list[str]:
@@ -187,6 +201,26 @@ def expand_entry(entry: dict, root: Path = SEED_ROOT) -> list[str]:
     base = re.sub(r"\*.*$", "", glob)
     pattern = re.compile("^" + re.escape(glob).replace(r"\*\*", "\0").replace(r"\*", "[^/]*").replace("\0", ".*") + "$")
     return [f for f in artifact_files(root) if f.startswith(base) and pattern.match(f)]
+
+
+def media_type_of(path: str, entry: dict) -> str:
+    return entry.get("media_type") or MEDIA_TYPES.get(Path(path).suffix[1:].lower(), "application/octet-stream")
+
+
+def entry_versioning(entry: dict, manifest: dict) -> str:
+    return entry.get("versioning") or (manifest.get("defaults") or {}).get("versioning") or "versioned"
+
+
+def entry_pinned(entry: dict, manifest: dict) -> bool:
+    """A versioned entry pins its revisions to the manifest release unless it says otherwise; a current-only entry is never pinned."""
+    if entry_versioning(entry, manifest) == "current":
+        return False
+    return entry["pin"] if "pin" in entry else (manifest.get("defaults") or {}).get("pin", True)
+
+
+def object_key(manifest: dict, access: str, path: str) -> str:
+    """The readable object key of a seed file: <access><logical_root>/<path under seed/>."""
+    return f"{access}{manifest['logical_root']}/{path}"
 
 
 def _sha256(path: Path) -> str:
@@ -216,13 +250,15 @@ def validate_manifest(root: Path = SEED_ROOT, repo_root: Path | None = None) -> 
     except Exception as error:  # noqa: BLE001 - report any unreadable manifest
         errors.append(f"manifest.yaml: {error}")
         return result
+    schema = json.loads((SCHEMA_ROOT / "seed" / "manifest.schema.json").read_text(encoding="utf-8"))
+    shape = sorted(Draft202012Validator(schema).iter_errors(manifest), key=lambda e: list(e.absolute_path))
+    if shape:
+        errors.extend(f"manifest.yaml: {'/'.join(map(str, e.absolute_path)) or '<root>'}: {e.message}" for e in shape[:20])
+        return result
     result.manifest = manifest
-    if manifest.get("schema_version") != 1:
-        errors.append("manifest.yaml: schema_version must be 1")
-    if manifest.get("bucket") != "mzizi":
-        errors.append("manifest.yaml: bucket must be mzizi (no new buckets)")
-    if manifest.get("region") != "us-east-1":
-        errors.append("manifest.yaml: region must be us-east-1")
+    for stray in ("manifests", "manifest.lock.json"):
+        if (root / stray).exists():
+            errors.append(f"{stray}: only manifest.yaml and manifest.lock.yaml may exist; remove it")
     ids: set[str] = set()
     covered: dict[str, str] = {}
     entries = manifest.get("entries") or []
@@ -235,6 +271,8 @@ def validate_manifest(root: Path = SEED_ROOT, repo_root: Path | None = None) -> 
         ids.add(eid)
         if bool(entry.get("path")) == bool(entry.get("glob")):
             errors.append(f"{eid}: needs exactly one of path or glob")
+        if bool(entry.get("path")) != bool(entry.get("glob")) and (entry.get("path") or entry["glob"]).split("/")[0].startswith(LOCAL_ONLY_PREFIX):
+            errors.append(f"{eid}: local-only folders (names beginning with _) are never manifest entries")
         if entry.get("loader") not in LOADERS:
             errors.append(f"{eid}: loader {entry.get('loader')} is not allowlisted")
         escapes = False
@@ -254,7 +292,7 @@ def validate_manifest(root: Path = SEED_ROOT, repo_root: Path | None = None) -> 
                 errors.append(f"{file}: covered by both {covered[file]} and {eid}")
             covered[file] = eid
             if absolute.stat().st_size > MAX_BYTES:
-                errors.append(f"{file}: larger than {MAX_BYTES} bytes; large inputs belong in generated/ with a regeneration recipe")
+                errors.append(f"{file}: larger than {MAX_BYTES} bytes; large inputs are registered as collected artifacts, not seed files")
             if SECRET.search(absolute.read_text(encoding="utf-8", errors="replace")):
                 errors.append(f"{file}: looks like it contains a secret")
             effective, meta_errors = resolve_effective(file, root)
@@ -321,37 +359,41 @@ def validate_manifest(root: Path = SEED_ROOT, repo_root: Path | None = None) -> 
     return result
 
 
-def build_lock(manifest: dict, root: Path = SEED_ROOT) -> dict:
-    manifest_text = (root / "manifest.yaml").read_text(encoding="utf-8")
-    entries = []
+def resolve_files(manifest: dict, root: Path = SEED_ROOT) -> list[dict]:
+    """Every uploadable file of the manifest with its identity, effective folder metadata, versioning and readable object key."""
+    out = []
     for entry in manifest["entries"]:
-        files = []
+        versioning, pinned, origin = entry_versioning(entry, manifest), entry_pinned(entry, manifest), entry.get("origin")
         for file in expand_entry(entry, root):
             effective, _ = resolve_effective(file, root)
-            digest = _sha256(root / file)
-            if entry.get("path"):
-                base = re.sub(r"\.[^.]+$", "", file.split("/")[-1])
-            else:
-                glob_base = re.sub(r"[^/]*\*.*$", "", entry["glob"])
-                base = re.sub(r"\.[^./]+$", "", file[len(glob_base):])
-            ext = Path(file).suffix[1:]
-            reloc = entry.get("relocated_from")
-            files.append({
-                "path": file, "sha256": digest, "bytes": (root / file).stat().st_size, "media_type": entry["media_type"],
-                "relocated_from": reloc if isinstance(reloc, str) else (reloc or {}).get(file),
-                "effective": effective, "bucket": manifest["bucket"],
-                "object_key": f"{ACCESS_PREFIX[effective['access']]}/content/sha256/{digest[:2]}/{digest[2:4]}/{digest}",
-                "upload_status": "not_recorded_here",
+            out.append({
+                "path": file, "entry": entry["id"], "loader": entry["loader"], "sha256": _sha256(root / file), "bytes": (root / file).stat().st_size,
+                "media_type": media_type_of(file, entry), "effective": effective, "versioning": versioning, "pin": pinned,
+                "origin": origin if isinstance(origin, str) else (origin or {}).get(file),
+                "key": object_key(manifest, effective["access"], file),
             })
-        entries.append({"id": entry["id"], "loader": entry["loader"], "target": entry["target"], "database_target_state": entry["database_target_state"], "depends_on": entry["depends_on"], "sync_policy": entry["sync_policy"], "files": files})
+    return sorted(out, key=lambda f: f["path"])
+
+
+def manifest_sha256(root: Path = SEED_ROOT) -> str:
+    return hashlib.sha256((root / MANIFEST_NAME).read_bytes()).hexdigest()
+
+
+def build_lock(manifest: dict, root: Path = SEED_ROOT) -> dict:
+    """The lock: one line of identity per file. It records no upload state; publication state lives in the filesystem registry."""
     return {
-        "release": manifest["release"], "manifest_sha256": hashlib.sha256(manifest_text.encode()).hexdigest(),
-        "generated_by": "mzizi-manifest lock (source/packages/manifest); programmatic, no model involved",
-        "bucket": manifest["bucket"], "region": manifest["region"],
-        "note": "The lock plans identities and content-addressed keys; it records no upload state. Publication state lives in the filesystem registry (mzizi_filesystem sync); nothing here claims an artifact is uploaded.",
-        "entries": entries,
+        "schema_version": 2, "release": manifest["release"], "manifest_sha256": manifest_sha256(root), "bucket": manifest["bucket"], "region": manifest["region"],
+        "logical_root": manifest["logical_root"],
+        "files": {f["path"]: {"entry": f["entry"], "sha256": f["sha256"], "bytes": f["bytes"], "media_type": f["media_type"], "access": f["effective"]["access"],
+                              "versioning": f["versioning"], "key": f["key"]} for f in resolve_files(manifest, root)},
     }
 
 
 def dump_lock(lock: dict) -> str:
-    return json.dumps(lock, indent=2, ensure_ascii=False) + "\n"
+    """YAML with one flow-style line per file, so a changed file is a one-line diff."""
+    head = {k: v for k, v in lock.items() if k != "files"}
+    lines = ["# Generated by `uv run mzizi-manifest lock` from manifest.yaml, the _folder.yaml descriptors and the files. Do not edit.",
+             "# It plans identities and readable object keys; it records no upload state (that lives in the filesystem registry).",
+             yaml.safe_dump(head, sort_keys=False, default_flow_style=False).rstrip(), "files:"]
+    lines += [f"  {json.dumps(path, ensure_ascii=False)}: {json.dumps(value, ensure_ascii=False)}" for path, value in lock["files"].items()]
+    return "\n".join(lines) + "\n"

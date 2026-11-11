@@ -1,8 +1,8 @@
 """Direct upload sessions and bounded cleanup.
 
 A session reserves a temporary key under private/tmp/uploads/ (always private, whatever the destination), hands the client a
-presigned PUT (or a multipart id), and `complete` verifies the stored bytes by streaming them, copies them to the immutable
-content key of the destination folder's access class, registers the file/version and only then removes its own temporary
+presigned PUT (or a multipart id), and `complete` verifies the stored bytes by streaming them, stores them at the readable
+key of the destination folder (see keys.py), registers the file/version and only then removes its own temporary
 object. Cleanup is lease-aware: an upload whose lease lapsed without renewal is abandoned, its multipart upload aborted, its own
 temp object removed; completed file records are never touched and old session metadata is trimmed in bounded batches.
 """
@@ -36,7 +36,10 @@ def create_upload(service: FilesystemService, folder_id: str, filename: str, *, 
     return row
 
 
-def complete_upload(service: FilesystemService, upload_id: str, *, actor: str | None, code: str | None = None, retention: str = "preserve_history", provenance_extra: dict | None = None) -> Registration:
+def complete_upload(service: FilesystemService, upload_id: str, *, actor: str | None, code: str | None = None, retention: str = "preserve_history", provenance_extra: dict | None = None,
+                    on_duplicate: str = "keep_both", on_name_conflict: str = "new_version") -> Registration:
+    """Registers a finished upload under its original file name. The two policies are those of `FilesystemService.register`: a client
+    that must never replace or re-store content passes on_name_conflict="keep_both" and on_duplicate="reuse_existing"."""
     repo, store = service.repo, service.store
     up = repo.get_upload(upload_id)
     if up is None or up["status"] not in ("pending", "uploaded"):
@@ -63,11 +66,12 @@ def complete_upload(service: FilesystemService, upload_id: str, *, actor: str | 
     else:
         source = data_head
     try:
-        reg = service.register(up["folder_id"], up["filename"], source, code=code, retention=retention, actor=actor, provenance_extra=provenance_extra, original_filename=up["filename"])
+        reg = service.register(up["folder_id"], up["filename"], source, code=code, retention=retention, actor=actor, provenance_extra=provenance_extra, original_filename=up["filename"],
+                               on_duplicate=on_duplicate, on_name_conflict=on_name_conflict)
     finally:
         if isinstance(source, Path):
             source.unlink(missing_ok=True)
-    if reg.outcome in ("created", "updated", "unchanged"):
+    if reg.outcome in ("created", "updated", "unchanged", "duplicate"):
         repo.set_upload(upload_id, "completed", None, reg.version_id)
         _delete_owned_temp(service, up)
     else:

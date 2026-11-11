@@ -75,12 +75,6 @@ class Repository:
             raise Conflict(f"folder {folder_id} changed concurrently (expected revision {expected_revision})")
         return row
 
-    def move_folder(self, folder_id: str, expected_revision: int, new_parent_id: str | None) -> dict:
-        row = self.conn.execute("UPDATE filesystem.folders SET parent_id = %s WHERE id = %s AND revision = %s RETURNING *", (new_parent_id, folder_id, expected_revision)).fetchone()
-        if row is None:
-            raise Conflict(f"folder {folder_id} changed concurrently")
-        return row
-
     # -------------------------------------------------------------------------------------------- files
     def get_file(self, file_id: str) -> dict | None:
         return self.conn.execute("SELECT * FROM filesystem.files WHERE id = %s", (file_id,)).fetchone()
@@ -97,10 +91,29 @@ class Repository:
     def versions(self, file_id: str) -> list[dict]:
         return self.conn.execute("SELECT * FROM filesystem.file_versions WHERE file_id = %s ORDER BY revision", (file_id,)).fetchall()
 
-    def find_reusable_key(self, access: str, sha256: str, size: int) -> str | None:
-        """An existing physical key for these exact bytes inside the same access boundary (key prefix = access), else None."""
-        row = self.conn.execute("SELECT s3_key FROM filesystem.file_versions WHERE sha256 = %s AND size_bytes = %s AND split_part(s3_key, '/', 1) = %s ORDER BY created_at LIMIT 1", (sha256, size, access)).fetchone()
-        return row["s3_key"] if row else None
+    def find_same_content(self, access: str, sha256: str, size: int, exclude_file_id: str | None = None) -> dict | None:
+        """A current version holding these exact bytes inside the same access class (never across classes), with its file path; else None."""
+        return self.conn.execute(
+            """SELECT v.*, filesystem.file_path(f.id) AS path FROM filesystem.file_versions v JOIN filesystem.files f ON f.current_version_id = v.id
+                WHERE v.sha256 = %s AND v.size_bytes = %s AND split_part(v.s3_key, '/', 1) = %s AND (%s::uuid IS NULL OR f.id <> %s)
+                ORDER BY v.created_at LIMIT 1""", (sha256, size, access, exclude_file_id, exclude_file_id)).fetchone()
+
+    def duplicates(self, limit: int = 200) -> list[dict]:
+        """Groups of current versions with equal bytes (same sha256 and size), largest waste first."""
+        return self.conn.execute(
+            """SELECT v.sha256, v.size_bytes, count(*) AS copies, array_agg(filesystem.file_path(f.id) ORDER BY filesystem.file_path(f.id)) AS paths
+                 FROM filesystem.file_versions v JOIN filesystem.files f ON f.current_version_id = v.id
+                GROUP BY v.sha256, v.size_bytes HAVING count(*) > 1 ORDER BY v.size_bytes * (count(*) - 1) DESC LIMIT %s""", (limit,)).fetchall()
+
+    def version_protected(self, version_id: str) -> bool:
+        """Pinned, or taking part in a derivation relation: such a version is never dropped."""
+        return bool(self.conn.execute(
+            """SELECT 1 FROM filesystem.file_versions v WHERE v.id = %s AND (v.pinned OR EXISTS (SELECT 1 FROM filesystem.file_relations r WHERE r.source_version_id = v.id OR r.derived_version_id = v.id))""",
+            (version_id,)).fetchone())
+
+    def expected_key(self, version_id: str) -> str | None:
+        row = self.conn.execute("SELECT filesystem.version_key(%s) AS k", (version_id,)).fetchone()
+        return row["k"] if row else None
 
     def key_in_use(self, key: str) -> bool:
         return bool(self.conn.execute("SELECT filesystem.key_in_use(%s) AS u", (key,)).fetchone()["u"])
@@ -119,18 +132,22 @@ class Repository:
             file = self.conn.execute("UPDATE filesystem.files SET current_version_id = %s WHERE id = %s RETURNING *", (created["id"], file["id"])).fetchone()
         return file, created
 
-    def add_version(self, file_id: str, expected_revision: int, version: dict, actor: str | None, retention: str | None = None) -> tuple[dict, dict, list[dict]]:
-        """A new current version under optimistic concurrency. Returns (file, version, pruned versions). replace_current drops unpinned
-        superseded versions that no relation references; their S3 keys are returned for explicit cleanup, never deleted here."""
+    def add_version(self, file_id: str, expected_revision: int, version: dict, actor: str | None, archive_key: str | None = None) -> tuple[dict, dict, list[dict]]:
+        """A new current version under optimistic concurrency. Returns (file, version, pruned versions).
+
+        The superseded current version leaves the readable key first (a key belongs to one version): it is repointed to `archive_key`,
+        where the service has already preserved and verified its bytes. Under replace_current, unpinned superseded versions that no
+        relation references are then dropped; their keys are returned for explicit cleanup, never deleted here."""
         with self.transaction():
             file = self.conn.execute("SELECT * FROM filesystem.files WHERE id = %s AND revision = %s FOR UPDATE", (file_id, expected_revision)).fetchone()
             if file is None:
                 raise Conflict(f"file {file_id} changed concurrently (expected revision {expected_revision})")
-            policy = retention or file["retention"]
+            if file["current_version_id"] and archive_key:
+                self.relocate_version(file["current_version_id"], archive_key)
             new = self._insert_version(file_id, file["last_revision"] + 1, version, actor)
-            updated = self.conn.execute("UPDATE filesystem.files SET current_version_id = %s, retention = %s WHERE id = %s RETURNING *", (new["id"], policy, file_id)).fetchone()
+            updated = self.conn.execute("UPDATE filesystem.files SET current_version_id = %s WHERE id = %s RETURNING *", (new["id"], file_id)).fetchone()
             pruned: list[dict] = []
-            if policy == "replace_current":
+            if file["retention"] == "replace_current":
                 old = self.conn.execute(
                     """SELECT v.* FROM filesystem.file_versions v WHERE v.file_id = %s AND v.id <> %s AND NOT v.pinned
                          AND NOT EXISTS (SELECT 1 FROM filesystem.file_relations r WHERE r.source_version_id = v.id OR r.derived_version_id = v.id)""", (file_id, new["id"])).fetchall()
@@ -139,11 +156,18 @@ class Repository:
                     pruned.append(row)
         return updated, new, pruned
 
-    def move_file(self, file_id: str, expected_revision: int, new_folder_id: str, new_name: str | None = None) -> dict:
-        with self.transaction():
-            row = self.conn.execute("UPDATE filesystem.files SET folder_id = %s, name = coalesce(%s, name) WHERE id = %s AND revision = %s RETURNING *", (new_folder_id, new_name, file_id, expected_revision)).fetchone()
-            if row is None:
-                raise Conflict(f"file {file_id} changed concurrently")
+    def set_file_place(self, file_id: str, expected_revision: int, folder_id: str, name: str) -> dict:
+        """Row change only; the caller relocates the objects in the same transaction (transitions.move_file)."""
+        row = self.conn.execute("UPDATE filesystem.files SET folder_id = %s, name = %s WHERE id = %s AND revision = %s RETURNING *", (folder_id, name, file_id, expected_revision)).fetchone()
+        if row is None:
+            raise Conflict(f"file {file_id} changed concurrently")
+        return row
+
+    def set_folder_place(self, folder_id: str, expected_revision: int, parent_id: str | None, name: str) -> dict:
+        """Row change only; the caller relocates the objects in the same transaction (transitions.move_folder)."""
+        row = self.conn.execute("UPDATE filesystem.folders SET parent_id = %s, name = %s WHERE id = %s AND revision = %s RETURNING *", (parent_id, name, folder_id, expected_revision)).fetchone()
+        if row is None:
+            raise Conflict(f"folder {folder_id} changed concurrently")
         return row
 
     def delete_file(self, file_id: str, expected_revision: int) -> list[dict]:

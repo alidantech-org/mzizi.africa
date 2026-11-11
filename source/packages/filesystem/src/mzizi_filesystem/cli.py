@@ -1,13 +1,20 @@
-"""mzizi-filesystem: synchronize, inspect and maintain the filesystem registry.
+"""mzizi-filesystem: synchronize, inspect and maintain the filesystem registry and its bucket.
 
-  uv run mzizi-filesystem sync --manifest seed/manifest.yaml                 # preview (default, writes nothing)
-  uv run mzizi-filesystem sync --manifest seed/manifest.yaml --apply --actor <account-id>
-  uv run mzizi-filesystem sync --manifest seed/manifests/legacy-artifacts.yaml --apply --actor <account-id>
-  uv run mzizi-filesystem tree [/path]            uv run mzizi-filesystem cleanup-uploads [--apply]
-  uv run mzizi-filesystem transition-access /path internal --apply --actor <id>      uv run mzizi-filesystem live-check --apply
+  uv run mzizi-filesystem sync                                   # preview of seed/manifest.yaml (default, writes nothing)
+  uv run mzizi-filesystem sync --apply --operator                # upload and register; or --actor <account id | issuer|subject>
+  uv run mzizi-filesystem tree [/path]                           # folders with their effective classification
+  uv run mzizi-filesystem ls /seed/global/auth                   # files with their object keys
+  uv run mzizi-filesystem verify                                 # registry against bucket (missing, changed, unregistered objects)
+  uv run mzizi-filesystem duplicates                             # files with equal content
+  uv run mzizi-filesystem move /seed/a/b.json --name c.json --apply --operator      # rename or move; objects are relocated
+  uv run mzizi-filesystem transition-access /path internal --apply --operator
+  uv run mzizi-filesystem wipe --registry --bucket               # fresh start preview; --apply --confirm mzizi to run it
+  uv run mzizi-filesystem cleanup-uploads [--apply]              uv run mzizi-filesystem live-check --apply
 
-S3 comes from the environment (S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY, optional S3_PUBLIC_ENDPOINT); the repository-root .env (git-ignored) is loaded when variables are unset; AWS_* names alias S3_*; the database is mzizi_new
-(REWRITE_DATABASE_URL). Apply needs --actor (an account of the auth schema) unless --operator is given for local repository tooling.
+The object key is the registry path: <access>/<folder path>/<file name>. public/raw/ is a protected archive that no command writes or
+deletes. S3 comes from the environment (S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY, optional S3_PUBLIC_ENDPOINT); the repository-root
+.env (git-ignored) is loaded when variables are unset; AWS_* names alias S3_*; the database is mzizi_new (REWRITE_DATABASE_URL).
+Apply needs --actor (an account of the auth schema) unless --operator is given for local repository tooling.
 """
 from __future__ import annotations
 
@@ -26,8 +33,9 @@ from .env import load_environment
 from .secure import fetch_secure_file
 from .service import FilesystemService
 from .store import MemoryObjectStore, S3ObjectStore, StoreError
+from .reset import verify_registry, wipe_bucket, wipe_registry
 from .sync import ManifestError, load_plan, run_sync
-from .transitions import transition_folder_access
+from .transitions import move_file, move_folder, transition_folder_access
 from .uploads import cleanup_uploads
 
 
@@ -69,6 +77,14 @@ def main(argv: list[str] | None = None) -> int:
     c = sub.add_parser("cleanup-uploads"); c.add_argument("--apply", action="store_true"); c.add_argument("--store", choices=["auto", "s3", "memory"], default="auto")
     a = sub.add_parser("transition-access"); a.add_argument("path"); a.add_argument("access"); a.add_argument("--apply", action="store_true"); a.add_argument("--actor"); a.add_argument("--operator", action="store_true"); a.add_argument("--store", choices=["auto", "s3", "memory"], default="auto")
     sg = sub.add_parser("secure-get", help="download a registered security file into the git-ignored local cache and print its path"); sg.add_argument("path"); sg.add_argument("--refresh", action="store_true"); sg.add_argument("--store", choices=["auto", "s3", "memory"], default="s3")
+    ls = sub.add_parser("ls", help="files of a folder with revision, size and object key"); ls.add_argument("path")
+    sub.add_parser("duplicates", help="files with equal content (same sha256 and size)")
+    vf = sub.add_parser("verify", help="compare the registry with the bucket"); vf.add_argument("--store", choices=["auto", "s3", "memory"], default="s3"); vf.add_argument("--limit", type=int, default=20)
+    mv = sub.add_parser("move", help="rename and/or move a file or folder; its objects are relocated to the new readable keys")
+    mv.add_argument("path"); mv.add_argument("--name"); mv.add_argument("--to", help="destination folder path"); mv.add_argument("--apply", action="store_true"); mv.add_argument("--actor"); mv.add_argument("--operator", action="store_true"); mv.add_argument("--store", choices=["auto", "s3", "memory"], default="auto")
+    wp = sub.add_parser("wipe", help="fresh start: delete registry rows and/or every object outside the protected public/raw/ archive (dry run by default)")
+    wp.add_argument("--registry", action="store_true"); wp.add_argument("--bucket", action="store_true"); wp.add_argument("--drop-dependents", action="store_true", help="also delete rows of other schemas that reference file versions (reload them from seed afterwards)")
+    wp.add_argument("--apply", action="store_true"); wp.add_argument("--confirm", help="must be the bucket name when applying"); wp.add_argument("--store", choices=["auto", "s3", "memory"], default="s3")
     lv = sub.add_parser("live-check"); lv.add_argument("--apply", action="store_true"); lv.add_argument("--actor")
     args = p.parse_args(argv)
     load_environment()
@@ -91,7 +107,47 @@ def main(argv: list[str] | None = None) -> int:
             report = run_live_check(S3ObjectStore(), repo, _actor(conn, args))
             print(json.dumps(report, indent=2))
             return 0 if report["ok"] else 1
+        if args.command == "ls":
+            folder = repo.folder_by_path(args.path)
+            if folder is None:
+                print(f"no such folder {args.path}", file=sys.stderr)
+                return 1
+            for r in conn.execute("SELECT f.name, f.retention, v.revision, v.size_bytes, v.s3_key, v.pinned FROM filesystem.files f JOIN filesystem.file_versions v ON v.id = f.current_version_id WHERE f.folder_id = %s ORDER BY f.name", (folder["id"],)).fetchall():
+                print(f"{r['name']}  r{r['revision']}  {r['size_bytes']} bytes  {r['retention']}{' pinned' if r['pinned'] else ''}  {r['s3_key']}")
+            return 0
+        if args.command == "duplicates":
+            rows = repo.duplicates()
+            for r in rows:
+                print(f"{r['copies']} copies, {r['size_bytes']} bytes each, sha256 {r['sha256'][:16]}:")
+                for path in r["paths"]:
+                    print(f"  {path}")
+            print(f"{len(rows)} groups of equal content")
+            return 0
         store = _store(getattr(args, "store", "auto"), getattr(args, "apply", False))
+        if args.command == "verify":
+            rep = verify_registry(conn, store)
+            out = {"clean": rep.clean, "versions": rep.versions, "ok": rep.ok, "protected_objects": rep.protected_objects}
+            for name in ("missing", "mismatched", "misplaced", "unregistered"):
+                out[name] = {"count": len(getattr(rep, name)), "first": getattr(rep, name)[: args.limit]}
+            print(json.dumps(out, indent=2))
+            return 0 if rep.clean else 1
+        if args.command == "wipe":
+            if not (args.registry or args.bucket):
+                print("say what to wipe: --registry, --bucket or both", file=sys.stderr)
+                return 2
+            if args.apply and args.confirm != store.bucket:
+                print(f"applying a wipe needs --confirm {store.bucket}", file=sys.stderr)
+                return 2
+            out: dict = {}
+            if args.registry:
+                out["registry"] = wipe_registry(conn, dry_run=not args.apply, drop_dependents=args.drop_dependents)
+                if out["registry"].get("error"):
+                    print(json.dumps(out, indent=2, default=str))
+                    return 1
+            if args.bucket:
+                out["bucket"] = wipe_bucket(store, dry_run=not args.apply)
+            print(json.dumps(out, indent=2, default=str))
+            return 0
         if args.command == "secure-get":
             print(fetch_secure_file(conn, store, args.path, refresh=args.refresh))
             return 0
@@ -114,6 +170,24 @@ def main(argv: list[str] | None = None) -> int:
             rep = transition_folder_access(service, folder["id"], args.access, actor=actor, dry_run=not args.apply)
             print(json.dumps(vars(rep), indent=2, default=str))
             return 0 if rep.error is None else 1
+        if args.command == "move":
+            target = args.path.rstrip("/")
+            dest = repo.folder_by_path(args.to) if args.to else None
+            if args.to and dest is None:
+                print(f"no such folder {args.to}", file=sys.stderr)
+                return 1
+            folder = repo.folder_by_path(target)
+            if folder is not None:
+                rep = move_folder(service, folder["id"], new_parent_id=dest["id"] if dest else None, new_name=args.name, actor=actor, dry_run=not args.apply)
+            else:
+                parent = repo.folder_by_path(target.rsplit("/", 1)[0] or "/")
+                file = repo.find_file(parent["id"], target.rsplit("/", 1)[1]) if parent else None
+                if file is None:
+                    print(f"no such file or folder {target}", file=sys.stderr)
+                    return 1
+                rep = move_file(service, file["id"], new_folder_id=dest["id"] if dest else None, new_name=args.name, actor=actor, dry_run=not args.apply)
+            print(json.dumps(vars(rep), indent=2, default=str))
+            return 0 if rep.error is None else 1
         try:
             plan = load_plan(Path(args.manifest), entry_ids=set(args.entry or []) or None)
         except ManifestError as error:
@@ -125,7 +199,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"store error: {error}", file=sys.stderr)
             return 1
         out = {"manifest": plan.name, "dry_run": report.dry_run, "ok": report.ok, "folders": report.summary("folder"), "files": report.summary("file"),
-               "reused_storage": sum(1 for i in report.items if i.reused_storage), "recovered": sum(1 for i in report.items if i.recovered),
+               "duplicates": sum(1 for i in report.items if i.duplicate_of), "server_copied": sum(1 for i in report.items if i.server_copied), "recovered": sum(1 for i in report.items if i.recovered),
                "problems": [vars(i) for i in report.problems()[: args.limit_problems]]}
         print(json.dumps(out, indent=2))
         return 0 if report.ok else 1

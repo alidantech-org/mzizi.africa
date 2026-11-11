@@ -1,0 +1,6 @@
+description: Run reports, plans and logs written by the retired Kenyan importers (elections, office holders, MCA gazette, ORPP, PPF). Kept as a record of what those runs produced; not seed inputs and not reviewed facts.
+role: report
+seed: false
+acquisition_class: internally_derived
+preparation: programmatically_generated
+review: {status: needs_review, note: "Generated on 2-3 November 2026 by importers that are now archived; contents were not reviewed line by line."}
