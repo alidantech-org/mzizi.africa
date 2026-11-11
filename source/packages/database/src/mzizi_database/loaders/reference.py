@@ -88,3 +88,52 @@ def apply_country_seed(conn, path: Path | None = None) -> int:
             conn.execute("INSERT INTO reference.countries(code,name,iso_alpha2,recognition_status,source_file_version_id) VALUES (%s,%s,%s,%s,%s)", (row["code"], *wanted))
             added += 1
     return added
+
+
+def apply_geography_roots(conn) -> dict[str, int]:
+    """Create Africa and AU-member M49 area identities without inventing boundaries or administrative ancestry."""
+    assert_rewrite_session(conn)
+    data = json.loads((SEED_ROOT / COUNTRY_SEED_PATH).read_text(encoding="utf-8"))
+    source = next(s for s in data["source_artifacts"] if s["path"].endswith("un-m49-overview-2026-11-11.html"))
+    import hashlib
+    if hashlib.sha256((SEED_ROOT / source["path"]).read_bytes()).hexdigest() != source["sha256"]:
+        raise ValueError("UN M49 source snapshot hash changed")
+    evidence = conn.execute(
+        "SELECT id FROM filesystem.file_versions WHERE sha256=%s AND pinned=true AND provenance->>'manifest_entry'='global.reference.un-m49-source' ORDER BY created_at DESC LIMIT 1",
+        (source["sha256"],),
+    ).fetchone()
+    if not evidence:
+        raise ValueError("UN M49 source artifact is not registered and pinned")
+    file_id = evidence["id"]
+    scheme = conn.execute("SELECT id FROM reference.schemes WHERE code='geo_unit_type'").fetchone()["id"]
+    types = {r["code"]: r["id"] for r in conn.execute("SELECT id,code FROM reference.values WHERE scheme_id=%s", (scheme,))}
+    counts = {"units": 0, "country_links": 0}
+    with conn.transaction():
+        items = [("geo.africa", "Africa", "geo_unit_type.continent", None)]
+        items += [(f"geo.{r['code']}", r["un_m49_label"], "geo_unit_type.country_territory", r) for r in data["rows"]]
+        for code, name, type_code, country in items:
+            current = conn.execute("SELECT id,name,type_value_id,source_file_version_id FROM geography.units WHERE code=%s", (code,)).fetchone()
+            wanted = (name, types[type_code], file_id)
+            if current:
+                if (current["name"], current["type_value_id"], current["source_file_version_id"]) != wanted:
+                    raise ValueError(f"geography root conflict: {code}")
+                unit_id = current["id"]
+            else:
+                unit_id = conn.execute(
+                    "INSERT INTO geography.units(code,name,type_scheme_id,type_value_id,existence_status,source_file_version_id) VALUES (%s,%s,%s,%s,'established',%s) RETURNING id",
+                    (code, name, scheme, types[type_code], file_id),
+                ).fetchone()["id"]
+                counts["units"] += 1
+            if country:
+                identity = conn.execute("SELECT id FROM reference.countries WHERE code=%s", (country["code"],)).fetchone()
+                if not identity:
+                    raise ValueError(f"country identity absent: {country['code']}")
+                kind = "statistical_area"
+                existing = conn.execute("SELECT id,relation_kind,evidence_file_version_id FROM geography.country_territories WHERE country_id=%s AND unit_id=%s AND period IS NULL", (identity["id"], unit_id)).fetchone()
+                if existing:
+                    if (existing["relation_kind"], existing["evidence_file_version_id"]) != (kind, file_id):
+                        raise ValueError(f"country territory link conflict: {code}")
+                else:
+                    conn.execute("INSERT INTO geography.country_territories(country_id,unit_id,relation_kind,evidence_file_version_id) VALUES (%s,%s,%s,%s)", (identity["id"], unit_id, kind, file_id))
+                    counts["country_links"] += 1
+    return counts

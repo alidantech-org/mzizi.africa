@@ -5,7 +5,7 @@ import psycopg
 
 from mzizi_database import connect, rewrite_url
 from mzizi_database.cli import init
-from mzizi_database.loaders.reference import apply_reference_seed, apply_country_seed, COUNTRY_SEED_PATH, SEED_PATH, SEED_ROOT
+from mzizi_database.loaders.reference import apply_reference_seed, apply_country_seed, apply_geography_roots, COUNTRY_SEED_PATH, SEED_PATH, SEED_ROOT
 
 
 def test_foundation_seed_is_idempotent_and_wrong_scheme_is_rejected():
@@ -70,4 +70,32 @@ def test_official_country_reconciliation_has_55_unique_codes_and_checks_source_h
     with connect(rewrite_url()) as db:
         with pytest.raises(ValueError, match="source snapshot hash changed"):
             apply_country_seed(db, altered)
+        db.rollback()
+
+
+def test_official_country_and_statistical_area_loads_are_idempotent():
+    with connect(rewrite_url()) as db:
+        assert apply_country_seed(db) == 0
+        assert apply_geography_roots(db) == {"units": 0, "country_links": 0}
+        counts = db.execute("SELECT (SELECT count(*) FROM reference.countries) countries, (SELECT count(*) FROM geography.units WHERE code='geo.africa') africa, (SELECT count(*) FROM geography.country_territories WHERE relation_kind='statistical_area') statistical_links, (SELECT count(*) FROM geography.boundary_representations) boundaries").fetchone()
+        assert counts == {"countries": 55, "africa": 1, "statistical_links": 55, "boundaries": 0}
+        db.rollback()
+
+
+def test_reviewed_pattern_requires_pinned_artifact_and_retains_it():
+    import pytest
+    with connect(rewrite_url()) as db:
+        actor = db.execute("INSERT INTO auth.accounts(display_name) VALUES ('Pattern test actor') RETURNING id").fetchone()["id"]
+        pattern = db.execute("INSERT INTO reference.patterns(code,name,description,owner_account_id) VALUES ('test.pattern_release','Test','Test',%s) RETURNING id", (actor,)).fetchone()["id"]
+        version = db.execute("SELECT id,sha256 FROM filesystem.file_versions WHERE provenance->>'manifest_entry'='global.reference.au-members-source' AND pinned ORDER BY created_at DESC LIMIT 1").fetchone()
+        db.execute("SAVEPOINT unpinned")
+        db.execute("UPDATE filesystem.file_versions SET pinned=false,pin_reason=NULL WHERE id=%s", (version['id'],))
+        with pytest.raises(psycopg.errors.RaiseException, match='requires pinned artifact'):
+            db.execute("INSERT INTO reference.pattern_versions(pattern_id,version,file_version_id,schema_version,capability,capability_version,input_hash,max_outputs,reviewed_by,reviewed_at) VALUES (%s,1,%s,'v1','filesystem.sync','0.2.0',%s,10,%s,now())", (pattern, version['id'], '0'*64, actor))
+        db.execute("ROLLBACK TO SAVEPOINT unpinned")
+        db.execute("INSERT INTO reference.pattern_versions(pattern_id,version,file_version_id,schema_version,capability,capability_version,input_hash,max_outputs,reviewed_by,reviewed_at) VALUES (%s,1,%s,'v1','filesystem.sync','0.2.0',%s,10,%s,now())", (pattern, version['id'], '0'*64, actor))
+        db.execute("SAVEPOINT referenced")
+        with pytest.raises(psycopg.errors.RaiseException, match='still references'):
+            db.execute("UPDATE filesystem.file_versions SET pinned=false,pin_reason=NULL WHERE id=%s", (version['id'],))
+        db.execute("ROLLBACK TO SAVEPOINT referenced")
         db.rollback()

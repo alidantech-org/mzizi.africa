@@ -29,6 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("init", help="create mzizi_new if missing, apply pending SQL, apply the auth seed")
     sub.add_parser("reset", help="drop and recreate mzizi_new only (host and current_database() verified), then init")
     sub.add_parser("load-countries", help="load the reviewed 55 AU/UN country reconciliation after exact source artifacts are pinned")
+    sub.add_parser("load-geography-roots", help="create Africa and the 55 AU-member M49 area identities without geometry")
     admin = sub.add_parser("bootstrap-admin", help="create the first administrator; identity from args or the AUTH_BOOTSTRAP_* variables named in seed/global/auth/bootstrap.yaml")
     admin.add_argument("issuer", nargs="?")
     admin.add_argument("subject", nargs="?")
@@ -48,6 +49,10 @@ def main(argv: list[str] | None = None) -> int:
         with connect(rewrite_url()) as conn:
             assert_rewrite_session(conn)
             print(json.dumps({"countries_added": reference.apply_country_seed(conn)}))
+    elif args.command == "load-geography-roots":
+        with connect(rewrite_url()) as conn:
+            assert_rewrite_session(conn)
+            print(json.dumps(reference.apply_geography_roots(conn)))
     else:
         definition = auth.read_bootstrap()
         env = definition["identity"]
