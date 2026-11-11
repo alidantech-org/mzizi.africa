@@ -1,4 +1,8 @@
 ---
+{id: TSK-A5D7B8F87A9D,name: "Restructure into packages, single Python engine and archived history",type: task,status: completed,priority: medium,created_at: 2026-11-08T09:00:22.023Z,updated_at: 2026-11-11T04:29:39.867Z,depends_on: [TSK-0F4398B91D38],order: 1792,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-08T09:00:27.617Z},{from: in-progress,to: completed,at: 2026-11-11T04:29:39.867Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-A5D7B8F87A9D/1794128427627-start,started_at: 2026-11-08T09:00:28.287Z,end_ref: refs/tracking/TSK-A5D7B8F87A9D/1794371379869-end,ended_at: 2026-11-11T04:29:39.867Z,summary: {files: 915,insertions: 12737,deletions: 575}}]}}}
+---
+
+---
 {id: TSK-A5D7B8F87A9D,name: "Restructure into packages, single Python engine and archived history",type: task,status: in-progress,priority: medium,created_at: 2026-11-08T09:00:22.023Z,updated_at: 2026-11-08T09:00:27.617Z,depends_on: [TSK-0F4398B91D38],order: 1792,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-08T09:00:27.617Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-A5D7B8F87A9D/1794128427627-start,started_at: 2026-11-08T09:00:28.287Z}]}}}
 ---
 
@@ -35,3 +39,9 @@ Constraints: bucket `mzizi`, region `us-east-1`, existing credentials, only `pub
 **Verification.** `uv run pytest source` (145 tests: packages 130 plus engine 15), API auth specs 148, `uv lock --check`, `task validate`.
 
 **Gaps.** Domain schemas, source intelligence, scheduling, NestJS callback endpoint and SSE relay, agent provider, PostgreSQL filesystem registry adapter, live S3 smoke, source-specific extraction and candidate staging/promotion are untouched; API integration specs that need the old Dryv-entity schema cannot run until entities are rebuilt in `mzizi_new`.
+
+## Closeout verification — 2026-11-11
+
+The package layout, archive boundary, Python workspace, NestJS location, SQL ownership and executable capability registry were inspected. Fresh checks: 175 Python tests passed; the API auth selection passed 148 tests with 10 todo cases in matched legal suites; uv lock check passed. Manifest validation passed for 54 entries with 101 existing provenance-review warnings. These warnings require content review and are not a missing package-layout implementation.
+
+The original five acceptance items remain satisfied. Later filesystem work supersedes the earlier publication adapter/command notes: use mzizi-filesystem sync and the PostgreSQL repository, with file_relations for version lineage. PostgreSQL filesystem support and live S3 verification are no longer outstanding restructuring gaps; see task 02. Domain schemas, scheduling, source manifest execution, canonical promotion, real agent providers and NestJS callback/SSE integration remain later milestones explicitly excluded from this foundational task. Implementation commits are present in local origin/develop history. No archive code was executed and no live S3 write was repeated in this review.

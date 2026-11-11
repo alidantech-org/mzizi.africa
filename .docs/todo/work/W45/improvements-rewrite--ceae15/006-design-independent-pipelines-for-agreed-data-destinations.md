@@ -2,6 +2,10 @@
 {id: TSK-7ED801464BFD,name: Design independent pipelines for agreed data destinations,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:29.468Z,updated_at: 2026-11-08T06:46:29.468Z,depends_on: [TSK-0B9CCF587F64],order: 6144}
 ---
 
+---
+{id: TSK-7ED801464BFD,name: Design independent pipelines for agreed data destinations,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:29.468Z,updated_at: 2026-11-08T06:46:29.468Z,depends_on: [TSK-0B9CCF587F64],order: 6144}
+---
+
 # 06 — Design independent pipelines for agreed data destinations
 
 ## Goal
@@ -55,7 +59,7 @@ This is a future milestone requirement; keep the task planned and preserve depen
 
 ## 2026-11-08 — Package-first rewrite direction
 
-The user authorizes structure/package extraction and historical archiving now. Target: reusable capabilities under source/packages/, one Python orchestrator/API project under source/backend/engine/, preserved NestJS product API relocated to source/apps/api/, input schemas in source/schema/, and prepared inputs in seed/. Archive old engine/data, engine/database and api-legacy under .docs/_archives/<dated-rewrite-snapshot>/ after preserving active auth rewrite work; remove obsolete backend/files and backend/intelligence active scaffolds. Follow [the controlling structure and publication requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/independent-data-pipelines.md#2026-11-08--approved-package-first-layout-and-single-python-engine).
+The user authorizes structure/package extraction and historical archiving now. Target: reusable capabilities under source/packages/, one Python orchestrator/API project under source/backend/engine/, preserved NestJS product API relocated to source/backend/api/, input schemas in source/schema/, and prepared inputs in seed/. Archive old engine/data, engine/database and api-legacy under .docs/_archives/<dated-rewrite-snapshot>/ after preserving active auth rewrite work; remove obsolete backend/files and backend/intelligence active scaffolds. Follow [the controlling structure and publication requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/independent-data-pipelines.md#2026-11-08--approved-package-first-layout-and-single-python-engine).
 
 Filesystem package APIs must support seed manifest/folder provenance, registry upload and hash deduplication, immutable releases and conflict-safe updates to explicitly non-versioned logical items. Keep evidence/run snapshots immutable. This authorization covers restructuring foundations, not all later schema/source/pipeline features. Update all active build/Dryv/auth consumers and maintain focused checks. Existing S3 objects remain protected. Historical paths above are superseded for the rewrite as the local agent carries out the relocation.
 
@@ -64,4 +68,4 @@ Filesystem package APIs must support seed manifest/folder provenance, registry u
 
 ## Filesystem integration interface (recorded 8 November 2026)
 
-Pipelines register every artifact (downloaded, converted, extracted, derived) through the filesystem package so hashing, deduplication, verified upload and provenance snapshots are uniform. Extraction steps record `filesystem.extractions` rows linking exact input and output file versions with capability and tool versions and a configuration hash; engine runs and jobs link by `engine_run_id` and `engine_job_id` while scheduling, retries and cancellation stay in the engine schema. Processing status per operation is derived from extraction history, never stored as a flag. Engine endpoints for the filesystem exist under `/v1/filesystem` with folder-scoped authorization from the `auth` schema; SSE events for filesystem changes and the NestJS callback for registered artifacts are still to be designed with the pipeline contracts.
+Pipelines register every artifact (downloaded, converted, extracted, derived) through the filesystem package so hashing, deduplication, verified upload and provenance snapshots are uniform. Derivation records use `filesystem.file_relations` to link exact source and derived file versions, optionally referencing `engine_job_id`. Detailed extraction operation history, capability/tool versions and configuration hashes belong to the engine and remain to be designed in this milestone; the current provisional engine schema contains runs, jobs, events and outbox. Scheduling, retries and cancellation stay in the engine schema. Processing status per operation is derived from extraction history, never stored as a flag. Engine endpoints for the filesystem exist under `/v1/filesystem` with folder-scoped authorization from the `auth` schema; SSE events for filesystem changes and the NestJS callback for registered artifacts are still to be designed with the pipeline contracts.

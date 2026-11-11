@@ -1,4 +1,12 @@
 ---
+{id: TSK-3EA8C40B0F60,name: Design filesystem tables and existing S3 integration,type: task,status: completed,priority: medium,created_at: 2026-11-08T06:46:26.845Z,updated_at: 2026-11-11T04:29:40.735Z,depends_on: [TSK-1AC8F3754DAE,TSK-0F4398B91D38,TSK-A5D7B8F87A9D],order: 2432,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-08T09:39:48.836Z},{from: in-progress,to: completed,at: 2026-11-11T04:29:40.735Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-3EA8C40B0F60/1794130788847-start,started_at: 2026-11-08T09:39:51.343Z,end_ref: refs/tracking/TSK-3EA8C40B0F60/1794371380737-end,ended_at: 2026-11-11T04:29:40.735Z,summary: {files: 88,insertions: 4469,deletions: 1013}}]}}}
+---
+
+---
+{id: TSK-3EA8C40B0F60,name: Design filesystem tables and existing S3 integration,type: task,status: in-progress,priority: medium,created_at: 2026-11-08T06:46:26.845Z,updated_at: 2026-11-11T04:27:14.170Z,depends_on: [TSK-1AC8F3754DAE,TSK-0F4398B91D38,TSK-A5D7B8F87A9D],order: 2432,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-08T09:39:48.836Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-3EA8C40B0F60/1794130788847-start,started_at: 2026-11-08T09:39:51.343Z}]}}}
+---
+
+---
 {id: TSK-3EA8C40B0F60,name: Design filesystem tables and existing S3 integration,type: task,status: in-progress,priority: medium,created_at: 2026-11-08T06:46:26.845Z,updated_at: 2026-11-11T04:27:14.170Z,depends_on: [TSK-1AC8F3754DAE,TSK-0F4398B91D38,TSK-A5D7B8F87A9D],order: 2432,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-08T09:39:48.836Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-3EA8C40B0F60/1794130788847-start,started_at: 2026-11-08T09:39:51.343Z}]}}}
 ---
 
@@ -20,13 +28,17 @@ Inspect current Dryv contracts, generated entities, migration history, runtime r
 - [file-management-and-s3.md](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/file-management-and-s3.md)
 - [source-redesign/12-artifact-lifecycle-and-lineage.md](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/source-redesign/12-artifact-lifecycle-and-lineage.md)
 
-## Acceptance checklist
+## Current acceptance scope
 
-- [ ] Audit existing filesystem models and LocalDirectoryStore readers/writers and identify what to retain in the new design; existing schemas/data are disposable and no compatibility is required.
-- [ ] Specify exact filesystem constraints, auth references, typed attachments and derivative lineage.
-- [ ] Document existing S3 adapter operations, configuration names without secrets, visibility and public/private URL behavior.
-- [ ] Explicitly defer file-type seed content and jurisdiction/geography-generated folder hierarchy; define extension interfaces only.
-- [ ] Prepare fresh initialization and focused verification plan covering deduplication, private access and immutable evidence.
+The checked implementation checklist below is controlling. Earlier proposals are preserved as history, not open acceptance items. The final design has seven tables and file_relations; no separate object, file-type, extension or extraction tables. File formats use the shared media catalog. Reference-owned jurisdiction/folder generation belongs to task 03; extraction operation history and events/callbacks belong to tasks 05/06.
+
+## Earlier design requirements (superseded where noted)
+
+- Audit existing filesystem models and LocalDirectoryStore readers/writers and identify what to retain in the new design; existing schemas/data are disposable and no compatibility is required.
+- Specify exact filesystem constraints, auth references, typed attachments and derivative lineage.
+- Document existing S3 adapter operations, configuration names without secrets, visibility and public/private URL behavior.
+- Explicitly defer file-type seed content and jurisdiction/geography-generated folder hierarchy; define extension interfaces only.
+- Prepare fresh initialization and focused verification plan covering deduplication, private access and immutable evidence.
 
 ## Root seed registry requirement — 8 November 2026
 
@@ -34,33 +46,33 @@ All manually/AI-prepared bootstrap inputs now belong under root `seed/`, includi
 
 The clean database target is mzizi_new: schema/data disposal and fresh identities are approved, with no legacy compatibility or migration requirement. Existing S3 objects are not disposable. This task update documents requirements; actual content, manifest runtime support, bulk relocation and application remain gated by the owning implementation task. Folder/type seed production is still deferred until its model and reference/geography prerequisites are ready.
 
-- [ ] Specify global file_types and extension aliases, concrete folders, files/versions and object references with exact PK/FK/type/nullability/uniqueness rules; distinguish format from document role.
-- [ ] Document fixed Kenyan folder CSV and global file-type CSV contracts, system/jurisdiction pattern inputs, explicit access classes and stable code resolution; do not generate production seed rows yet.
-- [ ] Define staged manifest validation, immutable S3 registration, fresh bootstrap dependency handling, parameterized seed application and recovery across non-transactional S3/DB operations.
-- [ ] Build on the completed seed relocation (task `TSK-0F4398B91D38`, inventory in `.docs/docs/SEED_RELOCATION_INVENTORY.md`): derive the global file-type CSV and extension aliases from the authoritative `seed/global/reference/media-formats.json`, and keep one authoritative payload per output.
+- Specify global file_types and extension aliases, concrete folders, files/versions and object references with exact PK/FK/type/nullability/uniqueness rules; distinguish format from document role.
+- Document fixed Kenyan folder CSV and global file-type CSV contracts, system/jurisdiction pattern inputs, explicit access classes and stable code resolution; do not generate production seed rows yet.
+- Define staged manifest validation, immutable S3 registration, fresh bootstrap dependency handling, parameterized seed application and recovery across non-transactional S3/DB operations.
+- Build on the completed seed relocation (task `TSK-0F4398B91D38`, inventory in `.docs/docs/SEED_RELOCATION_INVENTORY.md`): derive the global file-type CSV and extension aliases from the authoritative `seed/global/reference/media-formats.json`, and keep one authoritative payload per output.
 
 ## Folder-level provenance and access requirements (added after the seed relocation, 8 November 2026)
 
 The seed consolidation task (`TSK-0F4398B91D38`) moved the real system seeds under root `seed/`, recorded origin and access in `_folder.yaml` descriptors and prepared `seed/manifest.yaml` plus a generated `seed/manifest.lock.json` (per file: SHA-256, effective metadata, the descriptor each field was resolved from, historical `relocated_from` path, mapping S3 key, `upload_status: not_uploaded`). Nothing is uploaded or registered. This task must turn that contract into the filesystem design; the rules and tool behavior are specified in `seed/README.md` and implemented for validation in `source/backend/engine/database/src/seed-manifest.ts`.
 
-- [ ] Model folder-level source, preparation and access metadata (role, acquisition class, preparation method, access class, scope, review state) with deterministic inheritance: nearest explicit folder value per field, more specific deeper folders, per-file override only when explicit and justified, missing access defaults to non-public, missing origin classification is flagged before registration, no inference from names such as generated or public, public access requires explicit authorization and a nested folder cannot silently weaken a parent's enforced restriction.
-- [ ] Record effective provenance when a seed artifact is registered: seed flag, effective acquisition class and preparation method, the folder or manifest definition each field was resolved from, manifest release and artifact checksum, source input references, generator/model/tool information (never fabricated; unknown stays unknown and flagged for review), intended access class and the durable S3 object reference.
-- [ ] Keep current folder placement and access separate from immutable historical origin: moving a file or reclassifying a folder must not rewrite the registered preparation provenance, and each has its own lifecycle and audit trail.
-- [ ] Link files to concrete folders and file types, enforce S3 prefix consistency with effective access (only `public/` is anonymous; `restricted/`, `private/`, `internal/` and all other prefixes are private), and treat the access of a seed artifact separately from the records or folders it generates.
-- [ ] Specify generation of jurisdiction and system folders from reference-owned patterns (`seed/system/patterns`, `seed/<jurisdiction>/patterns`), preview before apply, idempotent concrete folder creation, and no implicit deletion of folders or objects.
+- Model folder-level source, preparation and access metadata (role, acquisition class, preparation method, access class, scope, review state) with deterministic inheritance: nearest explicit folder value per field, more specific deeper folders, per-file override only when explicit and justified, missing access defaults to non-public, missing origin classification is flagged before registration, no inference from names such as generated or public, public access requires explicit authorization and a nested folder cannot silently weaken a parent's enforced restriction.
+- Record effective provenance when a seed artifact is registered: seed flag, effective acquisition class and preparation method, the folder or manifest definition each field was resolved from, manifest release and artifact checksum, source input references, generator/model/tool information (never fabricated; unknown stays unknown and flagged for review), intended access class and the durable S3 object reference.
+- Keep current folder placement and access separate from immutable historical origin: moving a file or reclassifying a folder must not rewrite the registered preparation provenance, and each has its own lifecycle and audit trail.
+- Link files to concrete folders and file types, enforce S3 prefix consistency with effective access (only `public/` is anonymous; `restricted/`, `private/`, `internal/` and all other prefixes are private), and treat the access of a seed artifact separately from the records or folders it generates.
+- Specify generation of jurisdiction and system folders from reference-owned patterns (`seed/system/patterns`, `seed/<jurisdiction>/patterns`), preview before apply, idempotent concrete folder creation, and no implicit deletion of folders or objects.
 
 These items stay planned: filesystem implementation is not authorized until the user starts this milestone.
 
 ## 2026-11-08 — Package-first rewrite direction
 
-The user authorizes structure/package extraction and historical archiving now. Target: reusable capabilities under source/packages/, one Python orchestrator/API project under source/backend/engine/, preserved NestJS product API relocated to source/apps/api/, input schemas in source/schema/, and prepared inputs in seed/. Archive old engine/data, engine/database and api-legacy under .docs/_archives/<dated-rewrite-snapshot>/ after preserving active auth rewrite work; remove obsolete backend/files and backend/intelligence active scaffolds. Follow [the controlling structure and publication requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/independent-data-pipelines.md#2026-11-08--approved-package-first-layout-and-single-python-engine).
+The user authorizes structure/package extraction and historical archiving now. Target: reusable capabilities under source/packages/, one Python orchestrator/API project under source/backend/engine/, preserved NestJS product API relocated to source/backend/api/, input schemas in source/schema/, and prepared inputs in seed/. Archive old engine/data, engine/database and api-legacy under .docs/_archives/<dated-rewrite-snapshot>/ after preserving active auth rewrite work; remove obsolete backend/files and backend/intelligence active scaffolds. Follow [the controlling structure and publication requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/independent-data-pipelines.md#2026-11-08--approved-package-first-layout-and-single-python-engine).
 
 Filesystem package APIs must support seed manifest/folder provenance, registry upload and hash deduplication, immutable releases and conflict-safe updates to explicitly non-versioned logical items. Keep evidence/run snapshots immutable. This authorization covers restructuring foundations, not all later schema/source/pipeline features. Update all active build/Dryv/auth consumers and maintain focused checks. Existing S3 objects remain protected. Historical paths above are superseded for the rewrite as the local agent carries out the relocation.
 
-- [ ] Integrate the approved source/packages and Python engine contracts; remove active dependencies on archived implementations and preserve working auth/resource authorization.
-- [ ] Use the filesystem package for seed registry publication, deduplication, provenance and explicitly non-versioned current-item updates without mutating pinned releases.
+- Integrate the approved source/packages and Python engine contracts; remove active dependencies on archived implementations and preserve working auth/resource authorization.
+- Use the filesystem package for seed registry publication, deduplication, provenance and explicitly non-versioned current-item updates without mutating pinned releases.
 
-## Implementation authorized — 8 November 2026 (supersedes the design-only framing and earlier object/type proposals)
+## Acceptance checklist — implementation authorized 8 November 2026
 
 The user authorized end-to-end implementation: schema in `mzizi_new`, the shared filesystem package, authorized engine endpoints, a synchronization command, seed integration and focused verification. Latest decisions, superseding earlier proposals: explicit file versioning (`filesystem.file_versions` hold the S3 key, hash, size, extension and content type directly; no separate objects table; several versions may reference one physical content-addressed key and that key is never deleted while any retained reference exists); no file-type or extension tables (normalized extension and MIME stored on the version, validated against the shared catalog `seed/global/reference/media-formats.json`); eight tables only: `folders`, `files`, `file_versions`, `tags`, `taggings`, `extractions`, `extraction_files`, `uploads`; per-file retention policy (`preserve_history` or `replace_current`) with pinned content always preserved; extraction lineage through exact file versions with input/output roles and no single-source or processed columns; paths derived from the folder hierarchy, never stored; access through the scoped RBAC model (`filesystem` namespace, folder scope targets); old `.data` artifacts relocated to the ignored `seed/generated/legacy-artifacts/` subtree except credential-bearing material and the explicitly excluded `.data/raw`.
 
@@ -82,3 +94,9 @@ The user authorized end-to-end implementation: schema in `mzizi_new`, the shared
 - Live S3 verified against the configured endpoint (bounded live check passed; presign step skipped without `S3_PUBLIC_ENDPOINT`). Seeds (107 files), security files (6) and legacy artifacts (18,167 files) were published through `mzizi-filesystem sync`; `.data` was removed after verification; `.data/raw` was deleted unpublished on the user's instruction.
 - Environment values live only in the root `.env`; security files are read with `mzizi-filesystem secure-get`.
 - Verification: `uv run pytest -q source` 175 passed; API auth specs 148 passed.
+
+## Closeout verification — 2026-11-11
+
+Reviewed current SQL, registration, sync, provenance and lineage implementations against the final seven-table scope. Fresh verification: `uv run pytest -q source` passed 175 tests (one dependency deprecation warning); API `bun run test -- auth` passed 148 tests with 10 todo cases in matched legal suites; `uv lock --check` passed. `uv run mzizi-manifest check` validated 54 entries with 101 existing classification-review warnings. Unknown provenance remains explicitly unknown; this closeout does not certify those seeds as canonical data. Live S3 publication and bounded checks remain the recorded 8 November results; no live S3 write was repeated. Implementation commits 473cb5b and fdcd0ae are contained in the local origin/develop history.
+
+The implemented scope is complete. Presigned download behavior is covered by tests; the previously recorded live presign limitation remains. Future reference patterns, source/domain loaders, detailed engine extraction history, filesystem events and NestJS callbacks remain with their owning milestones.

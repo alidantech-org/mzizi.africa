@@ -2,6 +2,10 @@
 {id: TSK-0B9CCF587F64,name: Design source custody and website data against agreed schemas,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:28.867Z,updated_at: 2026-11-08T06:46:28.867Z,depends_on: [TSK-D6949284672E],order: 5120}
 ---
 
+---
+{id: TSK-0B9CCF587F64,name: Design source custody and website data against agreed schemas,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:28.867Z,updated_at: 2026-11-08T06:46:28.867Z,depends_on: [TSK-D6949284672E],order: 5120}
+---
+
 # 05 — Design source custody and website data against agreed schemas
 
 ## Goal
@@ -55,7 +59,7 @@ This is a future milestone requirement; keep the task planned and preserve depen
 
 ## 2026-11-08 — Package-first rewrite direction
 
-The user authorizes structure/package extraction and historical archiving now. Target: reusable capabilities under source/packages/, one Python orchestrator/API project under source/backend/engine/, preserved NestJS product API relocated to source/apps/api/, input schemas in source/schema/, and prepared inputs in seed/. Archive old engine/data, engine/database and api-legacy under .docs/_archives/<dated-rewrite-snapshot>/ after preserving active auth rewrite work; remove obsolete backend/files and backend/intelligence active scaffolds. Follow [the controlling structure and publication requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/independent-data-pipelines.md#2026-11-08--approved-package-first-layout-and-single-python-engine).
+The user authorizes structure/package extraction and historical archiving now. Target: reusable capabilities under source/packages/, one Python orchestrator/API project under source/backend/engine/, preserved NestJS product API relocated to source/backend/api/, input schemas in source/schema/, and prepared inputs in seed/. Archive old engine/data, engine/database and api-legacy under .docs/_archives/<dated-rewrite-snapshot>/ after preserving active auth rewrite work; remove obsolete backend/files and backend/intelligence active scaffolds. Follow [the controlling structure and publication requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/independent-data-pipelines.md#2026-11-08--approved-package-first-layout-and-single-python-engine).
 
 Filesystem package APIs must support seed manifest/folder provenance, registry upload and hash deduplication, immutable releases and conflict-safe updates to explicitly non-versioned logical items. Keep evidence/run snapshots immutable. This authorization covers restructuring foundations, not all later schema/source/pipeline features. Update all active build/Dryv/auth consumers and maintain focused checks. Existing S3 objects remain protected. Historical paths above are superseded for the rewrite as the local agent carries out the relocation.
 
@@ -64,4 +68,4 @@ Filesystem package APIs must support seed manifest/folder provenance, registry u
 
 ## Filesystem integration interface (recorded 8 November 2026)
 
-The filesystem is implemented (`TSK-3EA8C40B0F60`, `.docs/docs/FILESYSTEM_SCHEMA.md`). Source work must map learned or discovered sources to folders through manifests, resource relationships and approved reference-owned patterns, then register content through the neutral package interface (`FilesystemService.register`, `run_sync` with a sync manifest, `begin_extraction`/`register_output` for extraction lineage with exact file versions). The package contains no Kenya, KNBS, IEBC or per-site logic and must not gain any: publisher, jurisdiction and site identity stay in manifests and database records, and the folder classification (access, role, acquisition class, preparation, seed flag, jurisdiction) is supplied by the caller or inherited from folders. Source evidence must pin the exact file versions it cites (`file_versions.pinned`), and capture access classes must respect the placement-equals-access rule.
+The filesystem is implemented (`TSK-3EA8C40B0F60`, `.docs/docs/FILESYSTEM_SCHEMA.md`). Source work must map learned or discovered sources to folders through manifests, resource relationships and approved reference-owned patterns, then register content through the neutral package interface (`FilesystemService.register`, `run_sync` with a sync manifest, `relate`/`register_derived` for lineage between exact file versions). The package contains no Kenya, KNBS, IEBC or per-site logic and must not gain any: publisher, jurisdiction and site identity stay in manifests and database records, and the folder classification (access, role, acquisition class, preparation, seed flag, jurisdiction) is supplied by the caller or inherited from folders. Source evidence must pin the exact file versions it cites (`file_versions.pinned`), and capture access classes must respect the placement-equals-access rule.
