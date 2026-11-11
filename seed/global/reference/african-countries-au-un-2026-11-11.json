@@ -1,0 +1,461 @@
+{
+  "schema_version": 1,
+  "preparation": "official_source_reconciliation",
+  "source_artifacts": [
+    {
+      "path": "global/reference/sources/au-member-states-2026-11-11.html",
+      "sha256": "cd8035b869cf7a0b76493ee5fc82682cf56f76024a02e236b7828a2aa6788ec8",
+      "url": "https://www.au.int/en/AU_Member_States",
+      "retrieved_on": "2026-11-11"
+    },
+    {
+      "path": "global/reference/sources/un-m49-overview-2026-11-11.html",
+      "sha256": "b9048114f6e7f2abda83bf03d4263c9d7cd1bd7230e3d0461025ee7839a7a1fb",
+      "url": "https://unstats.un.org/unsd/methodology/m49/overview/",
+      "retrieved_on": "2026-11-11"
+    }
+  ],
+  "rows": [
+    {
+      "code": "dz",
+      "name": "Algeria",
+      "iso_alpha2": "DZ",
+      "recognition_status": "recognized",
+      "au_label": "Algeria",
+      "un_m49_label": "Algeria"
+    },
+    {
+      "code": "ao",
+      "name": "Angola",
+      "iso_alpha2": "AO",
+      "recognition_status": "recognized",
+      "au_label": "Angola",
+      "un_m49_label": "Angola"
+    },
+    {
+      "code": "bj",
+      "name": "Benin",
+      "iso_alpha2": "BJ",
+      "recognition_status": "recognized",
+      "au_label": "Benin",
+      "un_m49_label": "Benin"
+    },
+    {
+      "code": "bw",
+      "name": "Botswana",
+      "iso_alpha2": "BW",
+      "recognition_status": "recognized",
+      "au_label": "Botswana",
+      "un_m49_label": "Botswana"
+    },
+    {
+      "code": "bf",
+      "name": "Burkina Faso",
+      "iso_alpha2": "BF",
+      "recognition_status": "recognized",
+      "au_label": "Burkina Faso",
+      "un_m49_label": "Burkina Faso"
+    },
+    {
+      "code": "bi",
+      "name": "Burundi",
+      "iso_alpha2": "BI",
+      "recognition_status": "recognized",
+      "au_label": "Burundi",
+      "un_m49_label": "Burundi"
+    },
+    {
+      "code": "cv",
+      "name": "Cabo Verde",
+      "iso_alpha2": "CV",
+      "recognition_status": "recognized",
+      "au_label": "Cabo Verde",
+      "un_m49_label": "Cabo Verde"
+    },
+    {
+      "code": "cm",
+      "name": "Cameroon",
+      "iso_alpha2": "CM",
+      "recognition_status": "recognized",
+      "au_label": "Cameroon",
+      "un_m49_label": "Cameroon"
+    },
+    {
+      "code": "cf",
+      "name": "Central African Republic",
+      "iso_alpha2": "CF",
+      "recognition_status": "recognized",
+      "au_label": "Central African Republic2",
+      "un_m49_label": "Central African Republic"
+    },
+    {
+      "code": "td",
+      "name": "Chad",
+      "iso_alpha2": "TD",
+      "recognition_status": "recognized",
+      "au_label": "Chad",
+      "un_m49_label": "Chad"
+    },
+    {
+      "code": "km",
+      "name": "Comoros",
+      "iso_alpha2": "KM",
+      "recognition_status": "recognized",
+      "au_label": "Comoros",
+      "un_m49_label": "Comoros"
+    },
+    {
+      "code": "cg",
+      "name": "Congo",
+      "iso_alpha2": "CG",
+      "recognition_status": "recognized",
+      "au_label": "Congo",
+      "un_m49_label": "Congo"
+    },
+    {
+      "code": "ci",
+      "name": "Côte d’Ivoire",
+      "iso_alpha2": "CI",
+      "recognition_status": "recognized",
+      "au_label": "Côte d’Ivoire",
+      "un_m49_label": "Côte d’Ivoire"
+    },
+    {
+      "code": "cd",
+      "name": "DR Congo",
+      "iso_alpha2": "CD",
+      "recognition_status": "recognized",
+      "au_label": "DR Congo",
+      "un_m49_label": "Democratic Republic of the Congo"
+    },
+    {
+      "code": "dj",
+      "name": "Djibouti",
+      "iso_alpha2": "DJ",
+      "recognition_status": "recognized",
+      "au_label": "Djibouti",
+      "un_m49_label": "Djibouti"
+    },
+    {
+      "code": "eg",
+      "name": "Egypt",
+      "iso_alpha2": "EG",
+      "recognition_status": "recognized",
+      "au_label": "Egypt",
+      "un_m49_label": "Egypt"
+    },
+    {
+      "code": "gq",
+      "name": "Equatorial Guinea",
+      "iso_alpha2": "GQ",
+      "recognition_status": "recognized",
+      "au_label": "Equatorial Guinea",
+      "un_m49_label": "Equatorial Guinea"
+    },
+    {
+      "code": "er",
+      "name": "Eritrea",
+      "iso_alpha2": "ER",
+      "recognition_status": "recognized",
+      "au_label": "Eritrea",
+      "un_m49_label": "Eritrea"
+    },
+    {
+      "code": "et",
+      "name": "Ethiopia",
+      "iso_alpha2": "ET",
+      "recognition_status": "recognized",
+      "au_label": "Ethiopia",
+      "un_m49_label": "Ethiopia"
+    },
+    {
+      "code": "ga",
+      "name": "Gabon",
+      "iso_alpha2": "GA",
+      "recognition_status": "recognized",
+      "au_label": "Gabon",
+      "un_m49_label": "Gabon"
+    },
+    {
+      "code": "gm",
+      "name": "Gambia",
+      "iso_alpha2": "GM",
+      "recognition_status": "recognized",
+      "au_label": "Gambia",
+      "un_m49_label": "Gambia"
+    },
+    {
+      "code": "gh",
+      "name": "Ghana",
+      "iso_alpha2": "GH",
+      "recognition_status": "recognized",
+      "au_label": "Ghana",
+      "un_m49_label": "Ghana"
+    },
+    {
+      "code": "gn",
+      "name": "Guinea",
+      "iso_alpha2": "GN",
+      "recognition_status": "recognized",
+      "au_label": "Guinea",
+      "un_m49_label": "Guinea"
+    },
+    {
+      "code": "gw",
+      "name": "Guinea Bissau",
+      "iso_alpha2": "GW",
+      "recognition_status": "recognized",
+      "au_label": "Guinea Bissau",
+      "un_m49_label": "Guinea-Bissau"
+    },
+    {
+      "code": "ke",
+      "name": "Kenya",
+      "iso_alpha2": "KE",
+      "recognition_status": "recognized",
+      "au_label": "Kenya",
+      "un_m49_label": "Kenya"
+    },
+    {
+      "code": "ls",
+      "name": "Lesotho",
+      "iso_alpha2": "LS",
+      "recognition_status": "recognized",
+      "au_label": "Lesotho",
+      "un_m49_label": "Lesotho"
+    },
+    {
+      "code": "lr",
+      "name": "Liberia",
+      "iso_alpha2": "LR",
+      "recognition_status": "recognized",
+      "au_label": "Liberia",
+      "un_m49_label": "Liberia"
+    },
+    {
+      "code": "ly",
+      "name": "Libya",
+      "iso_alpha2": "LY",
+      "recognition_status": "recognized",
+      "au_label": "Libya",
+      "un_m49_label": "Libya"
+    },
+    {
+      "code": "mg",
+      "name": "Madagascar",
+      "iso_alpha2": "MG",
+      "recognition_status": "recognized",
+      "au_label": "Madagascar",
+      "un_m49_label": "Madagascar"
+    },
+    {
+      "code": "mw",
+      "name": "Malawi",
+      "iso_alpha2": "MW",
+      "recognition_status": "recognized",
+      "au_label": "Malawi",
+      "un_m49_label": "Malawi"
+    },
+    {
+      "code": "ml",
+      "name": "Mali",
+      "iso_alpha2": "ML",
+      "recognition_status": "recognized",
+      "au_label": "Mali",
+      "un_m49_label": "Mali"
+    },
+    {
+      "code": "mr",
+      "name": "Mauritania",
+      "iso_alpha2": "MR",
+      "recognition_status": "recognized",
+      "au_label": "Mauritania",
+      "un_m49_label": "Mauritania"
+    },
+    {
+      "code": "mu",
+      "name": "Mauritius",
+      "iso_alpha2": "MU",
+      "recognition_status": "recognized",
+      "au_label": "Mauritius",
+      "un_m49_label": "Mauritius"
+    },
+    {
+      "code": "ma",
+      "name": "Morocco",
+      "iso_alpha2": "MA",
+      "recognition_status": "recognized",
+      "au_label": "Morocco",
+      "un_m49_label": "Morocco"
+    },
+    {
+      "code": "mz",
+      "name": "Mozambique",
+      "iso_alpha2": "MZ",
+      "recognition_status": "recognized",
+      "au_label": "Mozambique",
+      "un_m49_label": "Mozambique"
+    },
+    {
+      "code": "na",
+      "name": "Namibia",
+      "iso_alpha2": "NA",
+      "recognition_status": "recognized",
+      "au_label": "Namibia",
+      "un_m49_label": "Namibia"
+    },
+    {
+      "code": "ne",
+      "name": "Niger",
+      "iso_alpha2": "NE",
+      "recognition_status": "recognized",
+      "au_label": "Niger",
+      "un_m49_label": "Niger"
+    },
+    {
+      "code": "ng",
+      "name": "Nigeria",
+      "iso_alpha2": "NG",
+      "recognition_status": "recognized",
+      "au_label": "Nigeria",
+      "un_m49_label": "Nigeria"
+    },
+    {
+      "code": "rw",
+      "name": "Rwanda",
+      "iso_alpha2": "RW",
+      "recognition_status": "recognized",
+      "au_label": "Rwanda",
+      "un_m49_label": "Rwanda"
+    },
+    {
+      "code": "eh",
+      "name": "Sahrawi Republic",
+      "iso_alpha2": "EH",
+      "recognition_status": "disputed",
+      "au_label": "Sahrawi Republic",
+      "un_m49_label": "Western Sahara"
+    },
+    {
+      "code": "st",
+      "name": "São Tomé and Príncipe",
+      "iso_alpha2": "ST",
+      "recognition_status": "recognized",
+      "au_label": "São Tomé and Príncipe",
+      "un_m49_label": "Sao Tome and Principe"
+    },
+    {
+      "code": "sn",
+      "name": "Senegal",
+      "iso_alpha2": "SN",
+      "recognition_status": "recognized",
+      "au_label": "Senegal",
+      "un_m49_label": "Senegal"
+    },
+    {
+      "code": "sc",
+      "name": "Seychelles",
+      "iso_alpha2": "SC",
+      "recognition_status": "recognized",
+      "au_label": "Seychelles",
+      "un_m49_label": "Seychelles"
+    },
+    {
+      "code": "sl",
+      "name": "Sierra Leone",
+      "iso_alpha2": "SL",
+      "recognition_status": "recognized",
+      "au_label": "Sierra Leone",
+      "un_m49_label": "Sierra Leone"
+    },
+    {
+      "code": "so",
+      "name": "Somalia",
+      "iso_alpha2": "SO",
+      "recognition_status": "recognized",
+      "au_label": "Somalia",
+      "un_m49_label": "Somalia"
+    },
+    {
+      "code": "za",
+      "name": "South Africa",
+      "iso_alpha2": "ZA",
+      "recognition_status": "recognized",
+      "au_label": "South Africa",
+      "un_m49_label": "South Africa"
+    },
+    {
+      "code": "ss",
+      "name": "South Sudan",
+      "iso_alpha2": "SS",
+      "recognition_status": "recognized",
+      "au_label": "South Sudan",
+      "un_m49_label": "South Sudan"
+    },
+    {
+      "code": "sd",
+      "name": "Sudan",
+      "iso_alpha2": "SD",
+      "recognition_status": "recognized",
+      "au_label": "Sudan",
+      "un_m49_label": "Sudan"
+    },
+    {
+      "code": "sz",
+      "name": "Swaziland",
+      "iso_alpha2": "SZ",
+      "recognition_status": "recognized",
+      "au_label": "Swaziland",
+      "un_m49_label": "Eswatini"
+    },
+    {
+      "code": "tg",
+      "name": "Togo",
+      "iso_alpha2": "TG",
+      "recognition_status": "recognized",
+      "au_label": "Togo",
+      "un_m49_label": "Togo"
+    },
+    {
+      "code": "tn",
+      "name": "Tunisia",
+      "iso_alpha2": "TN",
+      "recognition_status": "recognized",
+      "au_label": "Tunisia",
+      "un_m49_label": "Tunisia"
+    },
+    {
+      "code": "ug",
+      "name": "Uganda",
+      "iso_alpha2": "UG",
+      "recognition_status": "recognized",
+      "au_label": "Uganda",
+      "un_m49_label": "Uganda"
+    },
+    {
+      "code": "tz",
+      "name": "UR of Tanzania",
+      "iso_alpha2": "TZ",
+      "recognition_status": "recognized",
+      "au_label": "UR of Tanzania",
+      "un_m49_label": "United Republic of Tanzania"
+    },
+    {
+      "code": "zm",
+      "name": "Zambia",
+      "iso_alpha2": "ZM",
+      "recognition_status": "recognized",
+      "au_label": "Zambia",
+      "un_m49_label": "Zambia"
+    },
+    {
+      "code": "zw",
+      "name": "Zimbabwe",
+      "iso_alpha2": "ZW",
+      "recognition_status": "recognized",
+      "au_label": "Zimbabwe",
+      "un_m49_label": "Zimbabwe"
+    }
+  ],
+  "note": "55 AU member-state labels matched to UN M49 Africa ISO alpha-2 codes. EH maps Sahrawi Republic to UN Western Sahara area label; recognition is disputed. Membership, recognition, territorial sovereignty and boundary geometry are separate facts."
+}

@@ -5,6 +5,66 @@ release: 2026-11-08.1
 bucket: mzizi
 region: us-east-1
 entries:
+- id: global.reference.au-members-source
+  path: global/reference/sources/au-member-states-2026-11-11.html
+  media_type: text/html
+  loader: none.unconsumed
+  target: reference country source artifact
+  database_target_state: evidence_only
+  key_columns: []
+  depends_on: []
+  consumers: []
+  relocated_from: retrieved from official AU page 2026-11-11
+  notes: Exact official page snapshot; not an asserted country or boundary row.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.reference.un-m49-source
+  path: global/reference/sources/un-m49-overview-2026-11-11.html
+  media_type: text/html
+  loader: none.unconsumed
+  target: reference country source artifact
+  database_target_state: evidence_only
+  key_columns: []
+  depends_on: []
+  consumers: []
+  relocated_from: retrieved from official UN Statistics Division page 2026-11-11
+  notes: Exact official M49 page snapshot; includes territories and areas beyond AU members.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.reference.au-m49-aliases
+  path: global/reference/au-m49-aliases.json
+  media_type: application/json
+  loader: none.unconsumed
+  target: reference country preparation mapping
+  database_target_state: preparation_only
+  key_columns: []
+  depends_on: [global.reference.au-members-source, global.reference.un-m49-source]
+  consumers: []
+  relocated_from: new in task TSK-7E5E18758D9C
+  notes: Explicit source-label reconciliation, not an official assertion.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.reference.african-countries
+  path: global/reference/african-countries-au-un-2026-11-11.json
+  media_type: application/json
+  loader: reference.countries
+  target: reference.countries
+  database_target_state: mzizi_new
+  key_columns: [code]
+  depends_on: [global.reference.au-members-source, global.reference.un-m49-source, global.reference.au-m49-aliases]
+  consumers: [source/packages/database/src/mzizi_database/loaders/reference.py]
+  relocated_from: new in task TSK-7E5E18758D9C
+  notes: 55 AU members reconciled to UN M49 ISO codes; Sahrawi Republic is disputed.
+  sync_policy: preview_then_apply_no_implicit_delete
+- id: global.reference.foundation-baseline
+  path: global/reference/foundation-baseline.json
+  media_type: application/json
+  loader: reference.foundation
+  target: reference.schemes,reference.values,reference.topics
+  database_target_state: mzizi_new
+  key_columns: [code]
+  depends_on: []
+  consumers: [source/packages/database/src/mzizi_database/loaders/reference.py]
+  relocated_from: new in task TSK-7E5E18758D9C
+  notes: Structural vocabulary only; no countries, boundaries, officeholders or legal facts.
+  sync_policy: preview_then_apply_no_implicit_delete
 - id: global.auth.namespaces
   path: global/auth/namespaces.csv
   media_type: text/csv

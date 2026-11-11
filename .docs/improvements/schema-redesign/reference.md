@@ -8,6 +8,8 @@ extra: {status: planning_only, implementation: not_approved}
 
 > **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
 
+The task-03 [foundation specification](../task03-foundation-specification.md) records the current proposed table dictionary, FK order, pattern/version contract and design fixtures. Its proposals require review before migration.
+
 # Reference and jurisdiction redesign
 
 **Planning only. Not approved for code changes or Taskcode task creation.** The user will direct the order of final design review and later tasks. All physical table/column changes below are proposals, not authorized migrations.

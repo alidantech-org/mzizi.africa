@@ -2,6 +2,10 @@
 {id: TSK-D6949284672E,name: Model remaining domain schemas and their dependencies,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:28.194Z,updated_at: 2026-11-08T06:46:28.194Z,depends_on: [TSK-7E5E18758D9C],order: 4096}
 ---
 
+---
+{id: TSK-D6949284672E,name: Model remaining domain schemas and their dependencies,type: task,status: planned,priority: medium,created_at: 2026-11-08T06:46:28.194Z,updated_at: 2026-11-08T06:46:28.194Z,depends_on: [TSK-7E5E18758D9C],order: 4096}
+---
+
 # 04 — Model remaining domain schemas and their dependencies
 
 ## Goal
@@ -56,3 +60,7 @@ Consume [the connected foundation](../../../../improvements/connected-reference-
 - [ ] Consume topic/capability contracts for population, representatives and budgets with actual availability, methods/evidence/gaps and explicit fallback; retain future history/land/goods/prices/inflation backlog without implementing all of it here.
 
 These are task-04 acceptance requirements, not task-03 implementation expansion. Keep task 04 planned and dependent on `TSK-7E5E18758D9C` until its foundation contracts are ready.
+
+## Task 03 foundation dependency (design proposal, 11 November 2026)
+
+Read `.docs/improvements/task03-foundation-specification.md` and its labeled fixture cases before finalizing legal, governance, electoral, political, place, organization or statistical tables. Task 03 proposes real reference/geography/pattern FKs and a minimal legal provision-version interface; it does not implement those domain tables. Task 04 must settle typed legal-basis junctions, actual office/holder/contest relationships, regional membership, physical presence and statistical meaning with hard FKs, then align Dryv and API consumers. No generated row may be treated as evidence of an officeholder or building. The task-03 proposal remains subject to review and does not authorize task-04 execution.

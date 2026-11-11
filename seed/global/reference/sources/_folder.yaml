@@ -1,0 +1,6 @@
+description: Official source page snapshots for the African country identity baseline.
+role: seed_input
+acquisition_class: externally_collected
+preparation: programmatically_generated
+access: internal
+review: {status: needs_review, note: "AU membership and UN M49 names/codes were checked against the captured pages; country recognition and boundary meaning require separate review."}

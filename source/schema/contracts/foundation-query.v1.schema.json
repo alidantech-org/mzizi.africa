@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schema/contracts/foundation-query.v1.schema.json",
+  "title": "Foundation query design contract v1",
+  "description": "Design fixture contract only. Dryv becomes the authored source before runtime export; no deployed handler consumes this schema.",
+  "oneOf": [
+    { "$ref": "#/$defs/request" },
+    { "$ref": "#/$defs/result" }
+  ],
+  "$defs": {
+    "request": {
+      "type": "object",
+      "required": ["kind", "topic", "asOf", "place"],
+      "properties": {
+        "kind": { "const": "foundation-query-request" },
+        "topic": { "enum": ["population", "representatives", "budget"] },
+        "asOf": { "type": "string", "format": "date" },
+        "place": {
+          "oneOf": [
+            { "type": "object", "required": ["unitCode"], "properties": { "unitCode": { "type": "string" } }, "additionalProperties": false },
+            { "type": "object", "required": ["longitude", "latitude"], "properties": { "longitude": { "type": "number", "minimum": -180, "maximum": 180 }, "latitude": { "type": "number", "minimum": -90, "maximum": 90 } }, "additionalProperties": false }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "result": {
+      "type": "object",
+      "required": ["kind", "topic", "status", "requestedAsOf", "resolvedScope", "dataPeriod", "methodology", "evidenceFileVersionIds", "gaps", "fallback"],
+      "properties": {
+        "kind": { "const": "foundation-query-result" },
+        "topic": { "enum": ["population", "representatives", "budget"] },
+        "status": { "enum": ["available", "unavailable", "disputed"] },
+        "requestedAsOf": { "type": "string", "format": "date" },
+        "resolvedScope": { "type": ["string", "null"] },
+        "dataPeriod": { "type": ["string", "null"] },
+        "boundaryEdition": { "type": ["string", "null"] },
+        "methodology": { "type": ["string", "null"] },
+        "release": { "type": ["string", "null"] },
+        "evidenceFileVersionIds": { "type": "array", "items": { "type": "string", "format": "uuid" } },
+        "uncertainty": { "type": ["string", "null"] },
+        "gaps": { "type": "array", "items": { "type": "string" } },
+        "fallback": { "enum": ["none", "national", "unavailable"] }
+      },
+      "additionalProperties": false
+    }
+  }
+}

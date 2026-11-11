@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "review": "structure_only",
+  "note": "Initial vocabulary definitions for the connected foundation. These classify structure only; no claim about a real boundary, legal authority or officeholder is made.",
+  "schemes": [
+    {"code": "geo_unit_type", "name": "Geographic unit type", "description": "Kinds of spatial identity; the type does not assert a particular boundary or parent.", "owner": "global"},
+    {"code": "office_category", "name": "Office category", "description": "Broad office meaning; a country-specific definition and legal support are separate.", "owner": "global"}
+  ],
+  "values": [
+    {"code": "geo_unit_type.continent", "scheme": "geo_unit_type", "label": "Continent", "description": "Continental geographic identity."},
+    {"code": "geo_unit_type.country_territory", "scheme": "geo_unit_type", "label": "Country territory", "description": "Territorial area linked to a modern country by a dated country-territory assertion."},
+    {"code": "geo_unit_type.administrative", "scheme": "geo_unit_type", "label": "Administrative area", "description": "Area participating in a documented administrative relationship system."},
+    {"code": "geo_unit_type.electoral", "scheme": "geo_unit_type", "label": "Electoral area", "description": "Area participating in a documented electoral relationship system."},
+    {"code": "geo_unit_type.statistical", "scheme": "geo_unit_type", "label": "Statistical area", "description": "Area defined for a documented statistical system."},
+    {"code": "geo_unit_type.historical", "scheme": "geo_unit_type", "label": "Historical area", "description": "Historically attested or reconstructed area with evidence and uncertainty on its assertions."},
+    {"code": "geo_unit_type.hypothetical", "scheme": "geo_unit_type", "label": "Hypothetical area", "description": "Explicit scenario area excluded from official containment traversal."},
+    {"code": "office_category.governor", "scheme": "office_category", "label": "Governor", "description": "Broad label only; powers, selection, mandate and actual office depend on a reviewed domain definition."}
+  ],
+  "topics": [
+    {"code": "population", "name": "Population", "description": "Defined measurements of people with period, coverage and method."},
+    {"code": "representatives", "name": "Representatives", "description": "Offices, mandates and independently sourced holder terms."},
+    {"code": "budget", "name": "Budget", "description": "Public resource plans linked to institutions, fiscal periods and coverage."}
+  ]
+}

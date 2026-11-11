@@ -92,10 +92,11 @@ def w(db):
 
 # ---------------------------------------------------------------------------- initialization and keys
 def test_migrations_are_recorded_and_the_nine_auth_tables_exist(db):
-    assert [r["name"] for r in db.execute("SELECT name FROM public.migrations ORDER BY name").fetchall()] == ["auth/0001_auth.sql", "auth/0002_auth_functions.sql", "engine/0001_engine.sql", "filesystem/0001_filesystem.sql"]
+    from mzizi_database.migrate import migration_files
+    assert [r["name"] for r in db.execute("SELECT name FROM public.migrations ORDER BY name").fetchall()] == sorted(n for n, _, _ in migration_files())
     tables = [r["table_name"] for r in db.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'auth' AND table_type = 'BASE TABLE' ORDER BY 1").fetchall()]
     assert tables == ["accounts", "governed_tables", "identities", "institutions", "permissions", "role_assignments", "role_permissions", "roles", "scope_targets"]
-    assert {r["table_name"] for r in db.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'").fetchall()} == {"migrations"}
+    assert {r["table_name"] for r in db.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'").fetchall()} == {"migrations", "spatial_ref_sys"}
 
 
 def test_every_auth_table_has_a_primary_key_and_a_comment(db):

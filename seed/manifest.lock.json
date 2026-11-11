@@ -1,11 +1,239 @@
 {
   "release": "2026-11-08.1",
-  "manifest_sha256": "bc22d2cccbc80b8e29ddb42f6723483aa6c84e9a0e58bae8b8cdf6946c10b074",
+  "manifest_sha256": "63e4031de49d4369f7cec060e9fdd397d12be2408261f000eb2022af545a3a8b",
   "generated_by": "mzizi-manifest lock (source/packages/manifest); programmatic, no model involved",
   "bucket": "mzizi",
   "region": "us-east-1",
   "note": "The lock plans identities and content-addressed keys; it records no upload state. Publication state lives in the filesystem registry (mzizi_filesystem sync); nothing here claims an artifact is uploaded.",
   "entries": [
+    {
+      "id": "global.reference.au-members-source",
+      "loader": "none.unconsumed",
+      "target": "reference country source artifact",
+      "database_target_state": "evidence_only",
+      "depends_on": [],
+      "sync_policy": "preview_then_apply_no_implicit_delete",
+      "files": [
+        {
+          "path": "global/reference/sources/au-member-states-2026-11-11.html",
+          "sha256": "cd8035b869cf7a0b76493ee5fc82682cf56f76024a02e236b7828a2aa6788ec8",
+          "bytes": 105961,
+          "media_type": "text/html",
+          "relocated_from": "retrieved from official AU page 2026-11-11",
+          "effective": {
+            "role": "seed_input",
+            "acquisition_class": "externally_collected",
+            "preparation": "programmatically_generated",
+            "access": "internal",
+            "access_defaulted": false,
+            "scope": {
+              "kind": "global"
+            },
+            "review": {
+              "status": "needs_review",
+              "note": "AU membership and UN M49 names/codes were checked against the captured pages; country recognition and boundary meaning require separate review."
+            },
+            "resolved_from": {
+              "access": "global/reference/sources/_folder.yaml",
+              "scope": "global/_folder.yaml",
+              "role": "global/reference/sources/_folder.yaml",
+              "acquisition_class": "global/reference/sources/_folder.yaml",
+              "preparation": "global/reference/sources/_folder.yaml",
+              "review": "global/reference/sources/_folder.yaml"
+            },
+            "file_override": null
+          },
+          "bucket": "mzizi",
+          "object_key": "internal/content/sha256/cd/80/cd8035b869cf7a0b76493ee5fc82682cf56f76024a02e236b7828a2aa6788ec8",
+          "upload_status": "not_recorded_here"
+        }
+      ]
+    },
+    {
+      "id": "global.reference.un-m49-source",
+      "loader": "none.unconsumed",
+      "target": "reference country source artifact",
+      "database_target_state": "evidence_only",
+      "depends_on": [],
+      "sync_policy": "preview_then_apply_no_implicit_delete",
+      "files": [
+        {
+          "path": "global/reference/sources/un-m49-overview-2026-11-11.html",
+          "sha256": "b9048114f6e7f2abda83bf03d4263c9d7cd1bd7230e3d0461025ee7839a7a1fb",
+          "bytes": 1721575,
+          "media_type": "text/html",
+          "relocated_from": "retrieved from official UN Statistics Division page 2026-11-11",
+          "effective": {
+            "role": "seed_input",
+            "acquisition_class": "externally_collected",
+            "preparation": "programmatically_generated",
+            "access": "internal",
+            "access_defaulted": false,
+            "scope": {
+              "kind": "global"
+            },
+            "review": {
+              "status": "needs_review",
+              "note": "AU membership and UN M49 names/codes were checked against the captured pages; country recognition and boundary meaning require separate review."
+            },
+            "resolved_from": {
+              "access": "global/reference/sources/_folder.yaml",
+              "scope": "global/_folder.yaml",
+              "role": "global/reference/sources/_folder.yaml",
+              "acquisition_class": "global/reference/sources/_folder.yaml",
+              "preparation": "global/reference/sources/_folder.yaml",
+              "review": "global/reference/sources/_folder.yaml"
+            },
+            "file_override": null
+          },
+          "bucket": "mzizi",
+          "object_key": "internal/content/sha256/b9/04/b9048114f6e7f2abda83bf03d4263c9d7cd1bd7230e3d0461025ee7839a7a1fb",
+          "upload_status": "not_recorded_here"
+        }
+      ]
+    },
+    {
+      "id": "global.reference.au-m49-aliases",
+      "loader": "none.unconsumed",
+      "target": "reference country preparation mapping",
+      "database_target_state": "preparation_only",
+      "depends_on": [
+        "global.reference.au-members-source",
+        "global.reference.un-m49-source"
+      ],
+      "sync_policy": "preview_then_apply_no_implicit_delete",
+      "files": [
+        {
+          "path": "global/reference/au-m49-aliases.json",
+          "sha256": "12ab975ae050f224250ab2e1e24346741486f27baa492083469a957694d36d70",
+          "bytes": 604,
+          "media_type": "application/json",
+          "relocated_from": "new in task TSK-7E5E18758D9C",
+          "effective": {
+            "role": "seed_input",
+            "acquisition_class": "static_curated",
+            "preparation": "human_and_ai_assisted",
+            "access": "internal",
+            "access_defaulted": false,
+            "scope": {
+              "kind": "global"
+            },
+            "review": {
+              "status": "needs_review",
+              "note": "Files state their content but not who prepared them; preparation method must be confirmed before registration."
+            },
+            "resolved_from": {
+              "access": "_folder.yaml",
+              "scope": "global/_folder.yaml",
+              "role": "global/reference/_folder.yaml",
+              "acquisition_class": "global/reference/_folder.yaml#overrides/au-m49-aliases.json",
+              "preparation": "global/reference/_folder.yaml#overrides/au-m49-aliases.json",
+              "review": "global/reference/_folder.yaml"
+            },
+            "file_override": [
+              "acquisition_class",
+              "preparation"
+            ]
+          },
+          "bucket": "mzizi",
+          "object_key": "internal/content/sha256/12/ab/12ab975ae050f224250ab2e1e24346741486f27baa492083469a957694d36d70",
+          "upload_status": "not_recorded_here"
+        }
+      ]
+    },
+    {
+      "id": "global.reference.african-countries",
+      "loader": "reference.countries",
+      "target": "reference.countries",
+      "database_target_state": "mzizi_new",
+      "depends_on": [
+        "global.reference.au-members-source",
+        "global.reference.un-m49-source",
+        "global.reference.au-m49-aliases"
+      ],
+      "sync_policy": "preview_then_apply_no_implicit_delete",
+      "files": [
+        {
+          "path": "global/reference/african-countries-au-un-2026-11-11.json",
+          "sha256": "f6f6b167394959498626aa9c9d6a241a0e64f1c5b92ab803e494f9689c3e600b",
+          "bytes": 11486,
+          "media_type": "application/json",
+          "relocated_from": "new in task TSK-7E5E18758D9C",
+          "effective": {
+            "role": "seed_input",
+            "acquisition_class": "internally_derived",
+            "preparation": "human_and_ai_assisted",
+            "access": "internal",
+            "access_defaulted": false,
+            "scope": {
+              "kind": "global"
+            },
+            "review": {
+              "status": "needs_review",
+              "note": "Files state their content but not who prepared them; preparation method must be confirmed before registration."
+            },
+            "resolved_from": {
+              "access": "_folder.yaml",
+              "scope": "global/_folder.yaml",
+              "role": "global/reference/_folder.yaml",
+              "acquisition_class": "global/reference/_folder.yaml#overrides/african-countries-au-un-2026-11-11.json",
+              "preparation": "global/reference/_folder.yaml#overrides/african-countries-au-un-2026-11-11.json",
+              "review": "global/reference/_folder.yaml"
+            },
+            "file_override": [
+              "acquisition_class",
+              "preparation"
+            ]
+          },
+          "bucket": "mzizi",
+          "object_key": "internal/content/sha256/f6/f6/f6f6b167394959498626aa9c9d6a241a0e64f1c5b92ab803e494f9689c3e600b",
+          "upload_status": "not_recorded_here"
+        }
+      ]
+    },
+    {
+      "id": "global.reference.foundation-baseline",
+      "loader": "reference.foundation",
+      "target": "reference.schemes,reference.values,reference.topics",
+      "database_target_state": "mzizi_new",
+      "depends_on": [],
+      "sync_policy": "preview_then_apply_no_implicit_delete",
+      "files": [
+        {
+          "path": "global/reference/foundation-baseline.json",
+          "sha256": "60613ecee7306f44619b76191e38027f4abb79cfdd8c537ff858a06b65ceb053",
+          "bytes": 2557,
+          "media_type": "application/json",
+          "relocated_from": "new in task TSK-7E5E18758D9C",
+          "effective": {
+            "role": "seed_input",
+            "acquisition_class": "static_curated",
+            "preparation": "unknown",
+            "access": "internal",
+            "access_defaulted": false,
+            "scope": {
+              "kind": "global"
+            },
+            "review": {
+              "status": "needs_review",
+              "note": "Files state their content but not who prepared them; preparation method must be confirmed before registration."
+            },
+            "resolved_from": {
+              "access": "_folder.yaml",
+              "scope": "global/_folder.yaml",
+              "role": "global/reference/_folder.yaml",
+              "acquisition_class": "global/reference/_folder.yaml",
+              "preparation": "global/reference/_folder.yaml",
+              "review": "global/reference/_folder.yaml"
+            },
+            "file_override": null
+          },
+          "bucket": "mzizi",
+          "object_key": "internal/content/sha256/60/61/60613ecee7306f44619b76191e38027f4abb79cfdd8c537ff858a06b65ceb053",
+          "upload_status": "not_recorded_here"
+        }
+      ]
+    },
     {
       "id": "global.auth.namespaces",
       "loader": "auth.baseline",

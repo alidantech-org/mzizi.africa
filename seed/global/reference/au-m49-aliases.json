@@ -1,0 +1,13 @@
+{
+  "note": "Explicit name reconciliation between captured AU member-state table and captured UN M49 Africa table; names are source labels, not synonyms asserted for all historical dates.",
+  "aliases": {
+    "Central African Republic2": "Central African Republic",
+    "DR Congo": "Democratic Republic of the Congo",
+    "Guinea Bissau": "Guinea-Bissau",
+    "Sahrawi Republic": "Western Sahara",
+    "São Tomé and Príncipe": "Sao Tome and Principe",
+    "Swaziland": "Eswatini",
+    "UR of Tanzania": "United Republic of Tanzania"
+  },
+  "recognition_exceptions": {"Sahrawi Republic": "disputed"}
+}

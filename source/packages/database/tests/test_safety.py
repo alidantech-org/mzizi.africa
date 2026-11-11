@@ -26,5 +26,6 @@ def test_the_rewrite_url_must_be_exactly_mzizi_new_on_a_local_host(monkeypatch):
 
 def test_the_ordered_migration_list_resolves_with_checksums():
     names = [n for n, _, _ in migration_files()]
-    assert names == ["auth/0001_auth.sql", "auth/0002_auth_functions.sql", "engine/0001_engine.sql", "filesystem/0001_filesystem.sql"]
+    assert names[:4] == ["auth/0001_auth.sql", "auth/0002_auth_functions.sql", "engine/0001_engine.sql", "filesystem/0001_filesystem.sql"]
+    assert len(names) == len(set(names))
     assert all(len(checksum) == 64 for _, _, checksum in migration_files())

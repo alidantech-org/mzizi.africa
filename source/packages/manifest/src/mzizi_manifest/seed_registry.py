@@ -23,6 +23,8 @@ PREPARATION = ("human_prepared", "ai_prepared", "human_and_ai_assisted", "progra
 
 #: Loaders a manifest may name. A manifest can never make a tool run an arbitrary script or SQL.
 LOADERS = frozenset({
+    "reference.foundation",
+    "reference.countries",
     "auth.baseline", "fixtures.entities", "database.governance-catalogue", "database.expected-sites", "database.domain-zones",
     "database.statistical-catalogue", "database.office-patterns", "database.media-expectations", "database.assessment-policy",
     "engine.import-mappings", "engine.site-structure", "engine.landmark-places", "engine.crawl-sections", "engine.domain-spellings",

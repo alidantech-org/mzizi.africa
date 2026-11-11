@@ -4,6 +4,14 @@ acquisition_class: static_curated
 preparation: unknown
 review: {status: needs_review, note: "Files state their content but not who prepared them; preparation method must be confirmed before registration."}
 overrides:
+  african-countries-au-un-2026-11-11.json:
+    acquisition_class: internally_derived
+    preparation: human_and_ai_assisted
+    reason: "Extracted AU member labels, mapped explicitly to UN M49 codes, with a manually reviewed alias list and disputed-recognition exception."
+  au-m49-aliases.json:
+    acquisition_class: static_curated
+    preparation: human_and_ai_assisted
+    reason: "Seven explicit label reconciliations reviewed against the AU and UN snapshots."
   media-formats.json:
     acquisition_class: internally_derived
     preparation: human_and_ai_assisted

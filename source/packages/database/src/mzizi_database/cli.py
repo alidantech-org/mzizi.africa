@@ -7,7 +7,7 @@ import os
 import sys
 
 from .connection import assert_rewrite_session, connect, rewrite_url
-from .loaders import auth
+from .loaders import auth, reference
 from .migrate import apply_migrations, migration_files, reset_database
 
 
@@ -16,7 +16,10 @@ def init() -> dict:
     with connect(rewrite_url()) as conn:
         assert_rewrite_session(conn)
         seeded = auth.apply_auth_seed(conn)
-    return {"applied": applied, "auth_seed_added": vars(seeded)}
+    with connect(rewrite_url()) as conn:
+        assert_rewrite_session(conn)
+        reference_seeded = reference.apply_reference_seed(conn)
+    return {"applied": applied, "auth_seed_added": vars(seeded), "reference_seed_added": reference_seeded}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -25,6 +28,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("status")
     sub.add_parser("init", help="create mzizi_new if missing, apply pending SQL, apply the auth seed")
     sub.add_parser("reset", help="drop and recreate mzizi_new only (host and current_database() verified), then init")
+    sub.add_parser("load-countries", help="load the reviewed 55 AU/UN country reconciliation after exact source artifacts are pinned")
     admin = sub.add_parser("bootstrap-admin", help="create the first administrator; identity from args or the AUTH_BOOTSTRAP_* variables named in seed/global/auth/bootstrap.yaml")
     admin.add_argument("issuer", nargs="?")
     admin.add_argument("subject", nargs="?")
@@ -40,6 +44,10 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "reset":
         reset_database()
         print(json.dumps(init()))
+    elif args.command == "load-countries":
+        with connect(rewrite_url()) as conn:
+            assert_rewrite_session(conn)
+            print(json.dumps({"countries_added": reference.apply_country_seed(conn)}))
     else:
         definition = auth.read_bootstrap()
         env = definition["identity"]
