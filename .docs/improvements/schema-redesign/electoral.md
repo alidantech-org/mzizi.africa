@@ -124,3 +124,7 @@ Connect an election contest to the office(s) it fills, its electoral area/report
 Boundaries and reporting areas are dated and need not follow an administrative parent chain. Voter counts belong to a defined registration release/coverage, not a generic current local number. Task 03 supplies interfaces and a contest-to-office-to-holder fixture; task 04 finalizes real tables and full electoral rule/version semantics. No fabricated results or terms from pattern expectations.
 
 Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+
+## 2026-11-11 — System-expansion alignment
+
+Electoral owns results and election facts; derived turnout or comparisons belong to Statistical with pinned definitions, source releases and geographic coverage. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

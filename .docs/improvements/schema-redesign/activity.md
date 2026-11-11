@@ -149,3 +149,7 @@ An event may be **derived as an expected schedule entry** only when its schedule
 ### Decisions reserved for the user
 
 Whether `activity.updates` and `activity.actions` need distinct tables; whether `is_recurring` should be derived from a schedule FK; whether announced event and completed occurrence are one versioned event identity or related records; how canonical domain dates and event dates are reconciled; whether a manually recorded event can bypass review; typed FK association design, and which trigger levels can refresh automatically. **Planning only; no database/API/UI changes or tasks approved.**
+
+## 2026-11-11 — System-expansion alignment
+
+Activity remains the canonical occurrence/event owner. History may define chronologies and interpretations that point to Activity events through enforceable typed relationships. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

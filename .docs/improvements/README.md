@@ -8,23 +8,24 @@ extra: {status: planning_only, task_creation: user_directed_only}
 
 # MZIZI improvement planning — compact document index
 
-**Planning and discussion only. Not approved for code changes, migrations, infrastructure work, or Taskcode task creation.**
+**Planning and discussion only. Expansion proposals are not approved for SQL, API implementation, migrations, infrastructure work or deployment. Documentation tasks are tracked through the repository Task workspace; that tracking does not approve implementation.**
 
-The user wants **few, useful cross-cutting documents**, but explicitly requested an individual detailed document for each of the 18 proposed schema domains. This is an organized reference library for a user-led schema redesign, data acquisition/generation improvements, a file manager backed by an **already deployed S3-compatible service**, and modular concurrent pipelines. The project will create Taskcode groups/tasks **one by one only when and how the user directs**, after discussing and approving design details. The user, not this document, determines implementation order.
+The user wants a small set of useful cross-cutting documents alongside detailed domain design documents. The library covers a user-led schema redesign, data acquisition/generation, a file manager backed by the existing S3-compatible service, and modular pipelines. The system-expansion proposal describes the broader research and product vision; domain documents refine possible ownership. Implementation order and approval remain user-directed.
 
 ## Read in this order
 
 | Document | Role |
 |---|---|
-| [Master planning register](mzizi-data-schema-storage-and-pipelines-redesign.md) | Full record of all user concerns, 18 answers, 22 open decisions, recommendations, current 24-schema/141-table inventory and handoff constraints. **Do not discard this register.** |
-| [Schema redesign folder](schema-redesign/README.md) | Audit method, scope, candidate regroupings, per-table/per-column decision template. **All 18 requested domain design files now exist following the user's explicit request; no additional placeholder files will be created automatically.** |
+| [System expansion and advancement proposal](advancement-and-system-expansion.md) | Broad vision, five exploration areas, candidate domains/tables, ownership boundaries, spatial/statistical lifecycle, product capabilities, standards and unresolved questions. Hypothetical and not SQL-approved. This document frames the expansion. |
+| [Master planning register](mzizi-data-schema-storage-and-pipelines-redesign.md) | Preserves user concerns, prior research, decisions, recommendations, historical inventory and unresolved design questions. **Do not discard this register.** |
+| [Schema redesign folder](schema-redesign/README.md) | Audit method, historical schema inventory, domain designs and per-table review template. The 18 original designs and seven expansion briefs are separately identified. |
 | [Data classification and pattern generation](data-categories-and-patterns.md) | Seeded/static, seeded/pattern, collected, derived; eligible table/class tags; pattern ownership, versions, corrections, sync, lineage and UI. |
 | [File manager and external S3](file-management-and-s3.md) | Logical folders/tags, clear structure, hashes/dedup, source files/derivatives, URLs and integration with the user's existing service. |
 | [Detailed source redesign and website intelligence](source-redesign/README.md) | Human table-by-table source/website review, root discovery, link graphs, fuzzy/ML ranking, vector-index options, adaptive extraction, pattern-schema alternative and open decisions. **Planning only; no consolidation approved.** |
 | [Site structure, content hashing and Markdown conversion](site-structure-and-markdown-extraction.md) | HTML/CSS/JavaScript-aware discovery, rendered content → readable Markdown, site/tree/section change detection, accurate extraction and mapping. |
 | [Independent pipelines and packages](independent-data-pipelines.md) | Pipeline composition, reusable agent/scraper/extractor/file packages, concurrency, dependencies, caching, safety, run control and alternatives. |
 
-**Reason for this layout:** More detailed schema review benefits from a dedicated folder because the user will evaluate each domain and individual table, but the cross-cutting subjects belong in **four substantive documents**, not one tiny file per topic. Keep descriptions nonduplicative: the master is the decision record; focused files explain design/tradeoffs.
+**Document authority:** The expansion proposal sets broad vision and hypothetical cross-domain boundaries; the master register preserves design history and decisions; the connected foundation controls Task 03; individual domain documents own detailed analysis. Where they conflict, retain the accepted specific decision and record the mismatch for resolution. Keep summaries linked rather than duplicating whole designs.
 
 ## Standing instructions
 
@@ -41,7 +42,7 @@ The user wants **few, useful cross-cutting documents**, but explicitly requested
 
 ## Required schema-column simplification review (2026-11-07)
 
-The user rejected automatically adding `valid_from/to`, `valid_from_precision/to_precision`, `is_current` and other generic rigid columns everywhere. The [schema redesign README](schema-redesign/README.md) now defines a **mandatory per-table KEEP/REMOVE/DERIVE/MOVE/RENAME/ADD review** across all 18 domain designs. It also evaluates selective `deleted_at` soft deletion for recoverable user-managed records, separately from real-world retirement, source evidence, corrections and privacy erasure. **No final per-table decisions or migrations are approved.** The older broad date-precision convention must be reconciled during a separately authorized code/docs migration, not modified silently now.
+The user rejected automatically adding `valid_from/to`, `valid_from_precision/to_precision`, `is_current` and other generic rigid columns everywhere. The [schema redesign README](schema-redesign/README.md) now defines a **mandatory per-table KEEP/REMOVE/DERIVE/MOVE/RENAME/ADD review** across all original 18 domain designs; expansion briefs follow the same review discipline. It also evaluates selective `deleted_at` soft deletion for recoverable user-managed records, separately from real-world retirement, source evidence, corrections and privacy erasure. **No final per-table decisions or migrations are approved.** The older broad date-precision convention must be reconciled during a separately authorized code/docs migration, not modified silently now.
 
 ## Source redesign — deep research follow-up
 
@@ -83,3 +84,8 @@ The user accepted the connected reference/geography/legal/domain direction and r
 Modern country identities organize governance, geography links territories/history/cross-border coverage, reference defines meanings, legal provisions support authority/rules, and typed domain FKs join actual entities. UI uses topic/capability contracts rather than arbitrary table traversal. Statistical meaning requires domain definitions and exact period/method/coverage/release context. The linked foundation records research, regional membership maps, historical uncertainty and methodology.
 
 The latest remote filesystem task notes supersede the older upload/type/extraction proposals in this index: seven tables with `file_relations`, a paths view, no file-type/extension/object tables, and reported live publication/checks. Task 02 still has in-progress metadata; verify its actual outputs. Earlier blanket planning/no-task wording and publication-pending statements are historical, not a rollback of authorized completed work. No infrastructure or S3 changes are part of this preparation.
+
+
+## 2026-11-11 — Expansion-document reading order
+
+Start with [Advancement and System Expansion](advancement-and-system-expansion.md) for the five exploration areas and broad architecture. Use the [master register](mzizi-data-schema-storage-and-pipelines-redesign.md) for history and unresolved decisions. For foundation work, follow the [connected Reference–Geography–Legal foundation](connected-reference-geography-legal-foundation.md) and its Task 03 specification. For domain details, consult the existing [schema redesign index](schema-redesign/README.md), which distinguishes the earlier 18 design documents from the seven new expansion briefs. All new candidate tables and schemas remain hypothetical pending review.

@@ -107,3 +107,7 @@ Test: Same supplier bidding for contracts in different counties, joint award rec
 **Domain-specific guidance:** Tenders need publication/closing deadlines; bids submission dates; contracts signing/effectiveness/end dates; milestones due/completed dates; variations amendment dates. Generic validity cannot represent these different legal events. Official historical transactions require version/supersession, not is_current or soft-delete. Drafts may justify recoverable deletion if explicitly modeled.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+## 2026-11-11 — System-expansion alignment
+
+Procurement remains the purchasing process owner. Economic market/product facts and Civic infrastructure assets may be linked but are not duplicate procurement records. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

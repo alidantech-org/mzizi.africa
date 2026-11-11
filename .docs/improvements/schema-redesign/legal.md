@@ -121,3 +121,7 @@ Separate stable legal instruments/provisions, their textual versions/languages, 
 Territorial, personal, subject and temporal applicability differ. Spatial inclusion alone cannot establish applicable law, and cited support is not proof of compliance or settled interpretation. Extracted text is not executable behavior; reviewed structured rules and registered handlers implement supported behavior. Historical/customary/de facto institutions may have non-statutory documented bases and must not be assigned invented constitutional support. Task 03 defines the minimal legal interface/bootstrap order and proof cases; task 04 finalizes full instruments/provisions/processes and downstream legal associations.
 
 Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+
+## 2026-11-11 — System-expansion alignment
+
+The expanded domains retain typed, direct legal-basis links where legal authority is a real relationship; the broader topic list does not create automatic legal FKs or implied applicability. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

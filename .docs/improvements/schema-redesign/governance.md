@@ -128,3 +128,7 @@ Distinguish broad office classification, country/system-specific office definiti
 The county-governor proof case separates Articles 176, 179 and 180 and their roles. A contest targets an office; declaration and beginning an officeholding term are separate. Regional organizations have real organs/posts and mandates; a continent unit does not appoint a continental leader. Task 03 establishes contracts and query traces; task 04 owns full governance schema/rule/holder implementation. Reference patterns generate only established structure and preserve independent factual edits.
 
 Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+
+## 2026-11-11 — System-expansion alignment
+
+Reconcile the earlier governance/civic service mapping with the expansion proposal: Governance owns institutions/offices/authority; Civic may own infrastructure function and service delivery. This boundary remains open. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

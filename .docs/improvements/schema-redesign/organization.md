@@ -106,3 +106,7 @@ See [master register](../mzizi-data-schema-storage-and-pipelines-redesign.md), [
 **Domain-specific guidance:** Canonical organization identity is stable; registration, dissolution, merger and renaming have specific lifecycles, not automatically valid_from/to everywhere. Issued identifiers and ownerships may have real validity intervals; ordinary entity names may require history. Avoid soft-delete for canonical public bodies/suppliers and use domain retirement or supersession instead.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+## 2026-11-11 — System-expansion alignment
+
+Infrastructure operators, market actors, custodial institutions and farm organizations should reuse Organization identities rather than create domain-local duplicates. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

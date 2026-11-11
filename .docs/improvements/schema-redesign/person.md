@@ -108,3 +108,7 @@ See [master register](../mzizi-data-schema-storage-and-pipelines-redesign.md), [
 **Domain-specific guidance:** A real individual is not a temporarily valid record just because a generic entity template says so. Names, contacts, public handles and profiles may have specific observed usage periods; keep only where needed. Privacy-driven erasure/anonymization differs from soft deletion of public facts. Remove redundant is_current and precision fields unless justified.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+## 2026-11-11 — System-expansion alignment
+
+Demographic aggregates remain Statistical; they do not create Person identities. Heritage/community records must also respect identity exposure and consent. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

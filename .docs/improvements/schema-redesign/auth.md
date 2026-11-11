@@ -233,3 +233,7 @@ The admin UI consumes effective capabilities from the backend and offers an expl
 Update this existing auth document with the full current-to-target table inventory and exact column dictionaries, annotated relationship diagram, sample permissions and bounded roles, grant/deny examples, admin/mobile/API flows, delegation and membership lifecycle, audit explanation, migration mapping and focused verification matrix. Explain every table in plain language and how people, accounts, institutions and resources remain distinct while linking correctly. Demonstrate cross-county denial, IEBC/county ownership separation, expired/revoked membership, non-UUID provider subjects, self-escalation denial, unauthorized field updates, role/scope changes, multi-steward conflicts and concurrent ownership change. Prefer explainable scoped RBAC with explicit attributes/relationships over unrestricted user-authored policy code.
 
 Return the completed design for user review. No migrations, schema/contract/code edits, account creation, identity-provider deployment, live resource changes or implementation of later milestones are authorized by this documentation update.
+
+## 2026-11-11 — System-expansion alignment
+
+Geographic or cultural sensitivity in biodiversity and heritage may require scoped access, but contextual place proximity must not be treated as authorization. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

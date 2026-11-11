@@ -268,3 +268,7 @@ The underlying system should be rigorous, source-aware and versioned.
 That combination is the product story:
 
 > **Mzizi makes Africa's roots explorable, and uses those roots to make the present more understandable.**
+
+## Broader place exploration — proposal (11 November 2026)
+
+The story grows beyond heritage and public institutions. A visitor should eventually follow a place across maps and time, from natural features and biodiversity to roads and services, from cultivation and markets to population measures, and from historical interpretation to today's institutions. Each view should expose the evidence and limits behind it. This is a product direction under investigation; candidate data domains and interfaces are described in [the system-expansion proposal](../improvements/advancement-and-system-expansion.md), not yet implemented features.

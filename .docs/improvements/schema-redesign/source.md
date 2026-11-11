@@ -190,3 +190,7 @@ Source task 05 specifies exact source/API/manifest tables, columns, FKs, release
 Inventory every listed extractor/importer and map its source knowledge, parser capability, manifest replacement, dependencies and retirement criteria. Demonstrate onboarding multiple websites and APIs from different jurisdictions by adding/editing manifests without source-specific engine code. Test API pagination/retry/checkpoint replay, HTML/PDF variability, seed/folder/schema validation, deterministic effective manifest resolution, conflict rejection, unsupported-format abstention and source gate enforcement. Replay captured evidence to verify mappings without unbounded live requests. The new database is mzizi_new and compatibility with old schemas is unnecessary; existing S3 artifacts remain protected.
 
 Status: user-approved architecture/documentation direction. No current source-module removal, runtime rewrite, live fetch or schema migration is performed by recording this requirement.
+
+## 2026-11-11 — System-expansion alignment
+
+Expanded environmental, biodiversity, agricultural, economic, historical and heritage claims use the existing Source evidence/provenance model; original artifacts remain preserved and AI-derived interpretations attributable. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

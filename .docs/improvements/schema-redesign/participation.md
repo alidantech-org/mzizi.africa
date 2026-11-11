@@ -96,3 +96,7 @@ Before adding DDL: review local public-participation laws/requirements and globa
 **Domain-specific guidance:** Consultations may open/close on exact dates; submissions and responses have real submitted/replied times, not generic validity. Legal procedural deadlines can derive from the applicable pattern while actual public hearings have independent dates. Consider deletion of unpublished drafts; preserve published official responses, withdrawal/redaction and privacy-specific purge rules.
 
 **OPEN for human review:** exact per-table/column disposition, derived status and as-of queries, pattern/legal links, justified precision, recoverable deletion versus domain lifecycle, history/identity preservation and hard-FK impact. No code or migration is authorized.
+
+## 2026-11-11 — System-expansion alignment
+
+Community participation and consent may be relevant to heritage and environmental knowledge; keep participation records distinct from canonical claims and audit decisions. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

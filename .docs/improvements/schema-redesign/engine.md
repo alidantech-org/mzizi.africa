@@ -210,3 +210,7 @@ An authorized admin can: (a) propose activity with evidence, (b) request re-veri
 **Research outcomes:** successful no-change verification; supported new canonical candidate; conflicting evidence requiring review; missing relationship; source unavailable; publisher-reported withdrawal; deliberate known-absence or not-applicable; canceled/overdue event schedule. Do not falsely advance `last_verified_at` when only a failed check or a source download occurred.
 
 **Unresolved design decisions:** whether the verification ledger physically lives under `engine` or `source`; how to enforce hard FK lineage for generic field-group checks; table/field-group policy registry representation; schedule-rule recurrence and timezone/legal exceptions; scheduler dedup keys; what source events are trusted to auto-trigger; cost/volume retention; which updates bypass human review. **No code/migration/task authorization.**
+
+## 2026-11-11 — System-expansion alignment
+
+Spatial/environmental transformations and domain acquisitions remain engine jobs with pinned inputs, methods and outputs; engine execution does not own canonical domain facts. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

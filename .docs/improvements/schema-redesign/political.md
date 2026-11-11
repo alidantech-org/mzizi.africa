@@ -107,3 +107,7 @@ Parties, coalitions and memberships are actual political/organization-domain rec
 Task 03 specifies the political/electoral/governance integration contract; task 04 finalizes political identity, membership, coalition and legal-rule relationships. Cross-border movements and historical organizations must not be forced into single-country ownership or inferred territorial control.
 
 Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+
+## 2026-11-11 — System-expansion alignment
+
+Political parties and affiliations remain distinct from History interpretation; historical claims link to dated party facts and evidence without duplicating membership/event systems. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

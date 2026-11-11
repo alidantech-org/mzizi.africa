@@ -667,3 +667,33 @@ The user accepted the November reference/geography/legal/domain explanation and 
 Superseded: using jurisdiction as country + vocabulary scope + legal authority; a fictional world legal jurisdiction; legacy ID/data-preservation requirements for the disposable `mzizi_new`; one geographic parent tree; generic statistics without domain meaning; reference as an obligatory bridge between all entities. Retained: explicit cross-schema FKs, scoped RBAC, source/evidence/version integrity, per-table semantic dates, reference-owned pattern definitions, engine-owned execution and existing S3 protection.
 
 Candidate physical tables and exact implementation remain subject to detailed design. Task 03 establishes minimal legal/domain connection contracts; task 04 finalizes downstream schemas. Read [the local-agent handoff](../handoffs/task03-connected-foundation-local-agent.md). The current filesystem task's final notes report seven tables/file_relations and completed publication/live checks; older planning/upload-pending statements do not override that later account.
+
+## 2026-11-11 — Broader Mzizi knowledge-system expansion
+
+The [advancement and system-expansion proposal](advancement-and-system-expansion.md) records a wider evidence-first African knowledge system organized for product exploration across Civic and Society; Geography and Nature; History and Heritage; Statistics and Demographics; and Economics and Production. These are product-level exploration areas, not five required database schemas.
+
+### New candidate domain work
+
+The proposal explores expanded Geography, Civic infrastructure and services, Environment, Biology, Agriculture, Economy, Statistical, History and Heritage. Education, Health, Linguistics and Migration remain subjects to evaluate, not automatically admitted schemas. Candidate responsibilities and tables appear in the vision and seven new domain briefs in `schema-redesign/`.
+
+### Ownership and cross-domain relationships
+
+The proposal retains single canonical ownership and typed relationships. Geography owns geographic identities and geometry; Civic owns infrastructure function and networks. Environment owns original sensor readings; Statistical owns published/derived comparable series. Biology owns taxa and biodiversity occurrences; Agriculture owns managed cultivation and actual harvest facts. Economy owns products, markets and individual prices, while Statistical owns price indices. Activity retains event identity and History interprets events and curates chronology; Geography retains boundary identity and History links to it; Heritage owns artifacts/custody and History owns interpretation. Person retains individuals while Statistical retains aggregate population measurements. Finance and Procurement remain distinct from Economy.
+
+### Spatial, temporal, evidence and product implications
+
+Preserve original geospatial files through the existing filesystem, use PostGIS for curated canonical geometry, and record exact lineage for derived assets, map layers and statistical aggregations. Boundary editions and crosswalks remain explicit. Distinguish historical validity, event time, observation time, publication time, retrieval time and record/review time where meaningful. Keep evidence, source versions, methods, uncertainty, disagreement and correction history attached to claims. Product queries should use place, time and registered topic/capability and return coverage, boundary, method, evidence and unavailable/fallback context; they must not expose arbitrary database table traversal.
+
+### Statistical ownership clarification
+
+Not every number belongs in Statistical. Raw environmental readings, agricultural harvest quantities, Economy price quotes, Electoral results and Finance transactions remain owned by their originating domains. Statistical owns defined comparable series, published measurement sets, official indices and reproducible derived observations. Derivations pin source inputs, method/version, units, temporal coverage and geography/boundary interpretation.
+
+### Reconcile prior assumptions without erasing history
+
+The old 24-schema/141-table repository inventory is retained as a 7 November pre-rewrite historical baseline, not the current SQL implementation count. The active ordered SQL tree on 11 November contains six schemas (`auth`, `engine`, `filesystem`, `geography`, `legal`, `reference`) and 13 migration files; Dryv defines additional contracts without implying their full databases or product capabilities are implemented. The 18 original design documents remain in the folder and this expansion adds seven briefs. The prior possible 18-to-21 target schema count remains unresolved; new domains may add to, split or be represented within existing domains after review.
+
+Retained: evidence-first modeling, provenance, real cross-schema FKs, first-class time/place, distinct source/extraction/intelligence/filesystem/database/API responsibilities, and the accepted connected foundation. Refined: five exploration areas guide user experience rather than schema count; spatial geometry and functional infrastructure have separate owners; raw source-domain measurements are separated from statistical series. Requires reconciliation: older Civic-to-Governance mapping; Geography/Place/Contact arrangement; Statistical relationship to domain-native numeric facts; History versus Activity; and Heritage artifact identity versus filesystem custody. These are open design questions, not silent replacements.
+
+### Standards and unresolved decisions
+
+Evaluate SDMX for statistical exchange; Darwin Core/GBIF for biodiversity records; FAOSTAT definitions/data for agricultural concepts; UN CPC for products with explicit version status; OGC APIs and STAC for geospatial discovery/services; and CF conventions for multidimensional environmental data. Treat them as versioned exchange/metadata references, not database schemas. Open questions include geographic feature/place/geometry ownership; network and reservoir identity; environmental readings versus gridded products; taxonomic versioning and sensitive occurrences; harvest/product modeling; historical currencies and comparable prices; Statistical dimensions/revisions; History's enforceable typed links; heritage custody and intangible culture; schema boundaries; public access and capability resolution.

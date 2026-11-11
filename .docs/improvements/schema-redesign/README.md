@@ -13,11 +13,11 @@ extra: {status: planning_only, no_bulk_task_creation: true}
 
 > **2026-11-08 update:** the user approved a clean rewrite in the disposable database `mzizi_new` (`.docs/decisions/clean-rewrite-mzizi-new.md`). The `auth` design is implemented (see [auth.md](auth.md)); filesystem implementation is also recorded in task 02; task 03 is now prepared for detailed design, and remaining schema documents remain planning records. Statements elsewhere in this folder about preserving IDs, data migration or compatibility are the former policy and are superseded for the rewrite.
 
-## Final schema count: NOT DECIDED — all current schemas accounted for
+## Final schema count: NOT DECIDED — historical inventory and active rewrite distinguished
 
-**This folder has 19 Markdown files: 18 proposed target-schema plans plus this README. They are NOT 19 PostgreSQL schemas.** The repository currently defines 24 application/runtime PostgreSQL schemas; an 18-schema target is one provisional option, **not a user-approved physical design**. A domain planning file may account for several existing schemas. No merge, rename or removal is approved merely because its destination appears here.
+**The original review set contains 18 domain design documents. The expansion pass adds seven candidate-domain briefs, for 25 domain design documents plus this README. These are not PostgreSQL schemas. An earlier pre-rewrite inventory measured 24 application/runtime schemas and 141 tables from the former TypeORM definitions on 7 November 2026. On 11 November, the active ordered SQL tree defines six schemas (`auth`, `engine`, `filesystem`, `geography`, `legal`, `reference`) across 13 migrations. Dryv contracts cover more domains than the SQL tree; they do not prove full database implementation. Counts describe different snapshots and artifacts, not a current live database. No final target schema count, merge, rename or removal is approved.
 
-### Eighteen proposed domains for one-by-one human review
+### Original 18 domain designs for one-by-one human review
 
 | # | Planning document | Purpose |
 |---:|---|---|
@@ -40,7 +40,7 @@ extra: {status: planning_only, no_bulk_task_creation: true}
 | 17 | [`audit.md`](audit.md) | Immutable decisions and action history |
 | 18 | [`engine.md`](engine.md) | Pipeline runs, staging and generation |
 
-### Complete old-to-possible-new mapping (all 24 current schemas)
+### Historical pre-rewrite mapping (24 repository-defined schemas, 7 November 2026)
 
 | Current schema | Review document | Tentative direction; nothing silently discarded |
 |---|---|---|
@@ -88,7 +88,7 @@ extra: {status: planning_only, no_bulk_task_creation: true}
 
 ---
 
-## Domain design documents — all 18 explicitly requested
+## Domain design documents — original designs and expansion briefs
 
 The filenames describe **proposed target domains**, not necessarily existing PostgreSQL schema names. Several cover multiple existing schemas or a new proposed schema. Each file identifies actual current tables, ownership questions, direct-FK requirements, data classes, recommended alternatives, risks and unresolved decisions. **The documents are planning references; none is final DDL approval.**
 
@@ -134,7 +134,7 @@ The filenames describe **proposed target domains**, not necessarily existing Pos
 
 ## Current repository inventory
 
-On inspected `develop`, the TypeORM entity catalogue has **21 domain schemas and 124 entity tables**. Migrations add `engine`, `staging` and `access` with **16 tables**, plus `geography.boundary_shapes`, for **24 repository-defined schemas / 141 tables**; `access.account_permissions` is a view. The [master register](../mzizi-data-schema-storage-and-pipelines-redesign.md) contains the **full per-schema current table names**. That is code evidence, **not** a verified live database inventory. Older `.docs/docs/DATABASE_DESIGN.md` and naming rules lag some current entities (electoral referendum/electorate, statistical dimensions/vintages, website DNS/sightings, source classifications). `organization.locations` is retired.
+The historical 7 November pre-rewrite `develop` TypeORM entity catalogue had **21 domain schemas and 124 entity tables**. Its migrations added `engine`, `staging` and `access` with **16 tables**, plus `geography.boundary_shapes`, for **24 repository-defined schemas / 141 tables**; `access.account_permissions` was a view. This is not the active package-first SQL inventory. On 11 November the ordered rewrite SQL defines six schemas and 13 migrations; the [master register](../mzizi-data-schema-storage-and-pipelines-redesign.md) preserves the complete historical names. These are repository definitions, **not** a verified live database inventory. Older `.docs/docs/DATABASE_DESIGN.md` and naming rules lag some current entities (electoral referendum/electorate, statistical dimensions/vintages, website DNS/sightings, source classifications). `organization.locations` is retired.
 
 ### Domains to review (not a target schema count)
 
@@ -307,3 +307,20 @@ Reuse existing `engine.jobs`, `gaps`, `staging` and `source.verifications` befor
 ## 2026-11-11 — Foundation integration
 
 Read [connected reference/geography/legal foundation](../connected-reference-geography-legal-foundation.md) before interpreting historical jurisdiction or generic statistics proposals. The country umbrella, spatial foundation, legal-basis links, domain ownership, regional/historical cases and capability-driven UI are accepted direction. Exact physical tables are candidates until task 03 completes its detailed specifications. Follow [the local-agent handoff](../../handoffs/task03-connected-foundation-local-agent.md).
+
+
+### Seven system-expansion domain briefs (hypothetical)
+
+The [system-expansion proposal](../advancement-and-system-expansion.md) frames these domain briefs. Their candidate tables are discussion material, not existing SQL or approved target DDL.
+
+| Brief | Proposed responsibility | Existing design relationship |
+|---|---|---|
+| [civic.md](civic.md) | Built infrastructure identity, networks, facilities, services and projects | Extends the earlier governance/civic split question; does not silently reverse it |
+| [environment.md](environment.md) | Monitoring assets, raw observations and environmental model products | New candidate domain; Statistical retains published/derived series |
+| [biology.md](biology.md) | Taxa, biodiversity surveys, occurrences and distributions | New candidate domain; Person and Statistical remain distinct |
+| [agriculture.md](agriculture.md) | Farms, fields, cultivation, managed livestock and harvests | New candidate domain; species in Biology, products/prices in Economy |
+| [economy.md](economy.md) | Products, markets, prices, trade and economic operations | Complements rather than absorbs Finance or Procurement |
+| [history.md](history.md) | Period definitions, research interpretations and curated chronologies | Activity remains owner of event occurrence; Geography owns area identity |
+| [heritage.md](heritage.md) | Artifacts, collections and custody/provenance | Complements History interpretation and filesystem artifact custody |
+
+These briefs do not replace the original 18. The exact PostgreSQL schema boundaries, candidate tables, FK strategy, temporal fields, data classes, API contracts and standards mappings need review against active contracts and the connected foundation before any design is marked approved.

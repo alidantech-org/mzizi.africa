@@ -92,3 +92,7 @@ Audit the exact three current TypeORM entity fields and their generic target ref
 ## 2026-11-07 accountability for event-triggered updates (planning)
 
 Admin-created activities, approved source announcements, schedule-rule changes, ad-hoc refresh requests, agent monitoring authorizations and canonical value promotions require durable actor/decision lineage. **Do not treat engine verification attempts or source downloads as official decisions.** An admin may submit a proposal without approving it, and an unchanged successful recheck need not be a canonical edit. The audit model should show who authorized a monitor, who approved an activity, source evidence, which event/rule caused a job, whether a candidate was rejected/promoted, and old/new canonical version when modified. Retain history and privacy-safe access to internal audit events. Final FK actor/target links, retention and whether audit consumes engine job outcomes remain OPEN.
+
+## 2026-11-11 — System-expansion alignment
+
+Reviews of disputed historical, biodiversity and heritage claims should be append-only audit decisions linked to evidence and versioned domain records. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.

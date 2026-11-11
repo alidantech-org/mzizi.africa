@@ -252,3 +252,7 @@ Mzizi succeeds when a user can explore an African claim and understand:
 8. **how the information changed over time.**
 
 The platform should make Africa's historical depth and present-day complexity more legible without pretending that uncertain history is simple.
+
+## 2026-11-11 — Broader knowledge-system scope
+
+Mzizi's evidence-first purpose extends across civic life and society; geography and nature; history and heritage; statistics and demographics; and economics and production. These are exploration areas, not a mandated database shape. A place should become explorable through physical and historical geography, living environment, infrastructure, people and institutions, economic activity, measurements and source evidence. Each capability must preserve provenance, temporal context, uncertainty and single ownership of canonical facts. The proposed expansion is documented in [Advancement and System Expansion](../improvements/advancement-and-system-expansion.md); it does not imply that candidate domains have been implemented.

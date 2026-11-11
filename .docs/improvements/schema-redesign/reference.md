@@ -151,3 +151,7 @@ The accepted direction replaces the overloaded country/vocabulary/legal use of `
 Domain-specific office/power/selection definitions remain in governance and cite legal provisions. Reference is not a generic container for real organizations, languages' distribution or geographic units. Candidate names in the discussion are not final SQL. Capability discovery connects topics to registered handlers/contracts; its physical ownership must be decided, not assumed to require another schema. Follow the universal `code` rule; prefixes do not replace spatial relationships. Task 03 must specify bootstrap dependencies and real cross-schema keys.
 
 Read [the connected foundation](../connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+
+## 2026-11-11 — System-expansion alignment
+
+Expansion topics should bind to registered capabilities and shared meanings; Reference owns classifications/topics/patterns, not roads, species, products or observations. See the [system-expansion proposal](../advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
