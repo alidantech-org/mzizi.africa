@@ -22,7 +22,17 @@ actions:
     stage: files
     extensions: [.ts]
     commands:
-      - run: [bun, x, biome, lint, --write, --unsafe, --only=correctness/noUnusedImports, $(files)]
+      - run:
+          [
+            bun,
+            x,
+            biome,
+            lint,
+            --write,
+            --unsafe,
+            --only=correctness/noUnusedImports,
+            $(files),
+          ]
   typecheck:
     stage: final
     after: [install]
@@ -61,14 +71,19 @@ packs:
     destination: { $ref: "#/destinations/types" }
 
   dtos:
-    source: { $ref: "#/sources/packs/official", path: inject/validation/class-validator }
+    source:
+      {
+        $ref: "#/sources/packs/official",
+        path: inject/validation/class-validator,
+      }
     destination: { $ref: "#/destinations/modules" }
     bind:
       property.enum.types: { $ref: "#/packs/types" }
       property.types: { $ref: "#/packs/types" }
 
   entities:
-    source: { $ref: "#/sources/packs/official", path: inject/persistence/typeorm }
+    source:
+      { $ref: "#/sources/packs/official", path: inject/persistence/typeorm }
     destination: { $ref: "#/destinations/modules" }
     bind:
       property.enum.types: { $ref: "#/packs/types" }

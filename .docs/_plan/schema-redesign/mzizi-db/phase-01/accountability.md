@@ -220,7 +220,7 @@ Show consultations open for a Kenya county, with verified government sponsor and
 
 Before adding DDL: review local public-participation laws/requirements and global neutrality; record schema/table/column comments, real cross-schema FKs, immutable history, source evidence, data classes, API contracts and independent pattern/migration checks.
 
-**References:** [Master planning register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Activity](../phase-02/activity.md) · [Audit](../operational/audit.md) · [Auth](../operational/auth.md). **Status: discussed, not approved.**
+**References:** [Master planning register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Activity](../phase-02/activity.md) · [Audit](../mzizi-operational-db/audit.md) · [Auth](../mzizi-operational-db/auth.md). **Status: discussed, not approved.**
 
 ## Human review — editable user notes and design sign-off
 

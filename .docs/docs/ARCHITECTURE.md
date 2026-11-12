@@ -2,37 +2,41 @@
 {id: DOC-32E1E997FDD0,name: ARCHITECTURE,type: documentation}
 ---
 
-# ARCHITECTURE — Mzizi system boundaries
+# ARCHITECTURE — active Mzizi components
 
-Mzizi preserves source evidence, turns it into reviewed knowledge, and serves that knowledge through public and research applications. The architecture keeps those responsibilities explicit so extraction, AI assistance, storage and publication remain attributable and testable.
+The repository has separate application, product API, database, workflow, engine, capability and schema projects. These are code ownership boundaries; not every planned workflow or migration is complete.
 
-## Active repository
+## Code map
 
-- `source/apps/www`, `source/apps/web` and `source/apps/mobile` provide public, research and mobile experiences.
-- `source/backend/api` is the NestJS product API.
-- `source/backend/engine` is the Python orchestration and capability API.
-- `source/packages/` contains reusable Python capabilities.
-- `source/backend/pipelines` coordinates durable workflows.
-- `source/backend/database` owns TypeScript database operations.
-- `dryv/` owns authored API/database contracts; `source/schema/` holds input schemas and SQL.
-- Root `seed/` contains prepared inputs and manifests. `scripts/` is the root command runner.
+- `source/apps/{www,web,mobile}` — public Next.js experience, research/review dashboard, and Flutter geography client.
+- `source/backend/api` — NestJS product API, generated primarily from authored contracts in `dryv/`.
+- `source/backend/database` — Bun TypeScript migration/seed CLI and named database-operation service.
+- `source/backend/engine` — Python operational API, jobs and capability orchestrator.
+- `source/backend/pipelines` — Bun TypeScript Temporal workflow API and worker.
+- `source/packages/{agent,extraction,filesystem,manifest,ocr,scraping,source}` — reusable Python capabilities.
+- `source/schema/{contracts,database,pipeline,seed,site/v1}` — exchange/input schemas and ordered SQL.
+- root `seed/` — prepared system inputs; root `scripts/` — unified command runner.
 
-Earlier implementations are historical under `.docs/_archives/2026-11-08-rewrite-snapshot/`; they are not active services.
+See the [repository map](../design/operations/repository-map.md) and component READMEs for the exact code responsibilities.
 
-## Responsibility boundaries
+## Request and data ownership
 
-Raw bytes and immutable versions belong in object storage and are represented by Filesystem metadata. Source records describe publishers, captures, citations and provenance. The Python engine acquires and extracts permitted material into representations and candidates. Intelligence tools may classify or suggest links, but their outputs remain attributable and reviewable. Staging holds candidates and review state. The database owner validates releases and coordinates publication. Accepted, versioned civic knowledge is served by NestJS.
+Applications call the NestJS product API. The API enforces authentication and operation policies, reads product data with a restricted role, and forwards authorized writes to named operations in the TypeScript database service. The database service owns migrations, database seeds and controlled operations. It does not acquire or extract sources.
 
-Operations data is separate from accepted civic knowledge. Operational audit records security and workflow events; it does not establish public facts or replace source evidence. User interfaces consume stable contracts and do not define canonical domain rules.
+The Temporal worker owns durable workflow coordination. It calls the Python engine, which runs operational jobs and invokes reusable Python packages. Packages preserve source and processing metadata and emit representations or proposals; they do not define site-specific content or publish canonical data by themselves.
 
-## Data stores and schema scope
+Raw artifact bytes are managed through the filesystem capability and object storage; SQL stores metadata and relationships. Source, extraction, staging/review and accepted domain data remain distinct states. The current implementation still has Python filesystem and manifest-sync database paths, so database write ownership is not fully consolidated.
 
-The current schema direction and assignments are maintained in the [schema design catalogue](../_plan/schema-redesign/README.md): Operational, Phase 01 civic accountability and deferred Phase 02. It remains design guidance; a proposal is not proof of implementation. Reference mediates domain relationships to Legal. Geography and PostGIS support place and historical-area queries.
+## Contracts and proposals
 
-## Detailed guidance
+Authored API/database contracts live in `dryv/`. Exchange, seed, site and pipeline input schemas and ordered SQL live under `source/schema/`. System input values live under root `seed/`. Design proposals under `.docs/_plan/` describe unapproved or deferred scope; the active code and current contracts determine what is implemented.
 
-- [Data lifecycle](../design/architecture/DATA_LIFECYCLE.md)
-- [Migration boundaries](../design/architecture/MIGRATION.md)
-- [Data and evidence designs](../design/data/README.md)
-- [Source acquisition design](../design/acquisition/README.md)
-- [Operational guidance](../design/operations/README.md)
+The Python capability package list does not currently include `database/`, despite engine/filesystem workspace metadata importing `mzizi-database`. The TypeScript database service at `source/backend/database` is active, but does not satisfy that Python package dependency. Treat fresh Python workspace synchronization as blocked until the configuration/code mismatch is repaired.
+
+## Detailed design
+
+- [Data lifecycle and evidence](../design/architecture/DATA_LIFECYCLE.md)
+- [Migration status and boundaries](../design/architecture/MIGRATION.md)
+- [Database and filesystem design](../design/data/README.md)
+- [Acquisition design](../design/acquisition/README.md)
+- [Operations and repository map](../design/operations/README.md)

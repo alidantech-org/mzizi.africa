@@ -4,6 +4,8 @@ One complete Python project: orchestration, an operational API, workers and the 
 
 ## Run
 
+The current Python workspace cannot be installed from a clean checkout: `source/backend/engine/pyproject.toml` depends on `mzizi-database`, but no `source/packages/database/` workspace project exists. Until that dependency is reconciled, the commands below describe the intended local workflow and may fail before the engine starts. See [`source/packages/README.md`](../../packages/README.md) and the [root command guide](../../../scripts/README.md) for the current limitation.
+
 ```bash
 uv sync --all-packages
 bun run db migrate                                       # ordered schema releases are applied by the Bun database owner

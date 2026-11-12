@@ -422,7 +422,7 @@ A rule should express: applicable jurisdiction and dated legal/pattern basis; wh
 
 **Open design questions for human review:** Should schedules belong to `reference` as pattern subtypes or have distinct tables? How should legally established timing, official announcement and administrative override rank? How does a scheduled item link by real FK to a future `activity` occurrence or a domain election/budget/census? What policy hierarchy governs cadence at field-group and row level? Which version of a schedule applied when an earlier event was planned? How to express jurisdiction scope, timezone, business/calendar dates and legal holidays without embedding Kenya-specific assumptions? How is one authoritative scheduler enforced?
 
-**No DDL, engine changes or Taskcode tasks authorized.** See [activity](../phase-02/activity.md), [engine](../operational/engine.md), [schema-wide semantic naming](../README.md), and [data classes](../../guides/data-categories-and-patterns.md).
+**No DDL, engine changes or Taskcode tasks authorized.** See [activity](../phase-02/activity.md), [engine](../mzizi-operational-db/engine.md), [schema-wide semantic naming](../README.md), and [data classes](../../guides/data-categories-and-patterns.md).
 
 ## 2026-11-11 — Connected foundation direction (controlling for task 03)
 

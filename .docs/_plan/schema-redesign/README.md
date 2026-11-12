@@ -18,7 +18,7 @@ Phase 02 is a holding area for deferred proposals. Moving a schema there does no
 
 | Folder | Purpose | Schema documents |
 |---|---|---|
-| [Operational](operational/README.md) | System/workflow records in a separate Operations database | 7 |
+| [Operational](mzizi-operational-db/README.md) | System/workflow records in a separate Operations database | 7 |
 | [Phase 01](phase-01/README.md) | Agreed civic accountability pilot in Main, including geography and geospatial queries | 12 |
 | [Phase 02](phase-02/README.md) | All other schemas; deferred and unapproved | 14 |
 
@@ -36,19 +36,19 @@ All **35 original schema documents** map below to **33 destination schema docume
 
 | Original root file | Destination | Treatment |
 |---|---|---|
-| `acquisition.md` | [operational/acquisition.md](operational/acquisition.md) | Retained with agreed ownership updates |
+| `acquisition.md` | [operational/acquisition.md](mzizi-operational-db/acquisition.md) | Retained with agreed ownership updates |
 | `activity.md` | [phase-02/activity.md](phase-02/activity.md) | Deferred and unapproved; proposal content retained without redesign |
 | `agriculture.md` | [phase-02/agriculture.md](phase-02/agriculture.md) | Deferred and unapproved; proposal content retained without redesign |
-| `analytics.md` | [operational/analytics.md](operational/analytics.md) | Retained with agreed ownership updates |
-| `audit.md` | [operational/audit.md](operational/audit.md) | Retained with agreed ownership updates |
-| `auth.md` | [operational/auth.md](operational/auth.md) | Retained with agreed ownership updates |
+| `analytics.md` | [operational/analytics.md](mzizi-operational-db/analytics.md) | Retained with agreed ownership updates |
+| `audit.md` | [operational/audit.md](mzizi-operational-db/audit.md) | Retained with agreed ownership updates |
+| `auth.md` | [operational/auth.md](mzizi-operational-db/auth.md) | Retained with agreed ownership updates |
 | `biology.md` | [phase-02/biology.md](phase-02/biology.md) | Deferred and unapproved; proposal content retained without redesign |
 | `chemistry.md` | [phase-02/chemistry.md](phase-02/chemistry.md) | Deferred and unapproved; proposal content retained without redesign |
 | `civic.md` | [phase-01/civic.md](phase-01/civic.md) | Retained with agreed ownership updates |
 | `economy.md` | [phase-02/economy.md](phase-02/economy.md) | Deferred and unapproved; proposal content retained without redesign |
 | `education.md` | [phase-02/education.md](phase-02/education.md) | Deferred and unapproved; proposal content retained without redesign |
 | `electoral.md` | [phase-01/politics.md](phase-01/politics.md) | Merged political/election inputs; distinct tables |
-| `engine.md` | [operational/engine.md](operational/engine.md) | Retained with agreed ownership updates |
+| `engine.md` | [operational/engine.md](mzizi-operational-db/engine.md) | Retained with agreed ownership updates |
 | `environment.md` | [phase-02/environment.md](phase-02/environment.md) | Deferred and unapproved; proposal content retained without redesign |
 | `filesystem.md` | [phase-01/filesystem.md](phase-01/filesystem.md) | Retained with agreed ownership updates |
 | `finance.md` | [phase-01/finance.md](phase-01/finance.md) | Retained with agreed ownership updates |
@@ -59,7 +59,7 @@ All **35 original schema documents** map below to **33 destination schema docume
 | `history.md` | [phase-02/history.md](phase-02/history.md) | Deferred and unapproved; proposal content retained without redesign |
 | `legal.md` | [phase-01/legal.md](phase-01/legal.md) | Retained with agreed ownership updates |
 | `linguistics.md` | [phase-02/linguistics.md](phase-02/linguistics.md) | Deferred and unapproved; proposal content retained without redesign |
-| `management.md` | [operational/management.md](operational/management.md) | Retained with agreed ownership updates |
+| `management.md` | [operational/management.md](mzizi-operational-db/management.md) | Retained with agreed ownership updates |
 | `organization.md` | [phase-01/official.md](phase-01/official.md) | Merged identity inputs; distinct record types |
 | `participation.md` | [phase-01/accountability.md](phase-01/accountability.md) | Participation retained within broader Accountability |
 | `person.md` | [phase-01/official.md](phase-01/official.md) | Merged identity inputs; distinct record types |
@@ -69,7 +69,7 @@ All **35 original schema documents** map below to **33 destination schema docume
 | `research.md` | [phase-02/research.md](phase-02/research.md) | Deferred and unapproved; proposal content retained without redesign |
 | `society.md` | [phase-02/society.md](phase-02/society.md) | Deferred and unapproved; proposal content retained without redesign |
 | `source.md` | [phase-01/source.md](phase-01/source.md) | Retained with agreed ownership updates |
-| `staging.md` | [operational/staging.md](operational/staging.md) | Retained with agreed ownership updates |
+| `staging.md` | [operational/staging.md](mzizi-operational-db/staging.md) | Retained with agreed ownership updates |
 | `statistical.md` | [phase-02/statistical.md](phase-02/statistical.md) | Deferred and unapproved; proposal content retained without redesign |
 
 ## Preservation and review rules
@@ -78,4 +78,4 @@ The inherited 192 detailed table dictionaries are retained across the destinatio
 
 For each retained table, review purpose, actual inventory, fields, keys, typed relationships, exact evidence path, acquisition method, temporal meaning, uncertainty, privacy, workload, growth, storage and partition assumptions. Record KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD (or justified MERGE / SPLIT) per field. Do not impose generic validity/precision/currentness/deletion columns without meaning. Use domain-specific dates and distinguish historical validity, retrieval, observation, workflow and publication time. Source verification/freshness is not simply a successful download. Recoverable draft deletion differs from canonical correction, real-world retirement and privacy erasure.
 
-Exact table/column choices, physical keys and indexes, legal bridge design, release semantics and civic-side durable publication idempotency remain under review. Detailed Phase 02 redesign is deferred. No schema/table approval is inferred from completing this reorganization, and existing databases and S3 artifacts remain protected. Publication boundaries are explained in [Operational](operational/README.md#candidate-to-accepted-record).
+Exact table/column choices, physical keys and indexes, legal bridge design, release semantics and civic-side durable publication idempotency remain under review. Detailed Phase 02 redesign is deferred. No schema/table approval is inferred from completing this reorganization, and existing databases and S3 artifacts remain protected. Publication boundaries are explained in [Operational](mzizi-operational-db/README.md#candidate-to-accepted-record).

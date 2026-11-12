@@ -2,6 +2,10 @@
 {id: GRP-AF9EA7CEAE15,name: improvements-rewrite,type: documentation,extra: {created_at: 2026-11-08T06:46:16.748Z}}
 ---
 
+---
+{id: GRP-AF9EA7CEAE15,name: improvements-rewrite,type: documentation,extra: {created_at: 2026-11-08T06:46:16.748Z}}
+---
+
 # Ordered plan
 
 Complete design review in this dependency order: 01 auth, 02 filesystem/S3, 03 reference/patterns/geography, 04 remaining domain schemas, 05 source/website, 06 independent pipelines. Maintain one detailed task per milestone and refine acceptance within that same record. Start with current repository evidence, identify primary-key and referential-integrity defects, then specify exact target tables and columns with examples and a fresh initialization/disposition mapping for `mzizi_new`. User review of a design is separate from authorization to execute migrations.
@@ -14,6 +18,6 @@ Use root seed/ for every curated/manual/AI-prepared system bootstrap input: glob
 
 ## Task 03 preparation — 11 November 2026
 
-The user accepted the connected reference/geography/legal/domain direction and requested documentation and local-agent readiness. Read [the foundation](../../../../improvements/connected-reference-geography-legal-foundation.md) and [handoff](../../../../handoffs/task03-connected-foundation-local-agent.md). Task 03 specifies countries, schemes/values, parallel dated geography, minimal legal-basis interfaces, pattern/version/lineage and UI capability contracts. Task 04 completes legal/governance/electoral/political/statistical implementations and regional/history integration. No new task group is needed. Detailed physical design remains distinct from significant-change authorization.
+The user accepted the connected reference/geography/legal/domain direction and requested documentation and local-agent readiness. Read [the foundation](../../../../../_plan/guides/connected-reference-geography-legal-foundation.md) and [Task 03 design record](./003-design-reference-owned-patterns-and-harden-geography.md). Task 03 specifies countries, schemes/values, parallel dated geography, minimal legal-basis interfaces, pattern/version/lineage and UI capability contracts. Task 04 completes legal/governance/electoral/political/statistical implementations and regional/history integration. No new task group is needed. Detailed physical design remains distinct from significant-change authorization.
 
 Auth/filesystem implementation is recorded in their task notes; task 02 still has in-progress metadata despite final seven-table/file_relations and live-publication notes. Verify deliverables and report metadata discrepancies without inventing completion. Preserve existing S3 and scoped access. The code naming rule applies to identity, not geographic ancestry. Old jurisdiction/world, compatibility and single-tree proposals do not override the accepted foundation.

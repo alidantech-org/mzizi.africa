@@ -1,11 +1,13 @@
-# System input artifact schemas and database definitions
+# Input, exchange and database schemas
 
-Machine-readable schemas and shared contracts for Mzizi system inputs, plus the SQL definitions of the rewrite database schemas.
+`source/schema/` stores machine-readable input shapes and ordered PostgreSQL SQL. It does not own the authored product API/database contracts; those are maintained in repository-root [`dryv/`](../../dryv/README.md) and exported or consumed here where appropriate.
 
-| Path | Contents |
+| Directory | Contents |
 |---|---|
-| `site/v1/` | JSON Schemas for site-structure bundles (manifest, module, mapping, sections, common), read by `mzizi-manifest` |
-| `contracts/` | Layer exchange schema (`exchange.schema.json`, exported from Dryv by `dryv/tools/export-json-schema.ts`), `targets.json` and `validate_examples.py` (examples live in `seed/fixtures/contracts`) |
-| `database/` | Ordered SQL for the disposable rewrite database: `auth/` (active, with seed in `seed/global/auth`) and `engine/` (PROVISIONAL, not final); order in `database/migrations.yaml`, applied by `mzizi-db init` |
+| [`contracts/`](contracts/README.md) | Layer-exchange JSON Schema, target catalog and example validator. |
+| [`database/`](database/migrations.yaml) | Ordered SQL for the disposable rewrite database, organized by schema. The TypeScript owner is [`source/backend/database/`](../backend/database/README.md). `engine/` includes provisional and runtime-service migrations. |
+| `pipeline/v1/` | Versioned pipeline-manifest input schema. |
+| `seed/` | Root seed-manifest schema. Prepared inputs and their records live in repository-root [`seed/`](../../seed/README.md). |
+| `site/v1/` | Versioned site-structure manifest, module, mapping, section, tag and common schemas. |
 
-Canonical API/database modeling contracts remain under `dryv/`. Credentials are never schema examples or seed values. See the [root seed registry](../../seed/README.md) and [source design](../../.docs/_plan/schema-redesign/phase-01/source.md).
+Change contract-derived files through `dryv/` and the root Dryv commands. Change SQL through reviewed releases and the database owner. Do not copy publisher- or country-specific values into these generic schemas.

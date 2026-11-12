@@ -2,284 +2,48 @@
 {id: DOC-B84B0063429C,name: SYSTEM,type: documentation}
 ---
 
-# SYSTEM — Mzizi Responsibilities and Invariants
+# SYSTEM — Mzizi responsibilities and invariants
 
-This document is the operational summary of how the Mzizi platform should behave as a system.
+Mzizi turns source material into evidence-backed knowledge that people can review and explore. This page describes the active code and the boundaries it is intended to preserve; proposals are not implemented merely because a schema or folder exists.
 
-## System mission
+## Active components
 
-Transform fragmented African historical and public evidence into structured, versioned, explainable knowledge that can support both public exploration and serious research.
+| Path | What it does now |
+|---|---|
+| `source/apps/www` | Next.js public landing experience. The full public atlas and research catalogue remain planned. |
+| `source/apps/web` | Next.js dashboard with a Mzizi `/review` workbench and inherited `/admin` pages that still depend on a legacy `SERVER_URL`. |
+| `source/apps/mobile` | Flutter client for the versioned geography endpoints in the NestJS API. |
+| `source/backend/api` | NestJS product API for application reads and authorized workflow commands. |
+| `source/backend/database` | Bun TypeScript SQL migration/seed CLI and named database-operation service. |
+| `source/backend/engine` | Python operational API, jobs, workers and orchestration of reusable capabilities. It is not the product API. |
+| `source/backend/pipelines` | Bun TypeScript Temporal worker and internal workflow API. |
+| `source/packages/` | Python libraries for source access, scraping, extraction, OCR, filesystem work, manifests and model/tool interfaces. |
+| `source/schema/` | Input and exchange schemas plus ordered database SQL. Product API/database contracts are authored in root `dryv/`. |
+| root `seed/` | Prepared and versioned system inputs and fixtures. |
 
-## System components
+There is no standalone intelligence service: `source/packages/agent` provides model and tool interfaces. The Python engine and filesystem package still have some direct PostgreSQL paths. Their project metadata also refers to a `mzizi-database` workspace package that is absent from `source/packages/`; the active database service is TypeScript under `source/backend/database`.
 
-### Public application
+## Responsibility boundaries
 
-**Path:** `source/apps/www`
+- Applications render and submit work through API contracts. They do not define canonical domain rules.
+- The NestJS API handles product HTTP contracts, authorization and use cases. It reads through a restricted database role and sends authorized writes to named database-service operations.
+- The TypeScript database service owns ordered SQL releases, seed operations, local database administration and named writes. It does not own source acquisition or document extraction.
+- The Python engine runs operational jobs and calls packages. The Temporal worker coordinates durable workflow state and invokes the engine.
+- Packages provide reusable capabilities; they do not own publisher-specific data or silently publish canonical facts.
+- SQL and machine-readable source/pipeline/seed/site shapes live under `source/schema/`. Prepared values live under root `seed/`.
 
-**Role:** public atlas, heritage museum, historical explorer and evidence-backed knowledge experience.
-
-**Primary outputs:** maps, timelines, profiles, stories, comparisons, source views.
-
-### Research/dashboard application
-
-**Path:** `source/apps/web`
-
-**Role:** research and data-stewardship workspace.
-
-**Primary workflows:** source review, extraction review, entity resolution, AI review, quality control, canonical publishing, correction/version review.
-
-### File management service
-
-**Target path:** `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/files`
-
-**Role:** custody of source artifacts and derived files.
-
-**Owns:** hashes, metadata, raw versions, storage references, derived-artifact lineage.
-
-### Data engine
-
-**Target path:** `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data`
-
-**Role:** source acquisition, extraction, OCR, parsing and low-risk normalization.
-
-**Owns:** extraction jobs/results and reproducibility metadata.
-
-### Intelligence layer
-
-**Target path:** `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/intelligence`
-
-**Role:** explicit AI/tool-assisted classification, cleaning, entity resolution, contradiction detection and evaluation.
-
-**Owns:** intelligence job/result lineage and model/tool metadata.
-
-### Database management engine
-
-**Target path:** `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database`
-
-**Role:** schema, migrations, seeds, backfills, integrity validation and controlled promotion into canonical storage.
-
-**Owns:** database lifecycle, not HTTP application behavior.
-
-### Product API
-
-**Target path:** `source/backend/api`
-
-**Target technology:** NestJS.
-
-**Role:** stable contracts over canonical data for `source/apps/www`, `source/apps/web` and integrations.
-
-**Important:** the current Python FastAPI code is migration source material, not the final API implementation.
-
-## Core stores
-
-Mzizi should conceptually separate the following data even if they initially share PostgreSQL schemas:
-
-- source metadata;
-- file/artifact metadata;
-- extraction metadata/results;
-- AI/intelligence results;
-- staging/candidate records;
-- canonical domain data;
-- record versions;
-- audit/review history;
-- system taxonomies/reference data.
-
-Large binary artifacts should live in a file/object store rather than in normal relational rows.
-
-## System invariants
-
-### Invariant 1 — Every important claim can reach evidence
-
-A published historical/political claim must be able to link back toward preserved source evidence.
-
-### Invariant 2 — Raw evidence is never replaced by cleaned data
-
-Corrections and derivatives are new representations.
-
-### Invariant 3 — AI output is attributable
-
-The system records the tool/model/method that created an intelligent result.
-
-### Invariant 4 — AI does not silently publish canonical truth
-
-AI output becomes a candidate/evaluation and follows promotion rules.
-
-### Invariant 5 — Historical validity differs from ingestion time
-
-`valid_from`/`valid_to` or equivalent historical context must not be confused with `created_at`, `retrieved_at` or processing timestamps.
-
-### Invariant 6 — Modern borders are not universal containers for history
-
-Historical entities and uncertain/overlapping geographies must be independently representable.
-
-### Invariant 7 — Canonical changes preserve lineage
-
-Corrections create new versions or explicit supersession rather than deleting the meaningful history of a record.
-
-### Invariant 8 — Service boundaries own responsibilities
-
-The API does not become the scraper, migration runner, file store and AI worker.
-
-### Invariant 9 — Domain data is reusable
-
-The public website and research dashboard consume shared canonical knowledge rather than maintaining incompatible copies.
-
-### Invariant 10 — Uncertainty is data
-
-Approximate dates, disputed relationships, contradictory sources and uncertain entity matches must have explicit representation.
-
-## Standard system flow
+## Evidence lifecycle
 
 ```text
-SOURCE
-  ↓
-SOURCE REGISTRATION
-  ↓
-FILE ARTIFACT
-  ↓
-EXTRACTION RESULT
-  ↓
-INTELLIGENCE RESULT
-  ↓
-CANDIDATE RECORD
-  ↓
-VALIDATION / REVIEW
-  ↓
-CANONICAL RECORD VERSION
-  ↓
-NESTJS API
-  ↓
-PUBLIC / DASHBOARD EXPERIENCE
+raw source artifact
+  -> extracted representation
+  -> attributable candidate or proposal
+  -> validation and human review
+  -> accepted, versioned domain data
 ```
 
-## Common entity dimensions
+Preserve the raw artifact when creating a derivative. Every meaningful claim should retain its source, method and retrieval context. Record historical validity separately from processing time, and preserve uncertainty, disagreement, aliases and changing boundaries. Model-assisted results are attributable proposals and do not silently become canonical data.
 
-Domain entities should reuse shared ideas rather than reinventing them:
+## Current limits
 
-- stable identity;
-- names/aliases;
-- time validity;
-- geographic scope;
-- typed relationships;
-- evidence;
-- confidence/dispute state;
-- version;
-- review status;
-- method/lineage.
-
-## Tool interfaces for the intelligence layer
-
-The intelligence layer should eventually expose structured operations such as:
-
-```text
-classify_document
-classify_segment
-extract_entities
-resolve_entity
-suggest_relationships
-clean_ocr
-compare_sources
-detect_contradictions
-evaluate_extraction
-evaluate_candidate
-summarize_evidence
-identify_research_gaps
-```
-
-Each operation returns structured data, not merely prose.
-
-## Database-engine command families
-
-The DB engine should eventually expose controlled commands such as:
-
-```text
-schema status
-migrate plan
-migrate apply
-seed reference
-seed research
-fixture load
-validate integrity
-candidate validate
-candidate promote
-backfill run
-export canonical
-repair check
-```
-
-The exact CLI/API surface will be designed during implementation.
-
-## File-service operations
-
-The file service should support concepts such as:
-
-```text
-capture artifact
-hash/verify artifact
-retrieve artifact
-register derivative
-list lineage
-archive artifact
-inspect metadata
-```
-
-## Data-engine operations
-
-The data engine should support concepts such as:
-
-```text
-discover sources
-capture source
-extract document
-extract table
-extract metadata
-extract geography
-normalize primitives
-rerun extractor
-report quality
-```
-
-## Product/API read patterns
-
-The future NestJS API should make it natural to ask:
-
-- what was true at time T?
-- what entities existed in place P at time T?
-- how did this entity change?
-- what evidence supports this claim?
-- what relationships connect entity A to entity B?
-- what is disputed or uncertain?
-- what is the current canonical version?
-- which historical version applied previously?
-
-## Product/API mutation patterns
-
-Most public users should not mutate canonical knowledge directly.
-
-Mutations should generally represent workflows:
-
-- propose correction;
-- register source;
-- create candidate;
-- review candidate;
-- approve/reject;
-- publish/supersede.
-
-The system should prefer explicit commands over generic unrestricted CRUD for high-value knowledge.
-
-## Definition of done for a new domain
-
-A domain is not system-ready merely because tables exist.
-
-A complete domain should define:
-
-1. why the domain belongs in Mzizi;
-2. its canonical entities and relationships;
-3. temporal/geographic behavior;
-4. source/evidence expectations;
-5. candidate/validation behavior;
-6. versioning rules;
-7. API contracts;
-8. dashboard stewardship workflow;
-9. public experience where applicable;
-10. test/seed strategy.
+The implementation is in migration. Filesystem metadata and manifest synchronization still include Python database paths; the engine database schema is provisional; the review and source-specific promotion flow is incomplete; and the Python package workspace currently has an unresolved missing-member reference. See [ARCHITECTURE](ARCHITECTURE.md), [DATA_LIFECYCLE](../design/architecture/DATA_LIFECYCLE.md), [MIGRATION](../design/architecture/MIGRATION.md) and [ROADMAP](ROADMAP.md) for boundaries and current work.

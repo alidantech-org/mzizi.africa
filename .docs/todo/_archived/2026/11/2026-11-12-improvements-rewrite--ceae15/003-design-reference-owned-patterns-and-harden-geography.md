@@ -3,6 +3,14 @@
 ---
 
 ---
+{id: TSK-7E5E18758D9C,name: Design reference-owned patterns and harden geography,type: task,status: archived,priority: medium,created_at: 2026-11-08T06:46:27.515Z,updated_at: 2026-11-12T05:54:20.822Z,depends_on: [TSK-3EA8C40B0F60],order: 3072,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-11T04:17:53.977Z},{from: in-progress,to: planned,at: 2026-11-11T04:21:44.934Z},{from: planned,to: in-progress,at: 2026-11-11T04:35:21.177Z},{from: in-progress,to: archived,at: 2026-11-12T05:54:20.822Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-7E5E18758D9C/1794370673997-start,started_at: 2026-11-11T04:17:54.414Z,end_ref: refs/tracking/TSK-7E5E18758D9C/1794370904939-end,ended_at: 2026-11-11T04:21:44.935Z,summary: {files: 14,insertions: 338,deletions: 2}},{base_ref: refs/tracking/TSK-7E5E18758D9C/1794371721178-start,started_at: 2026-11-11T04:35:21.718Z,end_ref: refs/tracking/TSK-7E5E18758D9C/1794462860824-end,ended_at: 2026-11-12T05:54:20.822Z,summary: {files: 566,insertions: 119308,deletions: 10635}}]}},archived_at: 2026-11-12T05:54:25.705Z}
+---
+
+---
+{id: TSK-7E5E18758D9C,name: Design reference-owned patterns and harden geography,type: task,status: archived,priority: medium,created_at: 2026-11-08T06:46:27.515Z,updated_at: 2026-11-12T05:54:20.822Z,depends_on: [TSK-3EA8C40B0F60],order: 3072,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-11T04:17:53.977Z},{from: in-progress,to: planned,at: 2026-11-11T04:21:44.934Z},{from: planned,to: in-progress,at: 2026-11-11T04:35:21.177Z},{from: in-progress,to: archived,at: 2026-11-12T05:54:20.822Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-7E5E18758D9C/1794370673997-start,started_at: 2026-11-11T04:17:54.414Z,end_ref: refs/tracking/TSK-7E5E18758D9C/1794370904939-end,ended_at: 2026-11-11T04:21:44.935Z,summary: {files: 14,insertions: 338,deletions: 2}},{base_ref: refs/tracking/TSK-7E5E18758D9C/1794371721178-start,started_at: 2026-11-11T04:35:21.718Z,end_ref: refs/tracking/TSK-7E5E18758D9C/1794462860824-end,ended_at: 2026-11-12T05:54:20.822Z,summary: {files: 566,insertions: 119308,deletions: 10635}}]}},archived_at: 2026-11-12T05:54:25.705Z}
+---
+
+---
 {id: TSK-7E5E18758D9C,name: Design reference-owned patterns and harden geography,type: task,status: in-progress,priority: medium,created_at: 2026-11-08T06:46:27.515Z,updated_at: 2026-11-11T04:35:21.177Z,depends_on: [TSK-3EA8C40B0F60],order: 3072,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-11T04:17:53.977Z},{from: in-progress,to: planned,at: 2026-11-11T04:21:44.934Z},{from: planned,to: in-progress,at: 2026-11-11T04:35:21.177Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-7E5E18758D9C/1794370673997-start,started_at: 2026-11-11T04:17:54.414Z,end_ref: refs/tracking/TSK-7E5E18758D9C/1794370904939-end,ended_at: 2026-11-11T04:21:44.935Z,summary: {files: 14,insertions: 338,deletions: 2}},{base_ref: refs/tracking/TSK-7E5E18758D9C/1794371721178-start,started_at: 2026-11-11T04:35:21.718Z}]}}}
 ---
 
@@ -30,7 +38,7 @@
 
 ## Goal
 
-Produce the precise foundation specification that lets Mzizi explain modern and historical knowledge through place, time, meanings, legal support and actual domain relationships. Deliver an implementation-ready design and bounded integration contracts rather than another generic vocabulary proposal. The controlling discussion is recorded in [connected foundation](../../../../improvements/connected-reference-geography-legal-foundation.md); follow the [local-agent handoff](../../../../handoffs/task03-connected-foundation-local-agent.md).
+Produce the precise foundation specification that lets Mzizi explain modern and historical knowledge through place, time, meanings, legal support and actual domain relationships. Deliver an implementation-ready design and bounded integration contracts rather than another generic vocabulary proposal. The controlling discussion is recorded in [connected foundation](../../../../../_plan/guides/connected-reference-geography-legal-foundation.md); the former separate local-agent handoff is no longer maintained; its relevant design direction is captured in the foundation and this task.
 
 ## Context and authorization
 
@@ -62,10 +70,10 @@ Inspect active Dryv contracts, SQL under `source/schema/`, packages under `sourc
 
 ## Source documentation
 
-- [Connected model and research](../../../../improvements/connected-reference-geography-legal-foundation.md)
-- [Reference](../../../../improvements/schema-redesign/phase-01/reference.md), [geography](../../../../improvements/schema-redesign/phase-01/geography.md), [legal](../../../../improvements/schema-redesign/phase-01/legal.md)
-- [Patterns and acquisition](../../../../improvements/data-categories-and-patterns.md)
-- [Schema review policy](../../../../improvements/schema-redesign/README.md)
+- [Connected model and research](../../../../../_plan/guides/connected-reference-geography-legal-foundation.md)
+- [Reference](../../../../../_plan/schema-redesign/phase-01/reference.md), [geography](../../../../../_plan/schema-redesign/phase-01/geography.md), [legal](../../../../../_plan/schema-redesign/phase-01/legal.md)
+- [Patterns and acquisition](../../../../../_plan/guides/data-categories-and-patterns.md)
+- [Schema review policy](../../../../../_plan/schema-redesign/README.md)
 - [Seed convention](https://github.com/alidantech-org/mzizi.africa/blob/develop/seed/README.md)
 
 ## Preparation progress — 11 November 2026
@@ -74,13 +82,13 @@ The latest remote `develop` was inspected at `fc40f28dd03e01b52d5f8995dbc308f6fd
 
 ## Design progress — 11 November 2026
 
-Started through Task CLI on develop. The active Dryv reference/geography contracts, rewrite migration list, seed convention, auth and filesystem interfaces were inspected. The proposed table dictionary, disposition matrix, FK/bootstrap order, pattern/folder contract and labeled acceptance fixtures are in `.docs/improvements/task03-foundation-specification.md`. This is a design proposal only; no migration, production seed application or S3 operation was run.
+Started through Task CLI on develop. The active Dryv reference/geography contracts, rewrite migration list, seed convention, auth and filesystem interfaces were inspected. The proposed table dictionary, disposition matrix, FK/bootstrap order, pattern/folder contract and labeled acceptance fixtures are in the connected reference foundation design in `.docs/_plan/guides/connected-reference-geography-legal-foundation.md`. This is a design proposal only; no migration, production seed application or S3 operation was run.
 
 The detailed proposal still requires review and refinement before this task can complete: full column-by-column comments and lifecycle review; real scheme-guard implementation strategy; legal minimum table dictionary and typed lineage SQL; capability schema artifacts and machine-validated fixtures; source-backed legal/geographic research; and the user-facing implementation review package. Leave acceptance items unchecked until those artifacts are complete.
 
 ## Authorized implementation progress — 11 November 2026
 
-The user explicitly extended task 03 to schema migrations, seed preparation and live database application. Verified `develop`, the clean working tree at start, and `current_database() = mzizi_new`. Additive migrations now create reference, geography, PostGIS and minimum legal FK targets plus country-territory links and pattern binding constraints; no database reset or existing S3 change occurred. Root seed `global/reference/foundation-baseline.json` is manifest-locked and loaded idempotently: two structural schemes, eight values and three topics. No unsourced country, boundary, law or officeholder fact was inserted. The applied state and remaining gaps are recorded in `.docs/improvements/task03-foundation-specification.md`.
+The user explicitly extended task 03 to schema migrations, seed preparation and live database application. Verified `develop`, the clean working tree at start, and `current_database() = mzizi_new`. Additive migrations now create reference, geography, PostGIS and minimum legal FK targets plus country-territory links and pattern binding constraints; no database reset or existing S3 change occurred. Root seed `global/reference/foundation-baseline.json` is manifest-locked and loaded idempotently: two structural schemes, eight values and three topics. No unsourced country, boundary, law or officeholder fact was inserted. The applied state and remaining gaps are recorded in the connected reference foundation design in `.docs/_plan/guides/connected-reference-geography-legal-foundation.md`.
 
 Verification so far: `mzizi-db status` lists all migrations; a rolled-back wrong-scheme insert fails its composite FK; a rolled-back containment cycle fails; the two new database tests pass. The existing focused auth/filesystem/engine suite passes 89 tests after updating fixed migration/public-table assertions for the additive migrations and PostGIS-owned table. This is partial implementation. Task 03 remains in-progress and its acceptance items stay unchecked until complete.
 

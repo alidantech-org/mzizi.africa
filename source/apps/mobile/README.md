@@ -11,7 +11,7 @@ The app reads `MZIZI_API_BASE_URL` at build time. Flutter does not load `.env.lo
 From `source/apps/mobile`, set the URL in your ignored `.env.local` file for the target you are running:
 
 ```dotenv
-MZIZI_API_BASE_URL=http://127.0.0.1:8000
+MZIZI_API_BASE_URL=http://127.0.0.1:3000
 # Optional public Cesium token; omit for the imagery-only globe.
 # CESIUM_ION_TOKEN=YOUR_RESTRICTED_PUBLIC_TOKEN
 ```
@@ -28,7 +28,7 @@ The API must allow the Flutter Web development origin through its CORS policy.
 
 ### Android emulator
 
-Change the URL in `.env.local` to `http://10.0.2.2:8000`; `127.0.0.1` inside the emulator refers to the emulator itself. Then run:
+Change the URL in `.env.local` to `http://10.0.2.2:3000`; `127.0.0.1` inside the emulator refers to the emulator itself. Then run:
 
 ```sh
 flutter devices
@@ -39,14 +39,14 @@ Android debug builds allow local cleartext HTTP for development. Release builds 
 
 ### Physical Android phone
 
-Connect the phone and computer to the same network, set `.env.local` to the computer's LAN address (for example `http://192.168.1.20:8000`), and start the API bound to `0.0.0.0` on port `8000`. Allow that port through the computer's local firewall if required. Then run:
+Connect the phone and computer to the same network, set `.env.local` to the computer's LAN address (for example `http://192.168.1.20:3000`), and start the NestJS API on port `3000` and make it reachable on the local network. Allow that port through the computer's local firewall if required. Then run:
 
 ```sh
 flutter devices
 flutter run -d <phone-device-id> --dart-define-from-file=.env.local
 ```
 
-Use the API's documented local setup and ensure the app target can reach that host and port. For non-local deployments, use HTTPS.
+Use the API's documented local setup in [`source/backend/api/README.md`](../../backend/api/README.md) and ensure the app target can reach that host and port. The NestJS API defaults to port `3000`. For non-local deployments, use HTTPS.
 
 The Ion token is optional and is public client configuration. Restrict it in the Cesium account. Country scope, initial boundary level, and camera center default to Kenya/county/Nairobi; override them with `MZIZI_DEFAULT_COUNTRY`, `MZIZI_DEFAULT_BOUNDARY_LEVEL`, `MZIZI_MAP_INITIAL_LONGITUDE`, `MZIZI_MAP_INITIAL_LATITUDE`, and `MZIZI_MAP_INITIAL_HEIGHT` defines if needed.
 

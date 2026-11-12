@@ -9,9 +9,9 @@
 Everything is run from the repository root with Bun. Python projects use uv and JavaScript and TypeScript projects use Bun; the runner in `scripts/` knows which is which, so there is no need to change directory.
 
 ```sh
-bun run setup        # install every dependency, link the local Dryv checkout, create development sign-in keys
+bun run setup        # currently blocked by the missing mzizi-database Python workspace member
 bun run doctor       # report required tools and local files
-bun run dev          # API (3000), engine (8760), dashboard (3100) and public site (3200) together
+bun run dev          # database (3301), pipelines (3302), API (3000), engine (8760), dashboard (3100), public site (3200)
 bun run check        # format check, lint, typecheck, structure and tests
 bun run build        # Python wheels and both Next.js apps
 bun run start        # the same services without watchers
@@ -43,4 +43,4 @@ Use `source/apps/mobile/README.md` as the source for SDK and platform setup. The
 
 ## API and sites
 
-Follow each application README and package scripts. The legacy Python service may require environment and database configuration; inspect `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/api-legacy/README.md` before starting it. The public and research sites have separate ownership and scripts; consult their package manifests rather than assuming one root command covers both.
+Follow each application README and package scripts. The active product API is NestJS in `source/backend/api/`; the operational Python API is `source/backend/engine/`. The former Python API is historical under `.docs/_archives/2026-11-08-rewrite-snapshot/`. The research dashboard and public landing experience are separate Next.js apps in `source/apps/web/` and `source/apps/www/`.

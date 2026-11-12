@@ -1,6 +1,6 @@
 # Scripts: the root command runner
 
-Every routine activity in this repository runs from the repository root through Bun. You never need to `cd` into a project or remember which tool it uses: Python projects are driven with **uv**, JavaScript and TypeScript projects with **Bun**, and the runner knows which is which.
+Every routine activity in this repository runs from the repository root through Bun. Python projects are driven with **uv**, JavaScript and TypeScript projects with **Bun**, and the runner knows which is which. Current limitation: `uv sync --all-packages` cannot resolve `mzizi-database`, which the engine and filesystem package still declare as a workspace dependency even though `source/packages/database/` does not exist. Commands that install or run the Python workspace (`setup`, full `check`, `build`, or `engine`) may therefore fail until this dependency gap is fixed.
 
 ```bash
 bun run setup        # first time: install everything, link Dryv, create the development sign-in keys
@@ -15,8 +15,8 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 
 | Command | What it does |
 | --- | --- |
-| `bun run setup` | `sync`, then links the local Dryv checkout and creates the development sign-in keys |
-| `bun run sync` | installs dependencies exactly as locked: `uv sync --all-packages` and `bun install` in each Bun project |
+| `bun run setup` | attempts `sync`, then links the local Dryv checkout and creates the development sign-in keys; currently blocked at Python workspace sync |
+| `bun run sync` | attempts `uv sync --all-packages` and installs each Bun project; currently blocked by the missing Python workspace member |
 | `bun run doctor` | reports required tools and local files |
 | `bun run clean` | deletes caches and build output; `bun run clean -- --deep` also deletes `.venv` and every `node_modules` |
 | `bun run dev` | runs the services in watch mode; name some to run only those: `bun run dev api web` |
@@ -66,6 +66,8 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 | Service | Directory | Port | Override |
 | --- | --- | --- | --- |
 | `api` | `source/backend/api` | 3000 | `API_PORT` |
+| `database` | `source/backend/database` | 3301 | `DATABASE_PORT` |
+| `pipelines` | `source/backend/pipelines` | 3302 | `PIPELINES_PORT` |
 | `engine` | `source/backend/engine` | 8760 | `ENGINE_PORT` |
 | `web` | `source/apps/web` | 3100 | `WEB_PORT` |
 | `www` | `source/apps/www` | 3200 | `WWW_PORT` |

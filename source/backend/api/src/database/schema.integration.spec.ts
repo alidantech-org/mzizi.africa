@@ -8,7 +8,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 /**
  * Project-owned: every generated entity must produce valid PostgreSQL DDL. Runs when
  * TEST_DATABASE_URL points at a scratch PostGIS database. The test synchronizes the schema itself;
- * the API never does (schema lifecycle is owned by the database package, source/packages/database, with SQL in source/schema/database).
+ * the API never does (SQL migrations and schema lifecycle are owned by source/backend/database, with SQL in source/schema/database).
  */
 const adminUrl = process.env.TEST_DATABASE_URL;
 const entities = Object.values(

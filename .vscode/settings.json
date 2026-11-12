@@ -23,5 +23,8 @@
             "**/dist": true,
             "**/build": true,
             "**/.docs/_archives": true
+      },
+      "[markdown]": {
+            "editor.wordWrap": "off"
       }
 }

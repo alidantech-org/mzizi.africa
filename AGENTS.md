@@ -1,234 +1,97 @@
-# AGENTS.md — Mzizi Africa Repository Contract
+# AGENTS.md — Mzizi Africa
 
-This file defines how coding agents and contributors should reason about the Mzizi Africa repository.
+Use this file for repository-wide engineering rules. Product purpose and detailed designs live in the linked `.docs` documents; implementation claims must match active code.
 
-## 1. Start with the purpose
+## Purpose and starting points
 
-Before changing architecture or domain behavior, read:
+Mzizi researches and connects African historical and present-day knowledge while preserving evidence, provenance, time, place and uncertainty. Before changing system behavior, read:
 
 1. `.docs/docs/WHY.md`
 2. `.docs/docs/STORY.md`
-3. `.docs/docs/ARCHITECTURE.md`
-4. `.docs/design/architecture/DATA_LIFECYCLE.md`
+3. `.docs/docs/SYSTEM.md`
+4. `.docs/docs/ARCHITECTURE.md`
 5. `.docs/docs/DOMAINS.md`
-6. `.docs/design/architecture/MIGRATION.md`
+6. The relevant guide under `.docs/design/`
 
-Mzizi is an **evidence-first African heritage, history, geography, culture, linguistics, governance and political intelligence platform**. The goal is to research public/historical material and structure it cleanly while preserving provenance, time, place, uncertainty and version history.
+Use `.docs/docs/ROADMAP.md` for current priorities. Proposals under `.docs/_plan/` are not proof of implementation or approval.
 
-## 2. Do not collapse the architecture
-
-The system has intentionally separate responsibilities:
-
-- public application
-- research/dashboard application
-- file management service
-- data extraction engine
-- intelligence/AI layer
-- database management engine
-- canonical database
-- NestJS API
-
-Do not place a responsibility in the nearest convenient service merely because code already exists there.
-
-### Hard boundaries
-
-- **Data extraction is not the API.**
-- **AI classification is not data extraction.**
-- **AI output is not canonical truth.**
-- **Database migrations/seeding are not API responsibilities.**
-- **File storage is not database record storage.**
-- **The current Python FastAPI service is not the target API.**
-- **The future product API is NestJS.**
-
-## 3. The old Python implementations are archived, not active
-
-The inherited Python API and the old data and database engines were archived on 8 November 2026 at `.docs/_archives/2026-11-08-rewrite-snapshot/` (historical, non-executable; start with its README and `RELOCATION_INVENTORY.md`). Active layout: reusable capabilities in `source/packages/`, the one Python engine in `source/backend/engine/`, the NestJS product API in `source/backend/api/`, input schemas and SQL in `source/schema/`, prepared inputs and test fixtures in `seed/`, thin commands in `scripts/`. Install and test with `uv sync --all-packages` and `uv run pytest source`. Never import, build, generate or run anything from the archive.
-
-The replacement rules below remain the guide for reimplementing what the inventory marks as a remaining gap:
-
-1. inventory useful models and behavior;
-2. extract domain concepts and constraints;
-3. move migration/seeding concerns into the database management engine;
-4. move extraction concerns into the data engine;
-5. move file concerns into the file service;
-6. move intelligence concerns into the intelligence layer;
-7. expose approved domain contracts through the NestJS API;
-8. only remove old code after equivalent responsibilities are accounted for.
-
-See `.docs/design/architecture/MIGRATION.md`.
-
-## 4. Evidence is part of the data model
-
-Every meaningful historical or political claim should be able to answer:
-
-- Where did this come from?
-- What source artifact supports it?
-- When was the source obtained?
-- What location/time period does the claim describe?
-- Was it directly extracted, inferred, manually curated or AI-assisted?
-- How confident are we?
-- Is the claim disputed?
-- Which version is current?
-- What changed from the previous version?
-
-Never design domain records as if provenance can be added later as an optional afterthought.
-
-## 5. Preserve raw evidence
-
-The system must distinguish:
+## Active source layout
 
 ```text
-raw source
-  -> extracted representation
-  -> normalized candidate data
-  -> classified/linked/evaluated staging data
-  -> reviewed/versioned canonical data
+source/apps/{mobile,web,www}       Flutter client and Next.js applications
+source/backend/api                 NestJS product API
+source/backend/database            Bun TypeScript database service and CLI
+source/backend/engine               Python operational API, workers and package orchestrator
+source/backend/pipelines            Bun TypeScript Temporal workflows and worker
+source/packages/{agent,extraction,filesystem,manifest,ocr,scraping,source}
+source/schema/{contracts,database,pipeline,seed,site/v1}
 ```
 
-Do not overwrite raw source artifacts with cleaned text or normalized records.
+Read the local maps for current ownership and commands: `source/backend/README.md`, `source/packages/README.md`, `source/schema/README.md`, `source/apps/web/README.md`, `source/apps/www/README.md`, and `scripts/README.md`.
 
-## 6. Time and place are first-class
+The responsibilities are distinct even when they share a runtime:
 
-Historical truth changes by context.
+- `source/apps/` contains clients. They consume API contracts; they do not own canonical domain rules.
+- `source/backend/api/` is the NestJS product API. It reads product data and sends authorized named write commands to the database service; it does not run migrations, seed data, scrape or execute extraction.
+- `source/backend/database/` owns TypeScript SQL migration/seed commands and named database operations.
+- `source/backend/engine/` is the Python operational API and capability orchestrator, not the product API.
+- `source/backend/pipelines/` coordinates durable workflows with Temporal and invokes the engine.
+- `source/packages/` contains reusable Python libraries, not separate services. `agent/` provides provider-neutral model and tool interfaces; no standalone intelligence service currently exists.
+- `source/schema/` contains SQL and machine-readable input/exchange schemas. Authored API/database contracts remain in `dryv/`; prepared inputs remain in root `seed/`.
 
-Whenever applicable, designs should represent:
+The Python workspace still references `mzizi-database` from the engine and filesystem package configurations, but there is no `source/packages/database/` member in the repository. The active database service is TypeScript under `source/backend/database`. Treat this as an unresolved packaging/configuration gap; do not describe the missing Python package as present or claim a fresh `uv sync --all-packages` works.
 
-- `valid_from` / `valid_to` or equivalent historical validity;
-- observation/retrieval time separately from historical validity;
-- changing names and aliases;
-- changing boundaries;
-- changing parent/child geography;
-- historical polities that do not map neatly to current states;
-- uncertain or approximate dates;
-- source-specific claims and disagreements.
+The inherited Python API and former data/database engines are historical under `.docs/_archives/2026-11-08-rewrite-snapshot/`. Never import, build, generate or run archived code.
 
-Do not force pre-colonial or colonial history into today's national borders when the historical evidence does not support that model.
+## Data and service boundaries
 
-## 7. AI must be attributable and reviewable
+Keep the full evidence path attributable:
 
-The intelligence layer may assist with:
+```text
+raw artifact -> extracted representation -> candidate -> review -> versioned accepted data
+```
 
-- classification;
-- entity extraction;
-- normalization;
-- deduplication;
-- entity resolution;
-- relation suggestions;
-- source comparison;
-- contradiction detection;
-- quality evaluation;
-- confidence suggestions;
-- summaries for reviewers;
-- enrichment proposals.
+- Preserve raw source bytes; cleaning and extraction create derivatives.
+- Keep retrieval/observation time distinct from historical validity.
+- Model changing names, boundaries, parentage and historical entities without forcing them into current national borders.
+- Record source, method, confidence, uncertainty, disagreement and version history for meaningful claims.
+- Model-assisted output is a reviewable proposal, never silent canonical truth.
+- Keep API/database contracts explicit and versioned. Update their owning docs when behavior changes.
+- Filesystem metadata and object bytes have separate ownership; do not store raw artifacts in ordinary domain rows.
 
-AI-produced data must retain enough metadata to identify the method/model/tool invocation and inputs that produced it. AI must not silently mutate canonical records.
+Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neutral input contracts under `source/schema/`; keep publisher- and jurisdiction-specific data in manifests, seed inputs or database records rather than generic package code.
 
-## 8. Domain naming should explain why it exists
+## Documentation and repository hygiene
 
-Mzizi domains are not arbitrary database modules. Each should support the wider story:
+- Keep exactly the eight overview documents in `.docs/docs/`. Put detailed design in an existing topic under `.docs/design/`, and planning proposals in `.docs/_plan/`.
+- Put contributor and agent process in `.docs/rules/`. Do not recreate `.docs/guidance/`.
+- When paths or behavior change, update the affected README/design guide and every link that points to it in the same work. Mark incomplete behavior and proposals clearly.
+- Do not add or edit `.github/**` unless requested. Keep generated files, local databases, build outputs, virtual environments and dependencies out of source control.
 
-- heritage/culture preserves identity and material/intangible history;
-- history establishes chronology and change;
-- geography establishes place and boundary evolution;
-- linguistics reveals language relationships and movement;
-- migration explains population movement and settlement;
-- colonial influence links historical disruption/administration to modern institutions;
-- governance explains formal authority;
-- politics explains competition and organization around power;
-- law explains the legal basis of authority;
-- finance/debt/procurement reveal how public power uses resources;
-- evidence/provenance makes the whole system trustworthy.
+## Branch, task and checks
 
-Read `.docs/docs/DOMAINS.md` before introducing new top-level domains.
+- Work directly on `develop`; never create or switch branches or worktrees.
+- Task CLI tracking is mandatory. Read `.docs/rules/branching-and-task-usage.md` and `.docs/rules/task-writing.md`; create, start, update, check and archive work through `task`.
+- Run commands from the repository root through Bun (`bun run help`). JavaScript/TypeScript projects use Bun; Python projects use uv.
+- Run `task validate` after editing `.docs/`. Use `bun run check` for the root quality suite and report any pre-existing failure accurately.
+- Add or change a project in `scripts/lib/projects.ts` when it must participate in root commands.
 
-## 9. Documentation is part of implementation
+## Seed inputs
 
-If a change alters architecture, data lifecycle, domain ownership or product purpose, update the corresponding `.docs` file in the same work.
-
-Do not leave architectural truth only in code or chat history.
-
-## 10. Prefer explicit contracts between layers
-
-Services should communicate through documented, versionable contracts rather than importing each other's internals.
-
-Examples:
-
-- file artifact descriptor;
-- extraction job/result;
-- candidate record;
-- intelligence evaluation;
-- provenance/evidence link;
-- canonical record version;
-- API DTO/event.
-
-These contracts should eventually live in shared packages or schemas once implementation begins.
-
-## 11. Applications consume knowledge; they do not define it
-
-`source/apps/www` and `source/apps/web` should consume stable domain contracts.
-
-Avoid putting canonical domain rules only in React components or frontend-specific types.
-
-## 12. Repository hygiene
-
-- **Branch: `develop` only.** Work directly on `develop`. Never create, rename or switch to another branch, and never create git worktrees. See `.docs/rules/branching-and-task-usage.md`.
-- Do not add or modify `.github/**` unless explicitly requested.
-- Keep generated files, local databases, build outputs, virtual environments and dependency directories out of source control.
-- Prefer small, meaningful commits when making repository changes.
-- Preserve working functionality while migrating responsibilities.
-
-## 13. Decision test
-
-Before adding a feature, ask:
-
-> Does this help Mzizi research, preserve, structure, verify, connect, version or explain African historical and present-day knowledge?
-
-If the answer is unclear, document the reason before expanding the platform.
-
-## 14. Task workspace (mandatory)
-
-Using the Task CLI is **mandatory, not optional**. Every unit of work must be planned, started, recorded and completed through `task` (see `.docs/rules/branching-and-task-usage.md`). Work not tracked in Task is not done.
-
-Use the repository Task workspace in `.docs` to organize implementation activities. The root `task.yaml` points the CLI to that workspace. Keep current planning and project guidance in sync:
-
-- `.docs/todo/` — Task groups and tasks (created and changed only through the `task` CLI);
-- `.docs/docs/` — eight core system documents; `.docs/design/` — grouped technical design guides;
-- `.docs/rules/` — coding, testing, security, and Git rules;
-- `.docs/rules/` — contributor and agent workflow rules.
-
-This section supplements the repository contract above; it does not replace or weaken it.
+Read `seed/README.md` before changing curated or prepared system inputs. Keep them under root `seed/` with manifest, provenance, scope and access metadata. After seed changes, run `uv run mzizi-manifest check`; refresh the lock with `uv run mzizi-manifest lock` when required. Do not treat an example manifest as executable or delete existing S3 artifacts as part of local database work.
 
 <!-- BEGIN TASK MANAGED TASK-TOOL -->
-
 ## Task workspace
 
-This project manages its work with Task (`taskcode`; `task` and `tc` are aliases). Task records, documents, decisions and handoffs live in `.docs/` as Markdown files with YAML frontmatter. Read `.docs/README.md` for how the tool works. Using Task is mandatory.
+This project manages its work with Task (`taskcode`; `task` and `tc` are aliases). Task records, documents, decisions and handoffs live in `.docs/` as Markdown files with YAML frontmatter. Read `.docs/README.md` for how the tool works.
 
 - **Write detailed tasks.** Task rejects scaffold-only or thin files: one task file per piece of work, with a Goal, Context and an Acceptance checklist of at least a few `- [ ]` steps ("task create --body-file"). Groups need detailed `goal.md` and `plan.md`. Read `.docs/rules/task-writing.md` before creating work, and update the same file in follow-ups.
+- Discuss and organise work on the task itself: `task comment <id> --text "…"` (authors come from `TASK_AUTHOR`, `identity.name` in `task.yaml` or git), `task move <id> --before|--after <id>` to reorder, `task update <id> --parent … --link blocks:TSK-… --add-watcher name --estimate 3 --repeat week`, `task attach <id> <file|url>` (files up to 1 MB, links for anything larger), `task template create|list` and `task create --template <id>`.
 - Tick checkboxes with `task check <id> --item N | --section "Heading" | --all` instead of hand-editing.
 - Create and change tasks through the CLI (`task create`, `task update <id> --status in-progress`) rather than keeping a separate TODO list. Do not hand-edit `id`, `status_history` or other managed frontmatter.
 - Use `--json` for machine-readable output; commands exit non-zero on failure, and outside an interactive terminal they require explicit arguments instead of prompting.
 - Moving a task to `in-progress` records the project's file changes automatically (with or without Git); `task changes <id>` shows what the task changed.
 - Deleting is recoverable only briefly: `task delete <id> --yes` moves items to the OS temp folder; restore with `task undelete <trash-id>`. Prefer `task archive` for work that should be kept.
 - Run `task validate` after editing anything inside `.docs/`. Every Markdown file there needs valid frontmatter.
-- **Branch rule:** work only on `develop`; never create branches or worktrees (`.docs/rules/branching-and-task-usage.md`).
 - Record meaningful decisions in `.docs/decisions/` and agent handoffs in `.docs/handoffs/`.
 <!-- END TASK MANAGED TASK-TOOL -->
-
-## Root seed input convention (user direction, 2026-11-08)
-
-Read `seed/README.md` before adding any curated or AI-prepared seed data, baseline auth definitions, site structure, folder/file-type catalog, pattern definition or seed-specific source artifact. Keep all system seed inputs in root `seed/`, with global/system/jurisdiction separation and a manifest describing recognized DB loader/target, dependencies, content identity and S3 registration. Runtime loaders and contracts retain their existing code ownership. Do not introduce scattered per-service seed payloads or duplicate sources of truth. Do not treat the disabled example manifest as executable. The existing scattered payloads were relocated on 8 November 2026; the current convention and manifest checks are documented in `seed/README.md`. Loaders read `seed/` through `seedRoot` (TypeScript) and `seedroot.py` (Python). Origin, preparation and access are recorded per folder in `_folder.yaml`; run `uv run mzizi-manifest check` after changing anything under `seed/`, and `uv run mzizi-manifest lock` to refresh the lock. Runtime registration in S3 and the filesystem registry is still planned. Synthetic test-only fixtures may remain beside tests; anything applied as a real system seed follows the root convention. Only `public/` in bucket `mzizi` is anonymously readable; other prefixes remain private. The disposable database rewrite does not authorize deleting existing S3 artifacts.
-
-## Manifest-driven input contracts (2026-11-08)
-
-The user requires source-neutral API/site acquisition via versioned api.structure.yaml and website manifests under root seed/, backed by DB source identities and approved release bindings. All system input-artifact schemas (seed/folder manifests, site/API structures, mappings, patterns and consumed JSON/YAML/CSV shapes) belong under source/schema/. Generic runtime packages stay under source/backend; publisher/country specifics belong in manifest/DB data. Dryv database/API authoring remains under dryv/ with explicit export ownership where contracts overlap. Follow [the detailed source requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/_plan/schema-redesign/phase-01/source.md#2026-11-08--manifest-driven-api-and-website-sources-user-direction) for conflict-safe DB/YAML editing, pinned releases, learning/review and legacy extractor retirement. This documents future source/pipeline work, not a claim that manifest-driven runtime support is complete.
-
-## 2026-11-08 — Package-first rewrite direction
-
-The user authorizes structure/package extraction and historical archiving now. Target: reusable capabilities under source/packages/, one Python orchestrator/API project under source/backend/engine/, preserved NestJS product API relocated to source/backend/api/, input schemas in source/schema/, and prepared inputs in seed/. Archive old engine/data, engine/database and api-legacy under .docs/_archives/<dated-rewrite-snapshot>/ after preserving active auth rewrite work; remove obsolete backend/files and backend/intelligence active scaffolds. Follow [the controlling structure and publication requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/_plan/independent-data-pipelines.md#2026-11-08--approved-package-first-layout-and-single-python-engine).
-
-Filesystem package APIs must support seed manifest/folder provenance, registry upload and hash deduplication, immutable releases and conflict-safe updates to explicitly non-versioned logical items. Keep evidence/run snapshots immutable. This authorization covers restructuring foundations, not all later schema/source/pipeline features. Update all active build/Dryv/auth consumers and maintain focused checks. Existing S3 objects remain protected. Historical paths above are superseded for the rewrite as the local agent carries out the relocation.
-
-## Root command runner (user direction, 2026-11-11)
-
-Run every activity from the repository root through the Bun runner: `bun run setup`, `dev`, `start`, `build`, `format`, `lint`, `typecheck`, `test`, `structure`, `check`, `dryv:check`, `dryv:generate`, `db`, `seed`, `fs` (`bun run help` lists all; `scripts/README.md` is the guide). All Python projects use uv and all JavaScript and TypeScript projects use Bun. Hand-written code must stay formatted, linted, fully typed and within the hard layout and file size limits of `bun run structure`; Dryv-managed output is excluded from those limits and is changed only through the contracts and `bun run dryv:generate`. Add a new project to `scripts/lib/projects.ts` so every command includes it. Run `bun run check` before reporting work as done and report failures as they are.
