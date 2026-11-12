@@ -3,7 +3,7 @@ id: DOC-MZIZI-SCHEMA-ACQUISITION-20261111
 name: acquisition schema — operational
 type: schema-review
 tags: [database, schema-redesign, operations, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Operations, recorded_on: 2026-11-11}
+extra: {status: accepted, approval: approved, implementation: dryv_contracts_authorized, database: Operations, approved_on: 2026-11-12, approval_record: DEC-OPERATIONAL-DATABASE-20261112, migrations: not_authorized, deployment: not_authorized}
 ---
 
 # acquisition — Operational
@@ -168,3 +168,44 @@ Lifecycle: preserve source bytes; extract into candidate revisions; validate; re
 Capacity is unmeasured. Use low/expected/high input scenarios, explicit formulas and workload benchmarks; do not assume sizes or universal partitions.
 
 **Status:** NOT REVIEWED. Schema assignment follows the handoff; tables, columns, relationships, partitioning and S3 choices still require user approval. Feedback: none. Approval reference/date/revision: none. Implementation authorization: not granted. Material changes reopen approval.
+
+## 2026-11-12 — Operational design accepted and approved
+
+**Approval status:** ACCEPTED AND APPROVED by the user on 12 November 2026. **Implementation status:** Dryv contract authoring is authorized on `develop` for this schema. See [DEC-OPERATIONAL-DATABASE-20261112](../../../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the complete approval record and cross-schema rules.
+
+This approved inventory supersedes earlier candidate-table lists, draft definitions and statements in this document that the design is not reviewed, not approved or awaiting user approval. Historical analysis remains context only. The table names and column names below are the approved baseline; implementation must define their precise types, nullability, defaults, keys, relationships, constraints and indexes under the repository's contract-authoring rules. The author may resolve those engineering details without requesting individual approval, but must not silently add, remove or rename approved tables or columns.
+
+## acquisition — 7 approved tables
+
+**Responsibility:** Source targets, versioned collection policy, crawl frontier, access attempts, observations and discovered links.
+
+### `acquisition.targets`
+
+`id`, `url`, `publisher_ref_id`, `policy_version_id`, `state`, `created_at`, `updated_at`, `retired_at`
+
+### `acquisition.policies`
+
+`id`, `code`, `title`, `description`, `created_by`, `created_at`, `retired_at`
+
+### `acquisition.policy_versions`
+
+`id`, `policy_id`, `version`, `rules`, `rules_hash`, `approved_by`, `approved_at`, `effective_from`, `effective_until`
+
+### `acquisition.frontier`
+
+`id`, `target_id`, `url`, `priority`, `state`, `due_at`, `lease_owner`, `lease_until`, `lease_fence`, `attempt_count`, `last_attempt_at`, `engine_job_id`, `created_at`, `updated_at`
+
+### `acquisition.access_attempts`
+
+`id`, `target_id`, `frontier_id`, `run_id`, `job_id`, `requested_url`, `started_at`, `completed_at`, `http_status`, `outcome`, `retry_after`, `error_code`, `response_hash`, `artifact_id`, `bytes_received`
+
+### `acquisition.observations`
+
+`id`, `target_id`, `access_attempt_id`, `url`, `canonical_url`, `content_hash`, `observed_at`, `content_type`, `etag`, `last_modified`, `artifact_id`
+
+### `acquisition.discovered_links`
+
+`id`, `observation_id`, `target_url`, `normalized_url`, `anchor_text`, `rel`, `resolved_target_id`, `discovered_at`
+
+
+**Boundary:** This approval authorizes Operational Dryv contracts only. It does not authorize migrations, database provisioning, seed/data migration or deployment. It does not approve any Main `mzizi` Phase 01 schema; those will be reviewed individually later. Phase 02 remains deferred.
