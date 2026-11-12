@@ -10,6 +10,9 @@ extra: {status: ready_for_detailed_design, recorded_on: 2026-11-11}
 
 ## Status, precedence and scope
 
+> **Updated 12 November 2026:** Reference and Geography have approved authored Dryv contracts. Their owning schema-review documents and contract files supersede candidate table inventories and open design options in this guide. This remains useful for broader integration principles; statements about candidate country/jurisdiction tables, Geography unit models and legal-basis storage are not the current contract. Geography is not generation-ready pending PostGIS support; Reference has no executable Legal-basis bridge yet.
+
+
 The user accepted the architectural direction discussed on 10–11 November and requested that task 03 and the improvement documents be made ready for local-agent work. This records that direction and the research behind it. Candidate table names below are design inputs, not completed SQL specifications or a claim of deployed capability. Task 03 owns the detailed foundation design; task 04 owns completion of downstream legal/governance/electoral/political/statistical schemas. This documentation instruction does not independently authorize production migrations, broad domain implementation or infrastructure changes.
 
 For task 03, this document supersedes older proposals to retain an overloaded `reference.jurisdictions`, treat `world` as a legal jurisdiction, preserve legacy database IDs, use one universal geographic parent tree, or make all statistical meaning generic. The rewrite target remains the disposable `mzizi_new`; verify the actual connected database before destructive work. Existing S3 evidence remains protected. Historical inventories remain useful research material but are not current schema specifications.

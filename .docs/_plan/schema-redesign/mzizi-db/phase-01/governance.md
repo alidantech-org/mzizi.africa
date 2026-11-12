@@ -8,6 +8,9 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 # governance — Phase 01
 
+> **Geography/Reference alignment — 12 November 2026:** This schema remains a proposal. Its inherited `geography.boundaries`, `geography.countries`, `geography.legal_bases`, `reference.jurisdictions` or `reference.legal_bases` references (where present) predate the approved contracts. Re-review any such field against [Geography](geography.md) and [Reference](reference.md) before approving this schema; do not treat the old target names or links as current or implemented.
+
+
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)

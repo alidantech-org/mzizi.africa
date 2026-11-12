@@ -8,6 +8,9 @@ extra: {status: planning_only}
 
 # Data classes, reusable patterns, generation, lineage and corrections
 
+> **Status — updated 12 November 2026:** Candidate Reference and Geography table lists and jurisdiction-based examples below are historical planning material. The approved current designs are [Reference](../schema-redesign/mzizi-db/phase-01/reference.md) and [Geography](../schema-redesign/mzizi-db/phase-01/geography.md). Reference owns modern countries and reusable pattern identities, releases, applicability and dependencies; Geography owns feature identities and territory. Engine owns execution state.
+
+
 **PLANNING ONLY — architectural possibilities to review with the user; not a finalized implementation design.**
 
 This is a **cross-cutting requirement** for every domain and activity, not just the database-engine seeds. The user's original distinction is **two main categories** with **four subcategories**, preserved exactly in intent:
@@ -97,8 +100,8 @@ See [source redesign and adaptive website intelligence](../source-redesign/READM
 
 ### Decisions and unanswered questions, verbatim in meaning
 
-- **USER LEAN — pattern ownership:** Explore managing shared cross-domain pattern definitions **inside `reference`**, alongside jurisdiction, classifications and the other established data required by pattern evaluation. Do **not** create a dedicated `pattern` schema on the basis of the prior recommendation.
-- **USER DIRECTION — dependency chain:** Pattern establishment should start from **existing, real** records, usually jurisdictions, geographical units, legal instruments/provisions and rules. A pattern can produce canonical records that in turn become inputs for **subsequent pattern applications**. This may branch or merge: one versioned dependency graph, not a Kenya-specific fixed linear hierarchy.
+- **USER LEAN — pattern ownership:** Explore managing shared cross-domain pattern definitions **inside `reference`**, alongside countries, classifications and the other established data required by pattern evaluation. Do **not** create a dedicated `pattern` schema on the basis of the prior recommendation.
+- **USER DIRECTION — dependency chain:** Pattern establishment should start from **existing, real** records, usually countries, Geography units, legal instruments/provisions and rules. A pattern can produce canonical records that in turn become inputs for **subsequent pattern applications**. This may branch or merge: one versioned dependency graph, not a Kenya-specific fixed linear hierarchy.
 - **OPEN — generated-row link implementation:** No exact lineage/FK structure selected. Evaluate FK-backed associations, direct origin links where genuinely single-origin, and alternatives that still enforce referenced-record existence. Do not accept `target_kind + target_id` alone as a hard FK.
 - **OPEN — physical place materialization:** Patterns may establish geographically scoped presence or occupation relationships associated with actual offices, while exact premises, address or coordinates are found later. Determine when a **real presence** is established versus only a legal **obligation to maintain premises**; never manufacture a specific building, address or actual occupant.
 - **USER LEAN — manifest management:** Watcher and pattern definitions should be **mostly database-managed**, with approved immutable/versioned files stored in `filesystem` for large/complex rule bodies, source manifests and site structures.
@@ -122,7 +125,7 @@ Keep `reference` for long-lived **reusable definitions**; `engine` for transient
 Example dependency shape (conceptual):
 
 ```text
-reference.jurisdictions              legal.provisions
+reference.countries                   legal.provisions
         |                                   |
         v                                   |
 geography.units + geo relationships         |

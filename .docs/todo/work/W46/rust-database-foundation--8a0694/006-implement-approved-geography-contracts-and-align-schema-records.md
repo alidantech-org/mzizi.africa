@@ -1,5 +1,5 @@
 ---
-{id: TSK-1B6EBCB8D9A1,name: Implement approved Geography contracts and align schema records,type: task,status: in-progress,priority: medium,created_at: 2026-11-12T12:09:15.356Z,updated_at: 2026-11-12T12:09:21.302Z,order: 6144,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-12T12:09:21.302Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-1B6EBCB8D9A1/1794485361305-start,started_at: 2026-11-12T12:09:22.054Z}]}}}
+{id: TSK-1B6EBCB8D9A1,name: Implement approved Geography contracts and align schema records,type: task,status: completed,priority: medium,created_at: 2026-11-12T12:09:15.356Z,updated_at: 2026-11-12T12:27:06.357Z,order: 6144,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-12T12:09:21.302Z},{from: in-progress,to: completed,at: 2026-11-12T12:27:06.357Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-1B6EBCB8D9A1/1794485361305-start,started_at: 2026-11-12T12:09:22.054Z,end_ref: refs/tracking/TSK-1B6EBCB8D9A1/1794486426361-end,ended_at: 2026-11-12T12:27:06.358Z,summary: {files: 25,insertions: 560,deletions: 1298}}]}}}
 ---
 
 # Implement approved Geography contracts and align schema records
@@ -14,12 +14,18 @@ The user supplied an explicit approval handoff that supersedes the older candida
 
 ## Acceptance checklist
 
-- [ ] Read repository rules, Task rules, current schema documents, Reference/Filesystem/Legal contracts and the approved Geography handoff.
-- [ ] Define exactly the nine approved Geography tables with field descriptions, keys, local relations, referential actions, unique and lookup indexes and supported invariants.
-- [ ] Model `features` as the sole canonical identity; make Units and Places feature-key specializations without duplicate identities.
-- [ ] Preserve typed dated relationships, feature names and identifiers, geometry version history, geographic transformations and spatial dataset metadata.
-- [ ] Integrate countries and controlled values through Reference when executable targets exist; do not create a Geography country or Legal bridge table.
-- [ ] Document precise unsupported PostGIS types/indexes and unresolved shell-only cross-schema targets without weakening them or activating incomplete definitions.
-- [ ] Update Geography and Reference Phase 01 documents to state current approval, actual table inventory and contract status; search and repair stale active Geography/Reference docs while preserving historical records as historical.
-- [ ] Run root Bun typecheck, formatting, targeted Dryv contract checks, Task validation and diff checks. Review generated IR/table inventory and final diff.
-- [ ] Do not generate/apply migrations, modify live databases, activate unapproved schema files, or begin Civic implementation.
+- [x] Read repository rules, Task rules, current schema documents, Reference/Filesystem/Legal contracts and the approved Geography handoff.
+- [x] Define exactly the nine approved Geography tables with field descriptions, keys, local relations, referential actions, unique and lookup indexes and supported invariants.
+- [x] Model `features` as the sole canonical identity; make Units and Places feature-key specializations without duplicate identities.
+- [x] Preserve typed dated relationships, feature names and identifiers, geometry version history, geographic transformations and spatial dataset metadata.
+- [x] Integrate countries and controlled values through Reference when executable targets exist; do not create a Geography country or Legal bridge table.
+- [x] Document precise unsupported PostGIS types/indexes and unresolved shell-only cross-schema targets without weakening them or activating incomplete definitions.
+- [x] Update Geography and Reference Phase 01 documents to state current approval, actual table inventory and contract status; search and repair stale active Geography/Reference docs while preserving historical records as historical.
+- [x] Run root Bun typecheck, formatting, targeted Dryv contract checks, Task validation and diff checks. Review generated IR/table inventory and final diff.
+- [x] Do not generate/apply migrations, modify live databases, activate unapproved schema files, or begin Civic implementation.
+
+## Comments
+
+### 2026-11-12T12:24:39.980Z · PETER IRUNGU
+
+Implemented the approved nine-table Geography Dryv contract, linked country and vocabulary identities to Reference where executable, and recorded unsupported PostGIS and unresolved cross-schema targets. Updated Reference and Geography Phase 01 documents, recorded approval in DEC-MZIZI-REFERENCE-GEOGRAPHY-20261112, and marked stale active proposals as superseded/reconciliation-required. Targeted Dryv doctor/compile and Dryv typecheck pass; task validate now passes. Root bun run check was executed and failed on existing Python workspace, lint/structure and test-suite failures; Geography formatting has been applied and checked.

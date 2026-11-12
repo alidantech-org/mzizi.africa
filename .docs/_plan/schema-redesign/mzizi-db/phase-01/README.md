@@ -7,7 +7,7 @@ extra: {status: scope_agreed, implementation: not_authorized}
 
 # phase-01
 
-The agreed **civic accountability pilot**, including geography, geographic history and PostGIS/geospatial querying, lives in the civic knowledge database (Main). Schema responsibilities are agreed; individual tables, columns, relationships and physical designs remain under review.
+The **civic accountability pilot** lives in the Mzizi knowledge database (Main). Reference and Geography table/column designs are approved and authored in Dryv. Geography spatial generation is blocked on supported PostGIS geometry and index semantics. Other Phase 01 schemas remain under review.
 
 [Full catalogue and relocation inventory](../../README.md)
 
@@ -32,6 +32,6 @@ The agreed **civic accountability pilot**, including geography, geographic histo
 
 Domain schemas link to Reference; **Reference is the only schema that links to Legal**. Keep Legal separate. Official owns person/organization identity, while Governance owns authority, offices and tenure. Politics contains political relationships and election records in distinct tables. Accountability contains oversight and participation in distinct record types. Finance and Procurement remain separate, as do Source and Filesystem.
 
-Every countrywide institution links to the whole-country Geography unit. Geography supports known-area queries, coordinate-to-area lookup, nearby searches and spatial intersections with dated boundaries and uncertainty. Identity, location, authority and actual service delivery must not be conflated.
+Where a domain record requires countrywide geographic scope, it resolves to the whole-country Geography unit; missing unit does not mean national scope. The approved Geography design supports this concept, but no PostGIS runtime/API capability is claimed by the authored contract. Identity, location, authority and actual service delivery must not be conflated.
 
 Phase 02 is not a hidden prerequisite for the pilot. Earlier language/release links to Linguistics or Statistical remain historical inputs; current candidate alternatives are explained in Geography, Official and Politics and still require detailed review. Scientific/statistical redesign does not start in this reorganization. Every meaningful accepted record retains evidence, appropriate time/place, method, uncertainty and version history.
