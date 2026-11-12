@@ -3,28 +3,26 @@ id: PLAN-SCHEMA-CONTRACT-AUTHORING
 name: Agree Dryv schema contract authoring before implementation
 type: plan
 tags: [dryv, schemas, review, contracts]
-extra: {status: proposed, implementation_authorized: false, task: TSK-52BC741A0D7E}
+extra: {status: operational_design_accepted, implementation_authorized: operational_dryv_contracts_only, task: TSK-45A6D71C9E20, main_phase_01_review_pending: true}
 ---
 
 # Agree schema contract authoring
 
-The next task is to agree how schema designs become complete Dryv definitions before continuing schema implementation. The requested layout is `dryv/contracts/schemas/_shared.ts`, `dryv/contracts/schemas/mzizi/<schema>.ts` and `dryv/contracts/schemas/operational/<schema>.ts`. The [proposed authoring agreement](../../rules/schema-contract-authoring.md) contains the review process, shared-property conventions, per-schema checklist and file-header template. It is a proposal, not blanket schema approval.
+The authoring conventions are established. The user has approved the complete 45-table Operational design and authorized its Dryv contract implementation. The requested layout is `dryv/contracts/schemas/_shared.ts`, `dryv/contracts/schemas/mzizi/<schema>.ts` and `dryv/contracts/schemas/operational/<schema>.ts`. The [schema-authoring agreement](../../rules/schema-contract-authoring.md) contains the shared-property conventions, per-schema checklist and file-header template. This approval is Operations-only; Main Phase 01 schemas remain subject to individual review.
 
 ## Existing agreement and remaining review
 
-The [catalogue](README.md) already assigns twelve Main and seven Operational schemas. Preserve those responsibilities and keep Phase 02 deferred. Placement approval allows planning a schema file; it does not approve its tables or columns. Earlier foundation discussions selected an Auth/global-vocabulary proof slice, but those choices do not approve every detail in the current files. The latest instruction requires explicit review before further schema construction.
+The [catalogue](README.md) assigns twelve Main Phase 01 and seven Operational schemas, with all remaining schemas deferred to Phase 02. The 45 Operational tables and listed columns are approved by [DEC-OPERATIONAL-DATABASE-20261112](../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md). Main Phase 01 schemas, including Reference, are not approved by that decision and will be reviewed individually later.
 
-This drafting task changes documentation and Task records only. Existing uncommitted foundation code belongs to ongoing work and is preserved. No contract shell, entity, pack activation, generated SQL or database change is part of this draft.
+This implementation phase changes the seven Operational Dryv schema files and their owning design documentation. Preserve unrelated foundation work. Do not activate generation, generate/apply SQL migrations, provision databases, import seeds or change existing databases.
 
-## Review sequence
+## Review and implementation sequence
 
-1. Agree the authoring conventions, including shared scalar properties, explicit per-table semantics, header states and the complete-contract checklist.
-2. Reconcile the existing `_shared.ts`, Auth and Reference drafts against the agreed conventions. Resolve shared code validation and the universal entity base first, since both affect every consumer.
-3. Review Auth and Reference one coherent subset at a time in their existing design documents. Record exact approved definitions and KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD / MERGE / SPLIT dispositions; preserve unresolved questions.
-4. Once agreed, create comment-only shells for other scope-agreed schemas as needed. Their headers state `Approved definitions: none` and `Generation: excluded`; no empty shell implies a completed design.
-5. Write only approved definitions, using supported Dryv constructs. Resolve Dryv capability gaps before including affected definitions in generation. Verify approval selection and the generated semantics before subsequent database work.
-
-Approval of this process does not approve any of the nineteen detailed schemas. It also does not authorize a migration, deployment or data import. Application contracts continue to compose schemas separately from schema authoring.
+1. Implement the approved 45-table Operational design first, beginning with the shared scalar catalogue only where required by the approved contracts. Keep `_shared.ts` limited to reusable non-enum properties and rules; schema-local properties are allowed only for enums. Reconcile the existing Auth draft rather than treating it as final.
+2. Author complete contracts for all seven Operational schemas: Auth, Audit, Engine, Acquisition, Staging, Analytics and Management. Resolve types, nullability, defaults, keys, relationships, constraints and indexes consistently across the one Operations database.
+3. Validate every contract and the cross-schema relationship graph. Document exact Dryv capability gaps rather than weakening constraints or inventing syntax.
+4. Keep Main Phase 01 contracts and definitions out of this implementation. After Operational contracts are written and validated, the user will review Main schemas individually, one at a time, beginning only when directed.
+5. Keep Phase 02 deferred. No migrations, database provisioning, data changes or deployment are authorized by Operational design approval.
 
 ## Findings to resolve, not implementation changes
 
@@ -45,10 +43,10 @@ These observations are not a claim that the current generator or Rust service im
 
 ## Completion criteria
 
-The drafting deliverable is a linked, reviewable agreement with no implied table approval. The agreement task remains open until the user accepts or revises it. Later schema-authoring work is complete only when each selected definition has recorded approval, a truthful header, complete supported Dryv semantics and passing appropriate checks. Unapproved and unsupported definitions remain excluded.
+The Operational design approval is recorded in DEC-OPERATIONAL-DATABASE-20261112 and in all seven owning design documents. Operational contract authoring is now authorized. Work is complete only when all 45 approved tables have truthful headers, complete supported Dryv semantics, resolved relationships and passing appropriate checks. Main Phase 01 remains excluded until the user reviews each schema.
 
 Baseline documentation validation already reports a broken website-contract link in `.docs/_plan/source-redesign/README.md` after the ongoing contract relocation. Record this separately from any errors introduced by the drafting task.
 
 ## Scaffolding follow-up — 12 November 2026
 
-The user subsequently authorized creation of all nineteen schema files and consolidation of non-enum properties in `_shared.ts`. Files now contain candidate table inventories taken from their owning design dictionaries, with separators after each entry. Existing Auth and Reference drafts are preserved and use shared scalar profiles; app imports follow the existing Reference file. This supersedes the earlier documentation-only limit for this follow-up, without approving the candidate contracts. Detailed schema reviews and generation remain pending.
+The user subsequently authorized creation of all nineteen schema files and consolidation of non-enum properties in `_shared.ts`. Files contain the approved Operational inventories plus Main Phase 01/Phase 02 candidate scaffolding. The existing Auth draft must be reconciled to the approved 11-table Auth design; the Reference draft remains Main Phase 01 and unapproved. Operational Dryv contract authoring is authorized; Main Phase 01 review remains pending.
