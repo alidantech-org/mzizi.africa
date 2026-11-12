@@ -10,7 +10,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -220,7 +220,7 @@ Show consultations open for a Kenya county, with verified government sponsor and
 
 Before adding DDL: review local public-participation laws/requirements and global neutrality; record schema/table/column comments, real cross-schema FKs, immutable history, source evidence, data classes, API contracts and independent pattern/migration checks.
 
-**References:** [Master planning register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Activity](../phase-02/activity.md) · [Audit](../mzizi-operational-db/audit.md) · [Auth](../mzizi-operational-db/auth.md). **Status: discussed, not approved.**
+**References:** [Master planning register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Activity](../phase-02/activity.md) · [Audit](../../mzizi-operational-db/audit.md) · [Auth](../../mzizi-operational-db/auth.md). **Status: discussed, not approved.**
 
 ## Human review — editable user notes and design sign-off
 
@@ -252,7 +252,7 @@ Before adding DDL: review local public-participation laws/requirements and globa
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Consultations may open/close on exact dates; submissions and responses have real submitted/replied times, not generic validity. Legal procedural deadlines can derive from the applicable pattern while actual public hearings have independent dates. Consider deletion of unpublished drafts; preserve published official responses, withdrawal/redaction and privacy-specific purge rules.
 
@@ -260,7 +260,7 @@ Before adding DDL: review local public-participation laws/requirements and globa
 
 ## 2026-11-11 — System-expansion alignment
 
-Community participation and consent may be relevant to heritage and environmental knowledge; keep participation records distinct from canonical claims and audit decisions. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Community participation and consent may be relevant to heritage and environmental knowledge; keep participation records distinct from canonical claims and audit decisions. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>
 

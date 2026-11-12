@@ -9,7 +9,7 @@ extra: {status: deferred, implementation: not_authorized}
 
 **Deferred and unapproved.** This is a holding area for every remaining schema proposal, especially science, research and statistical proposals. Documents are moved here now for complete inventory. Their inclusion does not approve them, start planning, make them ready for implementation, or authorize table redesign.
 
-[Full catalogue and relocation inventory](../README.md)
+[Full catalogue and relocation inventory](../../README.md)
 
 ## Schema documents
 

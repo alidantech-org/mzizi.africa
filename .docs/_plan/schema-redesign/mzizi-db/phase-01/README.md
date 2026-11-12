@@ -9,7 +9,7 @@ extra: {status: scope_agreed, implementation: not_authorized}
 
 The agreed **civic accountability pilot**, including geography, geographic history and PostGIS/geospatial querying, lives in the civic knowledge database (Main). Schema responsibilities are agreed; individual tables, columns, relationships and physical designs remain under review.
 
-[Full catalogue and relocation inventory](../README.md)
+[Full catalogue and relocation inventory](../../README.md)
 
 ## Schema documents
 

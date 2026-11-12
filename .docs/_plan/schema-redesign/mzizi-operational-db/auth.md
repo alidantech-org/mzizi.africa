@@ -298,7 +298,7 @@ Migration strategy: preserve account/role/grant IDs and login continuity; map `i
 5. Which public participation roles require authentication versus anonymous submissions?
 6. How to preserve audit identity when an account is retired/deleted?
 
-**References:** [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Audit](audit.md) · [Participation](../phase-01/accountability.md) · [Engine](engine.md).
+**References:** [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Audit](audit.md) · [Participation](../mzizi-db/phase-01/accountability.md) · [Engine](engine.md).
 
 **Status: auth consolidation direction recorded; exact table/column design not approved.**
 

@@ -19,8 +19,8 @@ Phase 02 is a holding area for deferred proposals. Moving a schema there does no
 | Folder | Purpose | Schema documents |
 |---|---|---|
 | [Operational](mzizi-operational-db/README.md) | System/workflow records in a separate Operations database | 7 |
-| [Phase 01](phase-01/README.md) | Agreed civic accountability pilot in Main, including geography and geospatial queries | 12 |
-| [Phase 02](phase-02/README.md) | All other schemas; deferred and unapproved | 14 |
+| [Phase 01](mzizi-db/phase-01/README.md) | Agreed civic accountability pilot in Main, including geography and geospatial queries | 12 |
+| [Phase 02](mzizi-db/phase-02/README.md) | All other schemas; deferred and unapproved | 14 |
 
 Main is the civic knowledge database; Operations is separate. S3/object storage holds bytes, while Filesystem records accepted identities and versions and Source records evidence. The broader [two-database rules](../knowledge-platform/two-database-rules.md), [database management proposal](../knowledge-platform/rust-dryv-management.md) and [capacity guidance](../knowledge-platform/capacity-partitioning-storage.md) remain background design inputs; this handoff controls schema scope and placement. No runtime technology migration is performed here.
 
@@ -37,40 +37,40 @@ All **35 original schema documents** map below to **33 destination schema docume
 | Original root file | Destination | Treatment |
 |---|---|---|
 | `acquisition.md` | [operational/acquisition.md](mzizi-operational-db/acquisition.md) | Retained with agreed ownership updates |
-| `activity.md` | [phase-02/activity.md](phase-02/activity.md) | Deferred and unapproved; proposal content retained without redesign |
-| `agriculture.md` | [phase-02/agriculture.md](phase-02/agriculture.md) | Deferred and unapproved; proposal content retained without redesign |
+| `activity.md` | [phase-02/activity.md](mzizi-db/phase-02/activity.md) | Deferred and unapproved; proposal content retained without redesign |
+| `agriculture.md` | [phase-02/agriculture.md](mzizi-db/phase-02/agriculture.md) | Deferred and unapproved; proposal content retained without redesign |
 | `analytics.md` | [operational/analytics.md](mzizi-operational-db/analytics.md) | Retained with agreed ownership updates |
 | `audit.md` | [operational/audit.md](mzizi-operational-db/audit.md) | Retained with agreed ownership updates |
 | `auth.md` | [operational/auth.md](mzizi-operational-db/auth.md) | Retained with agreed ownership updates |
-| `biology.md` | [phase-02/biology.md](phase-02/biology.md) | Deferred and unapproved; proposal content retained without redesign |
-| `chemistry.md` | [phase-02/chemistry.md](phase-02/chemistry.md) | Deferred and unapproved; proposal content retained without redesign |
-| `civic.md` | [phase-01/civic.md](phase-01/civic.md) | Retained with agreed ownership updates |
-| `economy.md` | [phase-02/economy.md](phase-02/economy.md) | Deferred and unapproved; proposal content retained without redesign |
-| `education.md` | [phase-02/education.md](phase-02/education.md) | Deferred and unapproved; proposal content retained without redesign |
-| `electoral.md` | [phase-01/politics.md](phase-01/politics.md) | Merged political/election inputs; distinct tables |
+| `biology.md` | [phase-02/biology.md](mzizi-db/phase-02/biology.md) | Deferred and unapproved; proposal content retained without redesign |
+| `chemistry.md` | [phase-02/chemistry.md](mzizi-db/phase-02/chemistry.md) | Deferred and unapproved; proposal content retained without redesign |
+| `civic.md` | [phase-01/civic.md](mzizi-db/phase-01/civic.md) | Retained with agreed ownership updates |
+| `economy.md` | [phase-02/economy.md](mzizi-db/phase-02/economy.md) | Deferred and unapproved; proposal content retained without redesign |
+| `education.md` | [phase-02/education.md](mzizi-db/phase-02/education.md) | Deferred and unapproved; proposal content retained without redesign |
+| `electoral.md` | [phase-01/politics.md](mzizi-db/phase-01/politics.md) | Merged political/election inputs; distinct tables |
 | `engine.md` | [operational/engine.md](mzizi-operational-db/engine.md) | Retained with agreed ownership updates |
-| `environment.md` | [phase-02/environment.md](phase-02/environment.md) | Deferred and unapproved; proposal content retained without redesign |
-| `filesystem.md` | [phase-01/filesystem.md](phase-01/filesystem.md) | Retained with agreed ownership updates |
-| `finance.md` | [phase-01/finance.md](phase-01/finance.md) | Retained with agreed ownership updates |
-| `geography.md` | [phase-01/geography.md](phase-01/geography.md) | Retained with agreed ownership updates |
-| `governance.md` | [phase-01/governance.md](phase-01/governance.md) | Retained with agreed ownership updates |
-| `health.md` | [phase-02/health.md](phase-02/health.md) | Deferred and unapproved; proposal content retained without redesign |
-| `heritage.md` | [phase-02/heritage.md](phase-02/heritage.md) | Deferred and unapproved; proposal content retained without redesign |
-| `history.md` | [phase-02/history.md](phase-02/history.md) | Deferred and unapproved; proposal content retained without redesign |
-| `legal.md` | [phase-01/legal.md](phase-01/legal.md) | Retained with agreed ownership updates |
-| `linguistics.md` | [phase-02/linguistics.md](phase-02/linguistics.md) | Deferred and unapproved; proposal content retained without redesign |
+| `environment.md` | [phase-02/environment.md](mzizi-db/phase-02/environment.md) | Deferred and unapproved; proposal content retained without redesign |
+| `filesystem.md` | [phase-01/filesystem.md](mzizi-db/phase-01/filesystem.md) | Retained with agreed ownership updates |
+| `finance.md` | [phase-01/finance.md](mzizi-db/phase-01/finance.md) | Retained with agreed ownership updates |
+| `geography.md` | [phase-01/geography.md](mzizi-db/phase-01/geography.md) | Retained with agreed ownership updates |
+| `governance.md` | [phase-01/governance.md](mzizi-db/phase-01/governance.md) | Retained with agreed ownership updates |
+| `health.md` | [phase-02/health.md](mzizi-db/phase-02/health.md) | Deferred and unapproved; proposal content retained without redesign |
+| `heritage.md` | [phase-02/heritage.md](mzizi-db/phase-02/heritage.md) | Deferred and unapproved; proposal content retained without redesign |
+| `history.md` | [phase-02/history.md](mzizi-db/phase-02/history.md) | Deferred and unapproved; proposal content retained without redesign |
+| `legal.md` | [phase-01/legal.md](mzizi-db/phase-01/legal.md) | Retained with agreed ownership updates |
+| `linguistics.md` | [phase-02/linguistics.md](mzizi-db/phase-02/linguistics.md) | Deferred and unapproved; proposal content retained without redesign |
 | `management.md` | [operational/management.md](mzizi-operational-db/management.md) | Retained with agreed ownership updates |
-| `organization.md` | [phase-01/official.md](phase-01/official.md) | Merged identity inputs; distinct record types |
-| `participation.md` | [phase-01/accountability.md](phase-01/accountability.md) | Participation retained within broader Accountability |
-| `person.md` | [phase-01/official.md](phase-01/official.md) | Merged identity inputs; distinct record types |
-| `political.md` | [phase-01/politics.md](phase-01/politics.md) | Merged political/election inputs; distinct tables |
-| `procurement.md` | [phase-01/procurement.md](phase-01/procurement.md) | Retained with agreed ownership updates |
-| `reference.md` | [phase-01/reference.md](phase-01/reference.md) | Retained with agreed ownership updates |
-| `research.md` | [phase-02/research.md](phase-02/research.md) | Deferred and unapproved; proposal content retained without redesign |
-| `society.md` | [phase-02/society.md](phase-02/society.md) | Deferred and unapproved; proposal content retained without redesign |
-| `source.md` | [phase-01/source.md](phase-01/source.md) | Retained with agreed ownership updates |
+| `organization.md` | [phase-01/official.md](mzizi-db/phase-01/official.md) | Merged identity inputs; distinct record types |
+| `participation.md` | [phase-01/accountability.md](mzizi-db/phase-01/accountability.md) | Participation retained within broader Accountability |
+| `person.md` | [phase-01/official.md](mzizi-db/phase-01/official.md) | Merged identity inputs; distinct record types |
+| `political.md` | [phase-01/politics.md](mzizi-db/phase-01/politics.md) | Merged political/election inputs; distinct tables |
+| `procurement.md` | [phase-01/procurement.md](mzizi-db/phase-01/procurement.md) | Retained with agreed ownership updates |
+| `reference.md` | [phase-01/reference.md](mzizi-db/phase-01/reference.md) | Retained with agreed ownership updates |
+| `research.md` | [phase-02/research.md](mzizi-db/phase-02/research.md) | Deferred and unapproved; proposal content retained without redesign |
+| `society.md` | [phase-02/society.md](mzizi-db/phase-02/society.md) | Deferred and unapproved; proposal content retained without redesign |
+| `source.md` | [phase-01/source.md](mzizi-db/phase-01/source.md) | Retained with agreed ownership updates |
 | `staging.md` | [operational/staging.md](mzizi-operational-db/staging.md) | Retained with agreed ownership updates |
-| `statistical.md` | [phase-02/statistical.md](phase-02/statistical.md) | Deferred and unapproved; proposal content retained without redesign |
+| `statistical.md` | [phase-02/statistical.md](mzizi-db/phase-02/statistical.md) | Deferred and unapproved; proposal content retained without redesign |
 
 ## Preservation and review rules
 

@@ -63,7 +63,7 @@ A prospective review record should contain current purpose; all columns and cons
 
 ## Related existing plans and repository evidence
 
-- [Schema redesign/source](../schema-redesign/phase-01/source.md) — current `source` + `website` audit baseline.
+- [Schema redesign/source](../schema-redesign/mzizi-db/phase-01/source.md) — current `source` + `website` audit baseline.
 - [Schema redesign guide](../schema-redesign/README.md) — mandatory human review method.
 - [Master planning register](../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) — broader all-domain context.
 - [Data categories and patterns](../guides/data-categories-and-patterns.md) — four classes and shared pattern lifecycle.
@@ -90,7 +90,7 @@ Research findings **do not** approve the source/website merge, any new SQL table
 
 Source/site discovery and readable Markdown extraction should serve the **same shared event-driven freshness pipeline**, not invent an independent news-watcher scheduler. Approved site-specific source manifests can select which official pages/sections to monitor for elections, census releases, parliamentary schedules, budgets and appointments. Meaningful changed DOM/Markdown sections create sourced **activity candidates and targeted re-verification triggers**; downloading a page or seeing a new source hash is not proof that the real-world event occurred or a canonical fact changed. Admin-initiated research uses the same bounded engine queue and source permissions.
 
-**Further planning:** [activity](../schema-redesign/phase-02/activity.md), [reference schedules](../schema-redesign/phase-01/reference.md), [engine verification](../schema-redesign/mzizi-operational-db/engine.md), and [single orchestration boundary](11-tool-integration-and-contracts.md). No change to site collection permission, schema, scheduled workers or tools is authorized.
+**Further planning:** [activity](../schema-redesign/mzizi-db/phase-02/activity.md), [reference schedules](../schema-redesign/mzizi-db/phase-01/reference.md), [engine verification](../schema-redesign/mzizi-operational-db/engine.md), and [single orchestration boundary](11-tool-integration-and-contracts.md). No change to site collection permission, schema, scheduled workers or tools is authorized.
 
 ## Cross-cutting people, media and prominence proposals
 

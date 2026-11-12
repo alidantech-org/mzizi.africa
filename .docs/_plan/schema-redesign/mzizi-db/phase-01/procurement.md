@@ -10,7 +10,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -283,7 +283,7 @@ Test: Same supplier bidding for contracts in different counties, joint award rec
 5. PPIP/e-GP/OCDS source mapping and institution-vs-budget-unit role separation?
 6. Which automatic matching/correction thresholds and supporting evidence are acceptable?
 
-**References:** [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Organization](official.md) · [Finance](finance.md) · [Geography](geography.md).
+**References:** [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Organization](official.md) · [Finance](finance.md) · [Geography](geography.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -315,7 +315,7 @@ Test: Same supplier bidding for contracts in different counties, joint award rec
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Tenders need publication/closing deadlines; bids submission dates; contracts signing/effectiveness/end dates; milestones due/completed dates; variations amendment dates. Generic validity cannot represent these different legal events. Official historical transactions require version/supersession, not is_current or soft-delete. Drafts may justify recoverable deletion if explicitly modeled.
 
@@ -323,6 +323,6 @@ Test: Same supplier bidding for contracts in different counties, joint award rec
 
 ## 2026-11-11 — System-expansion alignment
 
-Procurement remains the purchasing process owner. Economic market/product facts and Civic infrastructure assets may be linked but are not duplicate procurement records. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Procurement remains the purchasing process owner. Economic market/product facts and Civic infrastructure assets may be linked but are not duplicate procurement records. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

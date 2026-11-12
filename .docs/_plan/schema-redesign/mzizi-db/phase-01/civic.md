@@ -10,7 +10,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -241,7 +241,7 @@ extra: {status: hypothetical, approval: not_approved, implementation: not_author
 
 # Civic — infrastructure, networks and public services
 
-> **Status: HYPOTHETICAL DOMAIN BRIEF.** Candidate responsibilities and tables are under investigation, not approved for SQL. Read alongside [the expansion proposal](../../guides/advancement-and-system-expansion.md), [governance design](governance.md), and [geography design](geography.md).
+> **Status: HYPOTHETICAL DOMAIN BRIEF.** Candidate responsibilities and tables are under investigation, not approved for SQL. Read alongside [the expansion proposal](../../../guides/advancement-and-system-expansion.md), [governance design](governance.md), and [geography design](geography.md).
 
 ## 1. Purpose and exploration areas
 
@@ -280,7 +280,7 @@ Prefer real FKs to Geography units/places/boundary representations, Organization
 
 ## 7. Cross-domain relationships
 
-The [system-expansion proposal](../../guides/advancement-and-system-expansion.md#16-cross-domain-ownership-rules-to-carry-into-detailed-designs) resolves provisional ownership: a road/railway is a Civic network with segments/nodes; its geometry is a geographic representation. A dam is built infrastructure; the reservoir is a geographic water feature. One physical facility identity must not be duplicated in Civic and Geography.
+The [system-expansion proposal](../../../guides/advancement-and-system-expansion.md#16-cross-domain-ownership-rules-to-carry-into-detailed-designs) resolves provisional ownership: a road/railway is a Civic network with segments/nodes; its geometry is a geographic representation. A dam is built infrastructure; the reservoir is a geographic water feature. One physical facility identity must not be duplicated in Civic and Geography.
 
 ## 8. Geographic responsibilities
 

@@ -10,7 +10,7 @@ extra: {status: deferred, approval: not_approved, implementation: not_authorized
 
 > **DEFERRED AND UNAPPROVED.** Retained for complete inventory only. Moving this proposal here does not approve it, start planning, or authorize table redesign or implementation. Older review/approval wording below is historical; this status controls.
 
-See [Phase 02](README.md) and [the catalogue](../README.md). References to the former Person/Organization, Political/Electoral and Participation names in the retained proposal mean historical inputs now organized under Official, Politics and Accountability. Direct domain-to-Legal links in this deferred material are not current contracts; any future review must follow Reference mediation.
+See [Phase 02](README.md) and [the catalogue](../../README.md). References to the former Person/Organization, Political/Electoral and Participation names in the retained proposal mean historical inputs now organized under Official, Politics and Accountability. Direct domain-to-Legal links in this deferred material are not current contracts; any future review must follow Reference mediation.
 
 ## Retained proposal — unchanged design
 
@@ -243,7 +243,7 @@ For one county, show actual appointment and inauguration dates with people, offi
 4. Event's multiple actors, legal sources and geographical roles: what must be explicitly FK-enforced?
 5. What public moderation and review are necessary for activity notes or user-submitted corrections?
 
-**Links:** [Schema index](../README.md), [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [Site Markdown extraction](../../guides/site-structure-and-markdown-extraction.md).
+**Links:** [Schema index](../../README.md), [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [Site Markdown extraction](../../../guides/site-structure-and-markdown-extraction.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -275,7 +275,7 @@ For one county, show actual appointment and inauguration dates with people, offi
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Events require meaningful scheduled/occurred/cancelled times, not blanket valid_from/to. Historical imprecision may justify date-specific precision only where evidenced. News has publication time distinct from event time and fetch time. Activity links ordinarily do not need validity unless they independently start/end; public history is corrected, not trash-deleted.
 
@@ -330,6 +330,6 @@ Whether `activity.updates` and `activity.actions` need distinct tables; whether 
 
 ## 2026-11-11 — System-expansion alignment
 
-Activity remains the canonical occurrence/event owner. History may define chronologies and interpretations that point to Activity events through enforceable typed relationships. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Activity remains the canonical occurrence/event owner. History may define chronologies and interpretations that point to Activity events through enforceable typed relationships. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

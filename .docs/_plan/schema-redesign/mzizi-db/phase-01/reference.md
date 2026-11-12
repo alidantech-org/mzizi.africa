@@ -10,7 +10,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -288,7 +288,7 @@ extra: {status: planning_only, implementation: not_approved}
 
 > **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
 
-The task-03 [connected foundation proposal](../../guides/connected-reference-geography-legal-foundation.md) records the proposed table dictionary, FK order, pattern/version contract and design fixtures. Its proposals require review before migration.
+The task-03 [connected foundation proposal](../../../guides/connected-reference-geography-legal-foundation.md) records the proposed table dictionary, FK order, pattern/version contract and design fixtures. Its proposals require review before migration.
 
 # Reference and jurisdiction redesign
 
@@ -354,7 +354,7 @@ Global requirements: check live data, orphans, actual FK constraints, indexes an
 
 ## 9. Related planning resources and decision status
 
-See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../README.md), [data classes/patterns](../../guides/data-categories-and-patterns.md), and [independent pipelines](../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
+See [master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../../README.md), [data classes/patterns](../../../guides/data-categories-and-patterns.md), and [independent pipelines](../../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
 
 ## Human review — editable user notes and design sign-off
 
@@ -397,11 +397,11 @@ The **hierarchical/cascading input model** starts with existing `reference.juris
 
 **Human review questions added:** Does this scope overload `reference`? Which patterns are definitional (reference-owned) versus domain-specific legal/governance facts? What is the approved dependency-graph/target binding and lineage FK structure? Which watcher definitions belong beside patterns? What source/jurisdiction-specific rules can stay in versioned manifests without introducing country-specific core code?
 
-Full detailed proposal: [Data classes and pattern graph](../../guides/data-categories-and-patterns.md). The former suggestion of a dedicated `pattern` schema is **an alternative, not a decision**.
+Full detailed proposal: [Data classes and pattern graph](../../../guides/data-categories-and-patterns.md). The former suggestion of a dedicated `pattern` schema is **an alternative, not a decision**.
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Jurisdiction and classification identities should not inherit four validity/precision fields by template. Effective applicability belongs to genuinely versioned patterns, jurisdictions or classifications where justified. An authorized pattern can establish records; review whether those records need their own independent lifecycle. Do not soft-delete approved definitions as though they were drafts.
 
@@ -422,7 +422,7 @@ A rule should express: applicable jurisdiction and dated legal/pattern basis; wh
 
 **Open design questions for human review:** Should schedules belong to `reference` as pattern subtypes or have distinct tables? How should legally established timing, official announcement and administrative override rank? How does a scheduled item link by real FK to a future `activity` occurrence or a domain election/budget/census? What policy hierarchy governs cadence at field-group and row level? Which version of a schedule applied when an earlier event was planned? How to express jurisdiction scope, timezone, business/calendar dates and legal holidays without embedding Kenya-specific assumptions? How is one authoritative scheduler enforced?
 
-**No DDL, engine changes or Taskcode tasks authorized.** See [activity](../phase-02/activity.md), [engine](../mzizi-operational-db/engine.md), [schema-wide semantic naming](../README.md), and [data classes](../../guides/data-categories-and-patterns.md).
+**No DDL, engine changes or Taskcode tasks authorized.** See [activity](../phase-02/activity.md), [engine](../../mzizi-operational-db/engine.md), [schema-wide semantic naming](../../README.md), and [data classes](../../../guides/data-categories-and-patterns.md).
 
 ## 2026-11-11 — Connected foundation direction (controlling for task 03)
 
@@ -430,10 +430,10 @@ The accepted direction replaces the overloaded country/vocabulary/legal use of `
 
 Domain-specific office/power/selection definitions remain in governance and cite legal provisions. Reference is not a generic container for real organizations, languages' distribution or geographic units. Candidate names in the discussion are not final SQL. Capability discovery connects topics to registered handlers/contracts; its physical ownership must be decided, not assumed to require another schema. Follow the universal `code` rule; prefixes do not replace spatial relationships. Task 03 must specify bootstrap dependencies and real cross-schema keys.
 
-Read [the connected foundation](../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+Read [the connected foundation](../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
 
 ## 2026-11-11 — System-expansion alignment
 
-Expansion topics should bind to registered capabilities and shared meanings; Reference owns classifications/topics/patterns, not roads, species, products or observations. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Expansion topics should bind to registered capabilities and shared meanings; Reference owns classifications/topics/patterns, not roads, species, products or observations. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

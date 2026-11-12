@@ -10,7 +10,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -281,7 +281,7 @@ Global requirements: check live data, orphans, actual FK constraints, indexes an
 
 ## 9. Related planning resources and decision status
 
-See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../README.md), [data classes/patterns](../../guides/data-categories-and-patterns.md), and [independent pipelines](../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
+See [master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../../README.md), [data classes/patterns](../../../guides/data-categories-and-patterns.md), and [independent pipelines](../../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
 
 ## Human review — editable user notes and design sign-off
 
@@ -313,7 +313,7 @@ See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redes
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** A law may have enacted, commenced, amended, repealed and published dates with distinct meanings; avoid generic valid_from/to on every provision. Provision versions can inherit effective context from the instrument but may have independent amendment history. Legal currentness is an as-of legal query; historical or approximate dates merit precision only where evidenced. No ordinary trash deletion of enacted legal history.
 
@@ -325,10 +325,10 @@ Separate stable legal instruments/provisions, their textual versions/languages, 
 
 Territorial, personal, subject and temporal applicability differ. Spatial inclusion alone cannot establish applicable law, and cited support is not proof of compliance or settled interpretation. Extracted text is not executable behavior; reviewed structured rules and registered handlers implement supported behavior. Historical/customary/de facto institutions may have non-statutory documented bases and must not be assigned invented constitutional support. Task 03 defines the minimal legal interface/bootstrap order and proof cases; task 04 finalizes full instruments/provisions/processes and downstream legal associations.
 
-Read [the connected foundation](../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+Read [the connected foundation](../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
 
 ## 2026-11-11 — System-expansion alignment
 
-The expanded domains retain typed, direct legal-basis links where legal authority is a real relationship; the broader topic list does not create automatic legal FKs or implied applicability. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+The expanded domains retain typed, direct legal-basis links where legal authority is a real relationship; the broader topic list does not create automatic legal FKs or implied applicability. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

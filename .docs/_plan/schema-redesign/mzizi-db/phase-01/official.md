@@ -10,7 +10,7 @@ extra: {merged_document_ids: [DOC-MZIZI-SCHEMA-PERSON-20261111], status: propose
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -277,7 +277,7 @@ Global requirements: check live data, orphans, actual FK constraints, indexes an
 
 ## 9. Related planning resources and decision status
 
-See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../README.md), [data classes/patterns](../../guides/data-categories-and-patterns.md), and [independent pipelines](../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
+See [master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../../README.md), [data classes/patterns](../../../guides/data-categories-and-patterns.md), and [independent pipelines](../../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
 
 ## Human review — editable user notes and design sign-off
 
@@ -309,7 +309,7 @@ See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redes
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Canonical organization identity is stable; registration, dissolution, merger and renaming have specific lifecycles, not automatically valid_from/to everywhere. Issued identifiers and ownerships may have real validity intervals; ordinary entity names may require history. Avoid soft-delete for canonical public bodies/suppliers and use domain retirement or supersession instead.
 
@@ -317,7 +317,7 @@ See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redes
 
 ## 2026-11-11 — System-expansion alignment
 
-Infrastructure operators, market actors, custodial institutions and farm organizations should reuse Organization identities rather than create domain-local duplicates. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Infrastructure operators, market actors, custodial institutions and farm organizations should reuse Organization identities rather than create domain-local duplicates. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>
 
@@ -548,7 +548,7 @@ Global requirements: check live data, orphans, actual FK constraints, indexes an
 
 ## 9. Related planning resources and decision status
 
-See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../README.md), [data classes/patterns](../../guides/data-categories-and-patterns.md), and [independent pipelines](../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
+See [master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../../README.md), [data classes/patterns](../../../guides/data-categories-and-patterns.md), and [independent pipelines](../../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
 
 ## Human review — editable user notes and design sign-off
 
@@ -580,7 +580,7 @@ See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redes
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** A real individual is not a temporarily valid record just because a generic entity template says so. Names, contacts, public handles and profiles may have specific observed usage periods; keep only where needed. Privacy-driven erasure/anonymization differs from soft deletion of public facts. Remove redundant is_current and precision fields unless justified.
 
@@ -588,6 +588,6 @@ See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redes
 
 ## 2026-11-11 — System-expansion alignment
 
-Demographic aggregates remain Statistical; they do not create Person identities. Heritage/community records must also respect identity exposure and consent. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Demographic aggregates remain Statistical; they do not create Person identities. Heritage/community records must also respect identity exposure and consent. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

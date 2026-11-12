@@ -172,7 +172,7 @@ Audit the exact three current TypeORM entity fields and their generic target ref
 
 **Explicitly open:** new general audit.events table; how operational engine decisions map to append-only audits; reliable target FK design; audit retention/PII/legal hold; service agent identities; which review comments are participation; indexed query patterns and read permissions; timeline of policy/version changes.
 
-**References:** [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Engine](engine.md) · [Participation](../phase-01/accountability.md) · [Auth](auth.md) · [Source](../phase-01/source.md).
+**References:** [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Engine](engine.md) · [Participation](../mzizi-db/phase-01/accountability.md) · [Auth](auth.md) · [Source](../mzizi-db/phase-01/source.md).
 
 **Status: audit remains separate as a concern; exact physical tables not approved.**
 

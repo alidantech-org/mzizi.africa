@@ -186,7 +186,7 @@ An approved agent may run a registered generic capability such as `discover_offi
 
 **Cross-domain examples**: `electoral` official date/nomination/result updates; `statistical` census data release/vintage; `legal` parliament readings and Acts; `finance` budget timetables/versions; `governance` appointments; `procurement` tender deadline/award. Each action follows schedule → activity/source evidence → engine → candidates/verifications → reviewed domain changes, without duplicating canonical subject identities.
 
-**Still open:** executable manifest grammar, one source of truth for verification status, verification ledger FK target design, scheduler/job reuse, cadence/tier thresholds, agent permissions, administrator form workflow, schedule rules vs real-world event statuses, UI status vocabulary and legal/source constraints. These require user validation and separate implementation/task approval. See [schema-wide freshness rule](../schema-redesign/README.md) and [activity](../schema-redesign/phase-02/activity.md).
+**Still open:** executable manifest grammar, one source of truth for verification status, verification ledger FK target design, scheduler/job reuse, cadence/tier thresholds, agent permissions, administrator form workflow, schedule rules vs real-world event statuses, UI status vocabulary and legal/source constraints. These require user validation and separate implementation/task approval. See [schema-wide freshness rule](../schema-redesign/README.md) and [activity](../schema-redesign/mzizi-db/phase-02/activity.md).
 
 ## 2026-11-08 — Root seed convention and folder/file-type design
 

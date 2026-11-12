@@ -10,7 +10,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -343,7 +343,7 @@ Before consolidation, audit which downstream tables and API contracts reference 
 5. Jurisdiction/fiscal period and geographic delivery vs physical institution location?
 6. Which value corrections can be automated, and which require financial/official publication review?
 
-**References:** [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Schema index](../README.md) · [Procurement](procurement.md) · [Statistics](../phase-02/statistical.md).
+**References:** [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Schema index](../../README.md) · [Procurement](procurement.md) · [Statistics](../phase-02/statistical.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -375,7 +375,7 @@ Before consolidation, audit which downstream tables and API contracts reference 
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Fiscal periods already have explicit dates; budget revisions need edition/approval dates, transactions need paid/booked times, loans need agreement/maturity dates, disbursements and repayments need occurrence dates. These are different semantics, not one blanket valid_from/to pair. Keep finance history and correct via versioning/reconciliation, not soft-delete or generic current flags.
 
@@ -392,6 +392,6 @@ Before consolidation, audit which downstream tables and API contracts reference 
 
 ## 2026-11-11 — System-expansion alignment
 
-Finance remains owner of budgets, debt and transactions. Economy's production, prices and trade do not absorb financial accounting; links to projects/contracts require real target FKs. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Finance remains owner of budgets, debt and transactions. Economy's production, prices and trade do not absorb financial accounting; links to projects/contracts require real target FKs. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

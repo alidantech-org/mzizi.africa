@@ -579,7 +579,7 @@ Newest user input qualifies the prior suggestion of a dedicated `pattern` schema
 
 **USER REQUIREMENT:** generic pattern/watch code must be country-neutral: IEBC, KNBS, ORPP, Kenya law and country counts are **manifest/seed/source-adapter context**, not hardcoded branches in universal scheduling, gap-checking, pattern evaluation or repair. Existing `reinforcement.py`, `gapclose.py` and `patterns.ts` are concrete code points to assess in a future approved refactor.
 
-No schema-count change is implied by placing patterns in `reference`. No code change, migration or Taskcode task is authorized. Detailed plan: [Data classes and pattern DAG](data-categories-and-patterns.md); [reference schema review](../schema-redesign/phase-01/reference.md), [geography schema review](../schema-redesign/phase-01/geography.md), and [engine schema review](../schema-redesign/mzizi-operational-db/engine.md).
+No schema-count change is implied by placing patterns in `reference`. No code change, migration or Taskcode task is authorized. Detailed plan: [Data classes and pattern DAG](data-categories-and-patterns.md); [reference schema review](../schema-redesign/mzizi-db/phase-01/reference.md), [geography schema review](../schema-redesign/mzizi-db/phase-01/geography.md), and [engine schema review](../schema-redesign/mzizi-operational-db/engine.md).
 
 
 ## 26. User requirement: remove unjustified temporal/precision/current columns; consider selective soft deletion (2026-11-07)
@@ -614,7 +614,7 @@ The [schema redesign index and mandatory review policy](../schema-redesign/READM
 
 The current TypeORM model historically uses generic temporal/current flags broadly (as recorded in section 26). In particular, `calendar.events` contains `starts_on`, `ends_on`, `is_recurring`, `status`, `is_current` and generic `valid_from/to`/precision fields; `statistical.periods` and `finance.years` already have explicit period start/end dates **plus** duplicated generic validity/current fields. `source.verifications` already exists, with verification state and generic `target_kind`/`target_id`, but that alone is not an enforceable FK to any arbitrary fact or a per-field historical freshness ledger. These are **code observations on `develop`, not verified deployed DB row/DDL findings**.
 
-**Cross-references:** [schema-wide column/freshness rule](../schema-redesign/README.md); [reference policy/schedules](../schema-redesign/phase-01/reference.md); [engine verification](../schema-redesign/mzizi-operational-db/engine.md); [source verification](../schema-redesign/phase-01/source.md); [data classes/patterns](data-categories-and-patterns.md). **OPEN:** actual field names, old→new migration, monitoring policy hierarchy and frequency, verification threshold/evidence, ledger physical ownership and hard FK design, UI status words and privacy/retention.
+**Cross-references:** [schema-wide column/freshness rule](../schema-redesign/README.md); [reference policy/schedules](../schema-redesign/mzizi-db/phase-01/reference.md); [engine verification](../schema-redesign/mzizi-operational-db/engine.md); [source verification](../schema-redesign/mzizi-db/phase-01/source.md); [data classes/patterns](data-categories-and-patterns.md). **OPEN:** actual field names, old→new migration, monitoring policy hierarchy and frequency, verification threshold/evidence, ledger physical ownership and hard FK design, UI status words and privacy/retention.
 
 ## 28. User discussion: activity and reference schedules trigger event-driven research (2026-11-07)
 
@@ -662,7 +662,7 @@ The user asked if `activity` can model official and scheduled happenings—**new
 - Idempotent trigger key, schedules and rechecks, bounded polling costs, no multi-scheduler conflict, agent model/capability selection and safe country-neutral manifests.
 - Which table/column additions or removals are actually justified; full live DB/contract audit and user-by-user schema sign-off **before** DDL.
 
-**Related planning details:** [activity](../schema-redesign/phase-02/activity.md), [reference](../schema-redesign/phase-01/reference.md), [engine](../schema-redesign/mzizi-operational-db/engine.md), [electoral](../schema-redesign/phase-01/politics.md), [finance](../schema-redesign/phase-01/finance.md), [statistical](../schema-redesign/phase-02/statistical.md), [independent pipelines](independent-data-pipelines.md). **No Taskcode tasks or implementation authorized by these notes.**
+**Related planning details:** [activity](../schema-redesign/mzizi-db/phase-02/activity.md), [reference](../schema-redesign/mzizi-db/phase-01/reference.md), [engine](../schema-redesign/mzizi-operational-db/engine.md), [electoral](../schema-redesign/mzizi-db/phase-01/politics.md), [finance](../schema-redesign/mzizi-db/phase-01/finance.md), [statistical](../schema-redesign/mzizi-db/phase-02/statistical.md), [independent pipelines](independent-data-pipelines.md). **No Taskcode tasks or implementation authorized by these notes.**
 
 ## 2026-11-11 — Accepted connected foundation; task 03 ready for detailed design
 

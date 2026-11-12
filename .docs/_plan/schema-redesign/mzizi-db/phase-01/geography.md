@@ -10,7 +10,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -404,7 +404,7 @@ Global requirements: check live data, orphans, actual FK constraints, indexes an
 
 ## 9. Related planning resources and decision status
 
-See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../README.md), [data classes/patterns](../../guides/data-categories-and-patterns.md), and [independent pipelines](../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
+See [master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../../README.md), [data classes/patterns](../../../guides/data-categories-and-patterns.md), and [independent pipelines](../../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
 
 ## Human review — editable user notes and design sign-off
 
@@ -450,11 +450,11 @@ Legal **obligation** to have premises is not always proof of a specific **actual
 
 Future pattern/watch source: mostly DB-managed rules in proposed `reference` with `engine` gap and watcher execution, source evidence and versioned filesystem manifests. Reconsider `place.expectations` migration/adoption without losing historical provenance, stable IDs or resolved occupancies. **OPEN**: nullable FK vs separate presence table, mandatory/optional physical presence, exact evidence threshold, multiple premises, cardinality and site identity.
 
-See [Pattern graph and materialization modes](../../guides/data-categories-and-patterns.md).
+See [Pattern graph and materialization modes](../../../guides/data-categories-and-patterns.md).
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Stable geographical units may derive applicable status from administrative/legal relations; boundaries, names, changing parent relationships and real occupancies may need independent dated intervals. A confirmed place need not have exact coordinates. Do not soft-delete historical geographical units/boundaries. Evaluate physical-presence relationships independently of office-rule applicability.
 
@@ -466,10 +466,10 @@ Geography is the spatial foundation for Africa, country territories, administrat
 
 Specify each geometry representation's source/version, applicable period, method and uncertainty. Distinguish official boundaries, disputed claims, reconstructions, linguistic distributions and hypothetical scenarios. A member-territory union must pin membership and boundary inputs and must not imply sovereignty or uniform legal applicability. Headquarters, serves-area, authority-area, electoral coverage and statistical coverage require explicit roles. Known nationwide reach links to the country territorial unit; unknown is not automatically national. GPS resolves location candidates and uncertainty, not citizenship/residence. Resolve place/presence/contact ownership without inventing buildings from legal duties.
 
-Read [the connected foundation](../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+Read [the connected foundation](../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
 
 ## 2026-11-11 — System-expansion alignment
 
-The expansion keeps geographic identities, natural features, places and spatial representations with Geography; Civic owns built infrastructure function. Review feature/place/geometry boundaries and spatial asset lineage against the expansion proposal. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+The expansion keeps geographic identities, natural features, places and spatial representations with Geography; Civic owns built infrastructure function. Review feature/place/geometry boundaries and spatial asset lineage against the expansion proposal. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

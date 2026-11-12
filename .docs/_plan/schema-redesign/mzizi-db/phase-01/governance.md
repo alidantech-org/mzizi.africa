@@ -10,7 +10,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -297,7 +297,7 @@ Global requirements: check live data, orphans, actual FK constraints, indexes an
 
 ## 9. Related planning resources and decision status
 
-See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../README.md), [data classes/patterns](../../guides/data-categories-and-patterns.md), and [independent pipelines](../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
+See [master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [schema review index](../../README.md), [data classes/patterns](../../../guides/data-categories-and-patterns.md), and [independent pipelines](../../../guides/independent-data-pipelines.md). **Any preference noted here is a planning recommendation; the user decides the final schema/table/column specification and authorizes tasks one at a time.**
 
 ## Human review — editable user notes and design sign-off
 
@@ -329,7 +329,7 @@ See [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redes
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Key example: governance.offices should generally derive structural/legal applicability from the referenced pattern and law, rather than duplicating its validity period. An office may still independently open/close or be abolished, requiring a real history/exception. governance.holders DOES need appointment/tenure boundaries; exact modern dates rarely need precision columns. Institution and civic-service existence, operational status and source completeness are separate. Retirement is not deletion.
 
@@ -341,10 +341,10 @@ Distinguish broad office classification, country/system-specific office definiti
 
 The county-governor proof case separates Articles 176, 179 and 180 and their roles. A contest targets an office; declaration and beginning an officeholding term are separate. Regional organizations have real organs/posts and mandates; a continent unit does not appoint a continental leader. Task 03 establishes contracts and query traces; task 04 owns full governance schema/rule/holder implementation. Reference patterns generate only established structure and preserve independent factual edits.
 
-Read [the connected foundation](../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+Read [the connected foundation](../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
 
 ## 2026-11-11 — System-expansion alignment
 
-Reconcile the earlier governance/civic service mapping with the expansion proposal: Governance owns institutions/offices/authority; Civic may own infrastructure function and service delivery. This boundary remains open. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Reconcile the earlier governance/civic service mapping with the expansion proposal: Governance owns institutions/offices/authority; Civic may own infrastructure function and service delivery. This boundary remains open. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

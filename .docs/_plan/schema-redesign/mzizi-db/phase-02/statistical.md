@@ -10,7 +10,7 @@ extra: {status: deferred, approval: not_approved, implementation: not_authorized
 
 > **DEFERRED AND UNAPPROVED.** Retained for complete inventory only. Moving this proposal here does not approve it, start planning, or authorize table redesign or implementation. Older review/approval wording below is historical; this status controls.
 
-See [Phase 02](README.md) and [the catalogue](../README.md). References to the former Person/Organization, Political/Electoral and Participation names in the retained proposal mean historical inputs now organized under Official, Politics and Accountability. Direct domain-to-Legal links in this deferred material are not current contracts; any future review must follow Reference mediation.
+See [Phase 02](README.md) and [the catalogue](../../README.md). References to the former Person/Organization, Political/Electoral and Participation names in the retained proposal mean historical inputs now organized under Official, Politics and Accountability. Direct domain-to-Legal links in this deferred material are not current contracts; any future review must follow Reference mediation.
 
 ## Retained proposal — unchanged design
 
@@ -353,7 +353,7 @@ Audit `fields` vs `datasets` and `categories` vs `reference.classifications` fir
 6. Which derived calculations can run in SQL procedures vs independent pipeline packages?
 7. How should dashboards display missingness, uncertainty, revisions and confidence?
 
-**References:** [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Reference](../phase-01/reference.md) · [Geography](../phase-01/geography.md) · [Data classification](../../guides/data-categories-and-patterns.md).
+**References:** [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Reference](../phase-01/reference.md) · [Geography](../phase-01/geography.md) · [Data classification](../../../guides/data-categories-and-patterns.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -385,7 +385,7 @@ Audit `fields` vs `datasets` and `categories` vs `reference.classifications` fir
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Observations already reference reporting periods and release vintages; generic validity windows and is_current may duplicate period/vintage/source editions. Dimension membership and indicator definitions need dates only if definitions genuinely change. Preserve all official revisions and derived-input lineage; soft-delete belongs to optional import drafts, not published observations.
 
@@ -408,10 +408,10 @@ The accepted model preserves shared observations/releases/units/time/provenance 
 
 Unknown boundary coverage remains explicit. No silent summation of overlapping areas/incompatible definitions, no national value copied to counties, no missing-as-zero. Language and community identities differ from distributions and territorial rights. An analytics capability describes supported filters, aggregation and presentation based on actual data; a topic label cannot authorize arbitrary calculations. Task 03 owns foundation contracts and these semantic test cases; task 04 owns the final statistical domain model. Future land/goods/prices/inflation/history work reuses place/time/evidence without being implemented here.
 
-Read [the connected foundation](../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+Read [the connected foundation](../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
 
 ## 2026-11-11 — System-expansion alignment
 
-Statistical owns published comparable series, indices and reproducible derivations. Raw Environment readings, Agriculture harvests, Economy prices, Finance transactions and Electoral results remain owned by their source domains. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Statistical owns published comparable series, indices and reproducible derivations. Raw Environment readings, Agriculture harvests, Economy prices, Finance transactions and Electoral results remain owned by their source domains. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

@@ -10,7 +10,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
 
-[Folder index](README.md) · [Full catalogue and relocation inventory](../README.md)
+[Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
@@ -293,7 +293,7 @@ Queries: show all KNBS census PDFs for 2019 and their Markdown/table derivatives
 
 Current Python `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/src/mzizi_data/files.py` uses `LocalDirectoryStore` and defaults created logical files to restricted. Migrate its adapter/access policy **only after inspecting** actual deployed S3 endpoint, bucket namespace, public URL rules, sign URL API, object versions and retention. No new storage service. Audit 10 table's current columns/FKs and clients; preserve all IDs, versions and hashes on backfill.
 
-**OPEN:** exact S3 API/URL configuration; folder multiple placements vs one parent; tag schema; file retention and legal hold; attachment FK model; `formats/uploads/events` ownership; cache and integrity checks; default public/private policy by source classification; UI operations; migration of existing local objects. See [file-management plan](../../guides/file-management-and-s3.md), [site Markdown plan](../../guides/site-structure-and-markdown-extraction.md), and [master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md).
+**OPEN:** exact S3 API/URL configuration; folder multiple placements vs one parent; tag schema; file retention and legal hold; attachment FK model; `formats/uploads/events` ownership; cache and integrity checks; default public/private policy by source classification; UI operations; migration of existing local objects. See [file-management plan](../../../guides/file-management-and-s3.md), [site Markdown plan](../../../guides/site-structure-and-markdown-extraction.md), and [master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md).
 
 **Status: proposals, no approved DDL.**
 
@@ -327,7 +327,7 @@ Current Python `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engin
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
-**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../README.md).
+**USER REQUIREMENT; planning only.** Examine every existing/proposed field and expressly record **KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD** for `valid_from`, `valid_to`, `valid_from_precision`, `valid_to_precision`, `is_current`, `status`, `version`, `created_at`, `updated_at` and other copied/rigid flags. These fields are **opt-in by justified meaning**, not blanket schema conventions. Assess `deleted_at` only for recoverable soft deletion where appropriate. The full policy and migration/approval checklist is in [schema redesign README](../../README.md).
 
 **Domain-specific guidance:** Immutable objects and versions have content identity and creation times, not real-world validity. Files and logical folders are candidates for selective deleted_at trash/restore, with FK and partial unique-index design; do not delete source evidence or remote S3 bytes by implication. Uploads/events have operational timestamps, not a copied is_current/precision bundle.
 
@@ -347,6 +347,6 @@ Task `TSK-0F4398B91D38` relocated the real system seeds to root `seed/` (invento
 
 ## 2026-11-11 — System-expansion alignment
 
-The expansion reuses immutable filesystem versions for original/derived spatial and heritage assets; domain identity, access policy, derivation lineage and canonical metadata remain separate concerns. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+The expansion reuses immutable filesystem versions for original/derived spatial and heritage assets; domain identity, access policy, derivation lineage and canonical metadata remain separate concerns. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>
