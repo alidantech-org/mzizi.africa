@@ -4,7 +4,7 @@
 
 # Database naming
 
-Applies to every table the Dryv contracts define. The contract audit (`dryv/tools/audit-contracts.ts`) enforces it. The design behind it is in `.docs/docs/DATABASE_DESIGN.md`.
+Applies to every table the Dryv contracts define. The contract audit (`dryv/tools/audit-contracts.ts`) enforces it. The design behind it is in `.docs/design/data/DATABASE_DESIGN.md`.
 
 ## Rules
 

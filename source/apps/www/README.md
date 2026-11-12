@@ -113,8 +113,8 @@ As real data is introduced, consume stable contracts from the future NestJS API 
 
 Read:
 
-- [`../../.docs/WHY.md`](../../.docs/WHY.md)
-- [`../../.docs/STORY.md`](../../.docs/STORY.md)
-- [`../../.docs/DOMAINS.md`](../../.docs/DOMAINS.md)
-- [`../../.docs/ARCHITECTURE.md`](../../.docs/ARCHITECTURE.md)
-- [`../../.docs/ROADMAP.md`](../../.docs/ROADMAP.md)
+- [`../../.docs/docs/WHY.md`](../../.docs/docs/WHY.md)
+- [`../../.docs/docs/STORY.md`](../../.docs/docs/STORY.md)
+- [`../../.docs/docs/DOMAINS.md`](../../.docs/docs/DOMAINS.md)
+- [`../../.docs/docs/ARCHITECTURE.md`](../../.docs/docs/ARCHITECTURE.md)
+- [`../../.docs/docs/ROADMAP.md`](../../.docs/docs/ROADMAP.md)

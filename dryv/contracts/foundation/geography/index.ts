@@ -59,7 +59,7 @@ const geoOwnedSchemas = geography.schemas({
       code: dryv.field(sharedProperties.BusinessCode).query({ filter: ["equal", "startsWith"], sort: true, search: true }),
       name: dryv.field(sharedProperties.Name).query({ filter: ["startsWith", "contains"], sort: true, search: true }),
       kind: dryv.field(geographyProperties.UnitKind).query({ filter: ["equal", "in"] }),
-      // Other schemas are referenced by plain id: no foreign key crosses a schema (DATABASE_DESIGN.md).
+      // Other schemas are referenced by plain id: no foreign key crosses a schema (.docs/design/data/DATABASE_DESIGN.md).
       jurisdictionId: dryv.field(sharedProperties.Id).query({ filter: ["equal"] }),
       levelId: dryv.field(sharedProperties.Id).query({ filter: ["equal"] }),
       parentId: dryv
@@ -177,7 +177,7 @@ export const geographySchemas = geography.schemas({
 export const geographyEntitySchemas = { ...geoOwnedSchemas, ...geographySchemas } as const;
 
 /* -------------------------------------------------------------------------- */
-/* Read contracts (mobile geography contract, docs/geography-api-contract.md) */
+/* Read contracts (mobile geography contract, .docs/design/geography/geography-api-contract.md) */
 /* -------------------------------------------------------------------------- */
 
 export const geographyQuerySchemas = geography.schemas({

@@ -12,7 +12,7 @@
  * 3. No file exceeds its hard line limit (see `limits`). Split a file by responsibility instead of raising a limit.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { at, label } from "../lib/paths.ts";
 
 /** A hard line limit for the files under `dir` whose path matches `match`. The first matching rule wins. */
@@ -90,9 +90,59 @@ export function pythonProjects(): string[] {
   return [...found, at("source/backend/engine")];
 }
 
+const coreDocs = ["README.md", "WHY.md", "GOALS.md", "STORY.md", "SYSTEM.md", "ARCHITECTURE.md", "DOMAINS.md", "ROADMAP.md"] as const;
+
+/** Enforce the compact documentation layout and resolve local links in the docs system. */
+export function documentationProblems(repoRoot = process.cwd()): string[] {
+  const problems: string[] = [];
+  const docsRoot = join(repoRoot, ".docs", "docs");
+  const designRoot = join(repoRoot, ".docs", "design");
+  const planRoot = join(repoRoot, ".docs", "_plan");
+  if (existsSync(join(repoRoot, ".docs", "guidance")))
+    problems.push(".docs/guidance: move contributor instructions to .docs/rules/ and design guides to .docs/design/");
+  const rootFiles = existsSync(docsRoot) ? readdirSync(docsRoot) : [];
+  const expected = new Set<string>(coreDocs);
+  for (const name of rootFiles) {
+    const path = join(docsRoot, name);
+    if (!statSync(path).isFile() || !name.endsWith(".md") || !expected.has(name))
+      problems.push(`.docs/docs: unexpected root entry ${name}; put detail under .docs/design/`);
+  }
+  for (const name of coreDocs) if (!existsSync(join(docsRoot, name))) problems.push(`.docs/docs: missing required core document ${name}`);
+
+  if (!existsSync(join(designRoot, "README.md"))) problems.push(".docs/design: missing README.md");
+  const topicNames = existsSync(designRoot) ? readdirSync(designRoot) : [];
+  const topics = topicNames.filter((name) => statSync(join(designRoot, name)).isDirectory());
+  if (topics.length > 7) problems.push(`.docs/design: ${topics.length} topic folders exceeds the limit of seven`);
+  for (const name of topicNames) {
+    const path = join(designRoot, name);
+    if (statSync(path).isFile() && name !== "README.md")
+      problems.push(`.docs/design: unexpected root file ${name}; group it in a topic folder`);
+  }
+  for (const topic of topics)
+    if (!existsSync(join(designRoot, topic, "README.md"))) problems.push(`.docs/design/${topic}: missing README.md`);
+
+  const markdownFiles = [
+    ...walk(docsRoot).filter((path) => path.endsWith(".md")),
+    ...walk(designRoot).filter((path) => path.endsWith(".md")),
+    ...walk(planRoot).filter((path) => path.endsWith(".md")),
+  ];
+  for (const file of markdownFiles) {
+    const text = readFileSync(file, "utf8");
+    for (const match of text.matchAll(/\]\(([^)\s]+)\)/g)) {
+      const target = match[1];
+      if (!target || /^[a-z][a-z0-9+.-]*:/i.test(target) || target.startsWith("/")) continue;
+      const pathPart = target.split("#", 1)[0];
+      if (!pathPart) continue;
+      const destination = resolve(dirname(file), decodeURIComponent(pathPart));
+      if (!isAbsolute(destination) || !existsSync(destination)) problems.push(`${label(file)}: broken local link ${target}`);
+    }
+  }
+  return problems;
+}
+
 /** Run every rule and print the result. Returns true when the repository conforms. */
 export function checkStructure(): boolean {
-  const problems = pythonProjects().flatMap(pythonLayoutProblems);
+  const problems = [...pythonProjects().flatMap(pythonLayoutProblems), ...documentationProblems()];
   const seen = new Set<string>();
   let checked = 0;
   for (const limit of limits) {

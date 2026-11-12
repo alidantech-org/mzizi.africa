@@ -1,12 +1,15 @@
 /** Tests for the root runner: argument parsing, project selection, step planning and the structure rules. */
 import { describe, expect, test } from "bun:test";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { failures, runBounded } from "./lib/exec.ts";
 import { parseEnv } from "./lib/paths.ts";
 import { portOf, projects, select, services } from "./lib/projects.ts";
 import { commands, parse } from "./mz.ts";
 import { qualitySteps } from "./tasks/quality.ts";
 import { pick } from "./tasks/serve.ts";
-import { fileProblems, hasHeader, type Limit, lineCount } from "./tasks/structure.ts";
+import { documentationProblems, fileProblems, hasHeader, type Limit, lineCount } from "./tasks/structure.ts";
 import packageJson from "../package.json" with { type: "json" };
 
 describe("parse", () => {
@@ -101,6 +104,26 @@ describe("parseEnv", () => {
 
 describe("structure", () => {
   const limit: Limit = { dir: "x", match: /\.py$/, lines: 3, needsHeader: true };
+  test("the repository documentation follows its compact grouped layout", () => {
+    expect(documentationProblems()).toEqual([]);
+  });
+  test("the documentation policy rejects a recreated guidance directory", () => {
+    const root = mkdtempSync(join(tmpdir(), "mzizi-docs-"));
+    const docs = join(root, ".docs", "docs");
+    mkdirSync(docs, { recursive: true });
+    mkdirSync(join(root, ".docs", "design"), { recursive: true });
+    mkdirSync(join(root, ".docs", "guidance"));
+    for (const name of ["README.md", "WHY.md", "GOALS.md", "STORY.md", "SYSTEM.md", "ARCHITECTURE.md", "DOMAINS.md", "ROADMAP.md"])
+      writeFileSync(join(docs, name), "# Core\n");
+    writeFileSync(join(root, ".docs", "design", "README.md"), "# Design\n");
+    try {
+      expect(documentationProblems(root)).toContain(
+        ".docs/guidance: move contributor instructions to .docs/rules/ and design guides to .docs/design/",
+      );
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
   test("counts lines without the trailing newline", () => {
     expect(lineCount("a\nb\n")).toBe(2);
     expect(lineCount("")).toBe(0);

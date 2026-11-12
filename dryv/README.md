@@ -15,7 +15,7 @@ Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/typ
 
 ## Contract rules
 
-- Domain entities extend `HistoricalEntity` (valid time) over `BaseEntity` (identity, record time, version); system schemas (`audit`, `source`, `filesystem`, `identity`) extend `BaseEntity`. Provenance and verification are never columns: the `source` schema points at records (`.docs/docs/SOURCING_DESIGN.md`).
+- Domain entities extend `HistoricalEntity` (valid time) over `BaseEntity` (identity, record time, version); system schemas (`audit`, `source`, `filesystem`, `identity`) extend `BaseEntity`. Provenance and verification are never columns: the `source` schema points at records (`.docs/design/data/SOURCING_DESIGN.md`).
 - No relation crosses a schema; other schemas are referenced by plain id.
 - Business codes are hierarchical and lowercase, such as `ke/nairobi/westlands`.
 - Levels, institution types, election types, selection methods and fiscal stages are `ClassificationRecord` rows scoped by jurisdiction, never enums or columns. Contracts never name a country.

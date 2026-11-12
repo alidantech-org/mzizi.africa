@@ -1,0 +1,113 @@
+---
+id: DOC-9A8E56DB1C09
+name: Central shared pattern schema alternative across domains
+type: documentation
+tags: [improvements, source-redesign, patterns, schemas, lineage]
+extra: {status: planning_only, implementation_approved: false, task_creation: user_directed_only}
+---
+
+# 08 — Shared pattern management as a candidate schema
+
+## Latest user clarification
+
+Re-evaluate Mzizi's **entire** pattern-management design. It may be wrong to give each eligible domain/schema its own self-contained pattern subsystem. Consider a dedicated `pattern` schema for common pattern identity, authoring, versioning, evaluation, generation and synchronization, with generated data stored as **normal records** in the target domain.
+
+**Important:** This is a newly emphasized **candidate architecture**, not approval to create `pattern` or migrate existing rules. Compare the option with a shared `engine` pattern registry and domain-owned patterns before deciding.
+
+## Four acquisition classes (cross-cutting)
+
+- **1A curated seed:** known researched input inserted as static/curated records with attribution and correction.
+- **1B pattern-generated seed:** repeatable expected structures from validated rules and inputs; never implies observed real-world existence of an officer, site or business.
+- **2A external collection:** web/API/document evidence processed into candidates for review/verification.
+- **2B internal derivation:** formulas/computations from versioned, already-known data with dependency lineage.
+
+Table eligibility and actual record origin differ. Pattern lineage must identify **which specific records** were generated, their input/version/scope and later human edits, not only tag a schema as pattern capable.
+
+## Example pattern families and important differences
+
+| Example | Input | Expected outcome | Caution |
+|---|---|---|---|
+| County governorship | Valid geo units + legal/administrative rule + time | Expected offices in `governance` | Does not produce actual officeholder |
+| County assembly seats | Legal/electoral structure + applicable geo hierarchy | Expected seats in `electoral` | Seats vary with law/time; elections verify holders |
+| Geo hierarchy | Verified admin levels/relations and applicable rules | Expected structures in `geography` | Historical scopes and county codes are not universal |
+| Finance reporting schedule | Institution, period, applicable legal reporting rule | Expected obligation or reporting window | Not proof report was published |
+| Statistical coverage | Indicator, geo levels, vintage, methodology | Expected series/observations | Not observed statistical values |
+| County site hostname | Geo unit + proposed domain template | Candidate URL/site in source/website | Pattern is hypothesis; DNS/fetch confirms reality |
+| Site extraction profile | Family/site layout rule + observed examples | Versioned extraction instructions | Technical recipe, not collection authority |
+| Derived population statistic | Input observations + formula/version | Computed value with traceable inputs | Distinguish extrapolation from direct data |
+
+These share **management and lineage**, not identical execution semantics. Do not force all kinds into one opaque executable SQL/JSON string or a single unconstrained target UUID.
+
+## Alternatives to test
+
+| Approach | Benefits | Risks / follow-up |
+|---|---|---|
+| A. Domain-owned pattern managers | Tight domain semantics | Repeated versioning, runs, UI, correction policy across schemas |
+| B. Shared registry and run management in `engine` | Fewer top-level schemas, close to job execution | Mixes long-lived rule authority with operational job state |
+| C. Dedicated `pattern` schema + `engine` runtime | Clear cross-domain registry, rule approvals and lineage; engine retains execution orchestration | Additional schema/foreign keys and governance; worth only if real use cases support it |
+| D. Hybrid shared pattern definitions and selectively domain-specific rules | Shared lifecycle and specialized semantics | Must prevent redundant definition/version ownership |
+
+Assistant's **provisional** preference: C or D if complexity measurements justify them; domain-specific logic stays in its domain code and validators, and `engine` owns workers, retries and resource budgets. User has not approved any option or schema count.
+
+## Candidate logical capabilities — **not approved tables**
+
+1. **Definition identity**: purpose, output domain, rule kind, scope, input contract, authority/evidence, owner, allowed generation behavior.
+2. **Immutable version**: semantic/effective dates, validated parameters, code/file/JSON/SQL reference, hash and supersession; big YAML/CSV/Markdown bodies in `filesystem`.
+3. **Preview/apply generation**: dry-run, human approval where required, input hashes, idempotency key, comparison against existing records and expected coverage.
+4. **Outputs and lineage**: actual target records created/adopted/unchanged/conflicting/retired, relationship to pattern version, output hashes, independent verification, corrections and exceptions.
+5. **Synchronization and dependency invalidation**: new geo unit, amended law, fixed rule, changed reporting period -> regenerate **affected** records only; preserve historical truth and reviewed overrides.
+6. **Admin interface**: list, inspect, edit, compare, preview, approve, generate/sync, see failed/conflicting outputs and rerun safely.
+
+Exact choices `pattern.definitions`/`versions`/`runs`/`outputs` are *conceptual words*; do not generate DDL or adopt names from this list. Compare against existing `engine.jobs`, `staging.runs/candidates`, `engine.gaps/claims` and source lineage.
+
+## Pattern outputs are normal data
+
+A rule generating expected governor offices writes candidates/approved normal `governance` records, not a duplicate canonical `pattern.offices` table. A rule generating website host candidates should not mark the host reachable. Attach generation version/run and input evidence while avoiding one `pattern_id` column on every domain table if a better FK-backed lineage mechanism exists.
+
+Generic `target_kind + target_id` pairs are **not real FKs**. Evaluate (i) typed output-association tables, (ii) a constrained record identity registry plus explicit links, and (iii) domain-specific FK associations. Test insert/delete/rollback and cross-schema constraints, not just conceptual diagrams.
+
+## Scope and legal applicability
+
+A nationwide ministry or election commission can be legally scoped to Kenya's root geo unit while physically located in Nairobi; a county office scopes to its county. A pattern may refer to a dated legal provision/rule, but every generated row need not redundantly copy the same law ID if lineage to the rule can explain it. Where law or jurisdiction differs across African states, reuse management mechanics without imposing Kenyan legal assumptions.
+
+Expected cardinality must be versioned and validated. Some structures have zero, one or multiple valid instances per scope, including exceptions and historically differing legal rules. Do not blindly generate 47 records merely because there are 47 contemporary counties.
+
+## Preview, reconcile and conflict safety
+
+Propose a diff: new, adopted, unchanged, missing, superseded expectation, conflicting with verified data, awaiting evidence. The human can understand **why each output exists**. Corrections to pattern assumptions must not overwrite verified real-world holders, budgets, published documents or historical periods; trigger quality issues and reviewed correction.
+
+## Open approval questions
+
+1. Should a `pattern` schema exist physically, or does a shared `engine` registry sufficiently simplify Mzizi?
+2. Which current `domain_patterns`, office patterns, seed scripts, derived formulas and website profiles qualify?
+3. What rule languages are allowed (safe SQL functions, Python, versioned declarative YAML/JSON), with resource/permission sandboxing?
+4. Which management records genuinely need standalone tables rather than filesystem manifests or current jobs?
+5. How to enforce generated-row references with real FKs across arbitrary target domains?
+6. What human/agent approvals and different risk levels govern version creation and apply?
+7. How should domain changes, legal changes and pattern fixes alter historical records?
+8. How will pattern registry UI and future Taskcode implementation be sequenced under user direction?
+
+**No pattern schema/table/runtime is approved.**
+
+
+## 2026-11-07 preference update: pattern registry under reference (candidate), not a new schema by default
+
+The user subsequently suggested that the **existing `reference` schema**, alongside jurisdictions and classifications, could own cross-domain pattern definitions, tool/target manifests, categories, dependencies and watcher definitions. Their reason: patterns should **originate from real existing jurisdiction, geographic and legal facts** and then generate canonical rows that enable subsequent approved patterns. They have **not decided** how generated-row lineage should use hard FKs, or when an unknown physical presence should materialize as a place/occupancy.
+
+This changes the priority of the previously listed alternatives: **`reference` definitions + `engine` execution is now a user-proposed option to evaluate first**, versus a dedicated `pattern` schema, all definitions in `engine`, or per-domain pattern managers. Do not interpret the prior assistant preference for a new `pattern` schema as user approval.
+
+The default outcome for an established entity is now proposed to be a **real incomplete canonical row**, with watcher gaps for unknown attributes/relationships; merely possible entities produce a **discovery job**, not a false canonical row. Evaluate retiring/consolidating `place.expectations` *only after* a safe migration and explicit design decision, respecting the difference between a mandated physical premises and an actually observed site.
+
+Watch manifests are **mostly database-managed**, with approved immutable file versions in `filesystem`. Generic engine logic must not branch on IEBC/KNBS/ORPP/Kenya; resolve jurisdiction/source-specific config and specialized adapters through manifests and a registered capability interface.
+
+See [central pattern/fill-in-the-gaps proposal](../guides/data-categories-and-patterns.md) for DAG dependencies, real-row criteria, physical presence alternatives, watch rules, neutral core and unresolved hard-FK decisions. **No implementation approved.**
+
+## Research-to-design: pattern definitions versus extraction strategies
+
+[AutoScraper](https://aclanthology.org/2024.emnlp-main.141/) and [Co-Scraper](https://arxiv.org/abs/2606.14821) support producing reusable extraction logic, but **webpage extraction YAML and legally grounded generative domain patterns have different truth semantics**. Both may share version/manifest/approval mechanics without sharing a physical table. Preserve the **most recent user's reference-managed pattern definitions + engine execution** as the leading *candidate*, alongside the other unapproved alternatives. Existing structure bundles can store reviewed extraction rules; filesystem/S3 can preserve immutable pattern versions; engine executes; source/staging/audit preserve runs and lineage. Compare real established offices, speculative websites and observed budget facts before choosing any schema. See [11](11-tool-integration-and-contracts.md), [12](12-artifact-lifecycle-and-lineage.md), [13](13-benchmarks-and-research-questions.md).
+
+## Reference-managed office and geography categories can drive prominence (proposal)
+
+The user's prominence idea fits the leading reference-owned pattern/definition direction: reusable office categories and geographic classifications can supply explainable structural weights, while the engine computes a versioned derived prominence result from verified office-holding and geographic relationships. Patterns may generate expected offices/seats as normal records in their owning domains; an expected seat is not an actual officeholder and must not award a person a role they do not hold.
+
+Keep the definition (reference), execution (engine), actual office/tenure (governance/electoral), geography (geography), source evidence (source) and review (audit/participation candidate) responsibilities distinct. Do not add a dedicated prominence schema or table by default. See [entity prominence and discoverability](../guides/entity-prominence-and-discoverability.md).

@@ -1,4 +1,4 @@
--- Rewrite migration 0001: auth, small on purpose (9 tables). See .docs/improvements/schema-redesign/auth.md.
+-- Rewrite migration 0001: auth, small on purpose (9 tables). See .docs/_plan/schema-redesign/operational/auth.md.
 -- accounts/identities: who signs in. permissions/roles/role_permissions: named access. institutions: who owns data.
 -- scope_targets/governed_tables: which tables a grant may point at and how records link to them.
 -- role_assignments: an account holds a role, platform-wide or scoped to one record (and its children) of a scope target.

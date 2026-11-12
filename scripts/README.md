@@ -84,7 +84,7 @@ The development sequence is `bun run db:up`, `bun run infra:up`, `bun run db res
 
 Generation stays connected through Dryv: the contracts in `dryv/contracts` generate the NestJS API, the access rules and JSON schema are exported from the same contracts, and the dashboard catalog is derived from the generated routes. `dryv:generate` runs that whole chain. `dryv:check` also checks the committed Dryv database catalog; `bun run db plan` reports the current entity/table-name gaps against ordered SQL migrations. This report is diagnostic and does not yet emit replacement SQL: current active models and SQL differ, so reconciliation is required first.
 
-`dryv:generate` and `dryv:verify` need the Dryv engine API. They start it from `DRYV_HOME` when nothing answers on its port and stop it afterwards; an engine that was already running is left alone. The engine is bound to `127.0.0.1` and started in Dryv's development mode, so no Dryv Platform login is needed. If port 8750 is taken by a different Dryv service, choose another: `DRYV_API_PORT=8751 bun run dryv:verify`. The log is `.local/dryv-api.log`. Traps and the manual steps are in `.docs/guidance/running-dryv.md`.
+`dryv:generate` and `dryv:verify` need the Dryv engine API. They start it from `DRYV_HOME` when nothing answers on its port and stop it afterwards; an engine that was already running is left alone. The engine is bound to `127.0.0.1` and started in Dryv's development mode, so no Dryv Platform login is needed. If port 8750 is taken by a different Dryv service, choose another: `DRYV_API_PORT=8751 bun run dryv:verify`. The log is `.local/dryv-api.log`. Traps and the manual steps are in `.docs/design/operations/running-dryv.md`.
 
 ## Code quality rules
 

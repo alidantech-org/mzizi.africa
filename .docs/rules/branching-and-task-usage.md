@@ -28,4 +28,11 @@ Task (`task`, `taskcode`, `tc`) is the only source of truth for planned and fini
 
 ## Documentation upkeep
 
-When a change alters architecture, paths, ownership or process, update the affected `.docs/docs/` file in the same work and run `task validate`. Stale paths are defects: all code lives under `source/` (`source/apps/*`, `source/backend/*`).
+When a change alters architecture, paths, ownership or process, update the affected core document in `.docs/docs/` or the relevant grouped guide in `.docs/design/` in the same work and run `task validate`. Stale paths are defects: all code lives under `source/` (`source/apps/*`, `source/backend/*`).
+
+## Agent and contributor workflow
+
+- Read `AGENTS.md` and the relevant core and design documents before changing system behavior. Confirm claims against active code and contracts; label proposals and archived implementations accurately.
+- Inspect the working tree before editing and preserve unrelated user changes. Keep work on `develop` in the shared checkout.
+- Use Task to track the work, record decisions and validation in the task, inspect the final diff, and report concrete check results.
+- Keep process instructions in `.docs/rules/`. Put architecture and product design in `.docs/design/`. Do not recreate `.docs/guidance/` or add extra files to the `.docs/docs/` root.

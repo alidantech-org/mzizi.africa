@@ -1,4 +1,4 @@
--- Filesystem schema for the disposable rewrite database (mzizi_new). Seven tables and one view; see .docs/docs/FILESYSTEM_SCHEMA.md.
+-- Filesystem schema for the disposable rewrite database (mzizi_new). Seven tables and one view; see .docs/design/data/FILESYSTEM_SCHEMA.md.
 -- Decisions (2026-11-08): explicit file versions hold the S3 key, hash, size, extension and content type directly (no objects table);
 -- no file-type or extension tables; paths are derived from the folder hierarchy; classification is inherited by folders and resolved
 -- deterministically; S3 configuration (bucket, region, endpoint) is never stored in rows; no credentials or presigned URLs are stored.

@@ -153,18 +153,7 @@ See [.docs/docs/DOMAINS.md](.docs/docs/DOMAINS.md) for the reason each domain be
 
 ## Documentation
 
-Start with:
-
-- [.docs/README.md](.docs/docs/README.md) — documentation map
-- [.docs/docs/WHY.md](.docs/docs/WHY.md) — common purpose and reasons
-- [.docs/docs/GOALS.md](.docs/docs/GOALS.md) — goals, success conditions and non-goals
-- [.docs/docs/STORY.md](.docs/docs/STORY.md) — product story and user journey
-- [.docs/docs/DOMAINS.md](.docs/docs/DOMAINS.md) — knowledge domains and why they matter
-- [.docs/docs/SYSTEM.md](.docs/docs/SYSTEM.md) — system responsibilities and invariants
-- [.docs/docs/ARCHITECTURE.md](.docs/docs/ARCHITECTURE.md) — target technical architecture
-- [.docs/docs/DATA_LIFECYCLE.md](.docs/docs/DATA_LIFECYCLE.md) — evidence-to-canonical-data pipeline
-- [.docs/docs/MIGRATION.md](.docs/docs/MIGRATION.md) — transition from the consolidated legacy code
-- [.docs/docs/ROADMAP.md](.docs/docs/ROADMAP.md) — build sequence
+The eight core documents are indexed in [.docs/docs/README.md](.docs/docs/README.md). Detailed designs and operational guides are grouped in [.docs/design/README.md](.docs/design/README.md).
 
 ## Running the repository
 

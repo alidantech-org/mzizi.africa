@@ -4,7 +4,7 @@ import { optionalId, plainId, recorded, relationTo, searchable } from "../../fou
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
 /**
- * Places, occupancy, expected presence and contact points (PLACES_AND_PRESENCE_ASSESSMENT.md).
+ * Places, occupancy, expected presence and contact points (.docs/design/data/PLACES_AND_PRESENCE_ASSESSMENT.md).
  *
  * Four domain-neutral capabilities shared by every domain that needs "where":
  *  - `place.places`: one self-referencing tree of physical places (site, structure, floor, wing, room, unit, service point);

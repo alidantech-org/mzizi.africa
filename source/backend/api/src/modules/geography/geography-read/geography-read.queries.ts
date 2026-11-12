@@ -9,7 +9,7 @@ export type Row = Record<string, unknown>;
 /**
  * Boundary provenance and verified state are not columns: they come from the source schema, which
  * points at the boundary row by (geography.boundaries, id). These joins are the only cross-schema
- * reads in the geography API (DATABASE_DESIGN.md).
+ * reads in the geography API (.docs/design/data/DATABASE_DESIGN.md).
  */
 export const BOUNDARY_TARGET = "'geography.boundaries'";
 

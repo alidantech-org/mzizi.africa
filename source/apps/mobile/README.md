@@ -1,7 +1,7 @@
 # Mzizi Mobile
 
 The Explore map uses the versioned geography API contract in
-[`.docs/docs/geography-api-contract.md`](../../../.docs/docs/geography-api-contract.md).
+[`.docs/design/geography/geography-api-contract.md`](../../../.docs/design/geography/geography-api-contract.md).
 The Flutter app does not contain authoritative boundaries or governance data.
 
 ## Local API configuration

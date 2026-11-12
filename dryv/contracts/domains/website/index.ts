@@ -5,7 +5,7 @@ import { readSurface } from "../../foundation/shared/read-surface.ts";
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
 /**
- * Known sites and their versioned structures (WEBSITE_DESIGN.md).
+ * Known sites and their versioned structures (.docs/design/acquisition/WEBSITE_DESIGN.md).
  *
  * A site has its own stable id: a domain is a dated attribute, never an identifier, and a site is
  * not a publisher (they relate many-to-many). A structure is a set of files in the filesystem

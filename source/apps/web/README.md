@@ -90,12 +90,12 @@ Do not rewrite the whole dashboard before the underlying evidence/data contracts
 
 ## Read first
 
-- [`../../.docs/WHY.md`](../../.docs/WHY.md)
-- [`../../.docs/GOALS.md`](../../.docs/GOALS.md)
-- [`../../.docs/STORY.md`](../../.docs/STORY.md)
-- [`../../.docs/SYSTEM.md`](../../.docs/SYSTEM.md)
-- [`../../.docs/DATA_LIFECYCLE.md`](../../.docs/DATA_LIFECYCLE.md)
-- [`../../.docs/MIGRATION.md`](../../.docs/MIGRATION.md)
+- [`../../.docs/docs/WHY.md`](../../.docs/docs/WHY.md)
+- [`../../.docs/docs/GOALS.md`](../../.docs/docs/GOALS.md)
+- [`../../.docs/docs/STORY.md`](../../.docs/docs/STORY.md)
+- [`../../.docs/docs/SYSTEM.md`](../../.docs/docs/SYSTEM.md)
+- [`../../.docs/design/architecture/DATA_LIFECYCLE.md`](../../.docs/design/architecture/DATA_LIFECYCLE.md)
+- [`../../.docs/design/architecture/MIGRATION.md`](../../.docs/design/architecture/MIGRATION.md)
 
 ## Review workbench (`/review`)
 

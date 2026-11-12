@@ -5,7 +5,7 @@ import { readSurface } from "../../foundation/shared/read-surface.ts";
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
 /**
- * Sourcing: where claims come from (SOURCING_DESIGN.md).
+ * Sourcing: where claims come from (.docs/design/data/SOURCING_DESIGN.md).
  *
  * Data rows in other schemas carry no provenance and no foreign key to this schema. A source knows
  * the records it produced: an attribution points at any row by (target kind, target id), through a

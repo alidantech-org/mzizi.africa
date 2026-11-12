@@ -3,7 +3,7 @@
  *
  * Generation needs the Dryv engine API (port 8750, or `DRYV_API_PORT`). `dryv:generate` and `dryv:verify` start it when it is
  * not already running and stop it again afterwards; an API that was already running is left alone.
- * Background and traps: .docs/guidance/running-dryv.md.
+ * Background and traps: .docs/design/operations/running-dryv.md.
  */
 import { mkdirSync } from "node:fs";
 import { group, has, type Step, step } from "../lib/exec.ts";

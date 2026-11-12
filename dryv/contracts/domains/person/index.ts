@@ -6,7 +6,7 @@ import { readSurface } from "../../foundation/shared/read-surface.ts";
 import { sharedProperties } from "../../foundation/shared/index.ts";
 
 /**
- * People and identity (PEOPLE_DESIGN.md).
+ * People and identity (.docs/design/data/PEOPLE_DESIGN.md).
  *
  * `person` models every real human the research concerns, outside any role: names, profile,
  * contacts and public handles, each with an exposure level the API enforces. `identity` models

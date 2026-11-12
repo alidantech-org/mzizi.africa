@@ -14,7 +14,7 @@ const schemas = new Map(items.filter((i) => i.kind === "schema").map((i) => [i.n
 /**
  * Schemas whose records are system or append-only (identity and record time only). Every other
  * schema holds domain facts and its entities carry valid time. Provenance is never a column: it
- * lives in the source schema (SOURCING_DESIGN.md).
+ * lives in the source schema (.docs/design/data/SOURCING_DESIGN.md).
  */
 const systemSchemas = new Set(["audit", "source", "filesystem", "identity", "website"]);
 const provenanceFields = [

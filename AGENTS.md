@@ -9,9 +9,9 @@ Before changing architecture or domain behavior, read:
 1. `.docs/docs/WHY.md`
 2. `.docs/docs/STORY.md`
 3. `.docs/docs/ARCHITECTURE.md`
-4. `.docs/docs/DATA_LIFECYCLE.md`
+4. `.docs/design/architecture/DATA_LIFECYCLE.md`
 5. `.docs/docs/DOMAINS.md`
-6. `.docs/docs/MIGRATION.md`
+6. `.docs/design/architecture/MIGRATION.md`
 
 Mzizi is an **evidence-first African heritage, history, geography, culture, linguistics, governance and political intelligence platform**. The goal is to research public/historical material and structure it cleanly while preserving provenance, time, place, uncertainty and version history.
 
@@ -55,7 +55,7 @@ The replacement rules below remain the guide for reimplementing what the invento
 7. expose approved domain contracts through the NestJS API;
 8. only remove old code after equivalent responsibilities are accounted for.
 
-See `.docs/docs/MIGRATION.md`.
+See `.docs/design/architecture/MIGRATION.md`.
 
 ## 4. Evidence is part of the data model
 
@@ -192,9 +192,9 @@ Using the Task CLI is **mandatory, not optional**. Every unit of work must be pl
 Use the repository Task workspace in `.docs` to organize implementation activities. The root `task.yaml` points the CLI to that workspace. Keep current planning and project guidance in sync:
 
 - `.docs/todo/` — Task groups and tasks (created and changed only through the `task` CLI);
-- `.docs/docs/` — project overview, repository map, development setup, testing guide, and roadmap;
+- `.docs/docs/` — eight core system documents; `.docs/design/` — grouped technical design guides;
 - `.docs/rules/` — coding, testing, security, and Git rules;
-- `.docs/guidance/codex.md` — agent workflow that supplements this file.
+- `.docs/rules/` — contributor and agent workflow rules.
 
 This section supplements the repository contract above; it does not replace or weaken it.
 
@@ -217,15 +217,15 @@ This project manages its work with Task (`taskcode`; `task` and `tc` are aliases
 
 ## Root seed input convention (user direction, 2026-11-08)
 
-Read `seed/README.md` before adding any curated or AI-prepared seed data, baseline auth definitions, site structure, folder/file-type catalog, pattern definition or seed-specific source artifact. Keep all system seed inputs in root `seed/`, with global/system/jurisdiction separation and a manifest describing recognized DB loader/target, dependencies, content identity and S3 registration. Runtime loaders and contracts retain their existing code ownership. Do not introduce scattered per-service seed payloads or duplicate sources of truth. Do not treat the disabled example manifest as executable. The existing scattered payloads were relocated on 8 November 2026 (inventory: `.docs/docs/SEED_RELOCATION_INVENTORY.md`); loaders read `seed/` through `seedRoot` (TypeScript) and `seedroot.py` (Python). Origin, preparation and access are recorded per folder in `_folder.yaml`; run `uv run mzizi-manifest check` after changing anything under `seed/`, and `uv run mzizi-manifest lock` to refresh the lock. Runtime registration in S3 and the filesystem registry is still planned. Synthetic test-only fixtures may remain beside tests; anything applied as a real system seed follows the root convention. Only `public/` in bucket `mzizi` is anonymously readable; other prefixes remain private. The disposable database rewrite does not authorize deleting existing S3 artifacts.
+Read `seed/README.md` before adding any curated or AI-prepared seed data, baseline auth definitions, site structure, folder/file-type catalog, pattern definition or seed-specific source artifact. Keep all system seed inputs in root `seed/`, with global/system/jurisdiction separation and a manifest describing recognized DB loader/target, dependencies, content identity and S3 registration. Runtime loaders and contracts retain their existing code ownership. Do not introduce scattered per-service seed payloads or duplicate sources of truth. Do not treat the disabled example manifest as executable. The existing scattered payloads were relocated on 8 November 2026; the current convention and manifest checks are documented in `seed/README.md`. Loaders read `seed/` through `seedRoot` (TypeScript) and `seedroot.py` (Python). Origin, preparation and access are recorded per folder in `_folder.yaml`; run `uv run mzizi-manifest check` after changing anything under `seed/`, and `uv run mzizi-manifest lock` to refresh the lock. Runtime registration in S3 and the filesystem registry is still planned. Synthetic test-only fixtures may remain beside tests; anything applied as a real system seed follows the root convention. Only `public/` in bucket `mzizi` is anonymously readable; other prefixes remain private. The disposable database rewrite does not authorize deleting existing S3 artifacts.
 
 ## Manifest-driven input contracts (2026-11-08)
 
-The user requires source-neutral API/site acquisition via versioned api.structure.yaml and website manifests under root seed/, backed by DB source identities and approved release bindings. All system input-artifact schemas (seed/folder manifests, site/API structures, mappings, patterns and consumed JSON/YAML/CSV shapes) belong under source/schema/. Generic runtime packages stay under source/backend; publisher/country specifics belong in manifest/DB data. Dryv database/API authoring remains under dryv/ with explicit export ownership where contracts overlap. Follow [the detailed source requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/schema-redesign/phase-01/source.md#2026-11-08--manifest-driven-api-and-website-sources-user-direction) for conflict-safe DB/YAML editing, pinned releases, learning/review and legacy extractor retirement. This documents future source/pipeline work, not a claim that manifest-driven runtime support is complete.
+The user requires source-neutral API/site acquisition via versioned api.structure.yaml and website manifests under root seed/, backed by DB source identities and approved release bindings. All system input-artifact schemas (seed/folder manifests, site/API structures, mappings, patterns and consumed JSON/YAML/CSV shapes) belong under source/schema/. Generic runtime packages stay under source/backend; publisher/country specifics belong in manifest/DB data. Dryv database/API authoring remains under dryv/ with explicit export ownership where contracts overlap. Follow [the detailed source requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/_plan/schema-redesign/phase-01/source.md#2026-11-08--manifest-driven-api-and-website-sources-user-direction) for conflict-safe DB/YAML editing, pinned releases, learning/review and legacy extractor retirement. This documents future source/pipeline work, not a claim that manifest-driven runtime support is complete.
 
 ## 2026-11-08 — Package-first rewrite direction
 
-The user authorizes structure/package extraction and historical archiving now. Target: reusable capabilities under source/packages/, one Python orchestrator/API project under source/backend/engine/, preserved NestJS product API relocated to source/backend/api/, input schemas in source/schema/, and prepared inputs in seed/. Archive old engine/data, engine/database and api-legacy under .docs/_archives/<dated-rewrite-snapshot>/ after preserving active auth rewrite work; remove obsolete backend/files and backend/intelligence active scaffolds. Follow [the controlling structure and publication requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/independent-data-pipelines.md#2026-11-08--approved-package-first-layout-and-single-python-engine).
+The user authorizes structure/package extraction and historical archiving now. Target: reusable capabilities under source/packages/, one Python orchestrator/API project under source/backend/engine/, preserved NestJS product API relocated to source/backend/api/, input schemas in source/schema/, and prepared inputs in seed/. Archive old engine/data, engine/database and api-legacy under .docs/_archives/<dated-rewrite-snapshot>/ after preserving active auth rewrite work; remove obsolete backend/files and backend/intelligence active scaffolds. Follow [the controlling structure and publication requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/_plan/independent-data-pipelines.md#2026-11-08--approved-package-first-layout-and-single-python-engine).
 
 Filesystem package APIs must support seed manifest/folder provenance, registry upload and hash deduplication, immutable releases and conflict-safe updates to explicitly non-versioned logical items. Keep evidence/run snapshots immutable. This authorization covers restructuring foundations, not all later schema/source/pipeline features. Update all active build/Dryv/auth consumers and maintain focused checks. Existing S3 objects remain protected. Historical paths above are superseded for the rewrite as the local agent carries out the relocation.
 
