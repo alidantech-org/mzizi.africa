@@ -3,7 +3,7 @@ id: DOC-MZIZI-SCHEMA-STAGING-20261111
 name: staging schema — operational
 type: schema-review
 tags: [database, schema-redesign, operations, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Operations, recorded_on: 2026-11-11}
+extra: {status: accepted, approval: approved, implementation: dryv_contracts_authorized, database: Operations, approved_on: 2026-11-12, approval_record: DEC-OPERATIONAL-DATABASE-20261112, migrations: not_authorized, deployment: not_authorized}
 ---
 
 # staging — Operational
@@ -202,3 +202,40 @@ Lifecycle: preserve source bytes; extract into candidate revisions; validate; re
 Capacity is unmeasured. Use low/expected/high input scenarios, explicit formulas and workload benchmarks; do not assume sizes or universal partitions.
 
 **Status:** NOT REVIEWED. Schema assignment follows the handoff; tables, columns, relationships, partitioning and S3 choices still require user approval. Feedback: none. Approval reference/date/revision: none. Implementation authorization: not granted. Material changes reopen approval.
+
+## 2026-11-12 — Operational design accepted and approved
+
+**Approval status:** ACCEPTED AND APPROVED by the user on 12 November 2026. **Implementation status:** Dryv contract authoring is authorized on `develop` for this schema. See [DEC-OPERATIONAL-DATABASE-20261112](../../../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the complete approval record and cross-schema rules.
+
+This approved inventory supersedes earlier candidate-table lists, draft definitions and statements in this document that the design is not reviewed, not approved or awaiting user approval. Historical analysis remains context only. The table names and column names below are the approved baseline; implementation must define their precise types, nullability, defaults, keys, relationships, constraints and indexes under the repository's contract-authoring rules. The author may resolve those engineering details without requesting individual approval, but must not silently add, remove or rename approved tables or columns.
+
+## staging — 6 approved tables
+
+**Responsibility:** Candidate identities, immutable revisions, extraction mappings, validation findings, human reviews and idempotent promotion requests.
+
+### `staging.candidates`
+
+`id`, `target_schema`, `target_table`, `target_contract`, `target_contract_version`, `stable_key`, `source_run_id`, `status`, `current_revision_id`, `created_by`, `created_at`
+
+### `staging.revisions`
+
+`id`, `candidate_id`, `revision_number`, `payload`, `schema_version`, `content_hash`, `artifact_id`, `source_manifest_key`, `source_manifest_hash`, `created_by`, `created_at`, `supersedes_revision_id`
+
+### `staging.mappings`
+
+`id`, `source_kind`, `target_contract`, `target_contract_version`, `version`, `mapping_definition`, `mapping_hash`, `model_provider`, `model_name`, `model_version`, `status`, `created_by`, `approved_by`, `approved_at`, `created_at`
+
+### `staging.findings`
+
+`id`, `revision_id`, `path`, `code`, `severity`, `message`, `details`, `rule_version`, `created_at`
+
+### `staging.reviews`
+
+`id`, `revision_id`, `reviewer_id`, `decision`, `reason`, `decided_at`, `policy_version`
+
+### `staging.promotion_requests`
+
+`id`, `revision_id`, `expected_main_version`, `idempotency_key`, `request_hash`, `status`, `publication_id`, `requested_by`, `requested_at`, `completed_at`, `failure_code`
+
+
+**Boundary:** This approval authorizes Operational Dryv contracts only. It does not authorize migrations, database provisioning, seed/data migration or deployment. It does not approve any Main `mzizi` Phase 01 schema; those will be reviewed individually later. Phase 02 remains deferred.
