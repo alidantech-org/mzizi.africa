@@ -3,7 +3,7 @@ id: DOC-MZIZI-SCHEMA-ANALYTICS-20261111
 name: analytics schema — operational
 type: schema-review
 tags: [database, schema-redesign, operations, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Operations, recorded_on: 2026-11-11}
+extra: {status: accepted, approval: approved, implementation: dryv_contracts_authorized, database: Operations, approved_on: 2026-11-12, approval_record: DEC-OPERATIONAL-DATABASE-20261112, migrations: not_authorized, deployment: not_authorized}
 ---
 
 # analytics — Operational
@@ -171,3 +171,36 @@ Lifecycle: preserve source bytes; extract into candidate revisions; validate; re
 Capacity is unmeasured. Use low/expected/high input scenarios, explicit formulas and workload benchmarks; do not assume sizes or universal partitions.
 
 **Status:** NOT REVIEWED. Schema assignment follows the handoff; tables, columns, relationships, partitioning and S3 choices still require user approval. Feedback: none. Approval reference/date/revision: none. Implementation authorization: not granted. Material changes reopen approval.
+
+## 2026-11-12 — Operational design accepted and approved
+
+**Approval status:** ACCEPTED AND APPROVED by the user on 12 November 2026. **Implementation status:** Dryv contract authoring is authorized on `develop` for this schema. See [DEC-OPERATIONAL-DATABASE-20261112](../../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the complete approval record and cross-schema rules.
+
+This approved inventory supersedes earlier candidate-table lists, draft definitions and statements in this document that the design is not reviewed, not approved or awaiting user approval. Historical analysis remains context only. The table names and column names below are the approved baseline; implementation must define their precise types, nullability, defaults, keys, relationships, constraints and indexes under the repository's contract-authoring rules. The author may resolve those engineering details without requesting individual approval, but must not silently add, remove or rename approved tables or columns.
+
+## analytics — 5 approved tables
+
+**Responsibility:** Research experiments, analytical requests, rebuildable projections, unpublished results and reproducibility evaluations.
+
+### `analytics.experiments`
+
+`id`, `code`, `title`, `hypothesis`, `protocol`, `protocol_version`, `status`, `created_by`, `created_at`, `closed_at`
+
+### `analytics.requests`
+
+`id`, `experiment_id`, `requested_by`, `query_contract`, `query_version`, `input_release_ids`, `request_hash`, `engine_run_id`, `status`, `requested_at`, `completed_at`
+
+### `analytics.projections`
+
+`id`, `request_id`, `source_contract`, `source_release`, `object_key`, `sha256`, `schema_version`, `row_count`, `created_at`, `expires_at`
+
+### `analytics.results`
+
+`id`, `request_id`, `method_version`, `object_key`, `inline_summary`, `sha256`, `created_at`
+
+### `analytics.evaluations`
+
+`id`, `result_id`, `check_name`, `passed`, `details`, `evaluator_version`, `checked_at`
+
+
+**Boundary:** This approval authorizes Operational Dryv contracts only. It does not authorize migrations, database provisioning, seed/data migration or deployment. It does not approve any Main `mzizi` Phase 01 schema; those will be reviewed individually later. Phase 02 remains deferred.

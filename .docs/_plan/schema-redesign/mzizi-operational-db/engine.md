@@ -3,7 +3,7 @@ id: DOC-MZIZI-SCHEMA-ENGINE-20261111
 name: engine schema — operational
 type: schema-review
 tags: [database, schema-redesign, operations, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Operations, recorded_on: 2026-11-11}
+extra: {status: accepted, approval: approved, implementation: dryv_contracts_authorized, database: Operations, approved_on: 2026-11-12, approval_record: DEC-OPERATIONAL-DATABASE-20261112, migrations: not_authorized, deployment: not_authorized}
 ---
 
 # engine — Operational
@@ -458,3 +458,57 @@ An authorized admin can: (a) propose activity with evidence, (b) request re-veri
 Spatial/environmental transformations and domain acquisitions remain engine jobs with pinned inputs, methods and outputs; engine execution does not own canonical domain facts. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>
+
+
+## 2026-11-12 — Operational design accepted and approved
+
+**Approval status:** ACCEPTED AND APPROVED by the user on 12 November 2026. **Implementation status:** Dryv contract authoring is authorized on `develop` for this schema. See [DEC-OPERATIONAL-DATABASE-20261112](../../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the complete approval record and cross-schema rules.
+
+This approved inventory supersedes earlier candidate-table lists, draft definitions and statements in this document that the design is not reviewed, not approved or awaiting user approval. Historical analysis remains context only. The table names and column names below are the approved baseline; implementation must define their precise types, nullability, defaults, keys, relationships, constraints and indexes under the repository's contract-authoring rules. The author may resolve those engineering details without requesting individual approval, but must not silently add, remove or rename approved tables or columns.
+
+## engine — 10 approved tables
+
+**Responsibility:** Pipeline identity/releases, runs, schedulable jobs, dependencies, attempts, checkpoints, execution events, outbox delivery and artifacts.
+
+### `engine.pipelines`
+
+`id`, `code`, `title`, `description`, `owner_account_id`, `enabled`, `created_at`, `retired_at`
+
+### `engine.pipeline_releases`
+
+`id`, `pipeline_id`, `version`, `manifest_hash`, `manifest_object_key`, `contract_version`, `approved_by`, `released_at`
+
+### `engine.runs`
+
+`id`, `release_id`, `requested_by`, `trigger_kind`, `trigger_ref`, `idempotency_key`, `request_hash`, `status`, `submitted_at`, `started_at`, `finished_at`, `cancelled_at`, `summary`
+
+### `engine.jobs`
+
+`id`, `run_id`, `kind`, `input_ref`, `status`, `attempt_count`, `max_attempts`, `next_attempt_at`, `lease_owner`, `lease_until`, `fence`, `created_at`, `started_at`, `finished_at`
+
+### `engine.job_dependencies`
+
+`job_id`, `depends_on_job_id`, `dependency_kind`, `created_at`
+
+### `engine.job_attempts`
+
+`id`, `job_id`, `attempt_number`, `worker_identity`, `started_at`, `finished_at`, `status`, `error_code`, `error_summary`, `input_hash`, `output_hash`
+
+### `engine.checkpoints`
+
+`id`, `job_id`, `sequence`, `checkpoint_key`, `state_hash`, `artifact_id`, `saved_at`
+
+### `engine.events`
+
+`id`, `run_id`, `job_id`, `sequence`, `kind`, `actor_id`, `occurred_at`, `payload`
+
+### `engine.outbox`
+
+`id`, `event_id`, `destination`, `status`, `attempts`, `next_attempt_at`, `delivered_at`, `last_error`, `idempotency_key`
+
+### `engine.artifacts`
+
+`id`, `run_id`, `job_id`, `object_key`, `sha256`, `size_bytes`, `media_type`, `role`, `access_classification`, `created_at`, `expires_at`
+
+
+**Boundary:** This approval authorizes Operational Dryv contracts only. It does not authorize migrations, database provisioning, seed/data migration or deployment. It does not approve any Main `mzizi` Phase 01 schema; those will be reviewed individually later. Phase 02 remains deferred.
