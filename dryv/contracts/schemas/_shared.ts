@@ -36,6 +36,8 @@ const scalarProperties = shared.properties({
   Instant: dryv.property.temporal.instant({ precision: "microsecond" }),
   CalendarDate: dryv.property.temporal.date(),
   DateTime: dryv.property.temporal.datetime(),
+  /** Bounded confidence; absence means no numeric assessment was made. */
+  Confidence: dryv.property.number().range({ min: 0, max: 1 }),
   Number: dryv.property.number(),
   Integer: dryv.property.number.integer(),
   NonNegativeInteger: dryv.property.number.integer({ range: { min: 0 } }),

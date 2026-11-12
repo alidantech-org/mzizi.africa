@@ -10,6 +10,9 @@
 import * as dryv from "@dryvcode/author";
 
 import { sharedProperties } from "../_shared.ts";
+import { legalSchemas } from "./legal.ts";
+import { sourceSchemas } from "./source.ts";
+import { geographySchemas } from "./geography.ts";
 
 export const reference = dryv
   .group({ name: "reference" })
@@ -422,3 +425,90 @@ export const vocabularySchemas = {
 
 /** No Reference-owned Legal bridge table is defined until its target semantics are decided. */
 /*---------------- End proposed Reference–Legal bridge: design decision pending ----------------*/
+
+/*---------------- Authorized Reference Legal mediation ----------------*/
+/** Separate from active database composition until all dependencies and SQL semantics are verified. */
+export const LegalBasisLinks = referenceProposals.schemas({
+  LegalBasisLink: dryv
+    .schema({
+      id: dryv.field(sharedProperties.Id),
+      provision_version_id: dryv
+        .field(sharedProperties.Id)
+        .relation({
+          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
+          cardinality: dryv.relation.manyToOne(),
+          onDelete: "restrict",
+          onUpdate: "restrict",
+        }),
+      basis_role_id: dryv
+        .field(sharedProperties.Id)
+        .relation({
+          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+          cardinality: dryv.relation.manyToOne(),
+          onDelete: "restrict",
+          onUpdate: "restrict",
+        }),
+      citation_id: dryv
+        .field(sharedProperties.Id)
+        .relation({
+          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
+          cardinality: dryv.relation.manyToOne(),
+          onDelete: "restrict",
+          onUpdate: "restrict",
+        }),
+      effective_from: dryv.field(sharedProperties.CalendarDate),
+      effective_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+      interpretation: dryv.field(sharedProperties.Description),
+      reviewed_by_snapshot: dryv.field(sharedProperties.JsonText),
+      reviewed_at: dryv.field(sharedProperties.Instant),
+    })
+    .description("One reviewed legal-support assertion; each basis role and precise provision version is a separate assertion.")
+    .invariant("EffectiveWindowIsOrdered", referenceExpressions.EffectiveWindowMustBeOrdered)
+    .role("entity")
+    .facets({
+      storage: dryv
+        .storage("legal_basis_links")
+        .primaryKey("id")
+        .indexes(
+          { name: "idx_legal_basis_links_provision", fields: ["provision_version_id"] },
+          { name: "idx_legal_basis_links_role", fields: ["basis_role_id"] },
+          { name: "idx_legal_basis_links_citation", fields: ["citation_id"] },
+        ),
+    }),
+});
+/*---------------- End reference.legal_basis_links ----------------*/
+export const GeographyChangeLegalBases = referenceProposals.schemas({
+  GeographyChangeLegalBasis: dryv
+    .schema({
+      id: dryv.field(sharedProperties.Id),
+      change_id: dryv
+        .field(sharedProperties.Id)
+        .relation({
+          target: (): dryv.SchemaFieldRef<unknown> => geographySchemas.Changes.field("id"),
+          cardinality: dryv.relation.manyToOne(),
+          onDelete: "restrict",
+          onUpdate: "restrict",
+        }),
+      legal_basis_id: dryv
+        .field(sharedProperties.Id)
+        .relation({
+          target: (): dryv.SchemaFieldRef<unknown> => LegalBasisLinks.LegalBasisLink.field("id"),
+          cardinality: dryv.relation.manyToOne(),
+          onDelete: "restrict",
+          onUpdate: "restrict",
+        }),
+    })
+    .description("Typed legal support for a geographic transformation edge; multiple bases and roles remain distinct.")
+    .role("entity")
+    .facets({
+      storage: dryv
+        .storage("geography_change_legal_bases")
+        .primaryKey("id")
+        .indexes(
+          { name: "uq_geography_change_legal_bases_pair", fields: ["change_id", "legal_basis_id"], unique: true },
+          { name: "idx_geography_change_legal_bases_basis", fields: ["legal_basis_id"] },
+        ),
+    }),
+});
+/*---------------- End reference.geography_change_legal_bases ----------------*/
+/** Official/Governance/Politics association tables await their exact authored entity targets. */

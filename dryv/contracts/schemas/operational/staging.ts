@@ -334,3 +334,44 @@ export const PromotionRequests = staging.schemas({
 /** Primary key and relation lookup indexes are declared in this storage contract. */
 /*---------------- End staging.promotion_requests ----------------*/
 stagingSchemas.PromotionRequests = PromotionRequests.PromotionRequests;
+
+/*---------------- Authorized multi-source revision evidence ----------------*/
+export const RevisionSources = staging.schemas({
+  RevisionSources: dryv
+    .schema({
+      id: dryv.field(sharedProperties.Id),
+      revision_id: dryv
+        .field(sharedProperties.Id)
+        .relation({
+          target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Revisions.field("id"),
+          cardinality: dryv.relation.manyToOne(),
+          onDelete: "restrict",
+          onUpdate: "restrict",
+        }),
+      /** Main external IDs: validated by Main during publication; no cross-database FKs. */
+      source_evidence_ref_id: dryv.field(sharedProperties.Id),
+      source_citation_ref_id: dryv.field(sharedProperties.Id),
+      file_version_ref_id: dryv.field(sharedProperties.Id),
+      manifest_release_ref_id: dryv.field(sharedProperties.Id).optional().nullable(),
+      evidence_role: dryv.field(sharedProperties.NonEmptyString100),
+      content_hash: dryv.field(sharedProperties.Sha256),
+      source_snapshot: dryv.field(sharedProperties.JsonText),
+      created_at: dryv.field(sharedProperties.Instant),
+    })
+    .description(
+      "Immutable normalized evidence inputs for a candidate revision; Main verifies citation/evidence/file ownership and hashes.",
+    )
+    .role("entity")
+    .facets({
+      storage: dryv
+        .storage("revision_sources")
+        .primaryKey("id")
+        .indexes(
+          { name: "uq_revision_sources_citation_role", fields: ["revision_id", "source_citation_ref_id", "evidence_role"], unique: true },
+          { name: "idx_revision_sources_evidence", fields: ["source_evidence_ref_id"] },
+          { name: "idx_revision_sources_file", fields: ["file_version_ref_id"] },
+        ),
+    }),
+});
+stagingSchemas.RevisionSources = RevisionSources.RevisionSources;
+/*---------------- End staging.revision_sources ----------------*/
