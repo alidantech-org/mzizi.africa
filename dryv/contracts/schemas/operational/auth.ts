@@ -1,3 +1,36 @@
+/**
+ * Schema: auth | Database: mzizi_operations
+ * Design: .docs/_plan/schema-redesign/mzizi-operational-db/auth.md
+ * Scope: agreed. Detailed table contracts: pending individual review.
+ * Inventory below records proposals, not approval or executable definitions.
+ * Existing definitions, where present, remain drafts requiring reconciliation.
+ * No new generation activation is authorized by this file.
+ */
+
+/*---------------- Candidate table inventory: review required ----------------*/
+
+/** auth.accounts — Login principal.
+ * Review fields, keys, relations, constraints and indexes in the linked design.
+ */
+/*---------------- End auth.accounts ----------------*/
+
+/** auth.roles — Permission bundles.
+ * Review fields, keys, relations, constraints and indexes in the linked design.
+ */
+/*---------------- End auth.roles ----------------*/
+
+/** auth.permissions — Named action permissions.
+ * Review fields, keys, relations, constraints and indexes in the linked design.
+ */
+/*---------------- End auth.permissions ----------------*/
+
+/** auth.assignments — Scoped role grants.
+ * Review fields, keys, relations, constraints and indexes in the linked design.
+ */
+/*---------------- End auth.assignments ----------------*/
+
+/*---------------- Existing draft definitions ----------------*/
+
 import * as dryv from "@dryvcode/author";
 
 import { baseEntitySchemas, sharedProperties } from "../_shared.ts";
@@ -23,10 +56,6 @@ export const authProperties = auth.properties({
     suspended: "suspended",
     closed: "closed",
   }),
-  /** OIDC issuer URL as presented by the provider. */
-  Issuer: dryv.property.string().length({ min: 1, max: 500 }),
-  /** OIDC subject claim, opaque provider-scoped identifier. */
-  Subject: dryv.property.string().length({ min: 1, max: 500 }),
   LabelKind: dryv.property.enum({
     preferred: "preferred",
     alternate: "alternate",
@@ -57,8 +86,10 @@ export const authSchemas = auth.schemas({
             authSchemas.Account.field("id"),
           cardinality: dryv.relation.manyToOne(),
         }),
-      issuer: dryv.field(authProperties.Issuer).query({ filter: ["equal"] }),
-      subject: dryv.field(authProperties.Subject).query({ filter: ["equal"] }),
+      /** OIDC issuer URL; interpretation belongs to this field. */
+      issuer: dryv.field(sharedProperties.NonEmptyString500).query({ filter: ["equal"] }),
+      /** Opaque provider-scoped OIDC subject; do not normalize. */
+      subject: dryv.field(sharedProperties.NonEmptyString500).query({ filter: ["equal"] }),
     })
     .role("entity")
     .extends(baseEntitySchemas.BaseEntity)
@@ -69,6 +100,7 @@ export const authSchemas = auth.schemas({
         unique: true,
       }),
     }),
+  /*---------------- End table definition ----------------*/
 
   Permission: dryv
     .schema({
@@ -89,6 +121,7 @@ export const authSchemas = auth.schemas({
         unique: true,
       }),
     }),
+  /*---------------- End table definition ----------------*/
 
   Role: dryv
     .schema({
@@ -108,6 +141,7 @@ export const authSchemas = auth.schemas({
         .storage("roles")
         .indexes({ name: "idx_role_code", fields: ["code"], unique: true }),
     }),
+  /*---------------- End table definition ----------------*/
 
   RolePermission: dryv
     .schema({
@@ -137,6 +171,7 @@ export const authSchemas = auth.schemas({
         unique: true,
       }),
     }),
+  /*---------------- End table definition ----------------*/
 
   RoleAssignment: dryv
     .schema({
@@ -170,4 +205,5 @@ export const authSchemas = auth.schemas({
         fields: ["accountId", "roleId"],
       }),
     }),
+  /*---------------- End table definition ----------------*/
 });

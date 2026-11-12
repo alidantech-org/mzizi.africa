@@ -10,7 +10,18 @@ import * as dryv from "@dryvcode/author";
  */
 export const shared = dryv.group({ name: "shared" }).description("Shared value, time, transport and failure semantics.");
 
-export const sharedProperties = shared.properties({
+const scalarProperties = shared.properties({
+  /*---------------- Reusable scalar validation profiles ----------------*/
+  String: dryv.property.string(),
+  /** Length-based nonempty text; whitespace is preserved, not silently trimmed. */
+  NonEmptyString: dryv.property.string().length({ min: 1 }),
+  NonEmptyString255: dryv.property.string().length({ min: 1, max: 255 }),
+  NonEmptyString500: dryv.property.string().length({ min: 1, max: 500 }),
+  /** Language-tag length profile; full BCP 47 validation remains a separate rule. */
+  LanguageTag: dryv.property.string().length({ min: 2, max: 35 }),
+  Number: dryv.property.number(),
+  NonNegativeInteger: dryv.property.number.integer({ range: { min: 0 } }),
+  PositiveInteger: dryv.property.number.integer({ range: { min: 1 } }),
   Id: dryv.property.string.uuid(),
   /** Hierarchical lowercase business code such as ke/nairobi/westlands. */
   BusinessCode: dryv.property.string().length({ min: 2, max: 200 }),
@@ -18,12 +29,17 @@ export const sharedProperties = shared.properties({
   Description: dryv.property.string().length({ max: 4000 }),
   DateTime: dryv.property.temporal.datetime(),
   Flag: dryv.property.boolean(),
-  Version: dryv.property.number.integer({ range: { min: 0 } }),
   Message: dryv.property.string().length({ min: 1, max: 2000 }),
   StatusCode: dryv.property.string().length({ min: 1, max: 100 }),
-  PaginationNumber: dryv.property.number.integer({ range: { min: 0 } }),
-  SortDirection: dryv.property.string().length({ min: 1, max: 100 }),
 });
+
+/** Compatibility names reuse the same property identity, without duplicate declarations. */
+export const sharedProperties = {
+  ...scalarProperties,
+  Version: scalarProperties.NonNegativeInteger,
+  PaginationNumber: scalarProperties.NonNegativeInteger,
+  SortDirection: scalarProperties.StatusCode,
+};
 
 /** Identity, record time and optimistic versioning for every stored record. */
 export const baseEntitySchemas = shared.schemas({

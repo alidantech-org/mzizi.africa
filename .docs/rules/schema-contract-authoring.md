@@ -34,7 +34,7 @@ dryv/contracts/schemas/
 ## Shared definitions
 
 - Put scalar property declarations in `_shared.ts`: strings, numbers, booleans, UUIDs, dates/timestamps, closed technical enums, formats, ranges and reusable validation rules. Use meaningful names such as `BusinessCode`, `LanguageTag`, `AuthAccountStatus` and `OidcSubject`, rather than a universal `String` or `Status`.
-- Properties with different meanings or limits remain distinct, even when both are strings. Describe units, format and validation semantics. Domain-specific enums can be named by their owning domain within the shared file; controlled vocabularies remain data.
+- Properties with different meanings or limits remain distinct, even when both are strings. Describe units, format and validation semantics. Schema-local property declarations are permitted only for enums. Non-enum properties must reuse shared validation profiles: issuer and subject fields, for example, both use `NonEmptyString500`, while their semantic descriptions remain on the fields. Controlled vocabularies remain data.
 - Schema files reference those properties with Dryv fields. Nullability, optional input presence, defaults, relations, uniqueness and table invariants are decided at the field/table use site. A reusable property does not silently make a field required, unique or indexed.
 - Reusable predicate definitions live in `_shared.ts`; the owning schema declares where they apply. Cross-field or domain-specific rules remain explicit beside the owning entity. `_shared.ts` must not import domain schema files.
 - Shared helpers are opt-in and transparent. Do not require a universal stored-entity base that adds creation/update time, version, validity, soft deletion or UUID primary keys to every table. Choose lifecycle fields and composite keys by meaning.
@@ -96,3 +96,7 @@ Use supported Dryv authoring constructs and verify their emitted IR and generate
 Before marking a subset generation ready, validate target placement, field/key coverage, shared-property dependencies, every declared relation, constraints and indexes, ownership boundaries, and approval selection. Compare generated models/SQL with the reviewed definitions, check deterministic generation, and test meaningful valid/invalid cases once runtime generation exists. Compiling TypeScript alone is not proof of database enforcement.
 
 Contributor work uses Task on `develop`. Record field dispositions and approval changes in the same owning review document and task. Run `task validate` after documentation changes; implementation work additionally runs the root quality suite and applicable contract/database checks. This proposal does not authorize applying a migration or changing live data.
+
+## Authorized scaffolding — 12 November 2026
+
+The user authorized all nineteen schema files with descriptive candidate-table inventories and `/*---------------- ... ----------------*/` separators after tables. This authorizes shells and shared scalar reuse, not every candidate definition. The existing Auth and Reference definitions remain drafts. Shared profiles include nonempty strings, bounded strings (255 and 500), language tags, numbers and positive/nonnegative integers. Length-based nonempty strings preserve whitespace; they do not claim nonblank validation.

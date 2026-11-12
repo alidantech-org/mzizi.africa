@@ -37,8 +37,8 @@ const identitySchemas = auth.schemas({
 
 const authAccessSchemas = auth.schemas({
   ResolveIdentityRequest: dryv.schema({
-    issuer: dryv.field(authProperties.Issuer),
-    subject: dryv.field(authProperties.Subject),
+    issuer: dryv.field(sharedProperties.NonEmptyString500),
+    subject: dryv.field(sharedProperties.NonEmptyString500),
   }),
   ResolveIdentityResponse: dryv.schema({
     identity: dryv.field(identitySchemas.ResolvedIdentity),
@@ -136,13 +136,13 @@ const lookupSchemas = vocabulary.schemas({
     scheme: dryv.field(sharedProperties.BusinessCode),
     code: dryv.field(sharedProperties.BusinessCode),
     language: dryv
-      .field(vocabularyProperties.LanguageTag)
+      .field(sharedProperties.LanguageTag)
       .optional()
       .nullable(),
   }),
   ValueLookupResponse: dryv.schema({
     value: dryv.field(values.schemas.ValuePublic),
-    label: dryv.field(vocabularyProperties.Label).optional().nullable(),
+    label: dryv.field(sharedProperties.Name).optional().nullable(),
   }),
 });
 

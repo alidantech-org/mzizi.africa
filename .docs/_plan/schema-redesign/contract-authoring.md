@@ -48,3 +48,7 @@ These observations are not a claim that the current generator or Rust service im
 The drafting deliverable is a linked, reviewable agreement with no implied table approval. The agreement task remains open until the user accepts or revises it. Later schema-authoring work is complete only when each selected definition has recorded approval, a truthful header, complete supported Dryv semantics and passing appropriate checks. Unapproved and unsupported definitions remain excluded.
 
 Baseline documentation validation already reports a broken website-contract link in `.docs/_plan/source-redesign/README.md` after the ongoing contract relocation. Record this separately from any errors introduced by the drafting task.
+
+## Scaffolding follow-up — 12 November 2026
+
+The user subsequently authorized creation of all nineteen schema files and consolidation of non-enum properties in `_shared.ts`. Files now contain candidate table inventories taken from their owning design dictionaries, with separators after each entry. Existing Auth and Reference drafts are preserved and use shared scalar profiles; app imports follow the existing Reference file. This supersedes the earlier documentation-only limit for this follow-up, without approving the candidate contracts. Detailed schema reviews and generation remain pending.
