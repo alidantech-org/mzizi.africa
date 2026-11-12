@@ -3,7 +3,7 @@ id: DOC-MZIZI-SCHEMA-MANAGEMENT-20261111
 name: management schema — operational
 type: schema-review
 tags: [database, schema-redesign, operations, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Operations, recorded_on: 2026-11-11}
+extra: {status: accepted, approval: approved, implementation: dryv_contracts_authorized, database: Operations, approved_on: 2026-11-12, approval_record: DEC-OPERATIONAL-DATABASE-20261112, migrations: not_authorized, deployment: not_authorized}
 ---
 
 # management — Operational
@@ -168,3 +168,32 @@ Lifecycle: record Operations contract/publication work; coordinate the exact rev
 Capacity is unmeasured. Use low/expected/high input scenarios, explicit formulas and workload benchmarks; do not assume sizes or universal partitions.
 
 **Status:** NOT REVIEWED. Schema assignment follows the handoff; tables, columns, relationships, partitioning and S3 choices still require user approval. Feedback: none. Approval reference/date/revision: none. Implementation authorization: not granted. Material changes reopen approval.
+
+## 2026-11-12 — Operational design accepted and approved
+
+**Approval status:** ACCEPTED AND APPROVED by the user on 12 November 2026. **Implementation status:** Dryv contract authoring is authorized on `develop` for this schema. See [DEC-OPERATIONAL-DATABASE-20261112](../../../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the complete approval record and cross-schema rules.
+
+This approved inventory supersedes earlier candidate-table lists, draft definitions and statements in this document that the design is not reviewed, not approved or awaiting user approval. Historical analysis remains context only. The table names and column names below are the approved baseline; implementation must define their precise types, nullability, defaults, keys, relationships, constraints and indexes under the repository's contract-authoring rules. The author may resolve those engineering details without requesting individual approval, but must not silently add, remove or rename approved tables or columns.
+
+## management — 4 approved tables
+
+**Responsibility:** Operations schema-release history and cross-database publication coordination/reconciliation.
+
+### `management.schema_releases`
+
+`id`, `release_id`, `database_target`, `digest`, `applied_at`, `manager_version`, `applied_by`
+
+### `management.publications`
+
+`id`, `publication_id`, `request_key`, `request_hash`, `actor_snapshot`, `contract_version`, `state`, `requested_at`, `submitted_at`, `published_at`, `last_reconciled_at`
+
+### `management.publication_items`
+
+`id`, `publication_id`, `schema_name`, `table_name`, `record_id`, `operation`, `expected_record_version`, `resulting_record_version`, `payload_hash`
+
+### `management.delivery_receipts`
+
+`id`, `publication_id`, `request_key`, `request_hash`, `observed_at`, `state`, `main_commit_ref`, `response_hash`, `details`
+
+
+**Boundary:** This approval authorizes Operational Dryv contracts only. It does not authorize migrations, database provisioning, seed/data migration or deployment. It does not approve any Main `mzizi` Phase 01 schema; those will be reviewed individually later. Phase 02 remains deferred.
