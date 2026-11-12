@@ -46,8 +46,8 @@ Database schemas, tables, columns and column definitions are **never written by 
 
 Generation is split into two independent runs:
 
-1. **The normal run** — the existing entrypoint (`dryv/contracts/index.ts`) and packs that generate the NestJS API. Untouched by this work.
-2. **The Rust run** — a separate entrypoint, `dryv/contracts/foundation-db`, composing only the foundation groups, driven by project-owned packs:
+1. **The normal run** — the legacy entrypoint (`dryv/contracts/apps/main/index.ts`) and packs that generate the NestJS API. Untouched by this work.
+2. **The Rust run** — a separate entrypoint, `dryv/contracts/apps/database`, composing the shared schema files under `dryv/contracts/schemas/{mzizi,operational}`, driven by project-owned packs:
    - `dryv/packs/rust-models` emits the `mzizi-db-generated` crate: Rust structs per entity and operation request/response types.
    - `dryv/packs/rust-sql` emits immutable SQL migration releases, one stream per target database, into `source/backend/database/migrations/{main,operations}`, each release with a recorded checksum and the contract digest it was generated from.
 

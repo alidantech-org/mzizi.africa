@@ -6,8 +6,8 @@
   "description": "Dryv contracts for the Mzizi canonical knowledge model (TypeScript authoring).",
   "scripts": {
     "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
-    "contracts:doctor": "bun --bun x dryv-ts doctor contracts/index.ts",
-    "contracts:compile": "bun --bun x dryv-ts compile contracts/index.ts",
+    "contracts:doctor": "bun --bun x dryv-ts doctor contracts/apps/main/index.ts",
+    "contracts:compile": "bun --bun x dryv-ts compile contracts/apps/main/index.ts",
     "check": "bun run typecheck && bun run contracts:audit && bun run contracts:doctor && bun run contracts:compile > /dev/null && bun run access:check && bun run boundary:check && bun run schema:check",
     "link": "bash scripts/link-dryv.sh",
     "contracts:audit": "bun tools/audit-contracts.ts",

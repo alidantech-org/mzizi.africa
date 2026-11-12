@@ -14,22 +14,28 @@ The repository already generates the NestJS API from Dryv contracts through proj
 
 ## Acceptance checklist
 
-- [ ] Design guide for the database foundation added under `.docs/design/data/` covering ownership catalogue, generation flow, boundaries and transition state, with links from the affected READMEs.
-- [ ] Decision recorded in `.docs/decisions/` reconciling the deleted `source/schema/database` location with the new backend-owned layout.
-- [ ] `source/backend/database/README.md` rewritten to describe both the legacy Bun service and the Rust workspace, marking unimplemented behavior clearly.
-- [ ] `task validate` passes after all `.docs/` edits.
+- [x] Design guide for the database foundation added under `.docs/design/data/` covering ownership catalogue, generation flow, boundaries and transition state, with links from the affected READMEs.
+- [x] Decision recorded in `.docs/decisions/` reconciling the deleted `source/schema/database` location with the new backend-owned layout.
+- [x] `source/backend/database/README.md` rewritten to describe both the legacy Bun service and the Rust workspace, marking unimplemented behavior clearly.
+- [x] `task validate` passes after all `.docs/` edits.
 
-- [ ] `dryv/contracts/foundation-db/` entrypoint composes auth (operations) and reference (main) groups with database assignment metadata; `bun run check` in `dryv/` still passes.
-- [ ] `dryv/packs/rust-models/` pack manifest and templates scaffolded, emitting into the generated crate.
-- [ ] `dryv/packs/rust-sql/` pack manifest and templates scaffolded, emitting checksummed releases into `source/backend/database/migrations/{main,operations}`.
+- [x] `dryv/contracts/foundation-db/` entrypoint composes auth (operations) and reference (main) groups with database assignment metadata; `bun run check` in `dryv/` still passes.
+- [x] `dryv/packs/rust-models/` pack manifest and templates scaffolded, emitting into the generated crate.
+- [x] `dryv/packs/rust-sql/` pack manifest and templates scaffolded, emitting checksummed releases into `source/backend/database/migrations/{main,operations}`.
 - [ ] Unsupported definitions (cross-database foreign keys, unassigned schemas) are rejected with actionable errors, by pack validation or the contract audit.
 
-- [ ] Cargo workspace with crates `mzizi-db-core`, `mzizi-db-generated`, `mzizi-db-service`, `mzizi-db-cli` compiles with `cargo check`, `cargo fmt --check` and `cargo clippy` clean.
-- [ ] Core provides configuration loading and two separately bounded SQLx pools for main and operations, with administrative credentials reachable only from the CLI binary.
-- [ ] Service starts on configurable port defaulting to 3303 with health and readiness endpoints, request IDs and structured logs free of credentials.
-- [ ] CLI exposes plan, migrate, status, verify, roles and seed subcommands with explicit target selection (stubs may return "not implemented" but parse and dispatch correctly).
-- [ ] Root Bun tooling (`scripts/lib/projects.ts`) runs Rust format, lint, test and build as part of `bun run check`.
+- [x] Cargo workspace with crates `mzizi-db-core`, `mzizi-db-generated`, `mzizi-db-service`, `mzizi-db-cli` compiles with `cargo check`, `cargo fmt --check` and `cargo clippy` clean.
+- [x] Core provides configuration loading and two separately bounded SQLx pools for main and operations, with administrative credentials reachable only from the CLI binary.
+- [x] Service starts on configurable port defaulting to 3303 with health and readiness endpoints, request IDs and structured logs free of credentials.
+- [x] CLI exposes plan, migrate, status, verify, roles and seed subcommands with explicit target selection (stubs may return "not implemented" but parse and dispatch correctly).
+- [x] Root Bun tooling (`scripts/lib/projects.ts`) runs Rust format, lint, test and build as part of `bun run check`.
 
 ## Notes
 
 Anything the current Dryv engine or pack format cannot express (for example SQL release emission or persistence metadata) is raised to the project owner as a proposed Dryv enhancement before any workaround is built.
+
+## Comments
+
+### 2026-11-12T11:32:18.284Z · PETER IRUNGU
+
+Skeleton complete. User restructured contracts into schemas/{mzizi,operational} + apps/{main,database}; entrypoints repointed (dryv.yaml, package.json, tools/lib/ir.ts). Item 8 (pack-side rejection of cross-database FKs/unassigned schemas) waits on Dryv multi-authoring: engine side landed in the Dryv repo (commit 279a7479); CLI per-source compile orchestration requested from the dryv-multi-authoring session. Rust workspace verified: cargo check/clippy/fmt/test clean, service boots on 3303 (health ok, ready fails closed), mzizi-db CLI parses and fails closed without admin URLs. Root check: new failures fixed; remaining failures are pre-existing (ruff format/lint, mypy, pytest, api test, filesystem_api.py line limit).

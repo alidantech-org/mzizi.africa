@@ -85,11 +85,37 @@ function flutter(project: Project, kind: QualityKind): Step[] {
   }
 }
 
+/** Commands for the Rust database workspace. Skipped with a notice when cargo is absent. */
+function rust(project: Project, kind: QualityKind): Step[] {
+  if (!has("cargo")) {
+    console.warn(`cargo is not installed; skipping ${project.name}`);
+    return [];
+  }
+  const cwd = at(project.dir);
+  switch (kind) {
+    case "format":
+      return [step("cargo fmt", cwd, ["cargo", "fmt"])];
+    case "format:check":
+      return [step("cargo fmt check", cwd, ["cargo", "fmt", "--check"])];
+    case "lint":
+      return [step("cargo clippy", cwd, ["cargo", "clippy", "--all-targets", "--", "-D", "warnings"])];
+    case "lint:fix":
+      return [step("cargo clippy fix", cwd, ["cargo", "clippy", "--fix", "--allow-dirty", "--all-targets"])];
+    case "typecheck":
+      return [step("cargo check", cwd, ["cargo", "check", "--all-targets"])];
+    case "test":
+      return [step("cargo test", cwd, ["cargo", "test"])];
+    case "build":
+      return [step("cargo build", cwd, ["cargo", "build", "--release"])];
+  }
+}
+
 /** Every step of one kind for the selected projects, in registry order. */
 export function qualitySteps(kind: QualityKind, selected: readonly Project[]): Step[] {
   return selected.flatMap((project) => {
     if (project.kind === "python") return python(kind);
     if (project.kind === "flutter") return flutter(project, kind);
+    if (project.kind === "rust") return rust(project, kind);
     return project.name === "scripts" ? rootScripts(kind) : delegated(project, kind);
   });
 }

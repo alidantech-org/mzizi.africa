@@ -68,7 +68,7 @@ describe("steps", () => {
     expect(() => pick(["nope"])).toThrow("unknown service");
   });
   test("TypeScript services use Bun for development and production entrypoints", () => {
-    for (const service of services.filter(({ name }) => name !== "engine")) {
+    for (const service of services.filter(({ name }) => name !== "engine" && name !== "database-rust")) {
       expect(service.dev[0]).toBe("bun");
       expect(service.start[0]).toBe("bun");
     }

@@ -5,7 +5,7 @@
  *   bun run <command>            the common commands are package.json scripts
  *   bun scripts/mz.ts <command>  the same, with arguments and options
  *
- * Options: `--only <names>` limits project commands to named projects or kinds (python, bun, flutter, all).
+ * Options: `--only <names>` limits project commands to named projects or kinds (python, bun, flutter, rust, all).
  * The command table below is the source of `bun run help`; see scripts/README.md for the full guide.
  */
 import { group, rootStep, stages, step } from "./lib/exec.ts";
@@ -158,7 +158,9 @@ export const commands: Record<string, Command> = {
 export function help(): void {
   console.log("Usage: bun run <command> [-- args]   or   bun scripts/mz.ts <command> [args] [--only <names>]\n");
   for (const [name, command] of Object.entries(commands)) console.log(`  ${name.padEnd(15)} ${command.summary}`);
-  console.log("\n--only takes project names or kinds: python, scripts, dryv, api, web, www, mobile, bun, flutter, all");
+  console.log(
+    "\n--only takes project names or kinds: python, scripts, dryv, api, database-rust, web, www, mobile, bun, flutter, rust, all",
+  );
 }
 
 /** Split the arguments into the command, its positional arguments and the `--only` value. */

@@ -1,3 +1,10 @@
+---
+id: PLAN-SCHEMA-REDESIGN-CHECKBOOK
+name: Schema redesign checkbook
+type: plan
+tags: [database, schemas]
+---
+
 You’re right to push for the existing proposals as the baseline. I checked the Phase 01 files you listed. They already contain detailed table and column reviews, so the schema plan should be fitted to those proposals—not expanded with a new table catalogue.
 
 The Phase 01 README and schema documents also contain sections titled **“Agreed responsibility — 12 November 2026.”** Those are the right starting point for the current decisions. The earlier list I gave was inaccurate: it introduced tables not established in those proposals and missed the actual designs.

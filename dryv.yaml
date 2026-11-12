@@ -9,7 +9,7 @@ sources:
     model:
       type: typescript
       path: dryv/contracts
-      entrypoint: index.ts
+      entrypoint: apps/main/index.ts
     # Database foundation model, compiled separately for the Rust packs. Activating packs
     # against this source needs the Dryv multi-authoring enhancement
     # (.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md); until it lands only `model`

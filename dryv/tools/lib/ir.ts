@@ -9,7 +9,7 @@ export const dryvRoot = join(import.meta.dir, "..", "..");
 
 /** Compiles the contracts and returns the Runtime IR items; exits with the diagnostics on failure. */
 export function compileIr(): Item[] {
-  const compile = spawnSync("bun", ["x", "dryv-ts", "compile", "contracts/index.ts"], {
+  const compile = spawnSync("bun", ["x", "dryv-ts", "compile", "contracts/apps/main/index.ts"], {
     cwd: dryvRoot,
     encoding: "utf8",
     maxBuffer: 256 * 1024 * 1024,
