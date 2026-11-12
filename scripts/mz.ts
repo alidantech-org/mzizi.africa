@@ -38,7 +38,10 @@ const postgres = (): string => process.env.MZIZI_PG_CONTAINER ?? "postgis";
 /** Every application schema command enters the TypeScript database owner. */
 const databaseCli = async ({ rest }: Context): Promise<boolean> => {
   const result = await Bun.spawn(["bun", "src/cli.ts", ...rest], {
-    cwd: `${root}/source/backend/database`, stdout: "inherit", stderr: "inherit", stdin: "inherit",
+    cwd: `${root}/source/backend/database`,
+    stdout: "inherit",
+    stderr: "inherit",
+    stdin: "inherit",
   }).exited;
   return result === 0;
 };
@@ -137,7 +140,10 @@ export const commands: Record<string, Command> = {
     summary: "stop local Temporal and object-store services while preserving their volumes",
     run: () => group("infra:down", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "down"])]),
   },
-  db: { summary: "TypeScript database owner: status | migrate | verify | provision-local-roles | seed | guarded reset | release operations", run: databaseCli },
+  db: {
+    summary: "TypeScript database owner: status | migrate | verify | provision-local-roles | seed | guarded reset | release operations",
+    run: databaseCli,
+  },
   "db:ts": { summary: "alias for the TypeScript database owner command", run: databaseCli },
   seed: passthrough("mzizi-manifest", "seed registry: seed check | lock | report | validate-structure <dir>"),
   fs: passthrough("mzizi-filesystem", "filesystem registry: fs sync --manifest <file> | tree | ..."),

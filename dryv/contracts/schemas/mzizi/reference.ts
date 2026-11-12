@@ -82,25 +82,16 @@ export const vocabularyProperties = vocabulary.properties({
 export const vocabularySchemas = vocabulary.schemas({
   Scheme: dryv
     .schema({
-      code: dryv
-        .field(sharedProperties.BusinessCode)
-        .query({ filter: ["equal", "startsWith"], sort: true, search: true }),
-      title: dryv
-        .field(sharedProperties.Name)
-        .query({ filter: ["contains"], sort: true, search: true }),
-      description: dryv
-        .field(sharedProperties.Description)
-        .optional()
-        .nullable(),
+      code: dryv.field(sharedProperties.BusinessCode).query({ filter: ["equal", "startsWith"], sort: true, search: true }),
+      title: dryv.field(sharedProperties.Name).query({ filter: ["contains"], sort: true, search: true }),
+      description: dryv.field(sharedProperties.Description).optional().nullable(),
       /** Stewardship owner snapshot: free-text owner at creation, not a relation. */
       stewardshipOwner: dryv.field(sharedProperties.Name),
     })
     .role("entity")
     .extends(baseEntitySchemas.BaseEntity)
     .facets({
-      storage: dryv
-        .storage("schemes")
-        .indexes({ name: "idx_scheme_code", fields: ["code"], unique: true }),
+      storage: dryv.storage("schemes").indexes({ name: "idx_scheme_code", fields: ["code"], unique: true }),
     }),
   /*---------------- End table definition ----------------*/
 
@@ -110,17 +101,11 @@ export const vocabularySchemas = vocabulary.schemas({
         .field(sharedProperties.Id)
         .query({ filter: ["equal"] })
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> =>
-            vocabularySchemas.Scheme.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => vocabularySchemas.Scheme.field("id"),
           cardinality: dryv.relation.manyToOne(),
         }),
-      code: dryv
-        .field(sharedProperties.BusinessCode)
-        .query({ filter: ["equal", "startsWith"], sort: true, search: true }),
-      description: dryv
-        .field(sharedProperties.Description)
-        .optional()
-        .nullable(),
+      code: dryv.field(sharedProperties.BusinessCode).query({ filter: ["equal", "startsWith"], sort: true, search: true }),
+      description: dryv.field(sharedProperties.Description).optional().nullable(),
       retiredAt: dryv
         .field(sharedProperties.DateTime)
         .optional()
@@ -150,20 +135,13 @@ export const vocabularySchemas = vocabulary.schemas({
         .field(sharedProperties.Id)
         .query({ filter: ["equal"] })
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> =>
-            vocabularySchemas.Value.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => vocabularySchemas.Value.field("id"),
           cardinality: dryv.relation.manyToOne(),
         }),
-      language: dryv
-        .field(sharedProperties.LanguageTag)
-        .query({ filter: ["equal"] }),
-      label: dryv
-        .field(sharedProperties.Name)
-        .query({ filter: ["contains"], search: true }),
+      language: dryv.field(sharedProperties.LanguageTag).query({ filter: ["equal"] }),
+      label: dryv.field(sharedProperties.Name).query({ filter: ["contains"], search: true }),
       /** At most one preferred label per value and language; the required partial unique index remains a generation gap. */
-      kind: dryv
-        .field(vocabularyProperties.LabelKind)
-        .query({ filter: ["equal"] }),
+      kind: dryv.field(vocabularyProperties.LabelKind).query({ filter: ["equal"] }),
     })
     .role("entity")
     .extends(baseEntitySchemas.BaseEntity)

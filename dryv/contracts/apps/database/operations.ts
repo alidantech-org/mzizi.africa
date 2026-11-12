@@ -1,18 +1,8 @@
 import * as dryv from "@dryvcode/author";
 
-import {
-  readSurface,
-  sharedProperties,
-  standardFailures,
-  withStandardHttpFailures,
-} from "../../schemas/_shared.ts";
-import {
-  auth,
-  authProperties,
-  authSchemas,
-} from "../../schemas/operational/auth.ts";
+import { readSurface, sharedProperties, standardFailures, withStandardHttpFailures } from "../../schemas/_shared.ts";
+import { auth, authProperties, authSchemas } from "../../schemas/operational/auth.ts";
 import { vocabulary, vocabularyProperties, vocabularySchemas } from "../../schemas/mzizi/reference.ts";
-
 
 /**
  * Named operations of the database service. Callers never supply SQL, table or schema names;
@@ -22,10 +12,7 @@ import { vocabulary, vocabularyProperties, vocabularySchemas } from "../../schem
 
 /* ------------------------------- auth ------------------------------------ */
 
-const authAccess = auth
-  .feature("AuthAccess")
-  .description("Identity resolution and platform permission checks.")
-  .tags("internal");
+const authAccess = auth.feature("AuthAccess").description("Identity resolution and platform permission checks.").tags("internal");
 
 const identitySchemas = auth.schemas({
   ResolvedIdentity: dryv.schema({
@@ -54,9 +41,7 @@ const authAccessSchemas = auth.schemas({
 
 const resolveIdentity = dryv
   .operation()
-  .description(
-    "Resolve an OIDC (issuer, subject) pair to an active platform account; unknown identities deny.",
-  )
+  .description("Resolve an OIDC (issuer, subject) pair to an active platform account; unknown identities deny.")
   .input(authAccessSchemas.ResolveIdentityRequest)
   .output(authAccessSchemas.ResolveIdentityResponse)
   .failures(...standardFailures);
@@ -72,9 +57,7 @@ resolveIdentity.facets({
 
 const checkPermission = dryv
   .operation()
-  .description(
-    "Check whether an account holds a platform permission through active, unrevoked, unexpired grants.",
-  )
+  .description("Check whether an account holds a platform permission through active, unrevoked, unexpired grants.")
   .input(authAccessSchemas.CheckPermissionRequest)
   .output(authAccessSchemas.CheckPermissionResponse)
   .failures(...standardFailures);
@@ -95,10 +78,7 @@ export const authAccessOperations = authAccess.operations({
 
 /* ----------------------------- vocabulary -------------------------------- */
 
-const vocabularyRead = vocabulary
-  .feature("VocabularyRead")
-  .description("Scheme and value reads for service callers.")
-  .tags("internal");
+const vocabularyRead = vocabulary.feature("VocabularyRead").description("Scheme and value reads for service callers.").tags("internal");
 
 const schemes = readSurface(vocabulary, {
   singular: "Scheme",
@@ -135,10 +115,7 @@ const lookupSchemas = vocabulary.schemas({
   ValueLookupRequest: dryv.schema({
     scheme: dryv.field(sharedProperties.BusinessCode),
     code: dryv.field(sharedProperties.BusinessCode),
-    language: dryv
-      .field(sharedProperties.LanguageTag)
-      .optional()
-      .nullable(),
+    language: dryv.field(sharedProperties.LanguageTag).optional().nullable(),
   }),
   ValueLookupResponse: dryv.schema({
     value: dryv.field(values.schemas.ValuePublic),
@@ -148,9 +125,7 @@ const lookupSchemas = vocabulary.schemas({
 
 const lookupValue = dryv
   .operation()
-  .description(
-    "Look up a vocabulary value by scheme code and value code, optionally with a preferred label.",
-  )
+  .description("Look up a vocabulary value by scheme code and value code, optionally with a preferred label.")
   .input(lookupSchemas.ValueLookupRequest)
   .output(lookupSchemas.ValueLookupResponse)
   .failures(...standardFailures);

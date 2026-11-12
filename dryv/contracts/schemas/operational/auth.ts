@@ -45,9 +45,7 @@ import { baseEntitySchemas, sharedProperties } from "../_shared.ts";
  */
 export const auth = dryv
   .group({ name: "auth" })
-  .description(
-    "Platform accounts, OIDC identities, permissions, roles and grants.",
-  )
+  .description("Platform accounts, OIDC identities, permissions, roles and grants.")
   .facets({ storage: { namespace: "auth" } });
 
 export const authProperties = auth.properties({
@@ -65,12 +63,8 @@ export const authProperties = auth.properties({
 export const authSchemas = auth.schemas({
   Account: dryv
     .schema({
-      displayName: dryv
-        .field(sharedProperties.Name)
-        .query({ filter: ["contains"], sort: true }),
-      status: dryv
-        .field(authProperties.AccountStatus)
-        .query({ filter: ["equal", "in"] }),
+      displayName: dryv.field(sharedProperties.Name).query({ filter: ["contains"], sort: true }),
+      status: dryv.field(authProperties.AccountStatus).query({ filter: ["equal", "in"] }),
     })
     .role("entity")
     .extends(baseEntitySchemas.BaseEntity)
@@ -82,8 +76,7 @@ export const authSchemas = auth.schemas({
         .field(sharedProperties.Id)
         .query({ filter: ["equal"] })
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> =>
-            authSchemas.Account.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Account.field("id"),
           cardinality: dryv.relation.manyToOne(),
         }),
       /** OIDC issuer URL; interpretation belongs to this field. */
@@ -104,13 +97,8 @@ export const authSchemas = auth.schemas({
 
   Permission: dryv
     .schema({
-      code: dryv
-        .field(sharedProperties.BusinessCode)
-        .query({ filter: ["equal", "startsWith"], sort: true }),
-      description: dryv
-        .field(sharedProperties.Description)
-        .optional()
-        .nullable(),
+      code: dryv.field(sharedProperties.BusinessCode).query({ filter: ["equal", "startsWith"], sort: true }),
+      description: dryv.field(sharedProperties.Description).optional().nullable(),
     })
     .role("entity")
     .extends(baseEntitySchemas.BaseEntity)
@@ -125,21 +113,14 @@ export const authSchemas = auth.schemas({
 
   Role: dryv
     .schema({
-      code: dryv
-        .field(sharedProperties.BusinessCode)
-        .query({ filter: ["equal", "startsWith"], sort: true }),
+      code: dryv.field(sharedProperties.BusinessCode).query({ filter: ["equal", "startsWith"], sort: true }),
       title: dryv.field(sharedProperties.Name),
-      description: dryv
-        .field(sharedProperties.Description)
-        .optional()
-        .nullable(),
+      description: dryv.field(sharedProperties.Description).optional().nullable(),
     })
     .role("entity")
     .extends(baseEntitySchemas.BaseEntity)
     .facets({
-      storage: dryv
-        .storage("roles")
-        .indexes({ name: "idx_role_code", fields: ["code"], unique: true }),
+      storage: dryv.storage("roles").indexes({ name: "idx_role_code", fields: ["code"], unique: true }),
     }),
   /*---------------- End table definition ----------------*/
 
@@ -149,16 +130,14 @@ export const authSchemas = auth.schemas({
         .field(sharedProperties.Id)
         .query({ filter: ["equal"] })
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> =>
-            authSchemas.Role.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Role.field("id"),
           cardinality: dryv.relation.manyToOne(),
         }),
       permissionId: dryv
         .field(sharedProperties.Id)
         .query({ filter: ["equal"] })
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> =>
-            authSchemas.Permission.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Permission.field("id"),
           cardinality: dryv.relation.manyToOne(),
         }),
     })
@@ -179,16 +158,14 @@ export const authSchemas = auth.schemas({
         .field(sharedProperties.Id)
         .query({ filter: ["equal"] })
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> =>
-            authSchemas.Account.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Account.field("id"),
           cardinality: dryv.relation.manyToOne(),
         }),
       roleId: dryv
         .field(sharedProperties.Id)
         .query({ filter: ["equal"] })
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> =>
-            authSchemas.Role.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Role.field("id"),
           cardinality: dryv.relation.manyToOne(),
         }),
       /** Granting account; a plain id so the grantor stays attributable without a second Account relation. */
