@@ -4,58 +4,38 @@
 
 # Database design
 
-The canonical PostgreSQL database is organised into domain schemas that are designed to be separable: one schema can move to its own database later without changing another schema. Names follow `.docs/rules/database-naming.md`.
+> **Currency note — 12 November 2026:** This guide contains pre-rewrite schema names and implementation assumptions. The active schema layout and approval states are in the [schema redesign catalogue](../../_plan/schema-redesign/README.md). Same-database cross-schema foreign keys are allowed by the current schema-authoring rules. The paragraphs below are architecture background where they do not conflict with that catalogue, `AGENTS.md`, or the authored contracts.
+
+PostgreSQL stores domain schemas in the Main and Operations database targets recorded by the current catalogue. Names follow `.docs/rules/database-naming.md`. Moving a schema between database targets may change foreign-key and query boundaries and requires a reviewed migration plan.
 
 ## Principles
 
 1. **One schema per domain, full words.** `geography`, `organization`, `statistical`, never `geo`, `org`, `statistic`.
-2. **No cross-schema foreign keys.** Inside a schema, tables may use real foreign keys. Between schemas, a record refers to another by plain id (a soft reference). Integrity across schemas is checked by the database engine's integrity jobs, not by the database. This is what lets a schema be split off later and what keeps one domain's DDL from locking another's.
+2. **Foreign keys follow database boundaries, not schema names.** Reviewed foreign keys within one PostgreSQL database, including across schemas, are allowed when the target is authored and the selected SQL pack preserves the relation. Foreign keys must never cross the `mzizi` / `mzizi_operations` database boundary; use typed identifiers and documented recovery/integrity operations there. Splitting a schema later may require FK and query redesign.
 3. **Provenance lives in `source`, not in data rows.** A data table carries only what describes the thing itself: its valid time, record time and version. Where a claim came from, how it was produced, how confident we are, and whether it has been verified are held by the `source` schema, which points at data rows by (`schema.table`, id). Data tables know nothing about sources.
 4. **Bytes live in object storage, metadata in `filesystem`.** No table stores file contents. Anything with media (source PDFs, avatars, logos, scans) is a file in `filesystem`, linked from the thing that uses it through `filesystem.attachments`.
 5. **Humans are modelled once.** `person` holds every real human (officials, historical figures, authors, reviewers) with names, profile, contacts and public handles. `identity` holds platform accounts and grants. They link by id.
 6. **Append-only where history matters.** Attributions, verifications, comments, decisions and file events are never updated; corrections are new rows.
-7. **Controlled vocabularies are data.** Levels, kinds and types are `reference.classifications` rows scoped by jurisdiction, not enums or columns. Small closed technical states (a file's processing state) stay enums.
+7. **Controlled vocabularies are data.** Reusable classifications belong in `reference.schemes` and `reference.values`; country-specific applicability must use `reference.countries` or an explicit typed scope. Do not hardcode geographic classes or feature types as enums. Small closed technical states (such as a file processing state) may remain enums.
 
-## Engine-owned objects outside the catalogue
+## Historical implementation note
 
-`staging` (runs, candidates, issues, promotions: validation and review before promotion), `engine` (migration history and the data engine job queue) and `geography.boundary_shapes` (PostGIS shapes derived from the GeoJSON text by a trigger). They are created by hand-written migrations in `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/database/migrations`, are not Dryv entities, and are not served by the API (the API role may see staging candidate ids only, for review decisions). The catalogue below lists the Dryv-generated schemas (21 including `website`, `place` and `contact`).
+The former `staging`, `engine` and `geography.boundary_shapes` descriptions below referred to the archived pre-rewrite service and migrations. They are not current contract or runtime claims. The active Rust database service, schema ownership, and SQL generation state are documented in `source/backend/README.md`, `source/backend/database/README.md`, and the schema redesign catalogue. The Rust SQL pack currently remains a generation skeleton and must not be treated as a migration source.
 
-## Schema catalogue
+## Current schema catalogue
 
-| Schema | Purpose | Tables |
-| --- | --- | --- |
-| `reference` | jurisdictions and vocabularies | `jurisdictions`, `classifications` |
-| `geography` | places, boundaries, lineage | `units`, `relationships`, `boundaries`, `names`, `changes` |
-| `legal` | instruments and provisions | `instruments`, `provisions`, `amendments`, `changes`, `links` |
-| `person` | real humans | `individuals`, `names`, `profiles`, `contacts`, `handles` |
-| `identity` | platform accounts and authorisation | `accounts`, `grants` |
-| `governance` | institutions and offices | `institutions`, `relationships`, `offices`, `rules`, `procedures`, `stages`, `holders` |
-| `electoral` | elections | `elections`, `seats`, `candidates`, `results`, `manifestos`, `commitments` |
-| `political` | parties | `parties`, `memberships`, `units`, `ideologies`, `positions`, `alignments`, `holders` |
-| `calendar` | events | `events`, `links` |
-| `organization` | legal entities | `entities`, `identifiers`, `ownerships`, `locations` |
-| `finance` | public finance | `years`, `units`, `budgets`, `transfers`, `revenues`, `expenditures`, `entries` |
-| `debt` | borrowing | `loans`, `disbursements`, `repayments` |
-| `procurement` | tenders and contracts | `tenders`, `bids`, `contracts`, `milestones`, `variations` |
-| `statistical` | indicators and observations | `periods`, `categories`, `indicators`, `fields`, `datasets`, `observations` |
-| `civic` | public services | `services`, `amenities`, `posts`, `deliveries` |
-| `filesystem` | files, versions, media | `stores`, `formats`, `folders`, `objects`, `files`, `versions`, `variants`, `attachments`, `uploads`, `events` |
-| `source` | where claims come from | `publishers`, `documents`, `captures`, `methods`, `attributions`, `verifications` |
-| `website` | known sites, domains, structures (see `design/acquisition/WEBSITE_DESIGN.md`) | `sites`, `domains`, `site_publishers`, `structures`, `structure_versions`, `structure_files`, `checks`, `families`, `domain_patterns`, `members`, `subjects`, `traits`, `relations`, `fingerprints`, `assessments`, `dossiers` |
-| `place` | places, occupancy and expected presence (see `DOMAINS.md`) | `places`, `occupancies`, `occupancy_links`, `expectations` |
-| `contact` | contact points at any scope | `points` |
-| `audit` | discussion and review | `comments`, `evidence`, `decisions` |
+The old 21-schema table inventory formerly shown here is retired. Use the [schema redesign catalogue](../../_plan/schema-redesign/README.md), which records the current Main and Operations assignments, approved inventories, proposals, and Phase 02 deferrals. In particular, Reference uses `countries`, `schemes`, `values`, measurement `units`, `topics`, and pattern tables; Geography uses the accepted `features`, `units`, `places`, `names`, `identifiers`, `geometries`, `relationships`, `changes`, and `datasets` inventory. See their owning Phase 01 documents for the distinction between accepted table inventory and proposed detailed fields.
 
 Reference tables (`reference`) are read constantly and change rarely; `filesystem.events`, `source.attributions` and `audit.*` are the heavy append-only tables.
 
 ## Designing for heavy traffic on one database today
 
-- **Identifiers.** All primary keys are UUIDs. Production should use time-ordered UUIDv7 (`uuidv7()` is built in from PostgreSQL 18) as the column default, set by database-engine migrations, so inserts append to the index instead of scattering. Development synchronisation uses the generator's default and is not representative.
+- **Identifiers.** Primary-key types and defaults belong to the approved contract and selected generator. UUIDv7 is a candidate production default where the PostgreSQL version and generation path support it; the current SQL skeleton does not implement this policy.
 - **No hot counters.** Folder file counts and sizes are not stored on the folder row; they are computed or rolled up asynchronously. A counter updated on every upload serialises concurrent writers.
 - **Immutable rows for the big tables.** Objects, versions, attributions, verifications, events and decisions are insert-only. Insert-only tables avoid row locks, bloat and vacuum pressure, and are cheap to replicate.
-- **Partitioning plan.** `source.attributions` and `filesystem.events` are range-partitioned by creation time (monthly) by the database engine; their indexes are leading (`target_kind`, `target_id`) for lookups and BRIN on the timestamp. `statistical.observations` is the other large table and partitions by period granularity or jurisdiction when it grows. Partition keys are in the contracts as plain columns, so the choice can change without touching the API.
-- **Read path.** The API reads through a SELECT-only role and can point at a replica unchanged. Public lists are current-only by default with bounded paging; search uses indexed columns.
-- **Separation later.** Because no foreign key crosses a schema, moving `filesystem`, `source` or `audit` to a dedicated database is a connection-string and data-copy exercise, not a redesign. Cross-schema joins in hand-written queries (geography reads joining `source`) are the only coupling and are listed in the data engine handoff.
+- **Partitioning plan.** Partitioning for Source, Filesystem or Statistical data is a future measured decision. Choose keys and indexes from approved table contracts, access patterns and observed size; do not infer a deployed partition scheme from this planning guide.
+- **Read path.** A SELECT-only API role, read replicas, bounded paging and indexed search are target architecture. This document does not claim they are deployed.
+- **Separation later.** Same-database cross-schema FKs are allowed where explicitly authored. Moving a referenced schema to another database requires replacing those FKs with typed cross-database references and defined integrity/recovery behavior; it is not guaranteed to be a connection-string-only change.
 - **Large values.** Geometry and long text live in dedicated columns and are never selected in list views.
 
 ## Normalisation notes
@@ -64,8 +44,10 @@ Reference tables (`reference`) are read constantly and change rarely; `filesyste
 - Humans moved out of `governance` into `person`; `governance.holders` refer to an individual, never copy a name.
 - Files are one logical `files` row, many immutable `versions`, each pointing at one deduplicated `objects` row; renditions are `variants`.
 - Money has an explicit currency column and no default; dates carry a precision; vocabularies are classifications.
-- Remaining review candidates, recorded rather than done: split `geography.boundaries` geometry into its own table if metadata scans become hot; add a `reference.languages` vocabulary used by names, profiles and documents; split `organization.identifiers` into verified registries once the first registry import exists.
+- The old candidate list for `geography.boundaries`, `reference.languages`, and `organization.identifiers` is superseded by the current schema catalogue and owner documents; do not interpret it as a current proposal or implementation.
 
-## Statistical dimensions and derived values
+## Statistical dimensions and derived values — historical proposal
+
+> The following table names and field ideas are retained as historical statistical design notes. They are not active approved contracts; consult the current Phase 02 Statistical proposal before implementation.
 
 Decision: breakdowns of a figure (county, sex, age group, community, religion, urban or rural) are rows, not a JSON column. `statistical.dimensions` and `statistical.dimension_members` (hierarchy through `parent_id`, `reference_code` for external codes) are joined to an observation through `statistical.observation_dimensions`, unique per observation and dimension. A JSON column cannot be constrained, indexed by member or given hierarchy. Observations also carry `measure_type`, `estimate_kind` (census, projection, survey, administrative, derived), `denominator_observation_id` and `denominator_value`, `margin_of_error`, `standard_error`, and a `vintage_id` (`statistical.vintages`, with `supersedes_id`) plus `release_label`. A computed value lists its inputs and computation in `statistical.observation_derivations`. Provenance stays in the source schema.

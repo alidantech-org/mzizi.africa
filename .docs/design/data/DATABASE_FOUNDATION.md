@@ -7,7 +7,7 @@ tags: [database, rust, dryv, generation, foundation]
 
 # Rust database foundation
 
-The database foundation is a Rust service and administration CLI under `source/backend/database` that is being built to become the exclusive application access boundary for Mzizi's PostgreSQL databases. This document describes the target shape and what the foundation milestone actually implements. The domain modelling principles (separable schemas, no cross-schema foreign keys, provenance in `source`, vocabularies as data) remain as written in [DATABASE_DESIGN](DATABASE_DESIGN.md); this document describes who owns the databases, how their schemas come into being, and how other systems reach them.
+The database foundation is a Rust service and administration CLI under `source/backend/database` that is being built to become the exclusive application access boundary for Mzizi's PostgreSQL databases. This document describes the target shape and what the foundation milestone actually implements. The domain modelling principles (separable schemas, reviewed same-database cross-schema foreign keys, provenance in `source`, vocabularies as data) are described in [DATABASE_DESIGN](DATABASE_DESIGN.md); this document describes who owns the databases, how their schemas come into being, and how other systems reach them.
 
 ## Status
 

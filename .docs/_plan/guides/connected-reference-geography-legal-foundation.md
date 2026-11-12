@@ -10,12 +10,12 @@ extra: {status: ready_for_detailed_design, recorded_on: 2026-11-11}
 
 ## Status, precedence and scope
 
-> **Updated 12 November 2026:** Reference and Geography have approved authored Dryv contracts. Their owning schema-review documents and contract files supersede candidate table inventories and open design options in this guide. This remains useful for broader integration principles; statements about candidate country/jurisdiction tables, Geography unit models and legal-basis storage are not the current contract. Geography is not generation-ready pending PostGIS support; Reference has no executable Legal-basis bridge yet.
+> **Updated 12 November 2026:** The user accepted Reference's existing inventory and Geography's nine table names and responsibilities. Detailed field designs, additional Reference tables and classification values remain under review. Their owning schema-review documents supersede older candidate tables and open design options in this guide. Geography is not generation-ready pending PostGIS support; Reference has no executable Legal-basis bridge yet.
 
 
 The user accepted the architectural direction discussed on 10–11 November and requested that task 03 and the improvement documents be made ready for local-agent work. This records that direction and the research behind it. Candidate table names below are design inputs, not completed SQL specifications or a claim of deployed capability. Task 03 owns the detailed foundation design; task 04 owns completion of downstream legal/governance/electoral/political/statistical schemas. This documentation instruction does not independently authorize production migrations, broad domain implementation or infrastructure changes.
 
-For task 03, this document supersedes older proposals to retain an overloaded `reference.jurisdictions`, treat `world` as a legal jurisdiction, preserve legacy database IDs, use one universal geographic parent tree, or make all statistical meaning generic. The rewrite target remains the disposable `mzizi_new`; verify the actual connected database before destructive work. Existing S3 evidence remains protected. Historical inventories remain useful research material but are not current schema specifications.
+For task 03, the accepted direction replaces the overloaded former country-scope catalogue with modern country identities in `reference.countries`; `world` is not a country, and geography does not require country membership for cross-border or historical records. The design also rejects one universal geographic parent tree and generic statistical meaning. Historical inventories remain research context, not current schema specifications.
 
 ## 1. User decisions and modeling principles
 
@@ -23,7 +23,7 @@ For task 03, this document supersedes older proposals to retain an overloaded `r
 2. Country identity, legal authority, territorial applicability, physical location, service coverage and vocabulary applicability are different facts. A county's legal powers do not make it another top-level country context.
 3. Global vocabulary has explicit global applicability, without a fictional `world` country or legal authority. Countries are not compulsory owners of languages, regional organizations, historical polities or cross-border areas.
 4. Reference defines meanings; domains own actual entities and rules; backend capabilities interpret supported queries; UI presents available answers with their context and evidence.
-5. Direct domain-to-geography and domain-to-legal FKs remain essential. Reference describes the kind of relationship; it is not an intervening entity through which every relationship must pass.
+5. Domain records may reference Geography directly when both schemas are in Main. Legal associations follow the accepted ownership boundary: Reference alone may link to Legal and mediate domain relationships. The authored Reference contract still has an unresolved `provision_id` target; this is a design requirement, not an implemented FK.
 6. Historical validity and when Mzizi learned/revised a claim are distinct. Evidence and uncertainty qualify the assertion, boundary or relationship concerned, not an indiscriminate confidence flag on the whole entity.
 7. No blanket `is_current`, validity/precision columns or soft deletion. Justify dates and lifecycle per table, use meaningful names, and preserve legally/historically relevant records.
 

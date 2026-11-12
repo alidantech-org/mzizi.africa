@@ -8,7 +8,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 # governance — Phase 01
 
-> **Geography/Reference alignment — 12 November 2026:** This schema remains a proposal. Its inherited `geography.boundaries`, `geography.countries`, `geography.legal_bases`, `reference.jurisdictions` or `reference.legal_bases` references (where present) predate the approved contracts. Re-review any such field against [Geography](geography.md) and [Reference](reference.md) before approving this schema; do not treat the old target names or links as current or implemented.
+> **Geography/Reference alignment — 12 November 2026:** This schema remains a proposal. Its inherited geography boundary/country/legal-basis targets and former Reference country-scope targets (where present) predate the accepted foundations. Re-review any such field against [Geography](geography.md) and [Reference](reference.md) before approving this schema; do not treat the old target names or links as current or implemented.
 
 
 > **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
@@ -19,7 +19,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 Government structures, institutional mandates, offices, officeholders, appointments, tenure and responsibility.
 
-Government structures and institutions' mandates belong here, together with offices, officeholders, appointments, acting roles, tenure and responsibility. Institutional and person identities link through Official; locations and jurisdiction link through Geography; legal foundations link through Reference. No Governance record links directly to Legal.
+Government structures and institutions' mandates belong here, together with offices, officeholders, appointments, acting roles, tenure and responsibility. Institutional and person identities link through Official; locations and territorial scope link through Geography; legal foundations link through Reference. No Governance record links directly to Legal.
 
 Keep office definitions independent of current holders, and distinguish an appointment, election declaration, commencement of tenure, vacancy and departure. The retained office/mandate dictionaries replace `provision_id` with proposed `legal_basis_id` to Reference. A countrywide institution points to the whole-country geographic unit. Official identity, a physical address or a pattern expectation alone cannot establish authority or an incumbent.
 

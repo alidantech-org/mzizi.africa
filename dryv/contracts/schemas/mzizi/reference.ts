@@ -1,12 +1,11 @@
 /**
  * Schema: reference | Database: mzizi
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/reference.md
- * Review: detailed Reference contracts proposed; not approved for migration or deployment.
+ * Review: accepted foundation inventory; current detailed field contract requires reconciliation.
  * Countries are canonical modern-country identities; spatial units belong to Geography.
  * No fictional world country or mandatory country membership is implied.
- * External Geography, Filesystem and Legal FK targets remain open until those contracts exist.
- * Target Geography relation: geography.units.country_id -> reference.countries.id; Geography remains a shell here.
- * SQL-level checks, partial indexes and transitive cycle constraints require pack verification.
+ * Geography, Filesystem and Legal relations must be verified through same-database composition and pack generation.
+ * SQL-level scheme checks, composite FKs, partial indexes and transitive cycle constraints are unsupported by the current pack.
  */
 import * as dryv from "@dryvcode/author";
 
@@ -46,6 +45,7 @@ export const vocabularyProperties = reference.properties({
 });
 
 /*---------------- Proposed Reference table contracts ----------------*/
+// biome-ignore lint/suspicious/noExplicitAny: supports forward references across the schema definitions below.
 export const referenceSchemas: Record<string, any> = {};
 
 export const Countries = reference.schemas({
@@ -257,7 +257,10 @@ export const PatternBindings = reference.schemas({
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
-      /** Optional for global applicability; when set, Geography must resolve this unit to a country. */
+      /**
+       * Proposed FK target is geography.units.feature_id. Keep as typed ID until the database app
+       * composes Geography and the country/unit consistency rule is enforceable.
+       */
       unit_id: dryv.field(sharedProperties.Id).optional().nullable(),
       /** Optional country scope; a country-wide geographic scope also identifies its country unit. */
       country_id: dryv
@@ -339,6 +342,77 @@ export const PatternDependencies = reference.schemas({
 /** Acyclicity beyond self-reference requires a transaction-level database constraint or operation. */
 /*---------------- End reference.pattern_dependencies ----------------*/
 referenceSchemas.PatternDependency = PatternDependencies.PatternDependency;
+
+/*---------------- Proposed Reference classification extension ----------------*/
+/**
+ * Proposal-only group. It is not composed into contracts/apps/database/index.ts and must not be
+ * included in generation until the owner approves the extension and the SQL pack supports its
+ * relation, time and uniqueness constraints.
+ */
+export const referenceProposals = dryv
+  .group({ name: "reference-proposals" })
+  .description("Unapproved Reference schema extensions for review; excluded from database applications.")
+  .facets({ storage: { namespace: "reference" } });
+
+export const referenceProposalEnums = referenceProposals.properties({
+  ValueRelationKind: dryv.property.enum({
+    BroaderThan: "broader_than",
+    NarrowerThan: "narrower_than",
+    RelatedTo: "related_to",
+  }),
+});
+
+export const referenceProposalExpressions = referenceProposals.expressions({
+  ValueRelationMustNotBeSelfReferential: dryv.expression.notEqual(
+    dryv.expression.context("value", "source_value_id"),
+    dryv.expression.context("value", "target_value_id"),
+  ),
+  ValueRelationWindowMustBeOrdered: dryv.expression.or(
+    dryv.expression.equal(dryv.expression.context("value", "valid_from"), dryv.expression.value(null)),
+    dryv.expression.equal(dryv.expression.context("value", "valid_until"), dryv.expression.value(null)),
+    dryv.expression.lessThan(dryv.expression.context("value", "valid_from"), dryv.expression.context("value", "valid_until")),
+  ),
+});
+
+export const ProposedValueRelations = referenceProposals.schemas({
+  ValueRelation: dryv
+    .schema({
+      id: dryv.field(sharedProperties.Id),
+      source_value_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      target_value_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      relation_kind: dryv.field(referenceProposalEnums.ValueRelationKind),
+      valid_from: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+      valid_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+    })
+    .invariant("ValueRelationMustNotBeSelfReferential", referenceProposalExpressions.ValueRelationMustNotBeSelfReferential)
+    .invariant("ValueRelationWindowMustBeOrdered", referenceProposalExpressions.ValueRelationWindowMustBeOrdered)
+    .description(
+      "Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.",
+    )
+    .role("entity")
+    .facets({
+      storage: dryv
+        .storage("value_relations")
+        .primaryKey("id")
+        .indexes(
+          { name: "idx_value_relations_source_edge", fields: ["source_value_id", "relation_kind", "valid_from"] },
+          { name: "idx_value_relations_target", fields: ["target_value_id", "relation_kind"] },
+        ),
+    }),
+});
+/** Proposal only: temporal edge uniqueness needs a PostgreSQL exclusion constraint, not yet supported by Dryv. */
+/** Do not add this group to database app composition without explicit approval and that persistence capability. */
+export const proposedReferenceSchemas = { ValueRelation: ProposedValueRelations.ValueRelation };
 
 /** Compatibility surface consumed by the existing database read operations. */
 export const vocabularySchemas = {

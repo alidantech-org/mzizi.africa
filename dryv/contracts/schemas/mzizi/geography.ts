@@ -3,11 +3,11 @@
  * Database: mzizi
  * Responsibility: Canonical geographic identities, territorial specializations and spatial facts.
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/geography.md
- * Review: approved — 2026-11-12
- * Approved definitions: features, units, places, names, identifiers, geometries, relationships, changes, datasets.
+ * Review: approved table inventory; proposed classification field alignment — 2026-11-12
+ * Approved tables: features, units, places, names, identifiers, geometries, relationships, changes, datasets.
  * Approval record: .docs/decisions/DEC-MZIZI-REFERENCE-GEOGRAPHY-20261112.md
- * Generation: excluded until PostGIS types and spatial index semantics are supported by Dryv.
- * Open items: PostGIS geometry/geography, GiST indexing and Reference Legal-basis interface.
+ * Generation: excluded; this draft is not selected by the database application.
+ * Open items: scheme-aware Reference constraints, PostGIS geometry/indexes and cross-schema targets.
  */
 import * as dryv from "@dryvcode/author";
 
@@ -18,31 +18,6 @@ export const geography = dryv
   .group({ name: "geography" })
   .description("Canonical geographic identities, territorial units, physical places and spatial representations.")
   .facets({ storage: { namespace: "geography" } });
-
-export const geographyEnums = geography.properties({
-  FeatureKind: dryv.property.enum({ Natural: "natural", HumanMade: "human_made", Administrative: "administrative", Unknown: "unknown" }),
-  GeometryKind: dryv.property.enum({
-    Point: "point",
-    Line: "line",
-    Polygon: "polygon",
-    MultiPolygon: "multipolygon",
-    RasterFootprint: "raster_footprint",
-  }),
-  DatasetKind: dryv.property.enum({
-    Vector: "vector",
-    Raster: "raster",
-    Elevation: "elevation",
-    Climate: "climate",
-    Hydrology: "hydrology",
-    Soil: "soil",
-    Geology: "geology",
-    Ecology: "ecology",
-    LandCover: "land_cover",
-    Imagery: "imagery",
-    Historical: "historical",
-    Derived: "derived",
-  }),
-});
 
 export const geographyExpressions = geography.expressions({
   EffectiveWindowMustBeOrdered: dryv.expression.or(
@@ -69,7 +44,13 @@ export const Features = geography.schemas({
     .schema({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
-      feature_kind: dryv.field(geographyEnums.FeatureKind),
+      /** Expected scheme: geography.feature_type; scheme-specific integrity is not yet enforceable. */
+      feature_type_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       created_at: dryv.field(sharedProperties.Instant),
     })
     .description("The sole canonical identity for each geographic entity, independent of type, country or geometry.")
@@ -78,7 +59,7 @@ export const Features = geography.schemas({
       storage: dryv
         .storage("features")
         .primaryKey("id")
-        .indexes({ name: "uq_features_code", fields: ["code"], unique: true }, { name: "idx_features_kind", fields: ["feature_kind"] }),
+        .indexes({ name: "uq_features_code", fields: ["code"], unique: true }, { name: "idx_features_type", fields: ["feature_type_id"] }),
     }),
 });
 geographySchemas.Features = Features.Features;
@@ -90,12 +71,6 @@ export const Units = geography.schemas({
       feature_id: dryv.field(sharedProperties.Id).relation({
         target: (): dryv.SchemaFieldRef<unknown> => geographySchemas.Features.field("id"),
         cardinality: dryv.relation.oneToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      unit_kind_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-        cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
@@ -121,7 +96,10 @@ export const Units = geography.schemas({
       storage: dryv
         .storage("units")
         .primaryKey("feature_id")
-        .indexes({ name: "idx_units_kind", fields: ["unit_kind_id"] }, { name: "idx_units_country", fields: ["country_id"] }),
+        .indexes(
+          { name: "idx_units_country", fields: ["country_id"] },
+          { name: "idx_units_validity", fields: ["valid_from", "valid_until"] },
+        ),
     }),
 });
 geographySchemas.Units = Units.Units;
@@ -136,22 +114,11 @@ export const Places = geography.schemas({
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
-      place_kind_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
       is_inhabited: dryv.field(sharedProperties.Flag).optional().nullable(),
     })
     .description("Optional physical-place attributes for a feature; does not create a separate identity.")
     .role("entity")
-    .facets({
-      storage: dryv
-        .storage("places")
-        .primaryKey("feature_id")
-        .indexes({ name: "idx_places_kind", fields: ["place_kind_id"] }),
-    }),
+    .facets({ storage: dryv.storage("places").primaryKey("feature_id") }),
 });
 geographySchemas.Places = Places.Places;
 /*---------------- End geography.places ----------------*/
@@ -207,7 +174,12 @@ export const Identifiers = geography.schemas({
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
-      scheme: dryv.field(sharedProperties.NonEmptyString255),
+      identifier_scheme_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       namespace: dryv.field(sharedProperties.NonEmptyString255).optional().nullable(),
       external_id: dryv.field(sharedProperties.NonEmptyString500),
       source_ref_id: dryv.field(sharedProperties.Id).optional().nullable(),
@@ -219,7 +191,7 @@ export const Identifiers = geography.schemas({
         .storage("identifiers")
         .primaryKey("id")
         .indexes(
-          { name: "uq_identifiers_external", fields: ["scheme", "namespace", "external_id"], unique: true },
+          { name: "uq_identifiers_external", fields: ["identifier_scheme_id", "namespace", "external_id"], unique: true },
           { name: "idx_identifiers_feature", fields: ["feature_id"] },
         ),
     }),
@@ -237,7 +209,13 @@ export const Geometries = geography.schemas({
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
-      geometry_kind: dryv.field(geographyEnums.GeometryKind),
+      /** Expected scheme: geography.geometry_role; geometry subtype comes from PostGIS storage. */
+      geometry_role_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       geometry: dryv.field(dryv.unknown()),
       srid: dryv.field(sharedProperties.PositiveInteger),
       valid_from: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
@@ -280,13 +258,20 @@ export const Relationships = geography.schemas({
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
+      /** Expected scheme: geography.relationship_type. */
       relationship_kind_id: dryv.field(sharedProperties.Id).relation({
         target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
-      system_code: dryv.field(sharedProperties.IdentityCode),
+      /** Expected scheme: geography.relationship_system. */
+      system_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       valid_from: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
       valid_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
       source_ref_id: dryv.field(sharedProperties.Id).optional().nullable(),
@@ -371,7 +356,20 @@ export const Datasets = geography.schemas({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
       title: dryv.field(sharedProperties.NonEmptyString255),
-      dataset_kind: dryv.field(geographyEnums.DatasetKind),
+      /** Expected scheme: geography.dataset_subject. */
+      subject_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      /** Expected scheme: geography.dataset_representation. */
+      representation_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       format: dryv.field(sharedProperties.NonEmptyString100),
       crs: dryv.field(sharedProperties.NonEmptyString100).optional().nullable(),
       resolution: dryv.field(sharedProperties.Number).optional().nullable(),
@@ -410,7 +408,8 @@ export const Datasets = geography.schemas({
         .primaryKey("id")
         .indexes(
           { name: "uq_datasets_code", fields: ["code"], unique: true },
-          { name: "idx_datasets_kind", fields: ["dataset_kind"] },
+          { name: "idx_datasets_subject", fields: ["subject_id"] },
+          { name: "idx_datasets_representation", fields: ["representation_id"] },
           { name: "idx_datasets_coverage", fields: ["coverage_feature_id"] },
         ),
     }),

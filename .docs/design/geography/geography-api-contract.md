@@ -4,7 +4,7 @@
 
 # Mzizi geography API contract for the mobile map
 
-> **Status — proposed client contract, not implemented runtime.** This endpoint/response proposal is separate from the approved data model. The current schema is documented in [Geography — Phase 01](../../_plan/schema-redesign/mzizi-db/phase-01/geography.md). Its identity is `geography.features`; countries are identified in Reference and spatial scope resolves through Geography units. This document does not prove that the endpoints, GeoJSON geometry, or PostGIS queries exist.
+> **Status — proposed client contract, not implemented runtime.** This endpoint/response proposal is separate from the accepted Geography table inventory; detailed fields remain under review. The current schema proposal is documented in [Geography — Phase 01](../../_plan/schema-redesign/mzizi-db/phase-01/geography.md). Its identity is `geography.features`; countries are identified in Reference and spatial scope resolves through Geography units. This document does not prove that the endpoints, GeoJSON geometry, or PostGIS queries exist.
 
 
 The Flutter client does not own administrative geography. Its IDs, hierarchy,

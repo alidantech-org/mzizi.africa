@@ -31,7 +31,7 @@ The user wants a small set of useful cross-cutting documents alongside detailed 
 
 - `develop` only. Never change `main`, create a branch or worktree, or change `.github/**` without permission.
 - No automatic Taskcode task group or tasks. The user will specify the sequence and content one task at a time when ready.
-- No present permission to change database naming rules, Dryv schemas, API, migrations, S3 config, or deployed data. In particular the user **rejects** the old "no cross-schema foreign keys" rule, but that rule must only be replaced during a separately approved coordinated migration.
+- Scope and approvals are recorded in the active schema redesign catalogue and owning decisions. Reviewed same-database cross-schema foreign keys are allowed; cross-database foreign keys remain prohibited. Contract work does not by itself authorize migrations, S3 changes or deployed data changes.
 - Preserve original evidence, dates, corrections, provenance and the user's four acquisition classes throughout all designs.
 - A recommendation is not a user decision. The procurement model, generic FK mechanism, exact schema compression, contact ownership, pipeline deployment model, and numerous other items remain open.
 - Consult `AGENTS.md`, `.docs/docs/DOMAINS.md`, `.docs/design/architecture/DATA_LIFECYCLE.md`, `.docs/docs/ARCHITECTURE.md`, current contracts and engine code before planning a specific implementation.
