@@ -36,7 +36,7 @@ There is no cross-database foreign key or distributed transaction spanning Opera
 
 ## Approved inventory — 12 November 2026
 
-The user approved the complete 45-table Operational design. The owning documents below contain the accepted table and column inventories and their implementation boundaries. See [DEC-OPERATIONAL-DATABASE-20261112](../../../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the formal decision.
+The user approved the complete 45-table Operational design. The owning documents below contain the accepted table and column inventories and their implementation boundaries. See [DEC-OPERATIONAL-DATABASE-20261112](../../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the formal decision.
 
 | Schema | Tables | Approved responsibility |
 |---|---:|---|
