@@ -1,0 +1,37 @@
+version: dryv.pack/v1alpha1
+key: mzizi.rust-sql
+source: templates
+
+info:
+  title: Mzizi SQL releases
+  version: 0.1.0
+  description: PostgreSQL DDL for the database foundation, one migration stream per target database (migrations/main, migrations/operations), emitted as per-entity fragments that the mzizi-db-cli assembles into immutable checksummed releases. Consumes the database authoring model; activation waits on the Dryv multi-authoring enhancement (.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md).
+  purpose: persistence
+  languages: [sql]
+  tags: [sql, postgresql, migrations, database]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+# Boundary rules this pack must enforce when it runs:
+# - every storage namespace must appear in the assignments input (contracts/apps/database/persistence.ts);
+#   an unassigned namespace fails generation;
+# - a relation whose source and target namespaces map to different databases fails generation
+#   (cross-database relationships are typed identifiers, never foreign keys);
+# - output is deterministic; the CLI records the contract digest in each release checksum.
+selections:
+  entities:
+    subject: schema
+    filter:
+      all: { role: entity }
+    scope: each
+
+templates:
+  table:
+    $ref: '#/selections/entities'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - fragments
+      symbol: $(subject.name.snake)

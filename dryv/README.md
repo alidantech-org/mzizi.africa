@@ -5,11 +5,11 @@ TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv co
 ## Layout
 
 - `../dryv.yaml`: the Dryv project file. It lives at the repository root because generation destinations may not leave the project root. It pins the engine (`6dba3100f02ada9dfd061e5100112c1d01760e3b`) and the packs repository (`7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a`).
-- `contracts/index.ts`: composes the application from groups.
-- `contracts/foundation/shared`: provenance, valid time, record time, verification, business code, transport and failures.
-- `contracts/foundation/reference`: jurisdictions and jurisdiction-scoped classification records.
-- `contracts/foundation/geography`: the pilot domain.
-- `packs/type-files`, `packs/use-cases`: project packs that scaffold shared types and per-operation use cases.
+- `contracts/schemas/`: the new design — one file per database schema (`shared.ts` base, `auth.ts`, `vocabulary.ts`), shared by every app.
+- `contracts/apps/database/`: the database foundation app (groups, named operations, schema-to-database catalogue), compiled by the `database` authoring source for the Rust packs.
+- `contracts/index.ts`: the legacy pre-foundation application; its groups moved to `contracts/_archive/{foundation,domains}` and keep generating the existing NestJS API until migration to the new design.
+- `packs/type-files`, `packs/use-cases`: project packs that scaffold shared types and per-operation use cases for the NestJS API.
+- `packs/rust-models`, `packs/rust-sql`: project packs for the Rust database foundation (generated models crate and per-database SQL releases); activation waits on the Dryv multi-authoring enhancement (`.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md`).
 
 Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/types/<group>/...`, `src/app.module.ts` and `src/database/`. Do not edit managed files; files marked "Scaffolded by Dryv once" belong to the project.
 

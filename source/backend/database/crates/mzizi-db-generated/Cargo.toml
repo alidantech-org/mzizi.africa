@@ -1,0 +1,14 @@
+# Output crate of the dryv pack mzizi.rust-models. src/models/ is generated; do not hand-edit
+# generated files. This manifest and src/lib.rs are scaffolded once and owned by the project.
+[package]
+name = "mzizi-db-generated"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde.workspace = true
+sqlx.workspace = true
+uuid.workspace = true
+time.workspace = true

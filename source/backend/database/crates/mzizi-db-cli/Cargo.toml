@@ -1,0 +1,22 @@
+# The administration binary: the only process that loads administrative credentials.
+[package]
+name = "mzizi-db-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "mzizi-db"
+path = "src/main.rs"
+
+[dependencies]
+mzizi-db-core = { path = "../mzizi-db-core" }
+tokio.workspace = true
+sqlx.workspace = true
+clap.workspace = true
+anyhow.workspace = true
+sha2.workspace = true
+hex.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true

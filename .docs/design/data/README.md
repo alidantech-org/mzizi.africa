@@ -9,6 +9,7 @@ type: documentation
 Canonical data, evidence, identity, file metadata and place design. These documents are supporting detail; the eight root documents explain overall system intent.
 
 - [DATABASE_DESIGN](DATABASE_DESIGN.md)
+- [DATABASE_FOUNDATION](DATABASE_FOUNDATION.md)
 - [FILESYSTEM_SCHEMA](FILESYSTEM_SCHEMA.md)
 - [SOURCING_DESIGN](SOURCING_DESIGN.md)
 - [PEOPLE_DESIGN](PEOPLE_DESIGN.md)

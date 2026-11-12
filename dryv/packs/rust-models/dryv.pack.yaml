@@ -1,0 +1,34 @@
+version: dryv.pack/v1alpha1
+key: mzizi.rust-models
+source: templates
+
+info:
+  title: Mzizi Rust models
+  version: 0.1.0
+  description: Rust structs and operation request/response types for the database foundation, emitted into the mzizi-db-generated crate. Consumes the database authoring model (contracts/apps/database); activation waits on the Dryv multi-authoring enhancement (.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md).
+  purpose: types
+  languages: [rust]
+  tags: [rust, models, database]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+selections:
+  entities:
+    subject: schema
+    filter:
+      all: { role: entity }
+    scope: each
+
+# crates/mzizi-db-generated/src/models/<entity>.rs — one struct per stored entity.
+# Skeleton: the type mapping is intentionally minimal until the pack can actually run
+# against the database IR; unsupported property kinds must fail generation, not guess.
+templates:
+  model:
+    $ref: '#/selections/entities'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - models
+      symbol: $(subject.name.pascal)

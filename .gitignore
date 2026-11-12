@@ -18,3 +18,4 @@ knbs-ca-bundle.pem
 .ruff_cache/
 .mypy_cache/
 .next/
+target/

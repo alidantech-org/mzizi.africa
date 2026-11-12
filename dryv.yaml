@@ -10,6 +10,14 @@ sources:
       type: typescript
       path: dryv/contracts
       entrypoint: index.ts
+    # Database foundation model, compiled separately for the Rust packs. Activating packs
+    # against this source needs the Dryv multi-authoring enhancement
+    # (.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md); until it lands only `model`
+    # is active and the Rust pack activations below stay commented out.
+    database:
+      type: typescript
+      path: dryv/contracts
+      entrypoint: apps/database/index.ts
   packs:
     official:
       repository: https://github.com/dryvcode/packs
@@ -42,6 +50,7 @@ actions:
 destinations:
   ir:
     compiled: { path: dryv/.dryv/ir/dryv.ir.yaml }
+    database: { path: dryv/.dryv/ir/dryv.database.ir.yaml }
   # Injected NestJS modules: source/backend/api/src/modules/<group>/...
   modules:
     path: source/backend/api/src/modules
@@ -60,6 +69,11 @@ destinations:
     path: source/backend/api/src/types
     imports: { path: source/backend/api/src, prefix: "#/" }
     choose: { js.package_manager: bun }
+  # Rust database foundation outputs (packs activate once Dryv supports per-pack authoring).
+  rust-generated:
+    path: source/backend/database/crates/mzizi-db-generated/src
+  rust-migrations:
+    path: source/backend/database/migrations
 
 authoring:
   source: { $ref: "#/sources/authoring/model" }
@@ -113,6 +127,22 @@ packs:
       schema.examples: { $ref: "#/packs/dtos" }
       operation.implementation: { $ref: "#/packs/use-cases" }
       operation.usecase: { $ref: "#/packs/use-cases" }
+
+# Rust database foundation destinations and pack activations. The destinations are declared now;
+# the activations below are commented out until the Dryv multi-authoring enhancement lands,
+# because today every pack consumes the single project-level authoring IR (contracts/index.ts),
+# not the database model they need.
+#
+#   rust-models:
+#     source: { $ref: "#/sources/packs/project", path: rust-models }
+#     authoring: { $ref: "#/sources/authoring/database" }
+#     destination: { $ref: "#/destinations/rust-generated" }
+#     inputs: { assignments: dryv/contracts/apps/database/persistence.ts }
+#   rust-sql:
+#     source: { $ref: "#/sources/packs/project", path: rust-sql }
+#     authoring: { $ref: "#/sources/authoring/database" }
+#     destination: { $ref: "#/destinations/rust-migrations" }
+#     inputs: { assignments: dryv/contracts/apps/database/persistence.ts }
 
 build:
   cache: reuse
