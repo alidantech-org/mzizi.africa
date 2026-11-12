@@ -3,7 +3,7 @@ id: DOC-MZIZI-SCHEMA-AUTH-20261111
 name: auth schema — operational
 type: schema-review
 tags: [database, schema-redesign, operations, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Operations, recorded_on: 2026-11-11}
+extra: {status: accepted, approval: approved, implementation: dryv_contracts_authorized, database: Operations, approved_on: 2026-11-12, approval_record: DEC-OPERATIONAL-DATABASE-20261112, migrations: not_authorized, deployment: not_authorized}
 ---
 
 # auth — Operational
@@ -408,3 +408,61 @@ Return the completed design for user review. No migrations, schema/contract/code
 Geographic or cultural sensitivity in biodiversity and heritage may require scoped access, but contextual place proximity must not be treated as authorization. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>
+
+
+## 2026-11-12 — Operational design accepted and approved
+
+**Approval status:** ACCEPTED AND APPROVED by the user on 12 November 2026. **Implementation status:** Dryv contract authoring is authorized on `develop` for this schema. See [DEC-OPERATIONAL-DATABASE-20261112](../../../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the complete approval record and cross-schema rules.
+
+This approved inventory supersedes earlier candidate-table lists, draft definitions and statements in this document that the design is not reviewed, not approved or awaiting user approval. Historical analysis remains context only. The table names and column names below are the approved baseline; implementation must define their precise types, nullability, defaults, keys, relationships, constraints and indexes under the repository's contract-authoring rules. The author may resolve those engineering details without requesting individual approval, but must not silently add, remove or rename approved tables or columns.
+
+## auth — 11 approved tables
+
+**Responsibility:** Accounts, login identities, roles, permissions, memberships, invitations, explicit scopes, assignments and bounded delegation.
+
+### `auth.accounts`
+
+`id`, `actor_kind`, `display_name`, `status`, `person_ref_id`, `created_at`, `disabled_at`, `last_authenticated_at`
+
+### `auth.login_identities`
+
+`id`, `account_id`, `issuer`, `subject`, `linked_at`, `unlinked_at`, `last_authenticated_at`
+
+### `auth.roles`
+
+`id`, `code`, `title`, `description`, `managing_institution_ref_id`, `protected`, `policy_version`, `created_at`, `retired_at`
+
+### `auth.permissions`
+
+`id`, `code`, `resource_type`, `action`, `field_group`, `description`, `is_active`
+
+### `auth.role_permissions`
+
+`role_id`, `permission_id`, `granted_by`, `granted_at`
+
+### `auth.memberships`
+
+`id`, `account_id`, `institution_ref_id`, `status`, `verified_by`, `verified_at`, `starts_at`, `ends_at`, `revoked_by`, `revoked_at`
+
+### `auth.invitations`
+
+`id`, `institution_ref_id`, `invited_by`, `intended_email`, `token_digest`, `expires_at`, `accepted_account_id`, `accepted_at`, `revoked_at`, `created_at`
+
+### `auth.scopes`
+
+`id`, `is_global`, `institution_ref_id`, `jurisdiction_ref_id`, `geographic_unit_ref_id`, `dataset_ref_id`, `field_group`, `include_descendants`, `scope_hash`, `created_at`
+
+### `auth.role_assignments`
+
+`id`, `account_id`, `role_id`, `scope_id`, `membership_id`, `delegation_id`, `granted_by`, `starts_at`, `expires_at`, `revoked_by`, `revoked_at`, `revocation_reason`, `created_at`
+
+### `auth.delegations`
+
+`id`, `delegator_account_id`, `delegate_account_id`, `scope_id`, `starts_at`, `expires_at`, `revoked_by`, `revoked_at`, `created_at`
+
+### `auth.delegation_roles`
+
+`delegation_id`, `role_id`
+
+
+**Boundary:** This approval authorizes Operational Dryv contracts only. It does not authorize migrations, database provisioning, seed/data migration or deployment. It does not approve any Main `mzizi` Phase 01 schema; those will be reviewed individually later. Phase 02 remains deferred.
