@@ -3,12 +3,12 @@ id: DOC-DB-SCHEMA-REVIEW-20261111
 name: Schema redesign phased catalogue
 type: documentation
 tags: [improvements, planning, schemas, review, approval]
-extra: {status: planning_only, approval_required: true, implementation_authorized: false}
+extra: {status: operational_approved_main_phase_01_review_pending, operational_implementation_authorized: true, main_phase_01_approval_required: true, phase_02_deferred: true, migrations_authorized: false, deployment_authorized: false}
 ---
 
 # Schema redesign catalogue
 
-The 12 November 2026 handoff organizes the design documents into Operational, Phase 01 and Phase 02. Schema assignments and responsibilities below are agreed; detailed table/column proposals remain unapproved unless a separate explicit decision says otherwise. This is a documentation-only reorganization, not an SQL, application, data or deployment change.
+The 12 November 2026 handoff organizes the design documents into Operational, Phase 01 and Phase 02. The seven Operational schemas and their 45-table/column inventory are now explicitly accepted and approved under [DEC-OPERATIONAL-DATABASE-20261112](../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md); Dryv contract authoring is authorized. Main Phase 01 schemas remain subject to individual user review and approval. Phase 02 remains deferred. This approval does not authorize migrations, data changes or deployment.
 
 > **Every schema not assigned to Phase 01 or Operational belongs in Phase 02 now.**
 
@@ -74,10 +74,10 @@ All **35 original schema documents** map below to **33 destination schema docume
 
 ## Preservation and review rules
 
-The [contract-authoring review plan](contract-authoring.md) and [proposed authoring agreement](../../rules/schema-contract-authoring.md) describe how reviewed designs will become Dryv files under `dryv/contracts/schemas/{mzizi,operational}/`, sharing properties through `_shared.ts`. These conventions await agreement; a scope-approved file or an existing draft does not approve its tables, fields, relations or indexes.
+The [contract-authoring plan](contract-authoring.md) and [schema-authoring rules](../../rules/schema-contract-authoring.md) govern implementation. The Operational inventory is approved and may now be authored in Dryv under `dryv/contracts/schemas/operational/`, sharing non-enum properties through `_shared.ts`. Main Phase 01 schemas remain unapproved until reviewed individually; existing drafts and scaffolding do not imply approval.
 
-The inherited 192 detailed table dictionaries are retained across the destinations. The Electoral commitment dictionary moves to Accountability and keeps its candidate relationship. Candidate Official contact/identifier names distinguish person and organization inputs. Geography/Governance legal-basis candidates now point to a proposed Reference bridge, while the direct-link history remains labeled as superseded. Pilot result capture and language classification candidates avoid requiring deferred Statistical/Linguistics schemas. These changes record the agreed responsibilities; they are not final column approval.
+The inherited 192 detailed table dictionaries are retained across the destinations. The Operational approval is limited to the 45-table inventory in its formal decision and owning documents. Main Phase 01 table dictionaries remain proposals until their schemas are reviewed one by one. The Electoral commitment dictionary remains under Accountability; Geography/Governance legal-basis candidates point to the proposed Reference bridge; Phase 02 remains deferred.
 
 For each retained table, review purpose, actual inventory, fields, keys, typed relationships, exact evidence path, acquisition method, temporal meaning, uncertainty, privacy, workload, growth, storage and partition assumptions. Record KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD (or justified MERGE / SPLIT) per field. Do not impose generic validity/precision/currentness/deletion columns without meaning. Use domain-specific dates and distinguish historical validity, retrieval, observation, workflow and publication time. Source verification/freshness is not simply a successful download. Recoverable draft deletion differs from canonical correction, real-world retirement and privacy erasure.
 
-Exact table/column choices, physical keys and indexes, legal bridge design, release semantics and civic-side durable publication idempotency remain under review. Detailed Phase 02 redesign is deferred. No schema/table approval is inferred from completing this reorganization, and existing databases and S3 artifacts remain protected. Publication boundaries are explained in [Operational](mzizi-operational-db/README.md#candidate-to-accepted-record).
+Operational table names and column inventories are approved; physical types, nullability, keys, indexes, and exact supported Dryv expressions are to be resolved during Operational contract authoring. Main Phase 01 table/column choices, legal bridge design, release semantics and civic-side durable publication idempotency remain under review. Detailed Phase 02 redesign is deferred. Existing databases and S3 artifacts remain protected. Publication boundaries are explained in [Operational](mzizi-operational-db/README.md#candidate-to-accepted-record).
