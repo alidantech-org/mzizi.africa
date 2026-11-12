@@ -34,6 +34,7 @@ const scalarProperties = shared.properties({
     .pattern({ match: ["^[a-f0-9]{64}$"] }),
   JsonText: dryv.property.string.json(),
   Instant: dryv.property.temporal.instant({ precision: "microsecond" }),
+  CalendarDate: dryv.property.temporal.date(),
   DateTime: dryv.property.temporal.datetime(),
   Number: dryv.property.number(),
   Integer: dryv.property.number.integer(),
