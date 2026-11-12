@@ -43,6 +43,11 @@ enum Command {
         #[arg(long, value_enum)]
         target: Target,
     },
+    /// Turn the generated schema snapshot into the immutable release stream (no database access).
+    Assemble {
+        #[arg(long, value_enum)]
+        target: Target,
+    },
     /// Plan: list pending releases and verify checksums without applying anything.
     Plan {
         #[arg(long, value_enum)]
@@ -81,6 +86,7 @@ async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
     match cli.command {
         Command::Status { target } => commands::status(target.into()).await,
+        Command::Assemble { target } => commands::assemble(target.into()).await,
         Command::Plan { target } => commands::plan(target.into()).await,
         Command::Migrate { target } => commands::migrate(target.into()).await,
         Command::Verify { target } => commands::verify(target.into()).await,

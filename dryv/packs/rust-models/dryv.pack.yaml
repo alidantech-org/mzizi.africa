@@ -4,8 +4,8 @@ source: templates
 
 info:
   title: Mzizi Rust models
-  version: 0.1.0
-  description: Rust structs and operation request/response types for the database foundation, emitted into the mzizi-db-generated crate. Consumes the database authoring model (contracts/apps/database); activation waits on the Dryv multi-authoring enhancement (.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md).
+  version: 0.2.0
+  description: One Rust struct per stored entity of the database foundation plus a deterministic models/mod.rs, emitted into the mzizi-db-generated crate. Consumes the `database` authoring source; field kinds without a Rust/PostgreSQL mapping abort generation.
   purpose: types
   languages: [rust]
   tags: [rust, models, database]
@@ -14,21 +14,41 @@ plugins:
   - name: jinja
     extensions: [.j2]
 
+inputs:
+  main_namespaces:
+    type: string[]
+    required: true
+    description: Storage namespaces of the `mzizi` database.
+  operations_namespaces:
+    type: string[]
+    required: true
+    description: Storage namespaces of the `mzizi_operations` database.
+
 selections:
   entities:
     subject: schema
     filter:
       all: { role: entity }
     scope: each
+  all-entities:
+    subject: schema
+    filter:
+      all: { role: entity }
+    scope: all
 
-# crates/mzizi-db-generated/src/models/<entity>.rs — one struct per stored entity.
-# Skeleton: the type mapping is intentionally minimal until the pack can actually run
-# against the database IR; unsupported property kinds must fail generation, not guess.
 templates:
   model:
     $ref: '#/selections/entities'
     output:
       name: $(subject.name.snake)
       path:
-        - models
+        - $(group.name.snake)
       symbol: $(subject.name.pascal)
+  index:
+    $ref: '#/selections/all-entities'
+  main:
+    $ref: '#/selections/all-entities'
+  operations:
+    $ref: '#/selections/all-entities'
+  contract:
+    $ref: '#/selections/all-entities'

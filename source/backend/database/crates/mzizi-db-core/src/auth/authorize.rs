@@ -22,7 +22,9 @@ pub async fn check_permission(
         JOIN auth.permissions p    ON p.id = rp.permission_id
         WHERE ra.account_id = $1
           AND p.code = $2
+          AND p.is_active
           AND ra.revoked_at IS NULL
+          AND (ra.starts_at IS NULL OR ra.starts_at <= now())
           AND (ra.expires_at IS NULL OR ra.expires_at > now())
         LIMIT 1
         "#,

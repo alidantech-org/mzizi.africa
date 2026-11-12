@@ -258,7 +258,7 @@ A local market price belongs to Economy; an official consumer/producer price ind
 
 ## 8. Geographic responsibilities
 
-Markets and extraction/production sites link to geographic places and areas; trade routes may reference Geography/Civic networks. Price context must distinguish market location from product origin, seller jurisdiction and consumer area.
+Markets and extraction/production sites link to geographic places and areas; trade routes may reference Geography/Civic networks. Price context must distinguish market location from product origin, seller country and consumer area.
 
 ## 9. Temporal responsibilities
 

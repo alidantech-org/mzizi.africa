@@ -8,7 +8,7 @@ extra: {status: foundation_accepted_details_under_review, approval: inventory_on
 
 # Reference — Phase 01
 
-> **FOUNDATION INVENTORY ACCEPTED — 12 November 2026; detailed field design remains under review.** The nine-table Reference foundation is authored in [`reference.ts`](../../../../../dryv/contracts/schemas/mzizi/reference.ts) and its base `reference` group is included through the `vocabulary` compatibility export in the database foundation application. The current field definitions are not a blanket approval of proposed semantics, and the separate `referenceProposals` group is not composed. This does not claim successful Rust SQL generation, migration, live database change, or deployment.
+> **FOUNDATION INVENTORY ACCEPTED — 12 November 2026; detailed field design remains under review.** Reference tables, including typed Legal mediation, are authored in [`reference.ts`](../../../../../dryv/contracts/schemas/mzizi/reference.ts). The base `reference` group is included through the `vocabulary` compatibility export in the active database application; the `referenceLegal` registration group and `referenceProposals` remain outside it. Main review composition passes TypeScript, Dryv doctor and compile; this does not claim faithful Rust SQL generation, migration, live database change, or deployment.
 
 [Phase 01 index](README.md) · [Schema catalogue](../../README.md)
 
@@ -18,7 +18,7 @@ Reference is the shared starting point for canonical modern-country identity, co
 
 `reference.countries` is the canonical modern-country catalogue. It does not contain a fictional `world` country and does not make country membership mandatory for global, historical or cross-border records. Geography owns territory and spatial facts: countrywide geographic scope resolves to that country's Geography unit where a domain record requires geographic scope. Do not confuse `reference.units` (measurement units) with `geography.units` (territorial units).
 
-Reference mediates Legal relationships for other domains. It is the only domain schema linking to Legal. The existing `reference.pattern_bindings.provision_id` remains an optional typed identifier intended by the proposal to refer to `legal.provision_versions`; its Legal target and semantics are unresolved and no FK is authored. Do not invent a proxy Legal model, remove the proposal silently, or introduce direct Legal FKs in Geography or other domains.
+Reference mediates Legal relationships for other domains. The review-only `reference.legal_basis_links` contract targets exact `legal.provision_versions`, Reference basis-role values and Source citations. Typed associations connect it to `geography.changes` and `official.entities`. The existing optional `reference.pattern_bindings.provision_id` remains a separate unresolved proposal field and is not silently redirected. Governance associations await approved target tables. Do not invent a proxy Legal model or add untyped `target_type`/`target_id` pointers.
 
 ## Accepted table inventory and current authored fields
 
@@ -30,8 +30,8 @@ Reference mediates Legal relationships for other domains. It is the only domain 
 | `reference.units` | `id`, `code`, `symbol`, `quantity`, `scale`, `offset`, `base_id?` | PK `id`; optional self-FK for base unit; unique `code`; base lookup index; positive-scale invariant. Measurement units only. |
 | `reference.topics` | `id`, `code`, `label`, `parent_id?` | PK `id`; optional self-FK; unique `code`; parent lookup index; no self-parent invariant. |
 | `reference.patterns` | `id`, `code`, `title` | PK `id`; unique `code`; stable reusable pattern identity. |
-| `reference.pattern_versions` | `id`, `pattern_id`, `edition`, `file_version_id`, `digest` | PK `id`; FK to patterns; unique pattern/edition; file-version lookup index. File version remains typed UUID until Filesystem authors its target. |
-| `reference.pattern_bindings` | `id`, `version_id`, `unit_id?`, `country_id?`, `provision_id?`, `effective_from`, `effective_until?` | PK `id`; FK to pattern version and optional country; indexes for version/scope/time, country, unit, provision and start date; ordered-window expression. `unit_id` is still a typed UUID; intended target is `geography.units.feature_id`, but that relation is inactive pending compatible app composition and enforceable country/unit integrity. |
+| `reference.pattern_versions` | `id`, `pattern_id`, `edition`, `file_version_id`, `digest` | PK `id`; FK to patterns; unique pattern/edition; file-version lookup index. `file_version_id` remains a typed UUID pending a supported cross-schema relation in the active application. |
+| `reference.pattern_bindings` | `id`, `version_id`, `unit_id?`, `country_id?`, `provision_id?`, `effective_from`, `effective_until?` | PK `id`; FK to pattern version and optional country; indexes for version/scope/time, country, unit, provision and start date; ordered-window expression. `unit_id` and `provision_id` remain typed UUIDs pending exact target and persistence review. |
 | `reference.pattern_dependencies` | `id`, `version_id`, `requires_id` | PK `id`; two FKs to pattern versions; unique pair and reverse lookup index; prevents self-dependency. Transitive acyclicity is not enforced by this contract. |
 
 Optional fields are nullable and optional in Dryv input. Scalar profiles come from `_shared.ts`; `LabelKind` is a closed technical enum. Declared relations use restrictive delete/update behavior. This table describes the current authored base contract, not final approval of every physical constraint. Proposed changes and dispositions are in the [classification architecture plan](reference-geography-classification.md).
@@ -42,7 +42,7 @@ The current contract contains no taxonomy edges between classification values. [
 
 ## Relationships and known gaps
 
-The authored `reference.countries` target is available to Geography: `geography.units.country_id` may refer to country identity, while the spatial territory remains a Geography feature/unit. `pattern_bindings.unit_id` has an intended target in the Geography contract, but the FK is not authored because country/unit compatibility cannot be verified or enforced in the current composed database app and pack. `pattern_versions.file_version_id` has no authored Filesystem relation. `pattern_bindings.provision_id` has no Legal FK until the Reference-mediated Legal interface is resolved. Country/unit compatibility for scoped bindings and uniqueness of effective scope are not encoded.
+The review-only Main entrypoint resolves 100 typed relation fields across Reference, Geography, Filesystem, Source, Legal, Official and Reference-Legal schemas. The active database application still composes only its existing operational schemas and Reference vocabulary; it does not activate these Main domains. Cross-database Operations identifiers remain application-validated external references. Country/unit compatibility for scoped bindings and uniqueness of effective scope are not encoded.
 
 The current Dryv contract uses a SHA-256 digest for pattern version content and a separate typed file-version identifier; Engine owns execution. Pattern dependency cycles beyond direct self-reference require a database or named-operation check. Nullable-scope uniqueness, effective interval exclusion, and a native date-range representation have not been verified through the selected database pack. These semantics must not be treated as enforced merely because TypeScript compiles.
 

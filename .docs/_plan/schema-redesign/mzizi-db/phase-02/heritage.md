@@ -245,7 +245,7 @@ Heritage owns artifact identity and physical custody/provenance; Filesystem owns
 
 ## 8. Geographic responsibilities
 
-Sites, excavation locations, current holding locations and cultural landscapes are distinct geographic relationships with dates and uncertainty. Do not assume artifact origin equals current location or legal jurisdiction.
+Sites, excavation locations, current holding locations and cultural landscapes are distinct geographic relationships with dates and uncertainty. Do not assume artifact origin equals current location or legal country.
 
 ## 9. Temporal responsibilities
 

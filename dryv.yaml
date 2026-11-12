@@ -2,7 +2,8 @@ version: dryv/v1alpha1
 
 # Dryv project for the Mzizi API. The project root is the repository root so generated output can
 # land in source/backend/api (destinations may not leave the root). Contracts and project packs live
-# in dryv/. Pin: Dryv engine 6dba3100f02ada9dfd061e5100112c1d01760e3b, packs 7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a.
+# in dryv/. Pin: Dryv engine 089607c2ee6c94742492c22b2d06d062851985e2 (multi-authoring),
+# packs 7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a.
 
 sources:
   authoring:
@@ -10,10 +11,8 @@ sources:
       type: typescript
       path: dryv/contracts
       entrypoint: apps/main/index.ts
-    # Database foundation model, compiled separately for the Rust packs. Activating packs
-    # against this source needs the Dryv multi-authoring enhancement
-    # (.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md); until it lands only `model`
-    # is active and the Rust pack activations below stay commented out.
+    # Database foundation model, compiled separately for the Rust packs (Dryv multi-authoring:
+    # one generate run compiles both entrypoints and routes each pack to its source's IR).
     database:
       type: typescript
       path: dryv/contracts
@@ -50,7 +49,9 @@ actions:
 destinations:
   ir:
     compiled: { path: dryv/.dryv/ir/dryv.ir.yaml }
-    database: { path: dryv/.dryv/ir/dryv.database.ir.yaml }
+    database:
+      path: dryv/.dryv/ir/dryv.database.ir.yaml
+      authoring: { $ref: "#/sources/authoring/database" }
   # Injected NestJS modules: source/backend/api/src/modules/<group>/...
   modules:
     path: source/backend/api/src/modules
@@ -69,11 +70,13 @@ destinations:
     path: source/backend/api/src/types
     imports: { path: source/backend/api/src, prefix: "#/" }
     choose: { js.package_manager: bun }
-  # Rust database foundation outputs (packs activate once Dryv supports per-pack authoring).
+  # Rust database foundation outputs. Models land in the generated crate; SQL lands as
+  # per-database schema snapshots that `mzizi-db assemble` turns into immutable checksummed
+  # releases under source/backend/database/migrations (never written by generation directly).
   rust-generated:
-    path: source/backend/database/crates/mzizi-db-generated/src
-  rust-migrations:
-    path: source/backend/database/migrations
+    path: source/backend/database/crates/mzizi-db-generated/src/models
+  rust-sql:
+    path: source/backend/database/generated/sql
 
 authoring:
   source: { $ref: "#/sources/authoring/model" }
@@ -128,21 +131,53 @@ packs:
       operation.implementation: { $ref: "#/packs/use-cases" }
       operation.usecase: { $ref: "#/packs/use-cases" }
 
-# Rust database foundation destinations and pack activations. The destinations are declared now;
-# the activations below are commented out until the Dryv multi-authoring enhancement lands,
-# because today every pack consumes the single project-level authoring IR (contracts/index.ts),
-# not the database model they need.
-#
-#   rust-models:
-#     source: { $ref: "#/sources/packs/project", path: rust-models }
-#     authoring: { $ref: "#/sources/authoring/database" }
-#     destination: { $ref: "#/destinations/rust-generated" }
-#     inputs: { assignments: dryv/contracts/apps/database/persistence.ts }
-#   rust-sql:
-#     source: { $ref: "#/sources/packs/project", path: rust-sql }
-#     authoring: { $ref: "#/sources/authoring/database" }
-#     destination: { $ref: "#/destinations/rust-migrations" }
-#     inputs: { assignments: dryv/contracts/apps/database/persistence.ts }
+  # Rust database foundation: both packs consume the `database` authoring source. The
+  # namespace-to-database lists mirror dryv/contracts/apps/database/persistence.ts (the
+  # canonical catalogue); tools/audit-database-assignments.ts fails database:check on drift.
+  rust-models:
+    source: { $ref: "#/sources/packs/project", path: rust-models }
+    authoring: { $ref: "#/sources/authoring/database" }
+    destination: { $ref: "#/destinations/rust-generated" }
+    inputs:
+      main_namespaces:
+        [
+          reference,
+          geography,
+          legal,
+          official,
+          governance,
+          politics,
+          finance,
+          procurement,
+          civic,
+          accountability,
+          source,
+          filesystem,
+        ]
+      operations_namespaces:
+        [auth, acquisition, engine, staging, analytics, audit, management]
+  rust-sql:
+    source: { $ref: "#/sources/packs/project", path: rust-sql }
+    authoring: { $ref: "#/sources/authoring/database" }
+    destination: { $ref: "#/destinations/rust-sql" }
+    inputs:
+      main_namespaces:
+        [
+          reference,
+          geography,
+          legal,
+          official,
+          governance,
+          politics,
+          finance,
+          procurement,
+          civic,
+          accountability,
+          source,
+          filesystem,
+        ]
+      operations_namespaces:
+        [auth, acquisition, engine, staging, analytics, audit, management]
 
 build:
   cache: reuse

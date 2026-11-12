@@ -34,6 +34,10 @@ Engine coordinates retryable work; Staging pins the reviewed revision, contract,
 There is no cross-database foreign key or distributed transaction spanning Operations, Main and object storage. The exact civic-side durable idempotency representation remains under contract review; placing Management here does not authorize a Main Management schema. Operations logs can diagnose a failed delivery but cannot prove a historical claim or public accountability finding. Durable acceptance/provenance survives operational log retention. Accepted public findings, complaints and responses belong in Accountability, supported by Source evidence.
 
 
+## Integration implementation status — 12 November 2026
+
+The seven approved contracts remain in place. Integration additions authored under the Main/Operations handoff are `engine.pipeline_releases.manifest_release_ref_id` (opaque Main reference with pinned hash/schema/capability versions) and `staging.revision_sources` (normalized multiple Main evidence/citation/file/manifest references). These are authored contract changes; app validation is required for external IDs, and no cross-database FK is declared. The 45-table approved inventory is preserved; the staging association is a proposed addition requiring inventory approval before migration.
+
 ## Approved inventory — 12 November 2026
 
 The user approved the complete 45-table Operational design. The owning documents below contain the accepted table and column inventories and their implementation boundaries. See [DEC-OPERATIONAL-DATABASE-20261112](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the formal decision.

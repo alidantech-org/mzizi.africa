@@ -124,7 +124,17 @@ export const Revisions = staging.schemas({
       payload: dryv.field(sharedProperties.JsonText).createOnly(),
       schema_version: dryv.field(sharedProperties.NonEmptyString100).createOnly(),
       content_hash: dryv.field(sharedProperties.Sha256).createOnly(),
-      artifact_id: dryv.field(sharedProperties.Id).optional().nullable().createOnly(),
+      artifact_id: dryv
+        .field(sharedProperties.Id)
+        .optional()
+        .nullable()
+        .createOnly()
+        .relation({
+          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Artifacts.field("id"),
+          cardinality: dryv.relation.manyToOne(),
+          onDelete: "restrict",
+          onUpdate: "restrict",
+        }),
       source_manifest_key: dryv.field(sharedProperties.String1000).optional().nullable().createOnly(),
       source_manifest_hash: dryv.field(sharedProperties.Sha256).optional().nullable().createOnly(),
       created_by: dryv
@@ -336,18 +346,17 @@ export const PromotionRequests = staging.schemas({
 stagingSchemas.PromotionRequests = PromotionRequests.PromotionRequests;
 
 /*---------------- Authorized multi-source revision evidence ----------------*/
+/** External Main IDs are app-verified; local operational artifacts use a real FK. */
 export const RevisionSources = staging.schemas({
   RevisionSources: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      revision_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Revisions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      revision_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Revisions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       /** Main external IDs: validated by Main during publication; no cross-database FKs. */
       source_evidence_ref_id: dryv.field(sharedProperties.Id),
       source_citation_ref_id: dryv.field(sharedProperties.Id),

@@ -4,10 +4,8 @@
 //! model (`dryv/contracts/apps/database`). Nothing under `models/` is hand-edited; this
 //! file is scaffolded once and only re-exports what generation produces.
 //!
-//! Generation is not active yet: it waits on the Dryv multi-authoring enhancement
-//! (`.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md`). Until then this crate
-//! compiles empty so the workspace, service and CLI skeletons build and test.
+//! Regenerate with `dryv generate` from the repository root; the SQL counterpart is the
+//! `generated/sql` snapshot consumed by `mzizi-db assemble`.
 
-pub mod models {
-    //! Populated by generation.
-}
+#[rustfmt::skip]
+pub mod models;

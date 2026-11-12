@@ -162,7 +162,7 @@ All tables and fields are hypothetical. Every proposed business column is listed
 | `provider_id` | `uuid` | Provider | No | — | FK → `official.entities` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
 | `kind_id` | `uuid` | Service class | No | — | FK → `reference.values` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
 
-- **Current SQL/Dryv fields without a proposed same-name column:** `code`, `created_at`, `description`, `is_current`, `jurisdiction_id`, `legal_basis_id`, `sector_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **Current SQL/Dryv fields without a proposed same-name column:** `code`, `created_at`, `description`, `is_current`, `country_id`, `legal_basis_id`, `sector_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** Service differs from legal mandate. Exact keys and cross-field checks remain for review.
 - **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `provider_id`, `kind_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
@@ -287,7 +287,7 @@ The [system-expansion proposal](../../../guides/advancement-and-system-expansion
 
 ## 8. Geographic responsibilities
 
-Use a Geography place for physical location and geography units for service/mandate coverage. Linear network geometry should be versioned and tied to source/derived assets. Jurisdiction, location, operator territory and service coverage are distinct.
+Use a Geography place for physical location and geography units for service/mandate coverage. Linear network geometry should be versioned and tied to source/derived assets. Country, location, operator territory and service coverage are distinct.
 
 ## 9. Temporal responsibilities
 

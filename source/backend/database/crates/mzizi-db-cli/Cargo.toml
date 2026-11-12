@@ -20,3 +20,6 @@ sha2.workspace = true
 hex.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
+
+[dev-dependencies]
+mzizi-db-generated = { path = "../mzizi-db-generated" }

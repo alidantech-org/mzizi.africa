@@ -64,14 +64,14 @@ flowchart LR
   politics_turnout["politics.turnout"]
   filesystem_file_versions["filesystem.file_versions"]
   geography_boundaries["geography.boundaries"]
-  geography_jurisdictions["geography.jurisdictions"]
+  reference_countries["reference.countries"]
   governance_offices["governance.offices"]
   official_individuals["official.individuals"]
   politics_parties["politics.parties"]
   reference_topics["reference.topics"]
   reference_values["reference.values"]
   source_captures["source.captures"]
-  politics_elections -->|jurisdiction_id| geography_jurisdictions
+  politics_elections -->|country_id| reference_countries
   politics_elections -->|kind_id| reference_values
   politics_contests -->|election_id| politics_elections
   politics_contests -->|office_id| governance_offices
@@ -104,14 +104,14 @@ All tables and fields are hypothetical. Every proposed business column is listed
 |---|---|---|---|---|---|---|---|
 | `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `title` | `text` | Election title | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
-| `jurisdiction_id` | `uuid` | Jurisdiction | No | — | FK → `geography.jurisdictions` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `country_id` | `uuid` | Country identity | No | — | FK → `reference.countries` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `held_on` | `date` | Actual polling date | Yes | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
 | `kind_id` | `uuid` | Election classification | No | — | FK → `reference.values` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
 
 - **Current SQL/Dryv fields without a proposed same-name column:** `administering_institution_id`, `code`, `created_at`, `geo_unit_id`, `held_date`, `is_current`, `legal_basis_id`, `name`, `scheduled_date`, `status`, `type_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** Scheduled dates belong to announced events until verified. Exact keys and cross-field checks remain for review.
-- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `jurisdiction_id`, `kind_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `country_id`, `kind_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
 - **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
 - **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
 - **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 1,000, +200/year, peak 20/day; five-year 2,000 rows ≈ 2.0 MiB live row+index budget; Expected: initial 10,000, +2,000/year, peak 200/day; five-year 20,000 rows ≈ 19.5 MiB live row+index budget; High: initial 100,000, +20,000/year, peak 2,000/day; five-year 200,000 rows ≈ 195.3 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
@@ -284,7 +284,7 @@ tags: [improvements, schema-redesign, electoral, planning]
 extra: {status: planning_only}
 ---
 
-> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting country, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
 
 # Electoral — elections, electorates, candidates, vote results and referendums
 
@@ -298,7 +298,7 @@ extra: {status: planning_only}
 
 | Current table | Review focus and possible improvement |
 |---|---|
-| `elections` | Elections/election rounds or by-elections, jurisdiction, organizer, law, dates and status. |
+| `elections` | Elections/election rounds or by-elections, country, organizer, law, dates and status. |
 | `seats` | Contest/representative seat identity, valid period and geo unit represented, not a candidate identity. |
 | `candidates` | Person contesting a seat, party affiliation/nomination at **that election**, withdrawal/disqualification status. |
 | `results` | Official vote tallies, reporting unit, candidate/contest, declaration level, status and correction edition. |
@@ -314,7 +314,7 @@ The current initial schema plus the `1794800000000-electoral-ballots.ts` migrati
 
 ## Proposal: hard links and defensible results
 
-Use hard FK for election→jurisdiction/organizing institution, seat→geography/office/legal pattern, candidate→person and election/seat, candidate party→political party at nomination time, result→candidate/seat/election/geo and source version, referendum option→question, and constituency representation→correct historical geography. Add unique/functional constraints to avoid duplicates by (election, contest, reporting geography, round, choice/candidate, official edition).
+Use hard FK for election→country/organizing institution, seat→geography/office/legal pattern, candidate→person and election/seat, candidate party→political party at nomination time, result→candidate/seat/election/geo and source version, referendum option→question, and constituency representation→correct historical geography. Add unique/functional constraints to avoid duplicates by (election, contest, reporting geography, round, choice/candidate, official edition).
 
 National and county results are overlapping reported totals, **not independent additive records** when one already includes the other. The geography ancestor/descendant query model must avoid reporting double totals; a national total cannot automatically be disaggregated to counties. Country-root scope and report geography must remain separate from ballot-center venue and declaring institution HQ.
 
@@ -434,7 +434,7 @@ The inventory does not establish live database state and may miss ALTER-only cha
 
 ```mermaid
 flowchart LR
-  geography_jurisdictions["geography.jurisdictions"]
+  reference_countries["reference.countries"]
   official_entities["official.entities"]
   official_individuals["official.individuals"]
   politics_alignments["politics.alignments"]
@@ -445,11 +445,11 @@ flowchart LR
   reference_topics["reference.topics"]
   reference_values["reference.values"]
   politics_parties -->|organization_id| official_entities
-  politics_parties -->|jurisdiction_id| geography_jurisdictions
+  politics_parties -->|country_id| reference_countries
   politics_memberships -->|party_id| politics_parties
   politics_memberships -->|person_id| official_individuals
   politics_memberships -->|role_id| reference_values
-  politics_coalitions -->|jurisdiction_id| geography_jurisdictions
+  politics_coalitions -->|country_id| reference_countries
   politics_alignments -->|coalition_id| politics_coalitions
   politics_alignments -->|party_id| politics_parties
   politics_positions -->|party_id| politics_parties
@@ -469,13 +469,13 @@ All tables and fields are hypothetical. Every proposed business column is listed
 |---|---|---|---|---|---|---|---|
 | `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `organization_id` | `uuid` | Organization | No | — | FK → `official.entities` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
-| `jurisdiction_id` | `uuid` | Registration area | No | — | FK → `geography.jurisdictions` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `country_id` | `uuid` | Registration country | No | — | FK → `reference.countries` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `registered_on` | `date` | Registration | Yes | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
 
 - **Current SQL/Dryv fields without a proposed same-name column:** `abbreviation`, `code`, `created_at`, `is_current`, `logo_marker`, `name`, `registry_authority_id`, `registry_identifier`, `status`, `symbol_url`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`, `wikidata_id`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
-- **Constraints:** UNIQUE(organization_id,jurisdiction_id). Exact keys and cross-field checks remain for review.
-- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `organization_id`, `jurisdiction_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Constraints:** UNIQUE(organization_id,country_id). Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `organization_id`, `country_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
 - **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
 - **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
 - **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 1,000, +200/year, peak 20/day; five-year 2,000 rows ≈ 2.0 MiB live row+index budget; Expected: initial 10,000, +2,000/year, peak 200/day; five-year 20,000 rows ≈ 19.5 MiB live row+index budget; High: initial 100,000, +20,000/year, peak 2,000/day; five-year 200,000 rows ≈ 195.3 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
@@ -517,13 +517,13 @@ All tables and fields are hypothetical. Every proposed business column is listed
 |---|---|---|---|---|---|---|---|
 | `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | ADD (proposed target field; pending user approval) |
 | `name` | `text` | Coalition name | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
-| `jurisdiction_id` | `uuid` | Context | No | — | FK → `geography.jurisdictions` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
+| `country_id` | `uuid` | Context country identity | No | — | FK → `reference.countries` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
 | `formed_on` | `date` | Formation | Yes | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
 | `ended_on` | `date` | Dissolution | Yes | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
 
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** ended_on >= formed_on. Exact keys and cross-field checks remain for review.
-- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `jurisdiction_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `country_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
 - **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
 - **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
 - **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 1,000, +200/year, peak 20/day; five-year 2,000 rows ≈ 2.0 MiB live row+index budget; Expected: initial 10,000, +2,000/year, peak 200/day; five-year 20,000 rows ≈ 19.5 MiB live row+index budget; High: initial 100,000, +20,000/year, peak 2,000/day; five-year 200,000 rows ≈ 195.3 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
@@ -601,7 +601,7 @@ tags: [improvements, schema-redesign, political, planning]
 extra: {status: planning_only}
 ---
 
-> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting country, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
 
 # Political — parties, party organizations, affiliations and internal leadership
 
@@ -617,7 +617,7 @@ Current active tables, verified in the entity catalogue:
 
 | Table | Existing responsibility; candidate treatment |
 |---|---|
-| `political.parties` | Canonical party identity; review registration status, aliases, legal jurisdiction, identifiers and historical continuity. **Retain concept.** |
+| `political.parties` | Canonical party identity; review registration status, aliases, legal country, identifiers and historical continuity. **Retain concept.** |
 | `political.memberships` | Person-to-party association over valid time; audit uniqueness, type of membership, evidence, uncertain affiliation and expiry. |
 | `political.units` | Party internal geographic/organizational branches; distinguish units from `geography.units`. |
 | `political.ideologies` | Named political theories/ideological concepts; review whether these belong in reference scheme or remain domain entities. |
@@ -625,13 +625,13 @@ Current active tables, verified in the entity catalogue:
 | `political.positions` | Party posts/leadership position definitions, distinct from constitutional/government offices. |
 | `political.holders` | People holding party positions with start/end/acting/verified status and historical evidence. |
 
-**Column audit needed for each current table:** `id`/stable business identifiers, names, `jurisdiction_id`, `geo_unit_id` if any, `party_id`, `person_id`/`individual_id`, `position_id`, validity, record version, provenance links, and type identifiers. This is a **review checklist**, not a statement that each listed column exists on every table. Extract the full column/type/index/FK report from current entities and actual PostgreSQL before deciding rename or removal.
+**Column audit needed for each current table:** `id`/stable business identifiers, names, `country_id`, `geo_unit_id` if any, `party_id`, `person_id`/`individual_id`, `position_id`, validity, record version, provenance links, and type identifiers. This is a **review checklist**, not a statement that each listed column exists on every table. Extract the full column/type/index/FK report from current entities and actual PostgreSQL before deciding rename or removal.
 
 ## Relationship plan: real foreign keys
 
-Political memberships and holders should FK to `person.individuals`, with party/position FKs inside `political`. A party may reference a legal identity in `organization.entities` where that entity really exists; the party and organization must not be collapsed into one concept automatically. Jurisdiction is distinct from county branch territory and from election seat geography; links to `reference` and `geography` must reflect actual semantics. Where party units have multiple geographic scopes, evaluate an explicit typed junction with hard FKs. Link nomination/party at an election through `electoral` at the historical election date, not by copying today's membership onto an old result.
+Political memberships and holders should FK to `person.individuals`, with party/position FKs inside `political`. A party may reference a legal identity in `organization.entities` where that entity really exists; the party and organization must not be collapsed into one concept automatically. Country is distinct from county branch territory and from election seat geography; links to `reference` and `geography` must reflect actual semantics. Where party units have multiple geographic scopes, evaluate an explicit typed junction with hard FKs. Link nomination/party at an election through `electoral` at the historical election date, not by copying today's membership onto an old result.
 
-**Questions for SQL review:** What was the person's documented party at election time? Are two same-named parties in separate jurisdictions different identities? Which party unit represents county scope versus merely having an office physically in that county? Which party office did a person hold during a coalition period? What is the source of an asserted ideological alignment?
+**Questions for SQL review:** What was the person's documented party at election time? Are two same-named parties in separate countries different identities? Which party unit represents county scope versus merely having an office physically in that county? Which party office did a person hold during a coalition period? What is the source of an asserted ideological alignment?
 
 ## Acquisition categories and patterns
 
@@ -644,7 +644,7 @@ Add acquisition eligibility to table comments/Markdown, with per-row lineage ide
 
 ## Redesign candidates, tradeoffs and migration
 
-An explicit `coalitions`/`alliances` concept may be useful but only after auditing whether existing relationships represent dated coalitions reliably. Controlled `ideologies` may benefit from dedicated classes if relationships carry more than a label; otherwise simplify vocabulary tables. Prefer stable party IDs and dated name/status/affiliation history over rewriting past values. Enforce FKs to person/organization/jurisdiction and membership temporal constraints without deleting historic ties.
+An explicit `coalitions`/`alliances` concept may be useful but only after auditing whether existing relationships represent dated coalitions reliably. Controlled `ideologies` may benefit from dedicated classes if relationships carry more than a label; otherwise simplify vocabulary tables. Prefer stable party IDs and dated name/status/affiliation history over rewriting past values. Enforce FKs to person/organization/country and membership temporal constraints without deleting historic ties.
 
 Preserve existing party and member identifiers, API contracts, source attributions and importer mappings during any later migration. Audit all old classification FKs, political-membership join uniqueness, and distinctions between party membership, elected office and governance appointment.
 

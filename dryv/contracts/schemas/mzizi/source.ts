@@ -7,8 +7,9 @@
  */
 import * as dryv from "@dryvcode/author";
 import { sharedProperties } from "../_shared.ts";
-import { referenceSchemas } from "./reference.ts";
 import { filesystemSchemas } from "./filesystem.ts";
+import { officialSchemas } from "./official.ts";
+import { referenceSchemas } from "./reference.ts";
 export const source = dryv
   .group({ name: "source" })
   .description("Accepted sources, evidence and publication receipts.")
@@ -31,15 +32,22 @@ export const Publishers = source.schemas({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
       name: dryv.field(sharedProperties.Name),
-      kind_id: dryv
+      kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      official_entity_id: dryv
         .field(sharedProperties.Id)
+        .optional()
+        .nullable()
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => officialSchemas.Entities.field("id"),
           cardinality: dryv.relation.manyToOne(),
           onDelete: "restrict",
           onUpdate: "restrict",
         }),
-      official_entity_ref_id: dryv.field(sharedProperties.Id).optional().nullable(),
       country_id: dryv
         .field(sharedProperties.Id)
         .optional()
@@ -51,7 +59,7 @@ export const Publishers = source.schemas({
           onUpdate: "restrict",
         }),
     })
-    .description("Accepted publishing organization; official_entity_ref_id awaits the unauthored Official entity contract.")
+    .description("Accepted publisher; an optional official identity distinguishes organization from publication channel.")
     .role("entity")
     .facets({
       storage: dryv
@@ -72,18 +80,24 @@ export const Sources = source.schemas({
     .schema({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
-      publisher_id: dryv
+      publisher_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Publishers.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      official_entity_id: dryv
         .field(sharedProperties.Id)
+        .optional()
+        .nullable()
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Publishers.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      kind_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => officialSchemas.Entities.field("id"),
           cardinality: dryv.relation.manyToOne(),
           onDelete: "restrict",
           onUpdate: "restrict",
@@ -111,14 +125,12 @@ export const Websites = source.schemas({
   Websites: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      source_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      source_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       canonical_url: dryv.field(sharedProperties.Url),
       title: dryv.field(sharedProperties.Name),
     })
@@ -141,14 +153,12 @@ export const Apis = source.schemas({
   Apis: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      source_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      source_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       base_url: dryv.field(sharedProperties.Url),
       credential_binding: dryv.field(sharedProperties.NonEmptyString255).optional().nullable(),
     })
@@ -169,30 +179,24 @@ export const Documents = source.schemas({
     .schema({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
-      source_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      publisher_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Publishers.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      kind_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      source_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      publisher_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Publishers.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       title: dryv.field(sharedProperties.Name),
       canonical_url: dryv.field(sharedProperties.Url).optional().nullable(),
       published_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
@@ -220,14 +224,12 @@ export const Manifests = source.schemas({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
       title: dryv.field(sharedProperties.Name),
-      kind_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
     })
     .description("Stable API, website or extraction configuration identity; contents remain versioned artifacts.")
@@ -246,23 +248,19 @@ export const ManifestReleases = source.schemas({
   ManifestReleases: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      manifest_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Manifests.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      manifest_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Manifests.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       version: dryv.field(sharedProperties.NonEmptyString100),
-      file_version_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      file_version_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       content_hash: dryv.field(sharedProperties.Sha256),
       input_schema_code: dryv.field(sharedProperties.IdentityCode),
       input_schema_version: dryv.field(sharedProperties.NonEmptyString100),
@@ -292,22 +290,18 @@ export const ManifestBindings = source.schemas({
   ManifestBindings: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      source_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      manifest_release_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.ManifestReleases.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      source_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      manifest_release_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.ManifestReleases.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       activated_at: dryv.field(sharedProperties.Instant),
       deactivated_at: dryv.field(sharedProperties.Instant).optional().nullable(),
       effective_from: dryv.field(sharedProperties.Instant),
@@ -332,14 +326,12 @@ export const Captures = source.schemas({
   Captures: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      source_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      source_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Sources.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       document_id: dryv
         .field(sharedProperties.Id)
         .optional()
@@ -350,14 +342,12 @@ export const Captures = source.schemas({
           onDelete: "restrict",
           onUpdate: "restrict",
         }),
-      file_version_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      file_version_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       manifest_release_id: dryv
         .field(sharedProperties.Id)
         .optional()
@@ -395,14 +385,12 @@ export const Evidence = source.schemas({
     .schema({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
-      kind_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       title: dryv.field(sharedProperties.Name),
       description: dryv.field(sharedProperties.Description).optional().nullable(),
       assembled_at: dryv.field(sharedProperties.Instant),
@@ -424,14 +412,12 @@ export const Citations = source.schemas({
   Citations: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      evidence_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Evidence.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      evidence_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Evidence.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       document_id: dryv
         .field(sharedProperties.Id)
         .optional()
@@ -452,22 +438,18 @@ export const Citations = source.schemas({
           onDelete: "restrict",
           onUpdate: "restrict",
         }),
-      file_version_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      locator_kind_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      file_version_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      locator_kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       locator: dryv.field(sharedProperties.JsonText),
       quoted_hash: dryv.field(sharedProperties.Sha256).optional().nullable(),
       recorded_at: dryv.field(sharedProperties.Instant),
@@ -494,22 +476,18 @@ export const Verifications = source.schemas({
   Verifications: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      evidence_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Evidence.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      method_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      evidence_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Evidence.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      method_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       outcome: dryv.field(sourceEnums.VerificationOutcome),
       confidence: dryv.field(sharedProperties.Confidence).optional().nullable(),
       explanation: dryv.field(sharedProperties.Description),
@@ -546,22 +524,18 @@ export const Attributions = source.schemas({
   Attributions: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      publisher_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Publishers.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      file_version_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      publisher_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Publishers.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      file_version_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       license_value_id: dryv
         .field(sharedProperties.Id)
         .optional()

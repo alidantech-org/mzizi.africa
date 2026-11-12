@@ -3,14 +3,21 @@ id: DOC-MZIZI-SCHEMA-FILESYSTEM-20261111
 name: filesystem schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {status: contract_authored_proposed_not_generation_ready, approval: implementation_authorized, database: mzizi, recorded_on: 2026-11-12}
 ---
 
 # filesystem — Phase 01
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+> **Scope agreed; detailed contract authored under 12 November implementation authorization.** Tables below remain design proposals and are not generation-ready.
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
+
+> **Implementation status — 12 November 2026:** `filesystem.ts` contains authored Dryv contracts (folders, files, file_extensions, file_versions, file_relations, tags, taggings). Contract development was authorized by the Main/Operations handoff. The contracts compile in the separate Main review entrypoint and remain excluded from the active database app because generation activation was not authorized and the SQL pack does not preserve all required constraints. No migration, seed import, live database change or deployment occurred.
+
+## Implemented contract outline
+
+Logical files, immutable content versions, typed derivatives and unified file/folder tagging. See `dryv/contracts/schemas/mzizi/filesystem.ts` for the current draft fields and relationships. Treat the historical dictionaries below as design evidence; the authored contract outline above supersedes stale claims that implementation is unauthorized or that no contract exists.
+
 
 ## Agreed responsibility — 12 November 2026
 
@@ -85,7 +92,7 @@ All tables and fields are hypothetical. Every proposed business column is listed
 | `authorization` | `jsonb` | Public release authority | Yes | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
 | `role` | `text` | Artifact purpose | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
 
-- **Current SQL/Dryv fields without a proposed same-name column:** `access_authorization`, `acquisition_class`, `allow_weaker_children`, `artifact_role`, `code`, `created_at`, `created_by`, `depth`, `description`, `is_seed`, `jurisdiction_code`, `metadata`, `path`, `preparation`, `revision`, `updated_at`, `version`, `visibility`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **Current SQL/Dryv fields without a proposed same-name column:** `access_authorization`, `acquisition_class`, `allow_weaker_children`, `artifact_role`, `code`, `created_at`, `created_by`, `depth`, `description`, `is_seed`, `country_code`, `metadata`, `path`, `preparation`, `revision`, `updated_at`, `version`, `visibility`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** Sibling identity unique; access cannot weaken without authorization. Exact keys and cross-field checks remain for review.
 - **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `parent_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
@@ -267,7 +274,7 @@ A logical file may be named and arranged differently from its remote S3 object k
 
 ## Proposed logical folder/tag model
 
-Example of **virtual** hierarchy: `sources/kenya/knbs/census`, `sources/kenya/iebc/elections`, `websites/site-structures`, `websites/markdown-pages`, `research/legal`, `generations/pattern-bundles` and `derived/validated-tables`. These are readable *examples*, not mandated S3 object keys or hard-coded classification. Allow tags like `jurisdiction:ke`, `source:knbs`, `content:statistics`, `acquisition:collected`, `artifact:markdown` and `year:2026`; tags should have an FK-controlled registry rather than unbounded free-text labels masquerading as reliable categories.
+Example of **virtual** hierarchy: `sources/kenya/knbs/census`, `sources/kenya/iebc/elections`, `websites/site-structures`, `websites/markdown-pages`, `research/legal`, `generations/pattern-bundles` and `derived/validated-tables`. These are readable *examples*, not mandated S3 object keys or hard-coded classification. Allow tags like `country:ke`, `source:knbs`, `content:statistics`, `acquisition:collected`, `artifact:markdown` and `year:2026`; tags should have an FK-controlled registry rather than unbounded free-text labels masquerading as reliable categories.
 
 Folder hierarchy must preserve parent FKs and path resolution, unique sibling/path rules, rename/move behavior, policy-inheritance tradeoffs, restored/archived files and stable IDs. No expensive hot file counters should be updated on each upload unless measured necessity warrants them. Folder and tags should complement one another: folders answer "where should humans browse?", tags answer "what is this and where else is it relevant?"
 
@@ -335,7 +342,7 @@ Current Python `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engin
 
 ## 2026-11-08 — Root seed convention and folder/file-type design
 
-The user now requires all manually or AI-prepared seed inputs, including auth baselines and site-structure YAML/JSON/CSV/code artifacts, under repository-root `seed/`. The authoritative convention and design proposal are in [seed/README.md](https://github.com/alidantech-org/mzizi.africa/blob/develop/seed/README.md). Use global file types without jurisdiction linkage, jurisdiction-specific fixed folder CSVs, and system/jurisdiction pattern definitions producing concrete folders from actual resources. Shared pattern definitions belong in reference, execution in engine. Files link to concrete folder and physical type; exact versions retain their actual format. Global/system/jurisdiction files are separated locally, and manifests identify dependencies, keys, recognized loaders/targets, hashes and S3 destination for each adopted artifact. Generated/reproducible outputs may be ignored but require replay or fetch metadata.
+The user now requires all manually or AI-prepared seed inputs, including auth baselines and site-structure YAML/JSON/CSV/code artifacts, under repository-root `seed/`. The authoritative convention and design proposal are in [seed/README.md](https://github.com/alidantech-org/mzizi.africa/blob/develop/seed/README.md). Use global file types without country linkage, country-specific fixed folder CSVs, and system/country pattern definitions producing concrete folders from actual resources. Shared pattern definitions belong in reference, execution in engine. Files link to concrete folder and physical type; exact versions retain their actual format. Global/system/country files are separated locally, and manifests identify dependencies, keys, recognized loaders/targets, hashes and S3 destination for each adopted artifact. Generated/reproducible outputs may be ignored but require replay or fetch metadata.
 
 Existing SeaweedFS configuration is fixed: bucket `mzizi`, region `us-east-1`, existing environment credentials, laptop endpoint `http://192.168.100.13:18333`, Docker endpoint `http://object-storage:8333` on `home-services`, public origin `https://res.alidantech.org/mzizi/`. Only `public/` allows anonymous reads; every other prefix is private. Do not provision storage, regenerate credentials, use per-object public ACLs or change infrastructure. Local logical folder paths need not mirror object keys. Seed CSV bytes normally go under `internal/seeds/` even when their rows define public folders.
 

@@ -3,14 +3,23 @@ id: DOC-MZIZI-SCHEMA-LEGAL-20261111
 name: legal schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {status: contract_authored_proposed_not_generation_ready, approval: implementation_authorized, database: mzizi, recorded_on: 2026-11-12}
 ---
 
 # legal — Phase 01
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+> **Scope agreed; detailed contract authored under 12 November implementation authorization.** Tables below remain design proposals and are not generation-ready.
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
+
+> **Implementation status — 12 November 2026:** `legal.ts` contains authored Dryv contracts (instruments, instrument_versions, provisions, provision_versions, amendments). Their relations compile in the separate Main review entrypoint alongside Reference, Geography, Filesystem and Source. They are excluded from active database composition because database generation activation is outside the authorization and the Rust SQL pack does not preserve all required constraints. No migration, seed import, live database change or deployment occurred.
+
+`legal.instruments.issuing_entity_id` is an optional restrictive FK to `official.entities.id`, and `issuing_unit_id` targets `geography.units.feature_id`. This expresses issuing organization separately from territorial scope. The Official entity target is an authorized integration dependency; the remaining Official design is still unapproved.
+
+## Implemented contract outline
+
+Stable legal identities, immutable exact wording and amendment relationships. See `dryv/contracts/schemas/mzizi/legal.ts` for the current draft fields and relationships. Treat the historical dictionaries below as design evidence; the authored contract outline above supersedes stale claims that implementation is unauthorized or that no contract exists.
+
 
 ## Agreed responsibility — 12 November 2026
 
@@ -18,7 +27,7 @@ Legal instruments, provisions, amendments, versions and applicability; kept sepa
 
 Legal remains a separate Phase 01 schema. Preserve stable instrument and provision identities, immutable wording versions, amendments/repeals and temporal, territorial, subject and personal applicability. Distinguish publication, enactment, commencement and effective dates; a citation alone does not establish compliance.
 
-Governance and other domains reach legal foundations **through Reference**. Only Reference may hold incoming cross-schema links to Legal. Internal Legal relationships remain in Legal; Legal may retain its own source/file and geographic context links. Earlier reverse or direct domain legal-basis proposals in the historical material are superseded. Exact applicability tables and Reference bridge fields remain under review.
+Governance and other domains reach legal foundations **through Reference**. Only Reference may hold incoming cross-schema links to Legal. Internal Legal relationships remain in Legal; Legal retains its source citation, file-version and geographic context links. The review-only `reference.legal_basis_links` targets exact `legal.provision_versions`, controlled basis roles and Source citations; `reference.geography_change_legal_bases` attaches it to a Geography change. Further domain-specific Reference associations remain open for exact target review. The current Main review composition passes typecheck, Dryv doctor and compile, but SQL-level constraint enforcement remains unverified.
 
 ## Retained table proposals and review context
 
@@ -45,25 +54,45 @@ The inventory does not establish live database state and may miss ALTER-only cha
 
 ## Proposed relationship map
 
-> All nodes and edges are proposals. Main schemas may use local cross-schema foreign keys; no edge crosses the Main/Operations database boundary.
+> Draft field relations in the current Main review composition. The graph compiles in Dryv; Rust SQL emission and constraint enforcement remain unverified. No edge crosses the Main/Operations database boundary.
 
 ```mermaid
 flowchart LR
   filesystem_file_versions["filesystem.file_versions"]
-  geography_jurisdictions["geography.jurisdictions"]
+  geography_units["geography.units"]
+  geography_changes["geography.changes"]
+  official_entities["official.entities"]
+  reference_values["reference.values"]
+  reference_legal_basis["reference.legal_basis_links"]
+  reference_official_legal_bases["reference.official_entity_legal_bases"]
+  source_citations["source.citations"]
+  source_evidence["source.evidence"]
   legal_amendments["legal.amendments"]
   legal_instrument_versions["legal.instrument_versions"]
   legal_instruments["legal.instruments"]
   legal_provision_versions["legal.provision_versions"]
   legal_provisions["legal.provisions"]
-  legal_instruments -->|jurisdiction_id| geography_jurisdictions
+  legal_instruments -->|issuing_unit_id| geography_units
+  legal_instruments -->|issuing_entity_id| official_entities
+  legal_instruments -->|kind_id| reference_values
   legal_instrument_versions -->|instrument_id| legal_instruments
   legal_instrument_versions -->|file_version_id| filesystem_file_versions
+  legal_instrument_versions -->|evidence_id| source_evidence
   legal_provisions -->|instrument_id| legal_instruments
   legal_provision_versions -->|provision_id| legal_provisions
   legal_provision_versions -->|instrument_version_id| legal_instrument_versions
+  legal_provision_versions -->|citation_id| source_citations
   legal_amendments -->|authority_id| legal_provision_versions
   legal_amendments -->|affected_id| legal_provision_versions
+  legal_amendments -->|resulting_version_id| legal_provision_versions
+  legal_amendments -->|citation_id| source_citations
+  legal_amendments -->|kind_id| reference_values
+  reference_legal_basis -->|provision_version_id| legal_provision_versions
+  reference_legal_basis -->|basis_role_id| reference_values
+  reference_legal_basis -->|citation_id| source_citations
+  geography_changes -->|change_id via reference.geography_change_legal_bases| reference_legal_basis
+  reference_official_legal_bases -->|entity_id| official_entities
+  reference_official_legal_bases -->|legal_basis_id| reference_legal_basis
 ```
 
 ## Proposed table and column review
@@ -79,14 +108,14 @@ All tables and fields are hypothetical. Every proposed business column is listed
 |---|---|---|---|---|---|---|---|
 | `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `title` | `text` | Official title | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
-| `jurisdiction_id` | `uuid` | Issuing jurisdiction | No | — | FK → `geography.jurisdictions` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `country_id` | `uuid` | Country identity | No | — | FK → `reference.countries`; geographic scope → `geography.units.feature_id` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `code` | `text` | Citation identity | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `enacted_on` | `date` | Enactment date if known | Yes | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
 
 - **Current SQL/Dryv fields without a proposed same-name column:** `content_hash`, `created_at`, `document_url`, `is_current`, `issuing_country_id`, `issuing_institution_id`, `kind_id`, `status`, `summary`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
-- **Constraints:** UNIQUE(jurisdiction_id,code). Exact keys and cross-field checks remain for review.
-- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `jurisdiction_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Constraints:** UNIQUE(country_id,code). Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `country_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
 - **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
 - **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
 - **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 1,000, +200/year, peak 20/day; five-year 2,000 rows ≈ 2.0 MiB live row+index budget; Expected: initial 10,000, +2,000/year, peak 200/day; five-year 20,000 rows ≈ 19.5 MiB live row+index budget; High: initial 100,000, +20,000/year, peak 2,000/day; five-year 200,000 rows ≈ 195.3 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
@@ -211,7 +240,7 @@ tags: [improvements, schema-redesign, legal, planning]
 extra: {status: planning_only, implementation: not_approved}
 ---
 
-> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting country, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
 
 # Neutral global legal domain and law-driven generation
 
@@ -221,7 +250,7 @@ extra: {status: planning_only, implementation: not_approved}
 
 Keep `legal` recognizable but make it understandable, neutral and internationally applicable. The user requires connections to constitutions, Acts, Bills, laws, provisions, legislative processes, amendments, authority for ministries/offices and evidence of real activities. Model laws over time, without assuming every country has the same Parliament, legal hierarchy, customary-law treatment or assent procedure.
 
-Distinguish identity and versions of legal instruments; draft/proposal ≠ enacted instrument; passing/assent/commencement/publication ≠ identical event; legislation that establishes an office ≠ evidence that a person currently occupies the office. Legal models must be auditable by jurisdiction and time.
+Distinguish identity and versions of legal instruments; draft/proposal ≠ enacted instrument; passing/assent/commencement/publication ≠ identical event; legislation that establishes an office ≠ evidence that a person currently occupies the office. Legal models must be auditable by country and time.
 
 ## 2. Current database table and column inventory
 
@@ -231,7 +260,7 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 |---|---|
 | `legal.amendments` | `id`, `amending_instrument_id`, `code`, `created_at`, `instrument_id`, `is_current`, `summary`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `legal.changes` | `id`, `amendment_id`, `created_at`, `is_current`, `kind`, `new_text`, `previous_text`, `provision_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
-| `legal.instruments` | `id`, `code`, `content_hash`, `created_at`, `document_url`, `is_current`, `issuing_institution_id`, `jurisdiction_id`, `kind_id`, `status`, `summary`, `title`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
+| `legal.instruments` | `id`, `code`, `content_hash`, `created_at`, `document_url`, `is_current`, `issuing_institution_id`, `country_id`, `kind_id`, `status`, `summary`, `title`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `legal.links` | `id`, `created_at`, `is_current`, `note`, `provision_id`, `target_id`, `target_kind`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `legal.provisions` | `id`, `citation`, `code`, `content`, `created_at`, `heading`, `instrument_id`, `is_current`, `kind`, `parent_id`, `previous_version_id`, `sort_order`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 
@@ -241,13 +270,13 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 | Current or candidate | Meaning / possible change |
 |---|---|
-| `instruments` | Constitutions, statutes, regulations, orders, treaties and other legal instruments; review kind/status/version and jurisdiction. |
+| `instruments` | Constitutions, statutes, regulations, orders, treaties and other legal instruments; review kind/status/version and country. |
 | `provisions` | Numbered articles, sections, parts and schedules with stable identity and dated text versions. |
 | `amendments` and `changes` | Track instrument-wide amendment events separately from specific provision replacements, insertions, repeals and retroactive applicability. |
 | `links` | Typed legal basis, enactment and instrument–instrument relations with explicit links to compatible target tables where possible. |
-| `proposals` / `bills` (proposed) | Jurisdiction-neutral proposed instrument/change; may never become law. |
+| `proposals` / `bills` (proposed) | Country-neutral proposed instrument/change; may never become law. |
 | `processes` / `proceedings` (proposed) | Actual lawmaking processes and dated readings, committee actions, votes, assent etc. |
-| `process_definitions` (proposed) | Versioned process patterns defined by jurisdiction and institution type. |
+| `process_definitions` (proposed) | Versioned process patterns defined by country and institution type. |
 | `rules` / `applicability` (proposed) | Formalized establishment/authorization obligations and their geographic/institutional reach. |
 
 ## 4. Strong relationships, geography, law and query design
@@ -256,24 +285,24 @@ Prefer **real FK**: `legal.provisions.instrument_id`, dated `legal.amendments.in
 
 ## 5. Four-class acquisition, patterns and traceability
 
-**Static seeded:** canonical constitutional/instrument identities, curated legal hierarchies and jurisdiction procedure definitions. **Pattern seeded:** versioned office/service/legal process rules. **Automated collected:** enacted bills, gazettes, law updates, provisions and dated proceedings from approved sources. **Derived:** effective-law timelines, impacted office patterns, legal coverage or historical snapshots. Original legal text remains evidence in `source`/`filesystem`, linked to versioned provisions, not overwritten.
+**Static seeded:** canonical constitutional/instrument identities, curated legal hierarchies and country procedure definitions. **Pattern seeded:** versioned office/service/legal process rules. **Automated collected:** enacted bills, gazettes, law updates, provisions and dated proceedings from approved sources. **Derived:** effective-law timelines, impacted office patterns, legal coverage or historical snapshots. Original legal text remains evidence in `source`/`filesystem`, linked to versioned provisions, not overwritten.
 
 For all retained/new tables, add concise PostgreSQL **schema/table/column comments**, plus a maintained Markdown/table registry describing each column's meaning, nullability decision, allowed acquisition classes and expected pattern/automated inputs. Record per-row origin via traceable lineage and real FKs where structurally possible. Do not treat a table's class eligibility as every row's origin.
 
 ## 6. Query scenarios the design must support
 
-What provision authorized a ministry in 2019? Which offices were generated from a statutory rule and which are directly observed? Is a proposed Bill enacted, pending, withdrawn or superseded? Which law version applied at an election/contract date? What legal amendment changed the expected number/type of positions? What other jurisdictions use a different lawmaking path?
+What provision authorized a ministry in 2019? Which offices were generated from a statutory rule and which are directly observed? Is a proposed Bill enacted, pending, withdrawn or superseded? Which law version applied at an election/contract date? What legal amendment changed the expected number/type of positions? What other countries use a different lawmaking path?
 
 ## 7. Migration, preservation, integrity and compatibility
 
-Audit current instrument `kind_id`, `jurisdiction_id`, `issuing_institution_id` and `legal.links` polymorphic references; distinguish stable IDs from version numbers and `content_hash` of legal text. Separate source-publication facts from legal effective dates. Implement actual FKs as appropriate across `reference`, `governance` and `legal`, with optional typed links. Revise Dryv contracts and importers with historical continuity, no one-off Kenya enum.
+Audit current instrument `kind_id`, `country_id`, `issuing_institution_id` and `legal.links` polymorphic references; distinguish stable IDs from version numbers and `content_hash` of legal text. Separate source-publication facts from legal effective dates. Implement actual FKs as appropriate across `reference`, `governance` and `legal`, with optional typed links. Revise Dryv contracts and importers with historical continuity, no one-off Kenya enum.
 
 Global requirements: check live data, orphans, actual FK constraints, indexes and enum/lookup validity; reconcile every old→new table/column; preserve historical identities, evidence, versioning and record counts; update Dryv, API, ingestion and filesystem references with migrations only after explicit user approval. Never rewrite canonical facts to make a schema migration pass.
 
 ## 8. Decisions the user has not yet approved
 
 1. Which legal process concepts genuinely need standalone tables vs `activity` events?
-2. How to model legal hierarchy, customary/historical legal sources and treaties across jurisdictions?
+2. How to model legal hierarchy, customary/historical legal sources and treaties across countries?
 3. Where should effect/commencement and retroactive dates live?
 4. What can be pattern-generated from a law, versus requiring independent evidence?
 5. Should a law/provision FK point at a stable identity or a specific published version?

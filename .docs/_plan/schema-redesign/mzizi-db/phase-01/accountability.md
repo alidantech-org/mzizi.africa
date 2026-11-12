@@ -175,7 +175,7 @@ extra: {status: planning_only, schema: new_proposed}
 
 The user explicitly requested a distinct `participation` schema for **government officials' participation, public participation, submitted feedback, consultation and related concerns**. This must be separate from operational `audit`, internal research `engine` reviews, ordinary `auth` role assignments, published source statements and domain-specific governance records.
 
-A member of the public may comment on a law or budget; a government office may respond; an official may participate as a stakeholder, moderator, reviewer or respondent; an authenticated contributor may propose a correction to MZIZI. These are distinguishable actions with different legal and privacy requirements. Preserve authorship, applicable jurisdiction, issue, date, evidence, moderation and whether participation was officially submitted or merely displayed.
+A member of the public may comment on a law or budget; a government office may respond; an official may participate as a stakeholder, moderator, reviewer or respondent; an authenticated contributor may propose a correction to MZIZI. These are distinguishable actions with different legal and privacy requirements. Preserve authorship, applicable country, issue, date, evidence, moderation and whether participation was officially submitted or merely displayed.
 
 ## No existing dedicated tables: consider only a small coherent model
 
@@ -193,7 +193,7 @@ A member of the public may comment on a law or budget; a government office may r
 
 ## Required referential integrity and temporal context
 
-FK consultation to responsible `governance.institutions`, jurisdiction/root geo unit and applicable `legal` rule if relevant; record public scope vs physical hearing venue and exact opening/closing times. FK submission and response to the consultation/topic, referenced person/account/org where appropriate, and official responder with a dated office/authority role. A public participant may be unauthenticated but still require spam prevention and privacy notices; do not fabricate a `person.individuals` identity for anonymous text. Publicly attributed official responses should link to a verified office/institution rather than a free-text badge.
+FK consultation to responsible `governance.institutions`, country/root geo unit and applicable `legal` rule if relevant; record public scope vs physical hearing venue and exact opening/closing times. FK submission and response to the consultation/topic, referenced person/account/org where appropriate, and official responder with a dated office/authority role. A public participant may be unauthenticated but still require spam prevention and privacy notices; do not fabricate a `person.individuals` identity for anonymous text. Publicly attributed official responses should link to a verified office/institution rather than a free-text badge.
 
 Support discussions about county projects and laws without assuming the subject's geography equals the submitter's home/location. Distinguish **original submitted text** from a published redacted version and structured moderation outcome; preserve immutable evidence and correction trail when law/consent permits. Link file attachments to filesystem, but never store original sensitive documents as indiscriminately public.
 

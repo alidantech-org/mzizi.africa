@@ -147,6 +147,11 @@ export const PipelineReleases = engine.schemas({
       version: dryv.field(sharedProperties.PositiveInteger),
       manifest_hash: dryv.field(sharedProperties.Sha256),
       manifest_object_key: dryv.field(sharedProperties.NonEmptyString1000),
+      /** Opaque Main manifest release identity pinned with the hash. */
+      manifest_release_ref_id: dryv.field(sharedProperties.Id).optional().nullable(),
+      input_schema_code: dryv.field(sharedProperties.IdentityCode).optional().nullable(),
+      input_schema_version: dryv.field(sharedProperties.NonEmptyString100).optional().nullable(),
+      capability_versions: dryv.field(sharedProperties.JsonText).optional().nullable(),
       contract_version: dryv.field(sharedProperties.NonEmptyString255),
       approved_by: dryv
         .field(sharedProperties.Id)

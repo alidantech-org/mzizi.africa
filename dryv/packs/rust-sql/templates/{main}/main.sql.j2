@@ -1,0 +1,118 @@
+{#- PostgreSQL snapshot for one database. Everything is derived from the contracts: nothing here
+    is hand-written schema. Rejections use the `{}['message']` idiom (StrictUndefined carries the
+    message into the generation error). -#}
+{%- set own = pack.inputs.main_namespaces -%}
+{%- set other = pack.inputs.operations_namespaces -%}
+{%- set database = 'mzizi' -%}
+
+{%- macro table_of(schema) -%}
+{%- set storage = schema.facets.storage -%}
+{%- if storage is not none and storage.name is not none -%}{{ storage.name }}{%- else -%}{{ schema.name.snake }}{%- endif -%}
+{%- endmacro -%}
+
+{%- macro namespace_of(schema) -%}
+{%- set storage = schema.facets.storage -%}
+{%- if storage is none or storage.namespace is none -%}{{ {}['entity ' ~ schema.id ~ ' has no storage namespace; set facets.storage.namespace'] }}{%- endif -%}
+{{ storage.namespace }}
+{%- endmacro -%}
+
+{%- macro lookup_namespace(id) -%}
+{%- for candidate in schemas -%}{%- if candidate.id == id -%}{{ namespace_of(candidate) }}{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro lookup_table(id) -%}
+{%- for candidate in schemas -%}{%- if candidate.id == id -%}"{{ namespace_of(candidate) }}"."{{ table_of(candidate) }}"{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro is_primary(storage, field) -%}
+{%- if storage is not none -%}{%- for key in storage.primary_key -%}{%- if key.raw == field.name.raw -%}yes{%- endif -%}{%- endfor -%}{%- endif -%}
+{%- endmacro -%}
+
+{%- macro lifecycle(value) -%}
+{%- if value == 'cascade' -%}CASCADE{%- elif value == 'restrict' -%}RESTRICT{%- elif value == 'detach' -%}SET NULL{%- elif value is none -%}NO ACTION{%- else -%}{{ {}['unsupported relation lifecycle ' ~ value] }}{%- endif -%}
+{%- endmacro -%}
+
+{#- PostgreSQL type of a stored field. -#}
+{%- macro sql_type(schema, field) -%}
+{%- set value = field.value -%}
+{%- if field.array is not none -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': array fields have no relational mapping yet'] }}
+{%- elif not value.is.property -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': nested schema values have no relational mapping; model a relation instead'] }}
+{%- elif value.is.primitive -%}
+  {%- set primitive = value.property.primitive -%}
+  {%- if primitive.is.string and primitive.is.uuid -%}uuid
+  {%- elif primitive.is.string and primitive.constraints.length is not none and primitive.constraints.length.has_max -%}varchar({{ primitive.constraints.length.max }})
+  {%- elif primitive.is.string and primitive.constraints.length is not none and primitive.constraints.length.has_exact -%}char({{ primitive.constraints.length.exact }})
+  {%- elif primitive.is.string -%}text
+  {%- elif primitive.is.boolean -%}boolean
+  {%- elif primitive.money is not none and primitive.money.minor_units -%}bigint
+  {%- elif primitive.is.integer and primitive.constraints.bits == 64 -%}bigint
+  {%- elif primitive.is.integer -%}integer
+  {%- elif primitive.is.decimal -%}numeric({{ primitive.constraints.precision }}, {{ primitive.constraints.scale }})
+  {%- else -%}double precision
+  {%- endif -%}
+{%- elif value.is.enum -%}text
+{%- elif value.is.temporal -%}
+  {%- set temporal = value.property.temporal -%}
+  {%- if temporal.is.date -%}date
+  {%- elif temporal.is.time -%}time
+  {%- elif temporal.is.duration or temporal.is.interval -%}interval
+  {%- else -%}timestamptz
+  {%- endif -%}
+{%- else -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': property kind has no PostgreSQL mapping (record, composite, union, tuple, generic and literal are unsupported)'] }}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro sql_operand(operand) -%}
+{%- if operand.is.field -%}"{{ operand.field.snake }}"
+{%- elif operand.is.literal -%}{{ operand.value | tojson | replace('"', "'") }}
+{%- else -%}({% for term in operand.terms %}{% if term.kind == 'field' %}"{{ term.field.snake }}"{% else %}{{ term.value | tojson | replace('"', "'") }}{% endif %}{% if not loop.last %} {% if operand.operator == 'add' %}+{% elif operand.operator == 'subtract' %}-{% elif operand.operator == 'multiply' %}*{% else %}/{% endif %} {% endif %}{% endfor %}){%- endif -%}
+{%- endmacro -%}
+
+{%- macro sql_operator(operator) -%}
+{%- if operator == 'equal' -%}={%- elif operator == 'not-equal' -%}<>{%- elif operator == 'less-than' -%}<{%- elif operator == 'less-than-or-equal' -%}<={%- elif operator == 'greater-than' -%}>{%- else -%}>={%- endif -%}
+{%- endmacro -%}
+
+{#- Reject entities whose namespace belongs to no database, and relations that cross databases. -#}
+{%- for schema in schemas -%}
+{%- set ns = namespace_of(schema) -%}
+{%- if ns not in own and ns not in other -%}{{ {}['storage namespace ' ~ ns ~ ' (' ~ schema.id ~ ') is not assigned to a database; add it to main_namespaces or operations_namespaces'] }}{%- endif -%}
+{%- for field in schema.fields -%}
+{%- if field.relation is not none and field.related is none -%}
+{%- set target_ns = lookup_namespace(field.relation.target.schema.id) -%}
+{%- if target_ns == '' -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': relation target ' ~ field.relation.target.schema.id ~ ' is not a stored entity'] }}{%- endif -%}
+{%- if (ns in own) != (target_ns in own) -%}{{ {}['cross-database foreign key ' ~ schema.id ~ '.' ~ field.name.raw ~ ' -> ' ~ field.relation.target.schema.id ~ '; use a typed identifier without a relation'] }}{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+-- Generated by dryv pack mzizi.rust-sql from the `database` authoring source. Do not edit.
+-- database: {{ database }}
+{% for ns in own %}
+CREATE SCHEMA "{{ ns }}";
+{% endfor %}
+{%- for ns in own %}
+{%- for schema in schemas %}{% if namespace_of(schema) == ns %}
+{%- set storage = schema.facets.storage %}
+
+CREATE TABLE "{{ ns }}"."{{ table_of(schema) }}" (
+{%- for field in schema.fields %}{% if field.related is none %}
+    "{{ field.name.snake }}" {{ sql_type(schema, field) }}{% if not field.optional and not field.nullable %} NOT NULL{% endif %}{% if field.default is not none and field.default.kind == 'value' %} DEFAULT {{ field.default.value_json | replace('"', "'") }}{% endif %},
+{%- endif %}{% endfor %}
+{%- for invariant in schema.invariants %}{% if not invariant.form.is.opaque %}
+    CONSTRAINT "chk_{{ table_of(schema) }}_{{ invariant.name.snake }}" CHECK ({% for comparison in invariant.form.comparisons %}{{ sql_operand(comparison.left) }} {{ sql_operator(comparison.operator) }} {{ sql_operand(comparison.right) }}{% if not loop.last %}{% if invariant.form.is.all %} AND {% else %} OR {% endif %}{% endif %}{% endfor %}),
+{%- endif %}{% endfor %}
+    PRIMARY KEY ({% for key in storage.primary_key %}"{{ key.snake }}"{% if not loop.last %}, {% endif %}{% endfor %})
+);
+{%- endif %}{% endfor %}
+{%- endfor %}
+
+{#- Foreign keys and indexes come after every table so declaration order never matters. -#}
+{%- for ns in own %}
+{%- for schema in schemas %}{% if namespace_of(schema) == ns %}
+{%- for field in schema.fields %}{% if field.relation is not none and field.related is none %}
+ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(schema) }}_{{ field.name.snake }}" FOREIGN KEY ("{{ field.name.snake }}") REFERENCES {{ lookup_table(field.relation.target.schema.id) }} ("{{ field.relation.target.field.snake }}") ON DELETE {{ lifecycle(field.relation.on_delete) }} ON UPDATE {{ lifecycle(field.relation.on_update) }};
+{%- endif %}{% endfor %}
+{%- for index in schema.facets.storage.indexes %}
+CREATE {% if index.unique %}UNIQUE {% endif %}INDEX "{% if index.name is not none %}{{ index.name }}{% else %}ix_{{ table_of(schema) }}_{% for item in index.fields %}{{ item.snake }}{% if not loop.last %}_{% endif %}{% endfor %}{% endif %}" ON "{{ ns }}"."{{ table_of(schema) }}" ({% for item in index.fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %});
+{%- endfor %}
+{%- endif %}{% endfor %}
+{%- endfor %}

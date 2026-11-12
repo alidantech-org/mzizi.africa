@@ -3,9 +3,9 @@ key: mzizi.rust-sql
 source: templates
 
 info:
-  title: Mzizi SQL releases
-  version: 0.1.0
-  description: PostgreSQL DDL for the database foundation, one migration stream per target database (migrations/main, migrations/operations), emitted as per-entity fragments that the mzizi-db-cli assembles into immutable checksummed releases. Consumes the database authoring model; activation waits on the Dryv multi-authoring enhancement (.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md).
+  title: Mzizi SQL snapshots
+  version: 0.2.0
+  description: Deterministic PostgreSQL DDL for the database foundation, one complete schema snapshot per target database (main.sql, operations.sql). `mzizi-db assemble` turns a snapshot into the immutable checksummed release stream under migrations/. Consumes the `database` authoring source.
   purpose: persistence
   languages: [sql]
   tags: [sql, postgresql, migrations, database]
@@ -14,24 +14,34 @@ plugins:
   - name: jinja
     extensions: [.j2]
 
-# Boundary rules this pack must enforce when it runs:
-# - every storage namespace must appear in the assignments input (contracts/apps/database/persistence.ts);
-#   an unassigned namespace fails generation;
-# - a relation whose source and target namespaces map to different databases fails generation
+# The namespace-to-database lists mirror dryv/contracts/apps/database/persistence.ts (the canonical
+# catalogue); `bun run database:assignments` fails on drift.
+inputs:
+  main_namespaces:
+    type: string[]
+    required: true
+    description: Storage namespaces that belong to the `mzizi` database.
+  operations_namespaces:
+    type: string[]
+    required: true
+    description: Storage namespaces that belong to the `mzizi_operations` database.
+
+# Boundary rules enforced inside the templates (a violation aborts generation with a message):
+# - every entity storage namespace must be listed in exactly one of the two inputs;
+# - a relation whose source and target namespaces map to different databases is rejected
 #   (cross-database relationships are typed identifiers, never foreign keys);
-# - output is deterministic; the CLI records the contract digest in each release checksum.
+# - field kinds without a PostgreSQL mapping (arrays, records, composites, unions, tuples,
+#   generics, literals, nested schemas) are rejected;
+# - output is deterministic: namespaces follow the input order, tables follow the engine's schema order.
 selections:
   entities:
     subject: schema
     filter:
       all: { role: entity }
-    scope: each
+    scope: all
 
 templates:
-  table:
+  main:
     $ref: '#/selections/entities'
-    output:
-      name: $(subject.name.snake)
-      path:
-        - fragments
-      symbol: $(subject.name.snake)
+  operations:
+    $ref: '#/selections/entities'

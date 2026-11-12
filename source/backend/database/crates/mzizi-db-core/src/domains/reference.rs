@@ -1,8 +1,6 @@
 //! Reference vocabulary reads: scheme listing, value listing and value lookup.
 //! All lists are bounded; `limit` is clamped to [`MAX_LIMIT`].
 
-use serde::Serialize;
-use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::config::TargetDatabase;
@@ -12,26 +10,9 @@ use crate::pools::Pools;
 pub const DEFAULT_LIMIT: i64 = 50;
 pub const MAX_LIMIT: i64 = 200;
 
-#[derive(Debug, Serialize, sqlx::FromRow)]
-pub struct Scheme {
-    pub id: Uuid,
-    pub code: String,
-    pub title: String,
-    pub description: Option<String>,
-    pub stewardship_owner: String,
-    pub created_at: OffsetDateTime,
-}
-
-#[derive(Debug, Serialize, sqlx::FromRow)]
-pub struct Value {
-    pub id: Uuid,
-    pub scheme_id: Uuid,
-    pub code: String,
-    pub description: Option<String>,
-    pub retired_at: Option<OffsetDateTime>,
-    pub superseded_by_id: Option<Uuid>,
-    pub created_at: OffsetDateTime,
-}
+/// Row types are the generated models (`mzizi-db-generated`), never hand-written.
+pub use mzizi_db_generated::models::main::reference::scheme::Scheme;
+pub use mzizi_db_generated::models::main::reference::value::Value;
 
 fn clamp(limit: Option<i64>) -> i64 {
     limit.unwrap_or(DEFAULT_LIMIT).clamp(1, MAX_LIMIT)
@@ -46,7 +27,7 @@ pub async fn list_schemes(
 ) -> Result<Vec<Scheme>, Error> {
     let rows = sqlx::query_as::<_, Scheme>(
         r#"
-        SELECT id, code, title, description, stewardship_owner, created_at
+        SELECT code, id, owner_snapshot, title
         FROM reference.schemes
         WHERE ($1::text IS NULL OR code LIKE $1 || '%')
         ORDER BY code
@@ -61,8 +42,8 @@ pub async fn list_schemes(
     Ok(rows)
 }
 
-/// Lists values of a scheme, ordered by code. Retired values are included; the caller sees
-/// `retired_at` and `superseded_by_id` and decides.
+/// Lists values of a scheme, ordered by code. Superseded values are included; the caller sees
+/// `supersedes_id` and decides.
 pub async fn list_values(
     pools: &Pools,
     scheme_id: Uuid,
@@ -71,7 +52,7 @@ pub async fn list_values(
 ) -> Result<Vec<Value>, Error> {
     let rows = sqlx::query_as::<_, Value>(
         r#"
-        SELECT id, scheme_id, code, description, retired_at, superseded_by_id, created_at
+        SELECT code, id, label, scheme_id, supersedes_id
         FROM reference.values
         WHERE scheme_id = $1
         ORDER BY code
@@ -94,7 +75,7 @@ pub async fn lookup_value(
 ) -> Result<Value, Error> {
     let row = sqlx::query_as::<_, Value>(
         r#"
-        SELECT v.id, v.scheme_id, v.code, v.description, v.retired_at, v.superseded_by_id, v.created_at
+        SELECT v.code, v.id, v.label, v.scheme_id, v.supersedes_id
         FROM reference.values v
         JOIN reference.schemes s ON s.id = v.scheme_id
         WHERE s.code = $1 AND v.code = $2

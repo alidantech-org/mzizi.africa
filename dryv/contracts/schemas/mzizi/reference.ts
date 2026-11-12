@@ -10,9 +10,10 @@
 import * as dryv from "@dryvcode/author";
 
 import { sharedProperties } from "../_shared.ts";
-import { legalSchemas } from "./legal.ts";
-import { sourceSchemas } from "./source.ts";
 import { geographySchemas } from "./geography.ts";
+import { legalSchemas } from "./legal.ts";
+import { officialSchemas } from "./official.ts";
+import { sourceSchemas } from "./source.ts";
 
 export const reference = dryv
   .group({ name: "reference" })
@@ -29,9 +30,11 @@ export const referenceExpressions = reference.expressions({
     dryv.expression.context("value", "supersedes_id"),
   ),
   TopicMustNotParentItself: dryv.expression.notEqual(dryv.expression.context("value", "id"), dryv.expression.context("value", "parent_id")),
-  EffectiveWindowMustBeOrdered: dryv.expression.or(
-    dryv.expression.equal(dryv.expression.context("value", "effective_until"), dryv.expression.value(null)),
-    dryv.expression.lessThan(dryv.expression.context("value", "effective_from"), dryv.expression.context("value", "effective_until")),
+  // The engine cannot type a comparison against a null literal. A SQL CHECK on `from < until` is
+  // satisfied when `until` is NULL (open window), so the open case needs no explicit branch.
+  EffectiveWindowMustBeOrdered: dryv.expression.lessThan(
+    dryv.expression.context("value", "effective_from"),
+    dryv.expression.context("value", "effective_until"),
   ),
   DependencyMustNotBeSelf: dryv.expression.notEqual(
     dryv.expression.context("value", "version_id"),
@@ -230,7 +233,7 @@ export const PatternVersions = reference.schemas({
         onUpdate: "restrict",
       }),
       edition: dryv.field(sharedProperties.PositiveInteger),
-      /** Typed artifact reference; filesystem.file_versions has no authored entity contract yet. */
+      /** Typed artifact identity; the active Reference vocabulary app does not compose Filesystem. */
       file_version_id: dryv.field(sharedProperties.Id),
       digest: dryv.field(sharedProperties.Sha256),
     })
@@ -246,7 +249,7 @@ export const PatternVersions = reference.schemas({
         ),
     }),
 });
-/** FK gap: add the real relation to filesystem.file_versions when that schema authors its entity. */
+/** FK gap: Main review composition has the target; keep the active Operations vocabulary decoupled. */
 /*---------------- End reference.pattern_versions ----------------*/
 referenceSchemas.PatternVersion = PatternVersions.PatternVersion;
 
@@ -260,10 +263,7 @@ export const PatternBindings = reference.schemas({
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
-      /**
-       * Proposed FK target is geography.units.feature_id. Keep as typed ID until the database app
-       * composes Geography and the country/unit consistency rule is enforceable.
-       */
+      /** Geography target is geography.units.feature_id; active vocabulary composition omits Geography. */
       unit_id: dryv.field(sharedProperties.Id).optional().nullable(),
       /** Optional country scope; a country-wide geographic scope also identifies its country unit. */
       country_id: dryv
@@ -276,10 +276,7 @@ export const PatternBindings = reference.schemas({
           onDelete: "restrict",
           onUpdate: "restrict",
         }),
-      /**
-       * Existing proposal targets legal.provision_versions. The FK is not encoded until the target
-       * Legal contract exists and its relationship to a Reference-owned domain bridge is resolved.
-       */
+      /** Existing proposal target and role need reconciliation with the Reference-owned Legal basis link. */
       provision_id: dryv.field(sharedProperties.Id).optional().nullable(),
       /** Inclusive lower date; Dryv has no native daterange storage property. */
       effective_from: dryv.field(sharedProperties.CalendarDate),
@@ -423,47 +420,46 @@ export const vocabularySchemas = {
   Value: referenceSchemas.Value,
 };
 
-/** No Reference-owned Legal bridge table is defined until its target semantics are decided. */
-/*---------------- End proposed Reference–Legal bridge: design decision pending ----------------*/
+/*---------------- Reference-mediated Legal relationship contracts ----------------*/
 
-/*---------------- Authorized Reference Legal mediation ----------------*/
-/** Separate from active database composition until all dependencies and SQL semantics are verified. */
-export const LegalBasisLinks = referenceProposals.schemas({
-  LegalBasisLink: dryv
+/** Separate registration group; tables persist under the Reference namespace. */
+export const referenceLegal = dryv
+  .group({ name: "reference-legal" })
+  .description("Typed Legal basis and domain associations owned by Reference.")
+  .facets({ storage: { namespace: "reference" } });
+
+// biome-ignore lint/suspicious/noExplicitAny: supports typed forward references across Main schemas.
+export const referenceLegalSchemas: Record<string, any> = {};
+
+export const LegalBasisLinks = referenceLegal.schemas({
+  LegalBasisLinks: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      provision_version_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      basis_role_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      citation_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      provision_version_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      basis_role_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      citation_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       effective_from: dryv.field(sharedProperties.CalendarDate),
       effective_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
       interpretation: dryv.field(sharedProperties.Description),
       reviewed_by_snapshot: dryv.field(sharedProperties.JsonText),
       reviewed_at: dryv.field(sharedProperties.Instant),
     })
-    .description("One reviewed legal-support assertion; each basis role and precise provision version is a separate assertion.")
-    .invariant("EffectiveWindowIsOrdered", referenceExpressions.EffectiveWindowMustBeOrdered)
+    .description("One reviewed legal support assertion for an exact provision version, role, citation and effective period.")
     .role("entity")
     .facets({
       storage: dryv
@@ -476,39 +472,69 @@ export const LegalBasisLinks = referenceProposals.schemas({
         ),
     }),
 });
+referenceLegalSchemas.LegalBasisLinks = LegalBasisLinks.LegalBasisLinks;
 /*---------------- End reference.legal_basis_links ----------------*/
-export const GeographyChangeLegalBases = referenceProposals.schemas({
-  GeographyChangeLegalBasis: dryv
+
+export const GeographyChangeLegalBases = referenceLegal.schemas({
+  GeographyChangeLegalBases: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      change_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => geographySchemas.Changes.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      legal_basis_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => LegalBasisLinks.LegalBasisLink.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      change_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => geographySchemas.Changes.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      legal_basis_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceLegalSchemas.LegalBasisLinks.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
     })
-    .description("Typed legal support for a geographic transformation edge; multiple bases and roles remain distinct.")
+    .description("Typed legal support for a geographic change; role distinctions live on the linked basis assertion.")
     .role("entity")
     .facets({
       storage: dryv
         .storage("geography_change_legal_bases")
         .primaryKey("id")
         .indexes(
-          { name: "uq_geography_change_legal_bases_pair", fields: ["change_id", "legal_basis_id"], unique: true },
-          { name: "idx_geography_change_legal_bases_basis", fields: ["legal_basis_id"] },
+          { name: "uq_geography_change_legal_basis", fields: ["change_id", "legal_basis_id"], unique: true },
+          { name: "idx_geography_change_legal_basis_link", fields: ["legal_basis_id"] },
         ),
     }),
 });
+referenceLegalSchemas.GeographyChangeLegalBases = GeographyChangeLegalBases.GeographyChangeLegalBases;
 /*---------------- End reference.geography_change_legal_bases ----------------*/
-/** Official/Governance/Politics association tables await their exact authored entity targets. */
+
+export const OfficialEntityLegalBases = referenceLegal.schemas({
+  OfficialEntityLegalBases: dryv
+    .schema({
+      id: dryv.field(sharedProperties.Id),
+      entity_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => officialSchemas.Entities.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      legal_basis_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceLegalSchemas.LegalBasisLinks.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+    })
+    .description("Typed legal support for an official organization identity.")
+    .role("entity")
+    .facets({
+      storage: dryv
+        .storage("official_entity_legal_bases")
+        .primaryKey("id")
+        .indexes(
+          { name: "uq_official_entity_legal_basis", fields: ["entity_id", "legal_basis_id"], unique: true },
+          { name: "idx_official_entity_legal_basis_link", fields: ["legal_basis_id"] },
+        ),
+    }),
+});
+referenceLegalSchemas.OfficialEntityLegalBases = OfficialEntityLegalBases.OfficialEntityLegalBases;
+/*---------------- End reference.official_entity_legal_bases ----------------*/

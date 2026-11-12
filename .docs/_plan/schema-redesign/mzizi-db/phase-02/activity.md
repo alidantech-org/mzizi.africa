@@ -198,7 +198,7 @@ Rename `calendar` to `activity` and extend from calendar entries to government/p
 
 | Current table / candidate | Proposed meaning |
 |---|---|
-| `calendar.events` → `activity.events` | Actual or expected occurrence; kind, time precision, jurisdiction, applicable geo, responsible participant, source and status. |
+| `calendar.events` → `activity.events` | Actual or expected occurrence; kind, time precision, country, applicable geo, responsible participant, source and status. |
 | `calendar.links` → `activity.links` | Typed links to a subject office/person/institution/law/contract/election; evaluate hard FK association design. |
 | **Candidate** `activity.actions` | If distinct from events: formal decision/official act (appoint, approve, sign, enact) with actor/target/date/result. |
 | **Candidate** `activity.updates` | Human-authored or curated news/public-update identity, headline/summary/publication timestamp and linked sources/events. |
@@ -290,7 +290,7 @@ For one county, show actual appointment and inauguration dates with people, offi
 
 | Layer | Owns | Does not own |
 |---|---|---|
-| `reference` schedule/pattern | Versioned generic timing or trigger definition, legal/jurisdiction applicability, expected activity category | The real occurrence, official declaration or executed job |
+| `reference` schedule/pattern | Versioned generic timing or trigger definition, legal/country applicability, expected activity category | The real occurrence, official declaration or executed job |
 | `activity` event/action/update | Announced or scheduled instance, amendments/rescheduling, verified occurrence and evidence-linked chronology | Numerical election result, vote count, budget amount, official appointment tenure or scientific observation |
 | Domain tables (e.g. `electoral.elections`, `finance.budgets`) | Domain-specific truth and dates, status/version and records | Duplicate independently conflicting public calendar state |
 
@@ -301,7 +301,7 @@ An event may be **derived as an expected schedule entry** only when its schedule
 ### Real administrative and external input workflows
 
 1. **Official-source agent:** Authorized site watcher detects a relevant announcement or date change, captures original evidence and Markdown derivative, extracts an event candidate and recognizes existing activities by real-world identity, source/publication identifiers and semantic linkage.
-2. **Admin records an event:** Authenticated, authorized admin chooses event type, jurisdiction, responsible entity, real domain subject, date/precision if appropriate, source/evidence and the assertion being made. Actions must distinguish **submit candidate**, **approve verified activity** and **request refresh**; editing a title should not secretly change an election result.
+2. **Admin records an event:** Authenticated, authorized admin chooses event type, country, responsible entity, real domain subject, date/precision if appropriate, source/evidence and the assertion being made. Actions must distinguish **submit candidate**, **approve verified activity** and **request refresh**; editing a title should not secretly change an election result.
 3. **Admin requests verification independently of an event:** An authorized person can ask the engine to verify a holder, budget release, census publication or official website even when no event has been asserted. Include justification, scope, target, source preference and optional recurrence.
 4. **Event is evaluated:** Rule/watcher checks applicability, effective rule version, required evidence, matched domain record and allowed tools; triggers `engine` jobs for affected fields/relationships only. A source announcement can require review before it becomes a verified event or triggers sensitive updates.
 5. **Domain facts are verified and reconciled:** An event can cause rechecking, but does not by itself imply a canonical row change. Preserve old official dates and supersessions, and record successful unchanged verification separately from publication and modification timestamps.

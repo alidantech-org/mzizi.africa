@@ -84,7 +84,7 @@ All tables and fields are hypothetical. Every proposed business column is listed
 | `code` | `text` | Publisher code | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `title` | `text` | Dataset name | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 
-- **Current SQL/Dryv fields without a proposed same-name column:** `collector`, `created_at`, `geo_unit_id`, `indicator_id`, `is_current`, `jurisdiction_id`, `methodology`, `publisher_institution_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **Current SQL/Dryv fields without a proposed same-name column:** `collector`, `created_at`, `geo_unit_id`, `indicator_id`, `is_current`, `country_id`, `methodology`, `publisher_institution_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** UNIQUE(publisher_id,code). Exact keys and cross-field checks remain for review.
 - **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `publisher_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
@@ -284,7 +284,7 @@ tags: [improvements, schema-redesign, statistical, data, planning]
 extra: {status: planning_only}
 ---
 
-> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting country, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
 
 # Statistical — understandable but powerful measures, dimensions, periods and vintages
 
@@ -300,7 +300,7 @@ Avoid two failures: (1) one giant generic row with ambiguous `value` and JSON di
 
 | Existing table | Semantics to verify; potential improvement |
 |---|---|
-| `statistical.periods` | Canonical period identity, date precision, type and jurisdiction; compare with fiscal years. |
+| `statistical.periods` | Canonical period identity, date precision, type and country; compare with fiscal years. |
 | `statistical.categories` | Indicator classification/taxonomy; clarify relation to `reference` schemes. |
 | `statistical.indicators` | Measurable quantity definition, unit, aggregation/denominator and time methodology. |
 | `statistical.fields` | Dataset column or table-specific field mapping; distinguish this from dimensions and values. |
@@ -318,7 +318,7 @@ The initial migration does not contain the five later dimension/vintage tables; 
 
 Conceptually: **What is measured** (`indicator`) × **where** (`geography`) × **when** (`period`) × **for which population/breakdown** (dimension members) × **which publication/edition** (`dataset/vintage`) → **observation** (`value, unit, estimate kind and uncertainty`).
 
-Each term should have an unambiguous description. Make `datasets` a source/publication identity, `fields` the external table's actual columns, and `indicators` reusable semantic measures only when that matches the real data. A dimension member must belong to a known dimension and cannot freely mix arbitrary classification UUIDs. Preserve legal or public reporting jurisdiction as distinct from an observation's physical/geographic measurement unit.
+Each term should have an unambiguous description. Make `datasets` a source/publication identity, `fields` the external table's actual columns, and `indicators` reusable semantic measures only when that matches the real data. A dimension member must belong to a known dimension and cannot freely mix arbitrary classification UUIDs. Preserve legal or public reporting country as distinct from an observation's physical/geographic measurement unit.
 
 ## Real FKs, strong constraints and query integrity
 
@@ -348,7 +348,7 @@ Audit `fields` vs `datasets` and `categories` vs `reference.classifications` fir
 1. Distinguish data column, indicator, series and observation identity: keep existing table split or simplify?
 2. Which units, denominator types and aggregation methods need enforceable lookup tables?
 3. Date/period precision, source vintage, revisions and time-varying geographic boundaries?
-4. Which dimensions are global versus jurisdiction-specific, and how are allowed members constrained?
+4. Which dimensions are global versus country-specific, and how are allowed members constrained?
 5. Quality checks for impossible values, double counting, incomplete geographic series and incompatible methodology?
 6. Which derived calculations can run in SQL procedures vs independent pipeline packages?
 7. How should dashboards display missingness, uncertainty, revisions and confidence?
@@ -394,7 +394,7 @@ Audit `fields` vs `datasets` and `categories` vs `reference.classifications` fir
 
 ## 2026-11-07 census/publication calendars and statistical freshness
 
-**Planning only:** Distinguish a **census enumeration event**, planned release, actual publication of preliminary tables and later revised statistical vintages. `reference` can define jurisdiction/source-specific census/reporting schedules and release watch policies; `activity` can record announced and actual milestones. The published statistical figures, indicator meanings, observed geography, periods and release versions remain canonical in `statistical`, not duplicated into the event.
+**Planning only:** Distinguish a **census enumeration event**, planned release, actual publication of preliminary tables and later revised statistical vintages. `reference` can define country/source-specific census/reporting schedules and release watch policies; `activity` can record announced and actual milestones. The published statistical figures, indicator meanings, observed geography, periods and release versions remain canonical in `statistical`, not duplicated into the event.
 
 A verified official KNBS or equivalent provider release should trigger focused dataset/vintage/distribution refresh, provenance capture, dimensional validation and recomputation of affected derived measures. A predicted release date merely creates a due check; it must not generate made-up population figures. A newly downloaded file is not necessarily a new vintage or verified observation.
 

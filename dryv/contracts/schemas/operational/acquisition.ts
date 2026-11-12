@@ -244,7 +244,16 @@ export const AccessAttempts = acquisition.schemas({
       retry_after: dryv.field(sharedProperties.Instant).optional().nullable(),
       error_code: dryv.field(sharedProperties.String255).optional().nullable(),
       response_hash: dryv.field(sharedProperties.Sha256).optional().nullable(),
-      artifact_id: dryv.field(sharedProperties.Id).optional().nullable(),
+      artifact_id: dryv
+        .field(sharedProperties.Id)
+        .optional()
+        .nullable()
+        .relation({
+          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Artifacts.field("id"),
+          cardinality: dryv.relation.manyToOne(),
+          onDelete: "restrict",
+          onUpdate: "restrict",
+        }),
       bytes_received: dryv.field(sharedProperties.NonNegativeInt64).optional().nullable(),
     })
     .role("entity")
@@ -288,7 +297,16 @@ export const Observations = acquisition.schemas({
       content_type: dryv.field(sharedProperties.String255).optional().nullable(),
       etag: dryv.field(sharedProperties.String255).optional().nullable(),
       last_modified: dryv.field(sharedProperties.String255).optional().nullable(),
-      artifact_id: dryv.field(sharedProperties.Id).optional().nullable(),
+      artifact_id: dryv
+        .field(sharedProperties.Id)
+        .optional()
+        .nullable()
+        .relation({
+          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Artifacts.field("id"),
+          cardinality: dryv.relation.manyToOne(),
+          onDelete: "restrict",
+          onUpdate: "restrict",
+        }),
     })
     .role("entity")
     .facets({

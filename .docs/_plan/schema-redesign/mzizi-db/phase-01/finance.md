@@ -16,7 +16,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 Public budgets, allocations, revenue, expenditure, transfers, public funds and debt.
 
-Keep Finance separate from Procurement. Preserve budgets and editions, allocations, revenues, expenditures, transfers, public funds, borrowing, loan disbursements and debt service. Record the relevant fiscal/transaction time, currency and units, jurisdiction, responsible institution and exact evidence. Responsible mandates link to Governance and identities to Official; geographic scope uses Geography, including a country unit for national coverage. Legal foundations are mediated by Reference.
+Keep Finance separate from Procurement. Preserve budgets and editions, allocations, revenues, expenditures, transfers, public funds, borrowing, loan disbursements and debt service. Record the relevant fiscal/transaction time, currency and units, country, responsible institution and exact evidence. Responsible mandates link to Governance and identities to Official; geographic scope uses Geography, including a country unit for national coverage. Legal foundations are mediated by Reference.
 
 Existing years/budgets/allocations/entries/loans/repayments/disbursements dictionaries and the older funds, revenue and transfer proposals remain review inputs. Distinguish authorization, allocation, commitment, payment and actual delivery. Procurement contracts and Civic projects reference funding without duplicating authoritative amounts. Do not require deferred Economy or Statistical tables to publish pilot finance records.
 
@@ -58,11 +58,11 @@ flowchart LR
   finance_loans["finance.loans"]
   finance_repayments["finance.repayments"]
   finance_years["finance.years"]
-  geography_jurisdictions["geography.jurisdictions"]
+  reference_countries["reference.countries"]
   official_entities["official.entities"]
   reference_units["reference.units"]
   reference_values["reference.values"]
-  finance_years -->|jurisdiction_id| geography_jurisdictions
+  finance_years -->|country_id| reference_countries
   finance_budgets -->|organization_id| official_entities
   finance_budgets -->|year_id| finance_years
   finance_budgets -->|file_version_id| filesystem_file_versions
@@ -94,14 +94,14 @@ All tables and fields are hypothetical. Every proposed business column is listed
 | Column | Proposed type | Meaning | Nullable | Default | Relationship | Units / validation | Proposed disposition |
 |---|---|---|---|---|---|---|---|
 | `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
-| `jurisdiction_id` | `uuid` | Jurisdiction | No | — | FK → `geography.jurisdictions` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `country_id` | `uuid` | Country identity | No | — | FK → `reference.countries`; geographic scope → `geography.units.feature_id` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `label` | `text` | Publisher label | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
 | `period` | `daterange` | Exact fiscal interval | No | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
 
 - **Current SQL/Dryv fields without a proposed same-name column:** `code`, `created_at`, `ends_on`, `is_current`, `starts_on`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
-- **Constraints:** UNIQUE(jurisdiction_id,label). Exact keys and cross-field checks remain for review.
-- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `jurisdiction_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Constraints:** UNIQUE(country_id,label). Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `country_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
 - **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
 - **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
 - **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 100, +100/year, peak 5/day; five-year 600 rows ≈ 0.6 MiB live row+index budget; Expected: initial 1,000, +500/year, peak 25/day; five-year 3,500 rows ≈ 3.4 MiB live row+index budget; High: initial 10,000, +5,000/year, peak 250/day; five-year 35,000 rows ≈ 34.2 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
@@ -296,7 +296,7 @@ Debt is a form of financing, so the user's chosen grouping is `finance` absorbin
 
 | Existing table | Real purpose and proposed action |
 |---|---|
-| `finance.years` | Fiscal-year and jurisdiction/calendar context; retain fiscal semantics and dated validity. |
+| `finance.years` | Fiscal-year and country/calendar context; retain fiscal semantics and dated validity. |
 | `finance.units` | Budgetary units/appropriation holders; relate to public institutions and canonical organization identities with FKs, not vague name matching. |
 | `finance.budgets` | Approved and amended allocations or estimates by unit, period, fund/project/line and currency; compare versions. |
 | `finance.transfers` | Public transfers between responsible units/funds; distinguish inflow/outflow, source and recipient. |
@@ -313,7 +313,7 @@ Debt is a form of financing, so the user's chosen grouping is `finance` absorbin
 
 ## Legal, geographic and entity links
 
-Require hard FKs to the correct `governance.institutions` or `organization.entities` for funding authority and to `finance.units` for budget owner. Fiscal records may link to `procurement.contracts` and project delivery location, but a contracted amount is not proof of actual payment. Differentiate the legally scoped jurisdiction, recipient location, implementation geo unit and statistical reporting geo unit. National transfer records might fund one county without being "located" there physically. Legal basis can attach to budget rules/appropriation laws; do not redundantly stamp a vague law ID onto every payment.
+Require hard FKs to the correct `governance.institutions` or `organization.entities` for funding authority and to `finance.units` for budget owner. Fiscal records may link to `procurement.contracts` and project delivery location, but a contracted amount is not proof of actual payment. Differentiate the legally scoped country, recipient location, implementation geo unit and statistical reporting geo unit. National transfer records might fund one county without being "located" there physically. Legal basis can attach to budget rules/appropriation laws; do not redundantly stamp a vague law ID onto every payment.
 
 Debt should link to lender/borrower organizations, origin agreement/legal instrument, repayment schedule, disbursement/repayment events and historical amendments. Ensure strong FK links across `finance`, `organization`, `governance`, `geography`, `legal` and `reference` where relevant. Date validity must distinguish fiscal period, transaction/recorded date, due date and publishing date.
 
@@ -340,7 +340,7 @@ Before consolidation, audit which downstream tables and API contracts reference 
 2. Ledger entries: double-entry accounting, simple transaction lines or redundant import artifacts?
 3. Loan borrower/lender roles, guarantees, repayment schedules and multicurrency conversion?
 4. Budget vs commitments vs obligations vs actual expenditures; required financial dates and versions?
-5. Jurisdiction/fiscal period and geographic delivery vs physical institution location?
+5. Country/fiscal period and geographic delivery vs physical institution location?
 6. Which value corrections can be automated, and which require financial/official publication review?
 
 **References:** [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Schema index](../../README.md) · [Procurement](procurement.md) · [Statistics](../phase-02/statistical.md).
@@ -388,7 +388,7 @@ Before consolidation, audit which downstream tables and API contracts reference 
 
 **Meaningful fields:** `finance.years.starts_on/ends_on` already defines fiscal periods. A budget `submitted_on`, `approved_on` and `revised_on` are different facts; expenses have `paid_at` or `booked_at` only if they mean actual transactions. Do not replace generic `valid_from/to` with unrelated renamed dates by template. An active fiscal process can have frequent monitoring but its prior approved edition and historical payment ledger remain cold unless an official correction or new source appears.
 
-**Agent/admin flow:** An official-source announcement or admin-submitted budget event becomes a sourced `activity` candidate, may trigger budget publication checks by finance unit/jurisdiction and period, then create staged comparisons against approved `finance.budgets` and `statistical` derived measures. Advance verification history for unchanged facts, not their value timestamps. Preserve published versions and legal authority. Source selection and schedules must be jurisdiction-manifest driven, never embedded Kenya-specific constants. Final tables, columns and review thresholds remain **OPEN**.
+**Agent/admin flow:** An official-source announcement or admin-submitted budget event becomes a sourced `activity` candidate, may trigger budget publication checks by finance unit/country and period, then create staged comparisons against approved `finance.budgets` and `statistical` derived measures. Advance verification history for unchanged facts, not their value timestamps. Preserve published versions and legal authority. Source selection and schedules must be country-manifest driven, never embedded Kenya-specific constants. Final tables, columns and review thresholds remain **OPEN**.
 
 ## 2026-11-11 — System-expansion alignment
 

@@ -52,7 +52,7 @@ The inventory does not establish live database state and may miss ALTER-only cha
 
 ```mermaid
 flowchart LR
-  geography_jurisdictions["geography.jurisdictions"]
+  reference_countries["reference.countries"]
   geography_units["geography.units"]
   governance_holders["governance.holders"]
   governance_institutions["governance.institutions"]
@@ -64,7 +64,7 @@ flowchart LR
   official_individuals["official.individuals"]
   reference_values["reference.values"]
   governance_institutions -->|organization_id| official_entities
-  governance_institutions -->|jurisdiction_id| geography_jurisdictions
+  governance_institutions -->|country_id| reference_countries
   governance_institutions -->|kind_id| reference_values
   governance_offices -->|institution_id| governance_institutions
   governance_offices -->|unit_id| geography_units
@@ -91,13 +91,13 @@ All tables and fields are hypothetical. Every proposed business column is listed
 |---|---|---|---|---|---|---|---|
 | `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `organization_id` | `uuid` | Legal identity | No | — | FK → `official.entities` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
-| `jurisdiction_id` | `uuid` | Authority context | No | — | FK → `geography.jurisdictions` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
+| `country_id` | `uuid` | Country identity | No | — | FK → `reference.countries`; geographic scope → `geography.units.feature_id` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `kind_id` | `uuid` | Institutional role | No | — | FK → `reference.values` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
 
 - **Current SQL/Dryv fields without a proposed same-name column:** `branch_id`, `code`, `created_at`, `description`, `entity_id`, `is_current`, `legal_basis_id`, `logo_marker`, `name`, `scope_geo_unit_id`, `type_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`, `wikidata_id`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
-- **Constraints:** UNIQUE(organization_id,jurisdiction_id,kind_id). Exact keys and cross-field checks remain for review.
-- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `organization_id`, `jurisdiction_id`, `kind_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
+- **Constraints:** UNIQUE(organization_id,country_id,kind_id). Exact keys and cross-field checks remain for review.
+- **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `organization_id`, `country_id`, `kind_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
 - **Relationships:** resolve each FK target. Main allows cross-schema FKs. Main and Operations have no cross-database FK.
 - **Evidence/time:** preserve exact source/version, observation/retrieval time, historical context and uncertainty where applicable. Approve the exact evidence path for this table.
 - **Growth/storage estimate (illustrative planning envelope, not measured):** Low: initial 1,000, +200/year, peak 20/day; five-year 2,000 rows ≈ 2.0 MiB live row+index budget; Expected: initial 10,000, +2,000/year, peak 200/day; five-year 20,000 rows ≈ 19.5 MiB live row+index budget; High: initial 100,000, +20,000/year, peak 2,000/day; five-year 200,000 rows ≈ 195.3 MiB live row+index budget. Model: initial rows + annual accepted rows × 5; multiply by a per-row budget of 1 KiB including a coarse index allowance. Replace assumptions with actual samples, ingest rates and `pg_total_relation_size` before approval. Large object bytes are excluded; WAL, replicas, backups and S3 are budgeted separately.
@@ -223,7 +223,7 @@ tags: [improvements, schema-redesign, governance, planning]
 extra: {status: planning_only, implementation: not_approved}
 ---
 
-> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting country, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
 
 # Institutions, offices, holders, public services and rule patterns
 
@@ -241,12 +241,12 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 | Existing table | Columns declared at initial CREATE TABLE (baseline) |
 |---|---|
-| `civic.amenities` | `id`, `code`, `created_at`, `geo_unit_id`, `is_active`, `is_current`, `jurisdiction_id`, `name`, `sector_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
+| `civic.amenities` | `id`, `code`, `created_at`, `geo_unit_id`, `is_active`, `is_current`, `country_id`, `name`, `sector_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `civic.deliveries` | `id`, `amenity_id`, `budget_id`, `created_at`, `is_current`, `responsible_office_id`, `service_id`, `status`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `civic.posts` | `id`, `amenity_id`, `created_at`, `is_current`, `office_id`, `role_kind_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
-| `civic.services` | `id`, `code`, `created_at`, `description`, `is_current`, `jurisdiction_id`, `legal_basis_id`, `name`, `sector_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
+| `civic.services` | `id`, `code`, `created_at`, `description`, `is_current`, `country_id`, `legal_basis_id`, `name`, `sector_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `governance.holders` | `id`, `created_at`, `departure_reason`, `is_current`, `legal_basis_id`, `office_id`, `person_id`, `selection_procedure_id`, `status`, `term_number`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
-| `governance.institutions` | `id`, `branch_id`, `code`, `created_at`, `description`, `geo_unit_id`, `is_current`, `jurisdiction_id`, `legal_basis_id`, `name`, `type_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
+| `governance.institutions` | `id`, `branch_id`, `code`, `created_at`, `description`, `geo_unit_id`, `is_current`, `country_id`, `legal_basis_id`, `name`, `type_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `governance.offices` | `id`, `code`, `created_at`, `description`, `institution_id`, `is_current`, `is_singleton`, `name`, `parent_office_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `governance.procedures` | `id`, `created_at`, `description`, `is_current`, `legal_basis_id`, `method_id`, `office_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `governance.relationships` | `id`, `child_institution_id`, `created_at`, `is_current`, `kind`, `legal_basis_id`, `parent_institution_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
@@ -259,11 +259,11 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 | Current/candidate | Specific purpose / issue |
 |---|---|
-| `institutions` | Public institution identity, legal establishment, jurisdiction/scope, relation to actual organization entity if relevant. |
+| `institutions` | Public institution identity, legal establishment, country/scope, relation to actual organization entity if relevant. |
 | `relationships` | Dated institution-to-institution parent, oversight, subordinate, mandate, collaboration links; avoid uncontrolled polymorphism. |
 | `offices` | Legally/structurally expected and observed posts, rank, scope, institution, office type, validity. |
 | `rules` | Pattern/office definition and applicability, count, generating scope, legal provision and version. |
-| `procedures` / `stages` | Selection, election, appointment, succession and other office filling procedures, jurisdiction/time aware. |
+| `procedures` / `stages` | Selection, election, appointment, succession and other office filling procedures, country/time aware. |
 | `holders` | Individuals in offices, status, appointment dates, service intervals, authority/evidence. |
 | `civic.services` / `deliveries` | Public service identity and actual delivery records, funding and reach. |
 | `civic.amenities` / `posts` | Facilities/service posts; decide fit with `geography.places` and expected `occupancies` before any table move. |
@@ -271,11 +271,11 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 ## 4. Strong relationships, geography, law and query design
 
-Real FKs: institutions → jurisdiction/root geography/legal basis where applicable; offices → institution, office rule, service region/seat; holders → person and office; governance.rules → legal authority/provision where relevant; physical `amenities`/facilities → place and scope; public service delivery → governing institution/finance units/geo and time. **No cross-schema soft-ID doctrine**. Use explicit typed junctions for multiple service territories or an office supported by several provisions. Avoid duplicating the same law FK on hundreds of generated offices if an approved pattern already supplies the reason, while retaining overrides/exception proofs.
+Real FKs: institutions → country/root geography/legal basis where applicable; offices → institution, office rule, service region/seat; holders → person and office; governance.rules → legal authority/provision where relevant; physical `amenities`/facilities → place and scope; public service delivery → governing institution/finance units/geo and time. **No cross-schema soft-ID doctrine**. Use explicit typed junctions for multiple service territories or an office supported by several provisions. Avoid duplicating the same law FK on hundreds of generated offices if an approved pattern already supplies the reason, while retaining overrides/exception proofs.
 
 ## 5. Four-class acquisition, patterns and traceability
 
-**Static seeded:** constitutional/legally established public institution definitions and basic controlled office types. **Pattern seeded:** county government offices, legislative seats, ministry structures and expected service locations generated by jurisdiction/period/geo unit. **Automated collected:** governors/deputies, ministers, commissioners, official holders, appointment/gazette notices, actual facilities and service delivery. **Derived:** coverage ratios, expected vs verified holders, cabinet composition and ministry responsibilities based on validated inputs.
+**Static seeded:** constitutional/legally established public institution definitions and basic controlled office types. **Pattern seeded:** county government offices, legislative seats, ministry structures and expected service locations generated by country/period/geo unit. **Automated collected:** governors/deputies, ministers, commissioners, official holders, appointment/gazette notices, actual facilities and service delivery. **Derived:** coverage ratios, expected vs verified holders, cabinet composition and ministry responsibilities based on validated inputs.
 
 For all retained/new tables, add concise PostgreSQL **schema/table/column comments**, plus a maintained Markdown/table registry describing each column's meaning, nullability decision, allowed acquisition classes and expected pattern/automated inputs. Record per-row origin via traceable lineage and real FKs where structurally possible. Do not treat a table's class eligibility as every row's origin.
 
@@ -285,7 +285,7 @@ For a county/year list legally required offices, verified current holders, vacan
 
 ## 7. Migration, preservation, integrity and compatibility
 
-Audit 2026-11 existing governance generalisation and pattern scripts/fixtures (`ke-office-patterns.json`), `governance.institutions`, `offices` scope and `governance.rules` relations. Check current holders/office duplicates; do **not** trust historical guessed counts automatically. Move civic service tables only after full column, query and FK compatibility review. Resolve outdated jurisdiction-wide null geo links as a separate, evidence-checked backfill. Preserve office holder history across office pattern changes.
+Audit 2026-11 existing governance generalisation and pattern scripts/fixtures (`ke-office-patterns.json`), `governance.institutions`, `offices` scope and `governance.rules` relations. Check current holders/office duplicates; do **not** trust historical guessed counts automatically. Move civic service tables only after full column, query and FK compatibility review. Resolve outdated country-wide null geo links as a separate, evidence-checked backfill. Preserve office holder history across office pattern changes.
 
 Global requirements: check live data, orphans, actual FK constraints, indexes and enum/lookup validity; reconcile every old→new table/column; preserve historical identities, evidence, versioning and record counts; update Dryv, API, ingestion and filesystem references with migrations only after explicit user approval. Never rewrite canonical facts to make a schema migration pass.
 

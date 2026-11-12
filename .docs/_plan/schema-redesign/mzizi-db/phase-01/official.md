@@ -3,12 +3,12 @@ id: DOC-MZIZI-SCHEMA-ORGANIZATION-20261111
 name: official schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {merged_document_ids: [DOC-MZIZI-SCHEMA-PERSON-20261111], status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {merged_document_ids: [DOC-MZIZI-SCHEMA-PERSON-20261111], status: proposed, approval: not_approved, implementation: integration_dependency_slice_authored, database: Main, recorded_on: 2026-11-11}
 ---
 
 # official — Phase 01
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+> **Phase 01 civic accountability scope agreed; the full Official schema remains unapproved.** The 12 November Main/Operations handoff requires a typed `official.entities` target for Source publishers and Legal issuers. That minimal identity dependency is now authored in `official.ts`; this does not approve the remaining Official inventory or activate generation.
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
@@ -18,9 +18,13 @@ Officially identified people and organizations, including schools and institutio
 
 Official combines the former Person and Organization schema proposals while retaining distinct person and organization record types. It owns officially identified individuals and entities, official names and aliases, identifiers and issuers, profiles/biographies, public handles and contact details. Schools, suppliers, public bodies and other institutions belong here when officially identified; a school identity does not require the deferred Education schema.
 
-Identity alone must not imply government authority or officeholding. Governance links institutional identities, offices, appointments and tenure to Official; Geography provides actual places and dated location/jurisdiction context; Civic links facility operators, service providers and project participants to those identities. A school organization, its campus/facility and its government mandate are different records. Auth accounts stay in Operations and are not civic people.
+Identity alone must not imply government authority or officeholding. Governance links institutional identities, offices, appointments and tenure to Official; Geography provides actual places and dated location/country context; Civic links facility operators, service providers and project participants to those identities. A school organization, its campus/facility and its government mandate are different records. Auth accounts stay in Operations and are not civic people.
 
 The retained dictionaries use candidate names `official.individuals`, `official.entities`, `official.person_names`, `official.person_identifiers`, `official.organization_identifiers`, `official.person_contacts` and `official.organization_contacts` to avoid collisions between the two inputs. Profiles, handles, organization names and ownership relationships remain review inputs from the older inventories; none is silently dropped or approved. Resolve the final names and column dispositions during review. Preserve dated identity changes, evidence, ambiguity and contact visibility. Name similarity alone cannot authorize an identity merge.
+
+### Authored integration dependency
+
+`official.entities` is the only table currently defined in Dryv. Its contract contains `id`, `code`, `name`, `kind_id → reference.values.id`, optional `registered_on` and `dissolved_on`, a primary key, unique code and kind lookup index. Source publishers, Source identities, Legal instruments and Reference legal-basis associations now target this stable organization identity. These fields are an implementation slice required to express the authorized Main contract graph; the broader Official table inventory remains unapproved and unimplemented. Registration/dissolution ordering and Reference kind-scheme membership remain application/database enforcement gaps.
 
 ## Retained table proposals and review context
 
@@ -87,7 +91,7 @@ All tables and fields are hypothetical. Every proposed business column is listed
 | `registered_on` | `date` | Registration | Yes | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
 | `dissolved_on` | `date` | Dissolution | Yes | — | — | Type checked; domain constraints and units must be approved for this field | ADD (proposed target field; pending user approval) |
 
-- **Current SQL/Dryv fields without a proposed same-name column:** `code`, `created_at`, `entity_type_id`, `is_current`, `jurisdiction_id`, `official_name`, `parent_entity_id`, `status`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **Current SQL/Dryv fields without a proposed same-name column:** `code`, `created_at`, `entity_type_id`, `is_current`, `country_id`, `official_name`, `parent_entity_id`, `status`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** Dissolution >= registration; names not unique. Exact keys and cross-field checks remain for review.
 - **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `kind_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
@@ -230,7 +234,7 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 | Existing table | Columns declared at initial CREATE TABLE (baseline) |
 |---|---|
-| `organization.entities` | `id`, `code`, `created_at`, `entity_type_id`, `is_current`, `jurisdiction_id`, `official_name`, `parent_entity_id`, `status`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
+| `organization.entities` | `id`, `code`, `created_at`, `entity_type_id`, `is_current`, `country_id`, `official_name`, `parent_entity_id`, `status`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 | `organization.identifiers` | `id`, `created_at`, `entity_id`, `is_current`, `issuing_authority_id`, `scheme_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `value`, `version` |
 | `organization.ownerships` | `id`, `created_at`, `entity_id`, `is_current`, `owner_entity_id`, `owner_person_id`, `percentage`, `position`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version` |
 
@@ -240,7 +244,7 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 | Current table | Purpose and redesign review |
 |---|---|
-| `entities` | Stable canonical legal identity, type/category, registered jurisdiction, parent affiliations and temporal status. |
+| `entities` | Stable canonical legal identity, type/category, registered country, parent affiliations and temporal status. |
 | `identifiers` | Scheme/value/issuer/valid period; enable verified PPIP/e-GP identifiers, business registries, and historic identifier aliases. |
 | `ownerships` | Dated share/control/relationship between organizations; real FKs to both parties. |
 | `organization.locations` | **Retired**; replace ambiguous HQ/service/county roles with `geography.places`/occupancies and typed scope links. |
@@ -249,7 +253,7 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 ## 4. Strong relationships, geography, law and query design
 
-Use direct FKs from `procurement.bids`, `procurement.contracts`, `finance.units`, `source.publishers`, `website` publisher/owner associations and `governance.institutions.entity_id` if appropriate. A legal organization and a public institution may be tightly connected but are not interchangeable; validate the 1:1/1:N cases. Model registered jurisdiction, HQ physical occupancy, public-service jurisdiction, procurement roles and delivery location separately. Treat organizational relationships as dated, directional, typed FKs.
+Use direct FKs from `procurement.bids`, `procurement.contracts`, `finance.units`, `source.publishers`, `website` publisher/owner associations and `governance.institutions.entity_id` if appropriate. A legal organization and a public institution may be tightly connected but are not interchangeable; validate the 1:1/1:N cases. Model registered country, HQ physical occupancy, public-service country, procurement roles and delivery location separately. Treat organizational relationships as dated, directional, typed FKs.
 
 ## 5. Four-class acquisition, patterns and traceability
 
@@ -272,7 +276,7 @@ Global requirements: check live data, orphans, actual FK constraints, indexes an
 1. What identities represent government offices that are not separately incorporated?
 2. Which supplier identifiers are authoritative and publicly reusable?
 3. Who may correct an organization ID/name, and how are mergers/splits represented?
-4. Are type classifications well-defined by jurisdiction, or mixed generic labels?
+4. Are type classifications well-defined by country, or mixed generic labels?
 5. Which owner/parent/branch relationships are legal, financial or operational?
 
 ## 9. Related planning resources and decision status
@@ -511,7 +515,7 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 | Current table | Review focus |
 |---|---|
-| `individuals` | Stable canonical identity independent of one institution/office; name, jurisdiction and optional public identifiers. |
+| `individuals` | Stable canonical identity independent of one institution/office; name, country and optional public identifiers. |
 | `names` | Full/part/alternative names with language, time and evidence, including disputed forms. |
 | `profiles` | Biography, occupations and other stable descriptive claims; distinguish source content from synthesis. |
 | `contacts` | Actual contact points; audit whether duplicative with `contact.points` and what publication permissions apply. |
@@ -520,7 +524,7 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 ## 4. Strong relationships, geography, law and query design
 
-Current `governance.holders.individual_id`, `electoral.candidates.person_id` (verify current naming), `political.memberships` and `auth.accounts` relationships should use proper FKs to stable `person.individuals` identities where present. One person can hold many roles over time; time-bounded FK junctions, not copied office titles on the person row. Respect jurisdiction vs birth/residence vs electoral representation distinctions. Profiles can be published public information but private contact data must be treated separately.
+Current `governance.holders.individual_id`, `electoral.candidates.person_id` (verify current naming), `political.memberships` and `auth.accounts` relationships should use proper FKs to stable `person.individuals` identities where present. One person can hold many roles over time; time-bounded FK junctions, not copied office titles on the person row. Respect country vs birth/residence vs electoral representation distinctions. Profiles can be published public information but private contact data must be treated separately.
 
 ## 5. Four-class acquisition, patterns and traceability
 

@@ -227,7 +227,7 @@ extra: {status: planning_only, design: explicitly_unapproved}
 
 Existing Kenya PPIP/e-GP and OCDS-style procurement data contain procuring entities and suppliers that are not consistently linked to MZIZI's canonical institutions/organizations and appropriate geographic units. The user wants true queryable links and better contract data, including contract type, responsible parties, values, dates and implementation information. They leaned toward canonical `organization.entities` for both procuring entities and suppliers, with `procurement` representing their participation and transactions, **but also suggested straightforward direct procurer/supplier FK columns and asked for tradeoff evaluation**.
 
-Do not equate procuring authority, buyer, finance unit, contracting office, bidder, awardee, supplier, subcontractor, headquarters, registered jurisdiction and delivery/project location. The organization legally registered in Nairobi may supply a contract delivered elsewhere. A ministry's legally national scope does not mean its HQ or a construction site is nationwide.
+Do not equate procuring authority, buyer, finance unit, contracting office, bidder, awardee, supplier, subcontractor, headquarters, registered country and delivery/project location. The organization legally registered in Nairobi may supply a contract delivered elsewhere. A ministry's legally national scope does not mean its HQ or a construction site is nationwide.
 
 ## Five active tables: preserve and examine their real fields
 
@@ -255,7 +255,7 @@ Do not equate procuring authority, buyer, finance unit, contracting office, bidd
 
 ## Legal, geographic, financial and identity references
 
-Require proper cross-schema FKs to `organization.entities` for procuring/supplying/bidding identities, `governance.institutions/offices` for public authority roles, `finance.units` for budgetary liability, `geography.units/places` for contract implementation, and `legal` rule/provision when relevant. Distinguish registration location, HQ, buyer jurisdiction, geographic beneficiary and contract delivery location. Match PPIP identifiers through `organization.identifiers` with verified issuer/scheme/value, not names alone.
+Require proper cross-schema FKs to `organization.entities` for procuring/supplying/bidding identities, `governance.institutions/offices` for public authority roles, `finance.units` for budgetary liability, `geography.units/places` for contract implementation, and `legal` rule/provision when relevant. Distinguish registration location, HQ, buyer country, geographic beneficiary and contract delivery location. Match PPIP identifiers through `organization.identifiers` with verified issuer/scheme/value, not names alone.
 
 Geographic resolution order: (1) authoritative explicitly given unit/site; (2) independently verified institutional relationships; (3) candidate inference requiring review; (4) unresolved instead of fabricated county. Preserve separate evidence for buyer identity and supplier address. Link publication and documents through `source` and `filesystem`; source bytes are not contract table fields.
 
@@ -270,7 +270,7 @@ Use content hashes, portal IDs, stable aliases, dated records, reviewed conflict
 
 ## Grounded implementation starting points and risks
 
-The repository importer `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/src/mzizi_data/imports/procurement.py` already stages procuring entities and organizations, optional official county data, tender and contracts. Audit exactly when it writes the organization's geo_unit_id, the source address and the procuring unit's service scope; previous code risks conflating location and jurisdiction. Compare portal outputs to canonical target relationships and hard FKs, then plan non-destructive reconciliation, not silent reseeding.
+The repository importer `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/src/mzizi_data/imports/procurement.py` already stages procuring entities and organizations, optional official county data, tender and contracts. Audit exactly when it writes the organization's geo_unit_id, the source address and the procuring unit's service scope; previous code risks conflating location and country. Compare portal outputs to canonical target relationships and hard FKs, then plan non-destructive reconciliation, not silent reseeding.
 
 Test: Same supplier bidding for contracts in different counties, joint award recipients, national procurer with local contract site, contract variation to date/value, explicit winning vs losing bidders, and provenance-based correction of a wrongly assigned county.
 

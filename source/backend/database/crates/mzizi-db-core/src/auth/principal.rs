@@ -23,9 +23,9 @@ pub async fn resolve_identity(
     let row: Option<(uuid::Uuid, String, String)> = sqlx::query_as(
         r#"
         SELECT a.id, a.display_name, a.status
-        FROM auth.oidc_identities i
+        FROM auth.login_identities i
         JOIN auth.accounts a ON a.id = i.account_id
-        WHERE i.issuer = $1 AND i.subject = $2
+        WHERE i.issuer = $1 AND i.subject = $2 AND i.unlinked_at IS NULL
         "#,
     )
     .bind(issuer)

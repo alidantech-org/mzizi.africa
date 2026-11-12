@@ -11,7 +11,7 @@ The database foundation is a Rust service and administration CLI under `source/b
 
 ## Status
 
-**Foundation milestone, in progress.** Only the skeleton and the first proof slice (platform authorization and the reference vocabulary) are being built. Existing callers — the NestJS API's current TypeORM paths, the legacy Bun database service, the Python engine — keep working unchanged until later milestones migrate them. Claims below marked *target* are not yet behavior.
+**Foundation milestone, in progress.** Implemented and verified locally: one `dryv generate` run compiles both authoring sources; the `rust-models` and `rust-sql` packs emit the `mzizi-db-generated` models and per-database schema snapshots; `mzizi-db assemble` turns the snapshots into immutable checksummed releases; both releases apply and verify on a fresh isolated PostgreSQL container; `roles` provisions a DML-only service role; gated integration tests cover fresh apply, rerun, concurrent migrators and checksum refusal. Not yet implemented: `seed` (no reviewed seed set exists; `seed/_fixtures` is test-only), incremental schema-evolution releases, and the service/API cut-over. Only the reference vocabulary and operational groups are composed so far; the other `mzizi` domain groups join as their contracts pass the engine. Existing callers — the NestJS API's current TypeORM paths, the legacy Bun database service, the Python engine — keep working unchanged until later milestones migrate them. Claims below marked *target* are not yet behavior.
 
 ## Architecture
 
@@ -49,11 +49,11 @@ Generation is split into two independent runs:
 1. **The normal run** — the legacy entrypoint (`dryv/contracts/apps/main/index.ts`) and packs that generate the NestJS API. Untouched by this work.
 2. **The Rust run** — a separate entrypoint, `dryv/contracts/apps/database`, composing the shared schema files under `dryv/contracts/schemas/{mzizi,operational}`, driven by project-owned packs:
    - `dryv/packs/rust-models` emits the `mzizi-db-generated` crate: Rust structs per entity and operation request/response types.
-   - `dryv/packs/rust-sql` emits immutable SQL migration releases, one stream per target database, into `source/backend/database/migrations/{main,operations}`, each release with a recorded checksum and the contract digest it was generated from.
+   - `dryv/packs/rust-sql` emits one deterministic schema snapshot per database (`source/backend/database/generated/sql/{main,operations}.sql`). `mzizi-db assemble --target <t>` copies a snapshot to `migrations/<t>/0001_init.sql` when the stream is empty and records its checksum; a later changed snapshot is refused because releases are immutable (see [DEC-DATABASE-RELEASE-ASSEMBLY](../../decisions/DEC-DATABASE-RELEASE-ASSEMBLY.md)). The ledger records each release's SHA-256.
 
 TypeScript and Python HTTP clients come from Dryv's existing client generation pointed at the foundation contracts; no project generator reimplements that. The generated Python client is a plain HTTP client package and must not pose as the missing historical `mzizi-database` workspace member, which remains a tracked gap.
 
-Pack-side validation (with the contract audit) rejects: schemas not assigned to a database, foreign keys that would cross databases, and definitions the foundation's type/constraint support does not cover. Generation is deterministic — repeated runs produce identical artefacts — and never applies schema changes itself.
+The namespace-to-database lists are pack inputs in `dryv.yaml` that must mirror `dryv/contracts/apps/database/persistence.ts`; `bun run database:assignments` (inside `database:check`) fails on drift. Pack-side validation (inside the templates) rejects: schemas not assigned to a database, foreign keys that would cross databases, and definitions the foundation's type/constraint support does not cover. Generation is deterministic — repeated runs produce identical artefacts — and never applies schema changes itself.
 
 ## The Rust workspace
 

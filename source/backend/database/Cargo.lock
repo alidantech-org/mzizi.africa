@@ -942,6 +942,7 @@ dependencies = [
  "clap",
  "hex",
  "mzizi-db-core",
+ "mzizi-db-generated",
  "sha2",
  "sqlx",
  "tokio",

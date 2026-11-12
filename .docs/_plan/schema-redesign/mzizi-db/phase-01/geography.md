@@ -8,7 +8,7 @@ extra: {status: inventory_approved_details_under_review, approval: table_names_a
 
 # Geography — Phase 01
 
-> **APPROVED INVENTORY — 12 November 2026; detailed field contracts remain proposals.** The nine approved table names and responsibilities are represented in [`geography.ts`](../../../../../dryv/contracts/schemas/mzizi/geography.ts), but its current field choices are still being reconciled and are not generation-ready. Geography is not composed in the database foundation application. There is no generated SQL, migration, live database change or deployment.
+> **APPROVED INVENTORY — 12 November 2026; detailed field contracts remain proposals.** The nine approved table names and responsibilities are authored in [`geography.ts`](../../../../../dryv/contracts/schemas/mzizi/geography.ts). The fields compile in the Main review entrypoint with Reference, Filesystem, Source, Legal and Reference-Legal, but Geography is not activated in the database foundation application. The Rust SQL pack has not been verified to preserve its relations or spatial constraints. No migration, live database change or deployment occurred.
 
 [Phase 01 index](README.md) · [Schema catalogue](../../README.md)
 
@@ -40,7 +40,7 @@ For the classification catalogue, value-relation proposal, country-specific scop
 
 PostGIS is the intended store for curated vector geometries, boundary representations, spatial relationships, versioned spatial queries and indexes. Large raster/array/original assets—including GeoTIFF/COG, NetCDF, Zarr, GeoParquet and point clouds—remain in the existing Filesystem/SeaweedFS S3 system. Geography stores metadata and typed references, not duplicate file identities or raw asset bytes. Statistical observations belong to Statistical; Geography may catalog their relevant spatial datasets and coverage.
 
-Reference is the only schema that may mediate Legal relationships for domain records. There is currently no executable Reference Legal-basis interface in `reference.ts`; therefore no Geography legal-basis table or unverified Legal FK is authored. Source and Filesystem contracts are also shells, so `source_ref_id` and `file_version_ref_id` are currently typed UUID references without enforced cross-schema relations. These remain explicit integration gaps.
+Reference is the only schema that may mediate Legal relationships for domain records. The review-only `reference.geography_change_legal_bases` relation associates a Geography change with an exact legal basis assertion; it is outside the active database composition. Geography `source_ref_id` and `file_version_ref_id` remain typed UUIDs because those external Source and Filesystem owners are not represented as direct Geography-to-domain FKs in this authored contract. The separate review entrypoint resolves 94 typed relation fields across the composed Main graph; SQL-level enforcement remains unverified.
 
 ## Dryv limitations and generation status
 
@@ -50,4 +50,4 @@ Dryv expressions now describe ordered validity windows, non-self geographic rela
 
 ## Superseded material
 
-The accepted Geography inventory replaces earlier candidates including `geography.countries`, `geography.boundaries` and `geography.legal_bases`. Countries are canonical identities in Reference; geographic identity and spatial representation belong to `features` and `geometries`. Detailed fields in the current contract remain proposals pending scheme-aware integrity, PostGIS support and review. Existing migrations and generated artifacts are historical implementation evidence, not this target model.
+The accepted Geography inventory replaces earlier country-catalogue, boundary and legal-basis table candidates. Countries are canonical identities in Reference; geographic identity and spatial representation belong to `features` and `geometries`. Detailed fields in the current contract remain proposals pending scheme-aware integrity, PostGIS support and review. Existing migrations and generated artifacts are historical implementation evidence, not this target model.

@@ -59,14 +59,12 @@ export const Folders = filesystem.schemas({
       name: dryv.field(sharedProperties.Name),
       access: dryv.field(filesystemEnums.Access),
       authorization: dryv.field(sharedProperties.JsonText).optional().nullable(),
-      role_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      role_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       created_at: dryv.field(sharedProperties.Instant),
     })
     .description("Logical hierarchy; access escalation requires recorded authorization, independent of object keys.")
@@ -92,14 +90,12 @@ export const Files = filesystem.schemas({
     .schema({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
-      folder_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.Folders.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      folder_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.Folders.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       name: dryv.field(sharedProperties.Name),
       retention: dryv.field(filesystemEnums.Retention),
       current_version_id: dryv
@@ -160,14 +156,12 @@ export const FileVersions = filesystem.schemas({
   FileVersions: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      file_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.Files.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      file_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.Files.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       revision: dryv.field(sharedProperties.PositiveInteger),
       s3_key: dryv.field(sharedProperties.NonEmptyString1000),
       sha256: dryv.field(sharedProperties.Sha256),
@@ -213,30 +207,24 @@ export const FileRelations = filesystem.schemas({
   FileRelations: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      source_version_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      derived_version_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      kind_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      source_version_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      derived_version_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       processing_provenance: dryv.field(sharedProperties.JsonText),
       created_at: dryv.field(sharedProperties.Instant),
     })
@@ -283,14 +271,12 @@ export const Taggings = filesystem.schemas({
   Taggings: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      tag_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.Tags.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      tag_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.Tags.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       file_id: dryv
         .field(sharedProperties.Id)
         .optional()

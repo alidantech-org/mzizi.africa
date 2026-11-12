@@ -7,9 +7,10 @@
  */
 import * as dryv from "@dryvcode/author";
 import { sharedProperties } from "../_shared.ts";
-import { referenceSchemas } from "./reference.ts";
 import { filesystemSchemas } from "./filesystem.ts";
 import { geographySchemas } from "./geography.ts";
+import { officialSchemas } from "./official.ts";
+import { referenceSchemas } from "./reference.ts";
 import { sourceSchemas } from "./source.ts";
 export const legal = dryv
   .group({ name: "legal" })
@@ -24,23 +25,28 @@ export const Instruments = legal.schemas({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
       title: dryv.field(sharedProperties.Name),
-      kind_id: dryv
+      kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      issuing_unit_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => geographySchemas.Units.field("feature_id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      issuing_entity_id: dryv
         .field(sharedProperties.Id)
+        .optional()
+        .nullable()
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => officialSchemas.Entities.field("id"),
           cardinality: dryv.relation.manyToOne(),
           onDelete: "restrict",
           onUpdate: "restrict",
         }),
-      issuing_unit_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => geographySchemas.Units.field("feature_id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      issuing_entity_ref_id: dryv.field(sharedProperties.Id).optional().nullable(),
       enacted_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
       published_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
     })
@@ -64,31 +70,25 @@ export const InstrumentVersions = legal.schemas({
   InstrumentVersions: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      instrument_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Instruments.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      instrument_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Instruments.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       edition: dryv.field(sharedProperties.NonEmptyString255),
-      file_version_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      evidence_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Evidence.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      file_version_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      evidence_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Evidence.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       content_hash: dryv.field(sharedProperties.Sha256),
       consolidated_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
       commenced_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
@@ -128,14 +128,12 @@ export const Provisions = legal.schemas({
     .schema({
       id: dryv.field(sharedProperties.Id),
       code: dryv.field(sharedProperties.IdentityCode),
-      instrument_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Instruments.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      instrument_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Instruments.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       parent_id: dryv
         .field(sharedProperties.Id)
         .optional()
@@ -169,30 +167,24 @@ export const ProvisionVersions = legal.schemas({
   ProvisionVersions: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      provision_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Provisions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      instrument_version_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.InstrumentVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      citation_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      provision_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Provisions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      instrument_version_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.InstrumentVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      citation_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       text: dryv.field(sharedProperties.NonEmptyString),
       text_hash: dryv.field(sharedProperties.Sha256),
       effective_from: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
@@ -230,22 +222,18 @@ export const Amendments = legal.schemas({
   Amendments: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
-      authority_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      affected_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      authority_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      affected_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       resulting_version_id: dryv
         .field(sharedProperties.Id)
         .optional()
@@ -256,24 +244,20 @@ export const Amendments = legal.schemas({
           onDelete: "restrict",
           onUpdate: "restrict",
         }),
-      kind_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
       effective_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
       explanation: dryv.field(sharedProperties.Description).optional().nullable(),
-      citation_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
+      citation_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
     })
     .description("An exact authority provision changes an exact affected wording version; both historical texts remain available.")
     .role("entity")
@@ -295,7 +279,6 @@ legalSchemas.Amendments = Amendments.Amendments;
 
 /** Persistence blockers: same-instrument provision/version/parent composite relationships;
  * hierarchy and supersession cycles; effective intervals; immutable wording and hashes.
- * issuing_entity_ref_id awaits Official.entities and is not an enforced FK. Territorial scope
- * uses geography.units.feature_id. No generic domain target pointer or automatic executable
+ * Territorial scope uses geography.units.feature_id. No generic domain target pointer or automatic executable
  * legal interpretation is introduced. Reference owns incoming domain-to-Legal mediation.
  */

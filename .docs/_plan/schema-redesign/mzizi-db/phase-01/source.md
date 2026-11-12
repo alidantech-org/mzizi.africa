@@ -3,14 +3,23 @@ id: DOC-MZIZI-SCHEMA-SOURCE-20261111
 name: source schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {status: contract_authored_proposed_not_generation_ready, approval: implementation_authorized, database: mzizi, recorded_on: 2026-11-12}
 ---
 
 # source — Phase 01
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+> **Scope agreed; detailed contract authored under 12 November implementation authorization.** Tables below remain design proposals and are not generation-ready.
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
+
+> **Implementation status — 12 November 2026:** `source.ts` contains authored Dryv contracts (publishers, sources, websites, apis, documents, manifests, manifest_releases, manifest_bindings, captures, evidence, citations, verifications, attributions, publication_receipts). Contract development was authorized by the Main/Operations handoff. The contracts compile in the separate Main review entrypoint and remain excluded from the active database app because generation activation was not authorized and the SQL pack does not preserve all required constraints. No migration, seed import, live database change or deployment occurred.
+
+The integration adds optional restrictive FKs from `source.publishers.official_entity_id` and `source.sources.official_entity_id` to the authored `official.entities.id` identity. This is why the minimum Official organization identity dependency is authored; no full Official schema approval is implied.
+
+## Implemented contract outline
+
+Source identity, versioned manifests, captures, evidence, citations, review and publication receipts. See `dryv/contracts/schemas/mzizi/source.ts` for the current draft fields and relationships. Treat the historical dictionaries below as design evidence; the authored contract outline above supersedes stale claims that implementation is unauthorized or that no contract exists.
+
 
 ## Agreed responsibility — 12 November 2026
 
@@ -60,7 +69,8 @@ flowchart LR
   source_publishers["source.publishers"]
   source_verifications["source.verifications"]
   source_websites["source.websites"]
-  source_publishers -->|organization_id| official_entities
+  source_publishers -->|official_entity_id| official_entities
+  source_sources -->|official_entity_id| official_entities
   source_publishers -->|kind_id| reference_values
   source_websites -->|publisher_id| source_publishers
   source_documents -->|publisher_id| source_publishers
@@ -95,7 +105,7 @@ All tables and fields are hypothetical. Every proposed business column is listed
 | `kind_id` | `uuid` | Publisher type | No | — | FK → `reference.values` | UUID syntax; FK target must exist when the relationship is required | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `trust_basis` | `text` | Verification basis | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
 
-- **Current SQL/Dryv fields without a proposed same-name column:** `code`, `created_at`, `jurisdiction_id`, `reliability`, `updated_at`, `version`, `website_url`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **Current SQL/Dryv fields without a proposed same-name column:** `code`, `created_at`, `country_id`, `reliability`, `updated_at`, `version`, `website_url`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** Trust is scoped and revisable, not a universal authority score. Exact keys and cross-field checks remain for review.
 - **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `organization_id`, `kind_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
@@ -143,7 +153,7 @@ All tables and fields are hypothetical. Every proposed business column is listed
 | `published_on` | `date` | Publication date | Yes | — | — | Type checked; domain constraints and units must be approved for this field | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `source_identifier` | `text` | Publisher ID | Yes | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
 
-- **Current SQL/Dryv fields without a proposed same-name column:** `citation`, `created_at`, `jurisdiction_id`, `kind_id`, `language`, `licence`, `published_on_precision`, `site_id`, `updated_at`, `url`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **Current SQL/Dryv fields without a proposed same-name column:** `citation`, `created_at`, `country_id`, `kind_id`, `language`, `licence`, `published_on_precision`, `site_id`, `updated_at`, `url`, `version`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** Unique publisher/source identifier where available. Exact keys and cross-field checks remain for review.
 - **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `publisher_id`, `file_version_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
@@ -435,7 +445,7 @@ Audit all 27 combined source+website entity tables, actual columns, cardinalitie
 **Existing code evidence on `develop`:** `source/backend/api/src/modules/source/entities/verification.entity.ts` has a verification state, review decision references and generic `target_kind` + `target_id`; it does **not** by itself provide a robust per-field freshness ledger or an enforced FK from generic target to arbitrary domain rows. The existing source capture/crawl/Markdown extraction planning should be reused rather than copied.
 
 A site watcher for news/announcements should:
-1. Confirm collection permission, jurisdiction/source profile and bounded refresh policy.
+1. Confirm collection permission, country/source profile and bounded refresh policy.
 2. Revalidate page and detect changed meaningful DOM sections (not only raw HTML noise); preserve source and Markdown versions in filesystem/S3.
 3. Extract **event candidates**, distinguish an official notice from commentary and deduplicate with existing `activity` records.
 4. Retain publication date, announced effective date, time of retrieval, capture/version and exact section citation separately.
@@ -448,17 +458,17 @@ A site watcher for news/announcements should:
 
 ## 2026-11-08 — Manifest-driven API and website sources (user direction)
 
-The user requires a jurisdiction-neutral extraction engine whose normal source onboarding and maintenance are data changes, not new source-specific Python modules. APIs and websites are both first-class sources. Define **api.structure.yaml** for API acquisition/mapping and equivalent versioned website structure manifests. Store prepared manifests under root seed/ (for example seed/ke/sites/<source-code>/api.structure.yaml or seed/global/sites/<source-code>/api.structure.yaml), with inherited folder provenance/access and manifest registration. APIs need not be associated with a public website: use a clear API-specific source path where appropriate. Country/publisher facts remain in manifests/DB records; folder location is not a runtime special case.
+The user requires a country-neutral extraction engine whose normal source onboarding and maintenance are data changes, not new source-specific Python modules. APIs and websites are both first-class sources. Define **api.structure.yaml** for API acquisition/mapping and equivalent versioned website structure manifests. Store prepared manifests under root seed/ (for example seed/ke/sites/<source-code>/api.structure.yaml or seed/global/sites/<source-code>/api.structure.yaml), with inherited folder provenance/access and manifest registration. APIs need not be associated with a public website: use a clear API-specific source path where appropriate. Country/publisher facts remain in manifests/DB records; folder location is not a runtime special case.
 
 ### Manifest content and reusable capabilities
 
-An API manifest must declare stable source identity/version and schema reference; source kind and publisher; approved endpoint/base URL and path templates; request methods and parameters; credential references (never credentials); allowed request/redirect hosts and source permissions; response media format; record selectors and field mappings; identifiers and relation bindings; pagination/cursors; bounded rate limits/retries/timeouts; expected response shape and validation; transformations, units and date interpretation; incremental checkpoints; provenance locators; evidence capture and destination candidate contracts. Handle error responses, empty pages, cursor loops, schema drift, unknown values and conflicting records explicitly. Record parameter bindings from existing jurisdiction/geography/institution resources rather than copying hard-coded country lists into runtime code.
+An API manifest must declare stable source identity/version and schema reference; source kind and publisher; approved endpoint/base URL and path templates; request methods and parameters; credential references (never credentials); allowed request/redirect hosts and source permissions; response media format; record selectors and field mappings; identifiers and relation bindings; pagination/cursors; bounded rate limits/retries/timeouts; expected response shape and validation; transformations, units and date interpretation; incremental checkpoints; provenance locators; evidence capture and destination candidate contracts. Handle error responses, empty pages, cursor loops, schema drift, unknown values and conflicting records explicitly. Record parameter bindings from existing country/geography/institution resources rather than copying hard-coded country lists into runtime code.
 
 Website manifests describe discovery scope, link/URL identity, optional rendering, selectors/structural hints, main-content extraction, tables/media, reusable templates and destination mappings. YAML is optional for initial generic discovery; the engine may propose new or repaired manifests from observations. API/OpenAPI discovery may help propose an API manifest but never bypass source approval or validation. Shared manifest composition/inheritance must have deterministic precedence, versioned dependencies and bounded expansion. Preserve exactly which effective configuration a run used.
 
 Retain reusable capabilities for HTTP/API requests, pagination, JSON/XML/CSV/GeoJSON parsing, HTML/Markdown extraction, PDF/table/OCR processing, selectors, normalization, entity linking, classification and evidence capture. Globally reusable protocol/ecosystem packages such as Wikipedia/MediaWiki may expose general capabilities, but no package may hard-code a particular county, official, IEBC page, Kenyan institution, World Bank indicator/country, or destination fact list. World Bank-specific endpoint paths, indicator choices and mappings belong in manifests where supported by generic API capabilities. Source-specific algorithms that cannot yet be expressed must become an explicit generic capability gap, not a new hidden site module or arbitrary Python embedded in YAML.
 
-The listed county_assembly_members, county_leaders_web, gazette_appointments, iebc_commissioners, iebc_gazette_mca, klrc_constitution, leadership_pages, ngcdf_api, orpp_parties, parliament_members, ppf_distribution, sitting_pdf, tenders_pe, wikidata_county_executives, wikipedia_holders and worldbank modules are rewrite inventory. Translate source-specific knowledge to reviewed manifests and replace bespoke orchestration with reusable capabilities. geojson, html_legal, legal_pdf, ocds, ocr, pdf and __init__ are also inventory, but generic parsing/standards/OCR code and package initializers are not forbidden merely by filename. Evaluate actual content; extract reusable functionality and eliminate jurisdiction/publisher branches. No legacy file layout or compatibility obligation applies. This documentation update does not remove current modules.
+The listed county_assembly_members, county_leaders_web, gazette_appointments, iebc_commissioners, iebc_gazette_mca, klrc_constitution, leadership_pages, ngcdf_api, orpp_parties, parliament_members, ppf_distribution, sitting_pdf, tenders_pe, wikidata_county_executives, wikipedia_holders and worldbank modules are rewrite inventory. Translate source-specific knowledge to reviewed manifests and replace bespoke orchestration with reusable capabilities. geojson, html_legal, legal_pdf, ocds, ocr, pdf and __init__ are also inventory, but generic parsing/standards/OCR code and package initializers are not forbidden merely by filename. Evaluate actual content; extract reusable functionality and eliminate country/publisher branches. No legacy file layout or compatibility obligation applies. This documentation update does not remove current modules.
 
 ### One schema home: source/schema/
 
@@ -480,7 +490,7 @@ Learning, fuzzy matching and AI-assisted discovery may propose mappings/structur
 
 Source task 05 specifies exact source/API/manifest tables, columns, FKs, releases, file relationships, import/export ownership and activation semantics against the agreed domain schemas. Pipeline task 06 implements reusable capabilities and manifest execution only when that milestone is authorized. Preserve source evidence and normalized candidates before controlled promotion; manifests do not grant direct arbitrary canonical SQL writes.
 
-Inventory every listed extractor/importer and map its source knowledge, parser capability, manifest replacement, dependencies and retirement criteria. Demonstrate onboarding multiple websites and APIs from different jurisdictions by adding/editing manifests without source-specific engine code. Test API pagination/retry/checkpoint replay, HTML/PDF variability, seed/folder/schema validation, deterministic effective manifest resolution, conflict rejection, unsupported-format abstention and source gate enforcement. Replay captured evidence to verify mappings without unbounded live requests. The new database is mzizi_new and compatibility with old schemas is unnecessary; existing S3 artifacts remain protected.
+Inventory every listed extractor/importer and map its source knowledge, parser capability, manifest replacement, dependencies and retirement criteria. Demonstrate onboarding multiple websites and APIs from different countries by adding/editing manifests without source-specific engine code. Test API pagination/retry/checkpoint replay, HTML/PDF variability, seed/folder/schema validation, deterministic effective manifest resolution, conflict rejection, unsupported-format abstention and source gate enforcement. Replay captured evidence to verify mappings without unbounded live requests. The new database is mzizi_new and compatibility with old schemas is unnecessary; existing S3 artifacts remain protected.
 
 Status: user-approved architecture/documentation direction. No current source-module removal, runtime rewrite, live fetch or schema migration is performed by recording this requirement.
 

@@ -1,18 +1,52 @@
 /**
  * Schema: official | Database: mzizi
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/official.md
- * Scope: agreed. Detailed table contracts: pending individual review.
- * Inventory below records proposals, not approval or executable definitions.
- * Existing definitions, where present, remain drafts requiring reconciliation.
+ * Scope: official.entities is authored as the minimum identity dependency required
+ * by the authorized Source and Legal handoff. Remaining table inventory is proposal only.
  * No new generation activation is authorized by this file.
  */
 
-/*---------------- Candidate table inventory: review required ----------------*/
+import * as dryv from "@dryvcode/author";
+import { sharedProperties } from "../_shared.ts";
+import { referenceSchemas } from "./reference.ts";
 
-/** official.entities — Stable organization identity.
- * Review fields, keys, relations, constraints and indexes in the linked design.
- */
+export const official = dryv
+  .group({ name: "official" })
+  .description("Officially identified people and organizations.")
+  .facets({ storage: { namespace: "official" } });
+
+// biome-ignore lint/suspicious/noExplicitAny: target is registered immediately below.
+export const officialSchemas: Record<string, any> = {};
+
+/** Minimum integration identity; authority and officeholding belong to Governance. */
+export const Entities = official.schemas({
+  Entities: dryv
+    .schema({
+      id: dryv.field(sharedProperties.Id),
+      code: dryv.field(sharedProperties.IdentityCode),
+      name: dryv.field(sharedProperties.Name),
+      kind_id: dryv.field(sharedProperties.Id).relation({
+        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+      registered_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+      dissolved_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+    })
+    .description("Stable organization identity; authority and officeholding belong to Governance.")
+    .role("entity")
+    .facets({
+      storage: dryv
+        .storage("entities")
+        .primaryKey("id")
+        .indexes({ name: "uq_entities_code", fields: ["code"], unique: true }, { name: "idx_entities_kind", fields: ["kind_id"] }),
+    }),
+});
+officialSchemas.Entities = Entities.Entities;
 /*---------------- End official.entities ----------------*/
+
+/*---------------- Candidate table inventory: review required ----------------*/
 
 /** official.official_organization_identifiers — Issuer and scheme-specific identifier.
  * Review fields, keys, relations, constraints and indexes in the linked design.
@@ -54,5 +88,4 @@
  */
 /*---------------- End official.official_person_contacts ----------------*/
 
-// No tables are activated until their detailed contracts are agreed.
-export {};
+// The remaining candidate tables are not authored or composed until separately reviewed.

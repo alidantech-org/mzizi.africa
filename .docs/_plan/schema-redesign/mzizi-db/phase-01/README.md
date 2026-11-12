@@ -2,12 +2,12 @@
 id: DOC-SCHEMA-PHASE-01-20261112
 name: Schema redesign phase-01 index
 type: documentation
-extra: {status: scope_agreed, implementation: not_authorized}
+extra: {status: scope_agreed, implementation: contracts_authored_not_generation_ready}
 ---
 
 # phase-01
 
-The **civic accountability pilot** lives in the Mzizi knowledge database (Main). The Reference foundation and Geography table inventory are accepted. Detailed classification fields and cross-schema integrity remain under review; see the [Reference–Geography classification plan](reference-geography-classification.md). The current SQL pack is not production-ready. Other Phase 01 schemas remain under review.
+The **civic accountability pilot** lives in the Mzizi knowledge database (Main). Source, Filesystem and Legal Dryv contracts are authored under the 12 November Main/Operations contract authorization; their detailed designs remain proposals pending final target review and generation capability. The Reference foundation and Geography table inventory are accepted. Detailed classification fields and cross-schema integrity remain under review; see the [Reference–Geography classification plan](reference-geography-classification.md). The current SQL pack is not production-ready. Other Phase 01 schemas remain under review.
 
 [Full catalogue and relocation inventory](../../README.md)
 
