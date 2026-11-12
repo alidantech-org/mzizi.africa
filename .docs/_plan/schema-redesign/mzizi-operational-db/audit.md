@@ -3,7 +3,7 @@ id: DOC-MZIZI-SCHEMA-AUDIT-20261111
 name: audit schema — operational
 type: schema-review
 tags: [database, schema-redesign, operations, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Operations, recorded_on: 2026-11-11}
+extra: {status: accepted, approval: approved, implementation: dryv_contracts_authorized, database: Operations, approved_on: 2026-11-12, approval_record: DEC-OPERATIONAL-DATABASE-20261112, migrations: not_authorized, deployment: not_authorized}
 ---
 
 # audit — Operational
@@ -222,3 +222,25 @@ Admin-created activities, approved source announcements, schedule-rule changes, 
 Reviews of disputed historical, biodiversity and heritage claims should be append-only audit decisions linked to evidence and versioned domain records. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>
+
+
+## 2026-11-12 — Operational design accepted and approved
+
+**Approval status:** ACCEPTED AND APPROVED by the user on 12 November 2026. **Implementation status:** Dryv contract authoring is authorized on `develop` for this schema. See [DEC-OPERATIONAL-DATABASE-20261112](../../../../decisions/DEC-OPERATIONAL-DATABASE-20261112.md) for the complete approval record and cross-schema rules.
+
+This approved inventory supersedes earlier candidate-table lists, draft definitions and statements in this document that the design is not reviewed, not approved or awaiting user approval. Historical analysis remains context only. The table names and column names below are the approved baseline; implementation must define their precise types, nullability, defaults, keys, relationships, constraints and indexes under the repository's contract-authoring rules. The author may resolve those engineering details without requesting individual approval, but must not silently add, remove or rename approved tables or columns.
+
+## audit — 2 approved tables
+
+**Responsibility:** Append-only attributable operational/security events and formal decisions.
+
+### `audit.events`
+
+`id`, `actor_id`, `action`, `target_kind`, `target_id`, `target_version`, `request_id`, `correlation_id`, `recorded_at`, `details`, `previous_hash`, `event_hash`
+
+### `audit.decisions`
+
+`id`, `event_id`, `actor_id`, `decision_type`, `decision`, `subject_kind`, `subject_id`, `subject_version`, `policy_version`, `reason`, `request_hash`, `decided_at`
+
+
+**Boundary:** This approval authorizes Operational Dryv contracts only. It does not authorize migrations, database provisioning, seed/data migration or deployment. It does not approve any Main `mzizi` Phase 01 schema; those will be reviewed individually later. Phase 02 remains deferred.
