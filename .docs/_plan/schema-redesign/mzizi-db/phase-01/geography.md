@@ -8,7 +8,7 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 # geography — Phase 01
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization. **Country terminology direction (12 November 2026):** the proposed Main model must not use jurisdiction as a country-like entity or link target; represent countries explicitly and relate other records through country references. This direction supersedes earlier jurisdiction-based proposals below, which remain only as historical input and are not approved implementation requirements.
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
@@ -18,7 +18,7 @@ Administrative and electoral units, places, dated relationships, boundary versio
 
 Include administrative, electoral and other geographic units needed by the civic pilot, physical places, parallel dated hierarchies, changing names, boundary versions, spatial representations and geographic history. Historical places and boundaries need not fit today's national borders. Keep retrieval time distinct from historical validity and mark approximate, disputed or missing geometry.
 
-**A countrywide institution must link to the geographic unit representing the whole country.** A missing unit must never encode national scope. Distinguish an institution's physical headquarters from its jurisdiction and service coverage. Other missing facts stay explicitly unknown; do not fabricate boundaries or addresses.
+**A countrywide institution must link to the geographic unit representing the whole country and to its country record where country association is needed.** A missing unit must never encode national scope. Distinguish an institution's physical headquarters from its country and service coverage. Other missing facts stay explicitly unknown; do not fabricate boundaries or addresses.
 
 PostGIS querying is part of Phase 01. Support: known-area lookup by identity/name and date; coordinate-to-area lookup against the applicable boundary version, including overlaps and edge ambiguity; nearby-place/facility searches with an explicit radius and distance units; and spatial intersections of areas, service coverage, projects and boundaries. Review coordinate reference systems, geometry validity, spatial indexes and query plans, and disclose the boundary edition and uncertainty. Spatial containment does not itself prove government authority.
 
@@ -45,7 +45,7 @@ The active manifest has 30 manifest migrations and 49 distinct CREATE TABLE decl
 - SQL declarations: `geography.units` (geography/0001_geography.sql), `geography.names` (geography/0001_geography.sql), `geography.relationship_systems` (geography/0001_geography.sql), `geography.relationships` (geography/0001_geography.sql), `geography.boundary_representations` (geography/0001_geography.sql), `geography.country_territories` (geography/0002_country_territories.sql), `geography.unit_changes` (geography/0002_country_territories.sql), `geography.unit_legal_bases` (legal/0001_legal_minimum.sql)
 - Dryv entities: `geography.boundaries` (geography.GeoBoundaryVersion), `geography.relationships` (geography.GeoRelationship), `geography.units` (geography.GeoUnit), `geography.changes` (geography.GeoUnitChange), `geography.names` (geography.GeoUnitNameVersion)
 
-The inventory does not establish live database state and may miss ALTER-only changes. Before implementation, reconcile migrations, Dryv, generated output and callers.
+The inventory does not establish live database state and may miss ALTER-only changes. Before implementation, reconcile migrations, Dryv, generated output and callers. Existing SQL, generated Dryv and API code still contain jurisdiction-based legacy structures, including `reference.jurisdictions` and `geography.units.jurisdiction_id`; these are not the target contract and require a coordinated source-of-truth redesign before that legacy API can be removed.
 
 ## Proposed relationship map
 
@@ -57,7 +57,7 @@ flowchart LR
   geography_boundaries["geography.boundaries"]
   geography_changes["geography.changes"]
   geography_datasets["geography.datasets"]
-  geography_jurisdictions["geography.jurisdictions"]
+  geography_countries["geography.countries"]
   geography_legal_bases["geography.legal_bases"]
   geography_names["geography.names"]
   geography_places["geography.places"]
@@ -78,8 +78,8 @@ flowchart LR
   geography_changes -->|predecessor_id| geography_units
   geography_changes -->|successor_id| geography_units
   geography_changes -->|kind_id| reference_values
-  geography_jurisdictions -->|unit_id| geography_units
-  geography_jurisdictions -->|kind_id| reference_values
+  geography_countries -->|unit_id| geography_units
+  geography_countries -->|kind_id| reference_values
   geography_legal_bases -->|unit_id| geography_units
   geography_legal_bases -->|legal_basis_id| reference_legal_bases
   geography_datasets -->|file_version_id| filesystem_file_versions
@@ -101,7 +101,7 @@ All tables and fields are hypothetical. Every proposed business column is listed
 | `name` | `text` | Accepted name | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | KEEP (candidate match to current SQL/Dryv field; confirm meaning) |
 | `kind_id` | `uuid` | Geographic kind | No | — | FK → `reference.values` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
 
-- **Current SQL/Dryv fields without a proposed same-name column:** `created_at`, `emblem_marker`, `existence_status`, `flag_marker`, `is_active`, `is_current`, `jurisdiction_id`, `kind`, `level_id`, `parent_id`, `source_file_version_id`, `type_scheme_id`, `type_value_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`, `wikidata_id`. **Disposition:** unresolved per field; propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE in review. Do not drop these fields until the user resolves each one.
+- **Current SQL/Dryv fields without a proposed same-name column:** `created_at`, `emblem_marker`, `existence_status`, `flag_marker`, `is_active`, `is_current`, `jurisdiction_id`, `kind`, `level_id`, `parent_id`, `source_file_version_id`, `type_scheme_id`, `type_value_id`, `updated_at`, `valid_from`, `valid_from_precision`, `valid_to`, `valid_to_precision`, `version`, `wikidata_id`. **Disposition:** unresolved per field; the old `jurisdiction_id` representation is not part of the target design and must be resolved through country or geographic-unit relationships during schema review. Propose KEEP, REMOVE, RENAME, MOVE, MERGE, SPLIT or DERIVE for all other fields. Do not drop these fields until the user resolves each one.
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** UNIQUE(code); historical polities supported. Exact keys and cross-field checks remain for review.
 - **Indexes:** primary key on `id`; candidate B-tree indexes on FK columns `kind_id` for joins and referenced-entity filters; add temporal/spatial indexes only where the stated query needs them and benchmarks support them.
@@ -234,7 +234,9 @@ All tables and fields are hypothetical. Every proposed business column is listed
 - **Partitioning:** None proposed initially; decide from measured scale/query plans. Check late data and partition count.
 - **Files:** originals, full-resolution geometry, arrays, media and large exports may be immutable S3 objects. Keep searchable identity, required facts, hashes, coverage, access and provenance in PostgreSQL; use manifests and selective reads.
 - **Retention/risks/benchmark:** preserve accepted evidence and corrections. Review late arrivals, contention, index/partition growth and recovery. Benchmark joins, filters, spatial access, ingestion bursts, concurrent access and interrupted publication.
-### `geography.jurisdictions` — Authority identity and territory link
+### `geography.countries` — Country identity and geographic-unit link
+
+This table candidate supersedes the earlier `geography.jurisdictions` proposal. Fields and relations remain pending review; country identity should be explicit, and other schemas must link to countries only when country-level association is semantically appropriate.
 
 - **Example:** Country identity
 - **Profile:** relation; planning envelope below.
@@ -242,10 +244,10 @@ All tables and fields are hypothetical. Every proposed business column is listed
 | Column | Proposed type | Meaning | Nullable | Default | Relationship | Units / validation | Proposed disposition |
 |---|---|---|---|---|---|---|---|
 | `id` | `uuid` | Proposed stable identity | No | Rust UUIDv7 candidate | Primary key | UUIDv7 candidate; unique and immutable after publication | ADD (proposed target field; pending user approval) |
-| `code` | `text` | Jurisdiction code | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
+| `code` | `text` | Country code | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
 | `title` | `text` | Name | No | — | — | Nonblank when required; enforce domain-specific length, normalization and controlled vocabulary | ADD (proposed target field; pending user approval) |
 | `unit_id` | `uuid` | Territory | No | — | FK → `geography.units` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
-| `kind_id` | `uuid` | Jurisdiction kind | No | — | FK → `reference.values` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
+| `kind_id` | `uuid` | Country classification | No | — | FK → `reference.values` | UUID syntax; FK target must exist when the relationship is required | ADD (proposed target field; pending user approval) |
 
 - **FK action/cardinality:** Each non-null FK is many-to-one to its named target; nullable FKs are optional. Candidate delete/update behavior is RESTRICT/NO ACTION for accepted records; cascading canonical deletion is not proposed. Confirm uniqueness and exact behavior during review.
 - **Constraints:** UNIQUE(code); unit applicability versioned. Exact keys and cross-field checks remain for review.
@@ -324,7 +326,7 @@ tags: [improvements, schema-redesign, geography, planning]
 extra: {status: planning_only, implementation: not_approved}
 ---
 
-> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting jurisdiction, compatibility and cross-domain assumptions in the historical proposal below. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
+> **11 November 2026 precedence:** the connected foundation update at the end of this document supersedes conflicting compatibility and cross-domain assumptions in the historical proposal below. The 12 November country terminology direction also supersedes jurisdiction-based assumptions. Detailed table names remain design candidates; task 03 is prepared for design work, not a claim of completed implementation.
 
 # Geography, places and geographic scope
 
@@ -373,7 +375,7 @@ These **real migration-declared** table/column names are from `.docs/_archives/2
 
 ## 4. Strong relationships, geography, law and query design
 
-Maintain separate **jurisdiction**, **legal territorial scope**, **physical location**, **operational presence**, **election/representation area**, **procurement delivery**, and **statistical observation location**. A single geo_unit_id everywhere is ambiguous. Prefer clear FK field names where a relationship is singular, and typed FK junction tables where a record has several scope roles. Each jurisdiction-wide scope maps to a valid root geo unit; time-aware exceptions must remain possible.
+Maintain separate **country association**, **legal territorial scope**, **physical location**, **operational presence**, **election/representation area**, **procurement delivery**, and **statistical observation location**. A single geo_unit_id everywhere is ambiguous. Prefer clear FK field names where a relationship is singular, and typed FK junction tables where a record has several scope roles. Country-scoped records link to a country; narrower geographic coverage links to the appropriate dated geographic units. Time-aware exceptions must remain possible.
 
 A country query should find descendant county/ward data; a ward query should find relevant national institutions where the scope includes the ward, **without automatically copying national statistical values to every descendant**. Recursive CTEs are the baseline; test a temporal closure table for high-volume querying. Real FK both directions (ancestor/descendant) if adopted. Handle multiple administrative systems and historical periods.
 
@@ -389,7 +391,7 @@ List all entities legally scoped to Kenya including county-specific ones without
 
 ## 7. Migration, preservation, integrity and compatibility
 
-Reconcile existing `place.places`, `geography.units` and institution/finance/electoral/statistical scope columns before moving tables. Add country-root scope backfills based on evidence and confirmed jurisdiction, not simplistic nonnull assumptions. Establish actual FKs to `reference.jurisdictions`, `geography.units`, `organization.entities`, `governance.institutions` etc. Geospatial checks and historical-mapping consistency must be explicit. Assess old code `geo_link.py`, office-generation fixtures and related integrity checks.
+Reconcile existing `place.places`, `geography.units` and institution/finance/electoral/statistical scope columns before moving tables. Add country-root scope backfills based on evidence and confirmed country relationships, not simplistic nonnull assumptions. Establish actual FKs to the approved country table, `geography.units`, `organization.entities`, `governance.institutions` etc. Geospatial checks and historical-mapping consistency must be explicit. Assess old code `geo_link.py`, office-generation fixtures and related integrity checks.
 
 Global requirements: check live data, orphans, actual FK constraints, indexes and enum/lookup validity; reconcile every old→new table/column; preserve historical identities, evidence, versioning and record counts; update Dryv, API, ingestion and filesystem references with migrations only after explicit user approval. Never rewrite canonical facts to make a schema migration pass.
 

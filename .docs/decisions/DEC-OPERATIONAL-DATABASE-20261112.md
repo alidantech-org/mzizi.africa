@@ -14,7 +14,7 @@ extra: {status: accepted, approved_on: 2026-11-12, database: mzizi_operations, t
 
 ## Decision
 
-The seven Operational schemas and their **45-table inventory and listed columns** are accepted as the approved design baseline for the single PostgreSQL database `mzizi_operations`.
+The seven Operational schemas and their **45-table inventory and listed columns** are accepted as the approved design baseline for the single PostgreSQL database `mzizi_operations`. A later explicit user direction renames the optional Main-country reference in `auth.scopes` from `jurisdiction_ref_id` to `country_ref_id`; this amendment supersedes that one field name in the original inventory.
 
 The approval covers the responsibilities, ownership, table names and column inventories listed below. The seven schemas are:
 
@@ -91,7 +91,9 @@ If Dryv cannot express a required constraint or relationship, document the exact
 
 ### `auth.scopes`
 
-`id`, `is_global`, `institution_ref_id`, `jurisdiction_ref_id`, `geographic_unit_ref_id`, `dataset_ref_id`, `field_group`, `include_descendants`, `scope_hash`, `created_at`
+`id`, `is_global`, `institution_ref_id`, `country_ref_id`, `geographic_unit_ref_id`, `dataset_ref_id`, `field_group`, `include_descendants`, `scope_hash`, `created_at`
+
+**Country-reference amendment:** `country_ref_id` is an optional typed reference to a country record in Main. It is validated by the application because Main and Operations are separate databases; no cross-database foreign key is created. Main's proposed geography inventory uses countries and does not retain a jurisdiction table.
 
 ### `auth.role_assignments`
 

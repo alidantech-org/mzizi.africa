@@ -70,7 +70,7 @@ A prospective review record should contain current purpose; all columns and cons
 - [Website Markdown extraction](../guides/site-structure-and-markdown-extraction.md) — current site-structure and semantic hashing proposal.
 - [Independent pipelines](../guides/independent-data-pipelines.md) — shared workers and concurrency.
 - [File manager / S3](../guides/file-management-and-s3.md) — artifact ownership and reuse.
-- [Existing website contracts](../../../dryv/contracts/domains/website/index.ts), [site structure specification](../../design/acquisition/SITE_STRUCTURE_SPEC.md), [website design](../../design/acquisition/WEBSITE_DESIGN.md).
+- [Archived website contracts](../../../dryv/contracts/_archive/domains/website/index.ts), [site structure specification](../../design/acquisition/SITE_STRUCTURE_SPEC.md), [website design](../../design/acquisition/WEBSITE_DESIGN.md).
 
 **Scope:** architectural analysis and documentation only; no migration design is final.
 

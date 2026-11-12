@@ -195,7 +195,7 @@ An earlier build of this slice had 19 tables (delegation ceilings, field groups,
 1. **Namespaced permissions:** `namespace.action`, e.g. `electoral.edit`. The namespace matches a data schema; actions are fixed: `read, edit, review, publish, export, delete`.
 2. **Roles** bundle permissions. Roles are rows, so they are dynamic. `auth.create_role('electoral_manager', ..., ['electoral.*'])`.
 3. **Scoped grants:** an account holds a role either platform-wide, or scoped to one record `(schema.table, id)` of an allowed target table, which also covers everything below it (children via the table's parent column).
-4. **Governed tables** say how records link to a scope target: `electoral.results` belongs to an institution, `finance.budgets` to a jurisdiction. Grants match only through that one link.
+4. **Governed tables** say how records link to a scope target: `electoral.results` belongs to an institution, while a country-scoped record links to its country. Grants match only through that one link.
 
 ### Tables (schema `auth`)
 
@@ -215,9 +215,9 @@ A generic `(table, id)` pair cannot carry a foreign key, so integrity comes from
 
 ### How the examples work
 
-- **Manage all electoral data for a jurisdiction:** role with `electoral.*` + scope `(geography.jurisdictions, id)`. Works for any registered electoral table linked to jurisdictions.
+- **Manage all electoral data for a country:** role with `electoral.*` + country scope. It works for registered electoral tables linked to that country; narrower units remain separately scoped where needed.
 - **Manage all data in a geo unit:** a role with every namespace + scope `(geography.units, id)`; sub-units are covered.
-- **IEBC official vs county official:** `electoral.results` is registered with link `auth.institutions` via its steward column. A grant on IEBC matches; a grant on the Nairobi jurisdiction does not, even for results about Nairobi, because geography is not the table's link.
+- **IEBC official vs county official:** `electoral.results` is registered with link `auth.institutions` via its steward column. A grant on IEBC matches; a country scope does not, because country is not the table's steward link.
 - **Membership alone grants nothing:** only role assignments do.
 
 ### Functions
@@ -243,7 +243,7 @@ Invitations and verified memberships; delegation of access management with limit
 | Old | New |
 |---|---|
 | `identity.accounts` (`issuer`, `subject`, `status`) | `accounts` + `identities` |
-| `identity.grants` (role enum, `jurisdiction_id`, validity, `is_current`) | `role_assignments` with a real scope pointer and optional expiry; `is_current` and precision columns dropped |
+| `identity.grants` (role enum, legacy scope identifier, validity, `is_current`) | `role_assignments` with a real scope pointer and optional expiry; `is_current` and precision columns dropped |
 | `access.roles/permissions/role_permissions` | same names; permissions are `namespace.action` |
 | `access.account_permissions` view | `auth.can*` and `auth.allowed_links` functions |
 | JWT `roles` claim | ignored in database mode |
@@ -275,7 +275,7 @@ The source of truth for existing fields is current TypeORM `identity` entities p
 
 ## FK and RBAC requirements
 
-All role grants, role permissions, account role assignments and session/actor references must use hard FKs. Cross-domain actor references in `audit` and `engine` should FK to `auth.accounts` where events were performed by authenticated accounts; distinguish service actors and external reviewers if needed. Optional links to `person.individuals` must be evidence-backed and permission-controlled; an account is not a replacement for a person row. Domain- or jurisdiction-scoped access may need a scope junction (resource, organization or jurisdiction) but a generic FK-less target pair should not be the default.
+All role grants, role permissions, account role assignments and session/actor references must use hard FKs. Cross-domain actor references in `audit` and `engine` should FK to `auth.accounts` where events were performed by authenticated accounts; distinguish service actors and external reviewers if needed. Optional links to `person.individuals` must be evidence-backed and permission-controlled; an account is not a replacement for a person row. Domain- or country-scoped access may need a scope junction (resource, organization or country) but a generic FK-less target pair should not be the default.
 
 Roles should be explainable (reviewer, data curator, pipeline operator, admin, public user) and separate from data-source truth verification. A person can be granted a temporary reviewer role without becoming a government official; a public official can submit participation content without elevated database privileges.
 
@@ -292,7 +292,7 @@ Migration strategy: preserve account/role/grant IDs and login continuity; map `i
 ## Explicitly unresolved decisions
 
 1. What exactly is `identity.grants` modeling today versus role assignments?
-2. Are RBAC roles global, organizational, jurisdiction-scoped or project scoped?
+2. Are RBAC roles global, organizational, country-scoped, geographic-unit-scoped or project scoped?
 3. Which session/token storage is actually necessary?
 4. How to represent service/agent actors separately from human accounts?
 5. Which public participation roles require authentication versus anonymous submissions?
@@ -341,7 +341,7 @@ Migration strategy: preserve account/role/grant IDs and login continuity; map `i
 
 ## 2026-11-07 admin-initiated activities and rechecks — permissions only (planning)
 
-The user wants an authenticated administrator to enter a sourced event/announcement or request a research/refresh job. `auth` should govern **who may** submit a proposed activity, approve source-backed event verification, trigger a scoped one-time job, author or activate recurring watcher/schedule policies, and approve a canonical update. These **must not be one universal admin privilege**. Review roles, jurisdiction scope, source access and authentication strength. Human input enters as a sourced candidate, not automatically verified truth; service/agent identities need their own accountable actor contract. Record actions in `audit`, execute via `engine`. No account or permission migration authorized.
+The user wants an authenticated administrator to enter a sourced event/announcement or request a research/refresh job. `auth` should govern **who may** submit a proposed activity, approve source-backed event verification, trigger a scoped one-time job, author or activate recurring watcher/schedule policies, and approve a canonical update. These **must not be one universal admin privilege**. Review roles, country/geographic scope, source access and authentication strength. Human input enters as a sourced candidate, not automatically verified truth; service/agent identities need their own accountable actor contract. Record actions in `audit`, execute via `engine`. No account or permission migration authorized.
 
 ## 2026-11-08 — Agreed scoped RBAC direction and design deliverables
 
@@ -349,7 +349,7 @@ The user accepted the proposed direction and requested documentation and clarifi
 
 ### Current implementation and concrete reasons to redesign
 
-Inspected repository models already give identity.accounts and identity.grants UUID primary keys; access.roles and access.permissions have code primary keys, and access.role_permissions has a composite primary key. Missing keys must be demonstrated by an audit, not presumed. Accounts have a unique issuer/subject pair, but token-verifier.ts currently requires a UUID subject and uses it directly as actorId. roles.ts hard-codes four role names and permission bundles. AuthGuard checks route policies without resource scope and permits unmatched routes. The access.account_permissions view considers account status and jurisdiction/validity; database staging review uses separate role/jurisdiction checks. reviewRun checks a permission without constraining its initial selection to the grant scope. These separate paths must be reconciled under one authorization contract. The web review workbench already supports OIDC authorization code with PKCE, but its UI recognizes reviewer/admin names rather than dynamic capabilities. These are source-code findings, not a live database audit.
+Inspected repository models already give identity.accounts and identity.grants UUID primary keys; access.roles and access.permissions have code primary keys, and access.role_permissions has a composite primary key. Missing keys must be demonstrated by an audit, not presumed. Accounts have a unique issuer/subject pair, but token-verifier.ts currently requires a UUID subject and uses it directly as actorId. roles.ts hard-codes four role names and permission bundles. AuthGuard checks route policies without resource scope and permits unmatched routes. The access.account_permissions view considers account status and legacy scope/validity; database staging review uses separate role/scope checks. reviewRun checks a permission without constraining its initial selection to the grant scope. These separate paths must be reconciled under one authorization contract. The web review workbench already supports OIDC authorization code with PKCE, but its UI recognizes reviewer/admin names rather than dynamic capabilities. These are source-code findings, not a live database audit.
 
 ### Accepted product and authorization direction
 
@@ -375,7 +375,7 @@ The following is a design starting point, not final DDL or a mandate to create e
 | auth.memberships | id, account_id, institution_id, verified_by, verified_at, starts_at, ends_at, revoked_at | Verified affiliation with lifecycle and actor/institution FKs. Membership alone confers no editing authority. |
 | auth.invitations | id, institution_id, invited_by, intended_identity, token_digest, expires_at, accepted_at | Bounded invitation/acceptance flow; no plaintext invitation secret, no automatic privilege from email matching. Link accepted membership/assignment through reviewed constraints. |
 | auth.role_assignments | id, account_id, role_id, scope_id, membership_id, granted_by, starts_at, expires_at, revoked_at, revocation_reason | Exact effective grant; timestamps have operational meaning. Any membership-bound grant becomes ineffective when that membership ends. |
-| auth.scopes and typed scope bindings | id, scope_kind; typed jurisdiction, geo-unit, institution, dataset and specific-resource FKs as needed | Avoid FK-less resource_kind/resource_id pairs. Explicit global scope, never accidental global authority from null. Define exactly-one-kind checks and scope intersection/composition. |
+| auth.scopes and typed scope bindings | id, scope_kind; typed country, geo-unit, institution, dataset and specific-resource FKs as needed | Avoid FK-less resource_kind/resource_id pairs. Explicit global scope, never accidental global authority from null. Define exactly-one-kind checks and scope intersection/composition. |
 | auth.delegations, if needed | id, delegator_id, delegate_id, scope_id, permitted_role/permission bindings, expires_at, revoked_at | Authority to grant is separate from authority to edit; recipient cannot exceed permission, field, scope, duration or further-delegation ceilings. |
 | auth.sessions, only if required | id, account_id, provider/session reference, created_at, expires_at, revoked_at | Persist only necessary server session/revocation state; specify logout and account-disable behavior. |
 
@@ -383,11 +383,11 @@ Known account-to-person, account-to-institution, actor-to-audit and scope-to-res
 
 ### How accounts, people and resources connect
 
-A login resolves issuer + subject -> login identity -> stable account. An account may have a separately controlled link to person.individuals. Verified membership connects the account to a real institution. A role assignment connects that account to a permission bundle and explicit scope; a delegation bounds who can issue that assignment. Resource metadata supplies authoritative jurisdiction, geographic placement, dataset, steward/owner and workflow state. None of those facts may be trusted merely because a request body or token claims them.
+A login resolves issuer + subject -> login identity -> stable account. An account may have a separately controlled link to person.individuals. Verified membership connects the account to a real institution. A role assignment connects that account to a permission bundle and explicit scope; a delegation bounds who can issue that assignment. Resource metadata supplies authoritative country, geographic placement, dataset, steward/owner and workflow state. None of those facts may be trusted merely because a request body or token claims them.
 
 An IEBC editor may edit designated Kenyan electoral datasets managed by IEBC, but not party biographies or all Kenyan records. A Nairobi County editor may edit county-stewarded data, but not IEBC-managed election results merely because they concern Nairobi. A resource with several stewards must identify which actions each steward can perform and who may publish. Examples must include permitted and denied reads, edits, field changes, review, publication, bulk exports and invitations.
 
-Scope dimensions combine explicitly. A single assignment requiring Kenya AND electoral domain AND IEBC stewardship cannot be accidentally satisfied by unrelated grants for separate dimensions. Independent complete grants can supply alternative valid access paths; permission from one grant must not be combined with broader scope from another. Design field-group matching and ownership transitions with the same rule. Geographic descendants are included only where the assignment explicitly requests inheritance. National jurisdiction does not mean authority over all national data.
+Scope dimensions combine explicitly. A single assignment requiring Kenya AND electoral domain AND IEBC stewardship cannot be accidentally satisfied by unrelated grants for separate dimensions. Independent complete grants can supply alternative valid access paths; permission from one grant must not be combined with broader scope from another. Design field-group matching and ownership transitions with the same rule. Geographic descendants are included only where the assignment explicitly requests inheritance. A country scope does not mean authority over all country-level data.
 
 ### Dynamic scope and enforcement contract
 
@@ -450,7 +450,7 @@ This approved inventory supersedes earlier candidate-table lists, draft definiti
 
 ### `auth.scopes`
 
-`id`, `is_global`, `institution_ref_id`, `jurisdiction_ref_id`, `geographic_unit_ref_id`, `dataset_ref_id`, `field_group`, `include_descendants`, `scope_hash`, `created_at`
+`id`, `is_global`, `institution_ref_id`, `country_ref_id`, `geographic_unit_ref_id`, `dataset_ref_id`, `field_group`, `include_descendants`, `scope_hash`, `created_at`
 
 ### `auth.role_assignments`
 

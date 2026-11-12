@@ -27,7 +27,8 @@ Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/typ
 ```bash
 cd dryv
 bun install && bun run link          # link the local Dryv checkout (set DRYV_HOME if not in the default place)
-bun run check                        # typecheck, contract audit, doctor, compile
+bun run check                        # Main model quality suite
+bun run database:check               # Operational database contracts: typecheck, Biome, doctor, compile
 bun run generated:check              # after generating: fails if a plan would still change files (needs the Dryv API)
 # start the Dryv API (from the Dryv checkout): uv run --project source/engine/python/api dryv-api serve --port 8750 --template-server source/engine/python/api/dryv.server.yaml
 cd .. && bun $DRYV_HOME/source/apps/cli/bin/dryv.ts --api http://127.0.0.1:8750 generate
@@ -37,6 +38,8 @@ cd source/backend/api && bun run typecheck && bun run test
 `bun run test` in the API runs the generated specs. The PostgreSQL integration test runs when `TEST_DATABASE_URL` points at a scratch PostGIS database, for example `postgres://postgres:test@localhost:55432/mzizi`.
 
 ## Contract checks
+
+`bun run database:check` validates the dedicated database authoring entrypoint at `contracts/apps/database/index.ts`: TypeScript typecheck, Biome formatting, `dryv-ts doctor`, and Runtime IR compilation. It composes the approved Operational groups with the existing shared and vocabulary dependencies. This check does not generate or apply SQL migrations. Use `bun run database:format` to apply the configured Biome formatter to the database contract files.
 
 `bun run check` runs, in order: `tsc` over the contracts, `tools/audit-contracts.ts`, `dryv-ts doctor` and `dryv-ts compile`. The audit compiles to Runtime IR and fails when:
 

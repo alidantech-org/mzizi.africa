@@ -2,6 +2,12 @@ import { dryv } from "@dryvcode/author";
 
 import { shared } from "../../schemas/_shared.ts";
 import { auth } from "../../schemas/operational/auth.ts";
+import { acquisition } from "../../schemas/operational/acquisition.ts";
+import { engine } from "../../schemas/operational/engine.ts";
+import { staging } from "../../schemas/operational/staging.ts";
+import { analytics } from "../../schemas/operational/analytics.ts";
+import { audit } from "../../schemas/operational/audit.ts";
+import { management } from "../../schemas/operational/management.ts";
 
 import "./operations.ts";
 import { vocabulary } from "../../schemas/mzizi/reference.ts";
@@ -20,6 +26,6 @@ import { vocabulary } from "../../schemas/mzizi/reference.ts";
 export default dryv
   .app({ name: "mzizi-database" })
   .info({ title: "Mzizi database foundation", version: "0.1.0" })
-  .groups(shared, auth, vocabulary);
+  .groups(shared, auth, acquisition, engine, staging, analytics, audit, management, vocabulary);
 
 export { databaseAssignments } from "./persistence.ts";

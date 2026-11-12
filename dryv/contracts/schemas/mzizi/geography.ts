@@ -39,10 +39,10 @@
  */
 /*---------------- End geography.changes ----------------*/
 
-/** geography.jurisdictions — Authority identity and territory link.
+/** geography.countries — Country identity and related geographic records.
  * Review fields, keys, relations, constraints and indexes in the linked design.
  */
-/*---------------- End geography.jurisdictions ----------------*/
+/*---------------- End geography.countries ----------------*/
 
 /** geography.legal_bases — Legal designation link.
  * Review fields, keys, relations, constraints and indexes in the linked design.
