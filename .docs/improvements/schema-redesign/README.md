@@ -1,95 +1,81 @@
 ---
 id: DOC-DB-SCHEMA-REVIEW-20261111
-name: Two database schema review catalogue
+name: Schema redesign phased catalogue
 type: documentation
 tags: [improvements, planning, schemas, review, approval]
 extra: {status: planning_only, approval_required: true, implementation_authorized: false}
 ---
 
-# Schema redesign: user review catalogue
+# Schema redesign catalogue
 
-**Status: proposals for review.** Every schema, table, column, relationship and partition decision here awaits explicit user approval. Documentation completion does not authorize implementation.
+The 12 November 2026 handoff organizes the design documents into Operational, Phase 01 and Phase 02. Schema assignments and responsibilities below are agreed; detailed table/column proposals remain unapproved unless a separate explicit decision says otherwise. This is a documentation-only reorganization, not an SQL, application, data or deployment change.
 
-## Architecture and inventory
+> **Every schema not assigned to Phase 01 or Operational belongs in Phase 02 now.**
 
-The target has two logical PostgreSQL databases: **Main** for accepted cross-domain knowledge, verified sources/evidence, published file records and approved analytical products; **Operations** for auth, acquisition, jobs/runs, staging, analytical work and operational audit. S3 holds file bytes. Python capabilities own rebuildable native vector indexes. Rust is the only application database access boundary, with Dryv as the contract authority.
+Phase 02 is a holding area for deferred proposals. Moving a schema there does not approve it or mean planning has started.
 
-The checkout inventory is an artifact-level estimate, not a live database certification. Current SQL migrations and generated Dryv entities materially diverge. See [management and gap register](../knowledge-platform/rust-dryv-management.md) for measured inventory and coverage method. Earlier four-, five-, eight- and nine-database layouts are superseded by the two-database direction.
+## Organization
 
-The focused rules are [ownership and publication](../knowledge-platform/two-database-rules.md), [Rust and Dryv](../knowledge-platform/rust-dryv-management.md), and [capacity, partitioning and storage](../knowledge-platform/capacity-partitioning-storage.md). This catalogue and its linked schema files are the authority for user review of proposed tables and columns.
-
-## Main database review queue
-
-| Schema | Proposed responsibility | Review file | Status |
-|---|---|---|---|
-| `reference` | Definitions, classifications, units, topics, identifiers and reusable patterns | [reference.md](reference.md) | Proposed; approval required |
-| `geography` | Places, territories, boundaries, spatial representations and geographic relationships | [geography.md](geography.md) | Proposed; approval required |
-| `legal` | Legal instruments, provisions, versions, applicability and authority | [legal.md](legal.md) | Proposed; approval required |
-| `person` | Canonical individuals, names and external identities | [person.md](person.md) | Proposed; approval required |
-| `organization` | Canonical institutions, businesses and other organizations | [organization.md](organization.md) | Proposed; approval required |
-| `society` | Communities, social groups and structures distinct from formal organizations | [society.md](society.md) | Proposed; approval required |
-| `governance` | Institutions, offices, mandates, appointments and tenures | [governance.md](governance.md) | Proposed; approval required |
-| `political` | Parties, movements, memberships, affiliations and coalitions | [political.md](political.md) | Proposed; approval required |
-| `electoral` | Elections, contests, candidates, electorates and results | [electoral.md](electoral.md) | Proposed; approval required |
-| `civic` | Infrastructure, facilities, public services and development projects | [civic.md](civic.md) | Proposed; approval required |
-| `finance` | Public budgets, revenue, expenditure, transfers and debt | [finance.md](finance.md) | Proposed; approval required |
-| `procurement` | Tenders, bidders, awards, contracts and delivery obligations | [procurement.md](procurement.md) | Proposed; approval required |
-| `economy` | Markets, products, prices, trade and economic activity | [economy.md](economy.md) | Proposed; approval required |
-| `statistical` | Published statistical definitions, datasets, releases, observations and approved indicators | [statistical.md](statistical.md) | Proposed; approval required |
-| `education` | Education systems, programmes, curricula, qualifications and accreditation | [education.md](education.md) | Proposed; approval required |
-| `health` | Health conditions, surveillance, incidents, interventions and system relationships | [health.md](health.md) | Proposed; approval required |
-| `linguistics` | Languages, families, dialects, scripts, features and distributions | [linguistics.md](linguistics.md) | Proposed; approval required |
-| `activity` | Real-world events and occurrences, excluding domain-owned elections and transactions | [activity.md](activity.md) | Proposed; approval required |
-| `history` | Historical periods, interpretations, accounts and curated chronologies | [history.md](history.md) | Proposed; approval required |
-| `heritage` | Cultural objects, traditions, practices and collections | [heritage.md](heritage.md) | Proposed; approval required |
-| `biology` | Taxonomy, organisms, traits, biodiversity and biological interactions | [biology.md](biology.md) | Proposed; approval required |
-| `chemistry` | Substances, composition, properties and analytical measurements | [chemistry.md](chemistry.md) | Proposed; approval required |
-| `agriculture` | Farms, fields, cultivation, livestock, practices and harvests | [agriculture.md](agriculture.md) | Proposed; approval required |
-| `environment` | Climate, weather, hydrology, soil, quality and environmental observations | [environment.md](environment.md) | Proposed; approval required |
-| `research` | Accepted study designs, protocols, samples and experimental relationships | [research.md](research.md) | Proposed; approval required |
-| `filesystem` | Published logical files, immutable versions, hashes, S3 references and derivatives | [filesystem.md](filesystem.md) | Proposed; approval required |
-| `source` | Accepted publishers, publications, captures, citations, attribution and provenance | [source.md](source.md) | Proposed; approval required |
-| `participation` | Accepted public/official contributions and consultation records | [participation.md](participation.md) | Proposed; approval required |
-
-**Main proposal count: 28 schemas.** Each is separately reviewable and may be merged, renamed or rejected by the user.
-
-## Operations database review queue
-
-| Schema | Proposed responsibility | Review file | Status |
-|---|---|---|---|
-| `auth` | Accounts, authentication, roles, permissions and service identities | [auth.md](auth.md) | Proposed; approval required |
-| `acquisition` | Discovery, crawl state, observed links, fingerprints and access attempts | [acquisition.md](acquisition.md) | Proposed; approval required |
-| `engine` | Pipeline releases, jobs, runs, attempts, checkpoints and delivery coordination | [engine.md](engine.md) | Proposed; approval required |
-| `staging` | Candidate revisions, mappings, validation findings and review workflow | [staging.md](staging.md) | Proposed; approval required |
-| `analytics` | Analytical requests, working projections, experiments and unpublished outputs | [analytics.md](analytics.md) | Proposed; approval required |
-| `audit` | Operational/security actions and workflow decision history | [audit.md](audit.md) | Proposed; approval required |
-| `management` | Minimal migration, contract and publication/delivery bookkeeping in both databases | [management.md](management.md) | Proposed; approval required |
-
-**Operations proposal count: 6 operational schemas plus the cross-database management proposal.**
-
-## Consolidations and ownership boundaries
-
-| Prior responsibility | Proposed owner | Tables/concepts to reconcile |
+| Folder | Purpose | Schema documents |
 |---|---|---|
-| Climate and hydrological measurements | Main `environment` | Climate observations, weather, river measurements, soil and water-quality observations |
-| Physical features and spatial structures | Main `geography` | Places, territory/boundary versions, geometries and spatial dataset descriptors |
-| Experiments | Main `research` | Study, protocol, sample and experimental relationship records; execution runs stay in Operations `engine` |
-| Evidence and publication provenance | Main `source` | Publisher, publication, capture, evidence, citation, verification and attribution records |
-| Accepted websites | Main `source` | Website/source identity; discovery and crawl frontier remain Operations `acquisition` |
-| Debt | Main `finance` | Debt instruments, balances, servicing and public borrowing |
-| Real-world calendar events | Main `activity` | Occurrences; elections and procurement/financial transactions stay in owning domain |
-| Identity and access administration | Operations `auth` | Accounts, roles, grants and service identities |
-| Contact information | Typed owner tables in Main `person`, `organization` or `geography` | Avoid unrestricted polymorphic foreign keys |
-| Temporary files and uploads | Operations `engine` | Reservations, incomplete uploads and cleanup; accepted immutable versions in Main `filesystem` |
-| Analytics execution | Operations `analytics` | Requests, working projections and experiment state; accepted results in appropriate Main domain |
-| Scraping/NLP vector indexes | Python capability-owned native store | Rebuildable index metadata; suggestions remain staging candidates |
+| [Operational](operational/README.md) | System/workflow records in a separate Operations database | 7 |
+| [Phase 01](phase-01/README.md) | Agreed civic accountability pilot in Main, including geography and geospatial queries | 12 |
+| [Phase 02](phase-02/README.md) | All other schemas; deferred and unapproved | 14 |
 
-## Review workflow and approval dashboard
+Main is the civic knowledge database; Operations is separate. S3/object storage holds bytes, while Filesystem records accepted identities and versions and Source records evidence. The broader [two-database rules](../knowledge-platform/two-database-rules.md), [database management proposal](../knowledge-platform/rust-dryv-management.md) and [capacity guidance](../knowledge-platform/capacity-partitioning-storage.md) remain background design inputs; this handoff controls schema scope and placement. No runtime technology migration is performed here.
 
-Each schema file records proposed tables/columns, current SQL and Dryv inventory where found, FK targets, example queries, admission/publication behavior, growth assumptions, partition decision, S3 offload, risks and an explicit approval block. Its status stays **proposed** until the user records a decision.
+## Agreed ownership
 
-Review order: shared definitions and publication rules; geography/source/filesystem; auth and operational contracts; identities and connected civic/governance domains; scientific/social domains; analytics outputs and management. For each table, review every column, key, FK, evidence path, retention rule, growth scenario and partition recommendation. A material edit reopens approval and dependent relationships.
+Reference mediates legal relationships: domain schemas link to Reference, and **Reference is the only schema that links to Legal**. Legal remains separate. Official consolidates Person and Organization, preserving distinct identity types without implying authority. Governance owns mandates, offices, officeholders, appointments and tenure. Politics consolidates Political and Electoral, preserving separate political relationship and result tables. Accountability consolidates oversight and Participation, preserving distinct record types. Finance and Procurement are separate schemas; Source and Filesystem are separate schemas. All seven operational schemas, including Management, belong only in Operations.
 
-## Implementation readiness gate
+Countrywide institutions must link to the geographic unit representing the whole country. Geography includes dated units, relationships, places, boundary versions, spatial representations and geographic history, with PostGIS queries for known areas, coordinate-to-area lookup, nearby searches and intersections.
 
-Implementation remains **blocked pending explicit user approval** of each retained schema and all its tables/columns, resolved ownership and foreign keys, capacity/partitioning decisions, and reconciliation of untouched `.docs/docs` and `.docs/rules` guidance. A later plan uses fresh Main and Operations databases generated from approved Dryv contracts, followed by selective import of validated records. Existing databases and S3 artifacts remain protected until a separately authorized cutover.
+## Relocation inventory
+
+All **35 original schema documents** map below to **33 destination schema documents**. Person/Organization and Political/Electoral each consolidate two inputs; Participation expands into Accountability. All other inputs have one destination. No old schema document remains at the root. Each destination retains the useful table proposals, column dictionaries, relationships, examples, capacity assumptions and historical review notes. Old measured inventories and collapsed historical proposals keep their original terminology; they do not override the current scope.
+
+| Original root file | Destination | Treatment |
+|---|---|---|
+| `acquisition.md` | [operational/acquisition.md](operational/acquisition.md) | Retained with agreed ownership updates |
+| `activity.md` | [phase-02/activity.md](phase-02/activity.md) | Deferred and unapproved; proposal content retained without redesign |
+| `agriculture.md` | [phase-02/agriculture.md](phase-02/agriculture.md) | Deferred and unapproved; proposal content retained without redesign |
+| `analytics.md` | [operational/analytics.md](operational/analytics.md) | Retained with agreed ownership updates |
+| `audit.md` | [operational/audit.md](operational/audit.md) | Retained with agreed ownership updates |
+| `auth.md` | [operational/auth.md](operational/auth.md) | Retained with agreed ownership updates |
+| `biology.md` | [phase-02/biology.md](phase-02/biology.md) | Deferred and unapproved; proposal content retained without redesign |
+| `chemistry.md` | [phase-02/chemistry.md](phase-02/chemistry.md) | Deferred and unapproved; proposal content retained without redesign |
+| `civic.md` | [phase-01/civic.md](phase-01/civic.md) | Retained with agreed ownership updates |
+| `economy.md` | [phase-02/economy.md](phase-02/economy.md) | Deferred and unapproved; proposal content retained without redesign |
+| `education.md` | [phase-02/education.md](phase-02/education.md) | Deferred and unapproved; proposal content retained without redesign |
+| `electoral.md` | [phase-01/politics.md](phase-01/politics.md) | Merged political/election inputs; distinct tables |
+| `engine.md` | [operational/engine.md](operational/engine.md) | Retained with agreed ownership updates |
+| `environment.md` | [phase-02/environment.md](phase-02/environment.md) | Deferred and unapproved; proposal content retained without redesign |
+| `filesystem.md` | [phase-01/filesystem.md](phase-01/filesystem.md) | Retained with agreed ownership updates |
+| `finance.md` | [phase-01/finance.md](phase-01/finance.md) | Retained with agreed ownership updates |
+| `geography.md` | [phase-01/geography.md](phase-01/geography.md) | Retained with agreed ownership updates |
+| `governance.md` | [phase-01/governance.md](phase-01/governance.md) | Retained with agreed ownership updates |
+| `health.md` | [phase-02/health.md](phase-02/health.md) | Deferred and unapproved; proposal content retained without redesign |
+| `heritage.md` | [phase-02/heritage.md](phase-02/heritage.md) | Deferred and unapproved; proposal content retained without redesign |
+| `history.md` | [phase-02/history.md](phase-02/history.md) | Deferred and unapproved; proposal content retained without redesign |
+| `legal.md` | [phase-01/legal.md](phase-01/legal.md) | Retained with agreed ownership updates |
+| `linguistics.md` | [phase-02/linguistics.md](phase-02/linguistics.md) | Deferred and unapproved; proposal content retained without redesign |
+| `management.md` | [operational/management.md](operational/management.md) | Retained with agreed ownership updates |
+| `organization.md` | [phase-01/official.md](phase-01/official.md) | Merged identity inputs; distinct record types |
+| `participation.md` | [phase-01/accountability.md](phase-01/accountability.md) | Participation retained within broader Accountability |
+| `person.md` | [phase-01/official.md](phase-01/official.md) | Merged identity inputs; distinct record types |
+| `political.md` | [phase-01/politics.md](phase-01/politics.md) | Merged political/election inputs; distinct tables |
+| `procurement.md` | [phase-01/procurement.md](phase-01/procurement.md) | Retained with agreed ownership updates |
+| `reference.md` | [phase-01/reference.md](phase-01/reference.md) | Retained with agreed ownership updates |
+| `research.md` | [phase-02/research.md](phase-02/research.md) | Deferred and unapproved; proposal content retained without redesign |
+| `society.md` | [phase-02/society.md](phase-02/society.md) | Deferred and unapproved; proposal content retained without redesign |
+| `source.md` | [phase-01/source.md](phase-01/source.md) | Retained with agreed ownership updates |
+| `staging.md` | [operational/staging.md](operational/staging.md) | Retained with agreed ownership updates |
+| `statistical.md` | [phase-02/statistical.md](phase-02/statistical.md) | Deferred and unapproved; proposal content retained without redesign |
+
+## Preservation and review rules
+
+The inherited 192 detailed table dictionaries are retained across the destinations. The Electoral commitment dictionary moves to Accountability and keeps its candidate relationship. Candidate Official contact/identifier names distinguish person and organization inputs. Geography/Governance legal-basis candidates now point to a proposed Reference bridge, while the direct-link history remains labeled as superseded. Pilot result capture and language classification candidates avoid requiring deferred Statistical/Linguistics schemas. These changes record the agreed responsibilities; they are not final column approval.
+
+For each retained table, review purpose, actual inventory, fields, keys, typed relationships, exact evidence path, acquisition method, temporal meaning, uncertainty, privacy, workload, growth, storage and partition assumptions. Record KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD (or justified MERGE / SPLIT) per field. Do not impose generic validity/precision/currentness/deletion columns without meaning. Use domain-specific dates and distinguish historical validity, retrieval, observation, workflow and publication time. Source verification/freshness is not simply a successful download. Recoverable draft deletion differs from canonical correction, real-world retirement and privacy erasure.
+
+Exact table/column choices, physical keys and indexes, legal bridge design, release semantics and civic-side durable publication idempotency remain under review. Detailed Phase 02 redesign is deferred. No schema/table approval is inferred from completing this reorganization, and existing databases and S3 artifacts remain protected. Publication boundaries are explained in [Operational](operational/README.md#candidate-to-accepted-record).

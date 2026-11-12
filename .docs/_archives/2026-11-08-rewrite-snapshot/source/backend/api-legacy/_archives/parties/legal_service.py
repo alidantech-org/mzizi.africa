@@ -1,8 +1,0 @@
-"""
-"""
-
-
-
-
-class GeoService(GeoInterface):
-   pass

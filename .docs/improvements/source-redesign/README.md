@@ -63,7 +63,7 @@ A prospective review record should contain current purpose; all columns and cons
 
 ## Related existing plans and repository evidence
 
-- [Schema redesign/source](../schema-redesign/source.md) — current `source` + `website` audit baseline.
+- [Schema redesign/source](../schema-redesign/phase-01/source.md) — current `source` + `website` audit baseline.
 - [Schema redesign guide](../schema-redesign/README.md) — mandatory human review method.
 - [Master planning register](../mzizi-data-schema-storage-and-pipelines-redesign.md) — broader all-domain context.
 - [Data categories and patterns](../data-categories-and-patterns.md) — four classes and shared pattern lifecycle.
@@ -90,7 +90,7 @@ Research findings **do not** approve the source/website merge, any new SQL table
 
 Source/site discovery and readable Markdown extraction should serve the **same shared event-driven freshness pipeline**, not invent an independent news-watcher scheduler. Approved site-specific source manifests can select which official pages/sections to monitor for elections, census releases, parliamentary schedules, budgets and appointments. Meaningful changed DOM/Markdown sections create sourced **activity candidates and targeted re-verification triggers**; downloading a page or seeing a new source hash is not proof that the real-world event occurred or a canonical fact changed. Admin-initiated research uses the same bounded engine queue and source permissions.
 
-**Further planning:** [activity](../schema-redesign/activity.md), [reference schedules](../schema-redesign/reference.md), [engine verification](../schema-redesign/engine.md), and [single orchestration boundary](11-tool-integration-and-contracts.md). No change to site collection permission, schema, scheduled workers or tools is authorized.
+**Further planning:** [activity](../schema-redesign/phase-02/activity.md), [reference schedules](../schema-redesign/phase-01/reference.md), [engine verification](../schema-redesign/operational/engine.md), and [single orchestration boundary](11-tool-integration-and-contracts.md). No change to site collection permission, schema, scheduled workers or tools is authorized.
 
 ## Cross-cutting people, media and prominence proposals
 
@@ -103,4 +103,4 @@ These are cross-domain improvement proposals, not approval to add a new schema o
 
 ## Manifest-driven input contracts (2026-11-08)
 
-The user requires source-neutral API/site acquisition via versioned api.structure.yaml and website manifests under root seed/, backed by DB source identities and approved release bindings. All system input-artifact schemas (seed/folder manifests, site/API structures, mappings, patterns and consumed JSON/YAML/CSV shapes) belong under source/schema/. Generic runtime packages stay under source/backend; publisher/country specifics belong in manifest/DB data. Dryv database/API authoring remains under dryv/ with explicit export ownership where contracts overlap. Follow [the detailed source requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/schema-redesign/source.md#2026-11-08--manifest-driven-api-and-website-sources-user-direction) for conflict-safe DB/YAML editing, pinned releases, learning/review and legacy extractor retirement. This documents future source/pipeline work, not a claim that manifest-driven runtime support is complete.
+The user requires source-neutral API/site acquisition via versioned api.structure.yaml and website manifests under root seed/, backed by DB source identities and approved release bindings. All system input-artifact schemas (seed/folder manifests, site/API structures, mappings, patterns and consumed JSON/YAML/CSV shapes) belong under source/schema/. Generic runtime packages stay under source/backend; publisher/country specifics belong in manifest/DB data. Dryv database/API authoring remains under dryv/ with explicit export ownership where contracts overlap. Follow [the detailed source requirements](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/improvements/schema-redesign/phase-01/source.md#2026-11-08--manifest-driven-api-and-website-sources-user-direction) for conflict-safe DB/YAML editing, pinned releases, learning/review and legacy extractor retirement. This documents future source/pipeline work, not a claim that manifest-driven runtime support is complete.

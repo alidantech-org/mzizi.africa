@@ -1,6 +1,0 @@
-"""
-"""
-
-
-class ScraperInterface(ABC):
-   pass

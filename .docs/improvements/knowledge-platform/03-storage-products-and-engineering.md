@@ -12,6 +12,10 @@ extra:
 
 # Mzizi Africa — Data Platform, Storage and Product Integration Strategy
 
+## Current schema organization — 12 November 2026
+
+The [phased schema catalogue](../schema-redesign/README.md) supersedes earlier schema assignments and review sequencing in this background register: seven Operational schemas in Operations, twelve Phase 01 civic accountability schemas in Main, and fourteen retained Phase 02 proposals. Every other schema belongs in Phase 02 now, deferred and unapproved; this does not start planning. Official consolidates Person/Organization, Politics consolidates Political/Electoral with distinct record types, and Accountability includes Participation. Management is Operations-only, Reference alone links to Legal for domain legal relationships, and geography/geospatial querying is in Phase 01. Finance and Procurement remain separate. Historical inventories below describe their original context; no SQL, application, seed or database change occurs in this documentation pass.
+
 > STATUS: TECHNICAL PLANNING PROPOSAL. Storage quantities are capacity-planning estimates, not measured consumption or approved infrastructure purchases.
 
 ## 1. Purpose

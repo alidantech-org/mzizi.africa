@@ -4,6 +4,14 @@
 
 # DATA LIFECYCLE — From Evidence to Canonical Knowledge
 
+## Schema organization — 12 November 2026
+
+The [schema redesign catalogue](../improvements/schema-redesign/README.md) records the latest documentation-only scope decision: 7 Operational schemas in a separate Operations database, 12 Phase 01 civic accountability schemas in Main, and 14 retained Phase 02 schema proposals. Every schema not assigned to Phase 01 or Operational belongs in Phase 02 now; it is deferred and unapproved, and relocation does not start its planning.
+
+Phase 01 is Reference, Geography, Legal, Official, Governance, Politics, Finance, Procurement, Civic, Accountability, Source and Filesystem. Official combines person and organization identities without granting authority; Politics combines political and electoral responsibilities in distinct tables; Accountability combines oversight and participation in distinct record types. Geography and PostGIS queries are included, and countrywide institutions reference the whole-country unit. Finance/Procurement and Source/Filesystem remain separate. Domain legal relationships go through Reference; Reference alone links to Legal. This supersedes earlier target text describing direct domain legal links or separate Person/Organization, Political/Electoral and Participation schemas. Historical implementation inventories below are not rewritten as if this target existed.
+
+Operations contains Auth, Acquisition, Engine, Staging, Analytics, Audit and Management. Operational audit is not public accountability evidence. Candidates become accepted civic versions only through validated publication with durable source/file provenance and reconciled acknowledgements. Management stays in Operations; the exact civic-side idempotency contract remains open. No SQL, seeds, application code or database data changes are authorized by this reorganization. Detailed table and column approval remains separate from schema scope.
+
 ## Purpose
 
 Mzizi's most important system behavior is not a page or endpoint. It is the controlled process that turns fragmented source material into structured, evidence-backed, versioned knowledge.

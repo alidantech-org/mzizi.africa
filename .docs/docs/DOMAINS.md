@@ -4,6 +4,14 @@
 
 # DOMAINS — What Mzizi Researches and Why
 
+## Schema organization — 12 November 2026
+
+The [schema redesign catalogue](../improvements/schema-redesign/README.md) records the latest documentation-only scope decision: 7 Operational schemas in a separate Operations database, 12 Phase 01 civic accountability schemas in Main, and 14 retained Phase 02 schema proposals. Every schema not assigned to Phase 01 or Operational belongs in Phase 02 now; it is deferred and unapproved, and relocation does not start its planning.
+
+Phase 01 is Reference, Geography, Legal, Official, Governance, Politics, Finance, Procurement, Civic, Accountability, Source and Filesystem. Official combines person and organization identities without granting authority; Politics combines political and electoral responsibilities in distinct tables; Accountability combines oversight and participation in distinct record types. Geography and PostGIS queries are included, and countrywide institutions reference the whole-country unit. Finance/Procurement and Source/Filesystem remain separate. Domain legal relationships go through Reference; Reference alone links to Legal. This supersedes earlier target text describing direct domain legal links or separate Person/Organization, Political/Electoral and Participation schemas. Historical implementation inventories below are not rewritten as if this target existed.
+
+Operations contains Auth, Acquisition, Engine, Staging, Analytics, Audit and Management. Operational audit is not public accountability evidence. Candidates become accepted civic versions only through validated publication with durable source/file provenance and reconciled acknowledgements. Management stays in Operations; the exact civic-side idempotency contract remains open. No SQL, seeds, application code or database data changes are authorized by this reorganization. Detailed table and column approval remains separate from schema scope.
+
 Mzizi is intentionally multi-domain because African history and present-day governance cannot be understood through one category of data.
 
 The platform should connect these domains through shared concepts such as **place, time, people, institutions, evidence and version history**.
@@ -516,4 +524,4 @@ Not yet contracted: heritage and culture, linguistics, migration and settlement,
 
 ## 2026-11-11 — Expanded exploration areas (proposal)
 
-The product exploration areas now include Civic and Society; Geography and Nature; History and Heritage; Statistics and Demographics; and Economics and Production. They are not a list of approved PostgreSQL schemas. The [system-expansion proposal](../improvements/advancement-and-system-expansion.md) records how candidate Environment, Biology, Agriculture, Economy, History, Heritage and expanded Civic responsibilities could connect to existing domains. The [seven candidate briefs](../improvements/schema-redesign/README.md#seven-system-expansion-domain-briefs-hypothetical) separate responsibilities and unresolved questions. All remain hypothetical; domain admission and schema ownership require review under the existing rule before implementation.
+The product exploration areas now include Civic and Society; Geography and Nature; History and Heritage; Statistics and Demographics; and Economics and Production. They are not a list of approved PostgreSQL schemas. The [system-expansion proposal](../improvements/advancement-and-system-expansion.md) records how candidate Environment, Biology, Agriculture, Economy, History, Heritage and expanded Civic responsibilities could connect to existing domains. The [seven candidate briefs](../improvements/schema-redesign/phase-02/README.md) separate responsibilities and unresolved questions. All remain hypothetical; domain admission and schema ownership require review under the existing rule before implementation.

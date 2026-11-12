@@ -4,6 +4,14 @@
 
 # ARCHITECTURE — Target Mzizi System
 
+## Schema organization — 12 November 2026
+
+The [schema redesign catalogue](../improvements/schema-redesign/README.md) records the latest documentation-only scope decision: 7 Operational schemas in a separate Operations database, 12 Phase 01 civic accountability schemas in Main, and 14 retained Phase 02 schema proposals. Every schema not assigned to Phase 01 or Operational belongs in Phase 02 now; it is deferred and unapproved, and relocation does not start its planning.
+
+Phase 01 is Reference, Geography, Legal, Official, Governance, Politics, Finance, Procurement, Civic, Accountability, Source and Filesystem. Official combines person and organization identities without granting authority; Politics combines political and electoral responsibilities in distinct tables; Accountability combines oversight and participation in distinct record types. Geography and PostGIS queries are included, and countrywide institutions reference the whole-country unit. Finance/Procurement and Source/Filesystem remain separate. Domain legal relationships go through Reference; Reference alone links to Legal. This supersedes earlier target text describing direct domain legal links or separate Person/Organization, Political/Electoral and Participation schemas. Historical implementation inventories below are not rewritten as if this target existed.
+
+Operations contains Auth, Acquisition, Engine, Staging, Analytics, Audit and Management. Operational audit is not public accountability evidence. Candidates become accepted civic versions only through validated publication with durable source/file provenance and reconciled acknowledgements. Management stays in Operations; the exact civic-side idempotency contract remains open. No SQL, seeds, application code or database data changes are authorized by this reorganization. Detailed table and column approval remains separate from schema scope.
+
 ## Status
 
 This document describes the target architecture and records the active migration state. The target is represented by the current `source/` layout; Python extraction and filesystem capabilities remain during the gradual database cutover.
@@ -642,13 +650,13 @@ Packages: `engine/data` (Python: structures, runner, polite fetcher, compliance 
 
 ## 2026-11-11 — Connected semantic and spatial foundation
 
-For task 03, follow [the connected foundation](../improvements/connected-reference-geography-legal-foundation.md). Reference defines vocabularies, topics and pattern definitions; geography defines actual areas and sourced dated representations; legal defines instruments/provisions and their versions; domain-owned FK relationships connect real entities to territorial mandates, coverage and precise legal support. Reference is not an entity registry for all domains or a mandatory intermediate link.
+For task 03, follow [the connected foundation](../improvements/connected-reference-geography-legal-foundation.md). Reference defines vocabularies, topics and pattern definitions; geography defines actual areas and sourced dated representations; legal defines instruments/provisions and their versions; domain-owned FK relationships connect real entities to territorial mandates, coverage and precise legal support. Reference is not an entity registry for all domains. The 12 November scope decision supersedes the earlier direct-link rule: Reference is the mandatory mediator for domain relationships to Legal.
 
 Modern country context does not restrict historical/cross-border identity. UI requests use registered backend capability contracts, requested place/date/topic, actual data availability and explainable methodology. Spatial containment cannot establish legal authority, citizenship or a statistical rollup. Pattern definitions differ from engine execution and domain rules. This is accepted design direction; exact SQL and broad downstream implementation remain the work of tasks 03/04, not completed runtime claims.
 
 ## 2026-11-11 — Expanded knowledge domains and current implementation boundary
 
-The product vision now groups exploration into Civic and Society; Geography and Nature; History and Heritage; Statistics and Demographics; and Economics and Production. These groupings do not prescribe database schemas. Candidate domain work includes environment, biodiversity, agriculture, economy, history, heritage and infrastructure; see [the system-expansion proposal](../improvements/advancement-and-system-expansion.md) and its [domain briefs](../improvements/schema-redesign/README.md#seven-system-expansion-domain-briefs-hypothetical).
+The product vision now groups exploration into Civic and Society; Geography and Nature; History and Heritage; Statistics and Demographics; and Economics and Production. These groupings do not prescribe database schemas. Candidate domain work includes environment, biodiversity, agriculture, economy, history, heritage and infrastructure; see [the system-expansion proposal](../improvements/advancement-and-system-expansion.md) and its [domain briefs](../improvements/schema-redesign/phase-02/README.md).
 
 Current active SQL definitions are under `source/schema/database/`; the ordered migrations define `audit`, `auth`, `engine`, `filesystem`, `geography`, `legal` and `reference`. Active source layout is `source/packages/`, the Python engine in `source/backend/engine/`, the NestJS product API in `source/backend/api/`, and input schemas in `source/schema/`. Dryv contains contracts for additional domains, which are not equivalent to fully implemented database schemas or API capabilities. The TypeScript database CLI can compile Dryv persistence entities into a stable catalog and compare their physical table names with SQL migrations. That audit currently reports extensive divergence; it does not generate replacement DDL until active domain models and migration-owned PostgreSQL behavior have been reconciled. This is a repository snapshot, not a statement about a live deployment.
 
