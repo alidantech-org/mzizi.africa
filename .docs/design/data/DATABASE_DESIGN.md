@@ -24,7 +24,7 @@ The former `staging`, `engine` and `geography.boundary_shapes` descriptions belo
 
 ## Current schema catalogue
 
-The old 21-schema table inventory formerly shown here is retired. Use the [schema redesign catalogue](../../_plan/schema-redesign/README.md), which records the current Main and Operations assignments, approved inventories, proposals, and Phase 02 deferrals. In particular, Reference uses `countries`, `schemes`, `values`, measurement `units`, `topics`, and pattern tables; Geography uses the accepted `features`, `units`, `places`, `names`, `identifiers`, `geometries`, `relationships`, `changes`, and `datasets` inventory. See their owning Phase 01 documents for the distinction between accepted table inventory and proposed detailed fields.
+The old 21-schema table inventory formerly shown here is retired. Use the [schema redesign catalogue](../../_plan/schema-redesign/README.md), which records the current Main and Operations assignments, implemented Main contracts, approved Operational inventories, and Phase 02 deferrals. In particular, Reference uses `countries`, `schemes`, `values`, measurement `units`, `topics`, and pattern tables; Geography uses the accepted `features`, `units`, `places`, `names`, `identifiers`, `geometries`, `relationships`, `changes`, and `datasets` inventory. The six authorized Main domain contracts are implemented in Dryv and composed with the foundation groups; Accountability contains no persisted entities. Their owning Phase 01 documents state the current table grains and the remaining SQL-pack gates.
 
 Reference tables (`reference`) are read constantly and change rarely; `filesystem.events`, `source.attributions` and `audit.*` are the heavy append-only tables.
 

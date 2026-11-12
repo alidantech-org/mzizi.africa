@@ -3,12 +3,21 @@ id: DOC-MZIZI-SCHEMA-FINANCE-20261111
 name: finance schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {status: proposed, approval: approved_contract_scope, implementation: dryv_contract_authored, database: Main, recorded_on: 2026-11-11}
 ---
 
 # finance — Phase 01
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+> **Approved contract implementation — 12 November 2026.** This is the current contract inventory and supersedes older proposed/unapproved wording below. These authored Dryv contracts are not generated migrations and do not change a live database.
+
+## Current implemented contract
+
+**Tables:** `FiscalPeriods, Budgets, BudgetVersions, Appropriations, Funds, Flows, Debts`.
+
+Money amounts use shared non-negative integer currency minor units and a separate Reference currency value. Flows preserve source transaction grain; budget aggregates remain appropriations. Measurement units are not a Finance table.
+
+All cross-schema relations target same-Main Dryv schemas. Older inventories and examples below are retained as historical design input and do not override the implemented contract above.
+
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
@@ -16,9 +25,9 @@ extra: {status: proposed, approval: not_approved, implementation: not_authorized
 
 Public budgets, allocations, revenue, expenditure, transfers, public funds and debt.
 
-Keep Finance separate from Procurement. Preserve budgets and editions, allocations, revenues, expenditures, transfers, public funds, borrowing, loan disbursements and debt service. Record the relevant fiscal/transaction time, currency and units, country, responsible institution and exact evidence. Responsible mandates link to Governance and identities to Official; geographic scope uses Geography, including a country unit for national coverage. Legal foundations are mediated by Reference.
+Finance owns fiscal periods, budgets and versions, appropriations, funds, reported flows and debt instruments. Procurement remains a Civic lifecycle and Finance flows link to Civic contracts where sourced. Amounts are exact integer currency minor units with an explicit Reference currency value; Finance has no `units` table. Country identity comes from Reference and physical scope from Geography. Legal basis uses Reference.
 
-Existing years/budgets/allocations/entries/loans/repayments/disbursements dictionaries and the older funds, revenue and transfer proposals remain review inputs. Distinguish authorization, allocation, commitment, payment and actual delivery. Procurement contracts and Civic projects reference funding without duplicating authoritative amounts. Do not require deferred Economy or Statistical tables to publish pilot finance records.
+The earlier years, entries, loans, repayments and disbursement proposals are superseded by `fiscal_periods`, versioned budgets and typed financial `flows`. Distinguish authorized appropriations, contracted amounts and reported payments. A source aggregate remains an aggregate and is not represented as a transaction.
 
 ## Retained table proposals and review context
 

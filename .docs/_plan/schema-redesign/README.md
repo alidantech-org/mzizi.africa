@@ -3,12 +3,12 @@ id: DOC-DB-SCHEMA-REVIEW-20261111
 name: Schema redesign phased catalogue
 type: documentation
 tags: [improvements, planning, schemas, review, approval]
-extra: {status: operational_approved_main_phase_01_review_pending, operational_implementation_authorized: true, main_phase_01_approval_required: true, phase_02_deferred: true, migrations_authorized: false, deployment_authorized: false}
+extra: {status: operational_approved_six_main_contracts_authored, operational_implementation_authorized: true, six_main_contracts_authorized: true, phase_02_deferred: true, migrations_authorized: false, deployment_authorized: false}
 ---
 
 # Schema redesign catalogue
 
-The 12 November 2026 handoff organizes the design documents into Operational, Phase 01 and Phase 02. The seven Operational schemas and their 45-table/column inventory are approved under [DEC-OPERATIONAL-DATABASE-20261112](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/decisions/DEC-OPERATIONAL-DATABASE-20261112.md). The Main Phase 01 Reference foundation and Geography table inventory are accepted, and contract development is authorized; detailed field designs and additions remain subject to review. See [Reference](mzizi-db/phase-01/reference.md), [Geography](mzizi-db/phase-01/geography.md) and the [proposed classification plan](mzizi-db/phase-01/reference-geography-classification.md). Other Main Phase 01 schemas remain under individual review. Phase 02 remains deferred. Nothing here authorizes migrations, data changes or deployment; the SQL pack is currently a non-production skeleton.
+The 12 November 2026 catalogue organizes Operational, Main Phase 01 and deferred Phase 02 designs. The seven Operational schemas and their 45-table/column inventory are approved under [DEC-OPERATIONAL-DATABASE-20261112](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/decisions/DEC-OPERATIONAL-DATABASE-20261112.md). The six Main domain contracts are implemented under [DEC-MAIN-SIX-DOMAIN-CONTRACTS-20261112](../../decisions/DEC-MAIN-SIX-DOMAIN-CONTRACTS-20261112.md); see their current Phase 01 documents. Phase 02 remains deferred. Contract composition and compilation do not authorize SQL generation, migrations, data changes or deployment; documented SQL-pack constraints remain open.
 
 > **Every schema not assigned to Phase 01 or Operational belongs in Phase 02 now.**
 
@@ -19,14 +19,14 @@ Phase 02 is a holding area for deferred proposals. Moving a schema there does no
 | Folder | Purpose | Schema documents |
 |---|---|---|
 | [Operational](mzizi-operational-db/README.md) | System/workflow records in a separate Operations database | 7 |
-| [Phase 01](mzizi-db/phase-01/README.md) | Agreed civic accountability pilot in Main, including geography and geospatial queries | 12 |
+| [Phase 01](mzizi-db/phase-01/README.md) | Main domain contracts and foundation schemas | 11 contract documents |
 | [Phase 02](mzizi-db/phase-02/README.md) | All other schemas; deferred and unapproved | 14 |
 
 Main is the civic knowledge database; Operations is separate. S3/object storage holds bytes, while Filesystem records accepted identities and versions and Source records evidence. The broader [two-database rules](../knowledge-platform/two-database-rules.md), [database management proposal](../knowledge-platform/rust-dryv-management.md) and [capacity guidance](../knowledge-platform/capacity-partitioning-storage.md) remain background design inputs; this handoff controls schema scope and placement. No runtime technology migration is performed here.
 
 ## Agreed ownership
 
-Reference mediates legal relationships: domain schemas link to Reference, and **Reference is the only schema that links to Legal**. Legal remains separate. Official consolidates Person and Organization, preserving distinct identity types without implying authority. Governance owns mandates, offices, officeholders, appointments and tenure. Politics consolidates Political and Electoral, preserving separate political relationship and result tables. Accountability consolidates oversight and Participation, preserving distinct record types. Finance and Procurement are separate schemas; Source and Filesystem are separate schemas. All seven operational schemas, including Management, belong only in Operations.
+Reference mediates legal relationships: domain schemas link to Reference, and **Reference is the only schema that links to Legal**. Legal remains separate. Official consolidates Person and Organization, preserving distinct identity types without implying authority. Governance owns mandates, offices, officeholders, appointments and tenure. Politics consolidates Political and Electoral, preserving separate political relationship and result tables. Accountability exposes derived analytical outputs and persists no domain entities. Civic owns procurement lifecycle records; Finance, Source and Filesystem remain distinct schemas. Accountability is a read-only analytical surface with no persisted tables. All seven operational schemas, including Management, belong only in Operations.
 
 Countrywide institutions must link to the geographic unit representing the whole country. Geography includes dated units, relationships, places, boundary versions, spatial representations and geographic history, with PostGIS queries for known areas, coordinate-to-area lookup, nearby searches and intersections.
 
@@ -64,7 +64,7 @@ All **35 original schema documents** map below to **33 destination schema docume
 | `participation.md` | [phase-01/accountability.md](mzizi-db/phase-01/accountability.md) | Participation retained within broader Accountability |
 | `person.md` | [phase-01/official.md](mzizi-db/phase-01/official.md) | Merged identity inputs; distinct record types |
 | `political.md` | [phase-01/politics.md](mzizi-db/phase-01/politics.md) | Merged political/election inputs; distinct tables |
-| `procurement.md` | [phase-01/procurement.md](mzizi-db/phase-01/procurement.md) | Retained with agreed ownership updates |
+| `procurement.md` | [phase-01/procurement.md](mzizi-db/phase-01/procurement.md) | Superseded: procurement lifecycle is owned by Civic |
 | `reference.md` | [phase-01/reference.md](mzizi-db/phase-01/reference.md) | Retained with agreed ownership updates |
 | `research.md` | [phase-02/research.md](mzizi-db/phase-02/research.md) | Deferred and unapproved; proposal content retained without redesign |
 | `society.md` | [phase-02/society.md](mzizi-db/phase-02/society.md) | Deferred and unapproved; proposal content retained without redesign |
@@ -74,10 +74,10 @@ All **35 original schema documents** map below to **33 destination schema docume
 
 ## Preservation and review rules
 
-The [contract-authoring plan](contract-authoring.md) and [schema-authoring rules](../../rules/schema-contract-authoring.md) govern implementation. Operational contracts are approved. The Main Reference foundation and Geography table inventory are accepted; their detailed field proposals remain under review. The remaining Main schemas are unapproved. Existing drafts and scaffolding alone do not imply approval.
+The [contract-authoring plan](contract-authoring.md) and [schema-authoring rules](../../rules/schema-contract-authoring.md) govern implementation. Operational contracts are approved, and six Main domain contracts are authorized and implemented. Reference and Geography foundations are accepted; their remaining classification and SQL-enforcement details are recorded as open in the owning documents. Existing drafts alone do not imply database enforcement.
 
-Historical table dictionaries remain planning evidence only. Operational approval is limited to the 45-table inventory in its formal decision and owning documents. The accepted Reference foundation and Geography inventory are recorded in their owning Phase 01 documents and contracts; other Main Phase 01 dictionaries remain proposals. Geography has no Legal association table; any domain Legal relationship must use an approved Reference interface. Phase 02 remains deferred.
+Historical table dictionaries remain planning evidence only. Operational approval is limited to the 45-table inventory in its formal decision and owning documents. The six authorized Main domain contracts are implemented in Dryv; older dictionaries remain historical inputs superseded by each owning document. Generated SQL, migrations and live database changes remain unauthorized. Reference is the legal-basis interface for domains; Phase 02 remains deferred.
 
 For each retained table, review purpose, actual inventory, fields, keys, typed relationships, exact evidence path, acquisition method, temporal meaning, uncertainty, privacy, workload, growth, storage and partition assumptions. Record KEEP / REMOVE / DERIVE / MOVE / RENAME / ADD (or justified MERGE / SPLIT) per field. Do not impose generic validity/precision/currentness/deletion columns without meaning. Use domain-specific dates and distinguish historical validity, retrieval, observation, workflow and publication time. Source verification/freshness is not simply a successful download. Recoverable draft deletion differs from canonical correction, real-world retirement and privacy erasure.
 
-Operational table names and column inventories are approved; physical types, nullability, keys, indexes, and exact supported Dryv expressions are resolved in the authored contracts subject to documented gaps. Reference and Geography inventories are accepted; detailed classification fields, scheme-aware constraints, the Reference–Legal bridge and Geography PostGIS semantics remain open. Other Main design choices and civic-side durable publication idempotency remain under review. Detailed Phase 02 redesign is deferred. Existing databases and S3 artifacts remain protected. Publication boundaries are explained in [Operational](mzizi-operational-db/README.md#candidate-to-accepted-record).
+Operational table names and column inventories are approved; physical types, nullability, keys, indexes, and exact supported Dryv expressions are resolved in the authored contracts subject to documented gaps. Reference and Geography inventories are accepted; detailed classification fields, scheme-aware constraints, the Reference–Legal bridge and Geography PostGIS semantics remain open. Reference/Geography field enforcement and civic-side durable publication idempotency remain under review. Detailed Phase 02 redesign is deferred. Existing databases and S3 artifacts remain protected. Publication boundaries are explained in [Operational](mzizi-operational-db/README.md#candidate-to-accepted-record).

@@ -16,7 +16,7 @@ Preserve original artifacts, acquire only under documented policy, produce repea
 
 ## 3. Build the civic accountability pilot
 
-Implement the reviewed Phase 01 scope across geography, institutions, governance, politics, finance, procurement, civic records, accountability, sources and files. Include PostGIS queries for known areas, coordinate lookup, nearby searches and intersections.
+Advance the authored Main contracts across Geography, Official, Governance, Politics, Civic, Finance and Source. Procurement is part of Civic. Accountability is analytical and has no persisted tables. Resolve SQL-pack constraints and Geography spatial support before generation or migration work.
 
 ## 4. Connect product surfaces
 

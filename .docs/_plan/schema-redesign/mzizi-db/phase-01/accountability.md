@@ -3,20 +3,29 @@ id: DOC-MZIZI-SCHEMA-PARTICIPATION-20261111
 name: accountability schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {status: proposed, approval: approved_contract_scope, implementation: dryv_contract_authored, database: Main, recorded_on: 2026-11-11}
 ---
 
 # accountability — Phase 01
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+> **Approved contract implementation — 12 November 2026.** This is the current contract inventory and supersedes older proposed/unapproved wording below. These authored Dryv contracts are not generated migrations and do not change a live database.
+
+## Current implemented contract
+
+**Tables:** `No persisted tables`.
+
+Accountability is a read-only analytical surface for budget execution, procurement/project performance, service coverage, institutional performance, promise progress and oversight signals. Aggregate query execution remains unsupported by the current Dryv database application.
+
+All cross-schema relations target same-Main Dryv schemas. Older inventories and examples below are retained as historical design input and do not override the implemented contract above.
+
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
-Oversight findings, commitments, recommendations, responses, corrective actions, petitions, consultations, complaints and public participation.
+Read-only analytical outputs derived from Governance, Politics, Civic, Finance, Geography and Source; no Accountability facts are persisted.
 
-Accountability combines public oversight and Participation in one schema while retaining distinct record types. Preserve the former participation programme, contribution and accepted review dictionaries; consultation, petition, complaint and response proposals remain distinct. Oversight findings are public civic claims, not operational audit events.
+Earlier Participation and oversight tables are not part of the current contract. Accountability derives performance indicators and review signals from domain facts and cited evidence; it does not store commitments, findings, complaints, participation or operational review records.
 
 | Record family to review | Meaning and connections |
 |---|---|
@@ -28,7 +37,7 @@ Accountability combines public oversight and Participation in one schema while r
 | Petitions, consultations and complaints | Distinct public participation cases and procedures, submissions and outcomes; protect private identities and do not turn allegations into verified findings. |
 | Participation programmes, contributions and accepted reviews | Preserve the existing proposals; accepted civic content is distinct from staging moderation and operational review logs. |
 
-These are responsibilities and proposal families, not approved new table/column designs. Link people and organizations through Official, authority through Governance, place through Geography, legal relationships through Reference, and provenance through Source. Operational review details stay in Staging/Audit; accepted record versions retain the necessary durable attribution. Public participation alone cannot silently change canonical facts.
+Read-only aggregate query execution remains a capability gap. A generated indicator must preserve its inputs, source citations, geographic/temporal scope and uncertainty; an anomaly is not a misconduct conclusion.
 
 ## Retained table proposals and review context
 

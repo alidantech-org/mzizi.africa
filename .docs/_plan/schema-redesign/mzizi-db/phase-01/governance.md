@@ -3,25 +3,31 @@ id: DOC-MZIZI-SCHEMA-GOVERNANCE-20261111
 name: governance schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {status: proposed, approval: approved_contract_scope, implementation: dryv_contract_authored, database: Main, recorded_on: 2026-11-11}
 ---
 
 # governance — Phase 01
 
-> **Geography/Reference alignment — 12 November 2026:** This schema remains a proposal. Its inherited geography boundary/country/legal-basis targets and former Reference country-scope targets (where present) predate the accepted foundations. Re-review any such field against [Geography](geography.md) and [Reference](reference.md) before approving this schema; do not treat the old target names or links as current or implemented.
+> **Approved contract implementation — 12 November 2026.** This is the current contract inventory and supersedes older proposed/unapproved wording below. These authored Dryv contracts are not generated migrations and do not change a live database.
 
+## Current implemented contract
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+**Tables:** `Institutions, Offices, Holders, Mandates, Relationships, AuthorityScopes`.
+
+AuthorityScopes bind an institution or office to a required Geography unit and optional Reference country identity. Legal basis is linked through Reference.LegalBasisLinks.
+
+All cross-schema relations target same-Main Dryv schemas. Older inventories and examples below are retained as historical design input and do not override the implemented contract above.
+
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
-Government structures, institutional mandates, offices, officeholders, appointments, tenure and responsibility.
+Government institutions, offices, holder tenures, mandates, institutional relationships and dated authority scopes.
 
-Government structures and institutions' mandates belong here, together with offices, officeholders, appointments, acting roles, tenure and responsibility. Institutional and person identities link through Official; locations and territorial scope link through Geography; legal foundations link through Reference. No Governance record links directly to Legal.
+The current tables use Official for institution/person identity, Geography units for geographic scope and Reference values for classifications. No Governance record links directly to Legal; mandate legal support uses `reference.legal_basis_links`. No separate appointment table is part of this contract.
 
-Keep office definitions independent of current holders, and distinguish an appointment, election declaration, commencement of tenure, vacancy and departure. The retained office/mandate dictionaries replace `provision_id` with proposed `legal_basis_id` to Reference. A countrywide institution points to the whole-country geographic unit. Official identity, a physical address or a pattern expectation alone cannot establish authority or an incumbent.
+Office definitions are independent of holders. Holder rows represent continuous tenure; authority scopes require a Geography unit, including the whole-country unit when countrywide scope is required. An Official identity, physical address or pattern expectation alone does not establish authority or an incumbent.
 
 ## Retained table proposals and review context
 

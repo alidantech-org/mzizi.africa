@@ -6,11 +6,9 @@
 
 ## Schema organization — 12 November 2026
 
-The [schema redesign catalogue](../../_plan/schema-redesign/README.md) records the latest documentation-only scope decision: 7 Operational schemas in a separate Operations database, 12 Phase 01 civic accountability schemas in Main, and 14 retained Phase 02 schema proposals. Every schema not assigned to Phase 01 or Operational belongs in Phase 02 now; it is deferred and unapproved, and relocation does not start its planning.
+## Schema organization — 12 November 2026
 
-Phase 01 is Reference, Geography, Legal, Official, Governance, Politics, Finance, Procurement, Civic, Accountability, Source and Filesystem. Official combines person and organization identities without granting authority; Politics combines political and electoral responsibilities in distinct tables; Accountability combines oversight and participation in distinct record types. Geography and PostGIS queries are included, and countrywide institutions reference the whole-country unit. Finance/Procurement and Source/Filesystem remain separate. Domain legal relationships go through Reference; Reference alone links to Legal. This supersedes earlier target text describing direct domain legal links or separate Person/Organization, Political/Electoral and Participation schemas. Historical implementation inventories below are not rewritten as if this target existed.
-
-Operations contains Auth, Acquisition, Engine, Staging, Analytics, Audit and Management. Operational audit is not public accountability evidence. Candidates become accepted civic versions only through validated publication with durable source/file provenance and reconciled acknowledgements. Management stays in Operations; the exact civic-side idempotency contract remains open. No SQL, seeds, application code or database data changes are authorized by this reorganization. Detailed table and column approval remains separate from schema scope.
+The current catalogue reflects the 12 November contract authorization: ten persisted Main schemas (Reference, Geography, Legal, Official, Governance, Politics, Civic, Finance, Source and Filesystem) plus read-only, non-persisted Accountability, and seven Operations schemas. Procurement records are owned by Civic. The six Main domain contracts are authored and composed in Dryv; SQL generation, migrations, data changes and deployment are not authorized by this schema-contract task. Older inventories below remain historical design material and are superseded by the owning Phase 01 contract summaries.
 
 ## Purpose
 

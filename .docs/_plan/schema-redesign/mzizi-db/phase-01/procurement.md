@@ -3,18 +3,18 @@ id: DOC-MZIZI-SCHEMA-PROCUREMENT-20261111
 name: procurement schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {status: superseded, approval: superseded_by_civic_ownership, implementation: none, database: Main, recorded_on: 2026-11-12}
 ---
 
 # procurement — Phase 01
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+> **Superseded on 12 November 2026.** Procurement is not a standalone database schema. Current tables are `civic.procurements`, `civic.bids`, `civic.contracts` and `civic.deliveries` in [Civic](civic.md). The historical proposal below is retained for context only and does not define current ownership or authorize SQL.
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
-Tenders, bidders, awards, contracts, amendments and delivery obligations; separate from Finance.
+Historical scope only: procurement lifecycle records are now owned by Civic; Finance remains a distinct schema.
 
 Procurement is its own Phase 01 schema; Finance and Procurement are **not merged**. Cover tenders, bidders/bids, awards, contracts, amendments/variations and delivery obligations, preserving the distinct notice, decision, signing, amendment and delivery dates.
 

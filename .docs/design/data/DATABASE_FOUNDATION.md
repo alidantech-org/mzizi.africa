@@ -11,7 +11,7 @@ The database foundation is a Rust service and administration CLI under `source/b
 
 ## Status
 
-**Foundation milestone, in progress.** Implemented and verified locally: one `dryv generate` run compiles both authoring sources; the `rust-models` and `rust-sql` packs emit the `mzizi-db-generated` models and per-database schema snapshots; `mzizi-db assemble` turns the snapshots into immutable checksummed releases; both releases apply and verify on a fresh isolated PostgreSQL container; `roles` provisions a DML-only service role; gated integration tests cover fresh apply, rerun, concurrent migrators and checksum refusal. Not yet implemented: `seed` (no reviewed seed set exists; `seed/_fixtures` is test-only), incremental schema-evolution releases, and the service/API cut-over. Only the reference vocabulary and operational groups are composed so far; the other `mzizi` domain groups join as their contracts pass the engine. Existing callers — the NestJS API's current TypeORM paths, the legacy Bun database service, the Python engine — keep working unchanged until later milestones migrate them. Claims below marked *target* are not yet behavior.
+**Foundation milestone, in progress.** Implemented and verified locally: one `dryv generate` run compiles both authoring sources; the `rust-models` and `rust-sql` packs emit the `mzizi-db-generated` models and per-database schema snapshots; `mzizi-db assemble` turns the snapshots into immutable checksummed releases; both releases apply and verify on a fresh isolated PostgreSQL container; `roles` provisions a DML-only service role; gated integration tests cover fresh apply, rerun, concurrent migrators and checksum refusal. Not yet implemented: `seed` (no reviewed seed set exists; `seed/_fixtures` is test-only), incremental schema-evolution releases, and the service/API cut-over. The database authoring application now composes the ten persisted Main namespaces (Reference, Geography, Legal, Official, Governance, Politics, Civic, Finance, Source and Filesystem) plus the read-only Accountability group, alongside all seven Operations namespaces. Composition and Dryv compilation establish contract connectivity; they do not mean SQL was generated or applied. Existing callers — the NestJS API's current TypeORM paths, the legacy Bun database service, the Python engine — keep working unchanged until later milestones migrate them. Claims below marked *target* are not yet behavior.
 
 ## Architecture
 
@@ -27,10 +27,10 @@ Two databases, one access boundary:
 
 | Database | Purpose | Domain schemas |
 | --- | --- | --- |
-| `mzizi` | canonical domain data | reference, geography, legal, official, governance, politics, finance, procurement, civic, accountability, source, filesystem |
+| `mzizi` | canonical domain data | reference, geography, legal, official, governance, politics, civic, finance, source, filesystem (Accountability: read-only, no stored tables) |
 | `mzizi_operations` | platform operations | auth, acquisition, engine, staging, analytics, audit, management |
 
-All assignments are registered up front; the foundation generates tables only for `auth` (operations) and `reference` (main). Each database carries a reserved `_mzizi` technical schema for target identity and migration history. Reviewed foreign keys are allowed across schemas **within** one database; relationships across the two databases use typed identifiers, never foreign keys.
+All namespace assignments are registered up front. The current Dryv database application composes the full Main domain contract graph and all seven Operations groups; actual generation remains a separate action. Each database carries a reserved `_mzizi` technical schema for target identity and migration history. Reviewed foreign keys are allowed across schemas **within** one database; relationships across the two databases use typed identifiers, never foreign keys.
 
 ### Boundary rules
 

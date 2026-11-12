@@ -18,9 +18,7 @@ export const databaseAssignments: Record<string, TargetDatabase> = {
   governance: "mzizi",
   politics: "mzizi",
   finance: "mzizi",
-  procurement: "mzizi",
   civic: "mzizi",
-  accountability: "mzizi",
   source: "mzizi",
   filesystem: "mzizi",
   // mzizi_operations: platform operations

@@ -3,15 +3,21 @@ id: DOC-MZIZI-SCHEMA-ELECTORAL-20261111
 name: politics schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {merged_document_ids: [DOC-MZIZI-SCHEMA-POLITICAL-20261111], status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {merged_document_ids: [DOC-MZIZI-SCHEMA-POLITICAL-20261111], status: proposed, approval: approved_contract_scope, implementation: dryv_contract_authored, database: Main, recorded_on: 2026-11-11}
 ---
 
 # politics — Phase 01
 
-> **Geography/Reference alignment — 12 November 2026:** This schema remains a proposal. Its inherited geography boundary/country/legal-basis targets and former Reference country-scope targets (where present) predate the accepted foundations. Re-review any such field against [Geography](geography.md) and [Reference](reference.md) before approving this schema; do not treat the old target names or links as current or implemented.
+> **Approved contract implementation — 12 November 2026.** This is the current contract inventory and supersedes older proposed/unapproved wording below. These authored Dryv contracts are not generated migrations and do not change a live database.
 
+## Current implemented contract
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+**Tables:** `Parties, Memberships, Coalitions, Alignments, Elections, Contests, Candidates, Electorates, Results, Manifestos, ManifestoItems, ReferendumOptions, OptionResults`.
+
+Candidate party affiliation is captured on the candidacy as it stood for that election. Results and electorate counts retain distinct measures and source citations. Referendum options and option results have separate row types and are never modeled as people or candidates.
+
+All cross-schema relations target same-Main Dryv schemas. Older inventories and examples below are retained as historical design input and do not override the implemented contract above.
+
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
@@ -23,7 +29,7 @@ Politics combines the former Political and Electoral proposals. Parties, members
 
 Link people and organizational identities through Official, offices through Governance, electoral areas and reporting boundaries through Geography, and legal frameworks through Reference. Preserve registered voters, ballots cast, valid/rejected votes, candidate totals and allocated seats as different measures; avoid summing overlapping reporting totals. Source evidence must establish declarations and corrections.
 
-The old required `statistical.releases` link is deferred with Statistical. For Phase 01 the retained result/turnout dictionaries instead propose an exact `source.captures` reference as `capture_id`, with declaration/version semantics still to be reviewed; this does not approve a replacement release table. Election promises are owned by Accountability: the original commitment dictionary is preserved there and retains its candidate link. Representation and electorate proposals in the historical inventory remain review inputs, not silently omitted requirements.
+Results and electorate rows use typed Source citations, not a deferred Statistical release or a raw capture ID. Accountability persists no promises; manifesto items are attributed political policy text, and a promise-to-project relationship is not asserted without an explicit reviewed relation. Referendum options/results have separate row types.
 
 ## Retained table proposals and review context
 

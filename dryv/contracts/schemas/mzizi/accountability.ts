@@ -1,33 +1,20 @@
 /**
- * Schema: accountability | Database: mzizi
- * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/accountability.md
- * Scope: agreed. Detailed table contracts: pending individual review.
- * Inventory below records proposals, not approval or executable definitions.
- * Existing definitions, where present, remain drafts requiring reconciliation.
- * No new generation activation is authorized by this file.
+ * Schema: accountability | Database: mzizi (read-only analytical surface; no persisted tables).
+ * Derived indicators are projections over Finance, Civic, Politics, Governance and Source evidence.
+ * Persisting programme, contribution, review or commitment facts here would duplicate domain ownership.
+ * Query/aggregate execution is not implemented by Dryv's current database application.
  */
+import * as dryv from "@dryvcode/author";
 
-/*---------------- Candidate table inventory: review required ----------------*/
-
-/** accountability.programmes — Participation programme.
- * Review fields, keys, relations, constraints and indexes in the linked design.
- */
-/*---------------- End accountability.programmes ----------------*/
-
-/** accountability.contributions — Accepted contribution identity.
- * Review fields, keys, relations, constraints and indexes in the linked design.
- */
-/*---------------- End accountability.contributions ----------------*/
-
-/** accountability.reviews — Accepted participation review.
- * Review fields, keys, relations, constraints and indexes in the linked design.
- */
-/*---------------- End accountability.reviews ----------------*/
-
-/** accountability.commitments — Candidate election promises.
- * Review fields, keys, relations, constraints and indexes in the linked design.
- */
-/*---------------- End accountability.commitments ----------------*/
-
-// No tables are activated until their detailed contracts are agreed.
-export {};
+export const accountability = dryv
+  .group({ name: "accountability" })
+  .description("Read-only derived accountability indicators; intentionally contains no storage schemas.");
+export const accountabilityViews = [
+  "budget_execution",
+  "procurement_performance",
+  "project_performance",
+  "service_coverage",
+  "institutional_performance",
+  "promise_progress",
+  "oversight_signals",
+] as const;

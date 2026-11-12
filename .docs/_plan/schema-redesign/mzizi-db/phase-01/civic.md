@@ -3,25 +3,31 @@ id: DOC-MZIZI-SCHEMA-CIVIC-20261111
 name: civic schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {status: proposed, approval: not_approved, implementation: not_authorized, database: Main, recorded_on: 2026-11-11}
+extra: {status: proposed, approval: approved_contract_scope, implementation: dryv_contract_authored, database: Main, recorded_on: 2026-11-11}
 ---
 
 # civic — Phase 01
 
-> **Geography/Reference alignment — 12 November 2026:** This schema remains a proposal. Its inherited geography boundary/country/legal-basis targets and former Reference country-scope targets (where present) predate the accepted foundations. Re-review any such field against [Geography](geography.md) and [Reference](reference.md) before approving this schema; do not treat the old target names or links as current or implemented.
+> **Approved contract implementation — 12 November 2026.** This is the current contract inventory and supersedes older proposed/unapproved wording below. These authored Dryv contracts are not generated migrations and do not change a live database.
 
+## Current implemented contract
 
-> **Phase 01 civic accountability scope agreed; table and column proposals remain unapproved.** No implementation is authorized by this documentation reorganization.
+**Tables:** `Services, Projects, ProjectFeatures, Procurements, Bids, Contracts, Deliveries`.
+
+Procurement is a Civic lifecycle. Physical assets, networks and spatial representations remain in Geography; no Civic asset or service-location duplicate is created.
+
+All cross-schema relations target same-Main Dryv schemas. Older inventories and examples below are retained as historical design input and do not override the implemented contract above.
+
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
-Public infrastructure and assets, facilities, projects and services, with responsibility, location, funding and delivery links.
+Public service provision, projects, procurements, bids, contracts and delivery records, linked to canonical identities and Geography.
 
-Civic covers public infrastructure, assets, facilities, networks, projects and services. Link responsible institutions and mandates through Governance, operator/provider identities through Official, physical places and geographic coverage through Geography, funding through Finance, and contracts/delivery through Procurement. Evidence belongs in Source, artifacts in Filesystem, and legal foundations are mediated by Reference.
+Civic does not own physical asset, network or place identities. Services can link to provider Official entity, responsible Governance institution, physical Geography place, coverage Geography unit and a service period. Projects link to responsible institutions, project features and Finance. Procurement lifecycle records are Civic-owned; evidence uses Source citations and exact file versions through Source.
 
-A facility is not its organization, an asset is not its coordinate, a project is not its budget, and an offered service is not proof of actual delivery. Preserve status changes and dated responsibility/coverage with source evidence. School and health facilities needed by the pilot can be Civic records without starting deferred Education or Health schema redesign.
+A facility is not its provider identity, a project is not its budget, a contract is not a payment, and an offered service is not proof of actual delivery. Preserve dates and source evidence. The current Civic contract contains no standalone service-location registry.
 
 ## Retained table proposals and review context
 
@@ -239,7 +245,7 @@ id: DOC-EXP-CIVIC-20261111
 name: Civic domain expansion brief
 type: documentation
 tags: [system-expansion, hypothetical, schema-design, civic]
-extra: {status: hypothetical, approval: not_approved, implementation: not_authorized, recorded_on: 2026-11-11}
+extra: {status: hypothetical, approval: approved_contract_scope, implementation: dryv_contract_authored, recorded_on: 2026-11-11}
 ---
 
 # Civic — infrastructure, networks and public services

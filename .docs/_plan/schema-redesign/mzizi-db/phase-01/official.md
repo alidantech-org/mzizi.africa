@@ -3,28 +3,37 @@ id: DOC-MZIZI-SCHEMA-ORGANIZATION-20261111
 name: official schema — phase-01
 type: schema-review
 tags: [database, schema-redesign, main, user-review]
-extra: {merged_document_ids: [DOC-MZIZI-SCHEMA-PERSON-20261111], status: proposed, approval: not_approved, implementation: integration_dependency_slice_authored, database: Main, recorded_on: 2026-11-11}
+extra: {merged_document_ids: [DOC-MZIZI-SCHEMA-PERSON-20261111], status: proposed, approval: approved_contract_scope, implementation: six_contract_tables_authored, database: Main, recorded_on: 2026-11-11}
 ---
 
 # official — Phase 01
 
-> **Phase 01 civic accountability scope agreed; the full Official schema remains unapproved.** The 12 November Main/Operations handoff requires a typed `official.entities` target for Source publishers and Legal issuers. That minimal identity dependency is now authored in `official.ts`; this does not approve the remaining Official inventory or activate generation.
+> **Approved contract implementation — 12 November 2026.** This is the current contract inventory and supersedes older proposed/unapproved wording below. These authored Dryv contracts are not generated migrations and do not change a live database.
+
+## Current implemented contract
+
+**Tables:** `Entities, Individuals, Names, Identifiers, Contacts, Relationships`.
+
+Official owns exactly one stable entity/person identity catalogue; shared names, identifiers, contacts and typed relationships attach to those identities. Names are not duplicated in the identity tables.
+
+All cross-schema relations target same-Main Dryv schemas. Older inventories and examples below are retained as historical design input and do not override the implemented contract above.
+
 
 [Folder index](README.md) · [Full catalogue and relocation inventory](../../README.md)
 
 ## Agreed responsibility — 12 November 2026
 
-Officially identified people and organizations, including schools and institutions; names, identifiers, profiles and contact details.
+Canonical identities for real people and organizations and their shared names, identifiers, contacts and typed relationships.
 
-Official combines the former Person and Organization schema proposals while retaining distinct person and organization record types. It owns officially identified individuals and entities, official names and aliases, identifiers and issuers, profiles/biographies, public handles and contact details. Schools, suppliers, public bodies and other institutions belong here when officially identified; a school identity does not require the deferred Education schema.
+Official combines the former Person and Organization identity proposals as `individuals` and `entities`, with shared neutral tables for names, identifiers, contacts and relationships. It does not define separate profile, biography, handle or ownership tables in the current six-table contract. Schools, suppliers and public bodies can use Official identities without implying a deferred domain schema.
 
 Identity alone must not imply government authority or officeholding. Governance links institutional identities, offices, appointments and tenure to Official; Geography provides actual places and dated location/country context; Civic links facility operators, service providers and project participants to those identities. A school organization, its campus/facility and its government mandate are different records. Auth accounts stay in Operations and are not civic people.
 
-The retained dictionaries use candidate names `official.individuals`, `official.entities`, `official.person_names`, `official.person_identifiers`, `official.organization_identifiers`, `official.person_contacts` and `official.organization_contacts` to avoid collisions between the two inputs. Profiles, handles, organization names and ownership relationships remain review inputs from the older inventories; none is silently dropped or approved. Resolve the final names and column dispositions during review. Preserve dated identity changes, evidence, ambiguity and contact visibility. Name similarity alone cannot authorize an identity merge.
+Earlier dictionaries had separate person and organization names, identifiers and contacts. Those duplicates are superseded by the four shared owner-aware tables. Contact visibility is represented as a Reference classification, but actual access enforcement remains a serving-layer gate. Name similarity alone cannot authorize an identity merge.
 
-### Authored integration dependency
+### Earlier integration dependency snapshot (superseded)
 
-`official.entities` is the only table currently defined in Dryv. Its contract contains `id`, `code`, `name`, `kind_id → reference.values.id`, optional `registered_on` and `dissolved_on`, a primary key, unique code and kind lookup index. Source publishers, Source identities, Legal instruments and Reference legal-basis associations now target this stable organization identity. These fields are an implementation slice required to express the authorized Main contract graph; the broader Official table inventory remains unapproved and unimplemented. Registration/dissolution ordering and Reference kind-scheme membership remain application/database enforcement gaps.
+At the time this paragraph was written, `official.entities` was only an integration dependency. The current six-table contract is documented at the top of this file and implemented in `official.ts`; this earlier snapshot does not describe the current contract.
 
 ## Retained table proposals and review context
 
@@ -220,7 +229,7 @@ extra: {status: planning_only, implementation: not_approved}
 
 # Canonical organizations, legal identities and identifiers
 
-**Planning only. Not approved for code changes or Taskcode task creation.** The user will direct the order of final design review and later tasks. All physical table/column changes below are proposals, not authorized migrations.
+**Historical planning note, superseded by the 12 November contract authorization.** The user will direct the order of final design review and later tasks. All physical table/column changes below are proposals, not authorized migrations.
 
 ## 1. Current domain, user intent and boundaries
 
@@ -489,7 +498,7 @@ extra: {status: planning_only, implementation: not_approved}
 
 # Real-world persons, identities and public profiles
 
-**Planning only. Not approved for code changes or Taskcode task creation.** The user will direct the order of final design review and later tasks. All physical table/column changes below are proposals, not authorized migrations.
+**Historical planning note, superseded by the 12 November contract authorization.** The user will direct the order of final design review and later tasks. All physical table/column changes below are proposals, not authorized migrations.
 
 ## 1. Current domain, user intent and boundaries
 

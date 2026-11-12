@@ -38,6 +38,10 @@ const scalarProperties = shared.properties({
   DateTime: dryv.property.temporal.datetime(),
   /** Bounded confidence; absence means no numeric assessment was made. */
   Confidence: dryv.property.number().range({ min: 0, max: 1 }),
+  /** Percentage in the inclusive range 0..100. */
+  Percentage: dryv.property.number().range({ min: 0, max: 100 }),
+  /** Exact non-negative integer in the currency's minor units; currency is a separate Reference value. */
+  AmountMinorUnits: dryv.property.number.int64().range({ min: 0 }),
   Number: dryv.property.number(),
   Integer: dryv.property.number.integer(),
   NonNegativeInteger: dryv.property.number.integer({ range: { min: 0 } }),
