@@ -307,7 +307,7 @@ CREATE TABLE "engine"."job_dependencies" (
     "dependency_kind" text NOT NULL,
     "depends_on_job_id" uuid NOT NULL,
     "job_id" uuid NOT NULL,
-    CONSTRAINT "chk_job_dependencies_jobs_must_differ" CHECK ("job_id" <> "depends_on_job_id"),
+    CONSTRAINT "chk_job_dependencies_jobs_must_differ" CHECK (("job_id" <> "depends_on_job_id")),
     PRIMARY KEY ("job_id", "depends_on_job_id")
 );
 

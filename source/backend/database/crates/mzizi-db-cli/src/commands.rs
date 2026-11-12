@@ -208,7 +208,7 @@ pub async fn verify(target: TargetDatabase) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Runtime role used by the service: data access only, no DDL, no access to `_mzizi`.
+/// Runtime role used by the service: data access only, no DDL, no access to the ledger tables.
 const SERVICE_ROLE: &str = "mzizi_service";
 
 fn quote_ident(name: &str) -> String {
@@ -223,7 +223,7 @@ fn quote_literal(value: &str) -> String {
 ///
 /// The password comes from `MZIZI_DB_SERVICE_PASSWORD` (never logged). The role is cluster-wide;
 /// grants are per database: CONNECT, schema USAGE and table DML for every domain schema, plus
-/// default privileges so releases applied later are covered. `_mzizi` stays admin-only.
+/// default privileges so releases applied later are covered. the `public` ledger tables stay admin-only.
 pub async fn roles(target: TargetDatabase) -> anyhow::Result<()> {
     let password = std::env::var("MZIZI_DB_SERVICE_PASSWORD")
         .map_err(|_| anyhow::anyhow!("MZIZI_DB_SERVICE_PASSWORD is required to provision roles"))?;
@@ -258,7 +258,7 @@ pub async fn roles(target: TargetDatabase) -> anyhow::Result<()> {
 
     let schemas: Vec<(String,)> = sqlx::query_as(
         "SELECT nspname FROM pg_namespace \
-         WHERE nspname !~ '^pg_' AND nspname NOT IN ('information_schema', '_mzizi', 'public') \
+         WHERE nspname !~ '^pg_' AND nspname NOT IN ('information_schema', 'public') \
          ORDER BY nspname",
     )
     .fetch_all(&pool)
@@ -278,7 +278,7 @@ pub async fn roles(target: TargetDatabase) -> anyhow::Result<()> {
         .await?;
     }
     sqlx::raw_sql(&format!(
-        "REVOKE ALL ON SCHEMA _mzizi FROM {role}; REVOKE ALL ON ALL TABLES IN SCHEMA _mzizi FROM {role};"
+        "REVOKE ALL ON public.mzizi_target, public.mzizi_migrations FROM {role};"
     ))
     .execute(&pool)
     .await?;

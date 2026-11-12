@@ -1,4 +1,4 @@
-//! The `_mzizi` technical schema: target identity and the migration ledger.
+//! The technical tables in the `public` schema (`mzizi_target`, `mzizi_migrations`): target identity and the migration ledger.
 //!
 //! Releases are immutable files under `migrations/<target>/` named `NNNN_name.sql`. Each is
 //! applied in one transaction together with its ledger row; the ledger records the file's
@@ -64,15 +64,12 @@ pub fn load_releases(dir: &std::path::Path) -> anyhow::Result<Vec<Release>> {
     Ok(releases)
 }
 
-/// Creates the `_mzizi` schema, identity and ledger tables if missing, and checks that the
+/// Creates the identity and ledger tables in `public` if missing, and checks that the
 /// connected database identifies as the expected target.
 pub async fn ensure(pool: &PgPool, target: TargetDatabase) -> anyhow::Result<()> {
     let mut tx = pool.begin().await?;
-    sqlx::query("CREATE SCHEMA IF NOT EXISTS _mzizi")
-        .execute(&mut *tx)
-        .await?;
     sqlx::query(
-        r#"CREATE TABLE IF NOT EXISTS _mzizi.target (
+        r#"CREATE TABLE IF NOT EXISTS public.mzizi_target (
                name text PRIMARY KEY,
                created_at timestamptz NOT NULL DEFAULT now()
            )"#,
@@ -80,7 +77,7 @@ pub async fn ensure(pool: &PgPool, target: TargetDatabase) -> anyhow::Result<()>
     .execute(&mut *tx)
     .await?;
     sqlx::query(
-        r#"CREATE TABLE IF NOT EXISTS _mzizi.migrations (
+        r#"CREATE TABLE IF NOT EXISTS public.mzizi_migrations (
                name text PRIMARY KEY,
                checksum text NOT NULL,
                applied_at timestamptz NOT NULL DEFAULT now()
@@ -88,13 +85,13 @@ pub async fn ensure(pool: &PgPool, target: TargetDatabase) -> anyhow::Result<()>
     )
     .execute(&mut *tx)
     .await?;
-    sqlx::query("INSERT INTO _mzizi.target (name) VALUES ($1) ON CONFLICT DO NOTHING")
+    sqlx::query("INSERT INTO public.mzizi_target (name) VALUES ($1) ON CONFLICT DO NOTHING")
         .bind(target.database_name())
         .execute(&mut *tx)
         .await?;
     tx.commit().await?;
 
-    let (identity,): (String,) = sqlx::query_as("SELECT name FROM _mzizi.target LIMIT 1")
+    let (identity,): (String,) = sqlx::query_as("SELECT name FROM public.mzizi_target LIMIT 1")
         .fetch_one(pool)
         .await?;
     anyhow::ensure!(
@@ -107,7 +104,7 @@ pub async fn ensure(pool: &PgPool, target: TargetDatabase) -> anyhow::Result<()>
 
 pub async fn applied(pool: &PgPool) -> anyhow::Result<Vec<AppliedRelease>> {
     Ok(sqlx::query_as::<_, AppliedRelease>(
-        "SELECT name, checksum FROM _mzizi.migrations ORDER BY name",
+        "SELECT name, checksum FROM public.mzizi_migrations ORDER BY name",
     )
     .fetch_all(pool)
     .await?)
@@ -120,7 +117,7 @@ pub async fn apply(connection: &mut PgConnection, release: &Release) -> anyhow::
         sqlx::raw_sql(&release.sql)
             .execute(&mut *connection)
             .await?;
-        sqlx::query("INSERT INTO _mzizi.migrations (name, checksum) VALUES ($1, $2)")
+        sqlx::query("INSERT INTO public.mzizi_migrations (name, checksum) VALUES ($1, $2)")
             .bind(&release.name)
             .bind(&release.checksum)
             .execute(&mut *connection)

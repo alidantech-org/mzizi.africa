@@ -9,7 +9,7 @@
 #[test]
 fn checksum_is_deterministic() {
     // The ledger refuses changed checksums forever; the hash must be stable across runs.
-    let sql = "CREATE TABLE _mzizi.example (id uuid PRIMARY KEY);";
+    let sql = "CREATE TABLE public.example (id uuid PRIMARY KEY);";
     let first = sha2_hex(sql);
     let second = sha2_hex(sql);
     assert_eq!(first, second);
@@ -78,7 +78,7 @@ async fn recreate(server: &str) {
 
 async fn ledger_rows(url: &str) -> i64 {
     let mut connection = PgConnection::connect(url).await.unwrap();
-    sqlx::query_scalar("SELECT count(*) FROM _mzizi.migrations")
+    sqlx::query_scalar("SELECT count(*) FROM public.mzizi_migrations")
         .fetch_one(&mut connection)
         .await
         .unwrap()
@@ -196,7 +196,7 @@ async fn live_migration_lifecycle() {
         .execute(&mut service)
         .await
         .is_err());
-    assert!(sqlx::query("SELECT * FROM _mzizi.migrations")
+    assert!(sqlx::query("SELECT * FROM public.mzizi_migrations")
         .execute(&mut service)
         .await
         .is_err());

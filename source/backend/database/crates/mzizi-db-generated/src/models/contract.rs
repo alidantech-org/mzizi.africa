@@ -354,6 +354,97 @@ pub async fn verify(main: &mut PgConnection, operations: &mut PgConnection) -> R
         check::<String>(&describe, 9, "auth.scopes.scope_hash", false, &mut errors);
     }
     {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"amount_minor_units\", \"bidder_entity_id\", \"currency_id\", \"id\", \"outcome_id\", \"procurement_id\", \"source_citation_id\", \"submitted_on\" FROM \"civic\".\"bids\"").await?;
+        check::<i64>(&describe, 0, "civic.bids.amount_minor_units", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "civic.bids.bidder_entity_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "civic.bids.currency_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "civic.bids.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "civic.bids.outcome_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "civic.bids.procurement_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "civic.bids.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 7, "civic.bids.submitted_on", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"amount_minor_units\", \"contractor_entity_id\", \"currency_id\", \"id\", \"procurement_id\", \"project_id\", \"signed_on\", \"source_citation_id\", \"status_id\" FROM \"civic\".\"contracts\"").await?;
+        check::<i64>(&describe, 0, "civic.contracts.amount_minor_units", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "civic.contracts.contractor_entity_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "civic.contracts.currency_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "civic.contracts.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "civic.contracts.procurement_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "civic.contracts.project_id", true, &mut errors);
+        check::<time::Date>(&describe, 6, "civic.contracts.signed_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "civic.contracts.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "civic.contracts.status_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"amount_minor_units\", \"contract_id\", \"currency_id\", \"delivered_on\", \"delivery_kind_id\", \"id\", \"source_citation_id\", \"unit_feature_id\" FROM \"civic\".\"deliveries\"").await?;
+        check::<i64>(&describe, 0, "civic.deliveries.amount_minor_units", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "civic.deliveries.contract_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "civic.deliveries.currency_id", true, &mut errors);
+        check::<time::Date>(&describe, 3, "civic.deliveries.delivered_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "civic.deliveries.delivery_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "civic.deliveries.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "civic.deliveries.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "civic.deliveries.unit_feature_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"buyer_entity_id\", \"code\", \"country_id\", \"id\", \"procedure_kind_id\", \"project_id\", \"published_on\", \"source_citation_id\" FROM \"civic\".\"procurements\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "civic.procurements.buyer_entity_id", false, &mut errors);
+        check::<String>(&describe, 1, "civic.procurements.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "civic.procurements.country_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "civic.procurements.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "civic.procurements.procedure_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "civic.procurements.project_id", true, &mut errors);
+        check::<time::Date>(&describe, 6, "civic.procurements.published_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "civic.procurements.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"feature_id\", \"feature_kind_id\", \"id\", \"project_id\", \"source_citation_id\" FROM \"civic\".\"project_features\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "civic.project_features.feature_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "civic.project_features.feature_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "civic.project_features.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "civic.project_features.project_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "civic.project_features.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"completed_on\", \"country_id\", \"description\", \"id\", \"implementing_entity_id\", \"name\", \"responsible_institution_id\", \"scope_unit_feature_id\", \"source_citation_id\", \"sponsor_entity_id\", \"started_on\", \"status_id\" FROM \"civic\".\"projects\"").await?;
+        check::<String>(&describe, 0, "civic.projects.code", false, &mut errors);
+        check::<time::Date>(&describe, 1, "civic.projects.completed_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "civic.projects.country_id", true, &mut errors);
+        check::<String>(&describe, 3, "civic.projects.description", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "civic.projects.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "civic.projects.implementing_entity_id", true, &mut errors);
+        check::<String>(&describe, 6, "civic.projects.name", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "civic.projects.responsible_institution_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "civic.projects.scope_unit_feature_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 9, "civic.projects.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 10, "civic.projects.sponsor_entity_id", true, &mut errors);
+        check::<time::Date>(&describe, 11, "civic.projects.started_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 12, "civic.projects.status_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"description\", \"ends_on\", \"id\", \"name\", \"place_feature_id\", \"provider_entity_id\", \"responsible_institution_id\", \"scope_unit_feature_id\", \"service_kind_id\", \"source_citation_id\", \"starts_on\" FROM \"civic\".\"services\"").await?;
+        check::<String>(&describe, 0, "civic.services.code", false, &mut errors);
+        check::<String>(&describe, 1, "civic.services.description", false, &mut errors);
+        check::<time::Date>(&describe, 2, "civic.services.ends_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "civic.services.id", false, &mut errors);
+        check::<String>(&describe, 4, "civic.services.name", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "civic.services.place_feature_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "civic.services.provider_entity_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "civic.services.responsible_institution_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "civic.services.scope_unit_feature_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 9, "civic.services.service_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 10, "civic.services.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 11, "civic.services.starts_on", true, &mut errors);
+    }
+    {
         let connection: &mut PgConnection = &mut *operations;
         let describe = connection.describe("SELECT \"access_classification\", \"created_at\", \"expires_at\", \"id\", \"job_id\", \"media_type\", \"object_key\", \"role\", \"run_id\", \"sha256\", \"size_bytes\" FROM \"engine\".\"artifacts\"").await?;
         check::<String>(&describe, 0, "engine.artifacts.access_classification", false, &mut errors);
@@ -491,6 +582,407 @@ pub async fn verify(main: &mut PgConnection, operations: &mut PgConnection) -> R
         check::<String>(&describe, 12, "engine.runs.trigger_ref", true, &mut errors);
     }
     {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"content_type\", \"description\", \"extension\", \"id\" FROM \"filesystem\".\"file_extensions\"").await?;
+        check::<String>(&describe, 0, "filesystem.file_extensions.code", false, &mut errors);
+        check::<String>(&describe, 1, "filesystem.file_extensions.content_type", false, &mut errors);
+        check::<String>(&describe, 2, "filesystem.file_extensions.description", true, &mut errors);
+        check::<String>(&describe, 3, "filesystem.file_extensions.extension", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "filesystem.file_extensions.id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"created_at\", \"derived_version_id\", \"id\", \"kind_id\", \"processing_provenance\", \"source_version_id\" FROM \"filesystem\".\"file_relations\"").await?;
+        check::<time::OffsetDateTime>(&describe, 0, "filesystem.file_relations.created_at", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "filesystem.file_relations.derived_version_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "filesystem.file_relations.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "filesystem.file_relations.kind_id", false, &mut errors);
+        check::<String>(&describe, 4, "filesystem.file_relations.processing_provenance", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "filesystem.file_relations.source_version_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"access\", \"content_type\", \"created_at\", \"created_by_snapshot\", \"file_extension_id\", \"file_id\", \"id\", \"original_filename\", \"pinned\", \"provenance\", \"revision\", \"s3_key\", \"sha256\", \"size_bytes\", \"verified_at\" FROM \"filesystem\".\"file_versions\"").await?;
+        check::<String>(&describe, 0, "filesystem.file_versions.access", false, &mut errors);
+        check::<String>(&describe, 1, "filesystem.file_versions.content_type", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 2, "filesystem.file_versions.created_at", false, &mut errors);
+        check::<String>(&describe, 3, "filesystem.file_versions.created_by_snapshot", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "filesystem.file_versions.file_extension_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "filesystem.file_versions.file_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "filesystem.file_versions.id", false, &mut errors);
+        check::<String>(&describe, 7, "filesystem.file_versions.original_filename", true, &mut errors);
+        check::<bool>(&describe, 8, "filesystem.file_versions.pinned", false, &mut errors);
+        check::<String>(&describe, 9, "filesystem.file_versions.provenance", false, &mut errors);
+        check::<i32>(&describe, 10, "filesystem.file_versions.revision", false, &mut errors);
+        check::<String>(&describe, 11, "filesystem.file_versions.s3_key", false, &mut errors);
+        check::<String>(&describe, 12, "filesystem.file_versions.sha256", false, &mut errors);
+        check::<i64>(&describe, 13, "filesystem.file_versions.size_bytes", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 14, "filesystem.file_versions.verified_at", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"created_at\", \"current_version_id\", \"folder_id\", \"id\", \"name\", \"retention\" FROM \"filesystem\".\"files\"").await?;
+        check::<String>(&describe, 0, "filesystem.files.code", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 1, "filesystem.files.created_at", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "filesystem.files.current_version_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "filesystem.files.folder_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "filesystem.files.id", false, &mut errors);
+        check::<String>(&describe, 5, "filesystem.files.name", false, &mut errors);
+        check::<String>(&describe, 6, "filesystem.files.retention", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"access\", \"authorization\", \"code\", \"created_at\", \"id\", \"name\", \"parent_id\", \"role_id\" FROM \"filesystem\".\"folders\"").await?;
+        check::<String>(&describe, 0, "filesystem.folders.access", false, &mut errors);
+        check::<String>(&describe, 1, "filesystem.folders.authorization", true, &mut errors);
+        check::<String>(&describe, 2, "filesystem.folders.code", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 3, "filesystem.folders.created_at", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "filesystem.folders.id", false, &mut errors);
+        check::<String>(&describe, 5, "filesystem.folders.name", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "filesystem.folders.parent_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "filesystem.folders.role_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"created_at\", \"file_id\", \"folder_id\", \"id\", \"tag_id\" FROM \"filesystem\".\"taggings\"").await?;
+        check::<time::OffsetDateTime>(&describe, 0, "filesystem.taggings.created_at", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "filesystem.taggings.file_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "filesystem.taggings.folder_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "filesystem.taggings.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "filesystem.taggings.tag_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"description\", \"id\", \"title\" FROM \"filesystem\".\"tags\"").await?;
+        check::<String>(&describe, 0, "filesystem.tags.code", false, &mut errors);
+        check::<String>(&describe, 1, "filesystem.tags.description", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "filesystem.tags.id", false, &mut errors);
+        check::<String>(&describe, 3, "filesystem.tags.title", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"amount_minor_units\", \"budget_version_id\", \"classification_id\", \"code\", \"currency_id\", \"id\", \"parent_appropriation_id\", \"project_id\", \"recipient_entity_id\", \"source_citation_id\", \"unit_feature_id\" FROM \"finance\".\"appropriations\"").await?;
+        check::<i64>(&describe, 0, "finance.appropriations.amount_minor_units", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "finance.appropriations.budget_version_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "finance.appropriations.classification_id", false, &mut errors);
+        check::<String>(&describe, 3, "finance.appropriations.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "finance.appropriations.currency_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "finance.appropriations.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "finance.appropriations.parent_appropriation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "finance.appropriations.project_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "finance.appropriations.recipient_entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 9, "finance.appropriations.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 10, "finance.appropriations.unit_feature_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"budget_id\", \"id\", \"released_on\", \"source_citation_id\", \"status_id\", \"version\" FROM \"finance\".\"budget_versions\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "finance.budget_versions.budget_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "finance.budget_versions.id", false, &mut errors);
+        check::<time::Date>(&describe, 2, "finance.budget_versions.released_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "finance.budget_versions.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "finance.budget_versions.status_id", false, &mut errors);
+        check::<i32>(&describe, 5, "finance.budget_versions.version", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"budget_kind_id\", \"code\", \"country_id\", \"fiscal_period_id\", \"government_entity_id\", \"id\", \"source_citation_id\" FROM \"finance\".\"budgets\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "finance.budgets.budget_kind_id", false, &mut errors);
+        check::<String>(&describe, 1, "finance.budgets.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "finance.budgets.country_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "finance.budgets.fiscal_period_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "finance.budgets.government_entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "finance.budgets.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "finance.budgets.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"amount_minor_units\", \"borrower_entity_id\", \"contracted_on\", \"country_id\", \"currency_id\", \"debt_kind_id\", \"id\", \"legal_basis_link_id\", \"lender_entity_id\", \"maturity_on\", \"source_citation_id\" FROM \"finance\".\"debts\"").await?;
+        check::<i64>(&describe, 0, "finance.debts.amount_minor_units", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "finance.debts.borrower_entity_id", false, &mut errors);
+        check::<time::Date>(&describe, 2, "finance.debts.contracted_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "finance.debts.country_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "finance.debts.currency_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "finance.debts.debt_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "finance.debts.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "finance.debts.legal_basis_link_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "finance.debts.lender_entity_id", true, &mut errors);
+        check::<time::Date>(&describe, 9, "finance.debts.maturity_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 10, "finance.debts.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"country_id\", \"ends_on\", \"id\", \"period_kind_id\", \"source_citation_id\", \"starts_on\" FROM \"finance\".\"fiscal_periods\"").await?;
+        check::<String>(&describe, 0, "finance.fiscal_periods.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "finance.fiscal_periods.country_id", true, &mut errors);
+        check::<time::Date>(&describe, 2, "finance.fiscal_periods.ends_on", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "finance.fiscal_periods.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "finance.fiscal_periods.period_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "finance.fiscal_periods.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 6, "finance.fiscal_periods.starts_on", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"amount_minor_units\", \"appropriation_id\", \"contract_id\", \"counterparty_entity_id\", \"currency_id\", \"debt_id\", \"fiscal_period_id\", \"flow_kind_id\", \"fund_id\", \"id\", \"occurred_on\", \"source_citation_id\" FROM \"finance\".\"flows\"").await?;
+        check::<i64>(&describe, 0, "finance.flows.amount_minor_units", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "finance.flows.appropriation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "finance.flows.contract_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "finance.flows.counterparty_entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "finance.flows.currency_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "finance.flows.debt_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "finance.flows.fiscal_period_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "finance.flows.flow_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "finance.flows.fund_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 9, "finance.flows.id", false, &mut errors);
+        check::<time::Date>(&describe, 10, "finance.flows.occurred_on", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 11, "finance.flows.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"country_id\", \"fund_kind_id\", \"id\", \"legal_basis_link_id\", \"managing_entity_id\", \"source_citation_id\" FROM \"finance\".\"funds\"").await?;
+        check::<String>(&describe, 0, "finance.funds.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "finance.funds.country_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "finance.funds.fund_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "finance.funds.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "finance.funds.legal_basis_link_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "finance.funds.managing_entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "finance.funds.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"change_kind_id\", \"effective_on\", \"explanation\", \"id\", \"predecessor_feature_id\", \"source_ref_id\", \"successor_feature_id\", \"transformation_id\" FROM \"geography\".\"changes\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "geography.changes.change_kind_id", false, &mut errors);
+        check::<time::Date>(&describe, 1, "geography.changes.effective_on", true, &mut errors);
+        check::<String>(&describe, 2, "geography.changes.explanation", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "geography.changes.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "geography.changes.predecessor_feature_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "geography.changes.source_ref_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "geography.changes.successor_feature_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "geography.changes.transformation_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"coverage_feature_id\", \"crs\", \"file_version_ref_id\", \"format\", \"id\", \"quality_notes\", \"representation_id\", \"resolution\", \"resolution_unit_id\", \"source_ref_id\", \"subject_id\", \"title\" FROM \"geography\".\"datasets\"").await?;
+        check::<String>(&describe, 0, "geography.datasets.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "geography.datasets.coverage_feature_id", true, &mut errors);
+        check::<String>(&describe, 2, "geography.datasets.crs", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "geography.datasets.file_version_ref_id", true, &mut errors);
+        check::<String>(&describe, 4, "geography.datasets.format", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "geography.datasets.id", false, &mut errors);
+        check::<String>(&describe, 6, "geography.datasets.quality_notes", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "geography.datasets.representation_id", false, &mut errors);
+        check::<f64>(&describe, 8, "geography.datasets.resolution", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 9, "geography.datasets.resolution_unit_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 10, "geography.datasets.source_ref_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 11, "geography.datasets.subject_id", false, &mut errors);
+        check::<String>(&describe, 12, "geography.datasets.title", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"created_at\", \"feature_type_id\", \"id\" FROM \"geography\".\"features\"").await?;
+        check::<String>(&describe, 0, "geography.features.code", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 1, "geography.features.created_at", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "geography.features.feature_type_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "geography.features.id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"feature_id\", \"file_version_ref_id\", \"geometry_role_id\", \"id\", \"observed_at\", \"source_ref_id\", \"srid\", \"valid_from\", \"valid_until\" FROM \"geography\".\"geometries\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "geography.geometries.feature_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "geography.geometries.file_version_ref_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "geography.geometries.geometry_role_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "geography.geometries.id", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 4, "geography.geometries.observed_at", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "geography.geometries.source_ref_id", true, &mut errors);
+        check::<i32>(&describe, 6, "geography.geometries.srid", false, &mut errors);
+        check::<time::Date>(&describe, 7, "geography.geometries.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 8, "geography.geometries.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"external_id\", \"feature_id\", \"id\", \"identifier_scheme_id\", \"namespace\", \"source_ref_id\" FROM \"geography\".\"identifiers\"").await?;
+        check::<String>(&describe, 0, "geography.identifiers.external_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "geography.identifiers.feature_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "geography.identifiers.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "geography.identifiers.identifier_scheme_id", false, &mut errors);
+        check::<String>(&describe, 4, "geography.identifiers.namespace", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "geography.identifiers.source_ref_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"feature_id\", \"id\", \"language_tag\", \"name\", \"name_kind_id\", \"source_ref_id\", \"valid_from\", \"valid_until\" FROM \"geography\".\"names\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "geography.names.feature_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "geography.names.id", false, &mut errors);
+        check::<String>(&describe, 2, "geography.names.language_tag", true, &mut errors);
+        check::<String>(&describe, 3, "geography.names.name", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "geography.names.name_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "geography.names.source_ref_id", true, &mut errors);
+        check::<time::Date>(&describe, 6, "geography.names.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 7, "geography.names.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"feature_id\", \"is_inhabited\" FROM \"geography\".\"places\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "geography.places.feature_id", false, &mut errors);
+        check::<bool>(&describe, 1, "geography.places.is_inhabited", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"id\", \"object_feature_id\", \"relationship_kind_id\", \"source_ref_id\", \"subject_feature_id\", \"system_id\", \"valid_from\", \"valid_until\" FROM \"geography\".\"relationships\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "geography.relationships.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "geography.relationships.object_feature_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "geography.relationships.relationship_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "geography.relationships.source_ref_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "geography.relationships.subject_feature_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "geography.relationships.system_id", false, &mut errors);
+        check::<time::Date>(&describe, 6, "geography.relationships.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 7, "geography.relationships.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"country_id\", \"feature_id\", \"valid_from\", \"valid_until\" FROM \"geography\".\"units\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "geography.units.country_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "geography.units.feature_id", false, &mut errors);
+        check::<time::Date>(&describe, 2, "geography.units.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 3, "geography.units.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"authority_kind_id\", \"country_id\", \"id\", \"institution_id\", \"office_id\", \"source_citation_id\", \"unit_feature_id\", \"valid_from\", \"valid_until\" FROM \"governance\".\"authority_scopes\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "governance.authority_scopes.authority_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "governance.authority_scopes.country_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "governance.authority_scopes.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "governance.authority_scopes.institution_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "governance.authority_scopes.office_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "governance.authority_scopes.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "governance.authority_scopes.unit_feature_id", false, &mut errors);
+        check::<time::Date>(&describe, 7, "governance.authority_scopes.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 8, "governance.authority_scopes.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"appointed_by_entity_id\", \"appointment_kind_id\", \"id\", \"individual_id\", \"office_id\", \"source_citation_id\", \"valid_from\", \"valid_until\" FROM \"governance\".\"holders\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "governance.holders.appointed_by_entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "governance.holders.appointment_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "governance.holders.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "governance.holders.individual_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "governance.holders.office_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "governance.holders.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 6, "governance.holders.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 7, "governance.holders.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"entity_id\", \"id\", \"institution_kind_id\", \"source_citation_id\", \"valid_from\", \"valid_until\" FROM \"governance\".\"institutions\"").await?;
+        check::<String>(&describe, 0, "governance.institutions.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "governance.institutions.entity_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "governance.institutions.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "governance.institutions.institution_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "governance.institutions.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 5, "governance.institutions.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 6, "governance.institutions.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"description\", \"id\", \"institution_id\", \"legal_basis_link_id\", \"mandate_kind_id\", \"office_id\", \"source_citation_id\", \"valid_from\", \"valid_until\" FROM \"governance\".\"mandates\"").await?;
+        check::<String>(&describe, 0, "governance.mandates.description", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "governance.mandates.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "governance.mandates.institution_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "governance.mandates.legal_basis_link_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "governance.mandates.mandate_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "governance.mandates.office_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "governance.mandates.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 7, "governance.mandates.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 8, "governance.mandates.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"id\", \"institution_id\", \"office_kind_id\", \"source_citation_id\", \"unit_feature_id\", \"valid_from\", \"valid_until\" FROM \"governance\".\"offices\"").await?;
+        check::<String>(&describe, 0, "governance.offices.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "governance.offices.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "governance.offices.institution_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "governance.offices.office_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "governance.offices.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "governance.offices.unit_feature_id", true, &mut errors);
+        check::<time::Date>(&describe, 6, "governance.offices.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 7, "governance.offices.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"id\", \"object_institution_id\", \"relationship_kind_id\", \"source_citation_id\", \"subject_institution_id\", \"valid_from\", \"valid_until\" FROM \"governance\".\"relationships\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "governance.relationships.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "governance.relationships.object_institution_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "governance.relationships.relationship_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "governance.relationships.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "governance.relationships.subject_institution_id", false, &mut errors);
+        check::<time::Date>(&describe, 5, "governance.relationships.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 6, "governance.relationships.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"affected_id\", \"authority_id\", \"citation_id\", \"effective_on\", \"explanation\", \"id\", \"kind_id\", \"resulting_version_id\" FROM \"legal\".\"amendments\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "legal.amendments.affected_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "legal.amendments.authority_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "legal.amendments.citation_id", false, &mut errors);
+        check::<time::Date>(&describe, 3, "legal.amendments.effective_on", true, &mut errors);
+        check::<String>(&describe, 4, "legal.amendments.explanation", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "legal.amendments.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "legal.amendments.kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "legal.amendments.resulting_version_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"ceased_on\", \"commenced_on\", \"consolidated_on\", \"content_hash\", \"edition\", \"evidence_id\", \"file_version_id\", \"id\", \"instrument_id\", \"observed_at\", \"repealed_on\", \"supersedes_id\" FROM \"legal\".\"instrument_versions\"").await?;
+        check::<time::Date>(&describe, 0, "legal.instrument_versions.ceased_on", true, &mut errors);
+        check::<time::Date>(&describe, 1, "legal.instrument_versions.commenced_on", true, &mut errors);
+        check::<time::Date>(&describe, 2, "legal.instrument_versions.consolidated_on", true, &mut errors);
+        check::<String>(&describe, 3, "legal.instrument_versions.content_hash", false, &mut errors);
+        check::<String>(&describe, 4, "legal.instrument_versions.edition", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "legal.instrument_versions.evidence_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "legal.instrument_versions.file_version_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "legal.instrument_versions.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "legal.instrument_versions.instrument_id", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 9, "legal.instrument_versions.observed_at", false, &mut errors);
+        check::<time::Date>(&describe, 10, "legal.instrument_versions.repealed_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 11, "legal.instrument_versions.supersedes_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"enacted_on\", \"id\", \"issuing_entity_id\", \"issuing_unit_id\", \"kind_id\", \"published_on\", \"title\" FROM \"legal\".\"instruments\"").await?;
+        check::<String>(&describe, 0, "legal.instruments.code", false, &mut errors);
+        check::<time::Date>(&describe, 1, "legal.instruments.enacted_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "legal.instruments.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "legal.instruments.issuing_entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "legal.instruments.issuing_unit_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "legal.instruments.kind_id", false, &mut errors);
+        check::<time::Date>(&describe, 6, "legal.instruments.published_on", true, &mut errors);
+        check::<String>(&describe, 7, "legal.instruments.title", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"citation_id\", \"effective_from\", \"effective_until\", \"id\", \"instrument_version_id\", \"observed_at\", \"provision_id\", \"supersedes_id\", \"text\", \"text_hash\" FROM \"legal\".\"provision_versions\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "legal.provision_versions.citation_id", false, &mut errors);
+        check::<time::Date>(&describe, 1, "legal.provision_versions.effective_from", true, &mut errors);
+        check::<time::Date>(&describe, 2, "legal.provision_versions.effective_until", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "legal.provision_versions.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "legal.provision_versions.instrument_version_id", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 5, "legal.provision_versions.observed_at", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "legal.provision_versions.provision_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "legal.provision_versions.supersedes_id", true, &mut errors);
+        check::<String>(&describe, 8, "legal.provision_versions.text", false, &mut errors);
+        check::<String>(&describe, 9, "legal.provision_versions.text_hash", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"designation\", \"id\", \"instrument_id\", \"parent_id\", \"title\" FROM \"legal\".\"provisions\"").await?;
+        check::<String>(&describe, 0, "legal.provisions.code", false, &mut errors);
+        check::<String>(&describe, 1, "legal.provisions.designation", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "legal.provisions.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "legal.provisions.instrument_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "legal.provisions.parent_id", true, &mut errors);
+        check::<String>(&describe, 5, "legal.provisions.title", true, &mut errors);
+    }
+    {
         let connection: &mut PgConnection = &mut *operations;
         let describe = connection.describe("SELECT \"details\", \"id\", \"main_commit_ref\", \"observed_at\", \"publication_id\", \"request_hash\", \"request_key\", \"response_hash\", \"state\" FROM \"management\".\"delivery_receipts\"").await?;
         check::<String>(&describe, 0, "management.delivery_receipts.details", true, &mut errors);
@@ -541,6 +1033,248 @@ pub async fn verify(main: &mut PgConnection, operations: &mut PgConnection) -> R
         check::<uuid::Uuid>(&describe, 4, "management.schema_releases.id", false, &mut errors);
         check::<String>(&describe, 5, "management.schema_releases.manager_version", false, &mut errors);
         check::<String>(&describe, 6, "management.schema_releases.release_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"entity_id\", \"id\", \"individual_id\", \"kind_id\", \"source_citation_id\", \"valid_from\", \"valid_until\", \"value\", \"visibility_id\" FROM \"official\".\"contacts\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "official.contacts.entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "official.contacts.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "official.contacts.individual_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "official.contacts.kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "official.contacts.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 5, "official.contacts.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 6, "official.contacts.valid_until", true, &mut errors);
+        check::<String>(&describe, 7, "official.contacts.value", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "official.contacts.visibility_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"dissolved_on\", \"id\", \"kind_id\", \"registered_on\", \"registration_country_id\", \"source_citation_id\" FROM \"official\".\"entities\"").await?;
+        check::<String>(&describe, 0, "official.entities.code", false, &mut errors);
+        check::<time::Date>(&describe, 1, "official.entities.dissolved_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "official.entities.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "official.entities.kind_id", false, &mut errors);
+        check::<time::Date>(&describe, 4, "official.entities.registered_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "official.entities.registration_country_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "official.entities.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"entity_id\", \"id\", \"individual_id\", \"issuer_entity_id\", \"namespace\", \"scheme_id\", \"source_citation_id\", \"valid_from\", \"valid_until\", \"value\" FROM \"official\".\"identifiers\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "official.identifiers.entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "official.identifiers.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "official.identifiers.individual_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "official.identifiers.issuer_entity_id", true, &mut errors);
+        check::<String>(&describe, 4, "official.identifiers.namespace", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "official.identifiers.scheme_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "official.identifiers.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 7, "official.identifiers.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 8, "official.identifiers.valid_until", true, &mut errors);
+        check::<String>(&describe, 9, "official.identifiers.value", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"birth_date\", \"code\", \"death_date\", \"id\", \"source_citation_id\" FROM \"official\".\"individuals\"").await?;
+        check::<time::Date>(&describe, 0, "official.individuals.birth_date", true, &mut errors);
+        check::<String>(&describe, 1, "official.individuals.code", false, &mut errors);
+        check::<time::Date>(&describe, 2, "official.individuals.death_date", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "official.individuals.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "official.individuals.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"entity_id\", \"id\", \"individual_id\", \"is_preferred\", \"language_tag\", \"name\", \"name_kind_id\", \"source_citation_id\", \"valid_from\", \"valid_until\" FROM \"official\".\"names\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "official.names.entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "official.names.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "official.names.individual_id", true, &mut errors);
+        check::<bool>(&describe, 3, "official.names.is_preferred", false, &mut errors);
+        check::<String>(&describe, 4, "official.names.language_tag", true, &mut errors);
+        check::<String>(&describe, 5, "official.names.name", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "official.names.name_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "official.names.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 8, "official.names.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 9, "official.names.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"from_entity_id\", \"from_individual_id\", \"id\", \"kind_id\", \"share_percentage\", \"source_citation_id\", \"to_entity_id\", \"to_individual_id\", \"valid_from\", \"valid_until\" FROM \"official\".\"relationships\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "official.relationships.from_entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "official.relationships.from_individual_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "official.relationships.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "official.relationships.kind_id", false, &mut errors);
+        check::<f64>(&describe, 4, "official.relationships.share_percentage", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "official.relationships.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "official.relationships.to_entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 7, "official.relationships.to_individual_id", true, &mut errors);
+        check::<time::Date>(&describe, 8, "official.relationships.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 9, "official.relationships.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"alignment_kind_id\", \"coalition_id\", \"id\", \"party_id\", \"source_citation_id\", \"valid_from\", \"valid_until\" FROM \"politics\".\"alignments\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "politics.alignments.alignment_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.alignments.coalition_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.alignments.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "politics.alignments.party_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.alignments.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 5, "politics.alignments.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 6, "politics.alignments.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"ballot_order\", \"candidate_kind_id\", \"contest_id\", \"id\", \"individual_id\", \"party_id_at_election\", \"source_citation_id\" FROM \"politics\".\"candidates\"").await?;
+        check::<i32>(&describe, 0, "politics.candidates.ballot_order", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.candidates.candidate_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.candidates.contest_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "politics.candidates.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.candidates.individual_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "politics.candidates.party_id_at_election", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "politics.candidates.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"coalition_kind_id\", \"code\", \"id\", \"name\", \"source_citation_id\", \"valid_from\", \"valid_until\" FROM \"politics\".\"coalitions\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "politics.coalitions.coalition_kind_id", false, &mut errors);
+        check::<String>(&describe, 1, "politics.coalitions.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.coalitions.id", false, &mut errors);
+        check::<String>(&describe, 3, "politics.coalitions.name", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.coalitions.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 5, "politics.coalitions.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 6, "politics.coalitions.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"contest_kind_id\", \"election_id\", \"id\", \"office_id\", \"source_citation_id\", \"unit_feature_id\" FROM \"politics\".\"contests\"").await?;
+        check::<String>(&describe, 0, "politics.contests.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.contests.contest_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.contests.election_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "politics.contests.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.contests.office_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "politics.contests.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "politics.contests.unit_feature_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"country_id\", \"election_kind_id\", \"held_on\", \"id\", \"source_citation_id\" FROM \"politics\".\"elections\"").await?;
+        check::<String>(&describe, 0, "politics.elections.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.elections.country_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.elections.election_kind_id", false, &mut errors);
+        check::<time::Date>(&describe, 3, "politics.elections.held_on", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.elections.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "politics.elections.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"ballots_cast\", \"contest_id\", \"id\", \"registered_voters\", \"rejected_ballots\", \"source_citation_id\", \"unit_feature_id\", \"valid_ballots\" FROM \"politics\".\"electorates\"").await?;
+        check::<i64>(&describe, 0, "politics.electorates.ballots_cast", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.electorates.contest_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.electorates.id", false, &mut errors);
+        check::<i64>(&describe, 3, "politics.electorates.registered_voters", true, &mut errors);
+        check::<i64>(&describe, 4, "politics.electorates.rejected_ballots", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "politics.electorates.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "politics.electorates.unit_feature_id", false, &mut errors);
+        check::<i64>(&describe, 7, "politics.electorates.valid_ballots", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"description\", \"id\", \"manifesto_id\", \"position\", \"source_citation_id\", \"title\", \"topic_id\" FROM \"politics\".\"manifesto_items\"").await?;
+        check::<String>(&describe, 0, "politics.manifesto_items.description", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.manifesto_items.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.manifesto_items.manifesto_id", false, &mut errors);
+        check::<i32>(&describe, 3, "politics.manifesto_items.position", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.manifesto_items.source_citation_id", true, &mut errors);
+        check::<String>(&describe, 5, "politics.manifesto_items.title", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "politics.manifesto_items.topic_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"candidate_id\", \"document_id\", \"election_id\", \"id\", \"party_id\", \"published_on\", \"source_citation_id\" FROM \"politics\".\"manifestos\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "politics.manifestos.candidate_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.manifestos.document_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.manifestos.election_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "politics.manifestos.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.manifestos.party_id", true, &mut errors);
+        check::<time::Date>(&describe, 5, "politics.manifestos.published_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "politics.manifestos.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"id\", \"individual_id\", \"membership_kind_id\", \"party_id\", \"source_citation_id\", \"valid_from\", \"valid_until\" FROM \"politics\".\"memberships\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "politics.memberships.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.memberships.individual_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.memberships.membership_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "politics.memberships.party_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.memberships.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 5, "politics.memberships.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 6, "politics.memberships.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"id\", \"option_id\", \"source_citation_id\", \"status_id\", \"unit_feature_id\", \"votes\" FROM \"politics\".\"option_results\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "politics.option_results.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.option_results.option_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.option_results.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "politics.option_results.status_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.option_results.unit_feature_id", false, &mut errors);
+        check::<i64>(&describe, 5, "politics.option_results.votes", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"entity_id\", \"id\", \"party_kind_id\", \"source_citation_id\", \"valid_from\", \"valid_until\" FROM \"politics\".\"parties\"").await?;
+        check::<String>(&describe, 0, "politics.parties.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.parties.entity_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.parties.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "politics.parties.party_kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.parties.source_citation_id", true, &mut errors);
+        check::<time::Date>(&describe, 5, "politics.parties.valid_from", true, &mut errors);
+        check::<time::Date>(&describe, 6, "politics.parties.valid_until", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"ballot_order\", \"code\", \"contest_id\", \"id\", \"label\", \"source_citation_id\" FROM \"politics\".\"referendum_options\"").await?;
+        check::<i32>(&describe, 0, "politics.referendum_options.ballot_order", true, &mut errors);
+        check::<String>(&describe, 1, "politics.referendum_options.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.referendum_options.contest_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "politics.referendum_options.id", false, &mut errors);
+        check::<String>(&describe, 4, "politics.referendum_options.label", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "politics.referendum_options.source_citation_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"candidate_id\", \"id\", \"source_citation_id\", \"status_id\", \"unit_feature_id\", \"votes\" FROM \"politics\".\"results\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "politics.results.candidate_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "politics.results.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "politics.results.source_citation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "politics.results.status_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "politics.results.unit_feature_id", false, &mut errors);
+        check::<i64>(&describe, 5, "politics.results.votes", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"change_id\", \"id\", \"legal_basis_id\" FROM \"reference\".\"geography_change_legal_bases\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "reference.geography_change_legal_bases.change_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "reference.geography_change_legal_bases.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "reference.geography_change_legal_bases.legal_basis_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"basis_role_id\", \"citation_id\", \"effective_from\", \"effective_until\", \"id\", \"interpretation\", \"provision_version_id\", \"reviewed_at\", \"reviewed_by_snapshot\" FROM \"reference\".\"legal_basis_links\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "reference.legal_basis_links.basis_role_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "reference.legal_basis_links.citation_id", false, &mut errors);
+        check::<time::Date>(&describe, 2, "reference.legal_basis_links.effective_from", false, &mut errors);
+        check::<time::Date>(&describe, 3, "reference.legal_basis_links.effective_until", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "reference.legal_basis_links.id", false, &mut errors);
+        check::<String>(&describe, 5, "reference.legal_basis_links.interpretation", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "reference.legal_basis_links.provision_version_id", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 7, "reference.legal_basis_links.reviewed_at", false, &mut errors);
+        check::<String>(&describe, 8, "reference.legal_basis_links.reviewed_by_snapshot", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"entity_id\", \"id\", \"legal_basis_id\" FROM \"reference\".\"official_entity_legal_bases\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "reference.official_entity_legal_bases.entity_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "reference.official_entity_legal_bases.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "reference.official_entity_legal_bases.legal_basis_id", false, &mut errors);
     }
     {
         let connection: &mut PgConnection = &mut *main;
@@ -618,6 +1352,167 @@ pub async fn verify(main: &mut PgConnection, operations: &mut PgConnection) -> R
         check::<String>(&describe, 2, "reference.values.label", false, &mut errors);
         check::<uuid::Uuid>(&describe, 3, "reference.values.scheme_id", false, &mut errors);
         check::<uuid::Uuid>(&describe, 4, "reference.values.supersedes_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"base_url\", \"credential_binding\", \"id\", \"source_id\" FROM \"source\".\"apis\"").await?;
+        check::<String>(&describe, 0, "source.apis.base_url", false, &mut errors);
+        check::<String>(&describe, 1, "source.apis.credential_binding", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.apis.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "source.apis.source_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"assessed_at\", \"assessor_snapshot\", \"credit\", \"file_version_id\", \"id\", \"license_value_id\", \"publisher_id\", \"rights_statement\" FROM \"source\".\"attributions\"").await?;
+        check::<time::OffsetDateTime>(&describe, 0, "source.attributions.assessed_at", false, &mut errors);
+        check::<String>(&describe, 1, "source.attributions.assessor_snapshot", false, &mut errors);
+        check::<String>(&describe, 2, "source.attributions.credit", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "source.attributions.file_version_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "source.attributions.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "source.attributions.license_value_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "source.attributions.publisher_id", false, &mut errors);
+        check::<String>(&describe, 7, "source.attributions.rights_statement", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"content_hash\", \"document_id\", \"file_version_id\", \"id\", \"manifest_release_id\", \"response_metadata\", \"retrieved_at\", \"retrieved_url\", \"source_id\" FROM \"source\".\"captures\"").await?;
+        check::<String>(&describe, 0, "source.captures.content_hash", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "source.captures.document_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.captures.file_version_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "source.captures.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "source.captures.manifest_release_id", true, &mut errors);
+        check::<String>(&describe, 5, "source.captures.response_metadata", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 6, "source.captures.retrieved_at", false, &mut errors);
+        check::<String>(&describe, 7, "source.captures.retrieved_url", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "source.captures.source_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"capture_id\", \"document_id\", \"evidence_id\", \"file_version_id\", \"id\", \"locator\", \"locator_kind_id\", \"quoted_hash\", \"recorded_at\" FROM \"source\".\"citations\"").await?;
+        check::<uuid::Uuid>(&describe, 0, "source.citations.capture_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "source.citations.document_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.citations.evidence_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "source.citations.file_version_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "source.citations.id", false, &mut errors);
+        check::<String>(&describe, 5, "source.citations.locator", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "source.citations.locator_kind_id", false, &mut errors);
+        check::<String>(&describe, 7, "source.citations.quoted_hash", true, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 8, "source.citations.recorded_at", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"canonical_url\", \"code\", \"id\", \"kind_id\", \"published_on\", \"publisher_id\", \"source_id\", \"title\" FROM \"source\".\"documents\"").await?;
+        check::<String>(&describe, 0, "source.documents.canonical_url", true, &mut errors);
+        check::<String>(&describe, 1, "source.documents.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.documents.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "source.documents.kind_id", false, &mut errors);
+        check::<time::Date>(&describe, 4, "source.documents.published_on", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "source.documents.publisher_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "source.documents.source_id", false, &mut errors);
+        check::<String>(&describe, 7, "source.documents.title", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"assembled_at\", \"assembled_by_snapshot\", \"code\", \"description\", \"id\", \"kind_id\", \"title\" FROM \"source\".\"evidence\"").await?;
+        check::<time::OffsetDateTime>(&describe, 0, "source.evidence.assembled_at", false, &mut errors);
+        check::<String>(&describe, 1, "source.evidence.assembled_by_snapshot", false, &mut errors);
+        check::<String>(&describe, 2, "source.evidence.code", false, &mut errors);
+        check::<String>(&describe, 3, "source.evidence.description", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "source.evidence.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "source.evidence.kind_id", false, &mut errors);
+        check::<String>(&describe, 6, "source.evidence.title", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"activated_at\", \"deactivated_at\", \"effective_from\", \"effective_until\", \"id\", \"manifest_release_id\", \"source_id\" FROM \"source\".\"manifest_bindings\"").await?;
+        check::<time::OffsetDateTime>(&describe, 0, "source.manifest_bindings.activated_at", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 1, "source.manifest_bindings.deactivated_at", true, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 2, "source.manifest_bindings.effective_from", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 3, "source.manifest_bindings.effective_until", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "source.manifest_bindings.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "source.manifest_bindings.manifest_release_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "source.manifest_bindings.source_id", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"approved_at\", \"approved_by_snapshot\", \"content_hash\", \"effective_from\", \"effective_until\", \"file_version_id\", \"id\", \"input_schema_code\", \"input_schema_version\", \"manifest_id\", \"required_capabilities\", \"status\", \"version\" FROM \"source\".\"manifest_releases\"").await?;
+        check::<time::OffsetDateTime>(&describe, 0, "source.manifest_releases.approved_at", false, &mut errors);
+        check::<String>(&describe, 1, "source.manifest_releases.approved_by_snapshot", false, &mut errors);
+        check::<String>(&describe, 2, "source.manifest_releases.content_hash", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 3, "source.manifest_releases.effective_from", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 4, "source.manifest_releases.effective_until", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "source.manifest_releases.file_version_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 6, "source.manifest_releases.id", false, &mut errors);
+        check::<String>(&describe, 7, "source.manifest_releases.input_schema_code", false, &mut errors);
+        check::<String>(&describe, 8, "source.manifest_releases.input_schema_version", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 9, "source.manifest_releases.manifest_id", false, &mut errors);
+        check::<String>(&describe, 10, "source.manifest_releases.required_capabilities", false, &mut errors);
+        check::<String>(&describe, 11, "source.manifest_releases.status", false, &mut errors);
+        check::<String>(&describe, 12, "source.manifest_releases.version", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"description\", \"id\", \"kind_id\", \"title\" FROM \"source\".\"manifests\"").await?;
+        check::<String>(&describe, 0, "source.manifests.code", false, &mut errors);
+        check::<String>(&describe, 1, "source.manifests.description", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.manifests.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "source.manifests.kind_id", false, &mut errors);
+        check::<String>(&describe, 4, "source.manifests.title", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"actor_snapshot\", \"contract_version\", \"id\", \"idempotency_key\", \"payload_hash\", \"publication_ref_id\", \"published_at\", \"request_hash\", \"result_manifest\" FROM \"source\".\"publication_receipts\"").await?;
+        check::<String>(&describe, 0, "source.publication_receipts.actor_snapshot", false, &mut errors);
+        check::<String>(&describe, 1, "source.publication_receipts.contract_version", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.publication_receipts.id", false, &mut errors);
+        check::<String>(&describe, 3, "source.publication_receipts.idempotency_key", false, &mut errors);
+        check::<String>(&describe, 4, "source.publication_receipts.payload_hash", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "source.publication_receipts.publication_ref_id", false, &mut errors);
+        check::<time::OffsetDateTime>(&describe, 6, "source.publication_receipts.published_at", false, &mut errors);
+        check::<String>(&describe, 7, "source.publication_receipts.request_hash", false, &mut errors);
+        check::<String>(&describe, 8, "source.publication_receipts.result_manifest", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"country_id\", \"id\", \"kind_id\", \"name\", \"official_entity_id\" FROM \"source\".\"publishers\"").await?;
+        check::<String>(&describe, 0, "source.publishers.code", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "source.publishers.country_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.publishers.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "source.publishers.kind_id", false, &mut errors);
+        check::<String>(&describe, 4, "source.publishers.name", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "source.publishers.official_entity_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"code\", \"description\", \"id\", \"kind_id\", \"official_entity_id\", \"publisher_id\", \"title\" FROM \"source\".\"sources\"").await?;
+        check::<String>(&describe, 0, "source.sources.code", false, &mut errors);
+        check::<String>(&describe, 1, "source.sources.description", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.sources.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 3, "source.sources.kind_id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "source.sources.official_entity_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "source.sources.publisher_id", false, &mut errors);
+        check::<String>(&describe, 6, "source.sources.title", false, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"assessed_at\", \"confidence\", \"evidence_id\", \"explanation\", \"id\", \"method_id\", \"outcome\", \"reviewer_snapshot\", \"supersedes_id\" FROM \"source\".\"verifications\"").await?;
+        check::<time::OffsetDateTime>(&describe, 0, "source.verifications.assessed_at", false, &mut errors);
+        check::<f64>(&describe, 1, "source.verifications.confidence", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.verifications.evidence_id", false, &mut errors);
+        check::<String>(&describe, 3, "source.verifications.explanation", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 4, "source.verifications.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 5, "source.verifications.method_id", false, &mut errors);
+        check::<String>(&describe, 6, "source.verifications.outcome", false, &mut errors);
+        check::<String>(&describe, 7, "source.verifications.reviewer_snapshot", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 8, "source.verifications.supersedes_id", true, &mut errors);
+    }
+    {
+        let connection: &mut PgConnection = &mut *main;
+        let describe = connection.describe("SELECT \"canonical_url\", \"id\", \"source_id\", \"title\" FROM \"source\".\"websites\"").await?;
+        check::<String>(&describe, 0, "source.websites.canonical_url", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 1, "source.websites.id", false, &mut errors);
+        check::<uuid::Uuid>(&describe, 2, "source.websites.source_id", false, &mut errors);
+        check::<String>(&describe, 3, "source.websites.title", false, &mut errors);
     }
     {
         let connection: &mut PgConnection = &mut *operations;

@@ -24,7 +24,7 @@ impl TargetDatabase {
         }
     }
 
-    /// The database name this target must identify as (checked by `verify`, recorded in `_mzizi`).
+    /// The database name this target must identify as (checked by `verify`, recorded in `public.mzizi_target`).
     pub fn database_name(self) -> &'static str {
         match self {
             TargetDatabase::Main => "mzizi",

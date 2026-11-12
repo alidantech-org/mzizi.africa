@@ -4,7 +4,7 @@
  * Every storage namespace is registered up front; the foundation generates tables only for the
  * groups composed in this app's entrypoint. Cross-database foreign keys are forbidden: the Rust
  * packs reject a relation whose source and target namespaces map to different databases.
- * Each database also carries a reserved `_mzizi` technical schema (target identity and migration
+ * Each database also carries the technical tables `public.mzizi_target` and `public.mzizi_migrations` (target identity and migration
  * ledger) owned by the CLI, not by contracts.
  */
 export type TargetDatabase = "mzizi" | "mzizi_operations";

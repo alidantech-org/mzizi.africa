@@ -4,7 +4,7 @@
 
 pub mod {{ ns }} {
 {%- for schema in schemas %}{% if schema.facets.storage.namespace == ns %}
-    pub use crate::models::{{ ns }}_{{ schema.name.snake }} as {{ schema.name.snake }};
+    pub use crate::models::{{ schema.group.name.snake }}_{{ schema.name.snake }} as {{ schema.name.snake }};
 {%- endif %}{% endfor %}
 }
 {%- endfor %}

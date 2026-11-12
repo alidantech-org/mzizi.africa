@@ -20,7 +20,7 @@ tests/                        migration, auth and reference integration tests
 ```
 
 - Two separately bounded connection pools with separate credentials; administrative credentials are loaded only by the CLI binary. The service binary cannot run DDL.
-- Migrations serialize with per-database advisory locks; each release commits together with its `_mzizi` ledger entry; changed checksums and wrong target identities are refused.
+- Migrations serialize with per-database advisory locks; each release commits together with its `public.mzizi_migrations` ledger entry; changed checksums and wrong target identities are refused.
 - Service callers are authenticated; authorization is resolved and enforced in Rust and fails closed. Callers never supply SQL or table names.
 - Build and test with `cargo check` / `cargo test` from this folder, or through the repository-root Bun runner once wired.
 
@@ -33,3 +33,12 @@ The foundation targets a fresh isolated local PostgreSQL instance holding `mzizi
 The previous service (`src/`, `package.json`) keeps its current behavior on port `3301` until its callers migrate: status/migration/seed/verify CLI for the disposable `mzizi_new` database and the named internal HTTP operations used by the API, engine and filesystem callers. Its commands still run through the root runner: `bun run db status`, `bun run db migrate`, `bun run db seed`, `bun run db verify`. Its administrative connection is `MZIZI_DATABASE_URL`; the service uses `DATABASE_RUNTIME_URL`; the NestJS API uses a separate read-only `DATABASE_URL`.
 
 Known gaps, still tracked: some Python filesystem metadata and manifest-sync paths connect to PostgreSQL directly; and the Python workspace references a `mzizi-database` package that does not exist in `source/packages/` — the generated Python HTTP client is a distinct package and does not fill that slot.
+
+## Generated scope and engine requirements
+
+All Main domain groups (reference, geography, legal, official, governance, politics, finance, civic, source, filesystem) and the operational groups are generated: 86 `mzizi` tables and 46 `mzizi_operations` tables. Notes:
+
+- The `geometry` column of `geography.geometries` is a Dryv placeholder (`dryv.unknown()`) and is excluded from both the SQL and the Rust model until PostGIS storage is designed.
+- Invariants render recursively into `CHECK` constraints, up to five levels deep; comparisons against `null` become `IS [NOT] NULL`. This needs a Dryv engine where a null comparison types as boolean (a small local change in `source/engine/python/engine/.../validation/common/expressions.py`; the pinned commit in `dryv.yaml` does not contain it yet).
+- Database names are deployment choices; the logical targets are `main` (`mzizi`) and `operations` (`mzizi_operations`) and the ledger records the logical identity. A working remote setup used `mzizix` and `mzizix_operational` through `MZIZI_DB_MAIN_ADMIN_URL` and `MZIZI_DB_OPERATIONS_ADMIN_URL` kept in the git-ignored `.data/`.
+- Run only the model/table contract test (`generated_models_match_live_tables`) against shared servers; the lifecycle test creates a cluster-wide `mzizi_service` role.

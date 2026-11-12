@@ -83,6 +83,27 @@ pub mod auth_roles;
 #[path = "auth/scopes.rs"]
 pub mod auth_scopes;
 #[doc(hidden)]
+#[path = "civic/bids.rs"]
+pub mod civic_bids;
+#[doc(hidden)]
+#[path = "civic/contracts.rs"]
+pub mod civic_contracts;
+#[doc(hidden)]
+#[path = "civic/deliveries.rs"]
+pub mod civic_deliveries;
+#[doc(hidden)]
+#[path = "civic/procurements.rs"]
+pub mod civic_procurements;
+#[doc(hidden)]
+#[path = "civic/project_features.rs"]
+pub mod civic_project_features;
+#[doc(hidden)]
+#[path = "civic/projects.rs"]
+pub mod civic_projects;
+#[doc(hidden)]
+#[path = "civic/services.rs"]
+pub mod civic_services;
+#[doc(hidden)]
 #[path = "engine/artifacts.rs"]
 pub mod engine_artifacts;
 #[doc(hidden)]
@@ -113,6 +134,108 @@ pub mod engine_pipelines;
 #[path = "engine/runs.rs"]
 pub mod engine_runs;
 #[doc(hidden)]
+#[path = "filesystem/file_extensions.rs"]
+pub mod filesystem_file_extensions;
+#[doc(hidden)]
+#[path = "filesystem/file_relations.rs"]
+pub mod filesystem_file_relations;
+#[doc(hidden)]
+#[path = "filesystem/file_versions.rs"]
+pub mod filesystem_file_versions;
+#[doc(hidden)]
+#[path = "filesystem/files.rs"]
+pub mod filesystem_files;
+#[doc(hidden)]
+#[path = "filesystem/folders.rs"]
+pub mod filesystem_folders;
+#[doc(hidden)]
+#[path = "filesystem/taggings.rs"]
+pub mod filesystem_taggings;
+#[doc(hidden)]
+#[path = "filesystem/tags.rs"]
+pub mod filesystem_tags;
+#[doc(hidden)]
+#[path = "finance/appropriations.rs"]
+pub mod finance_appropriations;
+#[doc(hidden)]
+#[path = "finance/budget_versions.rs"]
+pub mod finance_budget_versions;
+#[doc(hidden)]
+#[path = "finance/budgets.rs"]
+pub mod finance_budgets;
+#[doc(hidden)]
+#[path = "finance/debts.rs"]
+pub mod finance_debts;
+#[doc(hidden)]
+#[path = "finance/fiscal_periods.rs"]
+pub mod finance_fiscal_periods;
+#[doc(hidden)]
+#[path = "finance/flows.rs"]
+pub mod finance_flows;
+#[doc(hidden)]
+#[path = "finance/funds.rs"]
+pub mod finance_funds;
+#[doc(hidden)]
+#[path = "geography/changes.rs"]
+pub mod geography_changes;
+#[doc(hidden)]
+#[path = "geography/datasets.rs"]
+pub mod geography_datasets;
+#[doc(hidden)]
+#[path = "geography/features.rs"]
+pub mod geography_features;
+#[doc(hidden)]
+#[path = "geography/geometries.rs"]
+pub mod geography_geometries;
+#[doc(hidden)]
+#[path = "geography/identifiers.rs"]
+pub mod geography_identifiers;
+#[doc(hidden)]
+#[path = "geography/names.rs"]
+pub mod geography_names;
+#[doc(hidden)]
+#[path = "geography/places.rs"]
+pub mod geography_places;
+#[doc(hidden)]
+#[path = "geography/relationships.rs"]
+pub mod geography_relationships;
+#[doc(hidden)]
+#[path = "geography/units.rs"]
+pub mod geography_units;
+#[doc(hidden)]
+#[path = "governance/authority_scopes.rs"]
+pub mod governance_authority_scopes;
+#[doc(hidden)]
+#[path = "governance/holders.rs"]
+pub mod governance_holders;
+#[doc(hidden)]
+#[path = "governance/institutions.rs"]
+pub mod governance_institutions;
+#[doc(hidden)]
+#[path = "governance/mandates.rs"]
+pub mod governance_mandates;
+#[doc(hidden)]
+#[path = "governance/offices.rs"]
+pub mod governance_offices;
+#[doc(hidden)]
+#[path = "governance/relationships.rs"]
+pub mod governance_relationships;
+#[doc(hidden)]
+#[path = "legal/amendments.rs"]
+pub mod legal_amendments;
+#[doc(hidden)]
+#[path = "legal/instrument_versions.rs"]
+pub mod legal_instrument_versions;
+#[doc(hidden)]
+#[path = "legal/instruments.rs"]
+pub mod legal_instruments;
+#[doc(hidden)]
+#[path = "legal/provision_versions.rs"]
+pub mod legal_provision_versions;
+#[doc(hidden)]
+#[path = "legal/provisions.rs"]
+pub mod legal_provisions;
+#[doc(hidden)]
 #[path = "management/delivery_receipts.rs"]
 pub mod management_delivery_receipts;
 #[doc(hidden)]
@@ -124,6 +247,72 @@ pub mod management_publications;
 #[doc(hidden)]
 #[path = "management/schema_releases.rs"]
 pub mod management_schema_releases;
+#[doc(hidden)]
+#[path = "official/contacts.rs"]
+pub mod official_contacts;
+#[doc(hidden)]
+#[path = "official/entities.rs"]
+pub mod official_entities;
+#[doc(hidden)]
+#[path = "official/identifiers.rs"]
+pub mod official_identifiers;
+#[doc(hidden)]
+#[path = "official/individuals.rs"]
+pub mod official_individuals;
+#[doc(hidden)]
+#[path = "official/names.rs"]
+pub mod official_names;
+#[doc(hidden)]
+#[path = "official/relationships.rs"]
+pub mod official_relationships;
+#[doc(hidden)]
+#[path = "politics/alignments.rs"]
+pub mod politics_alignments;
+#[doc(hidden)]
+#[path = "politics/candidates.rs"]
+pub mod politics_candidates;
+#[doc(hidden)]
+#[path = "politics/coalitions.rs"]
+pub mod politics_coalitions;
+#[doc(hidden)]
+#[path = "politics/contests.rs"]
+pub mod politics_contests;
+#[doc(hidden)]
+#[path = "politics/elections.rs"]
+pub mod politics_elections;
+#[doc(hidden)]
+#[path = "politics/electorates.rs"]
+pub mod politics_electorates;
+#[doc(hidden)]
+#[path = "politics/manifesto_items.rs"]
+pub mod politics_manifesto_items;
+#[doc(hidden)]
+#[path = "politics/manifestos.rs"]
+pub mod politics_manifestos;
+#[doc(hidden)]
+#[path = "politics/memberships.rs"]
+pub mod politics_memberships;
+#[doc(hidden)]
+#[path = "politics/option_results.rs"]
+pub mod politics_option_results;
+#[doc(hidden)]
+#[path = "politics/parties.rs"]
+pub mod politics_parties;
+#[doc(hidden)]
+#[path = "politics/referendum_options.rs"]
+pub mod politics_referendum_options;
+#[doc(hidden)]
+#[path = "politics/results.rs"]
+pub mod politics_results;
+#[doc(hidden)]
+#[path = "reference_legal/geography_change_legal_bases.rs"]
+pub mod reference_legal_geography_change_legal_bases;
+#[doc(hidden)]
+#[path = "reference_legal/legal_basis_links.rs"]
+pub mod reference_legal_legal_basis_links;
+#[doc(hidden)]
+#[path = "reference_legal/official_entity_legal_bases.rs"]
+pub mod reference_legal_official_entity_legal_bases;
 #[doc(hidden)]
 #[path = "reference/country.rs"]
 pub mod reference_country;
@@ -151,6 +340,48 @@ pub mod reference_unit;
 #[doc(hidden)]
 #[path = "reference/value.rs"]
 pub mod reference_value;
+#[doc(hidden)]
+#[path = "source/apis.rs"]
+pub mod source_apis;
+#[doc(hidden)]
+#[path = "source/attributions.rs"]
+pub mod source_attributions;
+#[doc(hidden)]
+#[path = "source/captures.rs"]
+pub mod source_captures;
+#[doc(hidden)]
+#[path = "source/citations.rs"]
+pub mod source_citations;
+#[doc(hidden)]
+#[path = "source/documents.rs"]
+pub mod source_documents;
+#[doc(hidden)]
+#[path = "source/evidence.rs"]
+pub mod source_evidence;
+#[doc(hidden)]
+#[path = "source/manifest_bindings.rs"]
+pub mod source_manifest_bindings;
+#[doc(hidden)]
+#[path = "source/manifest_releases.rs"]
+pub mod source_manifest_releases;
+#[doc(hidden)]
+#[path = "source/manifests.rs"]
+pub mod source_manifests;
+#[doc(hidden)]
+#[path = "source/publication_receipts.rs"]
+pub mod source_publication_receipts;
+#[doc(hidden)]
+#[path = "source/publishers.rs"]
+pub mod source_publishers;
+#[doc(hidden)]
+#[path = "source/sources.rs"]
+pub mod source_sources;
+#[doc(hidden)]
+#[path = "source/verifications.rs"]
+pub mod source_verifications;
+#[doc(hidden)]
+#[path = "source/websites.rs"]
+pub mod source_websites;
 #[doc(hidden)]
 #[path = "staging/candidates.rs"]
 pub mod staging_candidates;

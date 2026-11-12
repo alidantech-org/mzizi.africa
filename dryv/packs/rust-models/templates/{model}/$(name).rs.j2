@@ -31,7 +31,7 @@
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct {{ schema.name.pascal }} {
-{%- for field in schema.fields %}{% if field.related is none %}
+{%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown %}
     pub {{ field.name.snake }}: {% if field.optional or field.nullable %}Option<{{ rust_type(schema, field) }}>{% else %}{{ rust_type(schema, field) }}{% endif %},
 {%- endif %}{% endfor %}
 }

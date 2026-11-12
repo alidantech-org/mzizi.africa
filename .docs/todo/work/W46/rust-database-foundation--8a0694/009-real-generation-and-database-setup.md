@@ -24,7 +24,7 @@ The skeleton (contracts, packs, Cargo workspace, docs, DEC-DATABASE-FOUNDATION-O
 - [x] `mzizi-db migrate` and `mzizi-db verify` succeed on both targets.
 
 - [x] `mzizi-db-core` hand-written SQL (auth, reference) matches the generated tables (reference rows now use the generated models). No `.sqlx/` offline cache is needed: core uses runtime `query_as`, not compile-time macros.
-- [x] `roles` CLI command implemented and covered by the live test (DML-only `mzizi_service`, `_mzizi` hidden).
+- [x] `roles` CLI command implemented and covered by the live test (DML-only `mzizi_service`, ledger tables hidden).
 - [ ] `seed` CLI command: blocked. `seed/_fixtures` is documented test-only and "never applied as seeds"; needs a reviewed seed set or an explicit dev-fixture decision from the owner. The command fails with that explanation.
 - [x] Gated integration tests cover fresh apply, rerun, concurrent migrators and checksum refusal.
 - [x] `cargo test`, `bun run check` (only pre-existing failures) and `task validate` pass; `.docs/design/data/DATABASE_FOUNDATION.md` and `source/backend/database/README.md` state what is implemented.
@@ -42,3 +42,7 @@ Resumed. Done: packs rewritten (rust-models/rust-sql), generation deterministic 
 ### 2026-11-12T14:55:38.741Z · PETER IRUNGU
 
 Checks: cargo test (workspace + live tests) pass; bun run check shows only the known pre-existing failures (filesystem_api.py line limit, ruff format/lint, mypy, pytest, api test). Open: seed (blocked on a reviewed seed set), not committed. Postgres: container mzizi-db-foundation, 127.0.0.1:55432, creds in .data/db-foundation.env.
+
+### 2026-11-12T16:59:04.588Z · PETER IRUNGU
+
+All eleven Main domain contracts are now generated: 86 mzizi + 46 mzizi_operations tables, Rust models compile, CHECK constraints rendered from invariants (null tests as IS [NOT] NULL), unknown/PostGIS geometry column skipped. Applied to a remote server as mzizix / mzizix_operational (migrate+verify ok, models-vs-tables contract test passes). Needs a Dryv engine change (null comparison types as boolean) that is only in the local checkout, not yet pinned. seed remains blocked.

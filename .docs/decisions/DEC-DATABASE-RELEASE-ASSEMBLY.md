@@ -15,7 +15,7 @@ tags: [database, rust, dryv, migrations, sql]
 2. `mzizi-db assemble --target <main|operations>` (no database access) owns the release stream:
    - empty stream: the snapshot is copied to `migrations/<target>/0001_init.sql` and its SHA-256 is recorded in `migrations/<target>/.snapshot`;
    - non-empty stream: the snapshot must still match the recorded checksum, otherwise assembly fails and leaves every release untouched.
-3. Releases stay immutable. The existing ledger (`_mzizi.migrations`, SHA-256, per-database advisory lock) is unchanged, so `migrate`, `plan` and `verify` need no new behavior.
+3. Releases stay immutable. The existing ledger (`public.mzizi_migrations`, SHA-256, per-database advisory lock) is unchanged, so `migrate`, `plan` and `verify` need no new behavior.
 4. The pack takes the namespace-to-database lists as pack inputs in `dryv.yaml` (packs cannot read TypeScript). `bun run database:assignments` (part of `database:check`) fails when they drift from `contracts/apps/database/persistence.ts`.
 5. All SQL identifiers are quoted: the contracts contain reserved words as column names (for example `offset`).
 6. Enums map to `text` without a CHECK in v1; arrays, records, composites, unions, tuples, generics, literals and nested schema values are rejected at generation. Invariants with a simple form become CHECK constraints; open (NULL) windows satisfy `from < until` in SQL.

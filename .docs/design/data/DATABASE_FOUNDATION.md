@@ -72,7 +72,7 @@ source/backend/database/
 
 - **SQLx, not an ORM.** Compile-time-checked queries against the generated schema; the schema is owned by Dryv, so an ORM that wants to own it is the wrong tool.
 - **Two pools, separate credentials.** Main and operations each get a bounded `sqlx::PgPool`; limits and credentials are independent. Administrative credentials are loaded only by the CLI binary; the service binary cannot run DDL.
-- **Migrations serialize.** The CLI takes a per-database advisory lock, applies a release and writes its `_mzizi` ledger entry in the same transaction, and refuses changed checksums or a target whose identity does not match.
+- **Migrations serialize.** The CLI takes a per-database advisory lock, applies a release and writes its `public.mzizi_migrations` ledger entry in the same transaction, and refuses changed checksums or a target whose identity does not match.
 - **Observability without leakage.** Health and readiness endpoints, request IDs, structured errors and logs that never contain credentials or sensitive payloads.
 
 ## Transition
