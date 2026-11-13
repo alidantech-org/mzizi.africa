@@ -76,7 +76,7 @@ export const Targets = acquisition.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End acquisition.targets ----------------*/
+
 acquisitionSchemas.Targets = Targets.Targets;
 
 export const Policies = acquisition.schemas({
@@ -103,7 +103,7 @@ export const Policies = acquisition.schemas({
         .indexes({ name: "idx_policies_created_by", fields: ["created_by"] }, { name: "uq_policies_code", fields: ["code"], unique: true }),
     }),
 });
-/*---------------- End acquisition.policies ----------------*/
+
 acquisitionSchemas.Policies = Policies.Policies;
 
 export const PolicyVersions = acquisition.schemas({
@@ -145,7 +145,7 @@ export const PolicyVersions = acquisition.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End acquisition.policy_versions ----------------*/
+
 acquisitionSchemas.PolicyVersions = PolicyVersions.PolicyVersions;
 
 export const Frontier = acquisition.schemas({
@@ -193,7 +193,7 @@ export const Frontier = acquisition.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End acquisition.frontier ----------------*/
+
 acquisitionSchemas.Frontier = Frontier.Frontier;
 
 export const AccessAttempts = acquisition.schemas({
@@ -271,7 +271,7 @@ export const AccessAttempts = acquisition.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End acquisition.access_attempts ----------------*/
+
 acquisitionSchemas.AccessAttempts = AccessAttempts.AccessAttempts;
 
 export const Observations = acquisition.schemas({
@@ -321,7 +321,7 @@ export const Observations = acquisition.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End acquisition.observations ----------------*/
+
 acquisitionSchemas.Observations = Observations.Observations;
 
 export const DiscoveredLinks = acquisition.schemas({
@@ -362,5 +362,5 @@ export const DiscoveredLinks = acquisition.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End acquisition.discovered_links ----------------*/
+
 acquisitionSchemas.DiscoveredLinks = DiscoveredLinks.DiscoveredLinks;

@@ -95,7 +95,7 @@
 {%- macro is_null_literal(node) -%}{%- if node.kind == 'literal' and node.value is none -%}1{%- endif -%}{%- endmacro -%}
 {%- macro x0(node, where) -%}
 {%- if node.kind == 'literal' -%}{%- if node.value is none -%}NULL{%- else -%}{{ node.value | tojson | replace('"', "'") }}{%- endif -%}
-{%- elif node.kind == 'context' -%}"{{ node.path.dotted }}"
+{%- elif node.kind == 'context' -%}"{{ node.path.snake }}"
 {%- else -%}{{ {}[where ~ ': invariant expression is nested deeper than the supported depth or uses kind ' ~ node.kind] }}
 {%- endif -%}
 {%- endmacro -%}

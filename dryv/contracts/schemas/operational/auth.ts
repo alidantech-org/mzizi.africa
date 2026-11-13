@@ -63,7 +63,7 @@ export const Accounts = auth.schemas({
     .facets({ storage: dryv.storage("accounts").primaryKey("id") }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.accounts ----------------*/
+
 authSchemas.Accounts = Accounts.Accounts;
 
 export const LoginIdentities = auth.schemas({
@@ -94,7 +94,7 @@ export const LoginIdentities = auth.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.login_identities ----------------*/
+
 authSchemas.LoginIdentities = LoginIdentities.LoginIdentities;
 
 export const Roles = auth.schemas({
@@ -119,7 +119,7 @@ export const Roles = auth.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.roles ----------------*/
+
 authSchemas.Roles = Roles.Roles;
 
 export const Permissions = auth.schemas({
@@ -141,7 +141,7 @@ export const Permissions = auth.schemas({
         .indexes({ name: "uq_permissions_code", fields: ["code"], unique: true }),
     }),
 });
-/*---------------- End auth.permissions ----------------*/
+
 authSchemas.Permissions = Permissions.Permissions;
 
 export const RolePermissions = auth.schemas({
@@ -179,7 +179,7 @@ export const RolePermissions = auth.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.role_permissions ----------------*/
+
 authSchemas.RolePermissions = RolePermissions.RolePermissions;
 
 export const Memberships = auth.schemas({
@@ -232,7 +232,7 @@ export const Memberships = auth.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.memberships ----------------*/
+
 authSchemas.Memberships = Memberships.Memberships;
 
 export const Invitations = auth.schemas({
@@ -276,7 +276,7 @@ export const Invitations = auth.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.invitations ----------------*/
+
 authSchemas.Invitations = Invitations.Invitations;
 
 export const Scopes = auth.schemas({
@@ -302,7 +302,7 @@ export const Scopes = auth.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.scopes ----------------*/
+
 authSchemas.Scopes = Scopes.Scopes;
 
 export const RoleAssignments = auth.schemas({
@@ -386,7 +386,7 @@ export const RoleAssignments = auth.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.role_assignments ----------------*/
+
 authSchemas.RoleAssignments = RoleAssignments.RoleAssignments;
 
 export const Delegations = auth.schemas({
@@ -440,7 +440,7 @@ export const Delegations = auth.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.delegations ----------------*/
+
 authSchemas.Delegations = Delegations.Delegations;
 
 export const DelegationRoles = auth.schemas({
@@ -472,7 +472,7 @@ export const DelegationRoles = auth.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End auth.delegation_roles ----------------*/
+
 authSchemas.DelegationRoles = DelegationRoles.DelegationRoles;
 
 /** Compatibility name retained for the existing database operation contracts. */

@@ -78,7 +78,7 @@ export const SchemaReleases = management.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End management.schema_releases ----------------*/
+
 managementSchemas.SchemaReleases = SchemaReleases.SchemaReleases;
 
 export const Publications = management.schemas({
@@ -109,7 +109,7 @@ export const Publications = management.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End management.publications ----------------*/
+
 managementSchemas.Publications = Publications.Publications;
 
 export const PublicationItems = management.schemas({
@@ -139,7 +139,7 @@ export const PublicationItems = management.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End management.publication_items ----------------*/
+
 managementSchemas.PublicationItems = PublicationItems.PublicationItems;
 
 export const DeliveryReceipts = management.schemas({
@@ -172,5 +172,5 @@ export const DeliveryReceipts = management.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End management.delivery_receipts ----------------*/
+
 managementSchemas.DeliveryReceipts = DeliveryReceipts.DeliveryReceipts;

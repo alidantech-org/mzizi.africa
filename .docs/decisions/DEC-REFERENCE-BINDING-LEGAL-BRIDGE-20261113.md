@@ -3,7 +3,7 @@ id: DEC-REFERENCE-BINDING-LEGAL-BRIDGE-20261113
 name: Open decision - how pattern bindings reference Legal
 type: decision
 tags: [database, schema, reference, legal, open]
-extra: {status: proposed, raised_on: 2026-11-13, needs: owner}
+extra: {status: superseded, raised_on: 2026-11-13, superseded_by: DEC-REFERENCE-REMOVE-PATTERN-LEGAL-20261113}
 ---
 
 # Open decision: how pattern bindings reference Legal

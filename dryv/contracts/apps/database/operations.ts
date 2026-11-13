@@ -2,7 +2,7 @@ import * as dryv from "@dryvcode/author";
 
 import { readSurface, sharedProperties, standardFailures, withStandardHttpFailures } from "../../schemas/_shared.ts";
 import { auth, authProperties, authSchemas } from "../../schemas/operational/auth.ts";
-import { reference, referenceSchemas } from "../../schemas/mzizi/reference.ts";
+import { reference, Scheme, Value } from "../../schemas/mzizi/reference.ts";
 
 /**
  * Named operations of the database service. Callers never supply SQL, table or schema names;
@@ -87,7 +87,7 @@ const schemes = readSurface(reference, {
   listKey: "schemes",
   path: "/reference/schemes",
   idParam: "schemeId",
-  entity: referenceSchemas.Scheme,
+  entity: Scheme,
   description: "vocabulary schemes",
   filters: {
     code: dryv.field(sharedProperties.BusinessCode).optional(),
@@ -102,7 +102,7 @@ const values = readSurface(reference, {
   listKey: "values",
   path: "/reference/values",
   idParam: "valueId",
-  entity: referenceSchemas.Value,
+  entity: Value,
   description: "vocabulary values",
   filters: {
     schemeId: dryv.field(sharedProperties.Id).optional(),

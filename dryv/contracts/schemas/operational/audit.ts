@@ -93,7 +93,7 @@ export const Events = audit.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End audit.events ----------------*/
+
 auditSchemas.Events = Events.Events;
 
 export const Decisions = audit.schemas({
@@ -139,5 +139,5 @@ export const Decisions = audit.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End audit.decisions ----------------*/
+
 auditSchemas.Decisions = Decisions.Decisions;

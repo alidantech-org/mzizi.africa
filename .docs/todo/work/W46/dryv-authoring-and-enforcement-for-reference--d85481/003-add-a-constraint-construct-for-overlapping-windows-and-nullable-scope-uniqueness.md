@@ -32,3 +32,7 @@ Stop after this task and report to the owner before starting the next one. Keep 
 ### 2026-11-13T07:31:49.143Z · PETER IRUNGU
 
 Added storage constraint no-overlap end to end (author .noOverlap, compiler mapping, Python contract/validation/context projection, rust-sql EXCLUDE USING gist with coalesce sentinels for nullable scope, btree_gist extension). Applied to PatternBinding. Verified: compile emits no-overlap; engine contract validates. Not verified: generated SQL / PostgreSQL execution. Nullable scope sentinels support uuid, text, integer only.
+
+### 2026-11-13T08:17:27.892Z · PETER IRUNGU
+
+Owner order 2026-11-13: PatternVersion/PatternBinding/PatternDependency and LegalBasisLink + bridges removed from Reference (DEC-REFERENCE-REMOVE-PATTERN-LEGAL-20261113). Parts of this task that targeted them (PatternBinding no-overlap, binding/legal relations) no longer apply in Reference; the Dryv features stay.

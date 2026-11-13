@@ -5,185 +5,148 @@
  * SQL generation remains gated on code-shape/CHECK enforcement and currency-scale policy.
  */
 import * as dryv from "@dryvcode/author";
+import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
-import { geographySchemas } from "./geography.ts";
-import { officialSchemas } from "./official.ts";
-import { referenceSchemas } from "./reference.ts";
-import { sourceSchemas } from "./source.ts";
-import { civicSchemas } from "./civic.ts";
+import { Units } from "./geography.ts";
+import { Entities } from "./official.ts";
+import { Value, Country } from "./reference.ts";
+import { Citations } from "./source.ts";
+import { Projects, Contracts } from "./civic.ts";
+
+const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const finance = dryv
   .group({ name: "finance" })
   .description("Fiscal periods, budget releases and appropriations, funds, recorded flows and public debt.")
   .facets({ storage: { namespace: "finance" } });
-// biome-ignore lint/suspicious/noExplicitAny: enables typed links among Finance records.
-export const financeSchemas: Record<string, any> = {};
-const id = () => dryv.field(sharedProperties.Id);
-const ref = (target: () => dryv.SchemaFieldRef<unknown>) =>
-  id().relation({ target, cardinality: dryv.relation.manyToOne(), onDelete: "restrict", onUpdate: "restrict" });
-const optRef = (target: () => dryv.SchemaFieldRef<unknown>) =>
-  id().optional().nullable().relation({ target, cardinality: dryv.relation.manyToOne(), onDelete: "restrict", onUpdate: "restrict" });
-const tableName = (name: string) => name.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toLowerCase();
-const grains: Record<string, string> = {
-  FiscalPeriods: "One fiscal reporting period for a country, with explicit date bounds and source citation.",
-  Budgets: "One institutional/country budget identity for a fiscal period and budget classification.",
-  BudgetVersions: "One ordered release or revision of a budget, preserving original and supplementary versions separately.",
-  Appropriations: "One classified amount authorized in a budget version, optionally nested and assigned to a project or unit.",
-  Funds: "One named public fund with a classification, manager, country and optional legal basis.",
-  Flows: "One reported financial flow at its source transaction grain, not a rolled-up aggregate.",
-  Debts: "One public debt instrument between a borrower and optional lender, with contracted amount and maturity facts.",
-};
-const table = (name: string, fields: Record<string, any>, indexes: any[] = []) => {
-  const x = finance.schemas({
-    [name]: dryv
-      .schema({ id: id(), ...fields })
-      .description(grains[name]!)
-      .role("entity")
-      .facets({
-        storage: dryv
-          .storage(tableName(name))
-          .primaryKey("id")
-          .indexes(...indexes, { name: `idx_${tableName(name)}_citation`, fields: ["source_citation_id"] }),
-      }),
-  });
-  financeSchemas[name] = x[name];
-};
-const money = {
-  amount_minor_units: dryv.field(sharedProperties.AmountMinorUnits),
-  currency_id: ref(() => referenceSchemas.Value.field("id")),
-};
+/** Entity that records an amount in minor units of one currency. */
+const MoneyEntity = finance
+  .schema("MoneyEntity", {
+    amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits),
+    currencyId: belongsTo(() => Value),
+  })
+  .extends(baseSchemas.Entity)
+  .abstract()
+  .description("Base for records that carry an amount in minor units and its currency.");
 /*---------------- finance.fiscal_periods ----------------*/
-table(
-  "FiscalPeriods",
-  {
-    country_id: optRef(() => referenceSchemas.Country.field("id")),
-    code: dryv.field(sharedProperties.IdentityCode),
-    starts_on: dryv.field(sharedProperties.CalendarDate),
-    ends_on: dryv.field(sharedProperties.CalendarDate),
-    period_kind_id: ref(() => referenceSchemas.Value.field("id")),
-    source_citation_id: optRef(() => sourceSchemas.Citations.field("id")),
-  },
-  [
-    { name: "uq_fiscal_periods_code", fields: ["code"], unique: true },
-    { name: "idx_fiscal_periods_dates", fields: ["starts_on", "ends_on"] },
-  ],
-);
-/*---------------- End finance.fiscal_periods ----------------*/
+export const FiscalPeriods = finance
+  .schema("FiscalPeriods", {
+    countryId: belongsTo(() => Country).maybe(),
+    startsOn: dryv.field(sharedProperties.CalendarDate),
+    endsOn: dryv.field(sharedProperties.CalendarDate),
+    periodKindId: belongsTo(() => Value),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description("One fiscal reporting period for a country, with explicit date bounds and source citation.")
+  .role("entity")
+  .facets({ storage: dryv.storage("fiscal_periods").index("startsOn", "endsOn").index("sourceCitationId") });
+
 /*---------------- finance.budgets ----------------*/
-table(
-  "Budgets",
-  {
-    country_id: optRef(() => referenceSchemas.Country.field("id")),
-    government_entity_id: optRef(() => officialSchemas.Entities.field("id")),
-    fiscal_period_id: ref(() => financeSchemas.FiscalPeriods.field("id")),
-    budget_kind_id: ref(() => referenceSchemas.Value.field("id")),
-    code: dryv.field(sharedProperties.IdentityCode),
-    source_citation_id: optRef(() => sourceSchemas.Citations.field("id")),
-  },
-  [
-    { name: "uq_budgets_code", fields: ["code"], unique: true },
-    { name: "idx_budgets_period", fields: ["fiscal_period_id"] },
-  ],
-);
-/*---------------- End finance.budgets ----------------*/
+export const Budgets = finance
+  .schema("Budgets", {
+    countryId: belongsTo(() => Country).maybe(),
+    governmentEntityId: belongsTo(() => Entities).maybe(),
+    fiscalPeriodId: belongsTo(() => FiscalPeriods),
+    budgetKindId: belongsTo(() => Value),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description("One institutional/country budget identity for a fiscal period and budget classification.")
+  .role("entity")
+  .facets({ storage: dryv.storage("budgets").index("fiscalPeriodId").index("sourceCitationId") });
+
 /*---------------- finance.budget_versions ----------------*/
-table(
-  "BudgetVersions",
-  {
-    budget_id: ref(() => financeSchemas.Budgets.field("id")),
-    version: dryv.field(sharedProperties.PositiveInteger),
-    status_id: ref(() => referenceSchemas.Value.field("id")),
-    released_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-    source_citation_id: optRef(() => sourceSchemas.Citations.field("id")),
-  },
-  [
-    { name: "uq_budget_versions_budget_version", fields: ["budget_id", "version"], unique: true },
-    { name: "idx_budget_versions_status", fields: ["status_id"] },
-  ],
-);
-/*---------------- End finance.budget_versions ----------------*/
+export const BudgetVersions = finance
+  .schema("BudgetVersions", {
+    budgetId: belongsTo(() => Budgets),
+    revision: dryv.field(sharedProperties.PositiveInteger),
+    statusId: belongsTo(() => Value),
+    releasedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .description("One ordered release or revision of a budget, preserving original and supplementary versions separately.")
+  .role("entity")
+  .facets({ storage: dryv.storage("budget_versions").unique("budgetId", "revision").index("statusId").index("sourceCitationId") });
+
 /*---------------- finance.appropriations ----------------*/
-table(
-  "Appropriations",
-  {
-    budget_version_id: ref(() => financeSchemas.BudgetVersions.field("id")),
-    parent_appropriation_id: optRef(() => financeSchemas.Appropriations.field("id")),
-    code: dryv.field(sharedProperties.IdentityCode),
-    recipient_entity_id: optRef(() => officialSchemas.Entities.field("id")),
-    project_id: optRef(() => civicSchemas.Projects.field("id")),
-    unit_feature_id: optRef(() => geographySchemas.Units.field("feature_id")),
-    classification_id: ref(() => referenceSchemas.Value.field("id")),
-    ...money,
-    source_citation_id: optRef(() => sourceSchemas.Citations.field("id")),
-  },
-  [
-    { name: "idx_appropriations_version", fields: ["budget_version_id"] },
-    { name: "uq_appropriations_code", fields: ["code"], unique: true },
-    { name: "idx_appropriations_parent", fields: ["parent_appropriation_id"] },
-    { name: "idx_appropriations_project", fields: ["project_id"] },
-    { name: "idx_appropriations_scope", fields: ["unit_feature_id"] },
-  ],
-);
-/*---------------- End finance.appropriations ----------------*/
+export const Appropriations = finance
+  .schema("Appropriations", {
+    budgetVersionId: belongsTo(() => BudgetVersions),
+    parentAppropriationId: belongsTo(dryv.self).maybe(),
+    recipientEntityId: belongsTo(() => Entities).maybe(),
+    projectId: belongsTo(() => Projects).maybe(),
+    unitFeatureId: belongsTo(() => Units, { to: "featureId" }).maybe(),
+    classificationId: belongsTo(() => Value),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description("One classified amount authorized in a budget version, optionally nested and assigned to a project or unit.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("appropriations")
+      .index("budgetVersionId")
+      .index("parentAppropriationId")
+      .index("projectId")
+      .index("unitFeatureId")
+      .index("sourceCitationId"),
+  });
+
 /*---------------- finance.funds ----------------*/
-table(
-  "Funds",
-  {
-    code: dryv.field(sharedProperties.IdentityCode),
-    fund_kind_id: ref(() => referenceSchemas.Value.field("id")),
-    managing_entity_id: optRef(() => officialSchemas.Entities.field("id")),
-    country_id: optRef(() => referenceSchemas.Country.field("id")),
-    legal_basis_link_id: optRef(() => referenceSchemas.LegalBasisLink.field("id")),
-    source_citation_id: optRef(() => sourceSchemas.Citations.field("id")),
-  },
-  [
-    { name: "uq_funds_code", fields: ["code"], unique: true },
-    { name: "idx_funds_manager", fields: ["managing_entity_id"] },
-  ],
-);
-/*---------------- End finance.funds ----------------*/
+export const Funds = finance
+  .schema("Funds", {
+    fundKindId: belongsTo(() => Value),
+    managingEntityId: belongsTo(() => Entities).maybe(),
+    countryId: belongsTo(() => Country).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description("One named public fund with a classification, manager and country.")
+  .role("entity")
+  .facets({ storage: dryv.storage("funds").index("managingEntityId").index("sourceCitationId") });
+
 /*---------------- finance.flows ----------------*/
-table(
-  "Flows",
-  {
-    flow_kind_id: ref(() => referenceSchemas.Value.field("id")),
-    fiscal_period_id: optRef(() => financeSchemas.FiscalPeriods.field("id")),
-    fund_id: optRef(() => financeSchemas.Funds.field("id")),
-    appropriation_id: optRef(() => financeSchemas.Appropriations.field("id")),
-    contract_id: optRef(() => civicSchemas.Contracts.field("id")),
-    debt_id: optRef(() => financeSchemas.Debts.field("id")),
-    counterparty_entity_id: optRef(() => officialSchemas.Entities.field("id")),
-    ...money,
-    occurred_on: dryv.field(sharedProperties.CalendarDate),
-    source_citation_id: optRef(() => sourceSchemas.Citations.field("id")),
-  },
-  [
-    { name: "idx_flows_date_kind", fields: ["occurred_on", "flow_kind_id"] },
-    { name: "idx_flows_fiscal_period", fields: ["fiscal_period_id"] },
-    { name: "idx_flows_fund", fields: ["fund_id"] },
-    { name: "idx_flows_appropriation", fields: ["appropriation_id"] },
-    { name: "idx_flows_contract", fields: ["contract_id"] },
-    { name: "idx_flows_debt", fields: ["debt_id"] },
-  ],
-);
-/*---------------- End finance.flows ----------------*/
+export const Flows = finance
+  .schema("Flows", {
+    flowKindId: belongsTo(() => Value),
+    fiscalPeriodId: belongsTo(() => FiscalPeriods).maybe(),
+    fundId: belongsTo(() => Funds).maybe(),
+    appropriationId: belongsTo(() => Appropriations).maybe(),
+    contractId: belongsTo(() => Contracts).maybe(),
+    debtId: belongsTo(() => Debts).maybe(),
+    counterpartyEntityId: belongsTo(() => Entities).maybe(),
+    occurredOn: dryv.field(sharedProperties.CalendarDate),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(MoneyEntity)
+  .description("One reported financial flow at its source transaction grain, not a rolled-up aggregate.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("flows")
+      .index("occurredOn", "flowKindId")
+      .index("fiscalPeriodId")
+      .index("fundId")
+      .index("appropriationId")
+      .index("contractId")
+      .index("debtId")
+      .index("sourceCitationId"),
+  });
+
 /*---------------- finance.debts ----------------*/
-table(
-  "Debts",
-  {
-    borrower_entity_id: ref(() => officialSchemas.Entities.field("id")),
-    lender_entity_id: optRef(() => officialSchemas.Entities.field("id")),
-    country_id: optRef(() => referenceSchemas.Country.field("id")),
-    debt_kind_id: ref(() => referenceSchemas.Value.field("id")),
-    ...money,
-    contracted_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-    maturity_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-    legal_basis_link_id: optRef(() => referenceSchemas.LegalBasisLink.field("id")),
-    source_citation_id: optRef(() => sourceSchemas.Citations.field("id")),
-  },
-  [
-    { name: "idx_debts_borrower", fields: ["borrower_entity_id"] },
-    { name: "idx_debts_maturity", fields: ["maturity_on"] },
-  ],
-);
-/*---------------- End finance.debts ----------------*/
+export const Debts = finance
+  .schema("Debts", {
+    borrowerEntityId: belongsTo(() => Entities),
+    lenderEntityId: belongsTo(() => Entities).maybe(),
+    countryId: belongsTo(() => Country).maybe(),
+    debtKindId: belongsTo(() => Value),
+    contractedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    maturityOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(MoneyEntity)
+  .description("One public debt instrument between a borrower and optional lender, with contracted amount and maturity facts.")
+  .role("entity")
+  .facets({ storage: dryv.storage("debts").index("borrowerEntityId").index("maturityOn").index("sourceCitationId") });

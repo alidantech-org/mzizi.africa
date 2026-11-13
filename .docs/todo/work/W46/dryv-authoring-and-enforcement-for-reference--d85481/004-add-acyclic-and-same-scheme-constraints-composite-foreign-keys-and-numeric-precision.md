@@ -32,3 +32,7 @@ Stop after this task and report to the owner before starting the next one. Keep 
 ### 2026-11-13T07:36:13.695Z · PETER IRUNGU
 
 Added acyclic and same-as constraint kinds end to end (author, compiler, engine IR/validation/context, rust-sql trigger and composite FK). Used in reference.ts: SupersessionStaysInScheme, SupersessionAcyclic, BaseUnitAcyclic, TopicParentAcyclic. Unit scale/offset now decimal(38,18). Composite FKs are provided through same-as (unique pk+match plus FK); general multi-field relation targets are NOT added. Edge-table cycles (pattern_dependencies, value_relations) still unenforced. SQL not generated or run.
+
+### 2026-11-13T08:17:28.078Z · PETER IRUNGU
+
+Owner order 2026-11-13: PatternVersion/PatternBinding/PatternDependency and LegalBasisLink + bridges removed from Reference (DEC-REFERENCE-REMOVE-PATTERN-LEGAL-20261113). Parts of this task that targeted them (PatternBinding no-overlap, binding/legal relations) no longer apply in Reference; the Dryv features stay.

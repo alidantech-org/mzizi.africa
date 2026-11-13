@@ -31,3 +31,7 @@ Stop after this task and report to the owner before starting the next one. Keep 
 ### 2026-11-13T07:36:13.877Z · PETER IRUNGU
 
 Added field.deferredRelation({to, reason}) with engine validation that fails when the target already exists. The geography.units, filesystem.file_versions targets already exist in the database app, so unit_id and file_version_id are now real relations instead of deferred ones; no Reference field currently needs deferral. Compiler does not print a report of deferred relations (not built). Legal bridge written up as open decision DEC-REFERENCE-BINDING-LEGAL-BRIDGE-20261113; provision_id left a plain id.
+
+### 2026-11-13T08:17:28.262Z · PETER IRUNGU
+
+Owner order 2026-11-13: PatternVersion/PatternBinding/PatternDependency and LegalBasisLink + bridges removed from Reference (DEC-REFERENCE-REMOVE-PATTERN-LEGAL-20261113). Parts of this task that targeted them (PatternBinding no-overlap, binding/legal relations) no longer apply in Reference; the Dryv features stay.

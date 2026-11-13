@@ -6,276 +6,116 @@
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/legal.md
  */
 import * as dryv from "@dryvcode/author";
+import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
-import { filesystemSchemas } from "./filesystem.ts";
-import { geographySchemas } from "./geography.ts";
-import { officialSchemas } from "./official.ts";
-import { referenceSchemas } from "./reference.ts";
-import { sourceSchemas } from "./source.ts";
+import { FileVersions } from "./filesystem.ts";
+import { Units } from "./geography.ts";
+import { Entities } from "./official.ts";
+import { Value } from "./reference.ts";
+import { Evidence, Citations } from "./source.ts";
+const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
+
 export const legal = dryv
   .group({ name: "legal" })
   .description("Legal instruments, exact wording versions and amendments.")
   .facets({ storage: { namespace: "legal" } });
-// biome-ignore lint/suspicious/noExplicitAny: deferred self and cross-table references.
-export const legalSchemas: Record<string, any> = {};
 
-export const Instruments = legal.schemas({
-  Instruments: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      code: dryv.field(sharedProperties.IdentityCode),
-      title: dryv.field(sharedProperties.Name),
-      kind_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      issuing_unit_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => geographySchemas.Units.field("feature_id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      issuing_entity_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => officialSchemas.Entities.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      enacted_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-      published_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-    })
-    .description("Stable instrument identity with explicit issuing territorial scope; geography alone never establishes applicability.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("instruments")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_instruments_0", fields: ["code"], unique: true },
-          { name: "idx_instruments_1", fields: ["kind_id"] },
-          { name: "idx_instruments_2", fields: ["issuing_unit_id"] },
-        ),
-    }),
-});
-legalSchemas.Instruments = Instruments.Instruments;
-/*---------------- End legal.instruments ----------------*/
+export const Instruments = legal
+  .schema("Instruments", {
+    title: dryv.field(sharedProperties.Name),
+    kindId: belongsTo(() => Value),
+    issuingUnitId: belongsTo(() => Units, { to: "featureId" }),
+    issuingEntityId: belongsTo(() => Entities).maybe(),
+    enactedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description("Stable instrument identity with explicit issuing territorial scope; geography alone never establishes applicability.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("instruments").index("kindId").index("issuingUnitId"),
+  });
 
-export const InstrumentVersions = legal.schemas({
-  InstrumentVersions: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      instrument_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Instruments.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      edition: dryv.field(sharedProperties.NonEmptyString255),
-      file_version_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => filesystemSchemas.FileVersions.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      evidence_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Evidence.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      content_hash: dryv.field(sharedProperties.Sha256),
-      consolidated_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-      commenced_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-      ceased_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-      repealed_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-      observed_at: dryv.field(sharedProperties.Instant),
-      supersedes_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.InstrumentVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-    })
-    .description("Exact source-backed release; observed, consolidated and legally effective dates have separate meanings.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("instrument_versions")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_instrument_versions_0", fields: ["instrument_id", "edition"], unique: true },
-          { name: "idx_instrument_versions_1", fields: ["file_version_id"] },
-          { name: "idx_instrument_versions_2", fields: ["evidence_id"] },
-          { name: "idx_instrument_versions_3", fields: ["supersedes_id"] },
-        ),
-    }),
-});
-legalSchemas.InstrumentVersions = InstrumentVersions.InstrumentVersions;
-/*---------------- End legal.instrument_versions ----------------*/
+export const InstrumentVersions = legal
+  .schema("InstrumentVersions", {
+    instrumentId: belongsTo(() => Instruments),
+    edition: dryv.field(sharedProperties.NonEmptyString255),
+    fileVersionId: belongsTo(() => FileVersions),
+    evidenceId: belongsTo(() => Evidence),
+    contentHash: dryv.field(sharedProperties.Sha256),
+    consolidatedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    commencedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    ceasedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    repealedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    observedAt: dryv.field(sharedProperties.Instant),
+    supersedesId: belongsTo(dryv.self).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .description("Exact source-backed release; observed, consolidated and legally effective dates have separate meanings.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("instrument_versions")
+      .unique("instrumentId", "edition")
+      .index("fileVersionId")
+      .index("evidenceId")
+      .index("supersedesId"),
+  });
 
-export const Provisions = legal.schemas({
-  Provisions: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      code: dryv.field(sharedProperties.IdentityCode),
-      instrument_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Instruments.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      parent_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Provisions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      designation: dryv.field(sharedProperties.NonEmptyString255),
-      title: dryv.field(sharedProperties.Name).optional().nullable(),
-    })
-    .description("Stable section identity within one instrument; hierarchy must remain within that instrument.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("provisions")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_provisions_0", fields: ["code"], unique: true },
-          { name: "idx_provisions_1", fields: ["instrument_id"] },
-          { name: "idx_provisions_2", fields: ["parent_id"] },
-        ),
-    }),
-});
-legalSchemas.Provisions = Provisions.Provisions;
-/*---------------- End legal.provisions ----------------*/
+export const Provisions = legal
+  .schema("Provisions", {
+    instrumentId: belongsTo(() => Instruments),
+    parentId: belongsTo(dryv.self).maybe(),
+    designation: dryv.field(sharedProperties.NonEmptyString255),
+    title: dryv.field(sharedProperties.Name).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description("Stable section identity within one instrument; hierarchy must remain within that instrument.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("provisions").index("instrumentId").index("parentId"),
+  });
 
-export const ProvisionVersions = legal.schemas({
-  ProvisionVersions: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      provision_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.Provisions.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      instrument_version_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.InstrumentVersions.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      citation_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      text: dryv.field(sharedProperties.NonEmptyString),
-      text_hash: dryv.field(sharedProperties.Sha256),
-      effective_from: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-      effective_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-      observed_at: dryv.field(sharedProperties.Instant),
-      supersedes_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-    })
-    .description("Immutable original wording in an exact instrument release; structured interpretation is separately reviewed.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("provision_versions")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_provision_versions_0", fields: ["provision_id", "instrument_version_id"], unique: true },
-          { name: "idx_provision_versions_1", fields: ["instrument_version_id"] },
-          { name: "idx_provision_versions_2", fields: ["citation_id"] },
-          { name: "idx_provision_versions_3", fields: ["supersedes_id"] },
-        ),
-    }),
-});
-legalSchemas.ProvisionVersions = ProvisionVersions.ProvisionVersions;
-/*---------------- End legal.provision_versions ----------------*/
+export const ProvisionVersions = legal
+  .schema("ProvisionVersions", {
+    provisionId: belongsTo(() => Provisions),
+    instrumentVersionId: belongsTo(() => InstrumentVersions),
+    citationId: belongsTo(() => Citations),
+    text: dryv.field(sharedProperties.NonEmptyString),
+    textHash: dryv.field(sharedProperties.Sha256),
+    effectiveFrom: dryv.field(sharedProperties.CalendarDate).maybe(),
+    effectiveUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
+    observedAt: dryv.field(sharedProperties.Instant),
+    supersedesId: belongsTo(dryv.self).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .description("Immutable original wording in an exact instrument release; structured interpretation is separately reviewed.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("provision_versions")
+      .unique("provisionId", "instrumentVersionId")
+      .index("instrumentVersionId")
+      .index("citationId")
+      .index("supersedesId"),
+  });
 
-export const Amendments = legal.schemas({
-  Amendments: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      authority_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      affected_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      resulting_version_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      kind_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      effective_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-      explanation: dryv.field(sharedProperties.Description).optional().nullable(),
-      citation_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-    })
-    .description("An exact authority provision changes an exact affected wording version; both historical texts remain available.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("amendments")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_amendments_0", fields: ["authority_id"] },
-          { name: "idx_amendments_1", fields: ["affected_id"] },
-          { name: "idx_amendments_2", fields: ["resulting_version_id"] },
-          { name: "idx_amendments_3", fields: ["kind_id"] },
-          { name: "idx_amendments_4", fields: ["citation_id"] },
-        ),
-    }),
-});
-legalSchemas.Amendments = Amendments.Amendments;
-/*---------------- End legal.amendments ----------------*/
+export const Amendments = legal
+  .schema("Amendments", {
+    authorityId: belongsTo(() => ProvisionVersions),
+    affectedId: belongsTo(() => ProvisionVersions),
+    resultingVersionId: belongsTo(() => ProvisionVersions).maybe(),
+    kindId: belongsTo(() => Value),
+    effectiveOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    explanation: dryv.field(sharedProperties.Description).maybe(),
+    citationId: belongsTo(() => Citations),
+  })
+  .extends(baseSchemas.Entity)
+  .description("An exact authority provision changes an exact affected wording version; both historical texts remain available.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("amendments").index("authorityId").index("affectedId").index("resultingVersionId").index("kindId").index("citationId"),
+  });
 
 /** Persistence blockers: same-instrument provision/version/parent composite relationships;
  * hierarchy and supersession cycles; effective intervals; immutable wording and hashes.

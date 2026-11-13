@@ -17,10 +17,10 @@ const EntityBase = dryv
     id: dryv.field(sharedProperties.Id),
     /** Optimistic-concurrency version; starts at 1 and increases on every update. */
     version: dryv.field(sharedProperties.PositiveInteger),
-    created_at: dryv.field(sharedProperties.Instant),
-    updated_at: dryv.field(sharedProperties.Instant),
+    createdAt: dryv.field(sharedProperties.Instant),
+    updatedAt: dryv.field(sharedProperties.Instant),
     /** Soft delete marker; null while the record is live. */
-    deleted_at: dryv.field(sharedProperties.Instant).optional().nullable(),
+    deletedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
   .abstract()
   .description("Base for versioned records: id, version, created/updated timestamps and soft delete.")
@@ -30,8 +30,8 @@ const EntityBase = dryv
 const AssociationBase = dryv
   .schema({
     id: dryv.field(sharedProperties.Id),
-    created_at: dryv.field(sharedProperties.Instant),
-    deleted_at: dryv.field(sharedProperties.Instant).optional().nullable(),
+    createdAt: dryv.field(sharedProperties.Instant),
+    deletedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
   .abstract()
   .description("Base for association rows: id, created timestamp and soft delete.")
@@ -41,7 +41,7 @@ const baseGroup = shared.schemas({ Entity: EntityBase, Association: AssociationB
 
 /** Predicate for indexes that should only cover live (not soft-deleted) rows. */
 const baseRules = shared.expressions({
-  LiveRecord: EntityBase.check((v) => v.deleted_at.isNull()),
+  LiveRecord: EntityBase.check((v) => v.deletedAt.isNull()),
 });
 
 /** Entity that also carries a stable, globally unique identity code. */
@@ -60,7 +60,55 @@ const CodedEntityBase = dryv
       .indexes({ fields: ["code"], unique: true, where: baseRules.LiveRecord }),
   });
 
+/** Entity that applies over a half-open time window, `[effectiveFrom, effectiveUntil)`. */
+const EffectiveEntityBase = dryv
+  .schema({
+    /** Start of the window, inclusive. */
+    effectiveFrom: dryv.field(sharedProperties.CalendarDate),
+    /** End of the window, exclusive. Null means the window is still open. */
+    effectiveUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
+  })
+  .extends(baseGroup.Entity)
+  .abstract()
+  .description("Base for versioned records that apply over a half-open time window.");
+
+/** Entity that is valid over an optional period: both ends may be unknown, and an open end has no limit. */
+const ValidityEntityBase = dryv
+  .schema({
+    validFrom: dryv.field(sharedProperties.CalendarDate).maybe(),
+    validUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
+  })
+  .extends(baseGroup.Entity)
+  .abstract()
+  .description("Base for versioned records valid over an optional period.");
+
+const validityGroup = shared.schemas({ ValidityEntity: ValidityEntityBase });
+ValidityEntityBase.rule(shared, "ValidityWindowIsOrdered", dryv.rule.ordered("validFrom", "validUntil"));
+
+/** Validity entity that also carries a stable, globally unique identity code. */
+const CodedValidityEntityBase = dryv
+  .schema({
+    /** Stable identity code: lowercase, dot-separated, repository-wide unique. */
+    code: dryv.field(sharedProperties.IdentityCode),
+  })
+  .extends(validityGroup.ValidityEntity)
+  .abstract()
+  .description("Base for versioned records with a unique identity code and an optional validity period.")
+  .facets({
+    storage: dryv.storage().unique("code").where(baseRules.LiveRecord),
+  });
+
+const effectiveGroup = shared.schemas({
+  CodedEntity: CodedEntityBase,
+  CodedValidityEntity: CodedValidityEntityBase,
+  EffectiveEntity: EffectiveEntityBase,
+});
+
+// A null end is an open window, and an SQL CHECK treats NULL as satisfied, so no explicit open branch.
+EffectiveEntityBase.rule(shared, "EffectiveWindowIsOrdered", (v) => v.effectiveFrom.lt(v.effectiveUntil));
+
 export const baseSchemas = {
   ...baseGroup,
-  ...shared.schemas({ CodedEntity: CodedEntityBase }),
+  ...validityGroup,
+  ...effectiveGroup,
 };

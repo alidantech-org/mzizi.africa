@@ -128,7 +128,7 @@ export const Pipelines = engine.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End engine.pipelines ----------------*/
+
 engineSchemas.Pipelines = Pipelines.Pipelines;
 
 export const PipelineReleases = engine.schemas({
@@ -174,7 +174,7 @@ export const PipelineReleases = engine.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End engine.pipeline_releases ----------------*/
+
 engineSchemas.PipelineReleases = PipelineReleases.PipelineReleases;
 
 export const Runs = engine.schemas({
@@ -218,7 +218,7 @@ export const Runs = engine.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End engine.runs ----------------*/
+
 engineSchemas.Runs = Runs.Runs;
 
 export const Jobs = engine.schemas({
@@ -260,7 +260,7 @@ export const Jobs = engine.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End engine.jobs ----------------*/
+
 engineSchemas.Jobs = Jobs.Jobs;
 
 export const JobDependencies = engine.schemas({
@@ -290,7 +290,7 @@ export const JobDependencies = engine.schemas({
         .indexes({ name: "idx_job_dependencies_depends_on_job_id", fields: ["depends_on_job_id"] }),
     }),
 });
-/*---------------- End engine.job_dependencies ----------------*/
+
 engineSchemas.JobDependencies = JobDependencies.JobDependencies;
 
 export const JobAttempts = engine.schemas({
@@ -326,7 +326,7 @@ export const JobAttempts = engine.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End engine.job_attempts ----------------*/
+
 engineSchemas.JobAttempts = JobAttempts.JobAttempts;
 
 export const Checkpoints = engine.schemas({
@@ -370,7 +370,7 @@ export const Checkpoints = engine.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End engine.checkpoints ----------------*/
+
 engineSchemas.Checkpoints = Checkpoints.Checkpoints;
 
 export const Events = engine.schemas({
@@ -428,7 +428,7 @@ export const Events = engine.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End engine.events ----------------*/
+
 engineSchemas.Events = Events.Events;
 
 export const Outbox = engine.schemas({
@@ -461,7 +461,7 @@ export const Outbox = engine.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End engine.outbox ----------------*/
+
 engineSchemas.Outbox = Outbox.Outbox;
 
 export const Artifacts = engine.schemas({
@@ -506,5 +506,5 @@ export const Artifacts = engine.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End engine.artifacts ----------------*/
+
 engineSchemas.Artifacts = Artifacts.Artifacts;

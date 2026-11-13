@@ -104,7 +104,7 @@ export const Candidates = staging.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End staging.candidates ----------------*/
+
 stagingSchemas.Candidates = Candidates.Candidates;
 
 export const Revisions = staging.schemas({
@@ -172,7 +172,7 @@ export const Revisions = staging.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End staging.revisions ----------------*/
+
 stagingSchemas.Revisions = Revisions.Revisions;
 
 export const Mappings = staging.schemas({
@@ -216,7 +216,7 @@ export const Mappings = staging.schemas({
         .indexes({ name: "idx_mappings_created_by", fields: ["created_by"] }, { name: "idx_mappings_approved_by", fields: ["approved_by"] }),
     }),
 });
-/*---------------- End staging.mappings ----------------*/
+
 stagingSchemas.Mappings = Mappings.Mappings;
 
 export const Findings = staging.schemas({
@@ -249,7 +249,7 @@ export const Findings = staging.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End staging.findings ----------------*/
+
 stagingSchemas.Findings = Findings.Findings;
 
 export const Reviews = staging.schemas({
@@ -288,7 +288,7 @@ export const Reviews = staging.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End staging.reviews ----------------*/
+
 stagingSchemas.Reviews = Reviews.Reviews;
 
 export const PromotionRequests = staging.schemas({
@@ -336,7 +336,7 @@ export const PromotionRequests = staging.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End staging.promotion_requests ----------------*/
+
 stagingSchemas.PromotionRequests = PromotionRequests.PromotionRequests;
 
 /*---------------- Authorized multi-source revision evidence ----------------*/
@@ -375,4 +375,3 @@ export const RevisionSources = staging.schemas({
     }),
 });
 stagingSchemas.RevisionSources = RevisionSources.RevisionSources;
-/*---------------- End staging.revision_sources ----------------*/

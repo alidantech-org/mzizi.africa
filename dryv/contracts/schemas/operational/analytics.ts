@@ -66,7 +66,7 @@ export const Experiments = analytics.schemas({
         ),
     }),
 });
-/*---------------- End analytics.experiments ----------------*/
+
 analyticsSchemas.Experiments = Experiments.Experiments;
 
 export const Requests = analytics.schemas({
@@ -117,7 +117,7 @@ export const Requests = analytics.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End analytics.requests ----------------*/
+
 analyticsSchemas.Requests = Requests.Requests;
 
 export const Projections = analytics.schemas({
@@ -159,7 +159,7 @@ export const Projections = analytics.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End analytics.projections ----------------*/
+
 analyticsSchemas.Projections = Projections.Projections;
 
 export const Results = analytics.schemas({
@@ -191,7 +191,7 @@ export const Results = analytics.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End analytics.results ----------------*/
+
 analyticsSchemas.Results = Results.Results;
 
 export const Evaluations = analytics.schemas({
@@ -226,5 +226,5 @@ export const Evaluations = analytics.schemas({
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
-/*---------------- End analytics.evaluations ----------------*/
+
 analyticsSchemas.Evaluations = Evaluations.Evaluations;
