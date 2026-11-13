@@ -115,11 +115,9 @@ export function documentationProblems(repoRoot = process.cwd()): string[] {
   if (topics.length > 7) problems.push(`.docs/design: ${topics.length} topic folders exceeds the limit of seven`);
   for (const name of topicNames) {
     const path = join(designRoot, name);
-    if (statSync(path).isFile() && name !== "README.md")
-      problems.push(`.docs/design: unexpected root file ${name}; group it in a topic folder`);
+    if (statSync(path).isFile() && name !== "README.md") problems.push(`.docs/design: unexpected root file ${name}; group it in a topic folder`);
   }
-  for (const topic of topics)
-    if (!existsSync(join(designRoot, topic, "README.md"))) problems.push(`.docs/design/${topic}: missing README.md`);
+  for (const topic of topics) if (!existsSync(join(designRoot, topic, "README.md"))) problems.push(`.docs/design/${topic}: missing README.md`);
 
   const markdownFiles = [
     ...walk(docsRoot).filter((path) => path.endsWith(".md")),

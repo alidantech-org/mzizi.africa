@@ -158,9 +158,7 @@ export const commands: Record<string, Command> = {
 export function help(): void {
   console.log("Usage: bun run <command> [-- args]   or   bun scripts/mz.ts <command> [args] [--only <names>]\n");
   for (const [name, command] of Object.entries(commands)) console.log(`  ${name.padEnd(15)} ${command.summary}`);
-  console.log(
-    "\n--only takes project names or kinds: python, scripts, dryv, api, database-rust, web, www, mobile, bun, flutter, rust, all",
-  );
+  console.log("\n--only takes project names or kinds: python, scripts, dryv, api, database-rust, web, www, mobile, bun, flutter, rust, all");
 }
 
 /** Split the arguments into the command, its positional arguments and the `--only` value. */

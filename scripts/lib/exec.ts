@@ -24,8 +24,7 @@ export const step = (name: string, cwd: string, args: readonly string[], env?: R
 });
 
 /** Names of the failed results, in input order. */
-export const failures = (results: readonly Result[]): string[] =>
-  results.filter((result) => result.code !== 0).map((result) => result.name);
+export const failures = (results: readonly Result[]): string[] => results.filter((result) => result.code !== 0).map((result) => result.name);
 
 /** Run `task` over `items` with at most `concurrency` running at once. */
 export async function runBounded<T>(items: readonly T[], concurrency: number, task: (item: T) => Promise<void>): Promise<void> {

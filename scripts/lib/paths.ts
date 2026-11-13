@@ -18,8 +18,7 @@ export const at = (...parts: string[]): string => join(root, ...parts);
 export const label = (path: string): string => (path === root ? "." : path.startsWith(`${root}/`) ? path.slice(root.length + 1) : path);
 
 /** The local Dryv checkout. Generation uses it because the published packages lag behind the pinned engine. */
-export const dryvHome = (): string =>
-  process.env.DRYV_HOME ?? join(process.env.HOME ?? "", "Projects/personal/alidantech-org/codepot/dryv");
+export const dryvHome = (): string => process.env.DRYV_HOME ?? join(process.env.HOME ?? "", "Projects/personal/alidantech-org/codepot/dryv");
 
 /**
  * Parse `KEY=value` lines (comments, blank lines, optional `export` and matching quotes are handled).

@@ -8,7 +8,7 @@ import * as dryv from "@dryvcode/author";
 import { sharedProperties } from "../_shared.ts";
 import { geographySchemas } from "./geography.ts";
 import { officialSchemas } from "./official.ts";
-import { referenceLegalSchemas, referenceSchemas } from "./reference.ts";
+import { referenceSchemas } from "./reference.ts";
 import { sourceSchemas } from "./source.ts";
 import { civicSchemas } from "./civic.ts";
 
@@ -133,7 +133,7 @@ table(
     fund_kind_id: ref(() => referenceSchemas.Value.field("id")),
     managing_entity_id: optRef(() => officialSchemas.Entities.field("id")),
     country_id: optRef(() => referenceSchemas.Country.field("id")),
-    legal_basis_link_id: optRef(() => referenceLegalSchemas.LegalBasisLinks.field("id")),
+    legal_basis_link_id: optRef(() => referenceSchemas.LegalBasisLink.field("id")),
     source_citation_id: optRef(() => sourceSchemas.Citations.field("id")),
   },
   [
@@ -178,7 +178,7 @@ table(
     ...money,
     contracted_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
     maturity_on: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-    legal_basis_link_id: optRef(() => referenceLegalSchemas.LegalBasisLinks.field("id")),
+    legal_basis_link_id: optRef(() => referenceSchemas.LegalBasisLink.field("id")),
     source_citation_id: optRef(() => sourceSchemas.Citations.field("id")),
   },
   [

@@ -10,8 +10,7 @@ import { management } from "../../schemas/operational/management.ts";
 import { staging } from "../../schemas/operational/staging.ts";
 
 import "./operations.ts";
-import { vocabulary } from "../../schemas/mzizi/reference.ts";
-import { referenceLegal } from "../../schemas/mzizi/reference.ts";
+import { reference } from "../../schemas/mzizi/reference.ts";
 import { geography } from "../../schemas/mzizi/geography.ts";
 import { legal } from "../../schemas/mzizi/legal.ts";
 import { official } from "../../schemas/mzizi/official.ts";
@@ -47,8 +46,7 @@ export default dryv
     analytics,
     audit,
     management,
-    vocabulary,
-    referenceLegal,
+    reference,
     geography,
     legal,
     official,

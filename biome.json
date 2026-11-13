@@ -3,7 +3,7 @@
   "files": {
     "includes": ["package.json", "biome.json", "tsconfig.json", "scripts/**", "dryv/tools/**", "dryv/contracts/**", "dryv/package.json"]
   },
-  "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 140 },
+  "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 145 },
   "linter": { "rules": { "recommended": true } },
   "assist": { "actions": { "source": { "organizeImports": "on" } } }
 }

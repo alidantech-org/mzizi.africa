@@ -9,7 +9,7 @@ import * as dryv from "@dryvcode/author";
 import { sharedProperties } from "../_shared.ts";
 import { geographySchemas } from "./geography.ts";
 import { officialSchemas } from "./official.ts";
-import { referenceLegalSchemas, referenceSchemas } from "./reference.ts";
+import { referenceSchemas } from "./reference.ts";
 import { sourceSchemas } from "./source.ts";
 
 export const governance = dryv
@@ -148,7 +148,7 @@ table(
   {
     institution_id: optRef(() => governanceSchemas.Institutions.field("id")),
     office_id: optRef(() => governanceSchemas.Offices.field("id")),
-    legal_basis_link_id: ref(() => referenceLegalSchemas.LegalBasisLinks.field("id")),
+    legal_basis_link_id: ref(() => referenceSchemas.LegalBasisLink.field("id")),
     mandate_kind_id: ref(() => referenceSchemas.Value.field("id")),
     description: dryv.field(sharedProperties.Description),
     ...dates,

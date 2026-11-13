@@ -15,8 +15,7 @@ export type Mode = "dev" | "start";
 export function pick(names: readonly string[]): Service[] {
   if (names.length === 0) return [...services];
   const unknown = names.filter((name) => !services.some((service) => service.name === name));
-  if (unknown.length)
-    throw new Error(`unknown service: ${unknown.join(", ")} (known: ${services.map((service) => service.name).join(", ")})`);
+  if (unknown.length) throw new Error(`unknown service: ${unknown.join(", ")} (known: ${services.map((service) => service.name).join(", ")})`);
   return services.filter((service) => names.includes(service.name));
 }
 

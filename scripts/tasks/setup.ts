@@ -37,8 +37,7 @@ export function doctor(): boolean {
     ok &&= path !== null;
     console.log(`${path ? "✔" : "✖"} ${tool.padEnd(8)} ${path ?? "missing (required)"}`);
   }
-  for (const tool of optional)
-    console.log(`${Bun.which(tool) ? "✔" : "–"} ${tool.padEnd(8)} ${Bun.which(tool) ?? "not installed (optional)"}`);
+  for (const tool of optional) console.log(`${Bun.which(tool) ? "✔" : "–"} ${tool.padEnd(8)} ${Bun.which(tool) ?? "not installed (optional)"}`);
   const files: readonly (readonly [string, string, boolean])[] = [
     [".env", "local environment for dev and start (git-ignored)", false],
     [".venv", "Python environment: run `bun run sync`", true],
@@ -82,9 +81,8 @@ export function clean(deep: boolean): void {
     rmSync(at(path), { recursive: true, force: true });
     console.log(`removed ${path}`);
   }
-  const caches = Bun.spawnSync(
-    ["find", "source", "scripts", "-name", "__pycache__", "-type", "d", "-prune", "-exec", "rm", "-rf", "{}", "+"],
-    { cwd: root },
-  );
+  const caches = Bun.spawnSync(["find", "source", "scripts", "-name", "__pycache__", "-type", "d", "-prune", "-exec", "rm", "-rf", "{}", "+"], {
+    cwd: root,
+  });
   if (caches.exitCode === 0) console.log("removed __pycache__ directories");
 }

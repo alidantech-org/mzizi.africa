@@ -2,7 +2,7 @@ import * as dryv from "@dryvcode/author";
 
 import { readSurface, sharedProperties, standardFailures, withStandardHttpFailures } from "../../schemas/_shared.ts";
 import { auth, authProperties, authSchemas } from "../../schemas/operational/auth.ts";
-import { vocabulary, vocabularyProperties, vocabularySchemas } from "../../schemas/mzizi/reference.ts";
+import { reference, referenceSchemas } from "../../schemas/mzizi/reference.ts";
 
 /**
  * Named operations of the database service. Callers never supply SQL, table or schema names;
@@ -78,16 +78,16 @@ export const authAccessOperations = authAccess.operations({
 
 /* ----------------------------- vocabulary -------------------------------- */
 
-const vocabularyRead = vocabulary.feature("VocabularyRead").description("Scheme and value reads for service callers.").tags("internal");
+const vocabularyRead = reference.feature("VocabularyRead").description("Scheme and value reads for service callers.").tags("internal");
 
-const schemes = readSurface(vocabulary, {
+const schemes = readSurface(reference, {
   singular: "Scheme",
   plural: "Schemes",
   itemKey: "scheme",
   listKey: "schemes",
   path: "/reference/schemes",
   idParam: "schemeId",
-  entity: vocabularySchemas.Scheme,
+  entity: referenceSchemas.Scheme,
   description: "vocabulary schemes",
   filters: {
     code: dryv.field(sharedProperties.BusinessCode).optional(),
@@ -95,14 +95,14 @@ const schemes = readSurface(vocabulary, {
   },
 });
 
-const values = readSurface(vocabulary, {
+const values = readSurface(reference, {
   singular: "Value",
   plural: "Values",
   itemKey: "value",
   listKey: "values",
   path: "/reference/values",
   idParam: "valueId",
-  entity: vocabularySchemas.Value,
+  entity: referenceSchemas.Value,
   description: "vocabulary values",
   filters: {
     schemeId: dryv.field(sharedProperties.Id).optional(),
@@ -111,7 +111,7 @@ const values = readSurface(vocabulary, {
 });
 
 /* Lookup one value by scheme code and value code, the common hot path. */
-const lookupSchemas = vocabulary.schemas({
+const lookupSchemas = reference.schemas({
   ValueLookupRequest: dryv.schema({
     scheme: dryv.field(sharedProperties.BusinessCode),
     code: dryv.field(sharedProperties.BusinessCode),
