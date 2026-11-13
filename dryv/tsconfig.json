@@ -10,7 +10,10 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
-    "types": ["bun"]
+    "types": ["bun"],
+    "paths": {
+      "@dryvcode/author": ["/home/alidante/Projects/personal/alidantech-org/codepot/dryv/source/plugins/authoring/typescript/author/src/index.ts"]
+    }
   },
   "include": ["contracts/**/*.ts"]
 }

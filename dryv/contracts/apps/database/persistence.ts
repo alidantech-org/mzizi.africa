@@ -21,6 +21,7 @@ export const databaseAssignments: Record<string, TargetDatabase> = {
   civic: "mzizi",
   source: "mzizi",
   filesystem: "mzizi",
+
   // mzizi_operations: platform operations
   auth: "mzizi_operations",
   acquisition: "mzizi_operations",

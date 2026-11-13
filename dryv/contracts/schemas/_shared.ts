@@ -113,10 +113,7 @@ export const sharedSchemas = shared.schemas({
 
 export const sharedFailures = shared.failures({
   BadRequest: dryv.failure("bad_request").description("The request is invalid.").payload(dryv.ref(transportSchemas.ApiError)),
-  Unauthorized: dryv
-    .failure("unauthorized")
-    .description("Authentication is required or invalid.")
-    .payload(dryv.ref(transportSchemas.ApiError)),
+  Unauthorized: dryv.failure("unauthorized").description("Authentication is required or invalid.").payload(dryv.ref(transportSchemas.ApiError)),
   Forbidden: dryv
     .failure("forbidden")
     .description("The caller is not permitted to perform this operation.")

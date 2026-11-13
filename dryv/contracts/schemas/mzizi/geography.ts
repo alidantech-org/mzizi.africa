@@ -96,10 +96,7 @@ export const Units = geography.schemas({
       storage: dryv
         .storage("units")
         .primaryKey("feature_id")
-        .indexes(
-          { name: "idx_units_country", fields: ["country_id"] },
-          { name: "idx_units_validity", fields: ["valid_from", "valid_until"] },
-        ),
+        .indexes({ name: "idx_units_country", fields: ["country_id"] }, { name: "idx_units_validity", fields: ["valid_from", "valid_until"] }),
     }),
 });
 geographySchemas.Units = Units.Units;

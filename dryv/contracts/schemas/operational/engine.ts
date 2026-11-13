@@ -94,10 +94,7 @@ export const engineEnums = engine.properties({
 });
 
 export const engineExpressions = engine.expressions({
-  JobsMustDiffer: dryv.expression.notEqual(
-    dryv.expression.context("value", "job_id"),
-    dryv.expression.context("value", "depends_on_job_id"),
-  ),
+  JobsMustDiffer: dryv.expression.notEqual(dryv.expression.context("value", "job_id"), dryv.expression.context("value", "depends_on_job_id")),
 });
 
 /*---------------- Approved engine table contracts ----------------*/

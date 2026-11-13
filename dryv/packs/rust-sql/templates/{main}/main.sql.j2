@@ -188,7 +188,8 @@ CREATE TABLE "{{ ns }}"."{{ table_of(schema) }}" (
 ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(schema) }}_{{ field.name.snake }}" FOREIGN KEY ("{{ field.name.snake }}") REFERENCES {{ lookup_table(field.relation.target.schema.id) }} ("{{ field.relation.target.field.snake }}") ON DELETE {{ lifecycle(field.relation.on_delete) }} ON UPDATE {{ lifecycle(field.relation.on_update) }};
 {%- endif %}{% endfor %}
 {%- for index in schema.facets.storage.indexes %}
-CREATE {% if index.unique %}UNIQUE {% endif %}INDEX "{% if index.name is not none %}{{ index.name }}{% else %}ix_{{ table_of(schema) }}_{% for item in index.fields %}{{ item.snake }}{% if not loop.last %}_{% endif %}{% endfor %}{% endif %}" ON "{{ ns }}"."{{ table_of(schema) }}" ({% for item in index.fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %});
+{%- set generated_name = (("uq_" if index.unique else "ix_") ~ table_of(schema) ~ "__" ~ (index.fields | map(attribute="snake") | join("_")))[:63] -%}
+CREATE {% if index.unique %}UNIQUE {% endif %}INDEX "{{ index.name if index.name is not none else generated_name }}" ON "{{ ns }}"."{{ table_of(schema) }}" ({% for item in index.fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %});
 {%- endfor %}
 {%- endif %}{% endfor %}
 {%- endfor %}

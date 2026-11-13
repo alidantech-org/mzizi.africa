@@ -8,7 +8,9 @@
  * SQL-level scheme checks, composite FKs, partial indexes and transitive cycle constraints are unsupported by the current pack.
  */
 import * as dryv from "@dryvcode/author";
+import { when } from "@dryvcode/author";
 
+import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
 import { geographySchemas } from "./geography.ts";
 import { legalSchemas } from "./legal.ts";
@@ -17,342 +19,224 @@ import { sourceSchemas } from "./source.ts";
 
 export const reference = dryv
   .group({ name: "reference" })
-  .description(
-    "Shared country identities, controlled meanings, measurement units and reviewed patterns.",
-  )
+  .description("Shared country identities, controlled meanings, measurement units and reviewed patterns.")
   .facets({ storage: { namespace: "reference" } });
-
-export const referenceExpressions = reference.expressions({
-  UnitScaleMustBePositive: dryv.expression.greaterThan(
-    dryv.expression.context("value", "scale"),
-    dryv.expression.value(0),
-  ),
-  ValueMustNotSupersedeItself: dryv.expression.notEqual(
-    dryv.expression.context("value", "id"),
-    dryv.expression.context("value", "supersedes_id"),
-  ),
-  TopicMustNotParentItself: dryv.expression.notEqual(
-    dryv.expression.context("value", "id"),
-    dryv.expression.context("value", "parent_id"),
-  ),
-  // The engine cannot type a comparison against a null literal. A SQL CHECK on `from < until` is
-  // satisfied when `until` is NULL (open window), so the open case needs no explicit branch.
-  EffectiveWindowMustBeOrdered: dryv.expression.lessThan(
-    dryv.expression.context("value", "effective_from"),
-    dryv.expression.context("value", "effective_until"),
-  ),
-  DependencyMustNotBeSelf: dryv.expression.notEqual(
-    dryv.expression.context("value", "version_id"),
-    dryv.expression.context("value", "requires_id"),
-  ),
-});
-
-/** Kept as an export for callers of the previous Reference draft. */
-export const vocabularyProperties = reference.properties({
-  LabelKind: dryv.property.enum({
-    preferred: "preferred",
-    alternate: "alternate",
-  }),
-});
 
 /*---------------- Reference schema contracts ----------------*/
 
-export const Countries = dryv
+export const Country = dryv
   .schema({
-    id: dryv.field(sharedProperties.Id),
-    /** Stable project identity code, independent of external country-code standards. */
-    code: dryv.field(sharedProperties.IdentityCode),
     name: dryv.field(sharedProperties.Name),
   })
-  .description(
-    "Canonical identity for a modern country; not a geographic unit or historical polity.",
-  )
+  .extends(baseSchemas.CodedEntity)
+  .description("Canonical identity for a modern country; not a geographic unit or historical polity.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("countries")
-      .primaryKey("id")
-      .indexes(
-        { name: "uq_countries_code", fields: ["code"], unique: true },
-        { name: "idx_countries_name", fields: ["name"] },
-      ),
+      .indexes({ fields: ["name"] }),
   });
-
-
-reference.schemas({
-  Country: Countries,
-});
 
 /** Country identity is independent of whether another record has a country relationship. */
 /** The inbound Geography FK must be declared with geography.units when that contract is authored. */
 /*---------------- End reference.countries ----------------*/
 
-export const Schemes = reference.schemas({
-  Scheme: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      code: dryv.field(sharedProperties.IdentityCode),
-      title: dryv.field(sharedProperties.Name),
-      owner_snapshot: dryv.field(sharedProperties.NonEmptyString255),
-    })
-    .description(
-      "Stable identity and stewardship snapshot for a controlled vocabulary scheme.",
-    )
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("schemes")
-        .primaryKey("id")
-        .indexes({ name: "uq_schemes_code", fields: ["code"], unique: true }),
-    }),
-});
+export const Scheme = dryv
+  .schema({
+    title: dryv.field(sharedProperties.Name),
+    owner_snapshot: dryv.field(sharedProperties.NonEmptyString255),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description("Stable identity and stewardship snapshot for a controlled vocabulary scheme.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("schemes"),
+  });
 /*---------------- End reference.schemes ----------------*/
 
-export const Values = reference.schemas({
-  Value: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      scheme_id: dryv.field(sharedProperties.Id).relation({
-        target: () => Schemes.Scheme.field("id"),
+export const Value = dryv
+  .schema({
+    scheme_id: dryv.field(sharedProperties.Id).relation({
+      target: Scheme.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+    label: dryv.field(sharedProperties.Name),
+    supersedes_id: dryv
+      .field(sharedProperties.Id)
+      .optional()
+      .nullable()
+      .relation({
+        target: dryv.self("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
-      /** Codes follow the repository-wide globally unique identity-code rule. */
-      code: dryv.field(sharedProperties.IdentityCode),
-      label: dryv.field(sharedProperties.Name),
-      supersedes_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => Values.Value.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-    })
-    .invariant(
-      "ValueDoesNotSupersedeItself",
-      referenceExpressions.ValueMustNotSupersedeItself,
-    )
-    .description(
-      "A controlled classification member within one scheme, with optional supersession.",
-    )
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("values")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_values_code", fields: ["code"], unique: true },
-          { name: "idx_values_scheme_id", fields: ["scheme_id"] },
-          { name: "idx_values_supersedes_id", fields: ["supersedes_id"] },
-        ),
-    }),
-});
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule(reference, "ValueDoesNotSupersedeItself", (v) => v.id.ne(v.supersedes_id))
+  .description("A controlled classification member within one scheme, with optional supersession.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("values")
+      .indexes({ fields: ["scheme_id"] }, { fields: ["supersedes_id"] }),
+  });
 /*---------------- End reference.values ----------------*/
 /** Same-scheme supersession and transitive acyclicity require a database operation/constraint. */
 
-export const Units = reference.schemas({
-  Unit: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      code: dryv.field(sharedProperties.IdentityCode),
-      symbol: dryv.field(sharedProperties.NonEmptyString100),
-      quantity: dryv.field(sharedProperties.NonEmptyString255),
-      scale: dryv.field(sharedProperties.Number),
-      offset: dryv.field(sharedProperties.Number),
-      base_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => Units.Unit.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-    })
-    .invariant(
-      "ScaleMustBePositive",
-      referenceExpressions.UnitScaleMustBePositive,
-    )
-    .description(
-      "Measurement unit and conversion to its optional base unit; never a spatial unit.",
-    )
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("units")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_units_code", fields: ["code"], unique: true },
-          { name: "idx_units_base_id", fields: ["base_id"] },
-        ),
-    }),
-});
+export const Unit = dryv
+  .schema({
+    symbol: dryv.field(sharedProperties.NonEmptyString100),
+    quantity: dryv.field(sharedProperties.NonEmptyString255),
+    scale: dryv.field(sharedProperties.Number),
+    offset: dryv.field(sharedProperties.Number),
+    base_id: dryv
+      .field(sharedProperties.Id)
+      .optional()
+      .nullable()
+      .relation({
+        target: dryv.self("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule(reference, "UnitScaleMustBePositive", (v) => v.scale.gt(0))
+  .description("Measurement unit and conversion to its optional base unit; never a spatial unit.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("units")
+      .indexes({ fields: ["base_id"] }),
+  });
 /*---------------- End reference.units ----------------*/
 /** Conversion scale precision and base-unit cycle checks require storage-pack/database verification. */
 
-export const Topics = reference.schemas({
-  Topic: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      code: dryv.field(sharedProperties.IdentityCode),
-      label: dryv.field(sharedProperties.Name),
-      parent_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => Topics.Topic.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-    })
-    .invariant(
-      "TopicDoesNotParentItself",
-      referenceExpressions.TopicMustNotParentItself,
-    )
-    .description(
-      "Cross-domain discovery topic hierarchy; topics do not own domain records.",
-    )
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("topics")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_topics_code", fields: ["code"], unique: true },
-          { name: "idx_topics_parent_id", fields: ["parent_id"] },
-        ),
-    }),
-});
+export const Topic = dryv
+  .schema({
+    label: dryv.field(sharedProperties.Name),
+    parent_id: dryv
+      .field(sharedProperties.Id)
+      .optional()
+      .nullable()
+      .relation({
+        target: dryv.self("id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule(reference, "TopicDoesNotParentItself", (v) => v.id.ne(v.parent_id))
+  .description("Cross-domain discovery topic hierarchy; topics do not own domain records.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("topics")
+      .indexes({ fields: ["parent_id"] }),
+  });
 /*---------------- End reference.topics ----------------*/
 /** Transitive topic-cycle prevention requires a database operation/constraint. */
 
-export const Patterns = reference.schemas({
-  Pattern: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      code: dryv.field(sharedProperties.IdentityCode),
-      title: dryv.field(sharedProperties.Name),
-    })
-    .description("Stable identity for a reusable, reviewed pattern definition.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("patterns")
-        .primaryKey("id")
-        .indexes({ name: "uq_patterns_code", fields: ["code"], unique: true }),
-    }),
-});
+export const Pattern = dryv
+  .schema({
+    title: dryv.field(sharedProperties.Name),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description("Stable identity for a reusable, reviewed pattern definition.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("patterns"),
+  });
 /*---------------- End reference.patterns ----------------*/
 
-export const PatternVersions = reference.schemas({
-  PatternVersion: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      pattern_id: dryv.field(sharedProperties.Id).relation({
-        target: () => Patterns.Pattern.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      edition: dryv.field(sharedProperties.PositiveInteger),
-      /** Typed artifact identity; the active Reference vocabulary app does not compose Filesystem. */
-      file_version_id: dryv.field(sharedProperties.Id),
-      digest: dryv.field(sharedProperties.Sha256),
-    })
-    .description(
-      "Immutable, reviewed release of a pattern; Engine owns execution state.",
-    )
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("pattern_versions")
-        .primaryKey("id")
-        .indexes(
-          {
-            name: "uq_pattern_versions_pattern_edition",
-            fields: ["pattern_id", "edition"],
-            unique: true,
-          },
-          {
-            name: "idx_pattern_versions_file_version_id",
-            fields: ["file_version_id"],
-          },
-        ),
+export const PatternVersion = dryv
+  .schema({
+    pattern_id: dryv.field(sharedProperties.Id).relation({
+      target: Pattern.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
     }),
-});
+    edition: dryv.field(sharedProperties.PositiveInteger),
+    /** Typed artifact identity; the active Reference vocabulary app does not compose Filesystem. */
+    file_version_id: dryv.field(sharedProperties.Id),
+    digest: dryv.field(sharedProperties.Sha256),
+  })
+  .extends(baseSchemas.Entity)
+  .description("Immutable, reviewed release of a pattern; Engine owns execution state.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("pattern_versions")
+      .indexes(
+        {
+          fields: ["pattern_id", "edition"],
+          unique: true,
+        },
+        {
+          fields: ["file_version_id"],
+        },
+      ),
+  });
 /** FK gap: Main review composition has the target; keep the active Operations vocabulary decoupled. */
 /*---------------- End reference.pattern_versions ----------------*/
 
-export const PatternBindings = reference.schemas({
-  PatternBinding: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      version_id: dryv.field(sharedProperties.Id).relation({
-        target: () => PatternVersions.PatternVersion.field("id"),
+export const PatternBinding = dryv
+  .schema({
+    version_id: dryv.field(sharedProperties.Id).relation({
+      target: PatternVersion.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+    /** Geography target is geography.units.feature_id; active vocabulary composition omits Geography. */
+    unit_id: dryv.field(sharedProperties.Id).optional().nullable(),
+    /** Optional country scope; a country-wide geographic scope also identifies its country unit. */
+    country_id: dryv
+      .field(sharedProperties.Id)
+      .optional()
+      .nullable()
+      .relation({
+        target: Country.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
-      /** Geography target is geography.units.feature_id; active vocabulary composition omits Geography. */
-      unit_id: dryv.field(sharedProperties.Id).optional().nullable(),
-      /** Optional country scope; a country-wide geographic scope also identifies its country unit. */
-      country_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: () => Countries.Country.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      /** Existing proposal target and role need reconciliation with the Reference-owned Legal basis link. */
-      provision_id: dryv.field(sharedProperties.Id).optional().nullable(),
-      /** Inclusive lower date; Dryv has no native daterange storage property. */
-      effective_from: dryv.field(sharedProperties.CalendarDate),
-      /** Exclusive upper date; null means no known end. */
-      effective_until: dryv
-        .field(sharedProperties.CalendarDate)
-        .optional()
-        .nullable(),
-    })
-    .invariant(
-      "EffectiveWindowIsOrdered",
-      referenceExpressions.EffectiveWindowMustBeOrdered,
-    )
-    .description(
-      "Country, geographic-unit and time applicability of an approved pattern release.",
-    )
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("pattern_bindings")
-        .primaryKey("id")
-        .indexes(
-          {
-            name: "idx_pattern_bindings_version_scope_time",
-            fields: ["version_id", "country_id", "unit_id", "effective_from"],
-          },
-          { name: "idx_pattern_bindings_country_id", fields: ["country_id"] },
-          { name: "idx_pattern_bindings_unit_id", fields: ["unit_id"] },
-          {
-            name: "idx_pattern_bindings_provision_id",
-            fields: ["provision_id"],
-          },
-          {
-            name: "idx_pattern_bindings_effective_from",
-            fields: ["effective_from"],
-          },
-        ),
-    }),
-});
+    /** Existing proposal target and role need reconciliation with the Reference-owned Legal basis link. */
+    provision_id: dryv.field(sharedProperties.Id).optional().nullable(),
+    /** Inclusive lower date; Dryv has no native daterange storage property. */
+    effective_from: dryv.field(sharedProperties.CalendarDate),
+    /** Exclusive upper date; null means no known end. */
+    effective_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+  })
+  .extends(baseSchemas.Entity)
+  // A NULL `effective_until` is an open window, and SQL CHECK treats NULL as satisfied, so no explicit open branch.
+  .rule(reference, "EffectiveWindowIsOrdered", (v) => v.effective_from.lt(v.effective_until))
+  .description("Country, geographic-unit and time applicability of an approved pattern release.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("pattern_bindings")
+      .indexes(
+        {
+          fields: ["version_id", "country_id", "unit_id", "effective_from"],
+        },
+        { fields: ["country_id"] },
+        { fields: ["unit_id"] },
+        {
+          fields: ["provision_id"],
+        },
+        {
+          fields: ["effective_from"],
+        },
+      ),
+  });
 /**
  * Open relationships: Geography has not yet authored geography.units, Filesystem has not authored
  * filesystem.file_versions, and the Reference-owned Legal bridge is unresolved. Keep the typed IDs;
@@ -362,63 +246,42 @@ export const PatternBindings = reference.schemas({
  */
 /*---------------- End reference.pattern_bindings ----------------*/
 
-export const PatternDependencies = reference.schemas({
-  PatternDependency: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      version_id: dryv.field(sharedProperties.Id).relation({
-        target: () => PatternVersions.PatternVersion.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      requires_id: dryv.field(sharedProperties.Id).relation({
-        target: () => PatternVersions.PatternVersion.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-    })
-    .invariant(
-      "DependencyMustNotBeSelf",
-      referenceExpressions.DependencyMustNotBeSelf,
-    )
-    .description("Pinned dependency between two Reference pattern releases.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("pattern_dependencies")
-        .primaryKey("id")
-        .indexes(
-          {
-            name: "uq_pattern_dependencies_pair",
-            fields: ["version_id", "requires_id"],
-            unique: true,
-          },
-          {
-            name: "idx_pattern_dependencies_requires_id",
-            fields: ["requires_id"],
-          },
-        ),
+export const PatternDependency = dryv
+  .schema({
+    version_id: dryv.field(sharedProperties.Id).relation({
+      target: PatternVersion.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
     }),
-});
+    requires_id: dryv.field(sharedProperties.Id).relation({
+      target: PatternVersion.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+  })
+  .extends(baseSchemas.Association)
+  .rule(reference, "DependencyMustNotBeSelf", (v) => v.version_id.ne(v.requires_id))
+  .description("Pinned dependency between two Reference pattern releases.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("pattern_dependencies")
+      .indexes(
+        {
+          fields: ["version_id", "requires_id"],
+          unique: true,
+        },
+        {
+          fields: ["requires_id"],
+        },
+      ),
+  });
 /** Acyclicity beyond self-reference requires a transaction-level database constraint or operation. */
 /*---------------- End reference.pattern_dependencies ----------------*/
 
-/*---------------- Proposed Reference classification extension ----------------*/
-/**
- * Proposal-only group. It is not composed into contracts/apps/database/index.ts and must not be
- * included in generation until the owner approves the extension and the SQL pack supports its
- * relation, time and uniqueness constraints.
- */
-export const referenceProposals = dryv
-  .group({ name: "reference-proposals" })
-  .description(
-    "Unapproved Reference schema extensions for review; excluded from database applications.",
-  )
-  .facets({ storage: { namespace: "reference" } });
-
-export const referenceProposalEnums = referenceProposals.properties({
+export const referenceProposalEnums = reference.properties({
   ValueRelationKind: dryv.property.enum({
     BroaderThan: "broader_than",
     NarrowerThan: "narrower_than",
@@ -426,250 +289,164 @@ export const referenceProposalEnums = referenceProposals.properties({
   }),
 });
 
-export const referenceProposalExpressions = referenceProposals.expressions({
-  ValueRelationMustNotBeSelfReferential: dryv.expression.notEqual(
-    dryv.expression.context("value", "source_value_id"),
-    dryv.expression.context("value", "target_value_id"),
-  ),
-  ValueRelationWindowMustBeOrdered: dryv.expression.or(
-    dryv.expression.equal(
-      dryv.expression.context("value", "valid_from"),
-      dryv.expression.value(null),
-    ),
-    dryv.expression.equal(
-      dryv.expression.context("value", "valid_until"),
-      dryv.expression.value(null),
-    ),
-    dryv.expression.lessThan(
-      dryv.expression.context("value", "valid_from"),
-      dryv.expression.context("value", "valid_until"),
-    ),
-  ),
-});
-
-export const ProposedValueRelations = referenceProposals.schemas({
-  ValueRelation: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      source_value_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => Values.Value.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      target_value_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => Values.Value.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      relation_kind: dryv.field(referenceProposalEnums.ValueRelationKind),
-      valid_from: dryv
-        .field(sharedProperties.CalendarDate)
-        .optional()
-        .nullable(),
-      valid_until: dryv
-        .field(sharedProperties.CalendarDate)
-        .optional()
-        .nullable(),
-    })
-    .invariant(
-      "ValueRelationMustNotBeSelfReferential",
-      referenceProposalExpressions.ValueRelationMustNotBeSelfReferential,
-    )
-    .invariant(
-      "ValueRelationWindowMustBeOrdered",
-      referenceProposalExpressions.ValueRelationWindowMustBeOrdered,
-    )
-    .description(
-      "Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.",
-    )
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("value_relations")
-        .primaryKey("id")
-        .indexes(
-          {
-            name: "idx_value_relations_source_edge",
-            fields: ["source_value_id", "relation_kind", "valid_from"],
-          },
-          {
-            name: "idx_value_relations_target",
-            fields: ["target_value_id", "relation_kind"],
-          },
-        ),
+export const ValueRelation = dryv
+  .schema({
+    source_value_id: dryv.field(sharedProperties.Id).relation({
+      target: Value.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
     }),
-});
-/** Proposal only: temporal edge uniqueness needs a PostgreSQL exclusion constraint, not yet supported by Dryv. */
-/** Do not add this group to database app composition without explicit approval and that persistence capability. */
-export const proposedReferenceSchemas = {
-  ValueRelation: ProposedValueRelations.ValueRelation,
-};
-
-/** Compatibility surface consumed by the existing database read operations. */
-export const referenceSchemas = {
-  Country: Countries.Country,
-  Scheme: Schemes.Scheme,
-  Value: Values.Value,
-  Unit: Units.Unit,
-  Topic: Topics.Topic,
-  Pattern: Patterns.Pattern,
-  PatternVersion: PatternVersions.PatternVersion,
-  PatternBinding: PatternBindings.PatternBinding,
-  PatternDependency: PatternDependencies.PatternDependency,
-};
-
-export const vocabularySchemas = {
-  Scheme: Schemes.Scheme,
-  Value: Values.Value,
-};
-
-/*---------------- Reference-mediated Legal relationship contracts ----------------*/
-
-/** Separate registration group; tables persist under the Reference namespace. */
-export const referenceLegal = dryv
-  .group({ name: "reference-legal" })
-  .description("Typed Legal basis and domain associations owned by Reference.")
-  .facets({ storage: { namespace: "reference" } });
-
-export const LegalBasisLinks = referenceLegal.schemas({
-  LegalBasisLinks: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      provision_version_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> =>
-          legalSchemas.ProvisionVersions.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      basis_role_id: dryv.field(sharedProperties.Id).relation({
-        target: () => Values.Value.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      citation_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> =>
-          sourceSchemas.Citations.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      effective_from: dryv.field(sharedProperties.CalendarDate),
-      effective_until: dryv
-        .field(sharedProperties.CalendarDate)
-        .optional()
-        .nullable(),
-      interpretation: dryv.field(sharedProperties.Description),
-      reviewed_by_snapshot: dryv.field(sharedProperties.JsonText),
-      reviewed_at: dryv.field(sharedProperties.Instant),
-    })
-    .description(
-      "One reviewed legal support assertion for an exact provision version, role, citation and effective period.",
-    )
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("legal_basis_links")
-        .primaryKey("id")
-        .indexes(
-          {
-            name: "idx_legal_basis_links_provision",
-            fields: ["provision_version_id"],
-          },
-          { name: "idx_legal_basis_links_role", fields: ["basis_role_id"] },
-          { name: "idx_legal_basis_links_citation", fields: ["citation_id"] },
-        ),
+    target_value_id: dryv.field(sharedProperties.Id).relation({
+      target: Value.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
     }),
-});
+    relation_kind: dryv.field(referenceProposalEnums.ValueRelationKind),
+    valid_from: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+    valid_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+  })
+  .extends(baseSchemas.Association)
+  .rule(reference, "ValueRelationMustNotBeSelfReferential", (v) => v.source_value_id.ne(v.target_value_id))
+  .rule(reference, "ValueRelationWindowMustBeOrdered", (v) =>
+    when.any(v.valid_from.isNull(), v.valid_until.isNull(), v.valid_from.lt(v.valid_until)),
+  )
+  .description("Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("value_relations")
+      .indexes(
+        {
+          fields: ["source_value_id", "relation_kind", "valid_from"],
+        },
+        {
+          fields: ["target_value_id", "relation_kind"],
+        },
+      ),
+  });
+
+export const LegalBasisLink = dryv
+  .schema({
+    provision_version_id: dryv.field(sharedProperties.Id).relation({
+      target: legalSchemas.ProvisionVersions.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+    basis_role_id: dryv.field(sharedProperties.Id).relation({
+      target: Value.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+    citation_id: dryv.field(sharedProperties.Id).relation({
+      target: sourceSchemas.Citations.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+    effective_from: dryv.field(sharedProperties.CalendarDate),
+    effective_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+    interpretation: dryv.field(sharedProperties.Description),
+    reviewed_by_snapshot: dryv.field(sharedProperties.JsonText),
+    reviewed_at: dryv.field(sharedProperties.Instant),
+  })
+  .extends(baseSchemas.Entity)
+  .description("One reviewed legal support assertion for an exact provision version, role, citation and effective period.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("legal_basis_links")
+      .indexes(
+        {
+          fields: ["provision_version_id"],
+        },
+        { fields: ["basis_role_id"] },
+        { fields: ["citation_id"] },
+      ),
+  });
 /*---------------- End reference.legal_basis_links ----------------*/
 
-export const GeographyChangeLegalBases = referenceLegal.schemas({
-  GeographyChangeLegalBases: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      change_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> =>
-          geographySchemas.Changes.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      legal_basis_id: dryv.field(sharedProperties.Id).relation({
-        target: () => LegalBasisLinks.LegalBasisLinks.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-    })
-    .description(
-      "Typed legal support for a geographic change; role distinctions live on the linked basis assertion.",
-    )
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("geography_change_legal_bases")
-        .primaryKey("id")
-        .indexes(
-          {
-            name: "uq_geography_change_legal_basis",
-            fields: ["change_id", "legal_basis_id"],
-            unique: true,
-          },
-          {
-            name: "idx_geography_change_legal_basis_link",
-            fields: ["legal_basis_id"],
-          },
-        ),
+export const GeographyChangeLegalBasis = dryv
+  .schema({
+    change_id: dryv.field(sharedProperties.Id).relation({
+      target: geographySchemas.Changes.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
     }),
-});
+    legal_basis_id: dryv.field(sharedProperties.Id).relation({
+      target: LegalBasisLink.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+  })
+  .extends(baseSchemas.Association)
+  .description("Typed legal support for a geographic change; role distinctions live on the linked basis assertion.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("geography_change_legal_bases")
+      .indexes(
+        {
+          fields: ["change_id", "legal_basis_id"],
+          unique: true,
+        },
+        {
+          fields: ["legal_basis_id"],
+        },
+      ),
+  });
 /*---------------- End reference.geography_change_legal_bases ----------------*/
 
-export const OfficialEntityLegalBases = referenceLegal.schemas({
-  OfficialEntityLegalBases: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      entity_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> =>
-          officialSchemas.Entities.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      legal_basis_id: dryv.field(sharedProperties.Id).relation({
-        target: () => LegalBasisLinks.LegalBasisLinks.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-    })
-    .description("Typed legal support for an official organization identity.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("official_entity_legal_bases")
-        .primaryKey("id")
-        .indexes(
-          {
-            name: "uq_official_entity_legal_basis",
-            fields: ["entity_id", "legal_basis_id"],
-            unique: true,
-          },
-          {
-            name: "idx_official_entity_legal_basis_link",
-            fields: ["legal_basis_id"],
-          },
-        ),
+export const OfficialEntityLegalBasis = dryv
+  .schema({
+    entity_id: dryv.field(sharedProperties.Id).relation({
+      target: officialSchemas.Entities.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
     }),
-});
+    legal_basis_id: dryv.field(sharedProperties.Id).relation({
+      target: LegalBasisLink.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+  })
+  .extends(baseSchemas.Association)
+  .description("Typed legal support for an official organization identity.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("official_entity_legal_bases")
+      .indexes(
+        {
+          fields: ["entity_id", "legal_basis_id"],
+          unique: true,
+        },
+        {
+          fields: ["legal_basis_id"],
+        },
+      ),
+  });
 /*---------------- End reference.official_entity_legal_bases ----------------*/
 
-/** Compatibility surface consumed by the existing database read operations. */
-export const referenceLegalSchemas = {
-  LegalBasisLinks: LegalBasisLinks.LegalBasisLinks,
-  GeographyChangeLegalBases:
-    GeographyChangeLegalBases.GeographyChangeLegalBases,
-  OfficialEntityLegalBases: OfficialEntityLegalBases.OfficialEntityLegalBases,
-};
+export const referenceSchemas = reference.schemas({
+  Country,
+  Scheme,
+  Value,
+  Unit,
+  Topic,
+  Pattern,
+  PatternVersion,
+  PatternBinding,
+  PatternDependency,
+  ValueRelation,
+  LegalBasisLink,
+  GeographyChangeLegalBasis,
+  OfficialEntityLegalBasis,
+});

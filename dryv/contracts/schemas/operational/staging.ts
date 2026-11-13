@@ -213,10 +213,7 @@ export const Mappings = staging.schemas({
       storage: dryv
         .storage("mappings")
         .primaryKey("id")
-        .indexes(
-          { name: "idx_mappings_created_by", fields: ["created_by"] },
-          { name: "idx_mappings_approved_by", fields: ["approved_by"] },
-        ),
+        .indexes({ name: "idx_mappings_created_by", fields: ["created_by"] }, { name: "idx_mappings_approved_by", fields: ["approved_by"] }),
     }),
 });
 /*---------------- End staging.mappings ----------------*/
@@ -287,10 +284,7 @@ export const Reviews = staging.schemas({
       storage: dryv
         .storage("reviews")
         .primaryKey("id")
-        .indexes(
-          { name: "idx_reviews_reviewer_id", fields: ["reviewer_id"] },
-          { name: "idx_reviews_revision_id", fields: ["revision_id"] },
-        ),
+        .indexes({ name: "idx_reviews_reviewer_id", fields: ["reviewer_id"] }, { name: "idx_reviews_revision_id", fields: ["revision_id"] }),
     }),
 });
 /** Primary key and relation lookup indexes are declared in this storage contract. */
@@ -367,9 +361,7 @@ export const RevisionSources = staging.schemas({
       source_snapshot: dryv.field(sharedProperties.JsonText),
       created_at: dryv.field(sharedProperties.Instant),
     })
-    .description(
-      "Immutable normalized evidence inputs for a candidate revision; Main verifies citation/evidence/file ownership and hashes.",
-    )
+    .description("Immutable normalized evidence inputs for a candidate revision; Main verifies citation/evidence/file ownership and hashes.")
     .role("entity")
     .facets({
       storage: dryv
