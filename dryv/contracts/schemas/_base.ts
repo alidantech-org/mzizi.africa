@@ -39,6 +39,11 @@ const AssociationBase = dryv
 
 const baseGroup = shared.schemas({ Entity: EntityBase, Association: AssociationBase });
 
+/** Predicate for indexes that should only cover live (not soft-deleted) rows. */
+const baseRules = shared.expressions({
+  LiveRecord: EntityBase.check((v) => v.deleted_at.isNull()),
+});
+
 /** Entity that also carries a stable, globally unique identity code. */
 const CodedEntityBase = dryv
   .schema({
@@ -48,7 +53,12 @@ const CodedEntityBase = dryv
   .extends(baseGroup.Entity)
   .abstract()
   .description("Base for versioned records with a unique identity code.")
-  .facets({ storage: dryv.storage().indexes({ fields: ["code"], unique: true }) });
+  .facets({
+    storage: dryv
+      .storage()
+      // Unique among live rows only, so a soft-deleted record releases its code.
+      .indexes({ fields: ["code"], unique: true, where: baseRules.LiveRecord }),
+  });
 
 export const baseSchemas = {
   ...baseGroup,

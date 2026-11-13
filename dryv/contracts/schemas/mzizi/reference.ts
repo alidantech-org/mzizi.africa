@@ -5,7 +5,7 @@
  * Countries are canonical modern-country identities; spatial units belong to Geography.
  * No fictional world country or mandatory country membership is implied.
  * Geography, Filesystem and Legal relations must be verified through same-database composition and pack generation.
- * SQL-level scheme checks, composite FKs, partial indexes and transitive cycle constraints are unsupported by the current pack.
+ * SQL-level scheme checks, composite FKs and transitive cycle constraints are unsupported by the current pack.
  */
 import * as dryv from "@dryvcode/author";
 import { when } from "@dryvcode/author";
@@ -32,9 +32,7 @@ export const Country = dryv
   .description("Canonical identity for a modern country; not a geographic unit or historical polity.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("countries")
-      .indexes({ fields: ["name"] }),
+    storage: dryv.storage("countries").indexes({ fields: ["name"] }),
   });
 
 /** Country identity is independent of whether another record has a country relationship. */
@@ -50,8 +48,7 @@ export const Scheme = dryv
   .description("Stable identity and stewardship snapshot for a controlled vocabulary scheme.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("schemes"),
+    storage: dryv.storage("schemes"),
   });
 /*---------------- End reference.schemes ----------------*/
 
@@ -80,9 +77,7 @@ export const Value = dryv
   .description("A controlled classification member within one scheme, with optional supersession.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("values")
-      .indexes({ fields: ["scheme_id"] }, { fields: ["supersedes_id"] }),
+    storage: dryv.storage("values").indexes({ fields: ["scheme_id"] }, { fields: ["supersedes_id"] }),
   });
 /*---------------- End reference.values ----------------*/
 /** Same-scheme supersession and transitive acyclicity require a database operation/constraint. */
@@ -109,9 +104,7 @@ export const Unit = dryv
   .description("Measurement unit and conversion to its optional base unit; never a spatial unit.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("units")
-      .indexes({ fields: ["base_id"] }),
+    storage: dryv.storage("units").indexes({ fields: ["base_id"] }),
   });
 /*---------------- End reference.units ----------------*/
 /** Conversion scale precision and base-unit cycle checks require storage-pack/database verification. */
@@ -135,9 +128,7 @@ export const Topic = dryv
   .description("Cross-domain discovery topic hierarchy; topics do not own domain records.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("topics")
-      .indexes({ fields: ["parent_id"] }),
+    storage: dryv.storage("topics").indexes({ fields: ["parent_id"] }),
   });
 /*---------------- End reference.topics ----------------*/
 /** Transitive topic-cycle prevention requires a database operation/constraint. */
@@ -150,8 +141,7 @@ export const Pattern = dryv
   .description("Stable identity for a reusable, reviewed pattern definition.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("patterns"),
+    storage: dryv.storage("patterns"),
   });
 /*---------------- End reference.patterns ----------------*/
 
@@ -172,17 +162,15 @@ export const PatternVersion = dryv
   .description("Immutable, reviewed release of a pattern; Engine owns execution state.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("pattern_versions")
-      .indexes(
-        {
-          fields: ["pattern_id", "edition"],
-          unique: true,
-        },
-        {
-          fields: ["file_version_id"],
-        },
-      ),
+    storage: dryv.storage("pattern_versions").indexes(
+      {
+        fields: ["pattern_id", "edition"],
+        unique: true,
+      },
+      {
+        fields: ["file_version_id"],
+      },
+    ),
   });
 /** FK gap: Main review composition has the target; keep the active Operations vocabulary decoupled. */
 /*---------------- End reference.pattern_versions ----------------*/
@@ -210,9 +198,9 @@ export const PatternBinding = dryv
       }),
     /** Existing proposal target and role need reconciliation with the Reference-owned Legal basis link. */
     provision_id: dryv.field(sharedProperties.Id).optional().nullable(),
-    /** Inclusive lower date; Dryv has no native daterange storage property. */
+    /** Start of the window, inclusive. */
     effective_from: dryv.field(sharedProperties.CalendarDate),
-    /** Exclusive upper date; null means no known end. */
+    /** End of the window, exclusive; null means no known end. */
     effective_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
   })
   .extends(baseSchemas.Entity)
@@ -223,6 +211,13 @@ export const PatternBinding = dryv
   .facets({
     storage: dryv
       .storage("pattern_bindings")
+      // No two bindings of the same release and scope may overlap in time. Null scope values (for
+      // example no country) compare equal, and a null `effective_until` is an open window.
+      .noOverlap("NoOverlappingBindings", {
+        scope: ["version_id", "country_id", "unit_id", "provision_id"],
+        from: "effective_from",
+        until: "effective_until",
+      })
       .indexes(
         {
           fields: ["version_id", "country_id", "unit_id", "effective_from"],
@@ -241,8 +236,7 @@ export const PatternBinding = dryv
  * Open relationships: Geography has not yet authored geography.units, Filesystem has not authored
  * filesystem.file_versions, and the Reference-owned Legal bridge is unresolved. Keep the typed IDs;
  * ensure country_id and unit_id identify compatible scopes; do not invent a Legal proxy or claim
- * these cross-schema FKs are enforced. The SQL pack must preserve effective interval ordering and
- * uniqueness semantics for nullable scope bindings before this contract is generation-ready.
+ * these cross-schema FKs are enforced.
  */
 /*---------------- End reference.pattern_bindings ----------------*/
 
@@ -266,17 +260,15 @@ export const PatternDependency = dryv
   .description("Pinned dependency between two Reference pattern releases.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("pattern_dependencies")
-      .indexes(
-        {
-          fields: ["version_id", "requires_id"],
-          unique: true,
-        },
-        {
-          fields: ["requires_id"],
-        },
-      ),
+    storage: dryv.storage("pattern_dependencies").indexes(
+      {
+        fields: ["version_id", "requires_id"],
+        unique: true,
+      },
+      {
+        fields: ["requires_id"],
+      },
+    ),
   });
 /** Acyclicity beyond self-reference requires a transaction-level database constraint or operation. */
 /*---------------- End reference.pattern_dependencies ----------------*/
@@ -315,16 +307,14 @@ export const ValueRelation = dryv
   .description("Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("value_relations")
-      .indexes(
-        {
-          fields: ["source_value_id", "relation_kind", "valid_from"],
-        },
-        {
-          fields: ["target_value_id", "relation_kind"],
-        },
-      ),
+    storage: dryv.storage("value_relations").indexes(
+      {
+        fields: ["source_value_id", "relation_kind", "valid_from"],
+      },
+      {
+        fields: ["target_value_id", "relation_kind"],
+      },
+    ),
   });
 
 export const LegalBasisLink = dryv
@@ -357,15 +347,13 @@ export const LegalBasisLink = dryv
   .description("One reviewed legal support assertion for an exact provision version, role, citation and effective period.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("legal_basis_links")
-      .indexes(
-        {
-          fields: ["provision_version_id"],
-        },
-        { fields: ["basis_role_id"] },
-        { fields: ["citation_id"] },
-      ),
+    storage: dryv.storage("legal_basis_links").indexes(
+      {
+        fields: ["provision_version_id"],
+      },
+      { fields: ["basis_role_id"] },
+      { fields: ["citation_id"] },
+    ),
   });
 /*---------------- End reference.legal_basis_links ----------------*/
 
@@ -388,17 +376,15 @@ export const GeographyChangeLegalBasis = dryv
   .description("Typed legal support for a geographic change; role distinctions live on the linked basis assertion.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("geography_change_legal_bases")
-      .indexes(
-        {
-          fields: ["change_id", "legal_basis_id"],
-          unique: true,
-        },
-        {
-          fields: ["legal_basis_id"],
-        },
-      ),
+    storage: dryv.storage("geography_change_legal_bases").indexes(
+      {
+        fields: ["change_id", "legal_basis_id"],
+        unique: true,
+      },
+      {
+        fields: ["legal_basis_id"],
+      },
+    ),
   });
 /*---------------- End reference.geography_change_legal_bases ----------------*/
 
@@ -421,17 +407,15 @@ export const OfficialEntityLegalBasis = dryv
   .description("Typed legal support for an official organization identity.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("official_entity_legal_bases")
-      .indexes(
-        {
-          fields: ["entity_id", "legal_basis_id"],
-          unique: true,
-        },
-        {
-          fields: ["legal_basis_id"],
-        },
-      ),
+    storage: dryv.storage("official_entity_legal_bases").indexes(
+      {
+        fields: ["entity_id", "legal_basis_id"],
+        unique: true,
+      },
+      {
+        fields: ["legal_basis_id"],
+      },
+    ),
   });
 /*---------------- End reference.official_entity_legal_bases ----------------*/
 

@@ -1,5 +1,5 @@
 ---
-{id: TSK-0826E5C938A4,name: Add a constraint construct for overlapping windows and nullable-scope uniqueness,type: task,status: planned,priority: medium,created_at: 2026-11-13T07:26:44.572Z,updated_at: 2026-11-13T07:26:44.572Z,order: 3072}
+{id: TSK-0826E5C938A4,name: Add a constraint construct for overlapping windows and nullable-scope uniqueness,type: task,status: in-progress,priority: medium,created_at: 2026-11-13T07:26:44.572Z,updated_at: 2026-11-13T07:28:30.319Z,order: 3072,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-13T07:28:30.319Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-0826E5C938A4/1794554910320-start,started_at: 2026-11-13T07:28:30.789Z}]}}}
 ---
 
 # Add a constraint construct for overlapping windows and nullable-scope uniqueness
@@ -17,12 +17,18 @@ PatternBinding needs effective windows that cannot overlap for the same scope, a
 
 ## Acceptance checklist
 
-- [ ] Add schema.constraint(name, spec) to the author with an excludeOverlap and a nullable-aware scope option.
-- [ ] Add the matching IR contract and validation in the Python engine.
-- [ ] Lower it in the rust-sql pack to an exclusion constraint, reporting unsupported targets.
-- [ ] Declare the PatternBinding window rule in reference.ts and delete the related comments.
-- [ ] Run formatting and typechecks only; report to the owner.
+- [x] Add schema.constraint(name, spec) to the author with an excludeOverlap and a nullable-aware scope option.
+- [x] Add the matching IR contract and validation in the Python engine.
+- [x] Lower it in the rust-sql pack to an exclusion constraint, reporting unsupported targets.
+- [x] Declare the PatternBinding window rule in reference.ts and delete the related comments.
+- [x] Run formatting and typechecks only; report to the owner.
 
 ## Notes
 
 Stop after this task and report to the owner before starting the next one. Keep verification light: formatting and typechecks only.
+
+## Comments
+
+### 2026-11-13T07:31:49.143Z · PETER IRUNGU
+
+Added storage constraint no-overlap end to end (author .noOverlap, compiler mapping, Python contract/validation/context projection, rust-sql EXCLUDE USING gist with coalesce sentinels for nullable scope, btree_gist extension). Applied to PatternBinding. Verified: compile emits no-overlap; engine contract validates. Not verified: generated SQL / PostgreSQL execution. Nullable scope sentinels support uuid, text, integer only.

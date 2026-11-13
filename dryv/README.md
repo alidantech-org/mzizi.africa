@@ -56,6 +56,13 @@ The local Dryv checkout is used instead of the published packages (they are out 
 
 Every group sets a storage namespace (a PostgreSQL schema) and every entity a short plural table name: `geo.units`, not `geo_units` in `public`. The rule and the full map are in `.docs/rules/database-naming.md`, and the contract audit enforces it (namespace present, never `public`, singular one-word schema, table not prefixed with its schema, at most one underscore, unique per schema). Audit `targetKind` values are the schema-qualified names (`geo.units`), exported by `access:export`. TypeORM creates enum types before a table's schema, so schemas must exist before `synchronize`; `synchronizeDomainSchemas` (api `src/database/scratch-database.ts`) does that for dev and tests, and the database engine must do the same.
 
+## Local Dryv author: types versus runtime
+
+`node_modules/@dryvcode/author` and `compiler` are symlinks (`bun run link`) into the Dryv checkout at `DRYV_HOME`. Two different things read them:
+
+- **Editor and `tsc`** resolve `@dryvcode/author` to the Dryv *source* through the `paths` entry in `tsconfig.json`, so authoring-API changes show up immediately. That entry is an absolute path to this machine's Dryv checkout; change it if yours lives elsewhere.
+- **`dryv-ts compile`, `doctor` and generation** run the package's built `dist/`. After changing the Dryv author, rebuild it (`bun run build` in `source/plugins/authoring/typescript/author`) before compiling, or the contracts compile against old behaviour.
+
 ## Generator limits and workarounds
 
 Found while generating the full model; the contract audit enforces the first three.
