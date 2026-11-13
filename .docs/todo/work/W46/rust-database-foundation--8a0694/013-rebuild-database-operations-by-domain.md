@@ -23,3 +23,7 @@ The existing database app mixes auth, reference and filesystem operations and de
 ### 2026-11-13T18:04:04.636Z · PETER IRUNGU
 
 Database authoring typechecks, alias import guard, both store audits, canonical IR validation and synthetic fixture checks passed. Generated 437 Axum and Python artifacts in scratch after qualifying Python model names by group to avoid stock pack collisions. Generated Python imports and paging model defaults smoke-tested. Strict Clippy reports the stock Axum pack empty-policy match. Initial SQL and regenerated model schema differ, and the generated runtime does not honor paging defaults or snake_case physical names. No Mzizi database was migrated or switched. Full product API compilation remains blocked by missing archive dependencies already referenced before this work.
+
+### 2026-11-13T18:06:12.505Z · PETER IRUNGU
+
+Readability follow-up: use the full dryv namespace import in the auth, filesystem and reference contract modules. Database checks passed.
