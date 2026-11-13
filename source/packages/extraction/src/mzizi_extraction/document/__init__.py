@@ -1,6 +1,7 @@
 """Structured documents: headings, paragraphs with bold/italic, lists, tables and figures, rendered to Markdown."""
 
 from mzizi_extraction.document.boilerplate import Boilerplate, learn_boilerplate
+from mzizi_extraction.document.chunks import Chunk, chunk_markdown
 from mzizi_extraction.document.html_backend import extract_html_document
 from mzizi_extraction.document.markdown import render_markdown, table_csv
 from mzizi_extraction.document.models import (
@@ -23,6 +24,7 @@ __all__ = [
     "Asset",
     "Block",
     "Boilerplate",
+    "Chunk",
     "DocumentOutput",
     "DocumentProfile",
     "DocumentWire",
@@ -34,6 +36,7 @@ __all__ = [
     "Paragraph",
     "Span",
     "TableBlock",
+    "chunk_markdown",
     "encode_document",
     "extract_html_document",
     "extract_pdf_document",

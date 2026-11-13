@@ -71,10 +71,10 @@ class Prompter:
                 f"--{arg.name}: {raw!r} is not an existing {'folder' if wanted_dir else 'file'}",
                 hint="did you mean: " + ", ".join(near) if near else None,
             )
-        if not self.allow_outside and not self.workspace.contains(path) and not self._confirm_outside(path):
+        if not self.allow_outside and not self.workspace.trusted(path) and not self._confirm_outside(path):
             raise CliError(
-                f"{path} is outside {self.workspace.inputs}",
-                hint="copy it into the inputs folder or pass --allow-outside-inputs",
+                f"{path} is outside {self.workspace.root}",
+                hint="copy it into .local/dev/inputs or pass --allow-outside-inputs",
             )
         return path
 
@@ -82,9 +82,7 @@ class Prompter:
         if not self.interactive:
             return False
         return bool(
-            _answer(
-                questionary.confirm(f"{path} is outside the dev inputs folder. Use it anyway?", default=False).ask()
-            )
+            _answer(questionary.confirm(f"{path} is outside the dev workspace. Use it anyway?", default=False).ask())
         )
 
     def _expand(self, raw: str) -> Path:

@@ -11,12 +11,12 @@ from mzizi_engine.jsonvalue import Payload
 from mzizi_engine.web.browser.adapter import check_profile
 from mzizi_engine.web.browser.models import BrowserConfig
 from mzizi_engine.web.identity import user_agent
-from mzizi_engine.web.requests import Request, Workspace
+from mzizi_engine.web.requests import Workspace
 
 DEFAULT_PROFILE = "browser-profile"
 
 
-def capability[R: Request](model: type[R], run: Callable[[R], BaseModel]) -> Callable[[Payload], Payload]:
+def capability[R: BaseModel](model: type[R], run: Callable[[R], BaseModel]) -> Callable[[Payload], Payload]:
     """Wraps a typed function as an engine capability: the payload is parsed once, here, and the result is serialised."""
 
     def handler(payload: Payload) -> Payload:

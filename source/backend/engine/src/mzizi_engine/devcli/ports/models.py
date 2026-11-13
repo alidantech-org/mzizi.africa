@@ -29,6 +29,7 @@ class Requirement:
     kind: RequirementKind
     names: tuple[str, ...]
     hint: str
+    default: str = ""  # used when the setting is unset (a conventional local address)
 
     @property
     def label(self) -> str:
@@ -82,8 +83,8 @@ def env(name: str, hint: str) -> Requirement:
     return Requirement(RequirementKind.ENV, (name,), hint)
 
 
-def service(env_name: str, hint: str) -> Requirement:
-    return Requirement(RequirementKind.SERVICE, (env_name,), hint)
+def service(env_name: str, hint: str, default: str = "") -> Requirement:
+    return Requirement(RequirementKind.SERVICE, (env_name,), hint, default)
 
 
 def declare(
@@ -107,7 +108,7 @@ def check_requirement(requirement: Requirement, *, probe: bool = False) -> Requi
             present = bool(os.environ.get(requirement.names[0]))
             return RequirementCheck(requirement, present, "set" if present else "not set")
         case RequirementKind.SERVICE:
-            value = os.environ.get(requirement.names[0])
+            value = os.environ.get(requirement.names[0]) or requirement.default
             if not value:
                 return RequirementCheck(requirement, False, f"{requirement.names[0]} not set")
             if not probe:

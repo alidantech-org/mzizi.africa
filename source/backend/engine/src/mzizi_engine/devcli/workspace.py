@@ -110,6 +110,10 @@ class Workspace:
         resolved = path.resolve()
         return self.inputs.resolve() in resolved.parents
 
+    def trusted(self, path: Path) -> bool:
+        """Inside the dev workspace (inputs, outputs, manifests): files the CLI itself manages."""
+        return self.root.resolve() in path.resolve().parents
+
     def remember_url(self, url: str) -> None:
         self.recent_urls_file.parent.mkdir(parents=True, exist_ok=True)
         known = self.recent_urls()
@@ -155,8 +159,8 @@ class Workspace:
 
     def run_folder(self, name: str) -> Path | None:
         if name == "last":
-            runs = self.list_runs(1)
-            return self.outputs / runs[0].run_id if runs else None
+            finished = [r for r in self.list_runs(50) if r.status == "ok"]
+            return self.outputs / finished[0].run_id if finished else None
         candidate = self.outputs / name
         return candidate if candidate.is_dir() else None
 

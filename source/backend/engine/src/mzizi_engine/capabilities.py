@@ -211,6 +211,9 @@ def build_default_registry() -> CapabilityRegistry:
     from mzizi_engine.web.register import register_web
 
     register_web(reg)
+    from mzizi_engine.devservices.register import register_devservices
+
+    register_devservices(reg)
     for kind, fn, desc, cpu in [
         ("pdf", extract_pdf, "PDF text, tables and OCR-needed report", True),
         ("geojson", extract_geojson, "GeoJSON features with geometry diagnostics", True),

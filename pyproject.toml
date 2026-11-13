@@ -83,7 +83,7 @@ warn_required_dynamic_aliases = true
 
 [[tool.mypy.overrides]]
 # Published without type information.
-module = ["pypdfium2.*", "pdfplumber.*", "playwright.*"]
+module = ["pypdfium2.*", "pdfplumber.*", "playwright.*", "patchright.*", "fastembed.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

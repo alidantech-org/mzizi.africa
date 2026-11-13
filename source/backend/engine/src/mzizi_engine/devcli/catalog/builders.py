@@ -109,3 +109,17 @@ def resume_payload(values: ArgValues, ws: Workspace) -> Payload:
             adapter=summary.adapter,
         )
     return payload
+
+
+def run_source_payload(values: ArgValues, ws: Workspace) -> Payload:
+    """`--run` is a run name (or `last`) in the dev outputs, or the path of any run folder."""
+    raw = values.get("run")
+    if not isinstance(raw, str):
+        raise CliError("--run is required")
+    direct = Path(raw).expanduser()
+    folder = direct.resolve() if direct.is_dir() else ws.run_folder(raw)
+    if folder is None:
+        raise CliError(f"no run folder {raw!r}", hint="see `mzizi dev runs`")
+    payload = passthrough({k: v for k, v in values.items() if k != "run"}, ws)
+    payload["source"] = str(folder)
+    return payload

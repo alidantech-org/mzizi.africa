@@ -37,6 +37,8 @@ export MZIZI_USER_AGENT='Name/1.0 (+https://your.site/bot; you@your.site)'   # r
 | `browser` | `open`, `snapshot`, `navigate`, `click`, `fill`, `compare` with optional `--adapter playwright\|patchright` |
 | `scrape` | `url URL --manifest MODULE`, `file HTML --manifest MODULE`, `select HTML --css SELECTOR`, `links` |
 | `search` | `web QUERY --engine brave\|google` |
+| `mongo` | `test`, `stats`, `load --run`, `find COLLECTION`, `drop-dev` (dev MongoDB, database `mzizi_dev`) |
+| `vector` | `test`, `status`, `index --run`, `search QUERY`, `classify FILE --labels`, `drop-dev` (dev Qdrant) |
 | `manifest`, `capability`, `dev` | seed/structure checks, registry inspection, workspace |
 
 `web crawl` options include `--max-pages --max-depth --delay --render http|browser --adapter playwright|patchright --on-block backoff|skip|stop|pause --allowed-hosts --allowed-paths --excluded-paths --include-subdomains --no-sitemap --no-markdown --inspect-resources --jsonl --headed`. Brave uses `BRAVE_API_KEY`. Google Custom Search uses `GOOGLE_CSE_API_KEY` and `GOOGLE_CSE_ID`.

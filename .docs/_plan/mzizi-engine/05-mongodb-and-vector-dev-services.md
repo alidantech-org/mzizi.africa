@@ -8,6 +8,8 @@ extra: {status: planning_only, implementation_approved: false}
 
 # 05 — MongoDB and vector database as dev services
 
+> **Status:** implemented as dev-only sandboxes in `source/backend/engine/src/mzizi_engine/devservices/`. See the engine README for commands and settings. Defaults: MongoDB `mongodb://127.0.0.1:27017` (database `mzizi_dev`), Qdrant `http://127.0.0.1:6333`. Collections are per embedding model; the chunker is `mzizi_extraction.document.chunk_markdown`. Still planned: a docker-compose helper (`mzizi dev services`).
+
 ## Position and caveat
 
 The accepted architecture keeps relational identity in PostgreSQL, bytes in S3-backed `filesystem`, and treats a vector index as a replaceable derivative whose service count "may be **zero**" ([07](../source-redesign/07-storage-and-vector-options.md)). No document that exists approves MongoDB. Therefore this plan treats both services as **dev-only sandboxes**, reachable only through the CLI and `dev_only` capabilities, used to learn whether they earn a place. A decision to adopt either is separate and follows the benchmark gates in 07 and [13](../source-redesign/13-benchmarks-and-research-questions.md).
