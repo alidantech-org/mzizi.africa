@@ -72,12 +72,12 @@ def build_lines(words: list[Word], gutter: Gutter | None) -> list[tuple[Line, in
     return result
 
 
-def reading_order(items: list[tuple[float, float, int, object]]) -> list[tuple[int, object]]:
+def reading_order[T](items: list[tuple[float, float, int, T]]) -> list[tuple[int, T]]:
     """Orders `(top, bottom, column, payload)` items: full-width items split the page into bands; each band reads the
     left column, then the right. Returns `(group, payload)`; items of one group may merge into a paragraph."""
     ordered = sorted(items, key=lambda i: (i[0], i[2]))
-    output: list[tuple[int, object]] = []
-    band: list[tuple[float, float, int, object]] = []
+    output: list[tuple[int, T]] = []
+    band: list[tuple[float, float, int, T]] = []
     group = 0
 
     def flush() -> None:

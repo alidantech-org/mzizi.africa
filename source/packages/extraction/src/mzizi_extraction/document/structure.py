@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from statistics import median
+from typing import Literal
 
 from mzizi_extraction.document.lines import Line, merge_spans
 from mzizi_extraction.document.models import BBox, Block, Heading, ListItem, Paragraph, Span
-from mzizi_extraction.text.patterns import list_marker
+from mzizi_extraction.text.patterns import ListMarker, list_marker
 
 HEADING_RATIO = 1.12
 MAX_SIZE_LEVELS = 4
@@ -54,7 +55,7 @@ def _size_level(size: float, typ: Typography) -> int | None:
 
 @dataclass
 class _Pending:
-    kind: str
+    kind: Literal["heading", "list", "paragraph"]
     spans: list[Span]
     x0: float
     x1: float
@@ -150,19 +151,24 @@ def _heading_level(line: Line, prev: Line | None, following: Line | None, typ: T
     return min(len(typ.levels) + 1, 6) if before and after else None
 
 
-def _start(line: Line, level: int | None, marker: object) -> _Pending:
-    base = {"x0": line.x0, "x1": line.x1, "top": line.top, "bottom": line.bottom, "size": line.size}
+def _start(line: Line, level: int | None, marker: ListMarker | None) -> _Pending:
+    def pending(kind: Literal["heading", "list", "paragraph"], spans: list[Span]) -> _Pending:
+        return _Pending(kind, spans, line.x0, line.x1, line.top, line.bottom, line.size)
+
     if level:
-        return _Pending(kind="heading", spans=_unbold(list(line.spans)), level=level, **base)
-    found = list_marker(line.text) if marker is not None else None
-    if found is not None:
-        return _Pending(
-            kind="list", spans=_strip_marker(line.spans, found.rest), ordered=found.ordered, marker=found.marker, **base
-        )
-    return _Pending(kind="paragraph", spans=list(line.spans), **base)
+        made = pending("heading", _unbold(list(line.spans)))
+        made.level = level
+        return made
+    if marker is not None:
+        made = pending("list", _strip_marker(line.spans, marker.rest))
+        made.ordered, made.marker = marker.ordered, marker.marker
+        return made
+    return pending("paragraph", list(line.spans))
 
 
-def _continues(cur: _Pending, line: Line, gap: float, level: int | None, marker: object, typ: Typography) -> bool:
+def _continues(
+    cur: _Pending, line: Line, gap: float, level: int | None, marker: ListMarker | None, typ: Typography
+) -> bool:
     if cur.kind == "heading":
         return level == cur.level and gap <= 1.0 * line.size
     if level is not None or marker is not None:

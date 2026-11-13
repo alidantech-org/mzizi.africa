@@ -6,7 +6,7 @@ tags: [engine, cli, commands, plan]
 extra: {status: planning_only, implementation_approved: false}
 ---
 
-# 01 — Proposed `mzizi` CLI
+# 01 — `mzizi` CLI (proposed names; the implemented groups are listed in `source/backend/engine/README.md`)
 
 Today the engine has `mzizi-engine serve|capabilities|check|filesystem`, plus `mzizi-manifest check|lock|report|validate-structure`. This plan adds a `mzizi` console script (the engine's `cli.py` extended; `mzizi-engine` remains an alias) grouped by function. Invoke through the root runner (`uv run mzizi …`).
 

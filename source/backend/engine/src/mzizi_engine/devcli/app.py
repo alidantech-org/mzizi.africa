@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import inspect
 import json
+import os
 import sys
-from collections.abc import Callable
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Protocol
 
 import questionary
 import typer
@@ -23,6 +23,7 @@ from mzizi_engine.devcli.runner import Session, run_command, status_table
 from mzizi_engine.devcli.theme import configure_logging, err, out
 from mzizi_engine.devcli.types import ArgValues, ExitCode
 from mzizi_engine.devcli.workspace import Workspace
+from mzizi_engine.web.search.providers import required_settings
 
 app = typer.Typer(
     name="mzizi",
@@ -65,15 +66,21 @@ def _py_type(arg: Arg) -> type:
     return int if arg.kind is ArgKind.INT else bool if arg.kind is ArgKind.FLAG else str
 
 
-def _make_function(command: Command) -> Callable[..., None]:
+class CommandFunction(Protocol):
+    def __call__(self, ctx: typer.Context, **kwargs: object) -> None: ...
+
+
+def _make_function(command: Command) -> CommandFunction:
     parameters = [inspect.Parameter("ctx", inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=typer.Context)]
     annotations: dict[str, object] = {"ctx": typer.Context}
     for arg in command.args:
         name = arg.name.replace("-", "_")
+        annotation: object
+        default: object
         help_text = arg.help + (f" ({', '.join(arg.choices)})" if arg.choices else "")
         if arg.kind is ArgKind.FLAG:
             annotation = Annotated[bool, typer.Option(f"--{arg.name}", help=help_text)]
-            default: object = False
+            default = False
         elif arg.positional:
             annotation = Annotated[_py_type(arg) | None, typer.Argument(help=help_text, show_default=False)]
             default = None
@@ -165,6 +172,21 @@ def doctor(
             "" if check.satisfied else key[2],
         )
     out.print(table)
+    out.print(_providers_table())
+
+
+def _providers_table() -> Table:
+    """Search provider configuration (settings are checked by name only; no key is ever printed)."""
+    table = Table(title="Search providers", header_style="accent")
+    for column in ("Provider", "State", "Settings"):
+        table.add_column(column, overflow="fold")
+    for provider in ("brave", "google"):
+        names = required_settings(provider)
+        missing = [n for n in names if not os.environ.get(n)]
+        state = "[ok]configured[/ok]" if not missing else f"[warn]missing {', '.join(missing)}[/warn]"
+        table.add_row(provider, state, ", ".join(names))
+    table.add_row("duckduckgo", "[dim]not available[/dim]", "no official search API")
+    return table
 
 
 capability = typer.Typer(help="Inspect and call registered engine capabilities directly", no_args_is_help=True)

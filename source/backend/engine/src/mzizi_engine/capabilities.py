@@ -11,7 +11,8 @@ import base64
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+
+from mzizi_engine.jsonvalue import Payload
 
 
 @dataclass(frozen=True)
@@ -20,12 +21,12 @@ class Capability:
     version: str
     package: str
     description: str
-    handler: Callable[[dict], dict]
-    input_schema: dict
+    handler: Callable[[Payload], Payload]
+    input_schema: Payload
     cpu_bound: bool = False
     concurrency: int | None = None
 
-    def describe(self) -> dict[str, Any]:
+    def describe(self) -> Payload:
         return {
             "name": self.name,
             "version": self.version,
@@ -73,12 +74,26 @@ def _bytes_input(payload: dict) -> bytes:
     return target.read_bytes()
 
 
-_SOURCE = {
+_SOURCE: Payload = {
     "type": "object",
     "properties": {"content_base64": {"type": "string"}, "path": {"type": "string"}, "profile": {"type": "string"}},
     "anyOf": [{"required": ["content_base64"]}, {"required": ["path"]}],
 }
 
+
+_MARKDOWN_SCHEMA: Payload = {
+    "type": "object",
+    "properties": {
+        "content_base64": {"type": "string"},
+        "path": {"type": "string"},
+        "profile": {"type": "string"},
+        "ocr": {"enum": ["auto", "off", "force"]},
+        "languages": {"type": "string"},
+        "page_renders": {"type": "boolean"},
+        "caption_labels": {"type": "array", "items": {"type": "string"}},
+    },
+    "anyOf": [{"required": ["content_base64"]}, {"required": ["path"]}],
+}
 
 # Feature-name property keys, until profiles carry them from manifests (tracked in the patterns task).
 _NAME_KEYS = ("shapeName", "name", "NAME", "NAME_1", "NAME_2", "ADM1_EN", "ADM2_EN", "COUNTY", "county")
@@ -193,6 +208,9 @@ def process_info(payload: dict) -> dict:
 
 def build_default_registry() -> CapabilityRegistry:
     reg = CapabilityRegistry()
+    from mzizi_engine.web.register import register_web
+
+    register_web(reg)
     for kind, fn, desc, cpu in [
         ("pdf", extract_pdf, "PDF text, tables and OCR-needed report", True),
         ("geojson", extract_geojson, "GeoJSON features with geometry diagnostics", True),
@@ -207,16 +225,7 @@ def build_default_registry() -> CapabilityRegistry:
             "mzizi-extraction",
             "PDF to structured Markdown: headings, bold/italic, lists, tables, figures, per-page OCR",
             extract_markdown,
-            {
-                **_SOURCE,
-                "properties": {
-                    **_SOURCE["properties"],
-                    "ocr": {"enum": ["auto", "off", "force"]},
-                    "languages": {"type": "string"},
-                    "page_renders": {"type": "boolean"},
-                    "caption_labels": {"type": "array", "items": {"type": "string"}},
-                },
-            },
+            _MARKDOWN_SCHEMA,
             cpu_bound=True,
         )
     )

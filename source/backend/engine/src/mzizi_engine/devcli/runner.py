@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import time
 from dataclasses import dataclass
 from pathlib import Path
 
+from rich.logging import RichHandler
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
@@ -21,6 +23,9 @@ from mzizi_engine.devcli.prompts import Prompter
 from mzizi_engine.devcli.theme import err, log, out
 from mzizi_engine.devcli.types import ArgValues, ExitCode
 from mzizi_engine.devcli.workspace import RunStatus, Workspace
+from mzizi_engine.jsonvalue import Payload
+from mzizi_engine.web.browser.adapter import BrowserUnavailable
+from mzizi_fetch import IdentityMissing
 
 _PREVIEW_LINES = 60
 
@@ -49,7 +54,15 @@ def run_command(command: Command, given: ArgValues, session: Session) -> ExitCod
         if status is not None:
             _require_ready(command, status)
         values = _resolve(command, given, session)
-        payload = (command.builder or _empty)(values, session.workspace)
+        payload: Payload = dict((command.builder or _empty)(values, session.workspace))
+        if command.run_folder:
+            payload.update(
+                out_dir=str(run.folder),
+                downloads_dir=str(session.workspace.downloads),
+                profile_dir=str(session.workspace.browser_profile),
+            )
+            if not session.json_output:
+                _show_progress()
         result = _call(command, registry, payload, session)
         if command.artifacts:
             summary = write_document_artifacts(run.folder, result)
@@ -71,6 +84,18 @@ def run_command(command: Command, given: ArgValues, session: Session) -> ExitCod
         _render_problem("Needs setup", exc, "warn")
         log.warning("%s: unavailable: %s", command.path, exc.message)
         return exc.exit_code
+    except (IdentityMissing, BrowserUnavailable) as exc:
+        outcome, message = "unavailable", str(exc)
+        _render_problem(
+            "Needs setup",
+            Unavailable(
+                str(exc),
+                hint="live requests need MZIZI_USER_AGENT with a monitored contact, e.g. export MZIZI_USER_AGENT='Name/1.0 (+https://your.site/bot; you@your.site)'; the browser needs `uv sync --all-packages --extra browser` and Chrome",
+            ),
+            "warn",
+        )
+        log.warning("%s: %s", command.path, exc)
+        return ExitCode.UNAVAILABLE
     except CliError as exc:
         outcome = (
             "cancelled"
@@ -90,7 +115,13 @@ def run_command(command: Command, given: ArgValues, session: Session) -> ExitCod
         run.finish(outcome, message)
 
 
-def _empty(values: ArgValues, ws: Workspace) -> dict[str, str]:
+def _show_progress() -> None:
+    for handler in log.handlers:
+        if isinstance(handler, RichHandler):
+            handler.setLevel(logging.INFO)
+
+
+def _empty(values: ArgValues, ws: Workspace) -> Payload:
     return {}
 
 
@@ -114,7 +145,7 @@ def _resolve(command: Command, given: ArgValues, session: Session) -> ArgValues:
     return values
 
 
-def _call(command: Command, registry: CapabilityRegistry, payload: dict[str, object], session: Session) -> object:
+def _call(command: Command, registry: CapabilityRegistry, payload: Payload, session: Session) -> Payload:
     if command.port is None:
         raise CliError(f"{command.path} has no capability")
     os.environ["ENGINE_INPUT_ROOT"] = str(session.workspace.inputs)

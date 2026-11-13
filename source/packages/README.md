@@ -8,7 +8,7 @@
 | [`filesystem/`](filesystem/README.md) | `mzizi-filesystem` | Object access, hashing, deduplication, artifact metadata, uploads and seed publication. |
 | [`manifest/`](manifest/README.md) | `mzizi-manifest` | Seed/folder manifest handling, lock generation and versioned site-structure validation. |
 | [`scraping/`](scraping/README.md) | `mzizi-scraping` | Deterministic selector, field, transform, link-discovery and challenge-detection primitives driven by manifests. |
-| [`fetch/`](fetch/README.md) | `mzizi-fetch` | Identified HTTP/API fetching, rate limits and stop rules. Gate and challenge checks are injected by the caller. |
+| [`fetch/`](fetch/README.md) | `mzizi-fetch` | Identified HTTP/API fetching, rate limits and stop rules (gate and challenge checks injected), plus the web core: URL handling, source and block policy, an HTTP client and a safe streaming downloader. |
 | [`database_client/`](database_client/README.md) | `mzizi-database-client` | Typed async HTTP client for the Rust database service's named operations. No SQL, no database credential; hand-written until the official Dryv client pack loads against the running engine. |
 
 ## Workspace status

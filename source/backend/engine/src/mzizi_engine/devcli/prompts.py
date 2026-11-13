@@ -161,11 +161,13 @@ class Prompter:
 def _complete(message: str, choices: list[str], *, filesystem: bool = False) -> str | None:
     """Autocomplete over known choices; with none (questionary refuses an empty list), fall back to lazy path or free text."""
     if choices:
-        return questionary.autocomplete(message, choices=choices, match_middle=True).ask()
-    if filesystem:
+        answer: object = questionary.autocomplete(message, choices=choices, match_middle=True).ask()
+    elif filesystem:
         err.print("[dim]Nothing matching found in the dev folders or here; type a path (Tab completes).[/dim]")
-        return questionary.path(message).ask()
-    return questionary.text(message).ask()
+        answer = questionary.path(message).ask()
+    else:
+        answer = questionary.text(message).ask()
+    return answer if isinstance(answer, str) else None
 
 
 def _url_problem(value: str) -> str | None:

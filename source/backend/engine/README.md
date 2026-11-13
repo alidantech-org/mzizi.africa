@@ -19,19 +19,30 @@ The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (develo
 
 ## Developer CLI (`mzizi`)
 
-`uv run mzizi` runs capabilities on local files and URLs and shows the result; it holds no extraction, scraping or fetching logic, only payload building over registered capability handlers (`mzizi_engine.devcli`). Plan: [`.docs/_plan/mzizi-engine/`](../../../.docs/_plan/mzizi-engine/README.md).
+`uv run mzizi` runs capabilities on local files and URLs and shows the result; it holds no extraction, scraping or fetching logic, only typed payload building over registered capability handlers (`mzizi_engine.devcli`). Run it with no arguments for an interactive menu; missing values are asked for on a terminal (bounded file search, recent-URL completion) and are a usage error otherwise. Plan: [`.docs/_plan/mzizi-engine/`](../../../.docs/_plan/mzizi-engine/README.md); runtime design: [`WEB_ACQUISITION_RUNTIME.md`](../../../.docs/design/acquisition/WEB_ACQUISITION_RUNTIME.md).
 
 ```bash
-uv run mzizi                          # interactive: pick a group and command, get asked for missing values
-uv run mzizi dev init                 # create the git-ignored .local/dev/{inputs,outputs,...} workspace
-uv run mzizi status [--group fetch] [--probe]   # every port: ready / needs setup / not yet added, and why
-uv run mzizi doctor                   # tools, libraries and services the ports need
-uv run mzizi extract pdf budget.pdf   # inputs/ is searched; --json, --no-input, -v, --allow-outside-inputs are global
-uv run mzizi extract markdown report.pdf   # Markdown + assets/ figures + tables/*.csv + structure.json in the run folder; --ocr auto|off|force, --page-renders
-uv run mzizi scrape links page.html --base-url https://example.org
+uv run mzizi dev init                  # create the git-ignored .local/dev workspace
+uv run mzizi status [--group web]      # every port: ready / needs setup / not yet added, and why
+uv run mzizi doctor                    # tools, libraries, services and search-provider settings
+export MZIZI_USER_AGENT='Name/1.0 (+https://your.site/bot; you@your.site)'   # required for live requests
 ```
 
-Every planned command exists. A command whose capability is not registered prints why, logs it to `.local/dev/logs/mzizi.log`, records a run folder and exits **3**; missing tools or libraries exit **4**; a missing value with no terminal exits **2**. Registering a capability of the declared name in `capabilities.py` turns its command live (state derived from the registry in `devcli/ports.py`). Missing values are prompted on a terminal, with a bounded, time-limited file search (`devcli/pathsearch.py`) and recent-URL completion.
+| Group | Commands |
+|---|---|
+| `extract` | `pdf`, `markdown` (structured PDF to Markdown, figures, tables, per-page OCR), `csv`, `json`, `geojson` |
+| `web` | `links URL`, `robots`/`fetch robots URL`, `challenge`, `markdown URL`, `crawl URL`, `resume FOLDER`, `export FOLDER` |
+| `fetch` | `url`, `robots` |
+| `download` | `get URL`, `many FILE`, `status` |
+| `browser` | `open`, `snapshot`, `navigate`, `click`, `fill`, `compare` (`--render browser` on crawl and markdown) |
+| `search` | `web QUERY --engine brave\|google` |
+| `manifest`, `scrape links`, `capability`, `dev` | seed/structure checks, offline links, registry inspection, workspace |
+
+`web crawl` options: `--max-pages --max-depth --delay --render http|browser --on-block backoff|skip|stop|pause --allowed-hosts --allowed-paths --excluded-paths --include-subdomains --no-sitemap --no-markdown --inspect-resources --jsonl --headed`. Outputs are listed in the runtime design document. Brave needs `BRAVE_API_KEY`; Google needs `GOOGLE_CSE_API_KEY` and `GOOGLE_CSE_ID`. The browser needs `uv sync --all-packages --extra browser` and Chrome.
+
+Every planned command exists. A command whose capability is not registered prints why, logs it to `.local/dev/logs/mzizi.log`, records a run folder and exits **3**; a missing tool, library or setting exits **4**; a missing value with no terminal exits **2**. Registering a capability of the declared name turns its command live (state is derived from the registry in `devcli/ports/`).
+
+Tests: `uv run pytest source/backend/engine/tests` (the crawler, downloads and browser tests use a loopback site; the real-Chrome tests skip when Playwright or Chrome is missing).
 
 ## Initial API
 

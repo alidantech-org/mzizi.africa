@@ -1,0 +1,45 @@
+# Web vocabulary v1: classification data for URL kinds, tracking parameters, challenge markers and file signatures.
+# Read by mzizi-fetch (mzizi_fetch.web.vocabulary); shape: vocabulary.schema.json. Extend here, not in code.
+version: 1
+url_kinds:
+  image: [png, jpg, jpeg, gif, webp, svg, bmp, ico, tif, tiff, avif]
+  media: [mp3, mp4, m4a, wav, ogg, webm, mov, avi, mkv, flac]
+  document: [pdf, doc, docx, xls, xlsx, ppt, pptx, odt, ods, odp, rtf, txt, csv, tsv, epub]
+  data: [json, xml, geojson, kml, kmz, shp, parquet, sql]
+  archive: [zip, gz, tgz, tar, rar, 7z, bz2, iso]
+  program: [exe, msi, dmg, apk]
+media_tags: [video, audio, track]
+embed_tags: [embed, object, iframe]
+tracking_parameters: [utm_source, utm_medium, utm_campaign, utm_term, utm_content, fbclid, gclid, mc_cid, mc_eid]
+challenge_markers:
+  captcha: [captcha, g-recaptcha, h-captcha, cf-turnstile]
+  challenge: [cf-chl, "just a moment...", checking your browser, verify you are human, "attention required! | cloudflare"]
+  notice: [access denied, request blocked, you have been blocked, unusual traffic]
+file_signatures:
+  - {magic: "%PDF", name: pdf, group: document}
+  - {magic: "\u0089PNG", name: png, group: image}
+  - {magic: "ÿØÿ", name: jpg, group: image}
+  - {magic: "GIF8", name: gif, group: image}
+  - {magic: "PK\u0003\u0004", name: zip, group: archive}
+  - {magic: "\u001f\u008b", name: gzip, group: archive}
+  - {magic: "Rar!", name: rar, group: archive}
+  - {magic: "MZ", name: windows-executable, group: executable}
+  - {magic: "\u007fELF", name: elf-executable, group: executable}
+  - {magic: "#!", name: script, group: executable}
+  - {magic: "<!doc", name: html, group: web, text: true}
+  - {magic: "<html", name: html, group: web, text: true}
+zip_based_extensions: [docx, xlsx, pptx, odt, ods, odp, epub, apk, jar, zip]
+jpeg_extensions: [jpg, jpeg]
+risky_groups: [executable, archive]
+block_responses:
+  connection: retry
+  dns: skip
+  timeout: retry
+  http_401: human_review
+  http_403: skip
+  http_404: skip
+  http_429: back_off
+  http_5xx: back_off
+  captcha: human_review
+  challenge: human_review
+  block_notice: pause

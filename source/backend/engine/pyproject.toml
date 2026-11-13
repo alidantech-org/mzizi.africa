@@ -28,6 +28,7 @@ mzizi = "mzizi_engine.devcli.app:main"
 
 [project.optional-dependencies]
 browser = [
+    "patchright>=1.64.4",
     "playwright>=1.65.1",
 ]
 

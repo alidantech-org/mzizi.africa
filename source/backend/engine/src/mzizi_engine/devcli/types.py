@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from enum import Enum
 
-type JsonValue = str | int | float | bool | list[JsonValue] | dict[str, JsonValue] | None
-type Payload = dict[str, JsonValue]
 type ArgValue = str | int | bool | None
 type ArgValues = dict[str, ArgValue]
 

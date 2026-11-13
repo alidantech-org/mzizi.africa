@@ -48,8 +48,13 @@ def merge_spans(spans: list[Span]) -> tuple[Span, ...]:
     for span in spans:
         if not span.text:
             continue
-        if merged and merged[-1].bold == span.bold and merged[-1].italic == span.italic:
-            merged[-1] = Span(text=merged[-1].text + span.text, bold=span.bold, italic=span.italic)
+        if (
+            merged
+            and merged[-1].bold == span.bold
+            and merged[-1].italic == span.italic
+            and merged[-1].href == span.href
+        ):
+            merged[-1] = Span(text=merged[-1].text + span.text, bold=span.bold, italic=span.italic, href=span.href)
         else:
             merged.append(span)
     return tuple(merged)

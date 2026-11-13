@@ -16,26 +16,55 @@ from mzizi_extraction.document.models import (
 )
 
 
-def render_spans(spans: tuple[Span, ...]) -> str:
-    """Emphasis markers hug the text: surrounding spaces stay outside `**...**`."""
+def _wrap(marker: str, text: str) -> str:
+    """Markers hug the text; whitespace at the edges stays outside them."""
+    core = text.strip()
+    if not core:
+        return text
+    lead = text[: len(text) - len(text.lstrip())]
+    trail = text[len(text.rstrip()) :]
+    return f"{lead}{marker}{core}{marker}{trail}"
+
+
+def _bold_only(span: Span) -> str:
+    return _wrap("**", span.text) if span.bold else span.text
+
+
+def _emphasis(group: list[Span]) -> str:
+    """Italic runs wrap their bold parts (`*a **b** c*`); a span's own bold stays on that span."""
     parts: list[str] = []
-    for span in spans:
-        core = span.text.strip()
-        if not core:
-            parts.append(span.text)
+    index = 0
+    while index < len(group):
+        if not group[index].italic:
+            parts.append(_bold_only(group[index]))
+            index += 1
             continue
-        lead, trail = span.text[: len(span.text) - len(span.text.lstrip())], span.text[len(span.text.rstrip()) :]
-        marked = core
-        if span.bold and span.italic:
-            marked = f"***{core}***"
-        elif span.bold:
-            marked = f"**{core}**"
-        elif span.italic:
-            marked = f"*{core}*"
-        if span.href:
-            marked = f"[{marked}]({span.href})"
-        parts.append(f"{lead}{marked}{trail}")
-    return "".join(parts).strip()
+        end = index
+        while end < len(group) and group[end].italic:
+            end += 1
+        parts.append(_wrap("*", "".join(_bold_only(s) for s in group[index:end])))
+        index = end
+    return "".join(parts)
+
+
+def render_spans(spans: tuple[Span, ...]) -> str:
+    """Markdown for inline spans: one link per run of spans sharing a destination, emphasis nested inside it."""
+    out: list[str] = []
+    index = 0
+    while index < len(spans):
+        href = spans[index].href
+        end = index
+        while end < len(spans) and spans[end].href == href:
+            end += 1
+        inner = _emphasis(list(spans[index:end]))
+        if href and inner.strip():
+            core = inner.strip()
+            lead = inner[: len(inner) - len(inner.lstrip())]
+            trail = inner[len(inner.rstrip()) :]
+            inner = f"{lead}[{core}]({href}){trail}"
+        out.append(inner)
+        index = end
+    return "".join(out).strip()
 
 
 def _cell(text: str) -> str:

@@ -115,7 +115,8 @@ def render_page_png(page: pdfium.PdfPage, scale: float) -> bytes:
 
 def render_image(page: pdfium.PdfPage) -> Image.Image:
     """The page rasterised once at figure resolution; crop several figures from it."""
-    return page.render(scale=FIGURE_SCALE).to_pil().convert("RGB")
+    image: Image.Image = page.render(scale=FIGURE_SCALE).to_pil().convert("RGB")
+    return image
 
 
 def crop_png(image: Image.Image, box: Box) -> bytes:

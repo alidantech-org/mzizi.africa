@@ -45,14 +45,14 @@ def test_registered_capabilities_are_all_declared_as_ports_or_internal() -> None
 def test_port_state_follows_the_registry() -> None:
     states = {s.port.capability: s.state for s in all_statuses()}
     assert states["extraction.pdf"] is PortState.READY
-    assert states["fetch.url"] is PortState.NOT_YET_ADDED
+    assert states["fetch.policy"] is PortState.NOT_YET_ADDED
 
 
 def test_unbuilt_command_exits_3_and_logs_why(workspace: Path) -> None:
-    result = invoke("fetch", "url", "https://example.org")
+    result = invoke("fetch", "policy", "--manifest", "m.yaml")
     assert result.exit_code == ExitCode.NOT_YET_ADDED
     assert "not been added yet" in result.output
-    assert "fetch.url" in (workspace / "logs" / "mzizi.log").read_text()
+    assert "fetch.policy" in (workspace / "logs" / "mzizi.log").read_text()
 
 
 def test_missing_value_without_a_terminal_is_a_usage_error() -> None:

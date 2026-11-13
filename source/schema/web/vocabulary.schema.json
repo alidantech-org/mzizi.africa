@@ -1,0 +1,207 @@
+{
+  "$defs": {
+    "ChallengeMarkers": {
+      "additionalProperties": false,
+      "properties": {
+        "captcha": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Captcha",
+          "type": "array"
+        },
+        "challenge": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Challenge",
+          "type": "array"
+        },
+        "notice": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notice",
+          "type": "array"
+        }
+      },
+      "required": [
+        "captcha",
+        "challenge",
+        "notice"
+      ],
+      "title": "ChallengeMarkers",
+      "type": "object"
+    },
+    "FileSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "title": "Group",
+          "type": "string"
+        },
+        "magic": {
+          "title": "Magic",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "text": {
+          "default": false,
+          "title": "Text",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "magic",
+        "name",
+        "group"
+      ],
+      "title": "FileSignature",
+      "type": "object"
+    },
+    "UrlKinds": {
+      "additionalProperties": false,
+      "properties": {
+        "archive": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Archive",
+          "type": "array"
+        },
+        "data": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Data",
+          "type": "array"
+        },
+        "document": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Document",
+          "type": "array"
+        },
+        "image": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Image",
+          "type": "array"
+        },
+        "media": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Media",
+          "type": "array"
+        },
+        "program": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Program",
+          "type": "array"
+        }
+      },
+      "required": [
+        "image",
+        "media",
+        "document",
+        "data",
+        "archive",
+        "program"
+      ],
+      "title": "UrlKinds",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "block_responses": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Block Responses",
+      "type": "object"
+    },
+    "challenge_markers": {
+      "$ref": "#/$defs/ChallengeMarkers"
+    },
+    "embed_tags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Embed Tags",
+      "type": "array"
+    },
+    "file_signatures": {
+      "items": {
+        "$ref": "#/$defs/FileSignature"
+      },
+      "title": "File Signatures",
+      "type": "array"
+    },
+    "jpeg_extensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Jpeg Extensions",
+      "type": "array"
+    },
+    "media_tags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Media Tags",
+      "type": "array"
+    },
+    "risky_groups": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Risky Groups",
+      "type": "array"
+    },
+    "tracking_parameters": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tracking Parameters",
+      "type": "array"
+    },
+    "url_kinds": {
+      "$ref": "#/$defs/UrlKinds"
+    },
+    "version": {
+      "title": "Version",
+      "type": "integer"
+    },
+    "zip_based_extensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Zip Based Extensions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "version",
+    "url_kinds",
+    "media_tags",
+    "embed_tags",
+    "tracking_parameters",
+    "challenge_markers",
+    "file_signatures",
+    "zip_based_extensions",
+    "jpeg_extensions",
+    "risky_groups",
+    "block_responses"
+  ],
+  "title": "Vocabulary",
+  "type": "object"
+}

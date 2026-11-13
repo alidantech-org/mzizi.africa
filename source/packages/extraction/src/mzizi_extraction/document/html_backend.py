@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 from mzizi_extraction.core import Status
 from mzizi_extraction.document.boilerplate import Boilerplate, fingerprint, is_landmark
 from mzizi_extraction.document.lines import merge_spans
+from mzizi_extraction.document.markdown import render_spans
 from mzizi_extraction.document.models import (
     Block,
     DocumentOutput,
@@ -99,7 +100,7 @@ class _Walker:
             href = urljoin(self.base_url, str(node["href"]))
         spans: list[Span] = []
         for child in node.children:
-            if isinstance(child, Tag) | isinstance(child, NavigableString):
+            if isinstance(child, Tag | NavigableString):
                 spans.extend(self.inline(child, bold, italic, href))
         return spans
 
@@ -182,10 +183,24 @@ class _Walker:
             if isinstance(nested, Tag):
                 self.list(nested, ordered=nested.name == "ol")
 
+    def cell(self, element: Tag) -> str:
+        """A table cell as inline Markdown, so links and emphasis inside tables keep their meaning."""
+        spans = _trim(
+            merge_spans(
+                [
+                    s
+                    for child in element.children
+                    if isinstance(child, Tag | NavigableString)
+                    for s in self.inline(child)
+                ]
+            )
+        )
+        return render_spans(spans).replace("\n", " ")
+
     def table(self, element: Tag) -> None:
         rows: list[tuple[str, ...]] = []
         for row in element.find_all("tr"):
-            cells = tuple(" ".join(c.get_text(" ").split()) for c in row.find_all(["th", "td"]))
+            cells = tuple(self.cell(c) for c in row.find_all(["th", "td"]))
             if any(cells):
                 rows.append(cells)
         if len(rows) >= 2 and max(len(r) for r in rows) >= 2:
@@ -229,10 +244,10 @@ def _main(soup: BeautifulSoup) -> Tag:
         found = soup.select_one(selector)
         if found is not None:
             return found
-    articles = soup.find_all("article")
+    articles = [a for a in soup.find_all("article") if isinstance(a, Tag)]
     if len(articles) == 1:
         return articles[0]
-    return soup.body or soup
+    return soup.body if soup.body is not None else soup
 
 
 def extract_html_document(

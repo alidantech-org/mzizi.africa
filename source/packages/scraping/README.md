@@ -9,3 +9,5 @@ See [../README.md](../README.md) for the package map and workspace commands. Tes
 ## Layout
 
 `selectors/` fallback chains, `extract/` field extraction, `transforms/` allow-listed transforms, `links/` link discovery, `challenge/` access-challenge detection (moved from the former `mzizi-source` package).
+
+`links/page.py` adds `page_meta` (title, canonical, `rel=next` pagination, advertised sitemaps), `parse_sitemap` (URLs and sitemap indexes, without resolving entities) and `sitemaps_from_robots`; `extract_references` lists every link, image, media, embed and frame URL with its tag.

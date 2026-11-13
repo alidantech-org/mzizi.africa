@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict
 from mzizi_engine.devcli.types import ArgValues
 
 WORKSPACE_ENV = "MZIZI_DEV_ROOT"
-_SUBFOLDERS = ("inputs", "outputs", "manifests", "cache", "logs", "services", "browser-profile")
+_SUBFOLDERS = ("inputs", "outputs", "manifests", "cache", "logs", "services", "browser-profile", "downloads")
 
 _README = """# Mzizi developer workspace
 
@@ -70,6 +70,14 @@ class Workspace:
     @property
     def outputs(self) -> Path:
         return self.root / "outputs"
+
+    @property
+    def downloads(self) -> Path:
+        return self.root / "downloads"
+
+    @property
+    def browser_profile(self) -> Path:
+        return self.root / "browser-profile"
 
     @property
     def manifests(self) -> Path:
