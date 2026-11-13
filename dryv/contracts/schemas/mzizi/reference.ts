@@ -1,7 +1,7 @@
 /**
  * Schema: reference | Database: mzizi
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/reference.md
- * Review: accepted foundation inventory; current detailed field contract requires reconciliation.
+ * Review: accepted foundation inventory.
  * Countries are canonical modern-country identities; spatial units belong to Geography.
  * No fictional world country or mandatory country membership is implied.
  * Rules the pack lowers from storage constraints: no-overlap windows, acyclic chains, same-scheme supersession.

@@ -2,7 +2,6 @@
  * Schema: filesystem | Database: mzizi
  * Contract implementation authorized by the Main/Operations handoff, 12 November 2026.
  * Owns logical identities, immutable bytes metadata and version lineage.
- * Generation excluded pending faithful SQL constraints and object verification.
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/filesystem.md
  */
 import * as dryv from "@dryvcode/author";
@@ -37,7 +36,7 @@ export const Folders = filesystem
   .role("entity")
   .rule("FolderMustNotParentItself", rule.differs("id", "parentId"))
   .facets({
-    storage: dryv.storage("folders").index("parentId").index("roleId"),
+    storage: dryv.storage("folders").acyclic("FolderParentAcyclic", { field: "parentId" }).index("parentId").index("roleId"),
   });
 
 /*---------------- files ----------------*/
@@ -52,7 +51,15 @@ export const Files = filesystem
   .description("Stable logical file identity; equal content hashes may belong to different files.")
   .role("entity")
   .facets({
-    storage: dryv.storage("files").index("folderId").index("currentVersionId"),
+    storage: dryv
+      .storage("files")
+      .references("CurrentVersionBelongsToFile", {
+        fields: ["currentVersionId", "id"],
+        target: () => FileVersions,
+        targetFields: ["id", "fileId"],
+      })
+      .index("folderId")
+      .index("currentVersionId"),
   });
 
 /*---------------- file_extensions ----------------*/
@@ -137,9 +144,8 @@ export const Taggings = filesystem
     storage: dryv.storage("taggings").unique("tagId", "fileId").unique("tagId", "folderId").index("fileId").index("folderId"),
   });
 
-/** Persistence blockers: file/current-version same-owner composite FK; transitive folder and
- * derivative cycle rejection; access inheritance and prefix checks; immutable versions; typed
- * Reference scheme membership; transactionally verified S3 metadata. Author invariants are
- * declarations, not proof of SQL enforcement. ReplaceCurrent never authorizes deleting pinned
- * versions or rewriting accepted bytes. Bucket mzizi, region us-east-1, credentials from env.
+/** Open: derivative cycle rejection through file_relations;
+ * access inheritance and prefix checks; immutable versions; typed Reference scheme membership;
+ * transactionally verified S3 metadata. ReplaceCurrent never authorizes deleting pinned versions or
+ * rewriting accepted bytes. Bucket mzizi, region us-east-1, credentials from env.
  */

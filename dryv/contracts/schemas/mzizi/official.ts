@@ -5,8 +5,7 @@
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/official.md
  * Review: contract development authorized — 12 November 2026
  * Approved definitions: six neutral identity tables per six-domain handoff.
- * Generation: excluded until one-of/partial uniqueness constraints are emitted and verified.
- * Open items: partial preferred-name/identifier uniqueness and contact access enforcement.
+ * Open items: identifier uniqueness over nullable issuer/namespace columns, and contact access enforcement.
  */
 import * as dryv from "@dryvcode/author";
 import { rule, when } from "@dryvcode/author";
@@ -64,15 +63,25 @@ export const Names = official
   .extends(baseSchemas.ValidityEntity)
   .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
   .description("One attested name form for exactly one entity or individual, with optional language and validity.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("names")
-      .index("entityId", "languageTag", "isPreferred")
-      .index("individualId", "languageTag", "isPreferred")
-      .index("nameKindId")
-      .index("sourceCitationId"),
-  });
+  .role("entity");
+
+const preferredName = official.expression(
+  "PreferredName",
+  Names.check((v) => v.isPreferred.eq(true)),
+);
+
+Names.facets({
+  storage: dryv
+    .storage("names")
+    .unique("entityId", "languageTag")
+    .where(preferredName)
+    .unique("individualId", "languageTag")
+    .where(preferredName)
+    .index("entityId")
+    .index("individualId")
+    .index("nameKindId")
+    .index("sourceCitationId"),
+});
 
 export const Identifiers = official
   .schema("Identifiers", {

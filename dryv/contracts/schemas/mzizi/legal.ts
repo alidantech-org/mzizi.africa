@@ -2,10 +2,10 @@
  * Schema: legal | Database: mzizi
  * Contract implementation authorized by the Main/Operations handoff, 12 November 2026.
  * Stable instrument/provision identities and immutable source-backed wording versions.
- * Generation excluded pending composite ownership and temporal constraint support.
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/legal.md
  */
 import * as dryv from "@dryvcode/author";
+import { rule } from "@dryvcode/author";
 import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
 import { FileVersions } from "./filesystem.ts";
@@ -56,6 +56,7 @@ export const InstrumentVersions = legal
   .facets({
     storage: dryv
       .storage("instrument_versions")
+      .acyclic("InstrumentVersionSupersessionAcyclic", { field: "supersedesId" })
       .unique("instrumentId", "edition")
       .index("fileVersionId")
       .index("evidenceId")
@@ -73,11 +74,17 @@ export const Provisions = legal
   .description("Stable section identity within one instrument; hierarchy must remain within that instrument.")
   .role("entity")
   .facets({
-    storage: dryv.storage("provisions").index("instrumentId").index("parentId"),
+    storage: dryv
+      .storage("provisions")
+      .sameAs("ParentInSameInstrument", { field: "parentId", match: ["instrumentId"] })
+      .acyclic("ProvisionParentAcyclic", { field: "parentId" })
+      .index("instrumentId")
+      .index("parentId"),
   });
 
 export const ProvisionVersions = legal
   .schema("ProvisionVersions", {
+    instrumentId: belongsTo(() => Instruments),
     provisionId: belongsTo(() => Provisions),
     instrumentVersionId: belongsTo(() => InstrumentVersions),
     citationId: belongsTo(() => Citations),
@@ -89,11 +96,24 @@ export const ProvisionVersions = legal
     supersedesId: belongsTo(dryv.self).maybe(),
   })
   .extends(baseSchemas.Entity)
+  .rule("EffectiveWindowIsOrdered", rule.ordered("effectiveFrom", "effectiveUntil"))
   .description("Immutable original wording in an exact instrument release; structured interpretation is separately reviewed.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("provision_versions")
+      .references("ProvisionOfInstrument", {
+        fields: ["provisionId", "instrumentId"],
+        target: () => Provisions,
+        targetFields: ["id", "instrumentId"],
+      })
+      .references("VersionOfInstrument", {
+        fields: ["instrumentVersionId", "instrumentId"],
+        target: () => InstrumentVersions,
+        targetFields: ["id", "instrumentId"],
+      })
+      .acyclic("ProvisionVersionSupersessionAcyclic", { field: "supersedesId" })
+      .noOverlap("NoOverlappingProvisionWording", { scope: ["provisionId"], from: "effectiveFrom", until: "effectiveUntil" })
       .unique("provisionId", "instrumentVersionId")
       .index("instrumentVersionId")
       .index("citationId")
@@ -117,8 +137,7 @@ export const Amendments = legal
     storage: dryv.storage("amendments").index("authorityId").index("affectedId").index("resultingVersionId").index("kindId").index("citationId"),
   });
 
-/** Persistence blockers: same-instrument provision/version/parent composite relationships;
- * hierarchy and supersession cycles; effective intervals; immutable wording and hashes.
+/** Open: immutable wording and hashes.
  * Territorial scope uses geography.units.feature_id. No generic domain target pointer or automatic executable
  * legal interpretation is introduced. Reference owns incoming domain-to-Legal mediation.
  */

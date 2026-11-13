@@ -2,10 +2,10 @@
  * Schema: source | Database: mzizi
  * Implementation authorized by the Main/Operations handoff, 12 November 2026.
  * Owns accepted publication channels, immutable captures, evidence and manifest releases.
- * Generation excluded until the SQL pack faithfully preserves constraints.
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/source.md
  */
 import * as dryv from "@dryvcode/author";
+import { rule } from "@dryvcode/author";
 import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
 import { FileVersions } from "./filesystem.ts";
@@ -127,10 +127,15 @@ export const ManifestReleases = source
     status: dryv.field(sourceEnums.ReleaseStatus),
   })
   .extends(baseSchemas.Entity)
+  .rule("EffectiveWindowIsOrdered", rule.ordered("effectiveFrom", "effectiveUntil"))
   .description("Pinned approved manifest content; schema and capabilities are immutable release inputs.")
   .role("entity")
   .facets({
-    storage: dryv.storage("manifest_releases").unique("manifestId", "releaseLabel").index("fileVersionId"),
+    storage: dryv
+      .storage("manifest_releases")
+      .noOverlap("NoOverlappingReleases", { scope: ["manifestId"], from: "effectiveFrom", until: "effectiveUntil" })
+      .unique("manifestId", "releaseLabel")
+      .index("fileVersionId"),
   });
 
 export const ManifestBindings = source
@@ -143,10 +148,15 @@ export const ManifestBindings = source
     effectiveUntil: dryv.field(sharedProperties.Instant).maybe(),
   })
   .extends(baseSchemas.Entity)
+  .rule("EffectiveWindowIsOrdered", rule.ordered("effectiveFrom", "effectiveUntil"))
   .description("Dated release binding; activation never changes releases already pinned by running jobs.")
   .role("entity")
   .facets({
-    storage: dryv.storage("manifest_bindings").unique("sourceId", "manifestReleaseId", "effectiveFrom").index("manifestReleaseId"),
+    storage: dryv
+      .storage("manifest_bindings")
+      .noOverlap("NoOverlappingBindings", { scope: ["sourceId"], from: "effectiveFrom", until: "effectiveUntil" })
+      .unique("sourceId", "manifestReleaseId", "effectiveFrom")
+      .index("manifestReleaseId"),
   });
 
 export const Captures = source
@@ -164,7 +174,17 @@ export const Captures = source
   .description("Immutable accepted retrieval snapshot with exact bytes; failed requests remain in Operations.")
   .role("entity")
   .facets({
-    storage: dryv.storage("captures").index("sourceId").index("documentId").index("fileVersionId").index("manifestReleaseId"),
+    storage: dryv
+      .storage("captures")
+      .references("DocumentBelongsToSource", {
+        fields: ["documentId", "sourceId"],
+        target: () => Documents,
+        targetFields: ["id", "sourceId"],
+      })
+      .index("sourceId")
+      .index("documentId")
+      .index("fileVersionId")
+      .index("manifestReleaseId"),
   });
 
 export const Evidence = source
@@ -255,9 +275,7 @@ export const PublicationReceipts = source
     storage: dryv.storage("publication_receipts").unique("idempotencyKey").unique("publicationRefId"),
   });
 
-/** Required persistence/runtime gates: scheme-aware value membership; ordered/non-overlapping
- * release/binding intervals; immutable releases, captures and assessments; capture/document/file
- * ownership consistency; same-key/hash replay and atomic receipt/provenance writes. The SQL pack
- * does not enforce these yet. Official identity is an explicit unresolved Main target, not a fake FK.
- * publication_ref_id refers to Operations and must never become a PostgreSQL cross-database FK.
+/** Open: scheme-aware value membership; immutable releases, captures and assessments; capture/file
+ * ownership (documents carry no file link); same-key/hash replay and atomic receipt/provenance writes.
+ * publicationRefId refers to Operations and must never become a PostgreSQL cross-database FK.
  */

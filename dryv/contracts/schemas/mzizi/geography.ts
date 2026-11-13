@@ -6,8 +6,7 @@
  * Review: approved table inventory; proposed classification field alignment — 2026-11-12
  * Approved tables: features, units, places, names, identifiers, geometries, relationships, changes, datasets.
  * Approval record: .docs/decisions/DEC-MZIZI-REFERENCE-GEOGRAPHY-20261112.md
- * Generation: excluded; this draft is not selected by the database application.
- * Open items: scheme-aware Reference constraints, PostGIS geometry/indexes and cross-schema targets.
+ * Open items: scheme-aware Reference constraints and PostGIS geometry/indexes.
  */
 import * as dryv from "@dryvcode/author";
 import { rule, when } from "@dryvcode/author";
