@@ -83,14 +83,24 @@
 {%- endif -%}
 {%- endmacro -%}
 
+{#- PostgreSQL literals retain text exactly; JSON quote substitution is not SQL escaping. -#}
+{%- macro sql_literal(value) -%}
+{%- if value is none -%}NULL
+{%- elif value is string -%}'{{ value | replace("'", "''") }}'
+{%- elif value is boolean -%}{{ 'TRUE' if value else 'FALSE' }}
+{%- elif value is number -%}{{ value }}
+{%- else -%}{{ {}['structured literal requires an explicit PostgreSQL mapping'] }}
+{%- endif -%}
+{%- endmacro -%}
+
 {%- macro sql_operand(operand) -%}
 {%- if operand.is.field -%}"{{ operand.field.snake }}"
-{%- elif operand.is.literal -%}{{ operand.value | tojson | replace('"', "'") }}
-{%- else -%}({% for term in operand.terms %}{% if term.kind == 'field' %}"{{ term.field.snake }}"{% else %}{{ term.value | tojson | replace('"', "'") }}{% endif %}{% if not loop.last %} {% if operand.operator == 'add' %}+{% elif operand.operator == 'subtract' %}-{% elif operand.operator == 'multiply' %}*{% else %}/{% endif %} {% endif %}{% endfor %}){%- endif -%}
+{%- elif operand.is.literal -%}{{ sql_literal(operand.value) }}
+{%- else -%}({% for term in operand.terms %}{% if term.kind == 'field' %}"{{ term.field.snake }}"{% else %}{{ sql_literal(term.value) }}{% endif %}{% if not loop.last %} {% if operand.operator == 'add' %}+{% elif operand.operator == 'subtract' %}-{% elif operand.operator == 'multiply' %}*{% else %}/{% endif %} {% endif %}{% endfor %}){%- endif -%}
 {%- endmacro -%}
 
 {%- macro sql_operator(operator) -%}
-{%- if operator == 'equal' -%}={%- elif operator == 'not-equal' -%}<>{%- elif operator == 'less-than' -%}<{%- elif operator == 'less-than-or-equal' -%}<={%- elif operator == 'greater-than' -%}>{%- else -%}>={%- endif -%}
+{%- if operator == 'equal' -%}={%- elif operator == 'not-equal' -%}<>{%- elif operator == 'less-than' -%}<{%- elif operator == 'less-than-or-equal' -%}<={%- elif operator == 'greater-than' -%}>{%- elif operator == 'greater-than-or-equal' -%}>={%- else -%}{{ {}['unsupported SQL comparison operator: ' ~ operator] }}{%- endif -%}
 {%- endmacro -%}
 
 {#- Fixed-depth CHECK rendering from the expression tree (Dryv forbids recursive macros): level N renders
@@ -98,7 +108,7 @@
     is a null test (IS [NOT] NULL); SQL three-valued logic otherwise matches the contract. -#}
 {%- macro is_null_literal(node) -%}{%- if node.kind == 'literal' and node.value is none -%}1{%- endif -%}{%- endmacro -%}
 {%- macro x0(node, where) -%}
-{%- if node.kind == 'literal' -%}{%- if node.value is none -%}NULL{%- else -%}{{ node.value | tojson | replace('"', "'") }}{%- endif -%}
+{%- if node.kind == 'literal' -%}{%- if node.value is none -%}NULL{%- else -%}{{ sql_literal(node.value) }}{%- endif -%}
 {%- elif node.kind == 'context' -%}"{{ node.path.snake }}"
 {%- else -%}{{ {}[where ~ ': invariant expression is nested deeper than the supported depth or uses kind ' ~ node.kind] }}
 {%- endif -%}
@@ -192,7 +202,7 @@ CREATE SCHEMA "{{ ns }}";
 
 CREATE TABLE "{{ ns }}"."{{ table_of(schema) }}" (
 {%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown %}
-    "{{ field.name.snake }}" {{ sql_type(schema, field) }}{% if not field.optional and not field.nullable %} NOT NULL{% endif %}{% if field.default is not none and field.default.kind == 'value' %} DEFAULT {{ field.default.value_json | replace('"', "'") }}{% endif %},
+    "{{ field.name.snake }}" {{ sql_type(schema, field) }}{% if not field.optional and not field.nullable %} NOT NULL{% endif %}{% if field.default is not none and field.default.kind == 'value' %} DEFAULT {{ sql_literal(field.default.value) }}{% endif %},
 {%- endif %}{% endfor %}
 {%- for invariant in schema.invariants %}
     CONSTRAINT "chk_{{ table_of(schema) }}_{{ invariant.name.snake }}" CHECK ({{ x5(invariant.rule.node, schema.id ~ '.' ~ invariant.name.raw) }}),
@@ -242,7 +252,7 @@ ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(s
 {%- if pk | length != 1 %}{{ {}[schema.id ~ ': same-as constraint ' ~ constraint.name.raw ~ ' needs a single-column primary key'] }}{% endif %}
 ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "uq_{{ table_of(schema) }}__{{ constraint.name.snake }}" UNIQUE ("{{ pk[0].snake }}"{% for item in constraint.match %}, "{{ item.snake }}"{% endfor %});
 ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(schema) }}__{{ constraint.name.snake }}" FOREIGN KEY ("{{ constraint.field.snake }}"{% for item in constraint.match %}, "{{ item.snake }}"{% endfor %}) REFERENCES "{{ ns }}"."{{ table_of(schema) }}" ("{{ pk[0].snake }}"{% for item in constraint.match %}, "{{ item.snake }}"{% endfor %});
-{%- else %}
+{%- elif constraint.kind == 'no-overlap' %}
 {%- set elements = namespace(items=[]) %}
 {%- for scope_name in constraint.scope %}{% for field in schema.fields %}{% if field.name.raw == scope_name.raw %}
 {%- set type = sql_type(schema, field) | trim %}
@@ -253,6 +263,7 @@ ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(s
 {%- set elements.items = elements.items + [(range_function(schema, field, sql_type(schema, field) | trim) | trim) ~ '("' ~ constraint.start.snake ~ '", "' ~ constraint.end.snake ~ '", \'[)\') WITH &&'] %}
 {%- endif %}{% endfor %}
 ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "ex_{{ table_of(schema) }}__{{ constraint.name.snake }}" EXCLUDE USING gist ({{ elements.items | join(', ') }});
+{%- else %}{{ {}['unsupported SQL storage constraint: ' ~ constraint.kind] }}
 {%- endif %}
 {%- endfor %}
 {%- endif %}{% endfor %}

@@ -1691,8 +1691,8 @@ ALTER TABLE "official"."names" ADD CONSTRAINT "fk_names_entity_id" FOREIGN KEY (
 ALTER TABLE "official"."names" ADD CONSTRAINT "fk_names_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE "official"."names" ADD CONSTRAINT "fk_names_name_kind_id" FOREIGN KEY ("name_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE "official"."names" ADD CONSTRAINT "fk_names_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_names__entity_id_language_tag" ON "official"."names" ("entity_id", "language_tag") WHERE ("is_preferred" = true);
-CREATE UNIQUE INDEX "uq_names__individual_id_language_tag" ON "official"."names" ("individual_id", "language_tag") WHERE ("is_preferred" = true);
+CREATE UNIQUE INDEX "uq_names__entity_id_language_tag" ON "official"."names" ("entity_id", "language_tag") WHERE ("is_preferred" = TRUE);
+CREATE UNIQUE INDEX "uq_names__individual_id_language_tag" ON "official"."names" ("individual_id", "language_tag") WHERE ("is_preferred" = TRUE);
 CREATE INDEX "ix_names__entity_id" ON "official"."names" ("entity_id");
 CREATE INDEX "ix_names__individual_id" ON "official"."names" ("individual_id");
 CREATE INDEX "ix_names__name_kind_id" ON "official"."names" ("name_kind_id");

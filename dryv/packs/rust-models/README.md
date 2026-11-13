@@ -11,3 +11,7 @@ create its stable `rust-catalog` modules; subsequent store-only runs can update 
 the public `models::main/operations::<namespace>::<entity>` module paths. The old flat generated
 row files are no longer referenced; they may be removed only through managed output cleanup, not
 by editing generated files manually.
+
+Generated exact decimal fields use rust_decimal::Decimal; the workspace and generated crate
+manifests enable rust_decimal and SQLx's rust_decimal integration. SQL NUMERIC values are never
+silently changed to floating point. Regenerate both rows and store verifiers after mapping changes.
