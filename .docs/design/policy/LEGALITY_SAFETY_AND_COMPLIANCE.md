@@ -80,7 +80,7 @@ Do not assume that information about public officials, beneficiaries, voters, te
 
 Review the Computer Misuse and Cybercrimes Act, 2018, including applicable amendments, regulations and current interpretations. The Communications Authority / KE-CIRT and other competent authorities may publish relevant legal and cybersecurity material.
 
-Mzizi must not bypass authentication, access controls, CAPTCHA or other technical barriers; use credentials without authority; exploit vulnerabilities; evade blocks; or interfere with a site's operation. A public URL is not permission to access a restricted system behind it.
+Mzizi must not access restricted systems or defeat authentication, CAPTCHAs, blocks or other technical controls without appropriate authority; must not use credentials without authority, exploit vulnerabilities or interfere with a site's operation. Approved testing, publisher-authorised research access and documented challenge-resolution workflows may use browser automation and specialised adapters within their express scope. A public URL alone is not permission to access a restricted system behind it.
 
 ### 3.4 Copyright and reuse
 
@@ -133,31 +133,32 @@ Prefer, in order:
 4. a public webpage or document with assessed access and reuse conditions;
 5. a formal information request or direct permission where the above routes are unavailable or uncertain.
 
-### 5.2 Prohibited collection methods
+### 5.2 Source-authorised collection methods and prohibitions
 
-Mzizi agents and operators must not:
-- bypass login, authentication, authorisation, CAPTCHA, paywall or technical access controls;
-- use stolen, shared without authority or otherwise unauthorised credentials;
+Mzizi may develop standard and anti-bot-resilient browser adapters, configurable client identities, CAPTCHA/challenge handling and robots-policy modes. These capabilities are not automatically prohibited by their technical names. Their use against a particular source requires an approved assessment establishing the relevant access basis, scope, conditions and method; a source owner may authorise testing or enhanced automated access.
+
+Without adequate authority, agents and operators must not:
+- defeat authentication, authorisation, CAPTCHAs, paywalls or other technical access controls;
+- use stolen or otherwise unauthorised credentials;
 - exploit a vulnerability or access a non-public system;
-- evade an explicit block, rate limit or access restriction by rotating identities, proxies or accounts;
-- use stealth, impersonation or anti-bot evasion;
-- cause or knowingly risk material degradation or disruption of a source system;
-- collect from a private portal merely because an endpoint or file URL can be guessed;
-- continue collection after a credible legal objection or restriction without review and documented resolution.
+- circumvent an explicit block or access restriction using identity, proxy or account rotation;
+- impersonate another party or misrepresent authorisation.
 
-A site's `robots.txt` is a useful technical signal about crawler preferences, but it is not itself a complete legal analysis, licence or permission. Record it and respect it as a default operational rule; assess any conflict or uncertainty rather than treating it as a legal safe harbour.
+Regardless of source approval, do not cause or knowingly risk material degradation or disruption, exceed approved request limits, collect from guessed private endpoints outside scope, or continue after a credible legal objection without review and documented resolution.
+
+Record a site's `robots.txt` as an access-policy signal; it is not by itself a complete legal analysis, licence or permission. The default mode is `respect`. An `override` may be approved per source when supported by the documented access basis and review, with a rationale, bounded scope and auditable execution. Neither the existence of `robots.txt` nor its absence alone establishes legal permission.
 
 ### 5.3 Polite and bounded access
 
 Every automated source must have:
-- an identifiable Mzizi user-agent string and a monitored contact channel;
+- a documented client identity/profile strategy consistent with source approval, with a monitored contact channel for normal identified crawls;
 - a documented request rate and concurrency ceiling;
 - bounded retries with exponential backoff and jitter;
 - caching and conditional requests where supported;
 - request and response size limits;
 - timeouts and circuit breakers;
-- a clear stop condition for 401, 403, 429, repeated 5xx, explicit block notices or other access challenges;
-- no retry loop that attempts to overcome a restriction.
+- a clear stop-or-review condition for 401, 403, 429, repeated 5xx, explicit blocks or access challenges; approved challenge-handling workflows may resume only inside recorded authorisation and request budgets;
+- no unbounded retry loop or attempts to defeat an unapproved restriction.
 
 Use the most conservative of the source's published limits, the approved source policy and the engine's global safety limits. If no reliable limit is published, begin conservatively and obtain permission where the expected volume or impact is material.
 
@@ -225,7 +226,7 @@ AI agents must not:
 - infer permission from public reachability;
 - override a restriction or legal-review decision recorded against another account;
 - decide that personal-data processing has a lawful basis without accountable review;
-- bypass a block or security control;
+- bypass a block or security control outside a separately recorded, source-authorised workflow;
 - publish uncertain licence conclusions as facts.
 
 **Separate technical validation from legal/source approval.** A structure may pass JSON Schema, static checks and dry-run validation while its source remains legally unapproved. Structure publication must not activate collection unless the source's access policy and legal status permit it.
@@ -270,7 +271,8 @@ The `mzizi.site/v1` manifest or associated site policy should eventually express
 - maximum request rate, concurrency, retries and response size;
 - prohibited paths and data categories;
 - authentication mode (v1 must remain unauthenticated unless a separately reviewed capability is introduced);
-- robots and published access-condition observations;
+- robots observations and the approved `respect` or `override` mode with rationale;
+- browser adapter, session and access-challenge handling permissions, when applicable;
 - allowed collection and publication purposes;
 - stop conditions and escalation route.
 
