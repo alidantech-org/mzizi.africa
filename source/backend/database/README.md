@@ -36,7 +36,7 @@ Known gaps, still tracked: some Python filesystem metadata and manifest-sync pat
 
 ## Generated scope and engine requirements
 
-All Main domain groups (reference, geography, legal, official, governance, politics, finance, civic, source, filesystem) and the operational groups are generated: 86 `mzizi` tables and 46 `mzizi_operations` tables. Notes:
+All Main domain groups (reference, geography, legal, official, governance, politics, finance, civic, source, filesystem) and the operational groups are generated: 81 `mzizi` tables and 46 `mzizi_operations` tables. Notes:
 
 - The `geometry` column of `geography.geometries` is a Dryv placeholder (`dryv.unknown()`) and is excluded from both the SQL and the Rust model until PostGIS storage is designed.
 - Invariants render recursively into `CHECK` constraints, up to five levels deep; comparisons against `null` become `IS [NOT] NULL`. This needs a Dryv engine where a null comparison types as boolean (a small local change in `source/engine/python/engine/.../validation/common/expressions.py`; the pinned commit in `dryv.yaml` does not contain it yet).
@@ -63,3 +63,8 @@ Schema snapshot regeneration does not assemble or apply a migration. Existing re
 checksums, target identity checks and the public ledger are unchanged. Do not switch this project
 to `dryv migrate` until the Mzizi storage mappings and an explicit ledger-adoption procedure are
 reviewed. See [contract workflow](../../../dryv/README.md) for approval and checkpoint commands.
+
+Fresh Rust generation requires the workspace rust_decimal dependency and SQLx rust_decimal
+feature for exact NUMERIC columns. The SQL pack renders canonical CHECK expressions, filtered
+indexes, composite foreign keys, same-scope keys, exclusion constraints and acyclic triggers;
+unsupported mappings stop generation. Existing release files are never overwritten by this step.

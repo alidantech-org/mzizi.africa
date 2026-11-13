@@ -2,6 +2,7 @@
 //! never leak SQL, credentials or which authorization check failed.
 
 pub mod auth;
+pub mod filesystem;
 pub mod health;
 pub mod reference;
 

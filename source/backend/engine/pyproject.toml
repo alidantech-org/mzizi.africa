@@ -12,6 +12,7 @@ dependencies = [
   "pyyaml",
   "psycopg[binary]",
   "mzizi-filesystem",
+  "mzizi-database-client",
   "mzizi-manifest",
   "mzizi-scraping",
   "mzizi-fetch",
@@ -33,6 +34,7 @@ where = ["src"]
 
 [tool.uv.sources]
 mzizi-filesystem = { workspace = true }
+mzizi-database-client = { workspace = true }
 mzizi-manifest = { workspace = true }
 mzizi-scraping = { workspace = true }
 mzizi-fetch = { workspace = true }

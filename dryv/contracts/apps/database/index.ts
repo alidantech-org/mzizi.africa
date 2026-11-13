@@ -19,7 +19,7 @@ import { auth } from "../../schemas/operational/auth.ts";
 import { engine } from "../../schemas/operational/engine.ts";
 import { management } from "../../schemas/operational/management.ts";
 import { staging } from "../../schemas/operational/staging.ts";
-import { authAccessOperations, vocabularyReadOperations } from "./operations.ts";
+import { authAccessOperations, filesystemWriteOperations, vocabularyReadOperations } from "./operations.ts";
 import { databaseStores } from "./persistence.ts";
 
 /** Database owns both logical stores and explicitly provides its named service operations.
@@ -31,7 +31,11 @@ export default dryv
   .stores(databaseStores)
   .accessStore("main", { write: true })
   .accessStore("operations", { write: true })
-  .provides(...Object.values(authAccessOperations), ...Object.values(vocabularyReadOperations))
+  .provides(
+    ...Object.values(authAccessOperations),
+    ...Object.values(vocabularyReadOperations),
+    ...Object.values(filesystemWriteOperations),
+  )
   .groups(
     shared,
     auth,

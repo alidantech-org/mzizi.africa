@@ -1,8 +1,9 @@
 import * as dryv from "@dryvcode/author";
 
 import { readSurface, sharedProperties, standardFailures, withStandardHttpFailures } from "../../schemas/_shared.ts";
-import { auth, authProperties, authSchemas } from "../../schemas/operational/auth.ts";
+import { filesystem, filesystemEnums } from "../../schemas/mzizi/filesystem.ts";
 import { reference, Scheme, Value } from "../../schemas/mzizi/reference.ts";
+import { auth, authProperties, authSchemas } from "../../schemas/operational/auth.ts";
 
 /**
  * Named operations of the database service. Callers never supply SQL, table or schema names;
@@ -143,4 +144,60 @@ export const vocabularyReadOperations = vocabularyRead.operations({
   ...schemes.operations,
   ...values.operations,
   LookupValue: lookupValue,
+});
+
+/* ----------------------------- filesystem --------------------------------
+ * Hand-written in Rust and Python today (official Dryv client/server generation packs failed
+ * to load against the running engine, see DEC-DATABASE-ACCESS-LIFECYCLE); authored here so the
+ * contract stays the single source of truth and generation becomes a drop-in replacement once
+ * the upstream packs are fixed.
+ */
+
+const filesystemWrite = filesystem.feature("FilesystemWrite").description("Folder and file writes for service callers.").tags("internal");
+
+const folderEntitySchemas = filesystemWrite.schemas({
+  Folder: dryv.schema({
+    id: dryv.field(sharedProperties.Id),
+    parentId: dryv.field(sharedProperties.Id).optional().nullable(),
+    name: dryv.field(sharedProperties.Name),
+    code: dryv.field(sharedProperties.BusinessCode),
+    access: dryv.field(filesystemEnums.Access),
+    roleId: dryv.field(sharedProperties.Id),
+    version: dryv.field(sharedProperties.PositiveInteger),
+    createdAt: dryv.field(sharedProperties.Instant),
+  }),
+});
+
+const folderSchemas = filesystemWrite.schemas({
+  CreateFolderRequest: dryv.schema({
+    accountId: dryv.field(sharedProperties.Id),
+    parentId: dryv.field(sharedProperties.Id).optional().nullable(),
+    name: dryv.field(sharedProperties.Name),
+    code: dryv.field(sharedProperties.BusinessCode),
+    access: dryv.field(filesystemEnums.Access),
+    roleId: dryv.field(sharedProperties.Id),
+  }),
+  CreateFolderResponse: dryv.schema({
+    folder: dryv.field(folderEntitySchemas.Folder),
+  }),
+});
+
+const createFolder = dryv
+  .operation()
+  .description("Create a folder under an optional parent, with its access class and role resolved by the caller. Denies on a duplicate code.")
+  .input(folderSchemas.CreateFolderRequest)
+  .output(folderSchemas.CreateFolderResponse)
+  .failures(...standardFailures);
+createFolder.facets({
+  http: withStandardHttpFailures(
+    dryv
+      .http("POST", "/v1/filesystem/folders")
+      .description("Create a filesystem folder.")
+      .input(createFolder.in, dryv.body())
+      .output(createFolder.out, dryv.respond(201)),
+  ),
+});
+
+export const filesystemWriteOperations = filesystemWrite.operations({
+  CreateFolder: createFolder,
 });

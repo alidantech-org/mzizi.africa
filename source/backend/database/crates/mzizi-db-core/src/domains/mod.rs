@@ -5,4 +5,5 @@
 //! generated migrations; when generation changes a shape, these queries are updated with it
 //! (compile-time checked once the SQLx offline cache is recorded).
 
+pub mod filesystem;
 pub mod reference;

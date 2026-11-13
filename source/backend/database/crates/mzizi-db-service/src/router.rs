@@ -37,6 +37,10 @@ pub fn build(pools: Pools) -> Router {
             "/v1/reference/values/lookup",
             post(routes::reference::lookup_value),
         )
+        .route(
+            "/v1/filesystem/folders",
+            post(routes::filesystem::create_folder),
+        )
         .with_state(state)
         .layer(PropagateRequestIdLayer::x_request_id())
         .layer(TraceLayer::new_for_http())

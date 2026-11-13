@@ -12,3 +12,4 @@ System architecture details. These documents are supporting detail; the eight ro
 - [MIGRATION](MIGRATION.md)
 - [ENGINE_JOB_MODEL](ENGINE_JOB_MODEL.md) — proposal: engine runtime, pure packages, staging store, agent hooks
 - [PATTERN_MATCHING](PATTERN_MATCHING.md) — proposal: manifest-driven rules, safe string matcher, semantic vector index
+- [DATABASE_ACCESS_AND_LIFECYCLE](DATABASE_ACCESS_AND_LIFECYCLE.md) — verified: Python/Rust write path; proposal: NestJS migration, Mongo, vectors
