@@ -9,11 +9,12 @@ import pytest
 from engine_helpers import settings
 from fastapi.testclient import TestClient
 
-from mzizi_database import connect, rewrite_url
 from mzizi_engine.app import create_app
 from mzizi_engine.capabilities import build_default_registry
+from mzizi_engine.filesystem import DatabaseAuthorizer
+from mzizi_engine.ports import connect, rewrite_url
 from mzizi_engine.store import MemoryStore
-from mzizi_filesystem import DatabaseAuthorizer, MemoryObjectStore
+from mzizi_filesystem import MemoryObjectStore
 from mzizi_filesystem.hashing import sha256_hex
 
 ISSUER = "https://pytest.mzizi.local"
@@ -32,7 +33,7 @@ class StubAuthority:
 
 
 def _purge(folder_ids):
-    from mzizi_filesystem.testing import purge_tree
+    from mzizi_engine.filesystem.testing import purge_tree
 
     with connect(rewrite_url(), autocommit=True) as conn:
         for fid in folder_ids:
@@ -43,19 +44,29 @@ class TestDatabaseOwner:
     async def create_upload(self, actor, folder_id, filename, size, sha256, lease_seconds, ttl_seconds):
         import uuid
 
-        from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, OperatorAuthorizer, Repository
-        from mzizi_filesystem.uploads import temp_key_for
+        from mzizi_engine.filesystem import DatabaseAuthorizer, FilesystemService, Repository
+        from mzizi_engine.filesystem.uploads import temp_key_for
+        from mzizi_filesystem import OperatorAuthorizer
 
         with connect(rewrite_url(), autocommit=True) as conn:
             repo = Repository(conn)
             authorizer = DatabaseAuthorizer(conn) if actor is not None else OperatorAuthorizer()
             service = FilesystemService(repo, MemoryObjectStore(), authorizer)
             service.authorizer.for_new_child(actor, "filesystem.edit", "filesystem.files", folder_id)
-            return repo.create_upload(folder_id, filename, temp_key_for(uuid.uuid4().hex, filename), lease_seconds,
-                ttl_seconds, size, sha256, None, actor)
+            return repo.create_upload(
+                folder_id,
+                filename,
+                temp_key_for(uuid.uuid4().hex, filename),
+                lease_seconds,
+                ttl_seconds,
+                size,
+                sha256,
+                None,
+                actor,
+            )
 
     async def get_file(self, actor, file_id):
-        from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, Repository
+        from mzizi_engine.filesystem import DatabaseAuthorizer, FilesystemService, Repository
 
         with connect(rewrite_url(), autocommit=True) as conn:
             repo = Repository(conn)
@@ -70,7 +81,7 @@ class TestDatabaseOwner:
             return {"file": file, "path": path, "versions": versions}
 
     async def get_folder(self, actor, folder_id):
-        from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, Repository
+        from mzizi_engine.filesystem import DatabaseAuthorizer, FilesystemService, Repository
 
         with connect(rewrite_url(), autocommit=True) as conn:
             repo = Repository(conn)
@@ -80,12 +91,22 @@ class TestDatabaseOwner:
                 raise LookupError("no such folder")
             if actor is not None:
                 service.authorizer.for_record(actor, "filesystem.read", "filesystem.folders", folder_id)
-            children = conn.execute("SELECT id,name FROM filesystem.folders WHERE parent_id=%s ORDER BY name", (folder_id,)).fetchall()
-            files = conn.execute("SELECT id,name,current_version_id FROM filesystem.files WHERE folder_id=%s ORDER BY name", (folder_id,)).fetchall()
-            return {"folder": folder, "path": repo.folder_path(folder_id), "effective": repo.effective(folder_id), "folders": children, "files": files}
+            children = conn.execute(
+                "SELECT id,name FROM filesystem.folders WHERE parent_id=%s ORDER BY name", (folder_id,)
+            ).fetchall()
+            files = conn.execute(
+                "SELECT id,name,current_version_id FROM filesystem.files WHERE folder_id=%s ORDER BY name", (folder_id,)
+            ).fetchall()
+            return {
+                "folder": folder,
+                "path": repo.folder_path(folder_id),
+                "effective": repo.effective(folder_id),
+                "folders": children,
+                "files": files,
+            }
 
     async def create_folder(self, actor, parent_id, name, fields):
-        from mzizi_filesystem import DatabaseAuthorizer, FilesystemService, Repository
+        from mzizi_engine.filesystem import DatabaseAuthorizer, FilesystemService, Repository
 
         with connect(rewrite_url(), autocommit=True) as conn:
             repo = Repository(conn)
@@ -153,7 +174,7 @@ def test_folders_uploads_downloads_and_transitions_through_the_engine(api):
     )
     assert up.status_code == 201 and "upload=1" in up.json()["put_url"]
     # the client uploads to the presigned URL; here the test writes the temp object the session reserved
-    from mzizi_database import connect as c2
+    from mzizi_engine.ports import connect as c2
 
     with c2(rewrite_url(), autocommit=True) as conn:
         key = conn.execute(
@@ -184,7 +205,7 @@ def test_folders_uploads_downloads_and_transitions_through_the_engine(api):
 
 def test_derived_files_record_exact_version_relations_through_the_engine(api):
     root = make_root(api)
-    from mzizi_filesystem import FilesystemService, Repository
+    from mzizi_engine.filesystem import FilesystemService, Repository
 
     with connect(rewrite_url(), autocommit=True) as conn:
         svc = FilesystemService(Repository(conn), api.store)

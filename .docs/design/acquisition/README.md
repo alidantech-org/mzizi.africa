@@ -11,3 +11,4 @@ Site registry, versioned structures and deterministic extraction rules. These do
 - [SITE_STRUCTURE_SPEC](SITE_STRUCTURE_SPEC.md)
 - [WEBSITE_DESIGN](WEBSITE_DESIGN.md)
 - [site-structure-authoring](site-structure-authoring.md)
+- [CRAWL_AND_PURPOSE_DETECTION](CRAWL_AND_PURPOSE_DETECTION.md) — proposal: crawling, link/page/file purpose detection, manifest-driven classification

@@ -19,13 +19,11 @@ source/
 │   ├── pipelines/              Bun TypeScript Temporal worker and workflow API
 │   └── README.md
 ├── packages/
-│   ├── agent/                  Provider-neutral model and tool interfaces
-│   ├── extraction/             PDF, GeoJSON, CSV and JSON extraction
+│   ├── extraction/             PDF, GeoJSON, CSV and JSON extraction, with OCR
+│   ├── fetch/                  Identified fetching, limits and stop rules
 │   ├── filesystem/             Object storage and filesystem metadata capabilities
 │   ├── manifest/               Seed and site-manifest validation
-│   ├── ocr/                    Tesseract-backed OCR
 │   ├── scraping/               Manifest-driven selectors and transforms
-│   ├── source/                 Identified fetching and collection controls
 │   └── README.md
 └── schema/
     ├── contracts/              Layer-exchange schemas and target catalog
@@ -44,7 +42,7 @@ source/
 - The NestJS API serves product contracts and forwards authorized write operations to the database service.
 - The TypeScript database service applies SQL releases and owns named database operations. The disposable local database is `mzizi_new`.
 - The Python engine runs operational jobs and calls reusable capabilities. The Temporal pipeline worker coordinates durable workflows and invokes the engine.
-- Python packages provide source access, scraping, extraction, OCR, filesystem operations, manifest validation and model-tool support. `source/packages/agent` is a library; there is no separate intelligence service.
+- Python packages provide fetching, scraping, extraction (including OCR), filesystem operations and manifest validation. There is no intelligence service yet; `source/backend/agent/` is a README-only proposal.
 - SQL lives in `source/schema/database/`; site, seed, exchange and pipeline input shapes live in the corresponding `source/schema/` folders.
 
 The evidence path is intended to preserve the original artifact while creating attributable extraction and review proposals. Some handoffs remain in migration: filesystem and seed operations still have Python PostgreSQL callers, the engine schema is provisional, and the Python workspace references a `mzizi-database` member that is absent from the source tree. The active database service is `source/backend/database`; this mismatch is documented rather than treated as a second package.

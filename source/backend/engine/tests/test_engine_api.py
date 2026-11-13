@@ -53,7 +53,8 @@ def test_a_job_runs_a_package_capability_and_records_the_result(make_client):
     created = client.post("/v1/jobs", json={"kind": "extraction.csv", "input": csv_payload("code,name\nA,Alpha\n")})
     assert created.status_code == 202
     done = job_done(client, created.json()["id"])
-    assert done["status"] == "succeeded" and done["result"]["segments"][0]["content"] == {"code": "A", "name": "Alpha"}
+    content = json.loads(done["result"]["segments"][0]["content"])
+    assert done["status"] == "succeeded" and content == {"cells": {"code": "A", "name": "Alpha"}}
     links = client.post(
         "/v1/jobs",
         json={"kind": "scraping.links", "input": {"html": '<a href="/x">X</a>', "base_url": "https://example.org/"}},
@@ -268,7 +269,7 @@ def test_authentication_and_authorization_use_the_auth_schema_contract(make_clie
 
 
 def test_a_sync_through_the_engine_is_a_dry_run_by_default_and_the_actor_cannot_be_spoofed(make_client, monkeypatch):
-    from mzizi_database import rewrite_url
+    from mzizi_engine.ports import rewrite_url
 
     monkeypatch.setenv("ENGINE_FILESYSTEM_LEGACY_DATABASE_URL", rewrite_url())
     client = make_client(settings=settings(database_url=rewrite_url()))
@@ -305,6 +306,9 @@ def test_settings_refuse_unauthenticated_mode_off_loopback():
         {"ENGINE_CAPABILITY_LIMITS": "extraction.pdf=2,scraping.links=5", "DATABASE_URL": "postgres://x/mzizi_new"}
     ).limits == {"extraction.pdf": 2, "scraping.links": 5}
     assert Settings.from_env({"DATABASE_URL": "postgres://api_reader/mzizi_new"}).database_url is None
-    assert Settings.from_env({"DATABASE_SERVICE_URL": "http://127.0.0.1:3301", "DATABASE_SERVICE_TOKEN": "local"}).store == "database_service"
+    assert (
+        Settings.from_env({"DATABASE_SERVICE_URL": "http://127.0.0.1:3301", "DATABASE_SERVICE_TOKEN": "local"}).store
+        == "database_service"
+    )
     with pytest.raises(ValueError, match="Python PostgreSQL persistence has been removed"):
         Settings(store="postgres").check()

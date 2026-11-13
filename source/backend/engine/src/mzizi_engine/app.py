@@ -22,9 +22,9 @@ from . import __version__
 from .auth import Authority, DatabaseServiceAuthority, Principal, TokenVerifier, oidc_verifier, require
 from .capabilities import CapabilityRegistry, build_default_registry
 from .config import Settings
+from .database_store import DatabaseServiceStore
 from .executor import Executor
 from .filesystem_api import router as filesystem_router
-from .database_store import DatabaseServiceStore
 from .store import MemoryStore, Store
 
 
@@ -104,7 +104,15 @@ def create_app(
             raise HTTPException(503, "Temporal capability service token is not configured")
         if not secrets.compare_digest(supplied, f"Bearer {expected}"):
             raise HTTPException(403, "invalid service credential")
-        allowed = {"extraction.pdf", "extraction.csv", "extraction.json", "extraction.geojson", "scraping.links", "manifest.validate_structure", "manifest.check_seeds"}
+        allowed = {
+            "extraction.pdf",
+            "extraction.csv",
+            "extraction.json",
+            "extraction.geojson",
+            "scraping.links",
+            "manifest.validate_structure",
+            "manifest.check_seeds",
+        }
         if body.kind not in allowed:
             raise HTTPException(422, "unregistered Temporal capability")
         try:

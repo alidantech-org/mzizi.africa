@@ -55,22 +55,57 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "f
 "**/tests/**" = ["B017", "E731", "E741"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["mzizi_agent", "mzizi_engine", "mzizi_extraction", "mzizi_filesystem", "mzizi_manifest", "mzizi_ocr", "mzizi_scraping", "mzizi_source"]
+known-first-party = ["mzizi_engine", "mzizi_extraction", "mzizi_filesystem", "mzizi_manifest", "mzizi_scraping", "mzizi_fetch"]
 
 [tool.mypy]
 python_version = "3.12"
-# Sources only: tests are covered by ruff and pytest.
+# Sources only: tests are covered by ruff and pytest. Rules: .docs/rules/typed-code.md
 files = ["source/packages/*/src", "source/backend/engine/src", "scripts"]
 namespace_packages = true
 explicit_package_bases = false
-warn_unused_ignores = true
-warn_redundant_casts = true
-check_untyped_defs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-no_implicit_optional = true
+strict = true
+plugins = ["pydantic.mypy"]
+# No Any, no bare dict/list as contracts. Untyped data lives only in parse modules.
+disallow_any_explicit = true
+disallow_any_generics = true
+warn_unreachable = true
+pretty = true
+show_error_codes = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
 
 [[tool.mypy.overrides]]
 # Published without type information.
 module = ["pypdfium2.*", "pdfplumber.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Legacy modules not yet moved to typed contracts. This list may only shrink: each package leaves it
+# when its consolidation task lands (TSK-443D558BBB70 manifest, TSK-401E2BBBF98F engine). `mzizi_filesystem.*`
+# left this list when its database code moved to `mzizi_engine.filesystem` (TSK-E55B1BC4011A); that module's own
+# raw-SQL business logic (repository, service, sync, uploads, reset, transitions, lineage, livecheck, download, cli)
+# is still legacy and is the remaining, larger part of that task: typed row contracts instead of `dict`, and
+# splitting modules over ~400 lines.
+module = ["mzizi_manifest.*", "mzizi_engine", "mzizi_engine.app", "mzizi_engine.auth", "mzizi_engine.capabilities", "mzizi_engine.cli", "mzizi_engine.config", "mzizi_engine.database_store", "mzizi_engine.executor", "mzizi_engine.filesystem.*", "mzizi_engine.filesystem_api.*", "mzizi_engine.store"]
+disallow_any_explicit = false
+disallow_any_generics = false
+disallow_any_decorated = false
+warn_return_any = false
+
+[[tool.mypy.overrides]]
+# The one declared parsing boundary for database rows (.docs/rules/typed-code.md): a row's shape depends on
+# whatever query ran, so `Any` is deliberate here and nowhere past it.
+module = ["mzizi_engine.ports.database"]
+disallow_any_explicit = false
+warn_return_any = false
+
+[[tool.mypy.overrides]]
+# boto3 ships no type information here (no `mypy-boto3-s3` stub package installed); the S3 client and its
+# responses are therefore a declared `Any` boundary, same reasoning as the database port above. Everything this
+# module returns to its own callers (ObjectHead, str, bytes, BinaryIO, list[dict[str, object]]) is fully typed.
+module = ["mzizi_filesystem.store"]
+disallow_any_explicit = false
+warn_return_any = false

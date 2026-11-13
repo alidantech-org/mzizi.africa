@@ -15,7 +15,7 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-from mzizi_scraping import extract, transforms
+from mzizi_scraping import extract, parse_module, transforms
 
 from . import sections
 from .bundle import Bundle
@@ -244,16 +244,17 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
                 report.warnings.append(f"module {name}: no example in examples/, dry run skipped")
                 continue
             try:
-                match = extract.discover_items(example, module)
+                spec = parse_module(module)
+                match = extract.discover_items(example, spec)
             except Exception as error:  # an invalid selector is a validation error, not a crash
                 report.errors.append(f"module {name}: selector error: {str(error).splitlines()[0][:200]}")
                 continue
-            records = [extract.extract_item(item, module["extract"]["fields"]) for item in match.items]
+            records = [extract.extract_item(item, spec.extract.fields) for item in match.items]
             expect = module.get("expect", {})
             result = {
                 "items": len(match.items),
                 "selector": match.selector_index,
-                "fieldErrors": sum(len(e) for _, e in records),
+                "fieldErrors": sum(len(r.errors) for r in records),
             }
             report.dry_run[name] = result
             if "min_items" in expect and len(match.items) < expect["min_items"]:
@@ -265,7 +266,7 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
                     f"module {name}: dry run found {len(match.items)} items, expected at most {expect['max_items']}"
                 )
             for required in expect.get("required_fields", []):
-                empty = sum(1 for record, _ in records if record.get(required) in (None, ""))
+                empty = sum(1 for r in records if r.record.get(required) in (None, ""))
                 if empty:
                     report.errors.append(
                         f"module {name}: required field {required!r} is empty in {empty} of {len(records)} items"

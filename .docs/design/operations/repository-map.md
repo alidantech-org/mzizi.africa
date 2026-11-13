@@ -21,8 +21,8 @@ source/
 │   ├── pipelines/              Bun TypeScript Temporal worker and workflow API
 │   └── README.md
 ├── packages/
-│   ├── agent/ extraction/ filesystem/ manifest/
-│   ├── ocr/ scraping/ source/
+│   ├── extraction/ fetch/ filesystem/ manifest/
+│   ├── scraping/
 │   └── README.md
 └── schema/
     ├── contracts/ database/ pipeline/ seed/ site/v1/
@@ -46,7 +46,7 @@ source/
 | root `seed/` | Prepared system inputs, manifests and fixtures. |
 | root `scripts/` | Bun command runner for setup, services, checks, databases and package entry points. |
 
-`source/packages/agent` is provider-neutral model/tool support; no standalone intelligence service exists. There is no `source/packages/database/` directory, although the engine and filesystem Python project metadata still reference `mzizi-database`. The active database service is TypeScript under `source/backend/database`; fresh Python workspace synchronization currently fails on the missing Python workspace member.
+`source/backend/agent` is a README-only proposal; no intelligence service exists. The Python workspace has no database package: the engine's `mzizi_engine.ports.database` is the one place that opens a connection, and `uv sync --all-packages` resolves cleanly. The active database service is TypeScript under `source/backend/database` (Rust foundation in progress).
 
 Former Python API/data/database implementations are historical and non-executable under `.docs/_archives/2026-11-08-rewrite-snapshot/`. A path in `.docs/_plan/` is a proposal or historical planning reference, not evidence that code exists.
 

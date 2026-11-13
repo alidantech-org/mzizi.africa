@@ -8,15 +8,12 @@ resolution-markers = [
 
 [manifest]
 members = [
-    "mzizi-agent",
-    "mzizi-database",
     "mzizi-engine",
     "mzizi-extraction",
+    "mzizi-fetch",
     "mzizi-filesystem",
     "mzizi-manifest",
-    "mzizi-ocr",
     "mzizi-scraping",
-    "mzizi-source",
     "mzizi-workspace",
 ]
 
@@ -885,41 +882,19 @@ wheels = [
 ]
 
 [[package]]
-name = "mzizi-agent"
-version = "0.1.0"
-source = { editable = "source/packages/agent" }
-
-[[package]]
-name = "mzizi-database"
-version = "0.1.0"
-source = { editable = "source/packages/database" }
-dependencies = [
-    { name = "psycopg", extra = ["binary"] },
-    { name = "pyyaml" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "psycopg", extras = ["binary"] },
-    { name = "pyyaml" },
-]
-
-[[package]]
 name = "mzizi-engine"
 version = "0.1.0"
 source = { editable = "source/backend/engine" }
 dependencies = [
     { name = "fastapi" },
     { name = "httpx" },
-    { name = "mzizi-agent" },
-    { name = "mzizi-database" },
     { name = "mzizi-extraction" },
+    { name = "mzizi-fetch" },
     { name = "mzizi-filesystem" },
     { name = "mzizi-manifest" },
-    { name = "mzizi-ocr" },
     { name = "mzizi-scraping" },
-    { name = "mzizi-source" },
     { name = "psycopg", extra = ["binary"] },
+    { name = "pydantic" },
     { name = "pyjwt", extra = ["crypto"] },
     { name = "pyyaml" },
     { name = "uvicorn" },
@@ -929,15 +904,13 @@ dependencies = [
 requires-dist = [
     { name = "fastapi" },
     { name = "httpx" },
-    { name = "mzizi-agent", editable = "source/packages/agent" },
-    { name = "mzizi-database", editable = "source/packages/database" },
     { name = "mzizi-extraction", editable = "source/packages/extraction" },
+    { name = "mzizi-fetch", editable = "source/packages/fetch" },
     { name = "mzizi-filesystem", editable = "source/packages/filesystem" },
     { name = "mzizi-manifest", editable = "source/packages/manifest" },
-    { name = "mzizi-ocr", editable = "source/packages/ocr" },
     { name = "mzizi-scraping", editable = "source/packages/scraping" },
-    { name = "mzizi-source", editable = "source/packages/source" },
     { name = "psycopg", extras = ["binary"] },
+    { name = "pydantic", specifier = ">=2.7" },
     { name = "pyjwt", extras = ["crypto"] },
     { name = "pyyaml" },
     { name = "uvicorn" },
@@ -948,18 +921,33 @@ name = "mzizi-extraction"
 version = "0.1.0"
 source = { editable = "source/packages/extraction" }
 dependencies = [
-    { name = "mzizi-ocr" },
     { name = "pdfplumber" },
+    { name = "pydantic" },
     { name = "pypdfium2" },
     { name = "shapely" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "mzizi-ocr", editable = "source/packages/ocr" },
     { name = "pdfplumber" },
+    { name = "pydantic", specifier = ">=2.7" },
     { name = "pypdfium2" },
     { name = "shapely" },
+]
+
+[[package]]
+name = "mzizi-fetch"
+version = "0.1.0"
+source = { editable = "source/packages/fetch" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx" },
+    { name = "pydantic", specifier = ">=2.7" },
 ]
 
 [[package]]
@@ -969,9 +957,8 @@ source = { editable = "source/packages/filesystem" }
 dependencies = [
     { name = "boto3" },
     { name = "jsonschema" },
-    { name = "mzizi-database" },
     { name = "mzizi-manifest" },
-    { name = "psycopg", extra = ["binary"] },
+    { name = "pydantic" },
     { name = "pyyaml" },
 ]
 
@@ -979,9 +966,8 @@ dependencies = [
 requires-dist = [
     { name = "boto3" },
     { name = "jsonschema" },
-    { name = "mzizi-database", editable = "source/packages/database" },
     { name = "mzizi-manifest", editable = "source/packages/manifest" },
-    { name = "psycopg", extras = ["binary"] },
+    { name = "pydantic", specifier = ">=2.7" },
     { name = "pyyaml" },
 ]
 
@@ -1005,35 +991,21 @@ requires-dist = [
 ]
 
 [[package]]
-name = "mzizi-ocr"
-version = "0.1.0"
-source = { editable = "source/packages/ocr" }
-
-[[package]]
 name = "mzizi-scraping"
 version = "0.1.0"
 source = { editable = "source/packages/scraping" }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "lxml" },
+    { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4" },
     { name = "lxml" },
+    { name = "pydantic", specifier = ">=2.7" },
 ]
-
-[[package]]
-name = "mzizi-source"
-version = "0.1.0"
-source = { editable = "source/packages/source" }
-dependencies = [
-    { name = "httpx" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "httpx" }]
 
 [[package]]
 name = "mzizi-workspace"

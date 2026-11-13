@@ -3,7 +3,7 @@ name = "mzizi-scraping"
 version = "0.1.0"
 description = "Reusable HTML/JSON scraping: selectors, field extraction, transforms and link discovery (no source-specific logic)."
 requires-python = ">=3.12"
-dependencies = ["beautifulsoup4", "lxml"]
+dependencies = ["beautifulsoup4", "lxml", "pydantic>=2.7"]
 
 [build-system]
 requires = ["setuptools>=68"]

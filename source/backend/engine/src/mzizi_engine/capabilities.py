@@ -80,12 +80,16 @@ _SOURCE = {
 }
 
 
+# Feature-name property keys, until profiles carry them from manifests (tracked in the patterns task).
+_NAME_KEYS = ("shapeName", "name", "NAME", "NAME_1", "NAME_2", "ADM1_EN", "ADM2_EN", "COUNTY", "county")
+
+
 def _extract(name: str) -> Callable[[dict], dict]:
     def run(payload: dict) -> dict:
-        from mzizi_extraction import EXTRACTORS
+        from mzizi_extraction import EXTRACTORS, encode_output, parse_profile
 
-        out = EXTRACTORS[name](_bytes_input(payload), payload.get("profile"))
-        return {"status": out.status, "segments": out.segments, "diagnostics": out.diagnostics}
+        out = EXTRACTORS[name](_bytes_input(payload), parse_profile(payload.get("profile"), _NAME_KEYS))
+        return encode_output(out).model_dump(mode="json")
 
     run.__name__ = f"extract_{name}"
     return run
@@ -130,32 +134,20 @@ def manifest_validate_structure(payload: dict) -> dict:
 
 
 def source_gate(payload: dict) -> dict:
-    from mzizi_source import evaluate
+    from .policy import decide
 
-    decision = evaluate(payload.get("assessment"), payload.get("dossier_stage"), payload["request"])
-    return {
-        "allowed": decision.allowed,
-        "reasons": decision.reasons,
-        "assessment_id": decision.assessment_id,
-        "requests_per_second": decision.requests_per_second,
-    }
+    decision = decide(payload.get("assessment"), payload.get("dossier_stage"), payload["request"])
+    return decision.model_dump(mode="json")
 
 
 def filesystem_sync(payload: dict) -> dict:
     """Plan (default) or apply a manifest sync. The actor is set by the engine from the authenticated principal. This legacy path requires ENGINE_FILESYSTEM_LEGACY_DATABASE_URL and S3 settings."""
     import os
 
-    from mzizi_database import connect
-    from mzizi_filesystem import (
-        DatabaseAuthorizer,
-        FilesystemService,
-        MemoryObjectStore,
-        OperatorAuthorizer,
-        Repository,
-        S3ObjectStore,
-        load_plan,
-        run_sync,
-    )
+    from mzizi_filesystem import MemoryObjectStore, OperatorAuthorizer, S3ObjectStore
+
+    from .filesystem import DatabaseAuthorizer, FilesystemService, Repository, load_plan, run_sync
+    from .ports import connect
 
     have_s3 = all(os.environ.get(k) for k in ("S3_ENDPOINT", "S3_ACCESS_KEY", "S3_SECRET_KEY"))
     if payload.get("apply") and not have_s3 and os.environ.get("ENGINE_STORE_MEMORY") != "1":
@@ -239,7 +231,7 @@ def build_default_registry() -> CapabilityRegistry:
         Capability(
             "source.gate",
             "0.1.0",
-            "mzizi-source",
+            "mzizi-engine",
             "Collection-gate decision for a request and assessment",
             source_gate,
             {"type": "object", "required": ["request"]},

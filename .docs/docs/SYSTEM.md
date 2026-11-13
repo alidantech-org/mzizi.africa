@@ -17,11 +17,11 @@ Mzizi turns source material into evidence-backed knowledge that people can revie
 | `source/backend/database` | Bun TypeScript SQL migration/seed CLI and named database-operation service. |
 | `source/backend/engine` | Python operational API, jobs, workers and orchestration of reusable capabilities. It is not the product API. |
 | `source/backend/pipelines` | Bun TypeScript Temporal worker and internal workflow API. |
-| `source/packages/` | Python libraries for source access, scraping, extraction, OCR, filesystem work, manifests and model/tool interfaces. |
+| `source/packages/` | Python libraries for fetching, scraping, extraction (with OCR), filesystem work and manifests. |
 | `source/schema/` | Input and exchange schemas plus ordered database SQL. Product API/database contracts are authored in root `dryv/`. |
 | root `seed/` | Prepared and versioned system inputs and fixtures. |
 
-There is no standalone intelligence service: `source/packages/agent` provides model and tool interfaces. The Python engine and filesystem package still have some direct PostgreSQL paths. Their project metadata also refers to a `mzizi-database` workspace package that is absent from `source/packages/`; the active database service is TypeScript under `source/backend/database`.
+There is no standalone intelligence service: `source/backend/agent/` is a README-only proposal for a future assistive application. The Python engine still has direct PostgreSQL paths for filesystem metadata, behind its own database port; the packages under `source/packages/` are pure and hold no database code. The active database service is TypeScript under `source/backend/database` (Rust foundation in progress).
 
 ## Responsibility boundaries
 

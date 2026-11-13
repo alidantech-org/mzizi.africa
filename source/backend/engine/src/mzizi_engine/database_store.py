@@ -14,7 +14,9 @@ import httpx
 class DatabaseServiceStore:
     def __init__(self, service_url: str, service_token: str) -> None:
         if not service_url or not service_token:
-            raise ValueError("DATABASE_SERVICE_URL and DATABASE_SERVICE_TOKEN are required for persistent engine storage")
+            raise ValueError(
+                "DATABASE_SERVICE_URL and DATABASE_SERVICE_TOKEN are required for persistent engine storage"
+            )
         self.base = service_url.rstrip("/") + "/internal/v1/engine"
         self.token = service_token
 
@@ -35,9 +37,26 @@ class DatabaseServiceStore:
     def get_run(self, run_id: str) -> dict | None:
         return self._request(f"runs/{run_id}", method="GET")["run"]
 
-    def create_job(self, kind: str, payload: dict, idempotency_key: str | None, requested_by: str | None, run_id: str | None, max_attempts: int) -> tuple[dict, bool]:
-        result = self._request("jobs", payload={"kind": kind, "input": payload, "idempotencyKey": idempotency_key,
-            "requestedBy": requested_by, "runId": run_id, "maxAttempts": max_attempts})
+    def create_job(
+        self,
+        kind: str,
+        payload: dict,
+        idempotency_key: str | None,
+        requested_by: str | None,
+        run_id: str | None,
+        max_attempts: int,
+    ) -> tuple[dict, bool]:
+        result = self._request(
+            "jobs",
+            payload={
+                "kind": kind,
+                "input": payload,
+                "idempotencyKey": idempotency_key,
+                "requestedBy": requested_by,
+                "runId": run_id,
+                "maxAttempts": max_attempts,
+            },
+        )
         return result["job"], bool(result["created"])
 
     def get_job(self, job_id: str) -> dict | None:
@@ -57,7 +76,9 @@ class DatabaseServiceStore:
         return self._request("jobs-queued", method="GET")["jobs"]
 
     def add_event(self, kind: str, job_id: str | None, run_id: str | None, data: dict, targets: list[str]) -> dict:
-        event = self._request("events", payload={"kind": kind, "jobId": job_id, "runId": run_id, "data": data, "targets": targets})["event"]
+        event = self._request(
+            "events", payload={"kind": kind, "jobId": job_id, "runId": run_id, "data": data, "targets": targets}
+        )["event"]
         event["seq"] = int(event["seq"])
         return event
 
@@ -70,12 +91,28 @@ class DatabaseServiceStore:
 
     def due_outbox(self, now: datetime | None = None, limit: int = 20) -> list[dict]:
         rows = self._request(f"outbox/due?limit={limit}", method="GET")["entries"]
-        return [{"id": row["id"], "event_seq": int(row["eventSeq"]), "target": row["target"], "attempts": row["attempts"],
-            "event": {"seq": int(row["eventSeq"]), "kind": row["kind"], "job_id": row["jobId"], "run_id": row["runId"], "data": row["data"], "created_at": row["createdAt"]}}
-            for row in rows]
+        return [
+            {
+                "id": row["id"],
+                "event_seq": int(row["eventSeq"]),
+                "target": row["target"],
+                "attempts": row["attempts"],
+                "event": {
+                    "seq": int(row["eventSeq"]),
+                    "kind": row["kind"],
+                    "job_id": row["jobId"],
+                    "run_id": row["runId"],
+                    "data": row["data"],
+                    "created_at": row["createdAt"],
+                },
+            }
+            for row in rows
+        ]
 
     def mark_delivered(self, outbox_id: str) -> None:
         self._request(f"outbox/{outbox_id}/delivered")
 
     def mark_failed(self, outbox_id: str, error: str, retry_in: float, max_attempts: int) -> None:
-        self._request(f"outbox/{outbox_id}/failed", payload={"error": error, "retryIn": retry_in, "maxAttempts": max_attempts})
+        self._request(
+            f"outbox/{outbox_id}/failed", payload={"error": error, "retryIn": retry_in, "maxAttempts": max_attempts}
+        )

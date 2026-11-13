@@ -3,7 +3,7 @@ name = "mzizi-extraction"
 version = "0.1.0"
 description = "Reusable extraction of PDF text and tables, GeoJSON, CSV and JSON into segments with honest diagnostics."
 requires-python = ">=3.12"
-dependencies = ["pdfplumber", "pypdfium2", "shapely", "mzizi-ocr"]
+dependencies = ["pdfplumber", "pypdfium2", "shapely", "pydantic>=2.7"]
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -14,9 +14,6 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "*" = ["py.typed"]
-
-[tool.uv.sources]
-mzizi-ocr = { workspace = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

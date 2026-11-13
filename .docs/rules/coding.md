@@ -15,3 +15,4 @@
 - Run everything from the repository root with the Bun runner (`scripts/README.md`). Python projects use uv; JavaScript and TypeScript projects use Bun. Do not add another package manager or a per-project task runner.
 - Hand-written code must pass `bun run check`: formatted (ruff, Biome, Prettier), linted, fully type annotated (mypy, strict `tsc`) and within the hard file size and layout limits of `bun run structure`. Every source file opens with a docstring or comment that says what it is for. Split a file by responsibility when it reaches its limit; never raise the limit to fit it.
 - Generated output stays connected through Dryv: change the contracts and run `bun run dryv:generate`; never hand-edit or reformat Dryv-managed files.
+- Typed contracts, a single parsing boundary, no hard-coded classification (data lives in manifests) and centralised pattern matching apply to all Python, Rust and TypeScript code: see [typed-code.md](typed-code.md).

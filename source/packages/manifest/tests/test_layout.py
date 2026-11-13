@@ -57,7 +57,13 @@ def test_no_active_file_references_archived_or_removed_paths():
 
 
 def test_the_backend_holds_the_api_and_the_engine_and_the_old_implementations_are_gone():
-    assert sorted(p.name for p in (REPO_ROOT / "source" / "backend").iterdir() if p.is_dir()) == ["api", "database", "engine", "pipelines"]
+    assert sorted(p.name for p in (REPO_ROOT / "source" / "backend").iterdir() if p.is_dir()) == [
+        "agent",
+        "api",
+        "database",
+        "engine",
+        "pipelines",
+    ]
     for gone in (
         "source/apps/api",
         "source/backend/api-legacy",

@@ -1,0 +1,19 @@
+[project]
+name = "mzizi-fetch"
+version = "0.1.0"
+description = "Reusable fetch client: polite identified HTTP/API fetching, rate limits and stop rules; gate and challenge checks are injected by the caller."
+requires-python = ">=3.12"
+dependencies = ["httpx", "pydantic>=2.7"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

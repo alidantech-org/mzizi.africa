@@ -13,9 +13,9 @@ from typing import Any, Protocol
 
 import httpx
 from fastapi import Depends, HTTPException, Request
-from mzizi_filesystem import PermissionDenied
 
 from .config import Settings
+from .filesystem import PermissionDenied
 
 
 @dataclass(frozen=True)
@@ -82,17 +82,39 @@ class DatabaseServiceFilesystemAuthorizer:
     def for_new_child(self, actor: str | None, permission: str, table: str, parent_folder_id: str | None) -> None:
         if actor is None:
             raise PermissionDenied("an authenticated actor is required")
-        self._check(self._post("can-link", {"accountId": actor, "permission": permission, "table": table, "linkId": parent_folder_id}), f"{permission} on {table}")
+        self._check(
+            self._post(
+                "can-link", {"accountId": actor, "permission": permission, "table": table, "linkId": parent_folder_id}
+            ),
+            f"{permission} on {table}",
+        )
 
     def for_record(self, actor: str | None, permission: str, table: str, record_id: str) -> None:
         if actor is None:
             raise PermissionDenied("an authenticated actor is required")
-        self._check(self._post("can-record", {"accountId": actor, "permission": permission, "table": table, "recordId": record_id}), f"{permission} on {table}")
+        self._check(
+            self._post(
+                "can-record", {"accountId": actor, "permission": permission, "table": table, "recordId": record_id}
+            ),
+            f"{permission} on {table}",
+        )
 
     def for_move(self, actor: str | None, permission: str, table: str, record_id: str, new_link_id: str | None) -> None:
         if actor is None:
             raise PermissionDenied("an authenticated actor is required")
-        self._check(self._post("can-change", {"accountId": actor, "permission": permission, "table": table, "recordId": record_id, "newLinkId": new_link_id}), f"move on {table}")
+        self._check(
+            self._post(
+                "can-change",
+                {
+                    "accountId": actor,
+                    "permission": permission,
+                    "table": table,
+                    "recordId": record_id,
+                    "newLinkId": new_link_id,
+                },
+            ),
+            f"move on {table}",
+        )
 
     def for_platform(self, actor: str | None, permission: str) -> None:
         if actor is None:
@@ -147,23 +169,51 @@ class DatabaseServiceFilesystemClient:
             response.raise_for_status()
             return response.json()
 
-    async def create_upload(self, actor: str | None, folder_id: str, filename: str, size: int | None, sha256: str | None, lease_seconds: int, ttl_seconds: int) -> dict[str, Any]:
+    async def create_upload(
+        self,
+        actor: str | None,
+        folder_id: str,
+        filename: str,
+        size: int | None,
+        sha256: str | None,
+        lease_seconds: int,
+        ttl_seconds: int,
+    ) -> dict[str, Any]:
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
                 f"{self.url}/internal/v1/filesystem/uploads",
-                json={"actorId": actor, "folderId": folder_id, "filename": filename, "size": size, "sha256": sha256,
-                    "leaseSeconds": lease_seconds, "ttlSeconds": ttl_seconds},
+                json={
+                    "actorId": actor,
+                    "folderId": folder_id,
+                    "filename": filename,
+                    "size": size,
+                    "sha256": sha256,
+                    "leaseSeconds": lease_seconds,
+                    "ttlSeconds": ttl_seconds,
+                },
                 headers={"authorization": f"Bearer {self.token}"},
             )
             response.raise_for_status()
             return response.json()["upload"]
 
-    async def link_relation(self, actor: str | None, source_version_id: str, derived_version_id: str, relation: str, engine_job_id: str | None) -> bool:
+    async def link_relation(
+        self,
+        actor: str | None,
+        source_version_id: str,
+        derived_version_id: str,
+        relation: str,
+        engine_job_id: str | None,
+    ) -> bool:
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
                 f"{self.url}/internal/v1/filesystem/relations",
-                json={"actorId": actor, "sourceVersionId": source_version_id, "derivedVersionId": derived_version_id,
-                    "relation": relation, "engineJobId": engine_job_id},
+                json={
+                    "actorId": actor,
+                    "sourceVersionId": source_version_id,
+                    "derivedVersionId": derived_version_id,
+                    "relation": relation,
+                    "engineJobId": engine_job_id,
+                },
                 headers={"authorization": f"Bearer {self.token}"},
             )
             response.raise_for_status()
@@ -199,7 +249,9 @@ class DatabaseServiceFilesystemClient:
             response.raise_for_status()
             return int(response.json()["marked"])
 
-    async def create_folder(self, actor: str | None, parent_id: str | None, name: str, fields: dict[str, Any]) -> dict[str, Any]:
+    async def create_folder(
+        self, actor: str | None, parent_id: str | None, name: str, fields: dict[str, Any]
+    ) -> dict[str, Any]:
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
                 f"{self.url}/internal/v1/filesystem/folders",

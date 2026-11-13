@@ -1,4 +1,4 @@
-"""mzizi-engine: serve the operational API, list capabilities, check settings."""
+"""mzizi-engine: serve the operational API, list capabilities, check settings, or run the filesystem CLI."""
 
 from __future__ import annotations
 
@@ -6,16 +6,23 @@ import argparse
 import json
 import sys
 
-from .capabilities import build_default_registry
-from .config import Settings
-
 
 def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if argv and argv[0] == "filesystem":
+        from .filesystem.cli import main as filesystem_main
+
+        return filesystem_main(argv[1:])
+
+    from .capabilities import build_default_registry
+    from .config import Settings
+
     parser = argparse.ArgumentParser(prog="mzizi-engine")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("serve", help="run the API (ENGINE_HOST/ENGINE_PORT, default 127.0.0.1:8760)")
     sub.add_parser("capabilities", help="print the registered capabilities")
     sub.add_parser("check", help="validate settings")
+    sub.add_parser("filesystem", help="synchronize, inspect and maintain the filesystem registry and its bucket")
     args = parser.parse_args(argv)
     if args.command == "capabilities":
         print(json.dumps(build_default_registry().describe(), indent=2))

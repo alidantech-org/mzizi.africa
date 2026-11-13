@@ -22,8 +22,9 @@ source/apps/{mobile,web,www}       Flutter client and Next.js applications
 source/backend/api                 NestJS product API
 source/backend/database            Bun TypeScript database service and CLI
 source/backend/engine               Python operational API, workers and package orchestrator
+source/backend/agent                README-only proposal for a future assistive AI application
 source/backend/pipelines            Bun TypeScript Temporal workflows and worker
-source/packages/{agent,extraction,filesystem,manifest,ocr,scraping,source}
+source/packages/{extraction,fetch,filesystem,manifest,scraping}
 source/schema/{contracts,database,pipeline,seed,site/v1}
 ```
 
@@ -36,10 +37,10 @@ The responsibilities are distinct even when they share a runtime:
 - `source/backend/database/` owns TypeScript SQL migration/seed commands and named database operations.
 - `source/backend/engine/` is the Python operational API and capability orchestrator, not the product API.
 - `source/backend/pipelines/` coordinates durable workflows with Temporal and invokes the engine.
-- `source/packages/` contains reusable Python libraries, not separate services. `agent/` provides provider-neutral model and tool interfaces; no standalone intelligence service currently exists.
+- `source/packages/` contains reusable Python libraries, not separate services. `source/backend/agent/` is a README-only proposal; no intelligence service or agent package currently exists. Packages must not know a database exists; the engine owns I/O (see `.docs/design/architecture/ENGINE_JOB_MODEL.md`, a proposal).
 - `source/schema/` contains SQL and machine-readable input/exchange schemas. Authored API/database contracts remain in `dryv/`; prepared inputs remain in root `seed/`.
 
-The Python workspace still references `mzizi-database` from the engine and filesystem package configurations, but there is no `source/packages/database/` member in the repository. The active database service is TypeScript under `source/backend/database`. Treat this as an unresolved packaging/configuration gap; do not describe the missing Python package as present or claim a fresh `uv sync --all-packages` works.
+`uv sync --all-packages` resolves and runs from a clean checkout: the stale `mzizi-database` workspace reference is gone. `source/backend/engine/src/mzizi_engine/ports/database.py` is the only place in the Python workspace that knows a database exists (a `Connection` port, psycopg adapter today); `source/packages/filesystem` and every other package are pure and never import it. `source/backend/engine/filesystem/` holds the raw-SQL business logic moved out of the former `mzizi_filesystem` database layer (TSK-E55B1BC4011A); typed row contracts for it and the active database service (TypeScript under `source/backend/database`, Rust foundation in progress) remain open follow-on work.
 
 The inherited Python API and former data/database engines are historical under `.docs/_archives/2026-11-08-rewrite-snapshot/`. Never import, build, generate or run archived code.
 
@@ -65,6 +66,7 @@ Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neut
 
 - Keep exactly the eight overview documents in `.docs/docs/`. Put detailed design in an existing topic under `.docs/design/`, and planning proposals in `.docs/_plan/`.
 - Put contributor and agent process in `.docs/rules/`. Do not recreate `.docs/guidance/`.
+- All hand-written Python, Rust and TypeScript follows `.docs/rules/typed-code.md`: named typed contracts (no free `dict`/`Any`/`any`/`serde_json::Value` past the parsing boundary), no hard-coded source or classification knowledge (it lives in manifests), and pattern matching only in the pattern-matching packages.
 - When paths or behavior change, update the affected README/design guide and every link that points to it in the same work. Mark incomplete behavior and proposals clearly.
 - Do not add or edit `.github/**` unless requested. Keep generated files, local databases, build outputs, virtual environments and dependencies out of source control.
 

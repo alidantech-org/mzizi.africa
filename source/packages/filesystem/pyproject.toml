@@ -1,12 +1,9 @@
 [project]
 name = "mzizi-filesystem"
 version = "0.1.0"
-description = "Reusable filesystem capability: S3 object access, hashing, deduplication, artifact metadata and seed publication to a registry."
+description = "Reusable filesystem capability: S3 object access, hashing, deduplication, key and code naming and the media catalog. No database knowledge; the engine owns metadata storage."
 requires-python = ">=3.12"
-dependencies = ["boto3", "pyyaml", "jsonschema", "psycopg[binary]", "mzizi-manifest", "mzizi-database"]
-
-[project.scripts]
-mzizi-filesystem = "mzizi_filesystem.cli:main"
+dependencies = ["boto3", "pyyaml", "jsonschema", "mzizi-manifest", "pydantic>=2.7"]
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -20,7 +17,6 @@ where = ["src"]
 
 [tool.uv.sources]
 mzizi-manifest = { workspace = true }
-mzizi-database = { workspace = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -71,6 +71,8 @@ class Settings:
         if self.auth not in ("oidc", "off"):
             raise ValueError("ENGINE_AUTH must be oidc or off")
         if self.store not in ("memory", "database_service"):
-            raise ValueError("ENGINE_STORE must be memory or database_service; Python PostgreSQL persistence has been removed")
+            raise ValueError(
+                "ENGINE_STORE must be memory or database_service; Python PostgreSQL persistence has been removed"
+            )
         if self.auth == "off" and self.host not in ("127.0.0.1", "::1", "localhost"):
             raise ValueError("ENGINE_AUTH=off is allowed only when bound to a loopback address")

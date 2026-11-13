@@ -5,19 +5,17 @@ description = "Mzizi Python orchestration engine: operational API, job/run lifec
 requires-python = ">=3.12"
 dependencies = [
   "fastapi",
+  "pydantic>=2.7",
   "uvicorn",
   "httpx",
   "pyjwt[crypto]",
   "pyyaml",
   "psycopg[binary]",
-  "mzizi-database",
   "mzizi-filesystem",
   "mzizi-manifest",
-  "mzizi-source",
   "mzizi-scraping",
+  "mzizi-fetch",
   "mzizi-extraction",
-  "mzizi-ocr",
-  "mzizi-agent",
 ]
 
 [project.scripts]
@@ -34,14 +32,11 @@ where = ["src"]
 "*" = ["py.typed"]
 
 [tool.uv.sources]
-mzizi-database = { workspace = true }
 mzizi-filesystem = { workspace = true }
 mzizi-manifest = { workspace = true }
-mzizi-source = { workspace = true }
 mzizi-scraping = { workspace = true }
+mzizi-fetch = { workspace = true }
 mzizi-extraction = { workspace = true }
-mzizi-ocr = { workspace = true }
-mzizi-agent = { workspace = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

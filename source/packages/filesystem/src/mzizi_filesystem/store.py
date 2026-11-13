@@ -11,7 +11,8 @@ from __future__ import annotations
 import os
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
-from typing import Any, BinaryIO, Protocol
+from datetime import datetime
+from typing import Any, BinaryIO, NotRequired, Protocol, TypedDict
 from urllib.parse import urlparse
 
 from .access import BUCKET, REGION
@@ -29,6 +30,12 @@ class StoreError(RuntimeError):
     pass
 
 
+class MultipartUpload(TypedDict):
+    Key: str
+    UploadId: str
+    Initiated: NotRequired[datetime | None]
+
+
 class ObjectStore(Protocol):
     bucket: str
 
@@ -43,7 +50,7 @@ class ObjectStore(Protocol):
     def presign_put(self, key: str, content_type: str, expires_seconds: int = 900) -> str: ...
     def list_keys(self, prefix: str = "") -> Iterator[tuple[str, int]]: ...
     def delete_many(self, keys: list[str]) -> int: ...
-    def list_multipart(self, prefix: str) -> list[dict]: ...
+    def list_multipart(self, prefix: str) -> list[MultipartUpload]: ...
     def abort_multipart(self, key: str, upload_id: str) -> None: ...
 
 
@@ -57,7 +64,7 @@ class MemoryObjectStore:
         self.puts: list[str] = []
         self.deleted: list[str] = []
         self.aborted: list[tuple[str, str]] = []
-        self.multiparts: list[dict] = []
+        self.multiparts: list[MultipartUpload] = []
         self.fail_next_puts = 0
         self.corrupt_next_puts = 0
 
@@ -118,7 +125,7 @@ class MemoryObjectStore:
     def presign_put(self, key: str, content_type: str, expires_seconds: int = 900) -> str:
         return f"{self.public_endpoint}/{self.bucket}/{key}?upload=1&expires={expires_seconds}"
 
-    def list_multipart(self, prefix: str) -> list[dict]:
+    def list_multipart(self, prefix: str) -> list[MultipartUpload]:
         return [m for m in self.multiparts if m["Key"].startswith(prefix)]
 
     def abort_multipart(self, key: str, upload_id: str) -> None:
@@ -252,7 +259,7 @@ class S3ObjectStore:
             done += len(batch)
         return done
 
-    def list_multipart(self, prefix: str) -> list[dict]:
+    def list_multipart(self, prefix: str) -> list[MultipartUpload]:
         out = self._client.list_multipart_uploads(Bucket=self.bucket, Prefix=prefix)
         return [
             {"Key": u["Key"], "UploadId": u["UploadId"], "Initiated": u.get("Initiated")}
@@ -267,7 +274,9 @@ class S3ObjectStore:
             # the database acknowledgement was lost. Missing uploads are already clean.
             response = getattr(error, "response", {})
             code = response.get("Error", {}).get("Code") if isinstance(response, Mapping) else None
-            status = response.get("ResponseMetadata", {}).get("HTTPStatusCode") if isinstance(response, Mapping) else None
+            status = (
+                response.get("ResponseMetadata", {}).get("HTTPStatusCode") if isinstance(response, Mapping) else None
+            )
             if code not in ("NoSuchUpload", "NoSuchKey", "NotFound", "404") and status != 404:
                 raise
 
