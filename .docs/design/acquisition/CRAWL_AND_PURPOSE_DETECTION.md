@@ -11,7 +11,7 @@ tags: [scraping,crawling,patterns,documents,proposal]
 
 ## Goal
 
-Crawl government and public-sector sites properly (politely, inside an approved scope) and decide, with evidence, what each **URL path, link, page, HTML region and downloaded file is for**. Then download files such as PDFs, assign them a probable purpose, choose the right extraction profile, extract data into the staging store, and map it to candidates for review. Everything site-specific is a manifest. Agents help later by proposing manifest changes; running a manifest never needs a model.
+Crawl government and public-sector sites properly (with bounded requests and an approved source-specific access scope) and decide, with evidence, what each **URL path, link, page, HTML region and downloaded file is for**. Then download files such as PDFs, assign them a probable purpose, choose the right extraction profile, extract data into the staging store, and map it to candidates for review. Everything site-specific is a manifest. Agents help later by proposing manifest changes; running a manifest never needs a model.
 
 ## The flow
 
@@ -19,7 +19,7 @@ Crawl government and public-sector sites properly (politely, inside an approved 
 site manifest (+ family) ──► crawl plan (engine plan step, reads registry/database/object store)
         │
         ▼
-  fetch (gate, robots, rate limits, stop rules)  ──►  raw bytes kept as-is (object store, hashed)
+  fetch (gate, source robots mode, rate limits, challenge policy)  ──►  raw bytes kept as-is (object store, hashed)
         │
         ├─► classify PATH      (sections.yml rules: exact/regex slots, then semantic query)
         ├─► classify LINK      (href + anchor text + surrounding text + file extension + section of origin)
@@ -56,7 +56,7 @@ The purpose and section vocabularies (tenders, budgets, bills, gazettes, publica
 
 ## Safety and scope
 
-The gate, robots handling, rate limits, stop-on conditions (401, 403, 429, repeated 5xx, access challenge, block notice) and the no-authentication rule of the site spec remain absolute. Classification never widens scope: a discovered link outside `policy.scope` is recorded as a sighting and not followed. Download size, count and depth are capped per job in the manifest, and the engine enforces memory bounds.
+The collection gate, source approval, bounded rate/concurrency limits and scope checks remain mandatory. `robots.txt` handling defaults to `respect`, with an `override` only when approved in the source assessment with its rationale recorded. Access challenges (401, 403, 429, CAPTCHA, block notices) cause a stop or review by default; an explicitly approved, source-scoped browser/challenge-handling workflow may resume within its documented limits. Authentication and challenge-solving permissions are separate capabilities to design and validate, not permissions inferred from a public URL. Classification never widens scope: a link outside `policy.scope` is recorded and not followed. Download size, count and depth are capped per job; the engine enforces memory bounds. See [collection policy](../policy/LEGALITY_SAFETY_AND_COMPLIANCE.md).
 
 ## Where agents help (later)
 
