@@ -7,22 +7,40 @@ const catalogue = reference.feature("Catalogue").failureDefaults(databaseHttp);
 const scheme = Scheme.asRef();
 const value = Value.asRef();
 
+const ReferencePage = reference
+  .schema("ReferencePage", {
+    limit: dryv.field(p.Integer).optional().default(50),
+    offset: dryv.field(p.Integer).optional().default(0),
+  })
+  .abstract()
+  .asRef();
+
+const SchemeWindow = reference
+  .schema("SchemeWindow", {
+    code: dryv.field(p.IdentityCode).optional(),
+  })
+  .extends(ReferencePage)
+  .asRef();
+
+const MemberWindow = reference
+  .schema("MemberWindow", {
+    scheme_id: dryv.field(p.Id),
+  })
+  .extends(ReferencePage)
+  .asRef();
+
 const { ScanSchemes, ScanMembers } = catalogue.queries({
   ScanSchemes: dryv.readQuery
     .from(scheme)
-    .params({
-      prefix: { value: p.IdentityCode, optional: true },
-      limit: { value: p.Integer, optional: true },
-      offset: { value: p.Integer, optional: true },
-    })
-    .where((row, args) => [row.fields.code.compare("prefix", args.prefix)])
+    .input(SchemeWindow)
+    .where((row, args) => [row.fields.code.compare("prefix", args.code)])
     .select(({ fields }) => ({ id: fields.id, code: fields.code, owner_snapshot: fields.ownerSnapshot, title: fields.title }))
     .orderBy(({ fields }) => [fields.code.order("asc"), fields.id.order("asc")])
     .page(({ limit, offset }) => ({ limit, offset, maxLimit: 200 })),
   ScanMembers: dryv.readQuery
     .from(value)
-    .params({ schemeId: p.Id, limit: { value: p.Integer, optional: true }, offset: { value: p.Integer, optional: true } })
-    .where((row, args) => [row.fields.schemeId.eq(args.schemeId)])
+    .input(MemberWindow)
+    .where((row, args) => [row.fields.schemeId.eq(args.scheme_id)])
     .select(({ fields }) => ({
       id: fields.id,
       code: fields.code,
@@ -36,16 +54,6 @@ const { ScanSchemes, ScanMembers } = catalogue.queries({
 
 const rows = catalogue.schemas({ SchemeEntry: dryv.schema.fromQuery(ScanSchemes), MemberEntry: dryv.schema.fromQuery(ScanMembers) });
 const io = catalogue.schemas({
-  SchemeWindow: dryv.schema({
-    code: dryv.field(p.IdentityCode).optional(),
-    limit: dryv.field(p.Integer).optional().default(50),
-    offset: dryv.field(p.Integer).optional().default(0),
-  }),
-  MemberWindow: dryv.schema({
-    scheme_id: dryv.field(p.Id),
-    limit: dryv.field(p.Integer).optional().default(50),
-    offset: dryv.field(p.Integer).optional().default(0),
-  }),
   SchemeCollection: dryv.schema({ schemes: dryv.field(rows.SchemeEntry).array() }),
   MemberCollection: dryv.schema({ values: dryv.field(rows.MemberEntry).array() }),
   MemberKey: dryv.schema({ scheme: dryv.field(p.IdentityCode), code: dryv.field(p.IdentityCode) }),
@@ -57,23 +65,17 @@ export const referenceOperations = catalogue.operations({
     .operation()
     .role("list")
     .description("Page through classification schemes in code order.")
-    .input(io.SchemeWindow)
+    .input(SchemeWindow)
     .output(io.SchemeCollection)
-    .query(ScanSchemes, ({ inputField }) => ({
-      parameters: { prefix: inputField("code"), limit: inputField("limit"), offset: inputField("offset") },
-      envelope: { schemes: "rows" },
-    }))
+    .queryFromInput(ScanSchemes, { envelope: { schemes: "rows" } })
     .facets(({ input, output }) => ({ http: dryv.http("GET", "/v1/reference/schemes").input(input, dryv.queryObject()).output(output) })),
   BrowseSchemeMembers: dryv
     .operation()
     .role("list")
     .description("Page through members of one scheme, including superseded members.")
-    .input(io.MemberWindow)
+    .input(MemberWindow)
     .output(io.MemberCollection)
-    .query(ScanMembers, ({ inputField }) => ({
-      parameters: { schemeId: inputField("scheme_id"), limit: inputField("limit"), offset: inputField("offset") },
-      envelope: { values: "rows" },
-    }))
+    .queryFromInput(ScanMembers, { envelope: { values: "rows" } })
     .facets(({ input, output }) => ({ http: dryv.http("GET", "/v1/reference/values").input(input, dryv.queryObject()).output(output) })),
   ResolveMemberCode: dryv
     .operation()
