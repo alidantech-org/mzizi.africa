@@ -22,17 +22,17 @@ The scraper was designed around site-structure and API-structure YAML (`source/s
 | 6 | Does a manifest-free site yield structure? | `mzizi scrape links` then `scrape markdown` | Link inventory (internal/external, normalised, deduped); readable Markdown |
 | 7 | Does navigation work? | `mzizi browser navigate … --click … --steps N` or `scrape crawl --max-pages 10` | Ordered page list with budgets honoured |
 | 8 | What needs JavaScript? | `mzizi browser compare --url …` | Diff of raw vs rendered text/links; verdict "needs browser" or not |
-| 9 | Are we blocked? | `mzizi scrape challenge --input page.html` | Challenge signals and stop recommendation (never bypassed) |
+| 9 | Is a challenge present, and is resolution approved? | `mzizi scrape challenge --input page.html` | Challenge signals, source-policy decision, approved resolution path or stop reason |
 | 10 | Do real results land as files? | Run folder inspection; `mzizi fs put --path outputs/<run> --dry-run` | Planned object keys, hashes, dedup hits |
 | 11 | Do they land in Mongo? | `mzizi mongo load --run <run>` | Counts and a `mongo find` sample ([05](05-mongodb-and-vector-dev-services.md)) |
 | 12 | Can vectors classify content? | `mzizi vector index` then `vector classify` | Nearest labelled examples and scores ([05](05-mongodb-and-vector-dev-services.md)) |
 
 ## Browser mode
 
-- **Adapter:** Playwright driving the installed system Chrome (`channel="chrome"`; `/usr/bin/google-chrome` is present), headed for watching (`--headed`), headless otherwise. This matches the "conditional browser fallback, not for all pages" disposition in [10 build vs reuse](../source-redesign/10-prior-art-and-build-vs-reuse.md) and [11](../source-redesign/11-tool-integration-and-contracts.md): preserve whether a capture is HTTP or rendered, and the environment (browser version, viewport).
+- **Adapter:** Playwright driving the installed system Chrome (`channel="chrome"`; `/usr/bin/google-chrome` is present) is the initial browser adapter, not a mandatory or exclusive choice. Allow other browser adapters and anti-bot-resilient profiles behind the same engine interface. Preserve whether a capture is HTTP or rendered, plus browser version, viewport, adapter, session mode and capture conditions. Prefer conditional browser fallback when HTTP suffices (see [10 build vs reuse](../source-redesign/10-prior-art-and-build-vs-reuse.md) and [11](../source-redesign/11-tool-integration-and-contracts.md)).
 - **Packaging:** an optional dependency group (`browser`) of the engine, not of any package. Packages stay HTTP/HTML-string based; the engine passes rendered HTML into `mzizi-scraping`.
 - **Isolation:** throwaway profile under `.local/dev/browser-profile/`; never the user's Chrome profile; no stored logins; downloads disabled unless `--allow-downloads`.
-- **Politeness and legality:** the same gate, robots check, identified user agent and rate limit apply to the browser. A challenge page ends the run; there is no CAPTCHA solving, fingerprint spoofing or bot-detection evasion.
+- **Source-specific access policy:** the same source approval, scope and bounded request budgets apply to every adapter. `robots.txt` defaults to `respect`, but the engine should support a documented source-approved `override`. CAPTCHA/access challenges are detected and recorded; where authorised, the browser layer may hand off to manual or approved provider/adaptor resolution, otherwise it stops. Browser profile/identity configuration may be supported for approved collection workflows. See [collection policy](../../design/policy/LEGALITY_SAFETY_AND_COMPLIANCE.md); these capabilities are design targets until implemented.
 - **Evidence capture:** `snapshot` records rendered HTML, a screenshot, final URL, redirect chain and console/network summary, so later replay is possible.
 
 ## Manifests
