@@ -107,3 +107,58 @@ def render_png(page: pdfium.PdfPage) -> bytes:
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")
     return buffer.getvalue()
+
+
+class OcrLine(BaseModel):
+    """One recognised line in image pixels, with the mean word confidence (0..1)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    text: str
+    block: int
+    x0: float
+    top: float
+    x1: float
+    bottom: float
+    confidence: float
+
+
+def _read_lines(tsv: str) -> list[OcrLine]:
+    grouped: dict[tuple[str, str, str], list[dict[str, str]]] = {}
+    for row in csv.DictReader(io.StringIO(tsv), delimiter="\t", quoting=csv.QUOTE_NONE):
+        if row.get("level") == WORD_LEVEL and (row.get("text") or "").strip():
+            grouped.setdefault((row["block_num"], row["par_num"], row["line_num"]), []).append(row)
+    lines: list[OcrLine] = []
+    for words in grouped.values():
+        left = min(float(w["left"]) for w in words)
+        top = min(float(w["top"]) for w in words)
+        right = max(float(w["left"]) + float(w["width"]) for w in words)
+        bottom = max(float(w["top"]) + float(w["height"]) for w in words)
+        confs = [float(w["conf"]) for w in words if float(w["conf"]) >= 0]
+        text = " ".join(w["text"].strip() for w in sorted(words, key=lambda w: float(w["left"])))
+        lines.append(
+            OcrLine(
+                text=text,
+                block=int(words[0]["block_num"]),
+                x0=left,
+                top=top,
+                x1=right,
+                bottom=bottom,
+                confidence=sum(confs) / len(confs) / 100 if confs else 0.0,
+            )
+        )
+    return lines
+
+
+def recognise_lines(png: bytes, languages: str = DEFAULT_LANGUAGES) -> list[OcrLine]:
+    """Recognised lines with positions, in Tesseract's reading order (automatic page layout analysis)."""
+    out = subprocess.run(
+        [_binary(), "stdin", "stdout", "-l", languages, "--psm", "3", "tsv"],
+        input=png,
+        capture_output=True,
+        timeout=TIMEOUT_SECONDS,
+        check=False,
+    )
+    if out.returncode != 0:
+        raise OcrUnavailable(out.stderr.decode(errors="replace")[:200])
+    return _read_lines(out.stdout.decode("utf-8", errors="replace"))

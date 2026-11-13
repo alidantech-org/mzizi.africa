@@ -17,10 +17,19 @@ dependencies = [
   "mzizi-scraping",
   "mzizi-fetch",
   "mzizi-extraction",
+  "typer>=0.29.1",
+  "rich>=15.0.0",
+  "questionary>=2.1.1",
 ]
 
 [project.scripts]
 mzizi-engine = "mzizi_engine.cli:main"
+mzizi = "mzizi_engine.devcli.app:main"
+
+[project.optional-dependencies]
+browser = [
+    "playwright>=1.65.1",
+]
 
 [build-system]
 requires = ["setuptools>=68"]

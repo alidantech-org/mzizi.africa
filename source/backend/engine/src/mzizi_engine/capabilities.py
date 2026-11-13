@@ -95,6 +95,21 @@ def _extract(name: str) -> Callable[[dict], dict]:
     return run
 
 
+def extract_markdown(payload: dict) -> dict:
+    """Structured PDF extraction: Markdown, figures and page renders as files, tables as CSV, a typed structure tree."""
+    from mzizi_extraction import DocumentProfile, encode_document, extract_pdf_document
+
+    options = {
+        k: payload[k]
+        for k in ("ocr", "languages", "tables", "figures", "page_renders", "caption_labels")
+        if k in payload
+    }
+    if "caption_labels" in options:
+        options["caption_labels"] = tuple(options["caption_labels"])
+    profile = DocumentProfile.model_validate(options, strict=False)
+    return encode_document(extract_pdf_document(_bytes_input(payload), profile)).model_dump(mode="json")
+
+
 def extract_pdf(payload: dict) -> dict:
     return _extract("pdf")(payload)
 
@@ -185,6 +200,26 @@ def build_default_registry() -> CapabilityRegistry:
         ("json", extract_json, "JSON records", False),
     ]:
         reg.register(Capability(f"extraction.{kind}", "0.1.0", "mzizi-extraction", desc, fn, _SOURCE, cpu_bound=cpu))
+    reg.register(
+        Capability(
+            "extraction.markdown",
+            "0.1.0",
+            "mzizi-extraction",
+            "PDF to structured Markdown: headings, bold/italic, lists, tables, figures, per-page OCR",
+            extract_markdown,
+            {
+                **_SOURCE,
+                "properties": {
+                    **_SOURCE["properties"],
+                    "ocr": {"enum": ["auto", "off", "force"]},
+                    "languages": {"type": "string"},
+                    "page_renders": {"type": "boolean"},
+                    "caption_labels": {"type": "array", "items": {"type": "string"}},
+                },
+            },
+            cpu_bound=True,
+        )
+    )
     reg.register(
         Capability(
             "engine.process_info",

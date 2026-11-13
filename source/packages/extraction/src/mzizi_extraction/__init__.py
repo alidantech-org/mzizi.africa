@@ -3,6 +3,16 @@
 from collections.abc import Callable
 
 from mzizi_extraction.core import ExtractionProfile, Limits, Output
+from mzizi_extraction.document import (
+    Boilerplate,
+    DocumentProfile,
+    DocumentWire,
+    OcrMode,
+    encode_document,
+    extract_html_document,
+    extract_pdf_document,
+    learn_boilerplate,
+)
 from mzizi_extraction.encode import WireOutput, encode_output
 from mzizi_extraction.geo import extract_geojson
 from mzizi_extraction.parse import parse_profile
@@ -21,16 +31,24 @@ EXTRACTORS: dict[str, Extractor] = {
 
 __all__ = [
     "EXTRACTORS",
+    "Boilerplate",
+    "DocumentProfile",
+    "DocumentWire",
     "ExtractionProfile",
     "Extractor",
     "Limits",
+    "OcrMode",
     "Output",
     "WireOutput",
+    "encode_document",
     "encode_output",
     "extract_csv",
     "extract_geojson",
+    "extract_html_document",
     "extract_json",
     "extract_pdf",
+    "extract_pdf_document",
+    "learn_boilerplate",
     "parse_profile",
 ]
 __version__ = "0.1.0"

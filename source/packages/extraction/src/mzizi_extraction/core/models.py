@@ -60,6 +60,12 @@ class Code(StrEnum):
     TABLE_PAGE_LIMIT = "table_page_limit"
     TABLES = "tables"
     TEXT_PAGES = "text_pages"
+    OCR_AUTO = "ocr_auto"
+    GARBLED_TEXT = "garbled_text"
+    PAGE_FURNITURE = "page_furniture"
+    COLUMNS = "columns"
+    FIGURES = "figures"
+    STRUCTURE = "structure"
 
 
 class Locator(Frozen):

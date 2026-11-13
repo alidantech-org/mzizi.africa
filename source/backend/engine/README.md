@@ -17,6 +17,22 @@ uv run pytest source/backend/engine/tests
 
 The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (development only) is refused on any other address. In normal mode a bearer token is verified against the same OIDC issuer as the NestJS API (`AUTH_ISSUER`, `AUTH_JWKS_URL`), then account resolution and platform permissions go through named TypeScript database-service operations (`DATABASE_SERVICE_URL`, `DATABASE_SERVICE_TOKEN`). Persistent jobs, events, and callback outbox records also go through those operations; the Python engine no longer has a PostgreSQL-backed job store. Filesystem folder/file detail reads, download-key authorization, folder creation, upload reservation/cleanup, exact-version lineage writes, and scoped authorization use named database-service operations; Python handles object-store transfer and signing. Failed cleanup remains retryable because the DB owner keeps the session until the object operation succeeds. Other filesystem metadata operations (repository, service, authz, sync, uploads, lineage, transitions, reset, secure, cli) still use direct PostgreSQL through `mzizi_engine.filesystem`, behind the port above; these remain migration gaps against the TypeScript/Rust database service, and that module's raw-SQL rows are still typed loosely (`Row = Mapping[str, Any]`), not as named per-query contracts. Those legacy routes require an explicit `ENGINE_FILESYSTEM_LEGACY_DATABASE_URL`; they no longer inherit `DATABASE_URL` or the database administrator connection. TypeScript services and tools run with Bun only, including the Temporal worker.
 
+## Developer CLI (`mzizi`)
+
+`uv run mzizi` runs capabilities on local files and URLs and shows the result; it holds no extraction, scraping or fetching logic, only payload building over registered capability handlers (`mzizi_engine.devcli`). Plan: [`.docs/_plan/mzizi-engine/`](../../../.docs/_plan/mzizi-engine/README.md).
+
+```bash
+uv run mzizi                          # interactive: pick a group and command, get asked for missing values
+uv run mzizi dev init                 # create the git-ignored .local/dev/{inputs,outputs,...} workspace
+uv run mzizi status [--group fetch] [--probe]   # every port: ready / needs setup / not yet added, and why
+uv run mzizi doctor                   # tools, libraries and services the ports need
+uv run mzizi extract pdf budget.pdf   # inputs/ is searched; --json, --no-input, -v, --allow-outside-inputs are global
+uv run mzizi extract markdown report.pdf   # Markdown + assets/ figures + tables/*.csv + structure.json in the run folder; --ocr auto|off|force, --page-renders
+uv run mzizi scrape links page.html --base-url https://example.org
+```
+
+Every planned command exists. A command whose capability is not registered prints why, logs it to `.local/dev/logs/mzizi.log`, records a run folder and exits **3**; missing tools or libraries exit **4**; a missing value with no terminal exits **2**. Registering a capability of the declared name in `capabilities.py` turns its command live (state derived from the registry in `devcli/ports.py`). Missing values are prompted on a terminal, with a bounded, time-limited file search (`devcli/pathsearch.py`) and recent-URL completion.
+
 ## Initial API
 
 | Method and path | Purpose | Permission |

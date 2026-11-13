@@ -11,13 +11,16 @@ def make_pdf(pages: list[dict]) -> bytes:
     """pages: dicts with 'text' (list of (x, y, str)), 'grid' (x0, y0, cols, rows, cell_w, cell_h) and/or 'image' True."""
     objs: list[bytes] = []
     kids = []
-    next_id = 4
+    next_id = 6
     filler: list[int] = []
     page_objs = []
     for page in pages:
         stream = b""
-        for x, y, s in page.get("text", []):
-            stream += f"BT /F1 11 Tf {x} {y} Td ({s}) Tj ET\n".encode()
+        for x, y, s, *style in page.get("text", []):
+            font, size = style if len(style) == 2 else ("F1", 11)
+            stream += f"BT /{font} {size} Tf {x} {y} Td ({s}) Tj ET\n".encode()
+        for operation in page.get("draw", []):
+            stream += operation.encode() + b"\n"
         if "grid" in page:
             x0, y0, cols, rows, cw, ch = page["grid"]
             for c in range(cols + 1):
@@ -30,7 +33,7 @@ def make_pdf(pages: list[dict]) -> bytes:
         next_id += 3
         if not page.get("image"):
             filler.append(image_id)
-        resources = b"<< /Font << /F1 3 0 R >>"
+        resources = b"<< /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >>"
         if page.get("image"):
             resources += f" /XObject << /Im1 {image_id} 0 R >>".encode()
         resources += b" >>"
@@ -39,6 +42,8 @@ def make_pdf(pages: list[dict]) -> bytes:
     objs.append(_obj(1, b"<< /Type /Catalog /Pages 2 0 R >>"))
     objs.append(_obj(2, f"<< /Type /Pages /Kids [{' '.join(f'{k} 0 R' for k in kids)}] /Count {len(kids)} >>".encode()))
     objs.append(_obj(3, b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"))
+    objs.append(_obj(4, b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>"))
+    objs.append(_obj(5, b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique >>"))
     extra: list[tuple[int, bytes]] = []
     for content_id, stream, page_id, resources, image_id in page_objs:
         extra.append(
