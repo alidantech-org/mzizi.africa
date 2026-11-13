@@ -9,6 +9,7 @@ from mzizi_engine.web.browser.challenge import ChallengeHandler, detect_challeng
 from mzizi_engine.web.browser.models import RenderedPage
 from mzizi_fetch.web.blocks import Response, detect_block
 from mzizi_fetch.web.client import WebClient, WebResponse
+from mzizi_fetch.web.policy import scope_decision
 
 RETRYING = frozenset(
     {Response.RETRY.value, Response.BACK_OFF.value, Response.SLOW_DOWN.value, Response.RETRY_LATER.value}
@@ -50,13 +51,22 @@ class BrowserBackend:
         self.client, self.session, self.challenges = client, session, challenges
 
     def get(self, url: str) -> WebResponse:
-        refusal = self.client.preflight(url)
-        if refusal is not None:
-            return refusal
         attempt = 0
         while True:
+            refusal = self.client.preflight(url)
+            if refusal is not None:
+                return refusal
+            self.client.wait_for_slot(url)
             page = self.session.goto(url)
             response = to_response(url, page)
+            if not page.error:
+                allowed, reason = scope_decision(self.client.policy, response.final_url, self.client.start_hosts)
+                if not allowed:
+                    return response.model_copy(update={"body": b"", "error": f"navigation left scope: {reason}"})
+                if response.final_url != url:
+                    robots = self.client.robots_for(response.final_url)
+                    if not robots.allowed:
+                        return response.model_copy(update={"body": b"", "refused": robots})
             block = detect_challenge(page) or detect_block(page.status, page.headers, response.body, page.error)
             if block is None:
                 self.client.blocks.ok()

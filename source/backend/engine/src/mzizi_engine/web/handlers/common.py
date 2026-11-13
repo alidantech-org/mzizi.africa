@@ -8,6 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from mzizi_engine.jsonvalue import Payload
+from mzizi_engine.web.browser.adapter import check_profile
 from mzizi_engine.web.browser.models import BrowserConfig
 from mzizi_engine.web.identity import user_agent
 from mzizi_engine.web.requests import Request, Workspace
@@ -33,9 +34,14 @@ def out_dir(request: Workspace) -> Path:
 
 def browser_config(request: Workspace, *, headed: bool, agent: str | None = None) -> BrowserConfig:
     folder = out_dir(request)
+    profile = Path(request.profile_dir) if request.profile_dir else folder / DEFAULT_PROFILE
+    if request.adapter == "patchright":
+        check_profile(profile)
+        profile = profile.with_name(f"{profile.name}-patchright")
     return BrowserConfig(
+        adapter=request.adapter,
         headed=headed,
-        profile_dir=Path(request.profile_dir) if request.profile_dir else folder / DEFAULT_PROFILE,
+        profile_dir=profile,
         downloads_dir=Path(request.downloads_dir) if request.downloads_dir else folder / "downloads",
         screenshots_dir=folder / "screenshots",
         user_agent=agent or user_agent(),

@@ -19,7 +19,6 @@ from mzizi_engine.web.records import ErrorRecord, LinkRecord, PageRecord, Resour
 from mzizi_engine.web.requests import CrawlRequest, ExportRequest, MarkdownRequest, Render
 from mzizi_extraction import extract_html_document
 from mzizi_extraction.document import render_markdown
-from mzizi_fetch.web.blocks import detect_block
 from mzizi_fetch.web.client import WebClient
 from mzizi_fetch.web.policy import SourcePolicy
 from mzizi_fetch.web.urls import host_of
@@ -77,11 +76,13 @@ def page_markdown(request: MarkdownRequest) -> MarkdownResult:
         client.close()
     if response.refused is not None:
         return MarkdownResult(url=request.url, ok=False, reason=response.refused.reason)
-    block = detect_block(response.status, response.headers, response.body, response.error)
+    block = response.block
     if block is not None:
         return MarkdownResult(
             url=request.url, ok=False, reason=f"{block.kind.value}: {block.detail}", status=response.status
         )
+    if not response.usable:
+        return MarkdownResult(url=request.url, ok=False, reason=response.error or f"HTTP {response.status}")
     output, title, removed = extract_html_document(response.text, response.final_url)
     markdown = render_markdown(output.pages).replace("<!-- page 1 -->\n\n", "", 1)
     (folder / "page.html").write_bytes(response.body)

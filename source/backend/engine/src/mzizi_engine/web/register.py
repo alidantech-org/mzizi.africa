@@ -4,14 +4,17 @@ from __future__ import annotations
 
 from mzizi_engine.capabilities import Capability, CapabilityRegistry
 from mzizi_engine.jsonvalue import Payload
-from mzizi_engine.web.handlers import crawl, downloads, inspect
+from mzizi_engine.web.handlers import crawl, downloads, inspect, scrape
 from mzizi_engine.web.handlers.common import capability
 from mzizi_engine.web.requests import (
     CrawlRequest,
     DownloadRequest,
     ExportRequest,
     MarkdownRequest,
+    ScrapeFileRequest,
+    ScrapeUrlRequest,
     SearchRequest,
+    SelectRequest,
     UrlRequest,
     Workspace,
 )
@@ -33,6 +36,9 @@ def register_web(registry: CapabilityRegistry) -> None:
             "One page to Markdown without header, footer and navigation",
             capability(MarkdownRequest, crawl.page_markdown),
         ),
+        ("scraping.extract", "Apply a site module to saved HTML", capability(ScrapeFileRequest, scrape.scrape_file)),
+        ("scraping.url", "Apply a site module to one source page", capability(ScrapeUrlRequest, scrape.scrape_url)),
+        ("scraping.select", "Run a CSS selector on saved HTML", capability(SelectRequest, scrape.select_file)),
         (
             "web.export",
             "Re-export a crawl's inventories as CSV, JSON or JSON Lines",

@@ -44,6 +44,7 @@ class Workspace(Request):
     out_dir: str
     downloads_dir: str = ""
     profile_dir: str = ""
+    adapter: str = "playwright"
 
 
 class CrawlRequest(Workspace):
@@ -78,6 +79,23 @@ class MarkdownRequest(Workspace):
     url: str
     render: Render = Render.HTTP
     headed: bool = False
+
+
+class ScrapeFileRequest(Request):
+    source: str
+    html_base64: str
+    module_yaml: str
+    module_source: str = "site module"
+
+
+class ScrapeUrlRequest(MarkdownRequest):
+    module_yaml: str
+    module_source: str = "site module"
+
+
+class SelectRequest(Request):
+    html_base64: str
+    css: str
 
 
 class UrlRequest(Workspace):

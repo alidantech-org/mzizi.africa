@@ -4,11 +4,13 @@ import { sharedFailures as f, sharedProperties as p } from "#/schemas/_shared.ts
 import { filesystem, filesystemEnums, Folders } from "#/schemas/mzizi/filesystem.ts";
 
 const hierarchy = filesystem.feature("FolderHierarchy").failureDefaults(databaseHttp);
+
 const { FolderView } = hierarchy.schemas({
   FolderView: dryv
     .schema({})
     .projection(dryv.projection(Folders.asRef()).read().pick("id", "parentId", "name", "code", "access", "roleId", "version", "createdAt")),
 });
+
 const io = hierarchy.schemas({
   RegisterFolderInput: dryv.schema({
     accountId: dryv.field(p.Id),

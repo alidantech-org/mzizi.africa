@@ -8,6 +8,8 @@ extra: {status: planning_only, implementation_approved: false}
 
 # 04 — Scraping proof ladder, real browser, manifests
 
+Playwright, Patchright and single-page site module extraction are available. See the [runtime guide](../../design/acquisition/WEB_ACQUISITION_RUNTIME.md) for current commands and scope.
+
 The scraper was designed around site-structure and API-structure YAML (`source/schema/site/v1`, [site structure spec](../../design/acquisition/SITE_STRUCTURE_SPEC.md)). The source redesign also says unknown sites without YAML are first-class ([README principle 6](../source-redesign/README.md), [03 discovery](../source-redesign/03-discovery-links-and-site-memory.md)). The ladder below proves both, one rung at a time; each rung is one CLI command a person watches.
 
 ## Ladder

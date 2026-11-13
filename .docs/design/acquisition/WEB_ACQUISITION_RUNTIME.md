@@ -18,7 +18,8 @@ This document describes what the code does today. Proposals stay in `design/acqu
 | Downloads | `mzizi_fetch.web.download` | streaming, resume, size check, SHA-256, duplicate detection, type sniffing, private-address refusal | Implemented |
 | Page discovery | `mzizi_scraping.links` | references (links, images, media, embeds), canonical, pagination, sitemaps | Implemented |
 | HTML to Markdown | `mzizi_extraction.document` | structure, inline emphasis, link targets, table cells, learned header/footer/navigation removal | Implemented |
-| Browser | `mzizi_engine.web.browser` | adapter interface, Playwright adapter on installed Chrome, action scripts, challenge detection | Implemented (one adapter) |
+| Browser | `mzizi_engine.web.browser` | Playwright on system Chrome, Patchright on bundled Chromium, action scripts and challenge detection | Implemented |
+| Single-page extraction | `mzizi_engine.web.handlers.scrape` | site module validation, field extraction from saved, fetched or rendered HTML, capture and audit | Implemented |
 | Crawler | `mzizi_engine.web.crawl` | breadth-first crawl, inventories, resume, exports | Implemented |
 | Search | `mzizi_engine.web.search` | Brave Search API and Google Custom Search JSON API behind one interface | Implemented, tested with mocked APIs only |
 
@@ -26,18 +27,35 @@ This document describes what the code does today. Proposals stay in `design/acqu
 
 - `robots.txt` is read once per origin with the crawler's identity and recorded for every request. The default mode is `respect`.
 - A source-specific `override` mode exists in `SourcePolicy`. It is refused unless an `Authorization` (reference, approved hosts, rationale) is supplied, applies only to those hosts, and is written to `policy_audit.json` with the reference. The code cannot verify an authorisation; the source assessment that backs it is the caller's responsibility (`AGENTS.md`, "Research acquisition and browser automation").
-- External hosts are listed, never requested, by the crawler. Downloads may fetch from any public host under an explicit `DownloadPolicy`; hosts resolving to private, loopback, link-local or reserved addresses are refused unless allowed.
+- The crawler queues links within the configured scope. Browser collection checks scope and robots before each requested page and rejects captures whose final URL is outside policy. Chromium can still follow redirects or load embedded resources during rendering. Choose HTTP for collection that requires outbound destination controls at the application layer. Downloads use their own `DownloadPolicy`, which refuses private, loopback, link-local and reserved addresses unless allowed.
 - A request needs an identified user agent with a monitored contact (`MZIZI_USER_AGENT`), as `mzizi_fetch.resolve_user_agent` requires.
 
 ## Blocks and challenges
 
 Failures are told apart (`connection`, `dns`, `timeout`, `http_401`, `http_403`, `http_404`, `http_429`, `http_5xx`, `captcha`, `challenge`, `block_notice`). Each gets a configured response (`retry`, `back_off`, `slow_down`, `pause`, `retry_later`, `skip`, `stop`, `human_review`), a wait that honours `Retry-After`, and a `BlockDecision` record. Repeated consecutive blocks escalate to `stop`. A blocked URL never ends unrelated work: it is recorded in `errors.*`/`blocks.json` and the crawl continues.
 
-Detection and resolution are separate. Detection is implemented. Resolution is a `ChallengeHandler`; the only implementation is `ManualChallengeHandler`, which asks a person to complete the check in the visible window (`--on-block pause --headed`). **No automated CAPTCHA solving, stealth patching or fingerprint spoofing exists.** An adapter approved by a source owner would implement the same interface.
+Detection runs on responses from either browser adapter. A headed crawl with `--on-block pause` can use `ManualChallengeHandler` to hand a check to an operator under source authorisation. Single-page extraction records detected blocks and returns without extracting records.
 
 ## Browser
 
-`BrowserSession` is a protocol (`goto`, `wait_for`, `click`, `fill`, `press`, `scroll`, `page_state`, `links`, `images`, `screenshot`, `close`) and `register_adapter` adds implementations. The Playwright adapter launches the installed Chrome in an isolated profile (`.local/dev/browser-profile` by default; personal browser profiles are refused), with configurable viewport, locale, headers, timeouts, download and screenshot folders, and records console errors, failed requests, redirects and captured downloads. Playwright is an optional extra (`uv sync --all-packages --extra browser`); HTTP-only installs are unaffected.
+`BrowserSession` is a protocol and `register_adapter` adds implementations. Select `--adapter playwright` for system Chrome or `--adapter patchright` for Patchright's bundled Chromium. The CLI uses separate isolated profiles in the dev workspace. Both drivers come from the optional `browser` extra (`uv sync --all-packages --extra browser`). Install the bundled Chromium with `uv run --package mzizi-engine --extra browser patchright install chromium`. Use `uv run --no-sync mzizi` after syncing to retain the optional dependencies.
+
+## Single-page extraction
+
+Pass a `modules/*.yml` file from a [site structure](SITE_STRUCTURE_SPEC.md) to `scrape file PAGE.html --manifest MODULE` or `scrape url URL --manifest MODULE`. The engine validates the module schema before requesting a page. The explicit URL identifies the page to retrieve. The module supplies `discover.listing.items` and `extract.fields` for that page.
+
+```yaml
+module: headings
+discover:
+  listing:
+    url: /
+    items: { css: "h1" }
+extract:
+  fields:
+    title: { from: item_text }
+```
+
+Add `--render browser --adapter patchright` to extract from a rendered DOM. The live command saves successful captures as `page.html` and includes the observation time, requested and final URLs, capture and module SHA-256 hashes, policy decisions, selected fallback index and field errors in its result. `scrape select PAGE.html --css "h1"` returns matching text from a saved page.
 
 ## Crawl outputs
 
@@ -45,4 +63,4 @@ Detection and resolution are separate. Detection is implemented. Resolution is a
 
 ## Not implemented
 
-Manifest-driven field extraction (`scrape file|url`), `fetch policy`, `fetch replay`, DuckDuckGo search (no official API), MongoDB and vector sandboxes, challenge-solving integrations, crawl-time resource `HEAD` for external hosts (by design), and live verification of the search integrations with real credentials.
+Full bundle execution with inheritance, pagination and mapping, `fetch policy`, `fetch replay`, DuckDuckGo search, MongoDB and vector sandboxes, automated challenge resolution and live verification of the search integrations.

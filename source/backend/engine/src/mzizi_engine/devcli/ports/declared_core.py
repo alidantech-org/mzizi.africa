@@ -51,20 +51,8 @@ CORE: tuple[Port, ...] = (
         "Needs a local-directory object store and a dry-run planner.",
     ),
     declare("scraping.links", "mzizi-scraping", "Absolute, de-duplicated links from HTML", 3),
-    declare(
-        "scraping.extract",
-        "mzizi-scraping",
-        "Apply a site structure to a document",
-        3,
-        "No capability applies a manifest's selectors, fields and transforms to a document yet.",
-    ),
-    declare(
-        "scraping.select",
-        "mzizi-scraping",
-        "Run one selector chain with fallback trace",
-        3,
-        "Needs a capability that returns the per-fallback trace.",
-    ),
+    declare("scraping.extract", "mzizi-scraping", "Apply a site module to saved HTML", 3),
+    declare("scraping.select", "mzizi-scraping", "Run a CSS selector on saved HTML", 3),
     declare(
         "fetch.policy",
         "mzizi-fetch",

@@ -2,6 +2,8 @@
 
 Deterministic HTML/JSON scraping primitives.
 
+The engine's `mzizi scrape file|url` commands apply site modules using these primitives. Browser sessions and source policy are owned by the engine. See [single-page extraction](../../../.docs/design/acquisition/WEB_ACQUISITION_RUNTIME.md#single-page-extraction).
+
 Selectors, fields and transforms are named by manifests; arbitrary code is never evaluated.
 
 See [../README.md](../README.md) for the package map and workspace commands. Tests: `uv run pytest source/packages/scraping`.

@@ -56,7 +56,7 @@ class Command:
 GROUP_HELP: dict[str, str] = {
     "extract": "Extract text, tables and records from local files (mzizi-extraction)",
     "fetch": "Identified, policy-checked HTTP requests (mzizi-fetch)",
-    "scrape": "Selectors and links on saved pages (mzizi-scraping)",
+    "scrape": "Selectors, links and field extraction from saved or live pages",
     "web": "Inspect, crawl and export websites: links, resources, external hosts, Markdown",
     "download": "Safe, slow, resumable downloads into quarantine",
     "browser": "Drive a real browser: open, click, fill, screenshot, compare with HTTP",

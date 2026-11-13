@@ -9,6 +9,7 @@ from mzizi_engine.devcli.errors import CliError
 from mzizi_engine.devcli.types import ArgValues
 from mzizi_engine.devcli.workspace import Workspace
 from mzizi_engine.jsonvalue import JsonValue, Payload
+from mzizi_engine.web.crawl.inventory import CrawlSummary
 
 LIST_ARGUMENTS = frozenset({"allowed-hosts", "allowed-paths", "excluded-paths", "urls"})
 
@@ -29,6 +30,19 @@ def links_payload(values: ArgValues, ws: Workspace) -> Payload:
     if not isinstance(raw, str) or not isinstance(base, str):
         raise CliError("--input and --base-url are required")
     return {"html": Path(raw).expanduser().read_text(encoding="utf-8", errors="replace"), "base_url": base}
+
+
+def scrape_payload(values: ArgValues, ws: Workspace) -> Payload:
+    payload = passthrough(values, ws)
+    raw = payload.pop("input", None)
+    if isinstance(raw, str):
+        payload["source"] = raw
+        payload["html_base64"] = base64.b64encode(Path(raw).read_bytes()).decode("ascii")
+    manifest = payload.pop("manifest", None)
+    if isinstance(manifest, str):
+        payload["module_yaml"] = Path(manifest).read_bytes().decode("utf-8")
+        payload["module_source"] = manifest
+    return payload
 
 
 def directory_payload(values: ArgValues, ws: Workspace) -> Payload:
@@ -82,15 +96,16 @@ def resume_payload(values: ArgValues, ws: Workspace) -> Payload:
     folder = values.get("folder")
     if not isinstance(folder, str):
         raise CliError("--folder is required")
-    first = ""
-    seed = Path(folder) / "summary.json"
-    if seed.exists():
-        import json
-
-        urls = json.loads(seed.read_text(encoding="utf-8")).get("start_urls", [])
-        first = urls[0] if urls else ""
-    return {
+    payload: Payload = {
         "resume_from": str(Path(folder).expanduser().resolve()),
-        "url": first,
         "max_pages": values.get("max-pages") or 25,
     }
+    seed = Path(folder) / "summary.json"
+    if seed.exists():
+        summary = CrawlSummary.model_validate_json(seed.read_bytes())
+        payload.update(
+            url=summary.start_urls[0] if summary.start_urls else "",
+            render=summary.render.value,
+            adapter=summary.adapter,
+        )
+    return payload

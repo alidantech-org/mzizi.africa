@@ -176,6 +176,10 @@ class WebClient:
             self.interval_scale = min(self.interval_scale * 2, 60.0)
             self._limiters.clear()
 
+    def wait_for_slot(self, url: str) -> None:
+        """Apply the source's request spacing to an HTTP request or browser navigation."""
+        self._limiter(host_of(url)).wait()
+
     # --- requests ----------------------------------------------------------------------------------------
     def get(self, url: str, *, conditional: bool = True) -> WebResponse:
         return self._request("GET", url, conditional)
@@ -245,7 +249,7 @@ class WebClient:
         attempt = 0
         retrying = (Response.RETRY.value, Response.BACK_OFF.value, Response.SLOW_DOWN.value, Response.RETRY_LATER.value)
         while True:
-            self._limiter(host_of(url)).wait()
+            self.wait_for_slot(url)
             response = self._once(method, url, cached)
             block = detect_block(response.status, response.headers, response.body, response.error)
             if block is None or (response.status == NOT_MODIFIED and cached):

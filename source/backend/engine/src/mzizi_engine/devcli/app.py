@@ -18,6 +18,7 @@ from mzizi_engine.capabilities import build_default_registry
 from mzizi_engine.devcli.catalog import COMMANDS, GROUP_HELP, Arg, ArgKind, Command
 from mzizi_engine.devcli.errors import Cancelled
 from mzizi_engine.devcli.ports import PORTS, PortState, all_statuses, check_requirement
+from mzizi_engine.devcli.ports.models import binary, module
 from mzizi_engine.devcli.prompts import is_interactive
 from mzizi_engine.devcli.runner import Session, run_command, status_table
 from mzizi_engine.devcli.theme import configure_logging, err, out
@@ -157,10 +158,18 @@ def doctor(
     for port in PORTS:
         for requirement in port.requires:
             needs.setdefault((requirement.kind.value, requirement.label, requirement.hint), []).append(port.capability)
+    browser_requirements = (
+        module("playwright", "uv sync --all-packages --extra browser"),
+        binary("google-chrome", "google-chrome-stable", "chromium", hint="Install Chrome for Playwright"),
+        module("patchright", "uv sync --all-packages --extra browser"),
+    )
+    for requirement in browser_requirements:
+        needs[(requirement.kind.value, requirement.label, requirement.hint)] = ["browser"]
     table = Table(title="Environment", header_style="accent")
     for column in ("Kind", "Need", "State", "Used by", "Fix"):
         table.add_column(column, overflow="fold")
     requirements = {(r.kind.value, r.label, r.hint): r for p in PORTS for r in p.requires}
+    requirements.update({(r.kind.value, r.label, r.hint): r for r in browser_requirements})
     for key, users in sorted(needs.items()):
         check = check_requirement(requirements[key], probe=probe)
         mark = "[ok]ok[/ok]" if check.satisfied else "[warn]missing[/warn]"

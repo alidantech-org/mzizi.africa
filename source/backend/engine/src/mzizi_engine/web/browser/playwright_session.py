@@ -1,4 +1,4 @@
-"""Playwright adapter: drives the installed Chrome in an isolated profile."""
+"""Shared session implementation for the Playwright-compatible Chromium drivers."""
 
 from __future__ import annotations
 
@@ -22,12 +22,12 @@ SCROLL_HEIGHT = "document.body.scrollHeight"
 
 
 class PlaywrightSession:
-    def __init__(self, config: BrowserConfig) -> None:
+    def __init__(self, config: BrowserConfig, driver: str = "playwright") -> None:
         try:
-            sync_api = importlib.import_module("playwright.sync_api")
+            sync_api = importlib.import_module(f"{driver}.sync_api")
         except ModuleNotFoundError as problem:
             raise BrowserUnavailable(
-                "playwright is not installed: run `uv sync --all-packages --extra browser`"
+                f"{driver} is not installed: run `uv sync --all-packages --extra browser`"
             ) from problem
         self.config = config
         config.profile_dir.mkdir(parents=True, exist_ok=True)
@@ -52,8 +52,14 @@ class PlaywrightSession:
             )
         except Exception as problem:
             self._pw.stop()
+            install = (
+                "; run `uv run --package mzizi-engine --extra browser patchright install chromium`"
+                " if bundled Chromium is missing"
+                if driver == "patchright" and config.channel is None and not config.executable_path
+                else ""
+            )
             raise BrowserUnavailable(
-                f"could not start {config.channel or 'chromium'}: {str(problem)[:200]}"
+                f"could not start {driver} with {config.channel or 'chromium'}: {str(problem)[:200]}{install}"
             ) from problem
         self._context.set_default_timeout(config.timeout_ms)
         self._page: Page = self._context.pages[0] if self._context.pages else self._context.new_page()
@@ -171,3 +177,12 @@ def _factory(config: BrowserConfig) -> BrowserSession:
 
 
 register_adapter("playwright", _factory)
+
+
+def _patchright_factory(config: BrowserConfig) -> BrowserSession:
+    if "channel" not in config.model_fields_set:
+        config = config.model_copy(update={"channel": None})
+    return PlaywrightSession(config, driver="patchright")
+
+
+register_adapter("patchright", _patchright_factory)

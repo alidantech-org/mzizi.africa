@@ -2,18 +2,21 @@
 
 from __future__ import annotations
 
-from mzizi_engine.devcli.catalog.builders import crawl_payload, passthrough, resume_payload
+from mzizi_engine.devcli.catalog.builders import crawl_payload, passthrough, resume_payload, scrape_payload
 from mzizi_engine.devcli.catalog.models import Arg, ArgKind, Command
 
 URL = Arg("url", ArgKind.URL, "Page or endpoint URL", positional=True)
 RENDER = Arg("render", ArgKind.CHOICE, "How to load pages", choices=("http", "browser"), optional=True, default="http")
+ADAPTER = Arg("adapter", ArgKind.CHOICE, "Browser driver", choices=("playwright", "patchright"), optional=True)
 ACTIONS = Arg("actions", ArgKind.FILE, "YAML or JSON list of steps", suffixes=(".yaml", ".yml", ".json"))
 TARGET = Arg("target", ArgKind.TEXT, "CSS selector, or text=Visible label")
 
 
 def _browser(name: str, help_text: str, *extra: Arg, headed: bool = True) -> Command:
     flag = Arg("headless", ArgKind.FLAG, "No window") if headed else Arg("headed", ArgKind.FLAG, "Show the window")
-    return Command("browser", name, help_text, f"browser.{name}", (URL, *extra, flag), passthrough, run_folder=True)
+    return Command(
+        "browser", name, help_text, f"browser.{name}", (URL, *extra, flag, ADAPTER), passthrough, run_folder=True
+    )
 
 
 CRAWL_ARGS: tuple[Arg, ...] = (
@@ -22,6 +25,7 @@ CRAWL_ARGS: tuple[Arg, ...] = (
     Arg("max-depth", ArgKind.INT, "How many links deep to follow", optional=True, default=2),
     Arg("delay", ArgKind.INT, "Seconds between requests to one host", optional=True, default=1),
     RENDER,
+    ADAPTER,
     Arg(
         "on-block",
         ArgKind.CHOICE,
@@ -90,18 +94,33 @@ COMMANDS: tuple[Command, ...] = (
         run_folder=True,
     ),
     Command(
+        "scrape",
+        "url",
+        "Apply a site module to one fetched or rendered HTML page",
+        "scraping.url",
+        (
+            URL,
+            Arg("manifest", ArgKind.FILE, "Site module YAML", suffixes=(".yaml", ".yml")),
+            RENDER,
+            ADAPTER,
+            Arg("headed", ArgKind.FLAG, "Show the browser window"),
+        ),
+        scrape_payload,
+        run_folder=True,
+    ),
+    Command(
         "web",
         "markdown",
         "One page to Markdown, without header, footer and navigation",
         "scraping.markdown",
-        (URL, RENDER, Arg("headed", ArgKind.FLAG, "Show the browser window")),
+        (URL, RENDER, ADAPTER, Arg("headed", ArgKind.FLAG, "Show the browser window")),
         passthrough,
         run_folder=True,
     ),
     Command(
         "web",
         "crawl",
-        "Crawl one site: pages, links, resources, external hosts, Markdown (external sites are never visited)",
+        "Crawl in-scope pages and inventory links, resources, external hosts and Markdown",
         "scraping.crawl",
         CRAWL_ARGS,
         crawl_payload,
@@ -163,7 +182,7 @@ COMMANDS: tuple[Command, ...] = (
     ),
     _browser(
         "open",
-        "Open a URL in Chrome and report what rendered",
+        "Open a URL in Chromium and report what rendered",
         Arg("hold", ArgKind.FLAG, "Keep it open until you press Enter"),
     ),
     _browser("snapshot", "Rendered HTML and a screenshot", headed=False),

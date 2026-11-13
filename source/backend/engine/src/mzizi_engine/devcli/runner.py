@@ -90,7 +90,11 @@ def run_command(command: Command, given: ArgValues, session: Session) -> ExitCod
             "Needs setup",
             Unavailable(
                 str(exc),
-                hint="live requests need MZIZI_USER_AGENT with a monitored contact, e.g. export MZIZI_USER_AGENT='Name/1.0 (+https://your.site/bot; you@your.site)'; the browser needs `uv sync --all-packages --extra browser` and Chrome",
+                hint=(
+                    "Set MZIZI_USER_AGENT to an identity with a monitored contact."
+                    if isinstance(exc, IdentityMissing)
+                    else ""
+                ),
             ),
             "warn",
         )

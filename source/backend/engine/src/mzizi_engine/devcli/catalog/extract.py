@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from mzizi_engine.devcli.catalog.builders import file_payload, links_payload, markdown_payload, passthrough
+from mzizi_engine.devcli.catalog.builders import file_payload, links_payload, markdown_payload, scrape_payload
 from mzizi_engine.devcli.catalog.models import Arg, ArgKind, Command
 
 PDF = (".pdf",)
@@ -74,19 +74,19 @@ COMMANDS: tuple[Command, ...] = (
         "scraping.extract",
         (
             Arg("input", ArgKind.FILE, "Saved HTML page", positional=True, suffixes=HTML),
-            Arg("manifest", ArgKind.FILE, "Site structure YAML", suffixes=(".yaml", ".yml")),
+            Arg("manifest", ArgKind.FILE, "Site module YAML", suffixes=(".yaml", ".yml")),
         ),
-        passthrough,
+        scrape_payload,
     ),
     Command(
         "scrape",
         "select",
-        "Run one CSS selector chain on a page",
+        "Run a CSS selector on a saved HTML page",
         "scraping.select",
         (
             Arg("input", ArgKind.FILE, "Saved HTML page", positional=True, suffixes=HTML),
             Arg("css", ArgKind.TEXT, "CSS selector"),
         ),
-        passthrough,
+        scrape_payload,
     ),
 )

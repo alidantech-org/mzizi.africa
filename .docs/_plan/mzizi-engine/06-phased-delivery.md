@@ -21,7 +21,7 @@ Each phase is independently useful and ends with something the user can run. Can
 | 6 | Dev services: `dev services`, `mongo *`, `vector *` | Run results queryable in Mongo; semantic search and classification demo |
 | 7 | Reduction loop: promote findings to package unit tests; CLI smoke tests in CI | Each found bug has a fixture and a test |
 
-**Implemented (see `design/acquisition/WEB_ACQUISITION_RUNTIME.md` for the code-level state):** the `mzizi` script and ports; PDF extraction and Markdown (phase 1); manifest checks (phase 2); the web core, HTTP fetch and robots, links, challenge detection, crawl, Markdown, exports and resume (phases 3 and 5); the browser adapter and actions, safe downloads and official-API search (phase 4). **Partly implemented:** manifest-driven scraping (`scrape file|url|select`) is declared only. **Not started:** Mongo and vector sandboxes (phase 6), DuckDuckGo search, live verification of search credentials.
+**Implemented:** the `mzizi` script and ports, PDF extraction, manifest checks, HTTP fetch and robots, links, challenge detection, crawl, Markdown, exports, resume, Playwright and Patchright drivers, safe downloads and official-API search. `scrape file|url` runs a single site module against one HTML page. `scrape select` tests a CSS selector against saved HTML. See the [runtime design](../../design/acquisition/WEB_ACQUISITION_RUNTIME.md). Full bundle execution, Mongo and vector sandboxes, DuckDuckGo search and live search verification remain planned.
 
 Phases 0–2 need no new dependencies. Phase 3 needs none beyond what packages use. Phase 4 adds Playwright (optional group). Phase 6 adds a Mongo driver, a vector client and a local embedding model (optional group).
 

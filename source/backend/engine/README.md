@@ -34,15 +34,25 @@ export MZIZI_USER_AGENT='Name/1.0 (+https://your.site/bot; you@your.site)'   # r
 | `web` | `links URL`, `robots`/`fetch robots URL`, `challenge`, `markdown URL`, `crawl URL`, `resume FOLDER`, `export FOLDER` |
 | `fetch` | `url`, `robots` |
 | `download` | `get URL`, `many FILE`, `status` |
-| `browser` | `open`, `snapshot`, `navigate`, `click`, `fill`, `compare` (`--render browser` on crawl and markdown) |
+| `browser` | `open`, `snapshot`, `navigate`, `click`, `fill`, `compare` with optional `--adapter playwright\|patchright` |
+| `scrape` | `url URL --manifest MODULE`, `file HTML --manifest MODULE`, `select HTML --css SELECTOR`, `links` |
 | `search` | `web QUERY --engine brave\|google` |
-| `manifest`, `scrape links`, `capability`, `dev` | seed/structure checks, offline links, registry inspection, workspace |
+| `manifest`, `capability`, `dev` | seed/structure checks, registry inspection, workspace |
 
-`web crawl` options: `--max-pages --max-depth --delay --render http|browser --on-block backoff|skip|stop|pause --allowed-hosts --allowed-paths --excluded-paths --include-subdomains --no-sitemap --no-markdown --inspect-resources --jsonl --headed`. Outputs are listed in the runtime design document. Brave needs `BRAVE_API_KEY`; Google needs `GOOGLE_CSE_API_KEY` and `GOOGLE_CSE_ID`. The browser needs `uv sync --all-packages --extra browser` and Chrome.
+`web crawl` options include `--max-pages --max-depth --delay --render http|browser --adapter playwright|patchright --on-block backoff|skip|stop|pause --allowed-hosts --allowed-paths --excluded-paths --include-subdomains --no-sitemap --no-markdown --inspect-resources --jsonl --headed`. Brave uses `BRAVE_API_KEY`. Google Custom Search uses `GOOGLE_CSE_API_KEY` and `GOOGLE_CSE_ID`.
+
+```bash
+uv sync --all-packages --extra browser
+uv run --package mzizi-engine --extra browser patchright install chromium
+uv run --no-sync mzizi --allow-outside-inputs scrape url https://example.org/ \
+  --manifest ./example-module.yml --render browser --adapter patchright
+```
+
+Use `--allow-outside-inputs` for files outside the CLI's `.local/dev/inputs` directory. The manifest argument takes a [site module YAML](../../../.docs/design/acquisition/WEB_ACQUISITION_RUNTIME.md#single-page-extraction). The run saves the captured HTML and records the module and capture hashes. Public page scraping uses `MZIZI_USER_AGENT` and requires no API key. Playwright remains the default driver and uses system Chrome. Patchright uses its bundled Chromium. `web crawl` and `web markdown` accept the same browser flags.
 
 Every planned command exists. A command whose capability is not registered prints why, logs it to `.local/dev/logs/mzizi.log`, records a run folder and exits **3**; a missing tool, library or setting exits **4**; a missing value with no terminal exits **2**. Registering a capability of the declared name turns its command live (state is derived from the registry in `devcli/ports/`).
 
-Tests: `uv run pytest source/backend/engine/tests` (the crawler, downloads and browser tests use a loopback site; the real-Chrome tests skip when Playwright or Chrome is missing).
+Run `uv run --no-sync pytest source/backend/engine/tests` after syncing the optional browser dependencies to include the loopback browser tests.
 
 ## Initial API
 

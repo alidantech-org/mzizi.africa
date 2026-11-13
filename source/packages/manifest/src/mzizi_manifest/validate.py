@@ -100,6 +100,11 @@ def _collect_tags(value: Any) -> list[str]:
     return found
 
 
+def module_errors(document: object, where: str) -> list[str]:
+    """Validate a standalone site module using the same schema as a bundle."""
+    return _schema_errors(_validator("module"), document, where)
+
+
 def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True) -> Report:
     report = Report(errors=list(bundle.errors))
     if report.errors:
@@ -109,7 +114,7 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
     # 1. JSON Schema
     report.errors += _schema_errors(_validator("manifest"), manifest, "manifest.yml")
     for name, module in bundle.modules.items():
-        report.errors += _schema_errors(_validator("module"), module, f"modules/{name}.yml")
+        report.errors += module_errors(module, f"modules/{name}.yml")
         if module.get("module") != name:
             report.errors.append(f"modules/{name}.yml: module name {module.get('module')!r} must equal the file name")
     for name, mapping in bundle.mappings.items():

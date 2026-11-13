@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-from mzizi_engine.devcli.ports.models import Port, binary, declare, module
+from mzizi_engine.devcli.ports.models import Port, declare
 
-BROWSER_LIB = module("playwright", "install the optional browser group: `uv sync --all-packages --extra browser`")
-CHROME = binary("google-chrome", "google-chrome-stable", "chromium", hint="install Google Chrome or Chromium")
 PKG = "mzizi-engine"
 
 WEB: tuple[Port, ...] = (
@@ -18,12 +16,13 @@ WEB: tuple[Port, ...] = (
     declare("web.export", PKG, "Re-export a crawl's inventories as CSV, JSON or JSON Lines", 3),
     declare("web.download", "mzizi-fetch", "Safe, resumable, throttled downloads into quarantine", 4),
     declare("web.downloads", PKG, "Progress and results of downloads", 4),
-    declare("browser.open", PKG, "Open a URL in a real browser", 4, "", BROWSER_LIB, CHROME),
-    declare("browser.snapshot", PKG, "Rendered HTML and a screenshot", 4, "", BROWSER_LIB, CHROME),
-    declare("browser.navigate", PKG, "Run a click, fill, scroll and wait script", 4, "", BROWSER_LIB, CHROME),
-    declare("browser.click", PKG, "Click one element and report the result", 4, "", BROWSER_LIB, CHROME),
-    declare("browser.fill", PKG, "Fill one field", 4, "", BROWSER_LIB, CHROME),
-    declare("browser.compare", PKG, "HTTP result versus browser result", 4, "", BROWSER_LIB, CHROME),
+    declare("browser.open", PKG, "Open a URL in a real browser", 4),
+    declare("browser.snapshot", PKG, "Rendered HTML and a screenshot", 4),
+    declare("browser.navigate", PKG, "Run a click, fill, scroll and wait script", 4),
+    declare("browser.click", PKG, "Click one element and report the result", 4),
+    declare("browser.fill", PKG, "Fill one field", 4),
+    declare("browser.compare", PKG, "HTTP result versus browser result", 4),
+    declare("scraping.url", PKG, "Extract fields from a source page with a site module", 3),
     declare("search.web", PKG, "Search through the official Brave or Google API", 4),
     declare(
         "search.duckduckgo",

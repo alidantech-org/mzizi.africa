@@ -21,6 +21,7 @@ from mzizi_engine.web.records import (
     ResourceRecord,
     Scope,
 )
+from mzizi_engine.web.requests import Render
 from mzizi_extraction import extract_html_document, learn_boilerplate
 from mzizi_extraction.document import render_markdown
 from mzizi_fetch.web.urls import UrlKind
@@ -32,6 +33,8 @@ OTHER_FILES = (UrlKind.DATA.value, UrlKind.ARCHIVE.value, UrlKind.PROGRAM.value)
 
 class CrawlSummary(Record):
     start_urls: tuple[str, ...]
+    render: Render = Render.HTTP
+    adapter: str = "playwright"
     pages: int
     internal_paths: int
     links: int
@@ -138,6 +141,8 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
     written += ["blocks.json", "policy_audit.json", "provenance.jsonl", "site_tree.json"]
     summary = CrawlSummary(
         start_urls=crawl.request.starts,
+        render=crawl.request.render,
+        adapter=crawl.request.adapter,
         pages=len(pages),
         internal_paths=len(paths),
         links=len(links),

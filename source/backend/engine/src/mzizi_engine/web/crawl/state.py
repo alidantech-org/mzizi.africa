@@ -35,8 +35,11 @@ class CrawlState(Record):
 
 def digest_of(request: CrawlRequest) -> str:
     """Identifies a crawl by what defines its scope, so a resume cannot mix two different crawls."""
-    scope = request.model_copy(update={"max_pages": 0, "resume": False, "out_dir": "", "headed": False, "formats": ()})
-    return hashlib.sha256(scope.model_dump_json().encode()).hexdigest()[:16]
+    scope = request.model_copy(
+        update={"max_pages": 0, "resume": False, "resume_from": "", "out_dir": "", "headed": False, "formats": ()}
+    )
+    excluded = {"adapter"} if scope.adapter == "playwright" else None
+    return hashlib.sha256(scope.model_dump_json(exclude=excluded).encode()).hexdigest()[:16]
 
 
 def load_state(folder: Path, digest: str) -> CrawlState | None:
