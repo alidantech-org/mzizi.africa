@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 import io
 
-from ..core import (
+from mzizi_extraction.core import (
     Code,
     Diagnostic,
     ExtractionProfile,

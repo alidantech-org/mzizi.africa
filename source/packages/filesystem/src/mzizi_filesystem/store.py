@@ -15,8 +15,8 @@ from datetime import datetime
 from typing import Any, BinaryIO, NotRequired, Protocol, TypedDict
 from urllib.parse import urlparse
 
-from .access import BUCKET, REGION
-from .hashing import sha256_hex
+from mzizi_filesystem.access import BUCKET, REGION
+from mzizi_filesystem.hashing import sha256_hex
 
 
 @dataclass(frozen=True)
@@ -73,7 +73,7 @@ class MemoryObjectStore:
         return ObjectHead(len(found[0]), found[2], found[1]) if found else None
 
     def put(self, key: str, data: bytes, content_type: str, sha256: str, cache_control: str | None = None) -> None:
-        from .keys import is_protected
+        from mzizi_filesystem.keys import is_protected
 
         if is_protected(key):
             raise StoreError(f"refusing to write protected key {key}")
@@ -104,7 +104,7 @@ class MemoryObjectStore:
         self.put(dest_key, self.get(source_key), content_type, sha256)
 
     def delete(self, key: str) -> None:
-        from .keys import is_protected
+        from mzizi_filesystem.keys import is_protected
 
         if is_protected(key):
             raise StoreError(f"refusing to delete protected key {key}")
@@ -214,7 +214,7 @@ class S3ObjectStore:
 
     @staticmethod
     def _writable(key: str) -> None:
-        from .keys import is_protected
+        from mzizi_filesystem.keys import is_protected
 
         if is_protected(key):
             raise StoreError(f"refusing to write protected key {key}")
@@ -229,7 +229,7 @@ class S3ObjectStore:
         )
 
     def delete(self, key: str) -> None:
-        from .keys import is_protected
+        from mzizi_filesystem.keys import is_protected
 
         if is_protected(key):
             raise StoreError(f"refusing to delete protected key {key}")
@@ -243,7 +243,7 @@ class S3ObjectStore:
 
     def delete_many(self, keys: list[str]) -> int:
         """Batch delete (1000 per request). Refuses any key under a protected prefix before sending anything."""
-        from .keys import is_protected
+        from mzizi_filesystem.keys import is_protected
 
         protected = [k for k in keys if is_protected(k)]
         if protected:

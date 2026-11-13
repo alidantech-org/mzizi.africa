@@ -16,7 +16,7 @@ import { managementSchemas } from "./management.ts";
 export const staging = dryv
   .group({ name: "staging" })
   .description("Approved Mzizi Operations staging records.")
-  .facets({ storage: { namespace: "staging" } });
+  .facets({ storage: { namespace: "staging", store: "operations" } });
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const stagingEnums = staging.properties({

@@ -5,11 +5,10 @@ from __future__ import annotations
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 
-from ..core import JsonValue, ScrapeError
-from ..text import fiscal_year_parts, numeric_characters
+from mzizi_scraping.core import JsonValue, ScrapeError
+from mzizi_scraping.text import fiscal_year_parts, numeric_characters
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
-DEFAULT_FISCAL_START_MONTH = 7  # Kenya: July
 
 
 def to_date(value: JsonValue, fmt: JsonValue = DEFAULT_DATE_FORMAT) -> JsonValue:
@@ -48,12 +47,15 @@ def fiscal_year(value: JsonValue, _arg: JsonValue = None) -> JsonValue:
     return f"{start}/{end}"
 
 
-def fy_start(value: JsonValue, start_month: JsonValue = DEFAULT_FISCAL_START_MONTH) -> JsonValue:
-    """First day of a fiscal year given as 'YYYY/YY'."""
+def fy_start(value: JsonValue, start_month: JsonValue = None) -> JsonValue:
+    """First day of a fiscal year given as 'YYYY/YY'. `start_month` (1-12) names when that jurisdiction's fiscal
+    year begins; it is not guessed, so a manifest must always supply it (there is no universal fiscal calendar)."""
     fiscal = fiscal_year(value)
     if fiscal is None:
         return None
-    month = (
-        int(start_month) if isinstance(start_month, (int, float, str)) and start_month else DEFAULT_FISCAL_START_MONTH
-    )
+    if not isinstance(start_month, (int, float, str)) or not start_month:
+        raise ScrapeError("fy_start needs start_month (1-12); the fiscal year's start month is not universal")
+    month = int(start_month)
+    if not 1 <= month <= 12:
+        raise ScrapeError(f"start_month must be 1-12, got {start_month!r}")
     return date(int(str(fiscal)[:4]), month, 1).isoformat()

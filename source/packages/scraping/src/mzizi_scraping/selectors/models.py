@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 from bs4 import Tag
 
-from ..core import External, JsonValue
+from mzizi_scraping.core import External, JsonValue
 
 DEFAULT_CONFIDENCE = 0.5
 

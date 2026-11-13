@@ -11,8 +11,8 @@ from pathlib import Path
 
 import yaml
 
-from .paths import SEED_ROOT
-from .seed_folders import (
+from mzizi_manifest.paths import SEED_ROOT
+from mzizi_manifest.seed_folders import (
     _sha256,
     entry_pinned,
     entry_versioning,
@@ -21,7 +21,7 @@ from .seed_folders import (
     object_key,
     resolve_effective,
 )
-from .seed_vocabulary import MANIFEST_NAME
+from mzizi_manifest.seed_vocabulary import MANIFEST_NAME
 
 
 def resolve_files(manifest: dict, root: Path = SEED_ROOT) -> list[dict]:

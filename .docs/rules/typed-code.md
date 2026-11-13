@@ -24,6 +24,7 @@ These rules apply to **all hand-written code in this repository, in every langua
 
 - Source-, publisher-, jurisdiction-, language-, domain- and classification-specific knowledge is **data**, not code: selectors, URL patterns, field maps, name aliases, category lists, challenge markers, stop-words, personal-data categories, thresholds and similar tables live in manifests, seed inputs or database records, validated against schemas under `source/schema/`.
 - Code contains **mechanisms** only: it loads a typed rule set and applies it. A new site, country, language or category must be addable without changing Python, Rust or TypeScript.
+- A **default value counts as hard-coding** when it silently picks one jurisdiction, language or calendar over another (a fiscal year's start month, a default OCR language beyond the one the package's own tests need, a default admin-unit name). Where there is no neutral default, the function takes the value as a required argument and raises rather than guessing; it does not fall back to whichever place the feature happened to be built for.
 - Constants that are true of the language or protocol (HTTP verbs, ISO formats, unit conversions) may stay in code, but they live in one named module. Safety ceilings (global rate limits and size caps) are policy: they live in a versioned policy manifest and are enforced by code.
 - Do not scatter literals. A string or number that changes behavior is a named, documented value in exactly one place.
 
@@ -34,7 +35,13 @@ These rules apply to **all hand-written code in this repository, in every langua
 - Matchers must be safe on untrusted input: linear-time engines (no catastrophic backtracking), length and time bounds, and no evaluation of manifest text as code.
 - Model-assisted or vector matches are proposals with a score and rule provenance, never silent decisions.
 
-## 5. Tooling and size
+## 5. Imports are absolute, from the package root
+
+- Python never uses a relative import (`from .module import x`, `from ..pkg.module import x`, `from . import x`). Every import names its package from the root: `from mzizi_scraping.links import extract_links`, `from mzizi_engine.filesystem import Repository`, never `from .links import extract_links` or `from ..filesystem import Repository`. Enforced by ruff (`TID252`, `ban-relative-imports = "all"`).
+- TypeScript and Rust follow the same rule with their own absolute forms (a package/workspace import, not a long run of `../../..`); a sibling module in the same folder may still use `./name`, but never climbs directories with `../`.
+- This is about where an import starts, not how a package is laid out: files still sit in nested folders by responsibility (rule 6 below); only the import statement must spell out the full package path instead of walking up to it.
+
+## 6. Tooling and size
 
 - Python: `mypy --strict` with the pydantic plugin plus `disallow_any_explicit` and `disallow_any_generics`; ruff with annotation rules (including `ANN401`). Rust: `clippy -D warnings`, no `unwrap`/`expect` outside tests, no `serde_json::Value` in contracts. TypeScript: strict `tsc` with `noImplicitAny`, no `any`, Biome.
 - `bun run check` must pass, including `bun run structure` (hard file-size limits; split by responsibility, never raise the limit). Package roots hold only `__init__`/`mod`/`index` files; code sits in folders by responsibility.

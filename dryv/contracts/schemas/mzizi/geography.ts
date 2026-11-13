@@ -13,14 +13,14 @@ import { rule, when } from "@dryvcode/author";
 
 import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
-import { Value, Country, Unit } from "./reference.ts";
+import { Country, Unit, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const geography = dryv
   .group({ name: "geography" })
   .description("Canonical geographic identities, territorial units, physical places and spatial representations.")
-  .facets({ storage: { namespace: "geography" } });
+  .facets({ storage: { namespace: "geography", store: "main" } });
 
 /*---------------- Approved Geography table contracts ----------------*/
 export const Features = geography

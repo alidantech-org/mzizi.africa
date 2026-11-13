@@ -14,7 +14,7 @@ import { authSchemas } from "./auth.ts";
 export const engine = dryv
   .group({ name: "engine" })
   .description("Approved Mzizi Operations engine records.")
-  .facets({ storage: { namespace: "engine" } });
+  .facets({ storage: { namespace: "engine", store: "operations" } });
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const engineEnums = engine.properties({

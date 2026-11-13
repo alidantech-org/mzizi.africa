@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from ..text import has_contact_address, is_placeholder_contact
-from .errors import IdentityMissing
+from mzizi_fetch.policy.errors import IdentityMissing
+from mzizi_fetch.text import has_contact_address, is_placeholder_contact
 
 
 def resolve_user_agent(configured: str | None, deployment: str | None) -> str:

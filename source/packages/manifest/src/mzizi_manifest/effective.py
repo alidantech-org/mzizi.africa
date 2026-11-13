@@ -5,7 +5,7 @@ from __future__ import annotations
 import copy
 from typing import Any
 
-from .bundle import Bundle
+from mzizi_manifest.bundle import Bundle
 
 
 def effective_modules(site: Bundle, family: Bundle | None) -> dict[str, dict]:

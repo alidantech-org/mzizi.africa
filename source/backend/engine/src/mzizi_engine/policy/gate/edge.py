@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
+from mzizi_engine.policy.gate.evaluate import evaluate
+from mzizi_engine.policy.gate.parse import parse_assessment, parse_request
 from mzizi_fetch import Decision
-
-from .evaluate import evaluate
-from .parse import parse_assessment, parse_request
 
 
 def decide(

@@ -12,7 +12,7 @@ from typing import Any
 
 from psycopg.types.json import Jsonb
 
-from ..ports import Connection, Row, required
+from mzizi_engine.ports import Connection, Row, required
 
 FOLDER_FIELDS = (
     "access",

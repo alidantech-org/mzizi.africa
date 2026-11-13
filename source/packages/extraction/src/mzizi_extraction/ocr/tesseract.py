@@ -1,9 +1,10 @@
 """OCR for scanned pages through the system Tesseract (DEC-PDF-EXTRACTION).
 
-Tesseract is a system package (`tesseract`, `tesseract-langpack-eng`, `tesseract-langpack-swa`) run as a subprocess,
-so no Python binding or model is bundled. A page is rasterised, read with the requested languages and returned with
-a mean confidence (0..1), so a reviewer can see the text is machine-read. A missing engine or language pack is a
-clear error, never a silent empty page.
+Tesseract is a system package (`tesseract`, `tesseract-langpack-<code>` for each language pack a deployment installs)
+run as a subprocess, so no Python binding or model is bundled. A page is rasterised, read with the requested
+languages and returned with a mean confidence (0..1), so a reviewer can see the text is machine-read. A missing
+engine or language pack is a clear error, never a silent empty page. Which languages to read is jurisdiction
+knowledge, not a package default: it comes from the manifest's extraction profile (`ExtractionProfile.languages`).
 """
 
 from __future__ import annotations
@@ -16,7 +17,8 @@ import subprocess
 import pypdfium2 as pdfium
 from pydantic import BaseModel, ConfigDict
 
-DEFAULT_LANGUAGES = "eng+swa"
+#: Only used when a caller asks for OCR without naming a language; every manifest should set its own.
+DEFAULT_LANGUAGES = "eng"
 # Page segmentation 4 (one column of variable-sized text) keeps table rows on one line, which 3 often splits.
 PSM = "4"
 RENDER_SCALE = 4  # about 288 dpi from a 72 dpi page; table digits read more reliably than at 216
@@ -41,7 +43,8 @@ def _binary() -> str:
     binary = shutil.which("tesseract")
     if not binary:
         raise OcrUnavailable(
-            "tesseract is not installed (dnf install tesseract tesseract-langpack-eng tesseract-langpack-swa)"
+            "tesseract is not installed (dnf install tesseract, plus a tesseract-langpack-<code> for each "
+            "language the manifest's extraction profile asks for)"
         )
     return binary
 

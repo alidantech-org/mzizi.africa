@@ -145,7 +145,7 @@ fields:
   fiscal_year: { from: fiscal_year, transform: fiscal_year }      # resolves to finance.years id by natural key
   amount:      { from: table.approved, transform: { decimal: {thousands: ","} } }
   currency:    { const: KES }
-  valid_from:  { from: fiscal_year, transform: fy_start, precision: day }
+  valid_from:  { from: fiscal_year, transform: { fy_start: 7 }, precision: day }     # this jurisdiction's fiscal year starts in month 7; fy_start never guesses it
 provenance:
   locator: { page: $page, table: $table_index, cell: $cell }
   method: structure-run

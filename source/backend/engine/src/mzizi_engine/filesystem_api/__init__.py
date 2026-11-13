@@ -5,7 +5,7 @@ shared and each sibling module registers its routes onto it by being imported he
 
 from __future__ import annotations
 
-from . import folders, relations, sync, uploads  # noqa: F401 (import registers each module's routes)
-from ._shared import router
+from mzizi_engine.filesystem_api import folders, relations, sync, uploads
+from mzizi_engine.filesystem_api._shared import router
 
-__all__ = ["router"]
+__all__ = ["folders", "relations", "router", "sync", "uploads"]

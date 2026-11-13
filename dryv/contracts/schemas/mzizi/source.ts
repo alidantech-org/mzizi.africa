@@ -10,13 +10,14 @@ import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
 import { FileVersions } from "./filesystem.ts";
 import { Entities } from "./official.ts";
-import { Value, Country } from "./reference.ts";
+import { Country, Value } from "./reference.ts";
+
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const source = dryv
   .group({ name: "source" })
   .description("Accepted sources, evidence and publication receipts.")
-  .facets({ storage: { namespace: "source" } });
+  .facets({ storage: { namespace: "source", store: "main" } });
 export const sourceEnums = source.properties({
   ReleaseStatus: dryv.property.enum({ Approved: "approved", Retired: "retired", Withdrawn: "withdrawn" }),
   VerificationOutcome: dryv.property.enum({

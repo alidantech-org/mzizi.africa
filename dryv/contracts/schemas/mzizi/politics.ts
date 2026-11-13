@@ -11,7 +11,7 @@ import { sharedProperties } from "../_shared.ts";
 import { Units } from "./geography.ts";
 import { Offices } from "./governance.ts";
 import { Entities, Individuals } from "./official.ts";
-import { Value, Country, Topic } from "./reference.ts";
+import { Country, Topic, Value } from "./reference.ts";
 import { Citations, Documents } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
@@ -19,7 +19,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 export const politics = dryv
   .group({ name: "politics" })
   .description("Parties, elections, candidates, results and attributed political commitments.")
-  .facets({ storage: { namespace: "politics" } });
+  .facets({ storage: { namespace: "politics", store: "main" } });
 
 /*---------------- politics.parties ----------------*/
 export const Parties = politics

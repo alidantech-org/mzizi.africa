@@ -10,10 +10,9 @@ from __future__ import annotations
 import os
 from typing import BinaryIO
 
+from mzizi_engine.filesystem.service import FilesystemService
+from mzizi_engine.ports import Row
 from mzizi_filesystem.access import is_anonymously_readable
-
-from ..ports import Row
-from .service import FilesystemService
 
 
 def download_url(service: FilesystemService, version_id: str, *, actor: str | None, expires_seconds: int = 900) -> dict:

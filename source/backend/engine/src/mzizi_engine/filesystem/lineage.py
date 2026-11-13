@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..ports import required
-from .service import FilesystemService, Registration
+from mzizi_engine.filesystem.service import FilesystemService, Registration
+from mzizi_engine.ports import required
 
 
 def relate(

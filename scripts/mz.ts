@@ -118,6 +118,23 @@ export const commands: Record<string, Command> = {
   "dryv:api:stop": { summary: "stop the Dryv engine API", run: () => dryv.stopApi() },
   "dryv:trust": { summary: "trust the project packs (once per machine)", run: () => dryv.trust() },
   "dryv:generate": { summary: "generate the NestJS API from the contracts, then adopt, verify and export", run: () => dryv.generate() },
+  "dryv:database:typecheck": {
+    summary: "typecheck the database root and neutral schemas",
+    run: () => group("database types", [step("database:typecheck", `${root}/dryv`, ["bun", "run", "database:typecheck"])]),
+  },
+  "dryv:database:check": {
+    summary: "check only the database contracts and canonical stores",
+    run: () => group("database contracts", [step("database:check", `${root}/dryv`, ["bun", "run", "database:check"])]),
+  },
+  "dryv:database:plan": {
+    summary: "plan the database app (--store main|operations is optional)",
+    run: ({ rest }) => dryv.database("plan", rest),
+  },
+  "dryv:database:generate": {
+    summary: "generate canonical store models and SQL without API follow-ups",
+    run: ({ rest }) => dryv.database("generate", rest),
+  },
+  "dryv:database:verify": { summary: "check canonical database output without writing files", run: ({ rest }) => dryv.database("verify", rest) },
   "dryv:verify": { summary: "fail when the generated output is not current", run: () => dryv.verify() },
   "dryv:export": {
     summary: "re-export access rules and JSON schema from the contracts",

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ..core import JsonValue, ScrapeError
+from mzizi_scraping.core import JsonValue, ScrapeError
 
 #: A transform is a name, a one-key object {name: argument}, or a list applied in order.
 type TransformSpec = str | list[TransformSpec] | dict[str, JsonValue]

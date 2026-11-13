@@ -134,7 +134,7 @@ def manifest_validate_structure(payload: dict) -> dict:
 
 
 def source_gate(payload: dict) -> dict:
-    from .policy import decide
+    from mzizi_engine.policy import decide
 
     decision = decide(payload.get("assessment"), payload.get("dossier_stage"), payload["request"])
     return decision.model_dump(mode="json")
@@ -144,10 +144,9 @@ def filesystem_sync(payload: dict) -> dict:
     """Plan (default) or apply a manifest sync. The actor is set by the engine from the authenticated principal. This legacy path requires ENGINE_FILESYSTEM_LEGACY_DATABASE_URL and S3 settings."""
     import os
 
+    from mzizi_engine.filesystem import DatabaseAuthorizer, FilesystemService, Repository, load_plan, run_sync
+    from mzizi_engine.ports import connect
     from mzizi_filesystem import MemoryObjectStore, OperatorAuthorizer, S3ObjectStore
-
-    from .filesystem import DatabaseAuthorizer, FilesystemService, Repository, load_plan, run_sync
-    from .ports import connect
 
     have_s3 = all(os.environ.get(k) for k in ("S3_ENDPOINT", "S3_ACCESS_KEY", "S3_SECRET_KEY"))
     if payload.get("apply") and not have_s3 and os.environ.get("ENGINE_STORE_MEMORY") != "1":

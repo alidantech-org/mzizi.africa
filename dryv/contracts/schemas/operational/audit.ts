@@ -14,7 +14,7 @@ import { authSchemas } from "./auth.ts";
 export const audit = dryv
   .group({ name: "audit" })
   .description("Approved Mzizi Operations audit records.")
-  .facets({ storage: { namespace: "audit" } });
+  .facets({ storage: { namespace: "audit", store: "operations" } });
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const auditEnums = audit.properties({

@@ -8,9 +8,9 @@ from typing import Any
 import httpx
 from fastapi import Depends, HTTPException, Request
 
-from ..auth import DatabaseServiceFilesystemClient, Principal, authenticated
-from ..filesystem import FilesystemService, PermissionDenied, Repository, cleanup_uploads, complete_upload
-from ._shared import CompleteIn, UploadIn, call, router, store_for
+from mzizi_engine.auth import DatabaseServiceFilesystemClient, Principal, authenticated
+from mzizi_engine.filesystem import FilesystemService, PermissionDenied, Repository, cleanup_uploads, complete_upload
+from mzizi_engine.filesystem_api._shared import CompleteIn, UploadIn, call, router, store_for
 
 
 @router.post("/uploads", status_code=201)

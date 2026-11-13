@@ -15,12 +15,11 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+from mzizi_manifest import sections
+from mzizi_manifest.bundle import Bundle
+from mzizi_manifest.effective import effective_modules
+from mzizi_manifest.paths import SCHEMA_ROOT, SEED_ROOT
 from mzizi_scraping import extract, parse_module, transforms
-
-from . import sections
-from .bundle import Bundle
-from .effective import effective_modules
-from .paths import SCHEMA_ROOT, SEED_ROOT
 
 SCHEMA_DIR = SCHEMA_ROOT / "site" / "v1"
 CONTRACTS = SCHEMA_ROOT / "contracts"

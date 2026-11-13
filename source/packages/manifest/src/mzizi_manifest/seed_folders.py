@@ -12,8 +12,8 @@ from typing import Any
 
 import yaml
 
-from .paths import SEED_ROOT
-from .seed_vocabulary import (
+from mzizi_manifest.paths import SEED_ROOT
+from mzizi_manifest.seed_vocabulary import (
     ACCESS_RANK,
     ACQUISITION,
     COUNTRIES_DIR,

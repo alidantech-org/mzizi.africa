@@ -20,7 +20,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 export const reference = dryv
   .group({ name: "reference" })
   .description("Shared country identities, controlled meanings, measurement units and reviewed patterns.")
-  .facets({ storage: { namespace: "reference" } });
+  .facets({ storage: { namespace: "reference", store: "main" } });
 
 /*---------------- Reference schema contracts ----------------*/
 

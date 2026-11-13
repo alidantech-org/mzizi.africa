@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ..core import ExtractionProfile
+from mzizi_extraction.core import ExtractionProfile
 
 _SEPARATOR = "+"
 

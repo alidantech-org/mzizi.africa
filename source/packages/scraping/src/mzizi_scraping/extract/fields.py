@@ -7,11 +7,11 @@ from dataclasses import dataclass
 
 from bs4 import Tag
 
-from ..core import JsonValue
-from ..selectors import Content, Item, Match, jsonpath, select
-from ..text import find_first
-from ..transforms import apply
-from .models import FieldSpec, ModuleSpec
+from mzizi_scraping.core import JsonValue
+from mzizi_scraping.extract.models import FieldSpec, ModuleSpec
+from mzizi_scraping.selectors import Content, Item, Match, jsonpath, select
+from mzizi_scraping.text import find_first
+from mzizi_scraping.transforms import apply
 
 ITEM_TEXT, LINK_TEXT, LINK_HREF = "item_text", "link_text", "link_href"
 TOKENS = frozenset({ITEM_TEXT, LINK_TEXT, LINK_HREF})

@@ -13,7 +13,7 @@ import { sharedProperties } from "../_shared.ts";
 export const auth = dryv
   .group({ name: "auth" })
   .description("Approved Mzizi Operations auth records.")
-  .facets({ storage: { namespace: "auth" } });
+  .facets({ storage: { namespace: "auth", store: "operations" } });
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const authEnums = auth.properties({

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError
 
-from ..core import JsonValue
+from mzizi_extraction.core import JsonValue
 
 GEOMETRY_TYPES = frozenset(
     {"Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection"}

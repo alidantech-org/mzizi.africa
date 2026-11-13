@@ -13,38 +13,38 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 
 ## Commands
 
-| Command | What it does |
-| --- | --- |
-| `bun run setup` | attempts `sync`, then links the local Dryv checkout and creates the development sign-in keys; currently blocked at Python workspace sync |
-| `bun run sync` | attempts `uv sync --all-packages` and installs each Bun project; currently blocked by the missing Python workspace member |
-| `bun run doctor` | reports required tools and local files |
-| `bun run clean` | deletes caches and build output; `bun run clean -- --deep` also deletes `.venv` and every `node_modules` |
-| `bun run dev` | runs the services in watch mode; name some to run only those: `bun run dev api web` |
-| `bun run start` | runs the services without watchers (run `bun run build` first for the Next.js apps) |
-| `bun run build` | builds the Python wheels into `.local/dist` and the two Next.js apps |
-| `bun run format` / `format:check` | ruff format; Biome for `scripts/` and `dryv/`; Prettier for the dashboard |
-| `bun run lint` / `lint:fix` | ruff check; Biome; ESLint for the dashboard |
-| `bun run typecheck` | mypy for Python; `tsc` for every TypeScript project |
-| `bun run test` | pytest, `bun test` and vitest |
-| `bun run structure` | folder layout, file headers and hard file size limits for hand-written code |
-| `bun run check` | `format:check`, `lint`, `typecheck`, `structure` and `test` |
-| `bun run check:all` | `check`, plus Dryv contract checks, the seed registry, `task validate` and the builds |
-| `bun run dryv:link` | links the local Dryv author and compiler into `dryv/node_modules` |
-| `bun run dryv:check` | typechecks, audits, doctors and compiles the contracts; checks access rules, API boundary and schema |
-| `bun run dryv:generate` | generates the NestJS API, adopts the list helper, verifies the output, exports access rules, regenerates the web catalog |
-| `bun run dryv:verify` | fails when the tracked generated output is not what the contracts generate now |
-| `bun run dryv:export` | re-exports the access rules and the JSON schema |
-| `bun run dryv:api` / `dryv:api:stop` | runs or stops the local Dryv engine API by hand |
-| `bun scripts/mz.ts dryv:trust` | trusts the project packs (once per machine) |
-| `bun run catalog` | regenerates the dashboard's data catalog from the API list routes |
-| `bun run db:up` / `db:down` | starts or stops the local PostGIS container (`MZIZI_PG_CONTAINER`, default `postgis`) |
-| `bun run db generate` / `bun run db plan` | regenerates the Dryv persistence catalog and reports table-name coverage against current SQL migrations |
-| `bun run db status` | TypeScript owner: `status`, `migrate`, `verify`, local role provisioning, `seed`, guarded reset, admin bootstrap and pipeline release operations |
-| `bun run infra:up` / `infra:down` | starts or stops local Temporal and S3-compatible SeaweedFS; named volumes preserve development history and test objects |
-| `bun run seed -- check` | `mzizi-manifest`: `check`, `lock`, `report`, `validate-structure <dir>` |
-| `bun run fs -- tree` | `mzizi-filesystem`: `sync --manifest <file>`, `tree`, `verify`, `cleanup-uploads` and the rest |
-| `bun run engine -- check` | `mzizi-engine`: `serve`, `capabilities`, `check` |
-| `bun run docs:validate` | `task validate` for the `.docs` workspace |
+| Command                                   | What it does                                                                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `bun run setup`                           | attempts `sync`, then links the local Dryv checkout and creates the development sign-in keys; currently blocked at Python workspace sync         |
+| `bun run sync`                            | attempts `uv sync --all-packages` and installs each Bun project; currently blocked by the missing Python workspace member                        |
+| `bun run doctor`                          | reports required tools and local files                                                                                                           |
+| `bun run clean`                           | deletes caches and build output; `bun run clean -- --deep` also deletes `.venv` and every `node_modules`                                         |
+| `bun run dev`                             | runs the services in watch mode; name some to run only those: `bun run dev api web`                                                              |
+| `bun run start`                           | runs the services without watchers (run `bun run build` first for the Next.js apps)                                                              |
+| `bun run build`                           | builds the Python wheels into `.local/dist` and the two Next.js apps                                                                             |
+| `bun run format` / `format:check`         | ruff format; Biome for `scripts/` and `dryv/`; Prettier for the dashboard                                                                        |
+| `bun run lint` / `lint:fix`               | ruff check; Biome; ESLint for the dashboard                                                                                                      |
+| `bun run typecheck`                       | mypy for Python; `tsc` for every TypeScript project                                                                                              |
+| `bun run test`                            | pytest, `bun test` and vitest                                                                                                                    |
+| `bun run structure`                       | folder layout, file headers and hard file size limits for hand-written code                                                                      |
+| `bun run check`                           | `format:check`, `lint`, `typecheck`, `structure` and `test`                                                                                      |
+| `bun run check:all`                       | `check`, plus Dryv contract checks, the seed registry, `task validate` and the builds                                                            |
+| `bun run dryv:link`                       | links the local Dryv author and compiler into `dryv/node_modules`                                                                                |
+| `bun run dryv:check`                      | typechecks, audits, doctors and compiles the contracts; checks access rules, API boundary and schema                                             |
+| `bun run dryv:generate`                   | generates the NestJS API, adopts the list helper, verifies the output, exports access rules, regenerates the web catalog                         |
+| `bun run dryv:verify`                     | fails when the tracked generated output is not what the contracts generate now                                                                   |
+| `bun run dryv:export`                     | re-exports the access rules and the JSON schema                                                                                                  |
+| `bun run dryv:api` / `dryv:api:stop`      | runs or stops the local Dryv engine API by hand                                                                                                  |
+| `bun scripts/mz.ts dryv:trust`            | trusts the project packs (once per machine)                                                                                                      |
+| `bun run catalog`                         | regenerates the dashboard's data catalog from the API list routes                                                                                |
+| `bun run db:up` / `db:down`               | starts or stops the local PostGIS container (`MZIZI_PG_CONTAINER`, default `postgis`)                                                            |
+| `bun run db generate` / `bun run db plan` | regenerates the Dryv persistence catalog and reports table-name coverage against current SQL migrations                                          |
+| `bun run db status`                       | TypeScript owner: `status`, `migrate`, `verify`, local role provisioning, `seed`, guarded reset, admin bootstrap and pipeline release operations |
+| `bun run infra:up` / `infra:down`         | starts or stops local Temporal and S3-compatible SeaweedFS; named volumes preserve development history and test objects                          |
+| `bun run seed -- check`                   | `mzizi-manifest`: `check`, `lock`, `report`, `validate-structure <dir>`                                                                          |
+| `bun run fs -- tree`                      | `mzizi-filesystem`: `sync --manifest <file>`, `tree`, `verify`, `cleanup-uploads` and the rest                                                   |
+| `bun run engine -- check`                 | `mzizi-engine`: `serve`, `capabilities`, `check`                                                                                                 |
+| `bun run docs:validate`                   | `task validate` for the `.docs` workspace                                                                                                        |
 
 Arguments after `--` go to the command. `bun scripts/mz.ts <command> [args]` is the same thing without the `--`.
 
@@ -63,14 +63,14 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 
 ## Services and ports
 
-| Service | Directory | Port | Override |
-| --- | --- | --- | --- |
-| `api` | `source/backend/api` | 3000 | `API_PORT` |
-| `database` | `source/backend/database` | 3301 | `DATABASE_PORT` |
+| Service     | Directory                  | Port | Override         |
+| ----------- | -------------------------- | ---- | ---------------- |
+| `api`       | `source/backend/api`       | 3000 | `API_PORT`       |
+| `database`  | `source/backend/database`  | 3301 | `DATABASE_PORT`  |
 | `pipelines` | `source/backend/pipelines` | 3302 | `PIPELINES_PORT` |
-| `engine` | `source/backend/engine` | 8760 | `ENGINE_PORT` |
-| `web` | `source/apps/web` | 3100 | `WEB_PORT` |
-| `www` | `source/apps/www` | 3200 | `WWW_PORT` |
+| `engine`    | `source/backend/engine`    | 8760 | `ENGINE_PORT`    |
+| `web`       | `source/apps/web`          | 3100 | `WEB_PORT`       |
+| `www`       | `source/apps/www`          | 3200 | `WWW_PORT`       |
 
 `dev` and `start` give every service the values of the git-ignored root `.env` and its own port, prefix each output line with the service name and stop every service when the runner stops or when one service exits. `PORT` from `.env` is deliberately not passed through, because it would put two services on one port.
 
@@ -99,32 +99,40 @@ One configuration per language, at the root:
 
 `bun run structure` enforces, for hand-written code only (Dryv-managed output is excluded):
 
-| Scope | Hard limit |
-| --- | --- |
-| Python sources in `source/packages/*`, `source/backend/engine`, `scripts` | 400 lines |
-| Python tests | 600 lines |
-| TypeScript in `scripts/` and `dryv/tools` | 400 lines (tests 600) |
-| Dryv contracts in `dryv/contracts` (declarative) | 800 lines |
+| Scope                                                                     | Hard limit            |
+| ------------------------------------------------------------------------- | --------------------- |
+| Python sources in `source/packages/*`, `source/backend/engine`, `scripts` | 400 lines             |
+| Python tests                                                              | 600 lines             |
+| TypeScript in `scripts/` and `dryv/tools`                                 | 400 lines (tests 600) |
+| Dryv contracts in `dryv/contracts` (declarative)                          | 800 lines             |
 
 It also requires every Python project to have `pyproject.toml`, `README.md`, `tests/` and exactly one `src/mzizi_*` package with `__init__.py` and `py.typed`, and every source file to open with a docstring or comment that says what it is for. When a file reaches its limit, split it by responsibility; do not raise the limit. The limits live in `scripts/tasks/structure.ts`.
 
 ## How the runner is built
 
-| File | Responsibility |
-| --- | --- |
-| `mz.ts` | entry point: the command table, argument parsing and help |
-| `lib/projects.ts` | the single registry of projects and services; add a project here and every command includes it |
-| `lib/exec.ts` | running steps, bounded parallelism and pass or fail summaries |
-| `lib/paths.ts` | repository paths and `.env` loading |
-| `tasks/quality.ts` | format, lint, typecheck, test and build steps |
-| `tasks/setup.ts` | sync, setup, doctor and clean |
-| `tasks/serve.ts` | dev and start |
-| `tasks/dryv.ts` | Dryv link, checks, engine API, generation and verification |
-| `tasks/structure.ts` | layout, header and size rules |
-| `mz.test.ts` | tests for the runner itself (`bun test scripts`) |
+| File                 | Responsibility                                                                                 |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| `mz.ts`              | entry point: the command table, argument parsing and help                                      |
+| `lib/projects.ts`    | the single registry of projects and services; add a project here and every command includes it |
+| `lib/exec.ts`        | running steps, bounded parallelism and pass or fail summaries                                  |
+| `lib/paths.ts`       | repository paths and `.env` loading                                                            |
+| `tasks/quality.ts`   | format, lint, typecheck, test and build steps                                                  |
+| `tasks/setup.ts`     | sync, setup, doctor and clean                                                                  |
+| `tasks/serve.ts`     | dev and start                                                                                  |
+| `tasks/dryv.ts`      | Dryv link, checks, engine API, generation and verification                                     |
+| `tasks/structure.ts` | layout, header and size rules                                                                  |
+| `mz.test.ts`         | tests for the runner itself (`bun test scripts`)                                               |
 
 A Bun project is checked through its own `package.json` scripts when it defines them (`format`, `format:check`, `lint`, `typecheck`, `test`, `build`), so each project still works on its own and the root never duplicates its configuration.
 
 ## Python command wrappers
 
 `db.py`, `seed_check.py` and `filesystem.py` are thin wrappers kept for direct use with `uv run scripts/<name>.py`; they call the same package entry points as `bun run db`, `bun run seed` and `bun run fs`. They contain no logic of their own.
+
+## Store-scoped database generation
+
+`bun run dryv:generate` runs only the legacy product API packs and its existing follow-up exports.
+Use `bun run dryv:database:plan`, `bun run dryv:database:generate` or
+`bun run dryv:database:verify` for the independent database foundation app. Forward a selector as
+`bun run dryv:database:generate -- --store main` (or `operations`). These commands start the local
+Dryv API only when needed and do not assemble/apply SQL releases or change database roles.

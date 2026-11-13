@@ -7,9 +7,7 @@ from datetime import UTC, datetime
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError
 
-from mzizi_fetch import FetchMode, GateRequest, Purpose
-
-from .models import (
+from mzizi_engine.policy.gate.models import (
     ApprovedScope,
     Assessment,
     AttributionRequired,
@@ -21,6 +19,7 @@ from .models import (
     ParsedAssessment,
     UnenforceableCondition,
 )
+from mzizi_fetch import FetchMode, GateRequest, Purpose
 
 _CONDITION_TYPES: dict[str, TypeAdapter[Condition]] = {
     "max_requests_per_second": TypeAdapter(MaxRequestsPerSecond),

@@ -7,7 +7,7 @@ from enum import StrEnum
 
 from pydantic import Field
 
-from ..models import Frozen
+from mzizi_fetch.models import Frozen
 
 
 class Purpose(StrEnum):

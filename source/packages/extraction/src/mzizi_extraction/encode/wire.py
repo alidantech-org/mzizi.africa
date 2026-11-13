@@ -9,7 +9,7 @@ import json
 
 from pydantic import BaseModel
 
-from ..core import Diagnostic, Frozen, Output, Segment
+from mzizi_extraction.core import Diagnostic, Frozen, Output, Segment
 
 
 class WireSegment(Frozen):

@@ -4,7 +4,7 @@ It bypasses the retention guards on purpose and must only ever be pointed at row
 
 from __future__ import annotations
 
-from ..ports import Connection
+from mzizi_engine.ports import Connection
 
 
 def purge_tree(conn: Connection, root_id: str) -> None:

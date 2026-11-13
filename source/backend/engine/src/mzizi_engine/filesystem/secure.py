@@ -8,10 +8,9 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from mzizi_engine.ports import Connection
 from mzizi_filesystem.env import repo_root
 from mzizi_filesystem.store import ObjectStore
-
-from ..ports import Connection
 
 SECURITY_FOLDER = "/security"
 

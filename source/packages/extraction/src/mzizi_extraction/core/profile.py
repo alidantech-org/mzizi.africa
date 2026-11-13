@@ -5,7 +5,7 @@ Profiles come from manifests or the engine edge (`parse/profile.py`); extractors
 
 from __future__ import annotations
 
-from .models import Frozen
+from mzizi_extraction.core.models import Frozen
 
 
 class Limits(Frozen):
@@ -19,7 +19,7 @@ class ExtractionProfile(Frozen):
     ocr: bool = False
     tables: bool = False
     expect_polygons: bool = False
-    languages: str = "eng+swa"
+    languages: str = "eng"
     # Property keys whose value names a feature. Supplied by the caller (manifest/profile data), never hard-coded here.
     name_keys: tuple[str, ...] = ()
     limits: Limits = Limits()

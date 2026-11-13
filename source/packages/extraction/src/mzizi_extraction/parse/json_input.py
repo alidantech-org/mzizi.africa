@@ -6,7 +6,7 @@ import json
 
 from pydantic import TypeAdapter
 
-from ..core import JsonValue
+from mzizi_extraction.core import JsonValue
 
 _ADAPTER: TypeAdapter[JsonValue] = TypeAdapter(JsonValue)
 

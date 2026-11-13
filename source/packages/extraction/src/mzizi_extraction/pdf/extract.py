@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pypdfium2 as pdfium
 
-from ..core import (
+from mzizi_extraction.core import (
     Code,
     Diagnostic,
     ExtractionProfile,
@@ -17,9 +17,9 @@ from ..core import (
     info,
     warning,
 )
-from .scanned import read_scanned
-from .tables import read_tables
-from .text import read_text_layer
+from mzizi_extraction.pdf.scanned import read_scanned
+from mzizi_extraction.pdf.tables import read_tables
+from mzizi_extraction.pdf.text import read_text_layer
 
 PDF_MAGIC = b"%PDF"
 

@@ -6,10 +6,10 @@ import argparse
 import json
 import sys
 
-from . import bundle
-from . import seed_registry as reg
-from .paths import SEED_ROOT
-from .validate import validate
+from mzizi_manifest import bundle
+from mzizi_manifest import seed_registry as reg
+from mzizi_manifest.paths import SEED_ROOT
+from mzizi_manifest.validate import validate
 
 
 def main(argv: list[str] | None = None) -> int:

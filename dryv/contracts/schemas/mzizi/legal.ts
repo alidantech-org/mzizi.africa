@@ -12,13 +12,14 @@ import { FileVersions } from "./filesystem.ts";
 import { Units } from "./geography.ts";
 import { Entities } from "./official.ts";
 import { Value } from "./reference.ts";
-import { Evidence, Citations } from "./source.ts";
+import { Citations, Evidence } from "./source.ts";
+
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const legal = dryv
   .group({ name: "legal" })
   .description("Legal instruments, exact wording versions and amendments.")
-  .facets({ storage: { namespace: "legal" } });
+  .facets({ storage: { namespace: "legal", store: "main" } });
 
 export const Instruments = legal
   .schema("Instruments", {

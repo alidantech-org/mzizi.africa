@@ -6,7 +6,17 @@ import io
 
 import pdfplumber
 
-from ..core import Code, Diagnostic, ExtractionProfile, Locator, Segment, SegmentKind, TableContent, info, warning
+from mzizi_extraction.core import (
+    Code,
+    Diagnostic,
+    ExtractionProfile,
+    Locator,
+    Segment,
+    SegmentKind,
+    TableContent,
+    info,
+    warning,
+)
 
 TABLE_CONFIDENCE = 0.7
 

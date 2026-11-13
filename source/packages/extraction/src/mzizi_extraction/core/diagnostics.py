@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .models import Code, Diagnostic, Level, Locator, Output, Status
+from mzizi_extraction.core.models import Code, Diagnostic, Level, Locator, Output, Status
 
 
 def info(code: Code, message: str, locator: Locator | None = None) -> Diagnostic:

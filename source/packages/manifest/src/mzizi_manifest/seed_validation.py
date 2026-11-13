@@ -9,8 +9,8 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
-from .paths import SCHEMA_ROOT, SEED_ROOT
-from .seed_folders import (
+from mzizi_manifest.paths import SCHEMA_ROOT, SEED_ROOT
+from mzizi_manifest.seed_folders import (
     artifact_files,
     expand_entry,
     fixture_files,
@@ -19,7 +19,7 @@ from .seed_folders import (
     resolve_effective,
     validate_descriptors,
 )
-from .seed_vocabulary import LOADERS, LOCAL_ONLY_PREFIX, MAX_BYTES, SECRET
+from mzizi_manifest.seed_vocabulary import LOADERS, LOCAL_ONLY_PREFIX, MAX_BYTES, SECRET
 
 
 @dataclass

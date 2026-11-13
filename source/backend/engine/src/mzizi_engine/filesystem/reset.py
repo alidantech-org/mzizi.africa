@@ -11,10 +11,9 @@ from typing import Any
 
 import psycopg
 
+from mzizi_engine.ports import Connection, Row, required
 from mzizi_filesystem.keys import PROTECTED_PREFIXES, TMP_PREFIX, is_protected
 from mzizi_filesystem.store import ObjectStore, StoreError
-
-from ..ports import Connection, Row, required
 
 TABLES = ("uploads", "file_relations", "taggings", "file_versions", "files", "folders", "tags")
 

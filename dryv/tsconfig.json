@@ -12,7 +12,7 @@
     "skipLibCheck": true,
     "types": ["bun"],
     "paths": {
-      "@dryvcode/author": ["/home/alidante/Projects/personal/alidantech-org/codepot/dryv/source/plugins/authoring/typescript/author/src/index.ts"]
+      "@dryvcode/author": ["./node_modules/@dryvcode/author/src/index.ts"]
     }
   },
   "include": ["contracts/**/*.ts"]

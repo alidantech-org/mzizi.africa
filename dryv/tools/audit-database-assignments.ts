@@ -1,51 +1,25 @@
-/**
- * Drift guard for the schema-to-database catalogue.
- *
- * `contracts/apps/database/persistence.ts` is the canonical namespace -> database catalogue; the
- * `rust-sql` pack activation in `dryv.yaml` carries the same lists as pack inputs (packs cannot read
- * TypeScript). This fails when the two disagree, so a namespace can never be assigned in one place
- * and unassigned in the other.
- *
- *   bun tools/audit-database-assignments.ts
- */
+/** Compile the database contracts and audit canonical store placement. Never reads a live database. */
+import { spawnSync } from "node:child_process";
 import { join } from "node:path";
+import { auditStoreAssignments } from "./stores/audit.ts";
+import { parseStoreAssignments } from "./stores/parse.ts";
 
-import { databaseAssignments } from "../contracts/apps/database/persistence.ts";
-
-const root = join(import.meta.dir, "..", "..");
-const config = Bun.YAML.parse(await Bun.file(join(root, "dryv.yaml")).text()) as {
-  packs?: Record<string, { inputs?: Record<string, unknown> }>;
-};
-const lists: Record<string, string> = { main_namespaces: "mzizi", operations_namespaces: "mzizi_operations" };
-
-const problems: string[] = [];
-const seen = new Map<string, string>();
-for (const [pack, input, database] of Object.keys(config.packs ?? {})
-  .filter((name) => name.startsWith("rust-"))
-  .flatMap((pack) => Object.entries(lists).map(([input, database]) => [pack, input, database] as const))) {
-  const value = config.packs?.[pack]?.inputs?.[input];
-  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
-    problems.push(`dryv.yaml packs.${pack}.inputs.${input} must be a list of namespaces`);
-    continue;
-  }
-  const names = value as string[];
-  if (new Set(names).size !== names.length) problems.push(`${input} lists a namespace twice`);
-  for (const namespace of names) {
-    const previous = seen.get(`${pack}:${namespace}`);
-    if (previous) problems.push(`namespace ${namespace} is in both ${previous} and ${input}`);
-    seen.set(`${pack}:${namespace}`, input);
-    const assigned = databaseAssignments[namespace];
-    if (assigned === undefined) problems.push(`${input} lists ${namespace}, which persistence.ts does not assign`);
-    else if (assigned !== database) problems.push(`${namespace} is ${assigned} in persistence.ts but listed in ${input} (${database})`);
-  }
-}
-for (const [namespace, database] of Object.entries(databaseAssignments)) {
-  if (!seen.has(`rust-sql:${namespace}`) || !seen.has(`rust-models:${namespace}`))
-    problems.push(`persistence.ts assigns ${namespace} to ${database} but dryv.yaml does not list it`);
-}
-
-if (problems.length > 0) {
-  console.error(`Database assignment drift:\n- ${problems.join("\n- ")}`);
-  process.exit(1);
-}
-console.log(`database assignments consistent (${Object.keys(databaseAssignments).length} namespaces, both packs)`);
+const root = join(import.meta.dir, "..");
+const compiled = spawnSync(
+  "bun",
+  [join(root, "node_modules/@dryvcode/compiler/dist/bin/dryv-ts.js"), "compile", "contracts/apps/database/index.ts"],
+  {
+    cwd: root,
+    encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024,
+  },
+);
+if (compiled.status !== 0) throw new Error(`database authoring failed: ${compiled.stderr || compiled.stdout}`);
+const result = auditStoreAssignments(parseStoreAssignments(compiled.stdout));
+if (result.problems.length) throw new Error(`Canonical store assignment errors:\n${result.problems.join("\n")}`);
+console.log(
+  `Canonical stores: ${[...result.tables]
+    .map(([store, count]) => `${store}=${count} tables`)
+    .sort()
+    .join(", ")}`,
+);

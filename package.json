@@ -46,7 +46,12 @@
     "seed": "bun scripts/mz.ts seed",
     "fs": "bun scripts/mz.ts fs",
     "engine": "bun scripts/mz.ts engine",
-    "docs:validate": "bun scripts/mz.ts docs:validate"
+    "docs:validate": "bun scripts/mz.ts docs:validate",
+    "dryv:database:plan": "bun scripts/mz.ts dryv:database:plan",
+    "dryv:database:generate": "bun scripts/mz.ts dryv:database:generate",
+    "dryv:database:verify": "bun scripts/mz.ts dryv:database:verify",
+    "dryv:database:check": "bun scripts/mz.ts dryv:database:check",
+    "dryv:database:typecheck": "bun scripts/mz.ts dryv:database:typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

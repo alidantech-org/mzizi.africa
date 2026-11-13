@@ -105,6 +105,33 @@ async function ensureApi(): Promise<() => void> {
   throw new Error(`the Dryv engine API did not start; see ${apiLog}`);
 }
 
+/** Legacy API packs remain independent of the database foundation's canonical application. */
+export const legacyApiSelection = (): string[] =>
+  ["types", "dtos", "entities", "type-files", "use-cases", "server"].flatMap((pack) => ["--pack", pack]);
+
+/** Plan/generate/check the database app; optional store selectors intersect its owned packs. */
+export async function database(action: "plan" | "generate" | "verify", selectors: readonly string[]): Promise<boolean> {
+  const stop = await ensureApi();
+  try {
+    const args = [
+      "bun",
+      `${dryvHome()}/source/apps/cli/bin/dryv.ts`,
+      "--api",
+      dryvApiUrl(),
+      "--yes",
+      "--no-input",
+      action === "verify" ? "generate" : action,
+      "--app",
+      "database",
+      ...selectors,
+    ];
+    if (action === "verify") args.push("--check");
+    return await group(`Dryv database ${action}`, [step(action, root, args, dryvEnv())]);
+  } finally {
+    stop();
+  }
+}
+
 /**
  * Generate the NestJS API from the contracts, then adopt the shared list helper, verify the output is current,
  * re-export the access rules and regenerate the web data catalog. A new operation makes the generate step end "failed" at its typecheck stage
@@ -115,7 +142,7 @@ export async function generate(): Promise<boolean> {
   try {
     const cli = ["bun", `${dryvHome()}/source/apps/cli/bin/dryv.ts`, "--api", dryvApiUrl(), "--yes", "--no-input"];
     const env = dryvEnv();
-    const generated = await group("Dryv generate", [step("Generate", root, [...cli, "generate"], env)]);
+    const generated = await group("Dryv generate", [step("Generate", root, [...cli, "generate", ...legacyApiSelection()], env)]);
     const followUp = await group("After generation", [
       inDryv("Adopt shared list helper", "adopt:list"),
       inDryv("Generated output is current", "generated:check"),

@@ -10,12 +10,12 @@ import sys
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     if argv and argv[0] == "filesystem":
-        from .filesystem.cli import main as filesystem_main
+        from mzizi_engine.filesystem.cli import main as filesystem_main
 
         return filesystem_main(argv[1:])
 
-    from .capabilities import build_default_registry
-    from .config import Settings
+    from mzizi_engine.capabilities import build_default_registry
+    from mzizi_engine.config import Settings
 
     parser = argparse.ArgumentParser(prog="mzizi-engine")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -36,7 +36,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     import uvicorn
 
-    from .app import create_app
+    from mzizi_engine.app import create_app
 
     uvicorn.run(create_app(settings), host=settings.host, port=settings.port)
     return 0

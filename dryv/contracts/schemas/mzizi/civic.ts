@@ -8,10 +8,10 @@ import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
-import { Places, Units, Features } from "./geography.ts";
+import { Features, Places, Units } from "./geography.ts";
 import { Institutions } from "./governance.ts";
 import { Entities } from "./official.ts";
-import { Value, Country } from "./reference.ts";
+import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
@@ -19,7 +19,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 export const civic = dryv
   .group({ name: "civic" })
   .description("Public services, projects, procurement processes, contracts and delivery evidence.")
-  .facets({ storage: { namespace: "civic" } });
+  .facets({ storage: { namespace: "civic", store: "main" } });
 
 /*---------------- civic.services ----------------*/
 export const Services = civic

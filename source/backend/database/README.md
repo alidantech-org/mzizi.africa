@@ -42,3 +42,24 @@ All Main domain groups (reference, geography, legal, official, governance, polit
 - Invariants render recursively into `CHECK` constraints, up to five levels deep; comparisons against `null` become `IS [NOT] NULL`. This needs a Dryv engine where a null comparison types as boolean (a small local change in `source/engine/python/engine/.../validation/common/expressions.py`; the pinned commit in `dryv.yaml` does not contain it yet).
 - Database names are deployment choices; the logical targets are `main` (`mzizi`) and `operations` (`mzizi_operations`) and the ledger records the logical identity. A working remote setup used `mzizix` and `mzizix_operational` through `MZIZI_DB_MAIN_ADMIN_URL` and `MZIZI_DB_OPERATIONS_ADMIN_URL` kept in the git-ignored `.data/`.
 - Run only the model/table contract test (`generated_models_match_live_tables`) against shared servers; the lifecycle test creates a cluster-wide `mzizi_service` role.
+
+## Canonical Dryv store ownership
+
+The database authoring app now owns two canonical stores, `main` and `operations`, with explicit
+read/write access and provided auth/reference operations. Placement is defined on the neutral
+schema groups, not mirrored namespace lists in pack inputs. Root usage supplies physical names
+and the existing runtime/admin environment variable names. The legacy NestJS contracts remain
+independent.
+
+Use repository-root `bun run dryv:database:plan`, `dryv:database:generate` and
+`dryv:database:verify`; append `-- --store main` or `-- --store operations` for a partial run.
+Perform one complete database generation first to create stable shared catalogue modules.
+Separate model activations own `models/main/` and `models/operations/`, while Rust public module
+paths remain unchanged. Store-specific verifiers combine through the stable generated contract
+module. SQL snapshots keep the existing `main.sql`/`operations.sql` locations. Non-persisted
+Accountability indicators do not become tables or acquire a database assignment.
+
+Schema snapshot regeneration does not assemble or apply a migration. Existing releases, `.snapshot`
+checksums, target identity checks and the public ledger are unchanged. Do not switch this project
+to `dryv migrate` until the Mzizi storage mappings and an explicit ledger-adoption procedure are
+reviewed. See [contract workflow](../../../dryv/README.md) for approval and checkpoint commands.

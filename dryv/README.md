@@ -4,19 +4,19 @@ TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv co
 
 ## Layout
 
-- `../dryv.yaml`: the Dryv project file. It lives at the repository root because generation destinations may not leave the project root. It pins the engine (`6dba3100f02ada9dfd061e5100112c1d01760e3b`) and the packs repository (`7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a`).
+- `../dryv.yaml`: the Dryv project file. It lives at the repository root because generation destinations may not leave the project root. It pins the engine (`a7b13a30`) and the packs repository (`7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a`).
 - `contracts/schemas/`: the new design — one file per database schema, grouped by database (`mzizi/` for canonical domain data, `operational/` for `mzizi_operations`), over the `_shared.ts` base; shared by every app.
-- `contracts/apps/database/`: the database foundation app (groups, named operations, schema-to-database catalogue), compiled by the `database` authoring source for the Rust packs.
+- `contracts/apps/database/`: database app, named provided operations and the two logical store identities. The neutral schema groups select their store through storage facets.
 - `contracts/apps/main/index.ts`: the legacy pre-foundation application; its groups moved to `contracts/_archive/{foundation,domains}` and keep generating the existing NestJS API until migration to the new design.
 - `packs/type-files`, `packs/use-cases`: project packs that scaffold shared types and per-operation use cases for the NestJS API.
-- `packs/rust-models`, `packs/rust-sql`: project packs for the Rust database foundation (generated models crate and per-database SQL snapshots), active against the `database` authoring source via Dryv multi-authoring (`.docs/_plan/database-foundation/DRYV_MULTI_AUTHORING.md`); `bun run database:assignments` guards the namespace lists in `dryv.yaml`.
+- `packs/rust-models`, `packs/rust-sql`: store-scoped database packs; each activates once for Main and once for Operations. `packs/rust-catalog` owns the stable shared Rust catalogue. `database:assignments` audits compiled canonical placement without namespace lists in usage.
 
 Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/types/<group>/...`, `src/app.module.ts` and `src/database/`. Do not edit managed files; files marked "Scaffolded by Dryv once" belong to the project.
 
 ## Contract rules
 
 - Domain entities extend `HistoricalEntity` (valid time) over `BaseEntity` (identity, record time, version); system schemas (`audit`, `source`, `filesystem`, `identity`) extend `BaseEntity`. Provenance and verification are never columns: the `source` schema points at records (`.docs/design/data/SOURCING_DESIGN.md`).
-- No relation crosses a schema; other schemas are referenced by plain id.
+- A physical foreign key may cross PostgreSQL namespaces inside one logical store. Cross-store foreign keys fail in Engine validation. Existing external Main IDs in staging remain application-verified plain IDs; declare a typed application reference only when its real provider/resolver operation exists.
 - Business codes are hierarchical and lowercase, such as `ke/nairobi/westlands`.
 - Levels, institution types, election types, selection methods and fiscal stages are `ClassificationRecord` rows scoped by jurisdiction, never enums or columns. Contracts never name a country.
 - Strings with a maximum length become `varchar(max)`; leave out the maximum for unbounded text such as GeoJSON.
@@ -60,8 +60,8 @@ Every group sets a storage namespace (a PostgreSQL schema) and every entity a sh
 
 `node_modules/@dryvcode/author` and `compiler` are symlinks (`bun run link`) into the Dryv checkout at `DRYV_HOME`. Two different things read them:
 
-- **Editor and `tsc`** resolve `@dryvcode/author` to the Dryv *source* through the `paths` entry in `tsconfig.json`, so authoring-API changes show up immediately. That entry is an absolute path to this machine's Dryv checkout; change it if yours lives elsewhere.
-- **`dryv-ts compile`, `doctor` and generation** run the package's built `dist/`. After changing the Dryv author, rebuild it (`bun run build` in `source/plugins/authoring/typescript/author`) before compiling, or the contracts compile against old behaviour.
+- **Editor and `tsc`** resolve `@dryvcode/author` to the Dryv _source_ through the `paths` entry in `tsconfig.json`, so authoring-API changes show up immediately. The entry is relative to the linked package under `node_modules`; no checkout-specific path is committed.
+- **`dryv-ts compile`, `doctor` and generation** run the package's built `dist/`. After changing Dryv, rebuild the compiler (`bun run build` in `source/plugins/authoring/typescript/compiler`); it also rebuilds the author. Otherwise linked `dist/` files may silently omit new contract fields.
 
 ## Generator limits and workarounds
 
@@ -98,9 +98,64 @@ Without `TEST_DATABASE_URL` the PostgreSQL suites are skipped and the generated 
 
 ## Checks
 
-| Command (in `dryv/`) | What it guards |
-| --- | --- |
-| `bun run check` | contracts typecheck, contract audit (including database naming), Dryv doctor and compile, access rules current, API boundary |
-| `bun run generated:check` | generated output is current and no stale entities remain (needs the Dryv API) |
-| `bun run access:export` | re-export policies and target kinds after changing operations or entities |
-| `bun run adopt:list` | give newly scaffolded Find use cases the shared paging and filter helper |
+| Command (in `dryv/`)      | What it guards                                                                                                               |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `bun run check`           | contracts typecheck, contract audit (including database naming), Dryv doctor and compile, access rules current, API boundary |
+| `bun run generated:check` | generated output is current and no stale entities remain (needs the Dryv API)                                                |
+| `bun run access:export`   | re-export policies and target kinds after changing operations or entities                                                    |
+| `bun run adopt:list`      | give newly scaffolded Find use cases the shared paging and filter helper                                                     |
+
+## Canonical Main and Operations setup
+
+Both stores are declared by `contracts/apps/database/persistence.ts`. Persisted groups under
+`contracts/schemas/mzizi` select `main`; those under `operational` select `operations`. The schema
+storage facet can override its group default explicitly. Namespace and table remain separate.
+The database app declares read/write access to both stores and explicitly provides its seven
+named auth/reference operations. Non-persisted Accountability view models have no store/table.
+The legacy API remains a separate authoring root; this setup does not mix its old domain entities
+with the database foundation or create an engine/client app implicitly.
+
+Root `dryv.yaml` maps `main` to `mzizi` and `operations` to `mzizi_operations`. Runtime variables
+are `MZIZI_DB_MAIN_URL` and `MZIZI_DB_OPERATIONS_URL`; administrative names have `_ADMIN_URL`.
+Values remain client-local. A deployment using different database names must explicitly adjust
+those two usage identities to match its environment; do not put credentials in the YAML.
+
+From the repository root:
+
+```bash
+bun run typecheck --only scripts
+# Focused static check before generation:
+bun run dryv:database:typecheck
+bun run dryv:database:check
+bun run dryv:database:plan
+bun run dryv:database:generate
+bun run dryv:database:generate -- --store main
+bun run dryv:database:generate -- --store operations
+bun run dryv:database:verify
+```
+
+The first complete database generation creates shared catalogue modules. Thereafter store-only
+generation writes only that store's models, verifier and SQL snapshot. Rust rows live below
+`models/main/<namespace>/` and `models/operations/<namespace>/`; the public Rust module paths stay
+`models::main::<namespace>::<entity>` and `models::operations::<namespace>::<entity>`. SQL remains
+`generated/sql/main.sql` and `operations.sql` for the existing administration CLI. Shared
+`mod.rs` and `contract.rs` belong only to `rust-catalog`; no two activations own one output.
+Legacy `bun run dryv:generate` selects only its six API packs and retains its API follow-ups.
+
+Dryv checkpoints are local by default. After actual successful generation/checks, use the local
+Dryv CLI to run `checkpoint approve --app database` or approve a complete selected store with
+`checkpoint approve --store main`. Inspect `checkpoint status` and
+`explain change --baseline approved --app database --diff full`. Change `checkpoints.storage`
+to `repository` only when the project chooses to commit compressed baselines; Dryv never commits
+or silently approves. Formatting/final checks must succeed before approval.
+
+This config deliberately does not enable Dryv migration execution: its initial PostgreSQL mapping
+does not cover Mzizi's temporal properties, advanced constraints and PostGIS placeholder. Existing
+`mzizi-db` releases and `public.mzizi_migrations` remain authoritative for applied state. Generation
+can change a schema snapshot but never rewrites an immutable release or applies it. A changed
+snapshot still requires a reviewed incremental migration procedure; do not reset a release stream.
+
+The database typecheck uses `tsconfig.database.json` and includes every neutral schema plus its
+own application entrypoint. The legacy all-contract typecheck remains separate: its main entrypoint
+currently imports `_archive` files absent from this checkout. This setup does not recreate those
+historical contracts or claim the legacy API can be regenerated from missing inputs.

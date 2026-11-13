@@ -15,7 +15,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 export const filesystem = dryv
   .group({ name: "filesystem" })
   .description("Accepted logical files, immutable versions and attributable derivative lineage.")
-  .facets({ storage: { namespace: "filesystem" } });
+  .facets({ storage: { namespace: "filesystem", store: "main" } });
 
 export const filesystemEnums = filesystem.properties({
   Access: dryv.property.enum({ Public: "public", Restricted: "restricted", Internal: "internal", Private: "private" }),

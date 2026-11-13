@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from ..core import JsonValue
-from ..text import IndexToken, KeyToken, jsonpath_tokens
+from mzizi_scraping.core import JsonValue
+from mzizi_scraping.text import IndexToken, KeyToken, jsonpath_tokens
 
 
 def jsonpath(document: JsonValue, expression: str) -> list[JsonValue]:

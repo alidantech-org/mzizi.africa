@@ -1,0 +1,15 @@
+//! Generated rows for the logical {{ pack.store }} store ({{ pack.connection.database }}).
+{%- for schema in schemas %}
+#[doc(hidden)]
+#[path = "{{ pack.store }}/{{ schema.group.name.snake }}/{{ schema.name.snake }}.rs"]
+pub mod {{ schema.group.name.snake }}_{{ schema.name.snake }};
+{%- endfor %}
+{%- set namespaces = namespace(seen=[]) %}
+{%- for schema in schemas %}{% if schema.facets.storage.namespace not in namespaces.seen %}
+{% set ns = schema.facets.storage.namespace %}{% set namespaces.seen = namespaces.seen + [ns] %}
+pub mod {{ ns }} {
+{%- for row in schemas %}{% if row.facets.storage.namespace == ns %}
+    pub use super::{{ row.group.name.snake }}_{{ row.name.snake }} as {{ row.name.snake }};
+{%- endif %}{% endfor %}
+}
+{%- endif %}{% endfor %}

@@ -1,8 +1,8 @@
 """Fetch client: polite identified HTTP/API fetching, limits and stop rules. Gate and challenge checks are injected."""
 
-from .http import ChallengeCheck, FetchEvent, FetchResult, PoliteFetcher, RateLimiter
-from .parse import parse_policy
-from .policy import (
+from mzizi_fetch.http import ChallengeCheck, FetchEvent, FetchResult, PoliteFetcher, RateLimiter
+from mzizi_fetch.parse import parse_policy
+from mzizi_fetch.policy import (
     Decision,
     Denied,
     FetchMode,

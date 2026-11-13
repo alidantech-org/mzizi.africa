@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import unicodedata
 
-from ..core import JsonValue, ScrapeError
-from ..text import find_first, slugify, strip_ordinal_suffixes
+from mzizi_scraping.core import JsonValue, ScrapeError
+from mzizi_scraping.text import find_first, slugify, strip_ordinal_suffixes
 
 
 def trim(value: JsonValue, _arg: JsonValue = None) -> JsonValue:

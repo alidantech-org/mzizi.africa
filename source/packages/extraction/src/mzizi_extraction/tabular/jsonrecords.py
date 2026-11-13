@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ..core import (
+from mzizi_extraction.core import (
     Code,
     ExtractionProfile,
     Locator,
@@ -14,7 +14,7 @@ from ..core import (
     error,
     failed,
 )
-from ..parse import JsonParseError, load_json
+from mzizi_extraction.parse import JsonParseError, load_json
 
 
 def extract_json(data: bytes, profile: ExtractionProfile | None = None) -> Output:

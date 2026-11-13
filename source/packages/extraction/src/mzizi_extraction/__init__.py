@@ -2,12 +2,12 @@
 
 from collections.abc import Callable
 
-from .core import ExtractionProfile, Limits, Output
-from .encode import WireOutput, encode_output
-from .geo import extract_geojson
-from .parse import parse_profile
-from .pdf import extract_pdf
-from .tabular import extract_csv, extract_json
+from mzizi_extraction.core import ExtractionProfile, Limits, Output
+from mzizi_extraction.encode import WireOutput, encode_output
+from mzizi_extraction.geo import extract_geojson
+from mzizi_extraction.parse import parse_profile
+from mzizi_extraction.pdf import extract_pdf
+from mzizi_extraction.tabular import extract_csv, extract_json
 
 type Extractor = Callable[[bytes, ExtractionProfile | None], Output]
 

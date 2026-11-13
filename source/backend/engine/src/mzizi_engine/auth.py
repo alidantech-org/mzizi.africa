@@ -14,8 +14,8 @@ from typing import Any, Protocol
 import httpx
 from fastapi import Depends, HTTPException, Request
 
-from .config import Settings
-from .filesystem import PermissionDenied
+from mzizi_engine.config import Settings
+from mzizi_engine.filesystem import PermissionDenied
 
 
 @dataclass(frozen=True)

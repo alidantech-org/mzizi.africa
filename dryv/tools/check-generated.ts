@@ -11,10 +11,23 @@ const repo = join(import.meta.dir, "..", "..");
 const dryvHome = process.env.DRYV_HOME ?? `${process.env.HOME}/Projects/personal/alidantech-org/codepot/dryv`;
 const api = process.env.DRYV_API ?? "http://127.0.0.1:8750";
 
-const plan = spawnSync("bun", [join(dryvHome, "source/apps/cli/bin/dryv.ts"), "--api", api, "--yes", "--no-input", "plan"], {
-  cwd: repo,
-  encoding: "utf8",
-});
+const plan = spawnSync(
+  "bun",
+  [
+    join(dryvHome, "source/apps/cli/bin/dryv.ts"),
+    "--api",
+    api,
+    "--yes",
+    "--no-input",
+    "generate",
+    "--check",
+    ...["types", "dtos", "entities", "type-files", "use-cases", "server"].flatMap((pack) => ["--pack", pack]),
+  ],
+  {
+    cwd: repo,
+    encoding: "utf8",
+  },
+);
 const output = `${plan.stdout}${plan.stderr}`;
 if (plan.status !== 0) {
   console.error(output);

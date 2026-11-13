@@ -1,8 +1,8 @@
 """Shared extraction contracts."""
 
-from .diagnostics import error, failed, info, warning
-from .json_value import JsonValue
-from .models import (
+from mzizi_extraction.core.diagnostics import error, failed, info, warning
+from mzizi_extraction.core.json_value import JsonValue
+from mzizi_extraction.core.models import (
     Code,
     Content,
     Diagnostic,
@@ -20,7 +20,7 @@ from .models import (
     TableContent,
     TextContent,
 )
-from .profile import ExtractionProfile, Limits
+from mzizi_extraction.core.profile import ExtractionProfile, Limits
 
 __all__ = [
     "Code",

@@ -15,9 +15,9 @@ from datetime import UTC, datetime
 
 import httpx
 
-from .capabilities import CapabilityRegistry
-from .config import Settings
-from .store import Store
+from mzizi_engine.capabilities import CapabilityRegistry
+from mzizi_engine.config import Settings
+from mzizi_engine.store import Store
 
 NON_RETRYABLE = (ValueError, KeyError, TypeError)
 TARGET = "nestjs"

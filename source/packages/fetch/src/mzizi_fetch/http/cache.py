@@ -5,8 +5,8 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
-from ..models import Frozen
-from .models import FetchResult
+from mzizi_fetch.http.models import FetchResult
+from mzizi_fetch.models import Frozen
 
 VALIDATORS = ("etag", "last-modified")
 

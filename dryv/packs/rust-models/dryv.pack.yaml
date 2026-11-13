@@ -1,54 +1,39 @@
 version: dryv.pack/v1alpha1
 key: mzizi.rust-models
 source: templates
-
 info:
-  title: Mzizi Rust models
-  version: 0.2.0
-  description: One Rust struct per stored entity of the database foundation plus a deterministic models/mod.rs, emitted into the mzizi-db-generated crate. Consumes the `database` authoring source; field kinds without a Rust/PostgreSQL mapping abort generation.
+  title: Store-scoped Mzizi Rust models
+  version: 0.3.0
+  description: One row struct per stored entity, one store module and one store verifier. Engine selects the canonical store; templates do not infer placement from namespaces.
   purpose: types
   languages: [rust]
   tags: [rust, models, database]
-
-plugins:
-  - name: jinja
-    extensions: [.j2]
-
-inputs:
-  main_namespaces:
-    type: string[]
-    required: true
-    description: Storage namespaces of the `mzizi` database.
-  operations_namespaces:
-    type: string[]
-    required: true
-    description: Storage namespaces of the `mzizi_operations` database.
-
+plugins: [{ name: jinja, extensions: [.j2] }]
+capabilities: { persistence: true, stores: true, references: true }
 selections:
   entities:
-    subject: schema
-    filter:
-      all: { role: entity }
-    scope: each
+    {
+      subject: schema,
+      scope: each,
+      filter: { all: { role: entity, facet: storage } },
+    }
   all-entities:
-    subject: schema
-    filter:
-      all: { role: entity }
-    scope: all
-
+    {
+      subject: schema,
+      scope: all,
+      filter: { all: { role: entity, facet: storage } },
+    }
 templates:
   model:
-    $ref: '#/selections/entities'
+    $ref: "#/selections/entities"
     output:
+      destination: rows
       name: $(subject.name.snake)
-      path:
-        - $(group.name.snake)
+      path: [$(group.name.snake)]
       symbol: $(subject.name.pascal)
-  index:
-    $ref: '#/selections/all-entities'
-  main:
-    $ref: '#/selections/all-entities'
-  operations:
-    $ref: '#/selections/all-entities'
+  store:
+    $ref: "#/selections/all-entities"
+    output: { name: store }
   contract:
-    $ref: '#/selections/all-entities'
+    $ref: "#/selections/all-entities"
+    output: { name: store_contract }

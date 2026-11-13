@@ -40,11 +40,15 @@ target-version = "py312"
 extend-exclude = [".docs", "seed", "node_modules", "source/apps", "source/backend/api", "dryv"]
 
 [tool.ruff.lint]
-# E/W pycodestyle, F pyflakes, I import order, UP modern syntax, B bugbear, SIM simplifications, RUF ruff rules.
-select = ["E", "W", "F", "I", "UP", "B", "SIM", "RUF"]
+# E/W pycodestyle, F pyflakes, I import order, UP modern syntax, B bugbear, SIM simplifications, RUF ruff rules,
+# TID banned/relative imports (.docs/rules/typed-code.md: every import names its package from the root).
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "RUF", "TID"]
 # E501: the formatter owns line length; long strings and SQL are left intact.
 # UP042: `(str, Enum)` members are compared and serialized as plain strings; StrEnum would change their formatting.
 ignore = ["E501", "UP042"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
 
 [tool.ruff.lint.flake8-bugbear]
 # FastAPI declares dependencies as argument defaults by design.

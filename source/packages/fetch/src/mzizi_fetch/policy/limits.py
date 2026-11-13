@@ -6,7 +6,7 @@ until a policy manifest carries them.
 
 from __future__ import annotations
 
-from ..models import External, Frozen
+from mzizi_fetch.models import External, Frozen
 
 GLOBAL_MAX_RPS = 2.0
 GLOBAL_MAX_CONCURRENCY = 4

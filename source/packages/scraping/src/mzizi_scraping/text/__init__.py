@@ -1,6 +1,6 @@
 """Pattern helpers used by this package (single regex home)."""
 
-from .patterns import (
+from mzizi_scraping.text.patterns import (
     MAX_PATTERN_CHARS,
     IndexToken,
     JsonPathToken,

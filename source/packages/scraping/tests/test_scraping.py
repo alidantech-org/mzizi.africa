@@ -1,4 +1,7 @@
+import pytest
+
 from mzizi_scraping import extract_links, parse_module, parse_selectors, selectors, transforms
+from mzizi_scraping.core import ScrapeError
 from mzizi_scraping.extract import discover_items, extract_item
 from mzizi_scraping.transforms import TransformSpec
 
@@ -36,6 +39,14 @@ def test_transforms_apply_dates_decimals_and_fiscal_years():
     assert transforms.apply({"fy_start": 7}, "2023/24") == "2023-07-01"
     assert transforms.apply(spec, "KES 1,234,567.50") == "1234567.50"
     assert transforms.apply({"date": "%d %B %Y"}, "14 June 2023") == "2023-06-14"
+
+
+def test_fy_start_never_assumes_a_fiscal_calendar():
+    with pytest.raises(ScrapeError, match="start_month"):
+        transforms.apply("fy_start", "2023/24")
+    with pytest.raises(ScrapeError, match="1-12"):
+        transforms.apply({"fy_start": 13}, "2023/24")
+    assert transforms.apply({"fy_start": 1}, "2023/24") == "2023-01-01"
 
 
 def test_a_module_discovers_items_and_extracts_typed_fields():

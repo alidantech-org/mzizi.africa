@@ -12,11 +12,10 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
+from mzizi_engine.filesystem.service import FilesystemService
+from mzizi_engine.ports import required
 from mzizi_filesystem.keys import check_name, is_protected
 from mzizi_filesystem.store import StoreError
-
-from ..ports import required
-from .service import FilesystemService
 
 
 @dataclass

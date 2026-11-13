@@ -18,14 +18,14 @@ from fastapi import FastAPI, Header, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
-from . import __version__
-from .auth import Authority, DatabaseServiceAuthority, Principal, TokenVerifier, oidc_verifier, require
-from .capabilities import CapabilityRegistry, build_default_registry
-from .config import Settings
-from .database_store import DatabaseServiceStore
-from .executor import Executor
-from .filesystem_api import router as filesystem_router
-from .store import MemoryStore, Store
+from mzizi_engine import __version__
+from mzizi_engine.auth import Authority, DatabaseServiceAuthority, Principal, TokenVerifier, oidc_verifier, require
+from mzizi_engine.capabilities import CapabilityRegistry, build_default_registry
+from mzizi_engine.config import Settings
+from mzizi_engine.database_store import DatabaseServiceStore
+from mzizi_engine.executor import Executor
+from mzizi_engine.filesystem_api import router as filesystem_router
+from mzizi_engine.store import MemoryStore, Store
 
 
 class JobRequest(BaseModel):
@@ -169,7 +169,7 @@ def create_app(
 
     @app.post("/v1/manifests/validate")
     async def validate_manifests(_: Principal = require("engine.read")) -> dict:
-        from .capabilities import manifest_check_seeds
+        from mzizi_engine.capabilities import manifest_check_seeds
 
         return await asyncio.to_thread(manifest_check_seeds, {})
 

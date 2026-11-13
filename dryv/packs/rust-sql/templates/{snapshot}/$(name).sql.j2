@@ -1,0 +1,259 @@
+{#- PostgreSQL snapshot for one database. Everything is derived from the contracts: nothing here
+    is hand-written schema. Rejections use the `{}['message']` idiom (StrictUndefined carries the
+    message into the generation error). -#}
+{%- set placement = namespace(names=[]) -%}
+{%- for schema in schemas -%}
+{%- if schema.facets.storage.store != pack.store -%}{{ {}['schema store differs from selected pack store: ' ~ schema.id] }}{%- endif -%}
+{%- if schema.facets.storage.namespace not in placement.names -%}{%- set placement.names = placement.names + [schema.facets.storage.namespace] -%}{%- endif -%}
+{%- endfor -%}
+{%- set own = placement.names -%}
+{%- set database = pack.connection.database -%}
+
+{%- macro table_of(schema) -%}
+{%- set storage = schema.facets.storage -%}
+{%- if storage is not none and storage.name is not none -%}{{ storage.name }}{%- else -%}{{ schema.name.snake }}{%- endif -%}
+{%- endmacro -%}
+
+{%- macro namespace_of(schema) -%}
+{%- set storage = schema.facets.storage -%}
+{%- if storage is none or storage.namespace is none -%}{{ {}['entity ' ~ schema.id ~ ' has no storage namespace; set facets.storage.namespace'] }}{%- endif -%}
+{{ storage.namespace }}
+{%- endmacro -%}
+
+{%- macro lookup_namespace(id) -%}
+{%- for candidate in schemas -%}{%- if candidate.id == id -%}{{ namespace_of(candidate) }}{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro lookup_table(id) -%}
+{%- for candidate in schemas -%}{%- if candidate.id == id -%}"{{ namespace_of(candidate) }}"."{{ table_of(candidate) }}"{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro is_primary(storage, field) -%}
+{%- if storage is not none -%}{%- for key in storage.primary_key -%}{%- if key.raw == field.name.raw -%}yes{%- endif -%}{%- endfor -%}{%- endif -%}
+{%- endmacro -%}
+
+{%- macro lifecycle(value) -%}
+{%- if value == 'cascade' -%}CASCADE{%- elif value == 'restrict' -%}RESTRICT{%- elif value == 'detach' -%}SET NULL{%- elif value is none -%}NO ACTION{%- else -%}{{ {}['unsupported relation lifecycle ' ~ value] }}{%- endif -%}
+{%- endmacro -%}
+
+{#- PostgreSQL type of a stored field. -#}
+{%- macro sql_type(schema, field) -%}
+{%- set value = field.value -%}
+{%- if field.array is not none -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': array fields have no relational mapping yet'] }}
+{%- elif not value.is.property -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': nested schema values have no relational mapping; model a relation instead'] }}
+{%- elif value.is.primitive -%}
+  {%- set primitive = value.property.primitive -%}
+  {%- if primitive.is.string and primitive.is.uuid -%}uuid
+  {%- elif primitive.is.string and primitive.constraints.length is not none and primitive.constraints.length.has_max -%}varchar({{ primitive.constraints.length.max }})
+  {%- elif primitive.is.string and primitive.constraints.length is not none and primitive.constraints.length.has_exact -%}char({{ primitive.constraints.length.exact }})
+  {%- elif primitive.is.string -%}text
+  {%- elif primitive.is.boolean -%}boolean
+  {%- elif primitive.money is not none and primitive.money.minor_units -%}bigint
+  {%- elif primitive.is.integer and primitive.constraints.bits == 64 -%}bigint
+  {%- elif primitive.is.integer -%}integer
+  {%- elif primitive.is.decimal -%}numeric({{ primitive.constraints.precision }}, {{ primitive.constraints.scale }})
+  {%- else -%}double precision
+  {%- endif -%}
+{%- elif value.is.enum -%}text
+{%- elif value.is.temporal -%}
+  {%- set temporal = value.property.temporal -%}
+  {%- if temporal.is.date -%}date
+  {%- elif temporal.is.time -%}time
+  {%- elif temporal.is.duration or temporal.is.interval -%}interval
+  {%- else -%}timestamptz
+  {%- endif -%}
+{%- else -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': property kind has no PostgreSQL mapping (record, composite, union, tuple, generic and literal are unsupported)'] }}
+{%- endif -%}
+{%- endmacro -%}
+
+{#- Scope columns in an overlap constraint: nullable columns compare null as equal by coalescing to a
+    neutral sentinel of the column type. -#}
+{%- macro null_sentinel(schema, field, type) -%}
+{%- if type == 'uuid' -%}'00000000-0000-0000-0000-000000000000'::uuid
+{%- elif type == 'text' or type[:7] == 'varchar' or type[:4] == 'char' -%}''
+{%- elif type == 'integer' or type == 'bigint' -%}-1
+{%- else -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': nullable scope column of type ' ~ type ~ ' has no neutral value for an overlap constraint'] }}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro range_function(schema, field, type) -%}
+{%- if type == 'date' -%}daterange
+{%- elif type == 'timestamptz' -%}tstzrange
+{%- else -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': overlap windows must be date or timestamp fields, not ' ~ type] }}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro sql_operand(operand) -%}
+{%- if operand.is.field -%}"{{ operand.field.snake }}"
+{%- elif operand.is.literal -%}{{ operand.value | tojson | replace('"', "'") }}
+{%- else -%}({% for term in operand.terms %}{% if term.kind == 'field' %}"{{ term.field.snake }}"{% else %}{{ term.value | tojson | replace('"', "'") }}{% endif %}{% if not loop.last %} {% if operand.operator == 'add' %}+{% elif operand.operator == 'subtract' %}-{% elif operand.operator == 'multiply' %}*{% else %}/{% endif %} {% endif %}{% endfor %}){%- endif -%}
+{%- endmacro -%}
+
+{%- macro sql_operator(operator) -%}
+{%- if operator == 'equal' -%}={%- elif operator == 'not-equal' -%}<>{%- elif operator == 'less-than' -%}<{%- elif operator == 'less-than-or-equal' -%}<={%- elif operator == 'greater-than' -%}>{%- else -%}>={%- endif -%}
+{%- endmacro -%}
+
+{#- Fixed-depth CHECK rendering from the expression tree (Dryv forbids recursive macros): level N renders
+    a node and delegates children to level N-1; deeper trees are rejected. A comparison against the null literal
+    is a null test (IS [NOT] NULL); SQL three-valued logic otherwise matches the contract. -#}
+{%- macro is_null_literal(node) -%}{%- if node.kind == 'literal' and node.value is none -%}1{%- endif -%}{%- endmacro -%}
+{%- macro x0(node, where) -%}
+{%- if node.kind == 'literal' -%}{%- if node.value is none -%}NULL{%- else -%}{{ node.value | tojson | replace('"', "'") }}{%- endif -%}
+{%- elif node.kind == 'context' -%}"{{ node.path.snake }}"
+{%- else -%}{{ {}[where ~ ': invariant expression is nested deeper than the supported depth or uses kind ' ~ node.kind] }}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro x1(node, where) -%}
+{%- if node.kind == 'literal' or node.kind == 'context' -%}{{ x0(node, where) }}
+{%- elif node.kind == 'comparison' -%}
+  {%- if is_null_literal(node.right) -%}({{ x0(node.left, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- elif is_null_literal(node.left) -%}({{ x0(node.right, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- else -%}({{ x0(node.left, where) }} {{ sql_operator(node.operator) }} {{ x0(node.right, where) }})
+  {%- endif -%}
+{%- elif node.kind == 'logical' -%}({% for item in node['values'] %}{{ x0(item, where) }}{% if not loop.last %} {% if node.operator == 'and' %}AND{% else %}OR{% endif %} {% endif %}{% endfor %})
+{%- elif node.kind == 'unary' and node.operator == 'not' -%}(NOT {{ x0(node.value, where) }})
+{%- elif node.kind == 'arithmetic' -%}({% for item in node['values'] %}{{ x0(item, where) }}{% if not loop.last %} {% if node.operator == 'add' %}+{% elif node.operator == 'subtract' %}-{% elif node.operator == 'multiply' %}*{% else %}/{% endif %} {% endif %}{% endfor %})
+{%- else -%}{{ {}[where ~ ': invariant expression kind ' ~ node.kind ~ ' has no SQL CHECK mapping'] }}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro x2(node, where) -%}
+{%- if node.kind == 'literal' or node.kind == 'context' -%}{{ x0(node, where) }}
+{%- elif node.kind == 'comparison' -%}
+  {%- if is_null_literal(node.right) -%}({{ x1(node.left, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- elif is_null_literal(node.left) -%}({{ x1(node.right, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- else -%}({{ x1(node.left, where) }} {{ sql_operator(node.operator) }} {{ x1(node.right, where) }})
+  {%- endif -%}
+{%- elif node.kind == 'logical' -%}({% for item in node['values'] %}{{ x1(item, where) }}{% if not loop.last %} {% if node.operator == 'and' %}AND{% else %}OR{% endif %} {% endif %}{% endfor %})
+{%- elif node.kind == 'unary' and node.operator == 'not' -%}(NOT {{ x1(node.value, where) }})
+{%- elif node.kind == 'arithmetic' -%}({% for item in node['values'] %}{{ x1(item, where) }}{% if not loop.last %} {% if node.operator == 'add' %}+{% elif node.operator == 'subtract' %}-{% elif node.operator == 'multiply' %}*{% else %}/{% endif %} {% endif %}{% endfor %})
+{%- else -%}{{ {}[where ~ ': invariant expression kind ' ~ node.kind ~ ' has no SQL CHECK mapping'] }}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro x3(node, where) -%}
+{%- if node.kind == 'literal' or node.kind == 'context' -%}{{ x0(node, where) }}
+{%- elif node.kind == 'comparison' -%}
+  {%- if is_null_literal(node.right) -%}({{ x2(node.left, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- elif is_null_literal(node.left) -%}({{ x2(node.right, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- else -%}({{ x2(node.left, where) }} {{ sql_operator(node.operator) }} {{ x2(node.right, where) }})
+  {%- endif -%}
+{%- elif node.kind == 'logical' -%}({% for item in node['values'] %}{{ x2(item, where) }}{% if not loop.last %} {% if node.operator == 'and' %}AND{% else %}OR{% endif %} {% endif %}{% endfor %})
+{%- elif node.kind == 'unary' and node.operator == 'not' -%}(NOT {{ x2(node.value, where) }})
+{%- elif node.kind == 'arithmetic' -%}({% for item in node['values'] %}{{ x2(item, where) }}{% if not loop.last %} {% if node.operator == 'add' %}+{% elif node.operator == 'subtract' %}-{% elif node.operator == 'multiply' %}*{% else %}/{% endif %} {% endif %}{% endfor %})
+{%- else -%}{{ {}[where ~ ': invariant expression kind ' ~ node.kind ~ ' has no SQL CHECK mapping'] }}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro x4(node, where) -%}
+{%- if node.kind == 'literal' or node.kind == 'context' -%}{{ x0(node, where) }}
+{%- elif node.kind == 'comparison' -%}
+  {%- if is_null_literal(node.right) -%}({{ x3(node.left, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- elif is_null_literal(node.left) -%}({{ x3(node.right, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- else -%}({{ x3(node.left, where) }} {{ sql_operator(node.operator) }} {{ x3(node.right, where) }})
+  {%- endif -%}
+{%- elif node.kind == 'logical' -%}({% for item in node['values'] %}{{ x3(item, where) }}{% if not loop.last %} {% if node.operator == 'and' %}AND{% else %}OR{% endif %} {% endif %}{% endfor %})
+{%- elif node.kind == 'unary' and node.operator == 'not' -%}(NOT {{ x3(node.value, where) }})
+{%- elif node.kind == 'arithmetic' -%}({% for item in node['values'] %}{{ x3(item, where) }}{% if not loop.last %} {% if node.operator == 'add' %}+{% elif node.operator == 'subtract' %}-{% elif node.operator == 'multiply' %}*{% else %}/{% endif %} {% endif %}{% endfor %})
+{%- else -%}{{ {}[where ~ ': invariant expression kind ' ~ node.kind ~ ' has no SQL CHECK mapping'] }}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro x5(node, where) -%}
+{%- if node.kind == 'literal' or node.kind == 'context' -%}{{ x0(node, where) }}
+{%- elif node.kind == 'comparison' -%}
+  {%- if is_null_literal(node.right) -%}({{ x4(node.left, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- elif is_null_literal(node.left) -%}({{ x4(node.right, where) }} IS {% if node.operator == 'not-equal' %}NOT {% endif %}NULL)
+  {%- else -%}({{ x4(node.left, where) }} {{ sql_operator(node.operator) }} {{ x4(node.right, where) }})
+  {%- endif -%}
+{%- elif node.kind == 'logical' -%}({% for item in node['values'] %}{{ x4(item, where) }}{% if not loop.last %} {% if node.operator == 'and' %}AND{% else %}OR{% endif %} {% endif %}{% endfor %})
+{%- elif node.kind == 'unary' and node.operator == 'not' -%}(NOT {{ x4(node.value, where) }})
+{%- elif node.kind == 'arithmetic' -%}({% for item in node['values'] %}{{ x4(item, where) }}{% if not loop.last %} {% if node.operator == 'add' %}+{% elif node.operator == 'subtract' %}-{% elif node.operator == 'multiply' %}*{% else %}/{% endif %} {% endif %}{% endfor %})
+{%- else -%}{{ {}[where ~ ': invariant expression kind ' ~ node.kind ~ ' has no SQL CHECK mapping'] }}
+{%- endif -%}
+{%- endmacro -%}
+
+{#- Engine rejects cross-store foreign keys before rendering. Explicit references emit no FK. -#}
+{%- for schema in schemas -%}
+{%- for field in schema.fields -%}
+{%- if field.relation is not none and field.relation.enforcement == 'foreign-key' and field.related is none and field.value is not none and not field.value.is.unknown -%}
+{%- if lookup_namespace(field.relation.target.schema.id) == '' -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': foreign key target is unavailable in the selected store'] }}{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+-- Generated by dryv pack mzizi.rust-sql from the `database` authoring source. Do not edit.
+-- database: {{ database }}
+{%- set needs = namespace(gist=false) -%}
+{%- for schema in schemas %}{% if schema.facets.storage is not none %}{% for constraint in schema.facets.storage.constraints %}{% if constraint.kind == 'no-overlap' %}{% set needs.gist = true %}{% endif %}{% endfor %}{% endif %}{% endfor %}
+{% if needs.gist %}CREATE EXTENSION IF NOT EXISTS btree_gist;
+{% endif %}
+{% for ns in own %}
+CREATE SCHEMA "{{ ns }}";
+{% endfor %}
+{%- for ns in own %}
+{%- for schema in schemas %}{% if namespace_of(schema) == ns %}
+{%- set storage = schema.facets.storage %}
+
+CREATE TABLE "{{ ns }}"."{{ table_of(schema) }}" (
+{%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown %}
+    "{{ field.name.snake }}" {{ sql_type(schema, field) }}{% if not field.optional and not field.nullable %} NOT NULL{% endif %}{% if field.default is not none and field.default.kind == 'value' %} DEFAULT {{ field.default.value_json | replace('"', "'") }}{% endif %},
+{%- endif %}{% endfor %}
+{%- for invariant in schema.invariants %}
+    CONSTRAINT "chk_{{ table_of(schema) }}_{{ invariant.name.snake }}" CHECK ({{ x5(invariant.rule.node, schema.id ~ '.' ~ invariant.name.raw) }}),
+{%- endfor %}
+    PRIMARY KEY ({% for key in storage.primary_key %}"{{ key.snake }}"{% if not loop.last %}, {% endif %}{% endfor %})
+);
+{%- endif %}{% endfor %}
+{%- endfor %}
+
+{#- Foreign keys and indexes come after every table so declaration order never matters. -#}
+{%- for ns in own %}
+{%- for schema in schemas %}{% if namespace_of(schema) == ns %}
+{%- for field in schema.fields %}{% if field.relation is not none and field.relation.enforcement == 'foreign-key' and field.related is none and field.value is not none and not field.value.is.unknown %}
+ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(schema) }}_{{ field.name.snake }}" FOREIGN KEY ("{{ field.name.snake }}") REFERENCES {{ lookup_table(field.relation.target.schema.id) }} ("{{ field.relation.target.field.snake }}") ON DELETE {{ lifecycle(field.relation.on_delete) }} ON UPDATE {{ lifecycle(field.relation.on_update) }};
+{%- endif %}{% endfor %}
+{%- for index in schema.facets.storage.indexes %}
+{%- set cols = namespace(items=[]) -%}
+{%- for item in index.fields %}{% set cols.items = cols.items + [item.snake] %}{% endfor -%}
+{%- set generated_name = (("uq_" if index.unique else "ix_") ~ table_of(schema) ~ "__" ~ (cols.items | join("_")))[:63] -%}
+{{ "\n" }}CREATE {% if index.unique %}UNIQUE {% endif %}INDEX "{{ index.name if index.name is not none else generated_name }}" ON "{{ ns }}"."{{ table_of(schema) }}" ({% for item in index.fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %}){% if index.where is not none %} WHERE {{ x5(index.where.rule.node, schema.id ~ '.index') }}{% endif %};
+{%- endfor %}
+{%- for constraint in schema.facets.storage.constraints %}
+{%- set pk = schema.facets.storage.primary_key %}
+{%- if constraint.kind == 'acyclic' %}
+{%- if pk | length != 1 %}{{ {}[schema.id ~ ': acyclic constraint ' ~ constraint.name.raw ~ ' needs a single-column primary key'] }}{% endif %}
+CREATE FUNCTION "{{ ns }}"."{{ table_of(schema) }}__{{ constraint.name.snake }}"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."{{ constraint.field.snake }}" IS NOT NULL AND EXISTS (
+    WITH RECURSIVE chain(id) AS (
+      SELECT NEW."{{ constraint.field.snake }}"
+      UNION
+      SELECT t."{{ constraint.field.snake }}" FROM "{{ ns }}"."{{ table_of(schema) }}" t JOIN chain ON t."{{ pk[0].snake }}" = chain.id WHERE t."{{ constraint.field.snake }}" IS NOT NULL
+    ) SELECT 1 FROM chain WHERE id = NEW."{{ pk[0].snake }}"
+  ) THEN
+    RAISE EXCEPTION '{{ table_of(schema) }}.{{ constraint.field.snake }} would create a cycle' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+CREATE TRIGGER "tr_{{ table_of(schema) }}__{{ constraint.name.snake }}" BEFORE INSERT OR UPDATE OF "{{ constraint.field.snake }}" ON "{{ ns }}"."{{ table_of(schema) }}" FOR EACH ROW EXECUTE FUNCTION "{{ ns }}"."{{ table_of(schema) }}__{{ constraint.name.snake }}"();
+{%- elif constraint.kind == 'references' %}
+{%- for candidate in schemas %}{% if candidate.id == constraint.target.id %}
+ALTER TABLE {{ lookup_table(candidate.id) }} ADD CONSTRAINT "uq_{{ table_of(candidate) }}__{{ constraint.name.snake }}_target" UNIQUE ({% for item in constraint.target_fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %});
+ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(schema) }}__{{ constraint.name.snake }}" FOREIGN KEY ({% for item in constraint.fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %}) REFERENCES {{ lookup_table(candidate.id) }} ({% for item in constraint.target_fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %});
+{%- endif %}{% endfor %}
+{%- elif constraint.kind == 'same-as' %}
+{%- if pk | length != 1 %}{{ {}[schema.id ~ ': same-as constraint ' ~ constraint.name.raw ~ ' needs a single-column primary key'] }}{% endif %}
+ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "uq_{{ table_of(schema) }}__{{ constraint.name.snake }}" UNIQUE ("{{ pk[0].snake }}"{% for item in constraint.match %}, "{{ item.snake }}"{% endfor %});
+ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(schema) }}__{{ constraint.name.snake }}" FOREIGN KEY ("{{ constraint.field.snake }}"{% for item in constraint.match %}, "{{ item.snake }}"{% endfor %}) REFERENCES "{{ ns }}"."{{ table_of(schema) }}" ("{{ pk[0].snake }}"{% for item in constraint.match %}, "{{ item.snake }}"{% endfor %});
+{%- else %}
+{%- set elements = namespace(items=[]) %}
+{%- for scope_name in constraint.scope %}{% for field in schema.fields %}{% if field.name.raw == scope_name.raw %}
+{%- set type = sql_type(schema, field) | trim %}
+{%- if field.optional or field.nullable %}{% set elements.items = elements.items + ['(coalesce("' ~ field.name.snake ~ '", ' ~ null_sentinel(schema, field, type) ~ ')) WITH ='] %}
+{%- else %}{% set elements.items = elements.items + ['"' ~ field.name.snake ~ '" WITH ='] %}{% endif %}
+{%- endif %}{% endfor %}{% endfor %}
+{%- for field in schema.fields %}{% if field.name.raw == constraint.start.raw %}
+{%- set elements.items = elements.items + [(range_function(schema, field, sql_type(schema, field) | trim) | trim) ~ '("' ~ constraint.start.snake ~ '", "' ~ constraint.end.snake ~ '", \'[)\') WITH &&'] %}
+{%- endif %}{% endfor %}
+ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "ex_{{ table_of(schema) }}__{{ constraint.name.snake }}" EXCLUDE USING gist ({{ elements.items | join(', ') }});
+{%- endif %}
+{%- endfor %}
+{%- endif %}{% endfor %}
+{%- endfor %}

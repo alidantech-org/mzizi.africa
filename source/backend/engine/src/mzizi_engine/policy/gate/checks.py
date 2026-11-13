@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from mzizi_fetch import GateRequest, Purpose
-
-from .models import (
+from mzizi_engine.policy.gate.models import (
     NO_PERSONAL_DATA,
     PILOT_OR_PRODUCTION,
     ApprovedScope,
@@ -15,6 +13,7 @@ from .models import (
     NoPublish,
     UnenforceableCondition,
 )
+from mzizi_fetch import GateRequest, Purpose
 
 
 def starts_with_any(path: str, prefixes: tuple[str, ...]) -> bool:

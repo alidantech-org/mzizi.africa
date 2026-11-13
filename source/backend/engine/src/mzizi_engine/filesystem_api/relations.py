@@ -9,8 +9,8 @@ from typing import Any
 import httpx
 from fastapi import Depends, HTTPException, Request
 
-from ..auth import DatabaseServiceFilesystemClient, Principal, authenticated
-from ..filesystem import (
+from mzizi_engine.auth import DatabaseServiceFilesystemClient, Principal, authenticated
+from mzizi_engine.filesystem import (
     FilesystemService,
     PermissionDenied,
     Repository,
@@ -19,7 +19,7 @@ from ..filesystem import (
     register_derived,
     relate,
 )
-from ._shared import DerivedIn, RelationIn, call, router
+from mzizi_engine.filesystem_api._shared import DerivedIn, RelationIn, call, router
 
 
 @router.post("/relations", status_code=201)

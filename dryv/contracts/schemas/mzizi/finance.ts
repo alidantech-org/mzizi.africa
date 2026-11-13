@@ -7,18 +7,18 @@
 import * as dryv from "@dryvcode/author";
 import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
+import { Contracts, Projects } from "./civic.ts";
 import { Units } from "./geography.ts";
 import { Entities } from "./official.ts";
-import { Value, Country } from "./reference.ts";
+import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
-import { Projects, Contracts } from "./civic.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const finance = dryv
   .group({ name: "finance" })
   .description("Fiscal periods, budget releases and appropriations, funds, recorded flows and public debt.")
-  .facets({ storage: { namespace: "finance" } });
+  .facets({ storage: { namespace: "finance", store: "main" } });
 /** Entity that records an amount in minor units of one currency. */
 const MoneyEntity = finance
   .schema("MoneyEntity", {

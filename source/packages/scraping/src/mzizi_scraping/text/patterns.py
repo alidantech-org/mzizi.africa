@@ -9,7 +9,7 @@ from __future__ import annotations
 import re
 from typing import Literal
 
-from ..core import Frozen, ScrapeError
+from mzizi_scraping.core import Frozen, ScrapeError
 
 MAX_PATTERN_CHARS = 500
 MAX_TEXT_CHARS = 2_000_000

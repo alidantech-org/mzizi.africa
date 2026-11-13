@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pypdfium2 as pdfium
 
-from ..core import (
+from mzizi_extraction.core import (
     Code,
     Diagnostic,
     ExtractionProfile,
@@ -17,7 +17,7 @@ from ..core import (
     info,
     warning,
 )
-from ..ocr import OcrUnavailable, check, recognise, render_png
+from mzizi_extraction.ocr import OcrUnavailable, check, recognise, render_png
 
 OCR_CONFIDENCE_CAP = 0.9
 LOW_CONFIDENCE = 0.6

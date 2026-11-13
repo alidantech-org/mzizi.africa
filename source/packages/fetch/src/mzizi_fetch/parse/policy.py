@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pydantic import TypeAdapter
 
-from ..policy import FetchPolicy
+from mzizi_fetch.policy import FetchPolicy
 
 _ADAPTER: TypeAdapter[FetchPolicy] = TypeAdapter(FetchPolicy)
 

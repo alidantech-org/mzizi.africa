@@ -1,0 +1,11 @@
+version: dryv.pack/v1alpha1
+key: mzizi.rust-catalog
+source: templates
+info:
+  title: Shared Rust store catalogue
+  version: 0.1.0
+  description: Stable catalogue joining the separately generated Main and Operations modules. Contains no schema or database assignment inference.
+plugins: [{ name: jinja, extensions: [.j2] }]
+templates:
+  index: {}
+  contract: {}

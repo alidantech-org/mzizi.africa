@@ -9,7 +9,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
 
-from .json_value import JsonValue
+from mzizi_extraction.core.json_value import JsonValue
 
 
 class Frozen(BaseModel):

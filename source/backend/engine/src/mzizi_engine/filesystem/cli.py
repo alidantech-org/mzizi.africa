@@ -26,19 +26,18 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from mzizi_engine.filesystem.authz import DatabaseAuthorizer, OperatorAuthorizer
+from mzizi_engine.filesystem.repository import Repository
+from mzizi_engine.filesystem.reset import verify_registry, wipe_bucket, wipe_registry
+from mzizi_engine.filesystem.secure import fetch_secure_file
+from mzizi_engine.filesystem.service import FilesystemService
+from mzizi_engine.filesystem.sync import ManifestError, load_plan, run_sync
+from mzizi_engine.filesystem.transitions import move_file, move_folder, transition_folder_access
+from mzizi_engine.filesystem.uploads import cleanup_uploads
+from mzizi_engine.ports import Connection, connect, required, rewrite_url
 from mzizi_filesystem.env import load_environment
 from mzizi_filesystem.store import MemoryObjectStore, ObjectStore, S3ObjectStore, StoreError
 from mzizi_manifest.paths import SEED_ROOT
-
-from ..ports import Connection, connect, required, rewrite_url
-from .authz import DatabaseAuthorizer, OperatorAuthorizer
-from .repository import Repository
-from .reset import verify_registry, wipe_bucket, wipe_registry
-from .secure import fetch_secure_file
-from .service import FilesystemService
-from .sync import ManifestError, load_plan, run_sync
-from .transitions import move_file, move_folder, transition_folder_access
-from .uploads import cleanup_uploads
 
 
 def _store(kind: str, apply: bool) -> ObjectStore:
@@ -151,7 +150,7 @@ def main(argv: list[str] | None = None) -> int:
                 )
             return 0
         if args.command == "live-check":
-            from .livecheck import run_live_check
+            from mzizi_engine.filesystem.livecheck import run_live_check
 
             if not args.apply:
                 print(

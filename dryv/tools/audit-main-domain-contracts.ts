@@ -60,9 +60,6 @@ const finance = await Bun.file(join(contracts, "finance.ts")).text();
 if (/storage\("units"\)/.test(finance)) problems.push("Finance must not own measurement/geographic units");
 if (!finance.includes("AmountMinorUnits") || !finance.includes("currencyId"))
   problems.push("Finance must retain exact currency-minor-unit amounts and a currency FK");
-const persistence = await Bun.file(join(root, "contracts/apps/database/persistence.ts")).text();
-if (/^\s*(procurement|accountability):/m.test(persistence))
-  problems.push("Procurement and non-persisted Accountability cannot be assigned storage namespaces");
 const app = await Bun.file(join(root, "contracts/apps/database/index.ts")).text();
 for (const schema of [...Object.keys(expected), "geography", "legal", "source", "filesystem"]) {
   if (!app.includes(`import { ${schema} }`)) problems.push(`database app does not explicitly import ${schema}`);

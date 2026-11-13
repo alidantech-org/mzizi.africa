@@ -15,7 +15,7 @@ import { engineSchemas } from "./engine.ts";
 export const acquisition = dryv
   .group({ name: "acquisition" })
   .description("Approved Mzizi Operations acquisition records.")
-  .facets({ storage: { namespace: "acquisition" } });
+  .facets({ storage: { namespace: "acquisition", store: "operations" } });
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const acquisitionEnums = acquisition.properties({

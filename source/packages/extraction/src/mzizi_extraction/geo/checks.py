@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from shapely.geometry.base import BaseGeometry
 
-from ..core import Code, Diagnostic, Locator, warning
-from .document import POLYGONAL
+from mzizi_extraction.core import Code, Diagnostic, Locator, warning
+from mzizi_extraction.geo.document import POLYGONAL
 
 MAX_LON, MAX_LAT = 180.0, 90.0
 

@@ -1,8 +1,8 @@
 """Polite identified HTTP fetching."""
 
-from .client import ChallengeCheck, PoliteFetcher
-from .models import CacheHit, Fetched, FetchEvent, FetchResult, RobotsBlocked, Stopped
-from .rate import RateLimiter
+from mzizi_fetch.http.client import ChallengeCheck, PoliteFetcher
+from mzizi_fetch.http.models import CacheHit, Fetched, FetchEvent, FetchResult, RobotsBlocked, Stopped
+from mzizi_fetch.http.rate import RateLimiter
 
 __all__ = [
     "CacheHit",

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from pydantic import ConfigDict, Field
 
-from ..core import External, JsonValue
-from ..selectors import Selector
-from ..transforms import TransformSpec
+from mzizi_scraping.core import External, JsonValue
+from mzizi_scraping.selectors import Selector
+from mzizi_scraping.transforms import TransformSpec
 
 type FieldSource = str | list[Selector] | Selector
 

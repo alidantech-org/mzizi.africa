@@ -11,7 +11,7 @@ import * as dryv from "@dryvcode/author";
 import { rule, when } from "@dryvcode/author";
 import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
-import { Value, Country } from "./reference.ts";
+import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
@@ -19,7 +19,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 export const official = dryv
   .group({ name: "official" })
   .description("Canonical identities for organizations and real people.")
-  .facets({ storage: { namespace: "official" } });
+  .facets({ storage: { namespace: "official", store: "main" } });
 
 export const Entities = official
   .schema("Entities", {

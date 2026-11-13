@@ -16,7 +16,11 @@ from urllib.parse import urlparse
 
 import httpx
 
-from ..policy import (
+from mzizi_fetch.http.cache import CachedResponse, ResponseCache
+from mzizi_fetch.http.models import CacheHit, Fetched, FetchEvent, FetchResult, RobotsBlocked, Stopped
+from mzizi_fetch.http.rate import RateLimiter
+from mzizi_fetch.http.transport import RawResponse, get_once
+from mzizi_fetch.policy import (
     Decision,
     Denied,
     FetchMode,
@@ -28,10 +32,6 @@ from ..policy import (
     StopRun,
     UpstreamError,
 )
-from .cache import CachedResponse, ResponseCache
-from .models import CacheHit, Fetched, FetchEvent, FetchResult, RobotsBlocked, Stopped
-from .rate import RateLimiter
-from .transport import RawResponse, get_once
 
 type ChallengeCheck = Callable[[int, dict[str, str], bytes], str | None]
 

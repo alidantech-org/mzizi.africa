@@ -8,7 +8,7 @@ keys it computes are the readable registry paths (`<access><logical_root>/<path>
 
 from __future__ import annotations
 
-from .seed_folders import (
+from mzizi_manifest.seed_folders import (
     _all_files,
     _folder_chain,
     _load_yaml,
@@ -26,17 +26,9 @@ from .seed_folders import (
     resolve_effective,
     validate_descriptors,
 )
-from .seed_lock import (
-    build_lock,
-    dump_lock,
-    manifest_sha256,
-    resolve_files,
-)
-from .seed_validation import (
-    Validation,
-    validate_manifest,
-)
-from .seed_vocabulary import (
+from mzizi_manifest.seed_lock import build_lock, dump_lock, manifest_sha256, resolve_files
+from mzizi_manifest.seed_validation import Validation, validate_manifest
+from mzizi_manifest.seed_vocabulary import (
     ACCESS_PREFIX,
     ACCESS_RANK,
     ACQUISITION,

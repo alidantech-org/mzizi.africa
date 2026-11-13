@@ -12,7 +12,7 @@ from collections import Counter
 from shapely.errors import ShapelyError
 from shapely.geometry import shape
 
-from ..core import (
+from mzizi_extraction.core import (
     Code,
     Diagnostic,
     ExtractionProfile,
@@ -28,9 +28,16 @@ from ..core import (
     info,
     warning,
 )
-from ..parse import JsonParseError, load_json
-from .checks import bounds_diagnostics, polygon_diagnostics, validity_diagnostics
-from .document import GeoFeature, declared_crs_name, features_of, is_wgs84, parse_document, parse_feature
+from mzizi_extraction.geo.checks import bounds_diagnostics, polygon_diagnostics, validity_diagnostics
+from mzizi_extraction.geo.document import (
+    GeoFeature,
+    declared_crs_name,
+    features_of,
+    is_wgs84,
+    parse_document,
+    parse_feature,
+)
+from mzizi_extraction.parse import JsonParseError, load_json
 
 
 def _feature_name(properties: dict[str, JsonValue], name_keys: tuple[str, ...]) -> str | None:

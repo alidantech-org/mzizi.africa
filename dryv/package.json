@@ -23,9 +23,10 @@
     "database:doctor": "bun --bun x dryv-ts doctor contracts/apps/database/index.ts",
     "database:compile": "bun --bun x dryv-ts compile contracts/apps/database/index.ts",
     "database:assignments": "bun tools/audit-database-assignments.ts",
-    "database:check": "bun run typecheck && bun run database:assignments && bun tools/audit-main-domain-contracts.ts && bun tools/dry-run-main-fixtures.ts && bun run database:format:check && bun run database:doctor && bun run database:compile > /dev/null",
+    "database:check": "bun run database:typecheck && bun run database:assignments && bun tools/audit-main-domain-contracts.ts && bun tools/dry-run-main-fixtures.ts && bun run database:format:check && bun run database:doctor && bun run database:compile > /dev/null",
     "database:format": "bunx --bun @biomejs/biome format --write contracts/schemas/_shared.ts contracts/schemas/mzizi/*.ts contracts/schemas/operational/*.ts contracts/apps/database/*.ts package.json",
-    "database:format:check": "bunx --bun @biomejs/biome format contracts/schemas/_shared.ts contracts/schemas/mzizi/*.ts contracts/schemas/operational/*.ts contracts/apps/database/*.ts package.json"
+    "database:format:check": "bunx --bun @biomejs/biome format contracts/schemas/_shared.ts contracts/schemas/mzizi/*.ts contracts/schemas/operational/*.ts contracts/apps/database/*.ts package.json",
+    "database:typecheck": "bunx --bun tsc --noEmit -p tsconfig.database.json"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",

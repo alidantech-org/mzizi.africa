@@ -8,10 +8,18 @@ from bs4 import BeautifulSoup, Tag
 from lxml import html as lxml_html
 from pydantic import TypeAdapter
 
-from ..core import JsonValue, ScrapeError
-from ..text import find_all
-from .jsonpath import jsonpath
-from .models import CssSelector, Item, JsonPathSelector, Match, RegexSelector, Selector, XpathSelector
+from mzizi_scraping.core import JsonValue, ScrapeError
+from mzizi_scraping.selectors.jsonpath import jsonpath
+from mzizi_scraping.selectors.models import (
+    CssSelector,
+    Item,
+    JsonPathSelector,
+    Match,
+    RegexSelector,
+    Selector,
+    XpathSelector,
+)
+from mzizi_scraping.text import find_all
 
 #: What a selector can run against: HTML or JSON text, a parsed HTML node, or parsed JSON.
 type Content = str | bytes | Tag | JsonValue

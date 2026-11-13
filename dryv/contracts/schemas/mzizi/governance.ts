@@ -10,7 +10,7 @@ import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
 import { Units } from "./geography.ts";
 import { Entities, Individuals } from "./official.ts";
-import { Value, Country } from "./reference.ts";
+import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
@@ -18,7 +18,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 export const governance = dryv
   .group({ name: "governance" })
   .description("Public institutions, offices, mandates, office holders and dated authority scopes.")
-  .facets({ storage: { namespace: "governance" } });
+  .facets({ storage: { namespace: "governance", store: "main" } });
 /*---------------- governance.institutions ----------------*/
 export const Institutions = governance
   .schema("Institutions", {

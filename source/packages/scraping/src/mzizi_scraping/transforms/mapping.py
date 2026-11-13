@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ..core import JsonValue, ScrapeError
+from mzizi_scraping.core import JsonValue, ScrapeError
 
 
 def lookup(value: JsonValue, table: JsonValue = None) -> JsonValue:

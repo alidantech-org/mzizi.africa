@@ -1,0 +1,8 @@
+//! Generated compatibility of Rust row types with both live stores. No database administration.
+use sqlx::PgConnection;
+
+pub async fn verify(main: &mut PgConnection, operations: &mut PgConnection) -> Result<Vec<String>, sqlx::Error> {
+    let mut errors = super::main_contract::verify(main).await?;
+    errors.extend(super::operations_contract::verify(operations).await?);
+    Ok(errors)
+}

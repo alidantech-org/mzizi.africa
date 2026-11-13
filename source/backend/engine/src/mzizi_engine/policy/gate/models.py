@@ -8,9 +8,8 @@ from typing import Literal
 
 from pydantic import Field
 
+from mzizi_engine.policy.models import External, Frozen
 from mzizi_fetch import FetchMode, Purpose
-
-from ..models import External, Frozen
 
 
 class LegalStatus(StrEnum):

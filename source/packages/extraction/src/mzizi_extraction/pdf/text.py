@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pypdfium2 as pdfium
 
-from ..core import Locator, Segment, SegmentKind, TextContent
+from mzizi_extraction.core import Locator, Segment, SegmentKind, TextContent
 
 
 def read_text_layer(document: pdfium.PdfDocument, min_chars: int) -> tuple[list[Segment], list[int]]:

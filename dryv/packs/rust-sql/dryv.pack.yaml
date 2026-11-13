@@ -1,47 +1,21 @@
 version: dryv.pack/v1alpha1
 key: mzizi.rust-sql
 source: templates
-
 info:
-  title: Mzizi SQL snapshots
-  version: 0.2.0
-  description: Deterministic PostgreSQL DDL for the database foundation, one complete schema snapshot per target database (main.sql, operations.sql). `mzizi-db assemble` turns a snapshot into the immutable checksummed release stream under migrations/. Consumes the `database` authoring source.
+  title: Store-scoped Mzizi SQL snapshots
+  version: 0.3.0
+  description: Complete PostgreSQL schema snapshot for the selected canonical store. Existing mzizi-db assembly and immutable releases remain separate from generation.
   purpose: persistence
   languages: [sql]
-  tags: [sql, postgresql, migrations, database]
-
-plugins:
-  - name: jinja
-    extensions: [.j2]
-
-# The namespace-to-database lists mirror dryv/contracts/apps/database/persistence.ts (the canonical
-# catalogue); `bun run database:assignments` fails on drift.
-inputs:
-  main_namespaces:
-    type: string[]
-    required: true
-    description: Storage namespaces that belong to the `mzizi` database.
-  operations_namespaces:
-    type: string[]
-    required: true
-    description: Storage namespaces that belong to the `mzizi_operations` database.
-
-# Boundary rules enforced inside the templates (a violation aborts generation with a message):
-# - every entity storage namespace must be listed in exactly one of the two inputs;
-# - a relation whose source and target namespaces map to different databases is rejected
-#   (cross-database relationships are typed identifiers, never foreign keys);
-# - field kinds without a PostgreSQL mapping (arrays, records, composites, unions, tuples,
-#   generics, literals, nested schemas) are rejected;
-# - output is deterministic: namespaces follow the input order, tables follow the engine's schema order.
+  tags: [sql, postgresql, database]
+plugins: [{ name: jinja, extensions: [.j2] }]
+capabilities: { persistence: true, stores: true, references: true }
 selections:
   entities:
-    subject: schema
-    filter:
-      all: { role: entity }
-    scope: all
-
+    {
+      subject: schema,
+      scope: all,
+      filter: { all: { role: entity, facet: storage } },
+    }
 templates:
-  main:
-    $ref: '#/selections/entities'
-  operations:
-    $ref: '#/selections/entities'
+  snapshot: { $ref: "#/selections/entities", output: { name: schema } }

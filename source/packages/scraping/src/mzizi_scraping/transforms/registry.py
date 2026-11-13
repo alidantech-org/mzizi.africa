@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from ..core import JsonValue, ScrapeError
-from . import mapping, numeric, textual
-from .spec import PIPELINE, TransformSpec, split
+from mzizi_scraping.core import JsonValue, ScrapeError
+from mzizi_scraping.transforms import mapping, numeric, textual
+from mzizi_scraping.transforms.spec import PIPELINE, TransformSpec, split
 
 type Transform = Callable[[JsonValue, JsonValue], JsonValue]
 

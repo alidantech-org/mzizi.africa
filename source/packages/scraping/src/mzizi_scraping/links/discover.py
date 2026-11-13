@@ -6,7 +6,7 @@ from urllib.parse import urldefrag, urljoin, urlparse
 
 from bs4 import BeautifulSoup
 
-from ..core import Frozen
+from mzizi_scraping.core import Frozen
 
 DEFAULT_SCHEMES = ("http", "https")
 

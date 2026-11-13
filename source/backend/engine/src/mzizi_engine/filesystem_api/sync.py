@@ -6,10 +6,9 @@ from pathlib import Path
 
 from fastapi import Depends, HTTPException, Request
 
+from mzizi_engine.auth import Principal, authenticated
+from mzizi_engine.filesystem_api._shared import SyncIn, router
 from mzizi_manifest.paths import SEED_ROOT
-
-from ..auth import Principal, authenticated
-from ._shared import SyncIn, router
 
 
 @router.post("/sync", status_code=202)
