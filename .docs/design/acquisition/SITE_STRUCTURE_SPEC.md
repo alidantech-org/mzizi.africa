@@ -36,13 +36,13 @@ policy:
   robots: respect
   rate: { requests_per_second: 0.5, max_concurrency: 2 }
   licence: { ref: cc-by-4.0, source: https://example.invalid/terms }
-  auth: none                     # anything other than none means the engine refuses
+  auth: none                     # current v1 default; authorised modes require a reviewed schema extension
 fetch: { mode: http }            # http | api | browser
 modules: [budgets, tenders]
 tags: [jurisdiction:KE, domain:finance]
 ```
 
-`auth` other than `none`, CAPTCHAs and access challenges are not supported; the engine stops and records a check. A manifest never contains secrets, passwords, cookies or tokens.
+`mzizi.site/v1` currently treats non-`none` authentication and automated challenge resolution as unsupported, so current implementations stop and record a check. This is a current contract limitation, **not a prohibition on adding approved capabilities**: the planned extension supports per-source authenticated sessions, browser adapters, CAPTCHA/challenge resolution and `robots: override` subject to the approved collection policy. A manifest never contains secrets, passwords, cookies or tokens; sensitive session material belongs in the engine's secure runtime.
 
 ### Policy block (machine-enforced)
 
@@ -59,13 +59,13 @@ policy:
   retries: { max: 3, backoff: exponential_jitter }
   limits: { max_response_bytes: 52428800, timeout_seconds: 30 }
   identify: { user_agent: "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)" }
-  robots: respect                                      # a default operational rule, not a legal safe harbour
+  robots: respect                                      # default; approved source-specific override is planned
   stop_on: [401, 403, 429, repeated_5xx, access_challenge, block_notice]
   data: { excluded_categories: [national_id, biometric, health, children, precise_address, criminal, political_opinion], on_unexpected: quarantine }
   purposes: [research, public_atlas]                   # collection and publication purposes covered by the assessment
 ```
 
-A structure is a technical recipe, not a licence or authorisation: it validates against the schema and a dry run even when its source is legally unapproved, and the engine refuses to run it unless the assessment is `approved` (or `approved_with_conditions` with every condition enforceable) and the request falls inside `scope`. Structure publication never activates collection. Retry loops never try to overcome a restriction; a stop condition ends the run and records a check.
+A structure is a technical recipe, not a licence or authorisation: it validates against the schema and a dry run even when its source is legally unapproved, and the engine refuses to run it unless the assessment is `approved` (or `approved_with_conditions` with every condition enforceable) and the request falls inside `scope`. Structure publication never activates collection. The current v1 engine stops at access challenges. Planned policy-gated adapters may provide authorised challenge resolution and explicit robots overrides, never unbounded retries or undocumented access expansion.
 
 ## Inheritance and overlays
 
@@ -166,7 +166,7 @@ Required for every bundle and written by the authoring agent: what was observed 
 
 ## Out of scope for v1
 
-Authenticated sites, CAPTCHAs, anti-bot evasion, JavaScript execution beyond declared browser mode, OCR rules (document extraction profiles belong to the extractor config referenced by `fetch.resource`), natural-language rules.
+Current v1 excludes authenticated sessions, CAPTCHA/challenge resolution, specialised anti-bot-resilient browser adapters and configurable robots overrides; these are **approved future capability directions** requiring explicit contracts, source authorisation, tests and implementation. JavaScript execution beyond declared browser mode, OCR rules (document extraction profiles belong to the extractor config referenced by `fetch.resource`) and natural-language rules remain separate contract work. Do not describe these planned modes as currently implemented.
 
 ## Implementation (engine/data)
 
