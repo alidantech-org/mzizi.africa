@@ -26,3 +26,9 @@ Accountability is described as a read-only derived surface with no storage, and 
 ## Notes
 
 Stop after this task and report to the owner before starting the next one. Keep verification light: formatting and typechecks only, unless the task says otherwise.
+
+## Comments
+
+### 2026-11-13T08:37:01.068Z · PETER IRUNGU
+
+Built the seven Accountability indicators as storage-free view-model schemas (BudgetExecution, ProcurementPerformance, ProjectPerformance, ServiceCoverage, InstitutionalPerformance, PromiseProgress, OversightSignals) on an abstract Indicator base. The packs select role=entity only, so they produce no tables (verified by generation). How the rows are computed (SQL views, API layer or deferred) is still the open decision in this task.

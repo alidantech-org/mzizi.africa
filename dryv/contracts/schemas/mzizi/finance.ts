@@ -79,6 +79,9 @@ export const Appropriations = finance
     projectId: belongsTo(() => Projects).maybe(),
     unitFeatureId: belongsTo(() => Units, { to: "featureId" }).maybe(),
     classificationId: belongsTo(() => Value),
+    // Same two fields as MoneyEntity; this schema is coded, and a schema inherits from one base only.
+    amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits),
+    currencyId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)

@@ -40,15 +40,17 @@ for (const [schema, tables] of Object.entries(expected)) {
 const accountability = await Bun.file(join(contracts, "accountability.ts")).text();
 if (/\.storage\(/.test(accountability)) problems.push("accountability must not declare persisted storage");
 for (const view of [
-  "budget_execution",
-  "procurement_performance",
-  "project_performance",
-  "service_coverage",
-  "institutional_performance",
-  "promise_progress",
-  "oversight_signals",
+  "BudgetExecution",
+  "ProcurementPerformance",
+  "ProjectPerformance",
+  "ServiceCoverage",
+  "InstitutionalPerformance",
+  "PromiseProgress",
+  "OversightSignals",
 ]) {
-  if (!accountability.includes(`"${view}"`)) problems.push(`accountability output missing: ${view}`);
+  if (!accountability.includes(`.schema("${view}"`)) problems.push(`accountability output missing: ${view}`);
+  if (!new RegExp(`\\.schema\\("${view}"[\\s\\S]*?\\.role\\("view-model"\\)`).test(accountability))
+    problems.push(`accountability output must be a view-model: ${view}`);
 }
 const civic = await Bun.file(join(contracts, "civic.ts")).text();
 for (const forbidden of ["service_locations", 'storage("assets")', 'storage("networks")', 'storage("segments")']) {
