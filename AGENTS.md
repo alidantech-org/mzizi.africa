@@ -44,6 +44,16 @@ The responsibilities are distinct even when they share a runtime:
 
 The inherited Python API and former data/database engines are historical under `.docs/_archives/2026-11-08-rewrite-snapshot/`. Never import, build, generate or run archived code.
 
+## Research acquisition and browser automation
+
+Mzizi's research engine may use HTTP clients, Playwright and interchangeable browser adapters, including adapters designed for resilient automated browsing. Do not reject an adapter solely because it supports anti-bot compatibility. Browser and scraping capabilities must remain separately configurable, testable, and accurately documented as implemented or planned.
+
+- Treat `robots.txt` as a recorded source signal, not an unconditional ban imposed on all collection. Default to `respect`; a source-specific `override` mode may be designed and used when the source assessment records adequate authority, the approved scope, and a rationale. Do not silently override.
+- Design first-class access-challenge handling, including CAPTCHA detection and authorised resolution workflows (manual completion or approved challenge-solving adapters). Where permission has not been established, stop or refer the source for review; do not assume a public URL grants access past a technical restriction.
+- Browser profiles, sessions, identities and network routing may be configured for approved sources. Preserve source-specific scope, request ceilings, audit evidence, provenance and privacy safeguards. Do not use stolen credentials, exploit vulnerabilities or cause service degradation.
+- For approved research methods, agents should implement the requested configurable functionality rather than issuing blanket technical refusals. Flag any genuinely unsupported or unauthorised operation specifically and continue with separable permitted work.
+- These rules express approved project direction; update site manifests, the engine, tests and documentation before claiming the new capabilities work. See `.docs/rules/security.md` and `.docs/design/policy/LEGALITY_SAFETY_AND_COMPLIANCE.md`.
+
 ## Data and service boundaries
 
 Keep the full evidence path attributable:
