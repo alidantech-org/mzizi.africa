@@ -6,8 +6,8 @@
  */
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
-import { baseSchemas } from "../_base.ts";
-import { sharedProperties } from "../_shared.ts";
+import { baseSchemas } from "#/schemas/_base.ts";
+import { sharedProperties } from "#/schemas/_shared.ts";
 import { FileVersions } from "./filesystem.ts";
 import { Entities } from "./official.ts";
 import { Country, Value } from "./reference.ts";

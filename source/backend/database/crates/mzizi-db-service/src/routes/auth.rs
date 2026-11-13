@@ -1,5 +1,5 @@
 //! Identity resolution and permission checks, matching the Dryv-authored operations
-//! `AuthAccess.ResolveIdentity` and `AuthAccess.CheckPermission`.
+//! `auth.ResolveActiveLogin` and `auth.EvaluatePlatformPermission`.
 
 use axum::extract::State;
 use axum::Json;

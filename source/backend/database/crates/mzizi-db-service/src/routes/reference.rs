@@ -1,4 +1,4 @@
-//! Reference vocabulary reads, matching the Dryv-authored `VocabularyRead` operations.
+//! Reference vocabulary reads, matching the Dryv-authored `reference catalogue` operations.
 
 use axum::extract::{Query, State};
 use axum::Json;

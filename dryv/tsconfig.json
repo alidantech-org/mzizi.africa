@@ -12,6 +12,7 @@
     "skipLibCheck": true,
     "types": ["bun"],
     "paths": {
+      "#/*": ["./contracts/*"],
       "@dryvcode/author": ["./node_modules/@dryvcode/author/src/index.ts"]
     }
   },

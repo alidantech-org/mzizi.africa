@@ -4,8 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "description": "Dryv contracts for the Mzizi canonical knowledge model (TypeScript authoring).",
+  "imports": {
+    "#/*": "./contracts/*"
+  },
   "scripts": {
-    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
+    "contracts:imports": "bun tools/check-contract-imports.ts",
+    "typecheck": "bun run contracts:imports && bunx --bun tsc --noEmit -p tsconfig.json",
     "contracts:doctor": "bun --bun x dryv-ts doctor contracts/apps/main/index.ts",
     "contracts:compile": "bun --bun x dryv-ts compile contracts/apps/main/index.ts",
     "check": "bun run typecheck && bun run contracts:audit && bun run contracts:doctor && bun run contracts:compile > /dev/null && bun run access:check && bun run boundary:check && bun run schema:check",
@@ -26,10 +30,11 @@
     "database:check": "bun run database:typecheck && bun run database:assignments && bun tools/audit-main-domain-contracts.ts && bun tools/dry-run-main-fixtures.ts && bun run database:format:check && bun run database:doctor && bun run database:compile > /dev/null",
     "database:format": "bunx --bun @biomejs/biome format --write contracts/schemas/_shared.ts contracts/schemas/mzizi/*.ts contracts/schemas/operational/*.ts contracts/apps/database/*.ts package.json",
     "database:format:check": "bunx --bun @biomejs/biome format contracts/schemas/_shared.ts contracts/schemas/mzizi/*.ts contracts/schemas/operational/*.ts contracts/apps/database/*.ts package.json",
-    "database:typecheck": "bunx --bun tsc --noEmit -p tsconfig.database.json"
+    "database:typecheck": "bun run contracts:imports && bunx --bun tsc --noEmit -p tsconfig.database.json"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "typescript-parser": "npm:typescript@5.9.3"
   }
 }

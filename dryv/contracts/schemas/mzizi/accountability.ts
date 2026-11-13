@@ -7,7 +7,7 @@
  */
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
-import { sharedProperties } from "../_shared.ts";
+import { sharedProperties } from "#/schemas/_shared.ts";
 import { Projects, Contracts, Procurements, Services } from "./civic.ts";
 import { BudgetVersions, FiscalPeriods } from "./finance.ts";
 import { Institutions } from "./governance.ts";

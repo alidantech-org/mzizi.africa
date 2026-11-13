@@ -6,7 +6,7 @@ written for now (`.docs/decisions/DEC-DATABASE-ACCESS-LIFECYCLE.md`): the offici
 `python-client-sdk` pack currently fails to load against the running Dryv engine, and
 `axum-backend` fails the same way on the server side. Swapping in generated code later is a
 drop-in replacement; every model and method here mirrors the Dryv-authored operation contract
-in `dryv/contracts/apps/database/operations.ts`.
+in `dryv/contracts/apps/database/filesystem.ts`.
 """
 
 from mzizi_database_client.client import DatabaseClient

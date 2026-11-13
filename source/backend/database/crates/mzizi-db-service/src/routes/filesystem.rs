@@ -1,4 +1,4 @@
-//! Filesystem writes, matching the Dryv-authored `FilesystemWrite.CreateFolder` operation.
+//! Filesystem writes, matching the Dryv-authored `filesystem.RegisterFolder` operation.
 //! The acting account is the authenticated caller, resolved upstream of this handler
 //! (`auth::resolve_identity`); this route only runs the named write and maps domain errors.
 

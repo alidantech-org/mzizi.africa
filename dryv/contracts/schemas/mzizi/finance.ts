@@ -5,8 +5,8 @@
  * SQL generation remains gated on code-shape/CHECK enforcement and currency-scale policy.
  */
 import * as dryv from "@dryvcode/author";
-import { baseSchemas } from "../_base.ts";
-import { sharedProperties } from "../_shared.ts";
+import { baseSchemas } from "#/schemas/_base.ts";
+import { sharedProperties } from "#/schemas/_shared.ts";
 import { Contracts, Projects } from "./civic.ts";
 import { Units } from "./geography.ts";
 import { Entities } from "./official.ts";

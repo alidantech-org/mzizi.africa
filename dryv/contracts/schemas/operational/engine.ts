@@ -8,7 +8,7 @@
  * Relations restrict deletion and key updates to preserve referenced operational history.
  */
 import * as dryv from "@dryvcode/author";
-import { sharedProperties } from "../_shared.ts";
+import { sharedProperties } from "#/schemas/_shared.ts";
 import { authSchemas } from "./auth.ts";
 
 export const engine = dryv

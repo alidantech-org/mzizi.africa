@@ -53,7 +53,7 @@ Generation is split into two independent runs:
 
 TypeScript and Python HTTP clients come from Dryv's existing client generation pointed at the foundation contracts; no project generator reimplements that. The generated Python client is a plain HTTP client package and must not pose as the missing historical `mzizi-database` workspace member, which remains a tracked gap.
 
-The namespace-to-database lists are pack inputs in `dryv.yaml` that must mirror `dryv/contracts/apps/database/persistence.ts`; `bun run database:assignments` (inside `database:check`) fails on drift. Pack-side validation (inside the templates) rejects: schemas not assigned to a database, foreign keys that would cross databases, and definitions the foundation's type/constraint support does not cover. Generation is deterministic — repeated runs produce identical artefacts — and never applies schema changes itself.
+The namespace-to-database lists are pack inputs in `dryv.yaml` that must mirror `dryv/contracts/apps/database/index.ts`; `bun run database:assignments` (inside `database:check`) fails on drift. Pack-side validation (inside the templates) rejects: schemas not assigned to a database, foreign keys that would cross databases, and definitions the foundation's type/constraint support does not cover. Generation is deterministic — repeated runs produce identical artefacts — and never applies schema changes itself.
 
 ## The Rust workspace
 

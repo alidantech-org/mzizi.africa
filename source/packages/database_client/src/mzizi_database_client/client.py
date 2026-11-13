@@ -44,6 +44,6 @@ class DatabaseClient:
         await self._http.aclose()
 
     async def create_folder(self, request: CreateFolderRequest) -> CreateFolderResponse:
-        """`FilesystemWrite.CreateFolder`: creates a folder; denies on a duplicate code."""
+        """`filesystem.RegisterFolder`: creates a folder; denies on a duplicate code."""
         response = await self._http.post("/v1/filesystem/folders", json=request.model_dump(mode="json", by_alias=True))
         return parse_response(response, CreateFolderResponse)

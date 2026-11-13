@@ -39,7 +39,7 @@ cd source/backend/api && bun run typecheck && bun run test
 
 ## Contract checks
 
-`bun run database:check` validates the dedicated database authoring entrypoint at `contracts/apps/database/index.ts`: TypeScript typecheck, Biome formatting, `dryv-ts doctor`, and Runtime IR compilation. It composes the approved Operational groups with the existing shared and vocabulary dependencies. This check does not generate or apply SQL migrations. Use `bun run database:format` to apply the configured Biome formatter to the database contract files.
+`bun run database:check` validates the dedicated database authoring entrypoint at `contracts/apps/database/index.ts`: TypeScript typecheck, Biome formatting, `dryv-ts doctor`, and Runtime IR compilation. It composes the approved Operational groups with the existing shared and reference dependencies. This check does not generate or apply SQL migrations. Use `bun run database:format` to apply the configured Biome formatter to the database contract files.
 
 `bun run check` runs, in order: `tsc` over the contracts, `tools/audit-contracts.ts`, `dryv-ts doctor` and `dryv-ts compile`. The audit compiles to Runtime IR and fails when:
 
@@ -107,11 +107,11 @@ Without `TEST_DATABASE_URL` the PostgreSQL suites are skipped and the generated 
 
 ## Canonical Main and Operations setup
 
-Both stores are declared by `contracts/apps/database/persistence.ts`. Persisted groups under
+Both stores are declared by `contracts/apps/database/index.ts`. Persisted groups under
 `contracts/schemas/mzizi` select `main`; those under `operational` select `operations`. The schema
 storage facet can override its group default explicitly. Namespace and table remain separate.
-The database app declares read/write access to both stores and explicitly provides its seven
-named auth/reference operations. Non-persisted Accountability view models have no store/table.
+The database app declares read/write access to both stores and explicitly provides six
+named operations from `reference.ts`, `filesystem.ts` and `auth.ts`. Non-persisted Accountability view models have no store/table.
 The legacy API remains a separate authoring root; this setup does not mix its old domain entities
 with the database foundation or create an engine/client app implicitly.
 
@@ -159,3 +159,33 @@ The database typecheck uses `tsconfig.database.json` and includes every neutral 
 own application entrypoint. The legacy all-contract typecheck remains separate: its main entrypoint
 currently imports `_archive` files absent from this checkout. This setup does not recreate those
 historical contracts or claim the legacy API can be regenerated from missing inputs.
+
+
+### Database service contracts
+
+The database authoring root uses `#/` for imports from the root of `dryv/contracts`.
+Use `bun run --cwd dryv database:typecheck` and `bun run --cwd dryv database:compile`
+to check this root independently.
+
+The reference module binds the two browse routes to named, paged queries. It keeps
+the live `schemes` and `values` envelopes and snake_case fields. Member lookup uses
+the live `{ scheme, code }` request and `{ value }` response. The filesystem module
+uses a read projection for the folder returned by registration. The auth module
+describes account resolution and permission evaluation using the live wire fields.
+Shared HTTP failure mappings are in `contracts/apps/database/failures.ts`.
+
+Before switching runtime handlers, reconcile the immutable initial migration with
+the current model snapshot. The initial reference and folder tables use snake_case
+columns and omit fields present in the newer generated snapshot. The current SeaORM
+pack uses authored column names, and its paging executor requires supplied numeric
+arguments even when an input schema declares a default. Member lookup needs an
+Engine uniqueness proof for the applicable live-row indexes. Folder registration
+also needs the acting account permission evaluated across the Operations and Main
+stores. The current lookup, auth, and folder routes therefore use service handlers.
+
+The independent product API root still refers to missing `contracts/_archive`
+modules in this checkout. The database check covers the active database root.
+The official Python SDK pack's flat model filenames collide across groups on the
+full database IR. The scratch generation used group-qualified filenames and
+symbols. The generated Rust crate also needs an empty-policy registry fix
+before it passes strict Clippy for this app.

@@ -1,6 +1,6 @@
 //! Filesystem writes: folder creation today, the shape every other filesystem write operation
 //! (upload completion, version registration, access transitions) follows next. Callers never
-//! supply SQL; `role_id` is resolved beforehand through the existing `VocabularyRead` operations
+//! supply SQL; `role_id` is resolved beforehand through the existing `reference catalogue` operations
 //! (a folder's role is a `reference.values` row, like any other controlled vocabulary term).
 
 use time::OffsetDateTime;

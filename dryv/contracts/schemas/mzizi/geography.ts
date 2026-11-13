@@ -11,8 +11,8 @@
 import * as dryv from "@dryvcode/author";
 import { rule, when } from "@dryvcode/author";
 
-import { baseSchemas } from "../_base.ts";
-import { sharedProperties } from "../_shared.ts";
+import { baseSchemas } from "#/schemas/_base.ts";
+import { sharedProperties } from "#/schemas/_shared.ts";
 import { Country, Unit, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);

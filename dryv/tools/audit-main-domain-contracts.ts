@@ -64,7 +64,7 @@ const app = await Bun.file(join(root, "contracts/apps/database/index.ts")).text(
 for (const schema of [...Object.keys(expected), "geography", "legal", "source", "filesystem"]) {
   if (!app.includes(`import { ${schema} }`)) problems.push(`database app does not explicitly import ${schema}`);
 }
-if (!app.includes('import { reference } from "../../schemas/mzizi/reference.ts"'))
+if (!app.includes('import { reference } from "#/schemas/mzizi/reference.ts"'))
   problems.push("database app does not import the persisted Reference group");
 if (problems.length) {
   console.error(`Main domain contract audit failed:\n- ${problems.join("\n- ")}`);
