@@ -4,14 +4,16 @@
  * Review: accepted foundation inventory; current detailed field contract requires reconciliation.
  * Countries are canonical modern-country identities; spatial units belong to Geography.
  * No fictional world country or mandatory country membership is implied.
- * Geography, Filesystem and Legal relations must be verified through same-database composition and pack generation.
- * SQL-level scheme checks, composite FKs and transitive cycle constraints are unsupported by the current pack.
+ * Relations to Geography, Filesystem and Legal are declared here against schemas in the same database.
+ * Rules the pack lowers from storage constraints: no-overlap windows, acyclic chains, same-scheme supersession.
+ * Not yet enforced: cycles through an edge table such as pattern_dependencies or value_relations.
  */
 import * as dryv from "@dryvcode/author";
 import { when } from "@dryvcode/author";
 
 import { baseSchemas } from "../_base.ts";
 import { sharedProperties } from "../_shared.ts";
+import { filesystemSchemas } from "./filesystem.ts";
 import { geographySchemas } from "./geography.ts";
 import { legalSchemas } from "./legal.ts";
 import { officialSchemas } from "./official.ts";
@@ -36,7 +38,7 @@ export const Country = dryv
   });
 
 /** Country identity is independent of whether another record has a country relationship. */
-/** The inbound Geography FK must be declared with geography.units when that contract is authored. */
+/** The Geography link to a country is declared on geography.units.country_id, not here. */
 /*---------------- End reference.countries ----------------*/
 
 export const Scheme = dryv
@@ -77,17 +79,26 @@ export const Value = dryv
   .description("A controlled classification member within one scheme, with optional supersession.")
   .role("entity")
   .facets({
-    storage: dryv.storage("values").indexes({ fields: ["scheme_id"] }, { fields: ["supersedes_id"] }),
+    storage: dryv
+      .storage("values")
+      .sameAs("SupersessionStaysInScheme", { field: "supersedes_id", match: ["scheme_id"] })
+      .acyclic("SupersessionAcyclic", { field: "supersedes_id" })
+      .indexes({ fields: ["scheme_id"] }, { fields: ["supersedes_id"] }),
   });
 /*---------------- End reference.values ----------------*/
-/** Same-scheme supersession and transitive acyclicity require a database operation/constraint. */
+
+const unitProperties = reference.properties({
+  /** Fixed precision so conversions are exact and reproducible, unlike a floating-point number. */
+  Factor: dryv.property.number.decimal({ precision: 38, scale: 18 }),
+});
 
 export const Unit = dryv
   .schema({
     symbol: dryv.field(sharedProperties.NonEmptyString100),
     quantity: dryv.field(sharedProperties.NonEmptyString255),
-    scale: dryv.field(sharedProperties.Number),
-    offset: dryv.field(sharedProperties.Number),
+    /** Exact conversion factor to the base unit: base = value * scale + offset. */
+    scale: dryv.field(unitProperties.Factor),
+    offset: dryv.field(unitProperties.Factor),
     base_id: dryv
       .field(sharedProperties.Id)
       .optional()
@@ -104,10 +115,12 @@ export const Unit = dryv
   .description("Measurement unit and conversion to its optional base unit; never a spatial unit.")
   .role("entity")
   .facets({
-    storage: dryv.storage("units").indexes({ fields: ["base_id"] }),
+    storage: dryv
+      .storage("units")
+      .acyclic("BaseUnitAcyclic", { field: "base_id" })
+      .indexes({ fields: ["base_id"] }),
   });
 /*---------------- End reference.units ----------------*/
-/** Conversion scale precision and base-unit cycle checks require storage-pack/database verification. */
 
 export const Topic = dryv
   .schema({
@@ -128,10 +141,12 @@ export const Topic = dryv
   .description("Cross-domain discovery topic hierarchy; topics do not own domain records.")
   .role("entity")
   .facets({
-    storage: dryv.storage("topics").indexes({ fields: ["parent_id"] }),
+    storage: dryv
+      .storage("topics")
+      .acyclic("TopicParentAcyclic", { field: "parent_id" })
+      .indexes({ fields: ["parent_id"] }),
   });
 /*---------------- End reference.topics ----------------*/
-/** Transitive topic-cycle prevention requires a database operation/constraint. */
 
 export const Pattern = dryv
   .schema({
@@ -154,8 +169,13 @@ export const PatternVersion = dryv
       onUpdate: "restrict",
     }),
     edition: dryv.field(sharedProperties.PositiveInteger),
-    /** Typed artifact identity; the active Reference vocabulary app does not compose Filesystem. */
-    file_version_id: dryv.field(sharedProperties.Id),
+    /** The stored file version this pattern release was built from. */
+    file_version_id: dryv.field(sharedProperties.Id).relation({
+      target: () => filesystemSchemas.FileVersions.field("id"),
+      cardinality: dryv.relation.manyToOne(),
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
     digest: dryv.field(sharedProperties.Sha256),
   })
   .extends(baseSchemas.Entity)
@@ -172,7 +192,6 @@ export const PatternVersion = dryv
       },
     ),
   });
-/** FK gap: Main review composition has the target; keep the active Operations vocabulary decoupled. */
 /*---------------- End reference.pattern_versions ----------------*/
 
 export const PatternBinding = dryv
@@ -183,8 +202,17 @@ export const PatternBinding = dryv
       onDelete: "restrict",
       onUpdate: "restrict",
     }),
-    /** Geography target is geography.units.feature_id; active vocabulary composition omits Geography. */
-    unit_id: dryv.field(sharedProperties.Id).optional().nullable(),
+    /** Optional geographic unit scope (geography.units, keyed by feature_id). */
+    unit_id: dryv
+      .field(sharedProperties.Id)
+      .optional()
+      .nullable()
+      .relation({
+        target: () => geographySchemas.Units.field("feature_id"),
+        cardinality: dryv.relation.manyToOne(),
+        onDelete: "restrict",
+        onUpdate: "restrict",
+      }),
     /** Optional country scope; a country-wide geographic scope also identifies its country unit. */
     country_id: dryv
       .field(sharedProperties.Id)
@@ -196,7 +224,7 @@ export const PatternBinding = dryv
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
-    /** Existing proposal target and role need reconciliation with the Reference-owned Legal basis link. */
+    /** Plain id: the Legal target is an open owner decision, so no foreign key is declared. */
     provision_id: dryv.field(sharedProperties.Id).optional().nullable(),
     /** Start of the window, inclusive. */
     effective_from: dryv.field(sharedProperties.CalendarDate),
@@ -232,12 +260,7 @@ export const PatternBinding = dryv
         },
       ),
   });
-/**
- * Open relationships: Geography has not yet authored geography.units, Filesystem has not authored
- * filesystem.file_versions, and the Reference-owned Legal bridge is unresolved. Keep the typed IDs;
- * ensure country_id and unit_id identify compatible scopes; do not invent a Legal proxy or claim
- * these cross-schema FKs are enforced.
- */
+/** Open: provision_id has no foreign key until the owner decides how bindings reference Legal (see decision note). */
 /*---------------- End reference.pattern_bindings ----------------*/
 
 export const PatternDependency = dryv
@@ -270,7 +293,7 @@ export const PatternDependency = dryv
       },
     ),
   });
-/** Acyclicity beyond self-reference requires a transaction-level database constraint or operation. */
+/** Not yet enforced: cycles through the edge graph itself need a graph-level constraint kind. */
 /*---------------- End reference.pattern_dependencies ----------------*/
 
 export const referenceProposalEnums = reference.properties({
