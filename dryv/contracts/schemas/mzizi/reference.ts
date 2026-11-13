@@ -17,19 +17,24 @@ import { sourceSchemas } from "./source.ts";
 
 export const reference = dryv
   .group({ name: "reference" })
-  .description("Shared country identities, controlled meanings, measurement units and reviewed patterns.")
+  .description(
+    "Shared country identities, controlled meanings, measurement units and reviewed patterns.",
+  )
   .facets({ storage: { namespace: "reference" } });
 
-/** Compatibility alias for the existing database application and named read operations. */
-export const vocabulary = reference;
-
 export const referenceExpressions = reference.expressions({
-  UnitScaleMustBePositive: dryv.expression.greaterThan(dryv.expression.context("value", "scale"), dryv.expression.value(0)),
+  UnitScaleMustBePositive: dryv.expression.greaterThan(
+    dryv.expression.context("value", "scale"),
+    dryv.expression.value(0),
+  ),
   ValueMustNotSupersedeItself: dryv.expression.notEqual(
     dryv.expression.context("value", "id"),
     dryv.expression.context("value", "supersedes_id"),
   ),
-  TopicMustNotParentItself: dryv.expression.notEqual(dryv.expression.context("value", "id"), dryv.expression.context("value", "parent_id")),
+  TopicMustNotParentItself: dryv.expression.notEqual(
+    dryv.expression.context("value", "id"),
+    dryv.expression.context("value", "parent_id"),
+  ),
   // The engine cannot type a comparison against a null literal. A SQL CHECK on `from < until` is
   // satisfied when `until` is NULL (open window), so the open case needs no explicit branch.
   EffectiveWindowMustBeOrdered: dryv.expression.lessThan(
@@ -50,31 +55,37 @@ export const vocabularyProperties = reference.properties({
   }),
 });
 
-/*---------------- Proposed Reference table contracts ----------------*/
-// biome-ignore lint/suspicious/noExplicitAny: supports forward references across the schema definitions below.
-export const referenceSchemas: Record<string, any> = {};
+/*---------------- Reference schema contracts ----------------*/
 
-export const Countries = reference.schemas({
-  Country: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      /** Stable project identity code, independent of external country-code standards. */
-      code: dryv.field(sharedProperties.IdentityCode),
-      name: dryv.field(sharedProperties.Name),
-    })
-    .description("Canonical identity for a modern country; not a geographic unit or historical polity.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("countries")
-        .primaryKey("id")
-        .indexes({ name: "uq_countries_code", fields: ["code"], unique: true }, { name: "idx_countries_name", fields: ["name"] }),
-    }),
+export const Countries = dryv
+  .schema({
+    id: dryv.field(sharedProperties.Id),
+    /** Stable project identity code, independent of external country-code standards. */
+    code: dryv.field(sharedProperties.IdentityCode),
+    name: dryv.field(sharedProperties.Name),
+  })
+  .description(
+    "Canonical identity for a modern country; not a geographic unit or historical polity.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("countries")
+      .primaryKey("id")
+      .indexes(
+        { name: "uq_countries_code", fields: ["code"], unique: true },
+        { name: "idx_countries_name", fields: ["name"] },
+      ),
+  });
+
+
+reference.schemas({
+  Country: Countries,
 });
+
 /** Country identity is independent of whether another record has a country relationship. */
 /** The inbound Geography FK must be declared with geography.units when that contract is authored. */
 /*---------------- End reference.countries ----------------*/
-referenceSchemas.Country = Countries.Country;
 
 export const Schemes = reference.schemas({
   Scheme: dryv
@@ -84,7 +95,9 @@ export const Schemes = reference.schemas({
       title: dryv.field(sharedProperties.Name),
       owner_snapshot: dryv.field(sharedProperties.NonEmptyString255),
     })
-    .description("Stable identity and stewardship snapshot for a controlled vocabulary scheme.")
+    .description(
+      "Stable identity and stewardship snapshot for a controlled vocabulary scheme.",
+    )
     .role("entity")
     .facets({
       storage: dryv
@@ -94,14 +107,13 @@ export const Schemes = reference.schemas({
     }),
 });
 /*---------------- End reference.schemes ----------------*/
-referenceSchemas.Scheme = Schemes.Scheme;
 
 export const Values = reference.schemas({
   Value: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
       scheme_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Scheme.field("id"),
+        target: () => Schemes.Scheme.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
@@ -114,14 +126,19 @@ export const Values = reference.schemas({
         .optional()
         .nullable()
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => Values.Value.field("id"),
           cardinality: dryv.relation.manyToOne(),
           onDelete: "restrict",
           onUpdate: "restrict",
         }),
     })
-    .invariant("ValueDoesNotSupersedeItself", referenceExpressions.ValueMustNotSupersedeItself)
-    .description("A controlled classification member within one scheme, with optional supersession.")
+    .invariant(
+      "ValueDoesNotSupersedeItself",
+      referenceExpressions.ValueMustNotSupersedeItself,
+    )
+    .description(
+      "A controlled classification member within one scheme, with optional supersession.",
+    )
     .role("entity")
     .facets({
       storage: dryv
@@ -136,7 +153,6 @@ export const Values = reference.schemas({
 });
 /*---------------- End reference.values ----------------*/
 /** Same-scheme supersession and transitive acyclicity require a database operation/constraint. */
-referenceSchemas.Value = Values.Value;
 
 export const Units = reference.schemas({
   Unit: dryv
@@ -152,25 +168,32 @@ export const Units = reference.schemas({
         .optional()
         .nullable()
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Unit.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => Units.Unit.field("id"),
           cardinality: dryv.relation.manyToOne(),
           onDelete: "restrict",
           onUpdate: "restrict",
         }),
     })
-    .invariant("ScaleMustBePositive", referenceExpressions.UnitScaleMustBePositive)
-    .description("Measurement unit and conversion to its optional base unit; never a spatial unit.")
+    .invariant(
+      "ScaleMustBePositive",
+      referenceExpressions.UnitScaleMustBePositive,
+    )
+    .description(
+      "Measurement unit and conversion to its optional base unit; never a spatial unit.",
+    )
     .role("entity")
     .facets({
       storage: dryv
         .storage("units")
         .primaryKey("id")
-        .indexes({ name: "uq_units_code", fields: ["code"], unique: true }, { name: "idx_units_base_id", fields: ["base_id"] }),
+        .indexes(
+          { name: "uq_units_code", fields: ["code"], unique: true },
+          { name: "idx_units_base_id", fields: ["base_id"] },
+        ),
     }),
 });
 /*---------------- End reference.units ----------------*/
 /** Conversion scale precision and base-unit cycle checks require storage-pack/database verification. */
-referenceSchemas.Unit = Units.Unit;
 
 export const Topics = reference.schemas({
   Topic: dryv
@@ -183,25 +206,32 @@ export const Topics = reference.schemas({
         .optional()
         .nullable()
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Topic.field("id"),
+          target: (): dryv.SchemaFieldRef<unknown> => Topics.Topic.field("id"),
           cardinality: dryv.relation.manyToOne(),
           onDelete: "restrict",
           onUpdate: "restrict",
         }),
     })
-    .invariant("TopicDoesNotParentItself", referenceExpressions.TopicMustNotParentItself)
-    .description("Cross-domain discovery topic hierarchy; topics do not own domain records.")
+    .invariant(
+      "TopicDoesNotParentItself",
+      referenceExpressions.TopicMustNotParentItself,
+    )
+    .description(
+      "Cross-domain discovery topic hierarchy; topics do not own domain records.",
+    )
     .role("entity")
     .facets({
       storage: dryv
         .storage("topics")
         .primaryKey("id")
-        .indexes({ name: "uq_topics_code", fields: ["code"], unique: true }, { name: "idx_topics_parent_id", fields: ["parent_id"] }),
+        .indexes(
+          { name: "uq_topics_code", fields: ["code"], unique: true },
+          { name: "idx_topics_parent_id", fields: ["parent_id"] },
+        ),
     }),
 });
 /*---------------- End reference.topics ----------------*/
 /** Transitive topic-cycle prevention requires a database operation/constraint. */
-referenceSchemas.Topic = Topics.Topic;
 
 export const Patterns = reference.schemas({
   Pattern: dryv
@@ -220,14 +250,13 @@ export const Patterns = reference.schemas({
     }),
 });
 /*---------------- End reference.patterns ----------------*/
-referenceSchemas.Pattern = Patterns.Pattern;
 
 export const PatternVersions = reference.schemas({
   PatternVersion: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
       pattern_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Pattern.field("id"),
+        target: () => Patterns.Pattern.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
@@ -237,28 +266,36 @@ export const PatternVersions = reference.schemas({
       file_version_id: dryv.field(sharedProperties.Id),
       digest: dryv.field(sharedProperties.Sha256),
     })
-    .description("Immutable, reviewed release of a pattern; Engine owns execution state.")
+    .description(
+      "Immutable, reviewed release of a pattern; Engine owns execution state.",
+    )
     .role("entity")
     .facets({
       storage: dryv
         .storage("pattern_versions")
         .primaryKey("id")
         .indexes(
-          { name: "uq_pattern_versions_pattern_edition", fields: ["pattern_id", "edition"], unique: true },
-          { name: "idx_pattern_versions_file_version_id", fields: ["file_version_id"] },
+          {
+            name: "uq_pattern_versions_pattern_edition",
+            fields: ["pattern_id", "edition"],
+            unique: true,
+          },
+          {
+            name: "idx_pattern_versions_file_version_id",
+            fields: ["file_version_id"],
+          },
         ),
     }),
 });
 /** FK gap: Main review composition has the target; keep the active Operations vocabulary decoupled. */
 /*---------------- End reference.pattern_versions ----------------*/
-referenceSchemas.PatternVersion = PatternVersions.PatternVersion;
 
 export const PatternBindings = reference.schemas({
   PatternBinding: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
       version_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.PatternVersion.field("id"),
+        target: () => PatternVersions.PatternVersion.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
@@ -271,7 +308,7 @@ export const PatternBindings = reference.schemas({
         .optional()
         .nullable()
         .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Country.field("id"),
+          target: () => Countries.Country.field("id"),
           cardinality: dryv.relation.manyToOne(),
           onDelete: "restrict",
           onUpdate: "restrict",
@@ -281,21 +318,38 @@ export const PatternBindings = reference.schemas({
       /** Inclusive lower date; Dryv has no native daterange storage property. */
       effective_from: dryv.field(sharedProperties.CalendarDate),
       /** Exclusive upper date; null means no known end. */
-      effective_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+      effective_until: dryv
+        .field(sharedProperties.CalendarDate)
+        .optional()
+        .nullable(),
     })
-    .invariant("EffectiveWindowIsOrdered", referenceExpressions.EffectiveWindowMustBeOrdered)
-    .description("Country, geographic-unit and time applicability of an approved pattern release.")
+    .invariant(
+      "EffectiveWindowIsOrdered",
+      referenceExpressions.EffectiveWindowMustBeOrdered,
+    )
+    .description(
+      "Country, geographic-unit and time applicability of an approved pattern release.",
+    )
     .role("entity")
     .facets({
       storage: dryv
         .storage("pattern_bindings")
         .primaryKey("id")
         .indexes(
-          { name: "idx_pattern_bindings_version_scope_time", fields: ["version_id", "country_id", "unit_id", "effective_from"] },
+          {
+            name: "idx_pattern_bindings_version_scope_time",
+            fields: ["version_id", "country_id", "unit_id", "effective_from"],
+          },
           { name: "idx_pattern_bindings_country_id", fields: ["country_id"] },
           { name: "idx_pattern_bindings_unit_id", fields: ["unit_id"] },
-          { name: "idx_pattern_bindings_provision_id", fields: ["provision_id"] },
-          { name: "idx_pattern_bindings_effective_from", fields: ["effective_from"] },
+          {
+            name: "idx_pattern_bindings_provision_id",
+            fields: ["provision_id"],
+          },
+          {
+            name: "idx_pattern_bindings_effective_from",
+            fields: ["effective_from"],
+          },
         ),
     }),
 });
@@ -307,26 +361,28 @@ export const PatternBindings = reference.schemas({
  * uniqueness semantics for nullable scope bindings before this contract is generation-ready.
  */
 /*---------------- End reference.pattern_bindings ----------------*/
-referenceSchemas.PatternBinding = PatternBindings.PatternBinding;
 
 export const PatternDependencies = reference.schemas({
   PatternDependency: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
       version_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.PatternVersion.field("id"),
+        target: () => PatternVersions.PatternVersion.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
       requires_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.PatternVersion.field("id"),
+        target: () => PatternVersions.PatternVersion.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
     })
-    .invariant("DependencyMustNotBeSelf", referenceExpressions.DependencyMustNotBeSelf)
+    .invariant(
+      "DependencyMustNotBeSelf",
+      referenceExpressions.DependencyMustNotBeSelf,
+    )
     .description("Pinned dependency between two Reference pattern releases.")
     .role("entity")
     .facets({
@@ -334,14 +390,20 @@ export const PatternDependencies = reference.schemas({
         .storage("pattern_dependencies")
         .primaryKey("id")
         .indexes(
-          { name: "uq_pattern_dependencies_pair", fields: ["version_id", "requires_id"], unique: true },
-          { name: "idx_pattern_dependencies_requires_id", fields: ["requires_id"] },
+          {
+            name: "uq_pattern_dependencies_pair",
+            fields: ["version_id", "requires_id"],
+            unique: true,
+          },
+          {
+            name: "idx_pattern_dependencies_requires_id",
+            fields: ["requires_id"],
+          },
         ),
     }),
 });
 /** Acyclicity beyond self-reference requires a transaction-level database constraint or operation. */
 /*---------------- End reference.pattern_dependencies ----------------*/
-referenceSchemas.PatternDependency = PatternDependencies.PatternDependency;
 
 /*---------------- Proposed Reference classification extension ----------------*/
 /**
@@ -351,7 +413,9 @@ referenceSchemas.PatternDependency = PatternDependencies.PatternDependency;
  */
 export const referenceProposals = dryv
   .group({ name: "reference-proposals" })
-  .description("Unapproved Reference schema extensions for review; excluded from database applications.")
+  .description(
+    "Unapproved Reference schema extensions for review; excluded from database applications.",
+  )
   .facets({ storage: { namespace: "reference" } });
 
 export const referenceProposalEnums = referenceProposals.properties({
@@ -368,9 +432,18 @@ export const referenceProposalExpressions = referenceProposals.expressions({
     dryv.expression.context("value", "target_value_id"),
   ),
   ValueRelationWindowMustBeOrdered: dryv.expression.or(
-    dryv.expression.equal(dryv.expression.context("value", "valid_from"), dryv.expression.value(null)),
-    dryv.expression.equal(dryv.expression.context("value", "valid_until"), dryv.expression.value(null)),
-    dryv.expression.lessThan(dryv.expression.context("value", "valid_from"), dryv.expression.context("value", "valid_until")),
+    dryv.expression.equal(
+      dryv.expression.context("value", "valid_from"),
+      dryv.expression.value(null),
+    ),
+    dryv.expression.equal(
+      dryv.expression.context("value", "valid_until"),
+      dryv.expression.value(null),
+    ),
+    dryv.expression.lessThan(
+      dryv.expression.context("value", "valid_from"),
+      dryv.expression.context("value", "valid_until"),
+    ),
   ),
 });
 
@@ -379,23 +452,35 @@ export const ProposedValueRelations = referenceProposals.schemas({
     .schema({
       id: dryv.field(sharedProperties.Id),
       source_value_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        target: (): dryv.SchemaFieldRef<unknown> => Values.Value.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
       target_value_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        target: (): dryv.SchemaFieldRef<unknown> => Values.Value.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
       relation_kind: dryv.field(referenceProposalEnums.ValueRelationKind),
-      valid_from: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
-      valid_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+      valid_from: dryv
+        .field(sharedProperties.CalendarDate)
+        .optional()
+        .nullable(),
+      valid_until: dryv
+        .field(sharedProperties.CalendarDate)
+        .optional()
+        .nullable(),
     })
-    .invariant("ValueRelationMustNotBeSelfReferential", referenceProposalExpressions.ValueRelationMustNotBeSelfReferential)
-    .invariant("ValueRelationWindowMustBeOrdered", referenceProposalExpressions.ValueRelationWindowMustBeOrdered)
+    .invariant(
+      "ValueRelationMustNotBeSelfReferential",
+      referenceProposalExpressions.ValueRelationMustNotBeSelfReferential,
+    )
+    .invariant(
+      "ValueRelationWindowMustBeOrdered",
+      referenceProposalExpressions.ValueRelationWindowMustBeOrdered,
+    )
     .description(
       "Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.",
     )
@@ -405,19 +490,39 @@ export const ProposedValueRelations = referenceProposals.schemas({
         .storage("value_relations")
         .primaryKey("id")
         .indexes(
-          { name: "idx_value_relations_source_edge", fields: ["source_value_id", "relation_kind", "valid_from"] },
-          { name: "idx_value_relations_target", fields: ["target_value_id", "relation_kind"] },
+          {
+            name: "idx_value_relations_source_edge",
+            fields: ["source_value_id", "relation_kind", "valid_from"],
+          },
+          {
+            name: "idx_value_relations_target",
+            fields: ["target_value_id", "relation_kind"],
+          },
         ),
     }),
 });
 /** Proposal only: temporal edge uniqueness needs a PostgreSQL exclusion constraint, not yet supported by Dryv. */
 /** Do not add this group to database app composition without explicit approval and that persistence capability. */
-export const proposedReferenceSchemas = { ValueRelation: ProposedValueRelations.ValueRelation };
+export const proposedReferenceSchemas = {
+  ValueRelation: ProposedValueRelations.ValueRelation,
+};
 
 /** Compatibility surface consumed by the existing database read operations. */
+export const referenceSchemas = {
+  Country: Countries.Country,
+  Scheme: Schemes.Scheme,
+  Value: Values.Value,
+  Unit: Units.Unit,
+  Topic: Topics.Topic,
+  Pattern: Patterns.Pattern,
+  PatternVersion: PatternVersions.PatternVersion,
+  PatternBinding: PatternBindings.PatternBinding,
+  PatternDependency: PatternDependencies.PatternDependency,
+};
+
 export const vocabularySchemas = {
-  Scheme: referenceSchemas.Scheme,
-  Value: referenceSchemas.Value,
+  Scheme: Schemes.Scheme,
+  Value: Values.Value,
 };
 
 /*---------------- Reference-mediated Legal relationship contracts ----------------*/
@@ -428,51 +533,57 @@ export const referenceLegal = dryv
   .description("Typed Legal basis and domain associations owned by Reference.")
   .facets({ storage: { namespace: "reference" } });
 
-// biome-ignore lint/suspicious/noExplicitAny: supports typed forward references across Main schemas.
-export const referenceLegalSchemas: Record<string, any> = {};
-
 export const LegalBasisLinks = referenceLegal.schemas({
   LegalBasisLinks: dryv
     .schema({
       id: dryv.field(sharedProperties.Id),
       provision_version_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => legalSchemas.ProvisionVersions.field("id"),
+        target: (): dryv.SchemaFieldRef<unknown> =>
+          legalSchemas.ProvisionVersions.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
       basis_role_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceSchemas.Value.field("id"),
+        target: () => Values.Value.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
       citation_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => sourceSchemas.Citations.field("id"),
+        target: (): dryv.SchemaFieldRef<unknown> =>
+          sourceSchemas.Citations.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
       effective_from: dryv.field(sharedProperties.CalendarDate),
-      effective_until: dryv.field(sharedProperties.CalendarDate).optional().nullable(),
+      effective_until: dryv
+        .field(sharedProperties.CalendarDate)
+        .optional()
+        .nullable(),
       interpretation: dryv.field(sharedProperties.Description),
       reviewed_by_snapshot: dryv.field(sharedProperties.JsonText),
       reviewed_at: dryv.field(sharedProperties.Instant),
     })
-    .description("One reviewed legal support assertion for an exact provision version, role, citation and effective period.")
+    .description(
+      "One reviewed legal support assertion for an exact provision version, role, citation and effective period.",
+    )
     .role("entity")
     .facets({
       storage: dryv
         .storage("legal_basis_links")
         .primaryKey("id")
         .indexes(
-          { name: "idx_legal_basis_links_provision", fields: ["provision_version_id"] },
+          {
+            name: "idx_legal_basis_links_provision",
+            fields: ["provision_version_id"],
+          },
           { name: "idx_legal_basis_links_role", fields: ["basis_role_id"] },
           { name: "idx_legal_basis_links_citation", fields: ["citation_id"] },
         ),
     }),
 });
-referenceLegalSchemas.LegalBasisLinks = LegalBasisLinks.LegalBasisLinks;
 /*---------------- End reference.legal_basis_links ----------------*/
 
 export const GeographyChangeLegalBases = referenceLegal.schemas({
@@ -480,31 +591,40 @@ export const GeographyChangeLegalBases = referenceLegal.schemas({
     .schema({
       id: dryv.field(sharedProperties.Id),
       change_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => geographySchemas.Changes.field("id"),
+        target: (): dryv.SchemaFieldRef<unknown> =>
+          geographySchemas.Changes.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
       legal_basis_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceLegalSchemas.LegalBasisLinks.field("id"),
+        target: () => LegalBasisLinks.LegalBasisLinks.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
     })
-    .description("Typed legal support for a geographic change; role distinctions live on the linked basis assertion.")
+    .description(
+      "Typed legal support for a geographic change; role distinctions live on the linked basis assertion.",
+    )
     .role("entity")
     .facets({
       storage: dryv
         .storage("geography_change_legal_bases")
         .primaryKey("id")
         .indexes(
-          { name: "uq_geography_change_legal_basis", fields: ["change_id", "legal_basis_id"], unique: true },
-          { name: "idx_geography_change_legal_basis_link", fields: ["legal_basis_id"] },
+          {
+            name: "uq_geography_change_legal_basis",
+            fields: ["change_id", "legal_basis_id"],
+            unique: true,
+          },
+          {
+            name: "idx_geography_change_legal_basis_link",
+            fields: ["legal_basis_id"],
+          },
         ),
     }),
 });
-referenceLegalSchemas.GeographyChangeLegalBases = GeographyChangeLegalBases.GeographyChangeLegalBases;
 /*---------------- End reference.geography_change_legal_bases ----------------*/
 
 export const OfficialEntityLegalBases = referenceLegal.schemas({
@@ -512,13 +632,14 @@ export const OfficialEntityLegalBases = referenceLegal.schemas({
     .schema({
       id: dryv.field(sharedProperties.Id),
       entity_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => officialSchemas.Entities.field("id"),
+        target: (): dryv.SchemaFieldRef<unknown> =>
+          officialSchemas.Entities.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
       }),
       legal_basis_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => referenceLegalSchemas.LegalBasisLinks.field("id"),
+        target: () => LegalBasisLinks.LegalBasisLinks.field("id"),
         cardinality: dryv.relation.manyToOne(),
         onDelete: "restrict",
         onUpdate: "restrict",
@@ -531,10 +652,24 @@ export const OfficialEntityLegalBases = referenceLegal.schemas({
         .storage("official_entity_legal_bases")
         .primaryKey("id")
         .indexes(
-          { name: "uq_official_entity_legal_basis", fields: ["entity_id", "legal_basis_id"], unique: true },
-          { name: "idx_official_entity_legal_basis_link", fields: ["legal_basis_id"] },
+          {
+            name: "uq_official_entity_legal_basis",
+            fields: ["entity_id", "legal_basis_id"],
+            unique: true,
+          },
+          {
+            name: "idx_official_entity_legal_basis_link",
+            fields: ["legal_basis_id"],
+          },
         ),
     }),
 });
-referenceLegalSchemas.OfficialEntityLegalBases = OfficialEntityLegalBases.OfficialEntityLegalBases;
 /*---------------- End reference.official_entity_legal_bases ----------------*/
+
+/** Compatibility surface consumed by the existing database read operations. */
+export const referenceLegalSchemas = {
+  LegalBasisLinks: LegalBasisLinks.LegalBasisLinks,
+  GeographyChangeLegalBases:
+    GeographyChangeLegalBases.GeographyChangeLegalBases,
+  OfficialEntityLegalBases: OfficialEntityLegalBases.OfficialEntityLegalBases,
+};

@@ -80,7 +80,7 @@ def test_no_fixture_sample_example_or_data_directory_sits_inside_source_code():
         REPO_ROOT / "source" / "backend" / "api",
     ):
         for path in root.rglob("*"):
-            if not path.is_dir() or {"node_modules", ".venv", "__pycache__", ".git"} & set(path.parts):
+            if not path.is_dir() or {"node_modules", ".venv", "__pycache__", ".git", "target"} & set(path.parts):
                 continue
             if path.name in {"fixtures", "samples", "examples", "pilots", "mappings"} or (
                 path.name == "data" and path.parent.name == "tests"

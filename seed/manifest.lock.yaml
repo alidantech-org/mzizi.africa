@@ -2,7 +2,7 @@
 # It plans identities and readable object keys; it records no upload state (that lives in the filesystem registry).
 schema_version: 2
 release: 2026-11-11.1
-manifest_sha256: 6f3251d7b390d06667a0adfbce63d2fafeb90561563492fd5b4a8e93b2cd6496
+manifest_sha256: 057dd4476515c66fcf081d86e29a5ce7584f0d44c26287f1d137bf89ebb96c78
 bucket: mzizi
 region: us-east-1
 logical_root: /seed

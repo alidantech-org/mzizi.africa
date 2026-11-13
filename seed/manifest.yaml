@@ -56,8 +56,6 @@ entries:
   - global.reference.au-members-source
   - global.reference.un-m49-source
   - global.reference.au-m49-aliases
-  consumers:
-  - source/packages/database/src/mzizi_database/loaders/reference.py
   origin: new in task TSK-7E5E18758D9C
   notes: 55 AU members reconciled to UN M49 ISO codes; Sahrawi Republic is disputed.
 - id: global.reference.foundation-baseline
@@ -68,8 +66,6 @@ entries:
   media_type: application/json
   key_columns:
   - code
-  consumers:
-  - source/packages/database/src/mzizi_database/loaders/reference.py
   origin: new in task TSK-7E5E18758D9C
   notes: Structural vocabulary only; no countries, boundaries, officeholders or legal facts.
 - id: global.auth.namespaces
@@ -80,8 +76,6 @@ entries:
   media_type: text/csv
   key_columns:
   - namespace
-  consumers:
-  - source/packages/database/src/mzizi_database/loaders/auth.py
   origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
 - id: global.auth.roles
   path: global/auth/roles.csv
@@ -91,8 +85,6 @@ entries:
   media_type: text/csv
   key_columns:
   - code
-  consumers:
-  - source/packages/database/src/mzizi_database/loaders/auth.py
   origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
 - id: global.auth.role-permissions
   path: global/auth/role-permissions.csv
@@ -106,8 +98,6 @@ entries:
   depends_on:
   - global.auth.roles
   - global.auth.namespaces
-  consumers:
-  - source/packages/database/src/mzizi_database/loaders/auth.py
   origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
 - id: global.auth.scope-targets
   path: global/auth/scope-targets.csv
@@ -117,8 +107,6 @@ entries:
   media_type: text/csv
   key_columns:
   - table_name
-  consumers:
-  - source/packages/database/src/mzizi_database/loaders/auth.py
   origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
 - id: global.auth.governed-tables
   path: global/auth/governed-tables.csv
@@ -131,8 +119,6 @@ entries:
   depends_on:
   - global.auth.scope-targets
   - global.auth.namespaces
-  consumers:
-  - source/packages/database/src/mzizi_database/loaders/auth.py
   origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
 - id: global.auth.bootstrap
   path: global/auth/bootstrap.yaml
@@ -142,9 +128,6 @@ entries:
   media_type: application/yaml
   depends_on:
   - global.auth.roles
-  consumers:
-  - source/packages/database/src/mzizi_database/loaders/auth.py
-  - source/packages/database/src/mzizi_database/cli.py
   origin: new in this assignment (extracted from rewrite/0002_auth_functions.sql seed statements)
 - id: global.reference.site-tags
   path: global/reference/site-tags.json
