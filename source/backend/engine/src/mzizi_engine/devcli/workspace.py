@@ -14,14 +14,14 @@ from pydantic import BaseModel, ConfigDict
 from mzizi_engine.devcli.types import ArgValues
 
 WORKSPACE_ENV = "MZIZI_DEV_ROOT"
-KEEP_RUNS = 50
+KEEP_RUNS = 500
 
 _README = """# Mzizi developer workspace
 
 Git-ignored. Folders appear only when something is first written into them.
 
 - `websites/<country>/<group>/<host>/`: everything about one site (`scraped/`, `extracted/`, `drafts/`).
-- `runs/<date>/`: one-off commands that are not tied to a site (the newest 50 are kept).
+- `runs/<date>/`: one-off commands that are not tied to a site (the newest 500 are kept).
 - `browser/`: browser profiles and the shared window state. `logs/`, `cache/`: throwaway state.
 - `inputs/`: files you drop in. `secure/`, `stack/`: keys and dev-stack settings.
 
@@ -167,7 +167,7 @@ class Workspace:
     def clean_runs(self, keep: int) -> int:
         folders = self._run_folders()
         for folder in folders[keep:]:
-            shutil.rmtree(folder)
+            shutil.rmtree(folder, ignore_errors=True)  # other processes may be pruning the same old runs at the same time
         return max(len(folders) - keep, 0)
 
 
