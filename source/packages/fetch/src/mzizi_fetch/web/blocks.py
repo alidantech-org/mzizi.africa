@@ -140,7 +140,7 @@ class BlockPolicy:
         response = self.responses[block.kind]
         reason = f"{block.kind.value}: configured response {response.value}"
         if self.consecutive >= self.stop_after:
-            response, reason = Response.STOP, f"{self.consecutive} consecutive blocks; stopping"
+            response, reason = Response.STOP, f"{self.consecutive} consecutive blocks ({block.kind.value}); stopping"
         elif response in (Response.RETRY, Response.BACK_OFF, Response.SLOW_DOWN) and attempt >= self.max_retries:
             response, reason = Response.SKIP, f"{block.kind.value}: {attempt} retries used; skipping"
         wait = 0.0
