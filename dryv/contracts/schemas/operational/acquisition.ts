@@ -19,26 +19,9 @@ export const acquisition = dryv
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const acquisitionEnums = acquisition.properties({
-  TargetState: dryv.property.enum({
-    Active: "active",
-    Paused: "paused",
-    Retired: "retired",
-  }),
-  FrontierState: dryv.property.enum({
-    Queued: "queued",
-    Leased: "leased",
-    RetryWait: "retry_wait",
-    Completed: "completed",
-    Failed: "failed",
-    Cancelled: "cancelled",
-  }),
-  AcquisitionOutcome: dryv.property.enum({
-    Success: "success",
-    Failure: "failure",
-    Blocked: "blocked",
-    Retryable: "retryable",
-    Permanent: "permanent",
-  }),
+  TargetState: dryv.property.enum(["active", "paused", "retired"]),
+  FrontierState: dryv.property.enum(["queued", "leased", "retry_wait", "completed", "failed", "cancelled"]),
+  AcquisitionOutcome: dryv.property.enum(["success", "failure", "blocked", "retryable", "permanent"]),
 });
 
 /*---------------- Approved acquisition table contracts ----------------*/

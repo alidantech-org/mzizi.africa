@@ -116,11 +116,7 @@ export const Pattern = reference
   });
 
 export const referenceProposalEnums = reference.properties({
-  ValueRelationKind: dryv.property.enum({
-    BroaderThan: "broader_than",
-    NarrowerThan: "narrower_than",
-    RelatedTo: "related_to",
-  }),
+  ValueRelationKind: dryv.property.enum(["broader_than", "narrower_than", "related_to"]),
 });
 
 export const ValueRelation = reference

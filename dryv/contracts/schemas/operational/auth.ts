@@ -17,32 +17,10 @@ export const auth = dryv
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const authEnums = auth.properties({
-  AccountStatus: dryv.property.enum({
-    Active: "active",
-    Suspended: "suspended",
-    Closed: "closed",
-  }),
-  AuthActorKind: dryv.property.enum({
-    Person: "person",
-    Service: "service",
-  }),
-  MembershipStatus: dryv.property.enum({
-    Pending: "pending",
-    Active: "active",
-    Suspended: "suspended",
-    Expired: "expired",
-    Revoked: "revoked",
-  }),
-  AuthAction: dryv.property.enum({
-    Read: "read",
-    Create: "create",
-    Update: "update",
-    Delete: "delete",
-    Review: "review",
-    Publish: "publish",
-    Export: "export",
-    Admin: "admin",
-  }),
+  AccountStatus: dryv.property.enum(["active", "suspended", "closed"]),
+  AuthActorKind: dryv.property.enum(["person", "service"]),
+  MembershipStatus: dryv.property.enum(["pending", "active", "suspended", "expired", "revoked"]),
+  AuthAction: dryv.property.enum(["read", "create", "update", "delete", "review", "publish", "export", "admin"]),
 });
 
 /*---------------- Approved auth table contracts ----------------*/

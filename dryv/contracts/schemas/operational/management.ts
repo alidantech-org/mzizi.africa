@@ -18,30 +18,18 @@ export const management = dryv
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const managementEnums = management.properties({
-  PublicationState: dryv.property.enum({
-    Requested: "requested",
-    Submitted: "submitted",
-    Published: "published",
-    Rejected: "rejected",
-    Failed: "failed",
-    Reconciling: "reconciling",
-    Reconciled: "reconciled",
-    Unknown: "unknown",
-  }),
-  DeliveryState: dryv.property.enum({
-    Received: "received",
-    Accepted: "accepted",
-    Rejected: "rejected",
-    Duplicate: "duplicate",
-    Conflict: "conflict",
-    Unknown: "unknown",
-  }),
-  ManagementOperation: dryv.property.enum({
-    Insert: "insert",
-    Update: "update",
-    Retire: "retire",
-    Upsert: "upsert",
-  }),
+  PublicationState: dryv.property.enum([
+    "requested",
+    "submitted",
+    "published",
+    "rejected",
+    "failed",
+    "reconciling",
+    "reconciled",
+    "unknown",
+  ]),
+  DeliveryState: dryv.property.enum(["received", "accepted", "rejected", "duplicate", "conflict", "unknown"]),
+  ManagementOperation: dryv.property.enum(["insert", "update", "retire", "upsert"]),
 });
 
 /*---------------- Approved management table contracts ----------------*/

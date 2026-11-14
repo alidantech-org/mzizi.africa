@@ -18,8 +18,8 @@ export const filesystem = dryv
   .facets({ storage: { namespace: "filesystem", store: "main" } });
 
 export const filesystemEnums = filesystem.properties({
-  Access: dryv.property.enum({ Public: "public", Restricted: "restricted", Internal: "internal", Private: "private" }),
-  Retention: dryv.property.enum({ PreserveHistory: "preserve_history", ReplaceCurrent: "replace_current" }),
+  Access: dryv.property.enum(["public", "restricted", "internal", "private"]),
+  Retention: dryv.property.enum(["preserve_history", "replace_current"]),
 });
 
 /*---------------- folders ----------------*/

@@ -19,13 +19,8 @@ export const source = dryv
   .description("Accepted sources, evidence and publication receipts.")
   .facets({ storage: { namespace: "source", store: "main" } });
 export const sourceEnums = source.properties({
-  ReleaseStatus: dryv.property.enum({ Approved: "approved", Retired: "retired", Withdrawn: "withdrawn" }),
-  VerificationOutcome: dryv.property.enum({
-    Supported: "supported",
-    Contradicted: "contradicted",
-    Insufficient: "insufficient",
-    Disputed: "disputed",
-  }),
+  ReleaseStatus: dryv.property.enum(["approved", "retired", "withdrawn"]),
+  VerificationOutcome: dryv.property.enum(["supported", "contradicted", "insufficient", "disputed"]),
 });
 
 export const Publishers = source

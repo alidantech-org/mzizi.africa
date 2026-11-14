@@ -18,37 +18,19 @@ export const audit = dryv
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const auditEnums = audit.properties({
-  AuditAction: dryv.property.enum({
-    Read: "read",
-    Create: "create",
-    Update: "update",
-    Delete: "delete",
-    Review: "review",
-    Publish: "publish",
-    Export: "export",
-    Admin: "admin",
-  }),
-  AuditDecisionType: dryv.property.enum({
-    Approval: "approval",
-    Review: "review",
-    Security: "security",
-    Publication: "publication",
-  }),
-  AuditDecision: dryv.property.enum({
-    Approve: "approve",
-    Reject: "reject",
-    Requestchanges: "request_changes",
-  }),
-  AuditSubjectKind: dryv.property.enum({
-    Account: "account",
-    Role: "role",
-    Membership: "membership",
-    Invitation: "invitation",
-    Scope: "scope",
-    Publication: "publication",
-    Candidate: "candidate",
-    Record: "record",
-  }),
+  AuditAction: dryv.property.enum(["read", "create", "update", "delete", "review", "publish", "export", "admin"]),
+  AuditDecisionType: dryv.property.enum(["approval", "review", "security", "publication"]),
+  AuditDecision: dryv.property.enum(["approve", "reject", "request_changes"]),
+  AuditSubjectKind: dryv.property.enum([
+    "account",
+    "role",
+    "membership",
+    "invitation",
+    "scope",
+    "publication",
+    "candidate",
+    "record",
+  ]),
 });
 
 /*---------------- Approved audit table contracts ----------------*/

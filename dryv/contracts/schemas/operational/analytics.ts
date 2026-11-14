@@ -19,19 +19,8 @@ export const analytics = dryv
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const analyticsEnums = analytics.properties({
-  ExperimentStatus: dryv.property.enum({
-    Draft: "draft",
-    Active: "active",
-    Completed: "completed",
-    Archived: "archived",
-  }),
-  RequestStatus: dryv.property.enum({
-    Pending: "pending",
-    Running: "running",
-    Succeeded: "succeeded",
-    Failed: "failed",
-    Cancelled: "cancelled",
-  }),
+  ExperimentStatus: dryv.property.enum(["draft", "active", "completed", "archived"]),
+  RequestStatus: dryv.property.enum(["pending", "running", "succeeded", "failed", "cancelled"]),
 });
 
 /*---------------- Approved analytics table contracts ----------------*/

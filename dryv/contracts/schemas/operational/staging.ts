@@ -20,34 +20,18 @@ export const staging = dryv
 
 /*---------------- Closed technical vocabulary enums ----------------*/
 export const stagingEnums = staging.properties({
-  CandidateStatus: dryv.property.enum({
-    Pending: "pending",
-    InReview: "in_review",
-    Accepted: "accepted",
-    Rejected: "rejected",
-    Promoted: "promoted",
-    Superseded: "superseded",
-  }),
-  MappingStatus: dryv.property.enum({ Draft: "draft", Active: "active", Retired: "retired" }),
-  PromotionStatus: dryv.property.enum({
-    Pending: "pending",
-    Submitted: "submitted",
-    Succeeded: "succeeded",
-    Failed: "failed",
-    Rejected: "rejected",
-    ReconciliationRequired: "reconciliation_required",
-  }),
-  StagingSeverity: dryv.property.enum({
-    Info: "info",
-    Warning: "warning",
-    Error: "error",
-    Critical: "critical",
-  }),
-  StagingDecision: dryv.property.enum({
-    Approve: "approve",
-    Reject: "reject",
-    Requestchanges: "request_changes",
-  }),
+  CandidateStatus: dryv.property.enum(["pending", "in_review", "accepted", "rejected", "promoted", "superseded"]),
+  MappingStatus: dryv.property.enum(["draft", "active", "retired"]),
+  PromotionStatus: dryv.property.enum([
+    "pending",
+    "submitted",
+    "succeeded",
+    "failed",
+    "rejected",
+    "reconciliation_required",
+  ]),
+  StagingSeverity: dryv.property.enum(["info", "warning", "error", "critical"]),
+  StagingDecision: dryv.property.enum(["approve", "reject", "request_changes"]),
 });
 
 /*---------------- Approved staging table contracts ----------------*/
