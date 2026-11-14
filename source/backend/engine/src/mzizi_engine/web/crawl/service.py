@@ -16,6 +16,9 @@ from mzizi_fetch.web.client import WebClient
 from mzizi_fetch.web.policy import SourcePolicy
 from mzizi_fetch.web.urls import host_of, validate
 
+# requests include redirect hops, missing pages, robots and sitemaps, so the ceiling is a multiple of the page budget
+REQUESTS_PER_PAGE = 25
+REQUEST_HEADROOM = 500
 BLOCK_KINDS_WITH_CONFIGURED_RESPONSE = (
     BlockKind.RATE_LIMITED,
     BlockKind.FORBIDDEN,
@@ -34,7 +37,7 @@ def policy_for(request: CrawlRequest) -> SourcePolicy:
         allowed_paths=request.allowed_paths,
         excluded_paths=request.excluded_paths,
         include_subdomains=request.include_subdomains,
-        max_requests=request.max_pages * 4 + 50,
+        max_requests=request.max_pages * REQUESTS_PER_PAGE + REQUEST_HEADROOM,
         max_concurrency=request.concurrency,
         requests_per_second=1.0 / request.delay if request.delay > 0 else 100.0,
     )

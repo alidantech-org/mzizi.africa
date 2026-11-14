@@ -251,3 +251,21 @@ def test_a_restricted_section_is_skipped_but_a_site_wide_refusal_still_stops():
     )
     crawl.drop_restricted()
     assert [i.url for i in crawl.frontier] == ["https://s/news/a"]
+
+
+def test_same_site_http_links_are_upgraded_and_the_request_ceiling_scales_with_the_page_budget():
+    from collections import deque
+
+    from mzizi_engine.web.crawl.engine import Crawl
+    from mzizi_engine.web.crawl.service import REQUESTS_PER_PAGE, REQUEST_HEADROOM
+
+    assert 120 * REQUESTS_PER_PAGE + REQUEST_HEADROOM > 120 * 4 + 50
+    crawl = Crawl.__new__(Crawl)
+    from collections import defaultdict
+
+    from mzizi_fetch.web.urls import Deduplicator
+
+    crawl.frontier, crawl.seen = deque(), Deduplicator()
+    crawl.query_variants, crawl.https_hosts = defaultdict(set), frozenset({"s.example"})
+    crawl.enqueue("http://s.example/about", 1, "", "")
+    assert [i.url for i in crawl.frontier] == ["https://s.example/about"]

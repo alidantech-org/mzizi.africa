@@ -178,5 +178,5 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
 
 def finish(crawl: Crawl) -> CrawlSummary:
     pages = write_markdown(crawl) if crawl.request.markdown and crawl.html else list(crawl.pages)
-    complete = not crawl.frontier and not crawl.stopped
+    complete = not crawl.frontier and not crawl.stopped and bool(crawl.pages)  # an unreachable site is not complete
     return export(crawl, pages, complete)

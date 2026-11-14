@@ -79,6 +79,7 @@ class Crawl:
     query_variants: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
     visited_groups: dict[str, int] = field(default_factory=lambda: defaultdict(int))
     restricted_groups: set[str] = field(default_factory=set)  # parts of the site that say 'access denied' or need a login
+    https_hosts: frozenset[str] = frozenset()  # hosts the crawl started on over https
     recorded_finals: set[str] = field(default_factory=set)  # where pages really ended up, so redirect aliases are not recorded twice
     on_page: Callable[[PageRecord, bytes], None] | None = None  # called with each page as it is fetched
     on_reference: Callable[[LinkRecord], None] | None = None  # called with every link or file reference found
@@ -117,6 +118,9 @@ class Crawl:
             self.frontier = deque(i for i in self.frontier if group_of(i.url) not in self.restricted_groups)
 
     def enqueue(self, url: str, depth: int, source: str, anchor: str) -> None:
+        parts = urlsplit(url)
+        if parts.scheme == "http" and parts.hostname in self.https_hosts:  # the site is served over https: skip the redirect
+            url = url.replace("http://", "https://", 1)
         query = urlsplit(url).query
         if query:  # many query variants of one path are usually a calendar or filter trap: keep a handful
             variants = self.query_variants[host_of(url) + path_of(url)]
@@ -136,6 +140,7 @@ def start_crawl(request: CrawlRequest, client: WebClient, backend: PageBackend) 
     starts = tuple(request.starts)
     digest = digest_of(request)
     crawl = Crawl(request, client, backend, out_dir, tuple(sorted({host_of(u) for u in starts})), digest)
+    crawl.https_hosts = frozenset(urlsplit(u).hostname or "" for u in starts if u.startswith("https://"))
     resumed = load_state(out_dir, digest) if request.resume else None
     if resumed is not None and not resumed.complete:
         for key in resumed.seen:
@@ -214,6 +219,8 @@ def _accept(crawl: Crawl, item: FrontierItem, response: WebResponse) -> bool:
         crawl.visited_groups[group_of(item.url)] += 1  # a failed attempt counts for ordering, so failures do not run back to back
     if response.refused is not None:
         _error(crawl, item.url, "policy", "refused", response.refused.reason)
+        if response.refused.reason.startswith("request budget"):  # the ceiling is a stop, not 3,000 separate errors
+            crawl.stopped = f"stopped: {response.refused.reason}"
         return False
     if response.block is not None and response.decision is not None:
         decision = response.decision
