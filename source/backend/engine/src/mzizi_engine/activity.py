@@ -8,7 +8,6 @@ and replayed the next time it is reachable, so a record is never lost. `ENGINE_A
 
 from __future__ import annotations
 
-import atexit
 import json
 import logging
 import os
@@ -43,17 +42,8 @@ def _shared_sandbox() -> MongoSandbox:
     global _shared
     with _lock:
         if _shared is None:
-            _shared = MongoSandbox(load_settings())
-            atexit.register(_close_shared)
+            _shared = MongoSandbox(load_settings())  # never closed by us: the OS closes it at exit, after every thread is done
         return _shared
-
-
-def _close_shared() -> None:
-    global _shared
-    with _lock:
-        if _shared is not None:
-            _shared.close()
-            _shared = None
 
 
 class Activity:

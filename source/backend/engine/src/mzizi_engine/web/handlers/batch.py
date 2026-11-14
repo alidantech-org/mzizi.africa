@@ -118,6 +118,9 @@ def run_batch(request: BatchRequest) -> BatchReport:
         children.add(process)
         output, _ = process.communicate()
         children.discard(process)
+        passes = folder / "passes"
+        passes.mkdir(exist_ok=True)
+        atomic_write(passes / f"{host}-pass{state.passes + 1}.log", output.encode("utf-8", errors="replace"))
         report = _parse(output)
         seconds = int(time.monotonic() - started)
         with lock:
