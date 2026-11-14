@@ -18,7 +18,7 @@ Downloads now write `catalog.json` with link context (`found_at`). Ranking rules
 - [ ] A ranking module in `mzizi_scraping` that scores catalog entries from rules, with evidence per match.
 - [ ] `web rank` capability writes `expectations.json` and records scores.
 - [x] A Kasarani NG-CDF family bundle fixture validates against the schemas.
-- [ ] Alternatives to the `found_at` shape are documented for later review.
+- [x] Alternatives to the `found_at` shape are documented for later review.
 
 ## Comments
 
@@ -33,3 +33,7 @@ Built .dev layout module, readable naming module, site store with layered change
 ### 2026-11-14T08:21:50.097Z · PETER IRUNGU
 
 Added per-site browser tabs (registry, site lease, 2-tab cap, pop-up tracking), query-aware page keys, per-site extra CA bundle. Batch crawl of NG-CDF, Nairobi and county sites in progress.
+
+### 2026-11-14T20:24:21.618Z · PETER IRUNGU
+
+Halted by the user for the day. Progress and how to resume are recorded in .docs/handoffs/HANDOFF-SITE-SCRAPING-BATCH-20261114.md. 24 of 47 sites done, about 13,000 pages and 17,400 files saved, nothing deleted. Constitution job pipeline is design-only and waits on the user's answers.
