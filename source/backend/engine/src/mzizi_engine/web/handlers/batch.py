@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import queue
+import shutil
 import signal
 import subprocess
 import sys
@@ -124,6 +125,10 @@ def run_batch(request: BatchRequest) -> BatchReport:
 
     def run_pass(host: str) -> None:
         state = states[host]
+        if shutil.disk_usage(layout.root).free < request.min_free_gb * 1024**3:
+            log({"host": host, "error": f"paused: less than {request.min_free_gb} GB of disk free; free space and run the batch again"})
+            stop.set()  # no new passes start; running ones finish and save
+            return
         started = time.monotonic()
         process = subprocess.Popen(  # noqa: S603 - our own interpreter and arguments
             _command(request, state.url), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,

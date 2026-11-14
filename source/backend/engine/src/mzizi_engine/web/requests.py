@@ -195,6 +195,7 @@ class BatchRequest(Workspace):
     max_seconds: int = 2400  # per pass; fetching stops gracefully and everything is still saved
     download_limit: int = 150
     max_passes: int = 6
+    min_free_gb: float = 8.0  # no new pass starts below this much free disk
 
 
 class ExportRequest(Workspace):

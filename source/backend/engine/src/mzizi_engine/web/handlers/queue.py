@@ -7,6 +7,7 @@ downloaded and flagged by the downloader, never opened. Each queue item records 
 from __future__ import annotations
 
 import hashlib
+import os
 import shutil
 import time
 from datetime import UTC, datetime
@@ -40,6 +41,11 @@ QUEUE = "download_queue"
 RESOURCE_TABLES = {  # inventory table of each kind (`candidate` rows come from hunted.csv)
    "document": "documents", "image": "images", "media": "media", "file": "files"}
 MAX_ATTEMPTS = 3
+MIN_FREE_BYTES = int(float(os.environ.get("MZIZI_MIN_FREE_GB", "8")) * 1024**3)  # downloads stop taking new files below this much free disk
+
+
+def disk_is_low(path: Path) -> bool:
+    return shutil.disk_usage(path).free < MIN_FREE_BYTES
 GATE_BUDGET = 1_000_000
 
 
@@ -208,6 +214,8 @@ class FileFetcher:
     def process(self, item: dict) -> str:  # noqa: ANN001 - a queue document (the Mongo parsing boundary)
         """Downloads one queue item; returns `done`, `failed` or `skipped`. Every outcome is recorded on the item."""
         put, url = self.activity.put, str(item["url"])
+        if disk_is_low(self.site.root):  # leave the item queued: nothing is lost, it is fetched when space returns
+            return "skipped"
         put(QUEUE, [{**item, "state": State.DOWNLOADING.value, "updated_at": _now()}])
         refusal = self.gate.preflight(url)  # robots.txt and scope apply to files too
         if refusal is not None:
