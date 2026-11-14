@@ -25,6 +25,7 @@ from mzizi_engine.sitestore import atomic_write
 from mzizi_engine.web.requests import BatchRequest
 
 RESULT_TAIL = 400
+BLOCKED_WORDS = ("http_403", "http_401", "captcha", "challenge", "block_notice")
 
 
 class SiteState(BaseModel):
@@ -131,6 +132,9 @@ def run_batch(request: BatchRequest) -> BatchReport:
                 state.complete, state.pages, state.note = complete, int(report.get("pages_visited", 0)), ""
                 # done: the whole site was reached, or a pass found nothing new (the budget is not the limit any more)
                 state.done = complete or (state.passes > 1 and new == 0 and state.last_new == 0)
+                stopped = str(report.get("stopped", "")).lower()
+                if any(word in stopped for word in BLOCKED_WORDS):  # the site refuses us: never retried, never worked around
+                    state.done, state.note = True, f"blocked by the site: {stopped[:120]}"
                 state.last_new = new
             else:
                 state.note = output[-RESULT_TAIL:].replace("\n", " ")
@@ -138,7 +142,7 @@ def run_batch(request: BatchRequest) -> BatchReport:
         log({
             "host": host, "pass": state.passes, "exit": process.returncode, "seconds": seconds, "done": state.done,
             **{k: report.get(k) for k in ("pages_visited", "new", "changed", "fresh", "complete", "files_hunted",
-                                           "files_downloaded", "downloads_failed", "markdown_converted")},
+                                           "files_downloaded", "downloads_failed", "markdown_converted", "stopped")},
             "error": state.note,
         })
         if not state.done and state.passes < request.max_passes and not stop.is_set():

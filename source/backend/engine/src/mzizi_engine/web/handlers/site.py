@@ -56,6 +56,7 @@ class WatchReport(BaseModel):
     fresh: int  # served from the saved copy (fetched recently), not fetched again
     gone: int
     complete: bool
+    stopped: str = ""  # why fetching ended early (a time or page budget, a block)
     files_hunted: int = 0
     files_downloaded: int = 0
     markdown_converted: int = 0
@@ -305,11 +306,11 @@ def watch_site(request: WatchRequest) -> WatchReport:
         shot.unlink(missing_ok=True)
 
     crawl_request = request.model_copy(update={"record": False, "markdown": False})
-    complete, done, hunted, fetched = False, {"gone": 0}, 0, (0, 0)
+    complete, stopped, done, hunted, fetched = False, "", {"gone": 0}, 0, (0, 0)
     try:
         try:
             summary = crawl_site(crawl_request, on_page, lookup, on_reference)
-            complete = summary.complete
+            complete, stopped = summary.complete, summary.stopped
         finally:  # whatever was fetched is saved, converted and downloaded, even if the crawl stopped early or failed
             outcomes = writer.close()
             for thread in hunters:
@@ -341,6 +342,7 @@ def watch_site(request: WatchRequest) -> WatchReport:
         counts[outcome.result] += 1
     return WatchReport(
         site=str(site.root), host=host, pages_visited=len(outcomes), gone=done["gone"], complete=complete,
+        stopped=stopped,
         changes=tuple(o for o in outcomes if o.result in ("new", "changed")),
         files_hunted=hunted, files_downloaded=fetched[0], downloads_failed=fetched[1],
         markdown_converted=markdown.converted, **counts,
