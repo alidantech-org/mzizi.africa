@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 type Document = dict[str, JsonValue]
 SERVER_SELECTION_MS = 2000
+POOL_SIZE = 16  # one process, a few threads: a small pool keeps the server's file handles free
 PROBE_COLLECTION = "_probe"
 
 
@@ -29,7 +30,7 @@ class MongoSandbox:
             ) from problem
         self.settings = settings
         self._client: MongoClient[Document] = pymongo.MongoClient(
-            settings.mongo_url, serverSelectionTimeoutMS=SERVER_SELECTION_MS
+            settings.mongo_url, serverSelectionTimeoutMS=SERVER_SELECTION_MS, maxPoolSize=POOL_SIZE
         )
         self._database = self._client[settings.mongo_database]
 

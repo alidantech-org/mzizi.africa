@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from mzizi_engine.capabilities import Capability, CapabilityRegistry
 from mzizi_engine.jsonvalue import Payload
-from mzizi_engine.web.handlers import changes, crawl, downloads, inspect, queue, rank, scrape, site, survey
+from mzizi_engine.web.handlers import batch, changes, crawl, downloads, inspect, queue, rank, scrape, site, survey
 from mzizi_engine.web.handlers.common import capability
 from mzizi_engine.web.requests import (
     CrawlRequest,
+    BatchRequest,
     DiffRequest,
     EnqueueRequest,
     FetchQueueRequest,
@@ -63,6 +64,7 @@ def register_web(registry: CapabilityRegistry) -> None:
         ("download.run", "Download queued items and track each in MongoDB", capability(FetchQueueRequest, queue.fetch_queue)),
         ("download.queue", "Counts of queued, running, done and failed downloads", capability(QueueStatusRequest, queue.queue_status)),
         ("site.watch", "Crawl a site by URL; keep hashed, versioned pages and report changes", capability(WatchRequest, site.watch_site)),
+        ("site.batch", "Run many sites at once, resumable, losing nothing", capability(BatchRequest, batch.run_batch)),
         ("web.diff", "Compare two crawls: pages added, removed and changed", capability(DiffRequest, changes.diff_crawls)),
         ("fetch.url", "One identified, policy-checked HTTP request", capability(UrlRequest, inspect.fetch_one)),
         ("fetch.robots", "The robots.txt decision for a URL, recorded", capability(UrlRequest, inspect.robots_policy)),

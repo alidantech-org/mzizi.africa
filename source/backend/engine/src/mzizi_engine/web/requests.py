@@ -60,6 +60,7 @@ class CrawlRequest(Workspace):
     headed: bool = False
     screenshots: bool = False
     paginate: bool = True  # follow next links and, in a browser, click next buttons, load more and infinite scroll
+    max_seconds: int = 0  # stop fetching after this long, then finish saving; 0 means no limit
     max_list_pages: int = 25  # at most this many pages per listing (the first page included)
     record: bool = True  # False: the caller (site watch) keeps its own site-level records
     on_block: OnBlock = OnBlock.BACK_OFF
@@ -181,6 +182,19 @@ class FetchQueueRequest(Workspace):
 
 class QueueStatusRequest(Workspace):
     site: str = ""
+
+
+class BatchRequest(Workspace):
+    file: str  # one URL per line
+    name: str = "default"
+    workers: int = 4  # sites run at the same time
+    max_pages: int = 120
+    max_depth: int = 5
+    delay: float = 2.0
+    max_list_pages: int = 25
+    max_seconds: int = 2400  # per pass; fetching stops gracefully and everything is still saved
+    download_limit: int = 150
+    max_passes: int = 6
 
 
 class ExportRequest(Workspace):

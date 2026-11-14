@@ -39,7 +39,7 @@ class MarkdownPool:
 
     def __init__(self, store: SiteStore, workers: int | None = None) -> None:
         self.store = store
-        count = workers or max(1, min(4, (os.cpu_count() or 2) - 1))
+        count = workers or int(os.environ.get("MZIZI_MARKDOWN_WORKERS") or max(1, min(4, (os.cpu_count() or 2) - 1)))
         self._executor = ProcessPoolExecutor(max_workers=count, mp_context=multiprocessing.get_context("spawn"))
         self._lock = threading.Lock()
         self._samples: list[str] = []

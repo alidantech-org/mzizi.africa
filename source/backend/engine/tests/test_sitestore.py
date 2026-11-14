@@ -104,3 +104,28 @@ def test_a_recently_fetched_page_is_served_from_disk_and_not_touched(tmp_path: P
     backend = CachedBackend(Inner(), lambda url: Cached() if url.endswith("/allocations/") else None)  # type: ignore[arg-type]
     assert backend.get("https://k.ngcdf.go.ke/allocations/").body == b"x"
     assert backend.take_extra("u") == []  # the wrapped backend's other methods stay reachable
+
+
+def test_records_are_spooled_when_mongodb_is_down_and_replayed_later(tmp_path: Path, monkeypatch):
+    from mzizi_engine import activity as module
+
+    class Down:
+        def upsert_many(self, collection, documents):
+            raise ConnectionError("server gone")
+
+    monkeypatch.setattr(module, "RETRY_WAITS", ())
+    monkeypatch.setattr(module, "_spool_dir", lambda: tmp_path / "spool")
+    handle = module.Activity(Down())  # type: ignore[arg-type]
+    assert handle.put("pages", [{"_id": "a", "n": 1}, {"_id": "b", "n": 2}]) == 0
+    assert list((tmp_path / "spool").glob("*.jsonl"))
+
+    class Up:
+        stored: list = []
+
+        def upsert_many(self, collection, documents):
+            self.stored.extend(documents)
+            return len(documents)
+
+    up = Up()
+    assert module.replay_spool(module.Activity(up)) == 2  # type: ignore[arg-type]
+    assert [d["_id"] for d in up.stored] == ["a", "b"] and not list((tmp_path / "spool").glob("*.jsonl"))

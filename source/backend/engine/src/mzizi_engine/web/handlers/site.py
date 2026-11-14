@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import shutil
+import signal
 import threading
 from pathlib import Path
 from urllib.parse import urlparse
@@ -13,6 +14,7 @@ from pydantic import BaseModel
 
 from mzizi_engine.activity import open_activity
 from mzizi_engine.layout import DevLayout, address_of
+from mzizi_engine.web.crawl.cancel import CANCEL
 from mzizi_engine.web.crawl.service import extra_ca_bundle
 from mzizi_engine.web.identity import user_agent
 from mzizi_engine.sitestore import atomic_write, Outcome, SiteStore, SiteWriter, Visit
@@ -208,6 +210,10 @@ FILE_KINDS = {"image": "image", "media": "media", "embed": "media", "document": 
 def watch_site(request: WatchRequest) -> WatchReport:
     """Crawls a site, saving pages as they arrive; Markdown conversion, file hunting and downloads run beside it."""
     layout = DevLayout.locate()
+    CANCEL.clear()
+    if threading.current_thread() is threading.main_thread():  # a stop signal ends fetching, then everything is saved
+        for signum in (signal.SIGTERM, signal.SIGINT):
+            signal.signal(signum, lambda *_: CANCEL.set())
     start = request.starts[0] if request.starts else request.url
     landed = canonical_url(start, extra_ca_bundle(host_of(start)))
     if landed != start:  # the site really lives on another host of the same domain: crawl and save it there

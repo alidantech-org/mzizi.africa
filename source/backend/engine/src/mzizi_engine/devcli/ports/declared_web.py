@@ -23,6 +23,7 @@ WEB: tuple[Port, ...] = (
     declare("download.run", PKG, "Download queued items and track each in MongoDB", 4),
     declare("download.queue", PKG, "Counts of queued, running, done and failed downloads", 4),
     declare("site.watch", PKG, "Crawl a site by URL; keep hashed, versioned pages and report changes", 3),
+    declare("site.batch", PKG, "Run many sites at once, resumable, losing nothing", 3),
     declare("web.diff", PKG, "Compare two crawls: pages added, removed and changed", 3),
     declare("web.download", "mzizi-fetch", "Safe, resumable, throttled downloads into quarantine", 4),
     declare("web.downloads", PKG, "Progress and results of downloads", 4),

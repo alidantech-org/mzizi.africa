@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from collections import defaultdict, deque
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -11,6 +12,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from mzizi_engine.web.crawl.backends import PageBackend
+from mzizi_engine.web.crawl.cancel import CANCEL
 from mzizi_engine.web.crawl.sitemaps import discover_sitemap_urls, partition
 from mzizi_engine.web.crawl.state import CrawlState, digest_of, load_state, save_state
 from mzizi_engine.web.records import (
@@ -158,12 +160,19 @@ def run(crawl: Crawl) -> None:
     request, out_dir = crawl.request, crawl.out_dir
     if crawl.on_page is None:
         (out_dir / "raw").mkdir(parents=True, exist_ok=True)
+    started = time.monotonic()
     while (
         crawl.frontier
         and crawl.fetched < request.max_pages
         and len(crawl.pages) < request.max_pages * SAVED_PAGE_FACTOR
         and not crawl.stopped
     ):
+        if CANCEL.is_set():
+            crawl.stopped = "interrupted: finishing what was fetched"
+            break
+        if request.max_seconds and time.monotonic() - started > request.max_seconds:
+            crawl.stopped = f"time budget of {request.max_seconds} s reached"
+            break
         item = crawl.next_item()
         response = crawl.backend.get(item.url)
         if not _accept(crawl, item, response):
