@@ -118,9 +118,14 @@ def canonical_url(url: str, ca_bundle: Path | None = None) -> str:
     if ca_bundle is not None:
         verify = ssl.create_default_context()
         verify.load_verify_locations(cafile=str(ca_bundle))
-    try:
-        response = httpx.get(url, follow_redirects=True, timeout=15, verify=verify, headers={"User-Agent": user_agent()})
-    except httpx.HTTPError:
+    response = None
+    for _attempt in range(3):  # a busy site can be slow to answer: ask again before giving up
+        try:
+            response = httpx.get(url, follow_redirects=True, timeout=30, verify=verify, headers={"User-Agent": user_agent()})
+            break
+        except httpx.HTTPError:
+            continue
+    if response is None:
         return url
     final = str(response.url)
     same = address_of(final).group == address_of(url).group
@@ -216,12 +221,19 @@ def watch_site(request: WatchRequest) -> WatchReport:
         for signum in (signal.SIGTERM, signal.SIGINT):
             signal.signal(signum, lambda *_: CANCEL.set())
     start = request.starts[0] if request.starts else request.url
+    activity = open_activity()
     landed = canonical_url(start, extra_ca_bundle(host_of(start)))
+    if activity is not None:  # remember where a start URL lands, so a slow answer later cannot send us to the wrong host
+        alias_id = host_of(start)
+        if landed != start:
+            activity.put("site_aliases", [{"_id": alias_id, "from": alias_id, "canonical": landed}])
+        else:
+            known = activity.get("site_aliases", {"_id": alias_id}, 1)
+            landed = known[0]["canonical"] if known else start
     if landed != start:  # the site really lives on another host of the same domain: crawl and save it there
         request = request.model_copy(update={"url": landed, "urls": ()})
     site = layout.website(landed)
     run = Path(request.out_dir)
-    activity = open_activity()
     store = SiteStore(site, activity, layout.root)
     host = site.address.host
     site_url = f"https://{host}/"
