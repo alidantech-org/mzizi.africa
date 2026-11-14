@@ -7,11 +7,6 @@ version: dryv/v1alpha1
 
 sources:
   authoring:
-    model:
-      type: typescript
-      path: dryv/contracts
-      entrypoint: apps/main/index.ts
-    # Independent database root; --app database compiles it without the legacy API root.
     database:
       type: typescript
       path: dryv/contracts
@@ -82,7 +77,7 @@ destinations:
     path: source/backend/database/generated/sql
 
 authoring:
-  source: { $ref: "#/sources/authoring/model" }
+  source: { $ref: "#/sources/authoring/database" }
   destination: { $ref: "#/destinations/ir/compiled" }
 
 packs:

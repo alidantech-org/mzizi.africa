@@ -2,7 +2,6 @@
 import { expect, test } from "bun:test";
 import { auditStoreAssignments } from "../dryv/tools/stores/audit.ts";
 import { parseStoreAssignments } from "../dryv/tools/stores/parse.ts";
-import { legacyApiSelection } from "./tasks/dryv.ts";
 
 function fixture(store = "main"): string {
   return JSON.stringify({
@@ -32,20 +31,4 @@ test("undefined canonical stores fail instead of inheriting a namespace list", (
 });
 test("malformed store references fail at the parsing boundary", () => {
   expect(() => parseStoreAssignments(fixture().replace("#/stores/main", "#/schemas/main"))).toThrow("expected #/stores/ reference");
-});
-test("legacy API selection never pulls database foundation packs into its follow-up workflow", () => {
-  expect(legacyApiSelection()).toEqual([
-    "--pack",
-    "types",
-    "--pack",
-    "dtos",
-    "--pack",
-    "entities",
-    "--pack",
-    "type-files",
-    "--pack",
-    "use-cases",
-    "--pack",
-    "server",
-  ]);
 });

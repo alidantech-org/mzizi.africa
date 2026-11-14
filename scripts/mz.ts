@@ -117,7 +117,7 @@ export const commands: Record<string, Command> = {
   "dryv:api": { summary: "run the Dryv engine API on :8750 in the foreground", run: () => group("dryv:api", [dryv.apiStep()]) },
   "dryv:api:stop": { summary: "stop the Dryv engine API", run: () => dryv.stopApi() },
   "dryv:trust": { summary: "trust the project packs (once per machine)", run: () => dryv.trust() },
-  "dryv:generate": { summary: "generate the NestJS API from the contracts, then adopt, verify and export", run: () => dryv.generate() },
+  "dryv:generate": { summary: "generate database artifacts from the current schema and operation contracts", run: () => dryv.generate() },
   "dryv:database:typecheck": {
     summary: "typecheck the database root and neutral schemas",
     run: () => group("database types", [step("database:typecheck", `${root}/dryv`, ["bun", "run", "database:typecheck"])]),

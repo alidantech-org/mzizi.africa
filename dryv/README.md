@@ -7,7 +7,6 @@ TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv co
 - `../dryv.yaml`: the Dryv project file. It lives at the repository root because generation destinations may not leave the project root. It pins the engine (`a7b13a30`) and the packs repository (`7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a`).
 - `contracts/schemas/`: the new design — one file per database schema, grouped by database (`mzizi/` for canonical domain data, `operational/` for `mzizi_operations`), over the `_shared.ts` base; shared by every app.
 - `contracts/apps/database/`: database app, named provided operations and the two logical store identities. The neutral schema groups select their store through storage facets.
-- `contracts/apps/main/index.ts`: the legacy pre-foundation application; its groups moved to `contracts/_archive/{foundation,domains}` and keep generating the existing NestJS API until migration to the new design.
 - `packs/type-files`, `packs/use-cases`: project packs that scaffold shared types and per-operation use cases for the NestJS API.
 - `packs/rust-models`, `packs/rust-sql`: store-scoped database packs; each activates once for Main and once for Operations. `packs/rust-catalog` owns the stable shared Rust catalogue. `database:assignments` audits compiled canonical placement without namespace lists in usage.
 
@@ -112,8 +111,7 @@ Both stores are declared by `contracts/apps/database/index.ts`. Persisted groups
 storage facet can override its group default explicitly. Namespace and table remain separate.
 The database app declares read/write access to both stores and explicitly provides six
 named operations from `reference.ts`, `filesystem.ts` and `auth.ts`. Non-persisted Accountability view models have no store/table.
-The legacy API remains a separate authoring root; this setup does not mix its old domain entities
-with the database foundation or create an engine/client app implicitly.
+The database application composes the current schema groups and provides the database operations.
 
 Root `dryv.yaml` maps `main` to `mzizi` and `operations` to `mzizi_operations`. Runtime variables
 are `MZIZI_DB_MAIN_URL` and `MZIZI_DB_OPERATIONS_URL`; administrative names have `_ADMIN_URL`.
@@ -140,7 +138,7 @@ generation writes only that store's models, verifier and SQL snapshot. Rust rows
 `models::main::<namespace>::<entity>` and `models::operations::<namespace>::<entity>`. SQL remains
 `generated/sql/main.sql` and `operations.sql` for the existing administration CLI. Shared
 `mod.rs` and `contract.rs` belong only to `rust-catalog`; no two activations own one output.
-Legacy `bun run dryv:generate` selects only its six API packs and retains its API follow-ups.
+`bun run dryv:generate` selects the active database app and its packs.
 
 Dryv checkpoints are local by default. After actual successful generation/checks, use the local
 Dryv CLI to run `checkpoint approve --app database` or approve a complete selected store with
@@ -155,10 +153,8 @@ does not cover Mzizi's temporal properties, advanced constraints and PostGIS pla
 can change a schema snapshot but never rewrites an immutable release or applies it. A changed
 snapshot still requires a reviewed incremental migration procedure; do not reset a release stream.
 
-The database typecheck uses `tsconfig.database.json` and includes every neutral schema plus its
-own application entrypoint. The legacy all-contract typecheck remains separate: its main entrypoint
-currently imports `_archive` files absent from this checkout. This setup does not recreate those
-historical contracts or claim the legacy API can be regenerated from missing inputs.
+The database typecheck uses `tsconfig.database.json` and includes every neutral schema and the
+database application entrypoint. The configured packs emit Rust database models and SQL snapshots.
 
 
 ### Database service contracts
@@ -183,8 +179,6 @@ Engine uniqueness proof for the applicable live-row indexes. Folder registration
 also needs the acting account permission evaluated across the Operations and Main
 stores. The current lookup, auth, and folder routes therefore use service handlers.
 
-The independent product API root still refers to missing `contracts/_archive`
-modules in this checkout. The database check covers the active database root.
 The official Python SDK pack's flat model filenames collide across groups on the
 full database IR. The scratch generation used group-qualified filenames and
 symbols. The generated Rust crate also needs an empty-policy registry fix

@@ -31,7 +31,7 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 | `bun run check:all`                       | `check`, plus Dryv contract checks, the seed registry, `task validate` and the builds                                                            |
 | `bun run dryv:link`                       | links the local Dryv author and compiler into `dryv/node_modules`                                                                                |
 | `bun run dryv:check`                      | typechecks, audits, doctors and compiles the contracts; checks access rules, API boundary and schema                                             |
-| `bun run dryv:generate`                   | generates the NestJS API, adopts the list helper, verifies the output, exports access rules, regenerates the web catalog                         |
+| `bun run dryv:generate`                   | generates database models and SQL snapshots from the current contracts                         |
 | `bun run dryv:verify`                     | fails when the tracked generated output is not what the contracts generate now                                                                   |
 | `bun run dryv:export`                     | re-exports the access rules and the JSON schema                                                                                                  |
 | `bun run dryv:api` / `dryv:api:stop`      | runs or stops the local Dryv engine API by hand                                                                                                  |
@@ -84,7 +84,7 @@ The development sequence is `bun run db:up`, `bun run infra:up`, `bun run db res
 
 ## Dryv
 
-Generation stays connected through Dryv: the contracts in `dryv/contracts` generate the NestJS API, the access rules and JSON schema are exported from the same contracts, and the dashboard catalog is derived from the generated routes. `dryv:generate` runs that whole chain. `dryv:check` also checks the committed Dryv database catalog; `bun run db plan` reports the current entity/table-name gaps against ordered SQL migrations. This report is diagnostic and does not yet emit replacement SQL: current active models and SQL differ, so reconciliation is required first.
+The root generation command compiles the current database contracts and writes Rust row models and SQL schema snapshots. `bun run db plan` compares the current entities and table names with the ordered SQL migrations. Reconcile differences before preparing incremental migrations.
 
 `dryv:generate` and `dryv:verify` need the Dryv engine API. They start it from `DRYV_HOME` when nothing answers on its port and stop it afterwards; an engine that was already running is left alone. The engine is bound to `127.0.0.1` and started in Dryv's development mode, so no Dryv Platform login is needed. If port 8750 is taken by a different Dryv service, choose another: `DRYV_API_PORT=8751 bun run dryv:verify`. The log is `.local/dryv-api.log`. Traps and the manual steps are in `.docs/design/operations/running-dryv.md`.
 
@@ -131,7 +131,7 @@ A Bun project is checked through its own `package.json` scripts when it defines 
 
 ## Store-scoped database generation
 
-`bun run dryv:generate` runs only the legacy product API packs and its existing follow-up exports.
+`bun run dryv:generate` runs the active database app and its configured packs.
 Use `bun run dryv:database:plan`, `bun run dryv:database:generate` or
 `bun run dryv:database:verify` for the independent database foundation app. Forward a selector as
 `bun run dryv:database:generate -- --store main` (or `operations`). These commands start the local

@@ -105,10 +105,6 @@ async function ensureApi(): Promise<() => void> {
   throw new Error(`the Dryv engine API did not start; see ${apiLog}`);
 }
 
-/** Legacy API packs remain independent of the database foundation's canonical application. */
-export const legacyApiSelection = (): string[] =>
-  ["types", "dtos", "entities", "type-files", "use-cases", "server"].flatMap((pack) => ["--pack", pack]);
-
 /** Plan/generate/check the database app; optional store selectors intersect its owned packs. */
 export async function database(action: "plan" | "generate" | "verify", selectors: readonly string[]): Promise<boolean> {
   const stop = await ensureApi();
@@ -132,27 +128,9 @@ export async function database(action: "plan" | "generate" | "verify", selectors
   }
 }
 
-/**
- * Generate the NestJS API from the contracts, then adopt the shared list helper, verify the output is current,
- * re-export the access rules and regenerate the web data catalog. A new operation makes the generate step end "failed" at its typecheck stage
- * until the project-owned `*.service.impl.ts` gains the method; the follow-up steps still run so the report is complete.
- */
+/** Generate Rust database models and SQL snapshots from the active application. */
 export async function generate(): Promise<boolean> {
-  const stop = await ensureApi();
-  try {
-    const cli = ["bun", `${dryvHome()}/source/apps/cli/bin/dryv.ts`, "--api", dryvApiUrl(), "--yes", "--no-input"];
-    const env = dryvEnv();
-    const generated = await group("Dryv generate", [step("Generate", root, [...cli, "generate", ...legacyApiSelection()], env)]);
-    const followUp = await group("After generation", [
-      inDryv("Adopt shared list helper", "adopt:list"),
-      inDryv("Generated output is current", "generated:check"),
-      inDryv("Export access rules", "access:export"),
-      ...catalogSteps(),
-    ]);
-    return generated && followUp;
-  } finally {
-    stop();
-  }
+  return database("generate", []);
 }
 
 /** Trust the project packs; needed once per machine before the first generation. */
@@ -166,12 +144,7 @@ export async function trust(): Promise<boolean> {
   }
 }
 
-/** Check that the tracked generated output matches what the contracts would generate now. */
+/** Verify the active database artifacts against their contracts. */
 export async function verify(): Promise<boolean> {
-  const stop = await ensureApi();
-  try {
-    return await group("Dryv verify", [inDryv("Generated output is current", "generated:check")]);
-  } finally {
-    stop();
-  }
+  return database("verify", []);
 }
