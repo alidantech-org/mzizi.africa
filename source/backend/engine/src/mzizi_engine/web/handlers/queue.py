@@ -192,6 +192,14 @@ class FileFetcher:
         except OSError:
             pass
 
+    def _is_html_page(self, url: str) -> bool:
+        """True when a HEAD request says the address serves an HTML page; any doubt (an error, no answer) is False."""
+        try:
+            reply = self.downloader.client.head(url, follow_redirects=True, timeout=15)
+        except Exception:
+            return False
+        return reply.status_code < 400 and reply.headers.get("content-type", "").lower().startswith("text/html")
+
     def _clean(self, result_file: str, url: str) -> None:
         (self.stage / result_file).unlink(missing_ok=True)
         (self.stage / f"{result_file}.json").unlink(missing_ok=True)
@@ -205,6 +213,9 @@ class FileFetcher:
         if refusal is not None:
             reason = refusal.refused.reason if refusal.refused else "refused"
             put(QUEUE, [{**item, "state": State.SKIPPED.value, "error": reason, "updated_at": _now()}])
+            return "skipped"
+        if str(item["kind"]) == "candidate" and self._is_html_page(url):  # a cheap HEAD saves fetching a whole page
+            put(QUEUE, [{**item, "state": State.SKIPPED.value, "error": "not a file (HTML)", "updated_at": _now()}])
             return "skipped"
         try:
             try:
