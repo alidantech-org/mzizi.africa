@@ -24,6 +24,7 @@ from urllib.parse import urljoin, urlparse
 import httpx
 
 from mzizi_fetch.models import Frozen
+from mzizi_fetch.web.client import trust_store
 from mzizi_fetch.web.urls import host_of
 from mzizi_fetch.web.vocabulary import vocabulary
 
@@ -155,6 +156,7 @@ class Downloader:
         user_agent: str,
         policy: DownloadPolicy | None = None,
         transport: httpx.BaseTransport | None = None,
+        extra_ca_bundle: Path | None = None,
     ) -> None:
         self.destination = destination
         self.policy = policy or DownloadPolicy()
@@ -166,7 +168,11 @@ class Downloader:
             pool=self.policy.connect_timeout,
         )
         self.client = httpx.Client(
-            follow_redirects=False, timeout=timeout, headers={"User-Agent": user_agent}, transport=transport
+            follow_redirects=False,
+            timeout=timeout,
+            headers={"User-Agent": user_agent},
+            transport=transport,
+            verify=trust_store(extra_ca_bundle),
         )
         self._count = 0
 

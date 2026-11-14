@@ -31,7 +31,7 @@ from mzizi_engine.web.handlers.downloads import (
 )
 from mzizi_engine.web.identity import user_agent
 from mzizi_engine.web.export import read_csv
-from mzizi_engine.web.crawl.service import client_for
+from mzizi_engine.web.crawl.service import client_for, extra_ca_bundle
 from mzizi_engine.web.requests import CrawlRequest, EnqueueRequest, FetchQueueRequest, QueueStatusRequest
 from mzizi_fetch.web.download import Downloader
 from mzizi_fetch.web.vocabulary import vocabulary
@@ -40,6 +40,7 @@ QUEUE = "download_queue"
 RESOURCE_TABLES = {  # inventory table of each kind (`candidate` rows come from hunted.csv)
    "document": "documents", "image": "images", "media": "media", "file": "files"}
 MAX_ATTEMPTS = 3
+GATE_BUDGET = 1_000_000
 
 
 class State(StrEnum):
@@ -178,8 +179,9 @@ class FileFetcher:
         self.host = site.address.host
         self.stage = site.root / "scraped" / ".incoming" / stage_name
         self.stage.mkdir(parents=True, exist_ok=True)
-        self.downloader = Downloader(self.stage, user_agent(), _policy_for(request))
-        self.gate = client_for(CrawlRequest(out_dir=str(self.stage), url=f"https://{self.host}/"), user_agent())
+        self.downloader = Downloader(self.stage, user_agent(), _policy_for(request), extra_ca_bundle=extra_ca_bundle(self.host))
+        # the gate only checks robots.txt and scope for each file: a huge budget keeps it from refusing files for "using up" requests
+        self.gate = client_for(CrawlRequest(out_dir=str(self.stage), url=f"https://{self.host}/", max_pages=GATE_BUDGET), user_agent())
 
     def close(self) -> None:
         self.downloader.close()

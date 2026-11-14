@@ -85,7 +85,7 @@ class WebResponse(Frozen):
         return self.refused is None and not self.error and self.block is None and 200 <= self.status < 400
 
 
-def _trust(extra: Path | None) -> ssl.SSLContext | bool:
+def trust_store(extra: Path | None) -> ssl.SSLContext | bool:
     """The system trust store plus one extra CA bundle (for a site that sends an incomplete certificate chain)."""
     if extra is None:
         return True
@@ -117,7 +117,7 @@ class WebClient:
         self.max_bytes, self.sleep, self.clock = max_bytes, sleep, clock
         self.headers = {"User-Agent": user_agent, "Accept": "*/*", **(headers or {})}
         self.http = httpx.Client(
-            follow_redirects=False, timeout=timeout, transport=transport, verify=_trust(extra_ca_bundle)
+            follow_redirects=False, timeout=timeout, transport=transport, verify=trust_store(extra_ca_bundle)
         )
         self.cache = ResponseCache(cache_dir)
         self.provenance: list[Provenance] = []
