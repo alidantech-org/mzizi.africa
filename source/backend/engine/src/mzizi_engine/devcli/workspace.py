@@ -119,12 +119,15 @@ class Workspace:
         now = datetime.now(UTC)
         run_id = f"{now:%H%M%S}-{command.replace(' ', '-')}"
         day = self.runs / f"{now:%Y-%m-%d}"
-        folder = day / run_id
-        suffix = 1
-        while folder.exists():
-            suffix += 1
-            folder = day / f"{run_id}-{suffix}"
-        folder.mkdir(parents=True)
+        day.mkdir(parents=True, exist_ok=True)
+        folder, suffix = day / run_id, 1
+        while True:  # creating the folder is the claim: two runs starting in the same second get different names
+            try:
+                folder.mkdir()
+                break
+            except FileExistsError:
+                suffix += 1
+                folder = day / f"{run_id}-{suffix}"
         record = RunRecord(
             run_id=folder.name,
             command=command,

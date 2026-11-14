@@ -88,3 +88,20 @@ def test_long_results_are_previewed_without_parsing_the_truncated_json(workspace
     result = invoke("extract", "json", "big.json")
     assert result.exit_code == 0
     assert "more lines" in result.output
+
+
+def test_runs_started_at_the_same_moment_get_different_folders(tmp_path):
+    import threading
+
+    from mzizi_engine.devcli.workspace import Workspace
+
+    workspace = Workspace(tmp_path)
+    folders: list[str] = []
+
+    def start() -> None:
+        folders.append(workspace.start_run("site watch", None, {}).folder.name)
+
+    threads = [threading.Thread(target=start) for _ in range(12)]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+    assert len(set(folders)) == 12
