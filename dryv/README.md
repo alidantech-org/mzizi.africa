@@ -163,17 +163,18 @@ Use `bun run --cwd dryv database:typecheck` and `bun run --cwd dryv database:com
 to check this root independently.
 
 The reference module binds the two browse routes to named, paged queries. It keeps
-the live `schemes` and `values` envelopes and snake_case fields. Member lookup uses
+the `schemes` and `values` envelopes and uses authored camelCase field names.
+These names also appear on the generated HTTP surface. Member lookup uses
 the live `{ scheme, code }` request and `{ value }` response. The filesystem module
 uses a read projection for the folder returned by registration. The auth module
 describes account resolution and permission evaluation using the live wire fields.
-Shared HTTP failure mappings are in `contracts/apps/database/failures.ts`.
+Shared HTTP failure mappings are in `contracts/apps/database/_shared.ts`.
 
 Before switching runtime handlers, reconcile the immutable initial migration with
 the current model snapshot. The initial reference and folder tables use snake_case
-columns and omit fields present in the newer generated snapshot. The current SeaORM
-pack uses authored column names, and its paging executor requires supplied numeric
-arguments even when an input schema declares a default. Member lookup needs an
+columns and omit fields present in the newer generated snapshot. When activating
+the Axum repository pack, set `repositories: true` and `snake_case_columns: true`
+to match the SQL column names. Member lookup needs an
 Engine uniqueness proof for the applicable live-row indexes. Folder registration
 also needs the acting account permission evaluated across the Operations and Main
 stores. The current lookup, auth, and folder routes therefore use service handlers.

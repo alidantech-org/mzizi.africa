@@ -24,7 +24,7 @@ const SchemeWindow = reference
 
 const MemberWindow = reference
   .schema("MemberWindow", {
-    scheme_id: dryv.field(p.Id),
+    schemeId: dryv.field(p.Id),
   })
   .extends(ReferencePage)
   .asRef();
@@ -37,7 +37,7 @@ const { ScanSchemes, ScanMembers } = catalogue.queries({
     .select(({ fields }) => ({
       id: fields.id,
       code: fields.code,
-      owner_snapshot: fields.ownerSnapshot,
+      ownerSnapshot: fields.ownerSnapshot,
       title: fields.title,
     }))
     .orderBy(({ fields }) => [fields.code.order("asc"), fields.id.order("asc")])
@@ -45,13 +45,13 @@ const { ScanSchemes, ScanMembers } = catalogue.queries({
   ScanMembers: dryv.readQuery
     .from(value)
     .input(MemberWindow)
-    .where((row, args) => [row.fields.schemeId.eq(args.scheme_id)])
+    .where((row, args) => [row.fields.schemeId.eq(args.schemeId)])
     .select(({ fields }) => ({
       id: fields.id,
       code: fields.code,
       label: fields.label,
-      scheme_id: fields.schemeId,
-      supersedes_id: fields.supersedesId,
+      schemeId: fields.schemeId,
+      supersedesId: fields.supersedesId,
     }))
     .orderBy(({ fields }) => [fields.code.order("asc"), fields.id.order("asc")])
     .page(({ limit, offset }) => ({ limit, offset, maxLimit: 200 })),
