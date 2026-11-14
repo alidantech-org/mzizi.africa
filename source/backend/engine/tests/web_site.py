@@ -35,6 +35,28 @@ def pages(port: int) -> dict[str, bytes]:
             "Dynamic",
             '<p id="slot">loading</p><script>document.getElementById("slot").innerHTML = \'<a href="/found-by-js">js link</a>\'; console.error("boom");</script><button id="go" onclick="document.title=\'clicked\'">Go</button><input id="name"><img src="/missing.png">',
         ),
+        "/buttons": page(
+            "Buttons",
+            '<ul id="list"></ul><nav aria-label="Pagination Navigation" class="pager"><ul>'
+            '<li><button id="prev" aria-label="Previous page" disabled>&lsaquo;</button></li>'
+            '<li><button id="next" aria-label="Next page">&rsaquo;</button></li></ul></nav>'
+            '<script>var all=["a1","a2","a3","b1","b2","b3","c1","c2","c3"],p=0;function show(){'
+            'document.getElementById("list").innerHTML=all.slice(p*3,p*3+3).map(function(x){return "<li>item "+x+"</li>"}).join("");'
+            'document.getElementById("next").disabled=(p>=2);document.getElementById("prev").disabled=(p<=0)}'
+            'document.getElementById("next").onclick=function(){p++;show()};show()</script>',
+        ),
+        "/loadmore": page(
+            "Load more",
+            '<ul id="list"><li>row 1</li><li>row 2</li></ul><button id="more">Load more</button>'
+            '<script>var n=2,b=document.getElementById("more");b.onclick=function(){for(var i=0;i<2;i++){n++;'
+            'var li=document.createElement("li");li.textContent="row "+n;document.getElementById("list").appendChild(li)}'
+            'if(n>=6){b.remove()}}</script>',
+        ),
+        "/spa": page(
+            "Spa",
+            '<div id="root"></div><script>setTimeout(function(){document.getElementById("root").innerHTML="<h1>Hydrated</h1><p>content</p>"},1200)</script>',
+        ),
+        "/never": page("Never", '<div id="root"></div>'),
         "/popups": page(
             "Popups",
             '<a id="blank" target="_blank" href="/about">about</a>'

@@ -98,6 +98,7 @@ def _ensure_locked(folder: Path, adapter: str, profile_dir: Path, user_agent: st
             f"--remote-debugging-port={port}",
             f"--user-data-dir={profile_dir}",
             f"--user-agent={user_agent}",
+            "--disable-features=CalculateNativeWinOcclusion",
             "--disable-backgrounding-occluded-windows",  # a window behind others must still paint, or screenshots stall
             "--disable-renderer-backgrounding",
             "--disable-background-timer-throttling",

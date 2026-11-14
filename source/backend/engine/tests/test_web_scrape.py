@@ -163,3 +163,55 @@ def test_popups_are_tracked_and_never_pile_up(site: str, tmp_path: Path) -> None
         assert len(session._context.pages) == 1  # type: ignore[attr-defined]
     finally:
         session.close()
+
+
+@pytest.mark.usefixtures("patchright_browser")
+def test_a_client_rendered_page_is_waited_for_and_an_empty_one_gives_up(site: str, tmp_path: Path) -> None:
+    from mzizi_engine.web.browser.adapter import open_session
+    from mzizi_engine.web.browser.models import BrowserConfig
+
+    session = open_session(
+        BrowserConfig(
+            adapter="patchright",
+            profile_dir=tmp_path / "p",
+            downloads_dir=tmp_path / "d",
+            screenshots_dir=tmp_path / "s",
+            user_agent="MziziTest/1.0 (+https://mzizi-test.africa/bot; research@mzizi-test.africa)",
+            stable_max_ms=2_500,
+        )
+    )
+    try:
+        ready = session.goto(site + "/spa")
+        assert "Hydrated" in ready.html and ready.ready == "stable"
+        empty = session.goto(site + "/never")
+        assert empty.ready == "timeout" and empty.ready_ms >= 2_000  # bounded, never waits forever
+    finally:
+        session.close()
+
+
+@pytest.mark.usefixtures("patchright_browser")
+def test_button_pagination_and_load_more_are_walked(site: str, tmp_path: Path) -> None:
+    from mzizi_engine.web.browser.adapter import open_session
+    from mzizi_engine.web.browser.models import BrowserConfig
+
+    session = open_session(
+        BrowserConfig(
+            adapter="patchright",
+            profile_dir=tmp_path / "p",
+            downloads_dir=tmp_path / "d",
+            screenshots_dir=tmp_path / "s",
+            user_agent="MziziTest/1.0 (+https://mzizi-test.africa/bot; research@mzizi-test.africa)",
+            stable_max_ms=4_000,
+        )
+    )
+    try:
+        first = session.goto(site + "/buttons")
+        assert "item a1" in first.html
+        pages = session.paginate(10)
+        assert [p.final_url.rsplit("#", 1)[1] for p in pages] == ["page-2", "page-3"]
+        assert "item b1" in pages[0].html and "item c3" in pages[1].html
+        session.goto(site + "/loadmore")
+        assert session.paginate(10) == ()  # load more extends the same page, no extra snapshots
+        assert "row 6" in session.page_state().html
+    finally:
+        session.close()

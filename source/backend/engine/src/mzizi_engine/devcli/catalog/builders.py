@@ -86,6 +86,12 @@ def crawl_payload(values: ArgValues, ws: Workspace) -> Payload:
     payload = passthrough(values, ws)
     if payload.pop("no_sitemap", False):
         payload["sitemap"] = False
+    if payload.pop("no_paginate", False):
+        payload["paginate"] = False
+    if payload.pop("no_download", False):
+        payload["download"] = False
+    if payload.pop("no_hunt", False):
+        payload["hunt"] = False
     if payload.pop("no_markdown", False):
         payload["markdown"] = False
     if payload.pop("jsonl", False):
@@ -132,7 +138,7 @@ DEV_BROWSER_ENV = "MZIZI_DEV_BROWSER"  # set to "headless" for CI and tests: no 
 
 def with_dev_browser_defaults(payload: Payload, *, uses_browser: bool) -> Payload:
     """Dev mode opens one persistent, visible Patchright window (reused by later commands) unless `--adapter` or `--headless` says otherwise."""
-    browsing = uses_browser and (payload.get("render", "browser") == "browser")
+    browsing = uses_browser and (payload.get("render", "browser") in ("browser", "auto"))
     if not browsing:
         return payload
     headless = bool(payload.pop("headless", False)) or os.environ.get(DEV_BROWSER_ENV) == "headless"

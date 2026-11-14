@@ -2,20 +2,23 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 import json
 from pathlib import Path
 
 from pydantic import BaseModel
 
-from mzizi_engine.web.browser.adapter import open_session
+from mzizi_engine.web.browser.adapter import BrowserSession, open_session
 from mzizi_engine.web.browser.challenge import ManualChallengeHandler
 from mzizi_engine.web.export import read_csv
-from mzizi_engine.web.crawl.backends import BrowserBackend, HttpBackend, PageBackend
+from mzizi_engine.web.crawl.backends import CachedBackend, HybridBackend, BrowserBackend, HttpBackend, PageBackend
 from mzizi_engine.web.crawl.inventory import CrawlSummary
 from mzizi_engine.web.crawl.service import client_for, run_crawl
 from mzizi_engine.web.export import write_table
 from mzizi_engine.web.handlers.common import site_of, browser_config, out_dir
 from mzizi_engine.web.identity import user_agent
+from mzizi_fetch.web.client import WebResponse
 from mzizi_engine.web.records import ErrorRecord, LinkRecord, PageRecord, ResourceRecord
 from mzizi_engine.web.requests import CrawlRequest, ExportRequest, MarkdownRequest, Render
 from mzizi_extraction import extract_html_document
@@ -30,20 +33,36 @@ def _ask_person(url: str, detail: str) -> bool:
     return True
 
 
-def crawl_site(request: CrawlRequest) -> CrawlSummary:
+def crawl_site(
+    request: CrawlRequest,
+    on_page: Callable[[PageRecord, bytes], None] | None = None,
+    lookup: Callable[[str], WebResponse | None] | None = None,
+    on_reference: Callable[[LinkRecord], None] | None = None,
+) -> CrawlSummary:
     if request.resume_from:
         request = request.model_copy(update={"out_dir": request.resume_from, "resume": True})
     agent = user_agent()
     client = client_for(request, agent)
-    session = None
+    sessions: list[BrowserSession] = []
+    site = site_of(request.starts[0] if request.starts else "")
+
+    def browser_backend() -> BrowserBackend:
+        session = open_session(browser_config(request, headed=request.headed, agent=agent, site=site))
+        sessions.append(session)
+        handler = ManualChallengeHandler(_ask_person) if request.headed else None
+        return BrowserBackend(client, session, handler, request.screenshots, request.max_list_pages if request.paginate else 0)
+
     try:
         backend: PageBackend = HttpBackend(client)
         if request.render is Render.BROWSER:
-            session = open_session(browser_config(request, headed=request.headed, agent=agent, site=site_of(request.starts[0] if request.starts else "")))
-            backend = BrowserBackend(client, session, ManualChallengeHandler(_ask_person) if request.headed else None, request.screenshots)
-        return run_crawl(request, client, backend)
+            backend = browser_backend()
+        elif request.render is Render.AUTO:  # a browser opens only when a page turns out to need one
+            backend = HybridBackend(backend, browser_backend)
+        if lookup is not None:
+            backend = CachedBackend(backend, lookup)
+        return run_crawl(request, client, backend, on_page, on_reference)
     finally:
-        if session is not None:
+        for session in sessions:
             session.close()
         client.close()
 

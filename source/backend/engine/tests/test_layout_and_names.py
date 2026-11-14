@@ -16,7 +16,8 @@ def test_site_folder_paths(tmp_path: Path):
     site = DevLayout(tmp_path).website("https://kasarani.ngcdf.go.ke/")
     assert site.root == tmp_path / "websites/ke/go/ngcdf/kasarani"
     assert site.page("/") == site.pages / "index"
-    assert site.page("/news/2024/Open Day/") == site.pages / "news/2024/open-day"
+    assert site.page("/news/2024/Open Day/") == site.pages / "news/2024/Open-Day"
+    assert site.page("/tenders#page-2") == site.pages / "tenders" and site.page("/a/b.html?x=1") == site.pages / "a/b"
     assert site.files("pdf") == site.root / "scraped/files/pdf" and site.files("exe").name == "other"
     assert not site.root.exists()  # nothing is created until something is written
 
@@ -24,7 +25,7 @@ def test_site_folder_paths(tmp_path: Path):
 def test_names_are_readable_and_deterministic():
     assert slug("Kasarani Financial Year: 2015-2016") == "kasarani-financial-year-2015-2016"
     assert page_slug("/") == "index" and page_slug("/news/open-day/") == "open-day"
-    assert page_slug("/reports", "page=2") == "reports--page-2"
+    assert page_slug("/reports", "page=2") == "reports.page-2" and page_slug("/tenders", "", "page-3") == "tenders.page-3"
     digest = "37d447f63bd6de6a"
     assert file_name("https://k/x/2015-16_kasarani.pdf", digest, Labels()) == "2015-16-kasarani--37d447f6.pdf"
     generic = file_name("https://k/download.php?id=3", digest, Labels(anchor_text="Financial Year 2015-2016"), "pdf")
@@ -40,3 +41,12 @@ def test_a_descriptive_link_text_beats_a_terse_file_name():
     digest = "37d447f63bd6de6a"
     named = file_name("https://k/up/2015-16_kasarani.pdf", digest, Labels(anchor_text="Kasarani Financial Year: 2015-2016"))
     assert named == "kasarani-financial-year-2015-2016--37d447f6.pdf"
+
+
+def test_hunted_files_accumulate_across_runs(tmp_path: Path):
+    from mzizi_engine.web.hunt import write_hunted
+
+    row = lambda u: {"original_url": u, "normalized_url": u, "kind": "candidate"}  # noqa: E731
+    path = tmp_path / "hunted.csv"
+    assert write_hunted(path, [row("https://a/1"), row("https://a/2")]) == 2
+    assert write_hunted(path, [row("https://a/2"), row("https://a/3")]) == 3  # earlier rows stay, no duplicates

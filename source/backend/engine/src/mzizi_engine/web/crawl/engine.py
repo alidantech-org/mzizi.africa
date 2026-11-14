@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import logging
-from collections import deque
+from collections import defaultdict, deque
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from mzizi_engine.web.crawl.backends import PageBackend
 from mzizi_engine.web.crawl.sitemaps import discover_sitemap_urls
@@ -25,8 +27,10 @@ from mzizi_fetch.web.blocks import Response
 from mzizi_fetch.web.client import WebClient, WebResponse
 from mzizi_fetch.web.urls import Deduplicator, UrlKind, classify, extension_of, host_of, normalize, path_of, same_site
 from mzizi_scraping import extract_references, page_meta
+from mzizi_scraping.pagination import detect_pagination
 
 log = logging.getLogger("mzizi.crawl")
+MAX_QUERY_VARIANTS = 6
 SAVE_EVERY = 10
 LINK_KINDS = frozenset({UrlKind.PAGE})
 
@@ -53,6 +57,9 @@ class Crawl:
     errors: list[ErrorRecord] = field(default_factory=list)
     html: dict[int, str] = field(default_factory=dict)
     stopped: str = ""
+    query_variants: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
+    on_page: Callable[[PageRecord, bytes], None] | None = None  # called with each page as it is fetched
+    on_reference: Callable[[LinkRecord], None] | None = None  # called with every link or file reference found
 
     def snapshot(self, complete: bool) -> CrawlState:
         return CrawlState(
@@ -69,6 +76,12 @@ class Crawl:
         )
 
     def enqueue(self, url: str, depth: int, source: str, anchor: str) -> None:
+        query = urlsplit(url).query
+        if query:  # many query variants of one path are usually a calendar or filter trap: keep a handful
+            variants = self.query_variants[host_of(url) + path_of(url)]
+            if len(variants) >= MAX_QUERY_VARIANTS and query not in variants:
+                return
+            variants.add(query)
         if self.seen.add(url):
             self.frontier.append(FrontierItem(url=url, depth=depth, source_page=source, anchor_text=anchor))
 
@@ -110,13 +123,19 @@ def start_crawl(request: CrawlRequest, client: WebClient, backend: PageBackend) 
 
 def run(crawl: Crawl) -> None:
     request, out_dir = crawl.request, crawl.out_dir
-    (out_dir / "raw").mkdir(parents=True, exist_ok=True)
+    if crawl.on_page is None:
+        (out_dir / "raw").mkdir(parents=True, exist_ok=True)
     while crawl.frontier and len(crawl.pages) < request.max_pages and not crawl.stopped:
         item = crawl.frontier.popleft()
         response = crawl.backend.get(item.url)
         if not _accept(crawl, item, response):
             continue
         _record_page(crawl, item, response)
+        take = getattr(crawl.backend, "take_extra", None)
+        for extra in take(item.url) if take is not None else []:
+            if len(crawl.pages) >= request.max_pages:
+                break
+            _record_page(crawl, item, extra)
         if len(crawl.pages) % SAVE_EVERY == 0:
             save_state(out_dir, crawl.snapshot(False))
     if crawl.frontier and len(crawl.pages) >= request.max_pages and not crawl.stopped:
@@ -183,8 +202,9 @@ def _resource(crawl: Crawl, url: str, kind: UrlKind, item: FrontierItem, respons
 def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> None:
     n = len(crawl.pages) + 1
     raw_name = f"raw/{n:04d}.html"
-    (crawl.out_dir / raw_name).write_bytes(response.body)
-    crawl.html[n] = response.text
+    if crawl.on_page is None:  # without a hook the pages are kept for the end-of-crawl exports
+        (crawl.out_dir / raw_name).write_bytes(response.body)
+        crawl.html[n] = response.text
     final = response.final_url
     crawl.seen.add(final)
     meta = page_meta(response.text, final)
@@ -197,7 +217,7 @@ def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> Non
         internal = crawl.internal(ref.url) and kind not in (UrlKind.MAIL, UrlKind.PHONE)
         scope = Scope.INTERNAL if internal else Scope.EXTERNAL
         count += 1
-        crawl.links.append(
+        record = (
             LinkRecord(
                 original_url=ref.url,
                 normalized_url=normalize(ref.url) if ref.url.startswith("http") else ref.url,
@@ -213,6 +233,9 @@ def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> Non
                 discovered_at=now,
             )
         )
+        crawl.links.append(record)
+        if crawl.on_reference is not None:
+            crawl.on_reference(record)
         if kind in LINK_KINDS:
             if internal and item.depth < crawl.request.max_depth:
                 crawl.enqueue(ref.url, item.depth + 1, final, ref.text)
@@ -226,6 +249,10 @@ def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> Non
     for later in meta.next_pages:
         if crawl.internal(later):
             crawl.enqueue(later, item.depth, final, "next page")
+    if crawl.request.paginate and "#page-" not in final:
+        found = detect_pagination(response.text, final).next
+        if found is not None and found.url and found.enabled and crawl.internal(found.url):
+            crawl.enqueue(found.url, item.depth, final, "next page")
     crawl.pages.append(
         PageRecord(
             n=n,
@@ -247,9 +274,11 @@ def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> Non
             redirects=len(response.redirects),
             links=count,
             chrome_removed=0,
-            fetched_via="browser" if response.headers.get("x-mzizi-via") == "browser" else "http",
+            fetched_via=response.headers.get("x-mzizi-via", "http"),
             raw_file=raw_name,
             markdown_file="",
         )
     )
     log.info("[%d/%d] %s -> %s", n, crawl.request.max_pages, final, response.status)
+    if crawl.on_page is not None:
+        crawl.on_page(crawl.pages[-1], response.body)

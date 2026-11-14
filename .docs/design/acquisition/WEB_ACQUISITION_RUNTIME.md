@@ -58,6 +58,10 @@ extract:
 
 Add `--render browser --adapter patchright` to extract from a rendered DOM. The live command saves successful captures as `page.html` and includes the observation time, requested and final URLs, capture and module SHA-256 hashes, policy decisions, selected fallback index and field errors in its result. `scrape select PAGE.html --css "h1"` returns matching text from a saved page.
 
+## Page readiness and pagination
+
+A browser page is ready when it has loaded, the network is quiet, any SPA root (`spa_root_selectors`) is filled, no visible loader (`busy_selectors`) remains, visible text passes a floor and the DOM has had no content change for `stable_quiet_ms`, bounded by `stable_max_ms` (reported as `ready`). Pagination detection (`mzizi_scraping.pagination`) reads labels and widget words from the vocabulary (`pagination:`) and returns the next control (link or button), page numbers, a URL template, a load-more button and infinite-scroll hints. The browser walks button pagination, load more and scroll; further pages are recorded as `<url>#page-N`.
+
 ## Browser tabs
 
 The shared dev browser keeps one working tab per site (`mzizi_engine.web.browser.tabs`): a registry maps host to tab, a per-site file lease keeps two commands off one tab, and different sites proceed in parallel. At most two tabs per site (working tab plus one pop-up at a time); pop-ups and `target=_blank` links are tracked on the page result. Above 24 tabs, idle least-recently-used tabs close.

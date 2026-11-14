@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 
 from pydantic import BaseModel
 
-from mzizi_engine.activity import open_activity
+from mzizi_engine.activity import Activity, open_activity
 from mzizi_engine.layout import DevLayout
 from mzizi_engine.names import Labels, file_name
 from mzizi_engine.web.handlers.common import out_dir
@@ -30,12 +30,14 @@ from mzizi_engine.web.handlers.downloads import (
 )
 from mzizi_engine.web.identity import user_agent
 from mzizi_engine.web.export import read_csv
-from mzizi_engine.web.requests import EnqueueRequest, FetchQueueRequest, QueueStatusRequest
+from mzizi_engine.web.crawl.service import client_for
+from mzizi_engine.web.requests import CrawlRequest, EnqueueRequest, FetchQueueRequest, QueueStatusRequest
 from mzizi_fetch.web.download import Downloader
 from mzizi_fetch.web.vocabulary import vocabulary
 
 QUEUE = "download_queue"
-RESOURCE_TABLES = {"document": "documents", "image": "images", "media": "media", "file": "files"}
+RESOURCE_TABLES = {  # inventory table of each kind (`candidate` rows come from hunted.csv)
+   "document": "documents", "image": "images", "media": "media", "file": "files"}
 MAX_ATTEMPTS = 3
 
 
@@ -43,6 +45,7 @@ class State(StrEnum):
     QUEUED = "queued"
     DOWNLOADING = "downloading"
     DONE = "done"
+    SKIPPED = "skipped"
     FAILED = "failed"
 
 
@@ -109,11 +112,18 @@ def enqueue(request: EnqueueRequest) -> EnqueueReport:
     try:
         existing = {row["_id"] for row in activity.get(QUEUE, {"host": host})}
         fresh = []
+        sources: list[tuple[str, list[dict[str, str]]]] = []
         for kind in request.kinds:
-            table = site.inventory / f"{RESOURCE_TABLES[kind]}.csv"
-            if not table.is_file():
-                continue
-            for row in read_csv(table):
+            table = site.inventory / f"{RESOURCE_TABLES[kind]}.csv" if kind in RESOURCE_TABLES else None
+            if table is not None and table.is_file():
+                sources.append((kind, read_csv(table)))
+        hunted = site.inventory / "hunted.csv"
+        if hunted.is_file():  # files found by the hunt: probable downloads and a CMS media index
+            for row in read_csv(hunted):
+                if row.get("kind", "candidate") in request.kinds:
+                    sources.append((row.get("kind", "candidate"), [row]))
+        for kind, rows in sources:
+            for row in rows:
                 url = row.get("original_url", "")
                 key = hashlib.sha256(url.encode()).hexdigest()[:24]
                 if not url or key in existing:
@@ -145,6 +155,95 @@ def enqueue(request: EnqueueRequest) -> EnqueueReport:
         activity.close()
 
 
+class FileFetcher:
+    """Downloads queue items one at a time into the site's files folder; one instance per worker (not shared)."""
+
+    def __init__(self, activity: Activity, site, layout: DevLayout, stage_name: str, request: FetchQueueRequest) -> None:  # noqa: ANN001
+        self.activity, self.site, self.layout = activity, site, layout
+        self.host = site.address.host
+        self.stage = site.root / "scraped" / ".incoming" / stage_name
+        self.stage.mkdir(parents=True, exist_ok=True)
+        self.downloader = Downloader(self.stage, user_agent(), _policy_for(request))
+        self.gate = client_for(CrawlRequest(out_dir=str(self.stage), url=f"https://{self.host}/"), user_agent())
+
+    def close(self) -> None:
+        self.downloader.close()
+        self.gate.close()
+        try:
+            self.stage.rmdir()
+            self.stage.parent.rmdir()
+        except OSError:
+            pass
+
+    def _clean(self, result_file: str, url: str) -> None:
+        (self.stage / result_file).unlink(missing_ok=True)
+        (self.stage / f"{result_file}.json").unlink(missing_ok=True)
+        (self.stage / f"{ident(url)}.status.json").unlink(missing_ok=True)
+
+    def process(self, item: dict) -> str:  # noqa: ANN001 - a queue document (the Mongo parsing boundary)
+        """Downloads one queue item; returns `done`, `failed` or `skipped`. Every outcome is recorded on the item."""
+        put, url = self.activity.put, str(item["url"])
+        put(QUEUE, [{**item, "state": State.DOWNLOADING.value, "updated_at": _now()}])
+        refusal = self.gate.preflight(url)  # robots.txt and scope apply to files too
+        if refusal is not None:
+            reason = refusal.refused.reason if refusal.refused else "refused"
+            put(QUEUE, [{**item, "state": State.SKIPPED.value, "error": reason, "updated_at": _now()}])
+            return "skipped"
+        try:
+            result = self.downloader.download(url)
+        except Exception as problem:  # recorded on the item; the queue continues
+            put(
+                QUEUE,
+                [{**item, "state": State.FAILED.value, "attempts": int(item["attempts"]) + 1,
+                  "error": f"{type(problem).__name__}: {str(problem)[:200]}", "updated_at": _now()}],
+            )
+            return "failed"
+        found = FoundAt.model_validate(item["found_at"])
+        kind_text = str(item["kind"])
+        if kind_text == "candidate" and result.detected_type == "html":  # a page in disguise, not a file
+            self._clean(result.file, url)
+            put(QUEUE, [{**item, "state": State.SKIPPED.value, "error": "not a file (HTML)", "updated_at": _now()}])
+            return "skipped"
+        extension = Path(urlparse(url).path).suffix.lstrip(".").lower() or result.detected_type
+        labels = Labels(
+            content_disposition=_disposition_name(result.headers),
+            anchor_text=found.anchor_text if kind_text != "image" else "",
+            alt_text=found.anchor_text if kind_text == "image" else "",
+            title=found.source_page_title,
+        )
+        final_name = file_name(url, result.sha256, labels, extension)
+        target = self.site.files(bucket(extension, kind_text))
+        target.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(self.stage / result.file), target / final_name)
+        self._clean(result.file, url)
+        relative = str((target / final_name).relative_to(self.layout.root))
+        entry = CatalogEntry(
+            url=result.url, file=relative, sha256=result.sha256, size=result.size,
+            detected_type=result.detected_type, duplicate_of=result.duplicate_of, found_at=found,
+        )
+        put(
+            DOWNLOADS_COLLECTION,
+            [{"_id": result.sha256, "host": self.host, "path": relative, **entry.model_dump(mode="json"),
+              "headers": result.headers, "flags": list(result.flags)}],
+        )
+        put(
+            QUEUE,
+            [{**item, "state": State.DONE.value, "attempts": int(item["attempts"]) + 1, "error": "",
+              "file": relative, "sha256": result.sha256, "size": result.size,
+              "detected_type": result.detected_type, "flags": list(result.flags), "updated_at": _now()}],
+        )
+        return "done"
+
+
+def queue_item(host: str, url: str, kind: str, found: FoundAt) -> dict:
+    """A new queue document (the Mongo boundary), keyed by the URL so a file is queued once however often it is seen."""
+    return {
+        "_id": hashlib.sha256(url.encode()).hexdigest()[:24], "host": host, "url": url, "kind": kind,
+        "state": State.QUEUED.value, "attempts": 0, "error": "", "found_at": found.model_dump(mode="json"),
+        "queued_at": _now(),
+    }
+
+
 def fetch_queue(request: FetchQueueRequest) -> FetchReport:
     """Downloads queued (or retryable) items into the site's `scraped/files/<type>/` under readable names."""
     activity = open_activity()
@@ -152,66 +251,19 @@ def fetch_queue(request: FetchQueueRequest) -> FetchReport:
         raise RuntimeError("the download queue needs the MongoDB activity store (is it running?)")
     layout = DevLayout.locate()
     site = layout.website(request.site)
-    host = site.address.host
-    stage = site.root / "scraped" / ".incoming"
-    stage.mkdir(parents=True, exist_ok=True)
-    downloader = Downloader(stage, user_agent(), _policy_for(request))
-    done = failed = 0
+    fetcher = FileFetcher(activity, site, layout, "queue", request)
+    counts = {"done": 0, "failed": 0, "skipped": 0}
     try:
-        query = {"host": host, "state": {"$in": [State.QUEUED.value, State.FAILED.value]}, "attempts": {"$lt": MAX_ATTEMPTS}}
+        query = {"host": site.address.host, "state": {"$in": [State.QUEUED.value, State.FAILED.value]}, "attempts": {"$lt": MAX_ATTEMPTS}}
         for item in activity.get(QUEUE, query, request.limit):
-            url = str(item["url"])
-            activity.put(QUEUE, [{**item, "state": State.DOWNLOADING.value, "updated_at": _now()}])
-            try:
-                result = downloader.download(url)
-            except Exception as problem:  # recorded on the item; the queue continues
-                failed += 1
-                activity.put(
-                    QUEUE,
-                    [{**item, "state": State.FAILED.value, "attempts": int(item["attempts"]) + 1,
-                      "error": f"{type(problem).__name__}: {str(problem)[:200]}", "updated_at": _now()}],
-                )
-                continue
-            found = FoundAt.model_validate(item["found_at"])
-            kind_text = str(item["kind"])
-            extension = Path(urlparse(url).path).suffix.lstrip(".").lower() or result.detected_type
-            labels = Labels(
-                content_disposition=_disposition_name(result.headers),
-                anchor_text=found.anchor_text if kind_text != "image" else "",
-                alt_text=found.anchor_text if kind_text == "image" else "",
-                title=found.source_page_title,
-            )
-            final_name = file_name(url, result.sha256, labels, extension)
-            target = site.files(bucket(extension, kind_text))
-            target.mkdir(parents=True, exist_ok=True)
-            shutil.move(str(stage / result.file), target / final_name)
-            (stage / f"{result.file}.json").unlink(missing_ok=True)
-            (stage / f"{ident(url)}.status.json").unlink(missing_ok=True)
-            done += 1
-            relative = str((target / final_name).relative_to(layout.root))
-            entry = CatalogEntry(
-                url=result.url, file=relative, sha256=result.sha256, size=result.size,
-                detected_type=result.detected_type, duplicate_of=result.duplicate_of, found_at=found,
-            )
-            activity.put(
-                DOWNLOADS_COLLECTION,
-                [{"_id": result.sha256, "host": host, "path": relative, **entry.model_dump(mode="json"),
-                  "headers": result.headers, "flags": list(result.flags)}],
-            )
-            activity.put(
-                QUEUE,
-                [{**item, "state": State.DONE.value, "attempts": int(item["attempts"]) + 1, "error": "",
-                  "file": relative, "sha256": result.sha256, "size": result.size,
-                  "detected_type": result.detected_type, "flags": list(result.flags), "updated_at": _now()}],
-            )
+            counts[fetcher.process(item)] += 1
     finally:
-        downloader.close()
+        fetcher.close()
         activity.close()
-        try:
-            stage.rmdir()
-        except OSError:
-            pass
-    return FetchReport(attempted=done + failed, done=done, failed=failed, folder=str(site.root / "scraped" / "files"))
+    return FetchReport(
+        attempted=counts["done"] + counts["failed"], done=counts["done"], failed=counts["failed"],
+        folder=str(site.root / "scraped" / "files"),
+    )
 
 
 def queue_status(request: QueueStatusRequest) -> QueueCounts:

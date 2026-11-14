@@ -91,10 +91,37 @@ def table_name(page_slug: str, caption: str, heading: str, label: str, index: in
     return f"{slug(page_slug, 30)}--{slug(best, 45)}.csv"
 
 
-def page_slug(path: str, query: str = "") -> str:
-    """The last path segment (`/news/2024/open-day/` is `open-day`), `index` for the root; a query is kept as a suffix."""
-    segments = [s for s in unquote(path).split("/") if s]
-    last = segments[-1] if segments else INDEX
-    stem = PurePosixPath(last).stem if PurePosixPath(last).suffix in (".html", ".htm", ".php", ".asp", ".aspx") else last
-    base = slug(stem, 60)
-    return f"{base}--{slug(query, 20)}" if query else base
+UNSAFE_PATH_CHARS = '/\\:*?"<>|'
+MAX_SEGMENT = 100
+PAGE_EXTENSIONS = (".html", ".htm", ".php", ".asp", ".aspx", ".jsp")
+
+
+def segment(text: str, max_len: int = MAX_SEGMENT) -> str:
+    """A path segment as a folder or file name: the site's own spelling (case kept), made safe for a file system."""
+    out: list[str] = []
+    for char in unquote(text).strip():
+        if char in UNSAFE_PATH_CHARS or ord(char) < 32:
+            out.append("-")
+        elif char.isspace():
+            out.append("-")
+        else:
+            out.append(char)
+    name = "".join(out)[:max_len].strip(".")
+    return name or "_"
+
+
+def path_segments(path: str) -> list[str]:
+    """The folder segments of a URL path (query and fragment ignored); a page extension on the last one is dropped."""
+    clean = unquote(path).split("#")[0].split("?")[0]
+    parts = [segment(s) for s in clean.split("/") if s]
+    if parts and PurePosixPath(parts[-1]).suffix.lower() in PAGE_EXTENSIONS:
+        parts[-1] = PurePosixPath(parts[-1]).stem or "_"
+    return parts or [INDEX]
+
+
+def page_slug(path: str, query: str = "", fragment: str = "") -> str:
+    """The file stem of a page: its last path segment (`index` for the root); a query or fragment (`?page=2`,
+    `#page-2`) becomes a `.page-2` part so it is a file beside the page, not a folder."""
+    stem = path_segments(path)[-1]
+    parts = [slug(part, 40) for part in (query, fragment) if part]
+    return ".".join([stem, *parts])

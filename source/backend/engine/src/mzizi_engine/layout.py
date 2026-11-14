@@ -21,7 +21,7 @@ from urllib.parse import urlparse
 import tldextract
 from pydantic import BaseModel, ConfigDict
 
-from mzizi_engine.names import page_slug, slug
+from mzizi_engine.names import page_slug, path_segments, slug
 
 WORKSPACE_ENV = "MZIZI_DEV_ROOT"
 APEX = "_root"
@@ -83,13 +83,10 @@ class SiteFolder:
 
     def page(self, path: str) -> Path:
         """`pages/<path segments>/`; the root page is `pages/index/`."""
-        segments = [slug(s, 60) for s in path.split("?")[0].split("/") if s]
-        if segments and Path(segments[-1]).suffix in (".html", ".htm"):
-            segments[-1] = Path(segments[-1]).stem
-        return self.pages.joinpath(*(segments or ["index"]))
+        return self.pages.joinpath(*path_segments(path))
 
-    def page_slug(self, path: str, query: str = "") -> str:
-        return page_slug(path, query)
+    def page_slug(self, path: str, query: str = "", fragment: str = "") -> str:
+        return page_slug(path, query, fragment)
 
     def files(self, kind: str) -> Path:
         return self.root / "scraped" / "files" / (kind if kind in TYPES else "other")

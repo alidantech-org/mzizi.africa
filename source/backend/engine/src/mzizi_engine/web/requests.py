@@ -17,6 +17,7 @@ class Request(BaseModel):
 class Render(StrEnum):
     HTTP = "http"
     BROWSER = "browser"
+    AUTO = "auto"  # plain HTTP, and a browser only for pages that need one
 
 
 class ExportFormat(StrEnum):
@@ -58,6 +59,8 @@ class CrawlRequest(Workspace):
     render: Render = Render.HTTP
     headed: bool = False
     screenshots: bool = False
+    paginate: bool = True  # follow next links and, in a browser, click next buttons, load more and infinite scroll
+    max_list_pages: int = 25  # at most this many pages per listing (the first page included)
     record: bool = True  # False: the caller (site watch) keeps its own site-level records
     on_block: OnBlock = OnBlock.BACK_OFF
     include_subdomains: bool = False
@@ -79,7 +82,12 @@ class CrawlRequest(Workspace):
 
 
 class WatchRequest(CrawlRequest):
-    """A crawl kept as hashed, versioned pages in the site folder."""
+    """A crawl kept as hashed, versioned pages in the site folder, then a hunt for files and their download."""
+
+    download: bool = True
+    download_limit: int = 200  # files fetched per run; the queue keeps the rest for the next run
+    hunt: bool = True
+    min_age_hours: float = 12.0  # a page fetched more recently than this is not fetched again; its saved copy feeds the crawl
 
 
 class SurveyRequest(CrawlRequest):
@@ -159,7 +167,7 @@ class RankRequest(Workspace):
 
 class EnqueueRequest(Workspace):
     site: str  # the site's URL or host; its inventory lists the files
-    kinds: tuple[str, ...] = ("document", "image", "media", "file")
+    kinds: tuple[str, ...] = ("document", "image", "media", "file", "candidate")
 
 
 class FetchQueueRequest(Workspace):

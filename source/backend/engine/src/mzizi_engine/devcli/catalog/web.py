@@ -6,6 +6,14 @@ from mzizi_engine.devcli.catalog.builders import crawl_payload, passthrough, res
 from mzizi_engine.devcli.catalog.models import Arg, ArgKind, Command
 
 URL = Arg("url", ArgKind.URL, "Page or endpoint URL", positional=True)
+RENDER_AUTO = Arg(
+    "render",
+    ArgKind.CHOICE,
+    "How to load pages: auto (HTTP, a browser only when a page needs one), browser, or http",
+    choices=("auto", "http", "browser"),
+    optional=True,
+    default="auto",
+)
 RENDER = Arg(
     "render",
     ArgKind.CHOICE,
@@ -55,6 +63,8 @@ CRAWL_ARGS: tuple[Arg, ...] = (
     Arg("no-sitemap", ArgKind.FLAG, "Do not read sitemaps"),
     Arg("no-markdown", ArgKind.FLAG, "Skip the Markdown conversion"),
     Arg("inspect-resources", ArgKind.FLAG, "HEAD internal files and images for type and status"),
+    Arg("no-paginate", ArgKind.FLAG, "Do not follow pagination (next links, next buttons, load more, infinite scroll)"),
+    Arg("max-list-pages", ArgKind.INT, "Pages per listing to walk", optional=True, default=25),
     Arg("screenshots", ArgKind.FLAG, "Save a full-page screenshot of every crawled page (browser render)"),
     Arg("jsonl", ArgKind.FLAG, "Also write JSON Lines"),
 )
@@ -251,7 +261,21 @@ COMMANDS: tuple[Command, ...] = (
         run_folder=True,
     ),
     Command("download", "queue", "Counts per state, and recent failures", "download.queue", (Arg("site", ArgKind.URL, "Site URL or host", optional=True, positional=True),), passthrough, run_folder=True),
-    Command("site", "watch", "Crawl a site by URL, keep hashed versioned pages, report what changed", "site.watch", CRAWL_ARGS, crawl_payload, run_folder=True),
+    Command(
+        "site",
+        "watch",
+        "Crawl a site by URL, keep hashed versioned pages, hunt and download its files, report what changed",
+        "site.watch",
+        (
+            *(RENDER_AUTO if arg.name == "render" else arg for arg in CRAWL_ARGS),
+            Arg("no-download", ArgKind.FLAG, "Do not download the files found"),
+            Arg("no-hunt", ArgKind.FLAG, "Do not hunt for probable downloads or a CMS media library"),
+            Arg("download-limit", ArgKind.INT, "Files to download per run", optional=True, default=200),
+            Arg("min-age-hours", ArgKind.INT, "Do not fetch again a page fetched less than this many hours ago", optional=True, default=12),
+        ),
+        crawl_payload,
+        run_folder=True,
+    ),
     Command(
         "web",
         "diff",
