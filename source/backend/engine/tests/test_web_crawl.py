@@ -221,3 +221,10 @@ def test_the_frontier_is_taken_from_the_least_visited_part_of_the_site():
 
     crawl.visited_groups = defaultdict(int, {"(article)": 3})
     assert crawl.next_item().url == "https://s/downloads/a"  # unvisited sections come before more articles
+
+
+def test_a_sitemap_listing_images_yields_files_not_pages():
+    from mzizi_engine.web.crawl.sitemaps import partition
+
+    pages, files = partition(["https://s/about", "https://s/wp-content/uploads/a.jpg", "https://s/report.pdf"])
+    assert pages == ["https://s/about"] and [u for u, _ in files] == ["https://s/wp-content/uploads/a.jpg", "https://s/report.pdf"]

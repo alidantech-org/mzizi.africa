@@ -135,7 +135,8 @@ class BlockPolicy:
         self.consecutive = 0
 
     def decide(self, url: str, block: Block, attempt: int, headers: dict[str, str] | None = None) -> BlockDecision:
-        self.consecutive += 1
+        if block.kind is not BlockKind.NOT_FOUND:  # a missing page is not an access block and never ends a crawl
+            self.consecutive += 1
         response = self.responses[block.kind]
         reason = f"{block.kind.value}: configured response {response.value}"
         if self.consecutive >= self.stop_after:

@@ -111,7 +111,7 @@ class DownloadPool:
         item = queue_item(self.host, url, kind, found)
         existing = self.activity.get(QUEUE, {"_id": item["_id"]}, 1)
         if existing:
-            if existing[0].get("state") in (State.DONE.value, State.SKIPPED.value) or existing[0].get("attempts", 0) >= 3:
+            if existing[0].get("state") in (State.DONE.value, State.SKIPPED.value, State.MISSING.value) or existing[0].get("attempts", 0) >= 3:
                 return  # already fetched, refused or given up on: never again
             item = existing[0]
         else:

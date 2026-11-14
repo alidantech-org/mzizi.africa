@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from mzizi_fetch.web.client import WebClient
-from mzizi_fetch.web.urls import origin_of
+from mzizi_fetch.web.urls import UrlKind, classify, origin_of
 from mzizi_scraping import parse_sitemap, sitemaps_from_robots
 
 MAX_SITEMAP_FILES = 20
@@ -32,3 +32,13 @@ def discover_sitemap_urls(client: WebClient, starts: tuple[str, ...]) -> list[st
         urls.extend(content.urls)
         queue.extend(content.child_sitemaps)
     return urls[:MAX_SITEMAP_URLS]
+
+
+def partition(urls: list[str]) -> tuple[list[str], list[tuple[str, UrlKind]]]:
+    """Splits sitemap addresses into pages to crawl and files (an image sitemap lists images, not pages)."""
+    pages: list[str] = []
+    files: list[tuple[str, UrlKind]] = []
+    for url in urls:
+        kind = classify(url)
+        (pages.append(url) if kind is UrlKind.PAGE else files.append((url, kind)))
+    return pages, files

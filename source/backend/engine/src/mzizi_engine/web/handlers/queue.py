@@ -46,6 +46,7 @@ class State(StrEnum):
     DOWNLOADING = "downloading"
     DONE = "done"
     SKIPPED = "skipped"
+    MISSING = "missing"  # the server says the file does not exist (404, 410)
     FAILED = "failed"
 
 
@@ -192,10 +193,14 @@ class FileFetcher:
         try:
             result = self.downloader.download(url)
         except Exception as problem:  # recorded on the item; the queue continues
+            message = f"{type(problem).__name__}: {str(problem)[:200]}"
+            if "HTTP 404" in message or "HTTP 410" in message:  # the file is gone: final, not worth retrying
+                put(QUEUE, [{**item, "state": State.MISSING.value, "error": message, "updated_at": _now()}])
+                return "skipped"
             put(
                 QUEUE,
                 [{**item, "state": State.FAILED.value, "attempts": int(item["attempts"]) + 1,
-                  "error": f"{type(problem).__name__}: {str(problem)[:200]}", "updated_at": _now()}],
+                  "error": message, "updated_at": _now()}],
             )
             return "failed"
         found = FoundAt.model_validate(item["found_at"])

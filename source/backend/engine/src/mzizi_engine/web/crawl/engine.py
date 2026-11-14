@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from mzizi_engine.web.crawl.backends import PageBackend
-from mzizi_engine.web.crawl.sitemaps import discover_sitemap_urls
+from mzizi_engine.web.crawl.sitemaps import discover_sitemap_urls, partition
 from mzizi_engine.web.crawl.state import CrawlState, digest_of, load_state, save_state
 from mzizi_engine.web.records import (
     DownloadStatus,
@@ -144,9 +144,13 @@ def start_crawl(request: CrawlRequest, client: WebClient, backend: PageBackend) 
     for url in starts:
         crawl.enqueue(url, 0, "", "")
     if request.sitemap:
-        for url in discover_sitemap_urls(client, starts):
+        pages, files = partition(discover_sitemap_urls(client, starts))
+        for url in pages:
             if crawl.internal(url):
                 crawl.enqueue(url, 1, "sitemap", "")
+        for url, kind in files:  # listed by the sitemap but not pages: inventoried for download, never fetched as pages
+            if crawl.internal(url):
+                _resource(crawl, url, kind, FrontierItem(url=url, depth=1, source_page="sitemap", anchor_text=""))
     return crawl
 
 
