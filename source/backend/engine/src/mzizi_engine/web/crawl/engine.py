@@ -25,7 +25,7 @@ from mzizi_engine.web.records import (
     Scope,
 )
 from mzizi_engine.web.requests import CrawlRequest
-from mzizi_fetch.web.blocks import Response
+from mzizi_fetch.web.blocks import BlockKind, Response
 from mzizi_fetch.web.client import WebClient, WebResponse
 from mzizi_fetch.web.urls import Deduplicator, is_api_url, UrlKind, classify, extension_of, host_of, normalize, path_of, same_site
 from mzizi_scraping import extract_references, page_meta
@@ -34,6 +34,8 @@ from mzizi_scraping.pagination import detect_pagination
 log = logging.getLogger("mzizi.crawl")
 ARTICLE_SLUG_WORDS = 5  # a single-segment slug with this many words is an article, not a section page
 MAX_QUERY_VARIANTS = 6
+RESTRICTED_KINDS = (BlockKind.NOTICE, BlockKind.FORBIDDEN, BlockKind.UNAUTHORIZED)
+MAX_RESTRICTED_GROUPS = 3  # refusals from this many different parts of a site mean the site refuses us, not one section
 SAVED_PAGE_FACTOR = 20  # pages served from saved copies are free of the fetch budget, up to this many times it
 SAVE_EVERY = 10
 LINK_KINDS = frozenset({UrlKind.PAGE})
@@ -74,6 +76,7 @@ class Crawl:
     fetched: int = 0  # pages actually fetched this run (saved copies do not use the page budget)
     query_variants: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
     visited_groups: dict[str, int] = field(default_factory=lambda: defaultdict(int))
+    restricted_groups: set[str] = field(default_factory=set)  # parts of the site that say 'access denied' or need a login
     recorded_finals: set[str] = field(default_factory=set)  # where pages really ended up, so redirect aliases are not recorded twice
     on_page: Callable[[PageRecord, bytes], None] | None = None  # called with each page as it is fetched
     on_reference: Callable[[LinkRecord], None] | None = None  # called with every link or file reference found
@@ -105,6 +108,11 @@ class Crawl:
         item = self.frontier[best]
         del self.frontier[best]
         return item
+
+    def drop_restricted(self) -> None:
+        """Forgets queued pages of a part of the site that refused us: asking again would only repeat the refusal."""
+        if self.restricted_groups:
+            self.frontier = deque(i for i in self.frontier if group_of(i.url) not in self.restricted_groups)
 
     def enqueue(self, url: str, depth: int, source: str, anchor: str) -> None:
         query = urlsplit(url).query
@@ -207,7 +215,15 @@ def _accept(crawl: Crawl, item: FrontierItem, response: WebResponse) -> bool:
         decision = response.decision
         _error(crawl, item.url, "block", decision.kind, decision.detail, decision.response, decision.attempt)
         if decision.response == Response.STOP.value:
-            crawl.stopped = f"stopped: {decision.reason} at {item.url}"
+            group = group_of(item.url)
+            if response.block.kind in RESTRICTED_KINDS and len(crawl.restricted_groups | {group}) < MAX_RESTRICTED_GROUPS:
+                # one section refuses us (an intranet, a members area): leave it alone and carry on with the rest of the site
+                crawl.restricted_groups.add(group)
+                crawl.client.blocks.consecutive = 0
+                crawl.drop_restricted()
+                log.info("section %r refuses access; skipping it", group)
+            else:
+                crawl.stopped = f"stopped: {decision.reason} at {item.url}"
         return False
     if response.error:
         _error(crawl, item.url, "transport", "error", response.error)

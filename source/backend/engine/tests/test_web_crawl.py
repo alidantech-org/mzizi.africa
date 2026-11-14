@@ -235,3 +235,19 @@ def test_a_redirect_alias_of_a_fetched_page_is_not_recorded_again():
 
     assert _final_key("https://s/a/") == _final_key("https://s/a") or _final_key("https://s/a#x") != _final_key("https://s/a")
     assert _final_key("https://s/tenders#page-2") != _final_key("https://s/tenders")
+
+
+def test_a_restricted_section_is_skipped_but_a_site_wide_refusal_still_stops():
+    from collections import deque
+
+    from mzizi_engine.web.crawl.engine import Crawl
+    from mzizi_engine.web.records import FrontierItem
+
+    crawl = Crawl.__new__(Crawl)
+    crawl.restricted_groups = {"intranet"}
+    crawl.frontier = deque(
+        FrontierItem(url=u, depth=1, source_page="", anchor_text="")
+        for u in ("https://s//intranet/forms", "https://s/news/a", "https://s/intranet/policies")
+    )
+    crawl.drop_restricted()
+    assert [i.url for i in crawl.frontier] == ["https://s/news/a"]
