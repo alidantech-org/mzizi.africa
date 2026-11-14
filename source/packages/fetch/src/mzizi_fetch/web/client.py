@@ -29,6 +29,9 @@ from mzizi_fetch.web.urls import host_of, normalize, origin_of
 MAX_REDIRECTS = 10
 DEFAULT_TIMEOUT = 30.0
 DEFAULT_MAX_BYTES = 32 * 1024 * 1024
+BODY_DEADLINE = 90.0  # most seconds spent reading one response body
+# media types a page fetch reads (protocol facts); anything else is a file and is not streamed here
+READABLE_TYPES = ("text/", "application/json", "application/xml", "application/xhtml", "application/rss", "application/atom", "application/ld+json", "application/javascript", "application/x-javascript")
 HTML_TYPES = ("text/html", "application/xhtml")
 SERVER_ERROR_FLOOR = 500
 NOT_MODIFIED = 304
@@ -105,6 +108,7 @@ class WebClient:
         cache_dir: Path | None = None,
         timeout: float = DEFAULT_TIMEOUT,
         max_bytes: int = DEFAULT_MAX_BYTES,
+        body_deadline: float = BODY_DEADLINE,
         headers: dict[str, str] | None = None,
         transport: httpx.BaseTransport | None = None,
         extra_ca_bundle: Path | None = None,
@@ -115,6 +119,7 @@ class WebClient:
         self.user_agent, self.policy, self.start_hosts = user_agent, policy, start_hosts
         self.blocks = blocks or BlockPolicy()
         self.max_bytes, self.sleep, self.clock = max_bytes, sleep, clock
+        self.body_deadline = body_deadline
         self.headers = {"User-Agent": user_agent, "Accept": "*/*", **(headers or {})}
         self.http = httpx.Client(
             follow_redirects=False, timeout=timeout, transport=transport, verify=trust_store(extra_ca_bundle)
@@ -305,9 +310,32 @@ class WebClient:
                             )
                         current = target
                         continue
+                    kind = reply.headers.get("content-type", "").split(";")[0].strip().lower()
+                    if kind and not kind.startswith(READABLE_TYPES):
+                        # a file (a PDF, an archive, a video) behind an address that looked like a page: report what it
+                        # is without reading it; the download queue fetches files, a page fetch must not stream them
+                        return WebResponse(
+                            url=url,
+                            final_url=current,
+                            status=reply.status_code,
+                            headers=dict(reply.headers),
+                            body=b"",
+                            redirects=tuple(chain),
+                        )
                     body = bytearray()
+                    deadline = time.monotonic() + self.body_deadline
                     for chunk in reply.iter_bytes():
                         body.extend(chunk)
+                        if time.monotonic() > deadline:  # a trickling response never trips the per-read timeout
+                            return WebResponse(
+                                url=url,
+                                final_url=current,
+                                status=reply.status_code,
+                                headers=dict(reply.headers),
+                                body=bytes(body),
+                                redirects=tuple(chain),
+                                error=f"body not complete after {self.body_deadline:.0f}s",
+                            )
                         if len(body) > self.max_bytes:
                             return WebResponse(
                                 url=url,

@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import csv
+import faulthandler
 import hashlib
+import os
 import shutil
 import signal
 import threading
@@ -216,6 +218,8 @@ FILE_KINDS = {"image": "image", "media": "media", "embed": "media", "document": 
 def watch_site(request: WatchRequest) -> WatchReport:
     """Crawls a site, saving pages as they arrive; Markdown conversion, file hunting and downloads run beside it."""
     layout = DevLayout.locate()
+    if os.environ.get("MZIZI_DEBUG_STACKS"):  # diagnosis: print every thread's stack when a run is still going after N seconds
+        faulthandler.dump_traceback_later(int(os.environ["MZIZI_DEBUG_STACKS"]), repeat=True)
     CANCEL.clear()
     if threading.current_thread() is threading.main_thread():  # a stop signal ends fetching, then everything is saved
         for signum in (signal.SIGTERM, signal.SIGINT):
