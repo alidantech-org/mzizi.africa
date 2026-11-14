@@ -28,6 +28,8 @@ class BrowserConfig(Frozen):
     settle_ms: int = 4_000  # then how long to wait for the network to go quiet
     stable_quiet_ms: int = 800  # ready after this long with no content changes, no visible loader, app root filled
     stable_max_ms: int = 25_000  # upper bound on waiting for a client-rendered page to finish
+    click_wait_ms: int = 8_000  # a real page change after a click shows up quickly; longer means it was not pagination
+    paginate_budget_s: int = 90  # most time spent walking one listing
     min_text_chars: int = 60  # a page with less visible text than this and scripts still pending is not ready
     headers: dict[str, str] = {}
     persistent: bool = True

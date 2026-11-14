@@ -343,7 +343,7 @@ class PlaywrightSession:
         before = self._text_signature()
         if not self._click(selector):
             return False
-        deadline = time.monotonic() + self.config.stable_max_ms / 1000
+        deadline = time.monotonic() + self.config.click_wait_ms / 1000
         while time.monotonic() < deadline:
             if self._text_signature() != before:
                 self._settle()
@@ -377,7 +377,10 @@ class PlaywrightSession:
         base = self._page.url.split("#")[0]
         seen = {self._text_signature()}
         snapshots: list[RenderedPage] = []
+        started = time.monotonic()
         for number in range(2, max_pages + 1):
+            if time.monotonic() - started > self.config.paginate_budget_s:
+                break
             control = detect_pagination(self._page.content(), self._page.url).next
             if control is None or not control.enabled or control.url:
                 break

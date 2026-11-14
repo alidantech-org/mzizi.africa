@@ -96,6 +96,14 @@
     "PaginationLabels": {
       "additionalProperties": false,
       "properties": {
+        "carousel_words": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Carousel Words",
+          "type": "array"
+        },
         "container_words": {
           "default": [],
           "items": {
@@ -323,6 +331,7 @@
     "pagination": {
       "$ref": "#/$defs/PaginationLabels",
       "default": {
+        "carousel_words": [],
         "container_words": [],
         "disabled_words": [],
         "infinite_scroll_words": [],

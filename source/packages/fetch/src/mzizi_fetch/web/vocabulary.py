@@ -56,6 +56,7 @@ class PaginationLabels(_Data):
     container_words: tuple[str, ...] = ()  # class, id or aria-label words that mark a pagination widget
     disabled_words: tuple[str, ...] = ()  # class words that mark a control as unusable
     infinite_scroll_words: tuple[str, ...] = ()
+    carousel_words: tuple[str, ...] = ()  # class words of sliders: their next/previous buttons are not pagination
 
 
 class DownloadHints(_Data):

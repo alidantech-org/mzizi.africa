@@ -59,6 +59,12 @@ def _matches(label: str, candidates: tuple[str, ...], exact: bool) -> bool:
     return any(lowered == c.lower() if exact or len(c) <= 2 else c.lower() in lowered for c in candidates)
 
 
+def _in_carousel(tag: Tag) -> bool:
+    """A next button inside a slider moves slides, not pages."""
+    words = vocabulary().pagination.carousel_words
+    return any(isinstance(node, Tag) and any(w in _words(node) for w in words) for node in [tag, *list(tag.parents)[:5]])
+
+
 def _control(tag: Tag, base_url: str, how: str) -> Control:
     target = _clickable(tag)
     href = str(target.get("href") or "").strip() if target.name == "a" else ""
@@ -115,6 +121,8 @@ def detect_pagination(html: str | bytes, base_url: str) -> Findings:
     last: int | None = None
     widgets = [t for t in soup.find_all(True) if any(w in _words(t) for w in vocab.container_words) and t.name in ("nav", "ul", "div", "ol", "section")]
     for widget in widgets[:4]:
+        if _in_carousel(widget):
+            continue
         for tag in widget.find_all(CONTROL_TAGS):
             target = _clickable(tag)
             if tag is not target and tag.name not in ("li",):
@@ -135,11 +143,15 @@ def detect_pagination(html: str | bytes, base_url: str) -> Findings:
                 evidence.append("pagination widget")
     # 3. a labelled next control anywhere
     if next_control is None:
-        for tag in soup.find_all(["a", "button"]):
+        for tag in soup.find_all("a", href=True):  # outside a pagination widget only real links count (buttons are sliders)
+            if _in_carousel(tag):
+                continue
             if _matches(_label(tag), vocab.next, True) or "next" in _words(tag).split():
-                next_control = _control(tag, base_url, "label")
-                evidence.append("next label")
-                break
+                control = _control(tag, base_url, "label")
+                if control.url:
+                    next_control = control
+                    evidence.append("next label")
+                    break
     # 4. a load-more button
     load_more: Control | None = None
     candidates = [t for t in soup.find_all(["button", "a"]) if _matches(_label(t), vocab.load_more, False)]

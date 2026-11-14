@@ -189,3 +189,15 @@ def test_needs_browser_tells_static_pages_from_app_shells():
     assert needs_browser("<html><body><noscript>You need to enable JavaScript to run this app.</noscript><div>x</div></body></html>", "https://e.org/")
     buttons = '<html><body><main><p>' + "text " * 80 + '</p><nav aria-label="Pagination"><button aria-label="Next page">></button></nav></main></body></html>'
     assert needs_browser(buttons, "https://e.org/") == "pagination by buttons"
+
+
+def test_slider_buttons_are_not_pagination():
+    from mzizi_scraping.pagination import detect_pagination
+
+    slider = (
+        '<div class="swiper"><button class="swiper-button-next" aria-label="Next slide">></button></div>'
+        '<div class="hero-slider"><div class="pagination"><button aria-label="Next page">></button></div></div>'
+    )
+    assert detect_pagination(slider, "https://e.org/").next is None
+    real = '<nav class="pagination"><button aria-label="Next page">></button></nav>'
+    assert detect_pagination(real, "https://e.org/").next is not None

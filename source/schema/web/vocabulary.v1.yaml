@@ -22,6 +22,7 @@ pagination:
   load_more: [load more, show more, view more, see more, more results, more items, more posts, pakia zaidi, onyesha zaidi, voir plus, ver más]
   container_words: [pagination, pager, paginate, paging, page-numbers, page-nav, pagenav, pages]
   disabled_words: [disabled, inactive, unavailable]
+  carousel_words: [carousel, slider, slick, swiper, owl-, splide, glide, flickity, slideshow, ticker, marquee]
   infinite_scroll_words: [infinite-scroll, infinitescroll, infinite_scroll, endless, lazy-load-more]
 download_hints:
   path_words: [download, downloads, attachment, attachments, getfile, get-file, filemanager, wp-content/uploads, sites/default/files, uploads, docs, documents, publications]
