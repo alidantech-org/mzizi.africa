@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict
 from mzizi_fetch.web.vocabulary import vocabulary
 
 MAX_SLUG = 80
+MAX_NAME_BYTES = 120  # a file system allows 255 bytes per name; fancy letters take 4 bytes each in UTF-8
 HASH_CHARS = 8
 MIN_DESCRIPTIVE_WORDS = 3
 INDEX = "index"
@@ -34,16 +35,24 @@ class Labels(BaseModel):
     css_context: str = ""
 
 
+def fit(text: str, max_bytes: int = MAX_NAME_BYTES) -> str:
+    """The longest start of `text` that fits in `max_bytes` of UTF-8 (whole characters only)."""
+    while len(text.encode("utf-8")) > max_bytes:
+        text = text[:-1]
+    return text
+
+
 def slug(text: str, max_len: int = MAX_SLUG) -> str:
-    """Lower case, unicode letters and digits kept, everything else one `-`; never empty."""
-    folded = unicodedata.normalize("NFC", text).lower()
+    """Lower case, unicode letters and digits kept (styled letters such as 𝐒𝐄𝐍𝐀𝐓𝐄 fold to plain ones), everything
+    else one `-`; never empty and never longer than a file name may be."""
+    folded = unicodedata.normalize("NFKC", text).lower()
     out: list[str] = []
     for char in folded:
         if char.isalnum():
             out.append(char)
         elif out and out[-1] != "-":
             out.append("-")
-    return "".join(out).strip("-")[:max_len].rstrip("-") or FALLBACK
+    return fit("".join(out).strip("-")[:max_len]).rstrip("-") or FALLBACK
 
 
 def short(digest: str) -> str:
@@ -106,7 +115,7 @@ def segment(text: str, max_len: int = MAX_SEGMENT) -> str:
             out.append("-")
         else:
             out.append(char)
-    name = "".join(out)[:max_len].strip(".")
+    name = fit("".join(out)[:max_len]).strip(".")
     return name or "_"
 
 

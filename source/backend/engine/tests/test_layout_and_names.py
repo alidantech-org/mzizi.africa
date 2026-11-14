@@ -58,3 +58,12 @@ def test_data_responses_without_an_extension_are_named_by_their_media_type():
     assert extension_for("https://t/api/active-tenders?page=1", "text", "application/json; charset=utf-8") == "json"
     assert extension_for("https://t/files/a.pdf", "pdf", "application/pdf") == "pdf"
     assert bucket("json", "file") == "data"
+
+
+def test_names_fit_the_file_system_even_with_styled_unicode_letters():
+    from mzizi_engine.names import Labels, file_name, segment, slug
+
+    fancy = "𝐒𝐄𝐍𝐀𝐓𝐄-𝐔𝐑𝐆𝐄𝐃-𝐓𝐎-𝐒𝐓𝐑𝐈𝐊𝐄-𝐎𝐔𝐓-𝐓𝐎𝐔𝐑𝐈𝐒𝐌-𝐑𝐄𝐆𝐔𝐋𝐀𝐓𝐈𝐎𝐍𝐒-𝐁𝐮𝐧𝐠𝐞-𝐓𝐨𝐰𝐞𝐫-𝐓𝐡𝐮𝐫𝐬𝐝𝐚𝐲"
+    assert slug(fancy).startswith("senate-urged")  # styled letters become plain letters
+    for name in (slug(fancy * 3), segment(fancy * 5), file_name("https://x/a.jpg", "039e92ee0000", Labels(alt_text=fancy * 4))):
+        assert len(name.encode("utf-8")) <= 200
