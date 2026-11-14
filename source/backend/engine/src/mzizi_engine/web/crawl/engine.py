@@ -34,7 +34,7 @@ from mzizi_scraping.pagination import detect_pagination
 log = logging.getLogger("mzizi.crawl")
 ARTICLE_SLUG_WORDS = 5  # a single-segment slug with this many words is an article, not a section page
 MAX_QUERY_VARIANTS = 6
-RESTRICTED_KINDS = (BlockKind.NOTICE, BlockKind.FORBIDDEN, BlockKind.UNAUTHORIZED)
+RESTRICTED_KINDS = (BlockKind.NOTICE, BlockKind.FORBIDDEN, BlockKind.UNAUTHORIZED, BlockKind.SERVER_ERROR)
 MAX_RESTRICTED_GROUPS = 3  # refusals from this many different parts of a site mean the site refuses us, not one section
 SAVED_PAGE_FACTOR = 20  # pages served from saved copies are free of the fetch budget, up to this many times it
 SAVE_EVERY = 10
@@ -221,7 +221,7 @@ def _accept(crawl: Crawl, item: FrontierItem, response: WebResponse) -> bool:
                 crawl.restricted_groups.add(group)
                 crawl.client.blocks.consecutive = 0
                 crawl.drop_restricted()
-                log.info("section %r refuses access; skipping it", group)
+                log.info("section %r refuses access or fails (4xx/5xx); skipping it", group)
             else:
                 crawl.stopped = f"stopped: {decision.reason} at {item.url}"
         return False
