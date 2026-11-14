@@ -24,10 +24,15 @@ export const step = (name: string, cwd: string, args: readonly string[], env?: R
 });
 
 /** Names of the failed results, in input order. */
-export const failures = (results: readonly Result[]): string[] => results.filter((result) => result.code !== 0).map((result) => result.name);
+export const failures = (results: readonly Result[]): string[] =>
+  results.filter((result) => result.code !== 0).map((result) => result.name);
 
 /** Run `task` over `items` with at most `concurrency` running at once. */
-export async function runBounded<T>(items: readonly T[], concurrency: number, task: (item: T) => Promise<void>): Promise<void> {
+export async function runBounded<T>(
+  items: readonly T[],
+  concurrency: number,
+  task: (item: T) => Promise<void>,
+): Promise<void> {
   let cursor = 0;
   const worker = async (): Promise<void> => {
     while (cursor < items.length) {
@@ -70,7 +75,9 @@ export async function group(title: string, steps: readonly Step[], concurrency =
   const failed = failures(results);
   for (const name of failed) console.error(`✖ ${name}`);
   console.log(
-    failed.length ? `━━ ${title}: ${failed.length}/${steps.length} failed ━━` : `━━ ${title}: ${steps.length}/${steps.length} passed ━━`,
+    failed.length
+      ? `━━ ${title}: ${failed.length}/${steps.length} failed ━━`
+      : `━━ ${title}: ${steps.length}/${steps.length} passed ━━`,
   );
   return failed.length === 0;
 }
@@ -86,4 +93,5 @@ export async function stages(entries: readonly (readonly [string, readonly Step[
 export const has = (program: string): boolean => Bun.which(program) !== null;
 
 /** A step that runs in the repository root. */
-export const rootStep = (name: string, args: readonly string[], env?: Record<string, string>): Step => step(name, root, args, env);
+export const rootStep = (name: string, args: readonly string[], env?: Record<string, string>): Step =>
+  step(name, root, args, env);

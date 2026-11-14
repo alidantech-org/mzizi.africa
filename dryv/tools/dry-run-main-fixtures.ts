@@ -10,10 +10,19 @@ const parties = [{ id: "party:a", entity: "org:party-a" }];
 const memberships = [{ party: "party:a", person: "person:candidate", from: "2018-01-01", until: "2023-01-01" }];
 const election = { id: "election:x", country: "country:xx", date: "2021-08-01" };
 const contests = [{ id: "contest:director", election: election.id, office: "office:director", unit: "unit:county-a" }];
-const candidates = [{ id: "candidate:x", contest: "contest:director", person: "person:candidate", partyAtElection: "party:a" }];
-const electorates = [{ contest: "contest:director", unit: "unit:county-a", registered: 1000, cast: 700, valid: 680, rejected: 20 }];
+const candidates = [
+  { id: "candidate:x", contest: "contest:director", person: "person:candidate", partyAtElection: "party:a" },
+];
+const electorates = [
+  { contest: "contest:director", unit: "unit:county-a", registered: 1000, cast: 700, valid: 680, rejected: 20 },
+];
 const results = [{ candidate: "candidate:x", unit: "unit:county-a", votes: 680 }];
-const project = { id: "project:road-a", institution: "institution:roads", unit: "unit:county-a", status: "in_progress" };
+const project = {
+  id: "project:road-a",
+  institution: "institution:roads",
+  unit: "unit:county-a",
+  status: "in_progress",
+};
 const featureLinks = [{ project: project.id, feature: "feature:road-a", role: "rehabilitated" }];
 const service = {
   provider: "org:health",
@@ -24,8 +33,20 @@ const service = {
   until: null,
 };
 const procurement = { id: "tender:road-a", buyer: "org:roads", project: project.id };
-const bid = { tender: procurement.id, bidder: "org:builder", amountMinor: 120_000, currency: "currency:xx", outcome: "awarded" };
-const contract = { id: "contract:road-a", tender: procurement.id, contractor: bid.bidder, amountMinor: 100_000, currency: bid.currency };
+const bid = {
+  tender: procurement.id,
+  bidder: "org:builder",
+  amountMinor: 120_000,
+  currency: "currency:xx",
+  outcome: "awarded",
+};
+const contract = {
+  id: "contract:road-a",
+  tender: procurement.id,
+  contractor: bid.bidder,
+  amountMinor: 100_000,
+  currency: bid.currency,
+};
 const delivery = { contract: contract.id, milestone: "section-opened", unit: project.unit, citation: "cite:delivery" };
 const budget = { id: "budget:fy-x", period: "period:fy-x" };
 const versions = [
@@ -89,7 +110,8 @@ assert.deepEqual(
   [680],
 );
 assert.equal(
-  memberships.find((row) => row.person === "person:candidate" && row.from <= election.date && election.date < row.until)!.party,
+  memberships.find((row) => row.person === "person:candidate" && row.from <= election.date && election.date < row.until)!
+    .party,
   "party:a",
 );
 // Test C: service availability resolves to a physical Geography place and a coverage unit.

@@ -31,7 +31,9 @@ export const Instruments = legal
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("Stable instrument identity with explicit issuing territorial scope; geography alone never establishes applicability.")
+  .description(
+    "Stable instrument identity with explicit issuing territorial scope; geography alone never establishes applicability.",
+  )
   .role("entity")
   .facets({
     storage: dryv.storage("instruments").index("kindId").index("issuingUnitId"),
@@ -98,7 +100,9 @@ export const ProvisionVersions = legal
   })
   .extends(baseSchemas.Entity)
   .rule("EffectiveWindowIsOrdered", rule.ordered("effectiveFrom", "effectiveUntil"))
-  .description("Immutable original wording in an exact instrument release; structured interpretation is separately reviewed.")
+  .description(
+    "Immutable original wording in an exact instrument release; structured interpretation is separately reviewed.",
+  )
   .role("entity")
   .facets({
     storage: dryv
@@ -114,7 +118,11 @@ export const ProvisionVersions = legal
         targetFields: ["id", "instrumentId"],
       })
       .acyclic("ProvisionVersionSupersessionAcyclic", { field: "supersedesId" })
-      .noOverlap("NoOverlappingProvisionWording", { scope: ["provisionId"], from: "effectiveFrom", until: "effectiveUntil" })
+      .noOverlap("NoOverlappingProvisionWording", {
+        scope: ["provisionId"],
+        from: "effectiveFrom",
+        until: "effectiveUntil",
+      })
       .unique("provisionId", "instrumentVersionId")
       .index("instrumentVersionId")
       .index("citationId")
@@ -132,10 +140,18 @@ export const Amendments = legal
     citationId: belongsTo(() => Citations),
   })
   .extends(baseSchemas.Entity)
-  .description("An exact authority provision changes an exact affected wording version; both historical texts remain available.")
+  .description(
+    "An exact authority provision changes an exact affected wording version; both historical texts remain available.",
+  )
   .role("entity")
   .facets({
-    storage: dryv.storage("amendments").index("authorityId").index("affectedId").index("resultingVersionId").index("kindId").index("citationId"),
+    storage: dryv
+      .storage("amendments")
+      .index("authorityId")
+      .index("affectedId")
+      .index("resultingVersionId")
+      .index("kindId")
+      .index("citationId"),
   });
 
 /** Open: immutable wording and hashes.

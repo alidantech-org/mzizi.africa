@@ -88,7 +88,8 @@ for (const [name, schema] of schemas) {
   if (!systemSchemas.has(owner) && !lineage.includes("shared.HistoricalEntity"))
     violations.push(`${name}: domain entity must extend shared.HistoricalEntity (valid time)`);
   for (const field of owner === "source" ? [] : Object.keys(schema.fields ?? {})) {
-    if (provenanceFields.includes(field)) violations.push(`${name}.${field}: provenance belongs in the source schema, not on data rows`);
+    if (provenanceFields.includes(field))
+      violations.push(`${name}.${field}: provenance belongs in the source schema, not on data rows`);
   }
 
   // 2. The entity pack names a relation property after its target; two relations collide.
@@ -99,7 +100,9 @@ for (const [name, schema] of schemas) {
   }
   for (const [target, fields] of targets) {
     if (fields.length > 1)
-      violations.push(`${name}: fields ${fields.join(", ")} all relate to ${target}; keep one relation and make the others plain ids`);
+      violations.push(
+        `${name}: fields ${fields.join(", ")} all relate to ${target}; keep one relation and make the others plain ids`,
+      );
   }
 
   // 3. Storage follows .docs/rules/database-naming.md.
@@ -115,15 +118,20 @@ for (const [name, schema] of schemas) {
     if (!targetName) continue;
     const target = storageOf(items, schemas.get(targetName) as Json);
     if (target.schema !== dbSchema)
-      violations.push(`${name}.${field}: relation to ${targetName} crosses from ${dbSchema} to ${target.schema}; use a plain id`);
+      violations.push(
+        `${name}.${field}: relation to ${targetName} crosses from ${dbSchema} to ${target.schema}; use a plain id`,
+      );
   }
-  if (!approvedSchemas.has(dbSchema)) violations.push(`${name}: schema ${dbSchema} is not an approved full-word schema name`);
+  if (!approvedSchemas.has(dbSchema))
+    violations.push(`${name}: schema ${dbSchema} is not an approved full-word schema name`);
   if (dbSchema === "public") violations.push(`${name}: tables must not live in the public schema`);
   if (!/^[a-z][a-z0-9]*$/.test(dbSchema)) violations.push(`${name}: schema ${dbSchema} must be one lowercase word`);
-  if (dbSchema.endsWith("s") && !["address"].includes(dbSchema)) violations.push(`${name}: schema ${dbSchema} must be singular`);
+  if (dbSchema.endsWith("s") && !["address"].includes(dbSchema))
+    violations.push(`${name}: schema ${dbSchema} must be singular`);
   if (!/^[a-z][a-z0-9]*(_[a-z][a-z0-9]*)?$/.test(table))
     violations.push(`${name}: table ${table} must be lowercase with at most one underscore`);
-  if (table.startsWith(`${dbSchema}_`) || table === dbSchema) violations.push(`${name}: table ${table} repeats its schema ${dbSchema}`);
+  if (table.startsWith(`${dbSchema}_`) || table === dbSchema)
+    violations.push(`${name}: table ${table} repeats its schema ${dbSchema}`);
   if (!table.endsWith("s") && !table.endsWith("people") && !table.endsWith("evidence"))
     violations.push(`${name}: table ${table} should be plural`);
   if (tables.has(qualified)) violations.push(`${name}: ${qualified} already used by ${tables.get(qualified)}`);

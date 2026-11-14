@@ -97,7 +97,12 @@ export const FileVersions = filesystem
   .description("Immutable exact bytes in the mzizi bucket; verify object hash, size and access before acceptance.")
   .role("entity")
   .facets({
-    storage: dryv.storage("file_versions").unique("fileId", "revision").index("sha256").index("s3Key").index("fileExtensionId"),
+    storage: dryv
+      .storage("file_versions")
+      .unique("fileId", "revision")
+      .index("sha256")
+      .index("s3Key")
+      .index("fileExtensionId"),
   });
 
 /*---------------- file_relations ----------------*/
@@ -113,7 +118,11 @@ export const FileRelations = filesystem
   .role("entity")
   .rule("VersionsMustDiffer", rule.differs("sourceVersionId", "derivedVersionId"))
   .facets({
-    storage: dryv.storage("file_relations").unique("sourceVersionId", "derivedVersionId", "kindId").index("derivedVersionId").index("kindId"),
+    storage: dryv
+      .storage("file_relations")
+      .unique("sourceVersionId", "derivedVersionId", "kindId")
+      .index("derivedVersionId")
+      .index("kindId"),
   });
 
 /*---------------- tags ----------------*/
@@ -141,7 +150,12 @@ export const Taggings = filesystem
   .role("entity")
   .rule("ExactlyOneTarget", rule.exactlyOne("fileId", "folderId"))
   .facets({
-    storage: dryv.storage("taggings").unique("tagId", "fileId").unique("tagId", "folderId").index("fileId").index("folderId"),
+    storage: dryv
+      .storage("taggings")
+      .unique("tagId", "fileId")
+      .unique("tagId", "folderId")
+      .index("fileId")
+      .index("folderId"),
   });
 
 /** Open: derivative cycle rejection through file_relations;

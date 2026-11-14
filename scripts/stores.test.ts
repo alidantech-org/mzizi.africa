@@ -9,7 +9,11 @@ function fixture(store = "main"): string {
     items: [
       { kind: "store", name: "main", value: {} },
       { kind: "store", name: "operations", value: {} },
-      { kind: "group", name: "domain", value: { facets: { storage: { namespace: "domain", store: { $ref: `#/stores/${store}` } } } } },
+      {
+        kind: "group",
+        name: "domain",
+        value: { facets: { storage: { namespace: "domain", store: { $ref: `#/stores/${store}` } } } },
+      },
       {
         kind: "schema",
         name: "domain.Entity",
@@ -30,5 +34,7 @@ test("undefined canonical stores fail instead of inheriting a namespace list", (
   ]);
 });
 test("malformed store references fail at the parsing boundary", () => {
-  expect(() => parseStoreAssignments(fixture().replace("#/stores/main", "#/schemas/main"))).toThrow("expected #/stores/ reference");
+  expect(() => parseStoreAssignments(fixture().replace("#/stores/main", "#/schemas/main"))).toThrow(
+    "expected #/stores/ reference",
+  );
 });

@@ -1,5 +1,5 @@
 import * as dryv from "@dryvcode/author";
-import { databaseHttp } from "#/apps/database/failures.ts";
+import { databaseHttp } from "#/apps/database/_shared";
 import { sharedFailures as f, sharedProperties as p } from "#/schemas/_shared.ts";
 import { reference, Scheme, Value } from "#/schemas/mzizi/reference.ts";
 
@@ -34,7 +34,12 @@ const { ScanSchemes, ScanMembers } = catalogue.queries({
     .from(scheme)
     .input(SchemeWindow)
     .where((row, args) => [row.fields.code.compare("prefix", args.code)])
-    .select(({ fields }) => ({ id: fields.id, code: fields.code, owner_snapshot: fields.ownerSnapshot, title: fields.title }))
+    .select(({ fields }) => ({
+      id: fields.id,
+      code: fields.code,
+      owner_snapshot: fields.ownerSnapshot,
+      title: fields.title,
+    }))
     .orderBy(({ fields }) => [fields.code.order("asc"), fields.id.order("asc")])
     .page(({ limit, offset }) => ({ limit, offset, maxLimit: 200 })),
   ScanMembers: dryv.readQuery
@@ -52,11 +57,21 @@ const { ScanSchemes, ScanMembers } = catalogue.queries({
     .page(({ limit, offset }) => ({ limit, offset, maxLimit: 200 })),
 });
 
-const rows = catalogue.schemas({ SchemeEntry: dryv.schema.fromQuery(ScanSchemes), MemberEntry: dryv.schema.fromQuery(ScanMembers) });
+const rows = catalogue.schemas({
+  SchemeEntry: dryv.schema.fromQuery(ScanSchemes),
+  MemberEntry: dryv.schema.fromQuery(ScanMembers),
+});
 const io = catalogue.schemas({
-  SchemeCollection: dryv.schema({ schemes: dryv.field(rows.SchemeEntry).array() }),
-  MemberCollection: dryv.schema({ values: dryv.field(rows.MemberEntry).array() }),
-  MemberKey: dryv.schema({ scheme: dryv.field(p.IdentityCode), code: dryv.field(p.IdentityCode) }),
+  SchemeCollection: dryv.schema({
+    schemes: dryv.field(rows.SchemeEntry).array(),
+  }),
+  MemberCollection: dryv.schema({
+    values: dryv.field(rows.MemberEntry).array(),
+  }),
+  MemberKey: dryv.schema({
+    scheme: dryv.field(p.IdentityCode),
+    code: dryv.field(p.IdentityCode),
+  }),
   ResolvedMember: dryv.schema({ value: dryv.field(rows.MemberEntry) }),
 });
 
@@ -68,7 +83,9 @@ export const referenceOperations = catalogue.operations({
     .input(SchemeWindow)
     .output(io.SchemeCollection)
     .queryFromInput(ScanSchemes, { envelope: { schemes: "rows" } })
-    .facets(({ input, output }) => ({ http: dryv.http("GET", "/v1/reference/schemes").input(input, dryv.queryObject()).output(output) })),
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/reference/schemes").input(input, dryv.queryObject()).output(output),
+    })),
   BrowseSchemeMembers: dryv
     .operation()
     .role("list")
@@ -76,7 +93,9 @@ export const referenceOperations = catalogue.operations({
     .input(MemberWindow)
     .output(io.MemberCollection)
     .queryFromInput(ScanMembers, { envelope: { values: "rows" } })
-    .facets(({ input, output }) => ({ http: dryv.http("GET", "/v1/reference/values").input(input, dryv.queryObject()).output(output) })),
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/reference/values").input(input, dryv.queryObject()).output(output),
+    })),
   ResolveMemberCode: dryv
     .operation()
     .role("detail")
@@ -84,5 +103,7 @@ export const referenceOperations = catalogue.operations({
     .input(io.MemberKey)
     .output(io.ResolvedMember)
     .failures(f.NotFound)
-    .facets(({ input, output }) => ({ http: dryv.http("POST", "/v1/reference/values/lookup").input(input, dryv.body()).output(output) })),
+    .facets(({ input, output }) => ({
+      http: dryv.http("POST", "/v1/reference/values/lookup").input(input, dryv.body()).output(output),
+    })),
 });

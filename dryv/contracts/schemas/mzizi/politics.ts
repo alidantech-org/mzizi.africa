@@ -45,7 +45,11 @@ export const Memberships = politics
   .description("One individual's dated membership in one political party.")
   .role("entity")
   .facets({
-    storage: dryv.storage("memberships").index("partyId", "validFrom").index("individualId", "validFrom").index("sourceCitationId"),
+    storage: dryv
+      .storage("memberships")
+      .index("partyId", "validFrom")
+      .index("individualId", "validFrom")
+      .index("sourceCitationId"),
   });
 
 /*---------------- politics.coalitions ----------------*/
@@ -72,7 +76,11 @@ export const Alignments = politics
   .description("One party's dated alignment with one coalition.")
   .role("entity")
   .facets({
-    storage: dryv.storage("alignments").index("coalitionId", "validFrom").index("partyId", "validFrom").index("sourceCitationId"),
+    storage: dryv
+      .storage("alignments")
+      .index("coalitionId", "validFrom")
+      .index("partyId", "validFrom")
+      .index("sourceCitationId"),
   });
 
 /*---------------- politics.elections ----------------*/
@@ -115,7 +123,9 @@ export const Candidates = politics
   .extends(baseSchemas.Entity)
   .description("One person's candidature in one contest, retaining party affiliation at election time.")
   .role("entity")
-  .facets({ storage: dryv.storage("candidates").index("contestId", "ballotOrder").index("individualId").index("sourceCitationId") });
+  .facets({
+    storage: dryv.storage("candidates").index("contestId", "ballotOrder").index("individualId").index("sourceCitationId"),
+  });
 
 /*---------------- politics.electorates ----------------*/
 export const Electorates = politics
@@ -131,7 +141,13 @@ export const Electorates = politics
   .extends(baseSchemas.Entity)
   .description("One set of electorate and ballot totals reported for one contest and geographic unit.")
   .role("entity")
-  .facets({ storage: dryv.storage("electorates").unique("contestId", "unitFeatureId").index("unitFeatureId").index("sourceCitationId") });
+  .facets({
+    storage: dryv
+      .storage("electorates")
+      .unique("contestId", "unitFeatureId")
+      .index("unitFeatureId")
+      .index("sourceCitationId"),
+  });
 
 /*---------------- politics.results ----------------*/
 export const Results = politics
@@ -145,7 +161,9 @@ export const Results = politics
   .extends(baseSchemas.Entity)
   .description("One candidate's published vote result for one geographic unit.")
   .role("entity")
-  .facets({ storage: dryv.storage("results").unique("candidateId", "unitFeatureId").index("unitFeatureId").index("sourceCitationId") });
+  .facets({
+    storage: dryv.storage("results").unique("candidateId", "unitFeatureId").index("unitFeatureId").index("sourceCitationId"),
+  });
 
 /*---------------- politics.manifestos ----------------*/
 export const Manifestos = politics
@@ -175,7 +193,9 @@ export const ManifestoItems = politics
   .extends(baseSchemas.Entity)
   .description("One policy commitment or promise within a manifesto, optionally linked to a Reference topic.")
   .role("entity")
-  .facets({ storage: dryv.storage("manifesto_items").index("manifestoId", "position").index("topicId").index("sourceCitationId") });
+  .facets({
+    storage: dryv.storage("manifesto_items").index("manifestoId", "position").index("topicId").index("sourceCitationId"),
+  });
 
 /*---------------- politics.referendum_options ----------------*/
 export const ReferendumOptions = politics
@@ -203,5 +223,9 @@ export const OptionResults = politics
   .description("One reported vote result for one referendum option and geographic unit.")
   .role("entity")
   .facets({
-    storage: dryv.storage("option_results").unique("optionId", "unitFeatureId").index("unitFeatureId").index("sourceCitationId"),
+    storage: dryv
+      .storage("option_results")
+      .unique("optionId", "unitFeatureId")
+      .index("unitFeatureId")
+      .index("sourceCitationId"),
   });

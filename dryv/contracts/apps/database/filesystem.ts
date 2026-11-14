@@ -1,5 +1,5 @@
 import * as dryv from "@dryvcode/author";
-import { databaseHttp } from "#/apps/database/failures.ts";
+import { databaseHttp } from "#/apps/database/_shared";
 import { sharedFailures as f, sharedProperties as p } from "#/schemas/_shared.ts";
 import { filesystem, filesystemEnums, Folders } from "#/schemas/mzizi/filesystem.ts";
 
@@ -8,7 +8,12 @@ const hierarchy = filesystem.feature("FolderHierarchy").failureDefaults(database
 const { FolderView } = hierarchy.schemas({
   FolderView: dryv
     .schema({})
-    .projection(dryv.projection(Folders.asRef()).read().pick("id", "parentId", "name", "code", "access", "roleId", "version", "createdAt")),
+    .projection(
+      dryv
+        .projection(Folders.asRef())
+        .read()
+        .pick("id", "parentId", "name", "code", "access", "roleId", "version", "createdAt"),
+    ),
 });
 
 const io = hierarchy.schemas({
@@ -27,7 +32,9 @@ export const filesystemOperations = hierarchy.operations({
   RegisterFolder: dryv
     .operation()
     .role("create")
-    .description("Register a logical folder under an optional parent after checking the acting account's filesystem edit permission.")
+    .description(
+      "Register a logical folder under an optional parent after checking the acting account's filesystem edit permission.",
+    )
     .input(io.RegisterFolderInput)
     .output(io.RegisteredFolder)
     .failures(f.Forbidden, f.ValidationError)

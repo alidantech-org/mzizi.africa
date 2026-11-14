@@ -210,10 +210,18 @@ export const Citations = source
     recordedAt: dryv.field(sharedProperties.Instant),
   })
   .extends(baseSchemas.Entity)
-  .description("Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record.")
+  .description(
+    "Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record.",
+  )
   .role("entity")
   .facets({
-    storage: dryv.storage("citations").index("evidenceId").index("documentId").index("captureId").index("fileVersionId").index("locatorKindId"),
+    storage: dryv
+      .storage("citations")
+      .index("evidenceId")
+      .index("documentId")
+      .index("captureId")
+      .index("fileVersionId")
+      .index("locatorKindId"),
   });
 
 export const Verifications = source

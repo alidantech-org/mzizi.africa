@@ -51,7 +51,10 @@ export const checkSteps = (): Step[] => [
 ];
 
 /** Re-export the access rules and the JSON schema derived from the contracts. */
-export const exportSteps = (): Step[] => [inDryv("Export access rules", "access:export"), inDryv("Export JSON schema", "schema:export")];
+export const exportSteps = (): Step[] => [
+  inDryv("Export access rules", "access:export"),
+  inDryv("Export JSON schema", "schema:export"),
+];
 
 /** Regenerate the web dashboard's data catalog from the generated API list routes. */
 export const catalogSteps = (): Step[] => [step("Web data catalog", at("source/apps/web"), ["bun", "run", "catalog"])];
@@ -91,7 +94,12 @@ async function ensureApi(): Promise<() => void> {
   }
   mkdirSync(at(".local"), { recursive: true });
   console.log(`Starting the Dryv engine API (log: ${apiLog}) ...`);
-  const child = Bun.spawn(apiCommand(), { cwd: dryvHome(), stdin: "ignore", stdout: Bun.file(at(apiLog)), stderr: Bun.file(at(apiLog)) });
+  const child = Bun.spawn(apiCommand(), {
+    cwd: dryvHome(),
+    stdin: "ignore",
+    stdout: Bun.file(at(apiLog)),
+    stderr: Bun.file(at(apiLog)),
+  });
   const stop = (): void => {
     child.kill("SIGTERM");
     stopApi();

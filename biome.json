@@ -1,9 +1,17 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "files": {
-    "includes": ["package.json", "biome.json", "tsconfig.json", "scripts/**", "dryv/tools/**", "dryv/contracts/**", "dryv/package.json"]
+    "includes": [
+      "package.json",
+      "biome.json",
+      "tsconfig.json",
+      "scripts/**",
+      "dryv/tools/**",
+      "dryv/contracts/**",
+      "dryv/package.json"
+    ]
   },
-  "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 145 },
+  "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 125 },
   "linter": { "rules": { "recommended": true } },
   "assist": { "actions": { "source": { "organizeImports": "on" } } }
 }

@@ -15,10 +15,12 @@ export const root = resolve(import.meta.dir, "..", "..");
 export const at = (...parts: string[]): string => join(root, ...parts);
 
 /** Turn an absolute path back into a repository-relative label for output. */
-export const label = (path: string): string => (path === root ? "." : path.startsWith(`${root}/`) ? path.slice(root.length + 1) : path);
+export const label = (path: string): string =>
+  path === root ? "." : path.startsWith(`${root}/`) ? path.slice(root.length + 1) : path;
 
 /** The local Dryv checkout. Generation uses it because the published packages lag behind the pinned engine. */
-export const dryvHome = (): string => process.env.DRYV_HOME ?? join(process.env.HOME ?? "", "Projects/personal/alidantech-org/codepot/dryv");
+export const dryvHome = (): string =>
+  process.env.DRYV_HOME ?? join(process.env.HOME ?? "", "Projects/personal/alidantech-org/codepot/dryv");
 
 /**
  * Parse `KEY=value` lines (comments, blank lines, optional `export` and matching quotes are handled).
@@ -41,6 +43,8 @@ export function parseEnv(text: string): Record<string, string> {
 export function localEnv(): Record<string, string> {
   const file = at(".env");
   const fromFile = existsSync(file) ? parseEnv(readFileSync(file, "utf8")) : {};
-  const fromProcess = Object.fromEntries(Object.entries(process.env).filter((entry): entry is [string, string] => entry[1] !== undefined));
+  const fromProcess = Object.fromEntries(
+    Object.entries(process.env).filter((entry): entry is [string, string] => entry[1] !== undefined),
+  );
   return { ...fromFile, ...fromProcess };
 }

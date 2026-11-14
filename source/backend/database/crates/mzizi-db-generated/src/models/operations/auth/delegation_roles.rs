@@ -3,6 +3,6 @@
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct DelegationRoles {
-    pub delegation_id: Option<uuid::Uuid>,
+    pub delegation_id: uuid::Uuid,
     pub role_id: uuid::Uuid,
 }

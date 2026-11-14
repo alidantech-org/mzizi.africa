@@ -95,7 +95,9 @@ export const Identifiers = official
   })
   .extends(baseSchemas.ValidityEntity)
   .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
-  .description("One exact external identifier assigned to an entity or individual under a Reference scheme and optional issuer.")
+  .description(
+    "One exact external identifier assigned to an entity or individual under a Reference scheme and optional issuer.",
+  )
   .role("entity")
   .facets({
     storage: dryv
@@ -143,8 +145,12 @@ export const Relationships = official
   .extends(baseSchemas.ValidityEntity)
   .rule("HasExactlyOneFromIdentity", rule.exactlyOne("fromEntityId", "fromIndividualId"))
   .rule("HasExactlyOneToIdentity", rule.exactlyOne("toEntityId", "toIndividualId"))
-  .rule("DoesNotLinkIdentityToItself", (v) => when.all(v.fromEntityId.ne(v.toEntityId), v.fromIndividualId.ne(v.toIndividualId)))
-  .description("One directed typed relationship between exactly two Official identities, optionally with an ownership share.")
+  .rule("DoesNotLinkIdentityToItself", (v) =>
+    when.all(v.fromEntityId.ne(v.toEntityId), v.fromIndividualId.ne(v.toIndividualId)),
+  )
+  .description(
+    "One directed typed relationship between exactly two Official identities, optionally with an ownership share.",
+  )
   .role("entity")
   .facets({
     storage: dryv

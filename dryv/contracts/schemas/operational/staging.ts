@@ -1,24 +1,23 @@
 /**
  * Schema: staging | Database: mzizi_operations
- * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12).
+ * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12); table and column inventory is unchanged.
  * Design: .docs/_plan/schema-redesign/mzizi-operational-db/staging.md
- * Approved inventory: 6 tables and their listed columns. Technical choices
- * follow approved semantics; SQL migration/application remains unauthorized.
- * Required values have no implicit defaults; named database operations must supply them.
- * Relations restrict deletion and key updates to preserve referenced operational history.
  */
 import * as dryv from "@dryvcode/author";
+import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { authSchemas } from "./auth.ts";
-import { engineSchemas } from "./engine.ts";
-import { managementSchemas } from "./management.ts";
+import { Artifacts, Runs } from "./engine.ts";
+import { Accounts } from "./auth.ts";
+import { Publications } from "./management.ts";
+
+const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const staging = dryv
   .group({ name: "staging" })
-  .description("Approved Mzizi Operations staging records.")
+  .description("Candidate revisions, mappings, validation findings and review workflow.")
   .facets({ storage: { namespace: "staging", store: "operations" } });
 
-/*---------------- Closed technical vocabulary enums ----------------*/
+/*---------------- Closed technical vocabulary ----------------*/
 export const stagingEnums = staging.properties({
   CandidateStatus: dryv.property.enum(["pending", "in_review", "accepted", "rejected", "promoted", "superseded"]),
   MappingStatus: dryv.property.enum(["draft", "active", "retired"]),
@@ -34,328 +33,158 @@ export const stagingEnums = staging.properties({
   StagingDecision: dryv.property.enum(["approve", "reject", "request_changes"]),
 });
 
-/*---------------- Approved staging table contracts ----------------*/
-export const stagingSchemas: Record<string, any> = {};
-export const Candidates = staging.schemas({
-  Candidates: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      target_schema: dryv.field(sharedProperties.NonEmptyString100),
-      target_table: dryv.field(sharedProperties.NonEmptyString100),
-      target_contract: dryv.field(sharedProperties.NonEmptyString255),
-      target_contract_version: dryv.field(sharedProperties.NonEmptyString255),
-      stable_key: dryv.field(sharedProperties.String500).optional().nullable(),
-      source_run_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Runs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable(),
-      status: dryv.field(stagingEnums.CandidateStatus),
-      current_revision_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Revisions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      created_by: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      created_at: dryv.field(sharedProperties.Instant),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("candidates")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_candidates_source_run_id", fields: ["source_run_id"] },
-          { name: "idx_candidates_created_by", fields: ["created_by"] },
-          { name: "idx_candidates_current_revision_id", fields: ["current_revision_id"] },
-          { name: "idx_candidates_status_created_at", fields: ["status", "created_at"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const Candidates = staging
+  .schema("Candidates", {
+    targetSchema: dryv.field(sharedProperties.NonEmptyString100),
+    targetTable: dryv.field(sharedProperties.NonEmptyString100),
+    targetContract: dryv.field(sharedProperties.NonEmptyString255),
+    targetContractVersion: dryv.field(sharedProperties.NonEmptyString255),
+    stableKey: dryv.field(sharedProperties.String500).maybe(),
+    sourceRunId: belongsTo(() => Runs).maybe(),
+    status: dryv.field(stagingEnums.CandidateStatus),
+    currentRevisionId: belongsTo(() => Revisions).maybe(),
+    createdBy: belongsTo(() => Accounts),
+  })
+  .extends(baseSchemas.Created)
+  .description("Proposed record awaiting review; never canonical until accepted and published.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("candidates")
+      .index("sourceRunId")
+      .index("createdBy")
+      .index("currentRevisionId")
+      .index("status", "createdAt"),
+  });
 
-stagingSchemas.Candidates = Candidates.Candidates;
+export const Revisions = staging
+  .schema("Revisions", {
+    candidateId: belongsTo(() => Candidates).createOnly(),
+    revisionNumber: dryv.field(sharedProperties.PositiveInteger).createOnly(),
+    payload: dryv.field(sharedProperties.JsonText).createOnly(),
+    schemaVersion: dryv.field(sharedProperties.NonEmptyString100).createOnly(),
+    contentHash: dryv.field(sharedProperties.Sha256).createOnly(),
+    artifactId: belongsTo(() => Artifacts)
+      .maybe()
+      .createOnly(),
+    sourceManifestKey: dryv.field(sharedProperties.String1000).maybe().createOnly(),
+    sourceManifestHash: dryv.field(sharedProperties.Sha256).maybe().createOnly(),
+    createdBy: belongsTo(() => Accounts).createOnly(),
+    createdAt: dryv.field(sharedProperties.Instant).createOnly(),
+    supersedesRevisionId: belongsTo(dryv.self).maybe().createOnly(),
+  })
+  .extends(baseSchemas.Immutable)
+  .description("Append-only revision of a candidate's proposed content.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("revisions")
+      .index("createdBy")
+      .index("supersedesRevisionId")
+      .unique("candidateId", "revisionNumber"),
+  });
 
-export const Revisions = staging.schemas({
-  Revisions: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id).createOnly(),
-      candidate_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Candidates.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .createOnly(),
-      revision_number: dryv.field(sharedProperties.PositiveInteger).createOnly(),
-      payload: dryv.field(sharedProperties.JsonText).createOnly(),
-      schema_version: dryv.field(sharedProperties.NonEmptyString100).createOnly(),
-      content_hash: dryv.field(sharedProperties.Sha256).createOnly(),
-      artifact_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .createOnly()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Artifacts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      source_manifest_key: dryv.field(sharedProperties.String1000).optional().nullable().createOnly(),
-      source_manifest_hash: dryv.field(sharedProperties.Sha256).optional().nullable().createOnly(),
-      created_by: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .createOnly(),
-      created_at: dryv.field(sharedProperties.Instant).createOnly(),
-      supersedes_revision_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Revisions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .createOnly(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("revisions")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_revisions_created_by", fields: ["created_by"] },
-          { name: "idx_revisions_supersedes_revision_id", fields: ["supersedes_revision_id"] },
-          { name: "uq_revisions_candidate_id_revision_number", fields: ["candidate_id", "revision_number"], unique: true },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const Mappings = staging
+  .schema("Mappings", {
+    sourceKind: dryv.field(sharedProperties.NonEmptyString100),
+    targetContract: dryv.field(sharedProperties.NonEmptyString255),
+    targetContractVersion: dryv.field(sharedProperties.NonEmptyString255),
+    version: dryv.field(sharedProperties.PositiveInteger),
+    mappingDefinition: dryv.field(sharedProperties.JsonText),
+    mappingHash: dryv.field(sharedProperties.Sha256),
+    modelProvider: dryv.field(sharedProperties.String255).maybe(),
+    modelName: dryv.field(sharedProperties.String255).maybe(),
+    modelVersion: dryv.field(sharedProperties.String255).maybe(),
+    status: dryv.field(stagingEnums.MappingStatus),
+    createdBy: belongsTo(() => Accounts),
+    approvedBy: belongsTo(() => Accounts).maybe(),
+    approvedAt: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.Created)
+  .description("Mapping from extracted fields to the candidate's target record.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("mappings").index("createdBy").index("approvedBy"),
+  });
 
-stagingSchemas.Revisions = Revisions.Revisions;
+export const Findings = staging
+  .schema("Findings", {
+    revisionId: belongsTo(() => Revisions).createOnly(),
+    path: dryv.field(sharedProperties.NonEmptyString1000).createOnly(),
+    code: dryv.field(sharedProperties.IdentityCode).createOnly(),
+    severity: dryv.field(stagingEnums.StagingSeverity).createOnly(),
+    message: dryv.field(sharedProperties.NonEmptyString1000).createOnly(),
+    details: dryv.field(sharedProperties.JsonText).maybe().createOnly(),
+    ruleVersion: dryv.field(sharedProperties.NonEmptyString255).createOnly(),
+    createdAt: dryv.field(sharedProperties.Instant).createOnly(),
+  })
+  .extends(baseSchemas.Immutable)
+  .description("Append-only validation finding raised against a revision.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("findings").index("revisionId"),
+  });
 
-export const Mappings = staging.schemas({
-  Mappings: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      source_kind: dryv.field(sharedProperties.NonEmptyString100),
-      target_contract: dryv.field(sharedProperties.NonEmptyString255),
-      target_contract_version: dryv.field(sharedProperties.NonEmptyString255),
-      version: dryv.field(sharedProperties.PositiveInteger),
-      mapping_definition: dryv.field(sharedProperties.JsonText),
-      mapping_hash: dryv.field(sharedProperties.Sha256),
-      model_provider: dryv.field(sharedProperties.String255).optional().nullable(),
-      model_name: dryv.field(sharedProperties.String255).optional().nullable(),
-      model_version: dryv.field(sharedProperties.String255).optional().nullable(),
-      status: dryv.field(stagingEnums.MappingStatus),
-      created_by: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      approved_by: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable(),
-      approved_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      created_at: dryv.field(sharedProperties.Instant),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("mappings")
-        .primaryKey("id")
-        .indexes({ name: "idx_mappings_created_by", fields: ["created_by"] }, { name: "idx_mappings_approved_by", fields: ["approved_by"] }),
-    }),
-});
+export const Reviews = staging
+  .schema("Reviews", {
+    revisionId: belongsTo(() => Revisions).createOnly(),
+    reviewerId: belongsTo(() => Accounts).createOnly(),
+    decision: dryv.field(stagingEnums.StagingDecision).createOnly(),
+    reason: dryv.field(sharedProperties.NonEmptyString1000).createOnly(),
+    decidedAt: dryv.field(sharedProperties.Instant).createOnly(),
+    policyVersion: dryv.field(sharedProperties.NonEmptyString255).createOnly(),
+  })
+  .extends(baseSchemas.Immutable)
+  .description("Append-only attributable review decision on a revision.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("reviews").index("reviewerId").index("revisionId"),
+  });
 
-stagingSchemas.Mappings = Mappings.Mappings;
+export const PromotionRequests = staging
+  .schema("PromotionRequests", {
+    revisionId: belongsTo(() => Revisions),
+    expectedMainVersion: dryv.field(sharedProperties.String255).maybe(),
+    idempotencyKey: dryv.field(sharedProperties.String255).maybe(),
+    requestHash: dryv.field(sharedProperties.Sha256),
+    status: dryv.field(stagingEnums.PromotionStatus),
+    publicationId: belongsTo(() => Publications),
+    requestedBy: belongsTo(() => Accounts),
+    requestedAt: dryv.field(sharedProperties.Instant),
+    completedAt: dryv.field(sharedProperties.Instant).maybe(),
+    failureCode: dryv.field(sharedProperties.String255).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Request to promote a reviewed revision to Main through publication.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("promotion_requests")
+      .index("publicationId")
+      .index("requestedBy")
+      .index("revisionId")
+      .unique("idempotencyKey")
+      .index("status", "requestedAt"),
+  });
 
-export const Findings = staging.schemas({
-  Findings: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id).createOnly(),
-      revision_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Revisions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .createOnly(),
-      path: dryv.field(sharedProperties.NonEmptyString1000).createOnly(),
-      code: dryv.field(sharedProperties.IdentityCode).createOnly(),
-      severity: dryv.field(stagingEnums.StagingSeverity).createOnly(),
-      message: dryv.field(sharedProperties.NonEmptyString1000).createOnly(),
-      details: dryv.field(sharedProperties.JsonText).optional().nullable().createOnly(),
-      rule_version: dryv.field(sharedProperties.NonEmptyString255).createOnly(),
-      created_at: dryv.field(sharedProperties.Instant).createOnly(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("findings")
-        .primaryKey("id")
-        .indexes({ name: "idx_findings_revision_id", fields: ["revision_id"] }),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-stagingSchemas.Findings = Findings.Findings;
-
-export const Reviews = staging.schemas({
-  Reviews: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id).createOnly(),
-      revision_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Revisions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .createOnly(),
-      reviewer_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .createOnly(),
-      decision: dryv.field(stagingEnums.StagingDecision).createOnly(),
-      reason: dryv.field(sharedProperties.NonEmptyString1000).createOnly(),
-      decided_at: dryv.field(sharedProperties.Instant).createOnly(),
-      policy_version: dryv.field(sharedProperties.NonEmptyString255).createOnly(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("reviews")
-        .primaryKey("id")
-        .indexes({ name: "idx_reviews_reviewer_id", fields: ["reviewer_id"] }, { name: "idx_reviews_revision_id", fields: ["revision_id"] }),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-stagingSchemas.Reviews = Reviews.Reviews;
-
-export const PromotionRequests = staging.schemas({
-  PromotionRequests: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      revision_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Revisions.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      expected_main_version: dryv.field(sharedProperties.String255).optional().nullable(),
-      idempotency_key: dryv.field(sharedProperties.String255).optional().nullable(),
-      request_hash: dryv.field(sharedProperties.Sha256),
-      status: dryv.field(stagingEnums.PromotionStatus),
-      publication_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => managementSchemas.Publications.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      requested_by: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      requested_at: dryv.field(sharedProperties.Instant),
-      completed_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      failure_code: dryv.field(sharedProperties.String255).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("promotion_requests")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_promotion_requests_publication_id", fields: ["publication_id"] },
-          { name: "idx_promotion_requests_requested_by", fields: ["requested_by"] },
-          { name: "idx_promotion_requests_revision_id", fields: ["revision_id"] },
-          { name: "uq_promotion_requests_idempotency_key", fields: ["idempotency_key"], unique: true },
-          { name: "idx_promotion_requests_status_requested_at", fields: ["status", "requested_at"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-stagingSchemas.PromotionRequests = PromotionRequests.PromotionRequests;
-
-/*---------------- Authorized multi-source revision evidence ----------------*/
-/** External Main IDs are app-verified; local operational artifacts use a real FK. */
-export const RevisionSources = staging.schemas({
-  RevisionSources: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      revision_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => stagingSchemas.Revisions.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      /** Main external IDs: validated by Main during publication; no cross-database FKs. */
-      source_evidence_ref_id: dryv.field(sharedProperties.Id),
-      source_citation_ref_id: dryv.field(sharedProperties.Id),
-      file_version_ref_id: dryv.field(sharedProperties.Id),
-      manifest_release_ref_id: dryv.field(sharedProperties.Id).optional().nullable(),
-      evidence_role: dryv.field(sharedProperties.NonEmptyString100),
-      content_hash: dryv.field(sharedProperties.Sha256),
-      source_snapshot: dryv.field(sharedProperties.JsonText),
-      created_at: dryv.field(sharedProperties.Instant),
-    })
-    .description("Immutable normalized evidence inputs for a candidate revision; Main verifies citation/evidence/file ownership and hashes.")
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("revision_sources")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_revision_sources_citation_role", fields: ["revision_id", "source_citation_ref_id", "evidence_role"], unique: true },
-          { name: "idx_revision_sources_evidence", fields: ["source_evidence_ref_id"] },
-          { name: "idx_revision_sources_file", fields: ["file_version_ref_id"] },
-        ),
-    }),
-});
-stagingSchemas.RevisionSources = RevisionSources.RevisionSources;
+export const RevisionSources = staging
+  .schema("RevisionSources", {
+    revisionId: belongsTo(() => Revisions),
+    sourceEvidenceRefId: dryv.field(sharedProperties.Id),
+    sourceCitationRefId: dryv.field(sharedProperties.Id),
+    fileVersionRefId: dryv.field(sharedProperties.Id),
+    manifestReleaseRefId: dryv.field(sharedProperties.Id).maybe(),
+    evidenceRole: dryv.field(sharedProperties.NonEmptyString100),
+    contentHash: dryv.field(sharedProperties.Sha256),
+    sourceSnapshot: dryv.field(sharedProperties.JsonText),
+  })
+  .extends(baseSchemas.Created)
+  .description("Source evidence supporting a candidate revision.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("revision_sources")
+      .unique("revisionId", "sourceCitationRefId", "evidenceRole")
+      .index("sourceEvidenceRefId")
+      .index("fileVersionRefId"),
+  });

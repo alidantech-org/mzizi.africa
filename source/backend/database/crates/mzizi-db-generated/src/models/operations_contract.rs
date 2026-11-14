@@ -219,7 +219,7 @@ pub async fn verify(connection: &mut PgConnection) -> Result<Vec<String>, sqlx::
     }
     {
         let describe = connection.describe("SELECT \"delegation_id\", \"role_id\" FROM \"auth\".\"delegation_roles\"").await?;
-        check::<uuid::Uuid>(&describe, 0, "auth.delegation_roles.delegation_id", true, &mut errors);
+        check::<uuid::Uuid>(&describe, 0, "auth.delegation_roles.delegation_id", false, &mut errors);
         check::<uuid::Uuid>(&describe, 1, "auth.delegation_roles.role_id", false, &mut errors);
     }
     {

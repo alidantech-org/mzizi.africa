@@ -47,7 +47,9 @@ if (!manifest.dependencies?.pg) violations.push("package.json: pg must be a runt
 
 // 2. Source rules, ignoring tests and test helpers (which create their own scratch schemas).
 const isTest = (path: string) =>
-  /\.(spec|test)\.ts$/.test(path) || /\/(neutral|read)\/.*(fixture-loader)/.test(path) || path.endsWith("scratch-database.ts");
+  /\.(spec|test)\.ts$/.test(path) ||
+  /\/(neutral|read)\/.*(fixture-loader)/.test(path) ||
+  path.endsWith("scratch-database.ts");
 const sourceRules: Array<[RegExp, string]> = [
   [/synchronize:\s*true/, "schema synchronisation (schema is owned by db-engine)"],
   [/migrationsRun:\s*true/, "running migrations (owned by db-engine)"],
@@ -67,7 +69,8 @@ for await (const file of new Glob("src/**/*.ts").scan({ cwd: api, absolute: true
   const source = readFileSync(file, "utf8");
   for (const [pattern, why] of sourceRules) if (pattern.test(source)) violations.push(`${rel}: ${why}`);
   const inAudit = rel.includes("/modules/audit/") || rel.endsWith("src/database/write-database.ts");
-  if (!inAudit && (sqlWrites.test(source) || repositoryWrites.test(source))) violations.push(`${rel}: writes outside the audit group`);
+  if (!inAudit && (sqlWrites.test(source) || repositoryWrites.test(source)))
+    violations.push(`${rel}: writes outside the audit group`);
 }
 
 if (violations.length > 0) {

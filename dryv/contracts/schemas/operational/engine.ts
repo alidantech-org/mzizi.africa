@@ -1,22 +1,22 @@
 /**
  * Schema: engine | Database: mzizi_operations
- * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12).
+ * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12); table and column inventory is unchanged.
  * Design: .docs/_plan/schema-redesign/mzizi-operational-db/engine.md
- * Approved inventory: 10 tables and their listed columns. Technical choices
- * follow approved semantics; SQL migration/application remains unauthorized.
- * Required values have no implicit defaults; named database operations must supply them.
- * Relations restrict deletion and key updates to preserve referenced operational history.
  */
 import * as dryv from "@dryvcode/author";
+import { rule } from "@dryvcode/author";
+import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { authSchemas } from "./auth.ts";
+import { Accounts } from "./auth.ts";
+
+const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const engine = dryv
   .group({ name: "engine" })
-  .description("Approved Mzizi Operations engine records.")
+  .description("Pipeline releases, runs, jobs, attempts, checkpoints and delivery coordination.")
   .facets({ storage: { namespace: "engine", store: "operations" } });
 
-/*---------------- Closed technical vocabulary enums ----------------*/
+/*---------------- Closed technical vocabulary ----------------*/
 export const engineEnums = engine.properties({
   EngineTriggerKind: dryv.property.enum(["manual", "scheduled", "event", "retry", "api"]),
   RunStatus: dryv.property.enum(["pending", "queued", "running", "succeeded", "failed", "cancelled"]),
@@ -52,418 +52,197 @@ export const engineEnums = engine.properties({
   EngineAccessClassification: dryv.property.enum(["public", "restricted", "confidential", "private"]),
 });
 
-export const engineExpressions = engine.expressions({
-  JobsMustDiffer: dryv.expression.notEqual(dryv.expression.context("value", "job_id"), dryv.expression.context("value", "depends_on_job_id")),
-});
+export const Pipelines = engine
+  .schema("Pipelines", {
+    title: dryv.field(sharedProperties.NonEmptyString255),
+    description: dryv.field(sharedProperties.Description).maybe(),
+    ownerAccountId: belongsTo(() => Accounts),
+    enabled: dryv.field(sharedProperties.Flag),
+    retiredAt: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.CodedCreated)
+  .description("Stable pipeline identity with an owner.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("pipelines").index("ownerAccountId"),
+  });
 
-/*---------------- Approved engine table contracts ----------------*/
-export const engineSchemas: Record<string, any> = {};
-export const Pipelines = engine.schemas({
-  Pipelines: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      code: dryv.field(sharedProperties.IdentityCode),
-      title: dryv.field(sharedProperties.NonEmptyString255),
-      description: dryv.field(sharedProperties.Description).optional().nullable(),
-      owner_account_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      enabled: dryv.field(sharedProperties.Flag),
-      created_at: dryv.field(sharedProperties.Instant),
-      retired_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("pipelines")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_pipelines_owner_account_id", fields: ["owner_account_id"] },
-          { name: "uq_pipelines_code", fields: ["code"], unique: true },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const PipelineReleases = engine
+  .schema("PipelineReleases", {
+    pipelineId: belongsTo(() => Pipelines),
+    version: dryv.field(sharedProperties.PositiveInteger),
+    manifestHash: dryv.field(sharedProperties.Sha256),
+    manifestObjectKey: dryv.field(sharedProperties.NonEmptyString1000),
+    manifestReleaseRefId: dryv.field(sharedProperties.Id).maybe(),
+    inputSchemaCode: dryv.field(sharedProperties.IdentityCode).maybe(),
+    inputSchemaVersion: dryv.field(sharedProperties.NonEmptyString100).maybe(),
+    capabilityVersions: dryv.field(sharedProperties.JsonText).maybe(),
+    contractVersion: dryv.field(sharedProperties.NonEmptyString255),
+    approvedBy: belongsTo(() => Accounts).maybe(),
+    releasedAt: dryv.field(sharedProperties.Instant),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Immutable pipeline definition released under a pipeline.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("pipeline_releases").index("approvedBy").unique("pipelineId", "version"),
+  });
 
-engineSchemas.Pipelines = Pipelines.Pipelines;
+export const Runs = engine
+  .schema("Runs", {
+    releaseId: belongsTo(() => PipelineReleases),
+    requestedBy: belongsTo(() => Accounts),
+    triggerKind: dryv.field(engineEnums.EngineTriggerKind),
+    triggerRef: dryv.field(sharedProperties.String1000).maybe(),
+    idempotencyKey: dryv.field(sharedProperties.String255).maybe(),
+    requestHash: dryv.field(sharedProperties.Sha256),
+    status: dryv.field(engineEnums.RunStatus),
+    submittedAt: dryv.field(sharedProperties.Instant),
+    startedAt: dryv.field(sharedProperties.Instant).maybe(),
+    finishedAt: dryv.field(sharedProperties.Instant).maybe(),
+    cancelledAt: dryv.field(sharedProperties.Instant).maybe(),
+    summary: dryv.field(sharedProperties.JsonText).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("One invocation of a pipeline release, with its trigger and lifecycle.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("runs")
+      .index("requestedBy")
+      .index("releaseId")
+      .unique("idempotencyKey")
+      .index("status", "submittedAt"),
+  });
 
-export const PipelineReleases = engine.schemas({
-  PipelineReleases: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      pipeline_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Pipelines.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      version: dryv.field(sharedProperties.PositiveInteger),
-      manifest_hash: dryv.field(sharedProperties.Sha256),
-      manifest_object_key: dryv.field(sharedProperties.NonEmptyString1000),
-      /** Opaque Main manifest release identity pinned with the hash. */
-      manifest_release_ref_id: dryv.field(sharedProperties.Id).optional().nullable(),
-      input_schema_code: dryv.field(sharedProperties.IdentityCode).optional().nullable(),
-      input_schema_version: dryv.field(sharedProperties.NonEmptyString100).optional().nullable(),
-      capability_versions: dryv.field(sharedProperties.JsonText).optional().nullable(),
-      contract_version: dryv.field(sharedProperties.NonEmptyString255),
-      approved_by: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable(),
-      released_at: dryv.field(sharedProperties.Instant),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("pipeline_releases")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_pipeline_releases_approved_by", fields: ["approved_by"] },
-          { name: "uq_pipeline_releases_pipeline_id_version", fields: ["pipeline_id", "version"], unique: true },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const Jobs = engine
+  .schema("Jobs", {
+    runId: belongsTo(() => Runs).maybe(),
+    kind: dryv.field(engineEnums.EngineKind),
+    inputRef: dryv.field(sharedProperties.String1000).maybe(),
+    status: dryv.field(engineEnums.JobStatus),
+    attemptCount: dryv.field(sharedProperties.NonNegativeInteger),
+    maxAttempts: dryv.field(sharedProperties.PositiveInteger),
+    nextAttemptAt: dryv.field(sharedProperties.Instant).maybe(),
+    leaseOwner: dryv.field(sharedProperties.String255).maybe(),
+    leaseUntil: dryv.field(sharedProperties.Instant).maybe(),
+    fence: dryv.field(sharedProperties.NonNegativeInteger),
+    startedAt: dryv.field(sharedProperties.Instant).maybe(),
+    finishedAt: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.Created)
+  .description("Retryable unit of execution within a run, with a lease and fencing counter.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("jobs").index("runId").index("status", "nextAttemptAt"),
+  });
 
-engineSchemas.PipelineReleases = PipelineReleases.PipelineReleases;
+export const JobDependencies = engine
+  .schema("JobDependencies", {
+    jobId: belongsTo(() => Jobs),
+    dependsOnJobId: belongsTo(() => Jobs),
+    dependencyKind: dryv.field(engineEnums.EngineDependencyKind),
+    createdAt: dryv.field(sharedProperties.Instant),
+  })
+  .rule("JobsMustDiffer", rule.differs("jobId", "dependsOnJobId"))
+  .description("Ordering dependency between two jobs; a job never depends on itself.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("job_dependencies").primaryKey("jobId", "dependsOnJobId").index("dependsOnJobId"),
+  });
 
-export const Runs = engine.schemas({
-  Runs: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      release_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.PipelineReleases.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      requested_by: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      trigger_kind: dryv.field(engineEnums.EngineTriggerKind),
-      trigger_ref: dryv.field(sharedProperties.String1000).optional().nullable(),
-      idempotency_key: dryv.field(sharedProperties.String255).optional().nullable(),
-      request_hash: dryv.field(sharedProperties.Sha256),
-      status: dryv.field(engineEnums.RunStatus),
-      submitted_at: dryv.field(sharedProperties.Instant),
-      started_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      finished_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      cancelled_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      summary: dryv.field(sharedProperties.JsonText).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("runs")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_runs_requested_by", fields: ["requested_by"] },
-          { name: "idx_runs_release_id", fields: ["release_id"] },
-          { name: "uq_runs_idempotency_key", fields: ["idempotency_key"], unique: true },
-          { name: "idx_runs_status_submitted_at", fields: ["status", "submitted_at"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const JobAttempts = engine
+  .schema("JobAttempts", {
+    jobId: belongsTo(() => Jobs).maybe(),
+    attemptNumber: dryv.field(sharedProperties.PositiveInteger),
+    workerIdentity: dryv.field(sharedProperties.NonEmptyString255),
+    startedAt: dryv.field(sharedProperties.Instant).maybe(),
+    finishedAt: dryv.field(sharedProperties.Instant).maybe(),
+    status: dryv.field(engineEnums.AttemptStatus),
+    errorCode: dryv.field(sharedProperties.String255).maybe(),
+    errorSummary: dryv.field(sharedProperties.Description).maybe(),
+    inputHash: dryv.field(sharedProperties.Sha256).maybe(),
+    outputHash: dryv.field(sharedProperties.Sha256).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("One execution attempt of a job by a worker.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("job_attempts").unique("jobId", "attemptNumber"),
+  });
 
-engineSchemas.Runs = Runs.Runs;
+export const Checkpoints = engine
+  .schema("Checkpoints", {
+    jobId: belongsTo(() => Jobs).maybe(),
+    sequence: dryv.field(sharedProperties.NonNegativeInteger),
+    checkpointKey: dryv.field(sharedProperties.NonEmptyString255),
+    stateHash: dryv.field(sharedProperties.Sha256),
+    artifactId: belongsTo(() => Artifacts).maybe(),
+    savedAt: dryv.field(sharedProperties.Instant),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Resumable progress marker saved by a job.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("checkpoints").index("artifactId").unique("jobId", "sequence"),
+  });
 
-export const Jobs = engine.schemas({
-  Jobs: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      run_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Runs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      kind: dryv.field(engineEnums.EngineKind),
-      input_ref: dryv.field(sharedProperties.String1000).optional().nullable(),
-      status: dryv.field(engineEnums.JobStatus),
-      attempt_count: dryv.field(sharedProperties.NonNegativeInteger),
-      max_attempts: dryv.field(sharedProperties.PositiveInteger),
-      next_attempt_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      lease_owner: dryv.field(sharedProperties.String255).optional().nullable(),
-      lease_until: dryv.field(sharedProperties.Instant).optional().nullable(),
-      fence: dryv.field(sharedProperties.NonNegativeInteger),
-      created_at: dryv.field(sharedProperties.Instant),
-      started_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      finished_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("jobs")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_jobs_run_id", fields: ["run_id"] },
-          { name: "idx_jobs_status_next_attempt_at", fields: ["status", "next_attempt_at"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const Events = engine
+  .schema("Events", {
+    runId: belongsTo(() => Runs)
+      .maybe()
+      .createOnly(),
+    jobId: belongsTo(() => Jobs)
+      .maybe()
+      .createOnly(),
+    sequence: dryv.field(sharedProperties.NonNegativeInteger).createOnly(),
+    kind: dryv.field(engineEnums.EngineEventKind).createOnly(),
+    actorId: belongsTo(() => Accounts)
+      .maybe()
+      .createOnly(),
+    occurredAt: dryv.field(sharedProperties.Instant).createOnly(),
+    payload: dryv.field(sharedProperties.JsonText).createOnly(),
+  })
+  .extends(baseSchemas.Immutable)
+  .description("Append-only operational execution history in sequence.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("events").index("actorId").index("jobId").unique("runId", "sequence"),
+  });
 
-engineSchemas.Jobs = Jobs.Jobs;
+export const Outbox = engine
+  .schema("Outbox", {
+    eventId: belongsTo(() => Events),
+    destination: dryv.field(sharedProperties.NonEmptyString255),
+    status: dryv.field(engineEnums.OutboxStatus),
+    attempts: dryv.field(sharedProperties.NonNegativeInteger),
+    nextAttemptAt: dryv.field(sharedProperties.Instant).maybe(),
+    deliveredAt: dryv.field(sharedProperties.Instant).maybe(),
+    lastError: dryv.field(sharedProperties.Description).maybe(),
+    idempotencyKey: dryv.field(sharedProperties.String255).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Durable delivery obligation to be sent at least once.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("outbox").unique("eventId", "destination").index("status", "nextAttemptAt"),
+  });
 
-export const JobDependencies = engine.schemas({
-  JobDependencies: dryv
-    .schema({
-      job_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Jobs.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      depends_on_job_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Jobs.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      dependency_kind: dryv.field(engineEnums.EngineDependencyKind),
-      created_at: dryv.field(sharedProperties.Instant),
-    })
-    .invariant("JobsMustDiffer", engineExpressions.JobsMustDiffer, { message: "A job cannot depend on itself." })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("job_dependencies")
-        .primaryKey("job_id", "depends_on_job_id")
-        .indexes({ name: "idx_job_dependencies_depends_on_job_id", fields: ["depends_on_job_id"] }),
-    }),
-});
-
-engineSchemas.JobDependencies = JobDependencies.JobDependencies;
-
-export const JobAttempts = engine.schemas({
-  JobAttempts: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      job_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Jobs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      attempt_number: dryv.field(sharedProperties.PositiveInteger),
-      worker_identity: dryv.field(sharedProperties.NonEmptyString255),
-      started_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      finished_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      status: dryv.field(engineEnums.AttemptStatus),
-      error_code: dryv.field(sharedProperties.String255).optional().nullable(),
-      error_summary: dryv.field(sharedProperties.Description).optional().nullable(),
-      input_hash: dryv.field(sharedProperties.Sha256).optional().nullable(),
-      output_hash: dryv.field(sharedProperties.Sha256).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("job_attempts")
-        .primaryKey("id")
-        .indexes({ name: "uq_job_attempts_job_id_attempt_number", fields: ["job_id", "attempt_number"], unique: true }),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-engineSchemas.JobAttempts = JobAttempts.JobAttempts;
-
-export const Checkpoints = engine.schemas({
-  Checkpoints: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      job_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Jobs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      sequence: dryv.field(sharedProperties.NonNegativeInteger),
-      checkpoint_key: dryv.field(sharedProperties.NonEmptyString255),
-      state_hash: dryv.field(sharedProperties.Sha256),
-      artifact_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Artifacts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable(),
-      saved_at: dryv.field(sharedProperties.Instant),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("checkpoints")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_checkpoints_artifact_id", fields: ["artifact_id"] },
-          { name: "uq_checkpoints_job_id_sequence", fields: ["job_id", "sequence"], unique: true },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-engineSchemas.Checkpoints = Checkpoints.Checkpoints;
-
-export const Events = engine.schemas({
-  Events: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id).createOnly(),
-      run_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Runs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .createOnly(),
-      job_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Jobs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .createOnly(),
-      sequence: dryv.field(sharedProperties.NonNegativeInteger).createOnly(),
-      kind: dryv.field(engineEnums.EngineEventKind).createOnly(),
-      actor_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable()
-        .createOnly(),
-      occurred_at: dryv.field(sharedProperties.Instant).createOnly(),
-      payload: dryv.field(sharedProperties.JsonText).createOnly(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("events")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_events_actor_id", fields: ["actor_id"] },
-          { name: "idx_events_job_id", fields: ["job_id"] },
-          { name: "uq_events_run_id_sequence", fields: ["run_id", "sequence"], unique: true },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-engineSchemas.Events = Events.Events;
-
-export const Outbox = engine.schemas({
-  Outbox: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      event_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Events.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      destination: dryv.field(sharedProperties.NonEmptyString255),
-      status: dryv.field(engineEnums.OutboxStatus),
-      attempts: dryv.field(sharedProperties.NonNegativeInteger),
-      next_attempt_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      delivered_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      last_error: dryv.field(sharedProperties.Description).optional().nullable(),
-      idempotency_key: dryv.field(sharedProperties.String255).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("outbox")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_outbox_event_id_destination", fields: ["event_id", "destination"], unique: true },
-          { name: "idx_outbox_status_next_attempt_at", fields: ["status", "next_attempt_at"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-engineSchemas.Outbox = Outbox.Outbox;
-
-export const Artifacts = engine.schemas({
-  Artifacts: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      run_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Runs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      job_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Jobs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      object_key: dryv.field(sharedProperties.NonEmptyString1000),
-      sha256: dryv.field(sharedProperties.Sha256),
-      size_bytes: dryv.field(sharedProperties.NonNegativeInt64),
-      media_type: dryv.field(sharedProperties.String255).optional().nullable(),
-      role: dryv.field(engineEnums.EngineRole),
-      access_classification: dryv.field(engineEnums.EngineAccessClassification),
-      created_at: dryv.field(sharedProperties.Instant),
-      expires_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("artifacts")
-        .primaryKey("id")
-        .indexes({ name: "idx_artifacts_run_id", fields: ["run_id"] }, { name: "idx_artifacts_job_id", fields: ["job_id"] }),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-engineSchemas.Artifacts = Artifacts.Artifacts;
+export const Artifacts = engine
+  .schema("Artifacts", {
+    runId: belongsTo(() => Runs).maybe(),
+    jobId: belongsTo(() => Jobs).maybe(),
+    objectKey: dryv.field(sharedProperties.NonEmptyString1000),
+    sha256: dryv.field(sharedProperties.Sha256),
+    sizeBytes: dryv.field(sharedProperties.NonNegativeInt64),
+    mediaType: dryv.field(sharedProperties.String255).maybe(),
+    role: dryv.field(engineEnums.EngineRole),
+    accessClassification: dryv.field(engineEnums.EngineAccessClassification),
+    expiresAt: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.Created)
+  .description("Temporary operational object reference with a hash and access classification.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("artifacts").index("runId").index("jobId"),
+  });

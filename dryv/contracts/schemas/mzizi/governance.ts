@@ -40,7 +40,9 @@ export const Offices = governance
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedValidityEntity)
-  .description("One established public office, independent of any current holder and optionally scoped to a geographic unit.")
+  .description(
+    "One established public office, independent of any current holder and optionally scoped to a geographic unit.",
+  )
   .role("entity")
   .facets({ storage: dryv.storage("offices").index("unitFeatureId").index("sourceCitationId") });
 
@@ -57,7 +59,11 @@ export const Holders = governance
   .description("One person's continuous tenure in one office, with appointment kind and effective dates.")
   .role("entity")
   .facets({
-    storage: dryv.storage("holders").index("officeId", "validFrom", "validUntil").index("individualId").index("sourceCitationId"),
+    storage: dryv
+      .storage("holders")
+      .index("officeId", "validFrom", "validUntil")
+      .index("individualId")
+      .index("sourceCitationId"),
   });
 
 /*---------------- governance.mandates ----------------*/

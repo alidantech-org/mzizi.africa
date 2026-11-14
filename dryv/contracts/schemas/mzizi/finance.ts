@@ -68,7 +68,9 @@ export const BudgetVersions = finance
   .extends(baseSchemas.Entity)
   .description("One ordered release or revision of a budget, preserving original and supplementary versions separately.")
   .role("entity")
-  .facets({ storage: dryv.storage("budget_versions").unique("budgetId", "revision").index("statusId").index("sourceCitationId") });
+  .facets({
+    storage: dryv.storage("budget_versions").unique("budgetId", "revision").index("statusId").index("sourceCitationId"),
+  });
 
 /*---------------- finance.appropriations ----------------*/
 export const Appropriations = finance
@@ -150,6 +152,8 @@ export const Debts = finance
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(MoneyEntity)
-  .description("One public debt instrument between a borrower and optional lender, with contracted amount and maturity facts.")
+  .description(
+    "One public debt instrument between a borrower and optional lender, with contracted amount and maturity facts.",
+  )
   .role("entity")
   .facets({ storage: dryv.storage("debts").index("borrowerEntityId").index("maturityOn").index("sourceCitationId") });

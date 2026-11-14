@@ -98,7 +98,11 @@ describe("exec", () => {
 
 describe("parseEnv", () => {
   test("handles comments, export and quotes", () => {
-    expect(parseEnv('# note\nexport A=1\nB="two words"\nC=x=y\n\nbad line')).toEqual({ A: "1", B: "two words", C: "x=y" });
+    expect(parseEnv('# note\nexport A=1\nB="two words"\nC=x=y\n\nbad line')).toEqual({
+      A: "1",
+      B: "two words",
+      C: "x=y",
+    });
   });
 });
 
@@ -113,7 +117,16 @@ describe("structure", () => {
     mkdirSync(docs, { recursive: true });
     mkdirSync(join(root, ".docs", "design"), { recursive: true });
     mkdirSync(join(root, ".docs", "guidance"));
-    for (const name of ["README.md", "WHY.md", "GOALS.md", "STORY.md", "SYSTEM.md", "ARCHITECTURE.md", "DOMAINS.md", "ROADMAP.md"])
+    for (const name of [
+      "README.md",
+      "WHY.md",
+      "GOALS.md",
+      "STORY.md",
+      "SYSTEM.md",
+      "ARCHITECTURE.md",
+      "DOMAINS.md",
+      "ROADMAP.md",
+    ])
       writeFileSync(join(docs, name), "# Core\n");
     writeFileSync(join(root, ".docs", "design", "README.md"), "# Design\n");
     try {

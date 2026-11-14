@@ -16,7 +16,12 @@ import { dirname, isAbsolute, join, resolve } from "node:path";
 import { at, label } from "../lib/paths.ts";
 
 /** A hard line limit for the files under `dir` whose path matches `match`. The first matching rule wins. */
-export type Limit = { readonly dir: string; readonly match: RegExp; readonly lines: number; readonly needsHeader: boolean };
+export type Limit = {
+  readonly dir: string;
+  readonly match: RegExp;
+  readonly lines: number;
+  readonly needsHeader: boolean;
+};
 
 export const limits: readonly Limit[] = [
   { dir: "source/packages", match: /\/tests\/.*\.py$/, lines: 600, needsHeader: false },
@@ -72,7 +77,9 @@ export function pythonLayoutProblems(dir: string): string[] {
     problems.push(`${name}/${loose}: Python files belong in src/ or tests/`);
   const source = join(dir, "src");
   if (!existsSync(source)) return problems;
-  const packages = readdirSync(source).filter((entry) => !entry.endsWith(".egg-info") && statSync(join(source, entry)).isDirectory());
+  const packages = readdirSync(source).filter(
+    (entry) => !entry.endsWith(".egg-info") && statSync(join(source, entry)).isDirectory(),
+  );
   if (packages.length !== 1 || !packages[0]?.startsWith("mzizi_"))
     problems.push(`${name}/src: expected exactly one package named mzizi_*, found ${packages.join(", ") || "none"}`);
   for (const pkg of packages)
@@ -90,7 +97,16 @@ export function pythonProjects(): string[] {
   return [...found, at("source/backend/engine")];
 }
 
-const coreDocs = ["README.md", "WHY.md", "GOALS.md", "STORY.md", "SYSTEM.md", "ARCHITECTURE.md", "DOMAINS.md", "ROADMAP.md"] as const;
+const coreDocs = [
+  "README.md",
+  "WHY.md",
+  "GOALS.md",
+  "STORY.md",
+  "SYSTEM.md",
+  "ARCHITECTURE.md",
+  "DOMAINS.md",
+  "ROADMAP.md",
+] as const;
 
 /** Enforce the compact documentation layout and resolve local links in the docs system. */
 export function documentationProblems(repoRoot = process.cwd()): string[] {
@@ -107,7 +123,8 @@ export function documentationProblems(repoRoot = process.cwd()): string[] {
     if (!statSync(path).isFile() || !name.endsWith(".md") || !expected.has(name))
       problems.push(`.docs/docs: unexpected root entry ${name}; put detail under .docs/design/`);
   }
-  for (const name of coreDocs) if (!existsSync(join(docsRoot, name))) problems.push(`.docs/docs: missing required core document ${name}`);
+  for (const name of coreDocs)
+    if (!existsSync(join(docsRoot, name))) problems.push(`.docs/docs: missing required core document ${name}`);
 
   if (!existsSync(join(designRoot, "README.md"))) problems.push(".docs/design: missing README.md");
   const topicNames = existsSync(designRoot) ? readdirSync(designRoot) : [];
@@ -115,9 +132,11 @@ export function documentationProblems(repoRoot = process.cwd()): string[] {
   if (topics.length > 7) problems.push(`.docs/design: ${topics.length} topic folders exceeds the limit of seven`);
   for (const name of topicNames) {
     const path = join(designRoot, name);
-    if (statSync(path).isFile() && name !== "README.md") problems.push(`.docs/design: unexpected root file ${name}; group it in a topic folder`);
+    if (statSync(path).isFile() && name !== "README.md")
+      problems.push(`.docs/design: unexpected root file ${name}; group it in a topic folder`);
   }
-  for (const topic of topics) if (!existsSync(join(designRoot, topic, "README.md"))) problems.push(`.docs/design/${topic}: missing README.md`);
+  for (const topic of topics)
+    if (!existsSync(join(designRoot, topic, "README.md"))) problems.push(`.docs/design/${topic}: missing README.md`);
 
   const markdownFiles = [
     ...walk(docsRoot).filter((path) => path.endsWith(".md")),
@@ -152,6 +171,8 @@ export function checkStructure(): boolean {
     }
   }
   for (const problem of problems) console.error(`✖ ${problem}`);
-  console.log(problems.length ? `structure: ${problems.length} problem(s) in ${checked} files` : `structure: ${checked} files conform`);
+  console.log(
+    problems.length ? `structure: ${problems.length} problem(s) in ${checked} files` : `structure: ${checked} files conform`,
+  );
   return problems.length === 0;
 }

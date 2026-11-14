@@ -130,8 +130,13 @@ export const ValueRelation = reference
   .extends(baseSchemas.Association)
   .rule("ValueRelationMustNotBeSelfReferential", (v) => v.sourceValueId.ne(v.targetValueId))
   .rule("ValueRelationWindowMustBeOrdered", rule.ordered("validFrom", "validUntil"))
-  .description("Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.")
+  .description(
+    "Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.",
+  )
   .role("entity")
   .facets({
-    storage: dryv.storage("value_relations").index("sourceValueId", "relationKind", "validFrom").index("targetValueId", "relationKind"),
+    storage: dryv
+      .storage("value_relations")
+      .index("sourceValueId", "relationKind", "validFrom")
+      .index("targetValueId", "relationKind"),
   });

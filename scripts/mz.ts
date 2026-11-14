@@ -88,7 +88,10 @@ export const commands: Record<string, Command> = {
   "lint:fix": quality("lint:fix", "apply safe lint fixes"),
   typecheck: quality("typecheck", "type check Python (mypy) and TypeScript (tsc)"),
   test: quality("test", "run pytest, bun test and vitest"),
-  structure: { summary: "enforce folder layout, file headers and hard file size limits for manual code", run: () => checkStructure() },
+  structure: {
+    summary: "enforce folder layout, file headers and hard file size limits for manual code",
+    run: () => checkStructure(),
+  },
   check: {
     summary: "format:check, lint, typecheck, structure and test",
     run: async ({ only }) => {
@@ -113,11 +116,20 @@ export const commands: Record<string, Command> = {
     summary: "link the local Dryv checkout into dryv/node_modules (DRYV_HOME)",
     run: () => group("dryv:link", dryv.linkSteps()),
   },
-  "dryv:check": { summary: "typecheck, audit, doctor and compile the contracts", run: () => group("dryv:check", dryv.checkSteps()) },
-  "dryv:api": { summary: "run the Dryv engine API on :8750 in the foreground", run: () => group("dryv:api", [dryv.apiStep()]) },
+  "dryv:check": {
+    summary: "typecheck, audit, doctor and compile the contracts",
+    run: () => group("dryv:check", dryv.checkSteps()),
+  },
+  "dryv:api": {
+    summary: "run the Dryv engine API on :8750 in the foreground",
+    run: () => group("dryv:api", [dryv.apiStep()]),
+  },
   "dryv:api:stop": { summary: "stop the Dryv engine API", run: () => dryv.stopApi() },
   "dryv:trust": { summary: "trust the project packs (once per machine)", run: () => dryv.trust() },
-  "dryv:generate": { summary: "generate database artifacts from the current schema and operation contracts", run: () => dryv.generate() },
+  "dryv:generate": {
+    summary: "generate database artifacts from the current schema and operation contracts",
+    run: () => dryv.generate(),
+  },
   "dryv:database:typecheck": {
     summary: "typecheck the database root and neutral schemas",
     run: () => group("database types", [step("database:typecheck", `${root}/dryv`, ["bun", "run", "database:typecheck"])]),
@@ -134,13 +146,19 @@ export const commands: Record<string, Command> = {
     summary: "generate canonical store models and SQL without API follow-ups",
     run: ({ rest }) => dryv.database("generate", rest),
   },
-  "dryv:database:verify": { summary: "check canonical database output without writing files", run: ({ rest }) => dryv.database("verify", rest) },
+  "dryv:database:verify": {
+    summary: "check canonical database output without writing files",
+    run: ({ rest }) => dryv.database("verify", rest),
+  },
   "dryv:verify": { summary: "fail when the generated output is not current", run: () => dryv.verify() },
   "dryv:export": {
     summary: "re-export access rules and JSON schema from the contracts",
     run: () => group("dryv:export", dryv.exportSteps()),
   },
-  catalog: { summary: "regenerate the web data catalog from the API list routes", run: () => group("catalog", dryv.catalogSteps()) },
+  catalog: {
+    summary: "regenerate the web data catalog from the API list routes",
+    run: () => group("catalog", dryv.catalogSteps()),
+  },
   "db:up": {
     summary: "start the local PostGIS container (MZIZI_PG_CONTAINER, default postgis)",
     run: () => group("db:up", [rootStep("docker start", ["docker", "start", postgres()])]),
@@ -151,14 +169,16 @@ export const commands: Record<string, Command> = {
   },
   "infra:up": {
     summary: "start persistent local Temporal and object-store services",
-    run: () => group("infra:up", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "up", "-d"])]),
+    run: () =>
+      group("infra:up", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "up", "-d"])]),
   },
   "infra:down": {
     summary: "stop local Temporal and object-store services while preserving their volumes",
     run: () => group("infra:down", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "down"])]),
   },
   db: {
-    summary: "TypeScript database owner: status | migrate | verify | provision-local-roles | seed | guarded reset | release operations",
+    summary:
+      "TypeScript database owner: status | migrate | verify | provision-local-roles | seed | guarded reset | release operations",
     run: databaseCli,
   },
   "db:ts": { summary: "alias for the TypeScript database owner command", run: databaseCli },
@@ -175,7 +195,9 @@ export const commands: Record<string, Command> = {
 export function help(): void {
   console.log("Usage: bun run <command> [-- args]   or   bun scripts/mz.ts <command> [args] [--only <names>]\n");
   for (const [name, command] of Object.entries(commands)) console.log(`  ${name.padEnd(15)} ${command.summary}`);
-  console.log("\n--only takes project names or kinds: python, scripts, dryv, api, database-rust, web, www, mobile, bun, flutter, rust, all");
+  console.log(
+    "\n--only takes project names or kinds: python, scripts, dryv, api, database-rust, web, www, mobile, bun, flutter, rust, all",
+  );
 }
 
 /** Split the arguments into the command, its positional arguments and the `--only` value. */
@@ -185,7 +207,10 @@ export function parse(argv: readonly string[]): { command: string; context: Cont
   if (at < 0) return { command, context: { rest: tail, only: undefined } };
   const inline = tail[at]?.startsWith("--only=") ? tail[at]?.slice("--only=".length) : undefined;
   const only = inline ?? tail[at + 1];
-  return { command, context: { rest: tail.filter((_, index) => index !== at && (inline !== undefined || index !== at + 1)), only } };
+  return {
+    command,
+    context: { rest: tail.filter((_, index) => index !== at && (inline !== undefined || index !== at + 1)), only },
+  };
 }
 
 if (import.meta.main) {

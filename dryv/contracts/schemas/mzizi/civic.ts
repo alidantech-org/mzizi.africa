@@ -66,11 +66,18 @@ export const Projects = civic
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("One public development or infrastructure project with responsible institution, status, geographic scope and evidence.")
+  .description(
+    "One public development or infrastructure project with responsible institution, status, geographic scope and evidence.",
+  )
   .role("entity")
   .rule("ProjectDatesAreOrdered", rule.ordered("startedOn", "completedOn", { allowEqual: true }))
   .facets({
-    storage: dryv.storage("projects").index("statusId").index("responsibleInstitutionId").index("scopeUnitFeatureId").index("sourceCitationId"),
+    storage: dryv
+      .storage("projects")
+      .index("statusId")
+      .index("responsibleInstitutionId")
+      .index("scopeUnitFeatureId")
+      .index("sourceCitationId"),
   });
 
 /*---------------- civic.project_features ----------------*/
@@ -85,7 +92,11 @@ export const ProjectFeatures = civic
   .description("One typed relationship between a Civic project and one Geography feature.")
   .role("entity")
   .facets({
-    storage: dryv.storage("project_features").unique("projectId", "featureId", "featureKindId").index("featureId").index("sourceCitationId"),
+    storage: dryv
+      .storage("project_features")
+      .unique("projectId", "featureId", "featureKindId")
+      .index("featureId")
+      .index("sourceCitationId"),
   });
 
 /*---------------- civic.procurements ----------------*/
@@ -150,4 +161,6 @@ export const Deliveries = civic
   .extends(baseSchemas.Entity)
   .description("One dated deliverable or milestone under a contract, optionally scoped to a geographic unit.")
   .role("entity")
-  .facets({ storage: dryv.storage("deliveries").index("contractId", "deliveredOn").index("unitFeatureId").index("sourceCitationId") });
+  .facets({
+    storage: dryv.storage("deliveries").index("contractId", "deliveredOn").index("unitFeatureId").index("sourceCitationId"),
+  });

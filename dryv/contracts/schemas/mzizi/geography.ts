@@ -162,7 +162,12 @@ export const Changes = geography
   )
   .role("entity")
   .facets({
-    storage: dryv.storage("changes").index("transformationId").index("predecessorFeatureId").index("successorFeatureId").index("changeKindId"),
+    storage: dryv
+      .storage("changes")
+      .index("transformationId")
+      .index("predecessorFeatureId")
+      .index("successorFeatureId")
+      .index("changeKindId"),
   });
 
 export const Datasets = geography

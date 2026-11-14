@@ -1,349 +1,159 @@
 /**
  * Schema: acquisition | Database: mzizi_operations
- * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12).
+ * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12); table and column inventory is unchanged.
  * Design: .docs/_plan/schema-redesign/mzizi-operational-db/acquisition.md
- * Approved inventory: 7 tables and their listed columns. Technical choices
- * follow approved semantics; SQL migration/application remains unauthorized.
- * Required values have no implicit defaults; named database operations must supply them.
- * Relations restrict deletion and key updates to preserve referenced operational history.
  */
 import * as dryv from "@dryvcode/author";
+import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { authSchemas } from "./auth.ts";
-import { engineSchemas } from "./engine.ts";
+import { Accounts } from "./auth.ts";
+import { Artifacts, Jobs, Runs } from "./engine.ts";
+
+const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const acquisition = dryv
   .group({ name: "acquisition" })
-  .description("Approved Mzizi Operations acquisition records.")
+  .description("Source discovery, crawl state, access attempts and observed links.")
   .facets({ storage: { namespace: "acquisition", store: "operations" } });
 
-/*---------------- Closed technical vocabulary enums ----------------*/
+/*---------------- Closed technical vocabulary ----------------*/
 export const acquisitionEnums = acquisition.properties({
   TargetState: dryv.property.enum(["active", "paused", "retired"]),
   FrontierState: dryv.property.enum(["queued", "leased", "retry_wait", "completed", "failed", "cancelled"]),
   AcquisitionOutcome: dryv.property.enum(["success", "failure", "blocked", "retryable", "permanent"]),
 });
 
-/*---------------- Approved acquisition table contracts ----------------*/
-export const acquisitionSchemas: Record<string, any> = {};
-export const Targets = acquisition.schemas({
-  Targets: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      url: dryv.field(sharedProperties.Url),
-      publisher_ref_id: dryv.field(sharedProperties.Id).optional().nullable(),
-      policy_version_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => acquisitionSchemas.PolicyVersions.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      state: dryv.field(acquisitionEnums.TargetState),
-      created_at: dryv.field(sharedProperties.Instant),
-      updated_at: dryv.field(sharedProperties.Instant),
-      retired_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("targets")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_targets_policy_version_id", fields: ["policy_version_id"] },
-          { name: "uq_targets_url", fields: ["url"], unique: true },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const Targets = acquisition
+  .schema("Targets", {
+    url: dryv.field(sharedProperties.Url),
+    publisherRefId: dryv.field(sharedProperties.Id).maybe(),
+    policyVersionId: belongsTo(() => PolicyVersions).maybe(),
+    state: dryv.field(acquisitionEnums.TargetState),
+    retiredAt: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.Timestamped)
+  .description("Collection target under an access policy; the URL is the stable identity.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("targets").index("policyVersionId").unique("url"),
+  });
 
-acquisitionSchemas.Targets = Targets.Targets;
+export const Policies = acquisition
+  .schema("Policies", {
+    title: dryv.field(sharedProperties.NonEmptyString255),
+    description: dryv.field(sharedProperties.Description).maybe(),
+    createdBy: belongsTo(() => Accounts),
+    retiredAt: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.CodedCreated)
+  .description("Stable access-policy identity; rules live in immutable versions.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("policies").index("createdBy"),
+  });
 
-export const Policies = acquisition.schemas({
-  Policies: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      code: dryv.field(sharedProperties.IdentityCode),
-      title: dryv.field(sharedProperties.NonEmptyString255),
-      description: dryv.field(sharedProperties.Description).optional().nullable(),
-      created_by: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      created_at: dryv.field(sharedProperties.Instant),
-      retired_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("policies")
-        .primaryKey("id")
-        .indexes({ name: "idx_policies_created_by", fields: ["created_by"] }, { name: "uq_policies_code", fields: ["code"], unique: true }),
-    }),
-});
+export const PolicyVersions = acquisition
+  .schema("PolicyVersions", {
+    policyId: belongsTo(() => Policies),
+    version: dryv.field(sharedProperties.PositiveInteger),
+    rules: dryv.field(sharedProperties.JsonText),
+    rulesHash: dryv.field(sharedProperties.Sha256),
+    approvedBy: belongsTo(() => Accounts).maybe(),
+    approvedAt: dryv.field(sharedProperties.Instant).maybe(),
+    effectiveFrom: dryv.field(sharedProperties.Instant),
+    effectiveUntil: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Immutable versioned access rules with approval and an effective period.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("policy_versions").index("approvedBy").unique("policyId", "version"),
+  });
 
-acquisitionSchemas.Policies = Policies.Policies;
+export const Frontier = acquisition
+  .schema("Frontier", {
+    targetId: belongsTo(() => Targets),
+    url: dryv.field(sharedProperties.Url),
+    priority: dryv.field(sharedProperties.Integer),
+    state: dryv.field(acquisitionEnums.FrontierState),
+    dueAt: dryv.field(sharedProperties.Instant),
+    leaseOwner: dryv.field(sharedProperties.String255).maybe(),
+    leaseUntil: dryv.field(sharedProperties.Instant).maybe(),
+    leaseFence: dryv.field(sharedProperties.NonNegativeInteger),
+    attemptCount: dryv.field(sharedProperties.NonNegativeInteger),
+    lastAttemptAt: dryv.field(sharedProperties.Instant).maybe(),
+    engineJobId: belongsTo(() => Jobs).maybe(),
+  })
+  .extends(baseSchemas.Timestamped)
+  .description("Retryable crawl queue entry with a lease and fencing counter.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("frontier").index("engineJobId").unique("targetId", "url").index("state", "dueAt"),
+  });
 
-export const PolicyVersions = acquisition.schemas({
-  PolicyVersions: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      policy_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => acquisitionSchemas.Policies.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      version: dryv.field(sharedProperties.PositiveInteger),
-      rules: dryv.field(sharedProperties.JsonText),
-      rules_hash: dryv.field(sharedProperties.Sha256),
-      approved_by: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable(),
-      approved_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      effective_from: dryv.field(sharedProperties.Instant),
-      effective_until: dryv.field(sharedProperties.Instant).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("policy_versions")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_policy_versions_approved_by", fields: ["approved_by"] },
-          { name: "uq_policy_versions_policy_id_version", fields: ["policy_id", "version"], unique: true },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const AccessAttempts = acquisition
+  .schema("AccessAttempts", {
+    targetId: belongsTo(() => Targets),
+    frontierId: belongsTo(() => Frontier).maybe(),
+    runId: belongsTo(() => Runs).maybe(),
+    jobId: belongsTo(() => Jobs).maybe(),
+    requestedUrl: dryv.field(sharedProperties.Url),
+    startedAt: dryv.field(sharedProperties.Instant).maybe(),
+    completedAt: dryv.field(sharedProperties.Instant).maybe(),
+    httpStatus: dryv.field(sharedProperties.HttpStatus).maybe(),
+    outcome: dryv.field(acquisitionEnums.AcquisitionOutcome),
+    retryAfter: dryv.field(sharedProperties.Instant).maybe(),
+    errorCode: dryv.field(sharedProperties.String255).maybe(),
+    responseHash: dryv.field(sharedProperties.Sha256).maybe(),
+    artifactId: belongsTo(() => Artifacts).maybe(),
+    bytesReceived: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Recorded request to a target with outcome, status and retained artifact.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("access_attempts")
+      .index("runId")
+      .index("jobId")
+      .index("targetId")
+      .index("frontierId")
+      .index("startedAt"),
+  });
 
-acquisitionSchemas.PolicyVersions = PolicyVersions.PolicyVersions;
+export const Observations = acquisition
+  .schema("Observations", {
+    targetId: belongsTo(() => Targets),
+    accessAttemptId: belongsTo(() => AccessAttempts),
+    url: dryv.field(sharedProperties.Url),
+    canonicalUrl: dryv.field(sharedProperties.Url).maybe(),
+    contentHash: dryv.field(sharedProperties.Sha256),
+    observedAt: dryv.field(sharedProperties.Instant),
+    contentType: dryv.field(sharedProperties.String255).maybe(),
+    etag: dryv.field(sharedProperties.String255).maybe(),
+    lastModified: dryv.field(sharedProperties.String255).maybe(),
+    artifactId: belongsTo(() => Artifacts).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Observed content fingerprint of a fetched page, linked to its access attempt.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("observations").index("targetId").index("accessAttemptId").index("observedAt"),
+  });
 
-export const Frontier = acquisition.schemas({
-  Frontier: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      target_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => acquisitionSchemas.Targets.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      url: dryv.field(sharedProperties.Url),
-      priority: dryv.field(sharedProperties.Integer),
-      state: dryv.field(acquisitionEnums.FrontierState),
-      due_at: dryv.field(sharedProperties.Instant),
-      lease_owner: dryv.field(sharedProperties.String255).optional().nullable(),
-      lease_until: dryv.field(sharedProperties.Instant).optional().nullable(),
-      lease_fence: dryv.field(sharedProperties.NonNegativeInteger),
-      attempt_count: dryv.field(sharedProperties.NonNegativeInteger),
-      last_attempt_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      engine_job_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Jobs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable(),
-      created_at: dryv.field(sharedProperties.Instant),
-      updated_at: dryv.field(sharedProperties.Instant),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("frontier")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_frontier_engine_job_id", fields: ["engine_job_id"] },
-          { name: "uq_frontier_target_id_url", fields: ["target_id", "url"], unique: true },
-          { name: "idx_frontier_state_due_at", fields: ["state", "due_at"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-acquisitionSchemas.Frontier = Frontier.Frontier;
-
-export const AccessAttempts = acquisition.schemas({
-  AccessAttempts: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      target_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => acquisitionSchemas.Targets.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      frontier_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => acquisitionSchemas.Frontier.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      run_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Runs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable(),
-      job_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Jobs.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable(),
-      requested_url: dryv.field(sharedProperties.Url),
-      started_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      completed_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      http_status: dryv.field(sharedProperties.HttpStatus).optional().nullable(),
-      outcome: dryv.field(acquisitionEnums.AcquisitionOutcome),
-      retry_after: dryv.field(sharedProperties.Instant).optional().nullable(),
-      error_code: dryv.field(sharedProperties.String255).optional().nullable(),
-      response_hash: dryv.field(sharedProperties.Sha256).optional().nullable(),
-      artifact_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Artifacts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      bytes_received: dryv.field(sharedProperties.NonNegativeInt64).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("access_attempts")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_access_attempts_run_id", fields: ["run_id"] },
-          { name: "idx_access_attempts_job_id", fields: ["job_id"] },
-          { name: "idx_access_attempts_target_id", fields: ["target_id"] },
-          { name: "idx_access_attempts_frontier_id", fields: ["frontier_id"] },
-          { name: "idx_access_attempts_started_at", fields: ["started_at"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-acquisitionSchemas.AccessAttempts = AccessAttempts.AccessAttempts;
-
-export const Observations = acquisition.schemas({
-  Observations: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      target_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => acquisitionSchemas.Targets.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      access_attempt_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => acquisitionSchemas.AccessAttempts.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      url: dryv.field(sharedProperties.Url),
-      canonical_url: dryv.field(sharedProperties.Url).optional().nullable(),
-      content_hash: dryv.field(sharedProperties.Sha256),
-      observed_at: dryv.field(sharedProperties.Instant),
-      content_type: dryv.field(sharedProperties.String255).optional().nullable(),
-      etag: dryv.field(sharedProperties.String255).optional().nullable(),
-      last_modified: dryv.field(sharedProperties.String255).optional().nullable(),
-      artifact_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => engineSchemas.Artifacts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("observations")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_observations_target_id", fields: ["target_id"] },
-          { name: "idx_observations_access_attempt_id", fields: ["access_attempt_id"] },
-          { name: "idx_observations_observed_at", fields: ["observed_at"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-acquisitionSchemas.Observations = Observations.Observations;
-
-export const DiscoveredLinks = acquisition.schemas({
-  DiscoveredLinks: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      observation_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => acquisitionSchemas.Observations.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      target_url: dryv.field(sharedProperties.Url),
-      normalized_url: dryv.field(sharedProperties.Url),
-      anchor_text: dryv.field(sharedProperties.String1000).optional().nullable(),
-      rel: dryv.field(sharedProperties.String255).optional().nullable(),
-      resolved_target_id: dryv
-        .field(sharedProperties.Id)
-        .optional()
-        .nullable()
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => acquisitionSchemas.Targets.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        }),
-      discovered_at: dryv.field(sharedProperties.Instant),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("discovered_links")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_discovered_links_observation_id", fields: ["observation_id"] },
-          { name: "idx_discovered_links_resolved_target_id", fields: ["resolved_target_id"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-acquisitionSchemas.DiscoveredLinks = DiscoveredLinks.DiscoveredLinks;
+export const DiscoveredLinks = acquisition
+  .schema("DiscoveredLinks", {
+    observationId: belongsTo(() => Observations),
+    targetUrl: dryv.field(sharedProperties.Url),
+    normalizedUrl: dryv.field(sharedProperties.Url),
+    anchorText: dryv.field(sharedProperties.String1000).maybe(),
+    rel: dryv.field(sharedProperties.String255).maybe(),
+    resolvedTargetId: belongsTo(() => Targets).maybe(),
+    discoveredAt: dryv.field(sharedProperties.Instant),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Link found in an observation, optionally resolved to a collection target.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("discovered_links").index("observationId").index("resolvedTargetId"),
+  });

@@ -84,7 +84,9 @@ export const ProjectPerformance = accountability
   })
   .extends(Indicator)
   .role("view-model")
-  .description("Delivery against contract for one project. Computed from its contracts and the deliveries recorded under them.");
+  .description(
+    "Delivery against contract for one project. Computed from its contracts and the deliveries recorded under them.",
+  );
 
 export const ServiceCoverage = accountability
   .schema("ServiceCoverage", {
@@ -95,7 +97,9 @@ export const ServiceCoverage = accountability
   })
   .extends(Indicator)
   .role("view-model")
-  .description("Which kinds of service reach one geographic unit. Computed from services whose place or coverage unit lies in it.");
+  .description(
+    "Which kinds of service reach one geographic unit. Computed from services whose place or coverage unit lies in it.",
+  );
 
 export const InstitutionalPerformance = accountability
   .schema("InstitutionalPerformance", {
@@ -110,7 +114,9 @@ export const InstitutionalPerformance = accountability
   })
   .extends(Indicator)
   .role("view-model")
-  .description("What one institution is responsible for and has finished. Computed from its mandates, projects and services.");
+  .description(
+    "What one institution is responsible for and has finished. Computed from its mandates, projects and services.",
+  );
 
 export const PromiseProgress = accountability
   .schema("PromiseProgress", {
@@ -124,7 +130,9 @@ export const PromiseProgress = accountability
   })
   .extends(Indicator)
   .role("view-model")
-  .description("Evidence of action on one manifesto commitment. Computed from projects that share its topic; it asserts no causal link.");
+  .description(
+    "Evidence of action on one manifesto commitment. Computed from projects that share its topic; it asserts no causal link.",
+  );
 
 export const OversightSignals = accountability
   .schema("OversightSignals", {
@@ -142,4 +150,6 @@ export const OversightSignals = accountability
   .extends(Indicator)
   .role("view-model")
   .rule("ExactlyOneSubject", rule.exactlyOne("projectId", "procurementId", "contractId", "institutionId", "serviceId"))
-  .description("A flagged pattern worth review on exactly one subject. A signal is a prompt for human review, never a finding.");
+  .description(
+    "A flagged pattern worth review on exactly one subject. A signal is a prompt for human review, never a finding.",
+  );

@@ -1,22 +1,21 @@
 /**
  * Schema: audit | Database: mzizi_operations
- * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12).
+ * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12); table and column inventory is unchanged.
  * Design: .docs/_plan/schema-redesign/mzizi-operational-db/audit.md
- * Approved inventory: 2 tables and their listed columns. Technical choices
- * follow approved semantics; SQL migration/application remains unauthorized.
- * Required values have no implicit defaults; named database operations must supply them.
- * Relations restrict deletion and key updates to preserve referenced operational history.
  */
 import * as dryv from "@dryvcode/author";
+import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { authSchemas } from "./auth.ts";
+import { Accounts } from "./auth.ts";
+
+const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const audit = dryv
   .group({ name: "audit" })
-  .description("Approved Mzizi Operations audit records.")
+  .description("Operational and security events and decisions; never civic data or public accountability findings.")
   .facets({ storage: { namespace: "audit", store: "operations" } });
 
-/*---------------- Closed technical vocabulary enums ----------------*/
+/*---------------- Closed technical vocabulary ----------------*/
 export const auditEnums = audit.properties({
   AuditAction: dryv.property.enum(["read", "create", "update", "delete", "review", "publish", "export", "admin"]),
   AuditDecisionType: dryv.property.enum(["approval", "review", "security", "publication"]),
@@ -33,93 +32,48 @@ export const auditEnums = audit.properties({
   ]),
 });
 
-/*---------------- Approved audit table contracts ----------------*/
-export const auditSchemas: Record<string, any> = {};
-export const Events = audit.schemas({
-  Events: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id).createOnly(),
-      actor_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable()
-        .createOnly(),
-      action: dryv.field(auditEnums.AuditAction).createOnly(),
-      target_kind: dryv.field(sharedProperties.StatusCode).createOnly(),
-      target_id: dryv.field(sharedProperties.Id).createOnly(),
-      target_version: dryv.field(sharedProperties.String255).optional().nullable().createOnly(),
-      request_id: dryv.field(sharedProperties.Id).optional().nullable().createOnly(),
-      correlation_id: dryv.field(sharedProperties.Id).optional().nullable().createOnly(),
-      recorded_at: dryv.field(sharedProperties.Instant).createOnly(),
-      details: dryv.field(sharedProperties.JsonText).optional().nullable().createOnly(),
-      previous_hash: dryv.field(sharedProperties.Sha256).optional().nullable().createOnly(),
-      event_hash: dryv.field(sharedProperties.Sha256).createOnly(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("events")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_events_actor_id", fields: ["actor_id"] },
-          { name: "uq_events_event_hash", fields: ["event_hash"], unique: true },
-          { name: "idx_events_recorded_at", fields: ["recorded_at"] },
-          { name: "idx_events_target_kind_target_id", fields: ["target_kind", "target_id"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const Events = audit
+  .schema("Events", {
+    actorId: belongsTo(() => Accounts)
+      .maybe()
+      .createOnly(),
+    action: dryv.field(auditEnums.AuditAction).createOnly(),
+    targetKind: dryv.field(sharedProperties.StatusCode).createOnly(),
+    targetId: dryv.field(sharedProperties.Id).createOnly(),
+    targetVersion: dryv.field(sharedProperties.String255).maybe().createOnly(),
+    requestId: dryv.field(sharedProperties.Id).maybe().createOnly(),
+    correlationId: dryv.field(sharedProperties.Id).maybe().createOnly(),
+    recordedAt: dryv.field(sharedProperties.Instant).createOnly(),
+    details: dryv.field(sharedProperties.JsonText).maybe().createOnly(),
+    previousHash: dryv.field(sharedProperties.Sha256).maybe().createOnly(),
+    eventHash: dryv.field(sharedProperties.Sha256).createOnly(),
+  })
+  .extends(baseSchemas.Immutable)
+  .description("Immutable attributable operational action, hash-chained to the previous event.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("events").index("actorId").unique("eventHash").index("recordedAt").index("targetKind", "targetId"),
+  });
 
-auditSchemas.Events = Events.Events;
-
-export const Decisions = audit.schemas({
-  Decisions: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id).createOnly(),
-      event_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => auditSchemas.Events.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .createOnly(),
-      actor_id: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable()
-        .createOnly(),
-      decision_type: dryv.field(auditEnums.AuditDecisionType).createOnly(),
-      decision: dryv.field(auditEnums.AuditDecision).createOnly(),
-      subject_kind: dryv.field(auditEnums.AuditSubjectKind).createOnly(),
-      subject_id: dryv.field(sharedProperties.Id).optional().nullable().createOnly(),
-      subject_version: dryv.field(sharedProperties.String255).optional().nullable().createOnly(),
-      policy_version: dryv.field(sharedProperties.NonEmptyString255).createOnly(),
-      reason: dryv.field(sharedProperties.NonEmptyString1000).createOnly(),
-      request_hash: dryv.field(sharedProperties.Sha256).createOnly(),
-      decided_at: dryv.field(sharedProperties.Instant).createOnly(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("decisions")
-        .primaryKey("id")
-        .indexes({ name: "idx_decisions_actor_id", fields: ["actor_id"] }, { name: "idx_decisions_event_id", fields: ["event_id"] }),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-auditSchemas.Decisions = Decisions.Decisions;
+export const Decisions = audit
+  .schema("Decisions", {
+    eventId: belongsTo(() => Events).createOnly(),
+    actorId: belongsTo(() => Accounts)
+      .maybe()
+      .createOnly(),
+    decisionType: dryv.field(auditEnums.AuditDecisionType).createOnly(),
+    decision: dryv.field(auditEnums.AuditDecision).createOnly(),
+    subjectKind: dryv.field(auditEnums.AuditSubjectKind).createOnly(),
+    subjectId: dryv.field(sharedProperties.Id).maybe().createOnly(),
+    subjectVersion: dryv.field(sharedProperties.String255).maybe().createOnly(),
+    policyVersion: dryv.field(sharedProperties.NonEmptyString255).createOnly(),
+    reason: dryv.field(sharedProperties.NonEmptyString1000).createOnly(),
+    requestHash: dryv.field(sharedProperties.Sha256).createOnly(),
+    decidedAt: dryv.field(sharedProperties.Instant).createOnly(),
+  })
+  .extends(baseSchemas.Immutable)
+  .description("Operational review decision with the policy version, reason and request it applied to.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("decisions").index("actorId").index("eventId"),
+  });

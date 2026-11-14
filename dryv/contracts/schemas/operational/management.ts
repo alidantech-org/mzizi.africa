@@ -1,22 +1,21 @@
 /**
  * Schema: management | Database: mzizi_operations
- * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12).
+ * Approval: DEC-OPERATIONAL-DATABASE-20261112 (accepted, 2026-11-12); table and column inventory is unchanged.
  * Design: .docs/_plan/schema-redesign/mzizi-operational-db/management.md
- * Approved inventory: 4 tables and their listed columns. Technical choices
- * follow approved semantics; SQL migration/application remains unauthorized.
- * Required values have no implicit defaults; named database operations must supply them.
- * Relations restrict deletion and key updates to preserve referenced operational history.
  */
 import * as dryv from "@dryvcode/author";
+import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { authSchemas } from "./auth.ts";
+import { Accounts } from "./auth.ts";
+
+const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const management = dryv
   .group({ name: "management" })
-  .description("Approved Mzizi Operations management records.")
+  .description("Schema release and publication bookkeeping scoped to Operations.")
   .facets({ storage: { namespace: "management", store: "operations" } });
 
-/*---------------- Closed technical vocabulary enums ----------------*/
+/*---------------- Closed technical vocabulary ----------------*/
 export const managementEnums = management.properties({
   PublicationState: dryv.property.enum([
     "requested",
@@ -32,133 +31,74 @@ export const managementEnums = management.properties({
   ManagementOperation: dryv.property.enum(["insert", "update", "retire", "upsert"]),
 });
 
-/*---------------- Approved management table contracts ----------------*/
-export const managementSchemas: Record<string, any> = {};
-export const SchemaReleases = management.schemas({
-  SchemaReleases: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      release_id: dryv.field(sharedProperties.NonEmptyString255),
-      database_target: dryv.field(sharedProperties.StatusCode),
-      digest: dryv.field(sharedProperties.Sha256),
-      applied_at: dryv.field(sharedProperties.Instant),
-      manager_version: dryv.field(sharedProperties.NonEmptyString100),
-      applied_by: dryv
-        .field(sharedProperties.Id)
-        .relation({
-          target: (): dryv.SchemaFieldRef<unknown> => authSchemas.Accounts.field("id"),
-          cardinality: dryv.relation.manyToOne(),
-          onDelete: "restrict",
-          onUpdate: "restrict",
-        })
-        .optional()
-        .nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("schema_releases")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_schema_releases_applied_by", fields: ["applied_by"] },
-          { name: "uq_schema_releases_release_id", fields: ["release_id"], unique: true },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const SchemaReleases = management
+  .schema("SchemaReleases", {
+    releaseId: dryv.field(sharedProperties.NonEmptyString255),
+    databaseTarget: dryv.field(sharedProperties.StatusCode),
+    digest: dryv.field(sharedProperties.Sha256),
+    appliedAt: dryv.field(sharedProperties.Instant),
+    managerVersion: dryv.field(sharedProperties.NonEmptyString100),
+    appliedBy: belongsTo(() => Accounts).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Operations schema release applied to the database, with digest and manager version.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("schema_releases").index("appliedBy").unique("releaseId"),
+  });
 
-managementSchemas.SchemaReleases = SchemaReleases.SchemaReleases;
+export const Publications = management
+  .schema("Publications", {
+    publicationId: dryv.field(sharedProperties.Id),
+    requestKey: dryv.field(sharedProperties.NonEmptyString255),
+    requestHash: dryv.field(sharedProperties.Sha256),
+    actorSnapshot: dryv.field(sharedProperties.JsonText),
+    contractVersion: dryv.field(sharedProperties.NonEmptyString255),
+    state: dryv.field(managementEnums.PublicationState),
+    requestedAt: dryv.field(sharedProperties.Instant),
+    submittedAt: dryv.field(sharedProperties.Instant),
+    publishedAt: dryv.field(sharedProperties.Instant).maybe(),
+    lastReconciledAt: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Coordination record for publishing accepted records to Main; one per idempotent request.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("publications").unique("publicationId").unique("requestKey").index("state", "requestedAt"),
+  });
 
-export const Publications = management.schemas({
-  Publications: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      publication_id: dryv.field(sharedProperties.Id),
-      request_key: dryv.field(sharedProperties.NonEmptyString255),
-      request_hash: dryv.field(sharedProperties.Sha256),
-      actor_snapshot: dryv.field(sharedProperties.JsonText),
-      contract_version: dryv.field(sharedProperties.NonEmptyString255),
-      state: dryv.field(managementEnums.PublicationState),
-      requested_at: dryv.field(sharedProperties.Instant),
-      submitted_at: dryv.field(sharedProperties.Instant),
-      published_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-      last_reconciled_at: dryv.field(sharedProperties.Instant).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("publications")
-        .primaryKey("id")
-        .indexes(
-          { name: "uq_publications_publication_id", fields: ["publication_id"], unique: true },
-          { name: "uq_publications_request_key", fields: ["request_key"], unique: true },
-          { name: "idx_publications_state_requested_at", fields: ["state", "requested_at"] },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
+export const PublicationItems = management
+  .schema("PublicationItems", {
+    publicationId: belongsTo(() => Publications),
+    schemaName: dryv.field(sharedProperties.NonEmptyString100),
+    tableName: dryv.field(sharedProperties.NonEmptyString100),
+    recordId: dryv.field(sharedProperties.Id),
+    operation: dryv.field(managementEnums.ManagementOperation),
+    expectedRecordVersion: dryv.field(sharedProperties.String255).maybe(),
+    resultingRecordVersion: dryv.field(sharedProperties.String255).maybe(),
+    payloadHash: dryv.field(sharedProperties.Sha256),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Record covered by a publication, with expected and resulting versions.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("publication_items").index("publicationId"),
+  });
 
-managementSchemas.Publications = Publications.Publications;
-
-export const PublicationItems = management.schemas({
-  PublicationItems: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      publication_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => managementSchemas.Publications.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      schema_name: dryv.field(sharedProperties.NonEmptyString100),
-      table_name: dryv.field(sharedProperties.NonEmptyString100),
-      record_id: dryv.field(sharedProperties.Id),
-      operation: dryv.field(managementEnums.ManagementOperation),
-      expected_record_version: dryv.field(sharedProperties.String255).optional().nullable(),
-      resulting_record_version: dryv.field(sharedProperties.String255).optional().nullable(),
-      payload_hash: dryv.field(sharedProperties.Sha256),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("publication_items")
-        .primaryKey("id")
-        .indexes({ name: "idx_publication_items_publication_id", fields: ["publication_id"] }),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-managementSchemas.PublicationItems = PublicationItems.PublicationItems;
-
-export const DeliveryReceipts = management.schemas({
-  DeliveryReceipts: dryv
-    .schema({
-      id: dryv.field(sharedProperties.Id),
-      publication_id: dryv.field(sharedProperties.Id).relation({
-        target: (): dryv.SchemaFieldRef<unknown> => managementSchemas.Publications.field("id"),
-        cardinality: dryv.relation.manyToOne(),
-        onDelete: "restrict",
-        onUpdate: "restrict",
-      }),
-      request_key: dryv.field(sharedProperties.NonEmptyString255),
-      request_hash: dryv.field(sharedProperties.Sha256),
-      observed_at: dryv.field(sharedProperties.Instant),
-      state: dryv.field(managementEnums.DeliveryState),
-      main_commit_ref: dryv.field(sharedProperties.String255).optional().nullable(),
-      response_hash: dryv.field(sharedProperties.Sha256).optional().nullable(),
-      details: dryv.field(sharedProperties.JsonText).optional().nullable(),
-    })
-    .role("entity")
-    .facets({
-      storage: dryv
-        .storage("delivery_receipts")
-        .primaryKey("id")
-        .indexes(
-          { name: "idx_delivery_receipts_publication_id", fields: ["publication_id"] },
-          { name: "uq_delivery_receipts_request_key", fields: ["request_key"], unique: true },
-        ),
-    }),
-});
-/** Primary key and relation lookup indexes are declared in this storage contract. */
-
-managementSchemas.DeliveryReceipts = DeliveryReceipts.DeliveryReceipts;
+export const DeliveryReceipts = management
+  .schema("DeliveryReceipts", {
+    publicationId: belongsTo(() => Publications),
+    requestKey: dryv.field(sharedProperties.NonEmptyString255),
+    requestHash: dryv.field(sharedProperties.Sha256),
+    observedAt: dryv.field(sharedProperties.Instant),
+    state: dryv.field(managementEnums.DeliveryState),
+    mainCommitRef: dryv.field(sharedProperties.String255).maybe(),
+    responseHash: dryv.field(sharedProperties.Sha256).maybe(),
+    details: dryv.field(sharedProperties.JsonText).maybe(),
+  })
+  .extends(baseSchemas.Identified)
+  .description("Operations reconciliation of what Main acknowledged for a publication.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("delivery_receipts").index("publicationId").unique("requestKey"),
+  });

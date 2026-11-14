@@ -31,7 +31,8 @@ export function parseStoreAssignments(content: string): StoreAssignments {
   for (const line of content.split("\n")) {
     if (!line.trim()) continue;
     const message = object(JSON.parse(line), "compiler frame");
-    if (message.type === "error" || (message.type === "diagnostic" && message.severity === "error")) throw new Error(String(message.message));
+    if (message.type === "error" || (message.type === "diagnostic" && message.severity === "error"))
+      throw new Error(String(message.message));
     if (message.type !== "batch") continue;
     if (!Array.isArray(message.items)) throw new Error("compiler batch items must be an array");
     for (const raw of message.items) {
@@ -40,9 +41,11 @@ export function parseStoreAssignments(content: string): StoreAssignments {
       const name = text(item.name, "canonical name");
       const value = object(item.value, "canonical value");
       if (item.kind === "store") stores.push(name);
-      else if (item.kind === "group") groups.push({ name, parent: reference(value.parent, "#/groups/"), storage: storage(value.facets) });
+      else if (item.kind === "group")
+        groups.push({ name, parent: reference(value.parent, "#/groups/"), storage: storage(value.facets) });
       else {
-        if (value.abstract !== undefined && typeof value.abstract !== "boolean") throw new Error("schema abstract must be boolean");
+        if (value.abstract !== undefined && typeof value.abstract !== "boolean")
+          throw new Error("schema abstract must be boolean");
         const group = reference(value.group, "#/groups/");
         if (group === null) throw new Error(`schema ${name} has no group`);
         schemas.push({
@@ -55,6 +58,7 @@ export function parseStoreAssignments(content: string): StoreAssignments {
       }
     }
   }
-  if (!stores.length || !groups.length || !schemas.length) throw new Error("compiled database contracts contain no stores/groups/schemas");
+  if (!stores.length || !groups.length || !schemas.length)
+    throw new Error("compiled database contracts contain no stores/groups/schemas");
   return { stores, groups, schemas };
 }

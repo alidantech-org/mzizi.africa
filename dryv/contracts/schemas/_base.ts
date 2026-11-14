@@ -39,6 +39,65 @@ const AssociationBase = dryv
 
 const baseGroup = shared.schemas({ Entity: EntityBase, Association: AssociationBase });
 
+/*---------------- Operations bases ----------------*/
+/*
+ * Operations records are not versioned or soft-deleted: they are retired with an explicit timestamp,
+ * superseded by a later row, or kept as history. These bases therefore carry only what the approved
+ * Operations inventory lists, never `version` or `deletedAt`.
+ */
+
+/** Identity only. */
+const IdentifiedBase = dryv
+  .schema({ id: dryv.field(sharedProperties.Id) })
+  .abstract()
+  .description("Base for operational records: identity only.")
+  .facets({ storage: dryv.storage().primaryKey("id") });
+
+/** Identity that never changes after the row is written; for append-only history. */
+const ImmutableBase = dryv
+  .schema({ id: dryv.field(sharedProperties.Id).createOnly() })
+  .abstract()
+  .description("Base for append-only operational records: identity written once.")
+  .facets({ storage: dryv.storage().primaryKey("id") });
+
+const operationsGroup = shared.schemas({ Identified: IdentifiedBase, Immutable: ImmutableBase });
+
+/** Identity and creation time. */
+const CreatedBase = dryv
+  .schema({ createdAt: dryv.field(sharedProperties.Instant) })
+  .extends(operationsGroup.Identified)
+  .abstract()
+  .description("Base for operational records: identity and creation time.");
+
+/** Identity with a stable, globally unique code. */
+const CodedIdentifiedBase = dryv
+  .schema({
+    /** Stable identity code: lowercase, dot-separated, repository-wide unique. */
+    code: dryv.field(sharedProperties.IdentityCode),
+  })
+  .extends(operationsGroup.Identified)
+  .abstract()
+  .description("Base for operational records with a unique identity code.")
+  .facets({ storage: dryv.storage().unique("code") });
+
+const operationsChildGroup = shared.schemas({ Created: CreatedBase, CodedIdentified: CodedIdentifiedBase });
+
+/** Identity, creation and last-change time. */
+const TimestampedBase = dryv
+  .schema({ updatedAt: dryv.field(sharedProperties.Instant) })
+  .extends(operationsChildGroup.Created)
+  .abstract()
+  .description("Base for operational records: identity, creation time and last-change time.");
+
+/** Coded identity and creation time. */
+const CodedCreatedBase = dryv
+  .schema({ createdAt: dryv.field(sharedProperties.Instant) })
+  .extends(operationsChildGroup.CodedIdentified)
+  .abstract()
+  .description("Base for operational records with a unique identity code and creation time.");
+
+const operationsLeafGroup = shared.schemas({ Timestamped: TimestampedBase, CodedCreated: CodedCreatedBase });
+
 /** Predicate for indexes that should only cover live (not soft-deleted) rows. */
 const baseRules = shared.expressions({
   LiveRecord: EntityBase.check((v) => v.deletedAt.isNull()),
@@ -109,6 +168,9 @@ EffectiveEntityBase.rule(shared, "EffectiveWindowIsOrdered", (v) => v.effectiveF
 
 export const baseSchemas = {
   ...baseGroup,
+  ...operationsGroup,
+  ...operationsChildGroup,
+  ...operationsLeafGroup,
   ...validityGroup,
   ...effectiveGroup,
 };

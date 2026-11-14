@@ -12,7 +12,8 @@ for await (const file of new Glob("**/*.ts").scan(root)) {
       specifier = node.moduleSpecifier;
     } else if (
       ts.isCallExpression(node) &&
-      (node.expression.kind === ts.SyntaxKind.ImportKeyword || (ts.isIdentifier(node.expression) && node.expression.text === "require"))
+      (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+        (ts.isIdentifier(node.expression) && node.expression.text === "require"))
     ) {
       specifier = node.arguments[0];
     } else if (ts.isImportTypeNode(node) && ts.isLiteralTypeNode(node.argument)) {
