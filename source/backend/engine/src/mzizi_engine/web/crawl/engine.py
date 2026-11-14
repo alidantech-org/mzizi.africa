@@ -30,9 +30,21 @@ from mzizi_scraping import extract_references, page_meta
 from mzizi_scraping.pagination import detect_pagination
 
 log = logging.getLogger("mzizi.crawl")
+ARTICLE_SLUG_WORDS = 5  # a single-segment slug with this many words is an article, not a section page
 MAX_QUERY_VARIANTS = 6
+SAVED_PAGE_FACTOR = 20  # pages served from saved copies are free of the fetch budget, up to this many times it
 SAVE_EVERY = 10
 LINK_KINDS = frozenset({UrlKind.PAGE})
+
+
+def group_of(url: str) -> str:
+    """The part of a site a page belongs to: its first path segment, with long single-segment slugs (articles) together."""
+    segments = [part for part in urlsplit(url).path.split("/") if part]
+    if not segments:
+        return "(home)"
+    if len(segments) == 1:
+        return "(article)" if segments[0].count("-") + 1 >= ARTICLE_SLUG_WORDS else "(page)"
+    return segments[0]
 
 
 def _now() -> str:
@@ -57,7 +69,9 @@ class Crawl:
     errors: list[ErrorRecord] = field(default_factory=list)
     html: dict[int, str] = field(default_factory=dict)
     stopped: str = ""
+    fetched: int = 0  # pages actually fetched this run (saved copies do not use the page budget)
     query_variants: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
+    visited_groups: dict[str, int] = field(default_factory=lambda: defaultdict(int))
     on_page: Callable[[PageRecord, bytes], None] | None = None  # called with each page as it is fetched
     on_reference: Callable[[LinkRecord], None] | None = None  # called with every link or file reference found
 
@@ -74,6 +88,20 @@ class Crawl:
             decisions=tuple(self.client.blocks.decisions),
             policy_audit=tuple(self.client.audit),
         )
+
+    def next_item(self) -> FrontierItem:
+        """The next page to fetch: from the least visited part of the site first, then the shallowest.
+
+        A plain first-in-first-out order spends a small budget on hundreds of news posts linked from the home page and
+        never reaches the sections behind them. Taking from the least visited group keeps coverage broad."""
+        best, best_key = 0, None
+        for index, item in enumerate(self.frontier):
+            key = (self.visited_groups[group_of(item.url)], item.depth, index)
+            if best_key is None or key < best_key:
+                best, best_key = index, key
+        item = self.frontier[best]
+        del self.frontier[best]
+        return item
 
     def enqueue(self, url: str, depth: int, source: str, anchor: str) -> None:
         query = urlsplit(url).query
@@ -107,6 +135,7 @@ def start_crawl(request: CrawlRequest, client: WebClient, backend: PageBackend) 
             list(resumed.errors),
         )
         for page in crawl.pages:
+            crawl.visited_groups[group_of(page.final_url)] += 1
             raw = out_dir / page.raw_file
             if raw.exists():
                 crawl.html[page.n] = raw.read_text(encoding="utf-8", errors="replace")
@@ -125,8 +154,13 @@ def run(crawl: Crawl) -> None:
     request, out_dir = crawl.request, crawl.out_dir
     if crawl.on_page is None:
         (out_dir / "raw").mkdir(parents=True, exist_ok=True)
-    while crawl.frontier and len(crawl.pages) < request.max_pages and not crawl.stopped:
-        item = crawl.frontier.popleft()
+    while (
+        crawl.frontier
+        and crawl.fetched < request.max_pages
+        and len(crawl.pages) < request.max_pages * SAVED_PAGE_FACTOR
+        and not crawl.stopped
+    ):
+        item = crawl.next_item()
         response = crawl.backend.get(item.url)
         if not _accept(crawl, item, response):
             continue
@@ -138,7 +172,7 @@ def run(crawl: Crawl) -> None:
             _record_page(crawl, item, extra)
         if len(crawl.pages) % SAVE_EVERY == 0:
             save_state(out_dir, crawl.snapshot(False))
-    if crawl.frontier and len(crawl.pages) >= request.max_pages and not crawl.stopped:
+    if crawl.frontier and crawl.fetched >= request.max_pages and not crawl.stopped:
         crawl.stopped = f"page budget of {request.max_pages} reached"
 
 
@@ -279,6 +313,9 @@ def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> Non
             markdown_file="",
         )
     )
+    crawl.visited_groups[group_of(final)] += 1
+    if response.headers.get("x-mzizi-via") != "cache":
+        crawl.fetched += 1
     log.info("[%d/%d] %s -> %s", n, crawl.request.max_pages, final, response.status)
     if crawl.on_page is not None:
         crawl.on_page(crawl.pages[-1], response.body)

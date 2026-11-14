@@ -236,6 +236,8 @@ class Downloader:
             offset = 0
         header = response.headers.get("content-length", "")
         expected = int(header) + offset if header.isdigit() else None
+        if response.headers.get("content-encoding", "identity").lower() not in ("", "identity"):
+            expected = None  # Content-Length counts the compressed bytes; the decoded body cannot be compared with it
         if expected is not None and expected > self.policy.max_bytes:
             raise DownloadError("too_large", f"{expected} bytes exceeds the {self.policy.max_bytes} byte limit")
         meta.write_text(

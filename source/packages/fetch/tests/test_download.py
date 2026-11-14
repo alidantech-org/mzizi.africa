@@ -137,3 +137,22 @@ def test_content_type_is_detected_from_bytes_not_names() -> None:
     assert "type mismatch" in flags_for("report.pdf", "application/pdf", "png", "image")[0]
     assert flags_for("sheet.xlsx", "", "zip", "archive") == ()
     assert "HTML although" in flags_for("a.pdf", "text/plain", "html", "web")[1]
+
+
+def test_a_compressed_response_is_not_judged_incomplete(tmp_path):
+    import gzip
+
+    import httpx
+
+    from mzizi_fetch.web.download import Downloader, DownloadPolicy
+
+    body = b"<html>" + b"hello " * 2000 + b"</html>"
+    packed = gzip.compress(body)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, content=packed, headers={"content-encoding": "gzip", "content-type": "text/html"})
+
+    downloader = Downloader(tmp_path, "MziziTest/1.0 (+https://t.example/bot; t@t.example)", DownloadPolicy(allow_private=True))
+    downloader.client = httpx.Client(transport=httpx.MockTransport(handler))
+    result = downloader.download("http://127.0.0.1/page")
+    assert result.size == len(body)

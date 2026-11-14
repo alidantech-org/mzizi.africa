@@ -200,3 +200,24 @@ def test_diff_reports_added_removed_and_changed(tmp_path):
     result = diff_crawls(DiffRequest(out_dir=str(tmp_path), baseline=old, current=new))
     assert [c.url for c in result.added] == ["u/4"] and [c.url for c in result.removed] == ["u/3"]
     assert [c.url for c in result.changed] == ["u/2"] and result.unchanged == 1
+
+
+def test_the_frontier_is_taken_from_the_least_visited_part_of_the_site():
+    from collections import deque
+
+    from mzizi_engine.web.crawl.engine import Crawl, group_of
+    from mzizi_engine.web.records import FrontierItem
+
+    assert group_of("https://s/") == "(home)" and group_of("https://s/about") == "(page)"
+    assert group_of("https://s/a-long-article-title-about-things") == "(article)"
+    assert group_of("https://s/downloads/2024/report") == "downloads"
+    crawl = Crawl.__new__(Crawl)
+    crawl.visited_groups = {"(article)": 3}
+    crawl.frontier = deque(
+        FrontierItem(url=u, depth=1, source_page="", anchor_text="")
+        for u in ("https://s/an-article-about-nothing-much", "https://s/downloads/a", "https://s/about")
+    )
+    from collections import defaultdict
+
+    crawl.visited_groups = defaultdict(int, {"(article)": 3})
+    assert crawl.next_item().url == "https://s/downloads/a"  # unvisited sections come before more articles
