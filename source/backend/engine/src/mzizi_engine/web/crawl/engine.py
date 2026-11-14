@@ -34,8 +34,10 @@ from mzizi_scraping.pagination import detect_pagination
 log = logging.getLogger("mzizi.crawl")
 ARTICLE_SLUG_WORDS = 5  # a single-segment slug with this many words is an article, not a section page
 MAX_QUERY_VARIANTS = 6
-RESTRICTED_KINDS = (BlockKind.NOTICE, BlockKind.FORBIDDEN, BlockKind.UNAUTHORIZED, BlockKind.SERVER_ERROR)
-MAX_RESTRICTED_GROUPS = 3  # refusals from this many different parts of a site mean the site refuses us, not one section
+RESTRICTED_KINDS = (
+    BlockKind.NOTICE, BlockKind.FORBIDDEN, BlockKind.UNAUTHORIZED, BlockKind.SERVER_ERROR, BlockKind.CAPTCHA, BlockKind.CHALLENGE
+)
+MAX_RESTRICTED_GROUPS = 3  # refusals from this many different parts of a site mean the site refuses us, not one section (a login form, an intranet)
 SAVED_PAGE_FACTOR = 20  # pages served from saved copies are free of the fetch budget, up to this many times it
 SAVE_EVERY = 10
 LINK_KINDS = frozenset({UrlKind.PAGE})
