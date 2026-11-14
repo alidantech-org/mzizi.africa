@@ -210,6 +210,8 @@ def _error(crawl: Crawl, url: str, stage: str, kind: str, detail: str, response:
 
 def _accept(crawl: Crawl, item: FrontierItem, response: WebResponse) -> bool:
     """True when `response` is a page to process; otherwise the reason is recorded."""
+    if response.refused is not None or response.block is not None or response.error:
+        crawl.visited_groups[group_of(item.url)] += 1  # a failed attempt counts for ordering, so failures do not run back to back
     if response.refused is not None:
         _error(crawl, item.url, "policy", "refused", response.refused.reason)
         return False
