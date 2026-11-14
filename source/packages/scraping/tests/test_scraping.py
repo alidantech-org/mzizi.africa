@@ -201,3 +201,13 @@ def test_slider_buttons_are_not_pagination():
     assert detect_pagination(slider, "https://e.org/").next is None
     real = '<nav class="pagination"><button aria-label="Next page">></button></nav>'
     assert detect_pagination(real, "https://e.org/").next is not None
+
+
+def test_a_long_static_page_with_a_javascript_banner_does_not_need_a_browser():
+    from mzizi_scraping.pagination import needs_browser
+
+    banner = "<noscript>Please enable JavaScript to use the chat widget.</noscript>"
+    long_page = f"<html><body>{banner}<main><p>" + "Plenty of real static text. " * 120 + "</p></main></body></html>"
+    assert needs_browser(long_page, "https://e.org/") == ""
+    short_app = f"<html><body>{banner}<div>Loading</div></body></html>"
+    assert needs_browser(short_app, "https://e.org/") == "page asks for JavaScript"

@@ -23,7 +23,7 @@ SCREENSHOT_TIMEOUT_MS = 10_000
 CLICK_TIMEOUT_MS = 4_000
 POPUP_LOAD_MS = 5_000
 READY_SCRIPT = """
-async ({quiet, max, roots, busy, minText}) => {
+async ({quiet, max, roots, busy, minText, moving}) => {
   const start = performance.now();
   const visible = el => {
     const rect = el.getBoundingClientRect();
@@ -40,7 +40,9 @@ async ({quiet, max, roots, busy, minText}) => {
   return await new Promise(resolve => {
     let last = performance.now();
     // content changes only: animations and class toggles (carousels, tickers) must not keep the page "busy" forever
-    const observer = new MutationObserver(() => { last = performance.now(); });
+    // sliders, tickers and carousels change forever by design: their changes do not mean the page is still loading
+    const isMoving = node => { const el = node && (node.nodeType === 1 ? node : node.parentElement); return !!el && moving.some(w => { const c = el.closest('[class],[id]'); return c && ((c.className && String(c.className).toLowerCase().includes(w)) || (c.id && c.id.toLowerCase().includes(w))); }); };
+    const observer = new MutationObserver(records => { if (records.some(r => !isMoving(r.target))) { last = performance.now(); } });
     observer.observe(document.documentElement, {subtree: true, childList: true, characterData: true});
     const tick = () => {
       const now = performance.now();
@@ -222,6 +224,7 @@ class PlaywrightSession:
             "roots": list(vocab.spa_root_selectors),
             "busy": list(vocab.busy_selectors),
             "minText": self.config.min_text_chars,
+            "moving": list(vocab.pagination.carousel_words),
         }
         for _attempt in range(2):  # a client-side redirect can replace the page while we wait; wait once more
             try:

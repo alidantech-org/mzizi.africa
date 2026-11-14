@@ -9,6 +9,7 @@ from mzizi_scraping.pagination.detect import detect_pagination
 from mzizi_scraping.pagination.models import ControlKind
 
 MIN_TEXT_CHARS = 200
+NOTICE_TEXT_LIMIT = 1500
 
 
 def needs_browser(html: str | bytes, base_url: str) -> str:
@@ -23,12 +24,16 @@ def needs_browser(html: str | bytes, base_url: str) -> str:
             continue
         if root is not None and not root.get_text(strip=True) and len(root.find_all(True)) < 2:
             return f"empty app root {selector}"
+    notices: list[str] = []
     for tag in soup(["script", "style", "noscript"]):
-        notice = tag.get_text(" ", strip=True).lower() if tag.name == "noscript" else ""
-        if notice and any(phrase in notice for phrase in vocab.needs_javascript_phrases):
-            return "page asks for JavaScript"
+        if tag.name == "noscript":
+            notices.append(tag.get_text(" ", strip=True).lower())
         tag.extract()
     text = soup.get_text(" ", strip=True)
+    # a "please enable JavaScript" notice only matters when the page itself shows little: a long static page that carries
+    # such a notice in a banner (a cookie or widget warning) is complete as it is
+    if len(text) < NOTICE_TEXT_LIMIT and any(p in notice for notice in notices for p in vocab.needs_javascript_phrases):
+        return "page asks for JavaScript"
     if len(text) < MIN_TEXT_CHARS and BeautifulSoup(html, "lxml").find("script", src=True) is not None:
         return "scripts and almost no text"
     next_control = detect_pagination(html, base_url).next
