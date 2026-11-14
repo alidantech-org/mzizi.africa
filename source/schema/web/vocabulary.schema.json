@@ -276,6 +276,14 @@
       "title": "Cms Media Paths",
       "type": "array"
     },
+    "content_query_keys": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Content Query Keys",
+      "type": "array"
+    },
     "download_hints": {
       "$ref": "#/$defs/DownloadHints",
       "default": {

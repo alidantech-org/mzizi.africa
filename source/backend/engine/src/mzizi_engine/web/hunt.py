@@ -37,6 +37,12 @@ def looks_like_download(url: str, anchor: str) -> bool:
     )
 
 
+def has_download_query(url: str) -> bool:
+    """A query parameter that names or asks for a file (`?download=`, `?bfd_download=`, `?file=`): a file endpoint, not a page."""
+    hints = [key.lower() for key in vocabulary().download_hints.query_keys]
+    return any(any(hint in key.lower() for hint in hints) for key, _ in parse_qsl(urlparse(url).query))
+
+
 def candidate_rows(links_csv: Path, known: set[str]) -> list[dict[str, str]]:
     """Internal links that are not obviously pages but probably serve a file (and are not already inventoried)."""
     rows: list[dict[str, str]] = []

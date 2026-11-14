@@ -9,9 +9,10 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlsplit
 
 from mzizi_engine.web.crawl.backends import PageBackend
+from mzizi_engine.web.hunt import has_download_query
 from mzizi_engine.web.crawl.cancel import CANCEL
 from mzizi_engine.web.crawl.sitemaps import discover_sitemap_urls, partition
 from mzizi_engine.web.crawl.state import CrawlState, digest_of, load_state, save_state
@@ -26,6 +27,7 @@ from mzizi_engine.web.records import (
 )
 from mzizi_engine.web.requests import CrawlRequest
 from mzizi_fetch.web.blocks import BlockKind, Response
+from mzizi_fetch.web.vocabulary import vocabulary
 from mzizi_fetch.web.client import WebClient, WebResponse
 from mzizi_fetch.web.urls import Deduplicator, is_api_url, UrlKind, classify, extension_of, host_of, normalize, path_of, same_site
 from mzizi_scraping import extract_references, page_meta
@@ -122,8 +124,10 @@ class Crawl:
         if parts.scheme == "http" and parts.hostname in self.https_hosts:  # the site is served over https: skip the redirect
             url = url.replace("http://", "https://", 1)
         query = urlsplit(url).query
-        if query:  # many query variants of one path are usually a calendar or filter trap: keep a handful
-            variants = self.query_variants[host_of(url) + path_of(url)]
+        keys = {k.lower() for k, _ in parse_qsl(query)}
+        identifies_content = bool(keys) and keys <= {k.lower() for k in vocabulary().content_query_keys}
+        if query and not identifies_content:  # many query variants of one path are usually a calendar or filter trap: keep a handful
+            variants = self.query_variants[host_of(url) + parts.path]  # the path alone: path_of() carries the query
             if len(variants) >= MAX_QUERY_VARIANTS and query not in variants:
                 return
             variants.add(query)
@@ -325,7 +329,7 @@ def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> Non
         if crawl.on_reference is not None:
             crawl.on_reference(record)
         if kind in LINK_KINDS:
-            if internal and item.depth < crawl.request.max_depth:
+            if internal and item.depth < crawl.request.max_depth and not has_download_query(ref.url):
                 crawl.enqueue(ref.url, item.depth + 1, final, ref.text)
         elif kind not in (UrlKind.MAIL, UrlKind.PHONE):
             _resource(

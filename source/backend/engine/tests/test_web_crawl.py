@@ -269,3 +269,33 @@ def test_same_site_http_links_are_upgraded_and_the_request_ceiling_scales_with_t
     crawl.query_variants, crawl.https_hosts = defaultdict(set), frozenset({"s.example"})
     crawl.enqueue("http://s.example/about", 1, "", "")
     assert [i.url for i in crawl.frontier] == ["https://s.example/about"]
+
+
+def test_query_variants_of_one_path_are_capped_and_download_queries_are_files():
+    from collections import defaultdict, deque
+
+    from mzizi_engine.web.crawl.engine import MAX_QUERY_VARIANTS, Crawl
+    from mzizi_engine.web.hunt import has_download_query
+    from mzizi_fetch.web.urls import Deduplicator
+
+    crawl = Crawl.__new__(Crawl)
+    crawl.frontier, crawl.seen = deque(), Deduplicator()
+    crawl.query_variants, crawl.https_hosts = defaultdict(set), frozenset()
+    for index in range(50):
+        crawl.enqueue(f"https://s.example/?item={index}", 1, "", "")
+    assert len(crawl.frontier) == MAX_QUERY_VARIANTS
+    assert has_download_query("https://s.example/?bfd_download=report") and not has_download_query("https://s.example/?page=2")
+
+
+def test_content_identifying_query_keys_are_not_capped():
+    from collections import defaultdict, deque
+
+    from mzizi_engine.web.crawl.engine import Crawl
+    from mzizi_fetch.web.urls import Deduplicator
+
+    crawl = Crawl.__new__(Crawl)
+    crawl.frontier, crawl.seen = deque(), Deduplicator()
+    crawl.query_variants, crawl.https_hosts = defaultdict(set), frozenset()
+    for index in range(30):
+        crawl.enqueue(f"https://s.example/?page_id={index}", 1, "", "")
+    assert len(crawl.frontier) == 30  # each page_id is a different page
