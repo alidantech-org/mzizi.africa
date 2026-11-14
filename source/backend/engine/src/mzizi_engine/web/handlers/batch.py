@@ -143,7 +143,9 @@ def run_batch(request: BatchRequest) -> BatchReport:
                 complete = bool(report.get("complete"))
                 state.complete, state.pages, state.note = complete, int(report.get("pages_visited", 0)), ""
                 # done: the whole site was reached, or a pass found nothing new (the budget is not the limit any more)
-                state.done = complete or (state.passes > 1 and new == 0 and state.last_new == 0)
+                state.done = complete or (state.passes > 1 and new == 0 and state.last_new == 0 and state.pages > 0)
+                if state.pages == 0:  # nothing was fetched: the site is unreachable or refusing, which is not "finished"
+                    state.done, state.note = False, "unreachable: no page fetched; run the batch again later"
                 stopped = str(report.get("stopped", "")).lower()
                 if any(word in stopped for word in BLOCKED_WORDS):  # the site refuses us: never retried, never worked around
                     state.done, state.note = True, f"blocked by the site: {stopped[:120]}"
@@ -157,8 +159,8 @@ def run_batch(request: BatchRequest) -> BatchReport:
                                            "files_downloaded", "downloads_failed", "markdown_converted", "stopped")},
             "error": state.note,
         })
-        if not state.done and state.passes < request.max_passes and not stop.is_set():
-            work.put(host)  # another pass, after the sites not yet visited
+        if not state.done and state.pages > 0 and state.passes < request.max_passes and not stop.is_set():
+            work.put(host)  # another pass, after the sites not yet visited (an unreachable site waits for the next run)
 
     def worker() -> None:
         while not stop.is_set():
