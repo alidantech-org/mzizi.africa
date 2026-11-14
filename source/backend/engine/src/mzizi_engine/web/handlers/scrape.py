@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import base64
 import hashlib
+from collections.abc import Callable
 from datetime import UTC, datetime
+from pathlib import Path
 
 import yaml
 from bs4 import Tag
@@ -12,17 +14,17 @@ from pydantic import BaseModel, TypeAdapter
 
 from mzizi_engine.web.browser.adapter import open_session
 from mzizi_engine.web.crawl.backends import BrowserBackend
-from mzizi_engine.web.handlers.common import browser_config, out_dir
+from mzizi_engine.web.handlers.common import site_of, browser_config, out_dir
 from mzizi_engine.web.identity import user_agent
 from mzizi_engine.web.requests import Render, ScrapeFileRequest, ScrapeUrlRequest, SelectRequest
 from mzizi_fetch.web.blocks import BlockDecision, BlockPolicy
-from mzizi_fetch.web.client import WebClient
+from mzizi_fetch.web.client import WebClient, WebResponse
 from mzizi_fetch.web.policy import Decision, SourcePolicy
 from mzizi_fetch.web.urls import host_of, validate
 from mzizi_manifest.validate import module_errors
 from mzizi_scraping import parse_module
 from mzizi_scraping.core import JsonValue
-from mzizi_scraping.extract import ModuleSpec, discover_items, extract_item
+from mzizi_scraping.extract import ModuleSpec, discover_items, extract_item, next_page_url
 from mzizi_scraping.selectors import CssSelector, select
 
 JSON_VALUE = TypeAdapter[JsonValue](JsonValue)
@@ -51,9 +53,17 @@ class ScrapeResult(BaseModel):
     render: Render | None = None
     adapter: str = ""
     selector_index: int = -1
+    pages: int = 0
+    captures: tuple[str, ...] = ()
     records: tuple[ScrapedRecord, ...] = ()
     policy_audit: tuple[Decision, ...] = ()
     block_decisions: tuple[BlockDecision, ...] = ()
+
+
+class PageCapture(BaseModel):
+    response: WebResponse
+    path: str
+    empty: bool = False
 
 
 class Selection(BaseModel):
@@ -94,46 +104,93 @@ def scrape_file(request: ScrapeFileRequest) -> ScrapeResult:
     return _extract(content, recipe, result)
 
 
+def _failure(response: WebResponse) -> str:
+    if response.refused is not None:
+        return response.refused.reason
+    if response.block is not None:
+        return f"{response.block.kind.value}: {response.block.detail}"
+    return response.error or f"HTTP {response.status}: expected a usable HTML page"
+
+
+def _fetch_pages(
+    recipe: Recipe, request: ScrapeUrlRequest, get: Callable[[str], WebResponse], folder: Path
+) -> tuple[list[PageCapture], str]:
+    """Follows the listing's pagination rule from the requested URL; returns the captures and why it stopped early."""
+    listing = recipe.module.discover.listing
+    paginate = listing.paginate if listing is not None else None
+    pages: list[PageCapture] = []
+    url, number = request.url, paginate.start if paginate else 1
+    seen: set[str] = set()
+    while url not in seen:
+        seen.add(url)
+        response = get(url)
+        if not response.usable or not response.is_html:
+            return pages, _failure(response) if not pages else ""
+        name = "page.html" if not pages else f"page-{len(pages) + 1}.html"
+        (folder / name).write_bytes(response.body)
+        pages.append(PageCapture(response=response, path=str(folder / name)))
+        if paginate is None or len(pages) >= paginate.page_limit:
+            break
+        html = response.body.decode("utf-8", errors="replace")
+        if paginate.stops_on_empty() and not discover_items(html, recipe.module).items:
+            pages[-1] = pages[-1].model_copy(update={"empty": True})
+            break
+        following = next_page_url(paginate, response.final_url, number, html)
+        if following is None:
+            break
+        url, number = following, number + 1
+    return pages, ""
+
+
 def scrape_url(request: ScrapeUrlRequest) -> ScrapeResult:
     recipe = _recipe(request.module_yaml, request.module_source)
     validate(request.url)
     host = host_of(request.url)
+    paginated = recipe.module.discover.listing is not None and recipe.module.discover.listing.paginate is not None
     client = WebClient(
-        user_agent(), SourcePolicy(allowed_hosts=(host,), max_requests=20), (host,), blocks=BlockPolicy(max_retries=0)
+        user_agent(),
+        SourcePolicy(allowed_hosts=(host,), max_requests=1000 if paginated else 20),
+        (host,),
+        blocks=BlockPolicy(max_retries=0),
     )
+    session = None
     try:
         if request.render is Render.BROWSER:
-            session = open_session(browser_config(request, headed=request.headed, agent=client.user_agent))
-            try:
-                response = BrowserBackend(client, session).get(request.url)
-            finally:
-                session.close()
+            session = open_session(browser_config(request, headed=request.headed, agent=client.user_agent, site=site_of(request.url)))
+            get = BrowserBackend(client, session).get
         else:
-            response = client.get(request.url)
+            get = client.get
+        pages, failure = _fetch_pages(recipe, request, get, out_dir(request))
     finally:
+        if session is not None:
+            session.close()
         client.close()
+    first = pages[0].response if pages else None
     result = ScrapeResult(
         source=request.url,
         module_sha256=recipe.sha256,
-        final_url=response.final_url,
-        status=response.status,
+        final_url=first.final_url if first else "",
+        status=first.status if first else 0,
         observed_at=datetime.now(UTC),
         render=request.render,
         adapter=request.adapter if request.render is Render.BROWSER else "",
         policy_audit=tuple(client.audit),
         block_decisions=tuple(client.blocks.decisions),
+        pages=len(pages),
+        captures=tuple(page.path for page in pages),
     )
-    if not response.usable or not response.is_html:
-        reason = response.error or f"HTTP {response.status}: expected a usable HTML page"
-        if response.refused is not None:
-            reason = response.refused.reason
-        elif response.block is not None:
-            reason = f"{response.block.kind.value}: {response.block.detail}"
-        return result.model_copy(update={"ok": False, "reason": reason})
-    capture = out_dir(request) / "page.html"
-    capture.write_bytes(response.body)
-    result = result.model_copy(update={"capture": str(capture), "sha256": hashlib.sha256(response.body).hexdigest()})
-    return _extract(response.body, recipe, result)
+    if not pages:
+        return result.model_copy(update={"ok": False, "reason": failure})
+    result = result.model_copy(
+        update={"capture": pages[0].path, "sha256": hashlib.sha256(pages[0].response.body).hexdigest()}
+    )
+    records: list[ScrapedRecord] = []
+    for page in pages:
+        extracted = _extract(page.response.body, recipe, result)
+        if result.selector_index == -1 or extracted.selector_index != -1:
+            result = result.model_copy(update={"selector_index": extracted.selector_index})
+        records.extend(extracted.records)
+    return result.model_copy(update={"records": tuple(records)})
 
 
 def select_file(request: SelectRequest) -> Selection:

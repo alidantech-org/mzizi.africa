@@ -7,11 +7,11 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from mzizi_engine.web.browser.actions import Click, Fill, Screenshot, parse_actions, run_actions
-from mzizi_engine.web.browser.adapter import open_session
+from mzizi_engine.web.browser.adapter import check_profile, open_session
 from mzizi_engine.web.browser.challenge import detect_challenge
 from mzizi_engine.web.browser.models import RenderedPage, StepResult
 from mzizi_engine.web.export import write_table
-from mzizi_engine.web.handlers.common import browser_config, out_dir
+from mzizi_engine.web.handlers.common import browser_config, out_dir, profiles_root, site_of
 from mzizi_engine.web.identity import user_agent
 from mzizi_engine.web.requests import SearchRequest, UrlRequest
 from mzizi_engine.web.search.models import SearchResult
@@ -102,7 +102,7 @@ class PageInfo(BaseModel):
 
 
 def browser_open(request: UrlRequest) -> PageInfo:
-    session = open_session(browser_config(request, headed=not request.headless))
+    session = open_session(browser_config(request, headed=not request.headless, site=site_of(request.url)))
     try:
         page = session.goto(request.url)
         block = detect_challenge(page)
@@ -128,7 +128,7 @@ class ScriptResult(BaseModel):
 
 def browser_script(request: UrlRequest) -> ScriptResult:
     steps = parse_actions(Path(request.actions).read_text(encoding="utf-8"))
-    session = open_session(browser_config(request, headed=not request.headless))
+    session = open_session(browser_config(request, headed=not request.headless, site=site_of(request.url)))
     try:
         if request.url:
             session.goto(request.url)
@@ -158,7 +158,7 @@ def browser_compare(request: UrlRequest) -> Comparison:
         raw = client.get(request.url)
     finally:
         client.close()
-    session = open_session(browser_config(request, headed=request.headed))
+    session = open_session(browser_config(request, headed=request.headed, site=site_of(request.url)))
     try:
         rendered = session.goto(request.url)
     finally:
@@ -197,7 +197,7 @@ def web_search(request: SearchRequest) -> SearchResults:
 
 def browser_snapshot(request: UrlRequest) -> PageInfo:
     folder = out_dir(request)
-    session = open_session(browser_config(request, headed=request.headed))
+    session = open_session(browser_config(request, headed=request.headed, site=site_of(request.url)))
     try:
         page = session.goto(request.url)
         (folder / "rendered.html").write_text(page.html, encoding="utf-8")
@@ -290,7 +290,7 @@ def inspect_challenge(request: UrlRequest) -> ChallengeReport:
 def _act(request: UrlRequest, step: str) -> ScriptResult:
     """One interaction on a freshly opened page, then a screenshot and the page's state."""
     folder = out_dir(request)
-    session = open_session(browser_config(request, headed=not request.headless))
+    session = open_session(browser_config(request, headed=not request.headless, site=site_of(request.url)))
     try:
         session.goto(request.url)
         steps = (
@@ -311,3 +311,27 @@ def browser_click(request: UrlRequest) -> ScriptResult:
 
 def browser_fill(request: UrlRequest) -> ScriptResult:
     return _act(request, "fill")
+
+
+class StopResult(BaseModel):
+    stopped: bool
+
+
+def browser_stop(request: UrlRequest) -> StopResult:
+    from mzizi_engine.web.browser.shared import stop_shared_browser
+
+    return StopResult(stopped=stop_shared_browser(profiles_root(request).parent))
+
+
+class StartResult(BaseModel):
+    cdp_url: str
+    adapter: str
+
+
+def browser_start(request: UrlRequest) -> StartResult:
+    from mzizi_engine.web.browser.shared import ensure_shared_browser
+
+    root = profiles_root(request)
+    check_profile(root)
+    shared = ensure_shared_browser(root.parent, request.adapter, root / request.adapter, user_agent())
+    return StartResult(cdp_url=shared.cdp_url, adapter=shared.adapter)

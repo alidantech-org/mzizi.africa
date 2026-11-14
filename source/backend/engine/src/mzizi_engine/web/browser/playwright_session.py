@@ -4,16 +4,21 @@ from __future__ import annotations
 
 import importlib
 import time
+from contextlib import ExitStack
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from mzizi_engine.web.browser.adapter import BrowserSession, BrowserUnavailable, register_adapter
 from mzizi_engine.web.browser.models import BrowserConfig, RenderedPage
+from mzizi_engine.web.browser.tabs import PopupGate, TabRegistry
 from mzizi_fetch.web.download import safe_name
 
 if TYPE_CHECKING:
     from playwright.sync_api import BrowserContext, Download, Page, Request, Response
 
+SCREENSHOT_TIMEOUT_MS = 10_000
+POPUP_LOAD_MS = 5_000
+BLANK_LINKS_SCRIPT = "els => els.map(e => e.href).filter(h => h)"
 SCROLL_PAUSE = 0.4
 MAX_SCROLLS = 40
 LINKS_SCRIPT = "els => els.map(e => e.href).filter(h => h)"
@@ -31,8 +36,6 @@ class PlaywrightSession:
             ) from problem
         self.config = config
         config.profile_dir.mkdir(parents=True, exist_ok=True)
-        config.downloads_dir.mkdir(parents=True, exist_ok=True)
-        config.screenshots_dir.mkdir(parents=True, exist_ok=True)
         self._pw = sync_api.sync_playwright().start()
         launch = {
             "headless": not config.headed,
@@ -47,9 +50,13 @@ class PlaywrightSession:
         elif config.channel:
             launch["channel"] = config.channel
         try:
-            self._context: BrowserContext = self._pw.chromium.launch_persistent_context(
-                str(config.profile_dir), **launch
-            )
+            if config.cdp_url:
+                self._attached = self._pw.chromium.connect_over_cdp(config.cdp_url)
+                self._context: BrowserContext = (
+                    self._attached.contexts[0] if self._attached.contexts else self._attached.new_context()
+                )
+            else:
+                self._context = self._pw.chromium.launch_persistent_context(str(config.profile_dir), **launch)
         except Exception as problem:
             self._pw.stop()
             install = (
@@ -62,7 +69,16 @@ class PlaywrightSession:
                 f"could not start {driver} with {config.channel or 'chromium'}: {str(problem)[:200]}{install}"
             ) from problem
         self._context.set_default_timeout(config.timeout_ms)
-        self._page: Page = self._context.pages[0] if self._context.pages else self._context.new_page()
+        self._lease = ExitStack()
+        self._gate = PopupGate()
+        self._registry = TabRegistry(config.registry_dir) if config.cdp_url and config.site and config.registry_dir else None
+        try:
+            self._page: Page = self._working_tab()
+        except Exception:
+            self._lease.close()
+            self._pw.stop()
+            raise
+        self._page.on("popup", self._on_popup)
         self._console: list[str] = []
         self._failed: list[str] = []
         self._downloads: list[str] = []
@@ -72,10 +88,64 @@ class PlaywrightSession:
         self._page.on("requestfailed", self._on_failed)
         self._page.on("download", self._on_download)
 
+    def _target_id(self, page: Page) -> str:
+        session = self._context.new_cdp_session(page)
+        try:
+            return str(session.send("Target.getTargetInfo")["targetInfo"]["targetId"])
+        finally:
+            session.detach()
+
+    def _working_tab(self) -> Page:
+        """This site's own tab (reused from an earlier command when it still exists), leased for this session."""
+        registry = self._registry
+        if registry is None:
+            return self._context.pages[0] if self._context.pages else self._context.new_page()
+        self._lease.enter_context(registry.lease(self.config.site))  # waits while another command works this site
+        live = {self._target_id(p): p for p in self._context.pages}
+        registry.forget(set(live))
+        entry = registry.tab_for(self.config.site)
+        page = live.get(entry.target_id) if entry else None
+        if page is None:
+            page = self._context.new_page()
+            registry.remember(self.config.site, self._target_id(page))
+        else:
+            registry.remember(self.config.site, entry.target_id)
+        self._trim_idle_tabs(registry, live)
+        return page
+
+    def _trim_idle_tabs(self, registry: TabRegistry, live: dict[str, Page]) -> None:
+        """Beyond the total tab limit, closes the least recently used tabs of sites nobody is working on."""
+        from mzizi_engine.web.browser.tabs import SiteBusy
+
+        for entry in registry.idle_beyond_limit({self.config.site}):
+            try:
+                with registry.lease(entry.host, wait=0.05):
+                    page = live.get(entry.target_id)
+                    if page is not None:
+                        page.close()
+                    registry.forget(set(live) - {entry.target_id})
+            except SiteBusy:
+                continue
+
+    def _on_popup(self, popup: Page) -> None:
+        """A new tab or window opened by this site's tab: tracked, allowed one at a time, closed once seen."""
+        try:
+            popup.wait_for_load_state("domcontentloaded", timeout=POPUP_LOAD_MS)
+        except Exception:  # a slow or blocked pop-up is still recorded by whatever address it reached
+            pass
+        if not self._gate.opened(popup.url):
+            popup.close()
+            return
+        try:
+            popup.close()
+        finally:
+            self._gate.closed()
+
     def _on_failed(self, request: Request) -> None:
         self._failed.append(f"{request.url}: {request.failure or 'failed'}")
 
     def _on_download(self, download: Download) -> None:
+        self.config.downloads_dir.mkdir(parents=True, exist_ok=True)
         target = self.config.downloads_dir / safe_name(download.suggested_filename)
         download.save_as(target)
         target.chmod(0o600)
@@ -95,6 +165,12 @@ class PlaywrightSession:
             chain.append(request.url)
         return tuple(reversed(chain))
 
+    def _blank_links(self) -> list[str]:
+        try:
+            return [str(v) for v in self._page.eval_on_selector_all("a[target=_blank][href]", BLANK_LINKS_SCRIPT)]
+        except Exception:
+            return []
+
     def page_state(self) -> RenderedPage:
         return self._state(self._page.url, None, "")
 
@@ -112,17 +188,24 @@ class PlaywrightSession:
             console_errors=tuple(self._console),
             failed_requests=tuple(self._failed),
             downloads=tuple(self._downloads),
+            popups=tuple(self._gate.seen),
+            deferred_popups=tuple(self._gate.deferred),
+            blank_links=tuple(self._blank_links()) if not error else (),
             error=error,
         )
 
     def goto(self, url: str) -> RenderedPage:
         self._console.clear()
         self._failed.clear()
+        self._gate.seen.clear()
+        self._gate.deferred.clear()
         try:
             response = self._page.goto(url, wait_until="domcontentloaded")
         except Exception as problem:
             return self._state(url, None, f"{type(problem).__name__}: {str(problem)[:150]}")
         self._settle()
+        if self.config.headed:
+            self._page.bring_to_front()  # the visible tab shows the page being worked on
         return self._state(url, response, "")
 
     def wait_for(self, selector: str, timeout_ms: int | None = None) -> None:
@@ -161,14 +244,20 @@ class PlaywrightSession:
         return tuple(str(v) for v in self._page.eval_on_selector_all("img", IMAGES_SCRIPT))
 
     def screenshot(self, name: str, full_page: bool) -> Path:
+        self.config.screenshots_dir.mkdir(parents=True, exist_ok=True)
         path = self.config.screenshots_dir / f"{safe_name(name)}.png"
-        self._page.screenshot(path=str(path), full_page=full_page)
+        try:
+            self._page.screenshot(path=str(path), full_page=full_page, timeout=SCREENSHOT_TIMEOUT_MS)
+        except Exception:  # a heavy page can stall a full-page capture: fall back to what is in view
+            self._page.screenshot(path=str(path), full_page=False, timeout=SCREENSHOT_TIMEOUT_MS)
         return path
 
     def close(self) -> None:
         try:
-            self._context.close()
+            if not self.config.cdp_url:  # a shared browser outlives the command; only the connection ends
+                self._context.close()
         finally:
+            self._lease.close()  # the site's tab stays open for the next command; only the lease ends
             self._pw.stop()
 
 

@@ -10,7 +10,7 @@ extra: {status: planning_only, implementation_approved: false}
 
 ## How the engine reaches a package
 
-`capabilities.py` registers `Capability(name, version, package, description, handler, input_schema, cpu_bound)`. A handler is a module-level function `dict -> dict`, so it can run in a worker process. File input goes through `_bytes_input`: either `content_base64` or a `path` confined to `ENGINE_INPUT_ROOT` (default: `seed/`). The dev CLI sets `ENGINE_INPUT_ROOT=.local/dev/inputs` for its own process, so a local PDF path works with no code change to the packages. A website URL is different: no capability currently fetches, so the CLI needs new fetch-based capabilities (below).
+`capabilities.py` registers `Capability(name, version, package, description, handler, input_schema, cpu_bound)`. A handler is a module-level function `dict -> dict`, so it can run in a worker process. File input goes through `_bytes_input`: either `content_base64` or a `path` confined to `ENGINE_INPUT_ROOT` (default: `seed/`). The dev CLI sets `ENGINE_INPUT_ROOT=.dev/inputs` for its own process, so a local PDF path works with no code change to the packages. A website URL is different: no capability currently fetches, so the CLI needs new fetch-based capabilities (below).
 
 ## Status per package
 
@@ -19,7 +19,7 @@ extra: {status: planning_only, implementation_approved: false}
 | `mzizi-extraction` | `EXTRACTORS` (pdf, geojson, csv, json), `ExtractionProfile`, `Limits`, `encode_output`, OCR | `extraction.pdf/geojson/csv/json` | CLI wrapper, `--pages`, writing text/tables to disk, OCR capability and Tesseract doctor check, `extract auto` |
 | `mzizi-fetch` | `PoliteFetcher`, `FetchPolicy`, `RateLimiter`, robots, cache, `GateCheck` injection | none (only `source.gate`) | `fetch.url`, `fetch.robots`, `fetch.policy` capabilities; engine supplies the gate and `detect_challenge` callbacks as designed |
 | `mzizi-scraping` | `extract_links`, selectors, fields, transforms, `detect_challenge`, `parse_module/selectors/transform` | `scraping.links` | `scraping.extract` (apply a structure to a document), `scraping.select`, `scraping.challenge` capabilities |
-| `mzizi-manifest` | seed registry, lock, effective manifests, structure validation | `manifest.check_seeds`, `manifest.validate_structure` | `manifest.explain`; run against `.local/dev/manifests` |
+| `mzizi-manifest` | seed registry, lock, effective manifests, structure validation | `manifest.check_seeds`, `manifest.validate_structure` | `manifest.explain`; run against `.dev/manifests` |
 | `mzizi-filesystem` | object store protocol (memory, S3), hashing, naming | `filesystem.sync` | `filesystem.hash`, local-directory object store for dev |
 | `mzizi-database-client` | typed client for the Rust database service | none | Out of scope here; engine-to-database proof is a separate effort |
 

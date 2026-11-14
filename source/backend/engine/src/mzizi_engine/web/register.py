@@ -4,10 +4,20 @@ from __future__ import annotations
 
 from mzizi_engine.capabilities import Capability, CapabilityRegistry
 from mzizi_engine.jsonvalue import Payload
-from mzizi_engine.web.handlers import crawl, downloads, inspect, scrape
+from mzizi_engine.web.handlers import changes, crawl, downloads, inspect, queue, rank, scrape, site, survey
 from mzizi_engine.web.handlers.common import capability
 from mzizi_engine.web.requests import (
     CrawlRequest,
+    DiffRequest,
+    EnqueueRequest,
+    FetchQueueRequest,
+    QueueStatusRequest,
+    DraftRequest,
+    FamilyRequest,
+    ProfileRequest,
+    RankRequest,
+    SurveyRequest,
+    WatchRequest,
     DownloadRequest,
     ExportRequest,
     MarkdownRequest,
@@ -44,6 +54,16 @@ def register_web(registry: CapabilityRegistry) -> None:
             "Re-export a crawl's inventories as CSV, JSON or JSON Lines",
             capability(ExportRequest, crawl.export_results),
         ),
+        ("web.profile", "Profile a crawled site: sections, templates, navigation", capability(ProfileRequest, survey.profile_run)),
+        ("web.family", "Compare two crawled sites for a shared template", capability(FamilyRequest, survey.family_runs)),
+        ("web.draft", "Draft a site structure bundle from a crawl", capability(DraftRequest, survey.draft_bundle)),
+        ("web.survey", "Crawl, profile and draft a bundle in one run", capability(SurveyRequest, survey.survey_site)),
+        ("web.rank", "Rank downloaded files against Mzizi targets from manifest rules", capability(RankRequest, rank.rank_downloads)),
+        ("download.enqueue", "Queue a crawl's files, images and media for download (tracked in MongoDB)", capability(EnqueueRequest, queue.enqueue)),
+        ("download.run", "Download queued items and track each in MongoDB", capability(FetchQueueRequest, queue.fetch_queue)),
+        ("download.queue", "Counts of queued, running, done and failed downloads", capability(QueueStatusRequest, queue.queue_status)),
+        ("site.watch", "Crawl a site by URL; keep hashed, versioned pages and report changes", capability(WatchRequest, site.watch_site)),
+        ("web.diff", "Compare two crawls: pages added, removed and changed", capability(DiffRequest, changes.diff_crawls)),
         ("fetch.url", "One identified, policy-checked HTTP request", capability(UrlRequest, inspect.fetch_one)),
         ("fetch.robots", "The robots.txt decision for a URL, recorded", capability(UrlRequest, inspect.robots_policy)),
         (
@@ -73,6 +93,8 @@ def register_web(registry: CapabilityRegistry) -> None:
             capability(UrlRequest, inspect.browser_click),
         ),
         ("browser.fill", "Fill one field on a page", capability(UrlRequest, inspect.browser_fill)),
+        ("browser.start", "Open the one shared dev browser window", capability(UrlRequest, inspect.browser_start)),
+        ("browser.stop", "Close the shared dev browser", capability(UrlRequest, inspect.browser_stop)),
         ("browser.compare", "HTTP result versus browser result", capability(UrlRequest, inspect.browser_compare)),
         (
             "web.download",

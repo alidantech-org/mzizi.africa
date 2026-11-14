@@ -33,14 +33,14 @@ The scraper was designed around site-structure and API-structure YAML (`source/s
 
 - **Adapter:** Playwright driving the installed system Chrome (`channel="chrome"`; `/usr/bin/google-chrome` is present) is the initial browser adapter, not a mandatory or exclusive choice. Allow other browser adapters and anti-bot-resilient profiles behind the same engine interface. Preserve whether a capture is HTTP or rendered, plus browser version, viewport, adapter, session mode and capture conditions. Prefer conditional browser fallback when HTTP suffices (see [10 build vs reuse](../source-redesign/10-prior-art-and-build-vs-reuse.md) and [11](../source-redesign/11-tool-integration-and-contracts.md)).
 - **Packaging:** an optional dependency group (`browser`) of the engine, not of any package. Packages stay HTTP/HTML-string based; the engine passes rendered HTML into `mzizi-scraping`.
-- **Isolation:** throwaway profile under `.local/dev/browser-profile/`; never the user's Chrome profile; no stored logins; downloads disabled unless `--allow-downloads`.
+- **Isolation:** throwaway profile under `.dev/browser-profile/`; never the user's Chrome profile; no stored logins; downloads disabled unless `--allow-downloads`.
 - **Source-specific access policy:** the same source approval, scope and bounded request budgets apply to every adapter. `robots.txt` defaults to `respect`, but the engine should support a documented source-approved `override`. CAPTCHA/access challenges are detected and recorded; where authorised, the browser layer may hand off to manual or approved provider/adaptor resolution, otherwise it stops. Browser profile/identity configuration may be supported for approved collection workflows. See [collection policy](../../design/policy/LEGALITY_SAFETY_AND_COMPLIANCE.md); these capabilities are design targets until implemented.
 - **Evidence capture:** `snapshot` records rendered HTML, a screenshot, final URL, redirect chain and console/network summary, so later replay is possible.
 
 ## Manifests
 
 - `scrape url|file --manifest <yaml>` loads a site structure through `mzizi-manifest` validation first; invalid manifests fail with path-level errors before any request.
-- Manifests under `.local/dev/manifests/` may be incomplete experiments; `manifest validate-structure` is the editing loop.
+- Manifests under `.dev/manifests/` may be incomplete experiments; `manifest validate-structure` is the editing loop.
 - Per-field trace is on by default in dev: for each field, selector chain attempts, which matched, raw value, transform steps, final value. This is how a selector or transform bug is localised.
 - API structures (`api.structure.yaml`) follow the same flow with `fetch url` (JSON) and `scraping.extract` over JSONPath, proving the other half of the original design.
 - The gap list for unknown sites (template learning, section hashing, change detection) is design work in [source redesign 03–06](../source-redesign/README.md); this plan only supplies the commands to observe those capabilities once built.

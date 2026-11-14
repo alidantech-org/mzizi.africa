@@ -172,3 +172,31 @@ def test_cli_commands_invoke_the_real_implementations(site: str, tmp_path: Path,
     status = runner.invoke(app, ["--no-input", "--json", "status", "--group", "web"])
     assert {row["capability"]: row["state"] for row in json.loads(status.output)}["web.links"] == "ready"
     assert runner.invoke(app, ["--no-input", "doctor"]).exit_code == 0
+
+
+def test_diff_reports_added_removed_and_changed(tmp_path):
+    import json
+
+    from mzizi_engine.web.handlers.changes import diff_crawls
+    from mzizi_engine.web.requests import DiffRequest
+
+    def crawl(name, pages):
+        folder = tmp_path / name
+        (folder / "raw").mkdir(parents=True)
+        rows = []
+        for url, body in pages.items():
+            (folder / "raw" / f"{len(rows)}.html").write_text(body)
+            rows.append({"normalized_url": url, "raw_file": f"raw/{len(rows)}.html"})
+        import csv
+
+        with (folder / "pages.csv").open("w", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=["normalized_url", "raw_file"])
+            writer.writeheader()
+            writer.writerows(rows)
+        return str(folder)
+
+    old = crawl("a", {"u/1": "x", "u/2": "y", "u/3": "z"})
+    new = crawl("b", {"u/1": "x", "u/2": "Y", "u/4": "w"})
+    result = diff_crawls(DiffRequest(out_dir=str(tmp_path), baseline=old, current=new))
+    assert [c.url for c in result.added] == ["u/4"] and [c.url for c in result.removed] == ["u/3"]
+    assert [c.url for c in result.changed] == ["u/2"] and result.unchanged == 1

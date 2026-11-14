@@ -7,7 +7,9 @@ from collections import defaultdict
 
 from pydantic import BaseModel
 
+from mzizi_engine.activity import open_activity
 from mzizi_engine.jsonvalue import JsonValue
+from mzizi_engine.web.crawl.persist import record_provenance, record_run, record_tables
 from mzizi_engine.web.crawl.engine import Crawl
 from mzizi_engine.web.crawl.state import save_state
 from mzizi_engine.web.export import columns_of, site_tree, write_table
@@ -27,6 +29,10 @@ from mzizi_extraction.document import render_markdown
 from mzizi_fetch.web.urls import UrlKind
 
 IMAGE, MEDIA_KINDS = UrlKind.IMAGE.value, (UrlKind.MEDIA.value, UrlKind.EMBED.value)
+CRAWL_TABLES = (
+    "pages", "paths", "links", "internal_urls", "external_urls", "external_hosts",
+    "images", "documents", "files", "media", "errors",
+)
 DOCUMENT = UrlKind.DOCUMENT.value
 OTHER_FILES = (UrlKind.DATA.value, UrlKind.ARCHIVE.value, UrlKind.PROGRAM.value)
 
@@ -127,18 +133,13 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
     table("media", [r for r in resources if r.kind in MEDIA_KINDS], ResourceRecord)
     table("errors", errors, ErrorRecord)
     decisions = crawl.client.blocks.decisions
-    (out / "blocks.json").write_text(
-        json.dumps([d.model_dump(mode="json") for d in decisions], indent=2), encoding="utf-8"
-    )
-    (out / "policy_audit.json").write_text(
-        json.dumps([d.model_dump(mode="json") for d in crawl.client.audit], indent=2), encoding="utf-8"
-    )
-    (out / "provenance.jsonl").write_text(
-        "".join(p.model_dump_json() + "\n" for p in crawl.client.provenance), encoding="utf-8"
-    )
     tree: dict[str, JsonValue] = site_tree([p.path for p in paths])
-    (out / "site_tree.json").write_text(json.dumps(tree, indent=2, ensure_ascii=False), encoding="utf-8")
-    written += ["blocks.json", "policy_audit.json", "provenance.jsonl", "site_tree.json"]
+    activity = open_activity() if crawl.request.record else None
+    audit: dict[str, JsonValue] = {
+        "blocks": [d.model_dump(mode="json") for d in decisions],
+        "policy_audit": [d.model_dump(mode="json") for d in crawl.client.audit],
+        "site_tree": tree,
+    }
     summary = CrawlSummary(
         start_urls=crawl.request.starts,
         render=crawl.request.render,
@@ -158,6 +159,19 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
         files_written=tuple(written),
     )
     (out / "summary.json").write_text(summary.model_dump_json(indent=2), encoding="utf-8")
+    if activity is not None:
+        try:
+            record_tables(activity, out, [name for name in CRAWL_TABLES])
+            record_run(activity, out, summary, audit)
+            record_provenance(activity, out.name, crawl.client.provenance)
+        finally:
+            activity.close()
+    elif crawl.request.record:  # no activity store: the audit trail stays in files so nothing is lost
+        for name, value in audit.items():
+            (out / f"{name}.json").write_text(json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
+        (out / "provenance.jsonl").write_text(
+            "".join(p.model_dump_json() + "\n" for p in crawl.client.provenance), encoding="utf-8"
+        )
     save_state(out, crawl.snapshot(complete))
     return summary
 

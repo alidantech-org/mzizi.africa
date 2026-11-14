@@ -187,6 +187,40 @@
       },
       "title": "Zip Based Extensions",
       "type": "array"
+    },
+    "generic_file_stems": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Generic File Stems",
+      "type": "array",
+      "default": []
+    },
+    "tabular_extensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tabular Extensions",
+      "type": "array",
+      "default": []
+    },
+    "captcha_page_max_links": {
+      "type": "integer",
+      "title": "Captcha Page Max Links",
+      "default": 8
+    },
+    "captcha_blocking_statuses": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Captcha Blocking Statuses",
+      "type": "array",
+      "default": [
+        401,
+        403,
+        429,
+        503
+      ]
     }
   },
   "required": [

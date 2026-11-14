@@ -134,6 +134,62 @@
     "extractor": {
       "$ref": "common.schema.json#/$defs/name",
       "description": "For dataset imports (no module): the extractor whose segments this mapping consumes."
+    },
+    "expect": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What a healthy result of this mapping looks like; a failed expectation is reported, never silently accepted.",
+      "properties": {
+        "min_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "required_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "value_ranges": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "period": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "expected": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "max_age_days": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
     }
   }
 }

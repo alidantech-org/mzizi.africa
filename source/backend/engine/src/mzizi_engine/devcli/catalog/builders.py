@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import os
 from pathlib import Path
 
 from mzizi_engine.devcli.errors import CliError
@@ -112,7 +113,7 @@ def resume_payload(values: ArgValues, ws: Workspace) -> Payload:
 
 
 def run_source_payload(values: ArgValues, ws: Workspace) -> Payload:
-    """`--run` is a run name (or `last`) in the dev outputs, or the path of any run folder."""
+    """`--run` is a run name (or `last`) in the dev runs, or the path of any run folder."""
     raw = values.get("run")
     if not isinstance(raw, str):
         raise CliError("--run is required")
@@ -122,4 +123,20 @@ def run_source_payload(values: ArgValues, ws: Workspace) -> Payload:
         raise CliError(f"no run folder {raw!r}", hint="see `mzizi dev runs`")
     payload = passthrough({k: v for k, v in values.items() if k != "run"}, ws)
     payload["source"] = str(folder)
+    return payload
+
+
+DEV_BROWSER_ADAPTER = "patchright"
+DEV_BROWSER_ENV = "MZIZI_DEV_BROWSER"  # set to "headless" for CI and tests: no window, no shared browser
+
+
+def with_dev_browser_defaults(payload: Payload, *, uses_browser: bool) -> Payload:
+    """Dev mode opens one persistent, visible Patchright window (reused by later commands) unless `--adapter` or `--headless` says otherwise."""
+    browsing = uses_browser and (payload.get("render", "browser") == "browser")
+    if not browsing:
+        return payload
+    headless = bool(payload.pop("headless", False)) or os.environ.get(DEV_BROWSER_ENV) == "headless"
+    payload.setdefault("adapter", DEV_BROWSER_ADAPTER)
+    payload["headed"] = not headless
+    payload["reuse_browser"] = not headless  # one persistent window and tab for the whole dev session
     return payload

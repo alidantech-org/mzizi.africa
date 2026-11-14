@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+from mzizi_engine.layout import DevLayout, address_of
 from mzizi_engine.web.crawl.backends import PageBackend
 from mzizi_engine.web.crawl.engine import run, start_crawl
 from mzizi_engine.web.crawl.inventory import CrawlSummary, finish
@@ -40,14 +43,23 @@ def block_policy_for(request: CrawlRequest) -> BlockPolicy:
     return BlockPolicy(responses={kind: response for kind in BLOCK_KINDS_WITH_CONFIGURED_RESPONSE})
 
 
+def extra_ca_bundle(host: str) -> Path | None:
+    """`.dev/secure/<registrable label>-ca-bundle.pem` when present (for example `knbs-ca-bundle.pem` for knbs.or.ke)."""
+    group = address_of(host).group
+    candidate = DevLayout.locate().root / "secure" / f"{group[-1]}-ca-bundle.pem"
+    return candidate if candidate.is_file() else None
+
+
 def client_for(request: CrawlRequest, user_agent: str) -> WebClient:
     for url in request.starts:
         validate(url)
+    first = host_of(request.starts[0]) if request.starts else ""
     return WebClient(
         user_agent,
         policy_for(request),
         tuple(sorted({host_of(u) for u in request.starts})),
         blocks=block_policy_for(request),
+        extra_ca_bundle=extra_ca_bundle(first) if first else None,
     )
 
 

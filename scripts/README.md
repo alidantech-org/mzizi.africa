@@ -21,7 +21,7 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 | `bun run clean`                           | deletes caches and build output; `bun run clean -- --deep` also deletes `.venv` and every `node_modules`                                         |
 | `bun run dev`                             | runs the services in watch mode; name some to run only those: `bun run dev api web`                                                              |
 | `bun run start`                           | runs the services without watchers (run `bun run build` first for the Next.js apps)                                                              |
-| `bun run build`                           | builds the Python wheels into `.local/dist` and the two Next.js apps                                                                             |
+| `bun run build`                           | builds the Python wheels into `.dev/dist` and the two Next.js apps                                                                             |
 | `bun run format` / `format:check`         | ruff format; Biome for `scripts/` and `dryv/`; Prettier for the dashboard                                                                        |
 | `bun run lint` / `lint:fix`               | ruff check; Biome; ESLint for the dashboard                                                                                                      |
 | `bun run typecheck`                       | mypy for Python; `tsc` for every TypeScript project                                                                                              |
@@ -86,7 +86,7 @@ The development sequence is `bun run db:up`, `bun run infra:up`, `bun run db res
 
 The root generation command compiles the current database contracts and writes Rust row models and SQL schema snapshots. `bun run db plan` compares the current entities and table names with the ordered SQL migrations. Reconcile differences before preparing incremental migrations.
 
-`dryv:generate` and `dryv:verify` need the Dryv engine API. They start it from `DRYV_HOME` when nothing answers on its port and stop it afterwards; an engine that was already running is left alone. The engine is bound to `127.0.0.1` and started in Dryv's development mode, so no Dryv Platform login is needed. If port 8750 is taken by a different Dryv service, choose another: `DRYV_API_PORT=8751 bun run dryv:verify`. The log is `.local/dryv-api.log`. Traps and the manual steps are in `.docs/design/operations/running-dryv.md`.
+`dryv:generate` and `dryv:verify` need the Dryv engine API. They start it from `DRYV_HOME` when nothing answers on its port and stop it afterwards; an engine that was already running is left alone. The engine is bound to `127.0.0.1` and started in Dryv's development mode, so no Dryv Platform login is needed. If port 8750 is taken by a different Dryv service, choose another: `DRYV_API_PORT=8751 bun run dryv:verify`. The log is `.dev/logs/dryv-api.log`. Traps and the manual steps are in `.docs/design/operations/running-dryv.md`.
 
 ## Code quality rules
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 from pydantic import ConfigDict, Field
 
 from mzizi_scraping.core import External, JsonValue
+from mzizi_scraping.extract.pagination import Pagination
 from mzizi_scraping.selectors import Selector
 from mzizi_scraping.transforms import TransformSpec
 
@@ -23,6 +24,7 @@ class FieldSpec(External):
 
 class ItemSource(External):
     items: list[Selector] | Selector
+    paginate: Pagination | None = None
 
 
 class Discover(External):

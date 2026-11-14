@@ -74,7 +74,7 @@ class Prompter:
         if not self.allow_outside and not self.workspace.trusted(path) and not self._confirm_outside(path):
             raise CliError(
                 f"{path} is outside {self.workspace.root}",
-                hint="copy it into .local/dev/inputs or pass --allow-outside-inputs",
+                hint="copy it into .dev/inputs or pass --allow-outside-inputs",
             )
         return path
 
@@ -93,7 +93,7 @@ class Prompter:
         return inside.resolve() if inside.exists() else path.resolve()
 
     def _roots(self) -> list[Path]:
-        return [self.workspace.inputs, self.workspace.outputs, self.workspace.manifests, Path.cwd()]
+        return [self.workspace.inputs, self.workspace.runs, Path.cwd()]
 
     def _ask(self, arg: Arg) -> ArgValue:
         match arg.kind:

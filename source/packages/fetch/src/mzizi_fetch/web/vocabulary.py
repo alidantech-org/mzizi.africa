@@ -58,6 +58,10 @@ class Vocabulary(_Data):
     file_signatures: tuple[FileSignature, ...]
     zip_based_extensions: tuple[str, ...]
     jpeg_extensions: tuple[str, ...]
+    tabular_extensions: tuple[str, ...] = ()  # spreadsheet and table files, stored under `data`
+    captcha_page_max_links: int = 8  # a captcha marker blocks only a page this bare (a real page with a form is usable)
+    captcha_blocking_statuses: tuple[int, ...] = (401, 403, 429, 503)
+    generic_file_stems: tuple[str, ...] = ()  # file names too vague to label a file (`download`, `file`, `view`)
     risky_groups: tuple[str, ...]
     block_responses: dict[str, str]
 

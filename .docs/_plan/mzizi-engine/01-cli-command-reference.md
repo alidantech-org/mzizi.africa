@@ -12,19 +12,19 @@ Today the engine has `mzizi-engine serve|capabilities|check|filesystem`, plus `m
 
 ## Conventions for every command
 
-- `--input <path>`: a file or folder. Relative paths resolve under `.local/dev/inputs/`; absolute paths are accepted only with `--allow-outside-inputs` (dev machine convenience, printed as a warning).
-- `--out <name>` (optional): run name; default `<UTC timestamp>-<group>-<verb>`. Output goes to `.local/dev/outputs/<run>/`.
+- `--input <path>`: a file or folder. Relative paths resolve under `.dev/inputs/`; absolute paths are accepted only with `--allow-outside-inputs` (dev machine convenience, printed as a warning).
+- `--out <name>` (optional): run name; default `<UTC timestamp>-<group>-<verb>`. Output goes to `.dev/outputs/<run>/`.
 - `--json`: print the machine result instead of the human summary. Human mode prints a short table plus the path of the run folder.
-- `--manifest <path>`: a site/API structure or fetch policy YAML (fixtures in `.local/dev/manifests/`, or real ones under `seed/`).
+- `--manifest <path>`: a site/API structure or fetch policy YAML (fixtures in `.dev/manifests/`, or real ones under `seed/`).
 - Exit code non-zero on failure; diagnostics are shown, never swallowed ("honest diagnostics" is a package rule).
-- `--dry-run` where a command could write beyond `.local/dev/` (only `fs upload`, `mongo load`, `vector index`).
+- `--dry-run` where a command could write beyond `.dev/` (only `fs upload`, `mongo load`, `vector index`).
 
 ## Groups
 
 ### `mzizi dev` — workspace and health
 | Command | Does |
 |---|---|
-| `dev init` | Create `.local/dev/{inputs,outputs,manifests,services}` and a README stub. Idempotent. |
+| `dev init` | Create `.dev/{inputs,outputs,manifests,services}` and a README stub. Idempotent. |
 | `dev doctor` | Report what is available: Python/uv, Tesseract, Chrome/Playwright, docker, Mongo/vector reachability, S3 env, each as ok/missing with the fix. Replaces guessing why a command fails. |
 | `dev runs [--last N]` | List run folders with command, status, duration. |
 | `dev show <run>` | Print the run's `result.json` summary and artifact list. |
@@ -71,7 +71,7 @@ Add `--render browser` to `scrape url|links|markdown|crawl` to use the real brow
 ### `mzizi manifest` — package `mzizi-manifest`
 | Command | Does |
 |---|---|
-| `manifest check` | Existing `mzizi-manifest check` for `seed/` (and `--root .local/dev/manifests`). |
+| `manifest check` | Existing `mzizi-manifest check` for `seed/` (and `--root .dev/manifests`). |
 | `manifest validate-structure <file>` | Validate a site/API structure against `source/schema/site/v1`; show path-level errors. |
 | `manifest explain <file>` | Print the resolved (effective) manifest after folder inheritance. |
 | `manifest lock` | Existing lock generation (seed only). |
@@ -96,7 +96,7 @@ Add `--render browser` to `scrape url|links|markdown|crawl` to use the real brow
 
 ```bash
 uv run mzizi dev init && uv run mzizi dev doctor
-cp ~/Downloads/county-budget.pdf .local/dev/inputs/
+cp ~/Downloads/county-budget.pdf .dev/inputs/
 uv run mzizi extract pdf --input county-budget.pdf
 uv run mzizi scrape links --url https://example.go.ke --internal-only
 uv run mzizi browser compare --url https://example.go.ke/news

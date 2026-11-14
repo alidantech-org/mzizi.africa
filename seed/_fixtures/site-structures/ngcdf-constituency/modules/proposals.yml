@@ -1,0 +1,11 @@
+module: proposals
+discover:
+  listing:
+    url: /proposals/
+    items: [{ css: "table.table tr", confidence: 0.6 }]
+extract:
+  fields:
+    label: { from: { css: "td:nth-of-type(2)" } }
+    status: { from: { css: "td:nth-of-type(3)" } }
+    file: { from: { css: "td a", attr: href } }
+expect: { min_items: 1, required_fields: [label, file] }

@@ -16,7 +16,7 @@ SECURITY_FOLDER = "/security"
 
 
 def cache_dir() -> Path:
-    return Path(os.environ.get("MZIZI_SECURE_DIR") or repo_root() / ".local" / "secure")
+    return Path(os.environ.get("MZIZI_SECURE_DIR") or repo_root() / ".dev" / "secure")
 
 
 def fetch_secure_file(conn: Connection, store: ObjectStore, logical_path: str, *, refresh: bool = False) -> Path:

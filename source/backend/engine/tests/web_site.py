@@ -35,6 +35,11 @@ def pages(port: int) -> dict[str, bytes]:
             "Dynamic",
             '<p id="slot">loading</p><script>document.getElementById("slot").innerHTML = \'<a href="/found-by-js">js link</a>\'; console.error("boom");</script><button id="go" onclick="document.title=\'clicked\'">Go</button><input id="name"><img src="/missing.png">',
         ),
+        "/popups": page(
+            "Popups",
+            '<a id="blank" target="_blank" href="/about">about</a>'
+            '<button id="two" onclick="window.open(\'/news\');window.open(\'/deep\')">two</button>',
+        ),
         "/sitemap.xml": f"<urlset><url><loc>http://127.0.0.1:{port}/news</loc></url></urlset>".encode(),
     }
 

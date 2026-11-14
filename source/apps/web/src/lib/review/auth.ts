@@ -63,7 +63,7 @@ export async function signOut(): Promise<void> {
 
 function privateKeyPem(): string {
   if (process.env.DEV_AUTH_PRIVATE_KEY) return process.env.DEV_AUTH_PRIVATE_KEY.replace(/\\n/g, '\n');
-  return readFileSync(join(process.cwd(), '..', '..', '..', '.local', 'secure', 'dev-auth', 'private.pem'), 'utf8');
+  return readFileSync(join(process.cwd(), '..', '..', '..', '.dev', 'secure', 'dev-auth', 'private.pem'), 'utf8');
 }
 
 export async function mintToken(): Promise<string> {

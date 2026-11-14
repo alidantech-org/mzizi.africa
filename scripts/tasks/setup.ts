@@ -44,7 +44,7 @@ export function doctor(): boolean {
     [".venv", "Python environment: run `bun run sync`", true],
     ["dryv/node_modules/@dryvcode/author", "Dryv link: run `bun run dryv:link`", true],
     ["source/backend/api/node_modules", "API dependencies: run `bun run sync`", true],
-    [".local/secure/dev-auth/public.pem", "development sign-in keys: run `bun run setup`", false],
+    [".dev/secure/dev-auth/public.pem", "development sign-in keys: run `bun run setup`", false],
   ];
   for (const [path, hint, needed] of files) {
     const present = existsSync(at(path));
@@ -58,12 +58,12 @@ export function doctor(): boolean {
   return ok;
 }
 
-/** Caches and build output that are safe to delete; dependencies and `.local/secure` are never touched. */
+/** Caches and build output that are safe to delete; dependencies and `.dev/secure` are never touched. */
 const disposable = [
   ".ruff_cache",
   ".mypy_cache",
   ".pytest_cache",
-  ".local/dist",
+  ".dev/dist",
   "source/apps/web/.next",
   "source/apps/www/.next",
   "source/apps/mobile/build",

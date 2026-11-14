@@ -1,0 +1,10 @@
+module: downloads
+discover:
+  listing:
+    url: /downloads/
+    items: [{ css: "a[href$='.pdf']", confidence: 0.6 }]
+extract:
+  fields:
+    title: { from: link_text }
+    file: { from: link_href }
+expect: { min_items: 1, required_fields: [title, file] }

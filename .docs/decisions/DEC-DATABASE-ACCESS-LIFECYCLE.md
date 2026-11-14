@@ -22,7 +22,7 @@ tags: [database, python, rust, dryv, mongo, vector]
 
 ## Verified end to end
 
-Against the real remote `mzizix` (main) and `mzizix_operational` (operations) databases (`.local/.data/db-remote.env`), using disposable, fully-cleaned-up fixture rows:
+Against the real remote `mzizix` (main) and `mzizix_operational` (operations) databases (`.dev/stack/db-remote.env`), using disposable, fully-cleaned-up fixture rows:
 
 - The Rust service (`mzizi-db-service`) built, ran, and connected to both databases.
 - A Python process (`mzizi_database_client.DatabaseClient`, no relation to any engine internals) created a folder over real HTTP, got back a typed, parsed response, and was correctly denied with a typed `Conflict` on a repeat with the same code and a typed `Denied` when the acting account held no grant.

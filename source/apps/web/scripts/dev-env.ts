@@ -1,7 +1,7 @@
 /**
  * Creates local development sign-in keys and prints the environment both processes need.
  *
- *   bun scripts/dev-env.ts          writes ../../../.local/secure/dev-auth/{private,public}.pem if missing
+ *   bun scripts/dev-env.ts          writes ../../../.dev/secure/dev-auth/{private,public}.pem if missing
  *
  * The admin site signs tokens for the seeded dev reviewer and admin accounts (`seed dev-accounts` in the
  * database engine); the NestJS API verifies them with the public key. Real OIDC replaces this later by
@@ -11,7 +11,7 @@ import { exportPKCS8, exportSPKI, generateKeyPair } from "jose";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const directory = join(new URL(".", import.meta.url).pathname, "..", "..", "..", "..", ".local", "secure", "dev-auth");
+const directory = join(new URL(".", import.meta.url).pathname, "..", "..", "..", "..", ".dev", "secure", "dev-auth");
 const privatePath = join(directory, "private.pem");
 const publicPath = join(directory, "public.pem");
 

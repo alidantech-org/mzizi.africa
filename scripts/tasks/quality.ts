@@ -32,7 +32,7 @@ function python(kind: QualityKind): Step[] {
     case "test":
       return [step("pytest", root, ["uv", "run", "pytest", "source", "-q"])];
     case "build":
-      return [step("Build wheels", root, ["uv", "build", "--all-packages", "--out-dir", ".local/dist"])];
+      return [step("Build wheels", root, ["uv", "build", "--all-packages", "--out-dir", ".dev/dist"])];
   }
 }
 

@@ -1,4 +1,4 @@
-"""The git-ignored developer workspace (`.local/dev/`) and the run folders written into it."""
+"""The git-ignored developer workspace (`.dev/`) and the run folders written into it."""
 
 from __future__ import annotations
 
@@ -14,16 +14,16 @@ from pydantic import BaseModel, ConfigDict
 from mzizi_engine.devcli.types import ArgValues
 
 WORKSPACE_ENV = "MZIZI_DEV_ROOT"
-_SUBFOLDERS = ("inputs", "outputs", "manifests", "cache", "logs", "services", "browser-profile", "downloads")
+KEEP_RUNS = 50
 
 _README = """# Mzizi developer workspace
 
-Git-ignored scratch space for `mzizi` CLI runs. Safe to delete.
+Git-ignored. Folders appear only when something is first written into them.
 
-- `inputs/`: files you drop in (PDF, HTML, CSV, GeoJSON). Never modified by the CLI.
-- `outputs/<run>/`: one folder per run (`run.json`, `result.json`, artifacts).
-- `manifests/`: unofficial site/API structures and fetch policies for experiments.
-- `cache/`, `browser-profile/`, `services/`, `logs/`: throwaway state.
+- `websites/<country>/<group>/<host>/`: everything about one site (`scraped/`, `extracted/`, `drafts/`).
+- `runs/<date>/`: one-off commands that are not tied to a site (the newest 50 are kept).
+- `browser/`: browser profiles and the shared window state. `logs/`, `cache/`: throwaway state.
+- `inputs/`: files you drop in. `secure/`, `stack/`: keys and dev-stack settings.
 
 Everything here is a dev run, not collected evidence.
 """
@@ -61,27 +61,19 @@ class Workspace:
         override = os.environ.get(WORKSPACE_ENV)
         if override:
             return cls(Path(override).expanduser().resolve())
-        return cls(find_repo_root((cwd or Path.cwd()).resolve()) / ".local" / "dev")
+        return cls(find_repo_root((cwd or Path.cwd()).resolve()) / ".dev")
 
     @property
     def inputs(self) -> Path:
         return self.root / "inputs"
 
     @property
-    def outputs(self) -> Path:
-        return self.root / "outputs"
-
-    @property
-    def downloads(self) -> Path:
-        return self.root / "downloads"
+    def runs(self) -> Path:
+        return self.root / "runs"
 
     @property
     def browser_profile(self) -> Path:
-        return self.root / "browser-profile"
-
-    @property
-    def manifests(self) -> Path:
-        return self.root / "manifests"
+        return self.root / "browser" / "profiles"
 
     @property
     def log_file(self) -> Path:
@@ -95,12 +87,9 @@ class Workspace:
         return self.root.is_dir()
 
     def init(self) -> list[Path]:
-        created: list[Path] = []
-        for name in _SUBFOLDERS:
-            folder = self.root / name
-            if not folder.is_dir():
-                created.append(folder)
-            folder.mkdir(parents=True, exist_ok=True)
+        """Creates only the workspace root and its README; every other folder appears on first write."""
+        created = [] if self.root.is_dir() else [self.root]
+        self.root.mkdir(parents=True, exist_ok=True)
         readme = self.root / "README.md"
         if not readme.exists():
             readme.write_text(_README, encoding="utf-8")
@@ -111,7 +100,7 @@ class Workspace:
         return self.inputs.resolve() in resolved.parents
 
     def trusted(self, path: Path) -> bool:
-        """Inside the dev workspace (inputs, outputs, manifests): files the CLI itself manages."""
+        """Inside the dev workspace (inputs, runs): files the CLI itself manages."""
         return self.root.resolve() in path.resolve().parents
 
     def remember_url(self, url: str) -> None:
@@ -128,12 +117,13 @@ class Workspace:
 
     def start_run(self, command: str, port: str | None, arguments: ArgValues) -> RunHandle:
         now = datetime.now(UTC)
-        run_id = f"{now:%Y%m%d-%H%M%S}-{command.replace(' ', '-')}"
-        folder = self.outputs / run_id
+        run_id = f"{now:%H%M%S}-{command.replace(' ', '-')}"
+        day = self.runs / f"{now:%Y-%m-%d}"
+        folder = day / run_id
         suffix = 1
         while folder.exists():
             suffix += 1
-            folder = self.outputs / f"{run_id}-{suffix}"
+            folder = day / f"{run_id}-{suffix}"
         folder.mkdir(parents=True)
         record = RunRecord(
             run_id=folder.name,
@@ -144,13 +134,19 @@ class Workspace:
         )
         handle = RunHandle(folder, record)
         handle.write()
+        self.clean_runs(KEEP_RUNS)  # run records are small and disposable: the newest are kept, so the folder cannot grow
         return handle
 
-    def list_runs(self, limit: int = 20) -> list[RunRecord]:
-        if not self.outputs.is_dir():
+    def _run_folders(self) -> list[Path]:
+        """Run folders, newest first (`runs/<date>/<time>-<command>`)."""
+        if not self.runs.is_dir():
             return []
+        days = sorted((d for d in self.runs.iterdir() if d.is_dir()), reverse=True)
+        return [f for day in days for f in sorted((p for p in day.iterdir() if p.is_dir()), reverse=True)]
+
+    def list_runs(self, limit: int = 20) -> list[RunRecord]:
         runs: list[RunRecord] = []
-        for folder in sorted((p for p in self.outputs.iterdir() if p.is_dir()), reverse=True)[:limit]:
+        for folder in self._run_folders()[:limit]:
             try:
                 runs.append(RunRecord.model_validate_json((folder / "run.json").read_text(encoding="utf-8")))
             except (OSError, ValueError):
@@ -159,15 +155,17 @@ class Workspace:
 
     def run_folder(self, name: str) -> Path | None:
         if name == "last":
-            finished = [r for r in self.list_runs(50) if r.status == "ok"]
-            return self.outputs / finished[0].run_id if finished else None
-        candidate = self.outputs / name
-        return candidate if candidate.is_dir() else None
+            for folder in self._run_folders()[:50]:
+                try:
+                    if RunRecord.model_validate_json((folder / "run.json").read_text()).status == "ok":
+                        return folder
+                except (OSError, ValueError):
+                    continue
+            return None
+        return next((f for f in self._run_folders() if f.name == name), None)
 
     def clean_runs(self, keep: int) -> int:
-        folders = (
-            sorted((p for p in self.outputs.iterdir() if p.is_dir()), reverse=True) if self.outputs.is_dir() else []
-        )
+        folders = self._run_folders()
         for folder in folders[keep:]:
             shutil.rmtree(folder)
         return max(len(folders) - keep, 0)

@@ -7,6 +7,7 @@ answered by the configured block policy; each decision and each request is kept 
 from __future__ import annotations
 
 import threading
+import ssl
 import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
@@ -84,6 +85,15 @@ class WebResponse(Frozen):
         return self.refused is None and not self.error and self.block is None and 200 <= self.status < 400
 
 
+def _trust(extra: Path | None) -> ssl.SSLContext | bool:
+    """The system trust store plus one extra CA bundle (for a site that sends an incomplete certificate chain)."""
+    if extra is None:
+        return True
+    context = ssl.create_default_context()
+    context.load_verify_locations(cafile=str(extra))
+    return context
+
+
 class WebClient:
     def __init__(
         self,
@@ -97,6 +107,7 @@ class WebClient:
         max_bytes: int = DEFAULT_MAX_BYTES,
         headers: dict[str, str] | None = None,
         transport: httpx.BaseTransport | None = None,
+        extra_ca_bundle: Path | None = None,
         sleep: Callable[[float], None] = time.sleep,
         clock: Callable[[], float] = time.monotonic,
     ) -> None:
@@ -105,7 +116,9 @@ class WebClient:
         self.blocks = blocks or BlockPolicy()
         self.max_bytes, self.sleep, self.clock = max_bytes, sleep, clock
         self.headers = {"User-Agent": user_agent, "Accept": "*/*", **(headers or {})}
-        self.http = httpx.Client(follow_redirects=False, timeout=timeout, transport=transport)
+        self.http = httpx.Client(
+            follow_redirects=False, timeout=timeout, transport=transport, verify=_trust(extra_ca_bundle)
+        )
         self.cache = ResponseCache(cache_dir)
         self.provenance: list[Provenance] = []
         self.audit: list[Decision] = []

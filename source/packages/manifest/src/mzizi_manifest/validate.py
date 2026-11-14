@@ -100,6 +100,15 @@ def _collect_tags(value: Any) -> list[str]:
     return found
 
 
+def validate_ranking(document: object) -> list[str]:
+    """Validate a standalone ranking rules file, including that every target exists in the targets contract."""
+    problems = _schema_errors(_validator("ranking"), document, "ranking.yml")
+    if problems or not isinstance(document, dict):
+        return problems
+    known = targets()
+    return [f"ranking.yml: unknown target {r.get('target')!r}" for r in document.get("rules", []) if r.get("target") not in known]
+
+
 def module_errors(document: object, where: str) -> list[str]:
     """Validate a standalone site module using the same schema as a bundle."""
     return _schema_errors(_validator("module"), document, where)
@@ -125,6 +134,12 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             )
     if bundle.tags:
         report.errors += _schema_errors(_validator("tags"), bundle.tags, "tags.yml")
+    if bundle.ranking:
+        report.errors += _schema_errors(_validator("ranking"), bundle.ranking, "ranking.yml")
+        known = targets()
+        for rule in bundle.ranking.get("rules", []) if isinstance(bundle.ranking, dict) else []:
+            if rule.get("target") not in known:
+                report.errors.append(f"ranking.yml: unknown target {rule.get('target')!r}")
     if bundle.sections:
         report.errors += _schema_errors(_validator("sections"), bundle.sections, "sections.yml")
         if not report.errors:

@@ -48,6 +48,12 @@ def write_table(
     return written
 
 
+def read_csv(path: Path) -> list[dict[str, str]]:
+    """Rows of a CSV export (the parsing boundary for reading crawl tables back)."""
+    with path.open(newline="", encoding="utf-8") as handle:
+        return list(csv.DictReader(handle))
+
+
 def columns_of(model: type[BaseModel]) -> list[str]:
     return list(model.model_fields)
 

@@ -49,7 +49,7 @@ def root(
     json_output: Annotated[bool, typer.Option("--json", help="Print machine-readable results only")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Show debug logging")] = False,
     allow_outside_inputs: Annotated[
-        bool, typer.Option("--allow-outside-inputs", help="Accept files outside .local/dev/inputs")
+        bool, typer.Option("--allow-outside-inputs", help="Accept files outside .dev/inputs")
     ] = False,
 ) -> None:
     workspace = Workspace.locate()
@@ -237,7 +237,7 @@ def capability_run(
 dev = _group("dev")
 
 
-@dev.command("init", help="Create the git-ignored .local/dev workspace")
+@dev.command("init", help="Create the git-ignored .dev workspace")
 def dev_init(ctx: typer.Context) -> None:
     ws = _session(ctx).workspace
     created = ws.init()

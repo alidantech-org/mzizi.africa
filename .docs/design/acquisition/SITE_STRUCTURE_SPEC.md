@@ -153,6 +153,13 @@ provenance:
 
 A mapping states the target contract (`schema.table`), the natural key used for idempotency, per-field sources, transforms from a fixed library (date, decimal, fiscal year, lookup by code, normalise name), constants, and the locator template for `source.attributions`. Unknown transforms fail validation. Lookups reference reference data by natural key, never by hard-coded ids.
 
+## Ranking rules and expectations (implemented, draft)
+
+- `ranking.yml` (`schema: mzizi.ranking/v1`, schema `source/schema/site/v1/ranking.schema.json`) maps facts known before a file is opened (section, link text, filename, source page title and path, extension) to a target in `source/schema/contracts/targets.json`. Each rule has weighted conditions, a confidence cap and provenance. `mzizi web rank` scores downloaded files (`catalog.json`) and writes `expectations.json`; scores are recorded in MongoDB (`--record mongo`) or a `scores.jsonl` ledger. Scores rank candidates; they never decide a mapping.
+- A mapping's optional `expect` block states what a healthy result is: `min_rows`, `max_rows`, `required_fields`, `value_ranges`, `period`, `max_age_days`. It lives in the mapping because the mapping already ties one module to one target table.
+- `found_at` (in `catalog.json`) records source page, title, section, link text, kind, depth and discovery time. Alternatives to consider later: DOM region and nearest heading; a link-occurrence list (a file linked from several pages); CSS rule and stylesheet hash for background images; neighbouring cell text for table rows; and redirect history of the file URL.
+- Fixture: `seed/_fixtures/site-structures/ngcdf-constituency` (family for NG-CDF constituency sites).
+
 ## Validation
 
 1. Schema validation against the `mzizi.site/v1` JSON Schema (closed: unknown keys and executable code are rejected).

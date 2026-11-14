@@ -184,3 +184,15 @@ def test_seeded_sections_are_valid_and_matchable():
     hit = match_rule(seed["families"]["ke/county-government"], "/tenders/2025")
     assert hit and hit["label"] == "tenders" and hit["slots"]["year"] == "2025"
     assert match_rule(seed["families"]["ke/county-government"], "/nothing-here") is None
+
+
+def test_ngcdf_family_fixture_and_ranking_rules_validate():
+    from pathlib import Path
+
+    from mzizi_manifest.bundle import load
+    from mzizi_manifest.validate import validate, validate_ranking
+
+    root = Path(__file__).resolve().parents[4] / "seed/_fixtures/site-structures/ngcdf-constituency"
+    assert validate(load(root), None, run_dry=True).errors == []
+    bad = {"schema": "mzizi.ranking/v1", "rules": [{"target": "nope.table", "label": "x", "conditions": [{"signal": "section", "contains": ["a"]}]}]}
+    assert validate_ranking(bad) == ["ranking.yml: unknown target 'nope.table'"]

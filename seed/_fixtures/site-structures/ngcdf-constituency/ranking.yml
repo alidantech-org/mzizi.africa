@@ -1,0 +1,15 @@
+schema: mzizi.ranking/v1
+rules:
+  - target: finance.transfers
+    label: constituency allocation schedule
+    provenance: discovered
+    conditions:
+      - { signal: section, contains: [allocations, downloads, proposals] }
+      - { signal: anchor_text, contains: [financial year], weight: 2 }
+      - { signal: extension, contains: [pdf, xlsx] }
+  - target: source.documents
+    label: published document
+    provenance: discovered
+    confidence_cap: 0.6
+    conditions:
+      - { signal: extension, contains: [pdf, doc, docx, xlsx] }

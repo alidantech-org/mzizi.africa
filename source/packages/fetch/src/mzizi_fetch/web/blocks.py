@@ -84,8 +84,9 @@ def detect_block(status: int, headers: dict[str, str], body: bytes, error: str =
     if lowered.get("cf-mitigated", "").lower() == "challenge":
         return _b(BlockKind.CHALLENGE, "challenge header", status)
     markers = vocabulary().challenge_markers
+    bare = body.lower().count(b"<a ") <= vocabulary().captcha_page_max_links
     for marker in markers.captcha:
-        if marker in text:
+        if marker in text and (bare or status in vocabulary().captcha_blocking_statuses):
             return _b(BlockKind.CAPTCHA, f"marker {marker!r}", status)
     for marker in markers.challenge:
         if marker in text:

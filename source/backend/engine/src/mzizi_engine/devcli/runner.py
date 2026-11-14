@@ -17,6 +17,7 @@ from rich.table import Table
 from mzizi_engine.capabilities import CapabilityRegistry, build_default_registry
 from mzizi_engine.devcli.artifacts import DocumentSummary, write_document_artifacts
 from mzizi_engine.devcli.catalog import Command
+from mzizi_engine.devcli.catalog.builders import with_dev_browser_defaults
 from mzizi_engine.devcli.errors import CliError, NotYetAdded, Unavailable
 from mzizi_engine.devcli.ports import PLAN_DOC, PortState, PortStatus, get_port, port_status
 from mzizi_engine.devcli.prompts import Prompter
@@ -55,10 +56,12 @@ def run_command(command: Command, given: ArgValues, session: Session) -> ExitCod
             _require_ready(command, status)
         values = _resolve(command, given, session)
         payload: Payload = dict((command.builder or _empty)(values, session.workspace))
+        payload = dict(
+            with_dev_browser_defaults(payload, uses_browser=any(arg.name == "adapter" for arg in command.args))
+        )
         if command.run_folder:
             payload.update(
                 out_dir=str(run.folder),
-                downloads_dir=str(session.workspace.downloads),
                 profile_dir=str(session.workspace.browser_profile),
             )
             if not session.json_output:

@@ -23,12 +23,12 @@ The accepted architecture keeps relational identity in PostgreSQL, bytes in S3-b
 
 ## Setup
 
-Docker is present on the dev machine; MongoDB and a vector server are not installed natively. `mzizi dev services up` writes `.local/dev/services/docker-compose.yml` and starts:
+Docker is present on the dev machine; MongoDB and a vector server are not installed natively. `mzizi dev services up` writes `.dev/services/docker-compose.yml` and starts:
 
-- `mongo:7` on `127.0.0.1:27018` with a volume under `.local/dev/services/mongo/`, database `mzizi_dev`.
-- Vector: **Qdrant** (`127.0.0.1:6334`), the provisional preference in 07, **or** LanceDB embedded under `.local/dev/services/lance/` for zero services; pick with `--vector qdrant|lance`. A third `pgvector`-in-separate-Postgres option stays documented but unbuilt.
+- `mongo:7` on `127.0.0.1:27018` with a volume under `.dev/services/mongo/`, database `mzizi_dev`.
+- Vector: **Qdrant** (`127.0.0.1:6334`), the provisional preference in 07, **or** LanceDB embedded under `.dev/services/lance/` for zero services; pick with `--vector qdrant|lance`. A third `pgvector`-in-separate-Postgres option stays documented but unbuilt.
 
-Bind to loopback only; random generated password in `.local/dev/services/.env`; images pinned by version. Connection settings come from `DEV_MONGO_URL` / `DEV_VECTOR_URL`, never from production `.env`.
+Bind to loopback only; random generated password in `.dev/services/.env`; images pinned by version. Connection settings come from `DEV_MONGO_URL` / `DEV_VECTOR_URL`, never from production `.env`.
 
 ## Commands
 

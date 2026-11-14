@@ -9,11 +9,12 @@ from pydantic import BaseModel
 
 from mzizi_engine.web.browser.adapter import open_session
 from mzizi_engine.web.browser.challenge import ManualChallengeHandler
+from mzizi_engine.web.export import read_csv
 from mzizi_engine.web.crawl.backends import BrowserBackend, HttpBackend, PageBackend
 from mzizi_engine.web.crawl.inventory import CrawlSummary
 from mzizi_engine.web.crawl.service import client_for, run_crawl
 from mzizi_engine.web.export import write_table
-from mzizi_engine.web.handlers.common import browser_config, out_dir
+from mzizi_engine.web.handlers.common import site_of, browser_config, out_dir
 from mzizi_engine.web.identity import user_agent
 from mzizi_engine.web.records import ErrorRecord, LinkRecord, PageRecord, ResourceRecord
 from mzizi_engine.web.requests import CrawlRequest, ExportRequest, MarkdownRequest, Render
@@ -38,8 +39,8 @@ def crawl_site(request: CrawlRequest) -> CrawlSummary:
     try:
         backend: PageBackend = HttpBackend(client)
         if request.render is Render.BROWSER:
-            session = open_session(browser_config(request, headed=request.headed, agent=agent))
-            backend = BrowserBackend(client, session, ManualChallengeHandler(_ask_person) if request.headed else None)
+            session = open_session(browser_config(request, headed=request.headed, agent=agent, site=site_of(request.starts[0] if request.starts else "")))
+            backend = BrowserBackend(client, session, ManualChallengeHandler(_ask_person) if request.headed else None, request.screenshots)
         return run_crawl(request, client, backend)
     finally:
         if session is not None:
@@ -65,7 +66,7 @@ def page_markdown(request: MarkdownRequest) -> MarkdownResult:
     )
     try:
         if request.render is Render.BROWSER:
-            session = open_session(browser_config(request, headed=request.headed, agent=agent))
+            session = open_session(browser_config(request, headed=request.headed, agent=agent, site=site_of(request.starts[0] if request.starts else "")))
             try:
                 response = BrowserBackend(client, session).get(request.url)
             finally:
@@ -125,9 +126,13 @@ def export_results(request: ExportRequest) -> ExportResult:
     written: list[str] = []
     for name, model in _TABLES.items():
         data = source / f"{name}.json"
-        if not data.exists():
+        table = source / f"{name}.csv"
+        if data.exists():
+            records = [model.model_validate(row) for row in json.loads(data.read_text(encoding="utf-8"))]
+        elif table.exists():
+            records = [model.model_validate(row, strict=False) for row in read_csv(table)]
+        else:
             continue
-        records = [model.model_validate(row) for row in json.loads(data.read_text(encoding="utf-8"))]
         written.extend(
             write_table(target, name, records, list(model.model_fields), request.formats, ordered=name == "pages")
         )

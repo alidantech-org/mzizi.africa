@@ -13,7 +13,7 @@ __pycache__/
 pub.auth.key
 knbs-ca-bundle.pem
 # Local caches (downloaded security files, never tracked)
-.local/
+.dev/
 .venv/
 .ruff_cache/
 .mypy_cache/

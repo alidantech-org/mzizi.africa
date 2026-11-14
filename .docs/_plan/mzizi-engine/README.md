@@ -22,7 +22,7 @@ The user asked: can the engine CLI run `extraction`, `scraping`, `manifest` and 
 |---|---|---|---|
 | Unit tests | Prove a pure function on in-memory bytes/strings. No network, no files outside `tmp_path`. Already exist per package (`source/packages/*/tests`). | `uv run pytest source/packages/<pkg>` | Every change, CI |
 | Capability tests | Prove the engine handler wraps the package correctly (payload in, typed result out). Exist for the API; extend per new capability. | `source/backend/engine/tests` | Every change |
-| **Live proving (new)** | A person runs a named command on a real artifact and *watches* the result: text from a PDF, links from a site, a browser opening. Outputs persist for inspection. | `mzizi …` CLI + `.local/dev/` | On demand, by hand |
+| **Live proving (new)** | A person runs a named command on a real artifact and *watches* the result: text from a PDF, links from a site, a browser opening. Outputs persist for inspection. | `mzizi …` CLI + `.dev/` | On demand, by hand |
 
 Live proving is not a test suite and never gates CI. When a live run finds a bug, the fixture that reproduces it is reduced to a small file and promoted into a unit test; that loop is the main value of this plan.
 
@@ -30,7 +30,7 @@ Live proving is not a test suite and never gates CI. When a live run finds a bug
 
 1. **One implementation.** CLI commands call the same capability handlers the HTTP API calls. No logic lives in the CLI beyond argument parsing, rendering and writing the run folder.
 2. **Packages stay pure.** Packages never see Mongo, vectors, the browser session store or the run folder. The engine owns I/O (`ENGINE_JOB_MODEL`, AGENTS.md).
-3. **Dev results are not evidence.** Everything a dev command produces is labelled `dev-run`, written only under `.local/dev/outputs/`, and never registered in the filesystem registry or database unless a command explicitly says so. The collection gate (`source.gate`) still applies to live URLs; technical ability to fetch never implies authority (source-redesign principle 10).
+3. **Dev results are not evidence.** Everything a dev command produces is labelled `dev-run`, written only under `.dev/outputs/`, and never registered in the filesystem registry or database unless a command explicitly says so. The collection gate (`source.gate`) still applies to live URLs; technical ability to fetch never implies authority (source-redesign principle 10).
 4. **No source knowledge in code.** Per-site selectors, URLs and policies come from manifests/fixtures supplied at run time (`.docs/rules/typed-code.md`).
 5. **Typed contracts.** Every command's input and output is a frozen pydantic model, not a free `dict`.
 
@@ -40,7 +40,7 @@ Live proving is not a test suite and never gates CI. When a live run finds a bug
 |---|---|
 | [01 — CLI command reference](01-cli-command-reference.md) | `mzizi` command groups, flags, examples and expected output per command |
 | [02 — Capabilities and package mapping](02-capabilities-and-package-mapping.md) | Package-by-package: what exists, which capability exposes it, gaps to fill |
-| [03 — Local dev workspace](03-local-dev-workspace.md) | `.local/dev/` layout, run folders, fixtures, manifests, safety |
+| [03 — Local dev workspace](03-local-dev-workspace.md) | `.dev/` layout, run folders, fixtures, manifests, safety |
 | [04 — Scraping, browser and site manifests](04-scraping-browser-and-site-manifests.md) | Step-by-step scraping proof ladder, real-browser mode, YAML structures |
 | [05 — MongoDB and vector database](05-mongodb-and-vector-dev-services.md) | Dev-only services, docker setup, commands and what each proves |
 | [06 — Phased delivery](06-phased-delivery.md) | Order of work, task candidates, acceptance, risks, open decisions |

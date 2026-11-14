@@ -1,0 +1,16 @@
+schema: mzizi.site/v1
+kind: family
+family: ke/ngcdf-constituency
+vars: { subject_host: kasarani.ngcdf.go.ke }
+fetch: { mode: http }
+modules: [allocations, proposals, downloads]
+tags: [geo:constituency]
+policy:
+  scope:
+    hosts: [kasarani.ngcdf.go.ke]
+    schemes: [https]
+    paths: { allow: [/allocations/, /proposals/, /downloads/] }
+  rate: { requests_per_second: 0.5, max_concurrency: 1 }
+  identify: { user_agent: "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)" }
+  robots: respect
+  auth: none

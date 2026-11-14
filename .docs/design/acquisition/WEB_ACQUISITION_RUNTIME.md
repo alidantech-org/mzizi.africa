@@ -20,6 +20,7 @@ This document describes what the code does today. Proposals stay in `design/acqu
 | HTML to Markdown | `mzizi_extraction.document` | structure, inline emphasis, link targets, table cells, learned header/footer/navigation removal | Implemented |
 | Browser | `mzizi_engine.web.browser` | Playwright on system Chrome, Patchright on bundled Chromium, action scripts and challenge detection | Implemented |
 | Single-page extraction | `mzizi_engine.web.handlers.scrape` | site module validation, field extraction from saved, fetched or rendered HTML, capture and audit | Implemented |
+| Site profile, family and draft | `mzizi_scraping.profile`, `mzizi_engine.web.handlers.survey` | sections, coarse page templates, repeated blocks, shared navigation, family similarity score, draft bundle for review | Implemented; heuristics, drafts are proposals |
 | Crawler | `mzizi_engine.web.crawl` | breadth-first crawl, inventories, resume, exports | Implemented |
 | Search | `mzizi_engine.web.search` | Brave Search API and Google Custom Search JSON API behind one interface | Implemented, tested with mocked APIs only |
 
@@ -56,6 +57,18 @@ extract:
 ```
 
 Add `--render browser --adapter patchright` to extract from a rendered DOM. The live command saves successful captures as `page.html` and includes the observation time, requested and final URLs, capture and module SHA-256 hashes, policy decisions, selected fallback index and field errors in its result. `scrape select PAGE.html --css "h1"` returns matching text from a saved page.
+
+## Browser tabs
+
+The shared dev browser keeps one working tab per site (`mzizi_engine.web.browser.tabs`): a registry maps host to tab, a per-site file lease keeps two commands off one tab, and different sites proceed in parallel. At most two tabs per site (working tab plus one pop-up at a time); pop-ups and `target=_blank` links are tracked on the page result. Above 24 tabs, idle least-recently-used tabs close.
+
+## Site folders, change detection and naming
+
+`mzizi_engine.layout` owns every path under `.dev/` (`websites/<reversed public-suffix labels>/<registrable label>/<host label>/`). `mzizi_engine.names` gives readable deterministic names: pages by URL path, files by server name, URL name or descriptive link text with `--<sha8>`, images by file or alt text, tables by caption or heading. `mzizi_scraping.change` fingerprints a page in layers (raw bytes, normalised DOM, text, link set, per-heading blocks) and compares two visits, ignoring blocks that changed on two visits in a row. `mzizi_engine.sitestore` keeps the current page files, moves the previous ones to `versions/` with a `change.md` only on a meaningful change, and records state in MongoDB (`sites`, `pages`, `page_versions`, `generated_files`, `site_links`). Pages missing from three complete crawls are marked gone. Screenshots are best effort: a stalled capture is skipped and logged.
+
+## Activity store and download queue
+
+Engine-built records live in MongoDB (`mzizi_engine.activity`): crawl rows (`crawl_<table>`), run summaries with the block, policy and site-tree audit (`crawl_runs`), provenance, the download queue (`download_queue`: queued, downloading, done, failed, attempts, error, result), the file catalog (`downloads`), `site_profiles`, `family_reports` and `expectation_scores`. CSV exports, Markdown, raw HTML, screenshots and all downloaded bytes remain files; CSVs are linked in `crawl_csv_files` with path, hash and row count. Without MongoDB the same records are written as JSON files.
 
 ## Crawl outputs
 

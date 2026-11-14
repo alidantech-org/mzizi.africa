@@ -1,0 +1,17 @@
+mapping: allocations
+module: allocations
+target_kind: finance.transfers
+key: [fiscalYearId, toUnitId]
+fields:
+  amount: { from: amount, transform: { decimal: { thousands: "," } } }
+  fiscalYearId: { from: fiscal_year, transform: fiscal_year }
+  currencyCode: { const: KES }
+  toUnitId: { const: { $ref: { kind: geography.units, where: { code: constituency.kasarani } } } }
+  fromUnitId: { const: { $ref: { kind: geography.units, where: { code: fund.ngcdf } } } }
+provenance:
+  locator: { page: $page, row: $row }
+  method: extracted
+expect:
+  min_rows: 1
+  required_fields: [amount, fiscalYearId]
+  value_ranges: { amount: { min: 1 } }

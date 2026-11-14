@@ -12,7 +12,7 @@ import { at, dryvHome, root } from "../lib/paths.ts";
 /** Port of the local Dryv engine API: `DRYV_API_PORT`, default 8750. Use another port when 8750 is taken by a different Dryv service. */
 export const dryvApiPort = (): string => process.env.DRYV_API_PORT ?? "8750";
 export const dryvApiUrl = (): string => process.env.DRYV_API ?? `http://127.0.0.1:${dryvApiPort()}`;
-const apiLog = ".local/dryv-api.log";
+const apiLog = ".dev/logs/dryv-api.log";
 const apiCommand = (): string[] => [
   "uv",
   "run",
@@ -85,14 +85,14 @@ export function stopApi(): boolean {
 
 /**
  * Make sure the Dryv API is running. Returns a function that stops it if this call started it.
- * Throws when it does not come up within two minutes; the log is in `.local/dryv-api.log`.
+ * Throws when it does not come up within two minutes; the log is in `.dev/logs/dryv-api.log`.
  */
 async function ensureApi(): Promise<() => void> {
   if (await apiIsUp()) {
     console.log(`Dryv engine API already running at ${dryvApiUrl()}`);
     return () => {};
   }
-  mkdirSync(at(".local"), { recursive: true });
+  mkdirSync(at(".dev/logs"), { recursive: true });
   console.log(`Starting the Dryv engine API (log: ${apiLog}) ...`);
   const child = Bun.spawn(apiCommand(), {
     cwd: dryvHome(),

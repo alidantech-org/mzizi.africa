@@ -45,6 +45,7 @@ class Workspace(Request):
     downloads_dir: str = ""
     profile_dir: str = ""
     adapter: str = "playwright"
+    reuse_browser: bool = False
 
 
 class CrawlRequest(Workspace):
@@ -56,6 +57,8 @@ class CrawlRequest(Workspace):
     concurrency: int = 1
     render: Render = Render.HTTP
     headed: bool = False
+    screenshots: bool = False
+    record: bool = True  # False: the caller (site watch) keeps its own site-level records
     on_block: OnBlock = OnBlock.BACK_OFF
     include_subdomains: bool = False
     allowed_hosts: tuple[str, ...] = ()
@@ -68,11 +71,19 @@ class CrawlRequest(Workspace):
     inspect_resources: bool = False
     robots_mode: RobotsMode = RobotsMode.RESPECT
     authorization: Authorization | None = None
-    formats: tuple[ExportFormat, ...] = Field(default=(ExportFormat.CSV, ExportFormat.JSON))
+    formats: tuple[ExportFormat, ...] = Field(default=(ExportFormat.CSV,))  # rows are in MongoDB; CSV is the linked file
 
     @property
     def starts(self) -> tuple[str, ...]:
         return (*([self.url] if self.url else []), *self.urls)
+
+
+class WatchRequest(CrawlRequest):
+    """A crawl kept as hashed, versioned pages in the site folder."""
+
+
+class SurveyRequest(CrawlRequest):
+    """A crawl followed by a profile and a draft bundle."""
 
 
 class MarkdownRequest(Workspace):
@@ -99,7 +110,7 @@ class SelectRequest(Request):
 
 
 class UrlRequest(Workspace):
-    url: str
+    url: str = ""
     delay: float = 1.0
     headed: bool = False
     headless: bool = False
@@ -118,6 +129,50 @@ class DownloadRequest(Workspace):
     allow_private: bool = False
     concurrency: int = 2
     allowed_hosts: tuple[str, ...] = ()
+
+
+class DiffRequest(Workspace):
+    baseline: str
+    current: str
+
+
+class ProfileRequest(Workspace):
+    source: str
+
+
+class FamilyRequest(Workspace):
+    left: str
+    right: str
+
+
+class DraftRequest(Workspace):
+    source: str
+    site: str = ""
+    browser: bool = False
+
+
+class RankRequest(Workspace):
+    source: str  # a downloads folder holding catalog.json
+    rules: str  # a ranking.yml
+    record: str = "auto"  # "auto": MongoDB when reachable, else a ledger file; "ledger" forces the file
+
+
+class EnqueueRequest(Workspace):
+    site: str  # the site's URL or host; its inventory lists the files
+    kinds: tuple[str, ...] = ("document", "image", "media", "file")
+
+
+class FetchQueueRequest(Workspace):
+    site: str
+    limit: int = 100
+    limit_rate: int = 0
+    allow_private: bool = False
+    concurrency: int = 2
+    allowed_hosts: tuple[str, ...] = ()
+
+
+class QueueStatusRequest(Workspace):
+    site: str = ""
 
 
 class ExportRequest(Workspace):

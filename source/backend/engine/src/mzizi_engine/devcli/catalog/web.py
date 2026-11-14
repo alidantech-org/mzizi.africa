@@ -6,16 +6,29 @@ from mzizi_engine.devcli.catalog.builders import crawl_payload, passthrough, res
 from mzizi_engine.devcli.catalog.models import Arg, ArgKind, Command
 
 URL = Arg("url", ArgKind.URL, "Page or endpoint URL", positional=True)
-RENDER = Arg("render", ArgKind.CHOICE, "How to load pages", choices=("http", "browser"), optional=True, default="http")
-ADAPTER = Arg("adapter", ArgKind.CHOICE, "Browser driver", choices=("playwright", "patchright"), optional=True)
+RENDER = Arg(
+    "render",
+    ArgKind.CHOICE,
+    "How to load pages (dev default: browser; use http to disable)",
+    choices=("http", "browser"),
+    optional=True,
+    default="browser",
+)
+ADAPTER = Arg(
+    "adapter",
+    ArgKind.CHOICE,
+    "Browser driver (dev default: patchright)",
+    choices=("playwright", "patchright"),
+    optional=True,
+)
+HEADLESS = Arg("headless", ArgKind.FLAG, "Hide the browser window (dev mode shows it by default)")
 ACTIONS = Arg("actions", ArgKind.FILE, "YAML or JSON list of steps", suffixes=(".yaml", ".yml", ".json"))
 TARGET = Arg("target", ArgKind.TEXT, "CSS selector, or text=Visible label")
 
 
 def _browser(name: str, help_text: str, *extra: Arg, headed: bool = True) -> Command:
-    flag = Arg("headless", ArgKind.FLAG, "No window") if headed else Arg("headed", ArgKind.FLAG, "Show the window")
     return Command(
-        "browser", name, help_text, f"browser.{name}", (URL, *extra, flag, ADAPTER), passthrough, run_folder=True
+        "browser", name, help_text, f"browser.{name}", (URL, *extra, HEADLESS, ADAPTER), passthrough, run_folder=True
     )
 
 
@@ -37,11 +50,12 @@ CRAWL_ARGS: tuple[Arg, ...] = (
     Arg("allowed-hosts", ArgKind.TEXT, "Extra hosts that count as the site (comma separated)", optional=True),
     Arg("allowed-paths", ArgKind.TEXT, "Only these path prefixes (comma separated)", optional=True),
     Arg("excluded-paths", ArgKind.TEXT, "Never these path prefixes (comma separated)", optional=True),
-    Arg("headed", ArgKind.FLAG, "Show the browser window (needed for --on-block pause)"),
+    HEADLESS,
     Arg("include-subdomains", ArgKind.FLAG, "Treat subdomains as the same site"),
     Arg("no-sitemap", ArgKind.FLAG, "Do not read sitemaps"),
     Arg("no-markdown", ArgKind.FLAG, "Skip the Markdown conversion"),
     Arg("inspect-resources", ArgKind.FLAG, "HEAD internal files and images for type and status"),
+    Arg("screenshots", ArgKind.FLAG, "Save a full-page screenshot of every crawled page (browser render)"),
     Arg("jsonl", ArgKind.FLAG, "Also write JSON Lines"),
 )
 
@@ -103,7 +117,7 @@ COMMANDS: tuple[Command, ...] = (
             Arg("manifest", ArgKind.FILE, "Site module YAML", suffixes=(".yaml", ".yml")),
             RENDER,
             ADAPTER,
-            Arg("headed", ArgKind.FLAG, "Show the browser window"),
+            HEADLESS,
         ),
         scrape_payload,
         run_folder=True,
@@ -113,7 +127,7 @@ COMMANDS: tuple[Command, ...] = (
         "markdown",
         "One page to Markdown, without header, footer and navigation",
         "scraping.markdown",
-        (URL, RENDER, ADAPTER, Arg("headed", ArgKind.FLAG, "Show the browser window")),
+        (URL, RENDER, ADAPTER, HEADLESS),
         passthrough,
         run_folder=True,
     ),
@@ -177,6 +191,79 @@ COMMANDS: tuple[Command, ...] = (
         passthrough,
         run_folder=True,
     ),
+    Command("web", "survey", "Crawl a site, profile it and draft a site structure", "web.survey", CRAWL_ARGS, crawl_payload, run_folder=True),
+    Command(
+        "web",
+        "profile",
+        "Profile a crawl run folder: sections, templates, navigation, repeated blocks",
+        "web.profile",
+        (Arg("source", ArgKind.TEXT, "Crawl run folder"),),
+        passthrough,
+        run_folder=True,
+    ),
+    Command(
+        "web",
+        "family",
+        "Do two crawled sites share a template? Similarity and the varying host part",
+        "web.family",
+        (Arg("left", ArgKind.TEXT, "First crawl run folder"), Arg("right", ArgKind.TEXT, "Second crawl run folder")),
+        passthrough,
+        run_folder=True,
+    ),
+    Command(
+        "web",
+        "draft",
+        "Draft a site structure bundle from a crawl run folder",
+        "web.draft",
+        (Arg("source", ArgKind.TEXT, "Crawl run folder"), Arg("site", ArgKind.TEXT, "Site code", optional=True)),
+        passthrough,
+        run_folder=True,
+    ),
+    Command(
+        "web",
+        "rank",
+        "Rank downloaded files (catalog.json) against Mzizi targets using ranking.yml rules",
+        "web.rank",
+        (
+            Arg("source", ArgKind.TEXT, "Downloads folder with catalog.json"),
+            Arg("rules", ArgKind.FILE, "ranking.yml", suffixes=(".yml", ".yaml")),
+            Arg("record", ArgKind.CHOICE, "Where scores go", choices=("auto", "ledger"), optional=True, default="auto"),
+        ),
+        passthrough,
+        run_folder=True,
+    ),
+    Command(
+        "download",
+        "enqueue",
+        "Queue every document, image, media and file in a site's inventory (state kept in MongoDB)",
+        "download.enqueue",
+        (Arg("site", ArgKind.URL, "Site URL or host", positional=True),),
+        passthrough,
+        run_folder=True,
+    ),
+    Command(
+        "download",
+        "run",
+        "Download queued items; each is tracked in MongoDB",
+        "download.run",
+        (Arg("site", ArgKind.URL, "Site URL or host", positional=True), Arg("limit", ArgKind.INT, "Items to take", optional=True, default=100)),
+        passthrough,
+        run_folder=True,
+    ),
+    Command("download", "queue", "Counts per state, and recent failures", "download.queue", (Arg("site", ArgKind.URL, "Site URL or host", optional=True, positional=True),), passthrough, run_folder=True),
+    Command("site", "watch", "Crawl a site by URL, keep hashed versioned pages, report what changed", "site.watch", CRAWL_ARGS, crawl_payload, run_folder=True),
+    Command(
+        "web",
+        "diff",
+        "Compare two crawl run folders: pages added, removed and changed",
+        "web.diff",
+        (
+            Arg("baseline", ArgKind.TEXT, "Earlier crawl run folder"),
+            Arg("current", ArgKind.TEXT, "Later crawl run folder"),
+        ),
+        passthrough,
+        run_folder=True,
+    ),
     Command(
         "download", "status", "Progress and results of downloads", "web.downloads", (), passthrough, run_folder=True
     ),
@@ -189,6 +276,10 @@ COMMANDS: tuple[Command, ...] = (
     _browser("navigate", "Run clicks, typing, scrolling and waits from a script", ACTIONS),
     _browser("click", "Open a page, click one element, report the result", TARGET),
     _browser("fill", "Open a page and fill one field", TARGET, Arg("text", ArgKind.TEXT, "Text to enter")),
+    Command(
+        "browser", "start", "Open the one shared dev browser window", "browser.start", (ADAPTER,), passthrough, run_folder=True
+    ),
+    Command("browser", "stop", "Close the shared dev browser window", "browser.stop", (), passthrough, run_folder=True),
     _browser("compare", "HTTP result versus browser result: does this page need a browser?", headed=False),
     Command(
         "search",
