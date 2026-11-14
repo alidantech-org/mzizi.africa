@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import shutil
+import time
 from datetime import UTC, datetime
 from email.message import Message
 from enum import StrEnum
@@ -91,6 +92,19 @@ def bucket(extension: str, kind: str) -> str:
 def _section(page: str) -> str:
     parts = [p for p in urlparse(page).path.split("/") if p]
     return parts[0] if parts else ""
+
+
+MIME_EXTENSIONS = {  # protocol facts: a data response without a file extension is named by its media type
+    "application/json": "json", "application/ld+json": "json", "application/xml": "xml", "text/xml": "xml",
+    "text/csv": "csv", "application/geo+json": "geojson", "application/vnd.ms-excel": "xls",
+}
+RATE_LIMIT_PAUSE = 20.0  # seconds to wait once before retrying a file the server rate-limited
+
+
+def extension_for(url: str, detected_type: str, declared_type: str) -> str:
+    """The file extension: the URL's own, else one implied by the response's media type, else the detected type."""
+    own = Path(urlparse(url).path).suffix.lstrip(".").lower()
+    return own or MIME_EXTENSIONS.get(declared_type.split(";")[0].strip().lower(), detected_type)
 
 
 def _disposition_name(headers: dict[str, str]) -> str:
@@ -191,7 +205,13 @@ class FileFetcher:
             put(QUEUE, [{**item, "state": State.SKIPPED.value, "error": reason, "updated_at": _now()}])
             return "skipped"
         try:
-            result = self.downloader.download(url)
+            try:
+                result = self.downloader.download(url)
+            except Exception as first:
+                if "HTTP 429" not in str(first):
+                    raise
+                time.sleep(RATE_LIMIT_PAUSE)  # the server asked us to slow down: wait once, then try again
+                result = self.downloader.download(url)
         except Exception as problem:  # recorded on the item; the queue continues
             message = f"{type(problem).__name__}: {str(problem)[:200]}"
             if "HTTP 404" in message or "HTTP 410" in message:  # the file is gone: final, not worth retrying
@@ -209,7 +229,7 @@ class FileFetcher:
             self._clean(result.file, url)
             put(QUEUE, [{**item, "state": State.SKIPPED.value, "error": "not a file (HTML)", "updated_at": _now()}])
             return "skipped"
-        extension = Path(urlparse(url).path).suffix.lstrip(".").lower() or result.detected_type
+        extension = extension_for(url, result.detected_type, result.declared_type)
         labels = Labels(
             content_disposition=_disposition_name(result.headers),
             anchor_text=found.anchor_text if kind_text != "image" else "",

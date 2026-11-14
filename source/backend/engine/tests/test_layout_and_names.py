@@ -50,3 +50,11 @@ def test_hunted_files_accumulate_across_runs(tmp_path: Path):
     path = tmp_path / "hunted.csv"
     assert write_hunted(path, [row("https://a/1"), row("https://a/2")]) == 2
     assert write_hunted(path, [row("https://a/2"), row("https://a/3")]) == 3  # earlier rows stay, no duplicates
+
+
+def test_data_responses_without_an_extension_are_named_by_their_media_type():
+    from mzizi_engine.web.handlers.queue import bucket, extension_for
+
+    assert extension_for("https://t/api/active-tenders?page=1", "text", "application/json; charset=utf-8") == "json"
+    assert extension_for("https://t/files/a.pdf", "pdf", "application/pdf") == "pdf"
+    assert bucket("json", "file") == "data"
