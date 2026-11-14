@@ -33,6 +33,37 @@
       "title": "ChallengeMarkers",
       "type": "object"
     },
+    "DownloadHints": {
+      "additionalProperties": false,
+      "properties": {
+        "anchor_words": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Anchor Words",
+          "type": "array"
+        },
+        "path_words": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Path Words",
+          "type": "array"
+        },
+        "query_keys": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Query Keys",
+          "type": "array"
+        }
+      },
+      "title": "DownloadHints",
+      "type": "object"
+    },
     "FileSignature": {
       "additionalProperties": false,
       "properties": {
@@ -60,6 +91,69 @@
         "group"
       ],
       "title": "FileSignature",
+      "type": "object"
+    },
+    "PaginationLabels": {
+      "additionalProperties": false,
+      "properties": {
+        "container_words": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Container Words",
+          "type": "array"
+        },
+        "disabled_words": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Disabled Words",
+          "type": "array"
+        },
+        "infinite_scroll_words": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Infinite Scroll Words",
+          "type": "array"
+        },
+        "last": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Last",
+          "type": "array"
+        },
+        "load_more": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Load More",
+          "type": "array"
+        },
+        "next": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Next",
+          "type": "array"
+        },
+        "previous": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Previous",
+          "type": "array"
+        }
+      },
+      "title": "PaginationLabels",
       "type": "object"
     },
     "UrlKinds": {
@@ -129,8 +223,50 @@
       "title": "Block Responses",
       "type": "object"
     },
+    "busy_selectors": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Busy Selectors",
+      "type": "array"
+    },
+    "captcha_blocking_statuses": {
+      "default": [
+        401,
+        403,
+        429,
+        503
+      ],
+      "items": {
+        "type": "integer"
+      },
+      "title": "Captcha Blocking Statuses",
+      "type": "array"
+    },
+    "captcha_page_max_links": {
+      "default": 8,
+      "title": "Captcha Page Max Links",
+      "type": "integer"
+    },
     "challenge_markers": {
       "$ref": "#/$defs/ChallengeMarkers"
+    },
+    "cms_media_paths": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Cms Media Paths",
+      "type": "array"
+    },
+    "download_hints": {
+      "$ref": "#/$defs/DownloadHints",
+      "default": {
+        "anchor_words": [],
+        "path_words": [],
+        "query_keys": []
+      }
     },
     "embed_tags": {
       "items": {
@@ -144,6 +280,14 @@
         "$ref": "#/$defs/FileSignature"
       },
       "title": "File Signatures",
+      "type": "array"
+    },
+    "generic_file_stems": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Generic File Stems",
       "type": "array"
     },
     "jpeg_extensions": {
@@ -160,11 +304,55 @@
       "title": "Media Tags",
       "type": "array"
     },
+    "needs_javascript_phrases": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Needs Javascript Phrases",
+      "type": "array"
+    },
+    "noise_hosts": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Noise Hosts",
+      "type": "array"
+    },
+    "pagination": {
+      "$ref": "#/$defs/PaginationLabels",
+      "default": {
+        "container_words": [],
+        "disabled_words": [],
+        "infinite_scroll_words": [],
+        "last": [],
+        "load_more": [],
+        "next": [],
+        "previous": []
+      }
+    },
     "risky_groups": {
       "items": {
         "type": "string"
       },
       "title": "Risky Groups",
+      "type": "array"
+    },
+    "spa_root_selectors": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Spa Root Selectors",
+      "type": "array"
+    },
+    "tabular_extensions": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Tabular Extensions",
       "type": "array"
     },
     "tracking_parameters": {
@@ -187,40 +375,6 @@
       },
       "title": "Zip Based Extensions",
       "type": "array"
-    },
-    "generic_file_stems": {
-      "items": {
-        "type": "string"
-      },
-      "title": "Generic File Stems",
-      "type": "array",
-      "default": []
-    },
-    "tabular_extensions": {
-      "items": {
-        "type": "string"
-      },
-      "title": "Tabular Extensions",
-      "type": "array",
-      "default": []
-    },
-    "captcha_page_max_links": {
-      "type": "integer",
-      "title": "Captcha Page Max Links",
-      "default": 8
-    },
-    "captcha_blocking_statuses": {
-      "items": {
-        "type": "integer"
-      },
-      "title": "Captcha Blocking Statuses",
-      "type": "array",
-      "default": [
-        401,
-        403,
-        429,
-        503
-      ]
     }
   },
   "required": [
