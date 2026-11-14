@@ -31,6 +31,7 @@ download_hints:
 cms_media_paths: ["/wp-json/wp/v2/media?per_page=100&page={n}"]
 noise_hosts: [google-analytics.com, googletagmanager.com, doubleclick.net, googlesyndication.com, facebook.net, connect.facebook.net, platform.twitter.com, syndication.twitter.com, hotjar.com, addthis.com, sharethis.com, clarity.ms, tawk.to, crisp.chat, intercom.io, linkedin.com/px, tiktok.com/i18n]
 needs_javascript_phrases: [enable javascript, javascript is required, javascript must be enabled, requires javascript, you need to enable javascript, please turn on javascript, this app works best with javascript]
+api_path_segments: [api, wp-json, graphql, rest, odata, ocds]
 generic_file_stems: [download, downloads, file, files, attachment, view, get, index, default, document, doc, image, img, photo, pic, upload, uploads, open, content]
 tracking_parameters: [utm_source, utm_medium, utm_campaign, utm_term, utm_content, fbclid, gclid, mc_cid, mc_eid]
 challenge_markers:

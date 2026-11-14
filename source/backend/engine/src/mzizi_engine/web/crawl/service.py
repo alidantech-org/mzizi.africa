@@ -11,7 +11,7 @@ from mzizi_engine.web.crawl.engine import run, start_crawl
 from mzizi_engine.web.crawl.inventory import CrawlSummary, finish
 from mzizi_engine.web.records import LinkRecord, PageRecord
 from mzizi_engine.web.requests import ON_BLOCK_RESPONSE, CrawlRequest
-from mzizi_fetch.web.blocks import BlockKind, BlockPolicy
+from mzizi_fetch.web.blocks import BlockKind, BlockPolicy, Response
 from mzizi_fetch.web.client import WebClient
 from mzizi_fetch.web.policy import SourcePolicy
 from mzizi_fetch.web.urls import host_of, validate
@@ -42,7 +42,9 @@ def policy_for(request: CrawlRequest) -> SourcePolicy:
 
 def block_policy_for(request: CrawlRequest) -> BlockPolicy:
     response = ON_BLOCK_RESPONSE[request.on_block]
-    return BlockPolicy(responses={kind: response for kind in BLOCK_KINDS_WITH_CONFIGURED_RESPONSE})
+    responses = {kind: response for kind in BLOCK_KINDS_WITH_CONFIGURED_RESPONSE}
+    responses[BlockKind.RATE_LIMITED] = Response.BACK_OFF  # a 429 asks us to slow down; it is never a reason to stop
+    return BlockPolicy(responses=responses)
 
 
 def extra_ca_bundle(host: str) -> Path | None:

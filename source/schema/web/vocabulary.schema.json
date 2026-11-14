@@ -224,6 +224,14 @@
   },
   "additionalProperties": false,
   "properties": {
+    "api_path_segments": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Api Path Segments",
+      "type": "array"
+    },
     "block_responses": {
       "additionalProperties": {
         "type": "string"

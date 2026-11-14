@@ -85,6 +85,7 @@ class Vocabulary(_Data):
     cms_media_paths: tuple[str, ...] = ()  # CMS endpoints that list every uploaded file, probed when the CMS is recognised
     noise_hosts: tuple[str, ...] = ()  # third-party analytics, ads and social widgets the browser never needs to load
     needs_javascript_phrases: tuple[str, ...] = ()  # text a static page shows when it only works with scripts
+    api_path_segments: tuple[str, ...] = ()  # path segments that mark a data endpoint (JSON), not a page
     generic_file_stems: tuple[str, ...] = ()  # file names too vague to label a file (`download`, `file`, `view`)
     risky_groups: tuple[str, ...]
     block_responses: dict[str, str]

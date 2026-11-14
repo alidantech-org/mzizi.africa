@@ -150,3 +150,13 @@ class Deduplicator:
 
     def __len__(self) -> int:
         return len(self._seen)
+
+
+def is_api_url(url: str) -> bool:
+    """A data endpoint (`/api/...`, `/wp-json/...`): worth keeping as data, never crawled as a page."""
+    from urllib.parse import urlsplit
+
+    from mzizi_fetch.web.vocabulary import vocabulary
+
+    segments = {part.lower() for part in urlsplit(url).path.split("/") if part}
+    return bool(segments & set(vocabulary().api_path_segments))

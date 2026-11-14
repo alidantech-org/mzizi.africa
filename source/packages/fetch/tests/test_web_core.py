@@ -206,3 +206,10 @@ def test_vocabulary_is_data_and_its_schema_is_in_sync() -> None:
     schema = Path(DEFAULT_PATH).parent / "vocabulary.schema.json"
     assert json.loads(schema.read_text()) == json.loads(json.dumps(Vocabulary.model_json_schema(), sort_keys=True))
     assert parse_vocabulary(DEFAULT_PATH.read_text()).file_signatures[0].magic_bytes == b"%PDF"
+
+
+def test_api_endpoints_are_data_not_pages():
+    from mzizi_fetch.web.urls import is_api_url
+
+    assert is_api_url("https://t.go.ke/api/active-tenders?page=5") and is_api_url("https://s/wp-json/wp/v2/media")
+    assert not is_api_url("https://s/news/rapid-reporting") and not is_api_url("https://s/apiary-guide")

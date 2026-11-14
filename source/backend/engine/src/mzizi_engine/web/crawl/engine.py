@@ -25,7 +25,7 @@ from mzizi_engine.web.records import (
 from mzizi_engine.web.requests import CrawlRequest
 from mzizi_fetch.web.blocks import Response
 from mzizi_fetch.web.client import WebClient, WebResponse
-from mzizi_fetch.web.urls import Deduplicator, UrlKind, classify, extension_of, host_of, normalize, path_of, same_site
+from mzizi_fetch.web.urls import Deduplicator, is_api_url, UrlKind, classify, extension_of, host_of, normalize, path_of, same_site
 from mzizi_scraping import extract_references, page_meta
 from mzizi_scraping.pagination import detect_pagination
 
@@ -252,6 +252,8 @@ def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> Non
     count = 0
     for ref in extract_references(response.text, final):
         kind = classify(ref.url, ref.tag)
+        if kind is UrlKind.PAGE and is_api_url(ref.url):
+            kind = UrlKind.DATA  # a JSON endpoint: kept and downloaded as data, not fetched as a page
         internal = crawl.internal(ref.url) and kind not in (UrlKind.MAIL, UrlKind.PHONE)
         scope = Scope.INTERNAL if internal else Scope.EXTERNAL
         count += 1
