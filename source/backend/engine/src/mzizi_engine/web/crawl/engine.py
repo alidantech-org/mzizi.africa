@@ -74,6 +74,7 @@ class Crawl:
     fetched: int = 0  # pages actually fetched this run (saved copies do not use the page budget)
     query_variants: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
     visited_groups: dict[str, int] = field(default_factory=lambda: defaultdict(int))
+    recorded_finals: set[str] = field(default_factory=set)  # where pages really ended up, so redirect aliases are not recorded twice
     on_page: Callable[[PageRecord, bytes], None] | None = None  # called with each page as it is fetched
     on_reference: Callable[[LinkRecord], None] | None = None  # called with every link or file reference found
 
@@ -138,6 +139,7 @@ def start_crawl(request: CrawlRequest, client: WebClient, backend: PageBackend) 
         )
         for page in crawl.pages:
             crawl.visited_groups[group_of(page.final_url)] += 1
+            crawl.recorded_finals.add(_final_key(page.final_url))
             raw = out_dir / page.raw_file
             if raw.exists():
                 crawl.html[page.n] = raw.read_text(encoding="utf-8", errors="replace")
@@ -246,7 +248,17 @@ def _resource(crawl: Crawl, url: str, kind: UrlKind, item: FrontierItem, respons
     )
 
 
+def _final_key(url: str) -> str:
+    """A page's identity after redirects: its normalised address (a virtual `#page-N` keeps its fragment)."""
+    base, _, fragment = url.partition("#")
+    return normalize(base) + (f"#{fragment}" if fragment else "")
+
+
 def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> None:
+    key = _final_key(response.final_url)
+    if key in crawl.recorded_finals:  # an alias of a page already fetched in this crawl (a redirect, a trailing slash)
+        return
+    crawl.recorded_finals.add(key)
     n = len(crawl.pages) + 1
     raw_name = f"raw/{n:04d}.html"
     if crawl.on_page is None:  # without a hook the pages are kept for the end-of-crawl exports

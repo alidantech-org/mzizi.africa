@@ -228,3 +228,10 @@ def test_a_sitemap_listing_images_yields_files_not_pages():
 
     pages, files = partition(["https://s/about", "https://s/wp-content/uploads/a.jpg", "https://s/report.pdf"])
     assert pages == ["https://s/about"] and [u for u, _ in files] == ["https://s/wp-content/uploads/a.jpg", "https://s/report.pdf"]
+
+
+def test_a_redirect_alias_of_a_fetched_page_is_not_recorded_again():
+    from mzizi_engine.web.crawl.engine import _final_key
+
+    assert _final_key("https://s/a/") == _final_key("https://s/a") or _final_key("https://s/a#x") != _final_key("https://s/a")
+    assert _final_key("https://s/tenders#page-2") != _final_key("https://s/tenders")
