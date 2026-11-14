@@ -73,6 +73,17 @@ def _parse(output: str) -> dict:
         return {}
 
 
+def _requeue_interrupted_downloads() -> int:
+    from mzizi_engine.activity import open_activity
+
+    activity = open_activity()
+    if activity is None:
+        return 0
+    stuck = activity.get("download_queue", {"state": "downloading"})
+    activity.put("download_queue", [{**row, "state": "queued"} for row in stuck])
+    return len(stuck)
+
+
 def run_batch(request: BatchRequest) -> BatchReport:
     layout = DevLayout.locate()
     folder = layout.root / "batches" / request.name
@@ -85,6 +96,7 @@ def run_batch(request: BatchRequest) -> BatchReport:
             states[host] = SiteState.model_validate(raw)
     for url in urls:
         states.setdefault(host_of(url), SiteState(url=url))
+    _requeue_interrupted_downloads()  # nothing is running now: files left "downloading" by a killed run go back in the queue
     lock = threading.Lock()
     stop = threading.Event()
     children: set[subprocess.Popen[str]] = set()

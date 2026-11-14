@@ -15,6 +15,7 @@ from concurrent.futures import Future, ProcessPoolExecutor
 
 from mzizi_engine.activity import Activity
 from mzizi_engine.layout import DevLayout
+from mzizi_engine.web.crawl.cancel import CANCEL
 from mzizi_engine.sitestore import SiteStore
 from mzizi_engine.web.handlers.downloads import FoundAt
 from mzizi_engine.web.handlers.queue import QUEUE, FileFetcher, State, queue_item
@@ -130,6 +131,8 @@ class DownloadPool:
                 with self._lock:
                     if self.counts["done"] >= self.limit:
                         continue
+                if CANCEL.is_set():  # a stop signal: finish what is in flight; the rest stays queued in MongoDB
+                    continue
                 outcome = fetcher.process(item)  # type: ignore[arg-type]
                 with self._lock:
                     self.counts[outcome] += 1
