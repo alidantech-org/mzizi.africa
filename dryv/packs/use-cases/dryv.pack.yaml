@@ -33,7 +33,7 @@ selections:
       all: { facet: http }
     scope: collects.feature
 
-# <group>/<feature>/<feature>.service.impl.ts and <group>/<feature>/use-cases/<operation>.usecase.ts.
+# <group>/features/<feature>/<feature>.service.impl.ts and <group>/features/<feature>/use-cases/<operation>.usecase.ts.
 templates:
   usecase:
     $ref: '#/selections/operations'
@@ -41,6 +41,7 @@ templates:
       name: $(subject.name.kebab)
       path:
         - $(group.name.kebab)
+        - features
         - $(feature.name.kebab)
       symbol: $(subject.name.pascal)UseCase
     imports:
@@ -56,6 +57,7 @@ templates:
       name: $(feature.name.kebab)
       path:
         - $(group.name.kebab)
+        - features
         - $(feature.name.kebab)
       symbol: $(group.name.pascal)$(feature.name.pascal)ServiceImpl
     imports:
@@ -70,6 +72,7 @@ templates:
       name: $(subject.name.kebab)
       path:
         - $(group.name.kebab)
+        - features
         - $(feature.name.kebab)
     imports:
       - $ref: '#/templates/usecase'

@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { GovernanceInstitutionsModule } from "#/modules/governance/institutions/institutions.module.ts";
+import { GovernanceInstitutionsModule } from "#/modules/governance/features/institutions/institutions.module.ts";
 
 @Module({
   imports: [

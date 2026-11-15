@@ -78,8 +78,8 @@
 // SHARED CONFIG TYPES
 // ----------------------------------
 
-import * as Q from '{{ (file.path.import_base ~ 'common/types/query') if file.path.import_base else '../../common/types/query' }}';
-import { ERelationType } from '{{ (file.path.import_base ~ 'common/types/enums') if file.path.import_base else '../../common/types/enums' }}';
+import * as Q from '{{ (file.path.import_base ~ 'common/schema/types/query') if file.path.import_base else '../../../../common/schema/types/query' }}';
+import { ERelationType } from '{{ (file.path.import_base ~ 'common/schema/types/enums') if file.path.import_base else '../../../../common/schema/types/enums' }}';
 
 // ----------------------------------
 // RELATED ENTITY CONFIGS

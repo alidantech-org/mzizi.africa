@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { AuthAccountsModule } from "#/modules/auth/accounts/accounts.module.ts";
+import { AuthAccountsModule } from "#/modules/auth/features/accounts/accounts.module.ts";
 
 @Module({
   imports: [

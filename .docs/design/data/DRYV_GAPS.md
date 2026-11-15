@@ -58,3 +58,5 @@ On 15 November 2026 Dryv compiled the single-store application (251 runtime IR r
 - Any Python, Mongo or TypeORM generation.
 - Behaviour on a database that already holds the older `mzizi` release stream.
 | 31 | **Static folders and per-entity folders.** Dryv warns about static `output.path` segments and forbids a dynamic directory in a template path, so a layout like `types/<entity>/` needs one static segment in the path | Verified | Three planner warnings remain for the type-files pack | Open (engine: allow a dynamic directory after a static one, or a path template) |
+| 32 | **Deleting stale files left empty folders.** The cleanup removed 688 files but kept 104 empty directories | Verified | Cluttered module trees | **Fixed** (client prunes folders a deletion empties) |
+| 33 | **Layout split needs static path segments.** `schema/`, `types/` and `features/` before a dynamic entity or feature folder cannot live in the pack filesystem, so 14 planner warnings remain | Verified | Noisy generate output | Open (same as gap 31) |

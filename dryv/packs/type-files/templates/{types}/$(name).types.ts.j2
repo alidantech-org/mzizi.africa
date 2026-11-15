@@ -91,8 +91,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '{{ (file.path.import_base ~ 'common/types/query') if file.path.import_base else '../../common/types/query' }}';
-import * as B from '{{ (file.path.import_base ~ 'common/types/base') if file.path.import_base else '../../common/types/base' }}';
+import * as Q from '{{ (file.path.import_base ~ 'common/schema/types/query') if file.path.import_base else '../../../../common/schema/types/query' }}';
+import * as B from '{{ (file.path.import_base ~ 'common/schema/types/base') if file.path.import_base else '../../../../common/schema/types/base' }}';
 {%- for dependency in file.dependencies %}{% if dependency.slot == 'property.enum.types' %}
 import type { {{ dependency.symbol }} } from '{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}';
 {%- endif %}{% endfor %}

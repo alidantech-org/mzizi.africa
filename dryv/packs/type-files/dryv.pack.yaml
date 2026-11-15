@@ -5,7 +5,7 @@ source: templates
 info:
   title: Mzizi type files
   version: 0.2.0
-  description: The project's query types and config per entity (a folder per entity holding <entity>.types.ts, <entity>.config.ts and an index.ts namespace entry), placed in each group module and built on the shared base and query helpers.
+  description: The project's query types and config per entity (under <group>/schema/types, a folder per entity holding <entity>.types.ts, <entity>.config.ts and an index.ts namespace entry), placed in each group module and built on the shared base and query helpers.
   purpose: types
   languages: [typescript]
   tags: [types, query, entities]
@@ -25,7 +25,7 @@ selections:
       all: { role: entity }
     scope: each
 
-# <group>/types/<entity>/<entity>.types.ts, <entity>.config.ts and index.ts (the folder comes from the output path).
+# <group>/schema/types/<entity>/<entity>.types.ts, <entity>.config.ts and index.ts (the folder comes from the output path).
 templates:
   types:
     $ref: '#/selections/entities'
@@ -33,6 +33,7 @@ templates:
       name: $(subject.name.kebab)
       path:
         - $(group.name.kebab)
+        - schema
         - types
         - $(subject.name.kebab)
       symbol: I$(subject.name.pascal)
@@ -47,6 +48,7 @@ templates:
       name: $(subject.name.kebab)
       path:
         - $(group.name.kebab)
+        - schema
         - types
         - $(subject.name.kebab)
       symbol: $(subject.name.constant)_QUERY_OPTIONS
@@ -60,6 +62,7 @@ templates:
       name: $(subject.name.kebab)
       path:
         - $(group.name.kebab)
+        - schema
         - types
         - $(subject.name.kebab)
       symbol: $(subject.name.pascal)
