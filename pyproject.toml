@@ -45,7 +45,8 @@ extend-exclude = [".docs", "seed", "node_modules", "source/apps", "source/backen
 select = ["E", "W", "F", "I", "UP", "B", "SIM", "RUF", "TID"]
 # E501: the formatter owns line length; long strings and SQL are left intact.
 # UP042: `(str, Enum)` members are compared and serialized as plain strings; StrEnum would change their formatting.
-ignore = ["E501", "UP042"]
+# RUF001-003: prose and fixtures legitimately use dashes, multiplication signs and other typographic characters.
+ignore = ["E501", "UP042", "RUF001", "RUF002", "RUF003"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"

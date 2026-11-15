@@ -173,8 +173,7 @@ export const commands: Record<string, Command> = {
     run: () => group("infra:down", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "down"])]),
   },
   db: {
-    summary:
-      "database CLI: assemble | status | plan | migrate | verify | roles",
+    summary: "database CLI: assemble | status | plan | migrate | verify | roles",
     run: databaseCli,
   },
   "db:ts": { summary: "alias for the database CLI", run: databaseCli },
