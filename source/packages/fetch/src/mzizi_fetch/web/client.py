@@ -6,8 +6,8 @@ answered by the configured block policy; each decision and each request is kept 
 
 from __future__ import annotations
 
-import threading
 import ssl
+import threading
 import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
@@ -31,7 +31,17 @@ DEFAULT_TIMEOUT = 30.0
 DEFAULT_MAX_BYTES = 32 * 1024 * 1024
 BODY_DEADLINE = 90.0  # most seconds spent reading one response body
 # media types a page fetch reads (protocol facts); anything else is a file and is not streamed here
-READABLE_TYPES = ("text/", "application/json", "application/xml", "application/xhtml", "application/rss", "application/atom", "application/ld+json", "application/javascript", "application/x-javascript")
+READABLE_TYPES = (
+    "text/",
+    "application/json",
+    "application/xml",
+    "application/xhtml",
+    "application/rss",
+    "application/atom",
+    "application/ld+json",
+    "application/javascript",
+    "application/x-javascript",
+)
 HTML_TYPES = ("text/html", "application/xhtml")
 SERVER_ERROR_FLOOR = 500
 NOT_MODIFIED = 304

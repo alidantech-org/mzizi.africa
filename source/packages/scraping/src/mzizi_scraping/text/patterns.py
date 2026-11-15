@@ -17,7 +17,7 @@ MAX_TEXT_CHARS = 2_000_000
 _JSONPATH_TOKEN = re.compile(r"\.([A-Za-z_][\w-]*)|\['([^']+)'\]|\[(\d+)\]|\[(\*)\]")
 _ORDINAL = re.compile(r"(\d)(st|nd|rd|th)\b")
 _NON_NUMERIC = re.compile(r"[^\d.\-]")
-_FISCAL_YEAR = re.compile(r"(\d{4})\s*[/\-–]\s*(\d{2,4})")  # noqa: RUF001 (en dash is a real separator)
+_FISCAL_YEAR = re.compile(r"(\d{4})\s*[/\-–]\s*(\d{2,4})")
 _NON_SLUG = re.compile(r"[^a-z0-9]+")
 
 

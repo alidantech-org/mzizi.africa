@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Self
 
-from pydantic import model_validator
+from pydantic import Field, model_validator
 
 from mzizi_extraction.core import Frozen, Limits
 from mzizi_extraction.document.table_models import TableSchema
@@ -29,6 +29,8 @@ class DocumentProfile(Frozen):
     #: Caption words in the document's language ("Figure", "Table", ...). Supplied by the caller; empty means the
     #: caption is found by position and style alone.
     caption_labels: tuple[str, ...] = ()
+    first_page: int | None = Field(default=None, ge=1)
+    last_page: int | None = Field(default=None, ge=1)
     limits: Limits = Limits()
 
     @model_validator(mode="after")
@@ -37,6 +39,12 @@ class DocumentProfile(Frozen):
             raise ValueError("strict_table_lines conflicts with automatic table selection")
         if not self.tables and (self.auto_tables or self.table_schema is not None):
             raise ValueError("automatic table selection requires table extraction")
+        return self
+
+    @model_validator(mode="after")
+    def validate_page_range(self) -> Self:
+        if self.first_page is not None and self.last_page is not None and self.first_page > self.last_page:
+            raise ValueError("first_page must be less than or equal to last_page")
         return self
 
     @property

@@ -194,5 +194,8 @@ def test_ngcdf_family_fixture_and_ranking_rules_validate():
 
     root = Path(__file__).resolve().parents[4] / "seed/_fixtures/site-structures/ngcdf-constituency"
     assert validate(load(root), None, run_dry=True).errors == []
-    bad = {"schema": "mzizi.ranking/v1", "rules": [{"target": "nope.table", "label": "x", "conditions": [{"signal": "section", "contains": ["a"]}]}]}
+    bad = {
+        "schema": "mzizi.ranking/v1",
+        "rules": [{"target": "nope.table", "label": "x", "conditions": [{"signal": "section", "contains": ["a"]}]}],
+    }
     assert validate_ranking(bad) == ["ranking.yml: unknown target 'nope.table'"]

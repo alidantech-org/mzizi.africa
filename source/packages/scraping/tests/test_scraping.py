@@ -83,9 +83,19 @@ def test_profile_and_family_comparison():
         rows = "".join(f"<tr><td>doc {i}</td></tr>" for i in range(4))
         return build_profile(
             [
-                PageInput(url=f"https://{host}/", title=f"Home – {name}", html=f"<body>{nav}<main><p>x</p></main></body>"),
-                PageInput(url=f"https://{host}/downloads/", title=f"Downloads – {name}", html=f"<body>{nav}<table>{rows}</table></body>"),
-                PageInput(url=f"https://{host}/about-us/", title=f"About – {name}", html=f"<body>{nav}<main><p>y</p></main></body>"),
+                PageInput(
+                    url=f"https://{host}/", title=f"Home – {name}", html=f"<body>{nav}<main><p>x</p></main></body>"
+                ),
+                PageInput(
+                    url=f"https://{host}/downloads/",
+                    title=f"Downloads – {name}",
+                    html=f"<body>{nav}<table>{rows}</table></body>",
+                ),
+                PageInput(
+                    url=f"https://{host}/about-us/",
+                    title=f"About – {name}",
+                    html=f"<body>{nav}<main><p>y</p></main></body>",
+                ),
             ]
         )
 
@@ -94,7 +104,9 @@ def test_profile_and_family_comparison():
     assert any(block.selector == "tr" for t in left.templates for block in t.repeated_blocks)
     report = compare_profiles(left, right)
     assert report.verdict == "same family" and report.host_variable == "a|b"
-    other = build_profile([PageInput(url="https://z.org/shop/", title="Shop", html="<body><div><ul><li>a</li></ul></div></body>")])
+    other = build_profile(
+        [PageInput(url="https://z.org/shop/", title="Shop", html="<body><div><ul><li>a</li></ul></div></body>")]
+    )
     assert compare_profiles(left, other).verdict == "different"
 
 
@@ -113,7 +125,11 @@ def test_ranking_scores_rules_from_link_context_with_evidence():
                         {"signal": "extension", "contains": ["pdf"]},
                     ],
                 },
-                {"target": "person.individuals", "label": "members", "conditions": [{"signal": "section", "contains": ["members"]}]},
+                {
+                    "target": "person.individuals",
+                    "label": "members",
+                    "conditions": [{"signal": "section", "contains": ["members"]}],
+                },
             ]
         }
     )
@@ -162,16 +178,26 @@ def test_pagination_is_detected_for_links_buttons_numbers_and_load_more():
         '<a href="/list?page=3">3</a><a rel="next" href="/list?page=3">Next</a></nav>',
         base,
     )
-    assert link.next and link.next.url == "https://e.org/list?page=3" and link.url_template == "https://e.org/list?page={n}"
+    assert (
+        link.next
+        and link.next.url == "https://e.org/list?page=3"
+        and link.url_template == "https://e.org/list?page={n}"
+    )
     button = detect_pagination(
         '<nav aria-label="Pagination Navigation"><button aria-label="Previous page" disabled></button>'
         '<button aria-label="Page 1, Current page">1</button><button aria-label="Go to page 2">2</button>'
         '<button aria-label="Go to page 9">9</button><button aria-label="Next page">&rsaquo;</button></nav>',
         base,
     )
-    assert button.next and button.next.kind is ControlKind.BUTTON and button.next.selector == 'button[aria-label="Next page"]'
+    assert (
+        button.next
+        and button.next.kind is ControlKind.BUTTON
+        and button.next.selector == 'button[aria-label="Next page"]'
+    )
     assert button.last == 9 and not button.next.url
-    disabled = detect_pagination('<nav class="pagination"><button aria-label="Next page" disabled>></button></nav>', base)
+    disabled = detect_pagination(
+        '<nav class="pagination"><button aria-label="Next page" disabled>></button></nav>', base
+    )
     assert disabled.next and disabled.next.enabled is False
     more = detect_pagination("<ul><li>x</li></ul><button>Load more</button>", base)
     assert more.load_more and more.load_more.kind is ControlKind.LOAD_MORE
@@ -185,9 +211,18 @@ def test_needs_browser_tells_static_pages_from_app_shells():
 
     article = "<html><body><main><p>" + "Real static content. " * 30 + "</p></main></body></html>"
     assert needs_browser(article, "https://e.org/") == ""
-    assert needs_browser('<html><body><div id="root"></div><script src="/app.js"></script></body></html>', "https://e.org/")
-    assert needs_browser("<html><body><noscript>You need to enable JavaScript to run this app.</noscript><div>x</div></body></html>", "https://e.org/")
-    buttons = '<html><body><main><p>' + "text " * 80 + '</p><nav aria-label="Pagination"><button aria-label="Next page">></button></nav></main></body></html>'
+    assert needs_browser(
+        '<html><body><div id="root"></div><script src="/app.js"></script></body></html>', "https://e.org/"
+    )
+    assert needs_browser(
+        "<html><body><noscript>You need to enable JavaScript to run this app.</noscript><div>x</div></body></html>",
+        "https://e.org/",
+    )
+    buttons = (
+        "<html><body><main><p>"
+        + "text " * 80
+        + '</p><nav aria-label="Pagination"><button aria-label="Next page">></button></nav></main></body></html>'
+    )
     assert needs_browser(buttons, "https://e.org/") == "pagination by buttons"
 
 
@@ -211,3 +246,34 @@ def test_a_long_static_page_with_a_javascript_banner_does_not_need_a_browser():
     assert needs_browser(long_page, "https://e.org/") == ""
     short_app = f"<html><body>{banner}<div>Loading</div></body></html>"
     assert needs_browser(short_app, "https://e.org/") == "page asks for JavaScript"
+
+
+@pytest.mark.parametrize(
+    "markup",
+    [
+        '<head><title>Records</title><link rel="canonical" href="/records"></head>'
+        '<main><h2>Reports</h2><a href="report.pdf">Report</a><a rel="next" href="?page=2">Next</a></main>',
+        '<body><nav class="pagination"><button aria-label="Next page">Next</button></nav>'
+        '<main><h2>Portraits</h2><img src="/portrait.webp" alt="Portrait"></main></body>',
+    ],
+)
+def test_shared_tree_matches_individual_discovery_passes(markup: str) -> None:
+    from bs4 import BeautifulSoup
+
+    from mzizi_scraping import extract_references, page_meta
+    from mzizi_scraping.pagination import detect_pagination
+
+    url = "https://example.org/records/"
+    expected = (
+        page_meta(markup, url),
+        detect_pagination(markup, url),
+        extract_references(markup, url, retain_context=True),
+    )
+    soup = BeautifulSoup(markup, "lxml")
+    original = str(soup)
+    assert (
+        page_meta(soup, url),
+        detect_pagination(soup, url),
+        extract_references(soup, url, retain_context=True),
+    ) == expected
+    assert str(soup) == original

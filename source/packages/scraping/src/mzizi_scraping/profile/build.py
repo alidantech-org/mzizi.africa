@@ -58,7 +58,12 @@ def _repeated(soup: BeautifulSoup) -> tuple[RepeatedBlock, ...]:
             text = " ".join(example.get_text(" ", strip=True).split())[:80]
             if text and (selector not in found or found[selector].repeats < repeats):
                 found[selector] = RepeatedBlock(selector=selector, repeats=repeats, example_text=text)
-    return tuple(sorted(found.values(), key=lambda block: (block.selector.split(".")[0] in CELL_TAGS, -block.repeats, block.selector))[:5])
+    return tuple(
+        sorted(
+            found.values(),
+            key=lambda block: (block.selector.split(".")[0] in CELL_TAGS, -block.repeats, block.selector),
+        )[:5]
+    )
 
 
 def _generator(soup: BeautifulSoup) -> str:
@@ -90,7 +95,7 @@ def _nav_labels(soups: list[BeautifulSoup]) -> tuple[str, ...]:
 
 def _pagination_hints(pages: list[PageInput], soups: list[BeautifulSoup]) -> tuple[str, ...]:
     hints: set[str] = set()
-    for page, soup in zip(pages, soups, strict=True):
+    for soup in soups:
         if soup.find("link", rel="next") or soup.find("a", rel="next"):
             hints.add("rel=next")
         for anchor in soup.find_all("a", href=True):

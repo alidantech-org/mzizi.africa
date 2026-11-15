@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field, replace
+from subprocess import TimeoutExpired
 
 import pdfplumber
 import pypdfium2 as pdfium
@@ -17,8 +19,8 @@ from mzizi_extraction.document.pdf_table_selection import select_pdf_tables
 from mzizi_extraction.document.profile import DocumentProfile, OcrMode
 from mzizi_extraction.document.style import is_bold, is_italic
 from mzizi_extraction.document.table_models import TableDecision
-from mzizi_extraction.ocr import RENDER_SCALE, OcrUnavailable, render_png
-from mzizi_extraction.ocr.tesseract import recognise_page
+from mzizi_extraction.ocr import RENDER_SCALE, OcrUnavailable
+from mzizi_extraction.ocr.tesseract import png_for_ocr, recognise_page
 from mzizi_extraction.pdf.tables import clean_table
 
 GARBLED_SHARE = 0.15
@@ -72,7 +74,8 @@ def _ocr_page(
     profile: DocumentProfile,
     diagnostics: list[Diagnostic],
 ) -> None:
-    recognized = recognise_page(render_png(pdf_page), profile.languages)
+    image = pdf_page.render(scale=RENDER_SCALE).to_pil()
+    recognized = recognise_page(png_for_ocr(image), profile.languages)
     raw = recognized.lines
     if profile.tables and not profile.strict_table_lines:
         try:
@@ -80,7 +83,7 @@ def _ocr_page(
                 plumber_page,
                 scan.number,
                 profile.table_schema,
-                lambda: pdf_page.render(scale=RENDER_SCALE).to_pil(),
+                image,
                 profile.languages,
             )
             if detected.unread_regions:
@@ -125,12 +128,14 @@ def _ocr_page(
 def scan_page(
     index: int,
     plumber_page: pdfplumber.page.Page,
-    pdf_page: pdfium.PdfPage,
+    pdf: pdfium.PdfDocument,
     profile: DocumentProfile,
     diagnostics: list[Diagnostic],
-    ocr_ready: bool,
+    ocr_ready: Callable[[], bool],
+    *,
+    page_offset: int = 0,
 ) -> PageScan:
-    scan = PageScan(index + 1, float(plumber_page.width), float(plumber_page.height))
+    scan = PageScan(page_offset + index + 1, float(plumber_page.width), float(plumber_page.height))
     words = _words(plumber_page)
     chars = sum(len(w.text) for w in words)
     garbled = _garbled(words)
@@ -157,16 +162,20 @@ def scan_page(
                     f"page {scan.number}: OCR grid cells require review; native-text strategy comparison is unavailable",
                 )
             )
-        if not ocr_ready:
+        if not ocr_ready():
             diagnostics.append(
                 warning(Code.OCR_REQUIRED, f"page {scan.number}: needs OCR but the engine is unavailable")
             )
             scan.words = words if not garbled else []
             return scan
+        pdf_page = pdf[index]
         try:
             _ocr_page(scan, plumber_page, pdf_page, profile, diagnostics)
-        except (OcrUnavailable, OSError) as problem:
+        except (OcrUnavailable, OSError, TimeoutExpired) as problem:
             diagnostics.append(warning(Code.OCR_FAILED, f"page {scan.number}: {str(problem)[:150]}"))
+            scan.words = words if not garbled else []
+        finally:
+            pdf_page.close()
         return scan
     if profile.compare_tables:
         for selection in select_pdf_tables(plumber_page, words, profile.table_schema, scan.number, diagnostics):

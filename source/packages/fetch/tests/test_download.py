@@ -153,7 +153,9 @@ def test_a_compressed_response_is_not_judged_incomplete(tmp_path):
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(200, content=packed, headers={"content-encoding": "gzip", "content-type": "text/html"})
 
-    downloader = Downloader(tmp_path, "MziziTest/1.0 (+https://t.example/bot; t@t.example)", DownloadPolicy(allow_private=True))
+    downloader = Downloader(
+        tmp_path, "MziziTest/1.0 (+https://t.example/bot; t@t.example)", DownloadPolicy(allow_private=True)
+    )
     downloader.client = httpx.Client(transport=httpx.MockTransport(handler))
     result = downloader.download("http://127.0.0.1/page")
     assert result.size == len(body)

@@ -82,11 +82,15 @@ class Vocabulary(_Data):
     busy_selectors: tuple[str, ...] = ()  # markers a page leaves while it is still loading content
     pagination: PaginationLabels = PaginationLabels()
     download_hints: DownloadHints = DownloadHints()
-    cms_media_paths: tuple[str, ...] = ()  # CMS endpoints that list every uploaded file, probed when the CMS is recognised
+    cms_media_paths: tuple[
+        str, ...
+    ] = ()  # CMS endpoints that list every uploaded file, probed when the CMS is recognised
     noise_hosts: tuple[str, ...] = ()  # third-party analytics, ads and social widgets the browser never needs to load
     needs_javascript_phrases: tuple[str, ...] = ()  # text a static page shows when it only works with scripts
     api_path_segments: tuple[str, ...] = ()  # path segments that mark a data endpoint (JSON), not a page
-    content_query_keys: tuple[str, ...] = ()  # query parameters that name one distinct page (`?page_id=12`), never a filter or a trap
+    content_query_keys: tuple[
+        str, ...
+    ] = ()  # query parameters that name one distinct page (`?page_id=12`), never a filter or a trap
     generic_file_stems: tuple[str, ...] = ()  # file names too vague to label a file (`download`, `file`, `view`)
     risky_groups: tuple[str, ...]
     block_responses: dict[str, str]

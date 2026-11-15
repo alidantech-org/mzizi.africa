@@ -1,5 +1,3 @@
-
-
 def test_a_captcha_word_on_a_real_page_is_not_a_block():
     from mzizi_fetch.web.blocks import BlockKind, detect_block
 

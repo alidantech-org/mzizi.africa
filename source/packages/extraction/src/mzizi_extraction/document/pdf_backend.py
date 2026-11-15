@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import io
 from dataclasses import dataclass, replace
+from functools import cache
 
 import pdfplumber
 import pypdfium2 as pdfium
@@ -20,7 +21,7 @@ from mzizi_extraction.document.furniture import find_furniture, is_furniture
 from mzizi_extraction.document.lines import Line
 from mzizi_extraction.document.models import Asset, Block, DocumentOutput, FigureBlock, Page, TableBlock
 from mzizi_extraction.document.pdf_scan import PageScan, page_lines, scan_page
-from mzizi_extraction.document.profile import DocumentProfile, OcrMode
+from mzizi_extraction.document.profile import DocumentProfile
 from mzizi_extraction.document.structure import Typography, build_blocks, line_height_typography, typography
 from mzizi_extraction.document.table_models import BBox, TableReviewReport
 from mzizi_extraction.ocr import OcrUnavailable, check
@@ -65,7 +66,7 @@ def _build_page(
     profile: DocumentProfile,
     repeated: set[str],
     assets: list[Asset],
-    pdf_page: pdfium.PdfPage,
+    pdf_page: pdfium.PdfPage | None,
 ) -> Page:
     items: list[tuple[float, float, int, _Item]] = []
     for line, column in lines:
@@ -74,7 +75,7 @@ def _build_page(
     single_column = all(column == FULL_WIDTH for _, column in lines)
     for index, (rows, box) in enumerate(scan.tables, start=1):
         items.append((box.top, box.bottom, _column_of(box, scan, single_column), _TableItem(index, rows, box)))
-    figure_image = render_image(pdf_page) if scan.figures else None
+    figure_image = render_image(pdf_page) if scan.figures and pdf_page is not None else None
     for index, box in enumerate(scan.figures, start=1):
         items.append((box.top, box.bottom, _column_of(box, scan, single_column), _FigureItem(index, box)))
     blocks: list[Block] = []
@@ -129,7 +130,9 @@ def _build_page(
     )
 
 
-def extract_pdf_document(data: bytes, profile: DocumentProfile | None = None) -> DocumentOutput:
+def extract_pdf_document(
+    data: bytes, profile: DocumentProfile | None = None, *, page_offset: int = 0
+) -> DocumentOutput:
     profile = profile or DocumentProfile()
     limits = profile.limits
     if len(data) > limits.max_bytes:
@@ -138,25 +141,45 @@ def extract_pdf_document(data: bytes, profile: DocumentProfile | None = None) ->
         return _failed(error(Code.NOT_PDF, "the file does not start with %PDF"))
     try:
         pdf = pdfium.PdfDocument(data)
-        plumber = pdfplumber.open(io.BytesIO(data))
     except Exception as problem:
         return _failed(error(Code.UNREADABLE_PDF, f"{str(problem)[:200]} (encrypted or damaged files are not opened)"))
-    with plumber, pdf:
+    with pdf:
         total = len(pdf)
         diagnostics: list[Diagnostic] = [info(Code.PAGES, f"{total} pages")]
-        if total > limits.max_pages:
-            diagnostics.append(error(Code.TOO_MANY_PAGES, f"{total} pages exceeds the limit of {limits.max_pages}"))
+        first, last = profile.first_page or 1, profile.last_page or total
+        scoped = profile.first_page is not None or profile.last_page is not None
+        if scoped:
+            if not 1 <= first <= last <= total:
+                return _failed(error(Code.PDF_PAGE_RANGE, f"requested pages {first}-{last} outside a {total}-page PDF"))
+            diagnostics.append(info(Code.PDF_PAGE_RANGE, f"extracting source pages {first}-{last} of {total}"))
+        count = max(0, last - first + 1)
+        if count > limits.max_pages:
+            diagnostics.append(error(Code.TOO_MANY_PAGES, f"{count} pages exceeds the limit of {limits.max_pages}"))
             return DocumentOutput(status=Status.FAILED, diagnostics=tuple(diagnostics))
-        ocr_ready = _ocr_ready(profile, diagnostics)
-        scans = [scan_page(i, plumber.pages[i], pdf[i], profile, diagnostics, ocr_ready) for i in range(total)]
-        return _assemble(scans, pdf, profile, diagnostics)
+        try:
+            plumber = pdfplumber.open(io.BytesIO(data), pages=list(range(first, last + 1)) if scoped else None)
+            with plumber:
+                pages = plumber.pages
+                if len(pages) != count:
+                    return _failed(error(Code.UNREADABLE_PDF, "PDF readers disagree on the selected page count"))
+                ocr_ready = cache(lambda: _ocr_ready(profile.languages, diagnostics))
+                scans: list[PageScan] = []
+                for page in pages:
+                    index = page.page_number - 1
+                    try:
+                        scans.append(
+                            scan_page(index, page, pdf, profile, diagnostics, ocr_ready, page_offset=page_offset)
+                        )
+                    finally:
+                        page.close()
+        except Exception as problem:
+            return _failed(error(Code.UNREADABLE_PDF, f"could not read PDF pages {first}-{last}: {str(problem)[:200]}"))
+        return _assemble(scans, pdf, profile, diagnostics, page_offset)
 
 
-def _ocr_ready(profile: DocumentProfile, diagnostics: list[Diagnostic]) -> bool:
-    if profile.ocr is OcrMode.OFF:
-        return False
+def _ocr_ready(languages: str, diagnostics: list[Diagnostic]) -> bool:
     try:
-        check(profile.languages)
+        check(languages)
     except OcrUnavailable as problem:
         diagnostics.append(error(Code.OCR_ENGINE_UNAVAILABLE, str(problem)))
         return False
@@ -164,7 +187,11 @@ def _ocr_ready(profile: DocumentProfile, diagnostics: list[Diagnostic]) -> bool:
 
 
 def _assemble(
-    scans: list[PageScan], pdf: pdfium.PdfDocument, profile: DocumentProfile, diagnostics: list[Diagnostic]
+    scans: list[PageScan],
+    pdf: pdfium.PdfDocument,
+    profile: DocumentProfile,
+    diagnostics: list[Diagnostic],
+    page_offset: int,
 ) -> DocumentOutput:
     sizes = [(w.size, len(w.text)) for s in scans if not s.ocr for w in s.words]
     typ = typography(sizes)
@@ -174,12 +201,15 @@ def _assemble(
     pages: list[Page] = []
     for scan in scans:
         page_typ = line_height_typography([line for line, _ in lines[scan.number][0]]) if scan.ocr else typ
-        pages.append(
-            _build_page(scan, lines[scan.number][0], page_typ, profile, repeated, assets, pdf[scan.number - 1])
-        )
-        if profile.page_renders:
-            png = render_page_png(pdf[scan.number - 1], PAGE_RENDER_SCALE)
-            assets.append(Asset(name=f"pages/page-{scan.number}.png", media_type="image/png", data=png))
+        pdf_page = pdf[scan.number - page_offset - 1] if scan.figures or profile.page_renders else None
+        try:
+            pages.append(_build_page(scan, lines[scan.number][0], page_typ, profile, repeated, assets, pdf_page))
+            if profile.page_renders and pdf_page is not None:
+                png = render_page_png(pdf_page, PAGE_RENDER_SCALE)
+                assets.append(Asset(name=f"pages/page-{scan.number}.png", media_type="image/png", data=png))
+        finally:
+            if pdf_page is not None:
+                pdf_page.close()
     ocr_pages = [s.number for s in scans if s.ocr]
     if ocr_pages:
         diagnostics.append(info(Code.OCR, f"OCR ran on {len(ocr_pages)} pages: {_compact(ocr_pages)}"))

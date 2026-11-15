@@ -49,6 +49,7 @@ class Code(StrEnum):
     NOT_PDF = "not_pdf"
     UNREADABLE_PDF = "unreadable_pdf"
     PAGES = "pages"
+    PDF_PAGE_RANGE = "pdf_page_range"
     TOO_MANY_PAGES = "too_many_pages"
     OCR_ENGINE_UNAVAILABLE = "ocr_engine_unavailable"
     OCR_FAILED = "ocr_failed"

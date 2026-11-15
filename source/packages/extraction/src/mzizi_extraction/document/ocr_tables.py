@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import io
-from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Literal, TypedDict
 
@@ -156,17 +155,14 @@ def ocr_tables(
     page: pdfplumber.page.Page,
     number: int,
     schema: TableSchema | None,
-    render: Callable[[], Image.Image],
+    image: Image.Image,
     languages: str,
 ) -> OcrTableScan:
     result: list[OcrTable] = []
     unread: list[BBox] = []
-    image: Image.Image | None = None
     for grid in _grids(page):
         if len(grid.rows) < MIN_GRID_ROWS or len(grid.columns) < MIN_GRID_COLUMNS:
             continue
-        if image is None:
-            image = render()
         words = _recognise_grid(grid, image, languages)
         rows = tuple(tuple(_cell(box, words) for box in row.cells) for row in grid.rows)
         if sum(bool(cell) for row in rows for cell in row) / sum(map(len, rows)) < MIN_CELL_TEXT_SHARE:

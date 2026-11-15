@@ -106,7 +106,11 @@ def validate_ranking(document: object) -> list[str]:
     if problems or not isinstance(document, dict):
         return problems
     known = targets()
-    return [f"ranking.yml: unknown target {r.get('target')!r}" for r in document.get("rules", []) if r.get("target") not in known]
+    return [
+        f"ranking.yml: unknown target {r.get('target')!r}"
+        for r in document.get("rules", [])
+        if r.get("target") not in known
+    ]
 
 
 def module_errors(document: object, where: str) -> list[str]:

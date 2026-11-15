@@ -20,9 +20,9 @@ def _absolute(base: str, href: object) -> str | None:
     return urldefrag(urljoin(base, href.strip()))[0] if isinstance(href, str) and href.strip() else None
 
 
-def page_meta(html: str | bytes, base_url: str) -> PageMeta:
+def page_meta(html: str | bytes | BeautifulSoup, base_url: str) -> PageMeta:
     """Title, `<link rel=canonical>`, pagination (`rel=next`, including anchors) and advertised sitemaps."""
-    soup = BeautifulSoup(html, "lxml")
+    soup = html if isinstance(html, BeautifulSoup) else BeautifulSoup(html, "lxml")
     canonical = next((_absolute(base_url, t.get("href")) for t in soup.find_all("link", rel="canonical")), None)
     nexts: list[str] = []
     for tag in soup.find_all(["link", "a"], rel=True):

@@ -65,7 +65,8 @@ def _next_href(spec: Pagination, html: Content, current_url: str) -> str | None:
     for item in select(html, spec.next).items:
         anchor = item if isinstance(item, Tag) else None
         if anchor is not None and anchor.name != "a":
-            anchor = anchor.find("a") if isinstance(anchor.find("a"), Tag) else None
+            found = anchor.find("a")
+            anchor = found if isinstance(found, Tag) else None
         href = anchor.get("href") if anchor is not None else item if isinstance(item, str) else None
         if isinstance(href, str) and href.strip():
             return urljoin(current_url, href.strip())

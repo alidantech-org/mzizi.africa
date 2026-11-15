@@ -16,6 +16,7 @@ import subprocess
 from typing import Literal
 
 import pypdfium2 as pdfium
+from PIL import Image
 from pydantic import BaseModel, ConfigDict
 
 #: Only used when a caller asks for OCR without naming a language; every manifest should set its own.
@@ -104,9 +105,13 @@ def recognise(png: bytes, languages: str = DEFAULT_LANGUAGES) -> Recognition:
 
 def render_png(page: pdfium.PdfPage) -> bytes:
     """A pypdfium2 page as PNG bytes."""
-    image = page.render(scale=RENDER_SCALE).to_pil().convert("L")
+    return png_for_ocr(page.render(scale=RENDER_SCALE).to_pil())
+
+
+def png_for_ocr(image: Image.Image) -> bytes:
+    """Encode a raster for page OCR while preserving the original image for color-sensitive analysis."""
     buffer = io.BytesIO()
-    image.save(buffer, format="PNG")
+    image.convert("L").save(buffer, format="PNG")
     return buffer.getvalue()
 
 

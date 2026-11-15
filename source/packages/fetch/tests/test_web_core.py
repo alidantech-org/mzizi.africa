@@ -225,12 +225,14 @@ def test_a_file_behind_a_page_address_is_reported_not_streamed_and_a_trickle_giv
 
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.path == "/download/form":
+
             def never_ending():
                 for _ in range(20):
                     yield b"x" * 10
                     time.sleep(0.05)
 
             return httpx.Response(200, headers={"content-type": "application/pdf"}, content=never_ending())
+
         def trickle():
             for _ in range(60):
                 yield b"<p>x</p>"
@@ -239,8 +241,11 @@ def test_a_file_behind_a_page_address_is_reported_not_streamed_and_a_trickle_giv
         return httpx.Response(200, headers={"content-type": "text/html"}, content=trickle())
 
     client = WebClient(
-        "MziziTest/1.0 (+https://t.example/bot; t@t.example)", SourcePolicy(allowed_hosts=("s.example",)), ("s.example",),
-        transport=httpx.MockTransport(handler), body_deadline=0.5,
+        "MziziTest/1.0 (+https://t.example/bot; t@t.example)",
+        SourcePolicy(allowed_hosts=("s.example",)),
+        ("s.example",),
+        transport=httpx.MockTransport(handler),
+        body_deadline=0.5,
     )
     started = time.monotonic()
     file = client.get("https://s.example/download/form", conditional=False)

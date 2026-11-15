@@ -32,7 +32,10 @@ def compare_profiles(left: SiteProfile, right: SiteProfile) -> FamilyReport:
     section_score, nav_score, template_score = _jaccard(*sections), _jaccard(*nav), _jaccard(*templates)
     same_generator = bool(left.generator) and left.generator == right.generator
     score = round(
-        sum(w * v for w, v in zip(WEIGHTS, (section_score, nav_score, template_score, float(same_generator)), strict=True)),
+        sum(
+            w * v
+            for w, v in zip(WEIGHTS, (section_score, nav_score, template_score, float(same_generator)), strict=True)
+        ),
         3,
     )
     verdict = "same family" if score >= SAME_FAMILY else "likely same family" if score >= LIKELY_FAMILY else "different"

@@ -109,9 +109,9 @@ def _template(controls: list[tuple[int, Control]]) -> str:
     return ""
 
 
-def detect_pagination(html: str | bytes, base_url: str) -> Findings:
+def detect_pagination(html: str | bytes | BeautifulSoup, base_url: str) -> Findings:
     vocab = vocabulary().pagination
-    soup = BeautifulSoup(html, "lxml")
+    soup = html if isinstance(html, BeautifulSoup) else BeautifulSoup(html, "lxml")
     evidence: list[str] = []
     next_control: Control | None = None
     # 1. the page declares its successor

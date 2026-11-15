@@ -104,13 +104,23 @@ def test_geometry_distinguishes_split_words_and_duplicate_cell_assignments() -> 
     assert geometry(bounds, overlapping, [word]) == (1.0, 1.0, 1.0)
 
 
-def test_forced_ocr_retains_colored_grid_values_and_requires_review() -> None:
+def test_forced_ocr_retains_colored_grid_values_with_one_raster(monkeypatch: MonkeyPatch) -> None:
     import shutil
 
     import pytest
 
     if shutil.which("tesseract") is None:
         pytest.skip("requires Tesseract")
+    from pypdfium2 import PdfBitmap, PdfPage
+
+    render = PdfPage.render
+    rendered: list[float] = []
+
+    def counted_render(page: PdfPage, *, scale: float) -> PdfBitmap:
+        rendered.append(scale)
+        return render(page, scale=scale)
+
+    monkeypatch.setattr(PdfPage, "render", counted_render)
     operations = ["1 0.1 0.1 rg 222 500 150 90 re f", "0 0 0 rg"]
     operations += [f"{72 + column * 150} 500 0.5 120 re f" for column in range(4)]
     operations += [f"72 {500 + row * 30} 450 0.5 re f" for row in range(5)]
@@ -131,6 +141,7 @@ def test_forced_ocr_retains_colored_grid_values_and_requires_review() -> None:
     (decision,) = result.table_review.tables
     assert decision.selected is TableStrategy.OCR_GRID
     assert decision.review_required and ReviewReason.OCR_TEXT in decision.reasons
+    assert len(rendered) == 1
 
 
 def test_optional_ocr_table_failure_preserves_recognized_page_text(monkeypatch: MonkeyPatch) -> None:
@@ -141,8 +152,6 @@ def test_optional_ocr_table_failure_preserves_recognized_page_text(monkeypatch: 
     if shutil.which("tesseract") is None:
         pytest.skip("requires Tesseract")
 
-    from collections.abc import Callable
-
     from pdfplumber.page import Page
     from PIL import Image
 
@@ -152,7 +161,7 @@ def test_optional_ocr_table_failure_preserves_recognized_page_text(monkeypatch: 
         page: Page,
         number: int,
         schema: TableSchema | None,
-        render: Callable[[], Image.Image],
+        image: Image.Image,
         languages: str,
     ) -> OcrTableScan:
         raise ValueError("table detector unavailable")
@@ -167,3 +176,18 @@ def test_optional_ocr_table_failure_preserves_recognized_page_text(monkeypatch: 
 
     assert "Recognized page text remains available" in render_markdown(output.pages)
     assert any(diagnostic.code is Code.TABLE_EXTRACTION_FAILED for diagnostic in output.diagnostics)
+
+
+def test_scoped_table_extraction_preserves_cells_and_source_page() -> None:
+    text = [(x, 480 - i * 20, value) for i, row in enumerate(ROWS) for x, value in zip((77, 210), row, strict=True)]
+    pdf = make_pdf([{"text": [(72, 700, "Cover")]}, {"text": text, "grid": (72, 390, 2, 5, 130, 20)}])
+    result = extract_pdf_document(
+        pdf, DocumentProfile(ocr=OcrMode.OFF, table_schema=SCHEMA, figures=False, first_page=2, last_page=2)
+    )
+    (page,) = result.pages
+    (table,) = [block for block in page.blocks if isinstance(block, TableBlock)]
+    assert page.number == table.page == 2
+    assert table.rows == ROWS
+    assert result.table_review is not None
+    (decision,) = result.table_review.tables
+    assert decision.page == 2

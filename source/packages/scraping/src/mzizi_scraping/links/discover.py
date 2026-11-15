@@ -76,13 +76,15 @@ def _headings(soup: BeautifulSoup) -> dict[int, str]:
     return headings
 
 
-def extract_references(html: str | bytes, base_url: str, *, retain_context: bool = False) -> list[Reference]:
+def extract_references(
+    html: str | bytes | BeautifulSoup, base_url: str, *, retain_context: bool = False
+) -> list[Reference]:
     """Every link, image, media, embed and frame URL on a page, absolute and de-duplicated per (tag, URL).
 
     Unlike `extract_links` this keeps `mailto:` and `tel:` references (they are part of a site's contact surface) and
     reports which tag carried each URL. `javascript:`, `data:` and `blob:` URLs are skipped.
     """
-    soup = BeautifulSoup(html, "lxml")
+    soup = html if isinstance(html, BeautifulSoup) else BeautifulSoup(html, "lxml")
     headings = _headings(soup)
     seen: set[tuple[str, str, str, str]] = set()
     found: list[Reference] = []
