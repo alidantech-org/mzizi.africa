@@ -18,7 +18,6 @@ source/
 │   ├── api/                    NestJS product API
 │   ├── database/               Bun TypeScript database service and CLI
 │   ├── engine/                 Python operational API and capability orchestrator
-│   ├── pipelines/              Bun TypeScript Temporal worker and workflow API
 │   └── README.md
 ├── packages/
 │   ├── extraction/ fetch/ filesystem/ manifest/
@@ -39,7 +38,6 @@ source/
 | `source/backend/api` | NestJS product API. Most contract-facing API types and modules are generated from root `dryv/`; selected use cases, auth and adapters are hand-written. |
 | `source/backend/database` | Bun TypeScript migration/seed CLI and internal named database operations. |
 | `source/backend/engine` | Python operational API, job lifecycle, workers and package orchestration. |
-| `source/backend/pipelines` | Bun TypeScript Temporal workflows, worker and internal command API. |
 | `source/packages/*` | Reusable Python capabilities; these are libraries, not separately deployed services. |
 | `source/schema/*` | Ordered SQL and JSON Schemas for exchange, pipeline, seed and site inputs. |
 | root `dryv/` | Authored API/database contracts and generation/audit tooling. |

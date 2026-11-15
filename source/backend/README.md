@@ -1,6 +1,6 @@
 # Backend
 
-The active backend has four separately owned projects, plus a README-only proposal (`agent/`):
+The active backend has three separately owned projects, plus a README-only proposal (`agent/`):
 
 | Directory | Responsibility | Guide |
 |---|---|---|
@@ -8,7 +8,6 @@ The active backend has four separately owned projects, plus a README-only propos
 | [`database/`](database/README.md) | Generated SQL, immutable migrations and the Bun administration CLI for the single PostgreSQL database. Not a service. | [`database/README.md`](database/README.md) |
 | [`agent/`](agent/README.md) | Proposal only: a future assistive application for AI and LLMs. No code yet. | [`agent/README.md`](agent/README.md) |
 | [`engine/`](engine/README.md) | Python operational API, workers and orchestration of reusable capabilities. | [`engine/README.md`](engine/README.md) |
-| [`pipelines/`](pipelines/README.md) | Bun TypeScript Temporal worker and durable workflow API. | [`pipelines/README.md`](pipelines/README.md) |
 
 Shared Python libraries live in [`../packages/`](../packages/README.md), input schemas and SQL in [`../schema/`](../schema/README.md), and prepared system inputs in [`../../seed/`](../../seed/README.md). The root command runner and local service setup are documented in [`../../scripts/README.md`](../../scripts/README.md).
 

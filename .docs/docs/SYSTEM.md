@@ -16,7 +16,6 @@ Mzizi turns source material into evidence-backed knowledge that people can revie
 | `source/backend/api` | NestJS product API for application reads and authorized workflow commands. |
 | `source/backend/database` | Generated SQL, immutable migrations and the Bun administration CLI for the single PostgreSQL database. Not a service. |
 | `source/backend/engine` | Python operational API, jobs, workers and orchestration of reusable capabilities. It is not the product API. |
-| `source/backend/pipelines` | Bun TypeScript Temporal worker and internal workflow API. |
 | `source/packages/` | Python libraries for fetching, scraping, extraction (with OCR), filesystem work and manifests. |
 | `source/schema/` | Input and exchange schemas plus ordered database SQL. Product API/database contracts are authored in root `dryv/`. |
 | root `seed/` | Prepared and versioned system inputs and fixtures. |
@@ -28,7 +27,7 @@ There is no standalone intelligence service: `source/backend/agent/` is a README
 - Applications render and submit work through API contracts. They do not define canonical domain rules.
 - The NestJS API handles product HTTP contracts, authorization and use cases. It connects to PostgreSQL with its own role, writes the schemas it owns (such as authentication) and asks the Python engine to run jobs.
 - The Bun database CLI owns the generated SQL, ordered immutable releases and role provisioning. It is not a service and does not own source acquisition or document extraction. MongoDB is the permanent staging store for huge, messy data; only verified, approved data is promoted to PostgreSQL.
-- The Python engine runs operational jobs and calls packages. The Temporal worker coordinates durable workflow state and invokes the engine.
+- The Python engine runs operational jobs and calls packages.
 - Packages provide reusable capabilities; they do not own publisher-specific data or silently publish canonical facts.
 - SQL and machine-readable source/pipeline/seed/site shapes live under `source/schema/`. Prepared values live under root `seed/`.
 

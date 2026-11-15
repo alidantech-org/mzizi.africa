@@ -9,7 +9,7 @@ bun run check        # format check, lint, typecheck, structure and tests
 bun run dev          # API, engine, dashboard and public site together
 ```
 
-Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object store), `flutter` (mobile app), `task` (work tracking), a Dryv checkout at `DRYV_HOME` (generation). TypeScript services, including the Temporal worker, run with Bun; no Node.js runtime is required. `bun run doctor` reports what is present.
+Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object store), `flutter` (mobile app), `task` (work tracking), a Dryv checkout at `DRYV_HOME` (generation). TypeScript services run with Bun; no Node.js runtime is required. `bun run doctor` reports what is present.
 
 ## Commands
 
@@ -66,7 +66,6 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 | Service     | Directory                  | Port | Override         |
 | ----------- | -------------------------- | ---- | ---------------- |
 | `api`       | `source/backend/api`       | 3000 | `API_PORT`       |
-| `pipelines` | `source/backend/pipelines` | 3302 | `PIPELINES_PORT` |
 | `engine`    | `source/backend/engine`    | 8760 | `ENGINE_PORT`    |
 | `web`       | `source/apps/web`          | 3100 | `WEB_PORT`       |
 | `www`       | `source/apps/www`          | 3200 | `WWW_PORT`       |
@@ -79,7 +78,7 @@ On a new checkout, copy `.env.example` to `.env` and set local-only service toke
 
 The local PostGIS container is managed separately so a database reset cannot remove other local databases. Start it with `bun run db:up`, then start the persistent Temporal development service and isolated S3-compatible SeaweedFS object store with `bun run infra:up`. Temporal listens on `127.0.0.1:7233` and its UI on `http://127.0.0.1:8233`; its SQLite history is in the named `temporal-data` volume. SeaweedFS exposes its local S3 endpoint on `127.0.0.1:9000`; object bytes remain in the named `object-store-data` volume. The local endpoint is bound to loopback and configured for local development only. These services never connect to the existing `mzizi` S3 bucket.
 
-The development sequence is `bun run db:up`, `bun run infra:up`, then against a fresh empty database `bun run db assemble` (first time), `bun run db migrate`, `bun run db roles` and `bun run db verify`, then run the pipeline, engine and API services with local URLs and tokens from `.env`. `bun run db status` reports release state. Stop application processes, then use `bun run infra:down` and `bun run db:down`. The infra down command retains its named volumes. To erase only local Temporal/SeaweedFS development data, explicitly run `docker compose -f compose.local.yaml down --volumes`. This stack provides local infrastructure; application service configuration and full end-to-end workflow acceptance remain in progress.
+The development sequence is `bun run db:up`, `bun run infra:up`, then against a fresh empty database `bun run db assemble` (first time), `bun run db migrate`, `bun run db roles` and `bun run db verify`, then run the engine and API services with local URLs and tokens from `.env`. `bun run db status` reports release state. Stop application processes, then use `bun run infra:down` and `bun run db:down`. The infra down command retains its named volumes. To erase only local Temporal/SeaweedFS development data, explicitly run `docker compose -f compose.local.yaml down --volumes`. This stack provides local infrastructure; application service configuration and full end-to-end workflow acceptance remain in progress.
 
 ## Dryv
 

@@ -23,7 +23,6 @@ source/backend/api                 NestJS product API
 source/backend/database            Bun CLI, generated SQL and immutable migrations for the single PostgreSQL database
 source/backend/engine               Python operational API, workers and package orchestrator
 source/backend/agent                README-only proposal for a future assistive AI application
-source/backend/pipelines            Bun TypeScript Temporal workflows and worker
 source/packages/{extraction,fetch,filesystem,manifest,scraping}
 source/schema/{contracts,database,pipeline,seed,site/v1}
 ```
@@ -36,7 +35,6 @@ The responsibilities are distinct even when they share a runtime:
 - `source/backend/api/` is the NestJS product API. It reads product data and sends authorized named write commands to the database service; it does not run migrations, seed data, scrape or execute extraction.
 - `source/backend/database/` owns TypeScript SQL migration/seed commands and named database operations.
 - `source/backend/engine/` is the Python operational API and capability orchestrator, not the product API.
-- `source/backend/pipelines/` coordinates durable workflows with Temporal and invokes the engine.
 - `source/packages/` contains reusable Python libraries, not separate services. `source/backend/agent/` is a README-only proposal; no intelligence service or agent package currently exists. Packages must not know a database exists; the engine owns I/O (see `.docs/design/architecture/ENGINE_JOB_MODEL.md`, a proposal).
 - `source/schema/` contains SQL and machine-readable input/exchange schemas. Authored API/database contracts remain in `dryv/`; prepared inputs remain in root `seed/`.
 

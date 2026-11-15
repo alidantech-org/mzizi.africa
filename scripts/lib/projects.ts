@@ -72,13 +72,6 @@ export const projects: readonly Project[] = [
     byDefault: true,
   },
   {
-    name: "pipelines",
-    kind: "bun",
-    dir: "source/backend/pipelines",
-    summary: "Temporal workflow coordinator",
-    byDefault: true,
-  },
-  {
     name: "web",
     kind: "bun",
     dir: "source/apps/web",
@@ -108,14 +101,6 @@ export const services: readonly Service[] = [
     start: ["bun", "run", "start"],
     port: 3000,
     portEnv: "PORT",
-  },
-  {
-    name: "pipelines",
-    dir: "source/backend/pipelines",
-    dev: ["bun", "--watch", "src/worker.ts"],
-    start: ["bun", "dist/worker.js"],
-    port: 3302,
-    portEnv: "PIPELINES_PORT",
   },
   {
     name: "engine",

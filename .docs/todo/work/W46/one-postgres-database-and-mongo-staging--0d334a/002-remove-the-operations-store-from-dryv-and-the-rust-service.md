@@ -18,3 +18,7 @@ Owner decision: DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115 (second order, same d
 - [x] The Cargo workspace, Rust crates, generated Rust models and Rust Dryv packs are removed from the repository, and the Rust packs are copied to the Dryv repository examples.
 - [x] The runner scripts have no Rust kind, service or quality step and `bun test scripts` passes.
 - [x] `bun run database:check` passes with one store, and the callers left without a server are listed here.
+
+## Notes
+
+On 15 November 2026 the owner also ordered the whole `source/backend/pipelines` folder removed. It was a Bun Temporal worker and workflow API that nothing called and that stored run state through the removed database service. Deleted: 12 tracked files (history preserved). Removed from the runner, package scripts and docs. Left in place and unused: the Temporal container in `compose.local.yaml`, the engine endpoint `/internal/v1/capabilities/execute`, and `seed/system/pipelines/pdf-extraction.v1.json`; review them with the engine job work.

@@ -25,6 +25,8 @@ The owner then ordered every Rust pack and all Rust code removed, with no databa
 - Typed Python schemas are required for both Postgres and Mongo; the API needs the Postgres schemas for TypeORM.
 - The Dryv gaps that block this are recorded in `.docs/design/data/DRYV_GAPS.md`.
 
+A third order removed `source/backend/pipelines` (the Bun Temporal worker and workflow API) entirely. Nothing called it, and it persisted run state through the removed database service. Its git history is preserved; durable job state and progress now belong to the engine. The local Temporal container definition in `compose.local.yaml`, the `/internal/v1/capabilities/execute` engine endpoint that served its activities, and the seed pipeline definition `seed/system/pipelines/pdf-extraction.v1.json` were left in place and are unused until reviewed.
+
 This supersedes DEC-DATABASE-FOUNDATION-OWNERSHIP and the Rust parts of DEC-DATABASE-RELEASE-ASSEMBLY and DEC-DATABASE-ACCESS-LIFECYCLE.
 
 ## What changes

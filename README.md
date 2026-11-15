@@ -16,7 +16,6 @@ source/
 │   ├── api/                    NestJS product API
 │   ├── database/               Bun TypeScript database service and CLI
 │   ├── engine/                 Python operational API, job runner and capability orchestrator
-│   ├── pipelines/              Bun TypeScript Temporal worker and workflow API
 │   └── README.md
 ├── packages/
 │   ├── extraction/             PDF, GeoJSON, CSV and JSON extraction, with OCR
@@ -41,7 +40,7 @@ source/
 - The public site, research dashboard and Flutter client are consumers. They do not own canonical domain rules.
 - The NestJS API serves product contracts and forwards authorized write operations to the database service.
 - The TypeScript database service applies SQL releases and owns named database operations. The disposable local database is `mzizi_new`.
-- The Python engine runs operational jobs and calls reusable capabilities. The Temporal pipeline worker coordinates durable workflows and invokes the engine.
+- The Python engine runs operational jobs and calls reusable capabilities.
 - Python packages provide fetching, scraping, extraction (including OCR), filesystem operations and manifest validation. There is no intelligence service yet; `source/backend/agent/` is a README-only proposal.
 - SQL lives in `source/schema/database/`; site, seed, exchange and pipeline input shapes live in the corresponding `source/schema/` folders.
 
