@@ -1,7 +1,7 @@
 import * as dryv from "@dryvcode/author";
 import { databaseHttp } from "#/apps/database/_shared";
 import { sharedFailures as f, sharedProperties as p } from "#/schemas/_shared.ts";
-import { auth, authEnums } from "#/schemas/operational/auth.ts";
+import { auth, authEnums } from "#/schemas/postgres/auth.ts";
 
 const access = auth.feature("AccountAccess").failureDefaults(databaseHttp);
 const { ActiveAccount } = access.schemas({

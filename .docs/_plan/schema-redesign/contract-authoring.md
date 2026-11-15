@@ -8,7 +8,7 @@ extra: {status: operational_design_accepted, implementation_authorized: operatio
 
 # Agree schema contract authoring
 
-The user approved the complete 45-table Operational design. The 12 November handoff authorizes implementation of Official, Governance, Politics, Civic, Finance and read-only Accountability. Their contracts now live in the existing six `dryv/contracts/schemas/mzizi/*.ts` files. Operational remains separately approved. Reference, Geography, Legal, Source and Filesystem stay as foundation groups and cross-schema targets; this task does not generate migrations or change live databases.
+The user approved the complete 45-table Operational design. The 12 November handoff authorizes implementation of Official, Governance, Politics, Civic, Finance and read-only Accountability. Their contracts now live in the existing six `dryv/contracts/schemas/postgres/*.ts` files. Operational remains separately approved. Reference, Geography, Legal, Source and Filesystem stay as foundation groups and cross-schema targets; this task does not generate migrations or change live databases.
 
 ## Existing agreement and remaining review
 
@@ -37,7 +37,7 @@ Observed in the working tree on 12 November 2026:
 | Detailed approval | Auth and Reference drafts lack headers identifying exact approved objects and approval records. | Reconcile them with their design reviews; their presence is not proof of approval. |
 | Relations and indexes | Supersession/grantor references and preferred-label uniqueness are partly explained in comments rather than complete persistence definitions. | Review complete semantics; report unsupported Dryv features instead of silently weakening them. |
 | Code uniqueness | The current Reference draft uses scheme-scoped code uniqueness, while the repository code rule requires table-wide uniqueness. | Explicitly resolve the conflict before approving that constraint; do not silently override either design. |
-| Application composition | Database app imports point to `schemas/vocabulary.ts`, while the draft file is under `schemas/mzizi/reference.ts`. | Correct imports as part of the later reviewed contract implementation, not this drafting task. |
+| Application composition | Database app imports point to `schemas/vocabulary.ts`, while the draft file is under `schemas/postgres/reference.ts`. | Correct imports as part of the later reviewed contract implementation, not this drafting task. |
 
 These observations are not a claim that the current generator or Rust service implements the proposed contracts. The working tree is actively changing; recheck each finding before editing it. Older design guidance also conflicts with the agreed same-database cross-schema FK direction and needs reconciliation in implementation work.
 

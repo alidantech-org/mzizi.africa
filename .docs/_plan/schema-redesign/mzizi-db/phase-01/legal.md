@@ -18,7 +18,7 @@ extra: {status: contract_authored_proposed_not_generation_ready, approval: imple
 
 ## Implemented contract outline
 
-Stable legal identities, immutable exact wording and amendment relationships. See `dryv/contracts/schemas/mzizi/legal.ts` for the current draft fields and relationships. Treat the historical dictionaries below as design evidence; the authored contract outline above supersedes stale claims that implementation is unauthorized or that no contract exists.
+Stable legal identities, immutable exact wording and amendment relationships. See `dryv/contracts/schemas/postgres/legal.ts` for the current draft fields and relationships. Treat the historical dictionaries below as design evidence; the authored contract outline above supersedes stale claims that implementation is unauthorized or that no contract exists.
 
 
 ## Agreed responsibility — 12 November 2026

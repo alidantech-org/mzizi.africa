@@ -1,7 +1,7 @@
 import * as dryv from "@dryvcode/author";
 import { databaseHttp } from "#/apps/database/_shared";
 import { sharedFailures as f, sharedProperties as p } from "#/schemas/_shared.ts";
-import { filesystem, filesystemEnums, Folders } from "#/schemas/mzizi/filesystem.ts";
+import { filesystem, filesystemEnums, Folders } from "#/schemas/postgres/filesystem.ts";
 
 const hierarchy = filesystem.feature("FolderHierarchy").failureDefaults(databaseHttp);
 

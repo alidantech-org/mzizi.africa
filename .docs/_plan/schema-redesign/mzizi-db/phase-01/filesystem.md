@@ -16,7 +16,7 @@ extra: {status: contract_authored_proposed_not_generation_ready, approval: imple
 
 ## Implemented contract outline
 
-Logical files, immutable content versions, typed derivatives and unified file/folder tagging. See `dryv/contracts/schemas/mzizi/filesystem.ts` for the current draft fields and relationships. Treat the historical dictionaries below as design evidence; the authored contract outline above supersedes stale claims that implementation is unauthorized or that no contract exists.
+Logical files, immutable content versions, typed derivatives and unified file/folder tagging. See `dryv/contracts/schemas/postgres/filesystem.ts` for the current draft fields and relationships. Treat the historical dictionaries below as design evidence; the authored contract outline above supersedes stale claims that implementation is unauthorized or that no contract exists.
 
 
 ## Agreed responsibility — 12 November 2026

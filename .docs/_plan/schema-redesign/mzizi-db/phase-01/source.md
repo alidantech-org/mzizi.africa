@@ -18,7 +18,7 @@ The integration adds optional restrictive FKs from `source.publishers.official_e
 
 ## Implemented contract outline
 
-Source identity, versioned manifests, captures, evidence, citations, review and publication receipts. See `dryv/contracts/schemas/mzizi/source.ts` for the current draft fields and relationships. Treat the historical dictionaries below as design evidence; the authored contract outline above supersedes stale claims that implementation is unauthorized or that no contract exists.
+Source identity, versioned manifests, captures, evidence, citations, review and publication receipts. See `dryv/contracts/schemas/postgres/source.ts` for the current draft fields and relationships. Treat the historical dictionaries below as design evidence; the authored contract outline above supersedes stale claims that implementation is unauthorized or that no contract exists.
 
 
 ## Agreed responsibility — 12 November 2026

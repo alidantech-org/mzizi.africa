@@ -1,7 +1,7 @@
 import * as dryv from "@dryvcode/author";
 import { databaseHttp } from "#/apps/database/_shared";
 import { sharedFailures as f, sharedProperties as p } from "#/schemas/_shared.ts";
-import { reference, Scheme, Value } from "#/schemas/mzizi/reference.ts";
+import { reference, Scheme, Value } from "#/schemas/postgres/reference.ts";
 
 const catalogue = reference.feature("Catalogue").failureDefaults(databaseHttp);
 const scheme = Scheme.asRef();

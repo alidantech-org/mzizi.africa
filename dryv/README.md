@@ -5,7 +5,7 @@ TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv co
 ## Layout
 
 - `../dryv.yaml`: the Dryv project file. It lives at the repository root because generation destinations may not leave the project root. It pins the engine (`a7b13a30`) and the packs repository (`7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a`).
-- `contracts/schemas/`: the new design — one file per database schema, grouped by database (`mzizi/` for canonical domain data, `operational/` for `mzizi_operations`), over the `_shared.ts` base; shared by every app.
+- `contracts/schemas/`: the new design — one file per Postgres schema in `postgres/` (no per-database split), Mongo document contracts in `mongo/` (empty until staging contracts are authored), over the `_base.ts` and `_shared.ts` bases; shared by every app.
 - `contracts/apps/database/`: database app, named provided operations and the two logical store identities. The neutral schema groups select their store through storage facets.
 - `packs/type-files`, `packs/use-cases`: project packs that scaffold shared types and per-operation use cases for the NestJS API.
 - `packs/rust-models`, `packs/rust-sql`: store-scoped database packs; each activates once for Main and once for Operations. `packs/rust-catalog` owns the stable shared Rust catalogue. `database:assignments` audits compiled canonical placement without namespace lists in usage.
@@ -106,7 +106,8 @@ Without `TEST_DATABASE_URL` the PostgreSQL suites are skipped and the generated 
 ## Canonical Main and Operations setup
 
 Both stores are declared by `contracts/apps/database/index.ts`. Persisted groups under
-`contracts/schemas/mzizi` select `main`; those under `operational` select `operations`. The schema
+`contracts/schemas/postgres` select their store through the storage facet on each group (`main` or, until
+the Operations store is removed, `operations`; see DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115). Mongo document contracts will live in `contracts/schemas/mongo`. The schema
 storage facet can override its group default explicitly. Namespace and table remain separate.
 The database app declares read/write access to both stores and explicitly provides six
 named operations from `reference.ts`, `filesystem.ts` and `auth.ts`. Non-persisted Accountability view models have no store/table.

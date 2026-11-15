@@ -10,7 +10,7 @@ extra: {status: implemented_and_checked, synthetic_fixtures_only: true, migratio
 
 ## Current contract files
 
-The authorized contracts are in the existing six files: [Official](../../dryv/contracts/schemas/mzizi/official.ts), [Governance](../../dryv/contracts/schemas/mzizi/governance.ts), [Politics](../../dryv/contracts/schemas/mzizi/politics.ts), [Civic](../../dryv/contracts/schemas/mzizi/civic.ts), [Finance](../../dryv/contracts/schemas/mzizi/finance.ts) and [Accountability](../../dryv/contracts/schemas/mzizi/accountability.ts). The database application composes the ten persisted Main groups and a non-storage Accountability group; the namespace mapping keeps Main separate from the seven Operations groups.
+The authorized contracts are in the existing six files: [Official](../../dryv/contracts/schemas/postgres/official.ts), [Governance](../../dryv/contracts/schemas/postgres/governance.ts), [Politics](../../dryv/contracts/schemas/postgres/politics.ts), [Civic](../../dryv/contracts/schemas/postgres/civic.ts), [Finance](../../dryv/contracts/schemas/postgres/finance.ts) and [Accountability](../../dryv/contracts/schemas/postgres/accountability.ts). The database application composes the ten persisted Main groups and a non-storage Accountability group; the namespace mapping keeps Main separate from the seven Operations groups.
 
 Accountability defines `budget_execution`, `procurement_performance`, `project_performance`, `service_coverage`, `institutional_performance`, `promise_progress` and `oversight_signals` as intended read-only outputs. The current Dryv app has no aggregate-query executor, so these names describe analytical products rather than callable database operations.
 
