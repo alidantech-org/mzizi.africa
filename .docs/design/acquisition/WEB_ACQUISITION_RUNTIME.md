@@ -68,7 +68,7 @@ Each result records the expected and observed evidence in `coverage.json`. The C
 
 ## Rendered media inventory
 
-Use `--rendered-media --render browser` with `web markdown`, `web crawl` or `web sections`. Each observed browser view records computed CSS backgrounds, pseudo-element backgrounds, selected images, declared lazy sources, and picture or responsive candidates. References carry their selector, visibility and, when available, label and nearby item URL. Crawls include the references in their link and image inventories. Markdown links visible backgrounds and selected images. Section reports link their media sidecars and augment each view's references.
+Use `--rendered-media --render browser` with `web markdown`, `web crawl` or `web sections`. Each observed browser view records computed CSS backgrounds, pseudo-element backgrounds, selected images, declared lazy sources, and picture or responsive candidates. References carry their selector, visibility and, when available, label and nearby item URL. In auto mode, a browser startup failure or missing browser response preserves the successful HTTP capture and is recorded as `browser_unavailable` in listing evidence. If rendered media was requested, it also counts as a media gap. Browser refusals and access challenges are preserved. Crawls include the references in their link and image inventories. Markdown links visible backgrounds and selected images. Section reports link their media sidecars and augment each view's references.
 
 The scan covers the top-level DOM and reports its 20,000-element cap. Page and crawl captures scroll up to six declared lazy image targets per view and report the number attempted. Section captures inspect the current panel. Uninspected frame documents and open shadow roots are counted as media gaps. Resource fetches needed by the browser may occur. The acquisition pass cancels browser downloads and saves image URLs as evidence. It cannot establish that a referenced asset loaded successfully or capture assets that exist only inside network activity, shadow roots or frames.
 
@@ -110,7 +110,7 @@ Engine-built records live in MongoDB (`mzizi_engine.activity`): crawl rows (`cra
 
 ## Crawl outputs
 
-`mzizi web crawl` writes, in the run folder: `pages`, `paths`, `links`, `internal_urls`, `external_urls`, `external_hosts`, `images`, `documents`, `files`, `media`, `errors` (each as CSV and JSON; JSON Lines with `--jsonl`), plus `summary.json`, `site_tree.json`, `blocks.json`, `policy_audit.json`, `provenance.jsonl`, `raw/`, `markdown/` and `state.json`. Rows are sorted by their columns, so equal inputs give equal files. `mzizi web resume FOLDER` continues from `state.json`; the state is bound to a digest of the crawl's scope.
+`mzizi web crawl` writes, in the run folder: `pages`, `paths`, `links`, `internal_urls`, `external_urls`, `external_hosts`, `images`, `documents`, `files`, `media`, `errors` (each as CSV and JSON; JSON Lines with `--jsonl`), plus `summary.json`, `site_tree.json`, `blocks.json`, `policy_audit.json`, `provenance.jsonl`, `raw/`, `markdown/` and `state.json`. Crawl discovery reuses one parsed HTML tree for page metadata, pagination discovery and contextual references. The raw capture is preserved for replay. Rows are sorted by their columns, so equal inputs give equal files. `mzizi web resume FOLDER` continues from `state.json`; the state is bound to a digest of the crawl's scope.
 
 ## Not implemented
 
