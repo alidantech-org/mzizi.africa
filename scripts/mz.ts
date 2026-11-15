@@ -151,10 +151,6 @@ export const commands: Record<string, Command> = {
     run: ({ rest }) => dryv.database("verify", rest),
   },
   "dryv:verify": { summary: "fail when the generated output is not current", run: () => dryv.verify() },
-  "dryv:export": {
-    summary: "re-export access rules and JSON schema from the contracts",
-    run: () => group("dryv:export", dryv.exportSteps()),
-  },
   catalog: {
     summary: "regenerate the web data catalog from the API list routes",
     run: () => group("catalog", dryv.catalogSteps()),

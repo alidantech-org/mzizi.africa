@@ -33,7 +33,6 @@
     "dryv:api:stop": "bun scripts/mz.ts dryv:api:stop",
     "dryv:generate": "bun scripts/mz.ts dryv:generate",
     "dryv:verify": "bun scripts/mz.ts dryv:verify",
-    "dryv:export": "bun scripts/mz.ts dryv:export",
     "catalog": "bun scripts/mz.ts catalog",
     "db:up": "bun scripts/mz.ts db:up",
     "db:down": "bun scripts/mz.ts db:down",

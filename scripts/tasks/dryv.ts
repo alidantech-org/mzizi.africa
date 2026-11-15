@@ -47,12 +47,6 @@ export const linkSteps = (): Step[] => [inDryv("Link local Dryv checkout", "link
 /** Typecheck, audit, doctor and compile the contracts, and check the exported access rules, API boundary and schema. */
 export const checkSteps = (): Step[] => [inDryv("Contract checks", "check")];
 
-/** Re-export the access rules and the JSON schema derived from the contracts. */
-export const exportSteps = (): Step[] => [
-  inDryv("Export access rules", "access:export"),
-  inDryv("Export JSON schema", "schema:export"),
-];
-
 /** Regenerate the web dashboard's data catalog from the generated API list routes. */
 export const catalogSteps = (): Step[] => [step("Web data catalog", at("source/apps/web"), ["bun", "run", "catalog"])];
 
@@ -123,7 +117,7 @@ export async function database(action: "plan" | "generate" | "verify", selectors
       "--no-input",
       action === "verify" ? "generate" : action,
       "--app",
-      "database",
+      "pgsql",
       ...selectors,
     ];
     if (action === "verify") args.push("--check");

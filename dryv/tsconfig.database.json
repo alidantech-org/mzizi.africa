@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["contracts/apps/database/**/*.ts", "contracts/schemas/**/*.ts"]
+  "include": ["contracts/apps/**/*.ts", "contracts/schemas/**/*.ts"]
 }

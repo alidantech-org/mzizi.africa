@@ -60,12 +60,12 @@ const finance = await Bun.file(join(contracts, "finance.ts")).text();
 if (/storage\("units"\)/.test(finance)) problems.push("Finance must not own measurement/geographic units");
 if (!finance.includes("AmountMinorUnits") || !finance.includes("currencyId"))
   problems.push("Finance must retain exact currency-minor-unit amounts and a currency FK");
-const app = await Bun.file(join(root, "contracts/apps/database/index.ts")).text();
+const app = await Bun.file(join(root, "contracts/apps/pgsql/index.ts")).text();
 for (const schema of [...Object.keys(expected), "geography", "legal", "source", "filesystem"]) {
-  if (!app.includes(`import { ${schema} }`)) problems.push(`database app does not explicitly import ${schema}`);
+  if (!app.includes(`import { ${schema} }`)) problems.push(`pgsql app does not explicitly import ${schema}`);
 }
 if (!app.includes('import { reference } from "#/schemas/postgres/reference.ts"'))
-  problems.push("database app does not import the persisted Reference group");
+  problems.push("pgsql app does not import the persisted Reference group");
 if (problems.length) {
   console.error(`Main domain contract audit failed:\n- ${problems.join("\n- ")}`);
   process.exit(1);

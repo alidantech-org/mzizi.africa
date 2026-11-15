@@ -7,7 +7,7 @@ import { parseStoreAssignments } from "./stores/parse.ts";
 const root = join(import.meta.dir, "..");
 const compiled = spawnSync(
   "bun",
-  [join(root, "node_modules/@dryvcode/compiler/dist/bin/dryv-ts.js"), "compile", "contracts/apps/database/index.ts"],
+  [join(root, "node_modules/@dryvcode/compiler/dist/bin/dryv-ts.js"), "compile", "contracts/apps/pgsql/index.ts"],
   {
     cwd: root,
     encoding: "utf8",

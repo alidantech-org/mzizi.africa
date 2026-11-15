@@ -18,3 +18,7 @@ The register lists fourteen gaps with evidence: no change-aware SQL, no Mongo dr
 - [ ] Geometry storage works end to end, or the decision to defer it is recorded with its consequences.
 - [ ] A reproducible generation procedure for a new machine is documented and tried once from a clean checkout.
 - [ ] `bun run dryv:database:verify` passes after the changes.
+
+## Notes
+
+On 15 November 2026 the API and engine contracts were authored (apps/api: auth, reference, geography, governance; apps/engine: jobs) as flat files, one per group, with Dryv queries, schema.fromQuery rows and policy stubs. The database app was replaced by a dedicated pgsql app for SQL generation. Stale tools were removed from dryv/tools. Gaps 15 to 24 were added to DRYV_GAPS; gaps 18 to 21 block five of the nine API queries from passing engine validation (the author compiler accepts them).

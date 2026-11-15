@@ -33,7 +33,6 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 | `bun run dryv:check`                      | typechecks, audits, doctors and compiles the contracts; checks access rules, API boundary and schema                                             |
 | `bun run dryv:generate`                   | generates the database SQL snapshot from the current contracts                         |
 | `bun run dryv:verify`                     | fails when the tracked generated output is not what the contracts generate now                                                                   |
-| `bun run dryv:export`                     | re-exports the access rules and the JSON schema                                                                                                  |
 | `bun run dryv:api` / `dryv:api:stop`      | runs or stops the local Dryv engine API by hand                                                                                                  |
 | `bun scripts/mz.ts dryv:trust`            | trusts the project packs (once per machine)                                                                                                      |
 | `bun run catalog`                         | regenerates the dashboard's data catalog from the API list routes                                                                                |
