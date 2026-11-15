@@ -53,6 +53,7 @@ A Postgres record links back to staging with a soft reference (collection, docum
 
 | Command | Does |
 |---|---|
+| `bun run db format [--check]` | Formats generated SQL (sql-formatter, PostgreSQL dialect); a Dryv action runs it after every generation, so the committed snapshot is always formatted |
 | `bun run db assemble` | Turns `sql/schema.sql` into `migrations/0001_init.sql` plus a `.snapshot` checksum; refuses a changed snapshot |
 | `bun run db plan` / `status` / `verify` | Lists pending releases, shows state, checks checksums and database identity |
 | `bun run db migrate` | Applies pending releases under an advisory lock, each in one transaction with its ledger row |

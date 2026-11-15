@@ -1,10 +1,13 @@
 #!/usr/bin/env bun
 /** `bun run db <command>`: administration of the single Mzizi PostgreSQL database. */
 import { assemble, migrate, plan, roles, status, verify } from "./commands.ts";
+import { paths } from "./config.ts";
+import { formatFile } from "./format.ts";
 
 const USAGE = `usage: bun run db <command>
 
 commands:
+  format    format generated SQL in place; format [--check] [file...] (default: the snapshot; no database access)
   assemble  turn the generated schema snapshot into the immutable release stream (no database access)
   status    show applied and pending releases
   plan      list pending releases and verify checksums without applying anything
@@ -23,9 +26,20 @@ function print(output: string | string[]): void {
   console.log(Array.isArray(output) ? output.join("\n") : output);
 }
 
+function format(args: string[]): number {
+  const check = args.includes("--check");
+  const files = args.filter((arg) => !arg.startsWith("--"));
+  const targets = files.length > 0 ? files : [paths().snapshot];
+  const changed = targets.map((file) => formatFile(file, check)).filter((result) => result.changed);
+  for (const result of changed) console.log(`${check ? "needs formatting" : "formatted"}: ${result.path}`);
+  return check && changed.length > 0 ? 1 : 0;
+}
+
 async function main(argv: string[]): Promise<number> {
   const [command] = argv;
   switch (command) {
+    case "format":
+      return format(argv.slice(1));
     case "assemble":
       print(assemble());
       return 0;

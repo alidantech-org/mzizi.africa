@@ -128,7 +128,7 @@ bun run dryv:database:generate -- --store main
 bun run dryv:database:verify
 ```
 
-Generation writes one file, `source/backend/database/sql/schema.sql`. The Bun CLI (`bun run db assemble`)
+Generation writes one file, `source/backend/database/sql/schema.sql`, and the `format-sql` action in `dryv.yaml` formats it with the database CLI before it is written (`bun run db format`). Regenerating over a snapshot that was formatted by hand needs `--conflicts overwrite` once. The Bun CLI (`bun run db assemble`)
 turns it into the immutable release stream under `source/backend/database/migrations`.
 
 Dryv checkpoints are local by default. After actual successful generation/checks, use the local

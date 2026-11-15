@@ -3,7 +3,7 @@
 `source/backend/database` is where the single PostgreSQL database `mzizi` is defined and administered. It is not a service: there is no server process. The Python engine and the NestJS API connect to PostgreSQL directly with their own roles. Design and rules: [DATABASE_ARCHITECTURE](../../../.docs/design/data/DATABASE_ARCHITECTURE.md); owner decision: [DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115](../../../.docs/decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md).
 
 ```text
-sql/schema.sql        generated schema snapshot (Dryv pack postgres-sql); never edited by hand
+sql/schema.sql        generated, formatted schema snapshot (Dryv pack postgres-sql + `db format`); never edited by hand
 migrations/           immutable release stream: 0001_init.sql plus the .snapshot checksum record
 src/                  the Bun CLI: cli.ts, commands.ts, ledger.ts, releases.ts, config.ts (+ tests)
 package.json          bun run db | typecheck | test
@@ -17,6 +17,7 @@ Run from the repository root (`bun run db <command>`) or from this folder.
 
 | Command | Needs the database | Does |
 |---|---|---|
+| `format [--check] [file…]` | no | Formats generated SQL with sql-formatter (the snapshot by default); `--check` only reports. Dryv runs it automatically after generation |
 | `assemble` | no | Turns `sql/schema.sql` into `migrations/0001_init.sql` and records its checksum; refuses a changed snapshot |
 | `plan` | yes | Lists pending releases and verifies checksums without applying anything |
 | `status` | yes | Shows applied and pending releases |

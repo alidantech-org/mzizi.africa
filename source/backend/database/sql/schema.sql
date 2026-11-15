@@ -2,7 +2,6 @@
 -- database: mzizi
 CREATE EXTENSION IF NOT EXISTS btree_gist;
 
-
 CREATE SCHEMA "audit";
 
 CREATE SCHEMA "auth";
@@ -26,7 +25,6 @@ CREATE SCHEMA "politics";
 CREATE SCHEMA "reference";
 
 CREATE SCHEMA "source";
-
 
 CREATE TABLE "audit"."decisions" (
     "actor_id" uuid,
@@ -289,7 +287,13 @@ CREATE TABLE "civic"."projects" (
     "status_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_projects_project_dates_are_ordered" CHECK ((("started_on" IS NULL) OR ("completed_on" IS NULL) OR ("started_on" <= "completed_on"))),
+    CONSTRAINT "chk_projects_project_dates_are_ordered" CHECK (
+        (
+            ("started_on" IS NULL)
+            OR ("completed_on" IS NULL)
+            OR ("started_on" <= "completed_on")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -310,8 +314,19 @@ CREATE TABLE "civic"."services" (
     "starts_on" date,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_services_has_place_or_coverage" CHECK ((("place_feature_id" IS NOT NULL) OR ("scope_unit_feature_id" IS NOT NULL))),
-    CONSTRAINT "chk_services_service_dates_are_ordered" CHECK ((("starts_on" IS NULL) OR ("ends_on" IS NULL) OR ("starts_on" <= "ends_on"))),
+    CONSTRAINT "chk_services_has_place_or_coverage" CHECK (
+        (
+            ("place_feature_id" IS NOT NULL)
+            OR ("scope_unit_feature_id" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_services_service_dates_are_ordered" CHECK (
+        (
+            ("starts_on" IS NULL)
+            OR ("ends_on" IS NULL)
+            OR ("starts_on" <= "ends_on")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -403,7 +418,18 @@ CREATE TABLE "filesystem"."taggings" (
     "tag_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_taggings_exactly_one_target" CHECK (((("file_id" IS NOT NULL) AND ("folder_id" IS NULL)) OR (("file_id" IS NULL) AND ("folder_id" IS NOT NULL)))),
+    CONSTRAINT "chk_taggings_exactly_one_target" CHECK (
+        (
+            (
+                ("file_id" IS NOT NULL)
+                AND ("folder_id" IS NULL)
+            )
+            OR (
+                ("file_id" IS NULL)
+                AND ("folder_id" IS NOT NULL)
+            )
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -568,7 +594,12 @@ CREATE TABLE "geography"."datasets" (
     "title" varchar(255) NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_datasets_dataset_resolution_must_be_positive" CHECK ((("resolution" IS NULL) OR ("resolution" > 0))),
+    CONSTRAINT "chk_datasets_dataset_resolution_must_be_positive" CHECK (
+        (
+            ("resolution" IS NULL)
+            OR ("resolution" > 0)
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -597,7 +628,13 @@ CREATE TABLE "geography"."geometries" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_geometries_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_geometries_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -628,7 +665,13 @@ CREATE TABLE "geography"."names" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_names_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_names_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -651,7 +694,13 @@ CREATE TABLE "geography"."relationships" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_relationships_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_relationships_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     CONSTRAINT "chk_relationships_relationship_must_not_be_self_referential" CHECK (("subject_feature_id" <> "object_feature_id")),
     PRIMARY KEY ("id")
 );
@@ -661,7 +710,13 @@ CREATE TABLE "geography"."units" (
     "feature_id" uuid NOT NULL,
     "valid_from" date,
     "valid_until" date,
-    CONSTRAINT "chk_units_effective_window_must_be_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_units_effective_window_must_be_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("feature_id")
 );
 
@@ -679,7 +734,13 @@ CREATE TABLE "governance"."authority_scopes" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_authority_scopes_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_authority_scopes_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -696,7 +757,13 @@ CREATE TABLE "governance"."holders" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_holders_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_holders_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -712,7 +779,13 @@ CREATE TABLE "governance"."institutions" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_institutions_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_institutions_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -729,7 +802,13 @@ CREATE TABLE "governance"."mandates" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_mandates_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_mandates_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -746,7 +825,13 @@ CREATE TABLE "governance"."offices" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_offices_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_offices_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -762,8 +847,18 @@ CREATE TABLE "governance"."relationships" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_relationships_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
-    CONSTRAINT "chk_relationships_relationship_is_not_self_referential" CHECK (("subject_institution_id" <> "object_institution_id")),
+    CONSTRAINT "chk_relationships_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
+    CONSTRAINT "chk_relationships_relationship_is_not_self_referential" CHECK (
+        (
+            "subject_institution_id" <> "object_institution_id"
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -835,7 +930,13 @@ CREATE TABLE "legal"."provision_versions" (
     "text_hash" char(64) NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_provision_versions_effective_window_is_ordered" CHECK ((("effective_from" IS NULL) OR ("effective_until" IS NULL) OR ("effective_from" < "effective_until"))),
+    CONSTRAINT "chk_provision_versions_effective_window_is_ordered" CHECK (
+        (
+            ("effective_from" IS NULL)
+            OR ("effective_until" IS NULL)
+            OR ("effective_from" < "effective_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -867,8 +968,25 @@ CREATE TABLE "official"."contacts" (
     "value" varchar(1000) NOT NULL,
     "version" integer NOT NULL,
     "visibility_id" uuid NOT NULL,
-    CONSTRAINT "chk_contacts_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
-    CONSTRAINT "chk_contacts_has_exactly_one_identity_owner" CHECK (((("entity_id" IS NOT NULL) AND ("individual_id" IS NULL)) OR (("entity_id" IS NULL) AND ("individual_id" IS NOT NULL)))),
+    CONSTRAINT "chk_contacts_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
+    CONSTRAINT "chk_contacts_has_exactly_one_identity_owner" CHECK (
+        (
+            (
+                ("entity_id" IS NOT NULL)
+                AND ("individual_id" IS NULL)
+            )
+            OR (
+                ("entity_id" IS NULL)
+                AND ("individual_id" IS NOT NULL)
+            )
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -884,7 +1002,13 @@ CREATE TABLE "official"."entities" (
     "source_citation_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_entities_registration_and_dissolution_are_ordered" CHECK ((("registered_on" IS NULL) OR ("dissolved_on" IS NULL) OR ("registered_on" <= "dissolved_on"))),
+    CONSTRAINT "chk_entities_registration_and_dissolution_are_ordered" CHECK (
+        (
+            ("registered_on" IS NULL)
+            OR ("dissolved_on" IS NULL)
+            OR ("registered_on" <= "dissolved_on")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -903,8 +1027,25 @@ CREATE TABLE "official"."identifiers" (
     "valid_until" date,
     "value" varchar(1000) NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_identifiers_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
-    CONSTRAINT "chk_identifiers_has_exactly_one_identity_owner" CHECK (((("entity_id" IS NOT NULL) AND ("individual_id" IS NULL)) OR (("entity_id" IS NULL) AND ("individual_id" IS NOT NULL)))),
+    CONSTRAINT "chk_identifiers_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
+    CONSTRAINT "chk_identifiers_has_exactly_one_identity_owner" CHECK (
+        (
+            (
+                ("entity_id" IS NOT NULL)
+                AND ("individual_id" IS NULL)
+            )
+            OR (
+                ("entity_id" IS NULL)
+                AND ("individual_id" IS NOT NULL)
+            )
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -936,8 +1077,25 @@ CREATE TABLE "official"."names" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_names_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
-    CONSTRAINT "chk_names_has_exactly_one_identity_owner" CHECK (((("entity_id" IS NOT NULL) AND ("individual_id" IS NULL)) OR (("entity_id" IS NULL) AND ("individual_id" IS NOT NULL)))),
+    CONSTRAINT "chk_names_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
+    CONSTRAINT "chk_names_has_exactly_one_identity_owner" CHECK (
+        (
+            (
+                ("entity_id" IS NOT NULL)
+                AND ("individual_id" IS NULL)
+            )
+            OR (
+                ("entity_id" IS NULL)
+                AND ("individual_id" IS NOT NULL)
+            )
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -956,10 +1114,43 @@ CREATE TABLE "official"."relationships" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_relationships_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
-    CONSTRAINT "chk_relationships_has_exactly_one_from_identity" CHECK (((("from_entity_id" IS NOT NULL) AND ("from_individual_id" IS NULL)) OR (("from_entity_id" IS NULL) AND ("from_individual_id" IS NOT NULL)))),
-    CONSTRAINT "chk_relationships_has_exactly_one_to_identity" CHECK (((("to_entity_id" IS NOT NULL) AND ("to_individual_id" IS NULL)) OR (("to_entity_id" IS NULL) AND ("to_individual_id" IS NOT NULL)))),
-    CONSTRAINT "chk_relationships_does_not_link_identity_to_itself" CHECK ((("from_entity_id" <> "to_entity_id") AND ("from_individual_id" <> "to_individual_id"))),
+    CONSTRAINT "chk_relationships_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
+    CONSTRAINT "chk_relationships_has_exactly_one_from_identity" CHECK (
+        (
+            (
+                ("from_entity_id" IS NOT NULL)
+                AND ("from_individual_id" IS NULL)
+            )
+            OR (
+                ("from_entity_id" IS NULL)
+                AND ("from_individual_id" IS NOT NULL)
+            )
+        )
+    ),
+    CONSTRAINT "chk_relationships_has_exactly_one_to_identity" CHECK (
+        (
+            (
+                ("to_entity_id" IS NOT NULL)
+                AND ("to_individual_id" IS NULL)
+            )
+            OR (
+                ("to_entity_id" IS NULL)
+                AND ("to_individual_id" IS NOT NULL)
+            )
+        )
+    ),
+    CONSTRAINT "chk_relationships_does_not_link_identity_to_itself" CHECK (
+        (
+            ("from_entity_id" <> "to_entity_id")
+            AND ("from_individual_id" <> "to_individual_id")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -975,7 +1166,13 @@ CREATE TABLE "politics"."alignments" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_alignments_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_alignments_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -1006,7 +1203,13 @@ CREATE TABLE "politics"."coalitions" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_coalitions_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_coalitions_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -1097,7 +1300,13 @@ CREATE TABLE "politics"."memberships" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_memberships_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_memberships_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -1127,7 +1336,13 @@ CREATE TABLE "politics"."parties" (
     "valid_from" date,
     "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_parties_validity_window_is_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_parties_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -1246,7 +1461,13 @@ CREATE TABLE "reference"."value_relations" (
     "valid_from" date,
     "valid_until" date,
     CONSTRAINT "chk_value_relations_value_relation_must_not_be_self_referential" CHECK (("source_value_id" <> "target_value_id")),
-    CONSTRAINT "chk_value_relations_value_relation_window_must_be_ordered" CHECK ((("valid_from" IS NULL) OR ("valid_until" IS NULL) OR ("valid_from" < "valid_until"))),
+    CONSTRAINT "chk_value_relations_value_relation_window_must_be_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -1355,7 +1576,13 @@ CREATE TABLE "source"."manifest_bindings" (
     "source_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_manifest_bindings_effective_window_is_ordered" CHECK ((("effective_from" IS NULL) OR ("effective_until" IS NULL) OR ("effective_from" < "effective_until"))),
+    CONSTRAINT "chk_manifest_bindings_effective_window_is_ordered" CHECK (
+        (
+            ("effective_from" IS NULL)
+            OR ("effective_until" IS NULL)
+            OR ("effective_from" < "effective_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -1377,7 +1604,13 @@ CREATE TABLE "source"."manifest_releases" (
     "status" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_manifest_releases_effective_window_is_ordered" CHECK ((("effective_from" IS NULL) OR ("effective_until" IS NULL) OR ("effective_from" < "effective_until"))),
+    CONSTRAINT "chk_manifest_releases_effective_window_is_ordered" CHECK (
+        (
+            ("effective_from" IS NULL)
+            OR ("effective_until" IS NULL)
+            OR ("effective_from" < "effective_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -1468,153 +1701,390 @@ CREATE TABLE "source"."websites" (
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
 );
-ALTER TABLE "audit"."decisions" ADD CONSTRAINT "fk_decisions_actor_id" FOREIGN KEY ("actor_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "audit"."decisions" ADD CONSTRAINT "fk_decisions_event_id" FOREIGN KEY ("event_id") REFERENCES "audit"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "audit"."decisions"
+ADD CONSTRAINT "fk_decisions_actor_id" FOREIGN KEY ("actor_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "audit"."decisions"
+ADD CONSTRAINT "fk_decisions_event_id" FOREIGN KEY ("event_id") REFERENCES "audit"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_decisions__actor_id" ON "audit"."decisions" ("actor_id");
+
 CREATE INDEX "ix_decisions__event_id" ON "audit"."decisions" ("event_id");
-ALTER TABLE "audit"."events" ADD CONSTRAINT "fk_events_actor_id" FOREIGN KEY ("actor_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "audit"."events"
+ADD CONSTRAINT "fk_events_actor_id" FOREIGN KEY ("actor_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_events__actor_id" ON "audit"."events" ("actor_id");
+
 CREATE UNIQUE INDEX "uq_events__event_hash" ON "audit"."events" ("event_hash");
+
 CREATE INDEX "ix_events__recorded_at" ON "audit"."events" ("recorded_at");
+
 CREATE INDEX "ix_events__target_kind_target_id" ON "audit"."events" ("target_kind", "target_id");
-ALTER TABLE "auth"."delegation_roles" ADD CONSTRAINT "fk_delegation_roles_delegation_id" FOREIGN KEY ("delegation_id") REFERENCES "auth"."delegations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."delegation_roles" ADD CONSTRAINT "fk_delegation_roles_role_id" FOREIGN KEY ("role_id") REFERENCES "auth"."roles" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."delegation_roles"
+ADD CONSTRAINT "fk_delegation_roles_delegation_id" FOREIGN KEY ("delegation_id") REFERENCES "auth"."delegations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."delegation_roles"
+ADD CONSTRAINT "fk_delegation_roles_role_id" FOREIGN KEY ("role_id") REFERENCES "auth"."roles" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_delegation_roles__role_id" ON "auth"."delegation_roles" ("role_id");
-ALTER TABLE "auth"."delegations" ADD CONSTRAINT "fk_delegations_delegate_account_id" FOREIGN KEY ("delegate_account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."delegations" ADD CONSTRAINT "fk_delegations_delegator_account_id" FOREIGN KEY ("delegator_account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."delegations" ADD CONSTRAINT "fk_delegations_revoked_by" FOREIGN KEY ("revoked_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."delegations" ADD CONSTRAINT "fk_delegations_scope_id" FOREIGN KEY ("scope_id") REFERENCES "auth"."scopes" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."delegations"
+ADD CONSTRAINT "fk_delegations_delegate_account_id" FOREIGN KEY ("delegate_account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."delegations"
+ADD CONSTRAINT "fk_delegations_delegator_account_id" FOREIGN KEY ("delegator_account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."delegations"
+ADD CONSTRAINT "fk_delegations_revoked_by" FOREIGN KEY ("revoked_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."delegations"
+ADD CONSTRAINT "fk_delegations_scope_id" FOREIGN KEY ("scope_id") REFERENCES "auth"."scopes" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_delegations__delegator_account_id" ON "auth"."delegations" ("delegator_account_id");
+
 CREATE INDEX "ix_delegations__delegate_account_id" ON "auth"."delegations" ("delegate_account_id");
+
 CREATE INDEX "ix_delegations__revoked_by" ON "auth"."delegations" ("revoked_by");
+
 CREATE INDEX "ix_delegations__scope_id" ON "auth"."delegations" ("scope_id");
-ALTER TABLE "auth"."invitations" ADD CONSTRAINT "fk_invitations_accepted_account_id" FOREIGN KEY ("accepted_account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."invitations" ADD CONSTRAINT "fk_invitations_invited_by" FOREIGN KEY ("invited_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."invitations"
+ADD CONSTRAINT "fk_invitations_accepted_account_id" FOREIGN KEY ("accepted_account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."invitations"
+ADD CONSTRAINT "fk_invitations_invited_by" FOREIGN KEY ("invited_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_invitations__invited_by" ON "auth"."invitations" ("invited_by");
+
 CREATE INDEX "ix_invitations__accepted_account_id" ON "auth"."invitations" ("accepted_account_id");
+
 CREATE UNIQUE INDEX "uq_invitations__token_digest" ON "auth"."invitations" ("token_digest");
-ALTER TABLE "auth"."login_identities" ADD CONSTRAINT "fk_login_identities_account_id" FOREIGN KEY ("account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."login_identities"
+ADD CONSTRAINT "fk_login_identities_account_id" FOREIGN KEY ("account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_login_identities__account_id" ON "auth"."login_identities" ("account_id");
+
 CREATE UNIQUE INDEX "uq_login_identities__issuer_subject" ON "auth"."login_identities" ("issuer", "subject");
-ALTER TABLE "auth"."memberships" ADD CONSTRAINT "fk_memberships_account_id" FOREIGN KEY ("account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."memberships" ADD CONSTRAINT "fk_memberships_revoked_by" FOREIGN KEY ("revoked_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."memberships" ADD CONSTRAINT "fk_memberships_verified_by" FOREIGN KEY ("verified_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."memberships"
+ADD CONSTRAINT "fk_memberships_account_id" FOREIGN KEY ("account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."memberships"
+ADD CONSTRAINT "fk_memberships_revoked_by" FOREIGN KEY ("revoked_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."memberships"
+ADD CONSTRAINT "fk_memberships_verified_by" FOREIGN KEY ("verified_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_memberships__verified_by" ON "auth"."memberships" ("verified_by");
+
 CREATE INDEX "ix_memberships__revoked_by" ON "auth"."memberships" ("revoked_by");
+
 CREATE INDEX "ix_memberships__account_id" ON "auth"."memberships" ("account_id");
+
 CREATE UNIQUE INDEX "uq_permissions__code" ON "auth"."permissions" ("code");
-ALTER TABLE "auth"."role_assignments" ADD CONSTRAINT "fk_role_assignments_account_id" FOREIGN KEY ("account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."role_assignments" ADD CONSTRAINT "fk_role_assignments_delegation_id" FOREIGN KEY ("delegation_id") REFERENCES "auth"."delegations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."role_assignments" ADD CONSTRAINT "fk_role_assignments_granted_by" FOREIGN KEY ("granted_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."role_assignments" ADD CONSTRAINT "fk_role_assignments_membership_id" FOREIGN KEY ("membership_id") REFERENCES "auth"."memberships" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."role_assignments" ADD CONSTRAINT "fk_role_assignments_revoked_by" FOREIGN KEY ("revoked_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."role_assignments" ADD CONSTRAINT "fk_role_assignments_role_id" FOREIGN KEY ("role_id") REFERENCES "auth"."roles" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."role_assignments" ADD CONSTRAINT "fk_role_assignments_scope_id" FOREIGN KEY ("scope_id") REFERENCES "auth"."scopes" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_assignments"
+ADD CONSTRAINT "fk_role_assignments_account_id" FOREIGN KEY ("account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_assignments"
+ADD CONSTRAINT "fk_role_assignments_delegation_id" FOREIGN KEY ("delegation_id") REFERENCES "auth"."delegations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_assignments"
+ADD CONSTRAINT "fk_role_assignments_granted_by" FOREIGN KEY ("granted_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_assignments"
+ADD CONSTRAINT "fk_role_assignments_membership_id" FOREIGN KEY ("membership_id") REFERENCES "auth"."memberships" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_assignments"
+ADD CONSTRAINT "fk_role_assignments_revoked_by" FOREIGN KEY ("revoked_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_assignments"
+ADD CONSTRAINT "fk_role_assignments_role_id" FOREIGN KEY ("role_id") REFERENCES "auth"."roles" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_assignments"
+ADD CONSTRAINT "fk_role_assignments_scope_id" FOREIGN KEY ("scope_id") REFERENCES "auth"."scopes" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_role_assignments__membership_id" ON "auth"."role_assignments" ("membership_id");
+
 CREATE INDEX "ix_role_assignments__delegation_id" ON "auth"."role_assignments" ("delegation_id");
+
 CREATE INDEX "ix_role_assignments__granted_by" ON "auth"."role_assignments" ("granted_by");
+
 CREATE INDEX "ix_role_assignments__revoked_by" ON "auth"."role_assignments" ("revoked_by");
+
 CREATE INDEX "ix_role_assignments__account_id" ON "auth"."role_assignments" ("account_id");
+
 CREATE INDEX "ix_role_assignments__role_id" ON "auth"."role_assignments" ("role_id");
+
 CREATE INDEX "ix_role_assignments__scope_id" ON "auth"."role_assignments" ("scope_id");
-ALTER TABLE "auth"."role_permissions" ADD CONSTRAINT "fk_role_permissions_granted_by" FOREIGN KEY ("granted_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."role_permissions" ADD CONSTRAINT "fk_role_permissions_permission_id" FOREIGN KEY ("permission_id") REFERENCES "auth"."permissions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "auth"."role_permissions" ADD CONSTRAINT "fk_role_permissions_role_id" FOREIGN KEY ("role_id") REFERENCES "auth"."roles" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_permissions"
+ADD CONSTRAINT "fk_role_permissions_granted_by" FOREIGN KEY ("granted_by") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_permissions"
+ADD CONSTRAINT "fk_role_permissions_permission_id" FOREIGN KEY ("permission_id") REFERENCES "auth"."permissions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "auth"."role_permissions"
+ADD CONSTRAINT "fk_role_permissions_role_id" FOREIGN KEY ("role_id") REFERENCES "auth"."roles" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_role_permissions__permission_id" ON "auth"."role_permissions" ("permission_id");
+
 CREATE INDEX "ix_role_permissions__granted_by" ON "auth"."role_permissions" ("granted_by");
+
 CREATE UNIQUE INDEX "uq_roles__code" ON "auth"."roles" ("code");
+
 CREATE UNIQUE INDEX "uq_scopes__scope_hash" ON "auth"."scopes" ("scope_hash");
-ALTER TABLE "civic"."bids" ADD CONSTRAINT "fk_bids_bidder_entity_id" FOREIGN KEY ("bidder_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."bids" ADD CONSTRAINT "fk_bids_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."bids" ADD CONSTRAINT "fk_bids_outcome_id" FOREIGN KEY ("outcome_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."bids" ADD CONSTRAINT "fk_bids_procurement_id" FOREIGN KEY ("procurement_id") REFERENCES "civic"."procurements" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."bids" ADD CONSTRAINT "fk_bids_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."bids"
+ADD CONSTRAINT "fk_bids_bidder_entity_id" FOREIGN KEY ("bidder_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."bids"
+ADD CONSTRAINT "fk_bids_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."bids"
+ADD CONSTRAINT "fk_bids_outcome_id" FOREIGN KEY ("outcome_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."bids"
+ADD CONSTRAINT "fk_bids_procurement_id" FOREIGN KEY ("procurement_id") REFERENCES "civic"."procurements" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."bids"
+ADD CONSTRAINT "fk_bids_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_bids__procurement_id" ON "civic"."bids" ("procurement_id");
+
 CREATE INDEX "ix_bids__bidder_entity_id" ON "civic"."bids" ("bidder_entity_id");
+
 CREATE INDEX "ix_bids__source_citation_id" ON "civic"."bids" ("source_citation_id");
-ALTER TABLE "civic"."contracts" ADD CONSTRAINT "fk_contracts_contractor_entity_id" FOREIGN KEY ("contractor_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."contracts" ADD CONSTRAINT "fk_contracts_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."contracts" ADD CONSTRAINT "fk_contracts_procurement_id" FOREIGN KEY ("procurement_id") REFERENCES "civic"."procurements" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."contracts" ADD CONSTRAINT "fk_contracts_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."contracts" ADD CONSTRAINT "fk_contracts_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."contracts" ADD CONSTRAINT "fk_contracts_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."contracts"
+ADD CONSTRAINT "fk_contracts_contractor_entity_id" FOREIGN KEY ("contractor_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."contracts"
+ADD CONSTRAINT "fk_contracts_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."contracts"
+ADD CONSTRAINT "fk_contracts_procurement_id" FOREIGN KEY ("procurement_id") REFERENCES "civic"."procurements" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."contracts"
+ADD CONSTRAINT "fk_contracts_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."contracts"
+ADD CONSTRAINT "fk_contracts_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."contracts"
+ADD CONSTRAINT "fk_contracts_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_contracts__procurement_id" ON "civic"."contracts" ("procurement_id");
+
 CREATE INDEX "ix_contracts__project_id" ON "civic"."contracts" ("project_id");
+
 CREATE INDEX "ix_contracts__source_citation_id" ON "civic"."contracts" ("source_citation_id");
-ALTER TABLE "civic"."deliveries" ADD CONSTRAINT "fk_deliveries_contract_id" FOREIGN KEY ("contract_id") REFERENCES "civic"."contracts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."deliveries" ADD CONSTRAINT "fk_deliveries_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."deliveries" ADD CONSTRAINT "fk_deliveries_delivery_kind_id" FOREIGN KEY ("delivery_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."deliveries" ADD CONSTRAINT "fk_deliveries_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."deliveries" ADD CONSTRAINT "fk_deliveries_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."deliveries"
+ADD CONSTRAINT "fk_deliveries_contract_id" FOREIGN KEY ("contract_id") REFERENCES "civic"."contracts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."deliveries"
+ADD CONSTRAINT "fk_deliveries_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."deliveries"
+ADD CONSTRAINT "fk_deliveries_delivery_kind_id" FOREIGN KEY ("delivery_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."deliveries"
+ADD CONSTRAINT "fk_deliveries_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."deliveries"
+ADD CONSTRAINT "fk_deliveries_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_deliveries__contract_id_delivered_on" ON "civic"."deliveries" ("contract_id", "delivered_on");
+
 CREATE INDEX "ix_deliveries__unit_feature_id" ON "civic"."deliveries" ("unit_feature_id");
+
 CREATE INDEX "ix_deliveries__source_citation_id" ON "civic"."deliveries" ("source_citation_id");
-ALTER TABLE "civic"."procurements" ADD CONSTRAINT "fk_procurements_buyer_entity_id" FOREIGN KEY ("buyer_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."procurements" ADD CONSTRAINT "fk_procurements_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."procurements" ADD CONSTRAINT "fk_procurements_procedure_kind_id" FOREIGN KEY ("procedure_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."procurements" ADD CONSTRAINT "fk_procurements_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."procurements" ADD CONSTRAINT "fk_procurements_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_procurements__code" ON "civic"."procurements" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "civic"."procurements"
+ADD CONSTRAINT "fk_procurements_buyer_entity_id" FOREIGN KEY ("buyer_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."procurements"
+ADD CONSTRAINT "fk_procurements_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."procurements"
+ADD CONSTRAINT "fk_procurements_procedure_kind_id" FOREIGN KEY ("procedure_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."procurements"
+ADD CONSTRAINT "fk_procurements_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."procurements"
+ADD CONSTRAINT "fk_procurements_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_procurements__code" ON "civic"."procurements" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_procurements__buyer_entity_id" ON "civic"."procurements" ("buyer_entity_id");
+
 CREATE INDEX "ix_procurements__source_citation_id" ON "civic"."procurements" ("source_citation_id");
-ALTER TABLE "civic"."project_features" ADD CONSTRAINT "fk_project_features_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."project_features" ADD CONSTRAINT "fk_project_features_feature_kind_id" FOREIGN KEY ("feature_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."project_features" ADD CONSTRAINT "fk_project_features_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."project_features" ADD CONSTRAINT "fk_project_features_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."project_features"
+ADD CONSTRAINT "fk_project_features_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."project_features"
+ADD CONSTRAINT "fk_project_features_feature_kind_id" FOREIGN KEY ("feature_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."project_features"
+ADD CONSTRAINT "fk_project_features_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."project_features"
+ADD CONSTRAINT "fk_project_features_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_project_features__project_id_feature_id_feature_kind_id" ON "civic"."project_features" ("project_id", "feature_id", "feature_kind_id");
+
 CREATE INDEX "ix_project_features__feature_id" ON "civic"."project_features" ("feature_id");
+
 CREATE INDEX "ix_project_features__source_citation_id" ON "civic"."project_features" ("source_citation_id");
-ALTER TABLE "civic"."projects" ADD CONSTRAINT "fk_projects_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."projects" ADD CONSTRAINT "fk_projects_implementing_entity_id" FOREIGN KEY ("implementing_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."projects" ADD CONSTRAINT "fk_projects_responsible_institution_id" FOREIGN KEY ("responsible_institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."projects" ADD CONSTRAINT "fk_projects_scope_unit_feature_id" FOREIGN KEY ("scope_unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."projects" ADD CONSTRAINT "fk_projects_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."projects" ADD CONSTRAINT "fk_projects_sponsor_entity_id" FOREIGN KEY ("sponsor_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."projects" ADD CONSTRAINT "fk_projects_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_projects__code" ON "civic"."projects" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "civic"."projects"
+ADD CONSTRAINT "fk_projects_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."projects"
+ADD CONSTRAINT "fk_projects_implementing_entity_id" FOREIGN KEY ("implementing_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."projects"
+ADD CONSTRAINT "fk_projects_responsible_institution_id" FOREIGN KEY ("responsible_institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."projects"
+ADD CONSTRAINT "fk_projects_scope_unit_feature_id" FOREIGN KEY ("scope_unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."projects"
+ADD CONSTRAINT "fk_projects_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."projects"
+ADD CONSTRAINT "fk_projects_sponsor_entity_id" FOREIGN KEY ("sponsor_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."projects"
+ADD CONSTRAINT "fk_projects_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_projects__code" ON "civic"."projects" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_projects__status_id" ON "civic"."projects" ("status_id");
+
 CREATE INDEX "ix_projects__responsible_institution_id" ON "civic"."projects" ("responsible_institution_id");
+
 CREATE INDEX "ix_projects__scope_unit_feature_id" ON "civic"."projects" ("scope_unit_feature_id");
+
 CREATE INDEX "ix_projects__source_citation_id" ON "civic"."projects" ("source_citation_id");
-ALTER TABLE "civic"."services" ADD CONSTRAINT "fk_services_place_feature_id" FOREIGN KEY ("place_feature_id") REFERENCES "geography"."places" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."services" ADD CONSTRAINT "fk_services_provider_entity_id" FOREIGN KEY ("provider_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."services" ADD CONSTRAINT "fk_services_responsible_institution_id" FOREIGN KEY ("responsible_institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."services" ADD CONSTRAINT "fk_services_scope_unit_feature_id" FOREIGN KEY ("scope_unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."services" ADD CONSTRAINT "fk_services_service_kind_id" FOREIGN KEY ("service_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "civic"."services" ADD CONSTRAINT "fk_services_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_services__code" ON "civic"."services" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "civic"."services"
+ADD CONSTRAINT "fk_services_place_feature_id" FOREIGN KEY ("place_feature_id") REFERENCES "geography"."places" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."services"
+ADD CONSTRAINT "fk_services_provider_entity_id" FOREIGN KEY ("provider_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."services"
+ADD CONSTRAINT "fk_services_responsible_institution_id" FOREIGN KEY ("responsible_institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."services"
+ADD CONSTRAINT "fk_services_scope_unit_feature_id" FOREIGN KEY ("scope_unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."services"
+ADD CONSTRAINT "fk_services_service_kind_id" FOREIGN KEY ("service_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "civic"."services"
+ADD CONSTRAINT "fk_services_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_services__code" ON "civic"."services" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_services__provider_entity_id" ON "civic"."services" ("provider_entity_id");
+
 CREATE INDEX "ix_services__responsible_institution_id" ON "civic"."services" ("responsible_institution_id");
+
 CREATE INDEX "ix_services__place_feature_id" ON "civic"."services" ("place_feature_id");
+
 CREATE INDEX "ix_services__scope_unit_feature_id" ON "civic"."services" ("scope_unit_feature_id");
+
 CREATE INDEX "ix_services__source_citation_id" ON "civic"."services" ("source_citation_id");
-CREATE UNIQUE INDEX "uq_file_extensions__code" ON "filesystem"."file_extensions" ("code") WHERE ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_file_extensions__code" ON "filesystem"."file_extensions" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE UNIQUE INDEX "uq_file_extensions__extension" ON "filesystem"."file_extensions" ("extension");
-ALTER TABLE "filesystem"."file_relations" ADD CONSTRAINT "fk_file_relations_derived_version_id" FOREIGN KEY ("derived_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "filesystem"."file_relations" ADD CONSTRAINT "fk_file_relations_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "filesystem"."file_relations" ADD CONSTRAINT "fk_file_relations_source_version_id" FOREIGN KEY ("source_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_file_relations__source_version_id_derived_version_id_kind_id" ON "filesystem"."file_relations" ("source_version_id", "derived_version_id", "kind_id");
+
+ALTER TABLE "filesystem"."file_relations"
+ADD CONSTRAINT "fk_file_relations_derived_version_id" FOREIGN KEY ("derived_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."file_relations"
+ADD CONSTRAINT "fk_file_relations_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."file_relations"
+ADD CONSTRAINT "fk_file_relations_source_version_id" FOREIGN KEY ("source_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_file_relations__source_version_id_derived_version_id_kind_id" ON "filesystem"."file_relations" (
+    "source_version_id",
+    "derived_version_id",
+    "kind_id"
+);
+
 CREATE INDEX "ix_file_relations__derived_version_id" ON "filesystem"."file_relations" ("derived_version_id");
+
 CREATE INDEX "ix_file_relations__kind_id" ON "filesystem"."file_relations" ("kind_id");
-ALTER TABLE "filesystem"."file_versions" ADD CONSTRAINT "fk_file_versions_file_extension_id" FOREIGN KEY ("file_extension_id") REFERENCES "filesystem"."file_extensions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "filesystem"."file_versions" ADD CONSTRAINT "fk_file_versions_file_id" FOREIGN KEY ("file_id") REFERENCES "filesystem"."files" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."file_versions"
+ADD CONSTRAINT "fk_file_versions_file_extension_id" FOREIGN KEY ("file_extension_id") REFERENCES "filesystem"."file_extensions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."file_versions"
+ADD CONSTRAINT "fk_file_versions_file_id" FOREIGN KEY ("file_id") REFERENCES "filesystem"."files" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_file_versions__file_id_revision" ON "filesystem"."file_versions" ("file_id", "revision");
+
 CREATE INDEX "ix_file_versions__sha256" ON "filesystem"."file_versions" ("sha256");
+
 CREATE INDEX "ix_file_versions__s3_key" ON "filesystem"."file_versions" ("s3_key");
+
 CREATE INDEX "ix_file_versions__file_extension_id" ON "filesystem"."file_versions" ("file_extension_id");
-ALTER TABLE "filesystem"."files" ADD CONSTRAINT "fk_files_current_version_id" FOREIGN KEY ("current_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "filesystem"."files" ADD CONSTRAINT "fk_files_folder_id" FOREIGN KEY ("folder_id") REFERENCES "filesystem"."folders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_files__code" ON "filesystem"."files" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "filesystem"."files"
+ADD CONSTRAINT "fk_files_current_version_id" FOREIGN KEY ("current_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."files"
+ADD CONSTRAINT "fk_files_folder_id" FOREIGN KEY ("folder_id") REFERENCES "filesystem"."folders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_files__code" ON "filesystem"."files" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_files__folder_id" ON "filesystem"."files" ("folder_id");
+
 CREATE INDEX "ix_files__current_version_id" ON "filesystem"."files" ("current_version_id");
-ALTER TABLE "filesystem"."file_versions" ADD CONSTRAINT "uq_file_versions__current_version_belongs_to_file_target" UNIQUE ("id", "file_id");
-ALTER TABLE "filesystem"."files" ADD CONSTRAINT "fk_files__current_version_belongs_to_file" FOREIGN KEY ("current_version_id", "id") REFERENCES "filesystem"."file_versions" ("id", "file_id");
-ALTER TABLE "filesystem"."folders" ADD CONSTRAINT "fk_folders_parent_id" FOREIGN KEY ("parent_id") REFERENCES "filesystem"."folders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "filesystem"."folders" ADD CONSTRAINT "fk_folders_role_id" FOREIGN KEY ("role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_folders__code" ON "filesystem"."folders" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "filesystem"."file_versions"
+ADD CONSTRAINT "uq_file_versions__current_version_belongs_to_file_target" UNIQUE ("id", "file_id");
+
+ALTER TABLE "filesystem"."files"
+ADD CONSTRAINT "fk_files__current_version_belongs_to_file" FOREIGN KEY ("current_version_id", "id") REFERENCES "filesystem"."file_versions" ("id", "file_id");
+
+ALTER TABLE "filesystem"."folders"
+ADD CONSTRAINT "fk_folders_parent_id" FOREIGN KEY ("parent_id") REFERENCES "filesystem"."folders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."folders"
+ADD CONSTRAINT "fk_folders_role_id" FOREIGN KEY ("role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_folders__code" ON "filesystem"."folders" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_folders__parent_id" ON "filesystem"."folders" ("parent_id");
+
 CREATE INDEX "ix_folders__role_id" ON "filesystem"."folders" ("role_id");
-CREATE FUNCTION "filesystem"."folders__folder_parent_acyclic"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+
+CREATE FUNCTION "filesystem"."folders__folder_parent_acyclic" () RETURNS trigger LANGUAGE plpgsql AS $fn$
 BEGIN
   IF NEW."parent_id" IS NOT NULL AND EXISTS (
     WITH RECURSIVE chain(id) AS (
@@ -1628,189 +2098,493 @@ BEGIN
   RETURN NEW;
 END
 $fn$;
-CREATE TRIGGER "tr_folders__folder_parent_acyclic" BEFORE INSERT OR UPDATE OF "parent_id" ON "filesystem"."folders" FOR EACH ROW EXECUTE FUNCTION "filesystem"."folders__folder_parent_acyclic"();
-ALTER TABLE "filesystem"."taggings" ADD CONSTRAINT "fk_taggings_file_id" FOREIGN KEY ("file_id") REFERENCES "filesystem"."files" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "filesystem"."taggings" ADD CONSTRAINT "fk_taggings_folder_id" FOREIGN KEY ("folder_id") REFERENCES "filesystem"."folders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "filesystem"."taggings" ADD CONSTRAINT "fk_taggings_tag_id" FOREIGN KEY ("tag_id") REFERENCES "filesystem"."tags" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE TRIGGER "tr_folders__folder_parent_acyclic"
+BEFORE INSERT OR UPDATE OF "parent_id" ON "filesystem"."folders" FOR EACH ROW
+EXECUTE FUNCTION "filesystem"."folders__folder_parent_acyclic" ();
+
+ALTER TABLE "filesystem"."taggings"
+ADD CONSTRAINT "fk_taggings_file_id" FOREIGN KEY ("file_id") REFERENCES "filesystem"."files" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."taggings"
+ADD CONSTRAINT "fk_taggings_folder_id" FOREIGN KEY ("folder_id") REFERENCES "filesystem"."folders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."taggings"
+ADD CONSTRAINT "fk_taggings_tag_id" FOREIGN KEY ("tag_id") REFERENCES "filesystem"."tags" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_taggings__tag_id_file_id" ON "filesystem"."taggings" ("tag_id", "file_id");
+
 CREATE UNIQUE INDEX "uq_taggings__tag_id_folder_id" ON "filesystem"."taggings" ("tag_id", "folder_id");
+
 CREATE INDEX "ix_taggings__file_id" ON "filesystem"."taggings" ("file_id");
+
 CREATE INDEX "ix_taggings__folder_id" ON "filesystem"."taggings" ("folder_id");
-CREATE UNIQUE INDEX "uq_tags__code" ON "filesystem"."tags" ("code") WHERE ("deleted_at" IS NULL);
-ALTER TABLE "finance"."appropriations" ADD CONSTRAINT "fk_appropriations_budget_version_id" FOREIGN KEY ("budget_version_id") REFERENCES "finance"."budget_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."appropriations" ADD CONSTRAINT "fk_appropriations_classification_id" FOREIGN KEY ("classification_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."appropriations" ADD CONSTRAINT "fk_appropriations_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."appropriations" ADD CONSTRAINT "fk_appropriations_parent_appropriation_id" FOREIGN KEY ("parent_appropriation_id") REFERENCES "finance"."appropriations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."appropriations" ADD CONSTRAINT "fk_appropriations_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."appropriations" ADD CONSTRAINT "fk_appropriations_recipient_entity_id" FOREIGN KEY ("recipient_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."appropriations" ADD CONSTRAINT "fk_appropriations_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."appropriations" ADD CONSTRAINT "fk_appropriations_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_appropriations__code" ON "finance"."appropriations" ("code") WHERE ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_tags__code" ON "filesystem"."tags" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+ALTER TABLE "finance"."appropriations"
+ADD CONSTRAINT "fk_appropriations_budget_version_id" FOREIGN KEY ("budget_version_id") REFERENCES "finance"."budget_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."appropriations"
+ADD CONSTRAINT "fk_appropriations_classification_id" FOREIGN KEY ("classification_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."appropriations"
+ADD CONSTRAINT "fk_appropriations_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."appropriations"
+ADD CONSTRAINT "fk_appropriations_parent_appropriation_id" FOREIGN KEY ("parent_appropriation_id") REFERENCES "finance"."appropriations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."appropriations"
+ADD CONSTRAINT "fk_appropriations_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."appropriations"
+ADD CONSTRAINT "fk_appropriations_recipient_entity_id" FOREIGN KEY ("recipient_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."appropriations"
+ADD CONSTRAINT "fk_appropriations_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."appropriations"
+ADD CONSTRAINT "fk_appropriations_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_appropriations__code" ON "finance"."appropriations" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_appropriations__budget_version_id" ON "finance"."appropriations" ("budget_version_id");
+
 CREATE INDEX "ix_appropriations__parent_appropriation_id" ON "finance"."appropriations" ("parent_appropriation_id");
+
 CREATE INDEX "ix_appropriations__project_id" ON "finance"."appropriations" ("project_id");
+
 CREATE INDEX "ix_appropriations__unit_feature_id" ON "finance"."appropriations" ("unit_feature_id");
+
 CREATE INDEX "ix_appropriations__source_citation_id" ON "finance"."appropriations" ("source_citation_id");
-ALTER TABLE "finance"."budget_versions" ADD CONSTRAINT "fk_budget_versions_budget_id" FOREIGN KEY ("budget_id") REFERENCES "finance"."budgets" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."budget_versions" ADD CONSTRAINT "fk_budget_versions_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."budget_versions" ADD CONSTRAINT "fk_budget_versions_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."budget_versions"
+ADD CONSTRAINT "fk_budget_versions_budget_id" FOREIGN KEY ("budget_id") REFERENCES "finance"."budgets" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."budget_versions"
+ADD CONSTRAINT "fk_budget_versions_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."budget_versions"
+ADD CONSTRAINT "fk_budget_versions_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_budget_versions__budget_id_revision" ON "finance"."budget_versions" ("budget_id", "revision");
+
 CREATE INDEX "ix_budget_versions__status_id" ON "finance"."budget_versions" ("status_id");
+
 CREATE INDEX "ix_budget_versions__source_citation_id" ON "finance"."budget_versions" ("source_citation_id");
-ALTER TABLE "finance"."budgets" ADD CONSTRAINT "fk_budgets_budget_kind_id" FOREIGN KEY ("budget_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."budgets" ADD CONSTRAINT "fk_budgets_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."budgets" ADD CONSTRAINT "fk_budgets_fiscal_period_id" FOREIGN KEY ("fiscal_period_id") REFERENCES "finance"."fiscal_periods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."budgets" ADD CONSTRAINT "fk_budgets_government_entity_id" FOREIGN KEY ("government_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."budgets" ADD CONSTRAINT "fk_budgets_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_budgets__code" ON "finance"."budgets" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "finance"."budgets"
+ADD CONSTRAINT "fk_budgets_budget_kind_id" FOREIGN KEY ("budget_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."budgets"
+ADD CONSTRAINT "fk_budgets_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."budgets"
+ADD CONSTRAINT "fk_budgets_fiscal_period_id" FOREIGN KEY ("fiscal_period_id") REFERENCES "finance"."fiscal_periods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."budgets"
+ADD CONSTRAINT "fk_budgets_government_entity_id" FOREIGN KEY ("government_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."budgets"
+ADD CONSTRAINT "fk_budgets_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_budgets__code" ON "finance"."budgets" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_budgets__fiscal_period_id" ON "finance"."budgets" ("fiscal_period_id");
+
 CREATE INDEX "ix_budgets__source_citation_id" ON "finance"."budgets" ("source_citation_id");
-ALTER TABLE "finance"."debts" ADD CONSTRAINT "fk_debts_borrower_entity_id" FOREIGN KEY ("borrower_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."debts" ADD CONSTRAINT "fk_debts_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."debts" ADD CONSTRAINT "fk_debts_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."debts" ADD CONSTRAINT "fk_debts_debt_kind_id" FOREIGN KEY ("debt_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."debts" ADD CONSTRAINT "fk_debts_lender_entity_id" FOREIGN KEY ("lender_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."debts" ADD CONSTRAINT "fk_debts_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."debts"
+ADD CONSTRAINT "fk_debts_borrower_entity_id" FOREIGN KEY ("borrower_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."debts"
+ADD CONSTRAINT "fk_debts_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."debts"
+ADD CONSTRAINT "fk_debts_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."debts"
+ADD CONSTRAINT "fk_debts_debt_kind_id" FOREIGN KEY ("debt_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."debts"
+ADD CONSTRAINT "fk_debts_lender_entity_id" FOREIGN KEY ("lender_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."debts"
+ADD CONSTRAINT "fk_debts_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_debts__borrower_entity_id" ON "finance"."debts" ("borrower_entity_id");
+
 CREATE INDEX "ix_debts__maturity_on" ON "finance"."debts" ("maturity_on");
+
 CREATE INDEX "ix_debts__source_citation_id" ON "finance"."debts" ("source_citation_id");
-ALTER TABLE "finance"."fiscal_periods" ADD CONSTRAINT "fk_fiscal_periods_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."fiscal_periods" ADD CONSTRAINT "fk_fiscal_periods_period_kind_id" FOREIGN KEY ("period_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."fiscal_periods" ADD CONSTRAINT "fk_fiscal_periods_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_fiscal_periods__code" ON "finance"."fiscal_periods" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "finance"."fiscal_periods"
+ADD CONSTRAINT "fk_fiscal_periods_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."fiscal_periods"
+ADD CONSTRAINT "fk_fiscal_periods_period_kind_id" FOREIGN KEY ("period_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."fiscal_periods"
+ADD CONSTRAINT "fk_fiscal_periods_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_fiscal_periods__code" ON "finance"."fiscal_periods" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_fiscal_periods__starts_on_ends_on" ON "finance"."fiscal_periods" ("starts_on", "ends_on");
+
 CREATE INDEX "ix_fiscal_periods__source_citation_id" ON "finance"."fiscal_periods" ("source_citation_id");
-ALTER TABLE "finance"."flows" ADD CONSTRAINT "fk_flows_appropriation_id" FOREIGN KEY ("appropriation_id") REFERENCES "finance"."appropriations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."flows" ADD CONSTRAINT "fk_flows_contract_id" FOREIGN KEY ("contract_id") REFERENCES "civic"."contracts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."flows" ADD CONSTRAINT "fk_flows_counterparty_entity_id" FOREIGN KEY ("counterparty_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."flows" ADD CONSTRAINT "fk_flows_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."flows" ADD CONSTRAINT "fk_flows_debt_id" FOREIGN KEY ("debt_id") REFERENCES "finance"."debts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."flows" ADD CONSTRAINT "fk_flows_fiscal_period_id" FOREIGN KEY ("fiscal_period_id") REFERENCES "finance"."fiscal_periods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."flows" ADD CONSTRAINT "fk_flows_flow_kind_id" FOREIGN KEY ("flow_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."flows" ADD CONSTRAINT "fk_flows_fund_id" FOREIGN KEY ("fund_id") REFERENCES "finance"."funds" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."flows" ADD CONSTRAINT "fk_flows_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."flows"
+ADD CONSTRAINT "fk_flows_appropriation_id" FOREIGN KEY ("appropriation_id") REFERENCES "finance"."appropriations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."flows"
+ADD CONSTRAINT "fk_flows_contract_id" FOREIGN KEY ("contract_id") REFERENCES "civic"."contracts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."flows"
+ADD CONSTRAINT "fk_flows_counterparty_entity_id" FOREIGN KEY ("counterparty_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."flows"
+ADD CONSTRAINT "fk_flows_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."flows"
+ADD CONSTRAINT "fk_flows_debt_id" FOREIGN KEY ("debt_id") REFERENCES "finance"."debts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."flows"
+ADD CONSTRAINT "fk_flows_fiscal_period_id" FOREIGN KEY ("fiscal_period_id") REFERENCES "finance"."fiscal_periods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."flows"
+ADD CONSTRAINT "fk_flows_flow_kind_id" FOREIGN KEY ("flow_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."flows"
+ADD CONSTRAINT "fk_flows_fund_id" FOREIGN KEY ("fund_id") REFERENCES "finance"."funds" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."flows"
+ADD CONSTRAINT "fk_flows_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_flows__occurred_on_flow_kind_id" ON "finance"."flows" ("occurred_on", "flow_kind_id");
+
 CREATE INDEX "ix_flows__fiscal_period_id" ON "finance"."flows" ("fiscal_period_id");
+
 CREATE INDEX "ix_flows__fund_id" ON "finance"."flows" ("fund_id");
+
 CREATE INDEX "ix_flows__appropriation_id" ON "finance"."flows" ("appropriation_id");
+
 CREATE INDEX "ix_flows__contract_id" ON "finance"."flows" ("contract_id");
+
 CREATE INDEX "ix_flows__debt_id" ON "finance"."flows" ("debt_id");
+
 CREATE INDEX "ix_flows__source_citation_id" ON "finance"."flows" ("source_citation_id");
-ALTER TABLE "finance"."funds" ADD CONSTRAINT "fk_funds_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."funds" ADD CONSTRAINT "fk_funds_fund_kind_id" FOREIGN KEY ("fund_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."funds" ADD CONSTRAINT "fk_funds_managing_entity_id" FOREIGN KEY ("managing_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "finance"."funds" ADD CONSTRAINT "fk_funds_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_funds__code" ON "finance"."funds" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "finance"."funds"
+ADD CONSTRAINT "fk_funds_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."funds"
+ADD CONSTRAINT "fk_funds_fund_kind_id" FOREIGN KEY ("fund_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."funds"
+ADD CONSTRAINT "fk_funds_managing_entity_id" FOREIGN KEY ("managing_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "finance"."funds"
+ADD CONSTRAINT "fk_funds_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_funds__code" ON "finance"."funds" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_funds__managing_entity_id" ON "finance"."funds" ("managing_entity_id");
+
 CREATE INDEX "ix_funds__source_citation_id" ON "finance"."funds" ("source_citation_id");
-ALTER TABLE "geography"."changes" ADD CONSTRAINT "fk_changes_change_kind_id" FOREIGN KEY ("change_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."changes" ADD CONSTRAINT "fk_changes_predecessor_feature_id" FOREIGN KEY ("predecessor_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."changes" ADD CONSTRAINT "fk_changes_successor_feature_id" FOREIGN KEY ("successor_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."changes"
+ADD CONSTRAINT "fk_changes_change_kind_id" FOREIGN KEY ("change_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."changes"
+ADD CONSTRAINT "fk_changes_predecessor_feature_id" FOREIGN KEY ("predecessor_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."changes"
+ADD CONSTRAINT "fk_changes_successor_feature_id" FOREIGN KEY ("successor_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_changes__transformation_id" ON "geography"."changes" ("transformation_id");
+
 CREATE INDEX "ix_changes__predecessor_feature_id" ON "geography"."changes" ("predecessor_feature_id");
+
 CREATE INDEX "ix_changes__successor_feature_id" ON "geography"."changes" ("successor_feature_id");
+
 CREATE INDEX "ix_changes__change_kind_id" ON "geography"."changes" ("change_kind_id");
-ALTER TABLE "geography"."datasets" ADD CONSTRAINT "fk_datasets_coverage_feature_id" FOREIGN KEY ("coverage_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."datasets" ADD CONSTRAINT "fk_datasets_representation_id" FOREIGN KEY ("representation_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."datasets" ADD CONSTRAINT "fk_datasets_resolution_unit_id" FOREIGN KEY ("resolution_unit_id") REFERENCES "reference"."units" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."datasets" ADD CONSTRAINT "fk_datasets_subject_id" FOREIGN KEY ("subject_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_datasets__code" ON "geography"."datasets" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "geography"."datasets"
+ADD CONSTRAINT "fk_datasets_coverage_feature_id" FOREIGN KEY ("coverage_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."datasets"
+ADD CONSTRAINT "fk_datasets_representation_id" FOREIGN KEY ("representation_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."datasets"
+ADD CONSTRAINT "fk_datasets_resolution_unit_id" FOREIGN KEY ("resolution_unit_id") REFERENCES "reference"."units" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."datasets"
+ADD CONSTRAINT "fk_datasets_subject_id" FOREIGN KEY ("subject_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_datasets__code" ON "geography"."datasets" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_datasets__subject_id" ON "geography"."datasets" ("subject_id");
+
 CREATE INDEX "ix_datasets__representation_id" ON "geography"."datasets" ("representation_id");
+
 CREATE INDEX "ix_datasets__coverage_feature_id" ON "geography"."datasets" ("coverage_feature_id");
-ALTER TABLE "geography"."features" ADD CONSTRAINT "fk_features_feature_type_id" FOREIGN KEY ("feature_type_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_features__code" ON "geography"."features" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "geography"."features"
+ADD CONSTRAINT "fk_features_feature_type_id" FOREIGN KEY ("feature_type_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_features__code" ON "geography"."features" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_features__feature_type_id" ON "geography"."features" ("feature_type_id");
-ALTER TABLE "geography"."geometries" ADD CONSTRAINT "fk_geometries_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."geometries" ADD CONSTRAINT "fk_geometries_geometry_role_id" FOREIGN KEY ("geometry_role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."geometries"
+ADD CONSTRAINT "fk_geometries_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."geometries"
+ADD CONSTRAINT "fk_geometries_geometry_role_id" FOREIGN KEY ("geometry_role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_geometries__feature_id" ON "geography"."geometries" ("feature_id");
+
 CREATE INDEX "ix_geometries__valid_from_valid_until" ON "geography"."geometries" ("valid_from", "valid_until");
-ALTER TABLE "geography"."identifiers" ADD CONSTRAINT "fk_identifiers_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."identifiers" ADD CONSTRAINT "fk_identifiers_identifier_scheme_id" FOREIGN KEY ("identifier_scheme_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_identifiers__identifier_scheme_id_namespace_external_id" ON "geography"."identifiers" ("identifier_scheme_id", "namespace", "external_id");
+
+ALTER TABLE "geography"."identifiers"
+ADD CONSTRAINT "fk_identifiers_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."identifiers"
+ADD CONSTRAINT "fk_identifiers_identifier_scheme_id" FOREIGN KEY ("identifier_scheme_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_identifiers__identifier_scheme_id_namespace_external_id" ON "geography"."identifiers" (
+    "identifier_scheme_id",
+    "namespace",
+    "external_id"
+);
+
 CREATE INDEX "ix_identifiers__feature_id" ON "geography"."identifiers" ("feature_id");
-ALTER TABLE "geography"."names" ADD CONSTRAINT "fk_names_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."names" ADD CONSTRAINT "fk_names_name_kind_id" FOREIGN KEY ("name_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."names"
+ADD CONSTRAINT "fk_names_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."names"
+ADD CONSTRAINT "fk_names_name_kind_id" FOREIGN KEY ("name_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_names__feature_id" ON "geography"."names" ("feature_id");
+
 CREATE INDEX "ix_names__name_kind_id" ON "geography"."names" ("name_kind_id");
+
 CREATE INDEX "ix_names__language_tag" ON "geography"."names" ("language_tag");
-ALTER TABLE "geography"."places" ADD CONSTRAINT "fk_places_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."relationships" ADD CONSTRAINT "fk_relationships_object_feature_id" FOREIGN KEY ("object_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."relationships" ADD CONSTRAINT "fk_relationships_relationship_kind_id" FOREIGN KEY ("relationship_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."relationships" ADD CONSTRAINT "fk_relationships_subject_feature_id" FOREIGN KEY ("subject_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."relationships" ADD CONSTRAINT "fk_relationships_system_id" FOREIGN KEY ("system_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."places"
+ADD CONSTRAINT "fk_places_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."relationships"
+ADD CONSTRAINT "fk_relationships_object_feature_id" FOREIGN KEY ("object_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."relationships"
+ADD CONSTRAINT "fk_relationships_relationship_kind_id" FOREIGN KEY ("relationship_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."relationships"
+ADD CONSTRAINT "fk_relationships_subject_feature_id" FOREIGN KEY ("subject_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."relationships"
+ADD CONSTRAINT "fk_relationships_system_id" FOREIGN KEY ("system_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_relationships__subject_feature_id_relationship_kind_id" ON "geography"."relationships" ("subject_feature_id", "relationship_kind_id");
+
 CREATE INDEX "ix_relationships__object_feature_id_relationship_kind_id" ON "geography"."relationships" ("object_feature_id", "relationship_kind_id");
+
 CREATE INDEX "ix_relationships__valid_from_valid_until" ON "geography"."relationships" ("valid_from", "valid_until");
-ALTER TABLE "geography"."units" ADD CONSTRAINT "fk_units_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "geography"."units" ADD CONSTRAINT "fk_units_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."units"
+ADD CONSTRAINT "fk_units_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."units"
+ADD CONSTRAINT "fk_units_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_units__country_id" ON "geography"."units" ("country_id");
+
 CREATE INDEX "ix_units__valid_from_valid_until" ON "geography"."units" ("valid_from", "valid_until");
-ALTER TABLE "governance"."authority_scopes" ADD CONSTRAINT "fk_authority_scopes_authority_kind_id" FOREIGN KEY ("authority_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."authority_scopes" ADD CONSTRAINT "fk_authority_scopes_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."authority_scopes" ADD CONSTRAINT "fk_authority_scopes_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."authority_scopes" ADD CONSTRAINT "fk_authority_scopes_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."authority_scopes" ADD CONSTRAINT "fk_authority_scopes_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."authority_scopes" ADD CONSTRAINT "fk_authority_scopes_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."authority_scopes"
+ADD CONSTRAINT "fk_authority_scopes_authority_kind_id" FOREIGN KEY ("authority_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."authority_scopes"
+ADD CONSTRAINT "fk_authority_scopes_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."authority_scopes"
+ADD CONSTRAINT "fk_authority_scopes_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."authority_scopes"
+ADD CONSTRAINT "fk_authority_scopes_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."authority_scopes"
+ADD CONSTRAINT "fk_authority_scopes_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."authority_scopes"
+ADD CONSTRAINT "fk_authority_scopes_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_authority_scopes__institution_id" ON "governance"."authority_scopes" ("institution_id");
+
 CREATE INDEX "ix_authority_scopes__office_id" ON "governance"."authority_scopes" ("office_id");
+
 CREATE INDEX "ix_authority_scopes__unit_feature_id_valid_from_valid_until" ON "governance"."authority_scopes" ("unit_feature_id", "valid_from", "valid_until");
+
 CREATE INDEX "ix_authority_scopes__country_id" ON "governance"."authority_scopes" ("country_id");
+
 CREATE INDEX "ix_authority_scopes__source_citation_id" ON "governance"."authority_scopes" ("source_citation_id");
-ALTER TABLE "governance"."holders" ADD CONSTRAINT "fk_holders_appointed_by_entity_id" FOREIGN KEY ("appointed_by_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."holders" ADD CONSTRAINT "fk_holders_appointment_kind_id" FOREIGN KEY ("appointment_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."holders" ADD CONSTRAINT "fk_holders_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."holders" ADD CONSTRAINT "fk_holders_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."holders" ADD CONSTRAINT "fk_holders_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."holders"
+ADD CONSTRAINT "fk_holders_appointed_by_entity_id" FOREIGN KEY ("appointed_by_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."holders"
+ADD CONSTRAINT "fk_holders_appointment_kind_id" FOREIGN KEY ("appointment_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."holders"
+ADD CONSTRAINT "fk_holders_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."holders"
+ADD CONSTRAINT "fk_holders_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."holders"
+ADD CONSTRAINT "fk_holders_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_holders__office_id_valid_from_valid_until" ON "governance"."holders" ("office_id", "valid_from", "valid_until");
+
 CREATE INDEX "ix_holders__individual_id" ON "governance"."holders" ("individual_id");
+
 CREATE INDEX "ix_holders__source_citation_id" ON "governance"."holders" ("source_citation_id");
-ALTER TABLE "governance"."institutions" ADD CONSTRAINT "fk_institutions_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."institutions" ADD CONSTRAINT "fk_institutions_institution_kind_id" FOREIGN KEY ("institution_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."institutions" ADD CONSTRAINT "fk_institutions_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_institutions__code" ON "governance"."institutions" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "governance"."institutions"
+ADD CONSTRAINT "fk_institutions_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."institutions"
+ADD CONSTRAINT "fk_institutions_institution_kind_id" FOREIGN KEY ("institution_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."institutions"
+ADD CONSTRAINT "fk_institutions_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_institutions__code" ON "governance"."institutions" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_institutions__entity_id" ON "governance"."institutions" ("entity_id");
+
 CREATE INDEX "ix_institutions__source_citation_id" ON "governance"."institutions" ("source_citation_id");
-ALTER TABLE "governance"."mandates" ADD CONSTRAINT "fk_mandates_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."mandates" ADD CONSTRAINT "fk_mandates_mandate_kind_id" FOREIGN KEY ("mandate_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."mandates" ADD CONSTRAINT "fk_mandates_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."mandates" ADD CONSTRAINT "fk_mandates_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."mandates"
+ADD CONSTRAINT "fk_mandates_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."mandates"
+ADD CONSTRAINT "fk_mandates_mandate_kind_id" FOREIGN KEY ("mandate_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."mandates"
+ADD CONSTRAINT "fk_mandates_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."mandates"
+ADD CONSTRAINT "fk_mandates_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_mandates__institution_id" ON "governance"."mandates" ("institution_id");
+
 CREATE INDEX "ix_mandates__office_id" ON "governance"."mandates" ("office_id");
+
 CREATE INDEX "ix_mandates__source_citation_id" ON "governance"."mandates" ("source_citation_id");
-ALTER TABLE "governance"."offices" ADD CONSTRAINT "fk_offices_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."offices" ADD CONSTRAINT "fk_offices_office_kind_id" FOREIGN KEY ("office_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."offices" ADD CONSTRAINT "fk_offices_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."offices" ADD CONSTRAINT "fk_offices_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_offices__code" ON "governance"."offices" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "governance"."offices"
+ADD CONSTRAINT "fk_offices_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."offices"
+ADD CONSTRAINT "fk_offices_office_kind_id" FOREIGN KEY ("office_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."offices"
+ADD CONSTRAINT "fk_offices_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."offices"
+ADD CONSTRAINT "fk_offices_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_offices__code" ON "governance"."offices" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_offices__unit_feature_id" ON "governance"."offices" ("unit_feature_id");
+
 CREATE INDEX "ix_offices__source_citation_id" ON "governance"."offices" ("source_citation_id");
-ALTER TABLE "governance"."relationships" ADD CONSTRAINT "fk_relationships_object_institution_id" FOREIGN KEY ("object_institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."relationships" ADD CONSTRAINT "fk_relationships_relationship_kind_id" FOREIGN KEY ("relationship_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."relationships" ADD CONSTRAINT "fk_relationships_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "governance"."relationships" ADD CONSTRAINT "fk_relationships_subject_institution_id" FOREIGN KEY ("subject_institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."relationships"
+ADD CONSTRAINT "fk_relationships_object_institution_id" FOREIGN KEY ("object_institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."relationships"
+ADD CONSTRAINT "fk_relationships_relationship_kind_id" FOREIGN KEY ("relationship_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."relationships"
+ADD CONSTRAINT "fk_relationships_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."relationships"
+ADD CONSTRAINT "fk_relationships_subject_institution_id" FOREIGN KEY ("subject_institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_relationships__subject_institution_id_relationship_kind_id" ON "governance"."relationships" ("subject_institution_id", "relationship_kind_id");
+
 CREATE INDEX "ix_relationships__object_institution_id_relationship_kind_id" ON "governance"."relationships" ("object_institution_id", "relationship_kind_id");
+
 CREATE INDEX "ix_relationships__source_citation_id" ON "governance"."relationships" ("source_citation_id");
-ALTER TABLE "legal"."amendments" ADD CONSTRAINT "fk_amendments_affected_id" FOREIGN KEY ("affected_id") REFERENCES "legal"."provision_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."amendments" ADD CONSTRAINT "fk_amendments_authority_id" FOREIGN KEY ("authority_id") REFERENCES "legal"."provision_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."amendments" ADD CONSTRAINT "fk_amendments_citation_id" FOREIGN KEY ("citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."amendments" ADD CONSTRAINT "fk_amendments_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."amendments" ADD CONSTRAINT "fk_amendments_resulting_version_id" FOREIGN KEY ("resulting_version_id") REFERENCES "legal"."provision_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."amendments"
+ADD CONSTRAINT "fk_amendments_affected_id" FOREIGN KEY ("affected_id") REFERENCES "legal"."provision_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."amendments"
+ADD CONSTRAINT "fk_amendments_authority_id" FOREIGN KEY ("authority_id") REFERENCES "legal"."provision_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."amendments"
+ADD CONSTRAINT "fk_amendments_citation_id" FOREIGN KEY ("citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."amendments"
+ADD CONSTRAINT "fk_amendments_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."amendments"
+ADD CONSTRAINT "fk_amendments_resulting_version_id" FOREIGN KEY ("resulting_version_id") REFERENCES "legal"."provision_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_amendments__authority_id" ON "legal"."amendments" ("authority_id");
+
 CREATE INDEX "ix_amendments__affected_id" ON "legal"."amendments" ("affected_id");
+
 CREATE INDEX "ix_amendments__resulting_version_id" ON "legal"."amendments" ("resulting_version_id");
+
 CREATE INDEX "ix_amendments__kind_id" ON "legal"."amendments" ("kind_id");
+
 CREATE INDEX "ix_amendments__citation_id" ON "legal"."amendments" ("citation_id");
-ALTER TABLE "legal"."instrument_versions" ADD CONSTRAINT "fk_instrument_versions_evidence_id" FOREIGN KEY ("evidence_id") REFERENCES "source"."evidence" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."instrument_versions" ADD CONSTRAINT "fk_instrument_versions_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."instrument_versions" ADD CONSTRAINT "fk_instrument_versions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."instrument_versions" ADD CONSTRAINT "fk_instrument_versions_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "legal"."instrument_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."instrument_versions"
+ADD CONSTRAINT "fk_instrument_versions_evidence_id" FOREIGN KEY ("evidence_id") REFERENCES "source"."evidence" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."instrument_versions"
+ADD CONSTRAINT "fk_instrument_versions_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."instrument_versions"
+ADD CONSTRAINT "fk_instrument_versions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."instrument_versions"
+ADD CONSTRAINT "fk_instrument_versions_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "legal"."instrument_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_instrument_versions__instrument_id_edition" ON "legal"."instrument_versions" ("instrument_id", "edition");
+
 CREATE INDEX "ix_instrument_versions__file_version_id" ON "legal"."instrument_versions" ("file_version_id");
+
 CREATE INDEX "ix_instrument_versions__evidence_id" ON "legal"."instrument_versions" ("evidence_id");
+
 CREATE INDEX "ix_instrument_versions__supersedes_id" ON "legal"."instrument_versions" ("supersedes_id");
-CREATE FUNCTION "legal"."instrument_versions__instrument_version_supersession_acyclic"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+
+CREATE FUNCTION "legal"."instrument_versions__instrument_version_supersession_acyclic" () RETURNS trigger LANGUAGE plpgsql AS $fn$
 BEGIN
   IF NEW."supersedes_id" IS NOT NULL AND EXISTS (
     WITH RECURSIVE chain(id) AS (
@@ -1824,27 +2598,64 @@ BEGIN
   RETURN NEW;
 END
 $fn$;
-CREATE TRIGGER "tr_instrument_versions__instrument_version_supersession_acyclic" BEFORE INSERT OR UPDATE OF "supersedes_id" ON "legal"."instrument_versions" FOR EACH ROW EXECUTE FUNCTION "legal"."instrument_versions__instrument_version_supersession_acyclic"();
-ALTER TABLE "legal"."instruments" ADD CONSTRAINT "fk_instruments_issuing_entity_id" FOREIGN KEY ("issuing_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."instruments" ADD CONSTRAINT "fk_instruments_issuing_unit_id" FOREIGN KEY ("issuing_unit_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."instruments" ADD CONSTRAINT "fk_instruments_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_instruments__code" ON "legal"."instruments" ("code") WHERE ("deleted_at" IS NULL);
+
+CREATE TRIGGER "tr_instrument_versions__instrument_version_supersession_acyclic"
+BEFORE INSERT OR UPDATE OF "supersedes_id" ON "legal"."instrument_versions" FOR EACH ROW
+EXECUTE FUNCTION "legal"."instrument_versions__instrument_version_supersession_acyclic" ();
+
+ALTER TABLE "legal"."instruments"
+ADD CONSTRAINT "fk_instruments_issuing_entity_id" FOREIGN KEY ("issuing_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."instruments"
+ADD CONSTRAINT "fk_instruments_issuing_unit_id" FOREIGN KEY ("issuing_unit_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."instruments"
+ADD CONSTRAINT "fk_instruments_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_instruments__code" ON "legal"."instruments" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_instruments__kind_id" ON "legal"."instruments" ("kind_id");
+
 CREATE INDEX "ix_instruments__issuing_unit_id" ON "legal"."instruments" ("issuing_unit_id");
-ALTER TABLE "legal"."provision_versions" ADD CONSTRAINT "fk_provision_versions_citation_id" FOREIGN KEY ("citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."provision_versions" ADD CONSTRAINT "fk_provision_versions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."provision_versions" ADD CONSTRAINT "fk_provision_versions_instrument_version_id" FOREIGN KEY ("instrument_version_id") REFERENCES "legal"."instrument_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."provision_versions" ADD CONSTRAINT "fk_provision_versions_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."provision_versions" ADD CONSTRAINT "fk_provision_versions_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "legal"."provision_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."provision_versions"
+ADD CONSTRAINT "fk_provision_versions_citation_id" FOREIGN KEY ("citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."provision_versions"
+ADD CONSTRAINT "fk_provision_versions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."provision_versions"
+ADD CONSTRAINT "fk_provision_versions_instrument_version_id" FOREIGN KEY ("instrument_version_id") REFERENCES "legal"."instrument_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."provision_versions"
+ADD CONSTRAINT "fk_provision_versions_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."provision_versions"
+ADD CONSTRAINT "fk_provision_versions_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "legal"."provision_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_provision_versions__provision_id_instrument_version_id" ON "legal"."provision_versions" ("provision_id", "instrument_version_id");
+
 CREATE INDEX "ix_provision_versions__instrument_version_id" ON "legal"."provision_versions" ("instrument_version_id");
+
 CREATE INDEX "ix_provision_versions__citation_id" ON "legal"."provision_versions" ("citation_id");
+
 CREATE INDEX "ix_provision_versions__supersedes_id" ON "legal"."provision_versions" ("supersedes_id");
-ALTER TABLE "legal"."provisions" ADD CONSTRAINT "uq_provisions__provision_of_instrument_target" UNIQUE ("id", "instrument_id");
-ALTER TABLE "legal"."provision_versions" ADD CONSTRAINT "fk_provision_versions__provision_of_instrument" FOREIGN KEY ("provision_id", "instrument_id") REFERENCES "legal"."provisions" ("id", "instrument_id");
-ALTER TABLE "legal"."instrument_versions" ADD CONSTRAINT "uq_instrument_versions__version_of_instrument_target" UNIQUE ("id", "instrument_id");
-ALTER TABLE "legal"."provision_versions" ADD CONSTRAINT "fk_provision_versions__version_of_instrument" FOREIGN KEY ("instrument_version_id", "instrument_id") REFERENCES "legal"."instrument_versions" ("id", "instrument_id");
-CREATE FUNCTION "legal"."provision_versions__provision_version_supersession_acyclic"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+
+ALTER TABLE "legal"."provisions"
+ADD CONSTRAINT "uq_provisions__provision_of_instrument_target" UNIQUE ("id", "instrument_id");
+
+ALTER TABLE "legal"."provision_versions"
+ADD CONSTRAINT "fk_provision_versions__provision_of_instrument" FOREIGN KEY ("provision_id", "instrument_id") REFERENCES "legal"."provisions" ("id", "instrument_id");
+
+ALTER TABLE "legal"."instrument_versions"
+ADD CONSTRAINT "uq_instrument_versions__version_of_instrument_target" UNIQUE ("id", "instrument_id");
+
+ALTER TABLE "legal"."provision_versions"
+ADD CONSTRAINT "fk_provision_versions__version_of_instrument" FOREIGN KEY ("instrument_version_id", "instrument_id") REFERENCES "legal"."instrument_versions" ("id", "instrument_id");
+
+CREATE FUNCTION "legal"."provision_versions__provision_version_supersession_acyclic" () RETURNS trigger LANGUAGE plpgsql AS $fn$
 BEGIN
   IF NEW."supersedes_id" IS NOT NULL AND EXISTS (
     WITH RECURSIVE chain(id) AS (
@@ -1858,16 +2669,42 @@ BEGIN
   RETURN NEW;
 END
 $fn$;
-CREATE TRIGGER "tr_provision_versions__provision_version_supersession_acyclic" BEFORE INSERT OR UPDATE OF "supersedes_id" ON "legal"."provision_versions" FOR EACH ROW EXECUTE FUNCTION "legal"."provision_versions__provision_version_supersession_acyclic"();
-ALTER TABLE "legal"."provision_versions" ADD CONSTRAINT "ex_provision_versions__no_overlapping_provision_wording" EXCLUDE USING gist ("provision_id" WITH =, daterange("effective_from", "effective_until", '[)') WITH &&);
-ALTER TABLE "legal"."provisions" ADD CONSTRAINT "fk_provisions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "legal"."provisions" ADD CONSTRAINT "fk_provisions_parent_id" FOREIGN KEY ("parent_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_provisions__code" ON "legal"."provisions" ("code") WHERE ("deleted_at" IS NULL);
+
+CREATE TRIGGER "tr_provision_versions__provision_version_supersession_acyclic"
+BEFORE INSERT OR UPDATE OF "supersedes_id" ON "legal"."provision_versions" FOR EACH ROW
+EXECUTE FUNCTION "legal"."provision_versions__provision_version_supersession_acyclic" ();
+
+ALTER TABLE "legal"."provision_versions"
+ADD CONSTRAINT "ex_provision_versions__no_overlapping_provision_wording" EXCLUDE USING gist (
+    "provision_id"
+    WITH
+        =,
+        daterange ("effective_from", "effective_until", '[)')
+    WITH
+        &&
+);
+
+ALTER TABLE "legal"."provisions"
+ADD CONSTRAINT "fk_provisions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."provisions"
+ADD CONSTRAINT "fk_provisions_parent_id" FOREIGN KEY ("parent_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_provisions__code" ON "legal"."provisions" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_provisions__instrument_id" ON "legal"."provisions" ("instrument_id");
+
 CREATE INDEX "ix_provisions__parent_id" ON "legal"."provisions" ("parent_id");
-ALTER TABLE "legal"."provisions" ADD CONSTRAINT "uq_provisions__parent_in_same_instrument" UNIQUE ("id", "instrument_id");
-ALTER TABLE "legal"."provisions" ADD CONSTRAINT "fk_provisions__parent_in_same_instrument" FOREIGN KEY ("parent_id", "instrument_id") REFERENCES "legal"."provisions" ("id", "instrument_id");
-CREATE FUNCTION "legal"."provisions__provision_parent_acyclic"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+
+ALTER TABLE "legal"."provisions"
+ADD CONSTRAINT "uq_provisions__parent_in_same_instrument" UNIQUE ("id", "instrument_id");
+
+ALTER TABLE "legal"."provisions"
+ADD CONSTRAINT "fk_provisions__parent_in_same_instrument" FOREIGN KEY ("parent_id", "instrument_id") REFERENCES "legal"."provisions" ("id", "instrument_id");
+
+CREATE FUNCTION "legal"."provisions__provision_parent_acyclic" () RETURNS trigger LANGUAGE plpgsql AS $fn$
 BEGIN
   IF NEW."parent_id" IS NOT NULL AND EXISTS (
     WITH RECURSIVE chain(id) AS (
@@ -1881,151 +2718,401 @@ BEGIN
   RETURN NEW;
 END
 $fn$;
-CREATE TRIGGER "tr_provisions__provision_parent_acyclic" BEFORE INSERT OR UPDATE OF "parent_id" ON "legal"."provisions" FOR EACH ROW EXECUTE FUNCTION "legal"."provisions__provision_parent_acyclic"();
-ALTER TABLE "official"."contacts" ADD CONSTRAINT "fk_contacts_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."contacts" ADD CONSTRAINT "fk_contacts_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."contacts" ADD CONSTRAINT "fk_contacts_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."contacts" ADD CONSTRAINT "fk_contacts_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."contacts" ADD CONSTRAINT "fk_contacts_visibility_id" FOREIGN KEY ("visibility_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE TRIGGER "tr_provisions__provision_parent_acyclic"
+BEFORE INSERT OR UPDATE OF "parent_id" ON "legal"."provisions" FOR EACH ROW
+EXECUTE FUNCTION "legal"."provisions__provision_parent_acyclic" ();
+
+ALTER TABLE "official"."contacts"
+ADD CONSTRAINT "fk_contacts_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."contacts"
+ADD CONSTRAINT "fk_contacts_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."contacts"
+ADD CONSTRAINT "fk_contacts_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."contacts"
+ADD CONSTRAINT "fk_contacts_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."contacts"
+ADD CONSTRAINT "fk_contacts_visibility_id" FOREIGN KEY ("visibility_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_contacts__entity_id_kind_id" ON "official"."contacts" ("entity_id", "kind_id");
+
 CREATE INDEX "ix_contacts__individual_id_kind_id" ON "official"."contacts" ("individual_id", "kind_id");
+
 CREATE INDEX "ix_contacts__visibility_id" ON "official"."contacts" ("visibility_id");
+
 CREATE INDEX "ix_contacts__source_citation_id" ON "official"."contacts" ("source_citation_id");
-ALTER TABLE "official"."entities" ADD CONSTRAINT "fk_entities_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."entities" ADD CONSTRAINT "fk_entities_registration_country_id" FOREIGN KEY ("registration_country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."entities" ADD CONSTRAINT "fk_entities_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_entities__code" ON "official"."entities" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "official"."entities"
+ADD CONSTRAINT "fk_entities_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."entities"
+ADD CONSTRAINT "fk_entities_registration_country_id" FOREIGN KEY ("registration_country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."entities"
+ADD CONSTRAINT "fk_entities_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_entities__code" ON "official"."entities" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_entities__kind_id" ON "official"."entities" ("kind_id");
+
 CREATE INDEX "ix_entities__registration_country_id" ON "official"."entities" ("registration_country_id");
+
 CREATE INDEX "ix_entities__source_citation_id" ON "official"."entities" ("source_citation_id");
-ALTER TABLE "official"."identifiers" ADD CONSTRAINT "fk_identifiers_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."identifiers" ADD CONSTRAINT "fk_identifiers_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."identifiers" ADD CONSTRAINT "fk_identifiers_issuer_entity_id" FOREIGN KEY ("issuer_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."identifiers" ADD CONSTRAINT "fk_identifiers_scheme_id" FOREIGN KEY ("scheme_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."identifiers" ADD CONSTRAINT "fk_identifiers_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."identifiers"
+ADD CONSTRAINT "fk_identifiers_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."identifiers"
+ADD CONSTRAINT "fk_identifiers_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."identifiers"
+ADD CONSTRAINT "fk_identifiers_issuer_entity_id" FOREIGN KEY ("issuer_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."identifiers"
+ADD CONSTRAINT "fk_identifiers_scheme_id" FOREIGN KEY ("scheme_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."identifiers"
+ADD CONSTRAINT "fk_identifiers_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_identifiers__entity_id" ON "official"."identifiers" ("entity_id");
+
 CREATE INDEX "ix_identifiers__individual_id" ON "official"."identifiers" ("individual_id");
-CREATE UNIQUE INDEX "uq_identifiers__scheme_id_issuer_entity_id_namespace_value" ON "official"."identifiers" ("scheme_id", "issuer_entity_id", "namespace", "value");
+
+CREATE UNIQUE INDEX "uq_identifiers__scheme_id_issuer_entity_id_namespace_value" ON "official"."identifiers" (
+    "scheme_id",
+    "issuer_entity_id",
+    "namespace",
+    "value"
+);
+
 CREATE INDEX "ix_identifiers__scheme_id_value" ON "official"."identifiers" ("scheme_id", "value");
+
 CREATE INDEX "ix_identifiers__issuer_entity_id" ON "official"."identifiers" ("issuer_entity_id");
+
 CREATE INDEX "ix_identifiers__source_citation_id" ON "official"."identifiers" ("source_citation_id");
-ALTER TABLE "official"."individuals" ADD CONSTRAINT "fk_individuals_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_individuals__code" ON "official"."individuals" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "official"."individuals"
+ADD CONSTRAINT "fk_individuals_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_individuals__code" ON "official"."individuals" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_individuals__source_citation_id" ON "official"."individuals" ("source_citation_id");
-ALTER TABLE "official"."names" ADD CONSTRAINT "fk_names_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."names" ADD CONSTRAINT "fk_names_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."names" ADD CONSTRAINT "fk_names_name_kind_id" FOREIGN KEY ("name_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."names" ADD CONSTRAINT "fk_names_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_names__entity_id_language_tag" ON "official"."names" ("entity_id", "language_tag") WHERE ("is_preferred" = TRUE);
-CREATE UNIQUE INDEX "uq_names__individual_id_language_tag" ON "official"."names" ("individual_id", "language_tag") WHERE ("is_preferred" = TRUE);
+
+ALTER TABLE "official"."names"
+ADD CONSTRAINT "fk_names_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."names"
+ADD CONSTRAINT "fk_names_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."names"
+ADD CONSTRAINT "fk_names_name_kind_id" FOREIGN KEY ("name_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."names"
+ADD CONSTRAINT "fk_names_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_names__entity_id_language_tag" ON "official"."names" ("entity_id", "language_tag")
+WHERE
+    ("is_preferred" = TRUE);
+
+CREATE UNIQUE INDEX "uq_names__individual_id_language_tag" ON "official"."names" ("individual_id", "language_tag")
+WHERE
+    ("is_preferred" = TRUE);
+
 CREATE INDEX "ix_names__entity_id" ON "official"."names" ("entity_id");
+
 CREATE INDEX "ix_names__individual_id" ON "official"."names" ("individual_id");
+
 CREATE INDEX "ix_names__name_kind_id" ON "official"."names" ("name_kind_id");
+
 CREATE INDEX "ix_names__source_citation_id" ON "official"."names" ("source_citation_id");
-ALTER TABLE "official"."relationships" ADD CONSTRAINT "fk_relationships_from_entity_id" FOREIGN KEY ("from_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."relationships" ADD CONSTRAINT "fk_relationships_from_individual_id" FOREIGN KEY ("from_individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."relationships" ADD CONSTRAINT "fk_relationships_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."relationships" ADD CONSTRAINT "fk_relationships_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."relationships" ADD CONSTRAINT "fk_relationships_to_entity_id" FOREIGN KEY ("to_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "official"."relationships" ADD CONSTRAINT "fk_relationships_to_individual_id" FOREIGN KEY ("to_individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."relationships"
+ADD CONSTRAINT "fk_relationships_from_entity_id" FOREIGN KEY ("from_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."relationships"
+ADD CONSTRAINT "fk_relationships_from_individual_id" FOREIGN KEY ("from_individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."relationships"
+ADD CONSTRAINT "fk_relationships_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."relationships"
+ADD CONSTRAINT "fk_relationships_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."relationships"
+ADD CONSTRAINT "fk_relationships_to_entity_id" FOREIGN KEY ("to_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."relationships"
+ADD CONSTRAINT "fk_relationships_to_individual_id" FOREIGN KEY ("to_individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_relationships__from_entity_id_kind_id" ON "official"."relationships" ("from_entity_id", "kind_id");
+
 CREATE INDEX "ix_relationships__from_individual_id_kind_id" ON "official"."relationships" ("from_individual_id", "kind_id");
+
 CREATE INDEX "ix_relationships__to_entity_id_kind_id" ON "official"."relationships" ("to_entity_id", "kind_id");
+
 CREATE INDEX "ix_relationships__to_individual_id_kind_id" ON "official"."relationships" ("to_individual_id", "kind_id");
+
 CREATE INDEX "ix_relationships__source_citation_id" ON "official"."relationships" ("source_citation_id");
-ALTER TABLE "politics"."alignments" ADD CONSTRAINT "fk_alignments_alignment_kind_id" FOREIGN KEY ("alignment_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."alignments" ADD CONSTRAINT "fk_alignments_coalition_id" FOREIGN KEY ("coalition_id") REFERENCES "politics"."coalitions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."alignments" ADD CONSTRAINT "fk_alignments_party_id" FOREIGN KEY ("party_id") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."alignments" ADD CONSTRAINT "fk_alignments_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."alignments"
+ADD CONSTRAINT "fk_alignments_alignment_kind_id" FOREIGN KEY ("alignment_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."alignments"
+ADD CONSTRAINT "fk_alignments_coalition_id" FOREIGN KEY ("coalition_id") REFERENCES "politics"."coalitions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."alignments"
+ADD CONSTRAINT "fk_alignments_party_id" FOREIGN KEY ("party_id") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."alignments"
+ADD CONSTRAINT "fk_alignments_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_alignments__coalition_id_valid_from" ON "politics"."alignments" ("coalition_id", "valid_from");
+
 CREATE INDEX "ix_alignments__party_id_valid_from" ON "politics"."alignments" ("party_id", "valid_from");
+
 CREATE INDEX "ix_alignments__source_citation_id" ON "politics"."alignments" ("source_citation_id");
-ALTER TABLE "politics"."candidates" ADD CONSTRAINT "fk_candidates_candidate_kind_id" FOREIGN KEY ("candidate_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."candidates" ADD CONSTRAINT "fk_candidates_contest_id" FOREIGN KEY ("contest_id") REFERENCES "politics"."contests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."candidates" ADD CONSTRAINT "fk_candidates_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."candidates" ADD CONSTRAINT "fk_candidates_party_id_at_election" FOREIGN KEY ("party_id_at_election") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."candidates" ADD CONSTRAINT "fk_candidates_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."candidates"
+ADD CONSTRAINT "fk_candidates_candidate_kind_id" FOREIGN KEY ("candidate_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."candidates"
+ADD CONSTRAINT "fk_candidates_contest_id" FOREIGN KEY ("contest_id") REFERENCES "politics"."contests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."candidates"
+ADD CONSTRAINT "fk_candidates_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."candidates"
+ADD CONSTRAINT "fk_candidates_party_id_at_election" FOREIGN KEY ("party_id_at_election") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."candidates"
+ADD CONSTRAINT "fk_candidates_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_candidates__contest_id_ballot_order" ON "politics"."candidates" ("contest_id", "ballot_order");
+
 CREATE INDEX "ix_candidates__individual_id" ON "politics"."candidates" ("individual_id");
+
 CREATE INDEX "ix_candidates__source_citation_id" ON "politics"."candidates" ("source_citation_id");
-ALTER TABLE "politics"."coalitions" ADD CONSTRAINT "fk_coalitions_coalition_kind_id" FOREIGN KEY ("coalition_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."coalitions" ADD CONSTRAINT "fk_coalitions_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_coalitions__code" ON "politics"."coalitions" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "politics"."coalitions"
+ADD CONSTRAINT "fk_coalitions_coalition_kind_id" FOREIGN KEY ("coalition_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."coalitions"
+ADD CONSTRAINT "fk_coalitions_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_coalitions__code" ON "politics"."coalitions" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_coalitions__source_citation_id" ON "politics"."coalitions" ("source_citation_id");
-ALTER TABLE "politics"."contests" ADD CONSTRAINT "fk_contests_contest_kind_id" FOREIGN KEY ("contest_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."contests" ADD CONSTRAINT "fk_contests_election_id" FOREIGN KEY ("election_id") REFERENCES "politics"."elections" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."contests" ADD CONSTRAINT "fk_contests_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."contests" ADD CONSTRAINT "fk_contests_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."contests" ADD CONSTRAINT "fk_contests_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_contests__code" ON "politics"."contests" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "politics"."contests"
+ADD CONSTRAINT "fk_contests_contest_kind_id" FOREIGN KEY ("contest_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."contests"
+ADD CONSTRAINT "fk_contests_election_id" FOREIGN KEY ("election_id") REFERENCES "politics"."elections" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."contests"
+ADD CONSTRAINT "fk_contests_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."contests"
+ADD CONSTRAINT "fk_contests_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."contests"
+ADD CONSTRAINT "fk_contests_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_contests__code" ON "politics"."contests" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_contests__unit_feature_id" ON "politics"."contests" ("unit_feature_id");
+
 CREATE INDEX "ix_contests__source_citation_id" ON "politics"."contests" ("source_citation_id");
-ALTER TABLE "politics"."elections" ADD CONSTRAINT "fk_elections_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."elections" ADD CONSTRAINT "fk_elections_election_kind_id" FOREIGN KEY ("election_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."elections" ADD CONSTRAINT "fk_elections_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_elections__code" ON "politics"."elections" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "politics"."elections"
+ADD CONSTRAINT "fk_elections_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."elections"
+ADD CONSTRAINT "fk_elections_election_kind_id" FOREIGN KEY ("election_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."elections"
+ADD CONSTRAINT "fk_elections_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_elections__code" ON "politics"."elections" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_elections__held_on" ON "politics"."elections" ("held_on");
+
 CREATE INDEX "ix_elections__source_citation_id" ON "politics"."elections" ("source_citation_id");
-ALTER TABLE "politics"."electorates" ADD CONSTRAINT "fk_electorates_contest_id" FOREIGN KEY ("contest_id") REFERENCES "politics"."contests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."electorates" ADD CONSTRAINT "fk_electorates_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."electorates" ADD CONSTRAINT "fk_electorates_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."electorates"
+ADD CONSTRAINT "fk_electorates_contest_id" FOREIGN KEY ("contest_id") REFERENCES "politics"."contests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."electorates"
+ADD CONSTRAINT "fk_electorates_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."electorates"
+ADD CONSTRAINT "fk_electorates_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_electorates__contest_id_unit_feature_id" ON "politics"."electorates" ("contest_id", "unit_feature_id");
+
 CREATE INDEX "ix_electorates__unit_feature_id" ON "politics"."electorates" ("unit_feature_id");
+
 CREATE INDEX "ix_electorates__source_citation_id" ON "politics"."electorates" ("source_citation_id");
-ALTER TABLE "politics"."manifesto_items" ADD CONSTRAINT "fk_manifesto_items_manifesto_id" FOREIGN KEY ("manifesto_id") REFERENCES "politics"."manifestos" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."manifesto_items" ADD CONSTRAINT "fk_manifesto_items_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."manifesto_items" ADD CONSTRAINT "fk_manifesto_items_topic_id" FOREIGN KEY ("topic_id") REFERENCES "reference"."topics" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."manifesto_items"
+ADD CONSTRAINT "fk_manifesto_items_manifesto_id" FOREIGN KEY ("manifesto_id") REFERENCES "politics"."manifestos" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."manifesto_items"
+ADD CONSTRAINT "fk_manifesto_items_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."manifesto_items"
+ADD CONSTRAINT "fk_manifesto_items_topic_id" FOREIGN KEY ("topic_id") REFERENCES "reference"."topics" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_manifesto_items__manifesto_id_position" ON "politics"."manifesto_items" ("manifesto_id", "position");
+
 CREATE INDEX "ix_manifesto_items__topic_id" ON "politics"."manifesto_items" ("topic_id");
+
 CREATE INDEX "ix_manifesto_items__source_citation_id" ON "politics"."manifesto_items" ("source_citation_id");
-ALTER TABLE "politics"."manifestos" ADD CONSTRAINT "fk_manifestos_candidate_id" FOREIGN KEY ("candidate_id") REFERENCES "politics"."candidates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."manifestos" ADD CONSTRAINT "fk_manifestos_document_id" FOREIGN KEY ("document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."manifestos" ADD CONSTRAINT "fk_manifestos_election_id" FOREIGN KEY ("election_id") REFERENCES "politics"."elections" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."manifestos" ADD CONSTRAINT "fk_manifestos_party_id" FOREIGN KEY ("party_id") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."manifestos" ADD CONSTRAINT "fk_manifestos_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."manifestos"
+ADD CONSTRAINT "fk_manifestos_candidate_id" FOREIGN KEY ("candidate_id") REFERENCES "politics"."candidates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."manifestos"
+ADD CONSTRAINT "fk_manifestos_document_id" FOREIGN KEY ("document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."manifestos"
+ADD CONSTRAINT "fk_manifestos_election_id" FOREIGN KEY ("election_id") REFERENCES "politics"."elections" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."manifestos"
+ADD CONSTRAINT "fk_manifestos_party_id" FOREIGN KEY ("party_id") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."manifestos"
+ADD CONSTRAINT "fk_manifestos_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_manifestos__party_id" ON "politics"."manifestos" ("party_id");
+
 CREATE INDEX "ix_manifestos__candidate_id" ON "politics"."manifestos" ("candidate_id");
+
 CREATE INDEX "ix_manifestos__source_citation_id" ON "politics"."manifestos" ("source_citation_id");
-ALTER TABLE "politics"."memberships" ADD CONSTRAINT "fk_memberships_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."memberships" ADD CONSTRAINT "fk_memberships_membership_kind_id" FOREIGN KEY ("membership_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."memberships" ADD CONSTRAINT "fk_memberships_party_id" FOREIGN KEY ("party_id") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."memberships" ADD CONSTRAINT "fk_memberships_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."memberships"
+ADD CONSTRAINT "fk_memberships_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."memberships"
+ADD CONSTRAINT "fk_memberships_membership_kind_id" FOREIGN KEY ("membership_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."memberships"
+ADD CONSTRAINT "fk_memberships_party_id" FOREIGN KEY ("party_id") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."memberships"
+ADD CONSTRAINT "fk_memberships_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_memberships__party_id_valid_from" ON "politics"."memberships" ("party_id", "valid_from");
+
 CREATE INDEX "ix_memberships__individual_id_valid_from" ON "politics"."memberships" ("individual_id", "valid_from");
+
 CREATE INDEX "ix_memberships__source_citation_id" ON "politics"."memberships" ("source_citation_id");
-ALTER TABLE "politics"."option_results" ADD CONSTRAINT "fk_option_results_option_id" FOREIGN KEY ("option_id") REFERENCES "politics"."referendum_options" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."option_results" ADD CONSTRAINT "fk_option_results_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."option_results" ADD CONSTRAINT "fk_option_results_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."option_results" ADD CONSTRAINT "fk_option_results_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."option_results"
+ADD CONSTRAINT "fk_option_results_option_id" FOREIGN KEY ("option_id") REFERENCES "politics"."referendum_options" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."option_results"
+ADD CONSTRAINT "fk_option_results_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."option_results"
+ADD CONSTRAINT "fk_option_results_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."option_results"
+ADD CONSTRAINT "fk_option_results_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_option_results__option_id_unit_feature_id" ON "politics"."option_results" ("option_id", "unit_feature_id");
+
 CREATE INDEX "ix_option_results__unit_feature_id" ON "politics"."option_results" ("unit_feature_id");
+
 CREATE INDEX "ix_option_results__source_citation_id" ON "politics"."option_results" ("source_citation_id");
-ALTER TABLE "politics"."parties" ADD CONSTRAINT "fk_parties_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."parties" ADD CONSTRAINT "fk_parties_party_kind_id" FOREIGN KEY ("party_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."parties" ADD CONSTRAINT "fk_parties_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_parties__code" ON "politics"."parties" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "politics"."parties"
+ADD CONSTRAINT "fk_parties_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."parties"
+ADD CONSTRAINT "fk_parties_party_kind_id" FOREIGN KEY ("party_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."parties"
+ADD CONSTRAINT "fk_parties_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_parties__code" ON "politics"."parties" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_parties__entity_id" ON "politics"."parties" ("entity_id");
+
 CREATE INDEX "ix_parties__source_citation_id" ON "politics"."parties" ("source_citation_id");
-ALTER TABLE "politics"."referendum_options" ADD CONSTRAINT "fk_referendum_options_contest_id" FOREIGN KEY ("contest_id") REFERENCES "politics"."contests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."referendum_options" ADD CONSTRAINT "fk_referendum_options_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_referendum_options__code" ON "politics"."referendum_options" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "politics"."referendum_options"
+ADD CONSTRAINT "fk_referendum_options_contest_id" FOREIGN KEY ("contest_id") REFERENCES "politics"."contests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."referendum_options"
+ADD CONSTRAINT "fk_referendum_options_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_referendum_options__code" ON "politics"."referendum_options" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_referendum_options__contest_id_ballot_order" ON "politics"."referendum_options" ("contest_id", "ballot_order");
+
 CREATE INDEX "ix_referendum_options__source_citation_id" ON "politics"."referendum_options" ("source_citation_id");
-ALTER TABLE "politics"."results" ADD CONSTRAINT "fk_results_candidate_id" FOREIGN KEY ("candidate_id") REFERENCES "politics"."candidates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."results" ADD CONSTRAINT "fk_results_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."results" ADD CONSTRAINT "fk_results_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "politics"."results" ADD CONSTRAINT "fk_results_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."results"
+ADD CONSTRAINT "fk_results_candidate_id" FOREIGN KEY ("candidate_id") REFERENCES "politics"."candidates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."results"
+ADD CONSTRAINT "fk_results_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."results"
+ADD CONSTRAINT "fk_results_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "politics"."results"
+ADD CONSTRAINT "fk_results_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."units" ("feature_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_results__candidate_id_unit_feature_id" ON "politics"."results" ("candidate_id", "unit_feature_id");
+
 CREATE INDEX "ix_results__unit_feature_id" ON "politics"."results" ("unit_feature_id");
+
 CREATE INDEX "ix_results__source_citation_id" ON "politics"."results" ("source_citation_id");
-CREATE UNIQUE INDEX "uq_countries__code" ON "reference"."countries" ("code") WHERE ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_countries__code" ON "reference"."countries" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_countries__name" ON "reference"."countries" ("name");
-CREATE UNIQUE INDEX "uq_patterns__code" ON "reference"."patterns" ("code") WHERE ("deleted_at" IS NULL);
-CREATE UNIQUE INDEX "uq_schemes__code" ON "reference"."schemes" ("code") WHERE ("deleted_at" IS NULL);
-ALTER TABLE "reference"."topics" ADD CONSTRAINT "fk_topics_parent_id" FOREIGN KEY ("parent_id") REFERENCES "reference"."topics" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_topics__code" ON "reference"."topics" ("code") WHERE ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_patterns__code" ON "reference"."patterns" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_schemes__code" ON "reference"."schemes" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+ALTER TABLE "reference"."topics"
+ADD CONSTRAINT "fk_topics_parent_id" FOREIGN KEY ("parent_id") REFERENCES "reference"."topics" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_topics__code" ON "reference"."topics" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_topics__parent_id" ON "reference"."topics" ("parent_id");
-CREATE FUNCTION "reference"."topics__topic_parent_acyclic"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+
+CREATE FUNCTION "reference"."topics__topic_parent_acyclic" () RETURNS trigger LANGUAGE plpgsql AS $fn$
 BEGIN
   IF NEW."parent_id" IS NOT NULL AND EXISTS (
     WITH RECURSIVE chain(id) AS (
@@ -2039,11 +3126,21 @@ BEGIN
   RETURN NEW;
 END
 $fn$;
-CREATE TRIGGER "tr_topics__topic_parent_acyclic" BEFORE INSERT OR UPDATE OF "parent_id" ON "reference"."topics" FOR EACH ROW EXECUTE FUNCTION "reference"."topics__topic_parent_acyclic"();
-ALTER TABLE "reference"."units" ADD CONSTRAINT "fk_units_base_id" FOREIGN KEY ("base_id") REFERENCES "reference"."units" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_units__code" ON "reference"."units" ("code") WHERE ("deleted_at" IS NULL);
+
+CREATE TRIGGER "tr_topics__topic_parent_acyclic"
+BEFORE INSERT OR UPDATE OF "parent_id" ON "reference"."topics" FOR EACH ROW
+EXECUTE FUNCTION "reference"."topics__topic_parent_acyclic" ();
+
+ALTER TABLE "reference"."units"
+ADD CONSTRAINT "fk_units_base_id" FOREIGN KEY ("base_id") REFERENCES "reference"."units" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_units__code" ON "reference"."units" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_units__base_id" ON "reference"."units" ("base_id");
-CREATE FUNCTION "reference"."units__base_unit_acyclic"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+
+CREATE FUNCTION "reference"."units__base_unit_acyclic" () RETURNS trigger LANGUAGE plpgsql AS $fn$
 BEGIN
   IF NEW."base_id" IS NOT NULL AND EXISTS (
     WITH RECURSIVE chain(id) AS (
@@ -2057,15 +3154,32 @@ BEGIN
   RETURN NEW;
 END
 $fn$;
-CREATE TRIGGER "tr_units__base_unit_acyclic" BEFORE INSERT OR UPDATE OF "base_id" ON "reference"."units" FOR EACH ROW EXECUTE FUNCTION "reference"."units__base_unit_acyclic"();
-ALTER TABLE "reference"."values" ADD CONSTRAINT "fk_values_scheme_id" FOREIGN KEY ("scheme_id") REFERENCES "reference"."schemes" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "reference"."values" ADD CONSTRAINT "fk_values_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_values__code" ON "reference"."values" ("code") WHERE ("deleted_at" IS NULL);
+
+CREATE TRIGGER "tr_units__base_unit_acyclic"
+BEFORE INSERT OR UPDATE OF "base_id" ON "reference"."units" FOR EACH ROW
+EXECUTE FUNCTION "reference"."units__base_unit_acyclic" ();
+
+ALTER TABLE "reference"."values"
+ADD CONSTRAINT "fk_values_scheme_id" FOREIGN KEY ("scheme_id") REFERENCES "reference"."schemes" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."values"
+ADD CONSTRAINT "fk_values_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_values__code" ON "reference"."values" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_values__scheme_id" ON "reference"."values" ("scheme_id");
+
 CREATE INDEX "ix_values__supersedes_id" ON "reference"."values" ("supersedes_id");
-ALTER TABLE "reference"."values" ADD CONSTRAINT "uq_values__supersession_stays_in_scheme" UNIQUE ("id", "scheme_id");
-ALTER TABLE "reference"."values" ADD CONSTRAINT "fk_values__supersession_stays_in_scheme" FOREIGN KEY ("supersedes_id", "scheme_id") REFERENCES "reference"."values" ("id", "scheme_id");
-CREATE FUNCTION "reference"."values__supersession_acyclic"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+
+ALTER TABLE "reference"."values"
+ADD CONSTRAINT "uq_values__supersession_stays_in_scheme" UNIQUE ("id", "scheme_id");
+
+ALTER TABLE "reference"."values"
+ADD CONSTRAINT "fk_values__supersession_stays_in_scheme" FOREIGN KEY ("supersedes_id", "scheme_id") REFERENCES "reference"."values" ("id", "scheme_id");
+
+CREATE FUNCTION "reference"."values__supersession_acyclic" () RETURNS trigger LANGUAGE plpgsql AS $fn$
 BEGIN
   IF NEW."supersedes_id" IS NOT NULL AND EXISTS (
     WITH RECURSIVE chain(id) AS (
@@ -2079,82 +3193,229 @@ BEGIN
   RETURN NEW;
 END
 $fn$;
-CREATE TRIGGER "tr_values__supersession_acyclic" BEFORE INSERT OR UPDATE OF "supersedes_id" ON "reference"."values" FOR EACH ROW EXECUTE FUNCTION "reference"."values__supersession_acyclic"();
-ALTER TABLE "reference"."value_relations" ADD CONSTRAINT "fk_value_relations_source_value_id" FOREIGN KEY ("source_value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "reference"."value_relations" ADD CONSTRAINT "fk_value_relations_target_value_id" FOREIGN KEY ("target_value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE TRIGGER "tr_values__supersession_acyclic"
+BEFORE INSERT OR UPDATE OF "supersedes_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "reference"."values__supersession_acyclic" ();
+
+ALTER TABLE "reference"."value_relations"
+ADD CONSTRAINT "fk_value_relations_source_value_id" FOREIGN KEY ("source_value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."value_relations"
+ADD CONSTRAINT "fk_value_relations_target_value_id" FOREIGN KEY ("target_value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_value_relations__source_value_id_relation_kind_valid_from" ON "reference"."value_relations" ("source_value_id", "relation_kind", "valid_from");
+
 CREATE INDEX "ix_value_relations__target_value_id_relation_kind" ON "reference"."value_relations" ("target_value_id", "relation_kind");
-ALTER TABLE "source"."apis" ADD CONSTRAINT "fk_apis_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."apis"
+ADD CONSTRAINT "fk_apis_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_apis__source_id" ON "source"."apis" ("source_id");
-ALTER TABLE "source"."attributions" ADD CONSTRAINT "fk_attributions_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."attributions" ADD CONSTRAINT "fk_attributions_license_value_id" FOREIGN KEY ("license_value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."attributions" ADD CONSTRAINT "fk_attributions_publisher_id" FOREIGN KEY ("publisher_id") REFERENCES "source"."publishers" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."attributions"
+ADD CONSTRAINT "fk_attributions_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."attributions"
+ADD CONSTRAINT "fk_attributions_license_value_id" FOREIGN KEY ("license_value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."attributions"
+ADD CONSTRAINT "fk_attributions_publisher_id" FOREIGN KEY ("publisher_id") REFERENCES "source"."publishers" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_attributions__publisher_id" ON "source"."attributions" ("publisher_id");
+
 CREATE INDEX "ix_attributions__file_version_id" ON "source"."attributions" ("file_version_id");
+
 CREATE INDEX "ix_attributions__license_value_id" ON "source"."attributions" ("license_value_id");
-ALTER TABLE "source"."captures" ADD CONSTRAINT "fk_captures_document_id" FOREIGN KEY ("document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."captures" ADD CONSTRAINT "fk_captures_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."captures" ADD CONSTRAINT "fk_captures_manifest_release_id" FOREIGN KEY ("manifest_release_id") REFERENCES "source"."manifest_releases" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."captures" ADD CONSTRAINT "fk_captures_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."captures"
+ADD CONSTRAINT "fk_captures_document_id" FOREIGN KEY ("document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."captures"
+ADD CONSTRAINT "fk_captures_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."captures"
+ADD CONSTRAINT "fk_captures_manifest_release_id" FOREIGN KEY ("manifest_release_id") REFERENCES "source"."manifest_releases" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."captures"
+ADD CONSTRAINT "fk_captures_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_captures__source_id" ON "source"."captures" ("source_id");
+
 CREATE INDEX "ix_captures__document_id" ON "source"."captures" ("document_id");
+
 CREATE INDEX "ix_captures__file_version_id" ON "source"."captures" ("file_version_id");
+
 CREATE INDEX "ix_captures__manifest_release_id" ON "source"."captures" ("manifest_release_id");
-ALTER TABLE "source"."documents" ADD CONSTRAINT "uq_documents__document_belongs_to_source_target" UNIQUE ("id", "source_id");
-ALTER TABLE "source"."captures" ADD CONSTRAINT "fk_captures__document_belongs_to_source" FOREIGN KEY ("document_id", "source_id") REFERENCES "source"."documents" ("id", "source_id");
-ALTER TABLE "source"."citations" ADD CONSTRAINT "fk_citations_capture_id" FOREIGN KEY ("capture_id") REFERENCES "source"."captures" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."citations" ADD CONSTRAINT "fk_citations_document_id" FOREIGN KEY ("document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."citations" ADD CONSTRAINT "fk_citations_evidence_id" FOREIGN KEY ("evidence_id") REFERENCES "source"."evidence" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."citations" ADD CONSTRAINT "fk_citations_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."citations" ADD CONSTRAINT "fk_citations_locator_kind_id" FOREIGN KEY ("locator_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."documents"
+ADD CONSTRAINT "uq_documents__document_belongs_to_source_target" UNIQUE ("id", "source_id");
+
+ALTER TABLE "source"."captures"
+ADD CONSTRAINT "fk_captures__document_belongs_to_source" FOREIGN KEY ("document_id", "source_id") REFERENCES "source"."documents" ("id", "source_id");
+
+ALTER TABLE "source"."citations"
+ADD CONSTRAINT "fk_citations_capture_id" FOREIGN KEY ("capture_id") REFERENCES "source"."captures" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."citations"
+ADD CONSTRAINT "fk_citations_document_id" FOREIGN KEY ("document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."citations"
+ADD CONSTRAINT "fk_citations_evidence_id" FOREIGN KEY ("evidence_id") REFERENCES "source"."evidence" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."citations"
+ADD CONSTRAINT "fk_citations_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."citations"
+ADD CONSTRAINT "fk_citations_locator_kind_id" FOREIGN KEY ("locator_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_citations__evidence_id" ON "source"."citations" ("evidence_id");
+
 CREATE INDEX "ix_citations__document_id" ON "source"."citations" ("document_id");
+
 CREATE INDEX "ix_citations__capture_id" ON "source"."citations" ("capture_id");
+
 CREATE INDEX "ix_citations__file_version_id" ON "source"."citations" ("file_version_id");
+
 CREATE INDEX "ix_citations__locator_kind_id" ON "source"."citations" ("locator_kind_id");
-ALTER TABLE "source"."documents" ADD CONSTRAINT "fk_documents_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."documents" ADD CONSTRAINT "fk_documents_publisher_id" FOREIGN KEY ("publisher_id") REFERENCES "source"."publishers" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."documents" ADD CONSTRAINT "fk_documents_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_documents__code" ON "source"."documents" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "source"."documents"
+ADD CONSTRAINT "fk_documents_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."documents"
+ADD CONSTRAINT "fk_documents_publisher_id" FOREIGN KEY ("publisher_id") REFERENCES "source"."publishers" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."documents"
+ADD CONSTRAINT "fk_documents_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_documents__code" ON "source"."documents" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_documents__source_id" ON "source"."documents" ("source_id");
+
 CREATE INDEX "ix_documents__publisher_id" ON "source"."documents" ("publisher_id");
+
 CREATE INDEX "ix_documents__kind_id" ON "source"."documents" ("kind_id");
-ALTER TABLE "source"."evidence" ADD CONSTRAINT "fk_evidence_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_evidence__code" ON "source"."evidence" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "source"."evidence"
+ADD CONSTRAINT "fk_evidence_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_evidence__code" ON "source"."evidence" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_evidence__kind_id" ON "source"."evidence" ("kind_id");
-ALTER TABLE "source"."manifest_bindings" ADD CONSTRAINT "fk_manifest_bindings_manifest_release_id" FOREIGN KEY ("manifest_release_id") REFERENCES "source"."manifest_releases" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."manifest_bindings" ADD CONSTRAINT "fk_manifest_bindings_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_manifest_bindings__source_id_manifest_release_id_effective_f" ON "source"."manifest_bindings" ("source_id", "manifest_release_id", "effective_from");
+
+ALTER TABLE "source"."manifest_bindings"
+ADD CONSTRAINT "fk_manifest_bindings_manifest_release_id" FOREIGN KEY ("manifest_release_id") REFERENCES "source"."manifest_releases" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."manifest_bindings"
+ADD CONSTRAINT "fk_manifest_bindings_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_manifest_bindings__source_id_manifest_release_id_effective_f" ON "source"."manifest_bindings" (
+    "source_id",
+    "manifest_release_id",
+    "effective_from"
+);
+
 CREATE INDEX "ix_manifest_bindings__manifest_release_id" ON "source"."manifest_bindings" ("manifest_release_id");
-ALTER TABLE "source"."manifest_bindings" ADD CONSTRAINT "ex_manifest_bindings__no_overlapping_bindings" EXCLUDE USING gist ("source_id" WITH =, tstzrange("effective_from", "effective_until", '[)') WITH &&);
-ALTER TABLE "source"."manifest_releases" ADD CONSTRAINT "fk_manifest_releases_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."manifest_releases" ADD CONSTRAINT "fk_manifest_releases_manifest_id" FOREIGN KEY ("manifest_id") REFERENCES "source"."manifests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."manifest_bindings"
+ADD CONSTRAINT "ex_manifest_bindings__no_overlapping_bindings" EXCLUDE USING gist (
+    "source_id"
+    WITH
+        =,
+        tstzrange ("effective_from", "effective_until", '[)')
+    WITH
+        &&
+);
+
+ALTER TABLE "source"."manifest_releases"
+ADD CONSTRAINT "fk_manifest_releases_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."manifest_releases"
+ADD CONSTRAINT "fk_manifest_releases_manifest_id" FOREIGN KEY ("manifest_id") REFERENCES "source"."manifests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_manifest_releases__manifest_id_release_label" ON "source"."manifest_releases" ("manifest_id", "release_label");
+
 CREATE INDEX "ix_manifest_releases__file_version_id" ON "source"."manifest_releases" ("file_version_id");
-ALTER TABLE "source"."manifest_releases" ADD CONSTRAINT "ex_manifest_releases__no_overlapping_releases" EXCLUDE USING gist ("manifest_id" WITH =, tstzrange("effective_from", "effective_until", '[)') WITH &&);
-ALTER TABLE "source"."manifests" ADD CONSTRAINT "fk_manifests_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_manifests__code" ON "source"."manifests" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "source"."manifest_releases"
+ADD CONSTRAINT "ex_manifest_releases__no_overlapping_releases" EXCLUDE USING gist (
+    "manifest_id"
+    WITH
+        =,
+        tstzrange ("effective_from", "effective_until", '[)')
+    WITH
+        &&
+);
+
+ALTER TABLE "source"."manifests"
+ADD CONSTRAINT "fk_manifests_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_manifests__code" ON "source"."manifests" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_manifests__kind_id" ON "source"."manifests" ("kind_id");
+
 CREATE UNIQUE INDEX "uq_publication_receipts__idempotency_key" ON "source"."publication_receipts" ("idempotency_key");
+
 CREATE UNIQUE INDEX "uq_publication_receipts__publication_ref_id" ON "source"."publication_receipts" ("publication_ref_id");
-ALTER TABLE "source"."publishers" ADD CONSTRAINT "fk_publishers_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."publishers" ADD CONSTRAINT "fk_publishers_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."publishers" ADD CONSTRAINT "fk_publishers_official_entity_id" FOREIGN KEY ("official_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_publishers__code" ON "source"."publishers" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "source"."publishers"
+ADD CONSTRAINT "fk_publishers_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."publishers"
+ADD CONSTRAINT "fk_publishers_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."publishers"
+ADD CONSTRAINT "fk_publishers_official_entity_id" FOREIGN KEY ("official_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_publishers__code" ON "source"."publishers" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_publishers__kind_id" ON "source"."publishers" ("kind_id");
+
 CREATE INDEX "ix_publishers__country_id" ON "source"."publishers" ("country_id");
-ALTER TABLE "source"."sources" ADD CONSTRAINT "fk_sources_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."sources" ADD CONSTRAINT "fk_sources_official_entity_id" FOREIGN KEY ("official_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."sources" ADD CONSTRAINT "fk_sources_publisher_id" FOREIGN KEY ("publisher_id") REFERENCES "source"."publishers" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE UNIQUE INDEX "uq_sources__code" ON "source"."sources" ("code") WHERE ("deleted_at" IS NULL);
+
+ALTER TABLE "source"."sources"
+ADD CONSTRAINT "fk_sources_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."sources"
+ADD CONSTRAINT "fk_sources_official_entity_id" FOREIGN KEY ("official_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."sources"
+ADD CONSTRAINT "fk_sources_publisher_id" FOREIGN KEY ("publisher_id") REFERENCES "source"."publishers" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_sources__code" ON "source"."sources" ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_sources__publisher_id" ON "source"."sources" ("publisher_id");
+
 CREATE INDEX "ix_sources__kind_id" ON "source"."sources" ("kind_id");
-ALTER TABLE "source"."verifications" ADD CONSTRAINT "fk_verifications_evidence_id" FOREIGN KEY ("evidence_id") REFERENCES "source"."evidence" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."verifications" ADD CONSTRAINT "fk_verifications_method_id" FOREIGN KEY ("method_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE "source"."verifications" ADD CONSTRAINT "fk_verifications_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "source"."verifications" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."verifications"
+ADD CONSTRAINT "fk_verifications_evidence_id" FOREIGN KEY ("evidence_id") REFERENCES "source"."evidence" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."verifications"
+ADD CONSTRAINT "fk_verifications_method_id" FOREIGN KEY ("method_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."verifications"
+ADD CONSTRAINT "fk_verifications_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "source"."verifications" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_verifications__evidence_id" ON "source"."verifications" ("evidence_id");
+
 CREATE INDEX "ix_verifications__method_id" ON "source"."verifications" ("method_id");
+
 CREATE INDEX "ix_verifications__supersedes_id" ON "source"."verifications" ("supersedes_id");
-ALTER TABLE "source"."websites" ADD CONSTRAINT "fk_websites_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."websites"
+ADD CONSTRAINT "fk_websites_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_websites__source_id" ON "source"."websites" ("source_id");
+
 CREATE UNIQUE INDEX "uq_websites__canonical_url" ON "source"."websites" ("canonical_url");

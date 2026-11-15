@@ -18,3 +18,7 @@ Generation runs through the Dryv engine API from the Dryv checkout (`bun run dry
 - [x] A release is assembled and applied to an empty scratch PostgreSQL database and the expected 94 tables exist.
 - [x] The Bun CLI unit tests and typecheck pass and the end-to-end CLI run succeeded against the scratch database.
 - [ ] The geometry storage decision (PostGIS type, SRID, who owns the generator change) is written down in this task and in the Dryv gaps register.
+
+## Notes
+
+On 15 November 2026 a format step was added: `bun run db format` (sql-formatter, PostgreSQL dialect) and a `format-sql` Dryv action that formats the snapshot before it is written. The formatted snapshot builds a schema identical to the unformatted one (pg_dump of both scratch databases differs only in pg_dump random restrict tokens). Because the snapshot changed, the unapplied `0001_init.sql` was re-assembled; no database had applied it.

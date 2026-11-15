@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",
+    "sql-formatter": "^15.9.0",
     "typescript": "^7.0.2"
   }
 }

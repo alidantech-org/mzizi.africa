@@ -34,6 +34,12 @@ actions:
             --only=correctness/noUnusedImports,
             $(files),
           ]
+  # Generated SQL is formatted after generation (sql-formatter via the database CLI).
+  format-sql:
+    stage: files
+    extensions: [.sql]
+    commands:
+      - run: [bun, source/backend/database/src/cli.ts, format, $(files)]
   typecheck:
     stage: final
     after: [install]
@@ -69,6 +75,8 @@ destinations:
   # source/backend/database/migrations (never written by generation directly).
   postgres-sql:
     path: source/backend/database/sql
+    actions:
+      - { $ref: "#/actions/format-sql" }
 
 authoring:
   source: { $ref: "#/sources/authoring/database" }
