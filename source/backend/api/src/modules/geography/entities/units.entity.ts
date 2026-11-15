@@ -12,7 +12,7 @@ import {
 
 import { FeaturesEntity } from "#/modules/geography/entities/features.entity.ts";
 import { CountryEntity } from "#/modules/reference/entities/country.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
 
 /**
  * A formally defined administrative, electoral, statistical or historical territorial specialization of one feature; country membership is optional for historic and cross-border units.

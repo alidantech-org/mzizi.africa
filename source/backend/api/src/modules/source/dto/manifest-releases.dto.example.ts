@@ -1,5 +1,5 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { ReleaseStatus } from "#/modules/source/release-status.enum.ts";
+import { ReleaseStatus } from "#/modules/source/enum/release-status.enum.ts";
 
 /** The contract shape of ManifestReleases, for generated tests. */
 export const manifestReleasesExample: ContractExample = contractExample({

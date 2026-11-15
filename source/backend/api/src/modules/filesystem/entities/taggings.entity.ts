@@ -10,8 +10,8 @@ import {
 import { FilesEntity } from "#/modules/filesystem/entities/files.entity.ts";
 import { FoldersEntity } from "#/modules/filesystem/entities/folders.entity.ts";
 import { TagsEntity } from "#/modules/filesystem/entities/tags.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * One tag assignment to exactly one typed file or folder target.

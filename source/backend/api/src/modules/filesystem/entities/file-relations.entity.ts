@@ -11,9 +11,9 @@ import {
 
 import { FileVersionsEntity } from "#/modules/filesystem/entities/file-versions.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { JsonText } from "#/modules/shared/json-text.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { JsonText } from "#/modules/shared/type/json-text.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * Directed exact input-to-output lineage with a pinned processing description; originals remain immutable.

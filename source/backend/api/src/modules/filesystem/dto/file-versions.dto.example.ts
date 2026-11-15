@@ -1,5 +1,5 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { Access } from "#/modules/filesystem/access.enum.ts";
+import { Access } from "#/modules/filesystem/enum/access.enum.ts";
 
 /** The contract shape of FileVersions, for generated tests. */
 export const fileVersionsExample: ContractExample = contractExample({

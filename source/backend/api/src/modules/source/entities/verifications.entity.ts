@@ -9,12 +9,12 @@ import {
 } from "typeorm";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
 import { EvidenceEntity } from "#/modules/source/entities/evidence.entity.ts";
-import { VerificationOutcome } from "#/modules/source/verification-outcome.enum.ts";
-import type { Confidence } from "#/modules/shared/confidence.type.ts";
-import type { Description } from "#/modules/shared/description.type.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { JsonText } from "#/modules/shared/json-text.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import { VerificationOutcome } from "#/modules/source/enum/verification-outcome.enum.ts";
+import type { Confidence } from "#/modules/shared/type/confidence.type.ts";
+import type { Description } from "#/modules/shared/type/description.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { JsonText } from "#/modules/shared/type/json-text.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * Append-only attributable assessment; disagreement and insufficient evidence remain explicit outcomes.

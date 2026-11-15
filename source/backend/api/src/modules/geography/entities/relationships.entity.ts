@@ -10,8 +10,8 @@ import {
 } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/entities/features.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * A typed, dated directed relationship between features; separate rows allow overlapping administrative, electoral, statistical and other systems.

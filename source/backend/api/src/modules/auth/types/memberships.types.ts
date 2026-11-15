@@ -4,7 +4,7 @@
 
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
-import type { MembershipStatus } from '#/modules/auth/membership-status.enum';
+import type { MembershipStatus } from '#/modules/auth/enum/membership-status.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES

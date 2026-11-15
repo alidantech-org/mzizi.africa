@@ -11,11 +11,11 @@ import {
   Min,
   ValidateIf,
 } from "class-validator";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { JsonText } from "#/modules/shared/json-text.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { Sha256 } from "#/modules/shared/sha256.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { JsonText } from "#/modules/shared/type/json-text.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { Sha256 } from "#/modules/shared/type/sha256.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record. (entity)

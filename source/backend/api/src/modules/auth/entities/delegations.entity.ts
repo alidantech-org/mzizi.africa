@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { AccountsEntity } from "#/modules/auth/entities/accounts.entity.ts";
 import { ScopesEntity } from "#/modules/auth/entities/scopes.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
 
 /**
  * Time-limited delegation of scoped access from one account to another.

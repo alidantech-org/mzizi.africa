@@ -10,11 +10,11 @@ import {
 import { EntitiesEntity } from "#/modules/official/entities/entities.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
 import { PublishersEntity } from "#/modules/source/entities/publishers.entity.ts";
-import type { Description } from "#/modules/shared/description.type.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { Name } from "#/modules/shared/name.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Description } from "#/modules/shared/type/description.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { Name } from "#/modules/shared/type/name.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * Stable publication-channel identity independent of any public website.

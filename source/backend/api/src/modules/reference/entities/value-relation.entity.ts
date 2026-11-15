@@ -9,8 +9,8 @@ import {
   type Relation,
 } from "typeorm";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
-import { ValueRelationKind } from "#/modules/reference/value-relation-kind.enum.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
+import { ValueRelationKind } from "#/modules/reference/enum/value-relation-kind.enum.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
 
 /**
  * Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.

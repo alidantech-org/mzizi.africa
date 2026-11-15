@@ -12,10 +12,10 @@ import { EntitiesEntity } from "#/modules/official/entities/entities.entity.ts";
 import { IndividualsEntity } from "#/modules/official/entities/individuals.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/entities/citations.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { NonEmptyString1000 } from "#/modules/shared/non-empty-string1000.type.ts";
-import type { NonEmptyString255 } from "#/modules/shared/non-empty-string255.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { NonEmptyString1000 } from "#/modules/shared/type/non-empty-string1000.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/type/non-empty-string255.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * One exact external identifier assigned to an entity or individual under a Reference scheme and optional issuer.

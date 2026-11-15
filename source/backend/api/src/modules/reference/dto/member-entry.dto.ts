@@ -7,9 +7,9 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { Name } from "#/modules/shared/name.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { Name } from "#/modules/shared/type/name.type.ts";
 
 /**
  * Member Entry

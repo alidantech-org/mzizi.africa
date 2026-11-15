@@ -11,11 +11,11 @@ import { FileVersionsEntity } from "#/modules/filesystem/entities/file-versions.
 import { DocumentsEntity } from "#/modules/source/entities/documents.entity.ts";
 import { ManifestReleasesEntity } from "#/modules/source/entities/manifest-releases.entity.ts";
 import { SourcesEntity } from "#/modules/source/entities/sources.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { JsonText } from "#/modules/shared/json-text.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { Sha256 } from "#/modules/shared/sha256.type.ts";
-import type { Url } from "#/modules/shared/url.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { JsonText } from "#/modules/shared/type/json-text.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { Sha256 } from "#/modules/shared/type/sha256.type.ts";
+import type { Url } from "#/modules/shared/type/url.type.ts";
 
 /**
  * Immutable accepted retrieval snapshot with exact bytes; failed requests remain in Operations.

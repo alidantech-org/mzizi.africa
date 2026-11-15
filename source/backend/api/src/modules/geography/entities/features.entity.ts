@@ -8,9 +8,9 @@ import {
   type Relation,
 } from "typeorm";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * The sole canonical identity for each geographic entity, independent of type, country or geometry.

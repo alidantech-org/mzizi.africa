@@ -14,9 +14,9 @@ import {
 import { InstitutionDetailMandatesDto } from "#/modules/governance/dto/institution-detail-mandates.dto.ts";
 import { InstitutionDetailNamesDto } from "#/modules/governance/dto/institution-detail-names.dto.ts";
 import { InstitutionDetailOfficesDto } from "#/modules/governance/dto/institution-detail-offices.dto.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { CalendarDate } from "#/modules/shared/calendar-date.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { CalendarDate } from "#/modules/shared/type/calendar-date.type.ts";
 
 /**
  * Institution Detail

@@ -7,9 +7,9 @@ import {
   MaxLength,
   MinLength,
 } from "class-validator";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * Base for operational records with a unique identity code and creation time.

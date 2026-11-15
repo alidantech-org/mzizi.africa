@@ -11,13 +11,13 @@ import {
 
 import { FileVersionsEntity } from "#/modules/filesystem/entities/file-versions.entity.ts";
 import { ManifestsEntity } from "#/modules/source/entities/manifests.entity.ts";
-import { ReleaseStatus } from "#/modules/source/release-status.enum.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { JsonText } from "#/modules/shared/json-text.type.ts";
-import type { NonEmptyString100 } from "#/modules/shared/non-empty-string100.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { Sha256 } from "#/modules/shared/sha256.type.ts";
+import { ReleaseStatus } from "#/modules/source/enum/release-status.enum.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { JsonText } from "#/modules/shared/type/json-text.type.ts";
+import type { NonEmptyString100 } from "#/modules/shared/type/non-empty-string100.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { Sha256 } from "#/modules/shared/type/sha256.type.ts";
 
 /**
  * Pinned approved manifest content; schema and capabilities are immutable release inputs.

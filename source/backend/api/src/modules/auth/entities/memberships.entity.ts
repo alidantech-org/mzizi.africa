@@ -8,8 +8,8 @@ import {
   type Relation,
 } from "typeorm";
 import { AccountsEntity } from "#/modules/auth/entities/accounts.entity.ts";
-import { MembershipStatus } from "#/modules/auth/membership-status.enum.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
+import { MembershipStatus } from "#/modules/auth/enum/membership-status.enum.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
 
 /**
  * Account membership of an institution, verified and revocable with attribution.

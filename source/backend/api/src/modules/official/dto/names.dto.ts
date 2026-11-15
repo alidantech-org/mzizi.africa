@@ -13,13 +13,13 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
-import type { Flag } from "#/modules/shared/flag.type.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { LanguageTag } from "#/modules/shared/language-tag.type.ts";
-import type { Name } from "#/modules/shared/name.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { CalendarDate } from "#/modules/shared/calendar-date.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import type { Flag } from "#/modules/shared/type/flag.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { LanguageTag } from "#/modules/shared/type/language-tag.type.ts";
+import type { Name } from "#/modules/shared/type/name.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { CalendarDate } from "#/modules/shared/type/calendar-date.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * One attested name form for exactly one entity or individual, with optional language and validity. (entity)

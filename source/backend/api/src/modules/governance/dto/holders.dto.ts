@@ -10,10 +10,10 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { CalendarDate } from "#/modules/shared/calendar-date.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { CalendarDate } from "#/modules/shared/type/calendar-date.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * One person's continuous tenure in one office, with appointment kind and effective dates. (entity)

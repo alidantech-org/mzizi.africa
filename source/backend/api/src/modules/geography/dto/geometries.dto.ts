@@ -11,10 +11,10 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { CalendarDate } from "#/modules/shared/calendar-date.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { CalendarDate } from "#/modules/shared/type/calendar-date.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * A dated spatial representation version for a feature. The geometry field remains an unsupported Dryv placeholder and is excluded from generation. (entity)

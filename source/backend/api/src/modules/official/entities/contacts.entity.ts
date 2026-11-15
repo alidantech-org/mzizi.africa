@@ -12,9 +12,9 @@ import { EntitiesEntity } from "#/modules/official/entities/entities.entity.ts";
 import { IndividualsEntity } from "#/modules/official/entities/individuals.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/entities/citations.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { NonEmptyString1000 } from "#/modules/shared/non-empty-string1000.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { NonEmptyString1000 } from "#/modules/shared/type/non-empty-string1000.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * One sourced contact channel for exactly one identity; visibility class governs handling of private values.

@@ -12,8 +12,8 @@ import { DelegationsEntity } from "#/modules/auth/entities/delegations.entity.ts
 import { MembershipsEntity } from "#/modules/auth/entities/memberships.entity.ts";
 import { RolesEntity } from "#/modules/auth/entities/roles.entity.ts";
 import { ScopesEntity } from "#/modules/auth/entities/scopes.entity.ts";
-import type { Description } from "#/modules/shared/description.type.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
+import type { Description } from "#/modules/shared/type/description.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
 
 /**
  * Scoped role grant to an account, optionally through a membership or delegation, with revocation history.

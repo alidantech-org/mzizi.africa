@@ -10,7 +10,7 @@ import {
 import { AccountsEntity } from "#/modules/auth/entities/accounts.entity.ts";
 import { PermissionsEntity } from "#/modules/auth/entities/permissions.entity.ts";
 import { RolesEntity } from "#/modules/auth/entities/roles.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
 
 /**
  * Permission granted to a role, with who granted it and when.

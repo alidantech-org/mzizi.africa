@@ -9,10 +9,10 @@ import {
   Matches,
   ValidateIf,
 } from "class-validator";
-import type { Email } from "#/modules/shared/email.type.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { Sha256 } from "#/modules/shared/sha256.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import type { Email } from "#/modules/shared/type/email.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { Sha256 } from "#/modules/shared/type/sha256.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * Single-use invitation to an institution; only a digest of the token is stored. (entity)

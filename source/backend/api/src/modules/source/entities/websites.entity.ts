@@ -8,10 +8,10 @@ import {
   type Relation,
 } from "typeorm";
 import { SourcesEntity } from "#/modules/source/entities/sources.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { Name } from "#/modules/shared/name.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { Url } from "#/modules/shared/url.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { Name } from "#/modules/shared/type/name.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { Url } from "#/modules/shared/type/url.type.ts";
 
 /**
  * Website-specific identity attached to a source channel.

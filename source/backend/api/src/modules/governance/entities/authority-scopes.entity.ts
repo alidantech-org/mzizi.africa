@@ -14,8 +14,8 @@ import { OfficesEntity } from "#/modules/governance/entities/offices.entity.ts";
 import { CountryEntity } from "#/modules/reference/entities/country.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/entities/citations.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * One institution or office authority over a required Geography unit for an effective period.

@@ -4,8 +4,8 @@
 
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
-import type { AccountStatus } from '#/modules/auth/account-status.enum';
-import type { AuthActorKind } from '#/modules/auth/auth-actor-kind.enum';
+import type { AccountStatus } from '#/modules/auth/enum/account-status.enum';
+import type { AuthActorKind } from '#/modules/auth/enum/auth-actor-kind.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES

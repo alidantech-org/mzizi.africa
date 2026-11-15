@@ -4,7 +4,7 @@
 
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
-import type { Retention } from '#/modules/filesystem/retention.enum';
+import type { Retention } from '#/modules/filesystem/enum/retention.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES

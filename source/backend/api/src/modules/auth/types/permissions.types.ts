@@ -4,7 +4,7 @@
 
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
-import type { AuthAction } from '#/modules/auth/auth-action.enum';
+import type { AuthAction } from '#/modules/auth/enum/auth-action.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES

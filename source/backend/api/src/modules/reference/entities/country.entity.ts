@@ -4,10 +4,10 @@ import {
   Index,
   PrimaryColumn,
 } from "typeorm";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { Name } from "#/modules/shared/name.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { Name } from "#/modules/shared/type/name.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * Canonical identity for a modern country; not a geographic unit or historical polity.

@@ -8,8 +8,8 @@ import {
   type Relation,
 } from "typeorm";
 import { AccountsEntity } from "#/modules/auth/entities/accounts.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { NonEmptyString500 } from "#/modules/shared/non-empty-string500.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { NonEmptyString500 } from "#/modules/shared/type/non-empty-string500.type.ts";
 
 /**
  * External issuer and subject linked to one account; unlinking is recorded, never deleted.

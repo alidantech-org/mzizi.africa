@@ -12,9 +12,9 @@ import { EntitiesEntity } from "#/modules/official/entities/entities.entity.ts";
 import { IndividualsEntity } from "#/modules/official/entities/individuals.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/entities/citations.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { Percentage } from "#/modules/shared/percentage.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { Percentage } from "#/modules/shared/type/percentage.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * One directed typed relationship between exactly two Official identities, optionally with an ownership share.

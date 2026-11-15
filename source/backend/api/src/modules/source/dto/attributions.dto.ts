@@ -11,12 +11,12 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
-import type { Description } from "#/modules/shared/description.type.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { JsonText } from "#/modules/shared/json-text.type.ts";
-import type { NonEmptyString1000 } from "#/modules/shared/non-empty-string1000.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import type { Description } from "#/modules/shared/type/description.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { JsonText } from "#/modules/shared/type/json-text.type.ts";
+import type { NonEmptyString1000 } from "#/modules/shared/type/non-empty-string1000.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * Accepted rights and credit statement tied to exact content and publisher. (entity)

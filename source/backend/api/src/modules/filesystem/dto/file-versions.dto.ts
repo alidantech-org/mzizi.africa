@@ -16,17 +16,17 @@ import {
   ValidateIf,
 } from "class-validator";
 
-import { Access } from "#/modules/filesystem/access.enum.ts";
-import type { Flag } from "#/modules/shared/flag.type.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { JsonText } from "#/modules/shared/json-text.type.ts";
-import type { NonEmptyString1000 } from "#/modules/shared/non-empty-string1000.type.ts";
-import type { NonEmptyString255 } from "#/modules/shared/non-empty-string255.type.ts";
-import type { NonEmptyString500 } from "#/modules/shared/non-empty-string500.type.ts";
-import type { NonNegativeInt64 } from "#/modules/shared/non-negative-int64.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { Sha256 } from "#/modules/shared/sha256.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import { Access } from "#/modules/filesystem/enum/access.enum.ts";
+import type { Flag } from "#/modules/shared/type/flag.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { JsonText } from "#/modules/shared/type/json-text.type.ts";
+import type { NonEmptyString1000 } from "#/modules/shared/type/non-empty-string1000.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/type/non-empty-string255.type.ts";
+import type { NonEmptyString500 } from "#/modules/shared/type/non-empty-string500.type.ts";
+import type { NonNegativeInt64 } from "#/modules/shared/type/non-negative-int64.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { Sha256 } from "#/modules/shared/type/sha256.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * Immutable exact bytes in the mzizi bucket; verify object hash, size and access before acceptance. (entity)

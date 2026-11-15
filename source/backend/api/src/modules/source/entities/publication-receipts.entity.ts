@@ -4,11 +4,11 @@ import {
   Index,
   PrimaryColumn,
 } from "typeorm";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { JsonText } from "#/modules/shared/json-text.type.ts";
-import type { NonEmptyString255 } from "#/modules/shared/non-empty-string255.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { Sha256 } from "#/modules/shared/sha256.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { JsonText } from "#/modules/shared/type/json-text.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/type/non-empty-string255.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { Sha256 } from "#/modules/shared/type/sha256.type.ts";
 
 /**
  * Immutable Main acknowledgement committed atomically with accepted records and provenance. Same-key different-hash retries must conflict.

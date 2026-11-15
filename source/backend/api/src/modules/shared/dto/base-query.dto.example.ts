@@ -1,5 +1,5 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { SortDirection } from "#/modules/shared/sort-direction.enum.ts";
+import { SortDirection } from "#/modules/shared/enum/sort-direction.enum.ts";
 
 /** The contract shape of BaseQuery, for generated tests. */
 export const baseQueryExample: ContractExample = contractExample({

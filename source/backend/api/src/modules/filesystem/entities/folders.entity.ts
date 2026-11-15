@@ -10,12 +10,12 @@ import {
 } from "typeorm";
 
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
-import { Access } from "#/modules/filesystem/access.enum.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { JsonText } from "#/modules/shared/json-text.type.ts";
-import type { Name } from "#/modules/shared/name.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import { Access } from "#/modules/filesystem/enum/access.enum.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { JsonText } from "#/modules/shared/type/json-text.type.ts";
+import type { Name } from "#/modules/shared/type/name.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * Logical hierarchy; access escalation requires recorded authorization, independent of object keys.

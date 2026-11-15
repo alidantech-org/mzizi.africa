@@ -10,11 +10,11 @@ import {
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
 import { PublishersEntity } from "#/modules/source/entities/publishers.entity.ts";
 import { SourcesEntity } from "#/modules/source/entities/sources.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { Name } from "#/modules/shared/name.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { Url } from "#/modules/shared/url.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { Name } from "#/modules/shared/type/name.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { Url } from "#/modules/shared/type/url.type.ts";
 
 /**
  * Stable published document identity; repeated captures retain independent retrieval history.

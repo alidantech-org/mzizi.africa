@@ -9,10 +9,10 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
-import { ValueRelationKind } from "#/modules/reference/value-relation-kind.enum.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { CalendarDate } from "#/modules/shared/calendar-date.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import { ValueRelationKind } from "#/modules/reference/enum/value-relation-kind.enum.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { CalendarDate } from "#/modules/shared/type/calendar-date.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy. (entity)

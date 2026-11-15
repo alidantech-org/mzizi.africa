@@ -7,8 +7,8 @@ import {
   type Relation,
 } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/entities/features.entity.ts";
-import type { Flag } from "#/modules/shared/flag.type.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
+import type { Flag } from "#/modules/shared/type/flag.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
 
 /**
  * Optional physical-place attributes for a feature; does not create a separate identity.

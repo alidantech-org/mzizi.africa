@@ -1,5 +1,5 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { AuthAction } from "#/modules/auth/auth-action.enum.ts";
+import { AuthAction } from "#/modules/auth/enum/auth-action.enum.ts";
 
 /** The contract shape of Permissions, for generated tests. */
 export const permissionsExample: ContractExample = contractExample({

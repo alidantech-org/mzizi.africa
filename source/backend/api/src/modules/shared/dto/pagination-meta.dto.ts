@@ -3,7 +3,7 @@ import {
   IsInt,
   Min,
 } from "class-validator";
-import type { NonNegativeInteger } from "#/modules/shared/non-negative-integer.type.ts";
+import type { NonNegativeInteger } from "#/modules/shared/type/non-negative-integer.type.ts";
 
 /**
  * Pagination Meta

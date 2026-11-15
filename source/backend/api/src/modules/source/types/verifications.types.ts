@@ -4,7 +4,7 @@
 
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
-import type { VerificationOutcome } from '#/modules/source/verification-outcome.enum';
+import type { VerificationOutcome } from '#/modules/source/enum/verification-outcome.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES

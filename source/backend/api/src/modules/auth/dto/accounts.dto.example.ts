@@ -1,6 +1,6 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { AccountStatus } from "#/modules/auth/account-status.enum.ts";
-import { AuthActorKind } from "#/modules/auth/auth-actor-kind.enum.ts";
+import { AccountStatus } from "#/modules/auth/enum/account-status.enum.ts";
+import { AuthActorKind } from "#/modules/auth/enum/auth-actor-kind.enum.ts";
 
 /** The contract shape of Accounts, for generated tests. */
 export const accountsExample: ContractExample = contractExample({

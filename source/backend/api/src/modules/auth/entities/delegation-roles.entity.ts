@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { DelegationsEntity } from "#/modules/auth/entities/delegations.entity.ts";
 import { RolesEntity } from "#/modules/auth/entities/roles.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
 
 /**
  * Role included in a delegation.

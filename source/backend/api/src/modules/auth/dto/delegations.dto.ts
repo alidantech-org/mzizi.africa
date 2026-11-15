@@ -7,8 +7,8 @@ import {
   ValidateIf,
 } from "class-validator";
 
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { Instant } from "#/modules/shared/instant.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { Instant } from "#/modules/shared/type/instant.type.ts";
 
 /**
  * Time-limited delegation of scoped access from one account to another. (entity)

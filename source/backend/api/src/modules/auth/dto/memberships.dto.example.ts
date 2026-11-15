@@ -1,5 +1,5 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { MembershipStatus } from "#/modules/auth/membership-status.enum.ts";
+import { MembershipStatus } from "#/modules/auth/enum/membership-status.enum.ts";
 
 /** The contract shape of Memberships, for generated tests. */
 export const membershipsExample: ContractExample = contractExample({

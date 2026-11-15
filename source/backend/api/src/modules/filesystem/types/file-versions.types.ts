@@ -4,7 +4,7 @@
 
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
-import type { Access } from '#/modules/filesystem/access.enum';
+import type { Access } from '#/modules/filesystem/enum/access.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES

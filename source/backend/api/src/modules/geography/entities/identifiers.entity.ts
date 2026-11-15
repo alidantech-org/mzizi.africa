@@ -9,10 +9,10 @@ import {
 } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/entities/features.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { NonEmptyString255 } from "#/modules/shared/non-empty-string255.type.ts";
-import type { NonEmptyString500 } from "#/modules/shared/non-empty-string500.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/type/non-empty-string255.type.ts";
+import type { NonEmptyString500 } from "#/modules/shared/type/non-empty-string500.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * A preserved identifier assigned to a feature by an external geographic registry or source system.

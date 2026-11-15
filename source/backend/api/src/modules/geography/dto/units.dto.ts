@@ -8,8 +8,8 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/dto/validators/satisfies.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { CalendarDate } from "#/modules/shared/calendar-date.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { CalendarDate } from "#/modules/shared/type/calendar-date.type.ts";
 
 /**
  * A formally defined administrative, electoral, statistical or historical territorial specialization of one feature; country membership is optional for historic and cross-border units. (entity)

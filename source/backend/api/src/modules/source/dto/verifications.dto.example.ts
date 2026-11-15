@@ -1,5 +1,5 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { VerificationOutcome } from "#/modules/source/verification-outcome.enum.ts";
+import { VerificationOutcome } from "#/modules/source/enum/verification-outcome.enum.ts";
 
 /** The contract shape of Verifications, for generated tests. */
 export const verificationsExample: ContractExample = contractExample({

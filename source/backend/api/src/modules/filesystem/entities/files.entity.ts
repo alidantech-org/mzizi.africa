@@ -9,11 +9,11 @@ import {
 } from "typeorm";
 import { FileVersionsEntity } from "#/modules/filesystem/entities/file-versions.entity.ts";
 import { FoldersEntity } from "#/modules/filesystem/entities/folders.entity.ts";
-import { Retention } from "#/modules/filesystem/retention.enum.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { Name } from "#/modules/shared/name.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import { Retention } from "#/modules/filesystem/enum/retention.enum.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { Name } from "#/modules/shared/type/name.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * Stable logical file identity; equal content hashes may belong to different files.

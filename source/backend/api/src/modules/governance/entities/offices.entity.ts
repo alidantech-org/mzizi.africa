@@ -12,9 +12,9 @@ import { UnitsEntity } from "#/modules/geography/entities/units.entity.ts";
 import { InstitutionsEntity } from "#/modules/governance/entities/institutions.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/entities/citations.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * One established public office, independent of any current holder and optionally scoped to a geographic unit.

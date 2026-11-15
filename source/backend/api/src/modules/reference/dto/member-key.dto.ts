@@ -5,7 +5,7 @@ import {
   MaxLength,
   MinLength,
 } from "class-validator";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
 
 /**
  * Member Key

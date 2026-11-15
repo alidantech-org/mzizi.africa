@@ -4,7 +4,7 @@
 
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
-import type { ReleaseStatus } from '#/modules/source/release-status.enum';
+import type { ReleaseStatus } from '#/modules/source/enum/release-status.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES

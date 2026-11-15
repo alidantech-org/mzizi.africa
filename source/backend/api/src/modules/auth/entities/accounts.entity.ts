@@ -4,10 +4,10 @@ import {
   PrimaryColumn,
 } from "typeorm";
 
-import { AccountStatus } from "#/modules/auth/account-status.enum.ts";
-import { AuthActorKind } from "#/modules/auth/auth-actor-kind.enum.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { NonEmptyString255 } from "#/modules/shared/non-empty-string255.type.ts";
+import { AccountStatus } from "#/modules/auth/enum/account-status.enum.ts";
+import { AuthActorKind } from "#/modules/auth/enum/auth-actor-kind.enum.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/type/non-empty-string255.type.ts";
 
 /**
  * Login principal for a person or service; identity is separate from the people and institutions it refers to.

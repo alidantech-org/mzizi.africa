@@ -12,9 +12,9 @@ import { InstitutionsEntity } from "#/modules/governance/entities/institutions.e
 import { OfficesEntity } from "#/modules/governance/entities/offices.entity.ts";
 import { ValueEntity } from "#/modules/reference/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/entities/citations.entity.ts";
-import type { Description } from "#/modules/shared/description.type.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Description } from "#/modules/shared/type/description.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * One responsibility or authority assignment for an institution or office.

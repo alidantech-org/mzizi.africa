@@ -8,10 +8,10 @@ import {
   type Relation,
 } from "typeorm";
 import { SourcesEntity } from "#/modules/source/entities/sources.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { NonEmptyString255 } from "#/modules/shared/non-empty-string255.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
-import type { Url } from "#/modules/shared/url.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/type/non-empty-string255.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
+import type { Url } from "#/modules/shared/type/url.type.ts";
 
 /**
  * API channel with named credential binding only; request behavior is pinned in manifest releases.

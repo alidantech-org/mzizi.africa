@@ -4,7 +4,7 @@
 
 import * as Q from '#/modules/common/types/query';
 import * as B from '#/modules/common/types/base';
-import type { ValueRelationKind } from '#/modules/reference/value-relation-kind.enum';
+import type { ValueRelationKind } from '#/modules/reference/enum/value-relation-kind.enum';
 
 // ----------------------------------
 // RELATED ENTITY TYPES

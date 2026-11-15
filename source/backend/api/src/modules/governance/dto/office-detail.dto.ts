@@ -11,8 +11,8 @@ import {
   ValidateNested,
 } from "class-validator";
 import { OfficeDetailHoldersDto } from "#/modules/governance/dto/office-detail-holders.dto.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
 
 /**
  * Office Detail

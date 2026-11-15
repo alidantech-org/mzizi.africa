@@ -4,7 +4,7 @@ import {
   IsUUID,
 } from "class-validator";
 
-import type { Id } from "#/modules/shared/id.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
 
 /**
  * Role included in a delegation. (entity)

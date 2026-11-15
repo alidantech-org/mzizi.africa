@@ -11,8 +11,8 @@ import {
 
 import { ManifestReleasesEntity } from "#/modules/source/entities/manifest-releases.entity.ts";
 import { SourcesEntity } from "#/modules/source/entities/sources.entity.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { PositiveInteger } from "#/modules/shared/positive-integer.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { PositiveInteger } from "#/modules/shared/type/positive-integer.type.ts";
 
 /**
  * Dated release binding; activation never changes releases already pinned by running jobs.

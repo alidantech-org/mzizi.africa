@@ -1,5 +1,5 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { Retention } from "#/modules/filesystem/retention.enum.ts";
+import { Retention } from "#/modules/filesystem/enum/retention.enum.ts";
 
 /** The contract shape of Files, for generated tests. */
 export const filesExample: ContractExample = contractExample({

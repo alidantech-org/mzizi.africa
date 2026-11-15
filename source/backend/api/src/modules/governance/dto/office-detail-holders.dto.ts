@@ -12,9 +12,9 @@ import {
   ValidateNested,
 } from "class-validator";
 import { OfficeDetailHoldersNamesDto } from "#/modules/governance/dto/office-detail-holders-names.dto.ts";
-import type { Id } from "#/modules/shared/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/identity-code.type.ts";
-import type { CalendarDate } from "#/modules/shared/calendar-date.type.ts";
+import type { Id } from "#/modules/shared/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/type/identity-code.type.ts";
+import type { CalendarDate } from "#/modules/shared/type/calendar-date.type.ts";
 
 /**
  * Office Detail Holders

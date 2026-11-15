@@ -3,7 +3,7 @@ import {
   IsInt,
   IsOptional,
 } from "class-validator";
-import type { Integer } from "#/modules/shared/integer.type.ts";
+import type { Integer } from "#/modules/shared/type/integer.type.ts";
 
 /**
  * Page Window

@@ -1,5 +1,5 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { ValueRelationKind } from "#/modules/reference/value-relation-kind.enum.ts";
+import { ValueRelationKind } from "#/modules/reference/enum/value-relation-kind.enum.ts";
 
 /** The contract shape of ValueRelation, for generated tests. */
 export const valueRelationExample: ContractExample = contractExample({

@@ -1,5 +1,5 @@
 import { type ContractExample, contractExample } from "#/modules/common/dto/testing/examples.ts";
-import { AccountStatus } from "#/modules/auth/account-status.enum.ts";
+import { AccountStatus } from "#/modules/auth/enum/account-status.enum.ts";
 
 /** The contract shape of AccountWindow, for generated tests. */
 export const accountWindowExample: ContractExample = contractExample({
