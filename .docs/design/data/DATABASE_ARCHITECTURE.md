@@ -74,8 +74,8 @@ The API calls the engine's internal HTTP API to start work. The engine records j
 | Runtime | Source | Output | Status |
 |---|---|---|---|
 | NestJS (TypeORM) | `schemas/postgres` | TypeORM entities | Not bound to the database app yet; the existing modules under `source/backend/api/src/modules` are inherited and are not generated from these contracts |
-| Python, Postgres rows | `schemas/postgres` | Pydantic models | Not built; candidate generator is the Dryv `fastapi-backend` example pack (untried here) or JSON Schema export plus a model generator |
-| Python, Mongo documents | `schemas/mongo` (empty) | Pydantic models | Not built; Dryv has no Mongo store driver, so the contracts are schemas without a storage facet |
+| Python, Postgres rows | `schemas/postgres` | Frozen Pydantic row models in `source/backend/engine/src/mzizi_engine/api/schemas/<group>/{entities,enums}` | Built (`dryv/packs/python-rows`, `dryv generate --app pgsql`); ruff and strict mypy run as actions |
+| Python, Mongo documents | `schemas/mongo` (`runtime`, `staging`) | Pydantic models in `.../api/schemas/<group>/{enums,models}` | Built through the engine app (`dryv/packs/python-api`); no storage facet because Dryv has no Mongo store driver; engine routes in `.../api/routes` and contract tests in `source/backend/engine/tests/api` |
 
 ## Known interim breakage
 

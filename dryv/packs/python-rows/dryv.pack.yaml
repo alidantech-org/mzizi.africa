@@ -1,0 +1,70 @@
+version: dryv.pack/v1alpha1
+key: mzizi.python-rows
+source: templates
+
+info:
+  title: Mzizi Python rows
+  version: 0.1.0
+  description: Frozen Pydantic row models and string enums for the PostgreSQL entities, one module per table under <group>/, read from psycopg dict rows by the engine.
+  purpose: persistence
+  languages: [python]
+  frameworks: [pydantic, psycopg]
+  tags: [rows, database, python]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+capabilities: { persistence: true, stores: true }
+
+selections:
+  entities:
+    subject: schema
+    filter:
+      all: { role: entity }
+    scope: each
+  enums:
+    subject: property.enum
+    scope: each
+  groups:
+    subject: schema
+    filter:
+      all: { role: entity }
+    scope: collects.group
+
+# schemas/<group>/entities/<table>.py per entity, schemas/<group>/enums/<enum>.py per enum, entities/__init__.py per group.
+templates:
+  enum:
+    $ref: '#/selections/enums'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(group.name.snake)
+        - enums
+      symbol: $(subject.name.pascal)
+
+  row:
+    $ref: '#/selections/entities'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(group.name.snake)
+        - entities
+      symbol: $(subject.name.scoped)Row
+    imports:
+      - $ref: '#/templates/enum'
+
+  group-index:
+    $ref: '#/selections/groups'
+    output:
+      name: __init__
+      path:
+        - $(group.name.snake)
+        - entities
+    imports:
+      - $ref: '#/templates/row'
+        members: true
+
+provides:
+  schema.persistence:
+    $ref: '#/templates/row'

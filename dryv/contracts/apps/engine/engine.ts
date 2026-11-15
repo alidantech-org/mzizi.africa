@@ -148,3 +148,6 @@ export const CancelJob = jobs.operation(
 );
 
 export const engineApi = { engine, jobs, ListCapabilities, SubmitJob, GetJob, ListJobs, CancelJob };
+
+/** What the other engine feature files share: the service-key policy, the failure mapping and the common properties. */
+export const engineShared = { ServiceKey, engineHttp, JobId, Count, Reason, Blurb };

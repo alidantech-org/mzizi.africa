@@ -150,7 +150,6 @@ const effectiveGroup = shared.schemas({
   CodedValidityEntity: CodedValidityEntityBase,
 });
 
-
 export const baseSchemas = {
   ...baseGroup,
   ...operationsGroup,

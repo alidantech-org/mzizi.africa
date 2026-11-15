@@ -1,0 +1,75 @@
+{%- macro symbol_for(link) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == link.id and dependency.symbol -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+{%- macro base_type(value) -%}
+{%- if value.is.unknown or value.is.dynamic -%}JsonValue
+{%- elif value.is.schema -%}{{ symbol_for(value.schema) or 'JsonValue' }}
+{%- elif value.is.primitive -%}
+  {%- if value.property.primitive.is.boolean -%}bool
+  {%- elif value.property.primitive.is.integer -%}int
+  {%- elif value.property.primitive.is.decimal or value.property.primitive.is.money -%}Decimal
+  {%- elif value.property.primitive.is.number -%}float
+  {%- elif value.property.primitive.is.uuid -%}UUID
+  {%- else -%}str
+  {%- endif -%}
+{%- elif value.is.enum -%}{{ symbol_for(value.property.enum) or 'str' }}
+{%- elif value.is.temporal -%}
+  {%- if value.property.temporal.is.date -%}date
+  {%- elif value.property.temporal.is.time -%}time
+  {%- elif value.property.temporal.is.duration or value.property.temporal.is.interval -%}timedelta
+  {%- else -%}datetime
+  {%- endif -%}
+{%- elif value.is.record -%}dict[str, JsonValue]
+{%- else -%}JsonValue
+{%- endif -%}
+{%- endmacro -%}
+{#- Validation constraints a primitive carries, as pydantic Field keyword arguments. -#}
+{%- macro constraints(value) -%}
+{%- if value.is.property and value.is.primitive -%}
+  {%- set c = value.property.primitive.constraints -%}
+  {%- if c.length is not none and c.length.has_exact %}min_length={{ c.length.exact }}, max_length={{ c.length.exact }}, {% endif -%}
+  {%- if c.length is not none and c.length.has_min %}min_length={{ c.length.min }}, {% endif -%}
+  {%- if c.length is not none and c.length.has_max %}max_length={{ c.length.max }}, {% endif -%}
+  {%- if c.range is not none and c.range.has_min %}ge={{ c.range.min }}, {% endif -%}
+  {%- if c.range is not none and c.range.has_max %}le={{ c.range.max }}, {% endif -%}
+  {%- if c.has_multiple_of %}multiple_of={{ c.multiple_of }}, {% endif -%}
+  {%- if c.pattern is not none %}{% for expression in c.pattern.match %}{% if loop.first %}pattern={{ expression | tojson }}, {% endif %}{% endfor %}{% endif -%}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro field_type(field) -%}
+{%- set inner = base_type(field.value) -%}
+{%- set limits = constraints(field.value) | trim | trim(',') -%}
+{%- if field.array is not none -%}
+list[{% if limits %}Annotated[{{ inner }}, Field({{ limits }})]{% else %}{{ inner }}{% endif %}]
+{%- elif limits -%}Annotated[{{ inner }}, Field({{ limits }})]
+{%- else -%}{{ inner }}
+{%- endif -%}
+{%- endmacro -%}
+"""{{ schema.description or schema.name.title }}"""
+
+from __future__ import annotations
+
+from datetime import date, datetime, time, timedelta
+from decimal import Decimal
+from typing import Annotated
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from mzizi_engine.jsonvalue import JsonValue
+{%- for dependency in file.dependencies %}{% if dependency.symbol and dependency.target.id != schema.id %}
+from {{ dependency.path.prefixed | replace('/', '.') | replace('.py', '') }} import {{ dependency.symbol }}
+{%- endif %}{% endfor %}
+
+
+class {{ file.symbol }}(BaseModel):
+    """{{ schema.description or schema.name.title }}"""
+
+    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+{% for field in schema.fields %}
+    {{ field.name.snake }}: {{ field_type(field) }}{% if field.nullable or field.optional %} | None{% endif %} = Field({% if field.nullable or field.optional %}default=None, {% endif %}alias="{{ field.name.camel }}")
+{%- else %}
+    pass
+{%- endfor %}

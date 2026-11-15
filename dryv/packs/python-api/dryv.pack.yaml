@@ -1,0 +1,152 @@
+version: dryv.pack/v1alpha1
+key: mzizi.python-api
+source: templates
+
+info:
+  title: Mzizi Python API
+  version: 0.1.0
+  description: Validated Pydantic models, enums and FastAPI routes for the engine API, built from the engine contracts. Routes delegate to an abstract service the engine implements.
+  purpose: backend
+  languages: [python]
+  frameworks: [fastapi, pydantic]
+  tags: [python, fastapi, pydantic, routes]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+selections:
+  enums:
+    subject: property.enum
+    filter:
+      not: { tags: [mongo] }
+    scope: each
+  models:
+    subject: schema
+    filter:
+      not: { tags: [mongo] }
+    scope: each
+  routes:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: collects.feature
+  all-routes:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: all
+  route-groups:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: collects.group
+  model-groups:
+    subject: schema
+    filter:
+      not: { tags: [mongo] }
+    scope: collects.group
+
+# schemas/<group>/enums/<enum>.py, schemas/<group>/models/<schema>.py, routes/<group>/<feature>.py.
+templates:
+  enum:
+    $ref: '#/selections/enums'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(group.name.snake)
+        - enums
+      symbol: $(subject.name.pascal)
+
+  model:
+    $ref: '#/selections/models'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(group.name.snake)
+        - models
+      symbol: $(subject.name.pascal)
+    imports:
+      - $ref: '#/templates/enum'
+      - $ref: '#/templates/model'
+
+  route:
+    $ref: '#/selections/routes'
+    output:
+      destination: routes
+      name: $(feature.name.snake)
+      path:
+        - $(group.name.snake)
+      symbols:
+        service: $(group.name.pascal)$(feature.name.pascal)Service
+        router: build_$(group.name.snake)_$(feature.name.snake)_router
+    imports:
+      - $ref: '#/templates/enum'
+      - $ref: '#/templates/model'
+
+  # tests/api/schemas/<group>/models/test_<schema>.py: fields, aliases and required flags match the contract.
+  model-spec:
+    $ref: '#/selections/models'
+    output:
+      destination: tests-schemas
+      name: test_$(subject.name.snake)
+      path:
+        - $(group.name.snake)
+        - models
+    imports:
+      - $ref: '#/templates/model'
+        members: true
+
+  # tests/api/routes/<group>/test_<feature>.py: the router serves exactly the contract's methods, paths and statuses.
+  route-spec:
+    $ref: '#/selections/routes'
+    output:
+      destination: tests-routes
+      name: test_$(feature.name.snake)
+      path:
+        - $(group.name.snake)
+
+  # Test folders are packages, so mirrored folders may repeat file names (tests/api/routes/system/test_health.py
+  # and tests/api/schemas/system/models/test_health.py) without pytest import clashes.
+  spec-routes-package:
+    $ref: '#/selections/route-groups'
+    output:
+      destination: tests-routes
+      name: __init__
+      path:
+        - $(group.name.snake)
+  spec-group-package:
+    $ref: '#/selections/model-groups'
+    output:
+      destination: tests-schemas
+      name: __init__
+      path:
+        - $(group.name.snake)
+  spec-models-package:
+    $ref: '#/selections/model-groups'
+    output:
+      destination: tests-schemas
+      name: __init__
+      path:
+        - $(group.name.snake)
+        - models
+  spec-schemas-root:
+    $ref: '#/selections/all-routes'
+    output:
+      destination: tests-schemas-root
+      name: __init__
+  spec-schemas-api-root:
+    $ref: '#/selections/all-routes'
+    output:
+      destination: tests-schemas
+      name: __init__
+  spec-routes-root:
+    $ref: '#/selections/all-routes'
+    output:
+      destination: tests-routes
+      name: __init__
+  spec-api-root:
+    $ref: '#/selections/all-routes'
+    output:
+      destination: tests-api
+      name: __init__

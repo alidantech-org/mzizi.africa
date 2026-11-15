@@ -1,0 +1,12 @@
+"""Row models of the {{ group.name.title }} group."""
+
+from __future__ import annotations
+{% for dependency in file.dependencies %}{% if dependency.symbol %}
+from {{ dependency.path.prefixed | replace('/', '.') | replace('.py', '') }} import {{ dependency.symbol }}
+{%- endif %}{% endfor %}
+
+__all__ = [
+{%- for dependency in file.dependencies %}{% if dependency.symbol %}
+    "{{ dependency.symbol }}",
+{%- endif %}{% endfor %}
+]

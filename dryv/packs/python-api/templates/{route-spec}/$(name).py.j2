@@ -1,0 +1,27 @@
+{%- macro path_of(http) -%}{{ http.path.local }}{%- endmacro -%}
+{%- set service = group.name.pascal ~ feature.name.pascal ~ 'Service' -%}
+{%- set builder = 'build_' ~ group.name.snake ~ '_' ~ feature.name.snake ~ '_router' -%}
+"""Contract test: the {{ feature.name.title }} router serves exactly the contract's methods, paths and statuses."""
+
+from __future__ import annotations
+
+from unittest.mock import create_autospec
+
+from fastapi.routing import APIRoute
+
+from mzizi_engine.api.routes.{{ group.name.snake }}.{{ feature.name.snake }} import {{ builder }}, {{ service }}
+
+
+def test_routes_match_contract() -> None:
+    router = {{ builder }}(create_autospec({{ service }}, instance=True))
+    served = {
+        (method, route.path, route.status_code)
+        for route in router.routes
+        if isinstance(route, APIRoute)
+        for method in route.methods
+    }
+    assert served == {
+{%- for operation in operations %}{% set http = operation.facets.http %}
+        ("{{ http.method }}", "{{ path_of(http) }}", {% for binding in http.outputs %}{{ binding.status }}{% else %}200{% endfor %}),
+{%- endfor %}
+    }

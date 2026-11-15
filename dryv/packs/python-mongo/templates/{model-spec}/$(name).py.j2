@@ -1,0 +1,24 @@
+"""Contract test: {{ schema.name.title }} keeps the fields, aliases and required flags its contract declares."""
+
+from __future__ import annotations
+{% for dependency in file.dependencies %}{% if dependency.symbol %}
+from {{ dependency.path.prefixed | replace('/', '.') | replace('.py', '') }} import {{ dependency.symbol }}
+{%- endif %}{% endfor %}
+
+
+def test_fields_match_contract() -> None:
+    fields = {{ schema.name.pascal }}.model_fields
+    assert {name: field.alias for name, field in fields.items()} == {
+{%- for field in schema.fields %}
+        "{{ field.name.snake }}": "{{ field.name.camel }}",
+{%- endfor %}
+    }
+
+
+def test_required_fields_match_contract() -> None:
+    required = {name for name, field in {{ schema.name.pascal }}.model_fields.items() if field.is_required()}
+    assert required == set([
+{%- for field in schema.fields %}{% if not (field.nullable or field.optional) %}
+        "{{ field.name.snake }}",
+{%- endif %}{% endfor %}
+    ])

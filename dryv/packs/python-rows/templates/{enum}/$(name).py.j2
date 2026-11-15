@@ -1,0 +1,13 @@
+"""{{ property.enum.name.title }}: a closed vocabulary."""
+
+from __future__ import annotations
+
+from enum import StrEnum
+
+
+class {{ file.symbol }}(StrEnum):
+{%- for item in property.enum.values %}
+    {{ item.name.constant }} = {{ item.value_json }}
+{%- else %}
+    pass
+{%- endfor %}

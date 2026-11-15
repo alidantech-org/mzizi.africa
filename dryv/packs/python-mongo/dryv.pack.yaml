@@ -1,0 +1,100 @@
+version: dryv.pack/v1alpha1
+key: mzizi.python-mongo
+source: templates
+
+info:
+  title: Mzizi Python Mongo documents
+  version: 0.1.0
+  description: Validated Pydantic models and string enums for the MongoDB staging and runtime documents (schemas tagged mongo), with contract tests.
+  purpose: persistence
+  languages: [python]
+  frameworks: [pydantic]
+  tags: [python, mongo, pydantic]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+selections:
+  enums:
+    subject: property.enum
+    filter:
+      all: { tags: [mongo] }
+    scope: each
+  models:
+    subject: schema
+    filter:
+      all: { tags: [mongo] }
+    scope: each
+  all-models:
+    subject: schema
+    filter:
+      all: { tags: [mongo] }
+    scope: all
+  model-groups:
+    subject: schema
+    filter:
+      all: { tags: [mongo] }
+    scope: collects.group
+
+# <group>/enums/<enum>.py, <group>/models/<schema>.py; tests mirror them.
+templates:
+  enum:
+    $ref: '#/selections/enums'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(group.name.snake)
+        - enums
+      symbol: $(subject.name.pascal)
+
+  model:
+    $ref: '#/selections/models'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(group.name.snake)
+        - models
+      symbol: $(subject.name.pascal)
+    imports:
+      - $ref: '#/templates/enum'
+      - $ref: '#/templates/model'
+
+  model-spec:
+    $ref: '#/selections/models'
+    output:
+      destination: tests
+      name: test_$(subject.name.snake)
+      path:
+        - $(group.name.snake)
+        - models
+    imports:
+      - $ref: '#/templates/model'
+        members: true
+
+  spec-models-package:
+    $ref: '#/selections/model-groups'
+    output:
+      destination: tests
+      name: __init__
+      path:
+        - $(group.name.snake)
+        - models
+  spec-group-package:
+    $ref: '#/selections/model-groups'
+    output:
+      destination: tests
+      name: __init__
+      path:
+        - $(group.name.snake)
+  spec-root:
+    $ref: '#/selections/all-models'
+    output:
+      destination: tests
+      name: __init__
+
+provides:
+  schema.validation:
+    $ref: '#/templates/model'
+  property.enum.types:
+    $ref: '#/templates/enum'

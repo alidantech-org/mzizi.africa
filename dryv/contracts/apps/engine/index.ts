@@ -7,10 +7,30 @@
  * server interface in the engine.
  */
 import { dryv } from "@dryvcode/author";
+import { shared } from "#/schemas/_shared.ts";
 import { engineApi } from "./engine.ts";
+import { runtimeApi } from "./runtime.ts";
+import { stagingApi } from "./staging.ts";
+import { systemApi } from "./system.ts";
 
 export default dryv
   .app({ name: "mzizi-engine" })
   .info({ title: "Mzizi engine", version: "0.1.0" })
-  .provides(engineApi.ListCapabilities, engineApi.SubmitJob, engineApi.GetJob, engineApi.ListJobs, engineApi.CancelJob)
-  .groups(engineApi.engine);
+  .provides(
+    engineApi.ListCapabilities,
+    engineApi.SubmitJob,
+    engineApi.GetJob,
+    engineApi.ListJobs,
+    engineApi.CancelJob,
+    runtimeApi.ListRuns,
+    runtimeApi.GetRun,
+    runtimeApi.ListRunEvents,
+    stagingApi.ListCaptures,
+    stagingApi.GetCapture,
+    stagingApi.ListCandidates,
+    stagingApi.GetCandidate,
+    stagingApi.DecideCandidate,
+    systemApi.GetHealth,
+    systemApi.GetReadiness,
+  )
+  .groups(shared, engineApi.engine, runtimeApi.runtime, stagingApi.staging, systemApi.system);
