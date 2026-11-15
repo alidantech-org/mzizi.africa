@@ -23,4 +23,6 @@ The [schema design catalogue](../_plan/schema-redesign/README.md) assigns schema
 
 ## Detailed domain models
 
+Public bodies are classified by legal basis, function and control rather than by name; see the proposal in [PUBLIC_BODIES_CLASSIFICATION](../design/data/PUBLIC_BODIES_CLASSIFICATION.md). It is not implemented.
+
 See [data design](../design/data/README.md), [geography design](../design/geography/README.md), and [acquisition design](../design/acquisition/README.md).

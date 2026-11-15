@@ -15,3 +15,4 @@ Canonical data, evidence, identity, file metadata and place design. These docume
 - [PEOPLE_DESIGN](PEOPLE_DESIGN.md)
 - [ENTITY_RESOLUTION](ENTITY_RESOLUTION.md) — proposal: scored matching of extracted data to candidates, review loop, biometric limits
 - [PLACES_AND_PRESENCE_ASSESSMENT](PLACES_AND_PRESENCE_ASSESSMENT.md)
+- [PUBLIC_BODIES_CLASSIFICATION](PUBLIC_BODIES_CLASSIFICATION.md) — proposal: classification of public bodies by legal basis, function and control levers, with comparison rules

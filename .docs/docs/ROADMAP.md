@@ -16,7 +16,7 @@ Preserve original artifacts, acquire only under documented policy, produce repea
 
 ## 3. Build the civic accountability pilot
 
-Advance the authored Main contracts across Geography, Official, Governance, Politics, Civic, Finance and Source. Procurement is part of Civic. Accountability is analytical and has no persisted tables. Resolve SQL-pack constraints and Geography spatial support before generation or migration work.
+Advance the authored Main contracts across Geography, Official, Governance, Politics, Civic, Finance and Source. Procurement is part of Civic. Accountability is analytical and has no persisted tables. Resolve SQL-pack constraints and Geography spatial support before generation or migration work. A proposed public-bodies map (classification, control levers, money trace and cross-country comparison) is described in [PUBLIC_BODIES_CLASSIFICATION](../design/data/PUBLIC_BODIES_CLASSIFICATION.md); it is unapproved and does not change this scope.
 
 ## 4. Connect product surfaces
 

@@ -1,5 +1,5 @@
 ---
-{id: TSK-C9561447F396,name: Document the public accountability map and international comparison proposal,type: task,status: completed,priority: medium,created_at: 2026-11-15T08:38:19.099Z,updated_at: 2026-11-15T08:38:26.300Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-15T08:38:21.144Z},{from: in-progress,to: completed,at: 2026-11-15T08:38:26.300Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-C9561447F396/1794731901146-start,started_at: 2026-11-15T08:38:21.801Z,end_ref: refs/tracking/TSK-C9561447F396/1794731906310-end,ended_at: 2026-11-15T08:38:26.300Z,summary: {files: 0,insertions: 0,deletions: 0}}]}}}
+{id: TSK-C9561447F396,name: Document the public accountability map and international comparison proposal,type: task,status: completed,priority: medium,created_at: 2026-11-15T08:38:19.099Z,updated_at: 2026-11-15T08:57:53.548Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-15T08:38:21.144Z},{from: in-progress,to: completed,at: 2026-11-15T08:38:26.300Z},{from: completed,to: in-progress,at: 2026-11-15T08:57:48.362Z},{from: in-progress,to: completed,at: 2026-11-15T08:57:53.548Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-C9561447F396/1794731901146-start,started_at: 2026-11-15T08:38:21.801Z,end_ref: refs/tracking/TSK-C9561447F396/1794731906310-end,ended_at: 2026-11-15T08:38:26.300Z,summary: {files: 0,insertions: 0,deletions: 0}},{base_ref: refs/tracking/TSK-C9561447F396/1794733068364-start,started_at: 2026-11-15T08:57:48.892Z,end_ref: refs/tracking/TSK-C9561447F396/1794733073550-end,ended_at: 2026-11-15T08:57:53.548Z,summary: {files: 0,insertions: 0,deletions: 0}}]}}}
 ---
 
 # Document the public accountability map and international comparison proposal
@@ -19,6 +19,9 @@ Kenya has no single official register of public bodies, and the classification o
 - [x] The document marks all quoted Kenyan figures as unverified and lists verification against the Economic Survey, budget documents and Controller of Budget reports as a next step.
 - [x] The placement of each need against the Phase 01 schemas is recorded as unconfirmed, with the open question about foreign institutions and indicators stated.
 - [x] `task validate` passes with no new findings from these files.
+- [x] A supporting design guide exists under `.docs/design/data/` and is linked from that folder's README.
+- [x] `.docs/docs/DOMAINS.md` and `.docs/docs/ROADMAP.md` point to the design guide and say it is an unapproved proposal, without adding a ninth file to `.docs/docs/`.
+- [x] `task validate` passes after the follow-up edits.
 
 ## Notes
 
