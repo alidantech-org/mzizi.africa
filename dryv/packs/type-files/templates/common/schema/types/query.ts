@@ -172,6 +172,13 @@ export interface IEntityQueryOptions<
   sortableFields: readonly TSortableField[];
   filterFields: readonly TFilterableField[];
   dateRangeFields: readonly TDateRangeField[];
+  /** The entity's relation names a client may load. */
+  relationKeys: readonly TRelationKey[];
+  /** The fields a client may write; everything else is set by the system. */
+  editableFields: readonly (keyof TEntity & string)[];
+  /** How the entity looks as one related row, and as a list of related rows, of another entity. */
+  asOne: IOneRelationConfig<string, TSelectableField>;
+  asMany: IManyRelationConfig<string, TSelectableField, TSortableField>;
   oneRelations: TOneRelationConfig;
   manyRelations: TManyRelationConfig;
 }

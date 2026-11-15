@@ -1,3 +1,5 @@
+{#- The many-side relation name: the schema name when it is already plural (Accounts), else with an s. -#}
+{%- macro plural(name) -%}{%- set marked = name ~ '#' -%}{{ name if marked != (marked | replace('s#', '#')) else name ~ 's' }}{%- endmacro -%}
 {#- The shared enum (bound property.enum.types pack) for an enum property. -#}
 {%- macro enum_symbol(id) -%}
 {%- for dependency in file.dependencies -%}
@@ -205,7 +207,7 @@ export type {{ name }}EditableField = (typeof {{ constant }}_EDITABLE_FIELDS)[nu
 
 export type I{{ name }}AsOneRelationConfig = Q.IOneRelationConfig<'{{ schema.name.camel }}', {{ name }}SelectableField>;
 
-export type I{{ name }}AsManyRelationConfig = Q.IManyRelationConfig<'{{ schema.name.camel }}s', {{ name }}SelectableField, {{ name }}SortableField>;
+export type I{{ name }}AsManyRelationConfig = Q.IManyRelationConfig<'{{ plural(schema.name.camel) }}', {{ name }}SelectableField, {{ name }}SortableField>;
 
 // ----------------------------------
 // RELATION QUERY TYPES

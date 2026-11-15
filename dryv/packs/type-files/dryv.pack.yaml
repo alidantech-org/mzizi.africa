@@ -66,3 +66,8 @@ templates:
         - types
         - $(subject.name.kebab)
       symbol: $(subject.name.pascal)
+
+provides:
+  # The per-entity query options other packs build repositories from.
+  schema.types:
+    $ref: '#/templates/config'

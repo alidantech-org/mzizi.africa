@@ -1,3 +1,5 @@
+{#- The many-side relation name: the schema name when it is already plural (Accounts), else with an s. -#}
+{%- macro plural(name) -%}{%- set marked = name ~ '#' -%}{{ name if marked != (marked | replace('s#', '#')) else name ~ 's' }}{%- endmacro -%}
 {#- The generated symbol of another planned file of the given template, for a subject. -#}
 {%- macro dep(id, template) -%}
 {%- for dependency in file.dependencies -%}
@@ -60,12 +62,28 @@
 {%- if field.relation is not none -%}{{ field.relation.target.schema.id }}{%- elif field.related is not none -%}{{ field.related.via.schema.id }}{%- endif -%}
 {%- endmacro -%}
 
+{#- Query classes of a stored field the contract does not annotate, from its kind: text is
+    searchable; scalars, enums and temporals sort; enums, booleans, ids and foreign keys filter;
+    temporals take date ranges. Sensitive, array and inverse fields are never derived. An
+    explicit `.query(...)` on the field always wins. -#}
+{%- macro derived(kind, field) -%}
+{%- if field.query is none and not field.sensitive and field.array is none and field.related is none and field.value.is.property -%}
+{%- set property = field.value.property -%}
+{%- if kind == 'sortable' and (field.value.is.primitive or field.value.is.enum or field.value.is.temporal) -%}yes
+{%- elif kind == 'searchable' and field.value.is.primitive and property.primitive.kind == 'text' -%}yes
+{%- elif kind == 'filterable' and (field.value.is.enum or field.relation is not none or (field.value.is.primitive and (property.primitive.type == 'boolean' or property.primitive.format == 'uuid'))) -%}yes
+{%- elif kind == 'dateRange' and field.value.is.temporal -%}yes
+{%- endif -%}
+{%- endif -%}
+{%- endmacro -%}
+
 {%- macro list(kind) -%}
 {%- for field in schema.fields -%}
 {%- if (kind == 'sortable' and field.query is not none and field.query.sort)
     or (kind == 'searchable' and field.query is not none and field.query.search)
     or (kind == 'filterable' and is_filterable(field))
     or (kind == 'dateRange' and is_date_range(field))
+    or (derived(kind, field) != '')
     or (kind == 'selectable' and is_selectable(field))
     or (kind == 'defaultSelect' and is_default_select(field))
     or (kind == 'editable' and field.mutation is none and field.related is none and is_base(field) == '') -%}
@@ -79,6 +97,7 @@
 // ----------------------------------
 
 import * as Q from '{{ (file.path.import_base ~ 'common/schema/types/query') if file.path.import_base else '../../../../common/schema/types/query' }}';
+import type { IBuildWhereConditionsOptions } from '#/database/base/query.types.ts';
 import { ERelationType } from '{{ (file.path.import_base ~ 'common/schema/types/enums') if file.path.import_base else '../../../../common/schema/types/enums' }}';
 
 // ----------------------------------
@@ -127,6 +146,12 @@ export const {{ constant }}_FILTERABLE_FIELDS = [{{ list('filterable') }}] as co
 
 export const {{ constant }}_DATE_RANGE_FIELDS = [{{ list('dateRange') }}] as const satisfies readonly {{ name }}Key[];
 
+export const {{ constant }}_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<I{{ name }}> = {
+  searchableFields: [...{{ constant }}_SEARCHABLE_FIELDS],
+  filterFields: [...{{ constant }}_FILTERABLE_FIELDS],
+  dateRangeFields: [...{{ constant }}_DATE_RANGE_FIELDS]
+};
+
 // ----------------------------------
 // SELECT FIELD CONFIG
 // ----------------------------------
@@ -153,7 +178,7 @@ export const {{ constant }}_AS_ONE_RELATION_CONFIG = {
 } as const satisfies I{{ name }}AsOneRelationConfig;
 
 export const {{ constant }}_AS_MANY_RELATION_CONFIG = {
-  relation: '{{ schema.name.camel }}s',
+  relation: '{{ plural(schema.name.camel) }}',
   type: ERelationType.Many,
   selectableFields: {{ constant }}_SELECTABLE_FIELDS,
   defaultSelectFields: {{ constant }}_DEFAULT_SELECT_FIELDS,
@@ -189,6 +214,10 @@ export const {{ file.symbol }} = {
   sortableFields: {{ constant }}_SORTABLE_FIELDS,
   filterFields: {{ constant }}_FILTERABLE_FIELDS,
   dateRangeFields: {{ constant }}_DATE_RANGE_FIELDS,
+  relationKeys: {{ constant }}_RELATION_KEYS,
+  editableFields: {{ constant }}_EDITABLE_FIELDS,
+  asOne: {{ constant }}_AS_ONE_RELATION_CONFIG,
+  asMany: {{ constant }}_AS_MANY_RELATION_CONFIG,
   oneRelations: {{ constant }}_ONE_RELATION_QUERY_OPTIONS,
   manyRelations: {{ constant }}_MANY_RELATION_QUERY_OPTIONS
 } as const satisfies Q.IEntityQueryOptions<

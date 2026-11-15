@@ -19,8 +19,16 @@ needs:
   schema.validation: { required: true }
   # Entities behind each operation's response read projection, for CRUD starting points.
   schema.persistence: { required: true }
+  # Each entity's generated query options (the type-files pack's config).
+  schema.types: { required: true }
 
 selections:
+  entities:
+    subject: schema
+    filter:
+      all: { role: entity }
+    scope: each
+
   operations:
     subject: operation
     filter:
@@ -33,7 +41,7 @@ selections:
       all: { facet: http }
     scope: collects.feature
 
-# <group>/features/<feature>/<feature>.service.impl.ts and <group>/features/<feature>/use-cases/<operation>.usecase.ts.
+# <group>/features/<feature>/use-cases/<operation>.usecase.ts (the service file holds the implementation).
 templates:
   usecase:
     $ref: '#/selections/operations'
@@ -45,13 +53,36 @@ templates:
         - $(feature.name.kebab)
       symbol: $(subject.name.pascal)UseCase
     imports:
+      - $ref: '#/templates/repository'
+        members: true
       # Transitive: nested read-projection DTOs, not only the response DTO itself.
       - $ref: '#/needs/schema.validation'
         transitive: true
       - $ref: '#/needs/schema.persistence'
         transitive: true
 
-  implementation:
+  # database/base/*: the Defytickets base repository (copied), its query types and the helpers of the generated named queries.
+  base-repository:
+    output:
+      destination: app
+
+  # <group>/schema/repositories/<entity>.repository.ts: one repository per stored entity.
+  entity-repository:
+    $ref: '#/selections/entities'
+    output:
+      name: $(subject.name.kebab)
+      path:
+        - $(group.name.kebab)
+        - schema
+      symbol: $(subject.name.pascal)Repository
+    imports:
+      - $ref: '#/needs/schema.persistence'
+        transitive: true
+      - $ref: '#/needs/schema.types'
+        transitive: true
+
+  # <feature>/<feature>.repository.ts: one method per declared read query of the feature.
+  repository:
     $ref: '#/selections/features'
     output:
       name: $(feature.name.kebab)
@@ -59,16 +90,20 @@ templates:
         - $(group.name.kebab)
         - features
         - $(feature.name.kebab)
-      symbol: $(group.name.pascal)$(feature.name.pascal)ServiceImpl
+      symbol: $(group.name.pascal)$(feature.name.pascal)Repository
     imports:
-      - $ref: '#/needs/schema.validation'
-      - $ref: '#/templates/usecase'
-        members: true
+      - $ref: '#/templates/entity-repository'
+        transitive: true
+      - $ref: '#/needs/schema.persistence'
+        transitive: true
+      - $ref: '#/needs/schema.types'
+        transitive: true
 
   # use-cases/<operation>.usecase.spec.ts: scaffolded once with the contract's promises as todos.
   usecase-spec:
     $ref: '#/selections/operations'
     output:
+      destination: test
       name: $(subject.name.kebab)
       path:
         - $(group.name.kebab)
@@ -79,7 +114,7 @@ templates:
         members: true
 
 provides:
-  operation.implementation:
-    $ref: '#/templates/implementation'
   operation.usecase:
     $ref: '#/templates/usecase'
+  module.provider:
+    $ref: '#/templates/repository'

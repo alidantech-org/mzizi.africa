@@ -136,6 +136,54 @@
 {%- endfor -%}
 {%- endmacro -%}
 
+{#- The operation's bound read query: its persistence plan is JSON text. -#}
+{%- set plan = (operation.persistence.document | fromjson) if operation.persistence is not none else none -%}
+{%- set read = plan.read if plan is not none else none -%}
+{%- macro repository_symbol() -%}
+{%- for dependency in file.dependencies %}{% if dependency.template == 'repository' %}{{ dependency.symbol }}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{%- macro repository_path() -%}
+{%- for dependency in file.dependencies %}{% if dependency.template == 'repository' %}{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{#- Whether any query parameter is provided by an access policy (the signed-in identity). -#}
+{%- macro uses_policy(read) -%}
+{%- for parameter in read.parameters %}{% if parameter.source.kind == 'policy' %}x{% endif %}{% endfor -%}
+{%- endmacro -%}
+{%- macro output_symbol() -%}{{ result(operation) }}{%- endmacro -%}
+
+{%- if read -%}
+import { Injectable } from '@nestjs/common';
+import type { ReadContext, Row } from '#/database/base/read-helpers.ts';
+import { {{ repository_symbol() }} } from '{{ repository_path() }}';
+{%- for dependency in file.dependencies %}{% if dependency.symbol and dependency.slot == 'schema.validation' %}
+import type { {{ dependency.symbol }} } from '{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) | replace(".ts", "") }}';
+{%- endif %}{% endfor %}
+
+/**
+ * {{ operation.description or operation.name.title }}
+ *
+ * Scaffolded by Dryv once; this file belongs to the project. It runs the declared query
+ * {{ plan.operation }} through the feature repository and maps the rows to the response;
+ * add business rules around that call.
+ */
+@Injectable()
+export class {{ file.symbol }} {
+  constructor(private readonly repository: {{ repository_symbol() }}) {}
+
+  async execute({% if operation.input %}{{ params(operation) }}{% if uses_policy(read) %}, {% endif %}{% endif %}{% if uses_policy(read) %}context: ReadContext = {}{% endif %}): Promise<{{ result(operation) }}> {
+    const result = await this.repository.{{ operation.name.camel }}({% if operation.input %}input as unknown as Row{% else %}{}{% endif %}{% if uses_policy(read) %}, context{% endif %});
+{%- if read.many and read.envelope %}
+    return {
+{%- for field in read.envelope %}
+      {{ field }}: result,
+{%- endfor %}
+    } as unknown as {{ result(operation) }};
+{%- else %}
+    return result as unknown as {{ result(operation) }};
+{%- endif %}
+  }
+}
+{%- else -%}
 {%- set crud = kind(operation) -%}
 {%- if crud -%}
 import { Injectable{% if crud in ['detail', 'update'] %}, NotFoundException{% endif %} } from '@nestjs/common';
@@ -236,3 +284,5 @@ export class {{ file.symbol }} {
 {%- endif %}
   }
 }
+
+{%- endif %}

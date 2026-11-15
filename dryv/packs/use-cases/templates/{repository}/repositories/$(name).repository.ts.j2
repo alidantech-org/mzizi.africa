@@ -1,0 +1,210 @@
+{#- One repository per feature: a named method per operation bound to a declared read query,
+    written out from the query (joins, filters, ordering, paging, nested selections). -#}
+{%- macro entity_symbol(schema) -%}
+{%- for dependency in file.dependencies %}{% if dependency.slot == 'schema.persistence' and dependency.target.id == schema %}{{ dependency.symbol }}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{%- macro repository_symbol(schema) -%}
+{%- for dependency in file.dependencies %}{% if dependency.slot is none and dependency.template == 'entity-repository' and dependency.target.id == schema %}{{ dependency.symbol }}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{#- "x" when any relation of the path returns many rows. -#}
+{%- macro has_many(path) -%}{%- for step in path %}{% if step.many %}x{% endif %}{% endfor -%}{%- endmacro -%}
+{#- The generated many-relation config of a schema: caps the rows a nested list returns per owner. -#}
+{%- macro many_config(schema) -%}
+{%- for dependency in file.dependencies %}{% if dependency.slot == 'schema.types' and dependency.target.id == schema %}{{ dependency.symbol | replace('_QUERY_OPTIONS', '_AS_MANY_RELATION_CONFIG') }}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{#- The alias of the table a column reads: the base alias extended by each followed relation. -#}
+{%- macro alias_of(base, path) -%}{{ base }}{% for step in path %}_{{ step.source_field }}{% endfor %}{%- endmacro -%}
+{#- The storage kind of a field, from the plan's schemas. -#}
+{%- macro scalar_of(plan, schema, field) -%}
+{%- for item in plan.schemas %}{% if item.id == schema %}{% for stored in item.fields %}{% if stored.name == field %}{{ stored.scalar }}{% endif %}{% endfor %}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{#- Joins each relation of a path once; `ns.seen` remembers the aliases already joined. -#}
+{%- macro join_path(ns, base, path) -%}
+{%- set cur = namespace(alias=base) -%}
+{%- for step in path -%}
+{%- set key = cur.alias ~ '_' ~ step.source_field -%}
+{%- if (',' ~ key ~ ',') not in ns.seen -%}
+{%- set ns.seen = ns.seen ~ key ~ ',' %}
+    query.leftJoin({{ entity_symbol(step.target) }}, "{{ key }}", "{{ key }}.{{ step.target_field }} = {{ cur.alias }}.{{ step.source_field }}");
+{%- endif -%}
+{%- set cur.alias = key -%}
+{%- endfor -%}
+{%- endmacro -%}
+{#- The SQL for one predicate; its value is `params.<name>`. -#}
+{%- macro predicate(ns, base, schema, item, bind) -%}
+{{ join_path(ns, base, item.column.path) }}
+{%- set ref = alias_of(base, item.column.path) ~ '.' ~ item.column.field -%}
+{%- if item.operator == 'null' %}
+    query.andWhere("{{ ref }} IS {% if not item.is_null %}NOT {% endif %}NULL");
+{%- else %}
+    if (params.{{ item.parameter }} !== undefined) {
+      query.andWhere("{{ ref }}{% if item.operator == 'equal' %} = {% elif item.operator == 'less-than' %} < {% elif item.operator == 'less-than-or-equal' %} <= {% elif item.operator == 'greater-than' %} > {% elif item.operator == 'greater-than-or-equal' %} >= {% else %} LIKE {% endif %}:{{ bind }}{{ item.parameter }}", { {{ bind }}{{ item.parameter }}: {% if item.operator == 'prefix' %}prefixPattern(params.{{ item.parameter }}){% else %}params.{{ item.parameter }}{% endif %} });
+    }
+{%- endif -%}
+{%- endmacro -%}
+{#- Selected fields (with the keys nested selections start from) and the ordering of one level. -#}
+{%- macro level(plan, ns, base, schema, selections, order) -%}
+{%- for selection in selections if selection.kind == 'field' -%}
+{{ join_path(ns, base, selection.column.path) }}
+    query.addSelect("{{ alias_of(base, selection.column.path) }}.{{ selection.column.field }}", "{{ selection.name }}");
+{%- endfor -%}
+{%- for selection in selections if selection.kind == 'related' -%}
+{%- set key = selection.path[0].source_field -%}
+{%- if (',key:' ~ key ~ ',') not in ns.seen -%}
+{%- set ns.seen = ns.seen ~ 'key:' ~ key ~ ',' %}
+    query.addSelect("{{ base }}.{{ key }}", "__key_{{ key }}");
+{%- endif -%}
+{%- endfor -%}
+{%- for item in order -%}
+{{ join_path(ns, base, item.column.path) }}
+    query.{% if loop.first %}orderBy{% else %}addOrderBy{% endif %}("{{ alias_of(base, item.column.path) }}.{{ item.column.field }}", "{{ 'DESC' if item.direction == 'desc' else 'ASC' }}");
+{%- endfor -%}
+{%- endmacro -%}
+{#- The row object built from one raw result row. -#}
+{%- macro shape(plan, schema, selections) -%}
+{ {% for selection in selections if selection.kind == 'field' %}{% set stored = scalar_of(plan, (selection.column.path[-1].target if selection.column.path else schema), selection.column.field) %}{{ selection.name }}: {% if stored == 'date' %}dateOnly(raw.{{ selection.name }}){% elif stored == 'instant' %}instant(raw.{{ selection.name }}){% else %}raw.{{ selection.name }}{% endif %}, {% endfor %}}
+{%- endmacro -%}
+{#- Fills the related selections of `rows` from their loaders. -#}
+{%- macro attach(prefix, selections) -%}
+{%- for selection in selections if selection.kind == 'related' -%}
+{%- set key = selection.path[0].source_field -%}
+{%- set many = namespace(value=false) -%}
+{%- for step in selection.path %}{% if step.many %}{% set many.value = true %}{% endif %}{% endfor %}
+    const {{ selection.name }}ByOwner = await this.load_{{ prefix }}_{{ selection.name }}(raws.map((raw) => raw.__key_{{ key }}), context);
+    rows.forEach((row, index) => {
+      const owned = {{ selection.name }}ByOwner.get(raws[index]?.__key_{{ key }});
+      row.{{ selection.name }} = {% if many.value %}owned ?? []{% else %}owned?.[0] ?? null{% endif %};
+    });
+{%- endfor -%}
+{%- endmacro -%}
+{#- A private loader per related selection: rows grouped by owner. Dryv templates cannot recurse,
+    so nested selections are unrolled to three levels (`nested` holds the rendered deeper loaders). -#}
+{%- macro loader(plan, prefix, selection, nested) -%}
+{%- set first = selection.path[0] -%}
+{%- set last = selection.path[-1] -%}
+{%- set ns = namespace(seen=',') -%}
+{%- set base = 'r' ~ selection.path | length %}
+
+  /** The {{ selection.name }} of the owners, grouped by the owner's key. */
+  private async load_{{ prefix }}_{{ selection.name }}(owners: unknown[], context: ReadContext): Promise<Map<unknown, Row[]>> {
+    if (owners.length === 0) return new Map();
+    const query = this.repositoryOf({{ repository_symbol(first.target) }}, {{ entity_symbol(first.target) }}).query("r1", context.manager);
+    query.select([]);
+    query.where("r1.{{ first.target_field }} IN (:...owners)", { owners });
+    query.addSelect("r1.{{ first.target_field }}", "__owner");
+{%- set cur = namespace(alias='r1') -%}
+{%- for step in selection.path -%}
+{%- if not loop.first -%}
+{%- set next = 'r' ~ (loop.index) %}
+    query.leftJoin({{ entity_symbol(step.target) }}, "{{ next }}", "{{ next }}.{{ step.target_field }} = {{ cur.alias }}.{{ step.source_field }}");
+{%- set cur.alias = next -%}
+{%- endif -%}
+{%- endfor %}
+    query.addSelect("{{ base }}.{{ last.target_field }}", "__hit");
+{{- level(plan, ns, base, last.target, selection.select, selection.order) }}
+    const raws = await query.getRawMany<Row>();
+    const rows: Row[] = raws.map((raw) => ({{ shape(plan, last.target, selection.select) }}));
+{{- attach(prefix ~ '_' ~ selection.name, selection.select) }}
+    const grouped = new Map<unknown, Row[]>();
+    raws.forEach((raw, index) => {
+      if (raw.__hit === null || raw.__hit === undefined) return;
+      const list = grouped.get(raw.__owner) ?? [];
+      {%- if has_many(selection.path) != '' %}
+      if (list.length >= {{ many_config(last.target) }}.maxLimit) return;
+      {%- endif %}
+      list.push(rows[index] as Row);
+      grouped.set(raw.__owner, list);
+    });
+    return grouped;
+  }
+{{- nested }}
+{%- endmacro -%}
+{%- macro loaders3(plan, prefix, selections) -%}
+{%- for selection in selections if selection.kind == 'related' -%}
+{{- loader(plan, prefix, selection, '') }}
+{%- endfor -%}
+{%- endmacro -%}
+{%- macro loaders2(plan, prefix, selections) -%}
+{%- for selection in selections if selection.kind == 'related' -%}
+{{- loader(plan, prefix, selection, loaders3(plan, prefix ~ '_' ~ selection.name, selection.select)) }}
+{%- endfor -%}
+{%- endmacro -%}
+{%- macro loaders(plan, prefix, selections) -%}
+{%- for selection in selections if selection.kind == 'related' -%}
+{{- loader(plan, prefix, selection, loaders2(plan, prefix ~ '_' ~ selection.name, selection.select)) }}
+{%- endfor -%}
+{%- endmacro -%}
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { getDataSourceToken } from '@nestjs/typeorm';
+import type { DataSource, EntityManager, EntityTarget, ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
+import { dateOnly, instant, missing, pageWindow, prefixPattern, type ReadContext, type Row } from '#/database/base/read-helpers.ts';
+import type { BaseRepository } from '#/database/base/base.repository.ts';
+{%- for dependency in file.dependencies %}{% if dependency.symbol and dependency.slot == 'schema.types' %}
+import { {{ dependency.symbol | replace('_QUERY_OPTIONS', '_AS_MANY_RELATION_CONFIG') }} } from '{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) }}';
+{%- endif %}{% endfor %}
+{%- for dependency in file.dependencies %}{% if dependency.symbol and (dependency.slot == 'schema.persistence' or (dependency.slot is none and dependency.template == 'entity-repository')) %}
+import { {{ dependency.symbol }} } from '{{ (dependency.path.prefixed or ('./' ~ dependency.path.relative)) }}';
+{%- endif %}{% endfor %}
+
+/**
+ * Reads of the {{ feature.name.title }} feature: one named method per declared query, written out
+ * from the contract. Regenerated by Dryv; entity repositories supply the connection.
+ */
+@Injectable()
+export class {{ file.symbol }} {
+  constructor(private readonly moduleRef: ModuleRef) {}
+
+  /** Resolved on first use, so the application assembles without a database connection. */
+  private get dataSource(): DataSource {
+    return this.moduleRef.get<DataSource>(getDataSourceToken(), { strict: false });
+  }
+
+  private repositoryOf<E extends ObjectLiteral, R extends BaseRepository<E> & { query(alias: string, manager?: EntityManager): SelectQueryBuilder<E> }>(
+    repository: new (target: Repository<E>) => R,
+    entity: EntityTarget<E>,
+  ): R {
+    return new repository(this.dataSource.getRepository(entity));
+  }
+{%- for operation in operations %}
+{%- if operation.persistence is not none %}
+{%- set plan = operation.persistence.document | fromjson %}
+{%- if plan.read %}
+{%- set read = plan.read %}
+{%- set ns = namespace(seen=',') %}
+
+  /** {{ operation.description or operation.name.title }} */
+  async {{ operation.name.camel }}(input: Row, context: ReadContext = {}): Promise<{% if read.many %}Row[]{% else %}Row{% endif %}> {
+    const params: Row = {
+{%- for parameter in read.parameters %}
+      {{ parameter.name }}: {% if parameter.source.kind == 'input' %}input.{{ parameter.source.name }}{% elif parameter.source.kind == 'policy' %}context.policies?.["{{ parameter.source.policy }}"]?.["{{ parameter.source.name }}"]{% elif parameter.source.kind == 'literal' %}{{ parameter.source.value | tojson }}{% else %}undefined{% endif %},
+{%- endfor %}
+    };
+{%- for parameter in read.parameters if not parameter.optional %}
+    if (params.{{ parameter.name }} === undefined) throw new {% if parameter.source.kind == 'policy' %}UnauthorizedException("The {{ parameter.source.policy }} policy does not provide {{ parameter.source.name }}"){% else %}Error("{{ parameter.name }} is required"){% endif %};
+{%- endfor %}
+    const query = this.repositoryOf({{ repository_symbol(read.root) }}, {{ entity_symbol(read.root) }}).query("r", context.manager);
+    query.select([]);
+{%- for item in read.where %}
+{{- predicate(ns, 'r', read.root, item, 'w_') }}
+{%- endfor %}
+{{- level(plan, ns, 'r', read.root, read.select, read.order) }}
+{%- if read.page %}
+    const page = pageWindow(params.{{ read.page.limit }}, params.{{ read.page.offset }}, {{ read.page.max_limit }});
+    query.limit(page.limit).offset(page.offset);
+{%- elif not read.many %}
+    query.limit(1);
+{%- endif %}
+    const raws = await query.getRawMany<Row>();
+{%- if not read.many and read.missing %}
+    if (raws.length === 0) throw missing("{{ read.missing.code }}", {{ read.missing.message | tojson }}, {{ read.missing.status }});
+{%- endif %}
+    const rows: Row[] = raws.map((raw) => ({{ shape(plan, read.root, read.select) }}));
+{{- attach(operation.name.pascal, read.select) }}
+    return {% if read.many %}rows{% else %}rows[0] as Row{% endif %};
+  }
+{{- loaders(plan, operation.name.pascal, read.select) }}
+{%- endif %}
+{%- endif %}
+{%- endfor %}
+}

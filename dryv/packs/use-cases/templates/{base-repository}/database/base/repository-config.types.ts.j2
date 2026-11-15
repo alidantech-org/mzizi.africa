@@ -1,0 +1,33 @@
+import { type IBuildWhereConditionsOptions } from './query.types.ts';
+
+/**
+ * RepositoryDomainConfig<T>
+ *
+ * Configuration interface that tells the BaseRepository how to handle specific domains.
+ * This encapsulates all domain-specific field mappings and security rules.
+ *
+ * @template T - The entity type being configured
+ *
+ * Properties:
+ * - searchableFields: Fields that support fuzzy search operations
+ * - selectableFields: Whitelist of fields that can be selected by clients
+ * - defaultSelectFields: Fields to select when no specific fields requested
+ * - relationKeys: Allowed relation names for this entity
+ * - buildWhereOptions: Configuration for building WHERE clauses with search and filtering
+ */
+export interface RepositoryDomainConfig<T> {
+  /** Fields that support fuzzy search operations */
+  searchableFields: (keyof T)[];
+
+  /** Whitelist of fields that can be selected by clients (security) */
+  selectableFields: (keyof T)[];
+
+  /** Default fields to select when no specific fields requested */
+  defaultSelectFields: (keyof T)[];
+
+  /** Allowed relation names for this entity (security) */
+  relationKeys: string[];
+
+  /** Configuration for building WHERE clauses with search and filtering */
+  buildWhereOptions: IBuildWhereConditionsOptions<T>;
+}
