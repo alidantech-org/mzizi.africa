@@ -1,20 +1,20 @@
 ---
-{id: TSK-E4F66863838C,name: Regenerate SQL and Rust models and run them on a fresh Postgres,type: task,status: planned,priority: medium,created_at: 2026-11-15T16:32:04.288Z,updated_at: 2026-11-15T16:32:04.288Z,order: 4096}
+{id: TSK-E4F66863838C,name: Regenerate the SQL and run it on a fresh PostgreSQL database,type: task,status: in-progress,priority: medium,created_at: 2026-11-15T16:32:04.288Z,updated_at: 2026-11-15T16:54:16.863Z,order: 4096,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-15T16:54:16.863Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-E4F66863838C/1794761656865-start,started_at: 2026-11-15T16:54:17.464Z}]}}}
 ---
 
-# Regenerate SQL and Rust models and run them on a fresh Postgres
+# Regenerate the SQL and run it on a fresh PostgreSQL database
 
 ## Goal
 
-Generate the SQL snapshot and Rust models from the single-store contracts, assemble a migration release, and apply it to a fresh empty Postgres database, proving the schema really works. Existing development databases are not touched.
+Generate the SQL snapshot from the single-store contracts, assemble the first release, and apply it to a fresh empty PostgreSQL database with the Bun CLI, proving the schema works. Existing development databases are not touched. (Rust models no longer exist; this task was renamed in substance.)
 
 ## Context
 
-Generation needs the Dryv checkout and API from outside this repository, started as described in `dryv/README.md`. The Rust CLI assembles releases with `mzizi-db assemble`. Generated SQL and models from the old contracts are stale. The geometry column in geography is a placeholder and needs a stated decision. Use a scratch database and never the shared development servers for lifecycle tests.
+Generation runs through the Dryv engine API from the Dryv checkout (`bun run dryv:api`, then `bun run dryv:database:generate`). Done on 15 November 2026: the snapshot `source/backend/database/sql/schema.sql` was generated (12 schemas, 94 tables, 294 foreign keys, 70 unique constraints, 42 checks, 3 exclusion constraints, 282 indexes); `0001_init.sql` and `.snapshot` were assembled; on a scratch PostgreSQL 18 database `plan`, `migrate`, a second `migrate`, `status`, `verify` and `roles` all passed, and the engine and API roles were confirmed able to read and write but not run DDL or read the ledger tables. The scratch database and roles were dropped afterwards. The geometry column is still a placeholder and needs a decision.
 
 ## Acceptance checklist
 
-- [ ] Dryv generates SQL and Rust models for one store with no operations output left over.
-- [ ] A migration release is assembled and applied to an empty scratch Postgres, and the expected tables exist.
-- [ ] `cargo test` for the database crates passes against the scratch database, or failures are reported accurately.
-- [ ] The geometry handling decision is written down in this task.
+- [x] Dryv generates one SQL snapshot for the single store with no operations output.
+- [x] A release is assembled and applied to an empty scratch PostgreSQL database and the expected 94 tables exist.
+- [x] The Bun CLI unit tests and typecheck pass and the end-to-end CLI run succeeded against the scratch database.
+- [ ] The geometry storage decision (PostGIS type, SRID, who owns the generator change) is written down in this task and in the Dryv gaps register.

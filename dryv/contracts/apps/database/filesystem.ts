@@ -1,5 +1,5 @@
 import * as dryv from "@dryvcode/author";
-import { databaseHttp } from "#/apps/database/_shared";
+import { databaseHttp } from "#/apps/database/_shared.ts";
 import { sharedFailures as f, sharedProperties as p } from "#/schemas/_shared.ts";
 import { filesystem, filesystemEnums, Folders } from "#/schemas/postgres/filesystem.ts";
 

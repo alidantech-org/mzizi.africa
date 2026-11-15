@@ -1,20 +1,20 @@
 ---
-{id: TSK-7363069AF5C1,name: Remove the Operations store from Dryv and the Rust service,type: task,status: planned,priority: medium,created_at: 2026-11-15T16:32:03.434Z,updated_at: 2026-11-15T16:32:03.434Z,order: 2048}
+{id: TSK-7363069AF5C1,name: "Remove the Operations store, the Rust service and all Rust code",type: task,status: completed,priority: medium,created_at: 2026-11-15T16:32:03.434Z,updated_at: 2026-11-15T16:54:16.067Z,order: 2048,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-15T16:54:15.284Z},{from: in-progress,to: completed,at: 2026-11-15T16:54:16.067Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-7363069AF5C1/1794761655286-start,started_at: 2026-11-15T16:54:15.834Z,end_ref: refs/tracking/TSK-7363069AF5C1/1794761656069-end,ended_at: 2026-11-15T16:54:16.067Z,summary: {files: 0,insertions: 0,deletions: 0}}]}}}
 ---
 
-# Remove the Operations store from Dryv and the Rust service
+# Remove the Operations store, the Rust service and all Rust code
 
 ## Goal
 
-Make Dryv and the Rust database service know a single Postgres store. The `operations` store, the `rust-operations-models` and `rust-operations-sql` packs, the `mzizi_operations` configuration and the operations models disappear from active configuration, while existing migration releases and databases are left untouched.
+Make Dryv, the runner scripts and the repository know a single PostgreSQL store and no Rust. The owner ordered every Rust pack and all Rust code removed, with the database folder becoming a plain Bun project. Existing databases and committed history are untouched.
 
 ## Context
 
-`dryv.yaml` declares two stores and two sets of packs. `dryv/contracts/apps/database/index.ts` composes the operational groups. The Rust crates `mzizi-db-core` (config, ids), `mzizi-db-generated` (models/operations), `mzizi-db-service` and `mzizi-db-cli` reference the operations pool and target. The hand-written Rust SQL must be read first to confirm which operational tables it uses, because auth tables are retained. The operational schema files are removed from the app, and only the retained auth subset and audit events move into the postgres folder in the next task.
+Owner decision: DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115 (second order, same day). Done in this task: the `operations` store, its packs and `mzizi_operations` configuration were removed from `dryv.yaml` and the database app; the five operational schema files that move to Mongo (engine, staging, acquisition, analytics, management) were deleted; auth and audit were kept and pointed at `main`; the Rust model and catalogue packs were copied to the Dryv repository examples and deleted here; the SQL pack was renamed `postgres-sql`; the Cargo workspace, crates and generated Rust models were deleted along with the local build directory; the runner scripts lost the Rust project kind, the Rust service entries and the Rust quality step. The hand-written Rust SQL was not read before deletion because the owner ordered removal; its operations are re-specified in the engine and API tasks. Callers that now have no server: engine `ENGINE_STORE=database_service`, `source/backend/api/src/database/write-database.ts`, and the engine filesystem legacy connection.
 
 ## Acceptance checklist
 
-- [ ] The Rust SQL was read and the list of operational tables it needs is recorded in this task.
-- [ ] `dryv.yaml`, the database app and the Rust crates use one store and one pair of environment variables.
-- [ ] Operational schema files are removed from the app composition without deleting historical migration releases.
-- [ ] `bun run database:check` and `cargo check` pass, or each failure is reported with its cause.
+- [x] `dryv.yaml` and the database app declare one store and one SQL pack, with no Operations store or Rust packs.
+- [x] The Cargo workspace, Rust crates, generated Rust models and Rust Dryv packs are removed from the repository, and the Rust packs are copied to the Dryv repository examples.
+- [x] The runner scripts have no Rust kind, service or quality step and `bun test scripts` passes.
+- [x] `bun run database:check` passes with one store, and the callers left without a server are listed here.

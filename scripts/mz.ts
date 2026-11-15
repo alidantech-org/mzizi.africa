@@ -5,7 +5,7 @@
  *   bun run <command>            the common commands are package.json scripts
  *   bun scripts/mz.ts <command>  the same, with arguments and options
  *
- * Options: `--only <names>` limits project commands to named projects or kinds (python, bun, flutter, rust, all).
+ * Options: `--only <names>` limits project commands to named projects or kinds (python, bun, flutter, all).
  * The command table below is the source of `bun run help`; see scripts/README.md for the full guide.
  */
 import { group, rootStep, stages, step } from "./lib/exec.ts";
@@ -35,7 +35,7 @@ const passthrough = (program: string, summary: string): Command => ({
 
 const postgres = (): string => process.env.MZIZI_PG_CONTAINER ?? "postgis";
 
-/** Every application schema command enters the TypeScript database owner. */
+/** Every database administration command enters the Bun database CLI. */
 const databaseCli = async ({ rest }: Context): Promise<boolean> => {
   const result = await Bun.spawn(["bun", "src/cli.ts", ...rest], {
     cwd: `${root}/source/backend/database`,
@@ -178,10 +178,10 @@ export const commands: Record<string, Command> = {
   },
   db: {
     summary:
-      "TypeScript database owner: status | migrate | verify | provision-local-roles | seed | guarded reset | release operations",
+      "database CLI: assemble | status | plan | migrate | verify | roles",
     run: databaseCli,
   },
-  "db:ts": { summary: "alias for the TypeScript database owner command", run: databaseCli },
+  "db:ts": { summary: "alias for the database CLI", run: databaseCli },
   seed: passthrough("mzizi-manifest", "seed registry: seed check | lock | report | validate-structure <dir>"),
   fs: passthrough("mzizi-filesystem", "filesystem registry: fs sync --manifest <file> | tree | ..."),
   engine: passthrough("mzizi-engine", "engine: engine serve | capabilities | check"),
@@ -196,7 +196,7 @@ export function help(): void {
   console.log("Usage: bun run <command> [-- args]   or   bun scripts/mz.ts <command> [args] [--only <names>]\n");
   for (const [name, command] of Object.entries(commands)) console.log(`  ${name.padEnd(15)} ${command.summary}`);
   console.log(
-    "\n--only takes project names or kinds: python, scripts, dryv, api, database-rust, web, www, mobile, bun, flutter, rust, all",
+    "\n--only takes project names or kinds: python, scripts, dryv, api, database, web, www, mobile, bun, flutter, all",
   );
 }
 

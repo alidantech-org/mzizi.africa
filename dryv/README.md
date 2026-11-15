@@ -8,7 +8,7 @@ TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv co
 - `contracts/schemas/`: the new design — one file per Postgres schema in `postgres/` (no per-database split), Mongo document contracts in `mongo/` (empty until staging contracts are authored), over the `_base.ts` and `_shared.ts` bases; shared by every app.
 - `contracts/apps/database/`: database app, named provided operations and the two logical store identities. The neutral schema groups select their store through storage facets.
 - `packs/type-files`, `packs/use-cases`: project packs that scaffold shared types and per-operation use cases for the NestJS API.
-- `packs/rust-models`, `packs/rust-sql`: store-scoped database packs; each activates once for Main and once for Operations. `packs/rust-catalog` owns the stable shared Rust catalogue. `database:assignments` audits compiled canonical placement without namespace lists in usage.
+- `packs/postgres-sql`: the store-scoped database pack; it writes one PostgreSQL schema snapshot to `source/backend/database/sql/schema.sql`. The former Rust packs (`rust-models`, `rust-catalog`) were moved to the Dryv repository examples (`sdk/_examples/packs/mzizi-rust-*`) on 2026-11-15. `database:assignments` audits compiled canonical placement without namespace lists in usage.
 
 Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/types/<group>/...`, `src/app.module.ts` and `src/database/`. Do not edit managed files; files marked "Scaffolded by Dryv once" belong to the project.
 
@@ -103,20 +103,17 @@ Without `TEST_DATABASE_URL` the PostgreSQL suites are skipped and the generated 
 | `bun run access:export`   | re-export policies and target kinds after changing operations or entities                                                    |
 | `bun run adopt:list`      | give newly scaffolded Find use cases the shared paging and filter helper                                                     |
 
-## Canonical Main and Operations setup
+## Canonical single-store setup
 
-Both stores are declared by `contracts/apps/database/index.ts`. Persisted groups under
-`contracts/schemas/postgres` select their store through the storage facet on each group (`main` or, until
-the Operations store is removed, `operations`; see DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115). Mongo document contracts will live in `contracts/schemas/mongo`. The schema
-storage facet can override its group default explicitly. Namespace and table remain separate.
-The database app declares read/write access to both stores and explicitly provides six
-named operations from `reference.ts`, `filesystem.ts` and `auth.ts`. Non-persisted Accountability view models have no store/table.
-The database application composes the current schema groups and provides the database operations.
-
-Root `dryv.yaml` maps `main` to `mzizi` and `operations` to `mzizi_operations`. Runtime variables
-are `MZIZI_DB_MAIN_URL` and `MZIZI_DB_OPERATIONS_URL`; administrative names have `_ADMIN_URL`.
-Values remain client-local. A deployment using different database names must explicitly adjust
-those two usage identities to match its environment; do not put credentials in the YAML.
+The database application `contracts/apps/database/index.ts` declares one store, `main`, mapped by
+root `dryv.yaml` to the PostgreSQL database `mzizi` (runtime variable `MZIZI_DB_URL`, administrative
+`MZIZI_DB_ADMIN_URL`; values stay client-local and credentials never go in the YAML). Every group
+under `contracts/schemas/postgres` selects `main` through its storage facet. Mongo document
+contracts will live in `contracts/schemas/mongo`; Dryv has no document-store driver yet, so those
+are schemas without storage (see `.docs/design/data/DRYV_GAPS.md`). The app provides six named
+operations from `reference.ts`, `filesystem.ts` and `auth.ts`. Non-persisted Accountability view
+models have no store or table. The 2026-11-15 owner decision removed the Operations store and the
+Rust service: see `DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115`.
 
 From the repository root:
 
@@ -128,17 +125,11 @@ bun run dryv:database:check
 bun run dryv:database:plan
 bun run dryv:database:generate
 bun run dryv:database:generate -- --store main
-bun run dryv:database:generate -- --store operations
 bun run dryv:database:verify
 ```
 
-The first complete database generation creates shared catalogue modules. Thereafter store-only
-generation writes only that store's models, verifier and SQL snapshot. Rust rows live below
-`models/main/<namespace>/` and `models/operations/<namespace>/`; the public Rust module paths stay
-`models::main::<namespace>::<entity>` and `models::operations::<namespace>::<entity>`. SQL remains
-`generated/sql/main.sql` and `operations.sql` for the existing administration CLI. Shared
-`mod.rs` and `contract.rs` belong only to `rust-catalog`; no two activations own one output.
-`bun run dryv:generate` selects the active database app and its packs.
+Generation writes one file, `source/backend/database/sql/schema.sql`. The Bun CLI (`bun run db assemble`)
+turns it into the immutable release stream under `source/backend/database/migrations`.
 
 Dryv checkpoints are local by default. After actual successful generation/checks, use the local
 Dryv CLI to run `checkpoint approve --app database` or approve a complete selected store with
@@ -148,13 +139,13 @@ to `repository` only when the project chooses to commit compressed baselines; Dr
 or silently approves. Formatting/final checks must succeed before approval.
 
 This config deliberately does not enable Dryv migration execution: its initial PostgreSQL mapping
-does not cover Mzizi's temporal properties, advanced constraints and PostGIS placeholder. Existing
-`mzizi-db` releases and `public.mzizi_migrations` remain authoritative for applied state. Generation
+does not cover Mzizi's temporal properties, advanced constraints and PostGIS placeholder. The
+Bun CLI releases and `public.mzizi_migrations` are authoritative for applied state. Generation
 can change a schema snapshot but never rewrites an immutable release or applies it. A changed
 snapshot still requires a reviewed incremental migration procedure; do not reset a release stream.
 
 The database typecheck uses `tsconfig.database.json` and includes every neutral schema and the
-database application entrypoint. The configured packs emit Rust database models and SQL snapshots.
+database application entrypoint. The configured pack emits the SQL snapshot.
 
 
 ### Database service contracts
@@ -182,5 +173,4 @@ stores. The current lookup, auth, and folder routes therefore use service handle
 
 The official Python SDK pack's flat model filenames collide across groups on the
 full database IR. The scratch generation used group-qualified filenames and
-symbols. The generated Rust crate also needs an empty-policy registry fix
-before it passes strict Clippy for this app.
+symbols (this matters for generating typed Python models; see `.docs/design/data/DRYV_GAPS.md`).

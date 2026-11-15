@@ -13,7 +13,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 export const audit = dryv
   .group({ name: "audit" })
   .description("Operational and security events and decisions; never civic data or public accountability findings.")
-  .facets({ storage: { namespace: "audit", store: "operations" } });
+  .facets({ storage: { namespace: "audit", store: "main" } });
 
 /*---------------- Closed technical vocabulary ----------------*/
 export const auditEnums = audit.properties({

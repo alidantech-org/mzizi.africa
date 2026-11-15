@@ -45,10 +45,7 @@ const inDryv = (name: string, script: string): Step => step(name, at("dryv"), ["
 export const linkSteps = (): Step[] => [inDryv("Link local Dryv checkout", "link")];
 
 /** Typecheck, audit, doctor and compile the contracts, and check the exported access rules, API boundary and schema. */
-export const checkSteps = (): Step[] => [
-  inDryv("Contract checks", "check"),
-  step("Database catalog stability", at("source/backend/database"), ["bun", "src/cli.ts", "schema-check"]),
-];
+export const checkSteps = (): Step[] => [inDryv("Contract checks", "check")];
 
 /** Re-export the access rules and the JSON schema derived from the contracts. */
 export const exportSteps = (): Step[] => [
@@ -136,7 +133,7 @@ export async function database(action: "plan" | "generate" | "verify", selectors
   }
 }
 
-/** Generate Rust database models and SQL snapshots from the active application. */
+/** Generate the database SQL snapshot from the active application. */
 export async function generate(): Promise<boolean> {
   return database("generate", []);
 }

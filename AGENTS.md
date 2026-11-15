@@ -20,7 +20,7 @@ Use `.docs/docs/ROADMAP.md` for current priorities. Proposals under `.docs/_plan
 ```text
 source/apps/{mobile,web,www}       Flutter client and Next.js applications
 source/backend/api                 NestJS product API
-source/backend/database            Bun TypeScript database service and CLI
+source/backend/database            Bun CLI, generated SQL and immutable migrations for the single PostgreSQL database
 source/backend/engine               Python operational API, workers and package orchestrator
 source/backend/agent                README-only proposal for a future assistive AI application
 source/backend/pipelines            Bun TypeScript Temporal workflows and worker
@@ -40,7 +40,7 @@ The responsibilities are distinct even when they share a runtime:
 - `source/packages/` contains reusable Python libraries, not separate services. `source/backend/agent/` is a README-only proposal; no intelligence service or agent package currently exists. Packages must not know a database exists; the engine owns I/O (see `.docs/design/architecture/ENGINE_JOB_MODEL.md`, a proposal).
 - `source/schema/` contains SQL and machine-readable input/exchange schemas. Authored API/database contracts remain in `dryv/`; prepared inputs remain in root `seed/`.
 
-`uv sync --all-packages` resolves and runs from a clean checkout: the stale `mzizi-database` workspace reference is gone. `source/backend/engine/src/mzizi_engine/ports/database.py` is the only place in the Python workspace that knows a database exists (a `Connection` port, psycopg adapter today); `source/packages/filesystem` and every other package are pure and never import it. `source/backend/engine/filesystem/` holds the raw-SQL business logic moved out of the former `mzizi_filesystem` database layer (TSK-E55B1BC4011A); typed row contracts for it and the active database service (TypeScript under `source/backend/database`, Rust foundation in progress) remain open follow-on work.
+`uv sync --all-packages` resolves and runs from a clean checkout: the stale `mzizi-database` workspace reference is gone. `source/backend/engine/src/mzizi_engine/ports/database.py` is the only place in the Python workspace that knows a database exists (a `Connection` port, psycopg adapter today); `source/packages/filesystem` and every other package are pure and never import it. `source/backend/engine/filesystem/` holds the raw-SQL business logic moved out of the former `mzizi_filesystem` database layer (TSK-E55B1BC4011A); typed row contracts for it remain open follow-on work. There is no database service: the engine and the NestJS API connect to PostgreSQL directly with their own roles, and `source/backend/database` holds only the SQL, migrations and Bun CLI (see `.docs/design/data/DATABASE_ARCHITECTURE.md`).
 
 The inherited Python API and former data/database engines are historical under `.docs/_archives/2026-11-08-rewrite-snapshot/`. Never import, build, generate or run archived code.
 

@@ -31,7 +31,7 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 | `bun run check:all`                       | `check`, plus Dryv contract checks, the seed registry, `task validate` and the builds                                                            |
 | `bun run dryv:link`                       | links the local Dryv author and compiler into `dryv/node_modules`                                                                                |
 | `bun run dryv:check`                      | typechecks, audits, doctors and compiles the contracts; checks access rules, API boundary and schema                                             |
-| `bun run dryv:generate`                   | generates database models and SQL snapshots from the current contracts                         |
+| `bun run dryv:generate`                   | generates the database SQL snapshot from the current contracts                         |
 | `bun run dryv:verify`                     | fails when the tracked generated output is not what the contracts generate now                                                                   |
 | `bun run dryv:export`                     | re-exports the access rules and the JSON schema                                                                                                  |
 | `bun run dryv:api` / `dryv:api:stop`      | runs or stops the local Dryv engine API by hand                                                                                                  |
@@ -66,7 +66,6 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 | Service     | Directory                  | Port | Override         |
 | ----------- | -------------------------- | ---- | ---------------- |
 | `api`       | `source/backend/api`       | 3000 | `API_PORT`       |
-| `database`  | `source/backend/database`  | 3301 | `DATABASE_PORT`  |
 | `pipelines` | `source/backend/pipelines` | 3302 | `PIPELINES_PORT` |
 | `engine`    | `source/backend/engine`    | 8760 | `ENGINE_PORT`    |
 | `web`       | `source/apps/web`          | 3100 | `WEB_PORT`       |
@@ -76,15 +75,15 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 
 ### Local data and workflow infrastructure
 
-On a new checkout, copy `.env.example` to `.env` and set local-only service tokens. Keep an existing `.env` intact. The database administrator connection `MZIZI_DATABASE_URL` is reserved for the Bun database CLI; the TypeScript database service uses `DATABASE_RUNTIME_URL`, and the NestJS API uses read-only `DATABASE_URL`.
+On a new checkout, copy `.env.example` to `.env` and set local-only service tokens. Keep an existing `.env` intact. The database administrator connection `MZIZI_DB_ADMIN_URL` is reserved for the Bun database CLI. The engine and the NestJS API each connect with their own role (`mzizi_engine`, `mzizi_api`) provisioned by `bun run db roles`; their connection settings are being moved to this model (see `.docs/design/data/DATABASE_ARCHITECTURE.md`).
 
 The local PostGIS container is managed separately so a database reset cannot remove other local databases. Start it with `bun run db:up`, then start the persistent Temporal development service and isolated S3-compatible SeaweedFS object store with `bun run infra:up`. Temporal listens on `127.0.0.1:7233` and its UI on `http://127.0.0.1:8233`; its SQLite history is in the named `temporal-data` volume. SeaweedFS exposes its local S3 endpoint on `127.0.0.1:9000`; object bytes remain in the named `object-store-data` volume. The local endpoint is bound to loopback and configured for local development only. These services never connect to the existing `mzizi` S3 bucket.
 
-The development sequence is `bun run db:up`, `bun run infra:up`, `bun run db reset --confirm mzizi_new`, `bun run db provision-local-roles`, and `bun run db verify`, then run the database, pipeline, engine, and API services with local URLs and tokens from `.env`. `bun run db status` reports schema migration state; `bun run db seed` reapplies the idempotent auth and reference seeds. Proposed workflow definitions can be imported with `bun run db seed pipelines <actor-uuid>`; they stay inactive until separately approved by hash. Stop application processes, then use `bun run infra:down` and `bun run db:down`. The infra down command retains its named volumes. To erase only local Temporal/SeaweedFS development data, explicitly run `docker compose -f compose.local.yaml down --volumes`; to rebuild application schema/data use only the guarded `mzizi_new` reset command. This stack provides local infrastructure; application service configuration and full end-to-end workflow acceptance remain in progress.
+The development sequence is `bun run db:up`, `bun run infra:up`, then against a fresh empty database `bun run db assemble` (first time), `bun run db migrate`, `bun run db roles` and `bun run db verify`, then run the pipeline, engine and API services with local URLs and tokens from `.env`. `bun run db status` reports release state. Stop application processes, then use `bun run infra:down` and `bun run db:down`. The infra down command retains its named volumes. To erase only local Temporal/SeaweedFS development data, explicitly run `docker compose -f compose.local.yaml down --volumes`. This stack provides local infrastructure; application service configuration and full end-to-end workflow acceptance remain in progress.
 
 ## Dryv
 
-The root generation command compiles the current database contracts and writes Rust row models and SQL schema snapshots. `bun run db plan` compares the current entities and table names with the ordered SQL migrations. Reconcile differences before preparing incremental migrations.
+The root generation command compiles the current database contracts and writes the SQL schema snapshot to `source/backend/database/sql/schema.sql`. `bun run db assemble | plan | status | migrate | verify | roles` is the Bun database CLI; see `source/backend/database/README.md`. Releases are immutable, so reconcile contract changes before preparing a new release stream.
 
 `dryv:generate` and `dryv:verify` need the Dryv engine API. They start it from `DRYV_HOME` when nothing answers on its port and stop it afterwards; an engine that was already running is left alone. The engine is bound to `127.0.0.1` and started in Dryv's development mode, so no Dryv Platform login is needed. If port 8750 is taken by a different Dryv service, choose another: `DRYV_API_PORT=8751 bun run dryv:verify`. The log is `.dev/logs/dryv-api.log`. Traps and the manual steps are in `.docs/design/operations/running-dryv.md`.
 

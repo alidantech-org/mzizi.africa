@@ -9,7 +9,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { at } from "./paths.ts";
 
-export type Kind = "python" | "bun" | "flutter" | "rust";
+export type Kind = "python" | "bun" | "flutter";
 
 export type Project = {
   /** Short name used with `--only`. */
@@ -68,14 +68,7 @@ export const projects: readonly Project[] = [
     name: "database",
     kind: "bun",
     dir: "source/backend/database",
-    summary: "TypeScript database owner and migration CLI",
-    byDefault: true,
-  },
-  {
-    name: "database-rust",
-    kind: "rust",
-    dir: "source/backend/database",
-    summary: "Rust database foundation (service and mzizi-db CLI)",
+    summary: "Bun database CLI: generated SQL, immutable releases, migrations and roles",
     byDefault: true,
   },
   {
@@ -115,22 +108,6 @@ export const services: readonly Service[] = [
     start: ["bun", "run", "start"],
     port: 3000,
     portEnv: "PORT",
-  },
-  {
-    name: "database",
-    dir: "source/backend/database",
-    dev: ["bun", "run", "dev"],
-    start: ["bun", "run", "start"],
-    port: 3301,
-    portEnv: "DATABASE_PORT",
-  },
-  {
-    name: "database-rust",
-    dir: "source/backend/database",
-    dev: ["cargo", "run", "--bin", "mzizi-db-service"],
-    start: ["cargo", "run", "--release", "--bin", "mzizi-db-service"],
-    port: 3303,
-    portEnv: "MZIZI_DB_SERVICE_PORT",
   },
   {
     name: "pipelines",
@@ -174,7 +151,7 @@ export function portOf(service: Service, env: Record<string, string | undefined>
 
 /**
  * Select projects. With no filter: the default set. A filter is a comma-separated list of project names
- * or kinds (`python`, `bun`, `flutter`, `rust`), or `all`. Unknown names throw, so typos never pass silently.
+ * or kinds (`python`, `bun`, `flutter`), or `all`. Unknown names throw, so typos never pass silently.
  */
 export function select(filter?: string): Project[] {
   if (!filter) return projects.filter((project) => project.byDefault);

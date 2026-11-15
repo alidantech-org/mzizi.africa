@@ -1,20 +1,20 @@
 ---
-{id: TSK-748FB13FED4D,name: "Author auth, audit events and the change ledger, and compress Main",type: task,status: planned,priority: medium,created_at: 2026-11-15T16:32:03.829Z,updated_at: 2026-11-15T16:32:03.829Z,order: 3072}
+{id: TSK-748FB13FED4D,name: Author the change ledger and compress Main to a first slice,type: task,status: planned,priority: medium,created_at: 2026-11-15T16:32:03.829Z,updated_at: 2026-11-15T16:54:08.084Z,order: 3072}
 ---
 
-# Author auth, audit events and the change ledger, and compress Main
+# Author the change ledger and compress Main to a first slice
 
 ## Goal
 
-Create the few new or retained Postgres contracts and shrink Main to a first vertical slice. The retained pieces are six auth tables, audit events and a new append-only change ledger. Main generation is limited to reference, geography, official, governance, source and filesystem, while legal, politics, civic, finance and accountability stay authored but not generated.
+Add the one genuinely new Postgres contract, the append-only change ledger, and decide how much of Main is generated now. The ledger records each approval (what to write, who approved, when, the target Main record, a soft Mongo reference with a content hash) so human effort is replayable if Mongo is lost. Main compression to a first vertical slice (reference, geography, official, governance, source, filesystem) is decided here.
 
 ## Context
 
-The change ledger records each approval: what to write, who approved it, when, the target Main record, and a soft Mongo reference with a content hash. It makes human effort replayable if Mongo is lost. Mongo links are never foreign keys. The auth operations in `contracts/apps/database/auth.ts` need accounts, login identities, roles, permissions and role assignments. Read the existing audit decisions and management publications shapes before deciding what the ledger reuses.
+Auth (11 tables) and audit (2 tables) were kept in Postgres unchanged and moved to the main store; trimming auth to six tables is deferred because role assignments reference scopes, memberships and delegations. All twelve schemas and 94 tables are currently generated; compressing means removing legal, politics, civic, finance and accountability from the app composition without deleting their files. The ledger replaces the former publications, publication items and the staging promotion request. Read the existing audit decisions shape before deciding what the ledger reuses. Mongo links are never foreign keys.
 
 ## Acceptance checklist
 
-- [ ] The six auth tables, audit events and the change ledger compile as Dryv contracts with indexes and checks.
-- [ ] The database app composes only the first-slice groups, and the deferred groups are listed in the task notes.
-- [ ] A named operation applies one approved ledger entry idempotently, and the contract states how.
-- [ ] `bun run database:check` passes with the smaller set.
+- [ ] The change ledger compiles as a Dryv contract with indexes and checks, and the replay and idempotency rules are stated in the contract.
+- [ ] A decision on which groups the database app composes now is written here, and deferred groups are listed.
+- [ ] A named operation applies one approved ledger entry idempotently, and its contract states how.
+- [ ] `bun run database:check` passes and the snapshot is regenerated and still applies to a fresh database.

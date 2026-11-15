@@ -5,6 +5,8 @@ type: documentation
 tags: [database, python, rust, nestjs, mongo, vector, lifecycle]
 ---
 
+> **Superseded in part, 15 November 2026.** The Rust database service, the two-database layout (`mzizi` and `mzizi_operations`) and an exclusive database service were replaced by one PostgreSQL database with direct engine and API connections and a Bun CLI. See [DATABASE_ARCHITECTURE](../data/DATABASE_ARCHITECTURE.md) and [DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115](../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md). Text below that describes the removed design is historical.
+
 # Database access, write lifecycle, and the data path from request to saved record
 
 **Status:** the Python-engine-to-Rust write path described here is implemented and verified end to end against the live `mzizix`/`mzizix_operational` databases (`DEC-DATABASE-ACCESS-LIFECYCLE`). The MongoDB staging store and the vector index are still proposals (ports only, no live infrastructure). NestJS's migration onto this same path is not started.

@@ -12,7 +12,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 export const auth = dryv
   .group({ name: "auth" })
   .description("Platform accounts, access control, roles and delegation.")
-  .facets({ storage: { namespace: "auth", store: "operations" } });
+  .facets({ storage: { namespace: "auth", store: "main" } });
 
 /*---------------- Closed technical vocabulary ----------------*/
 export const authEnums = auth.properties({
