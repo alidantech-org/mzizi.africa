@@ -22,3 +22,5 @@ The register lists fourteen gaps with evidence: no change-aware SQL, no Mongo dr
 ## Notes
 
 On 15 November 2026 the API and engine contracts were authored (apps/api: auth, reference, geography, governance; apps/engine: jobs) as flat files, one per group, with Dryv queries, schema.fromQuery rows and policy stubs. The database app was replaced by a dedicated pgsql app for SQL generation. Stale tools were removed from dryv/tools. Gaps 15 to 24 were added to DRYV_GAPS; gaps 18 to 21 block five of the nine API queries from passing engine validation (the author compiler accepts them).
+
+On 15 November 2026 the api app (auth, reference, geography, governance) was generated through the NestJS packs: 788 files, `generate --check` clean, package typecheck clean, 3,296 generated tests pass and 15 fail. Dryv fixes landed in the Dryv repository (TSK-596E5D13DB78) and two local commits in the packs repository (TypeORM store support, null-safe invariants). Gaps 15 to 29 are updated in DRYV_GAPS; gap 27 (same-named schemas across groups) is the remaining generation blocker for a fully green generated test run.

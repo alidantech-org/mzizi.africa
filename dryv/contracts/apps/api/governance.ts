@@ -30,7 +30,7 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
   ScanInstitutions: dryv.readQuery
     .from(institution)
     .input(InstitutionWindow)
-    .where((row, args) => [row.fields.code.compare("prefix", args.codePrefix)])
+    .where((row, args) => [row.fields.code.compare("prefix", args.codePrefix), row.fields.deletedAt.isNull()])
     .select((row) => ({
       id: row.fields.id,
       code: row.fields.code,
@@ -38,7 +38,10 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
       names: row
         .follow(institution.fields.entityId, entity)
         .reverse(officialName.fields.entityId, officialName)
-        .select((n) => ({ name: n.fields.name, languageTag: n.fields.languageTag, isPreferred: n.fields.isPreferred })),
+        .select(
+          (n) => ({ name: n.fields.name, languageTag: n.fields.languageTag, isPreferred: n.fields.isPreferred }),
+          (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
+        ),
     }))
     .orderBy(({ fields }) => [fields.code.order("asc"), fields.id.order("asc")])
     .page(({ limit, offset }) => ({ limit, offset, maxLimit: MAX_PAGE })),
@@ -46,7 +49,7 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
   FindInstitution: dryv.readQuery
     .from(institution)
     .input(InstitutionKey)
-    .where((row, args) => [row.fields.id.eq(args.institutionId)])
+    .where((row, args) => [row.fields.id.eq(args.institutionId), row.fields.deletedAt.isNull()])
     .select((row) => ({
       id: row.fields.id,
       code: row.fields.code,
@@ -56,18 +59,27 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
       names: row
         .follow(institution.fields.entityId, entity)
         .reverse(officialName.fields.entityId, officialName)
-        .select((n) => ({ name: n.fields.name, languageTag: n.fields.languageTag, isPreferred: n.fields.isPreferred })),
-      mandates: row.reverse(mandate.fields.institutionId, mandate).select((m) => ({
-        kind: m.follow(mandate.fields.mandateKindId, value).fields.code,
-        description: m.fields.description,
-        validFrom: m.fields.validFrom,
-        validUntil: m.fields.validUntil,
-      })),
-      offices: row.reverse(office.fields.institutionId, office).select((o) => ({
-        id: o.fields.id,
-        code: o.fields.code,
-        kind: o.follow(office.fields.officeKindId, value).fields.code,
-      })),
+        .select(
+          (n) => ({ name: n.fields.name, languageTag: n.fields.languageTag, isPreferred: n.fields.isPreferred }),
+          (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
+        ),
+      mandates: row.reverse(mandate.fields.institutionId, mandate).select(
+        (m) => ({
+          kind: m.follow(mandate.fields.mandateKindId, value).fields.code,
+          description: m.fields.description,
+          validFrom: m.fields.validFrom,
+          validUntil: m.fields.validUntil,
+        }),
+        (m) => [m.fields.validFrom.order("desc"), m.fields.id.order("asc")],
+      ),
+      offices: row.reverse(office.fields.institutionId, office).select(
+        (o) => ({
+          id: o.fields.id,
+          code: o.fields.code,
+          kind: o.follow(office.fields.officeKindId, value).fields.code,
+        }),
+        (o) => [o.fields.code.order("asc"), o.fields.id.order("asc")],
+      ),
     }))
     .orderBy(({ fields }) => [fields.id.order("asc")])
     .zeroOrOne(),
@@ -75,7 +87,7 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
   FindOffice: dryv.readQuery
     .from(office)
     .input(OfficeKey)
-    .where((row, args) => [row.fields.id.eq(args.officeId)])
+    .where((row, args) => [row.fields.id.eq(args.officeId), row.fields.deletedAt.isNull()])
     .select((row) => ({
       id: row.fields.id,
       code: row.fields.code,
@@ -91,9 +103,12 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
           names: h
             .follow(holder.fields.individualId, individual)
             .reverse(officialName.fields.individualId, officialName)
-            .select((n) => ({ name: n.fields.name, isPreferred: n.fields.isPreferred })),
+            .select(
+              (n) => ({ name: n.fields.name, isPreferred: n.fields.isPreferred }),
+              (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
+            ),
         }),
-        (h) => [h.fields.validFrom.order("desc")],
+        (h) => [h.fields.validFrom.order("desc"), h.fields.id.order("asc")],
       ),
     }))
     .orderBy(({ fields }) => [fields.id.order("asc")])

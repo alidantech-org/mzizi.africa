@@ -27,7 +27,7 @@ const { ScanSchemes, ScanMembers, FindMember } = catalogue.queries({
   ScanSchemes: dryv.readQuery
     .from(scheme)
     .input(SchemeWindow)
-    .where((row, args) => [row.fields.code.compare("prefix", args.code)])
+    .where((row, args) => [row.fields.code.compare("prefix", args.code), row.fields.deletedAt.isNull()])
     .select(({ fields }) => ({ id: fields.id, code: fields.code, title: fields.title }))
     .orderBy(({ fields }) => [fields.code.order("asc"), fields.id.order("asc")])
     .page(({ limit, offset }) => ({ limit, offset, maxLimit: MAX_PAGE })),
@@ -35,7 +35,7 @@ const { ScanSchemes, ScanMembers, FindMember } = catalogue.queries({
   ScanMembers: dryv.readQuery
     .from(value)
     .input(MemberWindow)
-    .where((row, args) => [row.fields.schemeId.eq(args.schemeId)])
+    .where((row, args) => [row.fields.schemeId.eq(args.schemeId), row.fields.deletedAt.isNull()])
     .select(({ fields }) => ({ id: fields.id, code: fields.code, label: fields.label, supersedesId: fields.supersedesId }))
     .orderBy(({ fields }) => [fields.code.order("asc"), fields.id.order("asc")])
     .page(({ limit, offset }) => ({ limit, offset, maxLimit: MAX_PAGE })),
@@ -43,7 +43,7 @@ const { ScanSchemes, ScanMembers, FindMember } = catalogue.queries({
   FindMember: dryv.readQuery
     .from(value)
     .input(MemberKey)
-    .where((row, args) => [row.fields.code.eq(args.code)])
+    .where((row, args) => [row.fields.code.eq(args.code), row.fields.deletedAt.isNull()])
     .select((row) => ({
       id: row.fields.id,
       code: row.fields.code,

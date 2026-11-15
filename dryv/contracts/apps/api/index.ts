@@ -4,8 +4,7 @@
  * A user-facing surface: the signed-in account and feedback, and read operations over the verified data.
  * It is not a mirror of the database. Promoted facts are written by the engine, never here.
  *
- * It lists only the groups it serves (and the groups those point at). The SQL snapshot is generated from
- * the separate pgsql app, which lists every persisted group.
+ * It lists only the groups it serves (and the groups those point at).
  */
 import { dryv } from "@dryvcode/author";
 import { shared } from "#/schemas/_shared.ts";

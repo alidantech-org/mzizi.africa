@@ -40,10 +40,10 @@ const { ScanUnits, FindUnit } = places.queries({
         countryId: row.fields.countryId,
         validFrom: row.fields.validFrom,
         validUntil: row.fields.validUntil,
-        names: identity.reverse(name.fields.featureId, name).select((n) => ({
-          name: n.fields.name,
-          languageTag: n.fields.languageTag,
-        })),
+        names: identity.reverse(name.fields.featureId, name).select(
+          (n) => ({ name: n.fields.name, languageTag: n.fields.languageTag }),
+          (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
+        ),
       };
     })
     .orderBy((row) => [
@@ -64,10 +64,10 @@ const { ScanUnits, FindUnit } = places.queries({
         countryId: row.fields.countryId,
         validFrom: row.fields.validFrom,
         validUntil: row.fields.validUntil,
-        names: identity.reverse(name.fields.featureId, name).select((n) => ({
-          name: n.fields.name,
-          languageTag: n.fields.languageTag,
-        })),
+        names: identity.reverse(name.fields.featureId, name).select(
+          (n) => ({ name: n.fields.name, languageTag: n.fields.languageTag }),
+          (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
+        ),
       };
     })
     .orderBy(({ fields }) => [fields.featureId.order("asc")])

@@ -8,9 +8,11 @@
       "scripts/**",
       "dryv/tools/**",
       "dryv/contracts/**",
-      "dryv/package.json"
+      "dryv/package.json",
+      "dryv/staging/**"
     ]
   },
+  "javascript": { "parser": { "unsafeParameterDecoratorsEnabled": true } },
   "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 125 },
   "linter": { "rules": { "recommended": true } },
   "assist": { "actions": { "source": { "organizeImports": "on" } } }

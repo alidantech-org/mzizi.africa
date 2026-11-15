@@ -119,18 +119,6 @@ const CodedEntityBase = dryv
       .indexes({ fields: ["code"], unique: true, where: baseRules.LiveRecord }),
   });
 
-/** Entity that applies over a half-open time window, `[effectiveFrom, effectiveUntil)`. */
-const EffectiveEntityBase = dryv
-  .schema({
-    /** Start of the window, inclusive. */
-    effectiveFrom: dryv.field(sharedProperties.CalendarDate),
-    /** End of the window, exclusive. Null means the window is still open. */
-    effectiveUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
-  })
-  .extends(baseGroup.Entity)
-  .abstract()
-  .description("Base for versioned records that apply over a half-open time window.");
-
 /** Entity that is valid over an optional period: both ends may be unknown, and an open end has no limit. */
 const ValidityEntityBase = dryv
   .schema({
@@ -160,11 +148,8 @@ const CodedValidityEntityBase = dryv
 const effectiveGroup = shared.schemas({
   CodedEntity: CodedEntityBase,
   CodedValidityEntity: CodedValidityEntityBase,
-  EffectiveEntity: EffectiveEntityBase,
 });
 
-// A null end is an open window, and an SQL CHECK treats NULL as satisfied, so no explicit open branch.
-EffectiveEntityBase.rule(shared, "EffectiveWindowIsOrdered", (v) => v.effectiveFrom.lt(v.effectiveUntil));
 
 export const baseSchemas = {
   ...baseGroup,

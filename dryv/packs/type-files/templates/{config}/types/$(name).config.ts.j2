@@ -45,7 +45,7 @@
 {#- A relation is named after its target (appId -> app), as the TypeORM pack does; a second
     relation to the same target is named after its field instead (ownerId -> ownerIdRelation). -#}
 {%- macro relation_name(field, position) -%}
-{%- if field.relation is not none -%}{% if target_seen(field.relation.target.schema.id, position) %}{{ field.name.camel }}Relation{% else %}{{ field.relation.target.schema.name.camel }}{% endif %}{%- elif field.related is not none -%}{{ field.name.camel }}{%- endif -%}
+{%- if field.relation is not none -%}{%- set key = field.name.camel -%}{%- set stripped = (key ~ '#') | replace('Id#', '') | replace('#', '') -%}{%- if stripped != key and stripped != '' -%}{{ stripped }}{%- else -%}{{ key }}Relation{%- endif -%}{%- elif field.related is not none -%}{{ field.name.camel }}{%- endif -%}
 {%- endmacro -%}
 
 {#- "yes" when an earlier field already relates to the same target (import it once). -#}

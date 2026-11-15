@@ -169,3 +169,16 @@ stores. The current lookup, auth, and folder routes therefore use service handle
 The official Python SDK pack's flat model filenames collide across groups on the
 full database IR. The scratch generation used group-qualified filenames and
 symbols (this matters for generating typed Python models; see `.docs/design/data/DRYV_GAPS.md`).
+
+## Generating the API
+
+The `api` application is bound to the NestJS packs (types, DTOs, entities, type files, use cases, server) with everything under `source/backend/api/src/modules`. From the repository root:
+
+```bash
+bun run dryv:api                       # start the Dryv engine API (needs the Dryv checkout)
+# in another shell, with DRYV_HOME, DRYV_API=http://127.0.0.1:8750 and DRYV_API_KEY=local-development set:
+bun "$DRYV_HOME/source/apps/cli/bin/dryv.ts" --api "$DRYV_API" --yes --no-input generate --app api
+bun "$DRYV_HOME/source/apps/cli/bin/dryv.ts" --api "$DRYV_API" --yes --no-input generate --app api --check
+```
+
+The `official` pack source is a `file://` git source pinned to a local commit of the packs repository that declares TypeORM store support and null-safe invariants; switch it back to the GitHub repository once those commits are published. Scaffolded use cases are created once and then belong to the project.

@@ -1,0 +1,7 @@
+
+import type { PaginationMeta } from "#/modules/shared/pagination-meta.interface.ts";
+
+/** Paginated Response */
+export interface PaginatedResponse {
+  meta: PaginationMeta;
+}
