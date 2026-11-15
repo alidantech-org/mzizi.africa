@@ -10,7 +10,6 @@ resolution-markers = [
 
 [manifest]
 members = [
-    "mzizi-database-client",
     "mzizi-engine",
     "mzizi-extraction",
     "mzizi-fetch",
@@ -1304,28 +1303,12 @@ wheels = [
 ]
 
 [[package]]
-name = "mzizi-database-client"
-version = "0.1.0"
-source = { editable = "source/packages/database_client" }
-dependencies = [
-    { name = "httpx" },
-    { name = "pydantic" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "httpx" },
-    { name = "pydantic", specifier = ">=2.7" },
-]
-
-[[package]]
 name = "mzizi-engine"
 version = "0.1.0"
 source = { editable = "source/backend/engine" }
 dependencies = [
     { name = "fastapi" },
     { name = "httpx" },
-    { name = "mzizi-database-client" },
     { name = "mzizi-extraction" },
     { name = "mzizi-fetch" },
     { name = "mzizi-filesystem" },
@@ -1358,7 +1341,6 @@ requires-dist = [
     { name = "fastapi" },
     { name = "fastembed", marker = "extra == 'services'", specifier = ">=0.9.1" },
     { name = "httpx" },
-    { name = "mzizi-database-client", editable = "source/packages/database_client" },
     { name = "mzizi-extraction", editable = "source/packages/extraction" },
     { name = "mzizi-fetch", editable = "source/packages/fetch" },
     { name = "mzizi-filesystem", editable = "source/packages/filesystem" },

@@ -22,7 +22,7 @@ engine    ──┘
 
 Only `mzizi-db-service` holds PostgreSQL credentials. Everyone else calls its named HTTP operations:
 
-- **Python** (the engine): `mzizi_database_client.DatabaseClient`, an async `httpx` client with frozen `pydantic` models, one method per operation (`create_folder(...)` today).
+- **Python** (the engine): formerly `mzizi_database_client`, a generated HTTP client for the Rust service. It was removed on 2026-11-15 with the service; the engine now connects to PostgreSQL directly (see DATABASE_ARCHITECTURE).
 - **NestJS**: a generated TypeScript client, same operations, same contract (not yet migrated for every route; see `source/backend/api`'s outstanding TypeORM paths).
 - **Rust** (the service itself) is the only process with `sqlx::PgPool`s against `mzizi` and `mzizi_operations`, and the only place SQL is written by hand (`mzizi-db-core::domains::*`).
 
@@ -47,7 +47,7 @@ Dryv has official packs for exactly this (`unit/backend/axum-backend`, `unit/cli
 
 - **Job/event persistence** already goes through named operations (`mzizi_engine.database_store.DatabaseServiceStore`, calling the database service's `jobs`/`events` endpoints) — this predates this session's work and already proves the pattern for operational state.
 - **Filesystem writes** are in two states right now:
-  - *New, target shape*: `mzizi_database_client` calling the Rust service's `filesystem.RegisterFolder` (and the write operations that will follow it: upload completion, version registration, access transitions), against the current Dryv-authored `filesystem` schema.
+  - *Removed*: the planned `mzizi_database_client` call to the Rust service no longer exists; the engine writes through its own PostgreSQL role.
   - *Legacy, transitional*: `mzizi_engine.filesystem` (raw SQL via `mzizi_engine.ports.database`, a psycopg adapter) against the disposable `mzizi_new` database, assuming an older, richer folder shape. Migrating this onto the new path is a schema/data migration decision, not a client swap (`TSK-E55B1BC4011A`), because the two schemas disagree on what a folder even carries.
 
 ## NestJS: not yet migrated, same target

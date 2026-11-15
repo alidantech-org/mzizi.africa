@@ -21,7 +21,6 @@ extra: {status: planning_only, implementation_approved: false}
 | `mzizi-scraping` | `extract_links`, selectors, fields, transforms, `detect_challenge`, `parse_module/selectors/transform` | `scraping.links` | `scraping.extract` (apply a structure to a document), `scraping.select`, `scraping.challenge` capabilities |
 | `mzizi-manifest` | seed registry, lock, effective manifests, structure validation | `manifest.check_seeds`, `manifest.validate_structure` | `manifest.explain`; run against `.dev/manifests` |
 | `mzizi-filesystem` | object store protocol (memory, S3), hashing, naming | `filesystem.sync` | `filesystem.hash`, local-directory object store for dev |
-| `mzizi-database-client` | typed client for the Rust database service | none | Out of scope here; engine-to-database proof is a separate effort |
 
 ## New capabilities (proposed names)
 
