@@ -8,9 +8,11 @@ from pathlib import Path
 
 from mzizi_engine.devcli.errors import CliError
 from mzizi_engine.devcli.types import ArgValues
-from mzizi_engine.devcli.workspace import Workspace
+from mzizi_engine.devcli.workspace import RunRecord, Workspace
 from mzizi_engine.jsonvalue import JsonValue, Payload
 from mzizi_engine.web.crawl.inventory import CrawlSummary
+from mzizi_engine.web.crawl.state import CrawlState
+from mzizi_engine.web.requests import CrawlRequest
 
 LIST_ARGUMENTS = frozenset({"allowed-hosts", "allowed-paths", "excluded-paths", "urls"})
 
@@ -60,6 +62,13 @@ def markdown_payload(values: ArgValues, ws: Workspace) -> Payload:
             payload[key] = values[key]
     if values.get("page-renders"):
         payload["page_renders"] = True
+    if values.get("strict-table-lines"):
+        payload["strict_table_lines"] = True
+    if values.get("auto-tables"):
+        payload["auto_tables"] = True
+    schema = values.get("table-schema")
+    if isinstance(schema, str):
+        payload["table_schema_json"] = Path(schema).read_text(encoding="utf-8")
     return payload
 
 
@@ -103,18 +112,38 @@ def resume_payload(values: ArgValues, ws: Workspace) -> Payload:
     folder = values.get("folder")
     if not isinstance(folder, str):
         raise CliError("--folder is required")
-    payload: Payload = {
-        "resume_from": str(Path(folder).expanduser().resolve()),
-        "max_pages": values.get("max-pages") or 25,
-    }
-    seed = Path(folder) / "summary.json"
-    if seed.exists():
-        summary = CrawlSummary.model_validate_json(seed.read_bytes())
+    root = Path(folder).expanduser().resolve()
+    payload: Payload = {}
+    state_file, run_file = root / "state.json", root / "run.json"
+    state = CrawlState.model_validate_json(state_file.read_bytes()) if state_file.exists() else None
+    if state is not None and state.request is not None:
+        payload.update(state.request.model_dump(mode="json"))
+    elif run_file.exists():
+        record = RunRecord.model_validate_json(run_file.read_bytes())
+        restored: ArgValues = {
+            key: True if value == "True" else False if value == "False" else value
+            for key, value in record.arguments.items()
+        }
+        payload.update(with_dev_browser_defaults(crawl_payload(restored, ws), uses_browser=True))
+        payload["profile_dir"] = str(ws.browser_profile)
+        payload["out_dir"] = str(root)
+        # Validate restored argument types before returning the engine payload.
+        payload = CrawlRequest.model_validate(payload, strict=False).model_dump(mode="json")
+    elif (root / "summary.json").exists():
+        summary = CrawlSummary.model_validate_json((root / "summary.json").read_bytes())
         payload.update(
             url=summary.start_urls[0] if summary.start_urls else "",
+            urls=list(summary.start_urls[1:]),
             render=summary.render.value,
             adapter=summary.adapter,
+            rendered_media=summary.rendered_media,
+            references_only=summary.references_only,
+            listing_selector=summary.listing_selector,
+            item_selector=summary.item_selector,
         )
+    payload.update(resume_from=str(root), max_pages=values.get("max-pages") or 25)
+    if values.get("css-images"):
+        payload["css_images"] = True
     return payload
 
 

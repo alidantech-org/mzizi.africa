@@ -18,6 +18,7 @@ from mzizi_extraction.document.models import (
 )
 from mzizi_extraction.document.pdf_backend import extract_pdf_document
 from mzizi_extraction.document.profile import DocumentProfile, OcrMode
+from mzizi_extraction.document.table_models import ColumnType, TableColumn, TableSchema
 from mzizi_extraction.document.wire import DocumentWire, encode_document
 
 __all__ = [
@@ -25,6 +26,7 @@ __all__ = [
     "Block",
     "Boilerplate",
     "Chunk",
+    "ColumnType",
     "DocumentOutput",
     "DocumentProfile",
     "DocumentWire",
@@ -36,6 +38,8 @@ __all__ = [
     "Paragraph",
     "Span",
     "TableBlock",
+    "TableColumn",
+    "TableSchema",
     "chunk_markdown",
     "encode_document",
     "extract_html_document",

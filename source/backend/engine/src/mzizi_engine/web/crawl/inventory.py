@@ -9,8 +9,10 @@ from pydantic import BaseModel
 
 from mzizi_engine.activity import open_activity
 from mzizi_engine.jsonvalue import JsonValue
-from mzizi_engine.web.crawl.persist import record_provenance, record_run, record_tables
+from mzizi_engine.web.browser.media import render_media
+from mzizi_engine.web.browser.traversal import End
 from mzizi_engine.web.crawl.engine import Crawl
+from mzizi_engine.web.crawl.persist import record_provenance, record_run, record_tables
 from mzizi_engine.web.crawl.state import save_state
 from mzizi_engine.web.export import columns_of, site_tree, write_table
 from mzizi_engine.web.records import (
@@ -24,14 +26,24 @@ from mzizi_engine.web.records import (
     Scope,
 )
 from mzizi_engine.web.requests import Render
+from mzizi_engine.web.tables import save_tables
 from mzizi_extraction import extract_html_document, learn_boilerplate
 from mzizi_extraction.document import render_markdown
 from mzizi_fetch.web.urls import UrlKind
 
 IMAGE, MEDIA_KINDS = UrlKind.IMAGE.value, (UrlKind.MEDIA.value, UrlKind.EMBED.value)
 CRAWL_TABLES = (
-    "pages", "paths", "links", "internal_urls", "external_urls", "external_hosts",
-    "images", "documents", "files", "media", "errors",
+    "pages",
+    "paths",
+    "links",
+    "internal_urls",
+    "external_urls",
+    "external_hosts",
+    "images",
+    "documents",
+    "files",
+    "media",
+    "errors",
 )
 DOCUMENT = UrlKind.DOCUMENT.value
 OTHER_FILES = (UrlKind.DATA.value, UrlKind.ARCHIVE.value, UrlKind.PROGRAM.value)
@@ -41,6 +53,10 @@ class CrawlSummary(Record):
     start_urls: tuple[str, ...]
     render: Render = Render.HTTP
     adapter: str = "playwright"
+    rendered_media: bool = False
+    references_only: bool = False
+    listing_selector: str = ""
+    item_selector: str = ""
     pages: int
     internal_paths: int
     links: int
@@ -53,6 +69,9 @@ class CrawlSummary(Record):
     blocked: int
     stopped: str
     complete: bool
+    listing_gaps: int = 0
+    media_gaps: int = 0
+    deferred_pages: int = 0
     files_written: tuple[str, ...]
 
 
@@ -62,9 +81,18 @@ def write_markdown(crawl: Crawl) -> list[PageRecord]:
     boilerplate = learn_boilerplate(list(crawl.html.values()))
     updated: list[PageRecord] = []
     for page in crawl.pages:
-        output, _title, removed = extract_html_document(crawl.html[page.n], page.final_url, boilerplate)
+        if page.n not in crawl.html:
+            updated.append(page)
+            continue
+        output, _title, removed = extract_html_document(
+            crawl.html[page.n], page.final_url, boilerplate, include_css_images=crawl.request.css_images
+        )
         name = f"markdown/{page.n:04d}.md"
         body = render_markdown(output.pages).replace("<!-- page 1 -->\n\n", "", 1)
+        inventory = crawl.evidence.media.get(page.final_url)
+        if inventory is not None:
+            body += render_media(inventory)
+        save_tables(output, crawl.out_dir / f"tables/{page.n:04d}.json")
         head = f"---\nurl: {page.final_url}\ntitle: {json.dumps(page.title, ensure_ascii=False)}\n---\n\n"
         (crawl.out_dir / name).write_text(head + body, encoding="utf-8")
         updated.append(page.model_copy(update={"markdown_file": name, "chrome_removed": removed}))
@@ -107,7 +135,9 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
     resources = _unique(crawl.resources)
     externals, paths = _externals(links), _paths(pages, links)
     errors = [e for e in crawl.errors if e.stage != "block"]
-    written: list[str] = []
+    reports = crawl.evidence.resolved(pages)
+    written = list(crawl.evidence.save(out, pages, reports))
+    written.extend(path.relative_to(out).as_posix() for path in sorted((out / "tables").glob("*.json")))
 
     def table(
         name: str,
@@ -144,6 +174,10 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
         start_urls=crawl.request.starts,
         render=crawl.request.render,
         adapter=crawl.request.adapter,
+        rendered_media=crawl.request.rendered_media,
+        references_only=crawl.request.references_only,
+        listing_selector=crawl.request.listing_selector,
+        item_selector=crawl.request.item_selector,
         pages=len(pages),
         internal_paths=len(paths),
         links=len(links),
@@ -156,6 +190,25 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
         blocked=len(decisions),
         stopped=crawl.stopped,
         complete=complete,
+        deferred_pages=len(crawl.deferred),
+        listing_gaps=sum(
+            report.stop_reason not in (End.NO_NEXT, End.DISABLED, End.NUMBERED_END, End.DISABLED_BY_REQUEST)
+            and not (report.stop_reason is End.LINK and report.continuation_captured)
+            for report in reports
+        ),
+        media_gaps=sum(
+            crawl.request.rendered_media
+            and (
+                inventory is None
+                or inventory.truncated
+                or inventory.lazy_candidates > inventory.lazy_scrolled
+                or inventory.uninspected_frames > 0
+                or inventory.shadow_roots > 0
+            )
+            for page in pages
+            if page.fetched_via == "browser"
+            for inventory in (crawl.evidence.media.get(page.final_url),)
+        ),
         files_written=tuple(written),
     )
     (out / "summary.json").write_text(summary.model_dump_json(indent=2), encoding="utf-8")
@@ -178,5 +231,7 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
 
 def finish(crawl: Crawl) -> CrawlSummary:
     pages = write_markdown(crawl) if crawl.request.markdown and crawl.html else list(crawl.pages)
-    complete = not crawl.frontier and not crawl.stopped and bool(crawl.pages)  # an unreachable site is not complete
+    complete = (
+        not crawl.frontier and not crawl.deferred and not crawl.stopped and bool(crawl.pages)
+    )  # an unreachable site is not complete
     return export(crawl, pages, complete)

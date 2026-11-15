@@ -33,6 +33,7 @@ class BrowserConfig(Frozen):
     min_text_chars: int = 60  # a page with less visible text than this and scripts still pending is not ready
     headers: dict[str, str] = {}
     persistent: bool = True
+    accept_downloads: bool = True
     site: str = ""  # the host this session works on; with a shared browser it owns that site's tab
     registry_dir: Path | None = None  # where the shared browser's tab registry lives
     cdp_url: str | None = None  # attach to an already-running shared browser; closing only detaches

@@ -59,6 +59,7 @@ class LinkRecord(Record):
     normalized_url: str
     source_page: str
     anchor_text: str
+    nearby_heading: str = ""
     tag: str
     kind: str
     scope: Scope
@@ -80,6 +81,7 @@ class ResourceRecord(Record):
     path: str
     source_page: str
     anchor_text: str
+    nearby_heading: str = ""
     content_type: str
     status: int
     depth: int
@@ -109,3 +111,4 @@ class FrontierItem(Record):
     depth: int
     source_page: str
     anchor_text: str
+    nearby_heading: str = ""

@@ -3,7 +3,15 @@ name = "mzizi-extraction"
 version = "0.1.0"
 description = "Reusable extraction of PDF text and tables, GeoJSON, CSV and JSON into segments with honest diagnostics."
 requires-python = ">=3.12"
-dependencies = ["pdfplumber", "pypdfium2", "shapely", "pydantic>=2.7", "beautifulsoup4", "lxml"]
+dependencies = [
+    "pdfplumber",
+    "pypdfium2",
+    "shapely",
+    "pydantic>=2.7",
+    "beautifulsoup4",
+    "lxml",
+    "tinycss2>=1.5.1",
+]
 
 [build-system]
 requires = ["setuptools>=68"]

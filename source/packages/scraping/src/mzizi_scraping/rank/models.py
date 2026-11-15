@@ -14,6 +14,7 @@ class Signal(StrEnum):
 
     SECTION = "section"
     ANCHOR_TEXT = "anchor_text"
+    NEARBY_HEADING = "nearby_heading"
     FILENAME = "filename"
     SOURCE_PAGE_TITLE = "source_page_title"
     SOURCE_PAGE_PATH = "source_page_path"
@@ -49,6 +50,7 @@ class FileFeatures(Frozen):
     extension: str
     section: str
     anchor_text: str
+    nearby_heading: str = ""
     source_page_title: str
     source_page_path: str
 

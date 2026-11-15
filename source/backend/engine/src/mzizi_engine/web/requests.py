@@ -70,12 +70,19 @@ class CrawlRequest(Workspace):
     excluded_paths: tuple[str, ...] = ()
     sitemap: bool = True
     markdown: bool = True
+    css_images: bool = False
+    rendered_media: bool = False
+    references_only: bool = False
+    listing_selector: str = ""
+    item_selector: str = ""
     resume: bool = False
     resume_from: str = ""
     inspect_resources: bool = False
     robots_mode: RobotsMode = RobotsMode.RESPECT
     authorization: Authorization | None = None
-    formats: tuple[ExportFormat, ...] = Field(default=(ExportFormat.CSV,))  # rows are in MongoDB; CSV is the linked file
+    formats: tuple[ExportFormat, ...] = Field(
+        default=(ExportFormat.CSV,)
+    )  # rows are in MongoDB; CSV is the linked file
 
     @property
     def starts(self) -> tuple[str, ...]:
@@ -88,7 +95,9 @@ class WatchRequest(CrawlRequest):
     download: bool = True
     download_limit: int = 200  # files fetched per run; the queue keeps the rest for the next run
     hunt: bool = True
-    min_age_hours: float = 12.0  # a page fetched more recently than this is not fetched again; its saved copy feeds the crawl
+    min_age_hours: float = (
+        12.0  # a page fetched more recently than this is not fetched again; its saved copy feeds the crawl
+    )
 
 
 class SurveyRequest(CrawlRequest):
@@ -99,6 +108,15 @@ class MarkdownRequest(Workspace):
     url: str
     render: Render = Render.HTTP
     headed: bool = False
+    css_images: bool = False
+    rendered_media: bool = False
+
+
+class SectionsRequest(MarkdownRequest):
+    render: Render = Render.AUTO
+    max_sections: int = Field(default=24, ge=1, le=100)
+    max_view_steps: int = Field(default=12, ge=1, le=50)
+    browser_seconds: int = Field(default=120, ge=1, le=600)
 
 
 class ScrapeFileRequest(Request):

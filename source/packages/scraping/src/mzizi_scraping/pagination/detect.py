@@ -36,7 +36,9 @@ def _disabled(tag: Tag) -> bool:
     words = vocabulary().pagination.disabled_words
     chain = [tag, *tag.parents][:3]
     return any(
-        node.has_attr("disabled") or str(node.get("aria-disabled", "")).lower() == "true" or any(w in _words(node) for w in words)
+        node.has_attr("disabled")
+        or str(node.get("aria-disabled", "")).lower() == "true"
+        or any(w in _words(node) for w in words)
         for node in chain
         if isinstance(node, Tag)
     )
@@ -62,7 +64,9 @@ def _matches(label: str, candidates: tuple[str, ...], exact: bool) -> bool:
 def _in_carousel(tag: Tag) -> bool:
     """A next button inside a slider moves slides, not pages."""
     words = vocabulary().pagination.carousel_words
-    return any(isinstance(node, Tag) and any(w in _words(node) for w in words) for node in [tag, *list(tag.parents)[:5]])
+    return any(
+        isinstance(node, Tag) and any(w in _words(node) for w in words) for node in [tag, *list(tag.parents)[:5]]
+    )
 
 
 def _control(tag: Tag, base_url: str, how: str) -> Control:
@@ -74,7 +78,7 @@ def _control(tag: Tag, base_url: str, how: str) -> Control:
         label=_label(target) or _label(tag),
         selector=_selector(target),
         url=urljoin(base_url, href) if real else "",
-        enabled=not _disabled(tag),
+        enabled=not (_disabled(target) or _disabled(tag)),
         how=how,
     )
 
@@ -119,7 +123,11 @@ def detect_pagination(html: str | bytes, base_url: str) -> Findings:
     numbered: list[tuple[int, Control]] = []
     current: int | None = None
     last: int | None = None
-    widgets = [t for t in soup.find_all(True) if any(w in _words(t) for w in vocab.container_words) and t.name in ("nav", "ul", "div", "ol", "section")]
+    widgets = [
+        t
+        for t in soup.find_all(True)
+        if any(w in _words(t) for w in vocab.container_words) and t.name in ("nav", "ul", "div", "ol", "section")
+    ]
     for widget in widgets[:4]:
         if _in_carousel(widget):
             continue
@@ -133,17 +141,28 @@ def detect_pagination(html: str | bytes, base_url: str) -> Findings:
                 found = _number(label)
                 current = found if found is not None else current
             number = _number(label)
-            if number is not None and "next" not in marker.split() and not _matches(label, vocab.last, False):
-                if "go to page" in label.lower() or label.strip().isdigit() or "page" in label.lower():
-                    numbered.append((number, _control(tag, base_url, "number")))
+            if (
+                number is not None
+                and "next" not in marker.split()
+                and not _matches(label, vocab.last, False)
+                and ("go to page" in label.lower() or label.strip().isdigit() or "page" in label.lower())
+            ):
+                numbered.append((number, _control(tag, base_url, "number")))
             if _matches(label, vocab.last, False) and number is not None:
                 last = number
-            if _matches(label, vocab.next, False) and not _matches(label, vocab.last, False) and not _matches(label, vocab.previous, False) and next_control is None:
+            if (
+                _matches(label, vocab.next, False)
+                and not _matches(label, vocab.last, False)
+                and not _matches(label, vocab.previous, False)
+                and next_control is None
+            ):
                 next_control = _control(tag, base_url, "pagination widget")
                 evidence.append("pagination widget")
     # 3. a labelled next control anywhere
     if next_control is None:
-        for tag in soup.find_all("a", href=True):  # outside a pagination widget only real links count (buttons are sliders)
+        for tag in soup.find_all(
+            "a", href=True
+        ):  # outside a pagination widget only real links count (buttons are sliders)
             if _in_carousel(tag):
                 continue
             if _matches(_label(tag), vocab.next, True) or "next" in _words(tag).split():
@@ -156,7 +175,9 @@ def detect_pagination(html: str | bytes, base_url: str) -> Findings:
     load_more: Control | None = None
     candidates = [t for t in soup.find_all(["button", "a"]) if _matches(_label(t), vocab.load_more, False)]
     if len(candidates) == 1:  # several identical buttons expand individual items; one button loads the next batch
-        load_more = _control(candidates[0], base_url, "load more label").model_copy(update={"kind": ControlKind.LOAD_MORE})
+        load_more = _control(candidates[0], base_url, "load more label").model_copy(
+            update={"kind": ControlKind.LOAD_MORE}
+        )
         evidence.append("load more")
     # 5. infinite-scroll markers
     text = str(soup).lower()

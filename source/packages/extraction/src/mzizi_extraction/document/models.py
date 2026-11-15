@@ -7,8 +7,7 @@ from typing import Annotated, Literal
 from pydantic import Field
 
 from mzizi_extraction.core import Diagnostic, Frozen, Status
-
-type BBox = tuple[float, float, float, float]
+from mzizi_extraction.document.table_models import BBox, TableReviewReport
 
 
 class Span(Frozen):
@@ -42,11 +41,22 @@ class ListItem(Frozen):
     bbox: BBox
 
 
+class TableCell(Frozen):
+    row: int
+    column: int
+    rowspan: int
+    colspan: int
+    header: bool
+    row_group: str
+    text: str
+
+
 class TableBlock(Frozen):
     kind: Literal["table"] = "table"
     index: int
     rows: tuple[tuple[str, ...], ...]
     header_rows: int
+    cells: tuple[TableCell, ...] = ()
     caption: str | None = None
     page: int
     bbox: BBox
@@ -85,3 +95,4 @@ class DocumentOutput(Frozen):
     pages: tuple[Page, ...] = ()
     assets: tuple[Asset, ...] = ()
     diagnostics: tuple[Diagnostic, ...] = ()
+    table_review: TableReviewReport | None = None

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "views": [
+    {
+      "html": "listing.html",
+      "url": "https://example.org/list",
+      "css_images": true,
+      "images": 1,
+      "tables": 1,
+      "table_rows": 2,
+      "pdf_links": 1,
+      "markdown_urls": ["https://example.org/portrait.webp", "https://example.org/report.pdf"],
+      "terminal": "continuation_disabled",
+      "selectors": [{ "selector": "article h2 a", "count": 1, "markdown_attribute": "href" }],
+      "cells": [
+        { "table": 1, "row": 0, "column": 2, "text": "Budget" },
+        { "table": 1, "row": 1, "column": 0, "text": "County" },
+        { "table": 1, "row": 1, "column": 2, "text": "2025" },
+        { "table": 1, "row": 3, "column": 0, "text": "Example County" }
+      ]
+    }
+  ]
+}

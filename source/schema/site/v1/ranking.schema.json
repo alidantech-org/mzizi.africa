@@ -59,6 +59,7 @@
                   "enum": [
                     "section",
                     "anchor_text",
+                    "nearby_heading",
                     "filename",
                     "source_page_title",
                     "source_page_path",

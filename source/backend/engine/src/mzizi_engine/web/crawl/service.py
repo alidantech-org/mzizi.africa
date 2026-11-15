@@ -8,6 +8,7 @@ from pathlib import Path
 from mzizi_engine.layout import DevLayout, address_of
 from mzizi_engine.web.crawl.backends import PageBackend
 from mzizi_engine.web.crawl.engine import run, start_crawl
+from mzizi_engine.web.crawl.evidence import CrawlEvidence
 from mzizi_engine.web.crawl.inventory import CrawlSummary, finish
 from mzizi_engine.web.records import LinkRecord, PageRecord
 from mzizi_engine.web.requests import ON_BLOCK_RESPONSE, CrawlRequest
@@ -76,8 +77,9 @@ def run_crawl(
     backend: PageBackend,
     on_page: Callable[[PageRecord, bytes], None] | None = None,
     on_reference: Callable[[LinkRecord], None] | None = None,
+    evidence: CrawlEvidence | None = None,
 ) -> CrawlSummary:
-    crawl = start_crawl(request, client, backend)
+    crawl = start_crawl(request, client, backend, evidence)
     crawl.on_page = on_page
     crawl.on_reference = on_reference
     run(crawl)

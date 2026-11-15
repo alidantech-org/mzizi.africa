@@ -76,6 +76,9 @@ def run_command(command: Command, given: ArgValues, session: Session) -> ExitCod
         path = run.save_result(result)
         outcome = "ok"
         _render_result(command, result, session, str(path))
+        if command.failure_field and result.get(command.failure_field) is False:
+            outcome, message = "failed", "coverage expectations did not match the capture"
+            return ExitCode.FAILED
         return ExitCode.OK
     except NotYetAdded as exc:
         outcome, message = "not_yet_added", exc.message

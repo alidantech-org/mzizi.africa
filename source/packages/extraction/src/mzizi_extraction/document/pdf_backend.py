@@ -12,16 +12,17 @@ from dataclasses import dataclass, replace
 import pdfplumber
 import pypdfium2 as pdfium
 
-from mzizi_extraction.core import Code, Diagnostic, Status, error, failed, info
+from mzizi_extraction.core import Code, Diagnostic, Status, error, failed, info, warning
 from mzizi_extraction.document.captions import attach_captions
 from mzizi_extraction.document.columns import reading_order
 from mzizi_extraction.document.figures import Box, crop_png, render_image, render_page_png
 from mzizi_extraction.document.furniture import find_furniture, is_furniture
 from mzizi_extraction.document.lines import Line
-from mzizi_extraction.document.models import Asset, BBox, Block, DocumentOutput, FigureBlock, Page, TableBlock
+from mzizi_extraction.document.models import Asset, Block, DocumentOutput, FigureBlock, Page, TableBlock
 from mzizi_extraction.document.pdf_scan import PageScan, page_lines, scan_page
 from mzizi_extraction.document.profile import DocumentProfile, OcrMode
 from mzizi_extraction.document.structure import Typography, build_blocks, line_height_typography, typography
+from mzizi_extraction.document.table_models import BBox, TableReviewReport
 from mzizi_extraction.ocr import OcrUnavailable, check
 
 PDF_MAGIC = b"%PDF"
@@ -97,7 +98,11 @@ def _build_page(
         if isinstance(payload, _TableItem):
             blocks.append(
                 TableBlock(
-                    index=payload.index, rows=payload.rows, header_rows=1, page=scan.number, bbox=_bbox(payload.box)
+                    index=payload.index,
+                    rows=payload.rows,
+                    header_rows=profile.table_schema.header_rows if profile.table_schema else 1,
+                    page=scan.number,
+                    bbox=_bbox(payload.box),
                 )
             )
         elif figure_image is not None:
@@ -136,7 +141,7 @@ def extract_pdf_document(data: bytes, profile: DocumentProfile | None = None) ->
         plumber = pdfplumber.open(io.BytesIO(data))
     except Exception as problem:
         return _failed(error(Code.UNREADABLE_PDF, f"{str(problem)[:200]} (encrypted or damaged files are not opened)"))
-    with plumber:
+    with plumber, pdf:
         total = len(pdf)
         diagnostics: list[Diagnostic] = [info(Code.PAGES, f"{total} pages")]
         if total > limits.max_pages:
@@ -190,7 +195,25 @@ def _assemble(
     empty = counts == {}
     unread = any(d.code in (Code.OCR_REQUIRED, Code.OCR_FAILED) for d in diagnostics)
     status = Status.FAILED if empty else Status.PARTIAL if unread else Status.SUCCEEDED
-    return DocumentOutput(status=status, pages=tuple(pages), assets=tuple(assets), diagnostics=tuple(diagnostics))
+    table_review = None
+    if profile.compare_tables or any(scan.table_review for scan in scans):
+        tables = tuple(item for scan in scans for item in scan.table_review)
+        table_review = TableReviewReport(table_schema=profile.table_schema, tables=tables)
+        review_count = sum(item.review_required for item in tables)
+        if not tables and profile.table_schema is not None:
+            diagnostics.append(warning(Code.TABLE_REVIEW, "no tables found for the supplied column schema"))
+        else:
+            message = f"{review_count} of {len(tables)} detected tables require review"
+            diagnostics.append(
+                warning(Code.TABLE_REVIEW, message) if review_count else info(Code.TABLE_REVIEW, message)
+            )
+    return DocumentOutput(
+        status=status,
+        pages=tuple(pages),
+        assets=tuple(assets),
+        diagnostics=tuple(diagnostics),
+        table_review=table_review,
+    )
 
 
 def _counts(pages: list[Page]) -> dict[str, int]:

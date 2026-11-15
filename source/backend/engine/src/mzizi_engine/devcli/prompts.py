@@ -38,7 +38,7 @@ class Prompter:
         self.allow_outside = allow_outside
 
     def resolve(self, arg: Arg, given: ArgValue) -> ArgValue:
-        if given not in (None, "", False) or arg.kind is ArgKind.FLAG:
+        if (given is not None and given is not False and given != "") or arg.kind is ArgKind.FLAG:
             return self._validate(arg, given)
         if arg.optional or (arg.default is not None and not self.interactive):
             return arg.default

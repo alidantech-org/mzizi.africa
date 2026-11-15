@@ -256,11 +256,14 @@ class Downloader:
             )
         )
         digest = hashlib.sha256()
+        head = b""
         if resumed:
             with part.open("rb") as existing:
                 for block in iter(lambda: existing.read(1024 * 1024), b""):
                     digest.update(block)
-        received, last, head = offset, 0.0, b""
+                    if len(head) < 512:
+                        head = (head + block)[:512]
+        received, last = offset, 0.0
         with part.open("ab" if resumed else "wb") as handle:
             for chunk in response.iter_bytes(self.policy.chunk_size):
                 received += len(chunk)
@@ -268,7 +271,8 @@ class Downloader:
                     raise DownloadError("too_large", f"download exceeded {self.policy.max_bytes} bytes")
                 handle.write(chunk)
                 digest.update(chunk)
-                head = head or chunk[:512]
+                if len(head) < 512:
+                    head = (head + chunk)[:512]
                 if self.policy.limit_rate:
                     time.sleep(len(chunk) / self.policy.limit_rate)
                 if time.monotonic() - last >= STATUS_EVERY:
@@ -285,7 +289,8 @@ class Downloader:
             )
         sha = digest.hexdigest()
         if not head:
-            head = part.read_bytes()[:512]
+            with part.open("rb") as saved:
+                head = saved.read(512)
         detected, group = sniff(head)
         declared = response.headers.get("content-type", "").split(";")[0].strip().lower()
         name = _filename(response, url)

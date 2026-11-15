@@ -13,6 +13,7 @@ import csv
 import io
 import shutil
 import subprocess
+from typing import Literal
 
 import pypdfium2 as pdfium
 from pydantic import BaseModel, ConfigDict
@@ -123,6 +124,37 @@ class OcrLine(BaseModel):
     confidence: float
 
 
+class OcrWord(OcrLine):
+    """One TSV word with its image coordinates and confidence."""
+
+
+class OcrPage(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    lines: tuple[OcrLine, ...]
+    words: tuple[OcrWord, ...]
+
+
+def _read_page(tsv: str) -> OcrPage:
+    words: list[OcrWord] = []
+    for row in csv.DictReader(io.StringIO(tsv), delimiter="\t", quoting=csv.QUOTE_NONE):
+        if row.get("level") != WORD_LEVEL or not row.get("text", "").strip():
+            continue
+        left, top = float(row["left"]), float(row["top"])
+        words.append(
+            OcrWord(
+                text=row["text"].strip(),
+                block=int(row["block_num"]),
+                x0=left,
+                top=top,
+                x1=left + float(row["width"]),
+                bottom=top + float(row["height"]),
+                confidence=max(0.0, float(row["conf"])) / 100,
+            )
+        )
+    return OcrPage(words=tuple(words), lines=tuple(_read_lines(tsv)))
+
+
 def _read_lines(tsv: str) -> list[OcrLine]:
     grouped: dict[tuple[str, str, str], list[dict[str, str]]] = {}
     for row in csv.DictReader(io.StringIO(tsv), delimiter="\t", quoting=csv.QUOTE_NONE):
@@ -150,10 +182,15 @@ def _read_lines(tsv: str) -> list[OcrLine]:
     return lines
 
 
-def recognise_lines(png: bytes, languages: str = DEFAULT_LANGUAGES) -> list[OcrLine]:
+def recognise_page(
+    png: bytes,
+    languages: str = DEFAULT_LANGUAGES,
+    *,
+    segmentation: Literal["3", "6"] = "3",
+) -> OcrPage:
     """Recognised lines with positions, in Tesseract's reading order (automatic page layout analysis)."""
     out = subprocess.run(
-        [_binary(), "stdin", "stdout", "-l", languages, "--psm", "3", "tsv"],
+        [_binary(), "stdin", "stdout", "-l", languages, "--psm", segmentation, "tsv"],
         input=png,
         capture_output=True,
         timeout=TIMEOUT_SECONDS,
@@ -161,4 +198,9 @@ def recognise_lines(png: bytes, languages: str = DEFAULT_LANGUAGES) -> list[OcrL
     )
     if out.returncode != 0:
         raise OcrUnavailable(out.stderr.decode(errors="replace")[:200])
-    return _read_lines(out.stdout.decode("utf-8", errors="replace"))
+    return _read_page(out.stdout.decode("utf-8", errors="replace"))
+
+
+def recognise_lines(png: bytes, languages: str = DEFAULT_LANGUAGES) -> list[OcrLine]:
+    """Read lines while retaining the historical list-returning interface."""
+    return list(recognise_page(png, languages).lines)

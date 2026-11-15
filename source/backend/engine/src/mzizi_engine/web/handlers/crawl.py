@@ -2,28 +2,30 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-
 import json
+from collections.abc import Callable
+from contextlib import nullcontext
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from pydantic import BaseModel
 
 from mzizi_engine.web.browser.adapter import BrowserSession, open_session
 from mzizi_engine.web.browser.challenge import ManualChallengeHandler
-from mzizi_engine.web.export import read_csv
-from mzizi_engine.web.crawl.backends import CachedBackend, HybridBackend, BrowserBackend, HttpBackend, PageBackend
+from mzizi_engine.web.browser.media import MediaInventory, RenderedMediaSession, save_inventory
+from mzizi_engine.web.crawl.backends import BrowserBackend, CachedBackend, HttpBackend, HybridBackend, PageBackend
+from mzizi_engine.web.crawl.evidence import CrawlEvidence
 from mzizi_engine.web.crawl.inventory import CrawlSummary
 from mzizi_engine.web.crawl.service import client_for, run_crawl
-from mzizi_engine.web.export import write_table
-from mzizi_engine.web.handlers.common import site_of, browser_config, out_dir
+from mzizi_engine.web.export import read_csv, write_table
+from mzizi_engine.web.handlers.common import browser_config, out_dir, site_of
 from mzizi_engine.web.identity import user_agent
-from mzizi_fetch.web.client import WebResponse
 from mzizi_engine.web.records import ErrorRecord, LinkRecord, PageRecord, ResourceRecord
 from mzizi_engine.web.requests import CrawlRequest, ExportRequest, MarkdownRequest, Render
+from mzizi_engine.web.tables import save_tables
 from mzizi_extraction import extract_html_document
 from mzizi_extraction.document import render_markdown
-from mzizi_fetch.web.client import WebClient
+from mzizi_fetch.web.client import WebClient, WebResponse
 from mzizi_fetch.web.policy import SourcePolicy
 from mzizi_fetch.web.urls import host_of
 
@@ -39,28 +41,47 @@ def crawl_site(
     lookup: Callable[[str], WebResponse | None] | None = None,
     on_reference: Callable[[LinkRecord], None] | None = None,
 ) -> CrawlSummary:
+    if request.rendered_media and request.render is Render.HTTP:
+        raise ValueError("rendered media requires browser or auto rendering")
     if request.resume_from:
         request = request.model_copy(update={"out_dir": request.resume_from, "resume": True})
     agent = user_agent()
     client = client_for(request, agent)
     sessions: list[BrowserSession] = []
+    evidence = CrawlEvidence()
     site = site_of(request.starts[0] if request.starts else "")
 
     def browser_backend() -> BrowserBackend:
-        session = open_session(browser_config(request, headed=request.headed, agent=agent, site=site))
+        config = browser_config(request, headed=request.headed, agent=agent, site=site)
+        session = open_session(config.model_copy(update={"accept_downloads": False}))
         sessions.append(session)
         handler = ManualChallengeHandler(_ask_person) if request.headed else None
-        return BrowserBackend(client, session, handler, request.screenshots, request.max_list_pages if request.paginate else 0)
+        return BrowserBackend(
+            client,
+            session,
+            handler,
+            request.screenshots,
+            request.max_list_pages if request.paginate else 0,
+            rendered_media=request.rendered_media,
+            listing_selector=request.listing_selector,
+            item_selector=request.item_selector,
+            evidence=evidence,
+        )
 
     try:
         backend: PageBackend = HttpBackend(client)
         if request.render is Render.BROWSER:
             backend = browser_backend()
         elif request.render is Render.AUTO:  # a browser opens only when a page turns out to need one
-            backend = HybridBackend(backend, browser_backend)
+            backend = HybridBackend(
+                backend,
+                browser_backend,
+                media=request.rendered_media,
+                item_selector=request.item_selector,
+            )
         if lookup is not None:
             backend = CachedBackend(backend, lookup)
-        return run_crawl(request, client, backend, on_page, on_reference)
+        return run_crawl(request, client, backend, on_page, on_reference, evidence)
     finally:
         for session in sessions:
             session.close()
@@ -78,18 +99,42 @@ class MarkdownResult(BaseModel):
     files: tuple[str, ...] = ()
 
 
+def _markdown_browser(
+    request: MarkdownRequest, client: WebClient, agent: str
+) -> tuple[WebResponse, MediaInventory | None]:
+    # Keep the rendered-media browser cache and any incidental downloads out of the evidence folder.
+    with TemporaryDirectory(prefix="mzizi-media-") if request.rendered_media else nullcontext() as scratch:
+        if scratch:
+            request = request.model_copy(
+                update={"reuse_browser": False, "profile_dir": scratch, "downloads_dir": scratch}
+            )
+        config = browser_config(request, headed=request.headed, agent=agent, site=site_of(request.url))
+        session = open_session(config.model_copy(update={"accept_downloads": False}) if scratch else config)
+        try:
+            response = BrowserBackend(client, session).get(request.url)
+            if not request.rendered_media or not response.usable or not response.is_html:
+                return response, None
+            if not isinstance(session, RenderedMediaSession):
+                raise ValueError(f"browser adapter {request.adapter!r} does not support rendered media")
+            capture = session.capture_media(scan_lazy=True)
+            if capture.inventory.source_url != response.final_url:
+                raise ValueError("page navigated during rendered media capture")
+            return response.model_copy(update={"body": capture.html.encode("utf-8")}), capture.inventory
+        finally:
+            session.close()
+
+
 def page_markdown(request: MarkdownRequest) -> MarkdownResult:
+    if request.rendered_media and request.render is not Render.BROWSER:
+        return MarkdownResult(url=request.url, ok=False, reason="rendered media requires browser rendering")
     folder, agent = out_dir(request), user_agent()
     client = WebClient(
         agent, SourcePolicy(allowed_hosts=(host_of(request.url),), max_requests=20), (host_of(request.url),)
     )
+    media = None
     try:
         if request.render is Render.BROWSER:
-            session = open_session(browser_config(request, headed=request.headed, agent=agent, site=site_of(request.starts[0] if request.starts else "")))
-            try:
-                response = BrowserBackend(client, session).get(request.url)
-            finally:
-                session.close()
+            response, media = _markdown_browser(request, client, agent)
         else:
             response = client.get(request.url)
     finally:
@@ -103,8 +148,16 @@ def page_markdown(request: MarkdownRequest) -> MarkdownResult:
         )
     if not response.usable:
         return MarkdownResult(url=request.url, ok=False, reason=response.error or f"HTTP {response.status}")
-    output, title, removed = extract_html_document(response.text, response.final_url)
+    output, title, removed = extract_html_document(
+        response.text, response.final_url, include_css_images=request.css_images
+    )
     markdown = render_markdown(output.pages).replace("<!-- page 1 -->\n\n", "", 1)
+    files: tuple[str, ...] = ("page.html", "page.md")
+    if save_tables(output, folder / "tables.json"):
+        files += ("tables.json",)
+    if media is not None:
+        markdown += save_inventory(folder, media)
+        files += ("rendered-media.json",)
     (folder / "page.html").write_bytes(response.body)
     (folder / "page.md").write_text(
         f"---\nurl: {response.final_url}\ntitle: {json.dumps(title, ensure_ascii=False)}\n---\n\n{markdown}",
@@ -117,7 +170,7 @@ def page_markdown(request: MarkdownRequest) -> MarkdownResult:
         status=response.status,
         chrome_removed=removed,
         markdown_chars=len(markdown),
-        files=("page.html", "page.md"),
+        files=files,
     )
 
 

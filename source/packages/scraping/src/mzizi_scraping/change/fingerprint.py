@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup, Comment, Tag
 
 from mzizi_scraping.change.models import MAIN_BLOCK, Change, Fingerprint
 
-NOISE_TAGS = ("script", "style", "noscript", "template", "svg", "iframe")
+NOISE_TAGS = ("head", "script", "style", "noscript", "template", "svg", "iframe")
 CHROME_TAGS = ("header", "nav", "footer", "aside", "form")
 HEADINGS = ("h1", "h2", "h3", "h4")
 
@@ -24,7 +24,12 @@ def _clean(soup: BeautifulSoup) -> Tag:
         comment.extract()
     for tag in soup.find_all(NOISE_TAGS):
         tag.decompose()
-    body = soup.body if isinstance(soup.body, Tag) else soup
+    bodies = soup.find_all("body", limit=2)
+    body = bodies[0] if len(bodies) == 1 else soup
+    if len(bodies) > 1:
+        for tag in body.find_all(CHROME_TAGS):
+            tag.decompose()
+        return body
     main = body.find("main") or body.find(attrs={"role": "main"}) or body
     main = main if isinstance(main, Tag) else body
     for tag in main.find_all(CHROME_TAGS):

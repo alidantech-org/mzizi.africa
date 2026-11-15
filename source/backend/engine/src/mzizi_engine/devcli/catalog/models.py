@@ -47,6 +47,7 @@ class Command:
     builder: PayloadBuilder | None = None
     artifacts: bool = False
     run_folder: bool = False
+    failure_field: str = ""
 
     @property
     def path(self) -> str:

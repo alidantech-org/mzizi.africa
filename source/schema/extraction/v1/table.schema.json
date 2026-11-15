@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PDF table expectations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["columns"],
+  "properties": {
+    "header_rows": { "type": "integer", "minimum": 1, "maximum": 5, "default": 1 },
+    "columns": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "pattern": "\\S" },
+          "aliases": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "\\S" }
+          },
+          "type": {
+            "enum": ["text", "integer", "number", "date", "quantity"],
+            "default": "text"
+          },
+          "required": { "type": "boolean", "default": false },
+          "units": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "\\S" }
+          }
+        },
+        "if": { "required": ["type"], "properties": { "type": { "const": "quantity" } } },
+        "then": { "required": ["units"], "properties": { "units": { "minItems": 1 } } },
+        "else": { "properties": { "units": { "maxItems": 0 } } }
+      }
+    }
+  }
+}

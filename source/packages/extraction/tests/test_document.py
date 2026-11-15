@@ -10,7 +10,7 @@ from pdfmaker import make_pdf
 from PIL import Image, ImageDraw, ImageFont
 
 from mzizi_extraction import DocumentProfile, OcrMode, encode_document, extract_pdf_document
-from mzizi_extraction.document import FigureBlock, Heading, ListItem, Paragraph
+from mzizi_extraction.document import FigureBlock, Heading, ListItem, Paragraph, TableBlock
 
 BOLD, REGULAR, ITALIC = "F2", "F1", "F3"
 
@@ -60,6 +60,32 @@ def test_tables_become_markdown_and_csv_with_a_caption() -> None:
     wire = encode_document(extract(make_pdf([page])))
     assert wire.tables and wire.tables[0].csv.splitlines()[0] == "Name,Value"
     assert "| Name | Value |" in wire.markdown
+
+
+def test_strict_table_lines_keep_rectangles_from_splitting_cells() -> None:
+    pdf = make_pdf(
+        [
+            {
+                "text": [
+                    (77, 325, "Office Location"),
+                    (180, 325, "Distance"),
+                    (77, 305, "Community Centre"),
+                    (180, 305, "10 metres"),
+                ],
+                "grid": (72, 300, 2, 2, 100, 20),
+                "draw": ["110 300 30 40 re S"],
+            }
+        ]
+    )
+    expected = (("Office Location", "Distance"), ("Community Centre", "10 metres"))
+    default = extract_pdf_document(pdf, DocumentProfile(ocr=OcrMode.OFF))
+    strict = extract_pdf_document(pdf, DocumentProfile(ocr=OcrMode.OFF, strict_table_lines=True))
+    assert [block.rows for block in default.pages[0].blocks if isinstance(block, TableBlock)] != [expected]
+    assert [block.rows for block in strict.pages[0].blocks if isinstance(block, TableBlock)] == [expected]
+    assert encode_document(strict).tables[0].csv.splitlines() == [
+        "Office Location,Distance",
+        "Community Centre,10 metres",
+    ]
 
 
 def test_vector_diagrams_are_saved_as_images_with_their_labels() -> None:

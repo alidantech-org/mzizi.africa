@@ -85,3 +85,54 @@ def test_boilerplate_removal_still_works_with_links() -> None:
     )
     text = render_markdown(output.pages)
     assert "Copyright" not in text and "News and" not in text
+
+
+def test_inline_backgrounds_export_references_without_fetching_images() -> None:
+    html = """<main>
+      <div aria-label="Portrait" style="background: center / cover no-repeat url('../img/a (1).jpg')"></div>
+      <div style="background-image: url('/first.jpg'); background-image: none"></div>
+      <div style="background-image: url('/kept.jpg') !important; background: none"></div>
+      <div style="background-image: url(data:image/png;base64,AA)"></div>
+      <div hidden style="background-image: url('/hidden.jpg')"></div>
+      <p>Profile text</p>
+    </main>"""
+    base = "https://example.org/members/"
+    doc, _, _ = extract_html_document(html, base, include_css_images=True)
+    assert [block.asset for block in doc.pages[0].blocks if block.kind == "figure"] == [
+        "https://example.org/img/a%20%281%29.jpg",
+        "https://example.org/kept.jpg",
+    ]
+    default, _, _ = extract_html_document(html, base)
+    assert all(block.kind != "figure" for block in default.pages[0].blocks)
+
+
+def test_table_cells_preserve_icon_only_attachment_links() -> None:
+    html = """<table><tr><th>Month</th><th>View</th></tr><tr><td>August</td><td>
+    <a href="/awards.pdf"><i class="icon"></i></a>
+    <a href="/notice.pdf" aria-label="Notice"><i class="icon"></i></a>
+    <a href="/visible.pdf">Visible link</a>
+    </td></tr></table>"""
+    markdown = md(html)
+    assert "[awards.pdf](https://example.org/awards.pdf)" in markdown
+    assert "[Notice](https://example.org/notice.pdf)" in markdown
+    assert markdown.count("https://example.org/visible.pdf") == 1
+
+
+def test_multiple_body_elements_keep_every_content_region_and_exclude_head() -> None:
+    html = """<html><head><title>Listing</title><style>unwanted stylesheet</style></head>
+    <body></body><body><p>First region</p></body>
+    <body><main><h2>Party list</h2><table><tr><td>
+    <a href="/nominees.pdf">Nominees</a></td></tr></table></main></body></html>"""
+    output, title, _ = extract_html_document(html, BASE)
+    markdown = render_markdown(output.pages)
+    assert title == "Listing" and output.status.value == "succeeded"
+    assert "First region" in markdown and "Party list" in markdown
+    assert "[Nominees](https://example.org/nominees.pdf)" in markdown
+    assert "unwanted stylesheet" not in markdown
+
+
+def test_image_only_download_link_keeps_both_target_and_image() -> None:
+    content = md('<!-- internal comment --><a href="/offices.pdf"><img src="/offices.jpg"></a>')
+    assert "[offices.pdf](https://example.org/offices.pdf)" in content
+    assert "https://example.org/offices.jpg" in content
+    assert "internal comment" not in content

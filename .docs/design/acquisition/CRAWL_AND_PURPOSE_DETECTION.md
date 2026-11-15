@@ -7,11 +7,24 @@ tags: [scraping,crawling,patterns,documents,proposal]
 
 # Manifest-driven crawling and purpose detection
 
-**Status: proposal, 13 November 2026.** It extends the existing [site structure specification](SITE_STRUCTURE_SPEC.md) (`mzizi.site/v1`: modules, `sections.yml` path rules with slots, tags, mappings, policy block) and builds on [PATTERN_MATCHING](../architecture/PATTERN_MATCHING.md) and [ENGINE_JOB_MODEL](../architecture/ENGINE_JOB_MODEL.md). Nothing here is implemented unless the site spec says so. The binding code rules are in [typed-code.md](../../rules/typed-code.md): no hard-coded site or classification knowledge, and all matching goes through the pattern packages.
+**Status: the Markdown-first commands below are implemented. The manifest-driven pipeline remains a design.** It extends the existing [site structure specification](SITE_STRUCTURE_SPEC.md) (`mzizi.site/v1`: modules, `sections.yml` path rules with slots, tags, mappings, policy block) and builds on [PATTERN_MATCHING](../architecture/PATTERN_MATCHING.md) and [ENGINE_JOB_MODEL](../architecture/ENGINE_JOB_MODEL.md). The first implementation slice and the runtime guide describe the active command. The binding code rules are in [typed-code.md](../../rules/typed-code.md). Site and classification knowledge belongs in manifests, and matching goes through the pattern packages.
 
 ## Goal
 
 Crawl government and public-sector sites properly (with bounded requests and an approved source-specific access scope) and decide, with evidence, what each **URL path, link, page, HTML region and downloaded file is for**. Then download files such as PDFs, assign them a probable purpose, choose the right extraction profile, extract data into the staging store, and map it to candidates for review. Everything site-specific is a manifest. Agents help later by proposing manifest changes; running a manifest never needs a model.
+
+## Markdown-first acquisition roadmap
+
+Discovery captures the HTML needed for a listing and inventories the references it contains. Store the URL, fragment or interactive state, observed link label, and the page or panel that supplied each document or media reference. Classification can then compare content and reference context and submit selected files to the existing downloader. Browser rendering may fetch assets needed by the page. Content selection controls what is subsequently downloaded and archived.
+
+1. **Extraction checks and offline replay.** `web replay` runs saved HTML through the converter and reports mismatches against reviewed counts, URLs, original capture hashes, selectors, cells and pagination states. It can pair a rendered media inventory with its HTML capture.
+2. **Rendered media inventory.** The opt-in browser capture is available in one-page Markdown, scoped crawls and listing sections. It records computed backgrounds, picture candidates, browser-selected URLs and declared lazy sources. Crawls and single-page runs can scroll a bounded sample of lazy targets. Images observed only in network activity are outside this DOM-based pass.
+3. **Tables and weak DOMs.** The HTML extractor lays out spans and header groups before rendering. Its table JSON preserves original cells, positions and links. Manifest-based `scrape url --render auto` compares static and browser captures when the static version falls short of the module's item or field expectations.
+4. **Verifiable traversal.** Crawls emit `listings.json` with source hashes, continuation actions, new row and item counts, and stop reasons. `web sections` records tab and disclosure states, and its section coverage report distinguishes a disabled Next control from a repeated result, timeout or cap. The general crawler retains ordinary URL continuations and marks whether the destination was captured.
+5. **Attachment selection.** `download select` ranks crawl references with manifest rules before transfer, reserves a byte and file budget, and downloads the selected set with `--apply`. The report accepts reviewed useful URLs for cost accounting.
+
+The [acquisition runtime](WEB_ACQUISITION_RUNTIME.md#offline-coverage-replay) describes the saved evidence and limits. The Nairobi roster, Papers Laid and IEBC DataTables captures exercise different extraction and navigation cases. Site-specific selectors and expected counts stay in replay inputs and site modules.
+
 
 ## The flow
 

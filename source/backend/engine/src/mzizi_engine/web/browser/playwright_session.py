@@ -2,65 +2,23 @@
 
 from __future__ import annotations
 
-import hashlib
 import importlib
 import time
-from contextlib import ExitStack
+from contextlib import ExitStack, suppress
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
+from mzizi_engine.web.browser import scripts
 from mzizi_engine.web.browser.adapter import BrowserSession, BrowserUnavailable, register_adapter
+from mzizi_engine.web.browser.media import MediaCapture, capture_media
 from mzizi_engine.web.browser.models import BrowserConfig, RenderedPage
 from mzizi_engine.web.browser.tabs import PopupGate, TabRegistry
+from mzizi_engine.web.browser.traversal import Action, walk_listing
 from mzizi_fetch.web.download import safe_name
-from mzizi_scraping.pagination import detect_pagination
 from mzizi_fetch.web.vocabulary import vocabulary
 
 if TYPE_CHECKING:
-    from playwright.sync_api import BrowserContext, Download, Page, Request, Response
-
-SCREENSHOT_TIMEOUT_MS = 10_000
-CLICK_TIMEOUT_MS = 4_000
-POPUP_LOAD_MS = 5_000
-READY_SCRIPT = """
-async ({quiet, max, roots, busy, minText, moving}) => {
-  const start = performance.now();
-  const visible = el => {
-    const rect = el.getBoundingClientRect();
-    const style = getComputedStyle(el);
-    return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none' && parseFloat(style.opacity || '1') > 0.05;
-  };
-  const rootEmpty = () => roots.some(sel => {
-    const el = document.querySelector(sel);
-    return el && el.textContent.trim().length === 0 && el.children.length < 2;
-  });
-  const loaderShown = () => busy.some(sel => { try { return [...document.querySelectorAll(sel)].some(visible); } catch (e) { return false; } });
-  const thin = () => (document.body ? document.body.innerText.trim().length : 0) < minText && document.querySelectorAll('script[src]').length > 0;
-  if (document.fonts && document.fonts.ready) { await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 2000))]); }
-  return await new Promise(resolve => {
-    let last = performance.now();
-    // content changes only: animations and class toggles (carousels, tickers) must not keep the page "busy" forever
-    // sliders, tickers and carousels change forever by design: their changes do not mean the page is still loading
-    const isMoving = node => { const el = node && (node.nodeType === 1 ? node : node.parentElement); return !!el && moving.some(w => { const c = el.closest('[class],[id]'); return c && ((c.className && String(c.className).toLowerCase().includes(w)) || (c.id && c.id.toLowerCase().includes(w))); }); };
-    const observer = new MutationObserver(records => { if (records.some(r => !isMoving(r.target))) { last = performance.now(); } });
-    observer.observe(document.documentElement, {subtree: true, childList: true, characterData: true});
-    const tick = () => {
-      const now = performance.now();
-      const settled = now - last >= quiet && document.readyState === 'complete' && !rootEmpty() && !loaderShown() && !thin();
-      if (settled) { observer.disconnect(); resolve({state: 'stable', ms: Math.round(now - start)}); return; }
-      if (now - start >= max) { observer.disconnect(); resolve({state: 'timeout', ms: Math.round(now - start)}); return; }
-      setTimeout(tick, 100);
-    };
-    tick();
-  });
-}
-"""
-BLANK_LINKS_SCRIPT = "els => els.map(e => e.href).filter(h => h)"
-SCROLL_PAUSE = 0.4
-MAX_SCROLLS = 40
-LINKS_SCRIPT = "els => els.map(e => e.href).filter(h => h)"
-IMAGES_SCRIPT = "els => els.map(e => e.currentSrc || e.src).filter(s => s)"
-SCROLL_HEIGHT = "document.body.scrollHeight"
+    from playwright.sync_api import BrowserContext, Download, Page, Request, Response, Route
 
 
 class PlaywrightSession:
@@ -77,7 +35,7 @@ class PlaywrightSession:
         launch = {
             "headless": not config.headed,
             "user_agent": config.user_agent,
-            "accept_downloads": True,
+            "accept_downloads": config.accept_downloads,
             "viewport": {"width": config.viewport_width, "height": config.viewport_height},
             "locale": config.locale,
             "extra_http_headers": dict(config.headers),
@@ -110,7 +68,9 @@ class PlaywrightSession:
         self._status = 0
         self._lease = ExitStack()
         self._gate = PopupGate()
-        self._registry = TabRegistry(config.registry_dir) if config.cdp_url and config.site and config.registry_dir else None
+        self._registry = (
+            TabRegistry(config.registry_dir) if config.cdp_url and config.site and config.registry_dir else None
+        )
         try:
             self._page: Page = self._working_tab()
         except Exception:
@@ -134,17 +94,17 @@ class PlaywrightSession:
         if not hosts:
             return
 
-        def route(handler_route, request):  # noqa: ANN001
+        def route(handler_route: Route, request: Request) -> None:
             url = request.url.lower()
-            if any(h in url.split("/", 3)[2] + "/" + (url.split("/", 3)[3] if url.count("/") >= 3 else "") for h in hosts):
+            if any(
+                h in url.split("/", 3)[2] + "/" + (url.split("/", 3)[3] if url.count("/") >= 3 else "") for h in hosts
+            ):
                 handler_route.abort()
             else:
                 handler_route.continue_()
 
-        try:
+        with suppress(Exception):
             self._page.route("**/*", route)
-        except Exception:
-            pass
 
     def _target_id(self, page: Page) -> str:
         session = self._context.new_cdp_session(page)
@@ -166,7 +126,7 @@ class PlaywrightSession:
         if page is None:
             page = self._context.new_page()
             registry.remember(self.config.site, self._target_id(page))
-        else:
+        elif entry is not None:
             registry.remember(self.config.site, entry.target_id)
         self._trim_idle_tabs(registry, live)
         return page
@@ -187,10 +147,8 @@ class PlaywrightSession:
 
     def _on_popup(self, popup: Page) -> None:
         """A new tab or window opened by this site's tab: tracked, allowed one at a time, closed once seen."""
-        try:
-            popup.wait_for_load_state("domcontentloaded", timeout=POPUP_LOAD_MS)
-        except Exception:  # a slow or blocked pop-up is still recorded by whatever address it reached
-            pass
+        with suppress(Exception):  # a slow or blocked pop-up is recorded at the address it reached
+            popup.wait_for_load_state("domcontentloaded", timeout=scripts.POPUP_LOAD_MS)
         if not self._gate.opened(popup.url):
             popup.close()
             return
@@ -203,6 +161,10 @@ class PlaywrightSession:
         self._failed.append(f"{request.url}: {request.failure or 'failed'}")
 
     def _on_download(self, download: Download) -> None:
+        if not self.config.accept_downloads:
+            self._downloads.append(download.suggested_filename)
+            download.cancel()
+            return
         self.config.downloads_dir.mkdir(parents=True, exist_ok=True)
         target = self.config.downloads_dir / safe_name(download.suggested_filename)
         download.save_as(target)
@@ -212,11 +174,13 @@ class PlaywrightSession:
     def _settle(self) -> None:
         """Waits until the page has really rendered: loaded, network quiet, app root filled, DOM no longer changing."""
         page = self._page
-        for state, timeout in (("load", self.config.load_wait_ms), ("networkidle", self.config.settle_ms)):
-            try:
+        waits: tuple[tuple[Literal["load", "networkidle"], int], ...] = (
+            ("load", self.config.load_wait_ms),
+            ("networkidle", self.config.settle_ms),
+        )
+        for state, timeout in waits:
+            with suppress(Exception):  # pages that never go idle are judged on their DOM
                 page.wait_for_load_state(state, timeout=timeout)
-            except Exception:  # pages that never go idle (polling, streaming) are judged on their DOM instead
-                pass
         vocab = vocabulary()
         arguments = {
             "quiet": self.config.stable_quiet_ms,
@@ -228,7 +192,7 @@ class PlaywrightSession:
         }
         for _attempt in range(2):  # a client-side redirect can replace the page while we wait; wait once more
             try:
-                found = page.evaluate(READY_SCRIPT, arguments)
+                found = page.evaluate(scripts.READY_SCRIPT, arguments)
                 self._ready = (str(found["state"]), int(found["ms"]))
                 return
             except Exception:
@@ -248,7 +212,9 @@ class PlaywrightSession:
 
     def _blank_links(self) -> list[str]:
         try:
-            return [str(v) for v in self._page.eval_on_selector_all("a[target=_blank][href]", BLANK_LINKS_SCRIPT)]
+            return [
+                str(v) for v in self._page.eval_on_selector_all("a[target=_blank][href]", scripts.BLANK_LINKS_SCRIPT)
+            ]
         except Exception:
             return []
 
@@ -312,112 +278,40 @@ class PlaywrightSession:
             page.evaluate("window.scrollTo(0, 0)")
             return 0
         previous = -1
-        for _ in range(MAX_SCROLLS):
-            height = int(page.evaluate(SCROLL_HEIGHT))
+        for _ in range(scripts.MAX_SCROLLS):
+            height = int(page.evaluate(scripts.SCROLL_HEIGHT))
             page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-            time.sleep(SCROLL_PAUSE)
+            time.sleep(scripts.SCROLL_PAUSE)
             if not until_stable or height == previous:
                 return height
             previous = height
         return previous
 
-    def _text_signature(self) -> str:
-        try:
-            return hashlib.sha256(self._page.inner_text("body").encode("utf-8")).hexdigest()
-        except Exception:
-            return ""
-
-    def _click(self, selector: str) -> bool:
-        """A normal click, or a script click when the window is not painting (an occluded window never settles)."""
-        target = self._page.locator(selector).first
-        try:
-            target.click(timeout=CLICK_TIMEOUT_MS)
-            return True
-        except Exception:
-            pass
-        try:
-            target.evaluate("element => element.click()", timeout=CLICK_TIMEOUT_MS)
-            return True
-        except Exception:
-            return False
-
-    def _click_and_wait(self, selector: str) -> bool:
-        """Clicks a control and waits for the page content to change and finish rendering; False when nothing changed."""
-        before = self._text_signature()
-        if not self._click(selector):
-            return False
-        deadline = time.monotonic() + self.config.click_wait_ms / 1000
-        while time.monotonic() < deadline:
-            if self._text_signature() != before:
-                self._settle()
-                return True
-            time.sleep(0.2)
-        return False
-
-    def _extend_in_place(self, steps: int) -> None:
-        """`Load more` buttons and infinite scroll add items to the same page: keep going until nothing new arrives."""
-        for _ in range(steps):
-            found = detect_pagination(self._page.content(), self._page.url)
-            if found.load_more is not None and found.load_more.enabled:
-                if not self._click_and_wait(found.load_more.selector):
-                    return
-            elif found.infinite_scroll:
-                before = self._text_signature()
-                self.scroll(True, True)
-                self._settle()
-                if self._text_signature() == before:
-                    return
-            else:
-                return
-
     def paginate(self, max_pages: int) -> tuple[RenderedPage, ...]:
-        """Walks a listing: extends it in place, then clicks `next` (a button, not a link) page after page.
-
-        Returns one snapshot per further page (`<url>#page-N`). Stops at the last page, a disabled or missing control,
-        content that repeats, or `max_pages`. Links to the next page are left to the crawler.
-        """
-        self._extend_in_place(steps=min(max_pages, 30))
-        base = self._page.url.split("#")[0]
-        seen = {self._text_signature()}
-        snapshots: list[RenderedPage] = []
-        started = time.monotonic()
-        for number in range(2, max_pages + 1):
-            if time.monotonic() - started > self.config.paginate_budget_s:
-                break
-            control = detect_pagination(self._page.content(), self._page.url).next
-            if control is None or not control.enabled or control.url:
-                break
-            if not self._click_and_wait(control.selector):
-                break
-            signature = self._text_signature()
-            if signature in seen:
-                break
-            seen.add(signature)
-            snapshot = self._state(base, None, "")
-            snapshots.append(snapshot.model_copy(update={"url": f"{base}#page-{number}", "final_url": f"{base}#page-{number}", "status": self._status}))
-        return tuple(snapshots)
+        """Compatibility entry point: in-place continuations update the tab and Next emits extra pages."""
+        first = self.page_state().model_copy(update={"status": self._status})
+        walk = walk_listing(self, first, max_pages)
+        later = (
+            page for page, view in zip(walk.pages[1:], walk.report.views[1:], strict=True) if view.action is Action.NEXT
+        )
+        base = first.final_url.split("#", 1)[0]
+        return tuple(
+            page.model_copy(update={"url": f"{base}#page-{index}", "final_url": f"{base}#page-{index}"})
+            for index, page in enumerate(later, start=2)
+        )
 
     def links(self) -> tuple[str, ...]:
-        return tuple(str(v) for v in self._page.eval_on_selector_all("a[href]", LINKS_SCRIPT))
+        return tuple(str(v) for v in self._page.eval_on_selector_all("a[href]", scripts.LINKS_SCRIPT))
 
     def images(self) -> tuple[str, ...]:
-        return tuple(str(v) for v in self._page.eval_on_selector_all("img", IMAGES_SCRIPT))
+        return tuple(str(v) for v in self._page.eval_on_selector_all("img", scripts.IMAGES_SCRIPT))
+
+    def capture_media(self, scope: str = "", *, scan_lazy: bool = False) -> MediaCapture:
+        return capture_media(self._page, scope, scan_lazy=scan_lazy)
 
     def screenshot(self, name: str, full_page: bool) -> Path:
-        self.config.screenshots_dir.mkdir(parents=True, exist_ok=True)
         path = self.config.screenshots_dir / f"{safe_name(name)}.png"
-        try:
-            self._page.screenshot(path=str(path), full_page=full_page, timeout=SCREENSHOT_TIMEOUT_MS)
-        except Exception:  # an unpainted window stalls the normal capture: ask the browser to render the page itself
-            import base64
-
-            cdp = self._context.new_cdp_session(self._page)
-            try:
-                shot = cdp.send("Page.captureScreenshot", {"format": "png", "captureBeyondViewport": full_page})
-            finally:
-                cdp.detach()
-            path.write_bytes(base64.b64decode(shot["data"]))
-        return path
+        return scripts.screenshot(self._context, self._page, path, full_page)
 
     def close(self) -> None:
         try:

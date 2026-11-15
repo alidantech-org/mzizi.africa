@@ -90,6 +90,9 @@ _MARKDOWN_SCHEMA: Payload = {
         "ocr": {"enum": ["auto", "off", "force"]},
         "languages": {"type": "string"},
         "page_renders": {"type": "boolean"},
+        "strict_table_lines": {"type": "boolean"},
+        "auto_tables": {"type": "boolean"},
+        "table_schema_json": {"type": "string"},
         "caption_labels": {"type": "array", "items": {"type": "string"}},
     },
     "anyOf": [{"required": ["content_base64"]}, {"required": ["path"]}],
@@ -112,17 +115,29 @@ def _extract(name: str) -> Callable[[dict], dict]:
 
 def extract_markdown(payload: dict) -> dict:
     """Structured PDF extraction: Markdown, figures and page renders as files, tables as CSV, a typed structure tree."""
-    from mzizi_extraction import DocumentProfile, encode_document, extract_pdf_document
+    from mzizi_extraction import DocumentProfile, TableSchema, encode_document, extract_pdf_document
 
     options = {
         k: payload[k]
-        for k in ("ocr", "languages", "tables", "figures", "page_renders", "caption_labels")
+        for k in (
+            "ocr",
+            "languages",
+            "tables",
+            "figures",
+            "page_renders",
+            "strict_table_lines",
+            "caption_labels",
+            "auto_tables",
+        )
         if k in payload
     }
     if "caption_labels" in options:
         options["caption_labels"] = tuple(options["caption_labels"])
+    if "table_schema_json" in payload:
+        options["table_schema"] = TableSchema.model_validate_json(payload["table_schema_json"])
     profile = DocumentProfile.model_validate(options, strict=False)
-    return encode_document(extract_pdf_document(_bytes_input(payload), profile)).model_dump(mode="json")
+    wire = encode_document(extract_pdf_document(_bytes_input(payload), profile))
+    return wire.model_dump(mode="json", exclude={"table_review"} if wire.table_review is None else None)
 
 
 def extract_pdf(payload: dict) -> dict:

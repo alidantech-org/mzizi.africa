@@ -4,11 +4,15 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable
-from typing import Protocol
+from typing import Protocol, runtime_checkable
+
+from bs4 import BeautifulSoup
 
 from mzizi_engine.web.browser.adapter import BrowserSession
 from mzizi_engine.web.browser.challenge import ChallengeHandler, detect_challenge
 from mzizi_engine.web.browser.models import RenderedPage
+from mzizi_engine.web.browser.traversal import End, ListingReport, walk_listing
+from mzizi_engine.web.crawl.evidence import CrawlEvidence
 from mzizi_fetch.web.blocks import Response, detect_block
 from mzizi_fetch.web.client import WebClient, WebResponse
 from mzizi_fetch.web.policy import scope_decision
@@ -24,6 +28,11 @@ class PageBackend(Protocol):
     def get(self, url: str) -> WebResponse: ...
 
 
+@runtime_checkable
+class PagedBackend(Protocol):
+    def take_extra(self, url: str) -> list[WebResponse]: ...
+
+
 class CachedBackend:
     """Serves a page from what is already saved when it is still fresh; otherwise asks the real backend.
 
@@ -37,16 +46,24 @@ class CachedBackend:
         cached = self.lookup(url)
         return cached if cached is not None else self.inner.get(url)
 
-    def __getattr__(self, name: str):  # noqa: ANN204 - `take_extra` and friends belong to the wrapped backend
-        return getattr(self.inner, name)
+    def take_extra(self, url: str) -> list[WebResponse]:
+        return self.inner.take_extra(url) if isinstance(self.inner, PagedBackend) else []
 
 
 class HybridBackend:
     """Plain HTTP first; a browser only for a page whose static HTML is not the real content (an app shell, a notice that
     scripts are required, button pagination). Most pages are static, and HTTP is many times cheaper than rendering."""
 
-    def __init__(self, http: PageBackend, browser: Callable[[], PageBackend]) -> None:
+    def __init__(
+        self,
+        http: PageBackend,
+        browser: Callable[[], PageBackend],
+        *,
+        media: bool = False,
+        item_selector: str = "",
+    ) -> None:
         self.http, self._make_browser = http, browser
+        self.media, self.item_selector = media, item_selector
         self._browser: PageBackend | None = None
         self.rendered = 0
 
@@ -59,13 +76,14 @@ class HybridBackend:
         response = self.http.get(url)
         if not response.usable or not response.is_html or response.block is not None or response.refused is not None:
             return response
-        if not needs_browser(response.text, response.final_url):
+        thin = bool(self.item_selector) and BeautifulSoup(response.text, "lxml").select_one(self.item_selector) is None
+        if not (self.media or thin or needs_browser(response.text, response.final_url)):
             return response
         self.rendered += 1
         return self._browser_backend().get(url)
 
     def take_extra(self, url: str) -> list[WebResponse]:
-        return self._browser.take_extra(url) if self._browser is not None and hasattr(self._browser, "take_extra") else []
+        return self._browser.take_extra(url) if isinstance(self._browser, PagedBackend) else []
 
 
 class HttpBackend:
@@ -102,11 +120,19 @@ class BrowserBackend:
         challenges: ChallengeHandler | None = None,
         screenshots: bool = False,
         paginate_pages: int = 0,
+        *,
+        rendered_media: bool = False,
+        listing_selector: str = "",
+        item_selector: str = "",
+        evidence: CrawlEvidence | None = None,
     ) -> None:
         self.client, self.session, self.challenges = client, session, challenges
         self.screenshots, self._shots = screenshots, 0
         self.paginate_pages = paginate_pages
         self._extra: dict[str, list[WebResponse]] = {}
+        self.rendered_media = rendered_media
+        self.listing_selector, self.item_selector = listing_selector, item_selector
+        self.evidence = evidence if evidence is not None else CrawlEvidence()
 
     def take_extra(self, url: str) -> list[WebResponse]:
         """The further pages (`#page-N`) walked behind `url`, handed over once."""
@@ -132,13 +158,32 @@ class BrowserBackend:
             block = detect_challenge(page) or detect_block(page.status, page.headers, response.body, page.error)
             if block is None:
                 self.client.blocks.ok()
-                if self.paginate_pages > 1 and not page.error and hasattr(self.session, "paginate"):
+                if (
+                    (self.paginate_pages or self.rendered_media)
+                    and not page.error
+                    and response.usable
+                    and response.is_html
+                ):
                     try:
-                        extra = self.session.paginate(self.paginate_pages)
-                    except Exception as problem:  # pagination is best effort: the first page is already good
-                        log.warning("pagination of %s failed: %s", url, str(problem)[:120])
-                        extra = ()
-                    self._extra[url] = [to_response(snap.final_url, snap) for snap in extra]
+                        walk = walk_listing(
+                            self.session,
+                            page,
+                            self.paginate_pages,
+                            include_media=self.rendered_media,
+                            scope=self.listing_selector,
+                            items=self.item_selector,
+                        )
+                        self.evidence.listings[response.final_url] = walk.report
+                        self.evidence.media.update((item.source_url, item) for item in walk.media)
+                        response = to_response(url, walk.pages[0])
+                        self._extra[url] = [to_response(snap.final_url, snap) for snap in walk.pages[1:]]
+                        if walk.report.stop_reason is End.LEFT_DOCUMENT:
+                            log.info("browser traversal left %s after %s saved views", url, len(walk.pages))
+                    except Exception as problem:
+                        log.warning("listing evidence of %s failed: %s", url, str(problem)[:120])
+                        self.evidence.listings[response.final_url] = ListingReport(
+                            source_url=response.final_url, stop_reason=End.CLICK_FAILED, views=()
+                        )
                 if self.screenshots and not page.error:
                     self._shots += 1
                     try:

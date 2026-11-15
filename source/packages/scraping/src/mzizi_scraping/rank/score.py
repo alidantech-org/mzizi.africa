@@ -25,6 +25,7 @@ def _fact(features: FileFeatures, signal: Signal) -> str:
     return {
         Signal.SECTION: features.section,
         Signal.ANCHOR_TEXT: features.anchor_text,
+        Signal.NEARBY_HEADING: features.nearby_heading,
         Signal.FILENAME: features.filename,
         Signal.SOURCE_PAGE_TITLE: features.source_page_title,
         Signal.SOURCE_PAGE_PATH: features.source_page_path,

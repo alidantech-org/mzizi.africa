@@ -136,6 +136,7 @@ def canonical_url(url: str, ca_bundle: Path | None = None) -> str:
 
 def _build_markdown(store: SiteStore, layout: DevLayout) -> int:
     """Makes the Markdown for every page whose file is missing or was built from older HTML (repairs interrupted runs)."""
+    from mzizi_engine.web.markdown_repair import needs_markdown_repair
     from mzizi_extraction import extract_html_document, learn_boilerplate
     from mzizi_extraction.document import render_markdown
 
@@ -144,8 +145,7 @@ def _build_markdown(store: SiteStore, layout: DevLayout) -> int:
         html_file, md_file = layout.root / state.html_file, layout.root / state.md_file
         if state.gone or not html_file.is_file():
             continue
-        current = md_file.is_file() and f"html_sha256: {state.fingerprint.raw}" in md_file.read_text(encoding="utf-8")[:800]
-        if not current:
+        if needs_markdown_repair(md_file, state.fingerprint.raw):
             todo.append((state, html_file.read_text(encoding="utf-8", errors="replace")))
     if not todo:
         return 0

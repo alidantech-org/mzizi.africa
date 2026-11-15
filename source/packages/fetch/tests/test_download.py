@@ -94,6 +94,7 @@ def test_interrupted_download_resumes_with_a_range_request(tmp_path: Path) -> No
     (tmp_path / f"{ident}.part.json").write_text(json.dumps({"etag": '"e1"', "last-modified": "", "url": url}))
     result = d.download(url)
     assert result.resumed and (tmp_path / result.file).read_bytes() == PDF
+    assert result.detected_type == "pdf" and not result.flags
     assert seen[0]["range"] == "bytes=5000-" and seen[0]["if-range"] == '"e1"'
 
 

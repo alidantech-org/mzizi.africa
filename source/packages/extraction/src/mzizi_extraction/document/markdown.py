@@ -74,8 +74,14 @@ def _cell(text: str) -> str:
 def render_table(table: TableBlock) -> str:
     width = max(len(r) for r in table.rows)
     rows = [[*r, *([""] * (width - len(r)))] for r in table.rows]
-    lines = ["| " + " | ".join(_cell(c) for c in rows[0]) + " |", "|" + "---|" * width]
-    lines += ["| " + " | ".join(_cell(c) for c in r) + " |" for r in rows[1:]]
+    header_count = table.header_rows if table.cells else 1
+    header = (
+        [" / ".join(dict.fromkeys(c for c in column if c)) for column in zip(*rows[:header_count], strict=True)]
+        if header_count
+        else [""] * width
+    )
+    lines = ["| " + " | ".join(_cell(c) for c in header) + " |", "|" + "---|" * width]
+    lines += ["| " + " | ".join(_cell(c) for c in r) + " |" for r in rows[header_count:]]
     return "\n".join(lines)
 
 

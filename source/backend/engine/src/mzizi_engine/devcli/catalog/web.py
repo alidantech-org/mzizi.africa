@@ -2,36 +2,23 @@
 
 from __future__ import annotations
 
-from mzizi_engine.devcli.catalog.builders import crawl_payload, passthrough, resume_payload, scrape_payload
-from mzizi_engine.devcli.catalog.models import Arg, ArgKind, Command
+from dataclasses import replace
 
-URL = Arg("url", ArgKind.URL, "Page or endpoint URL", positional=True)
-RENDER_AUTO = Arg(
-    "render",
-    ArgKind.CHOICE,
-    "How to load pages: auto (HTTP, a browser only when a page needs one), browser, or http",
-    choices=("auto", "http", "browser"),
-    optional=True,
-    default="auto",
+from mzizi_engine.devcli.catalog.builders import crawl_payload, passthrough, resume_payload, scrape_payload
+from mzizi_engine.devcli.catalog.evidence import REPLAY, SELECT_ATTACHMENTS
+from mzizi_engine.devcli.catalog.models import Arg, ArgKind, Command
+from mzizi_engine.devcli.catalog.web_args import (
+    ACTIONS,
+    ADAPTER,
+    CRAWL_ARGS,
+    CSS_IMAGES,
+    HEADLESS,
+    RENDER,
+    RENDER_AUTO,
+    RENDERED_MEDIA,
+    TARGET,
+    URL,
 )
-RENDER = Arg(
-    "render",
-    ArgKind.CHOICE,
-    "How to load pages (dev default: browser; use http to disable)",
-    choices=("http", "browser"),
-    optional=True,
-    default="browser",
-)
-ADAPTER = Arg(
-    "adapter",
-    ArgKind.CHOICE,
-    "Browser driver (dev default: patchright)",
-    choices=("playwright", "patchright"),
-    optional=True,
-)
-HEADLESS = Arg("headless", ArgKind.FLAG, "Hide the browser window (dev mode shows it by default)")
-ACTIONS = Arg("actions", ArgKind.FILE, "YAML or JSON list of steps", suffixes=(".yaml", ".yml", ".json"))
-TARGET = Arg("target", ArgKind.TEXT, "CSS selector, or text=Visible label")
 
 
 def _browser(name: str, help_text: str, *extra: Arg, headed: bool = True) -> Command:
@@ -39,35 +26,6 @@ def _browser(name: str, help_text: str, *extra: Arg, headed: bool = True) -> Com
         "browser", name, help_text, f"browser.{name}", (URL, *extra, HEADLESS, ADAPTER), passthrough, run_folder=True
     )
 
-
-CRAWL_ARGS: tuple[Arg, ...] = (
-    URL,
-    Arg("max-pages", ArgKind.INT, "Page budget", optional=True, default=25),
-    Arg("max-depth", ArgKind.INT, "How many links deep to follow", optional=True, default=2),
-    Arg("delay", ArgKind.INT, "Seconds between requests to one host", optional=True, default=1),
-    RENDER,
-    ADAPTER,
-    Arg(
-        "on-block",
-        ArgKind.CHOICE,
-        "Response to blocks and challenges",
-        choices=("backoff", "skip", "stop", "pause"),
-        optional=True,
-        default="backoff",
-    ),
-    Arg("allowed-hosts", ArgKind.TEXT, "Extra hosts that count as the site (comma separated)", optional=True),
-    Arg("allowed-paths", ArgKind.TEXT, "Only these path prefixes (comma separated)", optional=True),
-    Arg("excluded-paths", ArgKind.TEXT, "Never these path prefixes (comma separated)", optional=True),
-    HEADLESS,
-    Arg("include-subdomains", ArgKind.FLAG, "Treat subdomains as the same site"),
-    Arg("no-sitemap", ArgKind.FLAG, "Do not read sitemaps"),
-    Arg("no-markdown", ArgKind.FLAG, "Skip the Markdown conversion"),
-    Arg("inspect-resources", ArgKind.FLAG, "HEAD internal files and images for type and status"),
-    Arg("no-paginate", ArgKind.FLAG, "Do not follow pagination (next links, next buttons, load more, infinite scroll)"),
-    Arg("max-list-pages", ArgKind.INT, "Pages per listing to walk", optional=True, default=25),
-    Arg("screenshots", ArgKind.FLAG, "Save a full-page screenshot of every crawled page (browser render)"),
-    Arg("jsonl", ArgKind.FLAG, "Also write JSON Lines"),
-)
 
 COMMANDS: tuple[Command, ...] = (
     Command(
@@ -125,7 +83,7 @@ COMMANDS: tuple[Command, ...] = (
         (
             URL,
             Arg("manifest", ArgKind.FILE, "Site module YAML", suffixes=(".yaml", ".yml")),
-            RENDER,
+            replace(RENDER_AUTO, default="browser"),
             ADAPTER,
             HEADLESS,
         ),
@@ -137,7 +95,27 @@ COMMANDS: tuple[Command, ...] = (
         "markdown",
         "One page to Markdown, without header, footer and navigation",
         "scraping.markdown",
-        (URL, RENDER, ADAPTER, HEADLESS),
+        (URL, RENDER, ADAPTER, HEADLESS, CSS_IMAGES, RENDERED_MEDIA),
+        passthrough,
+        run_folder=True,
+    ),
+    REPLAY,
+    Command(
+        "web",
+        "sections",
+        "Capture listing tabs and disclosures with Markdown and a coverage report",
+        "scraping.sections",
+        (
+            URL,
+            RENDER_AUTO,
+            ADAPTER,
+            HEADLESS,
+            CSS_IMAGES,
+            RENDERED_MEDIA,
+            Arg("max-sections", ArgKind.INT, "Maximum sections to capture", optional=True, default=24),
+            Arg("max-view-steps", ArgKind.INT, "Maximum captured views per section", optional=True, default=12),
+            Arg("browser-seconds", ArgKind.INT, "Browser traversal time budget in seconds", optional=True, default=120),
+        ),
         passthrough,
         run_folder=True,
     ),
@@ -146,10 +124,18 @@ COMMANDS: tuple[Command, ...] = (
         "crawl",
         "Crawl in-scope pages and inventory links, resources, external hosts and Markdown",
         "scraping.crawl",
-        CRAWL_ARGS,
+        (
+            *CRAWL_ARGS,
+            CSS_IMAGES,
+            RENDERED_MEDIA,
+            Arg("references-only", ArgKind.FLAG, "Retain probable extensionless downloads without fetching them"),
+            Arg("listing-selector", ArgKind.TEXT, "CSS selector for the listing region", optional=True),
+            Arg("item-selector", ArgKind.TEXT, "CSS selector for repeated cards inside the listing", optional=True),
+        ),
         crawl_payload,
         run_folder=True,
     ),
+    SELECT_ATTACHMENTS,
     Command(
         "web",
         "resume",
@@ -158,6 +144,7 @@ COMMANDS: tuple[Command, ...] = (
         (
             Arg("folder", ArgKind.FOLDER, "Crawl output folder", positional=True),
             Arg("max-pages", ArgKind.INT, "Page budget", optional=True, default=25),
+            CSS_IMAGES,
         ),
         resume_payload,
         run_folder=True,
@@ -201,7 +188,15 @@ COMMANDS: tuple[Command, ...] = (
         passthrough,
         run_folder=True,
     ),
-    Command("web", "survey", "Crawl a site, profile it and draft a site structure", "web.survey", CRAWL_ARGS, crawl_payload, run_folder=True),
+    Command(
+        "web",
+        "survey",
+        "Crawl a site, profile it and draft a site structure",
+        "web.survey",
+        CRAWL_ARGS,
+        crawl_payload,
+        run_folder=True,
+    ),
     Command(
         "web",
         "profile",
@@ -256,11 +251,22 @@ COMMANDS: tuple[Command, ...] = (
         "run",
         "Download queued items; each is tracked in MongoDB",
         "download.run",
-        (Arg("site", ArgKind.URL, "Site URL or host", positional=True), Arg("limit", ArgKind.INT, "Items to take", optional=True, default=100)),
+        (
+            Arg("site", ArgKind.URL, "Site URL or host", positional=True),
+            Arg("limit", ArgKind.INT, "Items to take", optional=True, default=100),
+        ),
         passthrough,
         run_folder=True,
     ),
-    Command("download", "queue", "Counts per state, and recent failures", "download.queue", (Arg("site", ArgKind.URL, "Site URL or host", optional=True, positional=True),), passthrough, run_folder=True),
+    Command(
+        "download",
+        "queue",
+        "Counts per state, and recent failures",
+        "download.queue",
+        (Arg("site", ArgKind.URL, "Site URL or host", optional=True, positional=True),),
+        passthrough,
+        run_folder=True,
+    ),
     Command(
         "site",
         "watch",
@@ -271,8 +277,20 @@ COMMANDS: tuple[Command, ...] = (
             Arg("no-download", ArgKind.FLAG, "Do not download the files found"),
             Arg("no-hunt", ArgKind.FLAG, "Do not hunt for probable downloads or a CMS media library"),
             Arg("download-limit", ArgKind.INT, "Files to download per run", optional=True, default=200),
-            Arg("max-seconds", ArgKind.INT, "Stop fetching after this many seconds, then save everything", optional=True, default=0),
-            Arg("min-age-hours", ArgKind.INT, "Do not fetch again a page fetched less than this many hours ago", optional=True, default=12),
+            Arg(
+                "max-seconds",
+                ArgKind.INT,
+                "Stop fetching after this many seconds, then save everything",
+                optional=True,
+                default=0,
+            ),
+            Arg(
+                "min-age-hours",
+                ArgKind.INT,
+                "Do not fetch again a page fetched less than this many hours ago",
+                optional=True,
+                default=12,
+            ),
         ),
         crawl_payload,
         run_folder=True,
@@ -284,7 +302,13 @@ COMMANDS: tuple[Command, ...] = (
         "site.batch",
         (
             Arg("file", ArgKind.FILE, "Text file with one site URL per line", positional=True, suffixes=(".txt",)),
-            Arg("name", ArgKind.TEXT, "Batch name (its state is kept under .dev/batches/<name>)", optional=True, default="default"),
+            Arg(
+                "name",
+                ArgKind.TEXT,
+                "Batch name (its state is kept under .dev/batches/<name>)",
+                optional=True,
+                default="default",
+            ),
             Arg("workers", ArgKind.INT, "Sites to run at the same time", optional=True, default=4),
             Arg("max-pages", ArgKind.INT, "Pages fetched per site per pass", optional=True, default=120),
             Arg("max-depth", ArgKind.INT, "Link depth", optional=True, default=5),
@@ -319,7 +343,13 @@ COMMANDS: tuple[Command, ...] = (
     _browser("click", "Open a page, click one element, report the result", TARGET),
     _browser("fill", "Open a page and fill one field", TARGET, Arg("text", ArgKind.TEXT, "Text to enter")),
     Command(
-        "browser", "start", "Open the one shared dev browser window", "browser.start", (ADAPTER,), passthrough, run_folder=True
+        "browser",
+        "start",
+        "Open the one shared dev browser window",
+        "browser.start",
+        (ADAPTER,),
+        passthrough,
+        run_folder=True,
     ),
     Command("browser", "stop", "Close the shared dev browser window", "browser.stop", (), passthrough, run_folder=True),
     _browser("compare", "HTTP result versus browser result: does this page need a browser?", headed=False),

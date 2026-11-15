@@ -5,9 +5,12 @@ from collections.abc import Callable
 from mzizi_extraction.core import ExtractionProfile, Limits, Output
 from mzizi_extraction.document import (
     Boilerplate,
+    ColumnType,
     DocumentProfile,
     DocumentWire,
     OcrMode,
+    TableColumn,
+    TableSchema,
     encode_document,
     extract_html_document,
     extract_pdf_document,
@@ -32,6 +35,7 @@ EXTRACTORS: dict[str, Extractor] = {
 __all__ = [
     "EXTRACTORS",
     "Boilerplate",
+    "ColumnType",
     "DocumentProfile",
     "DocumentWire",
     "ExtractionProfile",
@@ -39,6 +43,8 @@ __all__ = [
     "Limits",
     "OcrMode",
     "Output",
+    "TableColumn",
+    "TableSchema",
     "WireOutput",
     "encode_document",
     "encode_output",

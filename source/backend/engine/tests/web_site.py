@@ -50,7 +50,7 @@ def pages(port: int) -> dict[str, bytes]:
             '<ul id="list"><li>row 1</li><li>row 2</li></ul><button id="more">Load more</button>'
             '<script>var n=2,b=document.getElementById("more");b.onclick=function(){for(var i=0;i<2;i++){n++;'
             'var li=document.createElement("li");li.textContent="row "+n;document.getElementById("list").appendChild(li)}'
-            'if(n>=6){b.remove()}}</script>',
+            "if(n>=6){b.remove()}}</script>",
         ),
         "/spa": page(
             "Spa",
@@ -60,7 +60,7 @@ def pages(port: int) -> dict[str, bytes]:
         "/popups": page(
             "Popups",
             '<a id="blank" target="_blank" href="/about">about</a>'
-            '<button id="two" onclick="window.open(\'/news\');window.open(\'/deep\')">two</button>',
+            "<button id=\"two\" onclick=\"window.open('/news');window.open('/deep')\">two</button>",
         ),
         "/sitemap.xml": f"<urlset><url><loc>http://127.0.0.1:{port}/news</loc></url></urlset>".encode(),
     }
@@ -69,7 +69,13 @@ def pages(port: int) -> dict[str, bytes]:
 class Handler(BaseHTTPRequestHandler):
     site: ClassVar[dict[str, bytes]] = {}
 
+    def do_HEAD(self) -> None:
+        self._serve(send_body=False)
+
     def do_GET(self) -> None:
+        self._serve(send_body=True)
+
+    def _serve(self, *, send_body: bool) -> None:
         path = self.path
         if path == "/robots.txt":
             body, kind, code = b"User-agent: *\nDisallow: /private\n", "text/plain", 200
@@ -77,6 +83,8 @@ class Handler(BaseHTTPRequestHandler):
             body, kind, code = PDF, "application/pdf", 200
         elif path == "/limited":
             body, kind, code = b"slow down", "text/plain", 429
+        elif path in self.site and path.endswith(".css"):
+            body, kind, code = self.site[path], "text/css", 200
         elif path in self.site:
             body, kind, code = self.site[path], "application/xml" if path.endswith(".xml") else "text/html", 200
         else:
@@ -85,7 +93,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", kind)
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
-        self.wfile.write(body)
+        if send_body:
+            self.wfile.write(body)
 
     def log_message(self, *_: object) -> None:
         return

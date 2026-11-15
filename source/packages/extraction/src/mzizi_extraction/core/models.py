@@ -58,6 +58,8 @@ class Code(StrEnum):
     OCR = "ocr"
     TABLE_EXTRACTION_FAILED = "table_extraction_failed"
     TABLE_PAGE_LIMIT = "table_page_limit"
+    TABLE_REVIEW = "table_review"
+    TABLE_TEXT_LAYER_REQUIRED = "table_text_layer_required"
     TABLES = "tables"
     TEXT_PAGES = "text_pages"
     OCR_AUTO = "ocr_auto"

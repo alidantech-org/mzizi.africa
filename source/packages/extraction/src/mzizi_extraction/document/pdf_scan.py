@@ -12,9 +12,13 @@ from mzizi_extraction.document.columns import build_lines, find_gutter
 from mzizi_extraction.document.figures import Box, find_bullets, find_figures
 from mzizi_extraction.document.lines import Line, Word, cluster_rows
 from mzizi_extraction.document.models import Span
+from mzizi_extraction.document.ocr_tables import ocr_tables, outlined_text
+from mzizi_extraction.document.pdf_table_selection import select_pdf_tables
 from mzizi_extraction.document.profile import DocumentProfile, OcrMode
 from mzizi_extraction.document.style import is_bold, is_italic
-from mzizi_extraction.ocr import RENDER_SCALE, OcrLine, OcrUnavailable, recognise_lines, render_png
+from mzizi_extraction.document.table_models import TableDecision
+from mzizi_extraction.ocr import RENDER_SCALE, OcrUnavailable, render_png
+from mzizi_extraction.ocr.tesseract import recognise_page
 from mzizi_extraction.pdf.tables import clean_table
 
 GARBLED_SHARE = 0.15
@@ -28,6 +32,7 @@ class PageScan:
     height: float
     words: list[Word] = field(default_factory=list)
     tables: list[tuple[tuple[tuple[str, ...], ...], Box]] = field(default_factory=list)
+    table_review: list[TableDecision] = field(default_factory=list)
     figures: list[Box] = field(default_factory=list)
     figure_labels: list[str] = field(default_factory=list)
     bullets: list[Box] = field(default_factory=list)
@@ -60,8 +65,41 @@ def _garbled(words: list[Word]) -> bool:
     return bool(text) and bad / len(text) > GARBLED_SHARE
 
 
-def _ocr_page(scan: PageScan, pdf_page: pdfium.PdfPage, profile: DocumentProfile) -> None:
-    raw: list[OcrLine] = recognise_lines(render_png(pdf_page), profile.languages)
+def _ocr_page(
+    scan: PageScan,
+    plumber_page: pdfplumber.page.Page,
+    pdf_page: pdfium.PdfPage,
+    profile: DocumentProfile,
+    diagnostics: list[Diagnostic],
+) -> None:
+    recognized = recognise_page(render_png(pdf_page), profile.languages)
+    raw = recognized.lines
+    if profile.tables and not profile.strict_table_lines:
+        try:
+            detected = ocr_tables(
+                plumber_page,
+                scan.number,
+                profile.table_schema,
+                lambda: pdf_page.render(scale=RENDER_SCALE).to_pil(),
+                profile.languages,
+            )
+            if detected.unread_regions:
+                diagnostics.append(
+                    warning(
+                        Code.TABLE_REVIEW,
+                        f"page {scan.number}: {len(detected.unread_regions)} ruled regions had too little OCR text",
+                    )
+                )
+            for table in detected.tables:
+                scan.tables.append((table.rows, Box(*table.bbox)))
+                scan.table_review.append(table.review)
+        except Exception as problem:
+            diagnostics.append(
+                warning(
+                    Code.TABLE_EXTRACTION_FAILED,
+                    f"page {scan.number}: OCR grid detection failed: {str(problem)[:150]}",
+                )
+            )
     scan.ocr = True
     lines = [
         Line(
@@ -75,6 +113,10 @@ def _ocr_page(scan: PageScan, pdf_page: pdfium.PdfPage, profile: DocumentProfile
         )
         for item in raw
         if item.text.strip()
+        and not any(
+            box.contains_center((item.x0 + item.x1) / RENDER_SCALE / 2, (item.top + item.bottom) / RENDER_SCALE / 2)
+            for _, box in scan.tables
+        )
     ]
     scan.ocr_lines = lines
     scan.ocr_confidence = round(sum(i.confidence for i in raw) / len(raw), 3) if raw else None
@@ -92,14 +134,29 @@ def scan_page(
     words = _words(plumber_page)
     chars = sum(len(w.text) for w in words)
     garbled = _garbled(words)
+    outlined = outlined_text(plumber_page, chars)
     wants_ocr = profile.ocr is OcrMode.FORCE or (
-        profile.ocr is OcrMode.AUTO and (chars < profile.limits.min_text_chars or garbled)
+        profile.ocr is OcrMode.AUTO and (chars < profile.limits.min_text_chars or garbled or outlined)
     )
-    if profile.ocr is OcrMode.OFF and chars < profile.limits.min_text_chars and plumber_page.images:
+    if profile.ocr is OcrMode.OFF and ((chars < profile.limits.min_text_chars and plumber_page.images) or outlined):
         diagnostics.append(warning(Code.OCR_REQUIRED, f"page {scan.number} has images and no text layer; OCR is off"))
     if garbled:
         diagnostics.append(warning(Code.GARBLED_TEXT, f"page {scan.number}: text layer is unreadable (encoding)"))
+    if outlined:
+        diagnostics.append(
+            warning(
+                Code.OCR_AUTO if wants_ocr else Code.OCR_REQUIRED,
+                f"page {scan.number}: lettering drawn as vector outlines",
+            )
+        )
     if wants_ocr:
+        if profile.compare_tables:
+            diagnostics.append(
+                warning(
+                    Code.TABLE_TEXT_LAYER_REQUIRED,
+                    f"page {scan.number}: OCR grid cells require review; native-text strategy comparison is unavailable",
+                )
+            )
         if not ocr_ready:
             diagnostics.append(
                 warning(Code.OCR_REQUIRED, f"page {scan.number}: needs OCR but the engine is unavailable")
@@ -107,13 +164,23 @@ def scan_page(
             scan.words = words if not garbled else []
             return scan
         try:
-            _ocr_page(scan, pdf_page, profile)
+            _ocr_page(scan, plumber_page, pdf_page, profile, diagnostics)
         except (OcrUnavailable, OSError) as problem:
             diagnostics.append(warning(Code.OCR_FAILED, f"page {scan.number}: {str(problem)[:150]}"))
         return scan
-    if profile.tables:
+    if profile.compare_tables:
+        for selection in select_pdf_tables(plumber_page, words, profile.table_schema, scan.number, diagnostics):
+            candidate = selection.candidate
+            scan.tables.append((candidate.rows, Box(*candidate.box)))
+            scan.table_review.append(selection.decision)
+    elif profile.tables:
         try:
-            for table in plumber_page.find_tables():
+            settings = (
+                {"vertical_strategy": "lines_strict", "horizontal_strategy": "lines_strict"}
+                if profile.strict_table_lines
+                else None
+            )
+            for table in plumber_page.find_tables(settings):
                 rows = clean_table(table.extract())
                 if len(rows) >= 2 and max(len(r) for r in rows) >= 2:
                     x0, top, x1, bottom = table.bbox

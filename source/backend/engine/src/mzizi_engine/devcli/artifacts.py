@@ -47,6 +47,8 @@ def write_document_artifacts(folder: Path, result: object) -> DocumentSummary:
         put(asset.path, base64.b64decode(asset.content_base64))
     for table in wire.tables:
         put(table.path, table.csv.encode("utf-8"))
+    if wire.table_review is not None:
+        put("table-review.json", wire.table_review.model_dump_json(indent=2, exclude_none=True).encode("utf-8"))
     return DocumentSummary(
         status=wire.status,
         pages=wire.pages,

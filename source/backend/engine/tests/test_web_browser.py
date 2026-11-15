@@ -115,3 +115,47 @@ def test_real_chrome_click_fill_screenshot_scroll_and_redirect(site: str, tmp_pa
         assert [r.ok for r in failed] == [False]
     finally:
         session.close()
+
+
+@needs_chrome
+def test_markdown_inventories_rendered_images_without_archiving_assets(site: str, tmp_path: Path) -> None:
+    from bs4 import BeautifulSoup
+    from web_site import Handler, page
+
+    from mzizi_engine.web.browser.media import MediaInventory
+    from mzizi_engine.web.handlers.crawl import page_markdown
+    from mzizi_engine.web.requests import MarkdownRequest, Render
+
+    Handler.site["/assets/portraits.css"] = b"""
+        .portrait.ready { width: 30px; height: 30px; background-image: url(amina.png); }
+        .portrait::before { content: ''; background-image: url(overlay.png); }
+    """
+    Handler.site["/portraits"] = page(
+        "Portrait gallery",
+        """<div><div><div class="portrait"></div></div><a href="/profile">Amina</a>
+        <a href="/profile">View profile</a>
+        <script>document.querySelector('.portrait').classList.add('ready')</script>
+        </div><article><picture><source srcset="/portrait-wide.png 1x, /portrait-hd.png 2x">
+        <img src="/fallback.png" alt="Felix"></picture></article>""",
+        '<link rel="stylesheet" href="/assets/portraits.css">',
+    )
+    request = MarkdownRequest(
+        url=site + "/portraits", out_dir=str(tmp_path), render=Render.BROWSER, rendered_media=True
+    )
+    result = page_markdown(request)
+    assert result.ok, result
+    inventory = MediaInventory.model_validate_json((tmp_path / "rendered-media.json").read_bytes())
+    assert inventory.source_url == request.url and not inventory.truncated
+    references = {(ref.kind, ref.url.removeprefix(site)): ref for ref in inventory.references}
+    background = references["background", "/assets/amina.png"]
+    assert (background.label, background.link, background.visible) == ("Amina", site + "/profile", True)
+    assert references["background", "/assets/overlay.png"].selector == background.selector + "::before"
+    assert ("responsive-source", "/portrait-hd.png") in references
+    assert references["selected-image", "/portrait-wide.png"].label == "Felix"
+    soup = BeautifulSoup((tmp_path / "page.html").read_bytes(), "lxml")
+    assert soup.select_one(background.selector) is not None
+    assert soup.select_one(background.selector).get("style") is None
+    markdown = (tmp_path / "page.md").read_text()
+    assert f"[Amina](<{site}/assets/amina.png>) ([page item](<{site}/profile>))" in markdown
+    assert f"[Felix](<{site}/portrait-wide.png>)" in markdown
+    assert sorted(path.name for path in tmp_path.iterdir()) == sorted(result.files)

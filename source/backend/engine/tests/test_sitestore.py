@@ -129,3 +129,27 @@ def test_records_are_spooled_when_mongodb_is_down_and_replayed_later(tmp_path: P
     up = Up()
     assert module.replay_spool(module.Activity(up)) == 2  # type: ignore[arg-type]
     assert [d["_id"] for d in up.stored] == ["a", "b"] and not list((tmp_path / "spool").glob("*.jsonl"))
+
+
+def test_empty_markdown_is_repaired_when_the_raw_html_hash_still_matches(tmp_path: Path):
+    from mzizi_engine.web.handlers.site import _build_markdown
+    from mzizi_scraping.change import fingerprint
+
+    layout = DevLayout(tmp_path)
+    site = layout.website("https://example.org/")
+    store = SiteStore(site, None, tmp_path)
+    html = b'<html><head><title>Reports</title></head><body></body><body><h2>Report</h2><a href="/r.pdf">Download</a></body></html>'
+    item = Visit(
+        url="https://example.org/reports", final_url="https://example.org/reports",
+        path="/reports", status=200, title="Reports", html=html, slug="reports",
+        markdown_body="<!-- page 1 -->\n",
+    )
+    store.record(item)
+    assert _build_markdown(store, layout) == 1
+    state = store.states["/reports"]
+    text = (tmp_path / state.md_file).read_text()
+    assert "[Download](https://example.org/r.pdf)" in text
+    assert _build_markdown(store, layout) == 0
+    before = fingerprint(html, item.url)
+    after = fingerprint(html.replace(b"Report</h2>", b"Revised report</h2>"), item.url)
+    assert before.text != after.text and "https://example.org/r.pdf" in before.link_set

@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import hashlib
 from collections.abc import Callable
+from contextlib import ExitStack
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -12,10 +13,11 @@ import yaml
 from bs4 import Tag
 from pydantic import BaseModel, TypeAdapter
 
-from mzizi_engine.web.browser.adapter import open_session
+from mzizi_engine.web.browser.adapter import BrowserUnavailable, open_session
 from mzizi_engine.web.crawl.backends import BrowserBackend
-from mzizi_engine.web.handlers.common import site_of, browser_config, out_dir
+from mzizi_engine.web.handlers.common import browser_config, out_dir, site_of
 from mzizi_engine.web.identity import user_agent
+from mzizi_engine.web.records import Record
 from mzizi_engine.web.requests import Render, ScrapeFileRequest, ScrapeUrlRequest, SelectRequest
 from mzizi_fetch.web.blocks import BlockDecision, BlockPolicy
 from mzizi_fetch.web.client import WebClient, WebResponse
@@ -40,6 +42,18 @@ class ScrapedRecord(BaseModel):
     errors: tuple[str, ...]
 
 
+class CaptureAttempt(Record):
+    url: str
+    capture: str = ""
+    sha256: str = ""
+    method: Render
+    records: int = 0
+    valid_records: int = 0
+    meets_expectations: bool = False
+    selected: bool = False
+    reason: str = ""
+
+
 class ScrapeResult(BaseModel):
     source: str
     module_sha256: str
@@ -58,6 +72,8 @@ class ScrapeResult(BaseModel):
     records: tuple[ScrapedRecord, ...] = ()
     policy_audit: tuple[Decision, ...] = ()
     block_decisions: tuple[BlockDecision, ...] = ()
+    attempts: tuple[CaptureAttempt, ...] = ()
+    coverage_complete: bool | None = None
 
 
 class PageCapture(BaseModel):
@@ -142,6 +158,83 @@ def _fetch_pages(
     return pages, ""
 
 
+class _AutoCapture:
+    def __init__(
+        self, recipe: Recipe, request: ScrapeUrlRequest, client: WebClient, folder: Path, stack: ExitStack
+    ) -> None:
+        self.recipe, self.request, self.client, self.folder, self.stack = recipe, request, client, folder, stack
+        self.browser: BrowserBackend | None = None
+        self.attempts: list[CaptureAttempt] = []
+
+    def _attempt(self, url: str, response: WebResponse, method: Render) -> CaptureAttempt:
+        attempt = CaptureAttempt(url=url, method=method)
+        if not response.usable or not response.is_html:
+            return attempt.model_copy(update={"reason": _failure(response)})
+        name = f"alternatives/{hashlib.sha256(url.encode()).hexdigest()[:16]}-{method.value}.html"
+        capture = self.folder / name
+        capture.parent.mkdir(parents=True, exist_ok=True)
+        capture.write_bytes(response.body)
+        result = _extract(response.body, self.recipe, ScrapeResult(source=url, module_sha256=self.recipe.sha256))
+        expect = self.recipe.module.expect
+        accepted = sum(
+            not record.errors
+            and all(record.fields.get(field) not in (None, "", [], ()) for field in expect.required_fields)
+            for record in result.records
+        )
+        meets = (
+            bool(result.records)
+            and accepted == len(result.records)
+            and accepted >= expect.min_items
+            and (expect.max_items is None or accepted <= expect.max_items)
+        )
+        return attempt.model_copy(
+            update={
+                "capture": name,
+                "sha256": hashlib.sha256(response.body).hexdigest(),
+                "records": len(result.records),
+                "valid_records": accepted,
+                "meets_expectations": meets,
+            }
+        )
+
+    def get(self, url: str) -> WebResponse:
+        initial = self.client.get(url)
+        http = self._attempt(url, initial, Render.HTTP)
+        if not initial.usable or not initial.is_html or http.meets_expectations:
+            self.attempts.append(http.model_copy(update={"selected": True}))
+            return initial
+        try:
+            if self.browser is None:
+                config = browser_config(
+                    self.request,
+                    headed=self.request.headed,
+                    agent=self.client.user_agent,
+                    site=site_of(url),
+                )
+                session = open_session(config.model_copy(update={"accept_downloads": False}))
+                self.stack.callback(session.close)
+                self.browser = BrowserBackend(self.client, session)
+            rendered = self.browser.get(url)
+        except BrowserUnavailable as error:
+            self.attempts.extend(
+                (
+                    http.model_copy(update={"selected": True}),
+                    CaptureAttempt(url=url, method=Render.BROWSER, reason=str(error)),
+                )
+            )
+            return initial
+        browser = self._attempt(url, rendered, Render.BROWSER)
+        better = bool(browser.capture) and (browser.meets_expectations, browser.valid_records, browser.records) > (
+            http.meets_expectations,
+            http.valid_records,
+            http.records,
+        )
+        self.attempts.extend(
+            (http.model_copy(update={"selected": not better}), browser.model_copy(update={"selected": better}))
+        )
+        return rendered if better else initial
+
+
 def scrape_url(request: ScrapeUrlRequest) -> ScrapeResult:
     recipe = _recipe(request.module_yaml, request.module_source)
     validate(request.url)
@@ -153,18 +246,21 @@ def scrape_url(request: ScrapeUrlRequest) -> ScrapeResult:
         (host,),
         blocks=BlockPolicy(max_retries=0),
     )
-    session = None
-    try:
+    auto: _AutoCapture | None = None
+    folder = out_dir(request)
+    with ExitStack() as stack:
+        stack.callback(client.close)
         if request.render is Render.BROWSER:
-            session = open_session(browser_config(request, headed=request.headed, agent=client.user_agent, site=site_of(request.url)))
+            config = browser_config(request, headed=request.headed, agent=client.user_agent, site=site_of(request.url))
+            session = open_session(config.model_copy(update={"accept_downloads": False}))
+            stack.callback(session.close)
             get = BrowserBackend(client, session).get
+        elif request.render is Render.AUTO:
+            auto = _AutoCapture(recipe, request, client, folder, stack)
+            get = auto.get
         else:
             get = client.get
-        pages, failure = _fetch_pages(recipe, request, get, out_dir(request))
-    finally:
-        if session is not None:
-            session.close()
-        client.close()
+        pages, failure = _fetch_pages(recipe, request, get, folder)
     first = pages[0].response if pages else None
     result = ScrapeResult(
         source=request.url,
@@ -173,7 +269,11 @@ def scrape_url(request: ScrapeUrlRequest) -> ScrapeResult:
         status=first.status if first else 0,
         observed_at=datetime.now(UTC),
         render=request.render,
-        adapter=request.adapter if request.render is Render.BROWSER else "",
+        adapter=request.adapter if request.render is Render.BROWSER or (auto and auto.browser) else "",
+        attempts=tuple(auto.attempts) if auto else (),
+        coverage_complete=bool(pages) and all(item.meets_expectations for item in auto.attempts if item.selected)
+        if auto
+        else None,
         policy_audit=tuple(client.audit),
         block_decisions=tuple(client.blocks.decisions),
         pages=len(pages),

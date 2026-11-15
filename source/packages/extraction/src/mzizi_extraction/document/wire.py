@@ -7,6 +7,7 @@ import base64
 from mzizi_extraction.core import Frozen
 from mzizi_extraction.document.markdown import render_markdown, table_csv
 from mzizi_extraction.document.models import DocumentOutput, TableBlock
+from mzizi_extraction.document.table_models import TableReviewReport
 from mzizi_extraction.encode.wire import WireDiagnostic, _diagnostic
 
 
@@ -33,6 +34,7 @@ class DocumentWire(Frozen):
     tables: tuple[WireTable, ...]
     structure: str
     diagnostics: tuple[WireDiagnostic, ...]
+    table_review: TableReviewReport | None = None
 
 
 def encode_document(output: DocumentOutput) -> DocumentWire:
@@ -62,4 +64,5 @@ def encode_document(output: DocumentOutput) -> DocumentWire:
         tables=tuple(tables),
         structure=structure,
         diagnostics=tuple(_diagnostic(d) for d in output.diagnostics),
+        table_review=output.table_review,
     )

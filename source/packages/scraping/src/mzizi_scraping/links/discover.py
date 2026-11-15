@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from urllib.parse import urldefrag, urljoin, urlparse
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 from mzizi_scraping.core import Frozen
 
@@ -40,6 +40,7 @@ class Reference(Frozen):
     text: str
     tag: str
     attribute: str
+    heading: str = ""
 
 
 _REFERENCE_ATTRIBUTES: tuple[tuple[str, str], ...] = (
@@ -58,14 +59,32 @@ _REFERENCE_ATTRIBUTES: tuple[tuple[str, str], ...] = (
 _NON_NAVIGABLE = ("javascript", "data", "blob")
 
 
-def extract_references(html: str | bytes, base_url: str) -> list[Reference]:
+_CONTEXT_TAGS = ("main", "article", "section", "li", "td", "nav", "aside", "header", "footer")
+_HEADING_TAGS = ("h1", "h2", "h3", "h4", "h5", "h6")
+
+
+def _headings(soup: BeautifulSoup) -> dict[int, str]:
+    active: dict[int, str] = {}
+    headings: dict[int, str] = {}
+    reference_tags = {tag for tag, _ in _REFERENCE_ATTRIBUTES}
+    for element in soup.find_all((*reference_tags, *_HEADING_TAGS)):
+        parents = tuple(id(node) for node in element.parents if isinstance(node, Tag) and node.name in _CONTEXT_TAGS)
+        if element.name in _HEADING_TAGS:
+            active[parents[0] if parents else 0] = element.get_text(" ", strip=True)
+        else:
+            headings[id(element)] = next((active[key] for key in parents if key in active), active.get(0, ""))
+    return headings
+
+
+def extract_references(html: str | bytes, base_url: str, *, retain_context: bool = False) -> list[Reference]:
     """Every link, image, media, embed and frame URL on a page, absolute and de-duplicated per (tag, URL).
 
     Unlike `extract_links` this keeps `mailto:` and `tel:` references (they are part of a site's contact surface) and
     reports which tag carried each URL. `javascript:`, `data:` and `blob:` URLs are skipped.
     """
     soup = BeautifulSoup(html, "lxml")
-    seen: set[tuple[str, str]] = set()
+    headings = _headings(soup)
+    seen: set[tuple[str, str, str, str]] = set()
     found: list[Reference] = []
     for tag, attribute in _REFERENCE_ATTRIBUTES:
         for element in soup.find_all(tag):
@@ -74,20 +93,32 @@ def extract_references(html: str | bytes, base_url: str) -> list[Reference]:
                 continue
             url, _fragment = urldefrag(urljoin(base_url, raw.strip()))
             scheme = urlparse(url).scheme
-            if scheme in _NON_NAVIGABLE or not scheme or (tag, url) in seen:
+            if scheme in _NON_NAVIGABLE or not scheme:
                 continue
-            seen.add((tag, url))
             label = element.get_text() if tag == "a" else str(element.get("alt") or element.get("title") or "")
-            found.append(Reference(url=url, text=" ".join(label.split()), tag=tag, attribute=attribute))
+            text, heading = " ".join(label.split()), headings.get(id(element), "")
+            key = (tag, url, text if retain_context else "", heading if retain_context else "")
+            if key not in seen:
+                seen.add(key)
+                found.append(Reference(url=url, text=text, tag=tag, attribute=attribute, heading=heading))
     for element in soup.find_all(["img", "source"], srcset=True):
         for candidate in str(element.get("srcset")).split(","):
             parts = candidate.strip().split(" ")
             if not parts[0]:
                 continue
             url, _fragment = urldefrag(urljoin(base_url, parts[0]))
-            if urlparse(url).scheme in ("http", "https") and (element.name, url) not in seen:
-                seen.add((element.name, url))
+            heading = headings.get(id(element), "")
+            text = str(element.get("alt") or "")
+            key = (element.name, url, text if retain_context else "", heading if retain_context else "")
+            if urlparse(url).scheme in ("http", "https") and key not in seen:
+                seen.add(key)
                 found.append(
-                    Reference(url=url, text=str(element.get("alt") or ""), tag=element.name, attribute="srcset")
+                    Reference(
+                        url=url,
+                        text=str(element.get("alt") or ""),
+                        tag=element.name,
+                        attribute="srcset",
+                        heading=headings.get(id(element), ""),
+                    )
                 )
     return found

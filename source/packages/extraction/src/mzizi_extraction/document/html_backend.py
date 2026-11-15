@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from urllib.parse import urljoin
+from urllib.parse import unquote, urljoin, urlsplit
 
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import BeautifulSoup, Comment, Doctype, NavigableString, Tag
 
 from mzizi_extraction.core import Status
 from mzizi_extraction.document.boilerplate import Boilerplate, fingerprint, is_landmark
+from mzizi_extraction.document.html_css_images import inline_background_images
+from mzizi_extraction.document.html_tables import table_grid
 from mzizi_extraction.document.lines import merge_spans
 from mzizi_extraction.document.markdown import render_spans
 from mzizi_extraction.document.models import (
@@ -22,7 +24,7 @@ from mzizi_extraction.document.models import (
     TableBlock,
 )
 
-SKIPPED_TAGS = ("script", "style", "noscript", "template", "svg", "iframe", "canvas")
+SKIPPED_TAGS = ("head", "script", "style", "noscript", "template", "svg", "iframe", "canvas")
 HEADINGS = ("h1", "h2", "h3", "h4", "h5", "h6")
 BLOCK_TAGS = (
     *HEADINGS,
@@ -59,9 +61,10 @@ MAX_HEADING_CHARS = 300
 
 
 class _Walker:
-    def __init__(self, base_url: str, boilerplate: Boilerplate) -> None:
+    def __init__(self, base_url: str, boilerplate: Boilerplate, include_css_images: bool) -> None:
         self.base_url = base_url
         self.boilerplate = boilerplate
+        self.include_css_images = include_css_images
         self.blocks: list[Block] = []
         self.removed = 0
 
@@ -84,6 +87,8 @@ class _Walker:
     def inline(
         self, node: Tag | NavigableString, bold: bool = False, italic: bool = False, href: str | None = None
     ) -> list[Span]:
+        if isinstance(node, Comment | Doctype):
+            return []
         if isinstance(node, NavigableString):
             raw = str(node)
             core = " ".join(raw.split())
@@ -121,6 +126,29 @@ class _Walker:
                 continue
             if self.skipped(child):
                 continue
+            if child.name == "a" and child.find("img") is not None:
+                href = child.get("href")
+                if isinstance(href, str):
+                    target = urljoin(self.base_url, href)
+                    label = child.get_text(" ", strip=True) or str(
+                        child.get("aria-label")
+                        or child.get("title")
+                        or unquote(urlsplit(target).path.rsplit("/", 1)[-1])
+                    )
+                    buffer.append(Span(text=label or target, href=target))
+            style = child.get("style")
+            if self.include_css_images and isinstance(style, str):
+                for asset in inline_background_images(style, self.base_url):
+                    self.flush(buffer)
+                    self.blocks.append(
+                        FigureBlock(
+                            asset=asset,
+                            figure_kind="image",
+                            alt=str(child.get("aria-label") or ""),
+                            page=1,
+                            bbox=ZERO_BBOX,
+                        )
+                    )
             if child.name not in BLOCK_TAGS:
                 if child.find(BLOCK_TAGS):
                     self.flush(buffer)
@@ -195,21 +223,32 @@ class _Walker:
                 ]
             )
         )
-        return render_spans(spans).replace("\n", " ")
+        rendered = render_spans(spans).replace("\n", " ")
+        visible_links = {span.href for span in spans if span.href is not None}
+        links: list[str] = []
+        for anchor in element.select("a[href]"):
+            try:
+                href = urljoin(self.base_url, str(anchor["href"]))
+                parts = urlsplit(href)
+            except ValueError:
+                continue
+            if href in visible_links or parts.scheme not in ("http", "https"):
+                continue
+            filename = unquote(parts.path.rstrip("/").rsplit("/", 1)[-1])
+            label = str(anchor.get("aria-label") or anchor.get("title") or filename or parts.netloc)
+            links.append(render_spans((Span(text=label, href=href),)))
+            visible_links.add(href)
+        return " ".join(part for part in (rendered, *links) if part)
 
     def table(self, element: Tag) -> None:
-        rows: list[tuple[str, ...]] = []
-        for row in element.find_all("tr"):
-            cells = tuple(self.cell(c) for c in row.find_all(["th", "td"]))
-            if any(cells):
-                rows.append(cells)
-        if len(rows) >= 2 and max(len(r) for r in rows) >= 2:
-            has_header = element.find("th") is not None
+        rows, headers, cells = table_grid(element, self.cell)
+        if rows and cells and any(any(row) for row in rows):
             self.blocks.append(
                 TableBlock(
                     index=sum(isinstance(b, TableBlock) for b in self.blocks) + 1,
-                    rows=tuple(rows),
-                    header_rows=1 if has_header else 0,
+                    rows=rows,
+                    header_rows=headers,
+                    cells=cells,
                     page=1,
                     bbox=ZERO_BBOX,
                 )
@@ -240,6 +279,10 @@ def _trim(spans: tuple[Span, ...]) -> tuple[Span, ...]:
 
 
 def _main(soup: BeautifulSoup) -> Tag:
+    # Recovery parsers can preserve multiple body elements from malformed publisher HTML.
+    # Walk the complete document so a later body is not lost behind an empty first one.
+    if len(soup.find_all("body", limit=2)) > 1:
+        return soup
     for selector in ("main", "[role=main]"):
         found = soup.select_one(selector)
         if found is not None:
@@ -251,12 +294,12 @@ def _main(soup: BeautifulSoup) -> Tag:
 
 
 def extract_html_document(
-    html: str, base_url: str, boilerplate: Boilerplate | None = None
+    html: str, base_url: str, boilerplate: Boilerplate | None = None, *, include_css_images: bool = False
 ) -> tuple[DocumentOutput, str, int]:
     """The page's main content as structured blocks, its title, and how many chrome blocks were left out."""
     soup = BeautifulSoup(html, "lxml")
     title = soup.title.get_text(" ", strip=True) if soup.title else ""
-    walker = _Walker(base_url, boilerplate or Boilerplate())
+    walker = _Walker(base_url, boilerplate or Boilerplate(), include_css_images)
     walker.walk(_main(soup))
     page = Page(number=1, width=0.0, height=0.0, blocks=tuple(walker.blocks))
     status = Status.SUCCEEDED if walker.blocks else Status.FAILED

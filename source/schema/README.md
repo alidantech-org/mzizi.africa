@@ -6,6 +6,7 @@
 |---|---|
 | [`contracts/`](contracts/README.md) | Layer-exchange JSON Schema, target catalog and example validator. |
 | `pipeline/v1/` | Versioned pipeline-manifest input schema. |
+| [`extraction/v1/`](extraction/v1/table.schema.json) | Optional expected-column input for PDF table comparison. |
 | `seed/` | Root seed-manifest schema. Prepared inputs and their records live in repository-root [`seed/`](../../seed/README.md). |
 | `web/` | Web vocabulary (URL kinds, challenge markers, file signatures, default block responses) and its JSON Schema; read by `mzizi-fetch`. |
 | `site/v1/` | Versioned site-structure manifest, module, mapping, section, tag and common schemas. |

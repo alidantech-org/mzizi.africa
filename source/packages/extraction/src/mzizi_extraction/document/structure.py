@@ -7,7 +7,8 @@ from statistics import median
 from typing import Literal
 
 from mzizi_extraction.document.lines import Line, merge_spans
-from mzizi_extraction.document.models import BBox, Block, Heading, ListItem, Paragraph, Span
+from mzizi_extraction.document.models import Block, Heading, ListItem, Paragraph, Span
+from mzizi_extraction.document.table_models import BBox
 from mzizi_extraction.text.patterns import ListMarker, list_marker
 
 HEADING_RATIO = 1.12

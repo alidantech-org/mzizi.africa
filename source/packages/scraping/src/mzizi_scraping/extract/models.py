@@ -36,6 +36,13 @@ class ExtractSpec(External):
     fields: dict[str, FieldSpec] = Field(default_factory=dict)
 
 
+class Expectations(External):
+    min_items: int = Field(default=0, ge=0)
+    max_items: int | None = Field(default=None, ge=0)
+    required_fields: tuple[str, ...] = ()
+
+
 class ModuleSpec(External):
     discover: Discover = Discover()
     extract: ExtractSpec = ExtractSpec()
+    expect: Expectations = Expectations()

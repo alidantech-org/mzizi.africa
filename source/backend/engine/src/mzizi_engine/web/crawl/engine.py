@@ -7,57 +7,43 @@ import time
 from collections import defaultdict, deque
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import parse_qsl, urlsplit
 
-from mzizi_engine.web.crawl.backends import PageBackend
-from mzizi_engine.web.hunt import has_download_query
+from mzizi_engine.web.crawl.backends import PageBackend, PagedBackend
 from mzizi_engine.web.crawl.cancel import CANCEL
+from mzizi_engine.web.crawl.capture import final_key as _final_key
+from mzizi_engine.web.crawl.capture import group_of, now, record_page, resource
+from mzizi_engine.web.crawl.evidence import CrawlEvidence
 from mzizi_engine.web.crawl.sitemaps import discover_sitemap_urls, partition
 from mzizi_engine.web.crawl.state import CrawlState, digest_of, load_state, save_state
 from mzizi_engine.web.records import (
-    DownloadStatus,
     ErrorRecord,
     FrontierItem,
     LinkRecord,
     PageRecord,
     ResourceRecord,
-    Scope,
 )
 from mzizi_engine.web.requests import CrawlRequest
 from mzizi_fetch.web.blocks import BlockKind, Response
-from mzizi_fetch.web.vocabulary import vocabulary
 from mzizi_fetch.web.client import WebClient, WebResponse
-from mzizi_fetch.web.urls import Deduplicator, is_api_url, UrlKind, classify, extension_of, host_of, normalize, path_of, same_site
-from mzizi_scraping import extract_references, page_meta
-from mzizi_scraping.pagination import detect_pagination
+from mzizi_fetch.web.urls import Deduplicator, UrlKind, classify, host_of, same_site
+from mzizi_fetch.web.vocabulary import vocabulary
 
 log = logging.getLogger("mzizi.crawl")
-ARTICLE_SLUG_WORDS = 5  # a single-segment slug with this many words is an article, not a section page
 MAX_QUERY_VARIANTS = 6
 RESTRICTED_KINDS = (
-    BlockKind.NOTICE, BlockKind.FORBIDDEN, BlockKind.UNAUTHORIZED, BlockKind.SERVER_ERROR, BlockKind.CAPTCHA, BlockKind.CHALLENGE,
+    BlockKind.NOTICE,
+    BlockKind.FORBIDDEN,
+    BlockKind.UNAUTHORIZED,
+    BlockKind.SERVER_ERROR,
+    BlockKind.CAPTCHA,
+    BlockKind.CHALLENGE,
     BlockKind.TIMEOUT,
 )
 MAX_RESTRICTED_GROUPS = 3  # refusals from this many different parts of a site mean the site refuses us, not one section (a login form, an intranet)
 SAVED_PAGE_FACTOR = 20  # pages served from saved copies are free of the fetch budget, up to this many times it
 SAVE_EVERY = 10
-LINK_KINDS = frozenset({UrlKind.PAGE})
-
-
-def group_of(url: str) -> str:
-    """The part of a site a page belongs to: its first path segment, with long single-segment slugs (articles) together."""
-    segments = [part for part in urlsplit(url).path.split("/") if part]
-    if not segments:
-        return "(home)"
-    if len(segments) == 1:
-        return "(article)" if segments[0].count("-") + 1 >= ARTICLE_SLUG_WORDS else "(page)"
-    return segments[0]
-
-
-def _now() -> str:
-    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 @dataclass
@@ -77,13 +63,19 @@ class Crawl:
     resources: list[ResourceRecord] = field(default_factory=list)
     errors: list[ErrorRecord] = field(default_factory=list)
     html: dict[int, str] = field(default_factory=dict)
+    deferred: list[FrontierItem] = field(default_factory=list)
+    evidence: CrawlEvidence = field(default_factory=CrawlEvidence)
     stopped: str = ""
     fetched: int = 0  # pages actually fetched this run (saved copies do not use the page budget)
     query_variants: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
     visited_groups: dict[str, int] = field(default_factory=lambda: defaultdict(int))
-    restricted_groups: set[str] = field(default_factory=set)  # parts of the site that say 'access denied' or need a login
+    restricted_groups: set[str] = field(
+        default_factory=set
+    )  # parts of the site that say 'access denied' or need a login
     https_hosts: frozenset[str] = frozenset()  # hosts the crawl started on over https
-    recorded_finals: set[str] = field(default_factory=set)  # where pages really ended up, so redirect aliases are not recorded twice
+    recorded_finals: set[str] = field(
+        default_factory=set
+    )  # where pages really ended up, so redirect aliases are not recorded twice
     on_page: Callable[[PageRecord, bytes], None] | None = None  # called with each page as it is fetched
     on_reference: Callable[[LinkRecord], None] | None = None  # called with every link or file reference found
 
@@ -99,6 +91,10 @@ class Crawl:
             errors=tuple(self.errors),
             decisions=tuple(self.client.blocks.decisions),
             policy_audit=tuple(self.client.audit),
+            listings=tuple(self.evidence.listings.values()),
+            rendered_media=tuple(self.evidence.media.values()),
+            deferred=tuple(self.deferred),
+            request=self.request,
         )
 
     def next_item(self) -> FrontierItem:
@@ -120,14 +116,18 @@ class Crawl:
         if self.restricted_groups:
             self.frontier = deque(i for i in self.frontier if group_of(i.url) not in self.restricted_groups)
 
-    def enqueue(self, url: str, depth: int, source: str, anchor: str) -> None:
+    def enqueue(self, url: str, depth: int, source: str, anchor: str, *, seed: bool = False) -> None:
         parts = urlsplit(url)
-        if parts.scheme == "http" and parts.hostname in self.https_hosts:  # the site is served over https: skip the redirect
+        if (
+            parts.scheme == "http" and parts.hostname in self.https_hosts
+        ):  # the site is served over https: skip the redirect
             url = url.replace("http://", "https://", 1)
         query = urlsplit(url).query
         keys = {k.lower() for k, _ in parse_qsl(query)}
         identifies_content = bool(keys) and keys <= {k.lower() for k in vocabulary().content_query_keys}
-        if query and not identifies_content:  # many query variants of one path are usually a calendar or filter trap: keep a handful
+        if (
+            query and not identifies_content and not seed and anchor != "next page"
+        ):  # many query variants of one path are usually a calendar or filter trap: keep a handful
             variants = self.query_variants[host_of(url) + parts.path]  # the path alone: path_of() carries the query
             if len(variants) >= MAX_QUERY_VARIANTS and query not in variants:
                 return
@@ -140,17 +140,25 @@ class Crawl:
         return any(same_site(h, host_of(url), self.request.include_subdomains) for h in hosts)
 
 
-def start_crawl(request: CrawlRequest, client: WebClient, backend: PageBackend) -> Crawl:
+def start_crawl(
+    request: CrawlRequest, client: WebClient, backend: PageBackend, evidence: CrawlEvidence | None = None
+) -> Crawl:
     out_dir = Path(request.out_dir)
     starts = tuple(request.starts)
     digest = digest_of(request)
     crawl = Crawl(request, client, backend, out_dir, tuple(sorted({host_of(u) for u in starts})), digest)
+    if evidence is not None:
+        crawl.evidence = evidence
     crawl.https_hosts = frozenset(urlsplit(u).hostname or "" for u in starts if u.startswith("https://"))
     resumed = load_state(out_dir, digest) if request.resume else None
     if resumed is not None and not resumed.complete:
+        crawl.evidence.listings.update((view.source_url, view) for view in resumed.listings)
+        crawl.evidence.media.update((view.source_url, view) for view in resumed.rendered_media)
         for key in resumed.seen:
             crawl.seen.add(key)
         crawl.frontier.extend(resumed.frontier)
+        queued = {item.url for item in resumed.frontier}
+        crawl.frontier.extend(item for item in resumed.deferred if item.url not in queued)
         crawl.pages, crawl.links, crawl.resources, crawl.errors = (
             list(resumed.pages),
             list(resumed.links),
@@ -166,7 +174,7 @@ def start_crawl(request: CrawlRequest, client: WebClient, backend: PageBackend) 
         log.info("resuming: %d pages done, %d queued", len(crawl.pages), len(crawl.frontier))
         return crawl
     for url in starts:
-        crawl.enqueue(url, 0, "", "")
+        crawl.enqueue(url, 0, "", "", seed=True)
     if request.sitemap:
         pages, files = partition(discover_sitemap_urls(client, starts))
         for url in pages:
@@ -174,7 +182,7 @@ def start_crawl(request: CrawlRequest, client: WebClient, backend: PageBackend) 
                 crawl.enqueue(url, 1, "sitemap", "")
         for url, kind in files:  # listed by the sitemap but not pages: inventoried for download, never fetched as pages
             if crawl.internal(url):
-                _resource(crawl, url, kind, FrontierItem(url=url, depth=1, source_page="sitemap", anchor_text=""))
+                resource(crawl, url, kind, FrontierItem(url=url, depth=1, source_page="sitemap", anchor_text=""))
     return crawl
 
 
@@ -198,13 +206,24 @@ def run(crawl: Crawl) -> None:
         item = crawl.next_item()
         response = crawl.backend.get(item.url)
         if not _accept(crawl, item, response):
+            if response.error or (
+                response.block is not None
+                and response.block.kind
+                in (
+                    BlockKind.TIMEOUT,
+                    BlockKind.SERVER_ERROR,
+                    BlockKind.RATE_LIMITED,
+                )
+            ):
+                crawl.deferred.append(item)
             continue
-        _record_page(crawl, item, response)
-        take = getattr(crawl.backend, "take_extra", None)
-        for extra in take(item.url) if take is not None else []:
-            if len(crawl.pages) >= request.max_pages:
+        if response.headers.get("x-mzizi-via") != "cache":
+            crawl.fetched += 1
+        record_page(crawl, item, response)
+        for extra in crawl.backend.take_extra(item.url) if isinstance(crawl.backend, PagedBackend) else ():
+            if len(crawl.pages) >= request.max_pages * SAVED_PAGE_FACTOR:
                 break
-            _record_page(crawl, item, extra)
+            record_page(crawl, item, extra)
         if len(crawl.pages) % SAVE_EVERY == 0:
             save_state(out_dir, crawl.snapshot(False))
     if crawl.frontier and crawl.fetched >= request.max_pages and not crawl.stopped:
@@ -213,7 +232,7 @@ def run(crawl: Crawl) -> None:
 
 def _error(crawl: Crawl, url: str, stage: str, kind: str, detail: str, response: str = "", attempt: int = 0) -> None:
     crawl.errors.append(
-        ErrorRecord(url=url, stage=stage, kind=kind, detail=detail, response=response, attempt=attempt, at=_now())
+        ErrorRecord(url=url, stage=stage, kind=kind, detail=detail, response=response, attempt=attempt, at=now())
     )
     log.warning("%s %s: %s %s", stage, url, kind, detail)
 
@@ -221,7 +240,9 @@ def _error(crawl: Crawl, url: str, stage: str, kind: str, detail: str, response:
 def _accept(crawl: Crawl, item: FrontierItem, response: WebResponse) -> bool:
     """True when `response` is a page to process; otherwise the reason is recorded."""
     if response.refused is not None or response.block is not None or response.error:
-        crawl.visited_groups[group_of(item.url)] += 1  # a failed attempt counts for ordering, so failures do not run back to back
+        crawl.visited_groups[group_of(item.url)] += (
+            1  # a failed attempt counts for ordering, so failures do not run back to back
+        )
     if response.refused is not None:
         _error(crawl, item.url, "policy", "refused", response.refused.reason)
         if response.refused.reason.startswith("request budget"):  # the ceiling is a stop, not 3,000 separate errors
@@ -232,7 +253,10 @@ def _accept(crawl: Crawl, item: FrontierItem, response: WebResponse) -> bool:
         _error(crawl, item.url, "block", decision.kind, decision.detail, decision.response, decision.attempt)
         if decision.response == Response.STOP.value:
             group = group_of(item.url)
-            if response.block.kind in RESTRICTED_KINDS and len(crawl.restricted_groups | {group}) < MAX_RESTRICTED_GROUPS:
+            if (
+                response.block.kind in RESTRICTED_KINDS
+                and len(crawl.restricted_groups | {group}) < MAX_RESTRICTED_GROUPS
+            ):
                 # one section refuses us (an intranet, a members area): leave it alone and carry on with the rest of the site
                 crawl.restricted_groups.add(group)
                 crawl.client.blocks.consecutive = 0
@@ -245,7 +269,7 @@ def _accept(crawl: Crawl, item: FrontierItem, response: WebResponse) -> bool:
         _error(crawl, item.url, "transport", "error", response.error)
         return False
     if not response.is_html:
-        _resource(
+        resource(
             crawl,
             item.url,
             classify(response.final_url, "a") if classify(response.final_url) is not UrlKind.PAGE else UrlKind.DOCUMENT,
@@ -254,127 +278,3 @@ def _accept(crawl: Crawl, item: FrontierItem, response: WebResponse) -> bool:
         )
         return False
     return True
-
-
-def _resource(crawl: Crawl, url: str, kind: UrlKind, item: FrontierItem, response: WebResponse | None = None) -> None:
-    host = host_of(url)
-    scope = Scope.INTERNAL if crawl.internal(url) else Scope.EXTERNAL
-    crawl.resources.append(
-        ResourceRecord(
-            original_url=url,
-            normalized_url=normalize(url),
-            final_url=response.final_url if response else url,
-            kind=kind.value,
-            scope=scope,
-            extension=extension_of(url),
-            host=host,
-            path=path_of(url),
-            source_page=item.source_page,
-            anchor_text=item.anchor_text,
-            content_type=response.content_type if response else "",
-            status=response.status if response else 0,
-            depth=item.depth,
-            discovered_at=_now(),
-            download_status=DownloadStatus.NOT_DOWNLOADED,
-        )
-    )
-
-
-def _final_key(url: str) -> str:
-    """A page's identity after redirects: its normalised address (a virtual `#page-N` keeps its fragment)."""
-    base, _, fragment = url.partition("#")
-    return normalize(base) + (f"#{fragment}" if fragment else "")
-
-
-def _record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> None:
-    key = _final_key(response.final_url)
-    if key in crawl.recorded_finals:  # an alias of a page already fetched in this crawl (a redirect, a trailing slash)
-        return
-    crawl.recorded_finals.add(key)
-    n = len(crawl.pages) + 1
-    raw_name = f"raw/{n:04d}.html"
-    if crawl.on_page is None:  # without a hook the pages are kept for the end-of-crawl exports
-        (crawl.out_dir / raw_name).write_bytes(response.body)
-        crawl.html[n] = response.text
-    final = response.final_url
-    crawl.seen.add(final)
-    meta = page_meta(response.text, final)
-    canonical = meta.canonical or final
-    crawl.seen.add(canonical)
-    now = _now()
-    count = 0
-    for ref in extract_references(response.text, final):
-        kind = classify(ref.url, ref.tag)
-        if kind is UrlKind.PAGE and is_api_url(ref.url):
-            kind = UrlKind.DATA  # a JSON endpoint: kept and downloaded as data, not fetched as a page
-        internal = crawl.internal(ref.url) and kind not in (UrlKind.MAIL, UrlKind.PHONE)
-        scope = Scope.INTERNAL if internal else Scope.EXTERNAL
-        count += 1
-        record = (
-            LinkRecord(
-                original_url=ref.url,
-                normalized_url=normalize(ref.url) if ref.url.startswith("http") else ref.url,
-                source_page=final,
-                anchor_text=ref.text,
-                tag=ref.tag,
-                kind=kind.value,
-                scope=scope,
-                host=host_of(ref.url),
-                path=path_of(ref.url) if ref.url.startswith("http") else "",
-                extension=extension_of(ref.url),
-                depth=item.depth + 1,
-                discovered_at=now,
-            )
-        )
-        crawl.links.append(record)
-        if crawl.on_reference is not None:
-            crawl.on_reference(record)
-        if kind in LINK_KINDS:
-            if internal and item.depth < crawl.request.max_depth and not has_download_query(ref.url):
-                crawl.enqueue(ref.url, item.depth + 1, final, ref.text)
-        elif kind not in (UrlKind.MAIL, UrlKind.PHONE):
-            _resource(
-                crawl,
-                ref.url,
-                kind,
-                FrontierItem(url=ref.url, depth=item.depth + 1, source_page=final, anchor_text=ref.text),
-            )
-    for later in meta.next_pages:
-        if crawl.internal(later):
-            crawl.enqueue(later, item.depth, final, "next page")
-    if crawl.request.paginate and "#page-" not in final:
-        found = detect_pagination(response.text, final).next
-        if found is not None and found.url and found.enabled and crawl.internal(found.url):
-            crawl.enqueue(found.url, item.depth, final, "next page")
-    crawl.pages.append(
-        PageRecord(
-            n=n,
-            original_url=item.url,
-            normalized_url=normalize(item.url),
-            final_url=final,
-            canonical_url=canonical,
-            source_page=item.source_page,
-            anchor_text=item.anchor_text,
-            title=meta.title,
-            status=response.status,
-            content_type=response.content_type,
-            extension=extension_of(final),
-            depth=item.depth,
-            scope=Scope.INTERNAL,
-            discovered_at=now,
-            path=path_of(final),
-            bytes=len(response.body),
-            redirects=len(response.redirects),
-            links=count,
-            chrome_removed=0,
-            fetched_via=response.headers.get("x-mzizi-via", "http"),
-            raw_file=raw_name,
-            markdown_file="",
-        )
-    )
-    crawl.visited_groups[group_of(final)] += 1
-    if response.headers.get("x-mzizi-via") != "cache":
-        crawl.fetched += 1
-    log.info("[%d/%d] %s -> %s", n, crawl.request.max_pages, final, response.status)
-    if crawl.on_page is not None:
-        crawl.on_page(crawl.pages[-1], response.body)
