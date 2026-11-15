@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -22,7 +21,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Accepted rights and credit statement tied to exact content and publisher. (entity)
  */
 export class AttributionsDto {
-
   @IsISO8601({})
   assessedAt!: Instant;
 

@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -22,7 +21,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * One real human identity; names, identifiers and contacts are normalized in shared tables. (entity)
  */
 export class IndividualsDto {
-
   @IsOptional()
   @ValidateIf((object) => object.birthDate !== null)
   @IsISO8601({ strict: true })

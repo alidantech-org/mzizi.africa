@@ -2,17 +2,17 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as CapturesTypes from '#/modules/source/schema/types/captures/captures.types';
-import type * as DocumentsTypes from '#/modules/source/schema/types/documents/documents.types';
-import type * as EvidenceTypes from '#/modules/source/schema/types/evidence/evidence.types';
-import type * as FileVersionsTypes from '#/modules/filesystem/schema/types/file-versions/file-versions.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
+import type * as CapturesTypes from "#/modules/source/schema/types/captures/captures.types";
+import type * as DocumentsTypes from "#/modules/source/schema/types/documents/documents.types";
+import type * as EvidenceTypes from "#/modules/source/schema/types/evidence/evidence.types";
+import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -26,8 +26,8 @@ import type {
   CITATIONS_DATE_RANGE_FIELDS,
   CITATIONS_SELECTABLE_FIELDS,
   CITATIONS_DEFAULT_SELECT_FIELDS,
-  CITATIONS_EDITABLE_FIELDS
-} from './citations.config';
+  CITATIONS_EDITABLE_FIELDS,
+} from "./citations.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -80,14 +80,21 @@ export type ICitationsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type ICitationsCreatable = Omit<ICitations, ICitationsImmutableFields | CitationsRelationKey>;
+export type ICitationsCreatable = Omit<
+  ICitations,
+  ICitationsImmutableFields | CitationsRelationKey
+>;
 
-export type ICitationsSystemWritable = Omit<ICitations, B.IBaseReadonlyFields | CitationsRelationKey>;
+export type ICitationsSystemWritable = Omit<
+  ICitations,
+  B.IBaseReadonlyFields | CitationsRelationKey
+>;
 
-export type ICitationsUpdatable = Partial<Omit<ICitations, ICitationsImmutableFields | CitationsRelationKey>>;
+export type ICitationsUpdatable = Partial<
+  Omit<ICitations, ICitationsImmutableFields | CitationsRelationKey>
+>;
 
-export interface ICitationsTransitionPayload {
-}
+export interface ICitationsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -111,17 +118,31 @@ export type CitationsEditableField = (typeof CITATIONS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type ICitationsAsOneRelationConfig = Q.IOneRelationConfig<'citations', CitationsSelectableField>;
+export type ICitationsAsOneRelationConfig = Q.IOneRelationConfig<
+  "citations",
+  CitationsSelectableField
+>;
 
-export type ICitationsAsManyRelationConfig = Q.IManyRelationConfig<'citationss', CitationsSelectableField, CitationsSortableField>;
+export type ICitationsAsManyRelationConfig = Q.IManyRelationConfig<
+  "citations",
+  CitationsSelectableField,
+  CitationsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type ICitationsAsOneRelationQuery = Q.IAsOneRelationQuery<ICitations, CitationsSelectableField>;
+export type ICitationsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  ICitations,
+  CitationsSelectableField
+>;
 
-export type ICitationsAsManyRelationQuery = Q.IAsManyRelationQuery<ICitations, CitationsSelectableField, CitationsSortableField>;
+export type ICitationsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  ICitations,
+  CitationsSelectableField,
+  CitationsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -139,7 +160,11 @@ export interface ICitationsRelationMap extends Record<CitationsRelationKey, unkn
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type ICitationsRelationQueries = Q.IBaseRelationQueries<ICitations, CitationsRelationKey, ICitationsRelationMap>;
+export type ICitationsRelationQueries = Q.IBaseRelationQueries<
+  ICitations,
+  CitationsRelationKey,
+  ICitationsRelationMap
+>;
 
 export type ICitationsItemQuery = Q.IBaseItemQuery<
   ICitations,

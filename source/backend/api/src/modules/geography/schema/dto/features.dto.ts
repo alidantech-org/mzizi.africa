@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -21,7 +20,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * The sole canonical identity for each geographic entity, independent of type, country or geometry. (entity)
  */
 export class FeaturesDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

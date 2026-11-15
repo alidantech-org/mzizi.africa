@@ -2,16 +2,16 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as EntitiesTypes from '#/modules/official/schema/types/entities/entities.types';
-import type * as IndividualsTypes from '#/modules/official/schema/types/individuals/individuals.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
+import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
+import type * as IndividualsTypes from "#/modules/official/schema/types/individuals/individuals.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -25,8 +25,8 @@ import type {
   NAMES_DATE_RANGE_FIELDS,
   NAMES_SELECTABLE_FIELDS,
   NAMES_DEFAULT_SELECT_FIELDS,
-  NAMES_EDITABLE_FIELDS
-} from './names.config';
+  NAMES_EDITABLE_FIELDS,
+} from "./names.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -70,10 +70,7 @@ export type INamesSensitiveFields = never;
 export type INamesTransitionFields = never;
 
 export type INamesImmutableFields =
-  | INamesReadonlyFields
-  | INamesContextualFields
-  | INamesSensitiveFields
-  | INamesTransitionFields;
+  INamesReadonlyFields | INamesContextualFields | INamesSensitiveFields | INamesTransitionFields;
 
 // ----------------------------------
 // WRITE CONTRACTS
@@ -85,8 +82,7 @@ export type INamesSystemWritable = Omit<INames, B.IBaseReadonlyFields | NamesRel
 
 export type INamesUpdatable = Partial<Omit<INames, INamesImmutableFields | NamesRelationKey>>;
 
-export interface INamesTransitionPayload {
-}
+export interface INamesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -110,9 +106,13 @@ export type NamesEditableField = (typeof NAMES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type INamesAsOneRelationConfig = Q.IOneRelationConfig<'names', NamesSelectableField>;
+export type INamesAsOneRelationConfig = Q.IOneRelationConfig<"names", NamesSelectableField>;
 
-export type INamesAsManyRelationConfig = Q.IManyRelationConfig<'namess', NamesSelectableField, NamesSortableField>;
+export type INamesAsManyRelationConfig = Q.IManyRelationConfig<
+  "names",
+  NamesSelectableField,
+  NamesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -120,7 +120,11 @@ export type INamesAsManyRelationConfig = Q.IManyRelationConfig<'namess', NamesSe
 
 export type INamesAsOneRelationQuery = Q.IAsOneRelationQuery<INames, NamesSelectableField>;
 
-export type INamesAsManyRelationQuery = Q.IAsManyRelationQuery<INames, NamesSelectableField, NamesSortableField>;
+export type INamesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  INames,
+  NamesSelectableField,
+  NamesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -137,7 +141,11 @@ export interface INamesRelationMap extends Record<NamesRelationKey, unknown> {
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type INamesRelationQueries = Q.IBaseRelationQueries<INames, NamesRelationKey, INamesRelationMap>;
+export type INamesRelationQueries = Q.IBaseRelationQueries<
+  INames,
+  NamesRelationKey,
+  INamesRelationMap
+>;
 
 export type INamesItemQuery = Q.IBaseItemQuery<
   INames,

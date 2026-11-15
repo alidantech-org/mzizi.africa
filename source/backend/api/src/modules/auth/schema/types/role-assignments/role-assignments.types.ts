@@ -2,17 +2,17 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as AccountsTypes from '#/modules/auth/schema/types/accounts/accounts.types';
-import type * as DelegationsTypes from '#/modules/auth/schema/types/delegations/delegations.types';
-import type * as MembershipsTypes from '#/modules/auth/schema/types/memberships/memberships.types';
-import type * as RolesTypes from '#/modules/auth/schema/types/roles/roles.types';
-import type * as ScopesTypes from '#/modules/auth/schema/types/scopes/scopes.types';
+import type * as AccountsTypes from "#/modules/auth/schema/types/accounts/accounts.types";
+import type * as DelegationsTypes from "#/modules/auth/schema/types/delegations/delegations.types";
+import type * as MembershipsTypes from "#/modules/auth/schema/types/memberships/memberships.types";
+import type * as RolesTypes from "#/modules/auth/schema/types/roles/roles.types";
+import type * as ScopesTypes from "#/modules/auth/schema/types/scopes/scopes.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -26,8 +26,8 @@ import type {
   ROLE_ASSIGNMENTS_DATE_RANGE_FIELDS,
   ROLE_ASSIGNMENTS_SELECTABLE_FIELDS,
   ROLE_ASSIGNMENTS_DEFAULT_SELECT_FIELDS,
-  ROLE_ASSIGNMENTS_EDITABLE_FIELDS
-} from './role-assignments.config';
+  ROLE_ASSIGNMENTS_EDITABLE_FIELDS,
+} from "./role-assignments.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -85,14 +85,21 @@ export type IRoleAssignmentsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IRoleAssignmentsCreatable = Omit<IRoleAssignments, IRoleAssignmentsImmutableFields | RoleAssignmentsRelationKey>;
+export type IRoleAssignmentsCreatable = Omit<
+  IRoleAssignments,
+  IRoleAssignmentsImmutableFields | RoleAssignmentsRelationKey
+>;
 
-export type IRoleAssignmentsSystemWritable = Omit<IRoleAssignments, B.IBaseReadonlyFields | RoleAssignmentsRelationKey>;
+export type IRoleAssignmentsSystemWritable = Omit<
+  IRoleAssignments,
+  B.IBaseReadonlyFields | RoleAssignmentsRelationKey
+>;
 
-export type IRoleAssignmentsUpdatable = Partial<Omit<IRoleAssignments, IRoleAssignmentsImmutableFields | RoleAssignmentsRelationKey>>;
+export type IRoleAssignmentsUpdatable = Partial<
+  Omit<IRoleAssignments, IRoleAssignmentsImmutableFields | RoleAssignmentsRelationKey>
+>;
 
-export interface IRoleAssignmentsTransitionPayload {
-}
+export interface IRoleAssignmentsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -108,7 +115,8 @@ export type RoleAssignmentsDateRangeField = (typeof ROLE_ASSIGNMENTS_DATE_RANGE_
 
 export type RoleAssignmentsSelectableField = (typeof ROLE_ASSIGNMENTS_SELECTABLE_FIELDS)[number];
 
-export type RoleAssignmentsDefaultSelectField = (typeof ROLE_ASSIGNMENTS_DEFAULT_SELECT_FIELDS)[number];
+export type RoleAssignmentsDefaultSelectField =
+  (typeof ROLE_ASSIGNMENTS_DEFAULT_SELECT_FIELDS)[number];
 
 export type RoleAssignmentsEditableField = (typeof ROLE_ASSIGNMENTS_EDITABLE_FIELDS)[number];
 
@@ -116,17 +124,31 @@ export type RoleAssignmentsEditableField = (typeof ROLE_ASSIGNMENTS_EDITABLE_FIE
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IRoleAssignmentsAsOneRelationConfig = Q.IOneRelationConfig<'roleAssignments', RoleAssignmentsSelectableField>;
+export type IRoleAssignmentsAsOneRelationConfig = Q.IOneRelationConfig<
+  "roleAssignments",
+  RoleAssignmentsSelectableField
+>;
 
-export type IRoleAssignmentsAsManyRelationConfig = Q.IManyRelationConfig<'roleAssignmentss', RoleAssignmentsSelectableField, RoleAssignmentsSortableField>;
+export type IRoleAssignmentsAsManyRelationConfig = Q.IManyRelationConfig<
+  "roleAssignments",
+  RoleAssignmentsSelectableField,
+  RoleAssignmentsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IRoleAssignmentsAsOneRelationQuery = Q.IAsOneRelationQuery<IRoleAssignments, RoleAssignmentsSelectableField>;
+export type IRoleAssignmentsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IRoleAssignments,
+  RoleAssignmentsSelectableField
+>;
 
-export type IRoleAssignmentsAsManyRelationQuery = Q.IAsManyRelationQuery<IRoleAssignments, RoleAssignmentsSelectableField, RoleAssignmentsSortableField>;
+export type IRoleAssignmentsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IRoleAssignments,
+  RoleAssignmentsSelectableField,
+  RoleAssignmentsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -146,7 +168,11 @@ export interface IRoleAssignmentsRelationMap extends Record<RoleAssignmentsRelat
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IRoleAssignmentsRelationQueries = Q.IBaseRelationQueries<IRoleAssignments, RoleAssignmentsRelationKey, IRoleAssignmentsRelationMap>;
+export type IRoleAssignmentsRelationQueries = Q.IBaseRelationQueries<
+  IRoleAssignments,
+  RoleAssignmentsRelationKey,
+  IRoleAssignmentsRelationMap
+>;
 
 export type IRoleAssignmentsItemQuery = Q.IBaseItemQuery<
   IRoleAssignments,

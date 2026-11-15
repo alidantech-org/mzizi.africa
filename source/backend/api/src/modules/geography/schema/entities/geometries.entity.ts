@@ -19,9 +19,11 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Entity({ schema: "geography", name: "geometries" })
 @Index(["featureId"])
 @Index(["validFrom", "validUntil"])
-@Check("chk_geometries_validity_window_is_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
+@Check(
+  "chk_geometries_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
 export class GeometriesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

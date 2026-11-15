@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as CountryTypes from '#/modules/reference/schema/types/country/country.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CountryTypes from "#/modules/reference/schema/types/country/country.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   ENTITIES_DATE_RANGE_FIELDS,
   ENTITIES_SELECTABLE_FIELDS,
   ENTITIES_DEFAULT_SELECT_FIELDS,
-  ENTITIES_EDITABLE_FIELDS
-} from './entities.config';
+  ENTITIES_EDITABLE_FIELDS,
+} from "./entities.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -78,10 +78,11 @@ export type IEntitiesCreatable = Omit<IEntities, IEntitiesImmutableFields | Enti
 
 export type IEntitiesSystemWritable = Omit<IEntities, B.IBaseReadonlyFields | EntitiesRelationKey>;
 
-export type IEntitiesUpdatable = Partial<Omit<IEntities, IEntitiesImmutableFields | EntitiesRelationKey>>;
+export type IEntitiesUpdatable = Partial<
+  Omit<IEntities, IEntitiesImmutableFields | EntitiesRelationKey>
+>;
 
-export interface IEntitiesTransitionPayload {
-}
+export interface IEntitiesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -105,9 +106,16 @@ export type EntitiesEditableField = (typeof ENTITIES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IEntitiesAsOneRelationConfig = Q.IOneRelationConfig<'entities', EntitiesSelectableField>;
+export type IEntitiesAsOneRelationConfig = Q.IOneRelationConfig<
+  "entities",
+  EntitiesSelectableField
+>;
 
-export type IEntitiesAsManyRelationConfig = Q.IManyRelationConfig<'entitiess', EntitiesSelectableField, EntitiesSortableField>;
+export type IEntitiesAsManyRelationConfig = Q.IManyRelationConfig<
+  "entities",
+  EntitiesSelectableField,
+  EntitiesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -115,7 +123,11 @@ export type IEntitiesAsManyRelationConfig = Q.IManyRelationConfig<'entitiess', E
 
 export type IEntitiesAsOneRelationQuery = Q.IAsOneRelationQuery<IEntities, EntitiesSelectableField>;
 
-export type IEntitiesAsManyRelationQuery = Q.IAsManyRelationQuery<IEntities, EntitiesSelectableField, EntitiesSortableField>;
+export type IEntitiesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IEntities,
+  EntitiesSelectableField,
+  EntitiesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -131,7 +143,11 @@ export interface IEntitiesRelationMap extends Record<EntitiesRelationKey, unknow
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IEntitiesRelationQueries = Q.IBaseRelationQueries<IEntities, EntitiesRelationKey, IEntitiesRelationMap>;
+export type IEntitiesRelationQueries = Q.IBaseRelationQueries<
+  IEntities,
+  EntitiesRelationKey,
+  IEntitiesRelationMap
+>;
 
 export type IEntitiesItemQuery = Q.IBaseItemQuery<
   IEntities,

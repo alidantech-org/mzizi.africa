@@ -28,10 +28,12 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["individualId"])
 @Index(["nameKindId"])
 @Index(["sourceCitationId"])
-@Check("chk_names_validity_window_is_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
+@Check(
+  "chk_names_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
 // Invariant "HasExactlyOneIdentityOwner" has no simple form, so it isn't enforced as a database check.
-export class NamesEntity {
-
+export class OfficialNamesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

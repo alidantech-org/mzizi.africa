@@ -2,8 +2,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -21,8 +21,8 @@ import type {
   TOPIC_DATE_RANGE_FIELDS,
   TOPIC_SELECTABLE_FIELDS,
   TOPIC_DEFAULT_SELECT_FIELDS,
-  TOPIC_EDITABLE_FIELDS
-} from './topic.config';
+  TOPIC_EDITABLE_FIELDS,
+} from "./topic.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -57,10 +57,7 @@ export type ITopicSensitiveFields = never;
 export type ITopicTransitionFields = never;
 
 export type ITopicImmutableFields =
-  | ITopicReadonlyFields
-  | ITopicContextualFields
-  | ITopicSensitiveFields
-  | ITopicTransitionFields;
+  ITopicReadonlyFields | ITopicContextualFields | ITopicSensitiveFields | ITopicTransitionFields;
 
 // ----------------------------------
 // WRITE CONTRACTS
@@ -72,8 +69,7 @@ export type ITopicSystemWritable = Omit<ITopic, B.IBaseReadonlyFields | TopicRel
 
 export type ITopicUpdatable = Partial<Omit<ITopic, ITopicImmutableFields | TopicRelationKey>>;
 
-export interface ITopicTransitionPayload {
-}
+export interface ITopicTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -97,9 +93,13 @@ export type TopicEditableField = (typeof TOPIC_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type ITopicAsOneRelationConfig = Q.IOneRelationConfig<'topic', TopicSelectableField>;
+export type ITopicAsOneRelationConfig = Q.IOneRelationConfig<"topic", TopicSelectableField>;
 
-export type ITopicAsManyRelationConfig = Q.IManyRelationConfig<'topics', TopicSelectableField, TopicSortableField>;
+export type ITopicAsManyRelationConfig = Q.IManyRelationConfig<
+  "topics",
+  TopicSelectableField,
+  TopicSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -107,7 +107,11 @@ export type ITopicAsManyRelationConfig = Q.IManyRelationConfig<'topics', TopicSe
 
 export type ITopicAsOneRelationQuery = Q.IAsOneRelationQuery<ITopic, TopicSelectableField>;
 
-export type ITopicAsManyRelationQuery = Q.IAsManyRelationQuery<ITopic, TopicSelectableField, TopicSortableField>;
+export type ITopicAsManyRelationQuery = Q.IAsManyRelationQuery<
+  ITopic,
+  TopicSelectableField,
+  TopicSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -121,7 +125,11 @@ export interface ITopicRelationMap extends Record<TopicRelationKey, unknown> {
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type ITopicRelationQueries = Q.IBaseRelationQueries<ITopic, TopicRelationKey, ITopicRelationMap>;
+export type ITopicRelationQueries = Q.IBaseRelationQueries<
+  ITopic,
+  TopicRelationKey,
+  ITopicRelationMap
+>;
 
 export type ITopicItemQuery = Q.IBaseItemQuery<
   ITopic,

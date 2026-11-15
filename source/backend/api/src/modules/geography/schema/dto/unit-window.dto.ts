@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsOptional,
@@ -16,7 +15,6 @@ import type { Integer } from "#/modules/shared/schema/type/integer.type.ts";
  * Unit Window
  */
 export class UnitWindowDto {
-
   @IsOptional()
   @IsString()
   @MinLength(1)

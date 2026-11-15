@@ -1,4 +1,3 @@
-
 import type { AccountStatus } from "#/modules/auth/schema/enum/account-status.enum.ts";
 import type { AuthActorKind } from "#/modules/auth/schema/enum/auth-actor-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";

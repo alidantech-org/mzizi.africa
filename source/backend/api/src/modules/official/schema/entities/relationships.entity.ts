@@ -25,12 +25,17 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["toEntityId", "kindId"])
 @Index(["toIndividualId", "kindId"])
 @Index(["sourceCitationId"])
-@Check("chk_relationships_validity_window_is_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
+@Check(
+  "chk_relationships_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
 // Invariant "HasExactlyOneFromIdentity" has no simple form, so it isn't enforced as a database check.
 // Invariant "HasExactlyOneToIdentity" has no simple form, so it isn't enforced as a database check.
-@Check("chk_relationships_does_not_link_identity_to_itself", `from_entity_id <> to_entity_id AND from_individual_id <> to_individual_id`)
-export class RelationshipsEntity {
-
+@Check(
+  "chk_relationships_does_not_link_identity_to_itself",
+  `from_entity_id <> to_entity_id AND from_individual_id <> to_individual_id`,
+)
+export class OfficialRelationshipsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -61,7 +66,11 @@ export class RelationshipsEntity {
   @JoinColumn({ name: "kind_id" })
   kind?: Relation<ValueEntity>;
 
-  @Column({ name: "share_percentage", type: "double precision", nullable: true })
+  @Column({
+    name: "share_percentage",
+    type: "double precision",
+    nullable: true,
+  })
   sharePercentage?: Percentage | null;
 
   @Column({ name: "source_citation_id", type: "uuid", nullable: true })

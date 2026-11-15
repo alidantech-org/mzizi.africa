@@ -22,7 +22,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["successorFeatureId"])
 @Index(["changeKindId"])
 export class ChangesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -42,7 +41,12 @@ export class ChangesEntity {
   @Column({ name: "effective_on", type: "date", nullable: true })
   effectiveOn?: Date | null;
 
-  @Column({ name: "explanation", type: "varchar", length: 4000, nullable: true })
+  @Column({
+    name: "explanation",
+    type: "varchar",
+    length: 4000,
+    nullable: true,
+  })
   explanation?: Description | null;
 
   @Column({ name: "predecessor_feature_id", type: "uuid", nullable: true })

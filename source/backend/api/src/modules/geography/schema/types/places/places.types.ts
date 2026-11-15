@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FeaturesTypes from '#/modules/geography/schema/types/features/features.types';
+import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   PLACES_DATE_RANGE_FIELDS,
   PLACES_SELECTABLE_FIELDS,
   PLACES_DEFAULT_SELECT_FIELDS,
-  PLACES_EDITABLE_FIELDS
-} from './places.config';
+  PLACES_EDITABLE_FIELDS,
+} from "./places.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -72,8 +72,7 @@ export type IPlacesSystemWritable = Omit<IPlaces, B.IBaseReadonlyFields | Places
 
 export type IPlacesUpdatable = Partial<Omit<IPlaces, IPlacesImmutableFields | PlacesRelationKey>>;
 
-export interface IPlacesTransitionPayload {
-}
+export interface IPlacesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -97,9 +96,13 @@ export type PlacesEditableField = (typeof PLACES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IPlacesAsOneRelationConfig = Q.IOneRelationConfig<'places', PlacesSelectableField>;
+export type IPlacesAsOneRelationConfig = Q.IOneRelationConfig<"places", PlacesSelectableField>;
 
-export type IPlacesAsManyRelationConfig = Q.IManyRelationConfig<'placess', PlacesSelectableField, PlacesSortableField>;
+export type IPlacesAsManyRelationConfig = Q.IManyRelationConfig<
+  "places",
+  PlacesSelectableField,
+  PlacesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -107,7 +110,11 @@ export type IPlacesAsManyRelationConfig = Q.IManyRelationConfig<'placess', Place
 
 export type IPlacesAsOneRelationQuery = Q.IAsOneRelationQuery<IPlaces, PlacesSelectableField>;
 
-export type IPlacesAsManyRelationQuery = Q.IAsManyRelationQuery<IPlaces, PlacesSelectableField, PlacesSortableField>;
+export type IPlacesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IPlaces,
+  PlacesSelectableField,
+  PlacesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -121,7 +128,11 @@ export interface IPlacesRelationMap extends Record<PlacesRelationKey, unknown> {
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IPlacesRelationQueries = Q.IBaseRelationQueries<IPlaces, PlacesRelationKey, IPlacesRelationMap>;
+export type IPlacesRelationQueries = Q.IBaseRelationQueries<
+  IPlaces,
+  PlacesRelationKey,
+  IPlacesRelationMap
+>;
 
 export type IPlacesItemQuery = Q.IBaseItemQuery<
   IPlaces,

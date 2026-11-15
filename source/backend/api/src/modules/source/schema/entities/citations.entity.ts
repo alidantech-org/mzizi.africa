@@ -27,7 +27,6 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 @Index(["fileVersionId"])
 @Index(["locatorKindId"])
 export class CitationsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

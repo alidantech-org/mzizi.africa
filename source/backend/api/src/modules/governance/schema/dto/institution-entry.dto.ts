@@ -17,7 +17,6 @@ import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.ty
  * Institution Entry
  */
 export class InstitutionEntryDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

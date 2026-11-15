@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  Index,
-  PrimaryColumn,
-} from "typeorm";
+import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
@@ -15,7 +10,6 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 @Entity({ schema: "auth", name: "scopes" })
 @Index(["scopeHash"], { unique: true })
 export class ScopesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

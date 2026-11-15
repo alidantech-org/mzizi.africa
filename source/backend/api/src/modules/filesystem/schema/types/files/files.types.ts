@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
-import type { Retention } from '#/modules/filesystem/schema/enum/retention.enum';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
+import type { Retention } from "#/modules/filesystem/schema/enum/retention.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FileVersionsTypes from '#/modules/filesystem/schema/types/file-versions/file-versions.types';
-import type * as FoldersTypes from '#/modules/filesystem/schema/types/folders/folders.types';
+import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
+import type * as FoldersTypes from "#/modules/filesystem/schema/types/folders/folders.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   FILES_DATE_RANGE_FIELDS,
   FILES_SELECTABLE_FIELDS,
   FILES_DEFAULT_SELECT_FIELDS,
-  FILES_EDITABLE_FIELDS
-} from './files.config';
+  FILES_EDITABLE_FIELDS,
+} from "./files.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -63,10 +63,7 @@ export type IFilesSensitiveFields = never;
 export type IFilesTransitionFields = never;
 
 export type IFilesImmutableFields =
-  | IFilesReadonlyFields
-  | IFilesContextualFields
-  | IFilesSensitiveFields
-  | IFilesTransitionFields;
+  IFilesReadonlyFields | IFilesContextualFields | IFilesSensitiveFields | IFilesTransitionFields;
 
 // ----------------------------------
 // WRITE CONTRACTS
@@ -78,8 +75,7 @@ export type IFilesSystemWritable = Omit<IFiles, B.IBaseReadonlyFields | FilesRel
 
 export type IFilesUpdatable = Partial<Omit<IFiles, IFilesImmutableFields | FilesRelationKey>>;
 
-export interface IFilesTransitionPayload {
-}
+export interface IFilesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -103,9 +99,13 @@ export type FilesEditableField = (typeof FILES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IFilesAsOneRelationConfig = Q.IOneRelationConfig<'files', FilesSelectableField>;
+export type IFilesAsOneRelationConfig = Q.IOneRelationConfig<"files", FilesSelectableField>;
 
-export type IFilesAsManyRelationConfig = Q.IManyRelationConfig<'filess', FilesSelectableField, FilesSortableField>;
+export type IFilesAsManyRelationConfig = Q.IManyRelationConfig<
+  "files",
+  FilesSelectableField,
+  FilesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -113,7 +113,11 @@ export type IFilesAsManyRelationConfig = Q.IManyRelationConfig<'filess', FilesSe
 
 export type IFilesAsOneRelationQuery = Q.IAsOneRelationQuery<IFiles, FilesSelectableField>;
 
-export type IFilesAsManyRelationQuery = Q.IAsManyRelationQuery<IFiles, FilesSelectableField, FilesSortableField>;
+export type IFilesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IFiles,
+  FilesSelectableField,
+  FilesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -128,7 +132,11 @@ export interface IFilesRelationMap extends Record<FilesRelationKey, unknown> {
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IFilesRelationQueries = Q.IBaseRelationQueries<IFiles, FilesRelationKey, IFilesRelationMap>;
+export type IFilesRelationQueries = Q.IBaseRelationQueries<
+  IFiles,
+  FilesRelationKey,
+  IFilesRelationMap
+>;
 
 export type IFilesItemQuery = Q.IBaseItemQuery<
   IFiles,

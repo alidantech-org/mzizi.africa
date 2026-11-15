@@ -25,11 +25,15 @@ import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 @Index(["publisherId"])
 @Index(["kindId"])
 export class DocumentsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
-  @Column({ name: "canonical_url", type: "varchar", length: 2048, nullable: true })
+  @Column({
+    name: "canonical_url",
+    type: "varchar",
+    length: 2048,
+    nullable: true,
+  })
   canonicalUrl?: Url | null;
 
   @Column({ name: "code", type: "varchar", length: 255 })

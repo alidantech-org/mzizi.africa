@@ -1,9 +1,4 @@
-
-import {
-  IsISO8601,
-  IsString,
-  IsUUID,
-} from "class-validator";
+import { IsISO8601, IsString, IsUUID } from "class-validator";
 
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
@@ -12,7 +7,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Permission granted to a role, with who granted it and when. (entity)
  */
 export class RolePermissionsDto {
-
   @IsISO8601({})
   grantedAt!: Instant;
 

@@ -23,9 +23,11 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["kindId"])
 @Index(["registrationCountryId"])
 @Index(["sourceCitationId"])
-@Check("chk_entities_registration_and_dissolution_are_ordered", `registered_on = null OR dissolved_on = null OR registered_on <= dissolved_on`)
+@Check(
+  "chk_entities_registration_and_dissolution_are_ordered",
+  `registered_on = null OR dissolved_on = null OR registered_on <= dissolved_on`,
+)
 export class EntitiesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

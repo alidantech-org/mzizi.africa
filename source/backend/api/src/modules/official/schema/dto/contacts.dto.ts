@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -24,7 +23,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Invariant "HasExactlyOneIdentityOwner" has no simple form, so it isn't validated here.
  */
 export class ContactsDto {
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -65,9 +63,13 @@ export class ContactsDto {
   @IsOptional()
   @ValidateIf((object) => object.validFrom !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<ContactsDto>((object) => object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil, {
-    message: "Validity Window Is Ordered",
-  })
+  @Satisfies<ContactsDto>(
+    (object) =>
+      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+    {
+      message: "Validity Window Is Ordered",
+    },
+  )
   validFrom?: CalendarDate | null;
 
   @IsOptional()

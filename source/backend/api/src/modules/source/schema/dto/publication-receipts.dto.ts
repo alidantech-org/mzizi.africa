@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -24,7 +23,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Immutable Main acknowledgement committed atomically with accepted records and provenance. Same-key different-hash retries must conflict. (entity)
  */
 export class PublicationReceiptsDto {
-
   @IsString()
   @IsJSON()
   actorSnapshot!: JsonText;

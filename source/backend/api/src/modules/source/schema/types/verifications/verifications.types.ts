@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
-import type { VerificationOutcome } from '#/modules/source/schema/enum/verification-outcome.enum';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
+import type { VerificationOutcome } from "#/modules/source/schema/enum/verification-outcome.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as EvidenceTypes from '#/modules/source/schema/types/evidence/evidence.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
+import type * as EvidenceTypes from "#/modules/source/schema/types/evidence/evidence.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   VERIFICATIONS_DATE_RANGE_FIELDS,
   VERIFICATIONS_SELECTABLE_FIELDS,
   VERIFICATIONS_DEFAULT_SELECT_FIELDS,
-  VERIFICATIONS_EDITABLE_FIELDS
-} from './verifications.config';
+  VERIFICATIONS_EDITABLE_FIELDS,
+} from "./verifications.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -76,14 +76,21 @@ export type IVerificationsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IVerificationsCreatable = Omit<IVerifications, IVerificationsImmutableFields | VerificationsRelationKey>;
+export type IVerificationsCreatable = Omit<
+  IVerifications,
+  IVerificationsImmutableFields | VerificationsRelationKey
+>;
 
-export type IVerificationsSystemWritable = Omit<IVerifications, B.IBaseReadonlyFields | VerificationsRelationKey>;
+export type IVerificationsSystemWritable = Omit<
+  IVerifications,
+  B.IBaseReadonlyFields | VerificationsRelationKey
+>;
 
-export type IVerificationsUpdatable = Partial<Omit<IVerifications, IVerificationsImmutableFields | VerificationsRelationKey>>;
+export type IVerificationsUpdatable = Partial<
+  Omit<IVerifications, IVerificationsImmutableFields | VerificationsRelationKey>
+>;
 
-export interface IVerificationsTransitionPayload {
-}
+export interface IVerificationsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -107,17 +114,31 @@ export type VerificationsEditableField = (typeof VERIFICATIONS_EDITABLE_FIELDS)[
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IVerificationsAsOneRelationConfig = Q.IOneRelationConfig<'verifications', VerificationsSelectableField>;
+export type IVerificationsAsOneRelationConfig = Q.IOneRelationConfig<
+  "verifications",
+  VerificationsSelectableField
+>;
 
-export type IVerificationsAsManyRelationConfig = Q.IManyRelationConfig<'verificationss', VerificationsSelectableField, VerificationsSortableField>;
+export type IVerificationsAsManyRelationConfig = Q.IManyRelationConfig<
+  "verifications",
+  VerificationsSelectableField,
+  VerificationsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IVerificationsAsOneRelationQuery = Q.IAsOneRelationQuery<IVerifications, VerificationsSelectableField>;
+export type IVerificationsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IVerifications,
+  VerificationsSelectableField
+>;
 
-export type IVerificationsAsManyRelationQuery = Q.IAsManyRelationQuery<IVerifications, VerificationsSelectableField, VerificationsSortableField>;
+export type IVerificationsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IVerifications,
+  VerificationsSelectableField,
+  VerificationsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -133,7 +154,11 @@ export interface IVerificationsRelationMap extends Record<VerificationsRelationK
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IVerificationsRelationQueries = Q.IBaseRelationQueries<IVerifications, VerificationsRelationKey, IVerificationsRelationMap>;
+export type IVerificationsRelationQueries = Q.IBaseRelationQueries<
+  IVerifications,
+  VerificationsRelationKey,
+  IVerificationsRelationMap
+>;
 
 export type IVerificationsItemQuery = Q.IBaseItemQuery<
   IVerifications,

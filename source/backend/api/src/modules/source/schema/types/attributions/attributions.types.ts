@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FileVersionsTypes from '#/modules/filesystem/schema/types/file-versions/file-versions.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as PublishersTypes from '#/modules/source/schema/types/publishers/publishers.types';
+import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as PublishersTypes from "#/modules/source/schema/types/publishers/publishers.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   ATTRIBUTIONS_DATE_RANGE_FIELDS,
   ATTRIBUTIONS_SELECTABLE_FIELDS,
   ATTRIBUTIONS_DEFAULT_SELECT_FIELDS,
-  ATTRIBUTIONS_EDITABLE_FIELDS
-} from './attributions.config';
+  ATTRIBUTIONS_EDITABLE_FIELDS,
+} from "./attributions.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -75,14 +75,21 @@ export type IAttributionsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IAttributionsCreatable = Omit<IAttributions, IAttributionsImmutableFields | AttributionsRelationKey>;
+export type IAttributionsCreatable = Omit<
+  IAttributions,
+  IAttributionsImmutableFields | AttributionsRelationKey
+>;
 
-export type IAttributionsSystemWritable = Omit<IAttributions, B.IBaseReadonlyFields | AttributionsRelationKey>;
+export type IAttributionsSystemWritable = Omit<
+  IAttributions,
+  B.IBaseReadonlyFields | AttributionsRelationKey
+>;
 
-export type IAttributionsUpdatable = Partial<Omit<IAttributions, IAttributionsImmutableFields | AttributionsRelationKey>>;
+export type IAttributionsUpdatable = Partial<
+  Omit<IAttributions, IAttributionsImmutableFields | AttributionsRelationKey>
+>;
 
-export interface IAttributionsTransitionPayload {
-}
+export interface IAttributionsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -106,17 +113,31 @@ export type AttributionsEditableField = (typeof ATTRIBUTIONS_EDITABLE_FIELDS)[nu
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IAttributionsAsOneRelationConfig = Q.IOneRelationConfig<'attributions', AttributionsSelectableField>;
+export type IAttributionsAsOneRelationConfig = Q.IOneRelationConfig<
+  "attributions",
+  AttributionsSelectableField
+>;
 
-export type IAttributionsAsManyRelationConfig = Q.IManyRelationConfig<'attributionss', AttributionsSelectableField, AttributionsSortableField>;
+export type IAttributionsAsManyRelationConfig = Q.IManyRelationConfig<
+  "attributions",
+  AttributionsSelectableField,
+  AttributionsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IAttributionsAsOneRelationQuery = Q.IAsOneRelationQuery<IAttributions, AttributionsSelectableField>;
+export type IAttributionsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IAttributions,
+  AttributionsSelectableField
+>;
 
-export type IAttributionsAsManyRelationQuery = Q.IAsManyRelationQuery<IAttributions, AttributionsSelectableField, AttributionsSortableField>;
+export type IAttributionsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IAttributions,
+  AttributionsSelectableField,
+  AttributionsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -132,7 +153,11 @@ export interface IAttributionsRelationMap extends Record<AttributionsRelationKey
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IAttributionsRelationQueries = Q.IBaseRelationQueries<IAttributions, AttributionsRelationKey, IAttributionsRelationMap>;
+export type IAttributionsRelationQueries = Q.IBaseRelationQueries<
+  IAttributions,
+  AttributionsRelationKey,
+  IAttributionsRelationMap
+>;
 
 export type IAttributionsItemQuery = Q.IBaseItemQuery<
   IAttributions,

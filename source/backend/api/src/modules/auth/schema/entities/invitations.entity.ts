@@ -20,7 +20,6 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 @Index(["acceptedAccountId"])
 @Index(["tokenDigest"], { unique: true })
 export class InvitationsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

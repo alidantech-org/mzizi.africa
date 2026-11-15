@@ -2,14 +2,14 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
-import type { Access } from '#/modules/filesystem/schema/enum/access.enum';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
+import type { Access } from "#/modules/filesystem/schema/enum/access.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -23,8 +23,8 @@ import type {
   FOLDERS_DATE_RANGE_FIELDS,
   FOLDERS_SELECTABLE_FIELDS,
   FOLDERS_DEFAULT_SELECT_FIELDS,
-  FOLDERS_EDITABLE_FIELDS
-} from './folders.config';
+  FOLDERS_EDITABLE_FIELDS,
+} from "./folders.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -76,10 +76,11 @@ export type IFoldersCreatable = Omit<IFolders, IFoldersImmutableFields | Folders
 
 export type IFoldersSystemWritable = Omit<IFolders, B.IBaseReadonlyFields | FoldersRelationKey>;
 
-export type IFoldersUpdatable = Partial<Omit<IFolders, IFoldersImmutableFields | FoldersRelationKey>>;
+export type IFoldersUpdatable = Partial<
+  Omit<IFolders, IFoldersImmutableFields | FoldersRelationKey>
+>;
 
-export interface IFoldersTransitionPayload {
-}
+export interface IFoldersTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -103,9 +104,13 @@ export type FoldersEditableField = (typeof FOLDERS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IFoldersAsOneRelationConfig = Q.IOneRelationConfig<'folders', FoldersSelectableField>;
+export type IFoldersAsOneRelationConfig = Q.IOneRelationConfig<"folders", FoldersSelectableField>;
 
-export type IFoldersAsManyRelationConfig = Q.IManyRelationConfig<'folderss', FoldersSelectableField, FoldersSortableField>;
+export type IFoldersAsManyRelationConfig = Q.IManyRelationConfig<
+  "folders",
+  FoldersSelectableField,
+  FoldersSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -113,7 +118,11 @@ export type IFoldersAsManyRelationConfig = Q.IManyRelationConfig<'folderss', Fol
 
 export type IFoldersAsOneRelationQuery = Q.IAsOneRelationQuery<IFolders, FoldersSelectableField>;
 
-export type IFoldersAsManyRelationQuery = Q.IAsManyRelationQuery<IFolders, FoldersSelectableField, FoldersSortableField>;
+export type IFoldersAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IFolders,
+  FoldersSelectableField,
+  FoldersSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -128,7 +137,11 @@ export interface IFoldersRelationMap extends Record<FoldersRelationKey, unknown>
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IFoldersRelationQueries = Q.IBaseRelationQueries<IFolders, FoldersRelationKey, IFoldersRelationMap>;
+export type IFoldersRelationQueries = Q.IBaseRelationQueries<
+  IFolders,
+  FoldersRelationKey,
+  IFoldersRelationMap
+>;
 
 export type IFoldersItemQuery = Q.IBaseItemQuery<
   IFolders,

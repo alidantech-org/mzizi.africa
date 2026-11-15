@@ -1,4 +1,3 @@
-
 import {
   IsEmail,
   IsISO8601,
@@ -18,7 +17,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Single-use invitation to an institution; only a digest of the token is stored. (entity)
  */
 export class InvitationsDto {
-
   @IsOptional()
   @ValidateIf((object) => object.acceptedAccountId !== null)
   @IsString()

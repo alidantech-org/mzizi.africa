@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as InstitutionsTypes from '#/modules/governance/schema/types/institutions/institutions.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
+import type * as InstitutionsTypes from "#/modules/governance/schema/types/institutions/institutions.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   RELATIONSHIPS_DATE_RANGE_FIELDS,
   RELATIONSHIPS_SELECTABLE_FIELDS,
   RELATIONSHIPS_DEFAULT_SELECT_FIELDS,
-  RELATIONSHIPS_EDITABLE_FIELDS
-} from './relationships.config';
+  RELATIONSHIPS_EDITABLE_FIELDS,
+} from "./relationships.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -75,14 +75,21 @@ export type IRelationshipsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IRelationshipsCreatable = Omit<IRelationships, IRelationshipsImmutableFields | RelationshipsRelationKey>;
+export type IRelationshipsCreatable = Omit<
+  IRelationships,
+  IRelationshipsImmutableFields | RelationshipsRelationKey
+>;
 
-export type IRelationshipsSystemWritable = Omit<IRelationships, B.IBaseReadonlyFields | RelationshipsRelationKey>;
+export type IRelationshipsSystemWritable = Omit<
+  IRelationships,
+  B.IBaseReadonlyFields | RelationshipsRelationKey
+>;
 
-export type IRelationshipsUpdatable = Partial<Omit<IRelationships, IRelationshipsImmutableFields | RelationshipsRelationKey>>;
+export type IRelationshipsUpdatable = Partial<
+  Omit<IRelationships, IRelationshipsImmutableFields | RelationshipsRelationKey>
+>;
 
-export interface IRelationshipsTransitionPayload {
-}
+export interface IRelationshipsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -106,17 +113,31 @@ export type RelationshipsEditableField = (typeof RELATIONSHIPS_EDITABLE_FIELDS)[
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IRelationshipsAsOneRelationConfig = Q.IOneRelationConfig<'relationships', RelationshipsSelectableField>;
+export type IRelationshipsAsOneRelationConfig = Q.IOneRelationConfig<
+  "relationships",
+  RelationshipsSelectableField
+>;
 
-export type IRelationshipsAsManyRelationConfig = Q.IManyRelationConfig<'relationshipss', RelationshipsSelectableField, RelationshipsSortableField>;
+export type IRelationshipsAsManyRelationConfig = Q.IManyRelationConfig<
+  "relationships",
+  RelationshipsSelectableField,
+  RelationshipsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IRelationshipsAsOneRelationQuery = Q.IAsOneRelationQuery<IRelationships, RelationshipsSelectableField>;
+export type IRelationshipsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IRelationships,
+  RelationshipsSelectableField
+>;
 
-export type IRelationshipsAsManyRelationQuery = Q.IAsManyRelationQuery<IRelationships, RelationshipsSelectableField, RelationshipsSortableField>;
+export type IRelationshipsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IRelationships,
+  RelationshipsSelectableField,
+  RelationshipsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -133,7 +154,11 @@ export interface IRelationshipsRelationMap extends Record<RelationshipsRelationK
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IRelationshipsRelationQueries = Q.IBaseRelationQueries<IRelationships, RelationshipsRelationKey, IRelationshipsRelationMap>;
+export type IRelationshipsRelationQueries = Q.IBaseRelationQueries<
+  IRelationships,
+  RelationshipsRelationKey,
+  IRelationshipsRelationMap
+>;
 
 export type IRelationshipsItemQuery = Q.IBaseItemQuery<
   IRelationships,

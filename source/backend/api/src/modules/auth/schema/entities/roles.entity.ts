@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  Index,
-  PrimaryColumn,
-} from "typeorm";
+import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -16,7 +11,6 @@ import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-s
 @Entity({ schema: "auth", name: "roles" })
 @Index(["code"], { unique: true })
 export class RolesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -26,7 +20,12 @@ export class RolesEntity {
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
 
-  @Column({ name: "description", type: "varchar", length: 4000, nullable: true })
+  @Column({
+    name: "description",
+    type: "varchar",
+    length: 4000,
+    nullable: true,
+  })
   description?: Description | null;
 
   @Column({ name: "managing_institution_ref_id", type: "uuid", nullable: true })

@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  Index,
-  PrimaryColumn,
-} from "typeorm";
+import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -18,7 +13,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["code"], { unique: true })
 @Index(["extension"], { unique: true })
 export class FileExtensionsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -34,7 +28,12 @@ export class FileExtensionsEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
-  @Column({ name: "description", type: "varchar", length: 4000, nullable: true })
+  @Column({
+    name: "description",
+    type: "varchar",
+    length: 4000,
+    nullable: true,
+  })
   description?: Description | null;
 
   @Column({ name: "extension", type: "varchar", length: 100 })

@@ -1,17 +1,10 @@
-
-import {
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from "class-validator";
+import { IsString, Matches, MaxLength, MinLength } from "class-validator";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 
 /**
  * Member Key
  */
 export class MemberKeyDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

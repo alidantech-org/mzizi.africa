@@ -2,8 +2,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -21,8 +21,8 @@ import type {
   SCHEME_DATE_RANGE_FIELDS,
   SCHEME_SELECTABLE_FIELDS,
   SCHEME_DEFAULT_SELECT_FIELDS,
-  SCHEME_EDITABLE_FIELDS
-} from './scheme.config';
+  SCHEME_EDITABLE_FIELDS,
+} from "./scheme.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -71,8 +71,7 @@ export type ISchemeSystemWritable = Omit<IScheme, B.IBaseReadonlyFields | Scheme
 
 export type ISchemeUpdatable = Partial<Omit<IScheme, ISchemeImmutableFields | SchemeRelationKey>>;
 
-export interface ISchemeTransitionPayload {
-}
+export interface ISchemeTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -96,9 +95,13 @@ export type SchemeEditableField = (typeof SCHEME_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type ISchemeAsOneRelationConfig = Q.IOneRelationConfig<'scheme', SchemeSelectableField>;
+export type ISchemeAsOneRelationConfig = Q.IOneRelationConfig<"scheme", SchemeSelectableField>;
 
-export type ISchemeAsManyRelationConfig = Q.IManyRelationConfig<'schemes', SchemeSelectableField, SchemeSortableField>;
+export type ISchemeAsManyRelationConfig = Q.IManyRelationConfig<
+  "schemes",
+  SchemeSelectableField,
+  SchemeSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -106,20 +109,27 @@ export type ISchemeAsManyRelationConfig = Q.IManyRelationConfig<'schemes', Schem
 
 export type ISchemeAsOneRelationQuery = Q.IAsOneRelationQuery<IScheme, SchemeSelectableField>;
 
-export type ISchemeAsManyRelationQuery = Q.IAsManyRelationQuery<IScheme, SchemeSelectableField, SchemeSortableField>;
+export type ISchemeAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IScheme,
+  SchemeSelectableField,
+  SchemeSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
 // ----------------------------------
 
-export interface ISchemeRelationMap extends Record<SchemeRelationKey, unknown> {
-}
+export interface ISchemeRelationMap extends Record<SchemeRelationKey, unknown> {}
 
 // ----------------------------------
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type ISchemeRelationQueries = Q.IBaseRelationQueries<IScheme, SchemeRelationKey, ISchemeRelationMap>;
+export type ISchemeRelationQueries = Q.IBaseRelationQueries<
+  IScheme,
+  SchemeRelationKey,
+  ISchemeRelationMap
+>;
 
 export type ISchemeItemQuery = Q.IBaseItemQuery<
   IScheme,

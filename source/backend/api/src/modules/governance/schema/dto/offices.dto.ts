@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -23,7 +22,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * One established public office, independent of any current holder and optionally scoped to a geographic unit. (entity)
  */
 export class OfficesDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -68,9 +66,13 @@ export class OfficesDto {
   @IsOptional()
   @ValidateIf((object) => object.validFrom !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<OfficesDto>((object) => object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil, {
-    message: "Validity Window Is Ordered",
-  })
+  @Satisfies<OfficesDto>(
+    (object) =>
+      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+    {
+      message: "Validity Window Is Ordered",
+    },
+  )
   validFrom?: CalendarDate | null;
 
   @IsOptional()

@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -21,7 +20,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * One responsibility or authority assignment for an institution or office. (entity)
  */
 export class MandatesDto {
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -66,9 +64,13 @@ export class MandatesDto {
   @IsOptional()
   @ValidateIf((object) => object.validFrom !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<MandatesDto>((object) => object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil, {
-    message: "Validity Window Is Ordered",
-  })
+  @Satisfies<MandatesDto>(
+    (object) =>
+      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+    {
+      message: "Validity Window Is Ordered",
+    },
+  )
   validFrom?: CalendarDate | null;
 
   @IsOptional()

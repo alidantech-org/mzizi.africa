@@ -22,7 +22,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["parentId"])
 @Check("chk_topic_topic_does_not_parent_itself", `id <> parent_id`)
 export class TopicEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

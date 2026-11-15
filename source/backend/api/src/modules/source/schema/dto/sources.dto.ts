@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -22,7 +21,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Stable publication-channel identity independent of any public website. (entity)
  */
 export class SourcesDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

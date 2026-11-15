@@ -19,7 +19,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["code"], { unique: true })
 @Index(["featureTypeId"])
 export class FeaturesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

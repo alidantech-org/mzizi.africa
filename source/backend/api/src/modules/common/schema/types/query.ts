@@ -1,4 +1,4 @@
-import { ESortOrder, ERelationType } from './enums';
+import { ESortOrder, ERelationType } from "./enums";
 
 // ----------------------------------
 // PRIMITIVES
@@ -12,14 +12,20 @@ export type IDateRange = {
 export type IRelationQueryValue<
   TRelatedEntity,
   TSelectableField extends keyof TRelatedEntity & string,
-  TSortableField extends keyof TRelatedEntity & string
-> = IAsOneRelationQuery<TRelatedEntity, TSelectableField> | IAsManyRelationQuery<TRelatedEntity, TSelectableField, TSortableField>;
+  TSortableField extends keyof TRelatedEntity & string,
+> =
+  | IAsOneRelationQuery<TRelatedEntity, TSelectableField>
+  | IAsManyRelationQuery<TRelatedEntity, TSelectableField, TSortableField>;
 
 // ----------------------------------
 // RELATION QUERIES
 // ----------------------------------
 
-export type IBaseRelationQueries<TEntity, TRelationKey extends keyof TEntity, TMap extends Record<TRelationKey, unknown>> = {
+export type IBaseRelationQueries<
+  TEntity,
+  TRelationKey extends keyof TEntity,
+  TMap extends Record<TRelationKey, unknown>,
+> = {
   readonly [K in TRelationKey]?: TMap[K];
 };
 
@@ -27,7 +33,9 @@ export type IBaseRelationQueries<TEntity, TRelationKey extends keyof TEntity, TM
 // FILTER
 // ----------------------------------
 
-export type IBaseFilter<TEntity, TFilterableField extends keyof TEntity> = Partial<Pick<TEntity, TFilterableField>>;
+export type IBaseFilter<TEntity, TFilterableField extends keyof TEntity> = Partial<
+  Pick<TEntity, TFilterableField>
+>;
 
 // ----------------------------------
 // ITEM QUERY
@@ -40,7 +48,7 @@ export type IBaseItemQuery<
   TInclude extends TRelationKey,
   TFields extends TSelectableField,
   TRelationMap extends Record<TRelationKey, unknown>,
-  TRelationQueries extends IBaseRelationQueries<TEntity, TRelationKey, TRelationMap>
+  TRelationQueries extends IBaseRelationQueries<TEntity, TRelationKey, TRelationMap>,
 > = TRelationQueries & {
   include?: TInclude[];
   fields?: TFields[];
@@ -63,7 +71,15 @@ export type IBaseListQuery<
   TFilterableField extends keyof TEntity & string,
   TRelationMap extends Record<TRelationKey, unknown>,
   TRelationQueries extends IBaseRelationQueries<TEntity, TRelationKey, TRelationMap>,
-  TItemQuery extends IBaseItemQuery<TEntity, TRelationKey, TSelectableField, TInclude, TFields, TRelationMap, TRelationQueries>
+  TItemQuery extends IBaseItemQuery<
+    TEntity,
+    TRelationKey,
+    TSelectableField,
+    TInclude,
+    TFields,
+    TRelationMap,
+    TRelationQueries
+  >,
 > = TItemQuery &
   TFilterableField & {
     cursor?: string;
@@ -98,7 +114,11 @@ export interface IOneRelationConfig<TRelationKey extends string, TSelectableFiel
   defaultSelectFields: readonly TSelectableField[];
 }
 
-export interface IManyRelationConfig<TRelationKey extends string, TSelectableField extends string, TSortableField extends string> {
+export interface IManyRelationConfig<
+  TRelationKey extends string,
+  TSelectableField extends string,
+  TSortableField extends string,
+> {
   relation: TRelationKey;
   type: ERelationType.Many;
   selectableFields: readonly TSelectableField[];
@@ -116,19 +136,23 @@ export function createRelationKeyMapper<TParentRelationKey extends string>() {
   return {
     one: <TCustomKey extends TParentRelationKey, TSelectableField extends string>(
       config: IOneRelationConfig<string, TSelectableField>,
-      customKey: TCustomKey
+      customKey: TCustomKey,
     ): IOneRelationConfig<TCustomKey, TSelectableField> => ({
       ...config,
-      relation: customKey
+      relation: customKey,
     }),
 
-    many: <TCustomKey extends TParentRelationKey, TSelectableField extends string, TSortableField extends string>(
+    many: <
+      TCustomKey extends TParentRelationKey,
+      TSelectableField extends string,
+      TSortableField extends string,
+    >(
       config: IManyRelationConfig<string, TSelectableField, TSortableField>,
-      customKey: TCustomKey
+      customKey: TCustomKey,
     ): IManyRelationConfig<TCustomKey, TSelectableField, TSortableField> => ({
       ...config,
-      relation: customKey
-    })
+      relation: customKey,
+    }),
   };
 }
 
@@ -144,7 +168,10 @@ export type IAsManyRelationQuery<
   TEntity,
   TSelectableField extends keyof TEntity & string,
   TSortableField extends keyof TEntity & string,
-  TAsOneQuery extends IAsOneRelationQuery<TEntity, TSelectableField> = IAsOneRelationQuery<TEntity, TSelectableField>
+  TAsOneQuery extends IAsOneRelationQuery<TEntity, TSelectableField> = IAsOneRelationQuery<
+    TEntity,
+    TSelectableField
+  >,
 > = TAsOneQuery & {
   sortBy?: TSortableField[];
   sortOrder?: ESortOrder[];
@@ -164,7 +191,8 @@ export interface IEntityQueryOptions<
   TDateRangeField extends keyof TEntity & string,
   TRelationKey extends keyof TEntity & string,
   TOneRelationConfig extends readonly IOneRelationConfig<TRelationKey, string>[] = readonly [],
-  TManyRelationConfig extends readonly IManyRelationConfig<TRelationKey, string, string>[] = readonly []
+  TManyRelationConfig extends readonly IManyRelationConfig<TRelationKey, string, string>[] =
+    readonly [],
 > {
   searchableFields: readonly (keyof TEntity & string)[];
   selectableFields: readonly TSelectableField[];
@@ -172,6 +200,13 @@ export interface IEntityQueryOptions<
   sortableFields: readonly TSortableField[];
   filterFields: readonly TFilterableField[];
   dateRangeFields: readonly TDateRangeField[];
+  /** The entity's relation names a client may load. */
+  relationKeys: readonly TRelationKey[];
+  /** The fields a client may write; everything else is set by the system. */
+  editableFields: readonly (keyof TEntity & string)[];
+  /** How the entity looks as one related row, and as a list of related rows, of another entity. */
+  asOne: IOneRelationConfig<string, TSelectableField>;
+  asMany: IManyRelationConfig<string, TSelectableField, TSortableField>;
   oneRelations: TOneRelationConfig;
   manyRelations: TManyRelationConfig;
 }

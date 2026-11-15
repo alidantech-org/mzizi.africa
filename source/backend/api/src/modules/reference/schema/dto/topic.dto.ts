@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -23,7 +22,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Cross-domain discovery topic hierarchy; topics do not own domain records. (entity)
  */
 export class TopicDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

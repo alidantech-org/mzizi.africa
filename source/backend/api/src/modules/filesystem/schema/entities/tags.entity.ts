@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  Index,
-  PrimaryColumn,
-} from "typeorm";
+import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -16,7 +11,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Entity({ schema: "filesystem", name: "tags" })
 @Index(["code"], { unique: true })
 export class TagsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -29,7 +23,12 @@ export class TagsEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
-  @Column({ name: "description", type: "varchar", length: 4000, nullable: true })
+  @Column({
+    name: "description",
+    type: "varchar",
+    length: 4000,
+    nullable: true,
+  })
   description?: Description | null;
 
   @Column({ name: "title", type: "varchar", length: 300 })

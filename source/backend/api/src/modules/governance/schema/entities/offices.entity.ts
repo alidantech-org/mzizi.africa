@@ -23,9 +23,11 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["code"], { unique: true })
 @Index(["unitFeatureId"])
 @Index(["sourceCitationId"])
-@Check("chk_offices_validity_window_is_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
+@Check(
+  "chk_offices_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
 export class OfficesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

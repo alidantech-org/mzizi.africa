@@ -1,4 +1,3 @@
-
 import type { SchemeEntry } from "#/modules/reference/schema/interface/scheme-entry.interface.ts";
 
 /** Scheme Collection */

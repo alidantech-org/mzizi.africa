@@ -40,9 +40,16 @@ const BOOLEAN = new Set(["isBoolean"]);
  * than reflected design types, which per-file compilers (SWC, esbuild) cannot resolve for
  * imported type aliases.
  */
-function fieldKinds(type: abstract new (...args: never[]) => unknown): Map<string, "number" | "boolean"> {
+function fieldKinds(
+  type: abstract new (...args: never[]) => unknown,
+): Map<string, "number" | "boolean"> {
   const kinds = new Map<string, "number" | "boolean">();
-  for (const item of getMetadataStorage().getTargetValidationMetadatas(type as never, "", true, false)) {
+  for (const item of getMetadataStorage().getTargetValidationMetadatas(
+    type as never,
+    "",
+    true,
+    false,
+  )) {
     const name = item.name ?? "";
     if (NUMERIC.has(name)) kinds.set(item.propertyName, "number");
     else if (BOOLEAN.has(name)) kinds.set(item.propertyName, "boolean");
@@ -50,7 +57,10 @@ function fieldKinds(type: abstract new (...args: never[]) => unknown): Map<strin
   return kinds;
 }
 
-function coerceQuery(query: Record<string, unknown>, type: abstract new (...args: never[]) => unknown) {
+function coerceQuery(
+  query: Record<string, unknown>,
+  type: abstract new (...args: never[]) => unknown,
+) {
   const kinds = fieldKinds(type);
   const coerced: Record<string, unknown> = { ...query };
   for (const [key, raw] of Object.entries(query)) {
@@ -62,7 +72,8 @@ function coerceQuery(query: Record<string, unknown>, type: abstract new (...args
 
 function coerce(value: unknown, kind: "number" | "boolean" | undefined): unknown {
   if (typeof value !== "string") return value;
-  if (kind === "number" && value.trim() !== "" && !Number.isNaN(Number(value))) return Number(value);
+  if (kind === "number" && value.trim() !== "" && !Number.isNaN(Number(value)))
+    return Number(value);
   if (kind === "boolean" && (value === "true" || value === "false")) return value === "true";
   return value;
 }

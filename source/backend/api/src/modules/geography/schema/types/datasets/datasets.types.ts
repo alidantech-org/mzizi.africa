@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FeaturesTypes from '#/modules/geography/schema/types/features/features.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as UnitTypes from '#/modules/reference/schema/types/unit/unit.types';
+import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as UnitTypes from "#/modules/reference/schema/types/unit/unit.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   DATASETS_DATE_RANGE_FIELDS,
   DATASETS_SELECTABLE_FIELDS,
   DATASETS_DEFAULT_SELECT_FIELDS,
-  DATASETS_EDITABLE_FIELDS
-} from './datasets.config';
+  DATASETS_EDITABLE_FIELDS,
+} from "./datasets.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -85,10 +85,11 @@ export type IDatasetsCreatable = Omit<IDatasets, IDatasetsImmutableFields | Data
 
 export type IDatasetsSystemWritable = Omit<IDatasets, B.IBaseReadonlyFields | DatasetsRelationKey>;
 
-export type IDatasetsUpdatable = Partial<Omit<IDatasets, IDatasetsImmutableFields | DatasetsRelationKey>>;
+export type IDatasetsUpdatable = Partial<
+  Omit<IDatasets, IDatasetsImmutableFields | DatasetsRelationKey>
+>;
 
-export interface IDatasetsTransitionPayload {
-}
+export interface IDatasetsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -112,9 +113,16 @@ export type DatasetsEditableField = (typeof DATASETS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IDatasetsAsOneRelationConfig = Q.IOneRelationConfig<'datasets', DatasetsSelectableField>;
+export type IDatasetsAsOneRelationConfig = Q.IOneRelationConfig<
+  "datasets",
+  DatasetsSelectableField
+>;
 
-export type IDatasetsAsManyRelationConfig = Q.IManyRelationConfig<'datasetss', DatasetsSelectableField, DatasetsSortableField>;
+export type IDatasetsAsManyRelationConfig = Q.IManyRelationConfig<
+  "datasets",
+  DatasetsSelectableField,
+  DatasetsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -122,7 +130,11 @@ export type IDatasetsAsManyRelationConfig = Q.IManyRelationConfig<'datasetss', D
 
 export type IDatasetsAsOneRelationQuery = Q.IAsOneRelationQuery<IDatasets, DatasetsSelectableField>;
 
-export type IDatasetsAsManyRelationQuery = Q.IAsManyRelationQuery<IDatasets, DatasetsSelectableField, DatasetsSortableField>;
+export type IDatasetsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IDatasets,
+  DatasetsSelectableField,
+  DatasetsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -139,7 +151,11 @@ export interface IDatasetsRelationMap extends Record<DatasetsRelationKey, unknow
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IDatasetsRelationQueries = Q.IBaseRelationQueries<IDatasets, DatasetsRelationKey, IDatasetsRelationMap>;
+export type IDatasetsRelationQueries = Q.IBaseRelationQueries<
+  IDatasets,
+  DatasetsRelationKey,
+  IDatasetsRelationMap
+>;
 
 export type IDatasetsItemQuery = Q.IBaseItemQuery<
   IDatasets,

@@ -2,14 +2,14 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as AccountsTypes from '#/modules/auth/schema/types/accounts/accounts.types';
-import type * as ScopesTypes from '#/modules/auth/schema/types/scopes/scopes.types';
+import type * as AccountsTypes from "#/modules/auth/schema/types/accounts/accounts.types";
+import type * as ScopesTypes from "#/modules/auth/schema/types/scopes/scopes.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -23,8 +23,8 @@ import type {
   DELEGATIONS_DATE_RANGE_FIELDS,
   DELEGATIONS_SELECTABLE_FIELDS,
   DELEGATIONS_DEFAULT_SELECT_FIELDS,
-  DELEGATIONS_EDITABLE_FIELDS
-} from './delegations.config';
+  DELEGATIONS_EDITABLE_FIELDS,
+} from "./delegations.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -75,14 +75,21 @@ export type IDelegationsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IDelegationsCreatable = Omit<IDelegations, IDelegationsImmutableFields | DelegationsRelationKey>;
+export type IDelegationsCreatable = Omit<
+  IDelegations,
+  IDelegationsImmutableFields | DelegationsRelationKey
+>;
 
-export type IDelegationsSystemWritable = Omit<IDelegations, B.IBaseReadonlyFields | DelegationsRelationKey>;
+export type IDelegationsSystemWritable = Omit<
+  IDelegations,
+  B.IBaseReadonlyFields | DelegationsRelationKey
+>;
 
-export type IDelegationsUpdatable = Partial<Omit<IDelegations, IDelegationsImmutableFields | DelegationsRelationKey>>;
+export type IDelegationsUpdatable = Partial<
+  Omit<IDelegations, IDelegationsImmutableFields | DelegationsRelationKey>
+>;
 
-export interface IDelegationsTransitionPayload {
-}
+export interface IDelegationsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -106,17 +113,31 @@ export type DelegationsEditableField = (typeof DELEGATIONS_EDITABLE_FIELDS)[numb
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IDelegationsAsOneRelationConfig = Q.IOneRelationConfig<'delegations', DelegationsSelectableField>;
+export type IDelegationsAsOneRelationConfig = Q.IOneRelationConfig<
+  "delegations",
+  DelegationsSelectableField
+>;
 
-export type IDelegationsAsManyRelationConfig = Q.IManyRelationConfig<'delegationss', DelegationsSelectableField, DelegationsSortableField>;
+export type IDelegationsAsManyRelationConfig = Q.IManyRelationConfig<
+  "delegations",
+  DelegationsSelectableField,
+  DelegationsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IDelegationsAsOneRelationQuery = Q.IAsOneRelationQuery<IDelegations, DelegationsSelectableField>;
+export type IDelegationsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IDelegations,
+  DelegationsSelectableField
+>;
 
-export type IDelegationsAsManyRelationQuery = Q.IAsManyRelationQuery<IDelegations, DelegationsSelectableField, DelegationsSortableField>;
+export type IDelegationsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IDelegations,
+  DelegationsSelectableField,
+  DelegationsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -133,7 +154,11 @@ export interface IDelegationsRelationMap extends Record<DelegationsRelationKey, 
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IDelegationsRelationQueries = Q.IBaseRelationQueries<IDelegations, DelegationsRelationKey, IDelegationsRelationMap>;
+export type IDelegationsRelationQueries = Q.IBaseRelationQueries<
+  IDelegations,
+  DelegationsRelationKey,
+  IDelegationsRelationMap
+>;
 
 export type IDelegationsItemQuery = Q.IBaseItemQuery<
   IDelegations,

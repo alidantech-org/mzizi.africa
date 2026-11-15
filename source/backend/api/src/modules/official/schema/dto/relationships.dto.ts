@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -26,7 +25,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Invariant "HasExactlyOneToIdentity" has no simple form, so it isn't validated here.
  */
 export class RelationshipsDto {
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -39,9 +37,14 @@ export class RelationshipsDto {
   @ValidateIf((object) => object.fromEntityId !== null)
   @IsString()
   @IsUUID()
-  @Satisfies<RelationshipsDto>((object) => object.fromEntityId !== object.toEntityId && object.fromIndividualId !== object.toIndividualId, {
-    message: "Does Not Link Identity To Itself",
-  })
+  @Satisfies<RelationshipsDto>(
+    (object) =>
+      object.fromEntityId !== object.toEntityId &&
+      object.fromIndividualId !== object.toIndividualId,
+    {
+      message: "Does Not Link Identity To Itself",
+    },
+  )
   fromEntityId?: Id | null;
 
   @IsOptional()
@@ -89,9 +92,13 @@ export class RelationshipsDto {
   @IsOptional()
   @ValidateIf((object) => object.validFrom !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<RelationshipsDto>((object) => object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil, {
-    message: "Validity Window Is Ordered",
-  })
+  @Satisfies<RelationshipsDto>(
+    (object) =>
+      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+    {
+      message: "Validity Window Is Ordered",
+    },
+  )
   validFrom?: CalendarDate | null;
 
   @IsOptional()

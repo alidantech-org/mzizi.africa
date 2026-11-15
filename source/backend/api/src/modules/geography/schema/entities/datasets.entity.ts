@@ -30,7 +30,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["coverageFeatureId"])
 @Check("chk_datasets_dataset_resolution_must_be_positive", `resolution = null OR resolution > 0`)
 export class DatasetsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -59,7 +58,12 @@ export class DatasetsEntity {
   @Column({ name: "format", type: "varchar", length: 100 })
   format!: NonEmptyString100;
 
-  @Column({ name: "quality_notes", type: "varchar", length: 4000, nullable: true })
+  @Column({
+    name: "quality_notes",
+    type: "varchar",
+    length: 4000,
+    nullable: true,
+  })
   qualityNotes?: Description | null;
 
   @Column({ name: "representation_id", type: "uuid" })

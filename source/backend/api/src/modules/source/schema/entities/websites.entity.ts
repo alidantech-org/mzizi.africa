@@ -20,7 +20,6 @@ import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 @Index(["sourceId"], { unique: true })
 @Index(["canonicalUrl"], { unique: true })
 export class WebsitesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

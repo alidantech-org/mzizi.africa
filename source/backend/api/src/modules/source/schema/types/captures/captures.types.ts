@@ -2,16 +2,16 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as DocumentsTypes from '#/modules/source/schema/types/documents/documents.types';
-import type * as FileVersionsTypes from '#/modules/filesystem/schema/types/file-versions/file-versions.types';
-import type * as ManifestReleasesTypes from '#/modules/source/schema/types/manifest-releases/manifest-releases.types';
-import type * as SourcesTypes from '#/modules/source/schema/types/sources/sources.types';
+import type * as DocumentsTypes from "#/modules/source/schema/types/documents/documents.types";
+import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
+import type * as ManifestReleasesTypes from "#/modules/source/schema/types/manifest-releases/manifest-releases.types";
+import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -25,8 +25,8 @@ import type {
   CAPTURES_DATE_RANGE_FIELDS,
   CAPTURES_SELECTABLE_FIELDS,
   CAPTURES_DEFAULT_SELECT_FIELDS,
-  CAPTURES_EDITABLE_FIELDS
-} from './captures.config';
+  CAPTURES_EDITABLE_FIELDS,
+} from "./captures.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -82,10 +82,11 @@ export type ICapturesCreatable = Omit<ICaptures, ICapturesImmutableFields | Capt
 
 export type ICapturesSystemWritable = Omit<ICaptures, B.IBaseReadonlyFields | CapturesRelationKey>;
 
-export type ICapturesUpdatable = Partial<Omit<ICaptures, ICapturesImmutableFields | CapturesRelationKey>>;
+export type ICapturesUpdatable = Partial<
+  Omit<ICaptures, ICapturesImmutableFields | CapturesRelationKey>
+>;
 
-export interface ICapturesTransitionPayload {
-}
+export interface ICapturesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -109,9 +110,16 @@ export type CapturesEditableField = (typeof CAPTURES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type ICapturesAsOneRelationConfig = Q.IOneRelationConfig<'captures', CapturesSelectableField>;
+export type ICapturesAsOneRelationConfig = Q.IOneRelationConfig<
+  "captures",
+  CapturesSelectableField
+>;
 
-export type ICapturesAsManyRelationConfig = Q.IManyRelationConfig<'capturess', CapturesSelectableField, CapturesSortableField>;
+export type ICapturesAsManyRelationConfig = Q.IManyRelationConfig<
+  "captures",
+  CapturesSelectableField,
+  CapturesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -119,7 +127,11 @@ export type ICapturesAsManyRelationConfig = Q.IManyRelationConfig<'capturess', C
 
 export type ICapturesAsOneRelationQuery = Q.IAsOneRelationQuery<ICaptures, CapturesSelectableField>;
 
-export type ICapturesAsManyRelationQuery = Q.IAsManyRelationQuery<ICaptures, CapturesSelectableField, CapturesSortableField>;
+export type ICapturesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  ICaptures,
+  CapturesSelectableField,
+  CapturesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -136,7 +148,11 @@ export interface ICapturesRelationMap extends Record<CapturesRelationKey, unknow
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type ICapturesRelationQueries = Q.IBaseRelationQueries<ICaptures, CapturesRelationKey, ICapturesRelationMap>;
+export type ICapturesRelationQueries = Q.IBaseRelationQueries<
+  ICaptures,
+  CapturesRelationKey,
+  ICapturesRelationMap
+>;
 
 export type ICapturesItemQuery = Q.IBaseItemQuery<
   ICaptures,

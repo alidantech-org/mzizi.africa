@@ -26,7 +26,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["roleId"])
 @Check("chk_folders_folder_must_not_parent_itself", `id <> parent_id`)
 export class FoldersEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

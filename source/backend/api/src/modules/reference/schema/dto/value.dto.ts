@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -23,7 +22,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * A controlled classification member within one scheme, with optional supersession. (entity)
  */
 export class ValueDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

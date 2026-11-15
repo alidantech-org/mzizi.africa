@@ -2,14 +2,14 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
-import type { ValueRelationKind } from '#/modules/reference/schema/enum/value-relation-kind.enum';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
+import type { ValueRelationKind } from "#/modules/reference/schema/enum/value-relation-kind.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -23,8 +23,8 @@ import type {
   VALUE_RELATION_DATE_RANGE_FIELDS,
   VALUE_RELATION_SELECTABLE_FIELDS,
   VALUE_RELATION_DEFAULT_SELECT_FIELDS,
-  VALUE_RELATION_EDITABLE_FIELDS
-} from './value-relation.config';
+  VALUE_RELATION_EDITABLE_FIELDS,
+} from "./value-relation.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -71,14 +71,21 @@ export type IValueRelationImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IValueRelationCreatable = Omit<IValueRelation, IValueRelationImmutableFields | ValueRelationRelationKey>;
+export type IValueRelationCreatable = Omit<
+  IValueRelation,
+  IValueRelationImmutableFields | ValueRelationRelationKey
+>;
 
-export type IValueRelationSystemWritable = Omit<IValueRelation, B.IBaseReadonlyFields | ValueRelationRelationKey>;
+export type IValueRelationSystemWritable = Omit<
+  IValueRelation,
+  B.IBaseReadonlyFields | ValueRelationRelationKey
+>;
 
-export type IValueRelationUpdatable = Partial<Omit<IValueRelation, IValueRelationImmutableFields | ValueRelationRelationKey>>;
+export type IValueRelationUpdatable = Partial<
+  Omit<IValueRelation, IValueRelationImmutableFields | ValueRelationRelationKey>
+>;
 
-export interface IValueRelationTransitionPayload {
-}
+export interface IValueRelationTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -102,17 +109,31 @@ export type ValueRelationEditableField = (typeof VALUE_RELATION_EDITABLE_FIELDS)
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IValueRelationAsOneRelationConfig = Q.IOneRelationConfig<'valueRelation', ValueRelationSelectableField>;
+export type IValueRelationAsOneRelationConfig = Q.IOneRelationConfig<
+  "valueRelation",
+  ValueRelationSelectableField
+>;
 
-export type IValueRelationAsManyRelationConfig = Q.IManyRelationConfig<'valueRelations', ValueRelationSelectableField, ValueRelationSortableField>;
+export type IValueRelationAsManyRelationConfig = Q.IManyRelationConfig<
+  "valueRelations",
+  ValueRelationSelectableField,
+  ValueRelationSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IValueRelationAsOneRelationQuery = Q.IAsOneRelationQuery<IValueRelation, ValueRelationSelectableField>;
+export type IValueRelationAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IValueRelation,
+  ValueRelationSelectableField
+>;
 
-export type IValueRelationAsManyRelationQuery = Q.IAsManyRelationQuery<IValueRelation, ValueRelationSelectableField, ValueRelationSortableField>;
+export type IValueRelationAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IValueRelation,
+  ValueRelationSelectableField,
+  ValueRelationSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -127,7 +148,11 @@ export interface IValueRelationRelationMap extends Record<ValueRelationRelationK
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IValueRelationRelationQueries = Q.IBaseRelationQueries<IValueRelation, ValueRelationRelationKey, IValueRelationRelationMap>;
+export type IValueRelationRelationQueries = Q.IBaseRelationQueries<
+  IValueRelation,
+  ValueRelationRelationKey,
+  IValueRelationRelationMap
+>;
 
 export type IValueRelationItemQuery = Q.IBaseItemQuery<
   IValueRelation,

@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as EntitiesTypes from '#/modules/official/schema/types/entities/entities.types';
-import type * as PublishersTypes from '#/modules/source/schema/types/publishers/publishers.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
+import type * as PublishersTypes from "#/modules/source/schema/types/publishers/publishers.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   SOURCES_DATE_RANGE_FIELDS,
   SOURCES_SELECTABLE_FIELDS,
   SOURCES_DEFAULT_SELECT_FIELDS,
-  SOURCES_EDITABLE_FIELDS
-} from './sources.config';
+  SOURCES_EDITABLE_FIELDS,
+} from "./sources.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -78,10 +78,11 @@ export type ISourcesCreatable = Omit<ISources, ISourcesImmutableFields | Sources
 
 export type ISourcesSystemWritable = Omit<ISources, B.IBaseReadonlyFields | SourcesRelationKey>;
 
-export type ISourcesUpdatable = Partial<Omit<ISources, ISourcesImmutableFields | SourcesRelationKey>>;
+export type ISourcesUpdatable = Partial<
+  Omit<ISources, ISourcesImmutableFields | SourcesRelationKey>
+>;
 
-export interface ISourcesTransitionPayload {
-}
+export interface ISourcesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -105,9 +106,13 @@ export type SourcesEditableField = (typeof SOURCES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type ISourcesAsOneRelationConfig = Q.IOneRelationConfig<'sources', SourcesSelectableField>;
+export type ISourcesAsOneRelationConfig = Q.IOneRelationConfig<"sources", SourcesSelectableField>;
 
-export type ISourcesAsManyRelationConfig = Q.IManyRelationConfig<'sourcess', SourcesSelectableField, SourcesSortableField>;
+export type ISourcesAsManyRelationConfig = Q.IManyRelationConfig<
+  "sources",
+  SourcesSelectableField,
+  SourcesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -115,7 +120,11 @@ export type ISourcesAsManyRelationConfig = Q.IManyRelationConfig<'sourcess', Sou
 
 export type ISourcesAsOneRelationQuery = Q.IAsOneRelationQuery<ISources, SourcesSelectableField>;
 
-export type ISourcesAsManyRelationQuery = Q.IAsManyRelationQuery<ISources, SourcesSelectableField, SourcesSortableField>;
+export type ISourcesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  ISources,
+  SourcesSelectableField,
+  SourcesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -131,7 +140,11 @@ export interface ISourcesRelationMap extends Record<SourcesRelationKey, unknown>
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type ISourcesRelationQueries = Q.IBaseRelationQueries<ISources, SourcesRelationKey, ISourcesRelationMap>;
+export type ISourcesRelationQueries = Q.IBaseRelationQueries<
+  ISources,
+  SourcesRelationKey,
+  ISourcesRelationMap
+>;
 
 export type ISourcesItemQuery = Q.IBaseItemQuery<
   ISources,

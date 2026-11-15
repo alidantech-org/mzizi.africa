@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FilesTypes from '#/modules/filesystem/schema/types/files/files.types';
-import type * as FoldersTypes from '#/modules/filesystem/schema/types/folders/folders.types';
-import type * as TagsTypes from '#/modules/filesystem/schema/types/tags/tags.types';
+import type * as FilesTypes from "#/modules/filesystem/schema/types/files/files.types";
+import type * as FoldersTypes from "#/modules/filesystem/schema/types/folders/folders.types";
+import type * as TagsTypes from "#/modules/filesystem/schema/types/tags/tags.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   TAGGINGS_DATE_RANGE_FIELDS,
   TAGGINGS_SELECTABLE_FIELDS,
   TAGGINGS_DEFAULT_SELECT_FIELDS,
-  TAGGINGS_EDITABLE_FIELDS
-} from './taggings.config';
+  TAGGINGS_EDITABLE_FIELDS,
+} from "./taggings.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -75,10 +75,11 @@ export type ITaggingsCreatable = Omit<ITaggings, ITaggingsImmutableFields | Tagg
 
 export type ITaggingsSystemWritable = Omit<ITaggings, B.IBaseReadonlyFields | TaggingsRelationKey>;
 
-export type ITaggingsUpdatable = Partial<Omit<ITaggings, ITaggingsImmutableFields | TaggingsRelationKey>>;
+export type ITaggingsUpdatable = Partial<
+  Omit<ITaggings, ITaggingsImmutableFields | TaggingsRelationKey>
+>;
 
-export interface ITaggingsTransitionPayload {
-}
+export interface ITaggingsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -102,9 +103,16 @@ export type TaggingsEditableField = (typeof TAGGINGS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type ITaggingsAsOneRelationConfig = Q.IOneRelationConfig<'taggings', TaggingsSelectableField>;
+export type ITaggingsAsOneRelationConfig = Q.IOneRelationConfig<
+  "taggings",
+  TaggingsSelectableField
+>;
 
-export type ITaggingsAsManyRelationConfig = Q.IManyRelationConfig<'taggingss', TaggingsSelectableField, TaggingsSortableField>;
+export type ITaggingsAsManyRelationConfig = Q.IManyRelationConfig<
+  "taggings",
+  TaggingsSelectableField,
+  TaggingsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -112,7 +120,11 @@ export type ITaggingsAsManyRelationConfig = Q.IManyRelationConfig<'taggingss', T
 
 export type ITaggingsAsOneRelationQuery = Q.IAsOneRelationQuery<ITaggings, TaggingsSelectableField>;
 
-export type ITaggingsAsManyRelationQuery = Q.IAsManyRelationQuery<ITaggings, TaggingsSelectableField, TaggingsSortableField>;
+export type ITaggingsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  ITaggings,
+  TaggingsSelectableField,
+  TaggingsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -128,7 +140,11 @@ export interface ITaggingsRelationMap extends Record<TaggingsRelationKey, unknow
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type ITaggingsRelationQueries = Q.IBaseRelationQueries<ITaggings, TaggingsRelationKey, ITaggingsRelationMap>;
+export type ITaggingsRelationQueries = Q.IBaseRelationQueries<
+  ITaggings,
+  TaggingsRelationKey,
+  ITaggingsRelationMap
+>;
 
 export type ITaggingsItemQuery = Q.IBaseItemQuery<
   ITaggings,

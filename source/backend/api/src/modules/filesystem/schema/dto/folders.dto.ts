@@ -1,4 +1,3 @@
-
 import {
   IsEnum,
   IsInt,
@@ -27,7 +26,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Logical hierarchy; access escalation requires recorded authorization, independent of object keys. (entity)
  */
 export class FoldersDto {
-
   @IsEnum(Access)
   access!: Access;
 

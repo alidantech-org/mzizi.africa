@@ -1,12 +1,4 @@
-
-import {
-  IsISO8601,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-  ValidateIf,
-} from "class-validator";
+import { IsISO8601, IsString, Matches, MaxLength, MinLength, ValidateIf } from "class-validator";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
@@ -15,7 +7,6 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
  * Institution Detail Mandates
  */
 export class InstitutionDetailMandatesDto {
-
   @IsString()
   @MaxLength(4000)
   description!: Description;

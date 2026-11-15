@@ -1,4 +1,3 @@
-
 import {
   IsBoolean,
   IsISO8601,
@@ -21,7 +20,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Named permission bundle with a policy version; protected roles cannot be edited away. (entity)
  */
 export class RolesDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

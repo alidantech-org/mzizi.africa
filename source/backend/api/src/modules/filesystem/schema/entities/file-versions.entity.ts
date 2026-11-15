@@ -31,7 +31,6 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 @Index(["s3Key"])
 @Index(["fileExtensionId"])
 export class FileVersionsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -64,7 +63,12 @@ export class FileVersionsEntity {
   @JoinColumn({ name: "file_id" })
   file?: Relation<FilesEntity>;
 
-  @Column({ name: "original_filename", type: "varchar", length: 500, nullable: true })
+  @Column({
+    name: "original_filename",
+    type: "varchar",
+    length: 500,
+    nullable: true,
+  })
   originalFilename?: NonEmptyString500 | null;
 
   @Column({ name: "pinned", type: "boolean" })
@@ -82,7 +86,11 @@ export class FileVersionsEntity {
   @Column({ name: "sha256", type: "char", length: 64 })
   sha256!: Sha256;
 
-  @Column({ name: "size_bytes", type: "bigint", transformer: new ColumnNumericTransformer() })
+  @Column({
+    name: "size_bytes",
+    type: "bigint",
+    transformer: new ColumnNumericTransformer(),
+  })
   sizeBytes!: NonNegativeInt64;
 
   @Column({ name: "updated_at", type: "timestamptz" })

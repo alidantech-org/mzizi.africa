@@ -1,11 +1,4 @@
-
-import {
-  IsEnum,
-  IsString,
-  IsUUID,
-  MaxLength,
-  MinLength,
-} from "class-validator";
+import { IsEnum, IsString, IsUUID, MaxLength, MinLength } from "class-validator";
 import { AccountStatus } from "#/modules/auth/schema/enum/account-status.enum.ts";
 import { AuthActorKind } from "#/modules/auth/schema/enum/auth-actor-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -15,7 +8,6 @@ import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-s
  * Account Summary
  */
 export class AccountSummaryDto {
-
   @IsEnum(AuthActorKind)
   actorKind!: AuthActorKind;
 

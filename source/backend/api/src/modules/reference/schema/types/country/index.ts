@@ -1,2 +1,2 @@
-export * as Types from './country.types';
-export * as Config from './country.config';
+export * as Types from "./country.types";
+export * as Config from "./country.config";

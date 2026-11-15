@@ -1,4 +1,3 @@
-
 import {
   IsBoolean,
   IsEnum,
@@ -21,7 +20,6 @@ import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-s
  * Named action on a resource type, optionally narrowed to a field group. (entity)
  */
 export class PermissionsDto {
-
   @IsEnum(AuthAction)
   action!: AuthAction;
 

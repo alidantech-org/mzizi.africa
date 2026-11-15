@@ -23,7 +23,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["folderId"])
 @Index(["currentVersionId"])
 export class FilesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

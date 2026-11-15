@@ -2,8 +2,9 @@
 // SHARED CONFIG TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import { ERelationType } from '#/modules/common/schema/types/enums';
+import * as Q from "#/modules/common/schema/types/query";
+import type { IBuildWhereConditionsOptions } from "#/database/base/query.types.ts";
+import { ERelationType } from "#/modules/common/schema/types/enums";
 
 // ----------------------------------
 // RELATED ENTITY CONFIGS
@@ -22,8 +23,8 @@ import type {
   AccountsDateRangeField,
   AccountsSelectableField,
   IAccountsAsOneRelationConfig,
-  IAccountsAsManyRelationConfig
-} from './accounts.types';
+  IAccountsAsManyRelationConfig,
+} from "./accounts.types";
 
 // ----------------------------------
 // RELATION KEYS
@@ -35,58 +36,105 @@ export const ACCOUNTS_RELATION_KEYS = [] as const satisfies readonly AccountsKey
 // QUERY FIELD CONFIG
 // ----------------------------------
 
-export const ACCOUNTS_SORTABLE_FIELDS = [] as const satisfies readonly AccountsKey[];
+export const ACCOUNTS_SORTABLE_FIELDS = [
+  "actorKind",
+  "createdAt",
+  "disabledAt",
+  "displayName",
+  "id",
+  "lastAuthenticatedAt",
+  "personRefId",
+  "status",
+] as const satisfies readonly AccountsKey[];
 
-export const ACCOUNTS_SEARCHABLE_FIELDS = [] as const satisfies readonly AccountsKey[];
+export const ACCOUNTS_SEARCHABLE_FIELDS = ["displayName"] as const satisfies readonly AccountsKey[];
 
-export const ACCOUNTS_FILTERABLE_FIELDS = [] as const satisfies readonly AccountsKey[];
+export const ACCOUNTS_FILTERABLE_FIELDS = [
+  "actorKind",
+  "id",
+  "personRefId",
+  "status",
+] as const satisfies readonly AccountsKey[];
 
-export const ACCOUNTS_DATE_RANGE_FIELDS = [] as const satisfies readonly AccountsKey[];
+export const ACCOUNTS_DATE_RANGE_FIELDS = [
+  "createdAt",
+  "disabledAt",
+  "lastAuthenticatedAt",
+] as const satisfies readonly AccountsKey[];
+
+export const ACCOUNTS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IAccounts> = {
+  searchableFields: [...ACCOUNTS_SEARCHABLE_FIELDS],
+  filterFields: [...ACCOUNTS_FILTERABLE_FIELDS],
+  dateRangeFields: [...ACCOUNTS_DATE_RANGE_FIELDS],
+};
 
 // ----------------------------------
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const ACCOUNTS_SELECTABLE_FIELDS = ['actorKind', 'createdAt', 'disabledAt', 'displayName', 'id', 'lastAuthenticatedAt', 'personRefId', 'status', ] as const satisfies readonly AccountsKey[];
+export const ACCOUNTS_SELECTABLE_FIELDS = [
+  "actorKind",
+  "createdAt",
+  "disabledAt",
+  "displayName",
+  "id",
+  "lastAuthenticatedAt",
+  "personRefId",
+  "status",
+] as const satisfies readonly AccountsKey[];
 
-export const ACCOUNTS_DEFAULT_SELECT_FIELDS = ['actorKind', 'createdAt', 'disabledAt', 'displayName', 'id', 'lastAuthenticatedAt', 'personRefId', 'status', ] as const satisfies readonly AccountsSelectableField[];
+export const ACCOUNTS_DEFAULT_SELECT_FIELDS = [
+  "actorKind",
+  "createdAt",
+  "disabledAt",
+  "displayName",
+  "id",
+  "lastAuthenticatedAt",
+  "personRefId",
+  "status",
+] as const satisfies readonly AccountsSelectableField[];
 
 // ----------------------------------
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const ACCOUNTS_EDITABLE_FIELDS = ['actorKind', 'disabledAt', 'displayName', 'lastAuthenticatedAt', 'personRefId', 'status', ] as const satisfies readonly AccountsKey[];
+export const ACCOUNTS_EDITABLE_FIELDS = [
+  "actorKind",
+  "disabledAt",
+  "displayName",
+  "lastAuthenticatedAt",
+  "personRefId",
+  "status",
+] as const satisfies readonly AccountsKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
 // ----------------------------------
 
 export const ACCOUNTS_AS_ONE_RELATION_CONFIG = {
-  relation: 'accounts',
+  relation: "accounts",
   type: ERelationType.One,
   selectableFields: ACCOUNTS_SELECTABLE_FIELDS,
-  defaultSelectFields: ACCOUNTS_DEFAULT_SELECT_FIELDS
+  defaultSelectFields: ACCOUNTS_DEFAULT_SELECT_FIELDS,
 } as const satisfies IAccountsAsOneRelationConfig;
 
 export const ACCOUNTS_AS_MANY_RELATION_CONFIG = {
-  relation: 'accountss',
+  relation: "accounts",
   type: ERelationType.Many,
   selectableFields: ACCOUNTS_SELECTABLE_FIELDS,
   defaultSelectFields: ACCOUNTS_DEFAULT_SELECT_FIELDS,
   sortableFields: ACCOUNTS_SORTABLE_FIELDS,
   defaultLimit: 10,
-  maxLimit: 50
+  maxLimit: 50,
 } as const satisfies IAccountsAsManyRelationConfig;
 
 // ----------------------------------
 // RELATION QUERY OPTIONS
 // ----------------------------------
 
-export const ACCOUNTS_ONE_RELATION_QUERY_OPTIONS = [
-] as const;
+export const ACCOUNTS_ONE_RELATION_QUERY_OPTIONS = [] as const;
 
-export const ACCOUNTS_MANY_RELATION_QUERY_OPTIONS = [
-] as const;
+export const ACCOUNTS_MANY_RELATION_QUERY_OPTIONS = [] as const;
 
 // ----------------------------------
 // ENTITY QUERY OPTIONS
@@ -99,8 +147,12 @@ export const ACCOUNTS_QUERY_OPTIONS = {
   sortableFields: ACCOUNTS_SORTABLE_FIELDS,
   filterFields: ACCOUNTS_FILTERABLE_FIELDS,
   dateRangeFields: ACCOUNTS_DATE_RANGE_FIELDS,
+  relationKeys: ACCOUNTS_RELATION_KEYS,
+  editableFields: ACCOUNTS_EDITABLE_FIELDS,
+  asOne: ACCOUNTS_AS_ONE_RELATION_CONFIG,
+  asMany: ACCOUNTS_AS_MANY_RELATION_CONFIG,
   oneRelations: ACCOUNTS_ONE_RELATION_QUERY_OPTIONS,
-  manyRelations: ACCOUNTS_MANY_RELATION_QUERY_OPTIONS
+  manyRelations: ACCOUNTS_MANY_RELATION_QUERY_OPTIONS,
 } as const satisfies Q.IEntityQueryOptions<
   IAccounts,
   AccountsSortableField,

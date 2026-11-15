@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -21,7 +20,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Canonical identity for a modern country; not a geographic unit or historical polity. (entity)
  */
 export class CountryDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

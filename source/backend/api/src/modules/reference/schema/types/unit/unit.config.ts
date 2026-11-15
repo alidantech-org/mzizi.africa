@@ -2,8 +2,9 @@
 // SHARED CONFIG TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import { ERelationType } from '#/modules/common/schema/types/enums';
+import * as Q from "#/modules/common/schema/types/query";
+import type { IBuildWhereConditionsOptions } from "#/database/base/query.types.ts";
+import { ERelationType } from "#/modules/common/schema/types/enums";
 
 // ----------------------------------
 // RELATED ENTITY CONFIGS
@@ -22,71 +23,126 @@ import type {
   UnitDateRangeField,
   UnitSelectableField,
   IUnitAsOneRelationConfig,
-  IUnitAsManyRelationConfig
-} from './unit.types';
+  IUnitAsManyRelationConfig,
+} from "./unit.types";
 
 // ----------------------------------
 // RELATION KEYS
 // ----------------------------------
 
-export const UNIT_RELATION_KEYS = ['base', ] as const satisfies readonly UnitKey[];
+export const UNIT_RELATION_KEYS = ["base"] as const satisfies readonly UnitKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
 // ----------------------------------
 
-export const UNIT_SORTABLE_FIELDS = [] as const satisfies readonly UnitKey[];
+export const UNIT_SORTABLE_FIELDS = [
+  "baseId",
+  "code",
+  "createdAt",
+  "deletedAt",
+  "id",
+  "offset",
+  "quantity",
+  "scale",
+  "symbol",
+  "updatedAt",
+  "version",
+] as const satisfies readonly UnitKey[];
 
-export const UNIT_SEARCHABLE_FIELDS = [] as const satisfies readonly UnitKey[];
+export const UNIT_SEARCHABLE_FIELDS = [
+  "code",
+  "quantity",
+  "symbol",
+] as const satisfies readonly UnitKey[];
 
-export const UNIT_FILTERABLE_FIELDS = [] as const satisfies readonly UnitKey[];
+export const UNIT_FILTERABLE_FIELDS = ["baseId", "id"] as const satisfies readonly UnitKey[];
 
-export const UNIT_DATE_RANGE_FIELDS = [] as const satisfies readonly UnitKey[];
+export const UNIT_DATE_RANGE_FIELDS = [
+  "createdAt",
+  "deletedAt",
+  "updatedAt",
+] as const satisfies readonly UnitKey[];
+
+export const UNIT_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IUnit> = {
+  searchableFields: [...UNIT_SEARCHABLE_FIELDS],
+  filterFields: [...UNIT_FILTERABLE_FIELDS],
+  dateRangeFields: [...UNIT_DATE_RANGE_FIELDS],
+};
 
 // ----------------------------------
 // SELECT FIELD CONFIG
 // ----------------------------------
 
-export const UNIT_SELECTABLE_FIELDS = ['baseId', 'code', 'createdAt', 'deletedAt', 'id', 'offset', 'quantity', 'scale', 'symbol', 'updatedAt', 'version', ] as const satisfies readonly UnitKey[];
+export const UNIT_SELECTABLE_FIELDS = [
+  "baseId",
+  "code",
+  "createdAt",
+  "deletedAt",
+  "id",
+  "offset",
+  "quantity",
+  "scale",
+  "symbol",
+  "updatedAt",
+  "version",
+] as const satisfies readonly UnitKey[];
 
-export const UNIT_DEFAULT_SELECT_FIELDS = ['baseId', 'code', 'createdAt', 'deletedAt', 'id', 'offset', 'quantity', 'scale', 'symbol', 'updatedAt', 'version', ] as const satisfies readonly UnitSelectableField[];
+export const UNIT_DEFAULT_SELECT_FIELDS = [
+  "baseId",
+  "code",
+  "createdAt",
+  "deletedAt",
+  "id",
+  "offset",
+  "quantity",
+  "scale",
+  "symbol",
+  "updatedAt",
+  "version",
+] as const satisfies readonly UnitSelectableField[];
 
 // ----------------------------------
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const UNIT_EDITABLE_FIELDS = ['baseId', 'code', 'offset', 'quantity', 'scale', 'symbol', ] as const satisfies readonly UnitKey[];
+export const UNIT_EDITABLE_FIELDS = [
+  "baseId",
+  "code",
+  "offset",
+  "quantity",
+  "scale",
+  "symbol",
+] as const satisfies readonly UnitKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
 // ----------------------------------
 
 export const UNIT_AS_ONE_RELATION_CONFIG = {
-  relation: 'unit',
+  relation: "unit",
   type: ERelationType.One,
   selectableFields: UNIT_SELECTABLE_FIELDS,
-  defaultSelectFields: UNIT_DEFAULT_SELECT_FIELDS
+  defaultSelectFields: UNIT_DEFAULT_SELECT_FIELDS,
 } as const satisfies IUnitAsOneRelationConfig;
 
 export const UNIT_AS_MANY_RELATION_CONFIG = {
-  relation: 'units',
+  relation: "units",
   type: ERelationType.Many,
   selectableFields: UNIT_SELECTABLE_FIELDS,
   defaultSelectFields: UNIT_DEFAULT_SELECT_FIELDS,
   sortableFields: UNIT_SORTABLE_FIELDS,
   defaultLimit: 10,
-  maxLimit: 50
+  maxLimit: 50,
 } as const satisfies IUnitAsManyRelationConfig;
 
 // ----------------------------------
 // RELATION QUERY OPTIONS
 // ----------------------------------
 
-export const UNIT_ONE_RELATION_QUERY_OPTIONS = [
-] as const;
+export const UNIT_ONE_RELATION_QUERY_OPTIONS = [] as const;
 
-export const UNIT_MANY_RELATION_QUERY_OPTIONS = [
-] as const;
+export const UNIT_MANY_RELATION_QUERY_OPTIONS = [] as const;
 
 // ----------------------------------
 // ENTITY QUERY OPTIONS
@@ -99,8 +155,12 @@ export const UNIT_QUERY_OPTIONS = {
   sortableFields: UNIT_SORTABLE_FIELDS,
   filterFields: UNIT_FILTERABLE_FIELDS,
   dateRangeFields: UNIT_DATE_RANGE_FIELDS,
+  relationKeys: UNIT_RELATION_KEYS,
+  editableFields: UNIT_EDITABLE_FIELDS,
+  asOne: UNIT_AS_ONE_RELATION_CONFIG,
+  asMany: UNIT_AS_MANY_RELATION_CONFIG,
   oneRelations: UNIT_ONE_RELATION_QUERY_OPTIONS,
-  manyRelations: UNIT_MANY_RELATION_QUERY_OPTIONS
+  manyRelations: UNIT_MANY_RELATION_QUERY_OPTIONS,
 } as const satisfies Q.IEntityQueryOptions<
   IUnit,
   UnitSortableField,

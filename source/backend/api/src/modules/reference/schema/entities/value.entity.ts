@@ -24,7 +24,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["supersedesId"])
 @Check("chk_value_value_does_not_supersede_itself", `id <> supersedes_id`)
 export class ValueEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

@@ -2,8 +2,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -21,8 +21,8 @@ import type {
   COUNTRY_DATE_RANGE_FIELDS,
   COUNTRY_SELECTABLE_FIELDS,
   COUNTRY_DEFAULT_SELECT_FIELDS,
-  COUNTRY_EDITABLE_FIELDS
-} from './country.config';
+  COUNTRY_EDITABLE_FIELDS,
+} from "./country.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -68,10 +68,11 @@ export type ICountryCreatable = Omit<ICountry, ICountryImmutableFields | Country
 
 export type ICountrySystemWritable = Omit<ICountry, B.IBaseReadonlyFields | CountryRelationKey>;
 
-export type ICountryUpdatable = Partial<Omit<ICountry, ICountryImmutableFields | CountryRelationKey>>;
+export type ICountryUpdatable = Partial<
+  Omit<ICountry, ICountryImmutableFields | CountryRelationKey>
+>;
 
-export interface ICountryTransitionPayload {
-}
+export interface ICountryTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -95,9 +96,13 @@ export type CountryEditableField = (typeof COUNTRY_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type ICountryAsOneRelationConfig = Q.IOneRelationConfig<'country', CountrySelectableField>;
+export type ICountryAsOneRelationConfig = Q.IOneRelationConfig<"country", CountrySelectableField>;
 
-export type ICountryAsManyRelationConfig = Q.IManyRelationConfig<'countrys', CountrySelectableField, CountrySortableField>;
+export type ICountryAsManyRelationConfig = Q.IManyRelationConfig<
+  "countrys",
+  CountrySelectableField,
+  CountrySortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -105,20 +110,27 @@ export type ICountryAsManyRelationConfig = Q.IManyRelationConfig<'countrys', Cou
 
 export type ICountryAsOneRelationQuery = Q.IAsOneRelationQuery<ICountry, CountrySelectableField>;
 
-export type ICountryAsManyRelationQuery = Q.IAsManyRelationQuery<ICountry, CountrySelectableField, CountrySortableField>;
+export type ICountryAsManyRelationQuery = Q.IAsManyRelationQuery<
+  ICountry,
+  CountrySelectableField,
+  CountrySortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
 // ----------------------------------
 
-export interface ICountryRelationMap extends Record<CountryRelationKey, unknown> {
-}
+export interface ICountryRelationMap extends Record<CountryRelationKey, unknown> {}
 
 // ----------------------------------
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type ICountryRelationQueries = Q.IBaseRelationQueries<ICountry, CountryRelationKey, ICountryRelationMap>;
+export type ICountryRelationQueries = Q.IBaseRelationQueries<
+  ICountry,
+  CountryRelationKey,
+  ICountryRelationMap
+>;
 
 export type ICountryItemQuery = Q.IBaseItemQuery<
   ICountry,

@@ -20,9 +20,11 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Entity({ schema: "source", name: "manifest_bindings" })
 @Index(["sourceId", "manifestReleaseId", "effectiveFrom"], { unique: true })
 @Index(["manifestReleaseId"])
-@Check("chk_manifest_bindings_effective_window_is_ordered", `effective_from = null OR effective_until = null OR effective_from < effective_until`)
+@Check(
+  "chk_manifest_bindings_effective_window_is_ordered",
+  `effective_from = null OR effective_until = null OR effective_from < effective_until`,
+)
 export class ManifestBindingsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

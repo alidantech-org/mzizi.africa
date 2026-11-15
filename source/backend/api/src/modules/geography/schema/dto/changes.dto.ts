@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -20,7 +19,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * An edge in a geographic transformation; multiple rows sharing transformation_id represent splits, mergers, creation or dissolution without overwriting predecessor identities. (entity)
  */
 export class ChangesDto {
-
   @IsString()
   @IsUUID()
   changeKindId!: Id;

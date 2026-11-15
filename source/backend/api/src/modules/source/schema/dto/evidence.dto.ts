@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -25,7 +24,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Durable evidence bundle whose exact supporting items are normalized citations. (entity)
  */
 export class EvidenceDto {
-
   @IsISO8601({})
   assembledAt!: Instant;
 

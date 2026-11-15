@@ -20,7 +20,6 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
  * Unit Entry
  */
 export class UnitEntryDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

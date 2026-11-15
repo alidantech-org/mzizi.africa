@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as AccountsTypes from '#/modules/auth/schema/types/accounts/accounts.types';
-import type * as PermissionsTypes from '#/modules/auth/schema/types/permissions/permissions.types';
-import type * as RolesTypes from '#/modules/auth/schema/types/roles/roles.types';
+import type * as AccountsTypes from "#/modules/auth/schema/types/accounts/accounts.types";
+import type * as PermissionsTypes from "#/modules/auth/schema/types/permissions/permissions.types";
+import type * as RolesTypes from "#/modules/auth/schema/types/roles/roles.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   ROLE_PERMISSIONS_DATE_RANGE_FIELDS,
   ROLE_PERMISSIONS_SELECTABLE_FIELDS,
   ROLE_PERMISSIONS_DEFAULT_SELECT_FIELDS,
-  ROLE_PERMISSIONS_EDITABLE_FIELDS
-} from './role-permissions.config';
+  ROLE_PERMISSIONS_EDITABLE_FIELDS,
+} from "./role-permissions.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -72,14 +72,21 @@ export type IRolePermissionsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IRolePermissionsCreatable = Omit<IRolePermissions, IRolePermissionsImmutableFields | RolePermissionsRelationKey>;
+export type IRolePermissionsCreatable = Omit<
+  IRolePermissions,
+  IRolePermissionsImmutableFields | RolePermissionsRelationKey
+>;
 
-export type IRolePermissionsSystemWritable = Omit<IRolePermissions, B.IBaseReadonlyFields | RolePermissionsRelationKey>;
+export type IRolePermissionsSystemWritable = Omit<
+  IRolePermissions,
+  B.IBaseReadonlyFields | RolePermissionsRelationKey
+>;
 
-export type IRolePermissionsUpdatable = Partial<Omit<IRolePermissions, IRolePermissionsImmutableFields | RolePermissionsRelationKey>>;
+export type IRolePermissionsUpdatable = Partial<
+  Omit<IRolePermissions, IRolePermissionsImmutableFields | RolePermissionsRelationKey>
+>;
 
-export interface IRolePermissionsTransitionPayload {
-}
+export interface IRolePermissionsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -95,7 +102,8 @@ export type RolePermissionsDateRangeField = (typeof ROLE_PERMISSIONS_DATE_RANGE_
 
 export type RolePermissionsSelectableField = (typeof ROLE_PERMISSIONS_SELECTABLE_FIELDS)[number];
 
-export type RolePermissionsDefaultSelectField = (typeof ROLE_PERMISSIONS_DEFAULT_SELECT_FIELDS)[number];
+export type RolePermissionsDefaultSelectField =
+  (typeof ROLE_PERMISSIONS_DEFAULT_SELECT_FIELDS)[number];
 
 export type RolePermissionsEditableField = (typeof ROLE_PERMISSIONS_EDITABLE_FIELDS)[number];
 
@@ -103,17 +111,31 @@ export type RolePermissionsEditableField = (typeof ROLE_PERMISSIONS_EDITABLE_FIE
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IRolePermissionsAsOneRelationConfig = Q.IOneRelationConfig<'rolePermissions', RolePermissionsSelectableField>;
+export type IRolePermissionsAsOneRelationConfig = Q.IOneRelationConfig<
+  "rolePermissions",
+  RolePermissionsSelectableField
+>;
 
-export type IRolePermissionsAsManyRelationConfig = Q.IManyRelationConfig<'rolePermissionss', RolePermissionsSelectableField, RolePermissionsSortableField>;
+export type IRolePermissionsAsManyRelationConfig = Q.IManyRelationConfig<
+  "rolePermissions",
+  RolePermissionsSelectableField,
+  RolePermissionsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IRolePermissionsAsOneRelationQuery = Q.IAsOneRelationQuery<IRolePermissions, RolePermissionsSelectableField>;
+export type IRolePermissionsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IRolePermissions,
+  RolePermissionsSelectableField
+>;
 
-export type IRolePermissionsAsManyRelationQuery = Q.IAsManyRelationQuery<IRolePermissions, RolePermissionsSelectableField, RolePermissionsSortableField>;
+export type IRolePermissionsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IRolePermissions,
+  RolePermissionsSelectableField,
+  RolePermissionsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -129,7 +151,11 @@ export interface IRolePermissionsRelationMap extends Record<RolePermissionsRelat
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IRolePermissionsRelationQueries = Q.IBaseRelationQueries<IRolePermissions, RolePermissionsRelationKey, IRolePermissionsRelationMap>;
+export type IRolePermissionsRelationQueries = Q.IBaseRelationQueries<
+  IRolePermissions,
+  RolePermissionsRelationKey,
+  IRolePermissionsRelationMap
+>;
 
 export type IRolePermissionsItemQuery = Q.IBaseItemQuery<
   IRolePermissions,

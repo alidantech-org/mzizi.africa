@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -20,7 +19,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Base for versioned records with a unique identity code.
  */
 export class CodedEntityDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

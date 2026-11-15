@@ -1,11 +1,4 @@
-
-import {
-  IsString,
-  IsUUID,
-  Matches,
-  MaxLength,
-  MinLength,
-} from "class-validator";
+import { IsString, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 
@@ -13,7 +6,6 @@ import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.ty
  * Institution Detail Offices
  */
 export class InstitutionDetailOfficesDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as EntitiesTypes from '#/modules/official/schema/types/entities/entities.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
+import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   INSTITUTIONS_DATE_RANGE_FIELDS,
   INSTITUTIONS_SELECTABLE_FIELDS,
   INSTITUTIONS_DEFAULT_SELECT_FIELDS,
-  INSTITUTIONS_EDITABLE_FIELDS
-} from './institutions.config';
+  INSTITUTIONS_EDITABLE_FIELDS,
+} from "./institutions.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -74,14 +74,21 @@ export type IInstitutionsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IInstitutionsCreatable = Omit<IInstitutions, IInstitutionsImmutableFields | InstitutionsRelationKey>;
+export type IInstitutionsCreatable = Omit<
+  IInstitutions,
+  IInstitutionsImmutableFields | InstitutionsRelationKey
+>;
 
-export type IInstitutionsSystemWritable = Omit<IInstitutions, B.IBaseReadonlyFields | InstitutionsRelationKey>;
+export type IInstitutionsSystemWritable = Omit<
+  IInstitutions,
+  B.IBaseReadonlyFields | InstitutionsRelationKey
+>;
 
-export type IInstitutionsUpdatable = Partial<Omit<IInstitutions, IInstitutionsImmutableFields | InstitutionsRelationKey>>;
+export type IInstitutionsUpdatable = Partial<
+  Omit<IInstitutions, IInstitutionsImmutableFields | InstitutionsRelationKey>
+>;
 
-export interface IInstitutionsTransitionPayload {
-}
+export interface IInstitutionsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -105,17 +112,31 @@ export type InstitutionsEditableField = (typeof INSTITUTIONS_EDITABLE_FIELDS)[nu
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IInstitutionsAsOneRelationConfig = Q.IOneRelationConfig<'institutions', InstitutionsSelectableField>;
+export type IInstitutionsAsOneRelationConfig = Q.IOneRelationConfig<
+  "institutions",
+  InstitutionsSelectableField
+>;
 
-export type IInstitutionsAsManyRelationConfig = Q.IManyRelationConfig<'institutionss', InstitutionsSelectableField, InstitutionsSortableField>;
+export type IInstitutionsAsManyRelationConfig = Q.IManyRelationConfig<
+  "institutions",
+  InstitutionsSelectableField,
+  InstitutionsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IInstitutionsAsOneRelationQuery = Q.IAsOneRelationQuery<IInstitutions, InstitutionsSelectableField>;
+export type IInstitutionsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IInstitutions,
+  InstitutionsSelectableField
+>;
 
-export type IInstitutionsAsManyRelationQuery = Q.IAsManyRelationQuery<IInstitutions, InstitutionsSelectableField, InstitutionsSortableField>;
+export type IInstitutionsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IInstitutions,
+  InstitutionsSelectableField,
+  InstitutionsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -131,7 +152,11 @@ export interface IInstitutionsRelationMap extends Record<InstitutionsRelationKey
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IInstitutionsRelationQueries = Q.IBaseRelationQueries<IInstitutions, InstitutionsRelationKey, IInstitutionsRelationMap>;
+export type IInstitutionsRelationQueries = Q.IBaseRelationQueries<
+  IInstitutions,
+  InstitutionsRelationKey,
+  IInstitutionsRelationMap
+>;
 
 export type IInstitutionsItemQuery = Q.IBaseItemQuery<
   IInstitutions,

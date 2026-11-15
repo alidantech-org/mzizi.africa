@@ -2,9 +2,9 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
-import type { AuthAction } from '#/modules/auth/schema/enum/auth-action.enum';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
+import type { AuthAction } from "#/modules/auth/schema/enum/auth-action.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -22,8 +22,8 @@ import type {
   PERMISSIONS_DATE_RANGE_FIELDS,
   PERMISSIONS_SELECTABLE_FIELDS,
   PERMISSIONS_DEFAULT_SELECT_FIELDS,
-  PERMISSIONS_EDITABLE_FIELDS
-} from './permissions.config';
+  PERMISSIONS_EDITABLE_FIELDS,
+} from "./permissions.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -69,14 +69,21 @@ export type IPermissionsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IPermissionsCreatable = Omit<IPermissions, IPermissionsImmutableFields | PermissionsRelationKey>;
+export type IPermissionsCreatable = Omit<
+  IPermissions,
+  IPermissionsImmutableFields | PermissionsRelationKey
+>;
 
-export type IPermissionsSystemWritable = Omit<IPermissions, B.IBaseReadonlyFields | PermissionsRelationKey>;
+export type IPermissionsSystemWritable = Omit<
+  IPermissions,
+  B.IBaseReadonlyFields | PermissionsRelationKey
+>;
 
-export type IPermissionsUpdatable = Partial<Omit<IPermissions, IPermissionsImmutableFields | PermissionsRelationKey>>;
+export type IPermissionsUpdatable = Partial<
+  Omit<IPermissions, IPermissionsImmutableFields | PermissionsRelationKey>
+>;
 
-export interface IPermissionsTransitionPayload {
-}
+export interface IPermissionsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -100,30 +107,47 @@ export type PermissionsEditableField = (typeof PERMISSIONS_EDITABLE_FIELDS)[numb
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IPermissionsAsOneRelationConfig = Q.IOneRelationConfig<'permissions', PermissionsSelectableField>;
+export type IPermissionsAsOneRelationConfig = Q.IOneRelationConfig<
+  "permissions",
+  PermissionsSelectableField
+>;
 
-export type IPermissionsAsManyRelationConfig = Q.IManyRelationConfig<'permissionss', PermissionsSelectableField, PermissionsSortableField>;
+export type IPermissionsAsManyRelationConfig = Q.IManyRelationConfig<
+  "permissions",
+  PermissionsSelectableField,
+  PermissionsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IPermissionsAsOneRelationQuery = Q.IAsOneRelationQuery<IPermissions, PermissionsSelectableField>;
+export type IPermissionsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IPermissions,
+  PermissionsSelectableField
+>;
 
-export type IPermissionsAsManyRelationQuery = Q.IAsManyRelationQuery<IPermissions, PermissionsSelectableField, PermissionsSortableField>;
+export type IPermissionsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IPermissions,
+  PermissionsSelectableField,
+  PermissionsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
 // ----------------------------------
 
-export interface IPermissionsRelationMap extends Record<PermissionsRelationKey, unknown> {
-}
+export interface IPermissionsRelationMap extends Record<PermissionsRelationKey, unknown> {}
 
 // ----------------------------------
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IPermissionsRelationQueries = Q.IBaseRelationQueries<IPermissions, PermissionsRelationKey, IPermissionsRelationMap>;
+export type IPermissionsRelationQueries = Q.IBaseRelationQueries<
+  IPermissions,
+  PermissionsRelationKey,
+  IPermissionsRelationMap
+>;
 
 export type IPermissionsItemQuery = Q.IBaseItemQuery<
   IPermissions,

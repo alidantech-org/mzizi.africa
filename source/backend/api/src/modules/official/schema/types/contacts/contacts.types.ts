@@ -2,16 +2,16 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as EntitiesTypes from '#/modules/official/schema/types/entities/entities.types';
-import type * as IndividualsTypes from '#/modules/official/schema/types/individuals/individuals.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
+import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
+import type * as IndividualsTypes from "#/modules/official/schema/types/individuals/individuals.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -25,8 +25,8 @@ import type {
   CONTACTS_DATE_RANGE_FIELDS,
   CONTACTS_SELECTABLE_FIELDS,
   CONTACTS_DEFAULT_SELECT_FIELDS,
-  CONTACTS_EDITABLE_FIELDS
-} from './contacts.config';
+  CONTACTS_EDITABLE_FIELDS,
+} from "./contacts.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -83,10 +83,11 @@ export type IContactsCreatable = Omit<IContacts, IContactsImmutableFields | Cont
 
 export type IContactsSystemWritable = Omit<IContacts, B.IBaseReadonlyFields | ContactsRelationKey>;
 
-export type IContactsUpdatable = Partial<Omit<IContacts, IContactsImmutableFields | ContactsRelationKey>>;
+export type IContactsUpdatable = Partial<
+  Omit<IContacts, IContactsImmutableFields | ContactsRelationKey>
+>;
 
-export interface IContactsTransitionPayload {
-}
+export interface IContactsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -110,9 +111,16 @@ export type ContactsEditableField = (typeof CONTACTS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IContactsAsOneRelationConfig = Q.IOneRelationConfig<'contacts', ContactsSelectableField>;
+export type IContactsAsOneRelationConfig = Q.IOneRelationConfig<
+  "contacts",
+  ContactsSelectableField
+>;
 
-export type IContactsAsManyRelationConfig = Q.IManyRelationConfig<'contactss', ContactsSelectableField, ContactsSortableField>;
+export type IContactsAsManyRelationConfig = Q.IManyRelationConfig<
+  "contacts",
+  ContactsSelectableField,
+  ContactsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -120,7 +128,11 @@ export type IContactsAsManyRelationConfig = Q.IManyRelationConfig<'contactss', C
 
 export type IContactsAsOneRelationQuery = Q.IAsOneRelationQuery<IContacts, ContactsSelectableField>;
 
-export type IContactsAsManyRelationQuery = Q.IAsManyRelationQuery<IContacts, ContactsSelectableField, ContactsSortableField>;
+export type IContactsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IContacts,
+  ContactsSelectableField,
+  ContactsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -138,7 +150,11 @@ export interface IContactsRelationMap extends Record<ContactsRelationKey, unknow
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IContactsRelationQueries = Q.IBaseRelationQueries<IContacts, ContactsRelationKey, IContactsRelationMap>;
+export type IContactsRelationQueries = Q.IBaseRelationQueries<
+  IContacts,
+  ContactsRelationKey,
+  IContactsRelationMap
+>;
 
 export type IContactsItemQuery = Q.IBaseItemQuery<
   IContacts,

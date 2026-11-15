@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   INDIVIDUALS_DATE_RANGE_FIELDS,
   INDIVIDUALS_SELECTABLE_FIELDS,
   INDIVIDUALS_DEFAULT_SELECT_FIELDS,
-  INDIVIDUALS_EDITABLE_FIELDS
-} from './individuals.config';
+  INDIVIDUALS_EDITABLE_FIELDS,
+} from "./individuals.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -68,14 +68,21 @@ export type IIndividualsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IIndividualsCreatable = Omit<IIndividuals, IIndividualsImmutableFields | IndividualsRelationKey>;
+export type IIndividualsCreatable = Omit<
+  IIndividuals,
+  IIndividualsImmutableFields | IndividualsRelationKey
+>;
 
-export type IIndividualsSystemWritable = Omit<IIndividuals, B.IBaseReadonlyFields | IndividualsRelationKey>;
+export type IIndividualsSystemWritable = Omit<
+  IIndividuals,
+  B.IBaseReadonlyFields | IndividualsRelationKey
+>;
 
-export type IIndividualsUpdatable = Partial<Omit<IIndividuals, IIndividualsImmutableFields | IndividualsRelationKey>>;
+export type IIndividualsUpdatable = Partial<
+  Omit<IIndividuals, IIndividualsImmutableFields | IndividualsRelationKey>
+>;
 
-export interface IIndividualsTransitionPayload {
-}
+export interface IIndividualsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -99,17 +106,31 @@ export type IndividualsEditableField = (typeof INDIVIDUALS_EDITABLE_FIELDS)[numb
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IIndividualsAsOneRelationConfig = Q.IOneRelationConfig<'individuals', IndividualsSelectableField>;
+export type IIndividualsAsOneRelationConfig = Q.IOneRelationConfig<
+  "individuals",
+  IndividualsSelectableField
+>;
 
-export type IIndividualsAsManyRelationConfig = Q.IManyRelationConfig<'individualss', IndividualsSelectableField, IndividualsSortableField>;
+export type IIndividualsAsManyRelationConfig = Q.IManyRelationConfig<
+  "individuals",
+  IndividualsSelectableField,
+  IndividualsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IIndividualsAsOneRelationQuery = Q.IAsOneRelationQuery<IIndividuals, IndividualsSelectableField>;
+export type IIndividualsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IIndividuals,
+  IndividualsSelectableField
+>;
 
-export type IIndividualsAsManyRelationQuery = Q.IAsManyRelationQuery<IIndividuals, IndividualsSelectableField, IndividualsSortableField>;
+export type IIndividualsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IIndividuals,
+  IndividualsSelectableField,
+  IndividualsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -123,7 +144,11 @@ export interface IIndividualsRelationMap extends Record<IndividualsRelationKey, 
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IIndividualsRelationQueries = Q.IBaseRelationQueries<IIndividuals, IndividualsRelationKey, IIndividualsRelationMap>;
+export type IIndividualsRelationQueries = Q.IBaseRelationQueries<
+  IIndividuals,
+  IndividualsRelationKey,
+  IIndividualsRelationMap
+>;
 
 export type IIndividualsItemQuery = Q.IBaseItemQuery<
   IIndividuals,

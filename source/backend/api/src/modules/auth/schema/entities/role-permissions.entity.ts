@@ -19,7 +19,6 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 @Index(["permissionId"])
 @Index(["grantedBy"])
 export class RolePermissionsEntity {
-
   @PrimaryColumn({ name: "permission_id", type: "uuid" })
   permissionId!: Id;
 

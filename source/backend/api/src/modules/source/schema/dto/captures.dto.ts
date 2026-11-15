@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -24,7 +23,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Immutable accepted retrieval snapshot with exact bytes; failed requests remain in Operations. (entity)
  */
 export class CapturesDto {
-
   @IsString()
   @Length(64, 64)
   @Matches(new RegExp("^[a-f0-9]{64}$"))

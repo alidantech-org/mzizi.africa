@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as PublishersTypes from '#/modules/source/schema/types/publishers/publishers.types';
-import type * as SourcesTypes from '#/modules/source/schema/types/sources/sources.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as PublishersTypes from "#/modules/source/schema/types/publishers/publishers.types";
+import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   DOCUMENTS_DATE_RANGE_FIELDS,
   DOCUMENTS_SELECTABLE_FIELDS,
   DOCUMENTS_DEFAULT_SELECT_FIELDS,
-  DOCUMENTS_EDITABLE_FIELDS
-} from './documents.config';
+  DOCUMENTS_EDITABLE_FIELDS,
+} from "./documents.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -75,14 +75,21 @@ export type IDocumentsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IDocumentsCreatable = Omit<IDocuments, IDocumentsImmutableFields | DocumentsRelationKey>;
+export type IDocumentsCreatable = Omit<
+  IDocuments,
+  IDocumentsImmutableFields | DocumentsRelationKey
+>;
 
-export type IDocumentsSystemWritable = Omit<IDocuments, B.IBaseReadonlyFields | DocumentsRelationKey>;
+export type IDocumentsSystemWritable = Omit<
+  IDocuments,
+  B.IBaseReadonlyFields | DocumentsRelationKey
+>;
 
-export type IDocumentsUpdatable = Partial<Omit<IDocuments, IDocumentsImmutableFields | DocumentsRelationKey>>;
+export type IDocumentsUpdatable = Partial<
+  Omit<IDocuments, IDocumentsImmutableFields | DocumentsRelationKey>
+>;
 
-export interface IDocumentsTransitionPayload {
-}
+export interface IDocumentsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -106,17 +113,31 @@ export type DocumentsEditableField = (typeof DOCUMENTS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IDocumentsAsOneRelationConfig = Q.IOneRelationConfig<'documents', DocumentsSelectableField>;
+export type IDocumentsAsOneRelationConfig = Q.IOneRelationConfig<
+  "documents",
+  DocumentsSelectableField
+>;
 
-export type IDocumentsAsManyRelationConfig = Q.IManyRelationConfig<'documentss', DocumentsSelectableField, DocumentsSortableField>;
+export type IDocumentsAsManyRelationConfig = Q.IManyRelationConfig<
+  "documents",
+  DocumentsSelectableField,
+  DocumentsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IDocumentsAsOneRelationQuery = Q.IAsOneRelationQuery<IDocuments, DocumentsSelectableField>;
+export type IDocumentsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IDocuments,
+  DocumentsSelectableField
+>;
 
-export type IDocumentsAsManyRelationQuery = Q.IAsManyRelationQuery<IDocuments, DocumentsSelectableField, DocumentsSortableField>;
+export type IDocumentsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IDocuments,
+  DocumentsSelectableField,
+  DocumentsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -132,7 +153,11 @@ export interface IDocumentsRelationMap extends Record<DocumentsRelationKey, unkn
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IDocumentsRelationQueries = Q.IBaseRelationQueries<IDocuments, DocumentsRelationKey, IDocumentsRelationMap>;
+export type IDocumentsRelationQueries = Q.IBaseRelationQueries<
+  IDocuments,
+  DocumentsRelationKey,
+  IDocumentsRelationMap
+>;
 
 export type IDocumentsItemQuery = Q.IBaseItemQuery<
   IDocuments,

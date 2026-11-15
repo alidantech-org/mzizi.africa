@@ -2,8 +2,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -21,8 +21,8 @@ import type {
   SCOPES_DATE_RANGE_FIELDS,
   SCOPES_SELECTABLE_FIELDS,
   SCOPES_DEFAULT_SELECT_FIELDS,
-  SCOPES_EDITABLE_FIELDS
-} from './scopes.config';
+  SCOPES_EDITABLE_FIELDS,
+} from "./scopes.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -76,8 +76,7 @@ export type IScopesSystemWritable = Omit<IScopes, B.IBaseReadonlyFields | Scopes
 
 export type IScopesUpdatable = Partial<Omit<IScopes, IScopesImmutableFields | ScopesRelationKey>>;
 
-export interface IScopesTransitionPayload {
-}
+export interface IScopesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -101,9 +100,13 @@ export type ScopesEditableField = (typeof SCOPES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IScopesAsOneRelationConfig = Q.IOneRelationConfig<'scopes', ScopesSelectableField>;
+export type IScopesAsOneRelationConfig = Q.IOneRelationConfig<"scopes", ScopesSelectableField>;
 
-export type IScopesAsManyRelationConfig = Q.IManyRelationConfig<'scopess', ScopesSelectableField, ScopesSortableField>;
+export type IScopesAsManyRelationConfig = Q.IManyRelationConfig<
+  "scopes",
+  ScopesSelectableField,
+  ScopesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -111,20 +114,27 @@ export type IScopesAsManyRelationConfig = Q.IManyRelationConfig<'scopess', Scope
 
 export type IScopesAsOneRelationQuery = Q.IAsOneRelationQuery<IScopes, ScopesSelectableField>;
 
-export type IScopesAsManyRelationQuery = Q.IAsManyRelationQuery<IScopes, ScopesSelectableField, ScopesSortableField>;
+export type IScopesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IScopes,
+  ScopesSelectableField,
+  ScopesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
 // ----------------------------------
 
-export interface IScopesRelationMap extends Record<ScopesRelationKey, unknown> {
-}
+export interface IScopesRelationMap extends Record<ScopesRelationKey, unknown> {}
 
 // ----------------------------------
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IScopesRelationQueries = Q.IBaseRelationQueries<IScopes, ScopesRelationKey, IScopesRelationMap>;
+export type IScopesRelationQueries = Q.IBaseRelationQueries<
+  IScopes,
+  ScopesRelationKey,
+  IScopesRelationMap
+>;
 
 export type IScopesItemQuery = Q.IBaseItemQuery<
   IScopes,

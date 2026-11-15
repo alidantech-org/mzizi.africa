@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   MANIFESTS_DATE_RANGE_FIELDS,
   MANIFESTS_SELECTABLE_FIELDS,
   MANIFESTS_DEFAULT_SELECT_FIELDS,
-  MANIFESTS_EDITABLE_FIELDS
-} from './manifests.config';
+  MANIFESTS_EDITABLE_FIELDS,
+} from "./manifests.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -68,14 +68,21 @@ export type IManifestsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IManifestsCreatable = Omit<IManifests, IManifestsImmutableFields | ManifestsRelationKey>;
+export type IManifestsCreatable = Omit<
+  IManifests,
+  IManifestsImmutableFields | ManifestsRelationKey
+>;
 
-export type IManifestsSystemWritable = Omit<IManifests, B.IBaseReadonlyFields | ManifestsRelationKey>;
+export type IManifestsSystemWritable = Omit<
+  IManifests,
+  B.IBaseReadonlyFields | ManifestsRelationKey
+>;
 
-export type IManifestsUpdatable = Partial<Omit<IManifests, IManifestsImmutableFields | ManifestsRelationKey>>;
+export type IManifestsUpdatable = Partial<
+  Omit<IManifests, IManifestsImmutableFields | ManifestsRelationKey>
+>;
 
-export interface IManifestsTransitionPayload {
-}
+export interface IManifestsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -99,17 +106,31 @@ export type ManifestsEditableField = (typeof MANIFESTS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IManifestsAsOneRelationConfig = Q.IOneRelationConfig<'manifests', ManifestsSelectableField>;
+export type IManifestsAsOneRelationConfig = Q.IOneRelationConfig<
+  "manifests",
+  ManifestsSelectableField
+>;
 
-export type IManifestsAsManyRelationConfig = Q.IManyRelationConfig<'manifestss', ManifestsSelectableField, ManifestsSortableField>;
+export type IManifestsAsManyRelationConfig = Q.IManyRelationConfig<
+  "manifests",
+  ManifestsSelectableField,
+  ManifestsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IManifestsAsOneRelationQuery = Q.IAsOneRelationQuery<IManifests, ManifestsSelectableField>;
+export type IManifestsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IManifests,
+  ManifestsSelectableField
+>;
 
-export type IManifestsAsManyRelationQuery = Q.IAsManyRelationQuery<IManifests, ManifestsSelectableField, ManifestsSortableField>;
+export type IManifestsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IManifests,
+  ManifestsSelectableField,
+  ManifestsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -123,7 +144,11 @@ export interface IManifestsRelationMap extends Record<ManifestsRelationKey, unkn
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IManifestsRelationQueries = Q.IBaseRelationQueries<IManifests, ManifestsRelationKey, IManifestsRelationMap>;
+export type IManifestsRelationQueries = Q.IBaseRelationQueries<
+  IManifests,
+  ManifestsRelationKey,
+  IManifestsRelationMap
+>;
 
 export type IManifestsItemQuery = Q.IBaseItemQuery<
   IManifests,

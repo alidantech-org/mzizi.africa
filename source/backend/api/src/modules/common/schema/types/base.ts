@@ -31,15 +31,21 @@ const baseKeys = tuple<IBaseKey>();
 // BASE FIELD CONSTANTS
 // ----------------------------------
 
-export const BASE_READONLY_FIELDS = baseKeys(['createdAt', 'updatedAt', 'deletedAt', 'version', 'id']);
+export const BASE_READONLY_FIELDS = baseKeys([
+  "createdAt",
+  "updatedAt",
+  "deletedAt",
+  "version",
+  "id",
+]);
 
-export const BASE_SORTABLE_FIELDS = baseKeys(['id', 'createdAt', 'updatedAt']);
+export const BASE_SORTABLE_FIELDS = baseKeys(["id", "createdAt", "updatedAt"]);
 
-export const BASE_DATE_RANGE_FIELDS = baseKeys(['createdAt', 'updatedAt']);
+export const BASE_DATE_RANGE_FIELDS = baseKeys(["createdAt", "updatedAt"]);
 
-export const BASE_SELECTABLE_FIELDS = baseKeys(['id', 'createdAt', 'updatedAt']);
+export const BASE_SELECTABLE_FIELDS = baseKeys(["id", "createdAt", "updatedAt"]);
 
-export const BASE_DEFAULT_SELECT_FIELDS = baseKeys(['id', 'createdAt']);
+export const BASE_DEFAULT_SELECT_FIELDS = baseKeys(["id", "createdAt"]);
 
 // ----------------------------------
 // BASE FIELD TYPES

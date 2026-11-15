@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -23,7 +22,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * One government institution specialization of an Official entity. (entity)
  */
 export class InstitutionsDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -62,9 +60,13 @@ export class InstitutionsDto {
   @IsOptional()
   @ValidateIf((object) => object.validFrom !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<InstitutionsDto>((object) => object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil, {
-    message: "Validity Window Is Ordered",
-  })
+  @Satisfies<InstitutionsDto>(
+    (object) =>
+      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+    {
+      message: "Validity Window Is Ordered",
+    },
+  )
   validFrom?: CalendarDate | null;
 
   @IsOptional()

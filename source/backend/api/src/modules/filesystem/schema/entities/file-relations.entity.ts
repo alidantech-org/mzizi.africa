@@ -24,7 +24,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["kindId"])
 @Check("chk_file_relations_versions_must_differ", `source_version_id <> derived_version_id`)
 export class FileRelationsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

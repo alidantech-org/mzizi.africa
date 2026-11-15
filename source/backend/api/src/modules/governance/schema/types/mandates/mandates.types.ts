@@ -2,16 +2,16 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as InstitutionsTypes from '#/modules/governance/schema/types/institutions/institutions.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as OfficesTypes from '#/modules/governance/schema/types/offices/offices.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
+import type * as InstitutionsTypes from "#/modules/governance/schema/types/institutions/institutions.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as OfficesTypes from "#/modules/governance/schema/types/offices/offices.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -25,8 +25,8 @@ import type {
   MANDATES_DATE_RANGE_FIELDS,
   MANDATES_SELECTABLE_FIELDS,
   MANDATES_DEFAULT_SELECT_FIELDS,
-  MANDATES_EDITABLE_FIELDS
-} from './mandates.config';
+  MANDATES_EDITABLE_FIELDS,
+} from "./mandates.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -81,10 +81,11 @@ export type IMandatesCreatable = Omit<IMandates, IMandatesImmutableFields | Mand
 
 export type IMandatesSystemWritable = Omit<IMandates, B.IBaseReadonlyFields | MandatesRelationKey>;
 
-export type IMandatesUpdatable = Partial<Omit<IMandates, IMandatesImmutableFields | MandatesRelationKey>>;
+export type IMandatesUpdatable = Partial<
+  Omit<IMandates, IMandatesImmutableFields | MandatesRelationKey>
+>;
 
-export interface IMandatesTransitionPayload {
-}
+export interface IMandatesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -108,9 +109,16 @@ export type MandatesEditableField = (typeof MANDATES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IMandatesAsOneRelationConfig = Q.IOneRelationConfig<'mandates', MandatesSelectableField>;
+export type IMandatesAsOneRelationConfig = Q.IOneRelationConfig<
+  "mandates",
+  MandatesSelectableField
+>;
 
-export type IMandatesAsManyRelationConfig = Q.IManyRelationConfig<'mandatess', MandatesSelectableField, MandatesSortableField>;
+export type IMandatesAsManyRelationConfig = Q.IManyRelationConfig<
+  "mandates",
+  MandatesSelectableField,
+  MandatesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -118,7 +126,11 @@ export type IMandatesAsManyRelationConfig = Q.IManyRelationConfig<'mandatess', M
 
 export type IMandatesAsOneRelationQuery = Q.IAsOneRelationQuery<IMandates, MandatesSelectableField>;
 
-export type IMandatesAsManyRelationQuery = Q.IAsManyRelationQuery<IMandates, MandatesSelectableField, MandatesSortableField>;
+export type IMandatesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IMandates,
+  MandatesSelectableField,
+  MandatesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -135,7 +147,11 @@ export interface IMandatesRelationMap extends Record<MandatesRelationKey, unknow
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IMandatesRelationQueries = Q.IBaseRelationQueries<IMandates, MandatesRelationKey, IMandatesRelationMap>;
+export type IMandatesRelationQueries = Q.IBaseRelationQueries<
+  IMandates,
+  MandatesRelationKey,
+  IMandatesRelationMap
+>;
 
 export type IMandatesItemQuery = Q.IBaseItemQuery<
   IMandates,

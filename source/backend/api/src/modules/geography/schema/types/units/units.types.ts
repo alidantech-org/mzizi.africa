@@ -2,14 +2,14 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as CountryTypes from '#/modules/reference/schema/types/country/country.types';
-import type * as FeaturesTypes from '#/modules/geography/schema/types/features/features.types';
+import type * as CountryTypes from "#/modules/reference/schema/types/country/country.types";
+import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -23,8 +23,8 @@ import type {
   UNITS_DATE_RANGE_FIELDS,
   UNITS_SELECTABLE_FIELDS,
   UNITS_DEFAULT_SELECT_FIELDS,
-  UNITS_EDITABLE_FIELDS
-} from './units.config';
+  UNITS_EDITABLE_FIELDS,
+} from "./units.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -61,10 +61,7 @@ export type IUnitsSensitiveFields = never;
 export type IUnitsTransitionFields = never;
 
 export type IUnitsImmutableFields =
-  | IUnitsReadonlyFields
-  | IUnitsContextualFields
-  | IUnitsSensitiveFields
-  | IUnitsTransitionFields;
+  IUnitsReadonlyFields | IUnitsContextualFields | IUnitsSensitiveFields | IUnitsTransitionFields;
 
 // ----------------------------------
 // WRITE CONTRACTS
@@ -76,8 +73,7 @@ export type IUnitsSystemWritable = Omit<IUnits, B.IBaseReadonlyFields | UnitsRel
 
 export type IUnitsUpdatable = Partial<Omit<IUnits, IUnitsImmutableFields | UnitsRelationKey>>;
 
-export interface IUnitsTransitionPayload {
-}
+export interface IUnitsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -101,9 +97,13 @@ export type UnitsEditableField = (typeof UNITS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IUnitsAsOneRelationConfig = Q.IOneRelationConfig<'units', UnitsSelectableField>;
+export type IUnitsAsOneRelationConfig = Q.IOneRelationConfig<"units", UnitsSelectableField>;
 
-export type IUnitsAsManyRelationConfig = Q.IManyRelationConfig<'unitss', UnitsSelectableField, UnitsSortableField>;
+export type IUnitsAsManyRelationConfig = Q.IManyRelationConfig<
+  "units",
+  UnitsSelectableField,
+  UnitsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -111,7 +111,11 @@ export type IUnitsAsManyRelationConfig = Q.IManyRelationConfig<'unitss', UnitsSe
 
 export type IUnitsAsOneRelationQuery = Q.IAsOneRelationQuery<IUnits, UnitsSelectableField>;
 
-export type IUnitsAsManyRelationQuery = Q.IAsManyRelationQuery<IUnits, UnitsSelectableField, UnitsSortableField>;
+export type IUnitsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IUnits,
+  UnitsSelectableField,
+  UnitsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -126,7 +130,11 @@ export interface IUnitsRelationMap extends Record<UnitsRelationKey, unknown> {
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IUnitsRelationQueries = Q.IBaseRelationQueries<IUnits, UnitsRelationKey, IUnitsRelationMap>;
+export type IUnitsRelationQueries = Q.IBaseRelationQueries<
+  IUnits,
+  UnitsRelationKey,
+  IUnitsRelationMap
+>;
 
 export type IUnitsItemQuery = Q.IBaseItemQuery<
   IUnits,

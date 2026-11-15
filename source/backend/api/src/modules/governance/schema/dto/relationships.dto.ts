@@ -1,13 +1,4 @@
-
-import {
-  IsInt,
-  IsISO8601,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Min,
-  ValidateIf,
-} from "class-validator";
+import { IsInt, IsISO8601, IsOptional, IsString, IsUUID, Min, ValidateIf } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -19,7 +10,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * One dated, typed relationship between two government institutions. (entity)
  */
 export class RelationshipsDto {
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -48,9 +38,12 @@ export class RelationshipsDto {
 
   @IsString()
   @IsUUID()
-  @Satisfies<RelationshipsDto>((object) => object.subjectInstitutionId !== object.objectInstitutionId, {
-    message: "Relationship Is Not Self Referential",
-  })
+  @Satisfies<RelationshipsDto>(
+    (object) => object.subjectInstitutionId !== object.objectInstitutionId,
+    {
+      message: "Relationship Is Not Self Referential",
+    },
+  )
   subjectInstitutionId!: Id;
 
   @IsISO8601({})
@@ -59,9 +52,13 @@ export class RelationshipsDto {
   @IsOptional()
   @ValidateIf((object) => object.validFrom !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<RelationshipsDto>((object) => object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil, {
-    message: "Validity Window Is Ordered",
-  })
+  @Satisfies<RelationshipsDto>(
+    (object) =>
+      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+    {
+      message: "Validity Window Is Ordered",
+    },
+  )
   validFrom?: CalendarDate | null;
 
   @IsOptional()

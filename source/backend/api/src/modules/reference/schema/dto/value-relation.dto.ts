@@ -1,12 +1,4 @@
-
-import {
-  IsEnum,
-  IsISO8601,
-  IsOptional,
-  IsString,
-  IsUUID,
-  ValidateIf,
-} from "class-validator";
+import { IsEnum, IsISO8601, IsOptional, IsString, IsUUID, ValidateIf } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import { ValueRelationKind } from "#/modules/reference/schema/enum/value-relation-kind.enum.ts";
@@ -18,7 +10,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy. (entity)
  */
 export class ValueRelationDto {
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -48,9 +39,13 @@ export class ValueRelationDto {
   @IsOptional()
   @ValidateIf((object) => object.validFrom !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<ValueRelationDto>((object) => object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil, {
-    message: "Value Relation Window Must Be Ordered",
-  })
+  @Satisfies<ValueRelationDto>(
+    (object) =>
+      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+    {
+      message: "Value Relation Window Must Be Ordered",
+    },
+  )
   validFrom?: CalendarDate | null;
 
   @IsOptional()

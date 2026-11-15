@@ -1,4 +1,3 @@
-
 import {
   IsBoolean,
   IsISO8601,
@@ -21,7 +20,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Deduplicated access scope: global, or narrowed by country, geographic unit, dataset or field group. (entity)
  */
 export class ScopesDto {
-
   @IsOptional()
   @ValidateIf((object) => object.countryRefId !== null)
   @IsString()

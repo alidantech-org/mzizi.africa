@@ -27,7 +27,6 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 @Index(["roleId"])
 @Index(["scopeId"])
 export class RoleAssignmentsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -65,7 +64,12 @@ export class RoleAssignmentsEntity {
   @JoinColumn({ name: "membership_id" })
   membership?: Relation<MembershipsEntity>;
 
-  @Column({ name: "revocation_reason", type: "varchar", length: 4000, nullable: true })
+  @Column({
+    name: "revocation_reason",
+    type: "varchar",
+    length: 4000,
+    nullable: true,
+  })
   revocationReason?: Description | null;
 
   @Column({ name: "revoked_at", type: "timestamptz", nullable: true })

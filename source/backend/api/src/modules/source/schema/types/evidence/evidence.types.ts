@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   EVIDENCE_DATE_RANGE_FIELDS,
   EVIDENCE_SELECTABLE_FIELDS,
   EVIDENCE_DEFAULT_SELECT_FIELDS,
-  EVIDENCE_EDITABLE_FIELDS
-} from './evidence.config';
+  EVIDENCE_EDITABLE_FIELDS,
+} from "./evidence.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -74,10 +74,11 @@ export type IEvidenceCreatable = Omit<IEvidence, IEvidenceImmutableFields | Evid
 
 export type IEvidenceSystemWritable = Omit<IEvidence, B.IBaseReadonlyFields | EvidenceRelationKey>;
 
-export type IEvidenceUpdatable = Partial<Omit<IEvidence, IEvidenceImmutableFields | EvidenceRelationKey>>;
+export type IEvidenceUpdatable = Partial<
+  Omit<IEvidence, IEvidenceImmutableFields | EvidenceRelationKey>
+>;
 
-export interface IEvidenceTransitionPayload {
-}
+export interface IEvidenceTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -101,9 +102,16 @@ export type EvidenceEditableField = (typeof EVIDENCE_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IEvidenceAsOneRelationConfig = Q.IOneRelationConfig<'evidence', EvidenceSelectableField>;
+export type IEvidenceAsOneRelationConfig = Q.IOneRelationConfig<
+  "evidence",
+  EvidenceSelectableField
+>;
 
-export type IEvidenceAsManyRelationConfig = Q.IManyRelationConfig<'evidences', EvidenceSelectableField, EvidenceSortableField>;
+export type IEvidenceAsManyRelationConfig = Q.IManyRelationConfig<
+  "evidences",
+  EvidenceSelectableField,
+  EvidenceSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -111,7 +119,11 @@ export type IEvidenceAsManyRelationConfig = Q.IManyRelationConfig<'evidences', E
 
 export type IEvidenceAsOneRelationQuery = Q.IAsOneRelationQuery<IEvidence, EvidenceSelectableField>;
 
-export type IEvidenceAsManyRelationQuery = Q.IAsManyRelationQuery<IEvidence, EvidenceSelectableField, EvidenceSortableField>;
+export type IEvidenceAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IEvidence,
+  EvidenceSelectableField,
+  EvidenceSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -125,7 +137,11 @@ export interface IEvidenceRelationMap extends Record<EvidenceRelationKey, unknow
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IEvidenceRelationQueries = Q.IBaseRelationQueries<IEvidence, EvidenceRelationKey, IEvidenceRelationMap>;
+export type IEvidenceRelationQueries = Q.IBaseRelationQueries<
+  IEvidence,
+  EvidenceRelationKey,
+  IEvidenceRelationMap
+>;
 
 export type IEvidenceItemQuery = Q.IBaseItemQuery<
   IEvidence,

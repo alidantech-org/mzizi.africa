@@ -25,7 +25,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["baseId"])
 @Check("chk_unit_unit_scale_must_be_positive", `scale > 0`)
 export class UnitEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -45,13 +44,25 @@ export class UnitEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
-  @Column({ name: "offset", type: "numeric", precision: 38, scale: 18, transformer: new ColumnNumericTransformer() })
+  @Column({
+    name: "offset",
+    type: "numeric",
+    precision: 38,
+    scale: 18,
+    transformer: new ColumnNumericTransformer(),
+  })
   offset!: Factor;
 
   @Column({ name: "quantity", type: "varchar", length: 255 })
   quantity!: NonEmptyString255;
 
-  @Column({ name: "scale", type: "numeric", precision: 38, scale: 18, transformer: new ColumnNumericTransformer() })
+  @Column({
+    name: "scale",
+    type: "numeric",
+    precision: 38,
+    scale: 18,
+    transformer: new ColumnNumericTransformer(),
+  })
   scale!: Factor;
 
   @Column({ name: "symbol", type: "varchar", length: 100 })

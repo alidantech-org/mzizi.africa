@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  Index,
-  PrimaryColumn,
-} from "typeorm";
+import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
@@ -17,7 +12,6 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 @Index(["idempotencyKey"], { unique: true })
 @Index(["publicationRefId"], { unique: true })
 export class PublicationReceiptsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

@@ -24,7 +24,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["methodId"])
 @Index(["supersedesId"])
 export class VerificationsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

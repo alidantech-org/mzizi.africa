@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryColumn,
-  type Relation,
-} from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn, type Relation } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -15,7 +8,6 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
  */
 @Entity({ schema: "geography", name: "places" })
 export class PlacesEntity {
-
   @PrimaryColumn({ name: "feature_id", type: "uuid" })
   featureId!: Id;
 

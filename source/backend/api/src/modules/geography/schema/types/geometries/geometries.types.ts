@@ -2,14 +2,14 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FeaturesTypes from '#/modules/geography/schema/types/features/features.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
+import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -23,8 +23,8 @@ import type {
   GEOMETRIES_DATE_RANGE_FIELDS,
   GEOMETRIES_SELECTABLE_FIELDS,
   GEOMETRIES_DEFAULT_SELECT_FIELDS,
-  GEOMETRIES_EDITABLE_FIELDS
-} from './geometries.config';
+  GEOMETRIES_EDITABLE_FIELDS,
+} from "./geometries.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -75,14 +75,21 @@ export type IGeometriesImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IGeometriesCreatable = Omit<IGeometries, IGeometriesImmutableFields | GeometriesRelationKey>;
+export type IGeometriesCreatable = Omit<
+  IGeometries,
+  IGeometriesImmutableFields | GeometriesRelationKey
+>;
 
-export type IGeometriesSystemWritable = Omit<IGeometries, B.IBaseReadonlyFields | GeometriesRelationKey>;
+export type IGeometriesSystemWritable = Omit<
+  IGeometries,
+  B.IBaseReadonlyFields | GeometriesRelationKey
+>;
 
-export type IGeometriesUpdatable = Partial<Omit<IGeometries, IGeometriesImmutableFields | GeometriesRelationKey>>;
+export type IGeometriesUpdatable = Partial<
+  Omit<IGeometries, IGeometriesImmutableFields | GeometriesRelationKey>
+>;
 
-export interface IGeometriesTransitionPayload {
-}
+export interface IGeometriesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -106,17 +113,31 @@ export type GeometriesEditableField = (typeof GEOMETRIES_EDITABLE_FIELDS)[number
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IGeometriesAsOneRelationConfig = Q.IOneRelationConfig<'geometries', GeometriesSelectableField>;
+export type IGeometriesAsOneRelationConfig = Q.IOneRelationConfig<
+  "geometries",
+  GeometriesSelectableField
+>;
 
-export type IGeometriesAsManyRelationConfig = Q.IManyRelationConfig<'geometriess', GeometriesSelectableField, GeometriesSortableField>;
+export type IGeometriesAsManyRelationConfig = Q.IManyRelationConfig<
+  "geometries",
+  GeometriesSelectableField,
+  GeometriesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IGeometriesAsOneRelationQuery = Q.IAsOneRelationQuery<IGeometries, GeometriesSelectableField>;
+export type IGeometriesAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IGeometries,
+  GeometriesSelectableField
+>;
 
-export type IGeometriesAsManyRelationQuery = Q.IAsManyRelationQuery<IGeometries, GeometriesSelectableField, GeometriesSortableField>;
+export type IGeometriesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IGeometries,
+  GeometriesSelectableField,
+  GeometriesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -131,7 +152,11 @@ export interface IGeometriesRelationMap extends Record<GeometriesRelationKey, un
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IGeometriesRelationQueries = Q.IBaseRelationQueries<IGeometries, GeometriesRelationKey, IGeometriesRelationMap>;
+export type IGeometriesRelationQueries = Q.IBaseRelationQueries<
+  IGeometries,
+  GeometriesRelationKey,
+  IGeometriesRelationMap
+>;
 
 export type IGeometriesItemQuery = Q.IBaseItemQuery<
   IGeometries,

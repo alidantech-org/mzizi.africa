@@ -1,11 +1,4 @@
-
-import {
-  IsBoolean,
-  IsString,
-  MaxLength,
-  MinLength,
-  ValidateIf,
-} from "class-validator";
+import { IsBoolean, IsString, MaxLength, MinLength, ValidateIf } from "class-validator";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { LanguageTag } from "#/modules/shared/schema/type/language-tag.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
@@ -14,7 +7,6 @@ import type { Name } from "#/modules/shared/schema/type/name.type.ts";
  * Institution Detail Names
  */
 export class InstitutionDetailNamesDto {
-
   @IsBoolean()
   isPreferred!: Flag;
 

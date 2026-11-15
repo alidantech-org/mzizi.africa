@@ -24,10 +24,12 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["individualId", "kindId"])
 @Index(["visibilityId"])
 @Index(["sourceCitationId"])
-@Check("chk_contacts_validity_window_is_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
+@Check(
+  "chk_contacts_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
 // Invariant "HasExactlyOneIdentityOwner" has no simple form, so it isn't enforced as a database check.
 export class ContactsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

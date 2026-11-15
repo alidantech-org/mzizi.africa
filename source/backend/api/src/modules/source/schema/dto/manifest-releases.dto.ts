@@ -1,4 +1,3 @@
-
 import {
   IsEnum,
   IsInt,
@@ -29,7 +28,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Pinned approved manifest content; schema and capabilities are immutable release inputs. (entity)
  */
 export class ManifestReleasesDto {
-
   @IsISO8601({})
   approvedAt!: Instant;
 
@@ -51,9 +49,15 @@ export class ManifestReleasesDto {
   deletedAt?: Instant | null;
 
   @IsISO8601({})
-  @Satisfies<ManifestReleasesDto>((object) => object.effectiveFrom == null || object.effectiveUntil == null || object.effectiveFrom < object.effectiveUntil, {
-    message: "Effective Window Is Ordered",
-  })
+  @Satisfies<ManifestReleasesDto>(
+    (object) =>
+      object.effectiveFrom == null ||
+      object.effectiveUntil == null ||
+      object.effectiveFrom < object.effectiveUntil,
+    {
+      message: "Effective Window Is Ordered",
+    },
+  )
   effectiveFrom!: Instant;
 
   @IsOptional()

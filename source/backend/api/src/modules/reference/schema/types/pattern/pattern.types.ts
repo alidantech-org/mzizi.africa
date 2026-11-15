@@ -2,8 +2,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -21,8 +21,8 @@ import type {
   PATTERN_DATE_RANGE_FIELDS,
   PATTERN_SELECTABLE_FIELDS,
   PATTERN_DEFAULT_SELECT_FIELDS,
-  PATTERN_EDITABLE_FIELDS
-} from './pattern.config';
+  PATTERN_EDITABLE_FIELDS,
+} from "./pattern.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -68,10 +68,11 @@ export type IPatternCreatable = Omit<IPattern, IPatternImmutableFields | Pattern
 
 export type IPatternSystemWritable = Omit<IPattern, B.IBaseReadonlyFields | PatternRelationKey>;
 
-export type IPatternUpdatable = Partial<Omit<IPattern, IPatternImmutableFields | PatternRelationKey>>;
+export type IPatternUpdatable = Partial<
+  Omit<IPattern, IPatternImmutableFields | PatternRelationKey>
+>;
 
-export interface IPatternTransitionPayload {
-}
+export interface IPatternTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -95,9 +96,13 @@ export type PatternEditableField = (typeof PATTERN_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IPatternAsOneRelationConfig = Q.IOneRelationConfig<'pattern', PatternSelectableField>;
+export type IPatternAsOneRelationConfig = Q.IOneRelationConfig<"pattern", PatternSelectableField>;
 
-export type IPatternAsManyRelationConfig = Q.IManyRelationConfig<'patterns', PatternSelectableField, PatternSortableField>;
+export type IPatternAsManyRelationConfig = Q.IManyRelationConfig<
+  "patterns",
+  PatternSelectableField,
+  PatternSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -105,20 +110,27 @@ export type IPatternAsManyRelationConfig = Q.IManyRelationConfig<'patterns', Pat
 
 export type IPatternAsOneRelationQuery = Q.IAsOneRelationQuery<IPattern, PatternSelectableField>;
 
-export type IPatternAsManyRelationQuery = Q.IAsManyRelationQuery<IPattern, PatternSelectableField, PatternSortableField>;
+export type IPatternAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IPattern,
+  PatternSelectableField,
+  PatternSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
 // ----------------------------------
 
-export interface IPatternRelationMap extends Record<PatternRelationKey, unknown> {
-}
+export interface IPatternRelationMap extends Record<PatternRelationKey, unknown> {}
 
 // ----------------------------------
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IPatternRelationQueries = Q.IBaseRelationQueries<IPattern, PatternRelationKey, IPatternRelationMap>;
+export type IPatternRelationQueries = Q.IBaseRelationQueries<
+  IPattern,
+  PatternRelationKey,
+  IPatternRelationMap
+>;
 
 export type IPatternItemQuery = Q.IBaseItemQuery<
   IPattern,

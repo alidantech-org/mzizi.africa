@@ -1,11 +1,11 @@
 export enum ESortOrder {
-  Asc = 'asc',
+  Asc = "asc",
 
-  Desc = 'desc'
+  Desc = "desc",
 }
 
 export enum ERelationType {
-  One = 'one',
+  One = "one",
 
-  Many = 'many'
+  Many = "many",
 }

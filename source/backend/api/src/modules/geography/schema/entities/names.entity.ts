@@ -22,9 +22,11 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["featureId"])
 @Index(["nameKindId"])
 @Index(["languageTag"])
-@Check("chk_names_validity_window_is_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
-export class NamesEntity {
-
+@Check(
+  "chk_names_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
+export class GeographyNamesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

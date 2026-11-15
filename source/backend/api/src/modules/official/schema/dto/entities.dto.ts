@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -23,7 +22,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Stable identity for one organization or legally identified entity; its names are stored in official.names. (entity)
  */
 export class EntitiesDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -54,9 +52,15 @@ export class EntitiesDto {
   @IsOptional()
   @ValidateIf((object) => object.registeredOn !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<EntitiesDto>((object) => object.registeredOn == null || object.dissolvedOn == null || object.registeredOn <= object.dissolvedOn, {
-    message: "Registration And Dissolution Are Ordered",
-  })
+  @Satisfies<EntitiesDto>(
+    (object) =>
+      object.registeredOn == null ||
+      object.dissolvedOn == null ||
+      object.registeredOn <= object.dissolvedOn,
+    {
+      message: "Registration And Dissolution Are Ordered",
+    },
+  )
   registeredOn?: CalendarDate | null;
 
   @IsOptional()

@@ -26,7 +26,6 @@ import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 @Index(["fileVersionId"])
 @Index(["manifestReleaseId"])
 export class CapturesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

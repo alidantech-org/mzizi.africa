@@ -18,10 +18,15 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 @Entity({ schema: "reference", name: "value_relations" })
 @Index(["sourceValueId", "relationKind", "validFrom"])
 @Index(["targetValueId", "relationKind"])
-@Check("chk_value_relation_value_relation_must_not_be_self_referential", `source_value_id <> target_value_id`)
-@Check("chk_value_relation_value_relation_window_must_be_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
+@Check(
+  "chk_value_relation_value_relation_must_not_be_self_referential",
+  `source_value_id <> target_value_id`,
+)
+@Check(
+  "chk_value_relation_value_relation_window_must_be_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
 export class ValueRelationEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

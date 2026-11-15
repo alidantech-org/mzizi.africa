@@ -1,4 +1,3 @@
-
 import {
   IsBoolean,
   IsEnum,
@@ -32,7 +31,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Immutable exact bytes in the mzizi bucket; verify object hash, size and access before acceptance. (entity)
  */
 export class FileVersionsDto {
-
   @IsEnum(Access)
   access!: Access;
 

@@ -23,7 +23,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["kindId"])
 @Index(["countryId"])
 export class PublishersEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

@@ -2,10 +2,10 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
-import type { AccountStatus } from '#/modules/auth/schema/enum/account-status.enum';
-import type { AuthActorKind } from '#/modules/auth/schema/enum/auth-actor-kind.enum';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
+import type { AccountStatus } from "#/modules/auth/schema/enum/account-status.enum";
+import type { AuthActorKind } from "#/modules/auth/schema/enum/auth-actor-kind.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -23,8 +23,8 @@ import type {
   ACCOUNTS_DATE_RANGE_FIELDS,
   ACCOUNTS_SELECTABLE_FIELDS,
   ACCOUNTS_DEFAULT_SELECT_FIELDS,
-  ACCOUNTS_EDITABLE_FIELDS
-} from './accounts.config';
+  ACCOUNTS_EDITABLE_FIELDS,
+} from "./accounts.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -74,10 +74,11 @@ export type IAccountsCreatable = Omit<IAccounts, IAccountsImmutableFields | Acco
 
 export type IAccountsSystemWritable = Omit<IAccounts, B.IBaseReadonlyFields | AccountsRelationKey>;
 
-export type IAccountsUpdatable = Partial<Omit<IAccounts, IAccountsImmutableFields | AccountsRelationKey>>;
+export type IAccountsUpdatable = Partial<
+  Omit<IAccounts, IAccountsImmutableFields | AccountsRelationKey>
+>;
 
-export interface IAccountsTransitionPayload {
-}
+export interface IAccountsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -101,9 +102,16 @@ export type AccountsEditableField = (typeof ACCOUNTS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IAccountsAsOneRelationConfig = Q.IOneRelationConfig<'accounts', AccountsSelectableField>;
+export type IAccountsAsOneRelationConfig = Q.IOneRelationConfig<
+  "accounts",
+  AccountsSelectableField
+>;
 
-export type IAccountsAsManyRelationConfig = Q.IManyRelationConfig<'accountss', AccountsSelectableField, AccountsSortableField>;
+export type IAccountsAsManyRelationConfig = Q.IManyRelationConfig<
+  "accounts",
+  AccountsSelectableField,
+  AccountsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -111,20 +119,27 @@ export type IAccountsAsManyRelationConfig = Q.IManyRelationConfig<'accountss', A
 
 export type IAccountsAsOneRelationQuery = Q.IAsOneRelationQuery<IAccounts, AccountsSelectableField>;
 
-export type IAccountsAsManyRelationQuery = Q.IAsManyRelationQuery<IAccounts, AccountsSelectableField, AccountsSortableField>;
+export type IAccountsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IAccounts,
+  AccountsSelectableField,
+  AccountsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
 // ----------------------------------
 
-export interface IAccountsRelationMap extends Record<AccountsRelationKey, unknown> {
-}
+export interface IAccountsRelationMap extends Record<AccountsRelationKey, unknown> {}
 
 // ----------------------------------
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IAccountsRelationQueries = Q.IBaseRelationQueries<IAccounts, AccountsRelationKey, IAccountsRelationMap>;
+export type IAccountsRelationQueries = Q.IBaseRelationQueries<
+  IAccounts,
+  AccountsRelationKey,
+  IAccountsRelationMap
+>;
 
 export type IAccountsItemQuery = Q.IBaseItemQuery<
   IAccounts,

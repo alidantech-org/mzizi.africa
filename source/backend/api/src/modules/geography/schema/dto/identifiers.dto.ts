@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -20,7 +19,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * A preserved identifier assigned to a feature by an external geographic registry or source system. (entity)
  */
 export class IdentifiersDto {
-
   @IsISO8601({})
   createdAt!: Instant;
 

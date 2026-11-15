@@ -18,7 +18,6 @@ import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.ty
  * Office Detail
  */
 export class OfficeDetailDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -20,7 +19,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Directed exact input-to-output lineage with a pinned processing description; originals remain immutable. (entity)
  */
 export class FileRelationsDto {
-
   @IsISO8601({})
   createdAt!: Instant;
 

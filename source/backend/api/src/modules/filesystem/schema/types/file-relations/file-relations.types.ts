@@ -2,14 +2,14 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FileVersionsTypes from '#/modules/filesystem/schema/types/file-versions/file-versions.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
+import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -23,8 +23,8 @@ import type {
   FILE_RELATIONS_DATE_RANGE_FIELDS,
   FILE_RELATIONS_SELECTABLE_FIELDS,
   FILE_RELATIONS_DEFAULT_SELECT_FIELDS,
-  FILE_RELATIONS_EDITABLE_FIELDS
-} from './file-relations.config';
+  FILE_RELATIONS_EDITABLE_FIELDS,
+} from "./file-relations.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -71,14 +71,21 @@ export type IFileRelationsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IFileRelationsCreatable = Omit<IFileRelations, IFileRelationsImmutableFields | FileRelationsRelationKey>;
+export type IFileRelationsCreatable = Omit<
+  IFileRelations,
+  IFileRelationsImmutableFields | FileRelationsRelationKey
+>;
 
-export type IFileRelationsSystemWritable = Omit<IFileRelations, B.IBaseReadonlyFields | FileRelationsRelationKey>;
+export type IFileRelationsSystemWritable = Omit<
+  IFileRelations,
+  B.IBaseReadonlyFields | FileRelationsRelationKey
+>;
 
-export type IFileRelationsUpdatable = Partial<Omit<IFileRelations, IFileRelationsImmutableFields | FileRelationsRelationKey>>;
+export type IFileRelationsUpdatable = Partial<
+  Omit<IFileRelations, IFileRelationsImmutableFields | FileRelationsRelationKey>
+>;
 
-export interface IFileRelationsTransitionPayload {
-}
+export interface IFileRelationsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -102,17 +109,31 @@ export type FileRelationsEditableField = (typeof FILE_RELATIONS_EDITABLE_FIELDS)
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IFileRelationsAsOneRelationConfig = Q.IOneRelationConfig<'fileRelations', FileRelationsSelectableField>;
+export type IFileRelationsAsOneRelationConfig = Q.IOneRelationConfig<
+  "fileRelations",
+  FileRelationsSelectableField
+>;
 
-export type IFileRelationsAsManyRelationConfig = Q.IManyRelationConfig<'fileRelationss', FileRelationsSelectableField, FileRelationsSortableField>;
+export type IFileRelationsAsManyRelationConfig = Q.IManyRelationConfig<
+  "fileRelations",
+  FileRelationsSelectableField,
+  FileRelationsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IFileRelationsAsOneRelationQuery = Q.IAsOneRelationQuery<IFileRelations, FileRelationsSelectableField>;
+export type IFileRelationsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IFileRelations,
+  FileRelationsSelectableField
+>;
 
-export type IFileRelationsAsManyRelationQuery = Q.IAsManyRelationQuery<IFileRelations, FileRelationsSelectableField, FileRelationsSortableField>;
+export type IFileRelationsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IFileRelations,
+  FileRelationsSelectableField,
+  FileRelationsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -128,7 +149,11 @@ export interface IFileRelationsRelationMap extends Record<FileRelationsRelationK
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IFileRelationsRelationQueries = Q.IBaseRelationQueries<IFileRelations, FileRelationsRelationKey, IFileRelationsRelationMap>;
+export type IFileRelationsRelationQueries = Q.IBaseRelationQueries<
+  IFileRelations,
+  FileRelationsRelationKey,
+  IFileRelationsRelationMap
+>;
 
 export type IFileRelationsItemQuery = Q.IBaseItemQuery<
   IFileRelations,

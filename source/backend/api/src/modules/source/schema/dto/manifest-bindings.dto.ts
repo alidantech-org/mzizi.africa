@@ -1,13 +1,4 @@
-
-import {
-  IsInt,
-  IsISO8601,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Min,
-  ValidateIf,
-} from "class-validator";
+import { IsInt, IsISO8601, IsOptional, IsString, IsUUID, Min, ValidateIf } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -18,7 +9,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Dated release binding; activation never changes releases already pinned by running jobs. (entity)
  */
 export class ManifestBindingsDto {
-
   @IsISO8601({})
   activatedAt!: Instant;
 
@@ -36,9 +26,15 @@ export class ManifestBindingsDto {
   deletedAt?: Instant | null;
 
   @IsISO8601({})
-  @Satisfies<ManifestBindingsDto>((object) => object.effectiveFrom == null || object.effectiveUntil == null || object.effectiveFrom < object.effectiveUntil, {
-    message: "Effective Window Is Ordered",
-  })
+  @Satisfies<ManifestBindingsDto>(
+    (object) =>
+      object.effectiveFrom == null ||
+      object.effectiveUntil == null ||
+      object.effectiveFrom < object.effectiveUntil,
+    {
+      message: "Effective Window Is Ordered",
+    },
+  )
   effectiveFrom!: Instant;
 
   @IsOptional()

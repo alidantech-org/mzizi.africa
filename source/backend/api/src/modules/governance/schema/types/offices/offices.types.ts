@@ -2,16 +2,16 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as InstitutionsTypes from '#/modules/governance/schema/types/institutions/institutions.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
-import type * as UnitsTypes from '#/modules/geography/schema/types/units/units.types';
+import type * as InstitutionsTypes from "#/modules/governance/schema/types/institutions/institutions.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
+import type * as UnitsTypes from "#/modules/geography/schema/types/units/units.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -25,8 +25,8 @@ import type {
   OFFICES_DATE_RANGE_FIELDS,
   OFFICES_SELECTABLE_FIELDS,
   OFFICES_DEFAULT_SELECT_FIELDS,
-  OFFICES_EDITABLE_FIELDS
-} from './offices.config';
+  OFFICES_EDITABLE_FIELDS,
+} from "./offices.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -81,10 +81,11 @@ export type IOfficesCreatable = Omit<IOffices, IOfficesImmutableFields | Offices
 
 export type IOfficesSystemWritable = Omit<IOffices, B.IBaseReadonlyFields | OfficesRelationKey>;
 
-export type IOfficesUpdatable = Partial<Omit<IOffices, IOfficesImmutableFields | OfficesRelationKey>>;
+export type IOfficesUpdatable = Partial<
+  Omit<IOffices, IOfficesImmutableFields | OfficesRelationKey>
+>;
 
-export interface IOfficesTransitionPayload {
-}
+export interface IOfficesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -108,9 +109,13 @@ export type OfficesEditableField = (typeof OFFICES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IOfficesAsOneRelationConfig = Q.IOneRelationConfig<'offices', OfficesSelectableField>;
+export type IOfficesAsOneRelationConfig = Q.IOneRelationConfig<"offices", OfficesSelectableField>;
 
-export type IOfficesAsManyRelationConfig = Q.IManyRelationConfig<'officess', OfficesSelectableField, OfficesSortableField>;
+export type IOfficesAsManyRelationConfig = Q.IManyRelationConfig<
+  "offices",
+  OfficesSelectableField,
+  OfficesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -118,7 +123,11 @@ export type IOfficesAsManyRelationConfig = Q.IManyRelationConfig<'officess', Off
 
 export type IOfficesAsOneRelationQuery = Q.IAsOneRelationQuery<IOffices, OfficesSelectableField>;
 
-export type IOfficesAsManyRelationQuery = Q.IAsManyRelationQuery<IOffices, OfficesSelectableField, OfficesSortableField>;
+export type IOfficesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IOffices,
+  OfficesSelectableField,
+  OfficesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -135,7 +144,11 @@ export interface IOfficesRelationMap extends Record<OfficesRelationKey, unknown>
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IOfficesRelationQueries = Q.IBaseRelationQueries<IOffices, OfficesRelationKey, IOfficesRelationMap>;
+export type IOfficesRelationQueries = Q.IBaseRelationQueries<
+  IOffices,
+  OfficesRelationKey,
+  IOfficesRelationMap
+>;
 
 export type IOfficesItemQuery = Q.IBaseItemQuery<
   IOffices,

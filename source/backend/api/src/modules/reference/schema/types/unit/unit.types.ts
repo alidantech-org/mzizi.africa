@@ -2,8 +2,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -21,8 +21,8 @@ import type {
   UNIT_DATE_RANGE_FIELDS,
   UNIT_SELECTABLE_FIELDS,
   UNIT_DEFAULT_SELECT_FIELDS,
-  UNIT_EDITABLE_FIELDS
-} from './unit.config';
+  UNIT_EDITABLE_FIELDS,
+} from "./unit.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -60,10 +60,7 @@ export type IUnitSensitiveFields = never;
 export type IUnitTransitionFields = never;
 
 export type IUnitImmutableFields =
-  | IUnitReadonlyFields
-  | IUnitContextualFields
-  | IUnitSensitiveFields
-  | IUnitTransitionFields;
+  IUnitReadonlyFields | IUnitContextualFields | IUnitSensitiveFields | IUnitTransitionFields;
 
 // ----------------------------------
 // WRITE CONTRACTS
@@ -75,8 +72,7 @@ export type IUnitSystemWritable = Omit<IUnit, B.IBaseReadonlyFields | UnitRelati
 
 export type IUnitUpdatable = Partial<Omit<IUnit, IUnitImmutableFields | UnitRelationKey>>;
 
-export interface IUnitTransitionPayload {
-}
+export interface IUnitTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -100,9 +96,13 @@ export type UnitEditableField = (typeof UNIT_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IUnitAsOneRelationConfig = Q.IOneRelationConfig<'unit', UnitSelectableField>;
+export type IUnitAsOneRelationConfig = Q.IOneRelationConfig<"unit", UnitSelectableField>;
 
-export type IUnitAsManyRelationConfig = Q.IManyRelationConfig<'units', UnitSelectableField, UnitSortableField>;
+export type IUnitAsManyRelationConfig = Q.IManyRelationConfig<
+  "units",
+  UnitSelectableField,
+  UnitSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -110,7 +110,11 @@ export type IUnitAsManyRelationConfig = Q.IManyRelationConfig<'units', UnitSelec
 
 export type IUnitAsOneRelationQuery = Q.IAsOneRelationQuery<IUnit, UnitSelectableField>;
 
-export type IUnitAsManyRelationQuery = Q.IAsManyRelationQuery<IUnit, UnitSelectableField, UnitSortableField>;
+export type IUnitAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IUnit,
+  UnitSelectableField,
+  UnitSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP

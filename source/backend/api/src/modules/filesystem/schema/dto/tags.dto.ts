@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -22,7 +21,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * One shared tag catalogue for files and folders. (entity)
  */
 export class TagsDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

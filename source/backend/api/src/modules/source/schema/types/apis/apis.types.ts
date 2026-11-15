@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as SourcesTypes from '#/modules/source/schema/types/sources/sources.types';
+import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   APIS_DATE_RANGE_FIELDS,
   APIS_SELECTABLE_FIELDS,
   APIS_DEFAULT_SELECT_FIELDS,
-  APIS_EDITABLE_FIELDS
-} from './apis.config';
+  APIS_EDITABLE_FIELDS,
+} from "./apis.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -58,10 +58,7 @@ export type IApisSensitiveFields = never;
 export type IApisTransitionFields = never;
 
 export type IApisImmutableFields =
-  | IApisReadonlyFields
-  | IApisContextualFields
-  | IApisSensitiveFields
-  | IApisTransitionFields;
+  IApisReadonlyFields | IApisContextualFields | IApisSensitiveFields | IApisTransitionFields;
 
 // ----------------------------------
 // WRITE CONTRACTS
@@ -73,8 +70,7 @@ export type IApisSystemWritable = Omit<IApis, B.IBaseReadonlyFields | ApisRelati
 
 export type IApisUpdatable = Partial<Omit<IApis, IApisImmutableFields | ApisRelationKey>>;
 
-export interface IApisTransitionPayload {
-}
+export interface IApisTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -98,9 +94,13 @@ export type ApisEditableField = (typeof APIS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IApisAsOneRelationConfig = Q.IOneRelationConfig<'apis', ApisSelectableField>;
+export type IApisAsOneRelationConfig = Q.IOneRelationConfig<"apis", ApisSelectableField>;
 
-export type IApisAsManyRelationConfig = Q.IManyRelationConfig<'apiss', ApisSelectableField, ApisSortableField>;
+export type IApisAsManyRelationConfig = Q.IManyRelationConfig<
+  "apis",
+  ApisSelectableField,
+  ApisSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -108,7 +108,11 @@ export type IApisAsManyRelationConfig = Q.IManyRelationConfig<'apiss', ApisSelec
 
 export type IApisAsOneRelationQuery = Q.IAsOneRelationQuery<IApis, ApisSelectableField>;
 
-export type IApisAsManyRelationQuery = Q.IAsManyRelationQuery<IApis, ApisSelectableField, ApisSortableField>;
+export type IApisAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IApis,
+  ApisSelectableField,
+  ApisSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP

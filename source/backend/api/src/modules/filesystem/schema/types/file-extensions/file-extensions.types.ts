@@ -2,8 +2,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -21,8 +21,8 @@ import type {
   FILE_EXTENSIONS_DATE_RANGE_FIELDS,
   FILE_EXTENSIONS_SELECTABLE_FIELDS,
   FILE_EXTENSIONS_DEFAULT_SELECT_FIELDS,
-  FILE_EXTENSIONS_EDITABLE_FIELDS
-} from './file-extensions.config';
+  FILE_EXTENSIONS_EDITABLE_FIELDS,
+} from "./file-extensions.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -66,14 +66,21 @@ export type IFileExtensionsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IFileExtensionsCreatable = Omit<IFileExtensions, IFileExtensionsImmutableFields | FileExtensionsRelationKey>;
+export type IFileExtensionsCreatable = Omit<
+  IFileExtensions,
+  IFileExtensionsImmutableFields | FileExtensionsRelationKey
+>;
 
-export type IFileExtensionsSystemWritable = Omit<IFileExtensions, B.IBaseReadonlyFields | FileExtensionsRelationKey>;
+export type IFileExtensionsSystemWritable = Omit<
+  IFileExtensions,
+  B.IBaseReadonlyFields | FileExtensionsRelationKey
+>;
 
-export type IFileExtensionsUpdatable = Partial<Omit<IFileExtensions, IFileExtensionsImmutableFields | FileExtensionsRelationKey>>;
+export type IFileExtensionsUpdatable = Partial<
+  Omit<IFileExtensions, IFileExtensionsImmutableFields | FileExtensionsRelationKey>
+>;
 
-export interface IFileExtensionsTransitionPayload {
-}
+export interface IFileExtensionsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -89,7 +96,8 @@ export type FileExtensionsDateRangeField = (typeof FILE_EXTENSIONS_DATE_RANGE_FI
 
 export type FileExtensionsSelectableField = (typeof FILE_EXTENSIONS_SELECTABLE_FIELDS)[number];
 
-export type FileExtensionsDefaultSelectField = (typeof FILE_EXTENSIONS_DEFAULT_SELECT_FIELDS)[number];
+export type FileExtensionsDefaultSelectField =
+  (typeof FILE_EXTENSIONS_DEFAULT_SELECT_FIELDS)[number];
 
 export type FileExtensionsEditableField = (typeof FILE_EXTENSIONS_EDITABLE_FIELDS)[number];
 
@@ -97,30 +105,47 @@ export type FileExtensionsEditableField = (typeof FILE_EXTENSIONS_EDITABLE_FIELD
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IFileExtensionsAsOneRelationConfig = Q.IOneRelationConfig<'fileExtensions', FileExtensionsSelectableField>;
+export type IFileExtensionsAsOneRelationConfig = Q.IOneRelationConfig<
+  "fileExtensions",
+  FileExtensionsSelectableField
+>;
 
-export type IFileExtensionsAsManyRelationConfig = Q.IManyRelationConfig<'fileExtensionss', FileExtensionsSelectableField, FileExtensionsSortableField>;
+export type IFileExtensionsAsManyRelationConfig = Q.IManyRelationConfig<
+  "fileExtensions",
+  FileExtensionsSelectableField,
+  FileExtensionsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IFileExtensionsAsOneRelationQuery = Q.IAsOneRelationQuery<IFileExtensions, FileExtensionsSelectableField>;
+export type IFileExtensionsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IFileExtensions,
+  FileExtensionsSelectableField
+>;
 
-export type IFileExtensionsAsManyRelationQuery = Q.IAsManyRelationQuery<IFileExtensions, FileExtensionsSelectableField, FileExtensionsSortableField>;
+export type IFileExtensionsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IFileExtensions,
+  FileExtensionsSelectableField,
+  FileExtensionsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
 // ----------------------------------
 
-export interface IFileExtensionsRelationMap extends Record<FileExtensionsRelationKey, unknown> {
-}
+export interface IFileExtensionsRelationMap extends Record<FileExtensionsRelationKey, unknown> {}
 
 // ----------------------------------
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IFileExtensionsRelationQueries = Q.IBaseRelationQueries<IFileExtensions, FileExtensionsRelationKey, IFileExtensionsRelationMap>;
+export type IFileExtensionsRelationQueries = Q.IBaseRelationQueries<
+  IFileExtensions,
+  FileExtensionsRelationKey,
+  IFileExtensionsRelationMap
+>;
 
 export type IFileExtensionsItemQuery = Q.IBaseItemQuery<
   IFileExtensions,

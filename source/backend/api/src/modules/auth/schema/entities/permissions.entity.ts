@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  Index,
-  PrimaryColumn,
-} from "typeorm";
+import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 import { AuthAction } from "#/modules/auth/schema/enum/auth-action.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
@@ -17,7 +12,6 @@ import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-s
 @Entity({ schema: "auth", name: "permissions" })
 @Index(["code"], { unique: true })
 export class PermissionsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -27,7 +21,12 @@ export class PermissionsEntity {
   @Column({ name: "code", type: "varchar", length: 255 })
   code!: IdentityCode;
 
-  @Column({ name: "description", type: "varchar", length: 4000, nullable: true })
+  @Column({
+    name: "description",
+    type: "varchar",
+    length: 4000,
+    nullable: true,
+  })
   description?: Description | null;
 
   @Column({ name: "field_group", type: "varchar", length: 255, nullable: true })

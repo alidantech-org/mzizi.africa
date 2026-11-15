@@ -1,4 +1,3 @@
-
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 
 /** Pagination Meta */

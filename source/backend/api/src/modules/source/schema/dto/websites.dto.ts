@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -22,7 +21,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Website-specific identity attached to a source channel. (entity)
  */
 export class WebsitesDto {
-
   @IsString()
   @IsUrl()
   @MaxLength(2048)

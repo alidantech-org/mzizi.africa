@@ -20,9 +20,11 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 @Entity({ schema: "geography", name: "units" })
 @Index(["countryId"])
 @Index(["validFrom", "validUntil"])
-@Check("chk_units_effective_window_must_be_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
+@Check(
+  "chk_units_effective_window_must_be_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
 export class UnitsEntity {
-
   @PrimaryColumn({ name: "feature_id", type: "uuid" })
   featureId!: Id;
 

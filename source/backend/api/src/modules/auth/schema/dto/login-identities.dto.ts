@@ -1,4 +1,3 @@
-
 import {
   IsISO8601,
   IsOptional,
@@ -16,7 +15,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * External issuer and subject linked to one account; unlinking is recorded, never deleted. (entity)
  */
 export class LoginIdentitiesDto {
-
   @IsString()
   @IsUUID()
   accountId!: Id;

@@ -1,4 +1,3 @@
-
 import {
   IsEnum,
   IsISO8601,
@@ -19,7 +18,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Login principal for a person or service; identity is separate from the people and institutions it refers to. (entity)
  */
 export class AccountsDto {
-
   @IsEnum(AuthActorKind)
   actorKind!: AuthActorKind;
 

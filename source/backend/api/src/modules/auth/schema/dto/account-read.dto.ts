@@ -1,4 +1,3 @@
-
 import {
   IsEnum,
   IsISO8601,
@@ -18,7 +17,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Account Read
  */
 export class AccountReadDto {
-
   @IsEnum(AuthActorKind)
   actorKind!: AuthActorKind;
 

@@ -20,8 +20,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Entity({ schema: "geography", name: "identifiers" })
 @Index(["identifierSchemeId", "namespace", "externalId"], { unique: true })
 @Index(["featureId"])
-export class IdentifiersEntity {
-
+export class GeographyIdentifiersEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

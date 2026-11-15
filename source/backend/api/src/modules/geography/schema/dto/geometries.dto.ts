@@ -1,4 +1,3 @@
-
 import {
   Allow,
   IsInt,
@@ -20,7 +19,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * A dated spatial representation version for a feature. The geometry field remains an unsupported Dryv placeholder and is excluded from generation. (entity)
  */
 export class GeometriesDto {
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -71,9 +69,13 @@ export class GeometriesDto {
   @IsOptional()
   @ValidateIf((object) => object.validFrom !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<GeometriesDto>((object) => object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil, {
-    message: "Validity Window Is Ordered",
-  })
+  @Satisfies<GeometriesDto>(
+    (object) =>
+      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+    {
+      message: "Validity Window Is Ordered",
+    },
+  )
   validFrom?: CalendarDate | null;
 
   @IsOptional()

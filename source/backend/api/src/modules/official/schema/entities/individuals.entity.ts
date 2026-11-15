@@ -19,7 +19,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["code"], { unique: true })
 @Index(["sourceCitationId"])
 export class IndividualsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

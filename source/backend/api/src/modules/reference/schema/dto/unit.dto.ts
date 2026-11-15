@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -26,7 +25,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Measurement unit and conversion to its optional base unit; never a spatial unit. (entity)
  */
 export class UnitDto {
-
   @IsOptional()
   @ValidateIf((object) => object.baseId !== null)
   @IsString()

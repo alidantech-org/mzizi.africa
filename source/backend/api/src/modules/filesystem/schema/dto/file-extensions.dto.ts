@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -23,7 +22,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Technical filename suffix and media-type hint; never a semantic document classification. (entity)
  */
 export class FileExtensionsDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

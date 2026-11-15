@@ -2,14 +2,14 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
-import type { MembershipStatus } from '#/modules/auth/schema/enum/membership-status.enum';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
+import type { MembershipStatus } from "#/modules/auth/schema/enum/membership-status.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as AccountsTypes from '#/modules/auth/schema/types/accounts/accounts.types';
+import type * as AccountsTypes from "#/modules/auth/schema/types/accounts/accounts.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -23,8 +23,8 @@ import type {
   MEMBERSHIPS_DATE_RANGE_FIELDS,
   MEMBERSHIPS_SELECTABLE_FIELDS,
   MEMBERSHIPS_DEFAULT_SELECT_FIELDS,
-  MEMBERSHIPS_EDITABLE_FIELDS
-} from './memberships.config';
+  MEMBERSHIPS_EDITABLE_FIELDS,
+} from "./memberships.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -76,14 +76,21 @@ export type IMembershipsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IMembershipsCreatable = Omit<IMemberships, IMembershipsImmutableFields | MembershipsRelationKey>;
+export type IMembershipsCreatable = Omit<
+  IMemberships,
+  IMembershipsImmutableFields | MembershipsRelationKey
+>;
 
-export type IMembershipsSystemWritable = Omit<IMemberships, B.IBaseReadonlyFields | MembershipsRelationKey>;
+export type IMembershipsSystemWritable = Omit<
+  IMemberships,
+  B.IBaseReadonlyFields | MembershipsRelationKey
+>;
 
-export type IMembershipsUpdatable = Partial<Omit<IMemberships, IMembershipsImmutableFields | MembershipsRelationKey>>;
+export type IMembershipsUpdatable = Partial<
+  Omit<IMemberships, IMembershipsImmutableFields | MembershipsRelationKey>
+>;
 
-export interface IMembershipsTransitionPayload {
-}
+export interface IMembershipsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -107,17 +114,31 @@ export type MembershipsEditableField = (typeof MEMBERSHIPS_EDITABLE_FIELDS)[numb
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IMembershipsAsOneRelationConfig = Q.IOneRelationConfig<'memberships', MembershipsSelectableField>;
+export type IMembershipsAsOneRelationConfig = Q.IOneRelationConfig<
+  "memberships",
+  MembershipsSelectableField
+>;
 
-export type IMembershipsAsManyRelationConfig = Q.IManyRelationConfig<'membershipss', MembershipsSelectableField, MembershipsSortableField>;
+export type IMembershipsAsManyRelationConfig = Q.IManyRelationConfig<
+  "memberships",
+  MembershipsSelectableField,
+  MembershipsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IMembershipsAsOneRelationQuery = Q.IAsOneRelationQuery<IMemberships, MembershipsSelectableField>;
+export type IMembershipsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IMemberships,
+  MembershipsSelectableField
+>;
 
-export type IMembershipsAsManyRelationQuery = Q.IAsManyRelationQuery<IMemberships, MembershipsSelectableField, MembershipsSortableField>;
+export type IMembershipsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IMemberships,
+  MembershipsSelectableField,
+  MembershipsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -133,7 +154,11 @@ export interface IMembershipsRelationMap extends Record<MembershipsRelationKey, 
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IMembershipsRelationQueries = Q.IBaseRelationQueries<IMemberships, MembershipsRelationKey, IMembershipsRelationMap>;
+export type IMembershipsRelationQueries = Q.IBaseRelationQueries<
+  IMemberships,
+  MembershipsRelationKey,
+  IMembershipsRelationMap
+>;
 
 export type IMembershipsItemQuery = Q.IBaseItemQuery<
   IMemberships,

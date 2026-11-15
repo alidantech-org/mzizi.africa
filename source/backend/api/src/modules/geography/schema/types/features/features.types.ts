@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   FEATURES_DATE_RANGE_FIELDS,
   FEATURES_SELECTABLE_FIELDS,
   FEATURES_DEFAULT_SELECT_FIELDS,
-  FEATURES_EDITABLE_FIELDS
-} from './features.config';
+  FEATURES_EDITABLE_FIELDS,
+} from "./features.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -70,10 +70,11 @@ export type IFeaturesCreatable = Omit<IFeatures, IFeaturesImmutableFields | Feat
 
 export type IFeaturesSystemWritable = Omit<IFeatures, B.IBaseReadonlyFields | FeaturesRelationKey>;
 
-export type IFeaturesUpdatable = Partial<Omit<IFeatures, IFeaturesImmutableFields | FeaturesRelationKey>>;
+export type IFeaturesUpdatable = Partial<
+  Omit<IFeatures, IFeaturesImmutableFields | FeaturesRelationKey>
+>;
 
-export interface IFeaturesTransitionPayload {
-}
+export interface IFeaturesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -97,9 +98,16 @@ export type FeaturesEditableField = (typeof FEATURES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IFeaturesAsOneRelationConfig = Q.IOneRelationConfig<'features', FeaturesSelectableField>;
+export type IFeaturesAsOneRelationConfig = Q.IOneRelationConfig<
+  "features",
+  FeaturesSelectableField
+>;
 
-export type IFeaturesAsManyRelationConfig = Q.IManyRelationConfig<'featuress', FeaturesSelectableField, FeaturesSortableField>;
+export type IFeaturesAsManyRelationConfig = Q.IManyRelationConfig<
+  "features",
+  FeaturesSelectableField,
+  FeaturesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -107,7 +115,11 @@ export type IFeaturesAsManyRelationConfig = Q.IManyRelationConfig<'featuress', F
 
 export type IFeaturesAsOneRelationQuery = Q.IAsOneRelationQuery<IFeatures, FeaturesSelectableField>;
 
-export type IFeaturesAsManyRelationQuery = Q.IAsManyRelationQuery<IFeatures, FeaturesSelectableField, FeaturesSortableField>;
+export type IFeaturesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IFeatures,
+  FeaturesSelectableField,
+  FeaturesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -121,7 +133,11 @@ export interface IFeaturesRelationMap extends Record<FeaturesRelationKey, unknow
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IFeaturesRelationQueries = Q.IBaseRelationQueries<IFeatures, FeaturesRelationKey, IFeaturesRelationMap>;
+export type IFeaturesRelationQueries = Q.IBaseRelationQueries<
+  IFeatures,
+  FeaturesRelationKey,
+  IFeaturesRelationMap
+>;
 
 export type IFeaturesItemQuery = Q.IBaseItemQuery<
   IFeatures,

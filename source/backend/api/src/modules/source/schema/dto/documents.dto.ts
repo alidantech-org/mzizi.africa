@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -25,7 +24,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Stable published document identity; repeated captures retain independent retrieval history. (entity)
  */
 export class DocumentsDto {
-
   @IsOptional()
   @ValidateIf((object) => object.canonicalUrl !== null)
   @IsString()

@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -21,7 +20,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Accepted publisher; an optional official identity distinguishes organization from publication channel. (entity)
  */
 export class PublishersDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -21,7 +20,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record. (entity)
  */
 export class CitationsDto {
-
   @IsOptional()
   @ValidateIf((object) => object.captureId !== null)
   @IsString()

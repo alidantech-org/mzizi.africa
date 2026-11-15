@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as SchemeTypes from '#/modules/reference/schema/types/scheme/scheme.types';
+import type * as SchemeTypes from "#/modules/reference/schema/types/scheme/scheme.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   VALUE_DATE_RANGE_FIELDS,
   VALUE_SELECTABLE_FIELDS,
   VALUE_DEFAULT_SELECT_FIELDS,
-  VALUE_EDITABLE_FIELDS
-} from './value.config';
+  VALUE_EDITABLE_FIELDS,
+} from "./value.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -60,10 +60,7 @@ export type IValueSensitiveFields = never;
 export type IValueTransitionFields = never;
 
 export type IValueImmutableFields =
-  | IValueReadonlyFields
-  | IValueContextualFields
-  | IValueSensitiveFields
-  | IValueTransitionFields;
+  IValueReadonlyFields | IValueContextualFields | IValueSensitiveFields | IValueTransitionFields;
 
 // ----------------------------------
 // WRITE CONTRACTS
@@ -75,8 +72,7 @@ export type IValueSystemWritable = Omit<IValue, B.IBaseReadonlyFields | ValueRel
 
 export type IValueUpdatable = Partial<Omit<IValue, IValueImmutableFields | ValueRelationKey>>;
 
-export interface IValueTransitionPayload {
-}
+export interface IValueTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -100,9 +96,13 @@ export type ValueEditableField = (typeof VALUE_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IValueAsOneRelationConfig = Q.IOneRelationConfig<'value', ValueSelectableField>;
+export type IValueAsOneRelationConfig = Q.IOneRelationConfig<"value", ValueSelectableField>;
 
-export type IValueAsManyRelationConfig = Q.IManyRelationConfig<'values', ValueSelectableField, ValueSortableField>;
+export type IValueAsManyRelationConfig = Q.IManyRelationConfig<
+  "values",
+  ValueSelectableField,
+  ValueSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -110,7 +110,11 @@ export type IValueAsManyRelationConfig = Q.IManyRelationConfig<'values', ValueSe
 
 export type IValueAsOneRelationQuery = Q.IAsOneRelationQuery<IValue, ValueSelectableField>;
 
-export type IValueAsManyRelationQuery = Q.IAsManyRelationQuery<IValue, ValueSelectableField, ValueSortableField>;
+export type IValueAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IValue,
+  ValueSelectableField,
+  ValueSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -125,7 +129,11 @@ export interface IValueRelationMap extends Record<ValueRelationKey, unknown> {
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IValueRelationQueries = Q.IBaseRelationQueries<IValue, ValueRelationKey, IValueRelationMap>;
+export type IValueRelationQueries = Q.IBaseRelationQueries<
+  IValue,
+  ValueRelationKey,
+  IValueRelationMap
+>;
 
 export type IValueItemQuery = Q.IBaseItemQuery<
   IValue,

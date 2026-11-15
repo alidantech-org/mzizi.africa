@@ -24,7 +24,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["fileVersionId"])
 @Index(["licenseValueId"])
 export class AttributionsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

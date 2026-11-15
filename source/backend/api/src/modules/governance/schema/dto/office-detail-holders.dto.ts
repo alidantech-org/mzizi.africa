@@ -20,7 +20,6 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
  * Office Detail Holders
  */
 export class OfficeDetailHoldersDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

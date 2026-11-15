@@ -1,12 +1,4 @@
-
-import {
-  IsISO8601,
-  IsOptional,
-  IsString,
-  IsUUID,
-  MaxLength,
-  ValidateIf,
-} from "class-validator";
+import { IsISO8601, IsOptional, IsString, IsUUID, MaxLength, ValidateIf } from "class-validator";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
@@ -15,7 +7,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Scoped role grant to an account, optionally through a membership or delegation, with revocation history. (entity)
  */
 export class RoleAssignmentsDto {
-
   @IsString()
   @IsUUID()
   accountId!: Id;

@@ -22,7 +22,6 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
  * Institution Detail
  */
 export class InstitutionDetailDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

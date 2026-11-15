@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as SourcesTypes from '#/modules/source/schema/types/sources/sources.types';
+import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   WEBSITES_DATE_RANGE_FIELDS,
   WEBSITES_SELECTABLE_FIELDS,
   WEBSITES_DEFAULT_SELECT_FIELDS,
-  WEBSITES_EDITABLE_FIELDS
-} from './websites.config';
+  WEBSITES_EDITABLE_FIELDS,
+} from "./websites.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -71,10 +71,11 @@ export type IWebsitesCreatable = Omit<IWebsites, IWebsitesImmutableFields | Webs
 
 export type IWebsitesSystemWritable = Omit<IWebsites, B.IBaseReadonlyFields | WebsitesRelationKey>;
 
-export type IWebsitesUpdatable = Partial<Omit<IWebsites, IWebsitesImmutableFields | WebsitesRelationKey>>;
+export type IWebsitesUpdatable = Partial<
+  Omit<IWebsites, IWebsitesImmutableFields | WebsitesRelationKey>
+>;
 
-export interface IWebsitesTransitionPayload {
-}
+export interface IWebsitesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -98,9 +99,16 @@ export type WebsitesEditableField = (typeof WEBSITES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IWebsitesAsOneRelationConfig = Q.IOneRelationConfig<'websites', WebsitesSelectableField>;
+export type IWebsitesAsOneRelationConfig = Q.IOneRelationConfig<
+  "websites",
+  WebsitesSelectableField
+>;
 
-export type IWebsitesAsManyRelationConfig = Q.IManyRelationConfig<'websitess', WebsitesSelectableField, WebsitesSortableField>;
+export type IWebsitesAsManyRelationConfig = Q.IManyRelationConfig<
+  "websites",
+  WebsitesSelectableField,
+  WebsitesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -108,7 +116,11 @@ export type IWebsitesAsManyRelationConfig = Q.IManyRelationConfig<'websitess', W
 
 export type IWebsitesAsOneRelationQuery = Q.IAsOneRelationQuery<IWebsites, WebsitesSelectableField>;
 
-export type IWebsitesAsManyRelationQuery = Q.IAsManyRelationQuery<IWebsites, WebsitesSelectableField, WebsitesSortableField>;
+export type IWebsitesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IWebsites,
+  WebsitesSelectableField,
+  WebsitesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -122,7 +134,11 @@ export interface IWebsitesRelationMap extends Record<WebsitesRelationKey, unknow
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IWebsitesRelationQueries = Q.IBaseRelationQueries<IWebsites, WebsitesRelationKey, IWebsitesRelationMap>;
+export type IWebsitesRelationQueries = Q.IBaseRelationQueries<
+  IWebsites,
+  WebsitesRelationKey,
+  IWebsitesRelationMap
+>;
 
 export type IWebsitesItemQuery = Q.IBaseItemQuery<
   IWebsites,

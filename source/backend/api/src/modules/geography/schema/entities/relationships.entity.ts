@@ -20,10 +20,15 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["subjectFeatureId", "relationshipKindId"])
 @Index(["objectFeatureId", "relationshipKindId"])
 @Index(["validFrom", "validUntil"])
-@Check("chk_relationships_validity_window_is_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
-@Check("chk_relationships_relationship_must_not_be_self_referential", `subject_feature_id <> object_feature_id`)
-export class RelationshipsEntity {
-
+@Check(
+  "chk_relationships_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
+@Check(
+  "chk_relationships_relationship_must_not_be_self_referential",
+  `subject_feature_id <> object_feature_id`,
+)
+export class GeographyRelationshipsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

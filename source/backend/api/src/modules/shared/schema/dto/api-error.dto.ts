@@ -1,10 +1,4 @@
-
-import {
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-} from "class-validator";
+import { IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 import type { Message } from "#/modules/shared/schema/type/message.type.ts";
 import type { StatusCode } from "#/modules/shared/schema/type/status-code.type.ts";
 
@@ -12,7 +6,6 @@ import type { StatusCode } from "#/modules/shared/schema/type/status-code.type.t
  * Api Error
  */
 export class ApiErrorDto {
-
   @IsOptional()
   @IsString()
   @MinLength(1)

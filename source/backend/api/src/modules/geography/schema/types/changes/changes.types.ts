@@ -2,14 +2,14 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as FeaturesTypes from '#/modules/geography/schema/types/features/features.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -23,8 +23,8 @@ import type {
   CHANGES_DATE_RANGE_FIELDS,
   CHANGES_SELECTABLE_FIELDS,
   CHANGES_DEFAULT_SELECT_FIELDS,
-  CHANGES_EDITABLE_FIELDS
-} from './changes.config';
+  CHANGES_EDITABLE_FIELDS,
+} from "./changes.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -78,10 +78,11 @@ export type IChangesCreatable = Omit<IChanges, IChangesImmutableFields | Changes
 
 export type IChangesSystemWritable = Omit<IChanges, B.IBaseReadonlyFields | ChangesRelationKey>;
 
-export type IChangesUpdatable = Partial<Omit<IChanges, IChangesImmutableFields | ChangesRelationKey>>;
+export type IChangesUpdatable = Partial<
+  Omit<IChanges, IChangesImmutableFields | ChangesRelationKey>
+>;
 
-export interface IChangesTransitionPayload {
-}
+export interface IChangesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -105,9 +106,13 @@ export type ChangesEditableField = (typeof CHANGES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IChangesAsOneRelationConfig = Q.IOneRelationConfig<'changes', ChangesSelectableField>;
+export type IChangesAsOneRelationConfig = Q.IOneRelationConfig<"changes", ChangesSelectableField>;
 
-export type IChangesAsManyRelationConfig = Q.IManyRelationConfig<'changess', ChangesSelectableField, ChangesSortableField>;
+export type IChangesAsManyRelationConfig = Q.IManyRelationConfig<
+  "changes",
+  ChangesSelectableField,
+  ChangesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -115,7 +120,11 @@ export type IChangesAsManyRelationConfig = Q.IManyRelationConfig<'changess', Cha
 
 export type IChangesAsOneRelationQuery = Q.IAsOneRelationQuery<IChanges, ChangesSelectableField>;
 
-export type IChangesAsManyRelationQuery = Q.IAsManyRelationQuery<IChanges, ChangesSelectableField, ChangesSortableField>;
+export type IChangesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IChanges,
+  ChangesSelectableField,
+  ChangesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -131,7 +140,11 @@ export interface IChangesRelationMap extends Record<ChangesRelationKey, unknown>
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IChangesRelationQueries = Q.IBaseRelationQueries<IChanges, ChangesRelationKey, IChangesRelationMap>;
+export type IChangesRelationQueries = Q.IBaseRelationQueries<
+  IChanges,
+  ChangesRelationKey,
+  IChangesRelationMap
+>;
 
 export type IChangesItemQuery = Q.IBaseItemQuery<
   IChanges,

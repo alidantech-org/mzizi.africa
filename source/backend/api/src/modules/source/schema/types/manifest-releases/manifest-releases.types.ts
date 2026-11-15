@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
-import type { ReleaseStatus } from '#/modules/source/schema/enum/release-status.enum';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
+import type { ReleaseStatus } from "#/modules/source/schema/enum/release-status.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FileVersionsTypes from '#/modules/filesystem/schema/types/file-versions/file-versions.types';
-import type * as ManifestsTypes from '#/modules/source/schema/types/manifests/manifests.types';
+import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
+import type * as ManifestsTypes from "#/modules/source/schema/types/manifests/manifests.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   MANIFEST_RELEASES_DATE_RANGE_FIELDS,
   MANIFEST_RELEASES_SELECTABLE_FIELDS,
   MANIFEST_RELEASES_DEFAULT_SELECT_FIELDS,
-  MANIFEST_RELEASES_EDITABLE_FIELDS
-} from './manifest-releases.config';
+  MANIFEST_RELEASES_EDITABLE_FIELDS,
+} from "./manifest-releases.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -79,14 +79,21 @@ export type IManifestReleasesImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IManifestReleasesCreatable = Omit<IManifestReleases, IManifestReleasesImmutableFields | ManifestReleasesRelationKey>;
+export type IManifestReleasesCreatable = Omit<
+  IManifestReleases,
+  IManifestReleasesImmutableFields | ManifestReleasesRelationKey
+>;
 
-export type IManifestReleasesSystemWritable = Omit<IManifestReleases, B.IBaseReadonlyFields | ManifestReleasesRelationKey>;
+export type IManifestReleasesSystemWritable = Omit<
+  IManifestReleases,
+  B.IBaseReadonlyFields | ManifestReleasesRelationKey
+>;
 
-export type IManifestReleasesUpdatable = Partial<Omit<IManifestReleases, IManifestReleasesImmutableFields | ManifestReleasesRelationKey>>;
+export type IManifestReleasesUpdatable = Partial<
+  Omit<IManifestReleases, IManifestReleasesImmutableFields | ManifestReleasesRelationKey>
+>;
 
-export interface IManifestReleasesTransitionPayload {
-}
+export interface IManifestReleasesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -102,7 +109,8 @@ export type ManifestReleasesDateRangeField = (typeof MANIFEST_RELEASES_DATE_RANG
 
 export type ManifestReleasesSelectableField = (typeof MANIFEST_RELEASES_SELECTABLE_FIELDS)[number];
 
-export type ManifestReleasesDefaultSelectField = (typeof MANIFEST_RELEASES_DEFAULT_SELECT_FIELDS)[number];
+export type ManifestReleasesDefaultSelectField =
+  (typeof MANIFEST_RELEASES_DEFAULT_SELECT_FIELDS)[number];
 
 export type ManifestReleasesEditableField = (typeof MANIFEST_RELEASES_EDITABLE_FIELDS)[number];
 
@@ -110,17 +118,31 @@ export type ManifestReleasesEditableField = (typeof MANIFEST_RELEASES_EDITABLE_F
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IManifestReleasesAsOneRelationConfig = Q.IOneRelationConfig<'manifestReleases', ManifestReleasesSelectableField>;
+export type IManifestReleasesAsOneRelationConfig = Q.IOneRelationConfig<
+  "manifestReleases",
+  ManifestReleasesSelectableField
+>;
 
-export type IManifestReleasesAsManyRelationConfig = Q.IManyRelationConfig<'manifestReleasess', ManifestReleasesSelectableField, ManifestReleasesSortableField>;
+export type IManifestReleasesAsManyRelationConfig = Q.IManyRelationConfig<
+  "manifestReleases",
+  ManifestReleasesSelectableField,
+  ManifestReleasesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IManifestReleasesAsOneRelationQuery = Q.IAsOneRelationQuery<IManifestReleases, ManifestReleasesSelectableField>;
+export type IManifestReleasesAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IManifestReleases,
+  ManifestReleasesSelectableField
+>;
 
-export type IManifestReleasesAsManyRelationQuery = Q.IAsManyRelationQuery<IManifestReleases, ManifestReleasesSelectableField, ManifestReleasesSortableField>;
+export type IManifestReleasesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IManifestReleases,
+  ManifestReleasesSelectableField,
+  ManifestReleasesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -135,7 +157,11 @@ export interface IManifestReleasesRelationMap extends Record<ManifestReleasesRel
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IManifestReleasesRelationQueries = Q.IBaseRelationQueries<IManifestReleases, ManifestReleasesRelationKey, IManifestReleasesRelationMap>;
+export type IManifestReleasesRelationQueries = Q.IBaseRelationQueries<
+  IManifestReleases,
+  ManifestReleasesRelationKey,
+  IManifestReleasesRelationMap
+>;
 
 export type IManifestReleasesItemQuery = Q.IBaseItemQuery<
   IManifestReleases,

@@ -1,2 +1,2 @@
-export * as Types from './publishers.types';
-export * as Config from './publishers.config';
+export * as Types from "./publishers.types";
+export * as Config from "./publishers.config";

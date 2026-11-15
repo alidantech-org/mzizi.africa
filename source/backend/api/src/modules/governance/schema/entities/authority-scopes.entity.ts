@@ -26,9 +26,11 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["unitFeatureId", "validFrom", "validUntil"])
 @Index(["countryId"])
 @Index(["sourceCitationId"])
-@Check("chk_authority_scopes_validity_window_is_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
+@Check(
+  "chk_authority_scopes_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
 export class AuthorityScopesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

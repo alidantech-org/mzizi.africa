@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as AccountsTypes from '#/modules/auth/schema/types/accounts/accounts.types';
+import type * as AccountsTypes from "#/modules/auth/schema/types/accounts/accounts.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   LOGIN_IDENTITIES_DATE_RANGE_FIELDS,
   LOGIN_IDENTITIES_SELECTABLE_FIELDS,
   LOGIN_IDENTITIES_DEFAULT_SELECT_FIELDS,
-  LOGIN_IDENTITIES_EDITABLE_FIELDS
-} from './login-identities.config';
+  LOGIN_IDENTITIES_EDITABLE_FIELDS,
+} from "./login-identities.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -70,14 +70,21 @@ export type ILoginIdentitiesImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type ILoginIdentitiesCreatable = Omit<ILoginIdentities, ILoginIdentitiesImmutableFields | LoginIdentitiesRelationKey>;
+export type ILoginIdentitiesCreatable = Omit<
+  ILoginIdentities,
+  ILoginIdentitiesImmutableFields | LoginIdentitiesRelationKey
+>;
 
-export type ILoginIdentitiesSystemWritable = Omit<ILoginIdentities, B.IBaseReadonlyFields | LoginIdentitiesRelationKey>;
+export type ILoginIdentitiesSystemWritable = Omit<
+  ILoginIdentities,
+  B.IBaseReadonlyFields | LoginIdentitiesRelationKey
+>;
 
-export type ILoginIdentitiesUpdatable = Partial<Omit<ILoginIdentities, ILoginIdentitiesImmutableFields | LoginIdentitiesRelationKey>>;
+export type ILoginIdentitiesUpdatable = Partial<
+  Omit<ILoginIdentities, ILoginIdentitiesImmutableFields | LoginIdentitiesRelationKey>
+>;
 
-export interface ILoginIdentitiesTransitionPayload {
-}
+export interface ILoginIdentitiesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -93,7 +100,8 @@ export type LoginIdentitiesDateRangeField = (typeof LOGIN_IDENTITIES_DATE_RANGE_
 
 export type LoginIdentitiesSelectableField = (typeof LOGIN_IDENTITIES_SELECTABLE_FIELDS)[number];
 
-export type LoginIdentitiesDefaultSelectField = (typeof LOGIN_IDENTITIES_DEFAULT_SELECT_FIELDS)[number];
+export type LoginIdentitiesDefaultSelectField =
+  (typeof LOGIN_IDENTITIES_DEFAULT_SELECT_FIELDS)[number];
 
 export type LoginIdentitiesEditableField = (typeof LOGIN_IDENTITIES_EDITABLE_FIELDS)[number];
 
@@ -101,17 +109,31 @@ export type LoginIdentitiesEditableField = (typeof LOGIN_IDENTITIES_EDITABLE_FIE
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type ILoginIdentitiesAsOneRelationConfig = Q.IOneRelationConfig<'loginIdentities', LoginIdentitiesSelectableField>;
+export type ILoginIdentitiesAsOneRelationConfig = Q.IOneRelationConfig<
+  "loginIdentities",
+  LoginIdentitiesSelectableField
+>;
 
-export type ILoginIdentitiesAsManyRelationConfig = Q.IManyRelationConfig<'loginIdentitiess', LoginIdentitiesSelectableField, LoginIdentitiesSortableField>;
+export type ILoginIdentitiesAsManyRelationConfig = Q.IManyRelationConfig<
+  "loginIdentities",
+  LoginIdentitiesSelectableField,
+  LoginIdentitiesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type ILoginIdentitiesAsOneRelationQuery = Q.IAsOneRelationQuery<ILoginIdentities, LoginIdentitiesSelectableField>;
+export type ILoginIdentitiesAsOneRelationQuery = Q.IAsOneRelationQuery<
+  ILoginIdentities,
+  LoginIdentitiesSelectableField
+>;
 
-export type ILoginIdentitiesAsManyRelationQuery = Q.IAsManyRelationQuery<ILoginIdentities, LoginIdentitiesSelectableField, LoginIdentitiesSortableField>;
+export type ILoginIdentitiesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  ILoginIdentities,
+  LoginIdentitiesSelectableField,
+  LoginIdentitiesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -125,7 +147,11 @@ export interface ILoginIdentitiesRelationMap extends Record<LoginIdentitiesRelat
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type ILoginIdentitiesRelationQueries = Q.IBaseRelationQueries<ILoginIdentities, LoginIdentitiesRelationKey, ILoginIdentitiesRelationMap>;
+export type ILoginIdentitiesRelationQueries = Q.IBaseRelationQueries<
+  ILoginIdentities,
+  LoginIdentitiesRelationKey,
+  ILoginIdentitiesRelationMap
+>;
 
 export type ILoginIdentitiesItemQuery = Q.IBaseItemQuery<
   ILoginIdentities,

@@ -1,13 +1,4 @@
-
-import {
-  IsInt,
-  IsISO8601,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Min,
-  ValidateIf,
-} from "class-validator";
+import { IsInt, IsISO8601, IsOptional, IsString, IsUUID, Min, ValidateIf } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -19,7 +10,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * One person's continuous tenure in one office, with appointment kind and effective dates. (entity)
  */
 export class HoldersDto {
-
   @IsOptional()
   @ValidateIf((object) => object.appointedByEntityId !== null)
   @IsString()
@@ -62,9 +52,13 @@ export class HoldersDto {
   @IsOptional()
   @ValidateIf((object) => object.validFrom !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<HoldersDto>((object) => object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil, {
-    message: "Validity Window Is Ordered",
-  })
+  @Satisfies<HoldersDto>(
+    (object) =>
+      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+    {
+      message: "Validity Window Is Ordered",
+    },
+  )
   validFrom?: CalendarDate | null;
 
   @IsOptional()

@@ -25,9 +25,11 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 @Entity({ schema: "source", name: "manifest_releases" })
 @Index(["manifestId", "releaseLabel"], { unique: true })
 @Index(["fileVersionId"])
-@Check("chk_manifest_releases_effective_window_is_ordered", `effective_from = null OR effective_until = null OR effective_from < effective_until`)
+@Check(
+  "chk_manifest_releases_effective_window_is_ordered",
+  `effective_from = null OR effective_until = null OR effective_from < effective_until`,
+)
 export class ManifestReleasesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

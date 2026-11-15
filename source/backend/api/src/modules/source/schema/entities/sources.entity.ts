@@ -24,7 +24,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["publisherId"])
 @Index(["kindId"])
 export class SourcesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -37,7 +36,12 @@ export class SourcesEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
-  @Column({ name: "description", type: "varchar", length: 4000, nullable: true })
+  @Column({
+    name: "description",
+    type: "varchar",
+    length: 4000,
+    nullable: true,
+  })
   description?: Description | null;
 
   @Column({ name: "kind_id", type: "uuid" })

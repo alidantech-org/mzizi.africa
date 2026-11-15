@@ -20,7 +20,6 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 @Index(["revokedBy"])
 @Index(["scopeId"])
 export class DelegationsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

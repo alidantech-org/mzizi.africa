@@ -2,14 +2,14 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ManifestReleasesTypes from '#/modules/source/schema/types/manifest-releases/manifest-releases.types';
-import type * as SourcesTypes from '#/modules/source/schema/types/sources/sources.types';
+import type * as ManifestReleasesTypes from "#/modules/source/schema/types/manifest-releases/manifest-releases.types";
+import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -23,8 +23,8 @@ import type {
   MANIFEST_BINDINGS_DATE_RANGE_FIELDS,
   MANIFEST_BINDINGS_SELECTABLE_FIELDS,
   MANIFEST_BINDINGS_DEFAULT_SELECT_FIELDS,
-  MANIFEST_BINDINGS_EDITABLE_FIELDS
-} from './manifest-bindings.config';
+  MANIFEST_BINDINGS_EDITABLE_FIELDS,
+} from "./manifest-bindings.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -72,14 +72,21 @@ export type IManifestBindingsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IManifestBindingsCreatable = Omit<IManifestBindings, IManifestBindingsImmutableFields | ManifestBindingsRelationKey>;
+export type IManifestBindingsCreatable = Omit<
+  IManifestBindings,
+  IManifestBindingsImmutableFields | ManifestBindingsRelationKey
+>;
 
-export type IManifestBindingsSystemWritable = Omit<IManifestBindings, B.IBaseReadonlyFields | ManifestBindingsRelationKey>;
+export type IManifestBindingsSystemWritable = Omit<
+  IManifestBindings,
+  B.IBaseReadonlyFields | ManifestBindingsRelationKey
+>;
 
-export type IManifestBindingsUpdatable = Partial<Omit<IManifestBindings, IManifestBindingsImmutableFields | ManifestBindingsRelationKey>>;
+export type IManifestBindingsUpdatable = Partial<
+  Omit<IManifestBindings, IManifestBindingsImmutableFields | ManifestBindingsRelationKey>
+>;
 
-export interface IManifestBindingsTransitionPayload {
-}
+export interface IManifestBindingsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -95,7 +102,8 @@ export type ManifestBindingsDateRangeField = (typeof MANIFEST_BINDINGS_DATE_RANG
 
 export type ManifestBindingsSelectableField = (typeof MANIFEST_BINDINGS_SELECTABLE_FIELDS)[number];
 
-export type ManifestBindingsDefaultSelectField = (typeof MANIFEST_BINDINGS_DEFAULT_SELECT_FIELDS)[number];
+export type ManifestBindingsDefaultSelectField =
+  (typeof MANIFEST_BINDINGS_DEFAULT_SELECT_FIELDS)[number];
 
 export type ManifestBindingsEditableField = (typeof MANIFEST_BINDINGS_EDITABLE_FIELDS)[number];
 
@@ -103,17 +111,31 @@ export type ManifestBindingsEditableField = (typeof MANIFEST_BINDINGS_EDITABLE_F
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IManifestBindingsAsOneRelationConfig = Q.IOneRelationConfig<'manifestBindings', ManifestBindingsSelectableField>;
+export type IManifestBindingsAsOneRelationConfig = Q.IOneRelationConfig<
+  "manifestBindings",
+  ManifestBindingsSelectableField
+>;
 
-export type IManifestBindingsAsManyRelationConfig = Q.IManyRelationConfig<'manifestBindingss', ManifestBindingsSelectableField, ManifestBindingsSortableField>;
+export type IManifestBindingsAsManyRelationConfig = Q.IManyRelationConfig<
+  "manifestBindings",
+  ManifestBindingsSelectableField,
+  ManifestBindingsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IManifestBindingsAsOneRelationQuery = Q.IAsOneRelationQuery<IManifestBindings, ManifestBindingsSelectableField>;
+export type IManifestBindingsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IManifestBindings,
+  ManifestBindingsSelectableField
+>;
 
-export type IManifestBindingsAsManyRelationQuery = Q.IAsManyRelationQuery<IManifestBindings, ManifestBindingsSelectableField, ManifestBindingsSortableField>;
+export type IManifestBindingsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IManifestBindings,
+  ManifestBindingsSelectableField,
+  ManifestBindingsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -128,7 +150,11 @@ export interface IManifestBindingsRelationMap extends Record<ManifestBindingsRel
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IManifestBindingsRelationQueries = Q.IBaseRelationQueries<IManifestBindings, ManifestBindingsRelationKey, IManifestBindingsRelationMap>;
+export type IManifestBindingsRelationQueries = Q.IBaseRelationQueries<
+  IManifestBindings,
+  ManifestBindingsRelationKey,
+  IManifestBindingsRelationMap
+>;
 
 export type IManifestBindingsItemQuery = Q.IBaseItemQuery<
   IManifestBindings,

@@ -1,0 +1,1803 @@
+import {
+  Repository,
+  type FindOptionsWhere,
+  type FindManyOptions,
+  type FindOneOptions,
+  type FindOptionsOrder,
+  type DeepPartial,
+  type ObjectLiteral,
+  type FindOptionsRelations,
+  type FindOptionsSelect,
+  ILike,
+  Between,
+  In,
+  EntityManager,
+  SelectQueryBuilder,
+  MoreThanOrEqual,
+  LessThanOrEqual,
+  type QueryDeepPartialEntity,
+  IsNull,
+} from "typeorm";
+import { NotFoundException, Logger } from "@nestjs/common";
+
+import { type IBaseRepository } from "./base-repository.interface.ts";
+import {
+  type IBuildWhereConditionsOptions,
+  type IFindAllOptions,
+  type IFindAllResponse,
+} from "./query.types.ts";
+import { ESortOrder } from "./sort-order.enums.ts";
+import { type RepositoryDomainConfig } from "./repository-config.types.ts";
+import { BaseQueryDto } from "./base-query.dto.ts";
+
+/**
+ * BaseRepository<T>
+ *
+ * Abstract base class that implements IBaseRepository<T> using TypeORM.
+ * Provides standardized CRUD operations and query methods for all domain entities.
+ * Every domain repository in the project must extend this class to ensure consistency.
+ *
+ * @template T - The entity type that extends ObjectLiteral & { id: string }
+ *
+ * Type Constraints:
+ * - T must extend ObjectLiteral (TypeORM requirement)
+ * - T must have an 'id: string' field (enforced at compile time)
+ * - This ensures all entities use UUID primary keys consistently
+ *
+ * Key Features:
+ * - Type-safe CRUD operations with proper TypeScript typing
+ * - Pagination support via findAll() with validation (max 100 per page)
+ * - Soft delete capabilities with restore() method
+ * - Relation loading with type-safe keyof T (developer-guided safety)
+ * - Protected helper methods for child repositories
+ * - Efficient existence checks using TypeORM's exist() method
+ *
+ * Design Principles:
+ * - Never use 'any' type - always use T, DeepPartial<T>, or FindOptionsWhere<T>
+ * - Relations are strongly typed using readonly (keyof T)[] (not strict compile-time safety)
+ * - All methods return null instead of throwing for not-found scenarios (except ensureById)
+ * - Uses FindOptionsWhere<T> for full TypeORM query capabilities (operators, nested conditions)
+ * - Pagination guards prevent abuse (page >= 1, limit capped at 100)
+ *
+ * Performance Considerations:
+ * - findAll() uses findAndCount() for efficient pagination (single query with COUNT)
+ * - exists() uses exist() method instead of count() for better performance
+ * - update() preserves entity lifecycle hooks but requires 2 queries (fetch + save)
+ *
+ * Limitations:
+ * - Assumes all entities use 'id: string' as primary key
+ * - Relations typing is developer-guided, not strict compile-time safe
+ * - For complex queries (joins, aggregates), use protected repository getter
+ *
+ * Usage Example:
+ *   @Injectable()
+ *   export class UserRepository extends BaseRepository<UserEntity> {
+ *     constructor(@InjectRepository(UserEntity) repo: Repository<UserEntity>) {
+ *       super(repo);
+ *     }
+ *
+ *     // Add domain-specific methods here
+ *     async findByEmail(email: string): Promise<UserEntity | null> {
+ *       return this.findOne({ email }); // Uses FindOptionsWhere<T>
+ *     }
+ *
+ *     // Complex query using QueryBuilder
+ *     async findActiveUsersWithOrders(): Promise<UserEntity[]> {
+ *       return this.repository
+ *         .createQueryBuilder('user')
+ *         .leftJoinAndSelect('user.orders', 'order')
+ *         .where('user.status = :status', { status: 'active' })
+ *         .getMany();
+ *     }
+ *   }
+ */
+export abstract class BaseRepository<T extends ObjectLiteral> implements IBaseRepository<T> {
+  /**
+   * Constructor receives the TypeORM repository instance and domain configuration.
+   * The repository is protected so child classes can access it for complex queries.
+   * The config provides domain-specific field mappings and security rules.
+   *
+   * @param repo - TypeORM Repository<T> instance injected by NestJS
+   * @param config - Domain-specific configuration for field mappings and security
+   */
+  constructor(
+    private readonly repo: Repository<T>,
+    protected readonly config: RepositoryDomainConfig<T>,
+  ) {
+    this.logger = new Logger(BaseRepository.name);
+  }
+
+  protected readonly logger: Logger;
+
+  // ─────────────────────────────────────────────
+  // SAFETY VALIDATION HELPERS
+  // ─────────────────────────────────────────────
+
+  /**
+   * Validate that a where clause is safe for delete/update operations.
+   * Logs warning instead of throwing error to avoid breaking features.
+   *
+   * @param where - The where clause to validate
+   * @param operation - The operation being performed (for warning message)
+   * @returns true if safe, false if unsafe
+   */
+  private isSafeWhere(where: FindOptionsWhere<T> | undefined, operation: string): boolean {
+    if (!where || Object.keys(where).length === 0) {
+      this.logger.warn(`Unsafe ${operation} prevented: empty where clause - operation skipped`);
+      return false;
+    }
+
+    // Check for undefined/null values in where clause
+    const hasUndefinedOrNull = Object.values(where).some(
+      (value) => value === undefined || value === null,
+    );
+    if (hasUndefinedOrNull) {
+      this.logger.warn(
+        `Unsafe ${operation} prevented: where clause contains undefined or null values - operation skipped`,
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Validate that an update payload is safe.
+   * Logs warning instead of throwing error to avoid breaking features.
+   *
+   * @param data - The update payload to validate
+   * @returns true if safe, false if unsafe
+   */
+  private isSafeUpdatePayload(data: DeepPartial<T> | undefined): boolean {
+    if (!data || Object.keys(data).length === 0) {
+      this.logger.warn("Unsafe update prevented: empty update payload - operation skipped");
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Sanitize an update payload by removing undefined values only.
+   * Null values are kept to allow explicit nullification of fields.
+   *
+   * @param data - The update payload to sanitize
+   * @returns Sanitized update payload or undefined if all values were removed
+   */
+  private sanitizeUpdatePayload(data: DeepPartial<T>): DeepPartial<T> | undefined {
+    const sanitized: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(data)) {
+      if (value !== undefined) {
+        sanitized[key] = value;
+      }
+    }
+
+    return Object.keys(sanitized).length > 0 ? (sanitized as DeepPartial<T>) : undefined;
+  }
+
+  /**
+   * Validate that a where clause includes tenant scope for multi-tenant entities.
+   * Logs warning instead of throwing error to avoid breaking features.
+   *
+   * @param where - The where clause to validate
+   * @param tenantId - The tenant ID to enforce
+   * @param operation - The operation being performed (for warning message)
+   * @returns true if safe, false if unsafe
+   */
+  private isTenantScoped(
+    where: FindOptionsWhere<T> | undefined,
+    tenantId: string,
+    operation: string,
+  ): boolean {
+    if (!where) {
+      this.logger.warn(
+        `Unsafe ${operation} prevented: where clause is required with tenant scope - operation skipped`,
+      );
+      return false;
+    }
+
+    if (!where.tenantId) {
+      this.logger.warn(
+        `Unsafe ${operation} prevented: missing tenantId in where clause (cross-tenant leak risk) - operation skipped`,
+      );
+      return false;
+    }
+
+    if (where.tenantId !== tenantId) {
+      this.logger.warn(
+        `Unsafe ${operation} prevented: tenantId mismatch (cross-tenant leak risk) - operation skipped`,
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Sanitize a where clause by removing undefined values only.
+   * Null values are kept to allow explicit null filtering.
+   *
+   * @param where - The where clause to sanitize
+   * @returns Sanitized where clause or undefined if all values were removed
+   */
+  private sanitizeWhere(where: FindOptionsWhere<T>): FindOptionsWhere<T> | undefined {
+    const sanitized: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(where)) {
+      if (value !== undefined) {
+        sanitized[key] = value;
+      }
+    }
+
+    return Object.keys(sanitized).length > 0 ? (sanitized as FindOptionsWhere<T>) : undefined;
+  }
+
+  // ─────────────────────────────────────────────
+  // READ OPERATIONS
+  // ─────────────────────────────────────────────
+
+  /**
+   * Find a single record with tenant scope enforcement.
+   * This method prevents cross-tenant data leaks by requiring tenantId in where clause.
+   *
+   * MULTI-TENANT SAFE: This method validates that tenantId is present and matches.
+   *
+   * @param where - Query criteria (must include tenantId)
+   * @param tenantId - The tenant ID to enforce
+   * @returns The found entity or null
+   *
+   * @throws Error if where clause lacks tenantId or tenantId mismatches
+   *
+   * Example:
+   *   const user = await repository.findOneScoped({ email: 'user@example.com' }, tenantId);
+   */
+  async findOneScoped(where: FindOptionsWhere<T>, tenantId: string): Promise<T | null> {
+    if (!this.isTenantScoped(where, tenantId, "findOneScoped")) {
+      return null;
+    }
+    return await this.repo.findOne({ where });
+  }
+
+  /**
+   * Find a record by ID with tenant scope enforcement.
+   * This method prevents cross-tenant data leaks by validating tenant ownership.
+   *
+   * MULTI-TENANT SAFE: This method validates that the record belongs to the specified tenant.
+   *
+   * @param id - The record ID
+   * @param tenantId - The tenant ID to enforce
+   * @returns The found entity or null
+   *
+   * @throws Error if tenantId mismatches (cross-tenant leak risk)
+   *
+   * Example:
+   *   const user = await repository.findByIdScoped('123', tenantId);
+   */
+  async findByIdScoped(id: string, tenantId: string): Promise<T | null> {
+    const where = { id, tenantId } as unknown as FindOptionsWhere<T>;
+    if (!this.isTenantScoped(where, tenantId, "findByIdScoped")) {
+      return null;
+    }
+    return await this.repo.findOne({ where });
+  }
+
+  /**
+   * Check if a record exists with tenant scope enforcement.
+   * This method prevents cross-tenant data leaks by requiring tenantId in where clause.
+   *
+   * MULTI-TENANT SAFE: This method validates that tenantId is present and matches.
+   *
+   * @param where - Query criteria (must include tenantId)
+   * @param tenantId - The tenant ID to enforce
+   * @returns true if record exists, false otherwise
+   *
+   * @throws Error if where clause lacks tenantId or tenantId mismatches
+   *
+   * Example:
+   *   const exists = await repository.existsScoped({ email: 'user@example.com' }, tenantId);
+   */
+  async existsScoped(where: FindOptionsWhere<T>, tenantId: string): Promise<boolean> {
+    if (!this.isTenantScoped(where, tenantId, "existsScoped")) {
+      return false;
+    }
+    return await this.repo.exists({ where });
+  }
+
+  /**
+   * Find all records with pagination, filtering, sorting, and relation loading.
+   * This is the primary method for list/index operations.
+   *
+   * @param options - Query options including pagination, filters, sorting, relations
+   * @returns Object containing data array and total count for pagination
+   *
+   * Features:
+   * - Pagination: page (1-indexed) and limit (default 20)
+   * - Filtering: where clause using Partial<T>
+   * - Sorting: Single field (sortBy/sortOrder) OR multi-field (sortByMultiple/sortOrderMultiple)
+   * - Relations: eager-load related entities
+   * - Soft deletes: optionally include soft-deleted records
+   *
+   * Examples:
+   *   // Single field sorting
+   *   const result1 = await repository.findAll({
+   *     page: 1,
+   *     limit: 10,
+   *     where: { status: 'active' },
+   *     sortBy: 'createdAt',
+   *     sortOrder: ['DESC'],
+   *     relations: ['profile', 'orders']
+   *   });
+   *
+   *   // Multi-field sorting
+   *   const result2 = await repository.findAll({
+   *     page: 1,
+   *     limit: 10,
+   *     where: { status: 'active' },
+   *     sortBy: ['priority', 'createdAt', 'name'],
+   *     sortOrder: ['DESC', 'ASC', 'ASC'],
+   *     relations: ['profile', 'orders']
+   *   });
+   *   // Returns: { data: T[], total: number }
+   */
+  private async findAll(options?: IFindAllOptions<T>): Promise<IFindAllResponse<T>> {
+    // Destructure options with sensible defaults
+    const {
+      page = 1,
+      limit = 20,
+      where,
+      relations = [],
+      sortBy,
+      sortOrder,
+      withDeleted = false,
+      select,
+    } = options ?? {};
+
+    // Validate and sanitize pagination parameters
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.max(1, Math.min(limit, 100)); // Cap at 100 to prevent abuse
+
+    // Calculate offset for pagination (page is 1-indexed)
+    const skip = (safePage - 1) * safeLimit;
+
+    // Build TypeORM find options
+    const findOptions: FindManyOptions<T> = {
+      where: where, // Cast to TypeORM's where type
+      relations: relations as unknown as FindOptionsRelations<T>, // Relations array is passed directly to TypeORM
+      skip, // Offset for pagination
+      take: safeLimit, // Limit for pagination (validated)
+      withDeleted, // Include soft-deleted records if true
+    };
+
+    // Add select fields if provided
+    if (select) {
+      // Ensure select is an array for consistent handling
+      const selectArray = Array.isArray(select) ? select : [select];
+      if (selectArray.length > 0) {
+        findOptions.select = selectArray;
+      }
+    }
+
+    // Build order clause - handle both single and multi-field sorting
+    if (sortBy) {
+      const order: Record<string, ESortOrder> = {};
+      const sortByArray = Array.isArray(sortBy) ? sortBy : [sortBy];
+      const sortOrderArray = Array.isArray(sortOrder) ? sortOrder : [sortOrder];
+
+      sortByArray.forEach((field, index) => {
+        // Fallback: 1st field uses provided order or DESC, others use provided or ASC
+        const defaultDirection = index === 0 ? ESortOrder.DESC : ESortOrder.ASC;
+        const direction = sortOrderArray[index] || defaultDirection;
+
+        order[String(field)] = direction;
+      });
+
+      findOptions.order = order as FindOptionsOrder<T>;
+    } else {
+      // Check if 'createdAt' exists in this specific entity's columns
+      const hasCreatedAt = this.repo.metadata.findColumnWithPropertyName("createdAt");
+
+      if (hasCreatedAt) {
+        findOptions.order = { createdAt: ESortOrder.DESC } as unknown as FindOptionsOrder<T>;
+      } else {
+        // Fallback to 'id' or first primary column if no createdAt exists
+        const primaryKey = this.repo.metadata.primaryColumns[0]?.propertyName || "id";
+        findOptions.order = { [primaryKey]: ESortOrder.DESC } as FindOptionsOrder<T>;
+      }
+    }
+
+    // Use findAndCount for efficient pagination (single query with COUNT)
+    const [data, total] = await this.repo.findAndCount(findOptions);
+
+    return { data, total };
+  }
+
+  /**
+   * Find a single record by its UUID primary key.
+   * Returns null if not found (does not throw exception).
+   *
+   * @param id - UUID string of the record
+   * @param relations - Optional array of relation names to eager-load (type-safe)
+   * @returns The entity or null if not found
+   *
+   * Note: This method assumes all entities have an 'id' field.
+   * Relations are type-safe using keyof T but cast to string[] for TypeORM.
+   *
+   * Example:
+   *   const user = await repository.findById('123e4567-e89b-12d3-a456-426614174000');
+   *   const userWithOrders = await repository.findById(id, ['orders', 'profile']);
+   */
+  async findById(id: string, relations: readonly (keyof T)[] = []): Promise<T | null> {
+    // MULTI-TENANT SAFETY: For tenant-owned entities, use findByIdScoped() instead
+    return this.repo.findOne({
+      where: { id } as unknown as FindOptionsWhere<T>, // Cast id to where clause
+      relations: relations as string[], // Cast keyof T[] to string[] for TypeORM
+    });
+  }
+
+  /**
+   * Find a single record by custom criteria.
+   * Returns the first matching record or null if not found.
+   *
+   * @param where - TypeORM FindOptionsWhere for filtering (supports operators, nested conditions)
+   * @param relations - Optional array of relation names to eager-load
+   * @returns The first matching entity or null
+   *
+   * Uses FindOptionsWhere<T> which supports:
+   * - Simple equality: { email: 'user@example.com' }
+   * - Operators: { age: MoreThan(18) }
+   * - Multiple conditions: { email: 'user@example.com', status: 'active' }
+   *
+   * For complex queries (joins, subqueries), use the protected repository getter and QueryBuilder.
+   *
+   * Example:
+   *   const user = await repository.findOne({ email: 'user@example.com' });
+   *   const activeUser = await repository.findOne(
+   *     { email: 'user@example.com', status: 'active' },
+   *     ['profile']
+   *   );
+   */
+  async findOne(
+    where: FindOptionsWhere<T>,
+    relations: readonly (keyof T)[] = [],
+  ): Promise<T | null> {
+    return this.repo.findOne({ where, relations: relations as string[] });
+  }
+
+  /**
+   * Find multiple records by their IDs in a single query.
+   * More efficient than calling findById in a loop.
+   *
+   * @param ids - Array of UUID strings
+   * @param relations - Optional relations to eager-load
+   * @returns Array of matching entities (missing IDs are silently omitted)
+   *
+   * Example:
+   *   const users = await repository.findByIds(['id1', 'id2', 'id3']);
+   */
+  async findByIds(ids: string[], relations: readonly (keyof T)[] = []): Promise<T[]> {
+    if (!ids.length) return [];
+    return this.repo.find({
+      where: { id: In(ids) } as unknown as FindOptionsWhere<T>,
+      relations: relations as string[],
+    });
+  }
+
+  /**
+   * Check if a record exists by its conditions.g the given criteria.
+   * More efficient than findOne when you only need to check existence.
+   *
+   * @param where - TypeORM FindOptionsWhere for filtering (supports operators)
+   * @returns true if at least one record exists, false otherwise
+   *
+   * Uses TypeORM's exist() method (v0.3+) which is more efficient than count().
+   * This is optimized specifically for existence checks without fetching data.
+   *
+   * Example:
+   *   const emailTaken = await repository.exists({ email: 'user@example.com' });
+   *   if (emailTaken) {
+   *     throw new ConflictException('Email already in use');
+   *   }
+   */
+  async exists(where: FindOptionsWhere<T>): Promise<boolean> {
+    // MULTI-TENANT SAFETY: For tenant-owned entities, use existsScoped() instead
+    // Use exist() method (TypeORM 0.3+) which is more efficient than count()
+    return this.repo.exists({ where });
+  }
+
+  /**
+   * Check if a non-deleted record exists by the given criteria.
+   * Automatically excludes soft-deleted rows (`deletedAt IS NULL`).
+   *
+   * More efficient than findOne/count when you only need existence checks.
+   *
+   * @param where - TypeORM FindOptionsWhere for filtering (supports operators)
+   * @returns true if at least one active (non-deleted) record exists
+   *
+   * Uses TypeORM's exist() method (v0.3+) which is optimized
+   * specifically for existence checks without fetching entity data.
+   *
+   * Example:
+   *   const exists = await repository.existsActive({
+   *     email: 'user@example.com',
+   *   });
+   *
+   *   if (exists) {
+   *     throw new ConflictException('Email already in use');
+   *   }
+   */
+  async existsActive(where: FindOptionsWhere<T>): Promise<boolean> {
+    // MULTI-TENANT SAFETY: For tenant-owned entities, use existsScoped() instead
+    return this.repo.exists({
+      where: {
+        ...where,
+        deletedAt: IsNull(),
+      } as FindOptionsWhere<T>,
+    });
+  }
+
+  /**
+   * Count records matching the given criteria.
+   * Useful for analytics, pagination metadata, or validation.
+   *
+   * @param where - TypeORM FindOptionsWhere for filtering (supports operators)
+   * @returns Number of matching records
+   *
+   * Example:
+   *   const activeUsers = await repository.count({ status: 'active' });
+   *   const totalOrders = await repository.count({ userId: user.id });
+   */
+  async count(where: FindOptionsWhere<T>): Promise<number> {
+    return this.repo.count({ where });
+  }
+
+  /**
+   * Generic findByQuery that applies domain security and filtering.
+   * This method encapsulates all domain-specific query logic in the base class.
+   *
+   * @param query - Query DTO containing pagination, search, and filter parameters
+   * @param businessFilters - Optional business logic filters (e.g., tenantId, userId)
+   * @returns Paginated response with filtered data
+   *
+   * Features:
+   * - Domain-specific search using config.searchableFields
+   * - Field-level security using config.selectableFields
+   * - Relation filtering using config.relationKeys
+   * - Business logic filter merging (filters override query)
+   * - Type-safe pagination and sorting
+   *
+   * Usage in child repositories:
+   *   async findByQuery(query: MyEntityQueryDto, filters?: FindOptionsWhere<MyEntity>) {
+   *     return super.findByQuery(query, filters);
+   *   }
+   */
+  protected async findByQuery(
+    query: BaseQueryDto<T>,
+    businessFilters?: FindOptionsWhere<T>,
+  ): Promise<IFindAllResponse<T>> {
+    // 1. Apply search logic using domain configuration
+    const whereConditions = this.buildWhereWithSearch<T, any>(query, this.config.buildWhereOptions);
+
+    // 2. Merge business logic filters safely
+    const finalWhere = businessFilters
+      ? Array.isArray(whereConditions)
+        ? whereConditions.map((condition) => ({
+            ...businessFilters,
+            ...condition,
+          }))
+        : {
+            ...businessFilters,
+            ...whereConditions,
+          }
+      : whereConditions;
+
+    // 3. Apply field security using domain configuration
+    const safeSelect = this.buildSelectFilter<T>(
+      query.select ? query.select : [],
+      this.config.selectableFields,
+      this.config.defaultSelectFields,
+    );
+
+    // 4. Apply relation filtering using domain configuration
+    // 4. Apply relation filtering using domain configuration
+    const safeRelations = this.buildRelationsFilter<T>(
+      query.relations ? query.relations : [],
+      this.config.relationKeys,
+    );
+
+    // 5. Final execution with domain-specific parameters
+    return await this.findAll({
+      page: query.page,
+      limit: query.limit,
+      where: finalWhere,
+      sortBy: query.sortBy as keyof T | (keyof T)[],
+      sortOrder: query.sortOrder,
+      select: safeSelect,
+      relations: safeRelations,
+      withDeleted: query.withDeleted,
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // WRITE OPERATIONS
+  // ─────────────────────────────────────────────
+
+  /**
+   * Create and persist a new record.
+   * Uses DeepPartial<T> to support nested object creation.
+   *
+   * @param data - Partial entity data (supports nested relations)
+   * @returns The created and saved entity with generated fields (id, timestamps)
+   *
+   * The create() method instantiates the entity, and save() persists it.
+   * TypeORM will automatically set id, createdAt, updatedAt fields.
+   *
+   * Example:
+   *   const user = await repository.create({
+   *     email: 'user@example.com',
+   *     profile: { firstName: 'John', lastName: 'Doe' }
+   *   });
+   */
+  async create(data: DeepPartial<T>): Promise<T> {
+    const entity = this.repo.create(data); // Instantiate entity
+    return this.repo.save(entity); // Persist to database (TypeORM infers correctly)
+  }
+
+  /**
+   * Update an existing record by ID.
+   * Returns null if the record doesn't exist (does not throw).
+   *
+   * @param id - UUID of the record to update
+   * @param data - Partial entity data to update (supports nested relations)
+   * @returns The updated entity or null if not found
+   *
+   * Process:
+   * 1. Fetch existing record (returns null if not found)
+   * 2. Merge new data onto existing entity
+   * 3. Save merged entity (triggers updatedAt timestamp)
+   *
+   * Note: Service layer should throw NotFoundException if needed.
+   *
+   * Example:
+   *   const updated = await repository.update(id, {
+   *     email: 'newemail@example.com',
+   *     profile: { firstName: 'Jane' }
+   *   });
+   *   if (!updated) {
+   *     throw new NotFoundException('User not found');
+   *   }
+   */
+  async update(id: string, data: DeepPartial<T>): Promise<T | null> {
+    const fast = await this.tryUpdateReturning(this.repo, id, data);
+    if (fast !== undefined) return fast;
+
+    // First confirm the record exists
+    const existing = await this.findById(id);
+    if (!existing) {
+      return null; // Return null instead of throwing
+    }
+
+    // Merge changes onto the existing entity and save
+    // Note: This approach preserves entity lifecycle hooks (beforeUpdate, etc.)
+    // Alternative: use repo.update() for better performance but loses hooks
+    const merged = this.repo.merge(existing, data);
+    return this.repo.save(merged);
+  }
+
+  /**
+   * One-statement update: `UPDATE … SET … WHERE id = $1 RETURNING *`, hydrated into the entity (column
+   * transformers, dates and numbers applied as on a normal read). This replaces find + save, which cost a
+   * read, a transaction and a diffing read for every update.
+   *
+   * Returns `undefined` when the update needs the full find + merge + save path: a relation in the data,
+   * an object value (save deep-merges objects such as jsonb into the stored value, a plain SET would
+   * replace them), or update listeners/subscribers on the entity.
+   */
+  private async tryUpdateReturning(
+    repo: Repository<T>,
+    id: string,
+    data: DeepPartial<T>,
+  ): Promise<T | null | undefined> {
+    const metadata = repo.metadata;
+    const entries = Object.entries(data as Record<string, unknown>).filter(
+      ([, value]) => value !== undefined,
+    );
+    if (entries.length === 0) return undefined;
+    const isPlainObject = (value: unknown) =>
+      typeof value === "object" &&
+      value !== null &&
+      !(value instanceof Date) &&
+      !Array.isArray(value) &&
+      !Buffer.isBuffer(value);
+    for (const [key, value] of entries) {
+      const column = metadata.findColumnWithPropertyName(key);
+      if (!column || column.relationMetadata || column.isVirtual || isPlainObject(value))
+        return undefined;
+    }
+    const hasUpdateHooks =
+      metadata.ownListeners.some(
+        (listener) => listener.type === "before-update" || listener.type === "after-update",
+      ) ||
+      repo.manager.connection.subscribers.some(
+        (subscriber) =>
+          !(subscriber as { invalidatesCacheOnly?: boolean }).invalidatesCacheOnly &&
+          (subscriber.beforeUpdate || subscriber.afterUpdate) &&
+          (!subscriber.listenTo || subscriber.listenTo() === metadata.target),
+      );
+    if (hasUpdateHooks) return undefined;
+
+    const query = repo
+      .createQueryBuilder()
+      .update()
+      .set(Object.fromEntries(entries) as QueryDeepPartialEntity<T>)
+      .where("id = :id", { id });
+    // Like the read it replaces, never touch a soft-deleted row.
+    if (metadata.deleteDateColumn)
+      query.andWhere(`${metadata.deleteDateColumn.databaseName} IS NULL`);
+    const result = await query.returning("*").execute();
+    const raw = (result.raw as Record<string, unknown>[])[0];
+    if (!raw) return null;
+
+    const driver = repo.manager.connection.driver;
+    const entity = repo.create();
+    for (const column of metadata.columns) {
+      if (!(column.databaseName in raw)) continue;
+      column.setEntityValue(entity, driver.prepareHydratedValue(raw[column.databaseName], column));
+    }
+    return entity;
+  }
+
+  /**
+   * Update multiple records by ID.
+   * Returns the number of records updated.
+   */
+  async updateMany(ids: string[], data: QueryDeepPartialEntity<T>): Promise<number> {
+    // 1. Safety check to avoid empty IN clause errors
+    if (!ids || ids.length === 0) return 0;
+
+    // 2. Perform bulk update
+    // We use QueryDeepPartialEntity to match TypeORM's .update() requirements
+    const result = await this.repo.update({ id: In(ids) } as unknown as FindOptionsWhere<T>, data);
+
+    return result.affected ?? 0;
+  }
+
+  /**
+   * Soft delete a record by ID (sets deletedAt timestamp).
+   * The record remains in the database but is excluded from normal queries.
+   *
+   * @param id - UUID of the record to soft delete
+   * @returns true if a record was soft deleted, false if not found
+   *
+   * Soft-deleted records can be:
+   * - Retrieved using withDeleted: true in findAll()
+   * - Permanently deleted using delete()
+   * - Restored using TypeORM's restore() method
+   *
+   * Example:
+   *   const deleted = await repository.softDelete(id);
+   *   if (!deleted) {
+   *     throw new NotFoundException('User not found');
+   *   }
+   */
+  async softDelete(id: string): Promise<boolean> {
+    const result = await this.repo.softDelete(id);
+    return (result.affected ?? 0) > 0; // Return true if any rows affected
+  }
+
+  /**
+   * Permanently delete a record by ID (hard delete).
+   * This operation is irreversible - use with caution.
+   *
+   * @param id - UUID of the record to permanently delete
+   * @returns true if a record was deleted, false if not found
+   *
+   * Warning: This permanently removes the record from the database.
+   * Consider using softDelete() instead for most use cases.
+   *
+   * Example:
+   *   const deleted = await repository.delete(id);
+   *   if (!deleted) {
+   *     throw new NotFoundException('Record not found');
+   *   }
+   */
+  async delete(id: string): Promise<boolean> {
+    const result = await this.repo.delete(id);
+    return (result.affected ?? 0) > 0; // Return true if any rows affected
+  }
+
+  /**
+   * Permanently delete records matching the given query (hard delete).
+   * This operation is irreversible - use with caution.
+   *
+   * SAFETY: This method validates the where clause to prevent accidental mass deletion.
+   * - Empty where clauses are rejected
+   * - Undefined/null values in where clause are rejected
+   *
+   * @param query - Query to match records to delete
+   * @returns number of records deleted
+   *
+   * Warning: This permanently removes the record from the database.
+   * Consider using softDelete() instead for most use cases.
+   *
+   * Example:
+   *   const deleted = await repository.delete({ status: 'deleted' });
+   *   if (deleted === 0) {
+   *     throw new NotFoundException('No records found to delete');
+   *   }
+   */
+  async findAndDelete(query: FindOptionsWhere<T>): Promise<number> {
+    if (!this.isSafeWhere(query, "delete")) {
+      return 0;
+    }
+    const result = await this.repo.delete(query);
+    return result.affected ?? 0; // Return number of rows affected
+  }
+
+  /**
+   * Permanently delete records matching the given query within a transaction (hard delete).
+   * This operation is irreversible - use with caution.
+   *
+   * SAFETY: This method validates the where clause to prevent accidental mass deletion.
+   * - Empty where clauses are rejected
+   * - Undefined/null values in where clause are rejected
+   * - Uses the provided EntityManager for transaction safety
+   *
+   * @param query - Query to match records to delete
+   * @param manager - EntityManager for transaction handling
+   * @returns number of records deleted
+   *
+   * Warning: This permanently removes the record from the database.
+   * Consider using softDeleteWithManager() instead for most use cases.
+   *
+   * Example:
+   *   const deleted = await repository.findAndDeleteWithManager({ status: 'deleted' }, manager);
+   *   if (deleted === 0) {
+   *     throw new NotFoundException('No records found to delete');
+   *   }
+   */
+  async findAndDeleteWithManager(
+    query: FindOptionsWhere<T>,
+    manager: EntityManager,
+  ): Promise<number> {
+    if (!this.isSafeWhere(query, "delete")) {
+      return 0;
+    }
+    const repo = manager.getRepository(this.repo.target);
+    const result = await repo.delete(query);
+    return result.affected ?? 0; // Return number of rows affected
+  }
+
+  /**
+   * Permanently delete records matching the given query (hard delete).
+   * This operation is irreversible - use with caution.
+   *
+   * SAFETY: This method validates the where clause to prevent accidental mass deletion.
+   * - Empty where clauses are rejected
+   * - Undefined/null values in where clause are rejected
+   * - Limits deletion to specified number of records
+   *
+   * @param query - Query to match records to delete
+   * @returns number of records deleted
+   *
+   * Warning: This permanently removes the record from the database.
+   * Consider using softDelete() instead for most use cases.
+   *
+   * Example:
+   *   const deleted = await repository.delete({ status: 'deleted' });
+   *   if (deleted === 0) {
+   *     throw new NotFoundException('No records found to delete');
+   *   }
+   */
+  async findAndDeleteWithLimit(query: FindOptionsWhere<T>, limit: number): Promise<number> {
+    if (!this.isSafeWhere(query, "delete")) {
+      return 0;
+    }
+    // 1. Find the IDs of the records to delete
+    const records = await this.repo.find({
+      where: query,
+      select: ["id"],
+      take: limit,
+    });
+
+    if (records.length === 0) {
+      return 0;
+    }
+
+    // 2. Delete by IDs
+    const ids = records.map((r) => r.id);
+    const result = await this.repo.delete(ids);
+    return result.affected ?? 0;
+  }
+  /**
+   * Restore a soft-deleted record by ID.
+   * Only works if the entity uses @DeleteDateColumn.
+   *
+   * @param id - UUID of the record to restore
+   * @returns true if a record was restored, false if not found
+   *
+   * This reverses a soft delete by clearing the deletedAt timestamp.
+   * The record becomes visible in normal queries again.
+   *
+   * Example:
+   *   const restored = await repository.restore(id);
+   *   if (!restored) {
+   *     throw new NotFoundException('Record not found or not deleted');
+   *   }
+   */
+  async restore(id: string): Promise<boolean> {
+    const result = await this.repo.restore(id);
+    return (result.affected ?? 0) > 0; // Return true if any rows affected
+  }
+
+  /**
+   * Insert or update a record based on conflict fields.
+   * Genuinely atomic at the database level - no race conditions.
+   *
+   * @param data - The data to insert or update
+   * @param conflictFields - Fields that define uniqueness (must have a unique index)
+   *
+   * Example:
+   *   await repository.upsert(
+   *     { workflowType: EWorkflowType.CHECKOUT, name: 'Checkout', status: 'active' },
+   *     ['workflowType'],
+   *   );
+   */
+  async upsert(data: DeepPartial<T>, conflictFields: (keyof T & string)[]): Promise<T | null> {
+    const updateFields = Object.keys(data).filter(
+      (k) => !conflictFields.includes(k as keyof T & string),
+    );
+
+    await this.repo
+      .createQueryBuilder()
+      .insert()
+      .into(this.repo.target)
+      .values(data as QueryDeepPartialEntity<T>)
+      .orUpdate(updateFields, conflictFields)
+      .execute();
+
+    const where = conflictFields.reduce(
+      (acc, field) => {
+        acc[field] = (data as Record<string, unknown>)[field];
+        return acc;
+      },
+      {} as Partial<Record<keyof T, any>>,
+    );
+
+    return this.findOne(where);
+  }
+
+  /**
+   * Create and persist a new record within an existing transaction.
+   *
+   * @param data - Partial entity data to create (supports nested relations)
+   * @param manager - EntityManager from an active transaction
+   * @returns The created and saved entity
+   *
+   * Usage:
+   * - Use this inside a transaction started via `withTransaction`
+   * - Ensures this write participates in the same transaction
+   *
+   * Why this exists:
+   * - Default `create()` uses the repository's own manager (outside transaction)
+   * - This method guarantees atomic multi-repository operations
+   *
+   * Example:
+   *   await this.eventRepository.withTransaction(async (manager) => {
+   *     const event = await this.eventRepository.createWithManager(data, manager);
+   *   });
+   */
+  async createWithManager(data: DeepPartial<T>, manager: EntityManager): Promise<T> {
+    const repo = manager.getRepository(this.repo.target);
+    const entity = repo.create(data);
+    return await repo.save(entity);
+  }
+
+  /**
+   * Bulk insert multiple records within an existing transaction.
+   *
+   * SAFETY: This method validates the data array to prevent unsafe operations.
+   * - Empty arrays are rejected with an error
+   * - Undefined arrays are rejected with an error
+   *
+   * Behavior:
+   * - Instantiates entities first so BaseUuidEntity can generate UUID v7 IDs
+   * - Persists all rows using a single bulk insert query
+   * - Returns instantiated entities with IDs available for downstream workflow steps
+   *
+   * Notes:
+   * - DB-managed fields such as createdAt, updatedAt, deletedAt, and version
+   *   are not populated on the returned objects unless reloaded from the database
+   * - Lifecycle hooks are not guaranteed with insert()
+   */
+  async createManyWithManager(data: DeepPartial<T>[], manager: EntityManager): Promise<T[]> {
+    if (!data || !data.length) {
+      throw new Error("Unsafe createManyWithManager prevented: empty data array");
+    }
+
+    const repo = manager.getRepository(this.repo.target);
+    const entities = repo.create(data);
+
+    await repo.insert(entities);
+    return entities;
+  }
+
+  /**
+   * Bulk insert multiple records.
+   *
+   * SAFETY: This method validates the data array to prevent unsafe operations.
+   * - Empty arrays are rejected with an error
+   * - Undefined arrays are rejected with an error
+   *
+   * Behavior:
+   * - Instantiates entities first so BaseUuidEntity can generate UUID v7 IDs
+   * - Persists all rows using a single bulk insert query
+   * - Returns instantiated entities with IDs available for downstream workflow steps
+   */
+  async createMany(data: DeepPartial<T>[]): Promise<T[]> {
+    if (!data || !data.length) {
+      throw new Error("Unsafe createMany prevented: empty data array");
+    }
+
+    const entities = this.repo.create(data);
+    await this.repo.insert(entities);
+    return entities;
+  }
+
+  /**
+   * Find a single record within an existing transaction.
+   *
+   * @param options - Find options for the query
+   * @param manager - EntityManager from an active transaction
+   * @returns The found entity or null
+   *
+   * Usage:
+   * - Use this inside a transaction started via `withTransaction`
+   * - Ensures this read participates in the same transaction
+   *
+   * Why this exists:
+   * - Default `findOne()` uses the repository's own manager (outside transaction)
+   * - This method guarantees consistent reads within transaction context
+   *
+   * Example:
+   *   await this.eventRepository.withTransaction(async (manager) => {
+   *     const event = await this.eventRepository.findOneWithManager({ where: { id } }, manager);
+   *   });
+   */
+  async findOneWithManager(options: FindOneOptions<T>, manager: EntityManager): Promise<T | null> {
+    const repo = manager.getRepository(this.repo.target);
+    return await repo.findOne(options);
+  }
+
+  /**
+   * Find multiple records within an existing transaction.
+   *
+   * @param options - Find options for the query
+   * @param manager - EntityManager from an active transaction
+   * @returns Array of found entities
+   *
+   * Usage:
+   * - Use this inside a transaction started via `withTransaction`
+   * - Ensures this read participates in the same transaction
+   *
+   * Why this exists:
+   * - Default `find()` uses the repository's own manager (outside transaction)
+   * - This method guarantees consistent reads within transaction context
+   *
+   * Example:
+   *   await this.eventRepository.withTransaction(async (manager) => {
+   *     const events = await this.eventRepository.findManyWithManager({ where: { status: 'active' } }, manager);
+   *   });
+   */
+  async findManyWithManager(options: FindManyOptions<T>, manager: EntityManager): Promise<T[]> {
+    const repo = manager.getRepository(this.repo.target);
+    return await repo.find(options);
+  }
+
+  /**
+   * Update an existing record by ID within an existing transaction.
+   *
+   * SAFETY: This method validates the update payload to prevent unsafe operations.
+   * - Empty payloads are rejected with an error
+   * - Payloads with all undefined/null values are rejected
+   *
+   * @param id - UUID of the record to update
+   * @param data - Partial entity data to update
+   * @param manager - EntityManager from an active transaction
+   * @returns The updated entity or null if not found
+   *
+   * Behavior:
+   * - Fetches the entity using the transaction manager
+   * - Merges incoming data onto the existing entity
+   * - Saves using the same transaction context
+   *
+   * Why this exists:
+   * - Default `update()` runs outside transaction scope
+   * - This ensures consistency across multiple writes
+   *
+   * Notes:
+   * - Preserves entity lifecycle hooks (beforeUpdate, etc.)
+   * - Returns null instead of throwing (service layer decides behavior)
+   *
+   * Example:
+   *   const updated = await this.repo.updateWithManager(id, data, manager);
+   */
+  async updateWithManager(
+    id: string,
+    data: DeepPartial<T>,
+    manager: EntityManager,
+  ): Promise<T | null> {
+    const sanitizedData = this.sanitizeUpdatePayload(data);
+    if (!this.isSafeUpdatePayload(sanitizedData)) {
+      return null;
+    }
+    const repo = manager.getRepository(this.repo.target);
+
+    const fast = await this.tryUpdateReturning(repo, id, sanitizedData as DeepPartial<T>);
+    if (fast !== undefined) return fast;
+
+    const existing = await repo.findOne({ where: { id } as unknown as FindOptionsWhere<T> });
+    if (!existing) return null;
+
+    const merged = repo.merge(existing, sanitizedData as DeepPartial<T>);
+    return await repo.save(merged);
+  }
+
+  /**
+   * Soft delete a record within an existing transaction.
+   *
+   * @param id - UUID of the record to soft delete
+   * @param manager - EntityManager from an active transaction
+   * @returns true if a record was soft deleted, false otherwise
+   *
+   * Behavior:
+   * - Uses TypeORM softDelete (sets deletedAt timestamp)
+   * - Executes within the transaction scope
+   *
+   * Why this exists:
+   * - Default `softDelete()` runs outside transaction
+   * - This ensures atomic behavior in multi-entity operations
+   *
+   * Example:
+   *   const deleted = await this.repo.softDeleteWithManager(id, manager);
+   */
+  async softDeleteWithManager(id: string, manager: EntityManager): Promise<boolean> {
+    const repo = manager.getRepository(this.repo.target);
+    const result = await repo.softDelete(id);
+    return (result.affected ?? 0) > 0;
+  }
+
+  /**
+   * Permanently delete a record by ID within an existing transaction.
+   *
+   * @param id - UUID of the record to hard delete
+   * @param manager - EntityManager from an active transaction
+   * @returns true if a record was deleted, false otherwise
+   */
+  async deleteWithManager(id: string, manager: EntityManager): Promise<boolean> {
+    const repo = manager.getRepository(this.repo.target);
+    const result = await repo.delete(id);
+    return (result.affected ?? 0) > 0;
+  }
+
+  /**
+   * Soft delete multiple records matching a where clause within an existing transaction.
+   *
+   * @param where - TypeORM FindOptionsWhere clause to match records
+   * @param manager - EntityManager from an active transaction
+   * @returns number of records soft deleted
+   *
+   * Behavior:
+   * - Uses TypeORM softDelete (sets deletedAt timestamp)
+   * - Executes within the transaction scope
+   * - Can delete multiple records matching the where clause
+   *
+   * Why this exists:
+   * - Default `softDelete()` runs outside transaction
+   * - This ensures atomic behavior in multi-entity operations
+   * - Needed for bulk soft deletes in transactions
+   *
+   * Example:
+   *   const count = await this.repo.softDeleteManyWithManager({ tenantId }, manager);
+   */
+  async softDeleteManyWithManager(
+    where: FindOptionsWhere<T>,
+    manager: EntityManager,
+  ): Promise<number> {
+    const repo = manager.getRepository(this.repo.target);
+    const result = await repo.softDelete(where);
+    return result.affected ?? 0;
+  }
+
+  /**
+   * Update multiple records matching a where clause within an existing transaction.
+   *
+   * @param where - TypeORM FindOptionsWhere clause to match records
+   * @param data - Partial entity data to update
+   * @param manager - EntityManager from an active transaction
+   * @returns number of records updated
+   *
+   * Behavior:
+   * - Executes within the transaction scope
+   * - Can update multiple records matching the where clause
+   *
+   * Why this exists:
+   * - Default `update()` runs outside transaction
+   * - This ensures atomic behavior in multi-entity operations
+   * - Needed for bulk updates in transactions
+   *
+   * Example:
+   *   const count = await this.repo.updateManyWithManager({ tenantId }, { status: 'inactive' }, manager);
+   */
+  async updateManyWithManager(
+    where: FindOptionsWhere<T>,
+    data: QueryDeepPartialEntity<T>,
+    manager: EntityManager,
+  ): Promise<number> {
+    const repo = manager.getRepository(this.repo.target);
+    const result = await repo.update(where, data);
+    return result.affected ?? 0;
+  }
+
+  // ─────────────────────────────────────────────
+  // PROTECTED HELPERS (available to child repos)
+  // ─────────────────────────────────────────────
+
+  /**
+   * Find a record by ID and throw NotFoundException if not found.
+   * This is a protected helper for use inside child repositories.
+   *
+   * @param id - UUID of the record
+   * @param relations - Optional array of relation names to eager-load
+   * @returns The entity (never null)
+   * @throws NotFoundException if record doesn't exist
+   *
+   * Use this when you know the record MUST exist and want to fail fast.
+   * This is useful in child repository methods where missing data is exceptional.
+   *
+   * Example in child repository:
+   *   async assignRole(userId: string, roleId: string): Promise<User> {
+   *     const user = await this.ensureById(userId); // Throws if not found
+   *     user.roleId = roleId;
+   *     return this.repo.save(user);
+   *   }
+   */
+  protected async ensureById(id: string, relations: readonly (keyof T)[] = []): Promise<T> {
+    const entity = await this.findById(id, relations);
+    if (!entity) throw new NotFoundException(`Record with id "${id}" not found`);
+    return entity;
+  }
+
+  /**
+   * Build TypeORM WHERE clause with search and filtering capabilities.
+   * Protected helper method for constructing complex query conditions.
+   *
+   * @template TEntity - The database entity type being queried
+   * @template TQuery - The query DTO type containing filter parameters
+   * @param query - Query DTO containing filter parameters and optional search term
+   * @param options - Configuration object containing searchable fields, filter fields, and date range fields
+   * @returns TypeORM FindOptionsWhere clause or array of clauses for OR conditions
+   *
+   * Functionality:
+   * 1. **Exact Filters**: Maps query fields to entity fields for precise matching
+   *    - Supports all primitive types (string, number, boolean, enum)
+   *    - Filters out undefined/null values automatically
+   *    - Uses direct equality matching for performance
+   *
+   * 2. **Date Range Filters**: Handles temporal queries with flexible boundaries
+   *    - Expects `{field}From` and `{field}To` naming convention in query DTO
+   *    - Supports partial ranges (from-only defaults to current date, to-only starts from epoch)
+   *    - Uses TypeORM Between() operator for efficient database queries
+   *
+   * 3. **Global Search**: Implements OR-based text search across multiple fields
+   *    - Uses TypeORM's Or() operator to combine search conditions
+   *    - Each search condition combines exact filters with LIKE search on one field
+   *    - Uses case-insensitive partial matching with % wildcards
+   *    - Combined with other filters using TypeORM's And() operator
+   *
+   * Return Types:
+   * - Single WHERE object: Always returns a single FindOptionsWhere object
+   * - Uses TypeORM's And() and Or() operators for search functionality
+   *
+   * Performance Considerations:
+   * - LIKE operations can be expensive on large datasets without proper indexing
+   * - Date range queries benefit from database indexes on temporal columns
+   * - OR conditions (search) may prevent some query optimizations
+   *
+   * Example Usage in Child Repository:
+   * ```typescript
+   * const whereConditions = this.buildWhereWithSearch<User, UserQueryDto>(
+   *   { search: 'john', status: 'active', ageFrom: 18, ageTo: 65 },
+   *   {
+   *     searchableFields: ['firstName', 'lastName', 'email'],
+   *     filterFields: ['status', 'role', 'isVerified'],
+   *     dateRangeFields: ['createdAt', 'age']
+   *   }
+   * );
+   * // Returns: And(
+   * //   { status: 'active', age: Between(18, 65) },
+   * //   Or(
+   * //     { firstName: Like('%john%') },
+   * //     { lastName: Like('%john%') },
+   * //     { email: Like('%john%') }
+   * //   )
+   * // )
+   * ```
+   */
+  protected buildWhereWithSearch<TEntity, TQuery extends Record<string, any>>(
+    query: TQuery & { search?: string },
+    options: IBuildWhereConditionsOptions<TEntity>,
+  ): FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[] {
+    const { searchableFields, filterFields, dateRangeFields } = options;
+
+    const baseWhere: Record<string, unknown> = {};
+
+    // 1. Exact/fuzzy field filters
+    if (filterFields) {
+      for (const key of filterFields) {
+        const value = query[key as keyof TQuery];
+
+        if (value === undefined || value === null || value === "") {
+          continue;
+        }
+
+        const fieldName = String(key);
+        const isSearchableField = searchableFields?.includes(key) ?? false;
+
+        if (isSearchableField && typeof value === "string") {
+          baseWhere[fieldName] = ILike(`%${value}%`);
+        } else {
+          baseWhere[fieldName] = value;
+        }
+      }
+    }
+
+    // 2. Date range filters
+    if (dateRangeFields) {
+      for (const key of dateRangeFields) {
+        const fieldName = String(key);
+        const fromKey = `${fieldName}From` as keyof TQuery;
+        const toKey = `${fieldName}To` as keyof TQuery;
+
+        const from = query[fromKey];
+        const to = query[toKey];
+
+        if (from && to) {
+          baseWhere[fieldName] = Between(from, to);
+        } else if (from) {
+          baseWhere[fieldName] = MoreThanOrEqual(from);
+        } else if (to) {
+          baseWhere[fieldName] = LessThanOrEqual(to);
+        }
+      }
+    }
+
+    // 3. Global search
+    const search = query.search?.trim();
+
+    if (search && searchableFields && searchableFields.length > 0) {
+      return searchableFields.map((field) => ({
+        ...baseWhere,
+        [String(field)]: ILike(`%${search}%`),
+      })) as FindOptionsWhere<TEntity>[];
+    }
+
+    return baseWhere as FindOptionsWhere<TEntity>;
+  }
+
+  protected mergeWhereWithBase<TEntity>(
+    where: FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[],
+    baseWhere: FindOptionsWhere<TEntity>,
+  ): FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[] {
+    if (Array.isArray(where)) {
+      return where.map((condition) => ({
+        ...baseWhere,
+        ...condition,
+      }));
+    }
+
+    return {
+      ...baseWhere,
+      ...where,
+    };
+  }
+
+  /**
+   * Build validated relations array from query with security filtering.
+   * Protected helper method for safely handling relation loading.
+   *
+   * @template TEntity - The database entity type being queried
+   * @param queryRelations - Relations requested in query DTO
+   * @param allowedRelations - Predefined allowed relations for this entity
+   * @returns Array of validated relation names safe for TypeORM
+   *
+   * Functionality:
+   * 1. **Security Filtering**: Only allows relations that are explicitly permitted
+   * 2. **Input Validation**: Filters out invalid or malicious relation names
+   * 3. **Type Safety**: Ensures returned relations are valid keys of the entity
+   * 4. **Empty Handling**: Returns empty array when no valid relations provided
+   *
+   * Security Considerations:
+   * - Prevents relation injection attacks by whitelisting allowed relations
+   * - Validates against entity schema to avoid runtime errors
+   * - Maintains strict control over what can be eager-loaded
+   *
+   * Performance Considerations:
+   * - Relation loading can impact query performance
+   * - Consider N+1 query problems when loading multiple relations
+   * - Use selective relation loading for better performance
+   *
+   * Example Usage in Child Repository:
+   * ```typescript
+   * const relations = this.buildRelationsFilter<User>(
+   *   query.relations || [],
+   *   ['profile', 'orders', 'roles']
+   * );
+   * // Returns: ['profile', 'orders'] if only those are valid and allowed
+   * ```
+   */
+  protected buildRelationsFilter<TEntity>(
+    queryRelations: (keyof TEntity)[],
+    allowedRelations: (keyof TEntity)[],
+  ): (keyof TEntity)[] {
+    if (!queryRelations || queryRelations.length === 0) {
+      return [];
+    }
+
+    // Filter and validate relations
+    const validRelations = queryRelations.filter((relation) => allowedRelations.includes(relation));
+
+    return validRelations;
+  }
+
+  /**
+   * Build validated select fields array from query with security filtering.
+   * Protected helper method for safely handling field selection.
+   *
+   * @template TEntity - The database entity type being queried
+   * @param querySelect - Select fields from query parameters
+   * @param allowedSelectFields - Whitelist of allowed select fields for this entity
+   * @param defaultSelectFields - Default fields to select when none specified
+   * @returns Array of validated select fields
+   *
+   * Security Features:
+   * - Only allows fields from the whitelist
+   * - Excludes sensitive fields automatically
+   * - Falls back to default fields when no valid fields provided
+   *
+   * Example Usage in Child Repository:
+   * ```typescript
+   * const select = this.buildSelectFilter<User>(
+   *   query.select || [],
+   *   ['id', 'name', 'email', 'createdAt'],
+   *   ['id', 'name', 'email']
+   * );
+   * // Returns: ['id', 'name', 'email'] if only those are valid and allowed
+   * ```
+   */
+  protected buildSelectFilter<TEntity>(
+    querySelect: (keyof TEntity)[],
+    allowedSelectFields: (keyof TEntity)[],
+    defaultSelectFields: (keyof TEntity)[],
+  ): (keyof TEntity)[] {
+    const persistedSelectFields = new Set(
+      this.repo.metadata.columns.map((column) => column.propertyName),
+    );
+    const toPersistedFields = (fields: (keyof TEntity)[]) =>
+      fields.filter((field) => persistedSelectFields.has(String(field)));
+
+    if (!querySelect || querySelect.length === 0) {
+      return toPersistedFields(defaultSelectFields);
+    }
+
+    // Filter and validate select fields
+    const validSelectFields = querySelect.filter((field) => allowedSelectFields.includes(field));
+    const validPersistedSelectFields = toPersistedFields(validSelectFields);
+
+    // If no valid fields after filtering, use defaults
+    if (validPersistedSelectFields.length === 0) {
+      return toPersistedFields(defaultSelectFields);
+    }
+
+    return validPersistedSelectFields;
+  }
+
+  /**
+   * Apply relation joins to a QueryBuilder.
+   * Call this instead of writing leftJoinAndSelect manually in child repositories.
+   *
+   * @param qb        - The QueryBuilder instance
+   * @param alias     - The entity alias used in the QueryBuilder
+   * @param relations - Relations to load (use your entity's relation keys)
+   *
+   * Example:
+   *   this.applyRelations(qb, 'user', ['profile', 'roles']);
+   *   // Equivalent to:
+   *   qb.leftJoinAndSelect('user.profile', 'profile')
+   *     .leftJoinAndSelect('user.roles', 'roles')
+   */
+  protected applyRelations(
+    qb: SelectQueryBuilder<T>,
+    alias: string,
+    relations?: readonly (keyof T & string)[],
+  ): void {
+    if (!relations?.length) return;
+    relations.forEach((rel) => qb.leftJoinAndSelect(`${alias}.${String(rel)}`, String(rel)));
+  }
+
+  /**
+   * Create a TypeORM SelectQueryBuilder for this repository.
+   *
+   * Use this for complex internal/domain queries while keeping raw repository
+   * access encapsulated in the base repository.
+   *
+   * Example:
+   *   const qb = this.createQueryBuilder('user');
+   */
+  protected createQueryBuilder(alias: string, manager?: EntityManager): SelectQueryBuilder<T> {
+    const repo = manager ? manager.getRepository<T>(this.repo.target) : this.repo;
+    return repo.createQueryBuilder(alias);
+  }
+
+  /**
+   * Increment a numeric field by a value.
+   * Uses TypeORM's increment method for atomic updates.
+   *
+   * SAFETY: This method validates the where clause to prevent accidental mass updates.
+   * - Empty where clauses are rejected
+   * - Undefined/null values in where clause are rejected
+   *
+   * @param where - Criteria to identify the record(s) to update
+   * @param propertyPath - Key of the numeric field to increment (must be a keyof T)
+   * @param value - Amount to increment by (default 1)
+   * @returns Promise that resolves when the operation completes
+   *
+   * This method performs atomic increment operations at the database level,
+   * which is safer than read-modify-write patterns for concurrent updates.
+   *
+   * Note: TypeScript ensures propertyPath is keyof T, but runtime validation
+   * should verify the field is numeric before calling this method.
+   *
+   * Example:
+   *   await repository.increment({ id: '123' }, 'attemptCount', 1);
+   *   await repository.increment({ status: 'pending' }, 'priority', 5);
+   */
+  async increment(
+    where: FindOptionsWhere<T>,
+    propertyPath: keyof T,
+    value: number = 1,
+  ): Promise<void> {
+    if (!this.isSafeWhere(where, "increment")) {
+      return;
+    }
+    await this.repo.increment(where, String(propertyPath), value);
+  }
+
+  /**
+   * Decrement a numeric field by a value.
+   * Uses TypeORM's decrement method for atomic updates.
+   *
+   * SAFETY: This method validates the where clause to prevent accidental mass updates.
+   * - Empty where clauses are rejected
+   * - Undefined/null values in where clause are rejected
+   *
+   * @param where - Criteria to identify the record(s) to update
+   * @param propertyPath - Key of the numeric field to decrement (must be a keyof T)
+   * @param value - Amount to decrement by (default 1)
+   * @returns Promise that resolves when the operation completes
+   *
+   * This method performs atomic decrement operations at the database level,
+   * which is safer than read-modify-write patterns for concurrent updates.
+   *
+   * Note: TypeScript ensures propertyPath is keyof T, but runtime validation
+   * should verify the field is numeric before calling this method.
+   *
+   * Example:
+   *   await repository.decrement({ id: '123' }, 'attemptCount', 1);
+   *   await repository.decrement({ status: 'pending' }, 'priority', 5);
+   */
+  async decrement(
+    where: FindOptionsWhere<T>,
+    propertyPath: keyof T,
+    value: number = 1,
+  ): Promise<void> {
+    if (!this.isSafeWhere(where, "decrement")) {
+      return;
+    }
+    await this.repo.decrement(where, String(propertyPath), value);
+  }
+  /**
+   * Find a record by ID with pessimistic write lock.
+   * Use within transactions to prevent concurrent modifications.
+   *
+   * @param id - UUID of the record to find and lock
+   * @param manager - EntityManager from active transaction
+   * @param relations - Optional relations to eager-load
+   * @returns The locked entity or null if not found
+   *
+   * Example:
+   *   return this.withTransaction(async (manager) => {
+   *     const entity = await this.findByIdWithLock(id, manager);
+   *     if (entity) {
+   *       entity.status = 'processing';
+   *       await manager.save(entity);
+   *     }
+   *   });
+   */
+  async findByIdWithLock(
+    id: string,
+    manager: EntityManager,
+    relations: readonly (keyof T)[] = [],
+  ): Promise<T | null> {
+    return manager.findOne(this.repo.target, {
+      where: { id } as unknown as FindOptionsWhere<T>,
+      relations: relations as string[],
+      lock: { mode: "pessimistic_write" },
+    });
+  }
+
+  /**
+   * Run work inside a database transaction.
+   * Use for atomic multi-write operations within a single repository.
+   *
+   * For multi-repository transactions, call this from the service layer
+   * and pass the EntityManager to withManager methods on other repositories.
+   *
+   * Example - single repo:
+   *   return this.withTransaction(async (manager) => {
+   *     await manager.update(MyEntity, id, { status: 'locked' });
+   *     await manager.save(MyEntity, newRecord);
+   *   });
+   *
+   * Example - service coordinates multiple repos:
+   *   return this.repoA.withTransaction(async (manager) => {
+   *     await this.repoA.doWorkWithManager(dataA, manager);
+   *     await this.repoB.doWorkWithManager(dataB, manager);
+   *   });
+   */
+  async withTransaction<T>(operation: (manager: EntityManager) => Promise<T>): Promise<T> {
+    return this.repo.manager.transaction(operation);
+  }
+
+  /**
+   * Internal find method for special use cases
+   *
+   * JUSTIFICATION: This method provides generic internal functionality:
+   * - Supports provider-specific field selection (sensitive fields for masking)
+   * - Bypasses normal DTO validation for internal operations
+   * - Provides direct TypeORM access with type safety
+   * - Internal use only - not exposed to public APIs
+   * - Generic functionality useful across all repositories
+   *
+   * @internal This method is for internal use only and should not be used in public APIs
+   */
+  async internalFind(options: {
+    where?: FindOptionsWhere<T>;
+    take?: number;
+    select?: (keyof T)[];
+    relations?: (keyof T)[];
+  }): Promise<T[]> {
+    return await this.repo.find({
+      where: options.where,
+      take: options.take,
+      select: options.select,
+      relations: options.relations as string[],
+    });
+  }
+
+  /**
+   * Internal find method with relation limiting support using QueryBuilder.
+   * Allows limiting the number of items loaded in one-to-many or many-to-many relations.
+   *
+   * Features:
+   * - Supports all internalFind options (where, take, select)
+   * - Adds relationLimits to limit number of items per relation
+   * - Uses TypeORM QueryBuilder for complex relation queries
+   * - Provides direct TypeORM access with type safety
+   * - Internal use only - not exposed to public APIs
+   *
+   * @example
+   * // Find events with max 5 images each
+   * const events = await repository.internalFindWithRelationLimit({
+   *   where: { organisationId: 'org-123' },
+   *   take: 10,
+   *   relations: ['images'],
+   *   relationLimits: [{ relation: 'images' as keyof Event, limit: 5 }]
+   * });
+   *
+   * @internal This method is for internal use only and should not be used in public APIs
+   */
+  async internalFindWithRelationLimit(options: {
+    where?: FindOptionsWhere<T>;
+    take?: number;
+    select?: (keyof T)[];
+    relations?: (keyof T)[];
+    relationLimits?: { relation: keyof T; limit: number }[];
+  }): Promise<T[]> {
+    const queryBuilder = this.repo.createQueryBuilder("entity");
+
+    // Build WHERE clause
+    if (options.where) {
+      Object.entries(options.where).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryBuilder.andWhere(`entity.${key} = :${key}`, { [key]: value });
+        }
+      });
+    }
+
+    // Build SELECT clause
+    if (options.select) {
+      queryBuilder.select(options.select.map((field) => `entity.${String(field)}`));
+    }
+
+    // Apply TAKE limit
+    if (options.take) {
+      queryBuilder.take(options.take);
+    }
+
+    // Load relations with limits
+    if (options.relations) {
+      for (const relation of options.relations) {
+        const relationLimit = options.relationLimits?.find((rl) => rl.relation === relation);
+        const relationName = String(relation);
+
+        if (relationLimit) {
+          // Use LEFT JOIN with subquery to limit relation items
+          queryBuilder.leftJoinAndSelect(
+            `entity.${relationName}`,
+            relationName,
+            `${relationName}.id IN (SELECT id FROM ${this.repo.metadata.tableName} WHERE id = entity.id LIMIT :${relationName}Limit)`,
+            { [`${relationName}Limit`]: relationLimit.limit },
+          );
+        } else {
+          // Load all relation items
+          queryBuilder.leftJoinAndSelect(`entity.${relationName}`, relationName);
+        }
+      }
+    }
+
+    return queryBuilder.getMany();
+  }
+
+  /**
+   * Expose EntityManager for participating in an external transaction.
+   * Only use this when this repository needs to join a transaction
+   * started by another repository or the service layer.
+   *
+   * Example in child repository:
+   *   async createWithManager(
+   *     data: DeepPartial<T>,
+   *     manager: EntityManager,
+   *   ): Promise<T> {
+   *     return manager.save(this.repo.target, data);
+   *   }
+   */
+  get manager(): EntityManager {
+    return this.repo.manager;
+  }
+
+  /**
+   * Protected getter for raw TypeORM repository access.
+   * Use this in child repositories for complex queries not covered by base methods.
+   *
+   * @returns The underlying TypeORM Repository<T> instance
+   *
+   * Common use cases:
+   * - QueryBuilder for complex joins and subqueries
+   * - Raw SQL queries
+   * - Transaction management
+   * - Bulk operations
+   *
+   * Example in child repository:
+   *   async findActiveUsersWithOrders(): Promise<User[]> {
+   *     return this.repository
+   *       .createQueryBuilder('user')
+   *       .leftJoinAndSelect('user.orders', 'order')
+   *       .where('user.status = :status', { status: 'active' })
+   *       .andWhere('order.total > :minTotal', { minTotal: 100 })
+   *       .getMany();
+   *   }
+   */
+  protected get repository(): Repository<T> {
+    return this.repo;
+  }
+}

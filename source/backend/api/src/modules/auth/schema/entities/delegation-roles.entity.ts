@@ -1,11 +1,4 @@
-import {
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-  type Relation,
-} from "typeorm";
+import { Entity, Index, JoinColumn, ManyToOne, PrimaryColumn, type Relation } from "typeorm";
 import { DelegationsEntity } from "#/modules/auth/schema/entities/delegations.entity.ts";
 import { RolesEntity } from "#/modules/auth/schema/entities/roles.entity.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -16,7 +9,6 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 @Entity({ schema: "auth", name: "delegation_roles" })
 @Index(["roleId"])
 export class DelegationRolesEntity {
-
   @PrimaryColumn({ name: "delegation_id", type: "uuid" })
   delegationId!: Id;
 

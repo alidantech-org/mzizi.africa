@@ -2,17 +2,17 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as EntitiesTypes from '#/modules/official/schema/types/entities/entities.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as IndividualsTypes from '#/modules/official/schema/types/individuals/individuals.types';
-import type * as OfficesTypes from '#/modules/governance/schema/types/offices/offices.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
+import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as IndividualsTypes from "#/modules/official/schema/types/individuals/individuals.types";
+import type * as OfficesTypes from "#/modules/governance/schema/types/offices/offices.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -26,8 +26,8 @@ import type {
   HOLDERS_DATE_RANGE_FIELDS,
   HOLDERS_SELECTABLE_FIELDS,
   HOLDERS_DEFAULT_SELECT_FIELDS,
-  HOLDERS_EDITABLE_FIELDS
-} from './holders.config';
+  HOLDERS_EDITABLE_FIELDS,
+} from "./holders.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -83,10 +83,11 @@ export type IHoldersCreatable = Omit<IHolders, IHoldersImmutableFields | Holders
 
 export type IHoldersSystemWritable = Omit<IHolders, B.IBaseReadonlyFields | HoldersRelationKey>;
 
-export type IHoldersUpdatable = Partial<Omit<IHolders, IHoldersImmutableFields | HoldersRelationKey>>;
+export type IHoldersUpdatable = Partial<
+  Omit<IHolders, IHoldersImmutableFields | HoldersRelationKey>
+>;
 
-export interface IHoldersTransitionPayload {
-}
+export interface IHoldersTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -110,9 +111,13 @@ export type HoldersEditableField = (typeof HOLDERS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IHoldersAsOneRelationConfig = Q.IOneRelationConfig<'holders', HoldersSelectableField>;
+export type IHoldersAsOneRelationConfig = Q.IOneRelationConfig<"holders", HoldersSelectableField>;
 
-export type IHoldersAsManyRelationConfig = Q.IManyRelationConfig<'holderss', HoldersSelectableField, HoldersSortableField>;
+export type IHoldersAsManyRelationConfig = Q.IManyRelationConfig<
+  "holders",
+  HoldersSelectableField,
+  HoldersSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -120,7 +125,11 @@ export type IHoldersAsManyRelationConfig = Q.IManyRelationConfig<'holderss', Hol
 
 export type IHoldersAsOneRelationQuery = Q.IAsOneRelationQuery<IHolders, HoldersSelectableField>;
 
-export type IHoldersAsManyRelationQuery = Q.IAsManyRelationQuery<IHolders, HoldersSelectableField, HoldersSortableField>;
+export type IHoldersAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IHolders,
+  HoldersSelectableField,
+  HoldersSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -138,7 +147,11 @@ export interface IHoldersRelationMap extends Record<HoldersRelationKey, unknown>
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IHoldersRelationQueries = Q.IBaseRelationQueries<IHolders, HoldersRelationKey, IHoldersRelationMap>;
+export type IHoldersRelationQueries = Q.IBaseRelationQueries<
+  IHolders,
+  HoldersRelationKey,
+  IHoldersRelationMap
+>;
 
 export type IHoldersItemQuery = Q.IBaseItemQuery<
   IHolders,

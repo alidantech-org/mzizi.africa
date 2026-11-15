@@ -2,18 +2,18 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as CountryTypes from '#/modules/reference/schema/types/country/country.types';
-import type * as InstitutionsTypes from '#/modules/governance/schema/types/institutions/institutions.types';
-import type * as OfficesTypes from '#/modules/governance/schema/types/offices/offices.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
-import type * as UnitsTypes from '#/modules/geography/schema/types/units/units.types';
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CountryTypes from "#/modules/reference/schema/types/country/country.types";
+import type * as InstitutionsTypes from "#/modules/governance/schema/types/institutions/institutions.types";
+import type * as OfficesTypes from "#/modules/governance/schema/types/offices/offices.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
+import type * as UnitsTypes from "#/modules/geography/schema/types/units/units.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -27,8 +27,8 @@ import type {
   AUTHORITY_SCOPES_DATE_RANGE_FIELDS,
   AUTHORITY_SCOPES_SELECTABLE_FIELDS,
   AUTHORITY_SCOPES_DEFAULT_SELECT_FIELDS,
-  AUTHORITY_SCOPES_EDITABLE_FIELDS
-} from './authority-scopes.config';
+  AUTHORITY_SCOPES_EDITABLE_FIELDS,
+} from "./authority-scopes.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -82,14 +82,21 @@ export type IAuthorityScopesImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IAuthorityScopesCreatable = Omit<IAuthorityScopes, IAuthorityScopesImmutableFields | AuthorityScopesRelationKey>;
+export type IAuthorityScopesCreatable = Omit<
+  IAuthorityScopes,
+  IAuthorityScopesImmutableFields | AuthorityScopesRelationKey
+>;
 
-export type IAuthorityScopesSystemWritable = Omit<IAuthorityScopes, B.IBaseReadonlyFields | AuthorityScopesRelationKey>;
+export type IAuthorityScopesSystemWritable = Omit<
+  IAuthorityScopes,
+  B.IBaseReadonlyFields | AuthorityScopesRelationKey
+>;
 
-export type IAuthorityScopesUpdatable = Partial<Omit<IAuthorityScopes, IAuthorityScopesImmutableFields | AuthorityScopesRelationKey>>;
+export type IAuthorityScopesUpdatable = Partial<
+  Omit<IAuthorityScopes, IAuthorityScopesImmutableFields | AuthorityScopesRelationKey>
+>;
 
-export interface IAuthorityScopesTransitionPayload {
-}
+export interface IAuthorityScopesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -105,7 +112,8 @@ export type AuthorityScopesDateRangeField = (typeof AUTHORITY_SCOPES_DATE_RANGE_
 
 export type AuthorityScopesSelectableField = (typeof AUTHORITY_SCOPES_SELECTABLE_FIELDS)[number];
 
-export type AuthorityScopesDefaultSelectField = (typeof AUTHORITY_SCOPES_DEFAULT_SELECT_FIELDS)[number];
+export type AuthorityScopesDefaultSelectField =
+  (typeof AUTHORITY_SCOPES_DEFAULT_SELECT_FIELDS)[number];
 
 export type AuthorityScopesEditableField = (typeof AUTHORITY_SCOPES_EDITABLE_FIELDS)[number];
 
@@ -113,17 +121,31 @@ export type AuthorityScopesEditableField = (typeof AUTHORITY_SCOPES_EDITABLE_FIE
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IAuthorityScopesAsOneRelationConfig = Q.IOneRelationConfig<'authorityScopes', AuthorityScopesSelectableField>;
+export type IAuthorityScopesAsOneRelationConfig = Q.IOneRelationConfig<
+  "authorityScopes",
+  AuthorityScopesSelectableField
+>;
 
-export type IAuthorityScopesAsManyRelationConfig = Q.IManyRelationConfig<'authorityScopess', AuthorityScopesSelectableField, AuthorityScopesSortableField>;
+export type IAuthorityScopesAsManyRelationConfig = Q.IManyRelationConfig<
+  "authorityScopes",
+  AuthorityScopesSelectableField,
+  AuthorityScopesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IAuthorityScopesAsOneRelationQuery = Q.IAsOneRelationQuery<IAuthorityScopes, AuthorityScopesSelectableField>;
+export type IAuthorityScopesAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IAuthorityScopes,
+  AuthorityScopesSelectableField
+>;
 
-export type IAuthorityScopesAsManyRelationQuery = Q.IAsManyRelationQuery<IAuthorityScopes, AuthorityScopesSelectableField, AuthorityScopesSortableField>;
+export type IAuthorityScopesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IAuthorityScopes,
+  AuthorityScopesSelectableField,
+  AuthorityScopesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -142,7 +164,11 @@ export interface IAuthorityScopesRelationMap extends Record<AuthorityScopesRelat
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IAuthorityScopesRelationQueries = Q.IBaseRelationQueries<IAuthorityScopes, AuthorityScopesRelationKey, IAuthorityScopesRelationMap>;
+export type IAuthorityScopesRelationQueries = Q.IBaseRelationQueries<
+  IAuthorityScopes,
+  AuthorityScopesRelationKey,
+  IAuthorityScopesRelationMap
+>;
 
 export type IAuthorityScopesItemQuery = Q.IBaseItemQuery<
   IAuthorityScopes,

@@ -21,10 +21,15 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["subjectInstitutionId", "relationshipKindId"])
 @Index(["objectInstitutionId", "relationshipKindId"])
 @Index(["sourceCitationId"])
-@Check("chk_relationships_validity_window_is_ordered", `valid_from = null OR valid_until = null OR valid_from < valid_until`)
-@Check("chk_relationships_relationship_is_not_self_referential", `subject_institution_id <> object_institution_id`)
-export class RelationshipsEntity {
-
+@Check(
+  "chk_relationships_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
+@Check(
+  "chk_relationships_relationship_is_not_self_referential",
+  `subject_institution_id <> object_institution_id`,
+)
+export class GovernanceRelationshipsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

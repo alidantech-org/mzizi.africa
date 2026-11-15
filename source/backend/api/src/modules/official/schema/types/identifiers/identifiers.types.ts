@@ -2,16 +2,16 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as EntitiesTypes from '#/modules/official/schema/types/entities/entities.types';
-import type * as IndividualsTypes from '#/modules/official/schema/types/individuals/individuals.types';
-import type * as ValueTypes from '#/modules/reference/schema/types/value/value.types';
-import type * as CitationsTypes from '#/modules/source/schema/types/citations/citations.types';
+import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
+import type * as IndividualsTypes from "#/modules/official/schema/types/individuals/individuals.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -25,8 +25,8 @@ import type {
   IDENTIFIERS_DATE_RANGE_FIELDS,
   IDENTIFIERS_SELECTABLE_FIELDS,
   IDENTIFIERS_DEFAULT_SELECT_FIELDS,
-  IDENTIFIERS_EDITABLE_FIELDS
-} from './identifiers.config';
+  IDENTIFIERS_EDITABLE_FIELDS,
+} from "./identifiers.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -80,14 +80,21 @@ export type IIdentifiersImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IIdentifiersCreatable = Omit<IIdentifiers, IIdentifiersImmutableFields | IdentifiersRelationKey>;
+export type IIdentifiersCreatable = Omit<
+  IIdentifiers,
+  IIdentifiersImmutableFields | IdentifiersRelationKey
+>;
 
-export type IIdentifiersSystemWritable = Omit<IIdentifiers, B.IBaseReadonlyFields | IdentifiersRelationKey>;
+export type IIdentifiersSystemWritable = Omit<
+  IIdentifiers,
+  B.IBaseReadonlyFields | IdentifiersRelationKey
+>;
 
-export type IIdentifiersUpdatable = Partial<Omit<IIdentifiers, IIdentifiersImmutableFields | IdentifiersRelationKey>>;
+export type IIdentifiersUpdatable = Partial<
+  Omit<IIdentifiers, IIdentifiersImmutableFields | IdentifiersRelationKey>
+>;
 
-export interface IIdentifiersTransitionPayload {
-}
+export interface IIdentifiersTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -111,17 +118,31 @@ export type IdentifiersEditableField = (typeof IDENTIFIERS_EDITABLE_FIELDS)[numb
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IIdentifiersAsOneRelationConfig = Q.IOneRelationConfig<'identifiers', IdentifiersSelectableField>;
+export type IIdentifiersAsOneRelationConfig = Q.IOneRelationConfig<
+  "identifiers",
+  IdentifiersSelectableField
+>;
 
-export type IIdentifiersAsManyRelationConfig = Q.IManyRelationConfig<'identifierss', IdentifiersSelectableField, IdentifiersSortableField>;
+export type IIdentifiersAsManyRelationConfig = Q.IManyRelationConfig<
+  "identifiers",
+  IdentifiersSelectableField,
+  IdentifiersSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IIdentifiersAsOneRelationQuery = Q.IAsOneRelationQuery<IIdentifiers, IdentifiersSelectableField>;
+export type IIdentifiersAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IIdentifiers,
+  IdentifiersSelectableField
+>;
 
-export type IIdentifiersAsManyRelationQuery = Q.IAsManyRelationQuery<IIdentifiers, IdentifiersSelectableField, IdentifiersSortableField>;
+export type IIdentifiersAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IIdentifiers,
+  IdentifiersSelectableField,
+  IdentifiersSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -139,7 +160,11 @@ export interface IIdentifiersRelationMap extends Record<IdentifiersRelationKey, 
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IIdentifiersRelationQueries = Q.IBaseRelationQueries<IIdentifiers, IdentifiersRelationKey, IIdentifiersRelationMap>;
+export type IIdentifiersRelationQueries = Q.IBaseRelationQueries<
+  IIdentifiers,
+  IdentifiersRelationKey,
+  IIdentifiersRelationMap
+>;
 
 export type IIdentifiersItemQuery = Q.IBaseItemQuery<
   IIdentifiers,

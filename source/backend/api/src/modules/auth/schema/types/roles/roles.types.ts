@@ -2,8 +2,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -21,8 +21,8 @@ import type {
   ROLES_DATE_RANGE_FIELDS,
   ROLES_SELECTABLE_FIELDS,
   ROLES_DEFAULT_SELECT_FIELDS,
-  ROLES_EDITABLE_FIELDS
-} from './roles.config';
+  ROLES_EDITABLE_FIELDS,
+} from "./roles.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -60,10 +60,7 @@ export type IRolesSensitiveFields = never;
 export type IRolesTransitionFields = never;
 
 export type IRolesImmutableFields =
-  | IRolesReadonlyFields
-  | IRolesContextualFields
-  | IRolesSensitiveFields
-  | IRolesTransitionFields;
+  IRolesReadonlyFields | IRolesContextualFields | IRolesSensitiveFields | IRolesTransitionFields;
 
 // ----------------------------------
 // WRITE CONTRACTS
@@ -75,8 +72,7 @@ export type IRolesSystemWritable = Omit<IRoles, B.IBaseReadonlyFields | RolesRel
 
 export type IRolesUpdatable = Partial<Omit<IRoles, IRolesImmutableFields | RolesRelationKey>>;
 
-export interface IRolesTransitionPayload {
-}
+export interface IRolesTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -100,9 +96,13 @@ export type RolesEditableField = (typeof ROLES_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IRolesAsOneRelationConfig = Q.IOneRelationConfig<'roles', RolesSelectableField>;
+export type IRolesAsOneRelationConfig = Q.IOneRelationConfig<"roles", RolesSelectableField>;
 
-export type IRolesAsManyRelationConfig = Q.IManyRelationConfig<'roless', RolesSelectableField, RolesSortableField>;
+export type IRolesAsManyRelationConfig = Q.IManyRelationConfig<
+  "roles",
+  RolesSelectableField,
+  RolesSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -110,20 +110,27 @@ export type IRolesAsManyRelationConfig = Q.IManyRelationConfig<'roless', RolesSe
 
 export type IRolesAsOneRelationQuery = Q.IAsOneRelationQuery<IRoles, RolesSelectableField>;
 
-export type IRolesAsManyRelationQuery = Q.IAsManyRelationQuery<IRoles, RolesSelectableField, RolesSortableField>;
+export type IRolesAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IRoles,
+  RolesSelectableField,
+  RolesSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
 // ----------------------------------
 
-export interface IRolesRelationMap extends Record<RolesRelationKey, unknown> {
-}
+export interface IRolesRelationMap extends Record<RolesRelationKey, unknown> {}
 
 // ----------------------------------
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IRolesRelationQueries = Q.IBaseRelationQueries<IRoles, RolesRelationKey, IRolesRelationMap>;
+export type IRolesRelationQueries = Q.IBaseRelationQueries<
+  IRoles,
+  RolesRelationKey,
+  IRolesRelationMap
+>;
 
 export type IRolesItemQuery = Q.IBaseItemQuery<
   IRoles,

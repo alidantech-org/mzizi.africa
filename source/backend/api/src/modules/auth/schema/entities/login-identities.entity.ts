@@ -18,7 +18,6 @@ import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-s
 @Index(["accountId"])
 @Index(["issuer", "subject"], { unique: true })
 export class LoginIdentitiesEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -32,7 +31,11 @@ export class LoginIdentitiesEntity {
   @Column({ name: "issuer", type: "varchar", length: 500 })
   issuer!: NonEmptyString500;
 
-  @Column({ name: "last_authenticated_at", type: "timestamptz", nullable: true })
+  @Column({
+    name: "last_authenticated_at",
+    type: "timestamptz",
+    nullable: true,
+  })
   lastAuthenticatedAt?: Date | null;
 
   @Column({ name: "linked_at", type: "timestamptz" })

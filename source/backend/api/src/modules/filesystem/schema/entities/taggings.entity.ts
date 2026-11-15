@@ -23,7 +23,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["folderId"])
 // Invariant "ExactlyOneTarget" has no simple form, so it isn't enforced as a database check.
 export class TaggingsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

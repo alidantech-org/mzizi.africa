@@ -1,4 +1,3 @@
-
 import {
   IsEnum,
   IsInt,
@@ -24,7 +23,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Stable logical file identity; equal content hashes may belong to different files. (entity)
  */
 export class FilesDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

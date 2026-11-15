@@ -1,8 +1,4 @@
-
-import {
-  IsString,
-  IsUUID,
-} from "class-validator";
+import { IsString, IsUUID } from "class-validator";
 
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 
@@ -10,7 +6,6 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
  * Role included in a delegation. (entity)
  */
 export class DelegationRolesDto {
-
   @IsString()
   @IsUUID()
   delegationId!: Id;

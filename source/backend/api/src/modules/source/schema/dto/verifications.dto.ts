@@ -1,4 +1,3 @@
-
 import {
   IsEnum,
   IsInt,
@@ -25,7 +24,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Append-only attributable assessment; disagreement and insufficient evidence remain explicit outcomes. (entity)
  */
 export class VerificationsDto {
-
   @IsISO8601({})
   assessedAt!: Instant;
 

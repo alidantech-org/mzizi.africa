@@ -8,8 +8,8 @@
   "scripts": {
     "start": "bun src/main.ts",
     "dev": "bun --watch src/main.ts",
-    "typecheck": "bunx --bun tsc --noEmit -p src/tsconfig.json",
-    "test": "vitest run --root src"
+    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
   },
   "dependencies": {
     "@nestjs/common": "^12.4.0",

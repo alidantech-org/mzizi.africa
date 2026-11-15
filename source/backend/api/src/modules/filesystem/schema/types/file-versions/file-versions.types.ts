@@ -2,15 +2,15 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
-import type { Access } from '#/modules/filesystem/schema/enum/access.enum';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
+import type { Access } from "#/modules/filesystem/schema/enum/access.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FileExtensionsTypes from '#/modules/filesystem/schema/types/file-extensions/file-extensions.types';
-import type * as FilesTypes from '#/modules/filesystem/schema/types/files/files.types';
+import type * as FileExtensionsTypes from "#/modules/filesystem/schema/types/file-extensions/file-extensions.types";
+import type * as FilesTypes from "#/modules/filesystem/schema/types/files/files.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -24,8 +24,8 @@ import type {
   FILE_VERSIONS_DATE_RANGE_FIELDS,
   FILE_VERSIONS_SELECTABLE_FIELDS,
   FILE_VERSIONS_DEFAULT_SELECT_FIELDS,
-  FILE_VERSIONS_EDITABLE_FIELDS
-} from './file-versions.config';
+  FILE_VERSIONS_EDITABLE_FIELDS,
+} from "./file-versions.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -80,14 +80,21 @@ export type IFileVersionsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IFileVersionsCreatable = Omit<IFileVersions, IFileVersionsImmutableFields | FileVersionsRelationKey>;
+export type IFileVersionsCreatable = Omit<
+  IFileVersions,
+  IFileVersionsImmutableFields | FileVersionsRelationKey
+>;
 
-export type IFileVersionsSystemWritable = Omit<IFileVersions, B.IBaseReadonlyFields | FileVersionsRelationKey>;
+export type IFileVersionsSystemWritable = Omit<
+  IFileVersions,
+  B.IBaseReadonlyFields | FileVersionsRelationKey
+>;
 
-export type IFileVersionsUpdatable = Partial<Omit<IFileVersions, IFileVersionsImmutableFields | FileVersionsRelationKey>>;
+export type IFileVersionsUpdatable = Partial<
+  Omit<IFileVersions, IFileVersionsImmutableFields | FileVersionsRelationKey>
+>;
 
-export interface IFileVersionsTransitionPayload {
-}
+export interface IFileVersionsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -111,17 +118,31 @@ export type FileVersionsEditableField = (typeof FILE_VERSIONS_EDITABLE_FIELDS)[n
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IFileVersionsAsOneRelationConfig = Q.IOneRelationConfig<'fileVersions', FileVersionsSelectableField>;
+export type IFileVersionsAsOneRelationConfig = Q.IOneRelationConfig<
+  "fileVersions",
+  FileVersionsSelectableField
+>;
 
-export type IFileVersionsAsManyRelationConfig = Q.IManyRelationConfig<'fileVersionss', FileVersionsSelectableField, FileVersionsSortableField>;
+export type IFileVersionsAsManyRelationConfig = Q.IManyRelationConfig<
+  "fileVersions",
+  FileVersionsSelectableField,
+  FileVersionsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IFileVersionsAsOneRelationQuery = Q.IAsOneRelationQuery<IFileVersions, FileVersionsSelectableField>;
+export type IFileVersionsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IFileVersions,
+  FileVersionsSelectableField
+>;
 
-export type IFileVersionsAsManyRelationQuery = Q.IAsManyRelationQuery<IFileVersions, FileVersionsSelectableField, FileVersionsSortableField>;
+export type IFileVersionsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IFileVersions,
+  FileVersionsSelectableField,
+  FileVersionsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -136,7 +157,11 @@ export interface IFileVersionsRelationMap extends Record<FileVersionsRelationKey
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IFileVersionsRelationQueries = Q.IBaseRelationQueries<IFileVersions, FileVersionsRelationKey, IFileVersionsRelationMap>;
+export type IFileVersionsRelationQueries = Q.IBaseRelationQueries<
+  IFileVersions,
+  FileVersionsRelationKey,
+  IFileVersionsRelationMap
+>;
 
 export type IFileVersionsItemQuery = Q.IBaseItemQuery<
   IFileVersions,

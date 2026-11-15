@@ -1,13 +1,4 @@
-
-import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  MaxLength,
-  Min,
-  MinLength,
-} from "class-validator";
+import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from "class-validator";
 import { SortDirection } from "#/modules/shared/schema/enum/sort-direction.enum.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { StatusCode } from "#/modules/shared/schema/type/status-code.type.ts";
@@ -16,7 +7,6 @@ import type { StatusCode } from "#/modules/shared/schema/type/status-code.type.t
  * Base Query
  */
 export class BaseQueryDto {
-
   @IsOptional()
   @IsInt()
   @Min(0)

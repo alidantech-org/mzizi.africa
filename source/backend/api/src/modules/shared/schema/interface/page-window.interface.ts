@@ -1,4 +1,3 @@
-
 import type { Integer } from "#/modules/shared/schema/type/integer.type.ts";
 
 /** Page Window */

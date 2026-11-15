@@ -2,13 +2,13 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as AccountsTypes from '#/modules/auth/schema/types/accounts/accounts.types';
+import type * as AccountsTypes from "#/modules/auth/schema/types/accounts/accounts.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -22,8 +22,8 @@ import type {
   INVITATIONS_DATE_RANGE_FIELDS,
   INVITATIONS_SELECTABLE_FIELDS,
   INVITATIONS_DEFAULT_SELECT_FIELDS,
-  INVITATIONS_EDITABLE_FIELDS
-} from './invitations.config';
+  INVITATIONS_EDITABLE_FIELDS,
+} from "./invitations.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -73,14 +73,21 @@ export type IInvitationsImmutableFields =
 // WRITE CONTRACTS
 // ----------------------------------
 
-export type IInvitationsCreatable = Omit<IInvitations, IInvitationsImmutableFields | InvitationsRelationKey>;
+export type IInvitationsCreatable = Omit<
+  IInvitations,
+  IInvitationsImmutableFields | InvitationsRelationKey
+>;
 
-export type IInvitationsSystemWritable = Omit<IInvitations, B.IBaseReadonlyFields | InvitationsRelationKey>;
+export type IInvitationsSystemWritable = Omit<
+  IInvitations,
+  B.IBaseReadonlyFields | InvitationsRelationKey
+>;
 
-export type IInvitationsUpdatable = Partial<Omit<IInvitations, IInvitationsImmutableFields | InvitationsRelationKey>>;
+export type IInvitationsUpdatable = Partial<
+  Omit<IInvitations, IInvitationsImmutableFields | InvitationsRelationKey>
+>;
 
-export interface IInvitationsTransitionPayload {
-}
+export interface IInvitationsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -104,17 +111,31 @@ export type InvitationsEditableField = (typeof INVITATIONS_EDITABLE_FIELDS)[numb
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type IInvitationsAsOneRelationConfig = Q.IOneRelationConfig<'invitations', InvitationsSelectableField>;
+export type IInvitationsAsOneRelationConfig = Q.IOneRelationConfig<
+  "invitations",
+  InvitationsSelectableField
+>;
 
-export type IInvitationsAsManyRelationConfig = Q.IManyRelationConfig<'invitationss', InvitationsSelectableField, InvitationsSortableField>;
+export type IInvitationsAsManyRelationConfig = Q.IManyRelationConfig<
+  "invitations",
+  InvitationsSelectableField,
+  InvitationsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
 // ----------------------------------
 
-export type IInvitationsAsOneRelationQuery = Q.IAsOneRelationQuery<IInvitations, InvitationsSelectableField>;
+export type IInvitationsAsOneRelationQuery = Q.IAsOneRelationQuery<
+  IInvitations,
+  InvitationsSelectableField
+>;
 
-export type IInvitationsAsManyRelationQuery = Q.IAsManyRelationQuery<IInvitations, InvitationsSelectableField, InvitationsSortableField>;
+export type IInvitationsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  IInvitations,
+  InvitationsSelectableField,
+  InvitationsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
@@ -129,7 +150,11 @@ export interface IInvitationsRelationMap extends Record<InvitationsRelationKey, 
 // QUERY CONTRACTS
 // ----------------------------------
 
-export type IInvitationsRelationQueries = Q.IBaseRelationQueries<IInvitations, InvitationsRelationKey, IInvitationsRelationMap>;
+export type IInvitationsRelationQueries = Q.IBaseRelationQueries<
+  IInvitations,
+  InvitationsRelationKey,
+  IInvitationsRelationMap
+>;
 
 export type IInvitationsItemQuery = Q.IBaseItemQuery<
   IInvitations,

@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -27,7 +26,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Catalog metadata for vector, raster, climate, elevation, historical and derived datasets. Large assets remain in the existing Filesystem/SeaweedFS S3 system; external references await executable Source and Filesystem contracts. (entity)
  */
 export class DatasetsDto {
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)

@@ -1,8 +1,4 @@
-import {
-  Column,
-  Entity,
-  PrimaryColumn,
-} from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 import { AccountStatus } from "#/modules/auth/schema/enum/account-status.enum.ts";
 import { AuthActorKind } from "#/modules/auth/schema/enum/auth-actor-kind.enum.ts";
@@ -14,7 +10,6 @@ import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-s
  */
 @Entity({ schema: "auth", name: "accounts" })
 export class AccountsEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -30,7 +25,11 @@ export class AccountsEntity {
   @Column({ name: "display_name", type: "varchar", length: 255 })
   displayName!: NonEmptyString255;
 
-  @Column({ name: "last_authenticated_at", type: "timestamptz", nullable: true })
+  @Column({
+    name: "last_authenticated_at",
+    type: "timestamptz",
+    nullable: true,
+  })
   lastAuthenticatedAt?: Date | null;
 
   @Column({ name: "person_ref_id", type: "uuid" })

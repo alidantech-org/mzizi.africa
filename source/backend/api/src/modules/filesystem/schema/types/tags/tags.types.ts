@@ -2,8 +2,8 @@
 // SHARED TYPES
 // ----------------------------------
 
-import * as Q from '#/modules/common/schema/types/query';
-import * as B from '#/modules/common/schema/types/base';
+import * as Q from "#/modules/common/schema/types/query";
+import * as B from "#/modules/common/schema/types/base";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -21,8 +21,8 @@ import type {
   TAGS_DATE_RANGE_FIELDS,
   TAGS_SELECTABLE_FIELDS,
   TAGS_DEFAULT_SELECT_FIELDS,
-  TAGS_EDITABLE_FIELDS
-} from './tags.config';
+  TAGS_EDITABLE_FIELDS,
+} from "./tags.config";
 
 // ----------------------------------
 // CORE ENTITY CONTRACT
@@ -56,10 +56,7 @@ export type ITagsSensitiveFields = never;
 export type ITagsTransitionFields = never;
 
 export type ITagsImmutableFields =
-  | ITagsReadonlyFields
-  | ITagsContextualFields
-  | ITagsSensitiveFields
-  | ITagsTransitionFields;
+  ITagsReadonlyFields | ITagsContextualFields | ITagsSensitiveFields | ITagsTransitionFields;
 
 // ----------------------------------
 // WRITE CONTRACTS
@@ -71,8 +68,7 @@ export type ITagsSystemWritable = Omit<ITags, B.IBaseReadonlyFields | TagsRelati
 
 export type ITagsUpdatable = Partial<Omit<ITags, ITagsImmutableFields | TagsRelationKey>>;
 
-export interface ITagsTransitionPayload {
-}
+export interface ITagsTransitionPayload {}
 
 // ----------------------------------
 // QUERY FIELD TYPES
@@ -96,9 +92,13 @@ export type TagsEditableField = (typeof TAGS_EDITABLE_FIELDS)[number];
 // RELATION CONFIG TYPES
 // ----------------------------------
 
-export type ITagsAsOneRelationConfig = Q.IOneRelationConfig<'tags', TagsSelectableField>;
+export type ITagsAsOneRelationConfig = Q.IOneRelationConfig<"tags", TagsSelectableField>;
 
-export type ITagsAsManyRelationConfig = Q.IManyRelationConfig<'tagss', TagsSelectableField, TagsSortableField>;
+export type ITagsAsManyRelationConfig = Q.IManyRelationConfig<
+  "tags",
+  TagsSelectableField,
+  TagsSortableField
+>;
 
 // ----------------------------------
 // RELATION QUERY TYPES
@@ -106,14 +106,17 @@ export type ITagsAsManyRelationConfig = Q.IManyRelationConfig<'tagss', TagsSelec
 
 export type ITagsAsOneRelationQuery = Q.IAsOneRelationQuery<ITags, TagsSelectableField>;
 
-export type ITagsAsManyRelationQuery = Q.IAsManyRelationQuery<ITags, TagsSelectableField, TagsSortableField>;
+export type ITagsAsManyRelationQuery = Q.IAsManyRelationQuery<
+  ITags,
+  TagsSelectableField,
+  TagsSortableField
+>;
 
 // ----------------------------------
 // RELATION MAP
 // ----------------------------------
 
-export interface ITagsRelationMap extends Record<TagsRelationKey, unknown> {
-}
+export interface ITagsRelationMap extends Record<TagsRelationKey, unknown> {}
 
 // ----------------------------------
 // QUERY CONTRACTS

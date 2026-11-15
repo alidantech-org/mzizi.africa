@@ -19,7 +19,6 @@ import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 @Entity({ schema: "source", name: "apis" })
 @Index(["sourceId"], { unique: true })
 export class ApisEntity {
-
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -29,7 +28,12 @@ export class ApisEntity {
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
 
-  @Column({ name: "credential_binding", type: "varchar", length: 255, nullable: true })
+  @Column({
+    name: "credential_binding",
+    type: "varchar",
+    length: 255,
+    nullable: true,
+  })
   credentialBinding?: NonEmptyString255 | null;
 
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })

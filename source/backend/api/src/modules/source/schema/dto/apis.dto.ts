@@ -1,4 +1,3 @@
-
 import {
   IsInt,
   IsISO8601,
@@ -22,7 +21,6 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * API channel with named credential binding only; request behavior is pinned in manifest releases. (entity)
  */
 export class ApisDto {
-
   @IsString()
   @IsUrl()
   @MaxLength(2048)
