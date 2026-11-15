@@ -1,0 +1,38 @@
+import "reflect-metadata";
+
+import { plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
+import { describe, expect, it } from "vitest";
+
+import { ValidityEntityDto } from "#/modules/shared/dto/validity-entity.dto.ts";
+import { validityEntityExample } from "#/modules/shared/dto/examples/validity-entity.dto.example.ts";
+
+/** Managed by Dryv: ValidityEntityDto enforces exactly what the ValidityEntity contract says. */
+async function errorsFor(value: Record<string, unknown>): Promise<string[]> {
+  const errors = await validate(plainToInstance(ValidityEntityDto, value), {
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    forbidUnknownValues: false,
+  });
+  return errors.map((error) => error.property);
+}
+
+const cases = validityEntityExample.violations().map((item) => [item.field, item.reason, item.value] as const);
+
+describe("ValidityEntityDto contract", () => {
+  it("accepts the contract example", async () => {
+    expect(await errorsFor(validityEntityExample.valid())).toEqual([]);
+  });
+
+  it("rejects unknown properties", async () => {
+    expect(await errorsFor({ ...validityEntityExample.valid(), unexpectedField: 1 })).toContain(
+      "unexpectedField",
+    );
+  });
+
+  if (cases.length > 0) {
+    it.each(cases)("rejects %s when %s", async (field, _reason, value) => {
+      expect(await errorsFor(value)).toContain(field);
+    });
+  }
+});

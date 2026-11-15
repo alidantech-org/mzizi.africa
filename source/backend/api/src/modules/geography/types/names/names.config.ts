@@ -1,0 +1,117 @@
+// ----------------------------------
+// SHARED CONFIG TYPES
+// ----------------------------------
+
+import * as Q from '#/modules/common/types/query';
+import { ERelationType } from '#/modules/common/types/enums';
+
+// ----------------------------------
+// RELATED ENTITY CONFIGS
+// ----------------------------------
+import * as FeaturesConfig from '#/modules/geography/types/features/features.config';
+import * as ValueConfig from '#/modules/reference/types/value/value.config';
+
+// ----------------------------------
+// LOCAL TYPES
+// ----------------------------------
+
+import type {
+  INames,
+  NamesKey,
+  NamesRelationKey,
+  NamesSortableField,
+  NamesFilterableField,
+  NamesDateRangeField,
+  NamesSelectableField,
+  INamesAsOneRelationConfig,
+  INamesAsManyRelationConfig
+} from './names.types';
+
+// ----------------------------------
+// RELATION KEYS
+// ----------------------------------
+
+export const NAMES_RELATION_KEYS = ['feature', 'nameKind', ] as const satisfies readonly NamesKey[];
+
+// ----------------------------------
+// QUERY FIELD CONFIG
+// ----------------------------------
+
+export const NAMES_SORTABLE_FIELDS = [] as const satisfies readonly NamesKey[];
+
+export const NAMES_SEARCHABLE_FIELDS = [] as const satisfies readonly NamesKey[];
+
+export const NAMES_FILTERABLE_FIELDS = [] as const satisfies readonly NamesKey[];
+
+export const NAMES_DATE_RANGE_FIELDS = [] as const satisfies readonly NamesKey[];
+
+// ----------------------------------
+// SELECT FIELD CONFIG
+// ----------------------------------
+
+export const NAMES_SELECTABLE_FIELDS = ['createdAt', 'deletedAt', 'featureId', 'id', 'languageTag', 'name', 'nameKindId', 'sourceRefId', 'updatedAt', 'validFrom', 'validUntil', 'version', ] as const satisfies readonly NamesKey[];
+
+export const NAMES_DEFAULT_SELECT_FIELDS = ['createdAt', 'deletedAt', 'featureId', 'id', 'languageTag', 'name', 'nameKindId', 'sourceRefId', 'updatedAt', 'validFrom', 'validUntil', 'version', ] as const satisfies readonly NamesSelectableField[];
+
+// ----------------------------------
+// EDITABLE FIELD CONFIG
+// ----------------------------------
+
+export const NAMES_EDITABLE_FIELDS = ['featureId', 'languageTag', 'name', 'nameKindId', 'sourceRefId', 'validFrom', 'validUntil', ] as const satisfies readonly NamesKey[];
+
+// ----------------------------------
+// RELATION CONFIGS
+// ----------------------------------
+
+export const NAMES_AS_ONE_RELATION_CONFIG = {
+  relation: 'names',
+  type: ERelationType.One,
+  selectableFields: NAMES_SELECTABLE_FIELDS,
+  defaultSelectFields: NAMES_DEFAULT_SELECT_FIELDS
+} as const satisfies INamesAsOneRelationConfig;
+
+export const NAMES_AS_MANY_RELATION_CONFIG = {
+  relation: 'namess',
+  type: ERelationType.Many,
+  selectableFields: NAMES_SELECTABLE_FIELDS,
+  defaultSelectFields: NAMES_DEFAULT_SELECT_FIELDS,
+  sortableFields: NAMES_SORTABLE_FIELDS,
+  defaultLimit: 10,
+  maxLimit: 50
+} as const satisfies INamesAsManyRelationConfig;
+
+// ----------------------------------
+// RELATION QUERY OPTIONS
+// ----------------------------------
+
+export const NAMES_ONE_RELATION_QUERY_OPTIONS = [
+  Q.createRelationKeyMapper<NamesRelationKey>().one(FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG, 'feature'),
+  Q.createRelationKeyMapper<NamesRelationKey>().one(ValueConfig.VALUE_AS_ONE_RELATION_CONFIG, 'nameKind'),
+] as const;
+
+export const NAMES_MANY_RELATION_QUERY_OPTIONS = [
+] as const;
+
+// ----------------------------------
+// ENTITY QUERY OPTIONS
+// ----------------------------------
+
+export const NAMES_QUERY_OPTIONS = {
+  searchableFields: NAMES_SEARCHABLE_FIELDS,
+  selectableFields: NAMES_SELECTABLE_FIELDS,
+  defaultSelectFields: NAMES_DEFAULT_SELECT_FIELDS,
+  sortableFields: NAMES_SORTABLE_FIELDS,
+  filterFields: NAMES_FILTERABLE_FIELDS,
+  dateRangeFields: NAMES_DATE_RANGE_FIELDS,
+  oneRelations: NAMES_ONE_RELATION_QUERY_OPTIONS,
+  manyRelations: NAMES_MANY_RELATION_QUERY_OPTIONS
+} as const satisfies Q.IEntityQueryOptions<
+  INames,
+  NamesSortableField,
+  NamesSelectableField,
+  NamesFilterableField,
+  NamesDateRangeField,
+  NamesRelationKey,
+  typeof NAMES_ONE_RELATION_QUERY_OPTIONS,
+  typeof NAMES_MANY_RELATION_QUERY_OPTIONS
+>;

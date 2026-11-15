@@ -57,3 +57,4 @@ On 15 November 2026 Dryv compiled the single-store application (251 runtime IR r
 - That every authored invariant appears as a database constraint; only the totals above were counted.
 - Any Python, Mongo or TypeORM generation.
 - Behaviour on a database that already holds the older `mzizi` release stream.
+| 31 | **Static folders and per-entity folders.** Dryv warns about static `output.path` segments and forbids a dynamic directory in a template path, so a layout like `types/<entity>/` needs one static segment in the path | Verified | Three planner warnings remain for the type-files pack | Open (engine: allow a dynamic directory after a static one, or a path template) |

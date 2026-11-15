@@ -4,9 +4,9 @@ import { Global, type INestApplication, Module } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { unitCollectionExample } from "#/modules/geography/dto/unit-collection.dto.example.ts";
-import { unitDetailExample } from "#/modules/geography/dto/unit-detail.dto.example.ts";
-import { unitWindowExample } from "#/modules/geography/dto/unit-window.dto.example.ts";
+import { unitCollectionExample } from "#/modules/geography/dto/examples/unit-collection.dto.example.ts";
+import { unitDetailExample } from "#/modules/geography/dto/examples/unit-detail.dto.example.ts";
+import { unitWindowExample } from "#/modules/geography/dto/examples/unit-window.dto.example.ts";
 
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 import { GeographyPlacesModule } from "#/modules/geography/places/places.module.ts";

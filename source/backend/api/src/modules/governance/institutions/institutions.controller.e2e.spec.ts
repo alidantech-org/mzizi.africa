@@ -4,10 +4,10 @@ import { Global, type INestApplication, Module } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { institutionCollectionExample } from "#/modules/governance/dto/institution-collection.dto.example.ts";
-import { institutionDetailExample } from "#/modules/governance/dto/institution-detail.dto.example.ts";
-import { institutionWindowExample } from "#/modules/governance/dto/institution-window.dto.example.ts";
-import { officeDetailExample } from "#/modules/governance/dto/office-detail.dto.example.ts";
+import { institutionCollectionExample } from "#/modules/governance/dto/examples/institution-collection.dto.example.ts";
+import { institutionDetailExample } from "#/modules/governance/dto/examples/institution-detail.dto.example.ts";
+import { institutionWindowExample } from "#/modules/governance/dto/examples/institution-window.dto.example.ts";
+import { officeDetailExample } from "#/modules/governance/dto/examples/office-detail.dto.example.ts";
 
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 import { GovernanceInstitutionsModule } from "#/modules/governance/institutions/institutions.module.ts";

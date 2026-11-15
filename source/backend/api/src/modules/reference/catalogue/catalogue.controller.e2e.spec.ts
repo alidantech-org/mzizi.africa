@@ -4,12 +4,12 @@ import { Global, type INestApplication, Module } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { foundMemberExample } from "#/modules/reference/dto/found-member.dto.example.ts";
-import { memberCollectionExample } from "#/modules/reference/dto/member-collection.dto.example.ts";
-import { memberKeyExample } from "#/modules/reference/dto/member-key.dto.example.ts";
-import { memberWindowExample } from "#/modules/reference/dto/member-window.dto.example.ts";
-import { schemeCollectionExample } from "#/modules/reference/dto/scheme-collection.dto.example.ts";
-import { schemeWindowExample } from "#/modules/reference/dto/scheme-window.dto.example.ts";
+import { foundMemberExample } from "#/modules/reference/dto/examples/found-member.dto.example.ts";
+import { memberCollectionExample } from "#/modules/reference/dto/examples/member-collection.dto.example.ts";
+import { memberKeyExample } from "#/modules/reference/dto/examples/member-key.dto.example.ts";
+import { memberWindowExample } from "#/modules/reference/dto/examples/member-window.dto.example.ts";
+import { schemeCollectionExample } from "#/modules/reference/dto/examples/scheme-collection.dto.example.ts";
+import { schemeWindowExample } from "#/modules/reference/dto/examples/scheme-window.dto.example.ts";
 
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 import { ReferenceCatalogueModule } from "#/modules/reference/catalogue/catalogue.module.ts";

@@ -4,9 +4,9 @@ import { Global, type INestApplication, Module } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { accountCollectionExample } from "#/modules/auth/dto/account-collection.dto.example.ts";
-import { accountReadExample } from "#/modules/auth/dto/account-read.dto.example.ts";
-import { accountWindowExample } from "#/modules/auth/dto/account-window.dto.example.ts";
+import { accountCollectionExample } from "#/modules/auth/dto/examples/account-collection.dto.example.ts";
+import { accountReadExample } from "#/modules/auth/dto/examples/account-read.dto.example.ts";
+import { accountWindowExample } from "#/modules/auth/dto/examples/account-window.dto.example.ts";
 
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 import { AuthAccountsModule } from "#/modules/auth/accounts/accounts.module.ts";
