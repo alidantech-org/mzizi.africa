@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import csv
 import faulthandler
 import hashlib
 import os
@@ -14,26 +13,34 @@ from urllib.parse import urlparse
 
 from pydantic import BaseModel
 
-from mzizi_engine.activity import open_activity
-from mzizi_engine.layout import DevLayout, address_of
+from mzizi_engine.activity import Activity, open_activity
+from mzizi_engine.layout import DevLayout, SiteFolder, address_of
+from mzizi_engine.sitestore import Outcome, SiteStore, SiteWriter, Visit, atomic_write
 from mzizi_engine.web.crawl.cancel import CANCEL
-from mzizi_engine.web.crawl.service import extra_ca_bundle
-from mzizi_engine.web.identity import user_agent
-from mzizi_engine.sitestore import atomic_write, Outcome, SiteStore, SiteWriter, Visit
-from mzizi_engine.web.records import PageRecord
-from mzizi_fetch.web.client import WebResponse
+from mzizi_engine.web.crawl.service import client_for, extra_ca_bundle
 from mzizi_engine.web.export import read_csv
 from mzizi_engine.web.handlers.crawl import crawl_site
-from mzizi_engine.web.crawl.service import client_for
 from mzizi_engine.web.handlers.downloads import FoundAt
 from mzizi_engine.web.hunt import HUNTED_FILE, candidate_rows, looks_like_download, wordpress_media, write_hunted
+from mzizi_engine.web.identity import user_agent
 from mzizi_engine.web.pipeline import DownloadPool, MarkdownPool
-from mzizi_engine.web.records import LinkRecord
+from mzizi_engine.web.records import LinkRecord, PageRecord
 from mzizi_engine.web.requests import FetchQueueRequest, WatchRequest
+from mzizi_fetch.web.client import WebResponse
 from mzizi_fetch.web.urls import host_of
 
 INVENTORY_TABLES = (
-    "pages", "paths", "links", "internal_urls", "external_urls", "external_hosts", "images", "documents", "files", "media", "errors",
+    "pages",
+    "paths",
+    "links",
+    "internal_urls",
+    "external_urls",
+    "external_hosts",
+    "images",
+    "documents",
+    "files",
+    "media",
+    "errors",
 )
 TRANSIENT = ("raw", "markdown", "screenshots")
 
@@ -83,7 +90,7 @@ def _copy_inventory(run: Path, target: Path) -> None:
             atomic_write(target / f"{name}.csv", source.read_bytes())
 
 
-def _record_links(activity, host: str, run: Path) -> None:  # noqa: ANN001
+def _record_links(activity: Activity, host: str, run: Path) -> None:
     path = run / "links.csv"
     if not path.is_file():
         return
@@ -96,8 +103,15 @@ def _record_links(activity, host: str, run: Path) -> None:  # noqa: ANN001
         first = existing.get(key, {}).get("first_seen", now)
         fresh.append(
             {
-                "_id": key, "host": host, "from_path": source, "to": target, "anchor": row.get("anchor_text", ""),
-                "kind": row.get("kind", ""), "scope": row.get("scope", ""), "first_seen": first, "last_seen": now,
+                "_id": key,
+                "host": host,
+                "from_path": source,
+                "to": target,
+                "anchor": row.get("anchor_text", ""),
+                "kind": row.get("kind", ""),
+                "scope": row.get("scope", ""),
+                "first_seen": first,
+                "last_seen": now,
             }
         )
     activity.put("site_links", fresh)
@@ -123,7 +137,9 @@ def canonical_url(url: str, ca_bundle: Path | None = None) -> str:
     response = None
     for _attempt in range(3):  # a busy site can be slow to answer: ask again before giving up
         try:
-            response = httpx.get(url, follow_redirects=True, timeout=30, verify=verify, headers={"User-Agent": user_agent()})
+            response = httpx.get(
+                url, follow_redirects=True, timeout=30, verify=verify, headers={"User-Agent": user_agent()}
+            )
             break
         except httpx.HTTPError:
             continue
@@ -154,14 +170,20 @@ def _build_markdown(store: SiteStore, layout: DevLayout) -> int:
         output, _title, _removed = extract_html_document(html, state.url, boilerplate)
         body = render_markdown(output.pages).replace("<!-- page 1 -->\n\n", "", 1)
         visit = Visit(
-            url=state.url, final_url=state.url, path=state.path, status=state.status, title=state.title,
-            html=b"", slug="", markdown_body=body,
+            url=state.url,
+            final_url=state.url,
+            path=state.path,
+            status=state.status,
+            title=state.title,
+            html=b"",
+            slug="",
+            markdown_body=body,
         )
         store.write_markdown(visit, state, body)
     return len(todo)
 
 
-def _known_urls(site) -> set[str]:  # noqa: ANN001
+def _known_urls(site: SiteFolder) -> set[str]:
     known: set[str] = set()
     for name in ("documents", "images", "media", "files"):
         table = site.inventory / f"{name}.csv"
@@ -170,7 +192,7 @@ def _known_urls(site) -> set[str]:  # noqa: ANN001
     return known
 
 
-def _hunt(request: WatchRequest, site, run: Path, wordpress: bool) -> int:  # noqa: ANN001
+def _hunt(request: WatchRequest, site: SiteFolder, run: Path, wordpress: bool) -> int:
     """Probable downloads among the links, plus a WordPress site's whole media library."""
     rows = candidate_rows(run / "links.csv", _known_urls(site)) if (run / "links.csv").is_file() else []
     if wordpress:
@@ -182,8 +204,9 @@ def _hunt(request: WatchRequest, site, run: Path, wordpress: bool) -> int:  # no
     return write_hunted(site.inventory / HUNTED_FILE, rows)
 
 
-def _write_discovered(site, run: Path, store: SiteStore) -> None:  # noqa: ANN001
+def _write_discovered(site: SiteFolder, run: Path, store: SiteStore) -> None:
     """Every internal page address seen on any page, marked visited or not: the full link map of the site."""
+
     def key(url: str) -> str:
         return url.split("#")[0].rstrip("/")
 
@@ -201,24 +224,32 @@ def _write_discovered(site, run: Path, store: SiteStore) -> None:  # noqa: ANN00
     atomic_write(site.root / "discovered.txt", ("\n".join(lines) + "\n").encode("utf-8"))
 
 
-def _download(request: WatchRequest, site, limit: int) -> tuple[int, int]:  # noqa: ANN001
+def _download(request: WatchRequest, site: SiteFolder, limit: int) -> tuple[int, int]:
     from mzizi_engine.web.handlers.queue import enqueue, fetch_queue
     from mzizi_engine.web.requests import EnqueueRequest, FetchQueueRequest
 
     enqueue(EnqueueRequest(out_dir=request.out_dir, site=f"https://{site.address.host}/"))
-    report = fetch_queue(
-        FetchQueueRequest(out_dir=request.out_dir, site=f"https://{site.address.host}/", limit=limit)
-    )
+    report = fetch_queue(FetchQueueRequest(out_dir=request.out_dir, site=f"https://{site.address.host}/", limit=limit))
     return report.done, report.failed
 
 
-FILE_KINDS = {"image": "image", "media": "media", "embed": "media", "document": "document", "data": "file", "archive": "file", "program": "file"}
+FILE_KINDS = {
+    "image": "image",
+    "media": "media",
+    "embed": "media",
+    "document": "document",
+    "data": "file",
+    "archive": "file",
+    "program": "file",
+}
 
 
 def watch_site(request: WatchRequest) -> WatchReport:
     """Crawls a site, saving pages as they arrive; Markdown conversion, file hunting and downloads run beside it."""
     layout = DevLayout.locate()
-    if os.environ.get("MZIZI_DEBUG_STACKS"):  # diagnosis: print every thread's stack when a run is still going after N seconds
+    if os.environ.get(
+        "MZIZI_DEBUG_STACKS"
+    ):  # diagnosis: print every thread's stack when a run is still going after N seconds
         faulthandler.dump_traceback_later(int(os.environ["MZIZI_DEBUG_STACKS"]), repeat=True)
     CANCEL.clear()
     if threading.current_thread() is threading.main_thread():  # a stop signal ends fetching, then everything is saved
@@ -227,13 +258,15 @@ def watch_site(request: WatchRequest) -> WatchReport:
     start = request.starts[0] if request.starts else request.url
     activity = open_activity()
     landed = canonical_url(start, extra_ca_bundle(host_of(start)))
-    if activity is not None:  # remember where a start URL lands, so a slow answer later cannot send us to the wrong host
+    if (
+        activity is not None
+    ):  # remember where a start URL lands, so a slow answer later cannot send us to the wrong host
         alias_id = host_of(start)
         if landed != start:
             activity.put("site_aliases", [{"_id": alias_id, "from": alias_id, "canonical": landed}])
         else:
             known = activity.get("site_aliases", {"_id": alias_id}, 1)
-            landed = known[0]["canonical"] if known else start
+            landed = str(known[0]["canonical"]) if known else start
     if landed != start:  # the site really lives on another host of the same domain: crawl and save it there
         request = request.model_copy(update={"url": landed, "urls": ()})
     site = layout.website(landed)
@@ -244,7 +277,9 @@ def watch_site(request: WatchRequest) -> WatchReport:
 
     markdown = MarkdownPool(store)
     downloads = (
-        DownloadPool(FetchQueueRequest(out_dir=request.out_dir, site=site_url), activity, layout, request.download_limit)
+        DownloadPool(
+            FetchQueueRequest(out_dir=request.out_dir, site=site_url), activity, layout, request.download_limit
+        )
         if request.download and activity is not None
         else None
     )
@@ -252,7 +287,9 @@ def watch_site(request: WatchRequest) -> WatchReport:
     def saved(outcome: Outcome, visit: Visit) -> None:
         state = store.states.get(outcome.path)
         if outcome.result in ("new", "changed") and state is not None:
-            markdown.add(outcome.path, visit.html.decode("utf-8", errors="replace"), visit.final_url, state.fingerprint.raw)
+            markdown.add(
+                outcome.path, visit.html.decode("utf-8", errors="replace"), visit.final_url, state.fingerprint.raw
+            )
 
     writer = SiteWriter(store, on_saved=saved)
 
@@ -266,7 +303,9 @@ def watch_site(request: WatchRequest) -> WatchReport:
         if state is None:
             return None
         return WebResponse(
-            url=url, final_url=state.url, status=state.status,
+            url=url,
+            final_url=state.url,
+            status=state.status,
             headers={"content-type": "text/html", "x-mzizi-via": "cache"},
             body=(layout.root / state.html_file).read_bytes(),
         )
@@ -279,7 +318,11 @@ def watch_site(request: WatchRequest) -> WatchReport:
         try:
             for row in wordpress_media(client, site_url, _now()):
                 if downloads is not None:
-                    downloads.offer(row["original_url"], row["kind"], FoundAt(source_page="wp-json media", anchor_text=row["anchor_text"], kind=row["kind"]))
+                    downloads.offer(
+                        row["original_url"],
+                        row["kind"],
+                        FoundAt(source_page="wp-json media", anchor_text=row["anchor_text"], kind=row["kind"]),
+                    )
         finally:
             client.close()
 
@@ -287,14 +330,26 @@ def watch_site(request: WatchRequest) -> WatchReport:
         if downloads is None or link.scope.value != "internal":
             return
         kind = FILE_KINDS.get(link.kind)
-        if kind is None and request.hunt and link.kind == "page" and looks_like_download(link.original_url, link.anchor_text):
+        if (
+            kind is None
+            and request.hunt
+            and link.kind == "page"
+            and looks_like_download(link.original_url, link.anchor_text)
+        ):
             kind = "candidate"
         if kind is not None:
             segments = [part for part in urlparse(link.source_page).path.split("/") if part]
             downloads.offer(
-                link.original_url, kind,
-                FoundAt(source_page=link.source_page, section=segments[0] if segments else "", anchor_text=link.anchor_text,
-                        kind=kind, depth=link.depth, discovered_at=link.discovered_at),
+                link.original_url,
+                kind,
+                FoundAt(
+                    source_page=link.source_page,
+                    section=segments[0] if segments else "",
+                    anchor_text=link.anchor_text,
+                    kind=kind,
+                    depth=link.depth,
+                    discovered_at=link.discovered_at,
+                ),
             )
 
     def on_page(page: PageRecord, body: bytes) -> None:
@@ -302,7 +357,12 @@ def watch_site(request: WatchRequest) -> WatchReport:
         if page.fetched_via == "cache":
             writer.submit_cached(key_of(page.final_url))
             return
-        if request.hunt and downloads is not None and not wordpress["seen"] and (b"wp-content" in body[:300_000] or b"wp-json" in body[:300_000]):
+        if (
+            request.hunt
+            and downloads is not None
+            and not wordpress["seen"]
+            and (b"wp-content" in body[:300_000] or b"wp-json" in body[:300_000])
+        ):
             wordpress["seen"] = True
             thread = threading.Thread(target=hunt_media, name="wordpress-media", daemon=True)
             thread.start()
@@ -314,8 +374,14 @@ def watch_site(request: WatchRequest) -> WatchReport:
         path = base + (f"?{parsed.query}" if parsed.query else "") + (f"#{parsed.fragment}" if parsed.fragment else "")
         writer.submit(
             Visit(
-                url=page.original_url, final_url=page.final_url, path=path, query=parsed.query, status=page.status,
-                title=page.title, html=body, screenshot=shot.read_bytes() if shot.is_file() else None,
+                url=page.original_url,
+                final_url=page.final_url,
+                path=path,
+                query=parsed.query,
+                status=page.status,
+                title=page.title,
+                html=body,
+                screenshot=shot.read_bytes() if shot.is_file() else None,
                 slug=site.page_slug(base, parsed.query, parsed.fragment),
             )
         )
@@ -357,9 +423,16 @@ def watch_site(request: WatchRequest) -> WatchReport:
     for outcome in outcomes:
         counts[outcome.result] += 1
     return WatchReport(
-        site=str(site.root), host=host, pages_visited=len(outcomes), gone=done["gone"], complete=complete,
+        site=str(site.root),
+        host=host,
+        pages_visited=len(outcomes),
+        gone=done["gone"],
+        complete=complete,
         stopped=stopped,
         changes=tuple(o for o in outcomes if o.result in ("new", "changed")),
-        files_hunted=hunted, files_downloaded=fetched[0], downloads_failed=fetched[1],
-        markdown_converted=markdown.converted, **counts,
+        files_hunted=hunted,
+        files_downloaded=fetched[0],
+        downloads_failed=fetched[1],
+        markdown_converted=markdown.converted,
+        **counts,
     )

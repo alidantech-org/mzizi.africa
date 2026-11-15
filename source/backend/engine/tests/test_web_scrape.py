@@ -128,7 +128,9 @@ def test_scrape_stops_on_robots_and_challenge(
     assert blocked["records"] == [] and blocked["block_decisions"][0]["kind"] == "captcha"
 
 
-def test_paginated_listing_follows_query_pages_until_empty(site: str, cli: tuple[CliRunner, Path], tmp_path: Path) -> None:
+def test_paginated_listing_follows_query_pages_until_empty(
+    site: str, cli: tuple[CliRunner, Path], tmp_path: Path
+) -> None:
     Handler.site["/list?page=1"] = page("p1", '<ul><li><a href="/a">A</a></li></ul>')
     Handler.site["/list?page=2"] = page("p2", '<ul><li><a href="/b">B</a></li></ul>')
     Handler.site["/list?page=3"] = page("p3", "<ul></ul>")

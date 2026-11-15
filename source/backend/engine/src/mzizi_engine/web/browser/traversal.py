@@ -44,6 +44,7 @@ class End(StrEnum):
     SCROLL_STABLE = "scroll_stabilized_without_terminal_control"
     DISABLED_BY_REQUEST = "traversal_disabled"
     BROWSER_REQUIRED = "browser_required"
+    BROWSER_UNAVAILABLE = "browser_unavailable"
 
 
 class Action(StrEnum):

@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import yaml
 from pydantic import BaseModel
 
 from mzizi_engine.activity import open_activity
+from mzizi_engine.devservices.mongo.sandbox import Document
+from mzizi_engine.web.export import read_csv
 from mzizi_engine.web.handlers.common import out_dir
 from mzizi_engine.web.handlers.crawl import crawl_site
 from mzizi_engine.web.identity import user_agent
-from mzizi_engine.web.export import read_csv
 from mzizi_engine.web.requests import DraftRequest, FamilyRequest, ProfileRequest, SurveyRequest
 from mzizi_manifest.bundle import from_files
 from mzizi_manifest.validate import validate
@@ -49,7 +49,11 @@ def _site_profile(folder: Path) -> SiteProfile:
         front = markdown.read_text(encoding="utf-8") if markdown.is_file() else ""
         url = _front(front, "final_url")
         if url:
-            pages.append(PageInput(url=url, title=_front(front, "title"), html=html.read_text(encoding="utf-8", errors="replace")))
+            pages.append(
+                PageInput(
+                    url=url, title=_front(front, "title"), html=html.read_text(encoding="utf-8", errors="replace")
+                )
+            )
     documents_file = folder / "inventory" / "documents.csv"
     documents = [row["normalized_url"] for row in read_csv(documents_file)] if documents_file.is_file() else []
     return build_profile(pages, documents)
@@ -133,7 +137,8 @@ def family_runs(request: FamilyRequest) -> FamilyReport:
     if activity is not None:
         try:
             activity.put(
-                "family_reports", [{"_id": f"{Path(request.left).name}|{Path(request.right).name}", **report.model_dump(mode="json")}]
+                "family_reports",
+                [{"_id": f"{Path(request.left).name}|{Path(request.right).name}", **report.model_dump(mode="json")}],
             )
         finally:
             activity.close()
@@ -156,7 +161,7 @@ def draft_bundle(request: DraftRequest) -> DraftResult:
     """Writes a draft bundle: one module per section with a repeated block. Every file is a proposal for review."""
     profile = load_profile(Path(request.source))
     blocks = {url: t.repeated_blocks for t in profile.templates for url in t.example_urls}
-    modules: dict[str, dict] = {}
+    modules: dict[str, Document] = {}
     for section in profile.sections:
         for url in section.sample_urls:
             chosen = blocks.get(url)

@@ -77,7 +77,7 @@ def run_command(command: Command, given: ArgValues, session: Session) -> ExitCod
         outcome = "ok"
         _render_result(command, result, session, str(path))
         if command.failure_field and result.get(command.failure_field) is False:
-            outcome, message = "failed", "coverage expectations did not match the capture"
+            outcome, message = "failed", f"{command.path} reported {command.failure_field}=false"
             return ExitCode.FAILED
         return ExitCode.OK
     except NotYetAdded as exc:
@@ -156,6 +156,8 @@ def _resolve(command: Command, given: ArgValues, session: Session) -> ArgValues:
 
 
 def _call(command: Command, registry: CapabilityRegistry, payload: Payload, session: Session) -> Payload:
+    if command.local_handler is not None:
+        return command.local_handler(payload)
     if command.port is None:
         raise CliError(f"{command.path} has no capability")
     os.environ["ENGINE_INPUT_ROOT"] = str(session.workspace.inputs)

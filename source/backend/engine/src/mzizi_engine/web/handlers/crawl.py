@@ -78,6 +78,7 @@ def crawl_site(
                 browser_backend,
                 media=request.rendered_media,
                 item_selector=request.item_selector,
+                evidence=evidence,
             )
         if lookup is not None:
             backend = CachedBackend(backend, lookup)

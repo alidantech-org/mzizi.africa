@@ -66,6 +66,10 @@ def markdown_payload(values: ArgValues, ws: Workspace) -> Payload:
         payload["strict_table_lines"] = True
     if values.get("auto-tables"):
         payload["auto_tables"] = True
+    for key in ("first-page", "last-page"):
+        value = values.get(key)
+        if value is not None:
+            payload[key.replace("-", "_")] = value
     schema = values.get("table-schema")
     if isinstance(schema, str):
         payload["table_schema_json"] = Path(schema).read_text(encoding="utf-8")

@@ -1,5 +1,4 @@
 import threading
-import time
 from pathlib import Path
 
 import pytest
@@ -28,9 +27,8 @@ def test_a_site_lease_excludes_a_second_user_but_not_other_sites(tmp_path: Path)
         thread.start()
         thread.join(2)
         assert order == ["b"]  # a different site is not blocked
-        with pytest.raises(SiteBusy):
-            with registry.lease("a.example", wait=0.3):
-                pass
+        with pytest.raises(SiteBusy), registry.lease("a.example", wait=0.3):
+            pass
     with registry.lease("a.example", wait=1):  # released: free again
         pass
 

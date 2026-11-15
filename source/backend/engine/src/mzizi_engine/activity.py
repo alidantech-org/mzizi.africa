@@ -13,7 +13,7 @@ import logging
 import os
 import threading
 import time
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from mzizi_engine.devservices.errors import ServiceUnavailable
@@ -34,7 +34,11 @@ _shared: MongoSandbox | None = None
 def _transient(problem: BaseException) -> bool:
     """A connection-level failure (the server restarting, a dropped socket), as opposed to a bad request."""
     return type(problem).__name__ in {
-        "AutoReconnect", "ServerSelectionTimeoutError", "NetworkTimeout", "ConnectionFailure", "NotPrimaryError",
+        "AutoReconnect",
+        "ServerSelectionTimeoutError",
+        "NetworkTimeout",
+        "ConnectionFailure",
+        "NotPrimaryError",
     } or isinstance(problem, (ServiceUnavailable, ConnectionError, TimeoutError))
 
 
@@ -42,7 +46,9 @@ def _shared_sandbox() -> MongoSandbox:
     global _shared
     with _lock:
         if _shared is None:
-            _shared = MongoSandbox(load_settings())  # never closed by us: the OS closes it at exit, after every thread is done
+            _shared = MongoSandbox(
+                load_settings()
+            )  # never closed by us: the OS closes it at exit, after every thread is done
         return _shared
 
 
@@ -52,7 +58,7 @@ class Activity:
     def __init__(self, sandbox: MongoSandbox) -> None:
         self._sandbox = sandbox
 
-    def _retry(self, action):  # noqa: ANN001, ANN202
+    def _retry[T](self, action: Callable[[], T]) -> T:
         for wait in (*RETRY_WAITS, None):
             try:
                 return action()
@@ -61,6 +67,7 @@ class Activity:
                     raise
                 log.warning("MongoDB unavailable (%s); retrying in %.1fs", type(problem).__name__, wait)
                 time.sleep(wait)
+        raise AssertionError("unreachable: the final attempt re-raises")
 
     def put(self, collection: str, documents: Sequence[Document]) -> int:
         if not documents:

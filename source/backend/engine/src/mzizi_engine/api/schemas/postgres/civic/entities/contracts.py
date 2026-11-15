@@ -1,0 +1,31 @@
+"""Contracts: one row of contracts."""
+
+from __future__ import annotations
+
+from datetime import date, datetime
+from typing import Annotated, ClassVar
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class ContractsRow(BaseModel):
+    """One executed contract with a contractor, optional procurement/project links and contracted amount."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    table: ClassVar[str] = "civic.contracts"
+
+    amount_minor_units: Annotated[int, Field(ge=0)]
+    contractor_entity_id: UUID
+    created_at: datetime
+    currency_id: UUID
+    deleted_at: datetime | None = None
+    id: UUID
+    procurement_id: UUID | None = None
+    project_id: UUID | None = None
+    signed_on: date | None = None
+    source_citation_id: UUID | None = None
+    status_id: UUID
+    updated_at: datetime
+    version: Annotated[int, Field(ge=1)]

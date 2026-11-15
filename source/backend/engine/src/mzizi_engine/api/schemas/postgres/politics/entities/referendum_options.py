@@ -1,0 +1,30 @@
+"""Referendum Options: one row of referendum_options."""
+
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Annotated, ClassVar
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class ReferendumOptionsRow(BaseModel):
+    """One ballot option for one referendum contest; options are not modeled as candidates."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    table: ClassVar[str] = "politics.referendum_options"
+
+    ballot_order: Annotated[int, Field(ge=1)] | None = None
+    code: Annotated[
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*){0,15}$")
+    ]
+    contest_id: UUID
+    created_at: datetime
+    deleted_at: datetime | None = None
+    id: UUID
+    label: Annotated[str, Field(min_length=1, max_length=300)]
+    source_citation_id: UUID | None = None
+    updated_at: datetime
+    version: Annotated[int, Field(ge=1)]

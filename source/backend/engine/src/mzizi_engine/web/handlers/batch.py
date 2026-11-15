@@ -21,6 +21,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 
+from mzizi_engine.devservices.mongo.sandbox import Document
+from mzizi_engine.jsonvalue import as_int
 from mzizi_engine.layout import DevLayout, host_of
 from mzizi_engine.sitestore import atomic_write
 from mzizi_engine.web.requests import BatchRequest
@@ -50,26 +52,43 @@ class BatchReport(BaseModel):
 
 
 def _read_sites(path: Path) -> list[str]:
-    return [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip() and not line.startswith("#")]
+    return [
+        line.strip()
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.startswith("#")
+    ]
 
 
 def _command(request: BatchRequest, url: str) -> list[str]:
     args = [
-        "site", "watch", url, "--max-pages", str(request.max_pages), "--max-depth", str(request.max_depth),
-        "--delay", str(request.delay), "--max-list-pages", str(request.max_list_pages),
-        "--max-seconds", str(request.max_seconds), "--download-limit", str(request.download_limit),
+        "site",
+        "watch",
+        url,
+        "--max-pages",
+        str(request.max_pages),
+        "--max-depth",
+        str(request.max_depth),
+        "--delay",
+        str(request.delay),
+        "--max-list-pages",
+        str(request.max_list_pages),
+        "--max-seconds",
+        str(request.max_seconds),
+        "--download-limit",
+        str(request.download_limit),
     ]
     return [sys.executable, "-c", "from mzizi_engine.devcli.app import main; main()", "--no-input", "--json", *args]
 
 
-def _parse(output: str) -> dict:
+def _parse(output: str) -> Document:
     """The JSON report a `site watch` prints (it starts at a line that is just `{`); empty when the run failed."""
     start = output.rfind("\n{\n")
     start = start + 1 if start != -1 else (0 if output.startswith("{\n") else -1)
     if start == -1:
         return {}
     try:
-        return json.loads(output[start:])
+        report: Document = json.loads(output[start:])
+        return report
     except json.JSONDecodeError:
         return {}
 
@@ -105,7 +124,7 @@ def run_batch(request: BatchRequest) -> BatchReport:
     def save() -> None:
         atomic_write(state_file, json.dumps({h: s.model_dump() for h, s in states.items()}, indent=1).encode("utf-8"))
 
-    def log(entry: dict) -> None:
+    def log(entry: Document) -> None:
         with lock, log_file.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps({"at": datetime.now(UTC).isoformat(timespec="seconds"), **entry}) + "\n")
 
@@ -126,12 +145,20 @@ def run_batch(request: BatchRequest) -> BatchReport:
     def run_pass(host: str) -> None:
         state = states[host]
         if shutil.disk_usage(layout.root).free < request.min_free_gb * 1024**3:
-            log({"host": host, "error": f"paused: less than {request.min_free_gb} GB of disk free; free space and run the batch again"})
+            log(
+                {
+                    "host": host,
+                    "error": f"paused: less than {request.min_free_gb} GB of disk free; free space and run the batch again",
+                }
+            )
             stop.set()  # no new passes start; running ones finish and save
             return
         started = time.monotonic()
-        process = subprocess.Popen(  # noqa: S603 - our own interpreter and arguments
-            _command(request, state.url), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+        process = subprocess.Popen(
+            _command(request, state.url),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
         )
         children.add(process)
         output, _ = process.communicate()
@@ -144,26 +171,49 @@ def run_batch(request: BatchRequest) -> BatchReport:
         with lock:
             state.passes += 1
             if report:
-                new = int(report.get("new", 0)) + int(report.get("changed", 0))
+                new = as_int(report.get("new")) + as_int(report.get("changed"))
                 complete = bool(report.get("complete"))
-                state.complete, state.pages, state.note = complete, int(report.get("pages_visited", 0)), ""
+                state.complete, state.pages, state.note = complete, as_int(report.get("pages_visited")), ""
                 # done: the whole site was reached, or a pass found nothing new (the budget is not the limit any more)
                 state.done = complete or (state.passes > 1 and new == 0 and state.last_new == 0 and state.pages > 0)
-                if state.pages == 0:  # nothing was fetched: the site is unreachable or refusing, which is not "finished"
+                if (
+                    state.pages == 0
+                ):  # nothing was fetched: the site is unreachable or refusing, which is not "finished"
                     state.done, state.note = False, "unreachable: no page fetched; run the batch again later"
                 stopped = str(report.get("stopped", "")).lower()
-                if any(word in stopped for word in BLOCKED_WORDS):  # the site refuses us: never retried, never worked around
+                if any(
+                    word in stopped for word in BLOCKED_WORDS
+                ):  # the site refuses us: never retried, never worked around
                     state.done, state.note = True, f"blocked by the site: {stopped[:120]}"
                 state.last_new = new
             else:
                 state.note = output[-RESULT_TAIL:].replace("\n", " ")
             save()
-        log({
-            "host": host, "pass": state.passes, "exit": process.returncode, "seconds": seconds, "done": state.done,
-            **{k: report.get(k) for k in ("pages_visited", "new", "changed", "fresh", "complete", "files_hunted",
-                                           "files_downloaded", "downloads_failed", "markdown_converted", "stopped")},
-            "error": state.note,
-        })
+        log(
+            {
+                "host": host,
+                "pass": state.passes,
+                "exit": process.returncode,
+                "seconds": seconds,
+                "done": state.done,
+                **{
+                    k: report.get(k)
+                    for k in (
+                        "pages_visited",
+                        "new",
+                        "changed",
+                        "fresh",
+                        "complete",
+                        "files_hunted",
+                        "files_downloaded",
+                        "downloads_failed",
+                        "markdown_converted",
+                        "stopped",
+                    )
+                },
+                "error": state.note,
+            }
+        )
         if not state.done and state.pages > 0 and state.passes < request.max_passes and not stop.is_set():
             work.put(host)  # another pass, after the sites not yet visited (an unreachable site waits for the next run)
 
@@ -187,4 +237,6 @@ def run_batch(request: BatchRequest) -> BatchReport:
         time.sleep(1)
     save()
     pending = tuple(h for h, s in states.items() if not s.done)
-    return BatchReport(name=request.name, folder=str(folder), sites=len(states), done=len(states) - len(pending), pending=pending)
+    return BatchReport(
+        name=request.name, folder=str(folder), sites=len(states), done=len(states) - len(pending), pending=pending
+    )

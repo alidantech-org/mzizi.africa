@@ -92,6 +92,8 @@ _MARKDOWN_SCHEMA: Payload = {
         "page_renders": {"type": "boolean"},
         "strict_table_lines": {"type": "boolean"},
         "auto_tables": {"type": "boolean"},
+        "first_page": {"type": "integer", "minimum": 1},
+        "last_page": {"type": "integer", "minimum": 1},
         "table_schema_json": {"type": "string"},
         "caption_labels": {"type": "array", "items": {"type": "string"}},
     },
@@ -128,6 +130,8 @@ def extract_markdown(payload: dict) -> dict:
             "strict_table_lines",
             "caption_labels",
             "auto_tables",
+            "first_page",
+            "last_page",
         )
         if k in payload
     }

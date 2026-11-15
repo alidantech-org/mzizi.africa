@@ -136,6 +136,7 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
     externals, paths = _externals(links), _paths(pages, links)
     errors = [e for e in crawl.errors if e.stage != "block"]
     reports = crawl.evidence.resolved(pages)
+    browser_unavailable = {report.source_url for report in reports if report.stop_reason is End.BROWSER_UNAVAILABLE}
     written = list(crawl.evidence.save(out, pages, reports))
     written.extend(path.relative_to(out).as_posix() for path in sorted((out / "tables").glob("*.json")))
 
@@ -206,7 +207,7 @@ def export(crawl: Crawl, pages: list[PageRecord], complete: bool) -> CrawlSummar
                 or inventory.shadow_roots > 0
             )
             for page in pages
-            if page.fetched_via == "browser"
+            if page.fetched_via == "browser" or page.final_url in browser_unavailable
             for inventory in (crawl.evidence.media.get(page.final_url),)
         ),
         files_written=tuple(written),

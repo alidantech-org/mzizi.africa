@@ -14,9 +14,10 @@ import threading
 from concurrent.futures import Future, ProcessPoolExecutor
 
 from mzizi_engine.activity import Activity
+from mzizi_engine.devservices.mongo.sandbox import Document
 from mzizi_engine.layout import DevLayout
-from mzizi_engine.web.crawl.cancel import CANCEL
 from mzizi_engine.sitestore import SiteStore
+from mzizi_engine.web.crawl.cancel import CANCEL
 from mzizi_engine.web.handlers.downloads import FoundAt
 from mzizi_engine.web.handlers.queue import QUEUE, FileFetcher, State, queue_item
 from mzizi_engine.web.requests import FetchQueueRequest
@@ -112,7 +113,10 @@ class DownloadPool:
         item = queue_item(self.host, url, kind, found)
         existing = self.activity.get(QUEUE, {"_id": item["_id"]}, 1)
         if existing:
-            if existing[0].get("state") in (State.DONE.value, State.SKIPPED.value, State.MISSING.value) or existing[0].get("attempts", 0) >= 3:
+            if (
+                existing[0].get("state") in (State.DONE.value, State.SKIPPED.value, State.MISSING.value)
+                or _attempts(existing[0]) >= 3
+            ):
                 return  # already fetched, refused or given up on: never again
             item = existing[0]
         else:
@@ -144,3 +148,9 @@ class DownloadPool:
             self._queue.put(self._STOP)
         for thread in self._threads:
             thread.join()
+
+
+def _attempts(item: Document) -> int:
+    """How many times a queue item was tried; a missing or malformed count reads as none."""
+    attempts = item.get("attempts", 0)
+    return attempts if isinstance(attempts, int) else 0

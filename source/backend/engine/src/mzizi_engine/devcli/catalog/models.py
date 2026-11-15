@@ -48,6 +48,7 @@ class Command:
     artifacts: bool = False
     run_folder: bool = False
     failure_field: str = ""
+    local_handler: Callable[[Payload], Payload] | None = None
 
     @property
     def path(self) -> str:

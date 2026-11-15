@@ -21,7 +21,16 @@ from mzizi_fetch.web.urls import UrlKind, classify
 from mzizi_fetch.web.vocabulary import vocabulary
 
 HUNTED_FILE = "hunted.csv"
-HUNTED_COLUMNS = ("original_url", "normalized_url", "kind", "anchor_text", "source_page", "depth", "discovered_at", "mime")
+HUNTED_COLUMNS = (
+    "original_url",
+    "normalized_url",
+    "kind",
+    "anchor_text",
+    "source_page",
+    "depth",
+    "discovered_at",
+    "mime",
+)
 MAX_MEDIA_PAGES = 20
 
 
@@ -99,9 +108,14 @@ def wordpress_media(client: WebClient, base_url: str, now: str) -> list[dict[str
                     title = item.title.get("rendered", "") or item.alt_text
                     rows.append(
                         {
-                            "original_url": item.source_url, "normalized_url": item.source_url,
-                            "kind": _kind(item.mime_type, item.source_url), "anchor_text": title,
-                            "source_page": "wp-json media", "depth": "0", "discovered_at": now, "mime": item.mime_type,
+                            "original_url": item.source_url,
+                            "normalized_url": item.source_url,
+                            "kind": _kind(item.mime_type, item.source_url),
+                            "anchor_text": title,
+                            "source_page": "wp-json media",
+                            "depth": "0",
+                            "discovered_at": now,
+                            "mime": item.mime_type,
                         }
                     )
     return rows

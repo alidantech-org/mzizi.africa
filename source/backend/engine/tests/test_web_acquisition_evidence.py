@@ -301,3 +301,71 @@ def test_resume_builder_restores_original_scope_and_rejects_a_different_scope(si
     assert digest_of(restored) == saved.digest
     with pytest.raises(ValueError, match="resume scope differs"):
         load_state(tmp_path, digest_of(request.model_copy(update={"allowed_paths": ("/other",)})))
+
+
+def test_hybrid_browser_unavailable_retains_html_and_reports_gaps(
+    site: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from mzizi_engine.web.browser.adapter import BrowserUnavailable
+    from mzizi_engine.web.browser.models import BrowserConfig
+    from mzizi_engine.web.handlers import crawl
+
+    def unavailable(config: BrowserConfig) -> None:
+        raise BrowserUnavailable("test browser missing")
+
+    monkeypatch.setattr(crawl, "open_session", unavailable)
+    Handler.site["/listing"] = page("Listing", '<main><p>Known item</p><a href="/resource.pdf">Document</a></main>')
+    summary = crawl_site(
+        CrawlRequest(
+            url=site + "/listing",
+            out_dir=str(tmp_path),
+            max_depth=0,
+            delay=0,
+            sitemap=False,
+            render=Render.AUTO,
+            rendered_media=True,
+            references_only=True,
+        )
+    )
+    assert summary.pages == summary.documents == summary.listing_gaps == summary.media_gaps == 1
+    assert "Known item" in (tmp_path / "raw" / "0001.html").read_text()
+    (report,) = REPORTS.validate_json((tmp_path / "listings.json").read_bytes())
+    assert report.stop_reason is End.BROWSER_UNAVAILABLE
+    assert len(report.views) == 1 and report.views[0].url == site + "/listing"
+
+
+@pytest.mark.parametrize("outcome", ["transport", "timeout", "refusal", "challenge", "scope"])
+def test_hybrid_never_masks_browser_access_decisions(outcome: str) -> None:
+    from mzizi_engine.web.crawl.backends import HybridBackend
+    from mzizi_fetch.web.blocks import Block, BlockKind
+    from mzizi_fetch.web.client import WebResponse
+    from mzizi_fetch.web.policy import Decision
+
+    class Backend:
+        def __init__(self, response: WebResponse) -> None:
+            self.response = response
+
+        def get(self, url: str) -> WebResponse:
+            return self.response
+
+    url = "https://example.org/listing"
+    http = WebResponse(url=url, final_url=url, status=200, headers={"content-type": "text/html"}, body=b"<p>Item</p>")
+    browser = WebResponse(url=url, final_url=url, status=0, headers={}, body=b"", error="no response")
+    if outcome == "timeout":
+        browser = browser.model_copy(update={"block": Block(kind=BlockKind.TIMEOUT, detail="navigation timed out")})
+    elif outcome == "refusal":
+        browser = browser.model_copy(
+            update={
+                "refused": Decision(
+                    url=url, allowed=False, reason="disallowed", robots_mode="respect", robots_observation="disallowed"
+                )
+            }
+        )
+    elif outcome == "challenge":
+        browser = browser.model_copy(update={"block": Block(kind=BlockKind.CAPTCHA, detail="challenge")})
+    elif outcome == "scope":
+        browser = browser.model_copy(update={"status": 200, "error": "navigation left scope"})
+    hybrid = HybridBackend(Backend(http), lambda: Backend(browser), media=True)
+    fallback = outcome in {"transport", "timeout"}
+    assert hybrid.get(url) == (http if fallback else browser)
+    assert bool(hybrid.evidence.listings) == fallback

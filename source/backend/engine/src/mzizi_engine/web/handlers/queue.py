@@ -19,33 +19,41 @@ from urllib.parse import urlparse
 from pydantic import BaseModel
 
 from mzizi_engine.activity import Activity, open_activity
-from mzizi_engine.layout import DevLayout
+from mzizi_engine.devservices.mongo.sandbox import Document
+from mzizi_engine.jsonvalue import as_int
+from mzizi_engine.layout import DevLayout, SiteFolder
 from mzizi_engine.names import Labels, file_name
-from mzizi_engine.web.handlers.common import out_dir
+from mzizi_engine.web.crawl.service import client_for, extra_ca_bundle
+from mzizi_engine.web.export import read_csv
 from mzizi_engine.web.handlers.downloads import (
     DOWNLOADS_COLLECTION,
     CatalogEntry,
     FoundAt,
-    _catalog,
     _policy_for,
     ident,
 )
 from mzizi_engine.web.identity import user_agent
-from mzizi_engine.web.export import read_csv
-from mzizi_engine.web.crawl.service import client_for, extra_ca_bundle
 from mzizi_engine.web.requests import CrawlRequest, EnqueueRequest, FetchQueueRequest, QueueStatusRequest
 from mzizi_fetch.web.download import Downloader
 from mzizi_fetch.web.vocabulary import vocabulary
 
 QUEUE = "download_queue"
 RESOURCE_TABLES = {  # inventory table of each kind (`candidate` rows come from hunted.csv)
-   "document": "documents", "image": "images", "media": "media", "file": "files"}
+    "document": "documents",
+    "image": "images",
+    "media": "media",
+    "file": "files",
+}
 MAX_ATTEMPTS = 3
-MIN_FREE_BYTES = int(float(os.environ.get("MZIZI_MIN_FREE_GB", "8")) * 1024**3)  # downloads stop taking new files below this much free disk
+MIN_FREE_BYTES = int(
+    float(os.environ.get("MZIZI_MIN_FREE_GB", "8")) * 1024**3
+)  # downloads stop taking new files below this much free disk
 
 
 def disk_is_low(path: Path) -> bool:
     return shutil.disk_usage(path).free < MIN_FREE_BYTES
+
+
 GATE_BUDGET = 1_000_000
 
 
@@ -102,8 +110,13 @@ def _section(page: str) -> str:
 
 
 MIME_EXTENSIONS = {  # protocol facts: a data response without a file extension is named by its media type
-    "application/json": "json", "application/ld+json": "json", "application/xml": "xml", "text/xml": "xml",
-    "text/csv": "csv", "application/geo+json": "geojson", "application/vnd.ms-excel": "xls",
+    "application/json": "json",
+    "application/ld+json": "json",
+    "application/xml": "xml",
+    "text/xml": "xml",
+    "text/csv": "csv",
+    "application/geo+json": "geojson",
+    "application/vnd.ms-excel": "xls",
 }
 RATE_LIMIT_PAUSE = 20.0  # seconds to wait once before retrying a file the server rate-limited
 
@@ -133,7 +146,7 @@ def enqueue(request: EnqueueRequest) -> EnqueueReport:
     host = site.address.host
     try:
         existing = {row["_id"] for row in activity.get(QUEUE, {"host": host})}
-        fresh = []
+        fresh: list[Document] = []
         sources: list[tuple[str, list[dict[str, str]]]] = []
         for kind in request.kinds:
             table = site.inventory / f"{RESOURCE_TABLES[kind]}.csv" if kind in RESOURCE_TABLES else None
@@ -180,14 +193,20 @@ def enqueue(request: EnqueueRequest) -> EnqueueReport:
 class FileFetcher:
     """Downloads queue items one at a time into the site's files folder; one instance per worker (not shared)."""
 
-    def __init__(self, activity: Activity, site, layout: DevLayout, stage_name: str, request: FetchQueueRequest) -> None:  # noqa: ANN001
+    def __init__(
+        self, activity: Activity, site: SiteFolder, layout: DevLayout, stage_name: str, request: FetchQueueRequest
+    ) -> None:
         self.activity, self.site, self.layout = activity, site, layout
         self.host = site.address.host
         self.stage = site.root / "scraped" / ".incoming" / stage_name
         self.stage.mkdir(parents=True, exist_ok=True)
-        self.downloader = Downloader(self.stage, user_agent(), _policy_for(request), extra_ca_bundle=extra_ca_bundle(self.host))
+        self.downloader = Downloader(
+            self.stage, user_agent(), _policy_for(request), extra_ca_bundle=extra_ca_bundle(self.host)
+        )
         # the gate only checks robots.txt and scope for each file: a huge budget keeps it from refusing files for "using up" requests
-        self.gate = client_for(CrawlRequest(out_dir=str(self.stage), url=f"https://{self.host}/", max_pages=GATE_BUDGET), user_agent())
+        self.gate = client_for(
+            CrawlRequest(out_dir=str(self.stage), url=f"https://{self.host}/", max_pages=GATE_BUDGET), user_agent()
+        )
 
     def close(self) -> None:
         self.downloader.close()
@@ -211,7 +230,7 @@ class FileFetcher:
         (self.stage / f"{result_file}.json").unlink(missing_ok=True)
         (self.stage / f"{ident(url)}.status.json").unlink(missing_ok=True)
 
-    def process(self, item: dict) -> str:  # noqa: ANN001 - a queue document (the Mongo parsing boundary)
+    def process(self, item: Document) -> str:
         """Downloads one queue item; returns `done`, `failed` or `skipped`. Every outcome is recorded on the item."""
         put, url = self.activity.put, str(item["url"])
         if disk_is_low(self.site.root):  # leave the item queued: nothing is lost, it is fetched when space returns
@@ -240,8 +259,15 @@ class FileFetcher:
                 return "skipped"
             put(
                 QUEUE,
-                [{**item, "state": State.FAILED.value, "attempts": int(item["attempts"]) + 1,
-                  "error": message, "updated_at": _now()}],
+                [
+                    {
+                        **item,
+                        "state": State.FAILED.value,
+                        "attempts": as_int(item["attempts"]) + 1,
+                        "error": message,
+                        "updated_at": _now(),
+                    }
+                ],
             )
             return "failed"
         found = FoundAt.model_validate(item["found_at"])
@@ -264,28 +290,58 @@ class FileFetcher:
         self._clean(result.file, url)
         relative = str((target / final_name).relative_to(self.layout.root))
         entry = CatalogEntry(
-            url=result.url, file=relative, sha256=result.sha256, size=result.size,
-            detected_type=result.detected_type, duplicate_of=result.duplicate_of, found_at=found,
+            url=result.url,
+            file=relative,
+            sha256=result.sha256,
+            size=result.size,
+            detected_type=result.detected_type,
+            duplicate_of=result.duplicate_of,
+            found_at=found,
         )
         put(
             DOWNLOADS_COLLECTION,
-            [{"_id": result.sha256, "host": self.host, "path": relative, **entry.model_dump(mode="json"),
-              "headers": result.headers, "flags": list(result.flags)}],
+            [
+                {
+                    "_id": result.sha256,
+                    "host": self.host,
+                    "path": relative,
+                    **entry.model_dump(mode="json"),
+                    "headers": dict(result.headers),
+                    "flags": list(result.flags),
+                }
+            ],
         )
         put(
             QUEUE,
-            [{**item, "state": State.DONE.value, "attempts": int(item["attempts"]) + 1, "error": "",
-              "file": relative, "sha256": result.sha256, "size": result.size,
-              "detected_type": result.detected_type, "flags": list(result.flags), "updated_at": _now()}],
+            [
+                {
+                    **item,
+                    "state": State.DONE.value,
+                    "attempts": as_int(item["attempts"]) + 1,
+                    "error": "",
+                    "file": relative,
+                    "sha256": result.sha256,
+                    "size": result.size,
+                    "detected_type": result.detected_type,
+                    "flags": list(result.flags),
+                    "updated_at": _now(),
+                }
+            ],
         )
         return "done"
 
 
-def queue_item(host: str, url: str, kind: str, found: FoundAt) -> dict:
+def queue_item(host: str, url: str, kind: str, found: FoundAt) -> Document:
     """A new queue document (the Mongo boundary), keyed by the URL so a file is queued once however often it is seen."""
     return {
-        "_id": hashlib.sha256(url.encode()).hexdigest()[:24], "host": host, "url": url, "kind": kind,
-        "state": State.QUEUED.value, "attempts": 0, "error": "", "found_at": found.model_dump(mode="json"),
+        "_id": hashlib.sha256(url.encode()).hexdigest()[:24],
+        "host": host,
+        "url": url,
+        "kind": kind,
+        "state": State.QUEUED.value,
+        "attempts": 0,
+        "error": "",
+        "found_at": found.model_dump(mode="json"),
         "queued_at": _now(),
     }
 
@@ -300,14 +356,20 @@ def fetch_queue(request: FetchQueueRequest) -> FetchReport:
     fetcher = FileFetcher(activity, site, layout, "queue", request)
     counts = {"done": 0, "failed": 0, "skipped": 0}
     try:
-        query = {"host": site.address.host, "state": {"$in": [State.QUEUED.value, State.FAILED.value]}, "attempts": {"$lt": MAX_ATTEMPTS}}
+        query: Document = {
+            "host": site.address.host,
+            "state": {"$in": [State.QUEUED.value, State.FAILED.value]},
+            "attempts": {"$lt": MAX_ATTEMPTS},
+        }
         for item in activity.get(QUEUE, query, request.limit):
             counts[fetcher.process(item)] += 1
     finally:
         fetcher.close()
         activity.close()
     return FetchReport(
-        attempted=counts["done"] + counts["failed"], done=counts["done"], failed=counts["failed"],
+        attempted=counts["done"] + counts["failed"],
+        done=counts["done"],
+        failed=counts["failed"],
         folder=str(site.root / "scraped" / "files"),
     )
 
@@ -317,10 +379,14 @@ def queue_status(request: QueueStatusRequest) -> QueueCounts:
     if activity is None:
         raise RuntimeError("the download queue needs the MongoDB activity store (is it running?)")
     try:
-        rows = activity.get(QUEUE, {"host": DevLayout.locate().website(request.site).address.host} if request.site else {})
+        rows = activity.get(
+            QUEUE, {"host": DevLayout.locate().website(request.site).address.host} if request.site else {}
+        )
     finally:
         activity.close()
     counts: dict[str, int] = {}
     for row in rows:
         counts[str(row["state"])] = counts.get(str(row["state"]), 0) + 1
-    return QueueCounts(counts=counts, failed=tuple(f"{r['url']}: {r['error']}" for r in rows if r["state"] == "failed")[:20])
+    return QueueCounts(
+        counts=counts, failed=tuple(f"{r['url']}: {r['error']}" for r in rows if r["state"] == "failed")[:20]
+    )

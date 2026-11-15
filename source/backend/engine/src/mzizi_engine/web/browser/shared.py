@@ -53,7 +53,9 @@ def _executable(adapter: str) -> str:
         try:
             sync_api = importlib.import_module("patchright.sync_api")
         except ModuleNotFoundError as problem:
-            raise BrowserUnavailable("patchright is not installed: run `uv sync --all-packages --extra browser`") from problem
+            raise BrowserUnavailable(
+                "patchright is not installed: run `uv sync --all-packages --extra browser`"
+            ) from problem
         with sync_api.sync_playwright() as driver:
             path = str(driver.chromium.executable_path)
         if not Path(path).is_file():
@@ -79,7 +81,9 @@ def read_state(folder: Path) -> SharedBrowser | None:
 def ensure_shared_browser(folder: Path, adapter: str, profile_dir: Path, user_agent: str) -> SharedBrowser:
     """Returns the running dev browser, starting a visible one (detached, own profile) when none is alive."""
     folder.mkdir(parents=True, exist_ok=True)
-    with (folder / LOCK_FILE).open("w") as lock:  # one starter at a time: concurrent commands never open a second window
+    with (folder / LOCK_FILE).open(
+        "w"
+    ) as lock:  # one starter at a time: concurrent commands never open a second window
         fcntl.flock(lock, fcntl.LOCK_EX)
         return _ensure_locked(folder, adapter, profile_dir, user_agent)
 

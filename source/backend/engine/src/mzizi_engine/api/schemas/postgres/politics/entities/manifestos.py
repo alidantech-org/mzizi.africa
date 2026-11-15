@@ -1,0 +1,29 @@
+"""Manifestos: one row of manifestos."""
+
+from __future__ import annotations
+
+from datetime import date, datetime
+from typing import Annotated, ClassVar
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class ManifestosRow(BaseModel):
+    """One published party or candidate manifesto associated with its election and source document."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    table: ClassVar[str] = "politics.manifestos"
+
+    candidate_id: UUID | None = None
+    created_at: datetime
+    deleted_at: datetime | None = None
+    document_id: UUID | None = None
+    election_id: UUID | None = None
+    id: UUID
+    party_id: UUID | None = None
+    published_on: date | None = None
+    source_citation_id: UUID | None = None
+    updated_at: datetime
+    version: Annotated[int, Field(ge=1)]

@@ -9,8 +9,8 @@ from urllib.parse import urlparse
 import yaml
 from pydantic import BaseModel
 
-from mzizi_engine.web.handlers.common import out_dir
 from mzizi_engine.activity import open_activity
+from mzizi_engine.web.handlers.common import out_dir
 from mzizi_engine.web.handlers.downloads import DOWNLOADS_COLLECTION, CatalogEntry
 from mzizi_engine.web.requests import RankRequest
 from mzizi_manifest.validate import validate_ranking

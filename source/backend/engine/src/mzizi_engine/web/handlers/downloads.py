@@ -98,7 +98,9 @@ def _contexts(request: DownloadRequest) -> dict[str, FoundAt]:
     return found
 
 
-def _catalog(destination: Path, done: tuple[DownloadResult, ...], contexts: dict[str, FoundAt]) -> tuple[CatalogEntry, ...]:
+def _catalog(
+    destination: Path, done: tuple[DownloadResult, ...], contexts: dict[str, FoundAt]
+) -> tuple[CatalogEntry, ...]:
     entries = tuple(
         CatalogEntry(
             url=item.url,
@@ -127,7 +129,7 @@ def _catalog(destination: Path, done: tuple[DownloadResult, ...], contexts: dict
                     "folder": str(destination),
                     "path": str(destination / entry.file),
                     **entry.model_dump(mode="json"),
-                    "headers": by_url[entry.url].headers,
+                    "headers": dict(by_url[entry.url].headers),
                 }
                 for entry in entries
             ],

@@ -7,7 +7,9 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 from urllib.parse import urlsplit
 
-from mzizi_engine.web.browser.traversal import static_listing
+from bs4 import BeautifulSoup
+
+from mzizi_engine.web.browser.traversal import End, static_listing
 from mzizi_engine.web.hunt import has_download_query, looks_like_download
 from mzizi_engine.web.records import DownloadStatus, FrontierItem, LinkRecord, PageRecord, ResourceRecord, Scope
 from mzizi_fetch.web.client import WebResponse
@@ -75,32 +77,39 @@ def record_page(crawl: Crawl, item: FrontierItem, response: WebResponse) -> None
     crawl.recorded_finals.add(key)
     n = len(crawl.pages) + 1
     raw_name = f"raw/{n:04d}.html"
+    html = response.text
     if crawl.on_page is None:  # without a hook the pages are kept for the end-of-crawl exports
         (crawl.out_dir / raw_name).write_bytes(response.body)
-        crawl.html[n] = response.text
+        crawl.html[n] = html
     final = response.final_url
     crawl.seen.add(final)
-    meta = page_meta(response.text, final)
+    soup = BeautifulSoup(html, "lxml")
+    meta = page_meta(soup, final)
     canonical = meta.canonical or final
     crawl.seen.add(canonical)
     discovered = now()
     count = 0
-    if final not in crawl.evidence.listings and "#page-" not in final:
-        crawl.evidence.listings[final] = static_listing(
+    listing = crawl.evidence.listings.get(final)
+    fallback = listing is not None and listing.stop_reason is End.BROWSER_UNAVAILABLE
+    if (listing is None or fallback) and "#page-" not in final:
+        static = static_listing(
             final,
-            response.text,
+            html,
             paginate=crawl.request.paginate,
             scope=crawl.request.listing_selector,
             items=crawl.request.item_selector,
+        )
+        crawl.evidence.listings[final] = (
+            static.model_copy(update={"stop_reason": End.BROWSER_UNAVAILABLE}) if fallback else static
         )
     for later in meta.next_pages if crawl.request.paginate else ():
         if crawl.internal(later):
             crawl.enqueue(later, item.depth, final, "next page")
     if crawl.request.paginate and "#page-" not in final:
-        found = detect_pagination(response.text, final).next
+        found = detect_pagination(soup, final).next
         if found is not None and found.url and found.enabled and crawl.internal(found.url):
             crawl.enqueue(found.url, item.depth, final, "next page")
-    for ref in crawl.evidence.references(final, extract_references(response.text, final, retain_context=True)):
+    for ref in crawl.evidence.references(final, extract_references(soup, final, retain_context=True)):
         kind = classify(ref.url, ref.tag)
         if kind is UrlKind.PAGE and is_api_url(ref.url):
             kind = UrlKind.DATA  # a JSON endpoint: kept and downloaded as data, not fetched as a page

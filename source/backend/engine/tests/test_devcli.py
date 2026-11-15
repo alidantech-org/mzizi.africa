@@ -105,3 +105,44 @@ def test_runs_started_at_the_same_moment_get_different_folders(tmp_path):
     [t.start() for t in threads]
     [t.join() for t in threads]
     assert len(set(folders)) == 12
+
+
+def test_stream_csv_uses_logical_records_and_does_not_drop_the_header(workspace: Path) -> None:
+    (workspace / "inputs" / "records.csv").write_text('id,label\r\n1,"first\nrecord"\r\n2,last\r\n', encoding="utf-8")
+    result = invoke("--json", "extract", "stream", "records.csv", "--chunk-size", "2")
+    assert result.exit_code == 0, result.output
+    report = json.loads(result.output)
+    assert report["complete"] and report["records"] == 3 and report["chunks"] == 2
+    journal = Path(report["journal"])
+    entries = [json.loads(line) for line in journal.read_text().splitlines()]
+    assert [(e["first_record"], e["last_record"]) for e in entries] == [(1, 2), (3, 3)]
+    first = (journal.parent / entries[0]["chunk"]).read_text().splitlines()
+    assert json.loads(first[0])["value"] == ["id", "label"]
+    assert json.loads(first[1]) == {"number": 2, "sheet": None, "value": ["1", "first\nrecord"]}
+
+
+def test_stream_malformed_input_keeps_only_published_chunks(workspace: Path) -> None:
+    (workspace / "inputs" / "bad.csv").write_text('1,ok\n2,ok\n3,next\n4,"unclosed\n')
+    result = invoke("extract", "stream", "bad.csv", "--chunk-size", "2")
+    assert result.exit_code == ExitCode.FAILED
+    (journal,) = list((workspace / "runs").rglob("chunks.jsonl"))
+    assert len(journal.read_text().splitlines()) == 1
+    assert (journal.parent / "records-000001.jsonl").is_file()
+    assert not (journal.parent / "records-000002.jsonl").exists()
+    assert not (journal.parent / "result.json").exists()
+
+
+def test_stream_can_publish_gzip_record_chunks(workspace: Path) -> None:
+    import gzip
+
+    (workspace / "inputs" / "data.json").write_text('[{"a":1},{"b":2}]')
+    result = invoke("--json", "extract", "stream", "data.json", "--gzip", "--chunk-size", "1")
+    assert result.exit_code == 0, result.output
+    journal = Path(json.loads(result.output)["journal"])
+    chunks = [json.loads(line)["chunk"] for line in journal.read_text().splitlines()]
+    assert chunks == ["records-000001.jsonl.gz", "records-000002.jsonl.gz"]
+    assert json.loads(gzip.decompress((journal.parent / chunks[1]).read_bytes())) == {
+        "number": 2,
+        "sheet": None,
+        "value": {"b": 2},
+    }

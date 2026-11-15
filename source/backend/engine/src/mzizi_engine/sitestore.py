@@ -22,6 +22,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 
 from mzizi_engine.activity import Activity
+from mzizi_engine.devservices.mongo.sandbox import Document
 from mzizi_engine.layout import SiteFolder
 from mzizi_scraping.change import Change, Fingerprint, compare, fingerprint
 
@@ -169,11 +170,14 @@ class SiteStore:
     def _load(self) -> dict[str, PageState]:
         if self.activity is not None:
             rows = self.activity.get("pages", {"host": self.host})
-            return {r["path"]: PageState.model_validate(r, strict=False) for r in rows}
+            return {str(r["path"]): PageState.model_validate(r, strict=False) for r in rows}
         file = self.site.root / STATE_FILE
         if not file.is_file():
             return {}
-        return {p: PageState.model_validate(s, strict=False) for p, s in json.loads(file.read_text(encoding="utf-8")).items()}
+        return {
+            p: PageState.model_validate(s, strict=False)
+            for p, s in json.loads(file.read_text(encoding="utf-8")).items()
+        }
 
     def _save(self, states: list[PageState]) -> None:
         if self.activity is not None:
@@ -208,8 +212,12 @@ class SiteStore:
                 if name in previous.fingerprint.blocks
             }
             if change.meaningful:
-                state = self._new_state(visit, print_, visual, folder, stem, now, previous, version=previous.version + 1)
-                state = state.model_copy(update={"flux": flux, "visits": previous.visits + 1, "first_seen": previous.first_seen})
+                state = self._new_state(
+                    visit, print_, visual, folder, stem, now, previous, version=previous.version + 1
+                )
+                state = state.model_copy(
+                    update={"flux": flux, "visits": previous.visits + 1, "first_seen": previous.first_seen}
+                )
                 self._archive(previous, folder, stem, change, state)
                 self._write_current(visit, state, folder, stem)
                 result = Outcome(path=visit.path, result="changed", version=state.version, change=change)
@@ -233,8 +241,13 @@ class SiteStore:
                     atomic_write(png, visit.screenshot)
                     state = state.model_copy(update={"png_file": self._rel(png)})
                     if self.activity is not None:
-                        self.activity.put("generated_files", [self._generated(png, "screenshot", state.html_file, state.fingerprint.raw)])
-                result = Outcome(path=visit.path, result="noise" if change.raw_only else "unchanged", version=state.version)
+                        self.activity.put(
+                            "generated_files",
+                            [self._generated(png, "screenshot", state.html_file, state.fingerprint.raw)],
+                        )
+                result = Outcome(
+                    path=visit.path, result="noise" if change.raw_only else "unchanged", version=state.version
+                )
         self.states[visit.path] = state
         self._save([state])  # the files are in place; now the state that describes them
         self.recorded += 1
@@ -276,14 +289,16 @@ class SiteStore:
     def _write_current(self, visit: Visit, state: PageState, folder: Path, stem: str) -> None:
         html_path, md_path = folder / f"{stem}.html", folder / f"{stem}.md"
         atomic_write(html_path, visit.html)
-        generated: list[dict[str, str]] = []
+        generated: list[Document] = []
         if visit.markdown_body:
             self.write_markdown(visit, state, visit.markdown_body)
         else:  # the Markdown of the old content must not outlive it; it is rebuilt from the new HTML later
             md_path.unlink(missing_ok=True)
         if visit.screenshot:
             atomic_write(folder / f"{stem}.png", visit.screenshot)
-            generated.append(self._generated(folder / f"{stem}.png", "screenshot", state.html_file, state.fingerprint.raw))
+            generated.append(
+                self._generated(folder / f"{stem}.png", "screenshot", state.html_file, state.fingerprint.raw)
+            )
         if self.activity is not None and generated:
             self.activity.put("generated_files", generated)
 
@@ -293,18 +308,28 @@ class SiteStore:
         if state is None or state.fingerprint.raw != raw_sha:
             return False
         visit = Visit(
-            url=state.url, final_url=state.url, path=state.path, status=state.status, title=state.title, html=b"", slug=""
+            url=state.url,
+            final_url=state.url,
+            path=state.path,
+            status=state.status,
+            title=state.title,
+            html=b"",
+            slug="",
         )
         self.write_markdown(visit, state, body)
         return True
 
     def write_markdown(self, visit: Visit, state: PageState, body: str) -> None:
         md_path = self.root / state.md_file
-        atomic_write(md_path, (front_matter(visit, state, state.html_file, state.fingerprint.text) + body).encode("utf-8"))
+        atomic_write(
+            md_path, (front_matter(visit, state, state.html_file, state.fingerprint.text) + body).encode("utf-8")
+        )
         if self.activity is not None:
-            self.activity.put("generated_files", [self._generated(md_path, "markdown", state.html_file, state.fingerprint.raw)])
+            self.activity.put(
+                "generated_files", [self._generated(md_path, "markdown", state.html_file, state.fingerprint.raw)]
+            )
 
-    def _generated(self, path: Path, kind: str, source: str, source_sha: str) -> dict[str, str]:
+    def _generated(self, path: Path, kind: str, source: str, source_sha: str) -> Document:
         return {
             "_id": self._rel(path),
             "path": self._rel(path),
@@ -418,7 +443,9 @@ class SiteWriter:
 
     _STOP = object()
 
-    def __init__(self, store: SiteStore, depth: int = 64, on_saved: Callable[[Outcome, Visit], None] | None = None) -> None:
+    def __init__(
+        self, store: SiteStore, depth: int = 64, on_saved: Callable[[Outcome, Visit], None] | None = None
+    ) -> None:
         self.store = store
         self.on_saved = on_saved
         self.outcomes: list[Outcome] = []

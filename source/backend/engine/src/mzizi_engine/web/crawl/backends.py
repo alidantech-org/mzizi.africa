@@ -8,12 +8,12 @@ from typing import Protocol, runtime_checkable
 
 from bs4 import BeautifulSoup
 
-from mzizi_engine.web.browser.adapter import BrowserSession
+from mzizi_engine.web.browser.adapter import BrowserSession, BrowserUnavailable
 from mzizi_engine.web.browser.challenge import ChallengeHandler, detect_challenge
 from mzizi_engine.web.browser.models import RenderedPage
 from mzizi_engine.web.browser.traversal import End, ListingReport, walk_listing
 from mzizi_engine.web.crawl.evidence import CrawlEvidence
-from mzizi_fetch.web.blocks import Response, detect_block
+from mzizi_fetch.web.blocks import BlockKind, Response, detect_block
 from mzizi_fetch.web.client import WebClient, WebResponse
 from mzizi_fetch.web.policy import scope_decision
 from mzizi_scraping.pagination import needs_browser
@@ -22,6 +22,9 @@ log = logging.getLogger(__name__)
 RETRYING = frozenset(
     {Response.RETRY.value, Response.BACK_OFF.value, Response.SLOW_DOWN.value, Response.RETRY_LATER.value}
 )
+
+
+TRANSPORT_FAILURES = frozenset({BlockKind.TIMEOUT, BlockKind.DNS, BlockKind.CONNECTION})
 
 
 class PageBackend(Protocol):
@@ -61,11 +64,13 @@ class HybridBackend:
         *,
         media: bool = False,
         item_selector: str = "",
+        evidence: CrawlEvidence | None = None,
     ) -> None:
         self.http, self._make_browser = http, browser
         self.media, self.item_selector = media, item_selector
         self._browser: PageBackend | None = None
         self.rendered = 0
+        self.evidence = evidence if evidence is not None else CrawlEvidence()
 
     def _browser_backend(self) -> PageBackend:
         if self._browser is None:
@@ -80,7 +85,19 @@ class HybridBackend:
         if not (self.media or thin or needs_browser(response.text, response.final_url)):
             return response
         self.rendered += 1
-        return self._browser_backend().get(url)
+        try:
+            rendered = self._browser_backend().get(url)
+        except BrowserUnavailable as problem:
+            log.warning("browser unavailable for %s; retaining HTTP capture: %s", url, str(problem)[:120])
+        else:
+            if rendered.refused is not None or rendered.status != 0:
+                return rendered
+            if rendered.block is not None and rendered.block.kind not in TRANSPORT_FAILURES:
+                return rendered
+        self.evidence.listings[response.final_url] = ListingReport(
+            source_url=response.final_url, stop_reason=End.BROWSER_UNAVAILABLE, views=()
+        )
+        return response
 
     def take_extra(self, url: str) -> list[WebResponse]:
         return self._browser.take_extra(url) if isinstance(self._browser, PagedBackend) else []

@@ -137,7 +137,9 @@ class Workspace:
         )
         handle = RunHandle(folder, record)
         handle.write()
-        self.clean_runs(KEEP_RUNS)  # run records are small and disposable: the newest are kept, so the folder cannot grow
+        self.clean_runs(
+            KEEP_RUNS
+        )  # run records are small and disposable: the newest are kept, so the folder cannot grow
         return handle
 
     def _run_folders(self) -> list[Path]:
@@ -170,7 +172,9 @@ class Workspace:
     def clean_runs(self, keep: int) -> int:
         folders = self._run_folders()
         for folder in folders[keep:]:
-            shutil.rmtree(folder, ignore_errors=True)  # other processes may be pruning the same old runs at the same time
+            shutil.rmtree(
+                folder, ignore_errors=True
+            )  # other processes may be pruning the same old runs at the same time
         return max(len(folders) - keep, 0)
 
 

@@ -175,7 +175,6 @@ def test_cli_commands_invoke_the_real_implementations(site: str, tmp_path: Path,
 
 
 def test_diff_reports_added_removed_and_changed(tmp_path):
-    import json
 
     from mzizi_engine.web.handlers.changes import diff_crawls
     from mzizi_engine.web.requests import DiffRequest
@@ -227,13 +226,18 @@ def test_a_sitemap_listing_images_yields_files_not_pages():
     from mzizi_engine.web.crawl.sitemaps import partition
 
     pages, files = partition(["https://s/about", "https://s/wp-content/uploads/a.jpg", "https://s/report.pdf"])
-    assert pages == ["https://s/about"] and [u for u, _ in files] == ["https://s/wp-content/uploads/a.jpg", "https://s/report.pdf"]
+    assert pages == ["https://s/about"] and [u for u, _ in files] == [
+        "https://s/wp-content/uploads/a.jpg",
+        "https://s/report.pdf",
+    ]
 
 
 def test_a_redirect_alias_of_a_fetched_page_is_not_recorded_again():
     from mzizi_engine.web.crawl.engine import _final_key
 
-    assert _final_key("https://s/a/") == _final_key("https://s/a") or _final_key("https://s/a#x") != _final_key("https://s/a")
+    assert _final_key("https://s/a/") == _final_key("https://s/a") or _final_key("https://s/a#x") != _final_key(
+        "https://s/a"
+    )
     assert _final_key("https://s/tenders#page-2") != _final_key("https://s/tenders")
 
 
@@ -257,7 +261,7 @@ def test_same_site_http_links_are_upgraded_and_the_request_ceiling_scales_with_t
     from collections import deque
 
     from mzizi_engine.web.crawl.engine import Crawl
-    from mzizi_engine.web.crawl.service import REQUESTS_PER_PAGE, REQUEST_HEADROOM
+    from mzizi_engine.web.crawl.service import REQUEST_HEADROOM, REQUESTS_PER_PAGE
 
     assert 120 * REQUESTS_PER_PAGE + REQUEST_HEADROOM > 120 * 4 + 50
     crawl = Crawl.__new__(Crawl)
@@ -284,7 +288,9 @@ def test_query_variants_of_one_path_are_capped_and_download_queries_are_files():
     for index in range(50):
         crawl.enqueue(f"https://s.example/?item={index}", 1, "", "")
     assert len(crawl.frontier) == MAX_QUERY_VARIANTS
-    assert has_download_query("https://s.example/?bfd_download=report") and not has_download_query("https://s.example/?page=2")
+    assert has_download_query("https://s.example/?bfd_download=report") and not has_download_query(
+        "https://s.example/?page=2"
+    )
 
 
 def test_content_identifying_query_keys_are_not_capped():

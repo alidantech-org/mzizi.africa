@@ -67,7 +67,12 @@ def _stem_and_ext(name: str) -> tuple[str, str]:
 def is_generic(stem: str) -> bool:
     """Too vague to label a file: empty, all digits, one or two characters, or listed as generic in the vocabulary."""
     cleaned = slug(stem, 40) if stem else ""
-    return not stem or cleaned.replace("-", "").isdigit() or len(cleaned) <= 2 or cleaned in vocabulary().generic_file_stems
+    return (
+        not stem
+        or cleaned.replace("-", "").isdigit()
+        or len(cleaned) <= 2
+        or cleaned in vocabulary().generic_file_stems
+    )
 
 
 def _words(text: str) -> int:
@@ -80,7 +85,9 @@ def file_name(url: str, digest: str, labels: Labels, extension: str = "") -> str
     server_stem, server_ext = _stem_and_ext(labels.content_disposition) if labels.content_disposition else ("", "")
     ext = (extension or server_ext or url_ext).lower()
     link_text = labels.anchor_text or labels.alt_text
-    describes_more = bool(link_text) and _words(link_text) >= MIN_DESCRIPTIVE_WORDS and _words(link_text) > _words(url_stem)
+    describes_more = (
+        bool(link_text) and _words(link_text) >= MIN_DESCRIPTIVE_WORDS and _words(link_text) > _words(url_stem)
+    )
     candidates = [
         server_stem,
         link_text if describes_more else "",  # a descriptive link text beats a terse file name
@@ -109,9 +116,7 @@ def segment(text: str, max_len: int = MAX_SEGMENT) -> str:
     """A path segment as a folder or file name: the site's own spelling (case kept), made safe for a file system."""
     out: list[str] = []
     for char in unquote(text).strip():
-        if char in UNSAFE_PATH_CHARS or ord(char) < 32:
-            out.append("-")
-        elif char.isspace():
+        if char in UNSAFE_PATH_CHARS or ord(char) < 32 or char.isspace():
             out.append("-")
         else:
             out.append(char)

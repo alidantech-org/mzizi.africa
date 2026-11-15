@@ -14,8 +14,14 @@ def page(nonce: str, rows: int) -> bytes:
 
 def visit(html: bytes) -> Visit:
     return Visit(
-        url="https://k.ngcdf.go.ke/allocations/", final_url="https://k.ngcdf.go.ke/allocations/",
-        path="/allocations/", status=200, title="Allocations", html=html, markdown_body="# Allocations\n", slug="allocations",
+        url="https://k.ngcdf.go.ke/allocations/",
+        final_url="https://k.ngcdf.go.ke/allocations/",
+        path="/allocations/",
+        status=200,
+        title="Allocations",
+        html=html,
+        markdown_body="# Allocations\n",
+        slug="allocations",
     )
 
 
@@ -57,8 +63,12 @@ def test_an_interrupted_save_keeps_every_page_already_recorded(tmp_path: Path):
     for index in range(5):
         writer.submit(
             Visit(
-                url=f"https://k.ngcdf.go.ke/p{index}/", final_url=f"https://k.ngcdf.go.ke/p{index}/", path=f"/p{index}/",
-                status=200, html=page(str(index), 2), slug=f"p{index}",
+                url=f"https://k.ngcdf.go.ke/p{index}/",
+                final_url=f"https://k.ngcdf.go.ke/p{index}/",
+                path=f"/p{index}/",
+                status=200,
+                html=page(str(index), 2),
+                slug=f"p{index}",
             )
         )
     assert [o.result for o in writer.close()] == ["new"] * 5
@@ -120,7 +130,8 @@ def test_records_are_spooled_when_mongodb_is_down_and_replayed_later(tmp_path: P
     assert list((tmp_path / "spool").glob("*.jsonl"))
 
     class Up:
-        stored: list = []
+        def __init__(self):
+            self.stored: list = []
 
         def upsert_many(self, collection, documents):
             self.stored.extend(documents)
@@ -140,8 +151,13 @@ def test_empty_markdown_is_repaired_when_the_raw_html_hash_still_matches(tmp_pat
     store = SiteStore(site, None, tmp_path)
     html = b'<html><head><title>Reports</title></head><body></body><body><h2>Report</h2><a href="/r.pdf">Download</a></body></html>'
     item = Visit(
-        url="https://example.org/reports", final_url="https://example.org/reports",
-        path="/reports", status=200, title="Reports", html=html, slug="reports",
+        url="https://example.org/reports",
+        final_url="https://example.org/reports",
+        path="/reports",
+        status=200,
+        title="Reports",
+        html=html,
+        slug="reports",
         markdown_body="<!-- page 1 -->\n",
     )
     store.record(item)

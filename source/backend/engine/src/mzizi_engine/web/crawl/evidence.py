@@ -81,6 +81,8 @@ class CrawlEvidence:
                     ),
                     *rest,
                 )
+            if report.stop_reason is End.BROWSER_UNAVAILABLE:
+                reason = report.stop_reason
             reports.append(
                 report.model_copy(
                     update={

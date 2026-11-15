@@ -8,10 +8,10 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from mzizi_engine.jsonvalue import Payload
+from mzizi_engine.layout import host_of
 from mzizi_engine.web.browser.adapter import check_profile
 from mzizi_engine.web.browser.models import BrowserConfig
 from mzizi_engine.web.browser.shared import ensure_shared_browser
-from mzizi_engine.layout import host_of
 from mzizi_engine.web.identity import user_agent
 from mzizi_engine.web.requests import Workspace
 
@@ -44,9 +44,7 @@ def site_of(url: str) -> str:
     return host_of(url) if url else ""
 
 
-def browser_config(
-    request: Workspace, *, headed: bool, agent: str | None = None, site: str = ""
-) -> BrowserConfig:
+def browser_config(request: Workspace, *, headed: bool, agent: str | None = None, site: str = "") -> BrowserConfig:
     folder = out_dir(request)
     root = profiles_root(request)
     check_profile(root)
