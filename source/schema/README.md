@@ -14,13 +14,13 @@
 
 ## Public URLs
 
-Every schema is served anonymously at `https://res.alidantech.org/mzizi/public/schemas/<folder>/<name>.schema.json` (object key `public/schemas/<folder>/<name>.schema.json`; only `public/` is anonymously readable). A schema's `$id` is that URL, so relative `$ref`s and editor links resolve there. Upload after changing a schema, with no database involved:
+Every schema is served anonymously at `https://res.alidantech.org/mzizi/public/schemas/<folder>/<name>.schema.json` (object key `public/schemas/<folder>/<name>.schema.json`; only `public/` is anonymously readable). A schema's `$id` is that URL, so relative `$ref`s and editor links resolve there. Resync everything after changing a schema, with no database involved:
 
 ```bash
-uv run mzizi-engine publish-schemas
+bun run schemas:sync
 ```
 
-`--dry-run` lists the keys without connecting. The command uploads only changed files, then reads each public URL anonymously and fails if it does not return the same bytes. These objects are not registered in the filesystem tables. Plain HTTP responses carry no CORS headers, which editors do not need.
+It regenerates the Dryv table schemas and the job schema, runs the schema and example checks, then uploads what changed. `-- --local` stops after the checks, `-- --dry-run` lists the keys that would be uploaded, and `-- --no-dryv` skips the Dryv generation. The upload alone is `uv run mzizi-engine publish-schemas` (`--dry-run` lists the keys without connecting). The command uploads only changed files, then reads each public URL anonymously and fails if it does not return the same bytes. These objects are not registered in the filesystem tables. Plain HTTP responses carry no CORS headers, which editors do not need.
 
 Every folder has an `_example/` folder with valid documents. Each example names the schema it defines, so an editor validates it: YAML files start with `# yaml-language-server: $schema=<public URL>` and JSON files carry a `"$schema"` key. Real files should do the same. `database/_example/` shows seed CSV files and their path rule.
 

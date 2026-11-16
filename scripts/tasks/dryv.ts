@@ -11,7 +11,8 @@ import { at, dryvHome, root } from "../lib/paths.ts";
 
 /** Port of the local Dryv engine API: `DRYV_API_PORT`, default 8750. Use another port when 8750 is taken by a different Dryv service. */
 export const dryvApiPort = (): string => process.env.DRYV_API_PORT ?? "8750";
-export const dryvApiUrl = (): string => process.env.DRYV_API ?? `http://127.0.0.1:${dryvApiPort()}`;
+export const dryvApiUrl = (): string =>
+  process.env.DRYV_API ?? `http://127.0.0.1:${dryvApiPort()}`;
 const apiLog = ".dev/logs/dryv-api.log";
 const apiCommand = (): string[] => [
   "uv",
@@ -39,19 +40,25 @@ const dryvEnv = (): Record<string, string> => ({
   DRYV_API_KEY: process.env.DRYV_API_KEY ?? "local-development",
 });
 
-const inDryv = (name: string, script: string): Step => step(name, at("dryv"), ["bun", "run", script], dryvEnv());
+const inDryv = (name: string, script: string): Step =>
+  step(name, at("dryv"), ["bun", "run", script], dryvEnv());
 
 /** Link the local Dryv author and compiler into dryv/node_modules. */
-export const linkSteps = (): Step[] => [inDryv("Link local Dryv checkout", "link")];
+export const linkSteps = (): Step[] => [
+  inDryv("Link local Dryv checkout", "link"),
+];
 
 /** Typecheck, audit, doctor and compile the contracts, and check the exported access rules, API boundary and schema. */
 export const checkSteps = (): Step[] => [inDryv("Contract checks", "check")];
 
 /** Regenerate the web dashboard's data catalog from the generated API list routes. */
-export const catalogSteps = (): Step[] => [step("Web data catalog", at("source/apps/web"), ["bun", "run", "catalog"])];
+export const catalogSteps = (): Step[] => [
+  step("Web data catalog", at("source/apps/web"), ["bun", "run", "catalog"]),
+];
 
 /** The Dryv engine API in the foreground (Ctrl+C stops it). */
-export const apiStep = (): Step => step(`Dryv engine API on :${dryvApiPort()}`, dryvHome(), apiCommand());
+export const apiStep = (): Step =>
+  step(`Dryv engine API on :${dryvApiPort()}`, dryvHome(), apiCommand());
 
 /** True when something answers on the Dryv API port (a 404 on `/` is the normal answer). */
 export async function apiIsUp(): Promise<boolean> {
@@ -69,7 +76,10 @@ export function stopApi(): boolean {
     console.error("fuser is not installed; stop the Dryv API by its PID");
     return false;
   }
-  Bun.spawnSync(["fuser", "-k", `${dryvApiPort()}/tcp`], { stdout: "ignore", stderr: "ignore" });
+  Bun.spawnSync(["fuser", "-k", `${dryvApiPort()}/tcp`], {
+    stdout: "ignore",
+    stderr: "ignore",
+  });
   console.log("Dryv engine API stopped");
   return true;
 }
@@ -105,7 +115,10 @@ async function ensureApi(): Promise<() => void> {
 }
 
 /** Plan/generate/check the database app; optional store selectors intersect its owned packs. */
-export async function database(action: "plan" | "generate" | "verify", selectors: readonly string[]): Promise<boolean> {
+export async function database(
+  action: "plan" | "generate" | "verify",
+  selectors: readonly string[],
+): Promise<boolean> {
   const stop = await ensureApi();
   try {
     const args = [
@@ -121,7 +134,9 @@ export async function database(action: "plan" | "generate" | "verify", selectors
       ...selectors,
     ];
     if (action === "verify") args.push("--check");
-    return await group(`Dryv database ${action}`, [step(action, root, args, dryvEnv())]);
+    return await group(`Dryv database ${action}`, [
+      step(action, root, args, dryvEnv()),
+    ]);
   } finally {
     stop();
   }
@@ -156,11 +171,29 @@ export async function catalog(check = false): Promise<boolean> {
       if (check) args.push("--check");
       return step(`${app} catalog`, root, args, dryvEnv());
     };
-    return await group("Dryv system catalogs", [
-      run("api", "catalog-api"),
-      run("engine", "catalog-engine"),
-      run("pgsql", "table-schemas"),
-    ]);
+    // The Dryv API sometimes refuses back-to-back requests ("Request limit exceeded", "authentication failed"), so each
+    // generation is retried after a pause.
+    const attempts = 3;
+    const pauseMs = 20_000;
+    let allPassed = true;
+    for (const [app, pack] of [
+      ["api", "catalog-api"],
+      ["engine", "catalog-engine"],
+      ["pgsql", "table-schemas"],
+    ] as const) {
+      let passed = false;
+      for (let attempt = 1; attempt <= attempts && !passed; attempt++) {
+        if (attempt > 1) {
+          console.log(
+            `\n… retrying ${app} generation (attempt ${attempt} of ${attempts}) after a pause`,
+          );
+          await Bun.sleep(pauseMs);
+        }
+        passed = await group(`Dryv ${app} catalog`, [run(app, pack)]);
+      }
+      allPassed &&= passed;
+    }
+    return allPassed;
   } finally {
     stop();
   }
@@ -170,8 +203,18 @@ export async function catalog(check = false): Promise<boolean> {
 export async function trust(): Promise<boolean> {
   const stop = await ensureApi();
   try {
-    const args = ["bun", `${dryvHome()}/source/apps/cli/bin/dryv.ts`, "--api", dryvApiUrl(), "--yes", "--no-input", "trust"];
-    return await group("Dryv trust", [step("Trust project packs", root, args, dryvEnv())]);
+    const args = [
+      "bun",
+      `${dryvHome()}/source/apps/cli/bin/dryv.ts`,
+      "--api",
+      dryvApiUrl(),
+      "--yes",
+      "--no-input",
+      "trust",
+    ];
+    return await group("Dryv trust", [
+      step("Trust project packs", root, args, dryvEnv()),
+    ]);
   } finally {
     stop();
   }

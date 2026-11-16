@@ -35,6 +35,7 @@
     "dryv:generate": "bun scripts/mz.ts dryv:generate",
     "dryv:verify": "bun scripts/mz.ts dryv:verify",
     "catalog": "bun scripts/mz.ts catalog",
+    "schemas:sync": "bun scripts/mz.ts schemas:sync",
     "db:up": "bun scripts/mz.ts db:up",
     "db:down": "bun scripts/mz.ts db:down",
     "infra:up": "bun scripts/mz.ts infra:up",
