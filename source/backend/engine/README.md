@@ -2,6 +2,10 @@
 
 One complete Python project: orchestration, an operational API, workers and the callback outbox. It orchestrates the packages in `source/packages`; it does not duplicate the NestJS product API, has no user interface, no user accounts, and never writes domain schemas. The NestJS API owns decisions, the UI and canonical database writes; the engine prepares data into artifacts and proposals and delivers results to NestJS.
 
+## Runtime (target entry point, skeleton only)
+
+`mzizi_engine.runtime` is the start of the restructure in [ENGINE_RUNTIME_AND_PACKAGES](../../../.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md): one `EngineRuntime` class that registers capabilities with a typed configuration and an execution plan, hands each job the configuration snapshot current when it started, limits concurrency per capability, cancels jobs on stop and reports health. It is new, tested with a stub capability, and **nothing in the engine uses it yet**: `executor.py`, `capabilities.py` and `app.py` still run the system until capabilities move into packages and are registered here. Job timeouts and the persistence bindings are not part of the skeleton.
+
 ## Run
 
 The Python workspace installs cleanly from a checkout (`uv sync --all-packages`): no package or the engine depends on a `mzizi-database` project that does not exist. `mzizi_engine.ports.database` is the one module in the workspace that opens a database connection (`Connection`/`Cursor` protocols, a psycopg adapter today); `source/packages/filesystem` and the other packages hold no database code at all (TSK-E55B1BC4011A).
