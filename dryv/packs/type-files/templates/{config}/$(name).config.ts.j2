@@ -193,13 +193,13 @@ export const {{ constant }}_AS_MANY_RELATION_CONFIG = {
 
 export const {{ constant }}_ONE_RELATION_QUERY_OPTIONS = [
 {%- for field in schema.fields %}{% set target = relation_target(field) %}{% if field.relation is not none and target != schema.id and dep(target, 'config') %}
-  Q.createRelationKeyMapper<{{ name }}RelationKey>().one({{ alias(target) }}Config.{{ dep(target, 'config') | replace('_QUERY_OPTIONS', '_AS_ONE_RELATION_CONFIG') }}, '{{ relation_name(field, loop.index) }}'),
+  Q.createRelationKeyMapper<{{ name }}RelationKey>().one(() => {{ alias(target) }}Config.{{ dep(target, 'config') | replace('_QUERY_OPTIONS', '_AS_ONE_RELATION_CONFIG') }}, '{{ relation_name(field, loop.index) }}'),
 {%- endif %}{% endfor %}
 ] as const;
 
 export const {{ constant }}_MANY_RELATION_QUERY_OPTIONS = [
 {%- for field in schema.fields %}{% set target = relation_target(field) %}{% if field.related is not none and target != schema.id and dep(target, 'config') %}
-  Q.createRelationKeyMapper<{{ name }}RelationKey>().many({{ alias(target) }}Config.{{ dep(target, 'config') | replace('_QUERY_OPTIONS', '_AS_MANY_RELATION_CONFIG') }}, '{{ relation_name(field, loop.index) }}'),
+  Q.createRelationKeyMapper<{{ name }}RelationKey>().many(() => {{ alias(target) }}Config.{{ dep(target, 'config') | replace('_QUERY_OPTIONS', '_AS_MANY_RELATION_CONFIG') }}, '{{ relation_name(field, loop.index) }}'),
 {%- endif %}{% endfor %}
 ] as const;
 
