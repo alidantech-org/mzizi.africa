@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from memory_registry import MemoryRegistry
 
-from mzizi_filesystem import MemoryObjectStore
+from mzizi_filesystem import MediaCatalog, MemoryObjectStore
 from mzizi_filesystem.features.lineage.lineage import LineageError, ancestry, derivatives, relate
 from mzizi_filesystem.features.placement.contracts import Placement
 from mzizi_filesystem.features.register.contracts import (
@@ -40,6 +40,7 @@ def request(
         "declared_type": None,
         "original_filename": None,
         "provenance": {"task": "test"},
+        "created_by": {"actor": "tests"},
         "on_name_conflict": NameConflictPolicy.NEW_VERSION,
         "on_duplicate": DuplicatePolicy.KEEP_BOTH,
         "pinned": False,
@@ -58,8 +59,11 @@ def request(
 
 @pytest.fixture
 def parts():
-    repo, store = MemoryRegistry(), MemoryObjectStore(bucket="test")
-    return repo, store, Registrar(repo, store, CONFIG)
+    repo = MemoryRegistry()
+    store = MemoryObjectStore(
+        bucket="test", public_endpoint="https://files.test", protected_prefixes=CONFIG.protected_prefixes
+    )
+    return repo, store, Registrar(repo, store, CONFIG, MediaCatalog({"pdf": "application/pdf"}))
 
 
 def test_a_new_file_creates_folders_the_file_and_the_first_version_at_a_readable_key(parts) -> None:
@@ -135,7 +139,12 @@ def test_duplicates_follow_the_policy_and_never_cross_access_classes(parts) -> N
 def test_protected_prefixes_dry_runs_and_bad_content_are_refused_without_writing(parts) -> None:
     repo, store, registrar = parts
     assert registrar.register(request("public", "raw", "x"), b"a\n").outcome is Outcome.CREATED
-    guarded = Registrar(repo, store, CONFIG.model_copy(update={"protected_prefixes": ("public/kenya/",)}))
+    guarded = Registrar(
+        repo,
+        store,
+        CONFIG.model_copy(update={"protected_prefixes": ("public/kenya/",)}),
+        MediaCatalog({"pdf": "application/pdf"}),
+    )
     assert guarded.register(request(name="n.csv"), b"a\n").outcome is Outcome.FAILED
     planned = registrar.register(request("plan", dry_run=True), b"a\n")
     assert planned.outcome is Outcome.PLANNED and store.head(planned.key) is None
@@ -163,3 +172,76 @@ def test_lineage_relates_exact_versions_and_refuses_cycles(parts) -> None:
         relate(repo, edge(raw.version_id, raw.version_id))
     with pytest.raises(LineageError, match="does not exist"):
         relate(repo, edge(raw.version_id, "missing"))
+
+
+def test_moves_renames_and_access_changes_carry_the_bytes_with_the_rows(parts) -> None:
+    from mzizi_filesystem.features.transitions.transitions import RelocationError, Relocator
+
+    repo, store, registrar = parts
+    first = registrar.register(request("kenya", "docs"), b"a\n1\n")
+    registrar.register(request("kenya", "docs"), b"a\n2\n")
+    relocator = Relocator(repo, store, CONFIG)
+    docs = next(f for f in repo.folders.values() if f.name == "docs")
+    with pytest.raises(RelocationError, match="authorization"):
+        relocator.change_access(docs.id, Access.PRIVATE, " ")
+    report = relocator.change_access(docs.id, Access.PRIVATE, "owner approved")
+    assert report.versions_relocated == 2
+    versions = repo.list_versions(first.file_id)
+    assert [v.access for v in versions] == [Access.PRIVATE, Access.PRIVATE]
+    assert store.get("private/kenya/docs/report.csv") == b"a\n2\n"
+    assert store.get("private/kenya/docs/_versions/report.csv/r0001/report.csv") == b"a\n1\n"
+    assert set(report.superseded_keys) == {
+        "public/kenya/docs/report.csv",
+        "public/kenya/docs/_versions/report.csv/r0001/report.csv",
+    }
+    assert relocator.delete_unreferenced_keys(report.superseded_keys) == 2
+    renamed = relocator.move_file(first.file_id, None, "budget.csv")
+    assert renamed.versions_relocated == 2 and store.get("private/kenya/docs/budget.csv") == b"a\n2\n"
+    kenya = next(f for f in repo.folders.values() if f.name == "kenya")
+    with pytest.raises(RelocationError, match="descendant"):
+        relocator.move_folder(kenya.id, docs.id, None)
+    moved = relocator.move_folder(docs.id, None, "reports")
+    assert moved.versions_relocated == 2 and store.get("private/reports/budget.csv") == b"a\n2\n"
+
+
+def test_uploads_go_to_a_temporary_key_and_register_by_server_side_copy(parts) -> None:
+    from mzizi_filesystem.features.store.store import StoreError
+    from mzizi_filesystem.features.upload.upload import begin_upload, discard_upload, finish_upload
+
+    _, store, registrar = parts
+    ticket = begin_upload(store, CONFIG, "big.csv", "text/csv", 600)
+    assert ticket.temp_key.startswith("private/tmp/") and "files.test" in ticket.url
+    with pytest.raises(StoreError, match="nothing was uploaded"):
+        finish_upload(registrar, store, CONFIG, ticket.temp_key, request(name="big.csv"))
+    store.put(ticket.temp_key, b"x,y\n1,2\n", "text/csv", __import__("hashlib").sha256(b"x,y\n1,2\n").hexdigest())
+    result = finish_upload(registrar, store, CONFIG, ticket.temp_key, request(name="big.csv"))
+    assert result.outcome is Outcome.CREATED and store.get(result.key) == b"x,y\n1,2\n"
+    assert store.head(ticket.temp_key) is None
+    with pytest.raises(StoreError, match="not an upload key"):
+        discard_upload(store, CONFIG, "public/other")
+
+
+def test_a_directory_tree_is_registered_under_caller_chosen_folders(parts, tmp_path) -> None:
+    from mzizi_filesystem.features.sync.sync import DirectorySpec, sync_directory
+
+    repo, _, registrar = parts
+    (tmp_path / "a").mkdir()
+    (tmp_path / "a" / "one.csv").write_text("a\n1\n")
+    (tmp_path / "two.csv").write_text("a\n2\n")
+    (tmp_path / ".hidden.csv").write_text("a\n3\n")
+    spec = DirectorySpec(
+        base_folders=("imports", "march"),
+        access=Access.INTERNAL,
+        retention=Retention.PRESERVE_HISTORY,
+        role_id="role",
+        authorization=None,
+        skip_hidden=True,
+        label="march import",
+        created_by={"actor": "tests"},
+    )
+    planned = sync_directory(registrar, tmp_path, spec, dry_run=True)
+    assert planned.count(Outcome.PLANNED) == 2 and not repo.files
+    done = sync_directory(registrar, tmp_path, spec, dry_run=False)
+    assert done.ok and done.count(Outcome.CREATED) == 2
+    assert sorted(f.name for f in repo.folders.values()) == ["a", "imports", "march"]
+    assert sync_directory(registrar, tmp_path, spec, dry_run=False).count(Outcome.UNCHANGED) == 2

@@ -42,7 +42,6 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 | `bun run db status`                       | TypeScript owner: `status`, `migrate`, `verify`, local role provisioning, `seed`, guarded reset, admin bootstrap and pipeline release operations |
 | `bun run infra:up` / `infra:down`         | starts or stops local Temporal and S3-compatible SeaweedFS; named volumes preserve development history and test objects                          |
 | `bun run seed -- check`                   | `mzizi-manifest`: `check`, `lock`, `report`, `validate-structure <dir>`                                                                          |
-| `bun run fs -- tree`                      | `mzizi-filesystem`: `sync --manifest <file>`, `tree`, `verify`, `cleanup-uploads` and the rest                                                   |
 | `bun run engine -- check`                 | `mzizi-engine`: `serve`, `capabilities`, `check`                                                                                                 |
 | `bun run docs:validate`                   | `task validate` for the `.docs` workspace                                                                                                        |
 
@@ -125,7 +124,7 @@ A Bun project is checked through its own `package.json` scripts when it defines 
 
 ## Python command wrappers
 
-`db.py`, `seed_check.py` and `filesystem.py` are thin wrappers kept for direct use with `uv run scripts/<name>.py`; they call the same package entry points as `bun run db`, `bun run seed` and `bun run fs`. They contain no logic of their own.
+`db.py` and `seed_check.py` are thin wrappers kept for direct use with `uv run scripts/<name>.py`; they call the same package entry points as `bun run db` and `bun run seed`. They contain no logic of their own.
 
 ## Store-scoped database generation
 

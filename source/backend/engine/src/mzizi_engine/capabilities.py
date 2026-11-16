@@ -145,35 +145,6 @@ def source_gate(payload: dict) -> dict:
     return decision.model_dump(mode="json")
 
 
-def filesystem_sync(payload: dict) -> dict:
-    """Plan (default) or apply a manifest sync. The actor is set by the engine from the authenticated principal. This legacy path requires ENGINE_FILESYSTEM_LEGACY_DATABASE_URL and S3 settings."""
-    import os
-
-    from mzizi_engine.filesystem import DatabaseAuthorizer, FilesystemService, Repository, load_plan, run_sync
-    from mzizi_engine.ports import connect
-    from mzizi_filesystem import MemoryObjectStore, OperatorAuthorizer, S3ObjectStore
-
-    have_s3 = all(os.environ.get(k) for k in ("S3_ENDPOINT", "S3_ACCESS_KEY", "S3_SECRET_KEY"))
-    if payload.get("apply") and not have_s3 and os.environ.get("ENGINE_STORE_MEMORY") != "1":
-        raise ValueError("object storage is not configured: refusing to apply a sync without S3 credentials")
-    store = S3ObjectStore() if have_s3 else MemoryObjectStore()
-    plan = load_plan(Path(payload["manifest"]), entry_ids=set(payload.get("entries") or []) or None)
-    with connect(os.environ.get("ENGINE_FILESYSTEM_LEGACY_DATABASE_URL"), autocommit=True) as conn:
-        actor = payload.get("actor")
-        service = FilesystemService(
-            Repository(conn), store, DatabaseAuthorizer(conn) if actor else OperatorAuthorizer()
-        )
-        report = run_sync(plan, service, actor=actor, dry_run=not payload.get("apply"))
-    return {
-        "manifest": plan.name,
-        "dry_run": report.dry_run,
-        "ok": report.ok,
-        "folders": report.summary("folder"),
-        "files": report.summary("file"),
-        "problems": [{"path": i.path, "outcome": i.outcome, "detail": i.detail} for i in report.problems()[:50]],
-    }
-
-
 def process_info(payload: dict) -> dict:
     """Diagnostic: which process ran this capability (shows CPU-bound work leaving the API process)."""
     import os
@@ -189,6 +160,9 @@ def build_default_registry() -> OperationRegistry:
     from mzizi_engine.devservices.register import register_devservices
 
     register_devservices(reg)
+    from mzizi_engine.runtime.assembly.filesystem_operations import register_filesystem
+
+    register_filesystem(reg)
     for kind, fn, desc, cpu in [
         ("pdf", extract_pdf, "PDF text, tables and OCR-needed report", True),
         ("geojson", extract_geojson, "GeoJSON features with geometry diagnostics", True),
@@ -256,17 +230,6 @@ def build_default_registry() -> OperationRegistry:
             "Collection-gate decision for a request and assessment",
             source_gate,
             {"type": "object", "required": ["request"]},
-        )
-    )
-    reg.register(
-        Operation(
-            "filesystem.sync",
-            "0.2.0",
-            "mzizi-filesystem",
-            "Plan or apply a manifest sync into the filesystem registry (dry run by default)",
-            filesystem_sync,
-            {"type": "object", "required": ["manifest"]},
-            concurrency=1,
         )
     )
     return reg

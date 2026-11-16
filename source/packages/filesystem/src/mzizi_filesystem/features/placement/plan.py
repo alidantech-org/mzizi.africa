@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from mzizi_filesystem.codes import child_code, code_segment, is_code
+from mzizi_filesystem.features.keys.keys import InvalidNameError, check_name
 from mzizi_filesystem.features.placement.contracts import FolderStep, Placement, PlacementPlan
 from mzizi_filesystem.features.placement.errors import PlacementError
 from mzizi_filesystem.features.registry.ports import FolderLookup
-from mzizi_filesystem.keys import NameError_, check_name
+from mzizi_filesystem.shared.codes import child_code, code_segment, is_code
 from mzizi_filesystem.shared.config import FilesystemConfig
 from mzizi_filesystem.shared.contracts import FolderRecord
 
@@ -19,9 +19,9 @@ def plan_placement(placement: Placement, repository: FolderLookup, config: Files
     """
     try:
         check_name(placement.file_name)
-        for index, name in enumerate(placement.folders):
-            check_name(name, root=index == 0)
-    except NameError_ as problem:
+        for name in placement.folders:
+            check_name(name)
+    except InvalidNameError as problem:
         raise PlacementError(str(problem)) from problem
     if placement.folders[0] in config.reserved_roots:
         raise PlacementError(f"{placement.folders[0]!r} is a reserved top-level folder")

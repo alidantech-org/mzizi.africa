@@ -111,6 +111,6 @@ warn_return_any = false
 # boto3 ships no type information here (no `mypy-boto3-s3` stub package installed); the S3 client and its
 # responses are therefore a declared `Any` boundary, same reasoning as the database port above. Everything this
 # module returns to its own callers (ObjectHead, str, bytes, BinaryIO, list[dict[str, object]]) is fully typed.
-module = ["mzizi_filesystem.store"]
+module = ["mzizi_filesystem.features.store.s3"]
 disallow_any_explicit = false
 warn_return_any = false

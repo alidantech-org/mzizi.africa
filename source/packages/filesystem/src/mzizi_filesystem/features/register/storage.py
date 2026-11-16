@@ -4,8 +4,18 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from mzizi_filesystem.hashing import hash_stream
-from mzizi_filesystem.store import ObjectStore, StoreError
+from mzizi_filesystem.features.store.store import ObjectStore, StoreError
+from mzizi_filesystem.shared.contracts import Frozen
+from mzizi_filesystem.shared.hashing import hash_stream
+
+
+class StoredObject(Frozen):
+    """Bytes that already sit in the store (an upload waiting at a temporary key); registering copies them server-side."""
+
+    key: str
+
+
+type Source = Path | bytes | StoredObject
 
 
 def holds(store: ObjectStore, key: str, sha256: str, size: int) -> bool:
@@ -19,9 +29,11 @@ def holds(store: ObjectStore, key: str, sha256: str, size: int) -> bool:
         return hash_stream(stream) == (sha256, size)
 
 
-def write(store: ObjectStore, key: str, source: Path | bytes, sha256: str, size: int, content_type: str) -> None:
+def write(store: ObjectStore, key: str, source: Source, sha256: str, size: int, content_type: str) -> None:
     if isinstance(source, Path):
         store.put_path(key, str(source), content_type, sha256)
+    elif isinstance(source, StoredObject):
+        store.copy(source.key, key, content_type, sha256)
     else:
         store.put(key, source, content_type, sha256)
     if not holds(store, key, sha256, size):

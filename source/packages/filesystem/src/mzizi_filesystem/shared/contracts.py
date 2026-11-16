@@ -90,6 +90,8 @@ class NewVersion(Frozen):
     pinned: bool
     #: Caller-supplied facts about where the bytes came from; the adapter stores them as one JSON text column.
     provenance: dict[str, str]
+    #: Who or what created the version (an actor and a task, for example); stored as a snapshot.
+    created_by: dict[str, str]
 
 
 class RelationRecord(Frozen):
@@ -97,3 +99,18 @@ class RelationRecord(Frozen):
     derived_version_id: str
     kind_id: str
     processing_provenance: dict[str, str]
+
+
+class FolderChange(Frozen):
+    """What a relocation changes about a folder; `None` fields stay as they are, `clear_parent` moves it to the top."""
+
+    name: str | None
+    parent_id: str | None
+    clear_parent: bool
+    access: Access | None
+    authorization: str | None
+
+
+class FileChange(Frozen):
+    name: str | None
+    folder_id: str | None

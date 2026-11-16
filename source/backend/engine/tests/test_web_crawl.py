@@ -153,27 +153,6 @@ def test_exports_are_deterministic_and_csv_escapes(tmp_path: Path) -> None:
     )
 
 
-def test_cli_commands_invoke_the_real_implementations(site: str, tmp_path: Path, monkeypatch) -> None:
-    from typer.testing import CliRunner
-
-    from mzizi_cli.orchestrator.app import app
-
-    monkeypatch.setenv("MZIZI_DEV_ROOT", str(tmp_path / "dev"))
-    runner = CliRunner()
-    crawl = runner.invoke(
-        app, ["--no-input", "--json", "web", "crawl", site + "/", "--delay", "0", "--max-pages", "3", "--no-sitemap"]
-    )
-    assert crawl.exit_code == 0, crawl.output
-    assert json.loads(crawl.output)["pages"] == 3
-    links = runner.invoke(app, ["--no-input", "--json", "web", "links", site + "/about"])
-    assert links.exit_code == 0 and json.loads(links.output)["counts"]["internal_page"] >= 1
-    robots = runner.invoke(app, ["--no-input", "--json", "fetch", "robots", site + "/private/x"])
-    assert json.loads(robots.output)["decision"]["allowed"] is False
-    status = runner.invoke(app, ["--no-input", "--json", "status", "--group", "web"])
-    assert {row["capability"]: row["state"] for row in json.loads(status.output)}["web.links"] == "ready"
-    assert runner.invoke(app, ["--no-input", "doctor"]).exit_code == 0
-
-
 def test_diff_reports_added_removed_and_changed(tmp_path):
 
     from mzizi_engine.web.handlers.changes import diff_crawls

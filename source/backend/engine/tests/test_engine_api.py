@@ -40,7 +40,7 @@ def test_health_and_capabilities_list_the_registered_package_capabilities(make_c
         "extraction.csv",
         "scraping.links",
         "manifest.check_seeds",
-        "filesystem.sync",
+        "filesystem.register",
         "source.gate",
         "engine.process_info",
     ):
@@ -269,32 +269,10 @@ def test_authentication_and_authorization_use_the_auth_schema_contract(make_clie
     assert submitted.status_code == 202 and submitted.json()["requested_by"] == "acct-e"
 
 
-def test_a_sync_through_the_engine_is_a_dry_run_by_default_and_the_actor_cannot_be_spoofed(make_client, monkeypatch):
-    from mzizi_engine.ports import rewrite_url
-
-    monkeypatch.setenv("ENGINE_FILESYSTEM_LEGACY_DATABASE_URL", rewrite_url())
-    client = make_client(settings=settings(database_url=rewrite_url()))
-    job = client.post("/v1/filesystem/sync", json={"manifest": "manifest.yaml"}).json()
-    done = job_done(client, job["id"])
-    assert (
-        done["status"] == "succeeded"
-        and done["result"]["dry_run"] is True
-        and done["result"]["ok"] is True
-        and done["result"]["files"]
-    )
-    assert done["input"]["actor"] is None
-    spoof = client.post(
-        "/v1/jobs",
-        json={
-            "kind": "filesystem.sync",
-            "input": {
-                "manifest": str(__import__("mzizi_manifest").paths.SEED_ROOT / "manifest.yaml"),
-                "actor": "someone-else",
-            },
-        },
-    ).json()
+def test_the_actor_of_a_filesystem_job_is_the_authenticated_principal_never_client_input(make_client):
+    client = make_client()
+    spoof = client.post("/v1/jobs", json={"kind": "filesystem.register", "input": {"actor": "someone-else"}}).json()
     assert job_done(client, spoof["id"])["input"]["actor"] is None
-    assert client.post("/v1/filesystem/sync", json={"manifest": "../../etc/passwd"}).status_code == 422
     check = client.post("/v1/manifests/validate").json()
     assert check["ok"] is True and check["entries"] > 40
 
@@ -306,7 +284,6 @@ def test_settings_refuse_unauthenticated_mode_off_loopback():
     assert Settings.from_env(
         {"ENGINE_CAPABILITY_LIMITS": "extraction.pdf=2,scraping.links=5", "DATABASE_URL": "postgres://x/mzizi_new"}
     ).limits == {"extraction.pdf": 2, "scraping.links": 5}
-    assert Settings.from_env({"DATABASE_URL": "postgres://api_reader/mzizi_new"}).database_url is None
     assert (
         Settings.from_env({"DATABASE_SERVICE_URL": "http://127.0.0.1:3301", "DATABASE_SERVICE_TOKEN": "local"}).store
         == "database_service"

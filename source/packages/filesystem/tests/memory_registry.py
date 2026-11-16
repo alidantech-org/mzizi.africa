@@ -8,7 +8,9 @@ from datetime import UTC, datetime
 
 from mzizi_filesystem.shared.contracts import (
     Access,
+    FileChange,
     FileRecord,
+    FolderChange,
     FolderRecord,
     NewFile,
     NewFolder,
@@ -25,6 +27,7 @@ class MemoryRegistry:
         self.versions: dict[str, VersionRecord] = {}
         self.relations: list[RelationRecord] = []
         self.retired: list[str] = []
+        self.ever: dict[str, int] = {}
         self._next = 0
 
     def _id(self, prefix: str) -> str:
@@ -58,9 +61,10 @@ class MemoryRegistry:
         return record
 
     def add_version(self, version: NewVersion) -> VersionRecord:
-        data = version.model_dump(exclude={"provenance"})
+        data = version.model_dump(exclude={"provenance", "created_by"})
         record = VersionRecord(id=self._id("ve"), verified_at=datetime.now(UTC), **data)
         self.versions[record.id] = record
+        self.ever[version.file_id] = max(self.ever.get(version.file_id, 0), version.revision)
         return record
 
     def set_current_version(self, file_id: str, version_id: str) -> FileRecord:
@@ -109,3 +113,43 @@ class MemoryRegistry:
 
     def relations_to(self, version_id: str) -> tuple[RelationRecord, ...]:
         return tuple(r for r in self.relations if r.derived_version_id == version_id)
+
+    def next_revision(self, file_id: str) -> int:
+        return self.ever.get(file_id, 0) + 1
+
+    def child_folders(self, parent_id: str | None) -> tuple[FolderRecord, ...]:
+        return tuple(f for f in self.folders.values() if f.parent_id == parent_id)
+
+    def files_in(self, folder_id: str) -> tuple[FileRecord, ...]:
+        return tuple(f for f in self.files.values() if f.folder_id == folder_id)
+
+    def update_folder(self, folder_id: str, change: FolderChange) -> FolderRecord:
+        current = self.folders[folder_id]
+        update: dict[str, object] = {}
+        if change.name is not None:
+            update["name"] = change.name
+        if change.parent_id is not None or change.clear_parent:
+            update["parent_id"] = change.parent_id
+        if change.access is not None:
+            update["access"] = change.access
+        if change.authorization is not None:
+            update["authorization"] = change.authorization
+        self.folders[folder_id] = current.model_copy(update=update)
+        return self.folders[folder_id]
+
+    def update_file(self, file_id: str, change: FileChange) -> FileRecord:
+        current = self.files[file_id]
+        update: dict[str, object] = {}
+        if change.name is not None:
+            update["name"] = change.name
+        if change.folder_id is not None:
+            update["folder_id"] = change.folder_id
+        self.files[file_id] = current.model_copy(update=update)
+        return self.files[file_id]
+
+    def update_version(self, version_id: str, s3_key: str, access: Access) -> VersionRecord:
+        self.versions[version_id] = self.versions[version_id].model_copy(update={"s3_key": s3_key, "access": access})
+        return self.versions[version_id]
+
+    def key_referenced(self, s3_key: str) -> bool:
+        return any(v.s3_key == s3_key for v in self.versions.values())

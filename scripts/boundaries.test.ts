@@ -35,6 +35,11 @@ describe("scanFile", () => {
       scanFile("source/packages/cli/src/mzizi_cli/orchestrator/app.py", "from mzizi_engine.runtime import X\n", "package"),
     ).toEqual([]);
   });
+  test("persistence adapters may import a database driver", () => {
+    expect(
+      scanFile("source/backend/engine/src/mzizi_engine/persistence/filesystem.py", "import psycopg\n", "engine"),
+    ).toEqual([]);
+  });
   test("the engine must not import a database driver or a capability library", () => {
     const hits = scanFile(enginePath, "import playwright.sync_api\nimport pymongo\nimport httpx\n", "engine");
     expect(hits.map((hit) => hit.rule)).toEqual(["engine-imports-capability", "engine-imports-database"]);

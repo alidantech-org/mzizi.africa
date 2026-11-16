@@ -95,7 +95,8 @@ def test_packages_do_not_import_the_engine_or_each_others_private_modules():
     names = {p.name for p in packages.iterdir() if p.is_dir()}
     for path in packages.rglob("src/**/*.py"):
         text = path.read_text()
-        assert "mzizi_engine" not in text, path
+        front_door = "cli" in path.relative_to(packages).parts[:1]  # the CLI calls the engine runtime by design
+        assert front_door or "mzizi_engine" not in text, path
         own = path.relative_to(packages).parts[0]
         for other in names - {own}:
             assert not re.search(

@@ -10,9 +10,15 @@ from __future__ import annotations
 import io
 from pathlib import Path
 
-from mzizi_filesystem import catalog
-from mzizi_filesystem.access import check_key_matches_access
-from mzizi_filesystem.codes import child_code
+from mzizi_filesystem.features.keys.keys import (
+    InvalidNameError,
+    archive_key,
+    check_key_matches_access,
+    current_key,
+    is_protected,
+    sibling_name,
+)
+from mzizi_filesystem.features.media.catalog import ContentTypeError, MediaCatalog
 from mzizi_filesystem.features.placement.contracts import Placement, PlacementPlan
 from mzizi_filesystem.features.placement.errors import PlacementError
 from mzizi_filesystem.features.placement.plan import plan_placement
@@ -23,33 +29,35 @@ from mzizi_filesystem.features.register.contracts import (
     RegisterRequest,
     RegisterResult,
 )
-from mzizi_filesystem.features.register.storage import holds, write
+from mzizi_filesystem.features.register.storage import Source, StoredObject, holds, write
 from mzizi_filesystem.features.registry.ports import RegistryRepository
-from mzizi_filesystem.hashing import hash_file, hash_stream
-from mzizi_filesystem.keys import NameError_, archive_key, current_key, sibling_name
+from mzizi_filesystem.features.store.store import ObjectStore, StoreError
+from mzizi_filesystem.shared.codes import child_code
 from mzizi_filesystem.shared.config import FilesystemConfig
 from mzizi_filesystem.shared.contracts import FileRecord, FolderRecord, NewFile, NewFolder, NewVersion, VersionRecord
-from mzizi_filesystem.store import ObjectStore, StoreError
+from mzizi_filesystem.shared.hashing import hash_file, hash_stream
 
 
 class Registrar:
-    def __init__(self, repository: RegistryRepository, store: ObjectStore, config: FilesystemConfig) -> None:
-        self._repo, self._store, self._config = repository, store, config
+    def __init__(
+        self, repository: RegistryRepository, store: ObjectStore, config: FilesystemConfig, catalog: MediaCatalog
+    ) -> None:
+        self._repo, self._store, self._config, self._catalog = repository, store, config, catalog
 
-    def register(self, request: RegisterRequest, source: Path | bytes) -> RegisterResult:
+    def register(self, request: RegisterRequest, source: Source) -> RegisterResult:
         try:
             return self._register(request, source)
-        except (NameError_, PlacementError, catalog.ContentTypeError) as problem:
+        except (InvalidNameError, PlacementError, ContentTypeError) as problem:
             return _result(Outcome.FAILED, detail=str(problem))
         except (StoreError, OSError) as problem:
             return _result(Outcome.FAILED, detail=str(problem))
 
-    def _register(self, request: RegisterRequest, source: Path | bytes) -> RegisterResult:
+    def _register(self, request: RegisterRequest, source: Source) -> RegisterResult:
         placement = request.placement
         plan = plan_placement(placement, self._repo, self._config)
-        sha, size, head = _digest(source)
+        sha, size, head = self._digest(source)
         name = placement.file_name
-        _, content_type = catalog.resolve(name, head, request.declared_type)
+        _, content_type = self._catalog.resolve(name, head, request.declared_type)
         folder = plan.steps[-1].existing if not plan.creates else None
         file = self._repo.find_file(folder.id, name) if folder else None
         current = self._repo.get_version(file.current_version_id) if file and file.current_version_id else None
@@ -64,9 +72,9 @@ class Registrar:
             same = bool(current and current.sha256 == sha and current.size_bytes == size)
         folder_path = "/" + "/".join(step.name for step in plan.steps)
         access = placement.access
-        key = current_key(access.value, folder_path, name)
-        check_key_matches_access(key, access.value)
-        if key.startswith(self._config.protected_prefixes):
+        key = current_key(access, folder_path, name)
+        check_key_matches_access(key, access)
+        if is_protected(key, self._config.protected_prefixes):
             raise StoreError(f"{key} is inside a protected archive and cannot be registered")
         base = _result(Outcome.PLANNED, key=key, sha256=sha, size_bytes=size)
         if same and file is not None and current is not None:
@@ -88,7 +96,7 @@ class Registrar:
             if request.on_duplicate is DuplicatePolicy.REJECT:
                 return _result(Outcome.CONFLICT, detail=f"identical content is already registered at {twin.s3_key}")
         keep_old = bool(file and current and (file.retention.value == "preserve_history" or current.pinned))
-        old_key = archive_key(access.value, folder_path, name, current.revision) if keep_old and current else None
+        old_key = archive_key(access, folder_path, name, current.revision) if keep_old and current else None
         if request.dry_run:
             return base.model_copy(update={"archived_key": old_key, "duplicate_of_key": twin.s3_key if twin else None})
         recovered, copied = self._place(key, source, sha, size, content_type, current, old_key, twin)
@@ -100,9 +108,7 @@ class Registrar:
                 file = self._repo.create_file(
                     NewFile(folder_id=folder.id, code=code, name=name, retention=placement.retention)
                 )
-                revision = 1
-            else:
-                revision = max(v.revision for v in self._repo.list_versions(file.id)) + 1
+            revision = self._repo.next_revision(file.id)
             version = self._repo.add_version(
                 NewVersion(
                     file_id=file.id,
@@ -115,6 +121,7 @@ class Registrar:
                     access=access,
                     pinned=request.pinned,
                     provenance=request.provenance,
+                    created_by=request.created_by,
                 )
             )
             self._repo.set_current_version(file.id, version.id)
@@ -135,6 +142,19 @@ class Registrar:
                 "server_copied": copied,
             }
         )
+
+    def _digest(self, source: Source) -> tuple[str, int, bytes]:
+        if isinstance(source, Path):
+            sha, size = hash_file(source)
+            with open(source, "rb") as handle:
+                return sha, size, handle.read(4096)
+        if isinstance(source, StoredObject):
+            with self._store.open_stream(source.key) as stream:
+                sha, size = hash_stream(stream)
+            with self._store.open_stream(source.key) as stream:
+                return sha, size, stream.read(4096)
+        sha, size = hash_stream(io.BytesIO(source))
+        return sha, size, source[:4096]
 
     def _create_missing_folders(self, plan: PlacementPlan, placement: Placement) -> FolderRecord:
         parent: FolderRecord | None = None
@@ -157,7 +177,7 @@ class Registrar:
         base: RegisterResult,
         file: FileRecord,
         current: VersionRecord,
-        source: Path | bytes,
+        source: Source,
         content_type: str,
         dry_run: bool,
     ) -> RegisterResult:
@@ -184,7 +204,7 @@ class Registrar:
     def _place(
         self,
         key: str,
-        source: Path | bytes,
+        source: Source,
         sha: str,
         size: int,
         content_type: str,
@@ -218,15 +238,6 @@ class Registrar:
             return False, True
         write(store, key, source, sha, size, content_type)
         return False, False
-
-
-def _digest(source: Path | bytes) -> tuple[str, int, bytes]:
-    if isinstance(source, Path):
-        sha, size = hash_file(source)
-        with open(source, "rb") as handle:
-            return sha, size, handle.read(4096)
-    sha, size = hash_stream(io.BytesIO(source))
-    return sha, size, source[:4096]
 
 
 def _result(

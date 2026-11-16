@@ -183,7 +183,6 @@ export const commands: Record<string, Command> = {
   },
   "db:ts": { summary: "alias for the database CLI", run: databaseCli },
   seed: passthrough("mzizi-manifest", "seed registry: seed check | lock | report | validate-structure <dir>"),
-  fs: passthrough("mzizi-filesystem", "filesystem registry: fs sync --manifest <file> | tree | ..."),
   engine: passthrough("mzizi-engine", "engine: engine serve | capabilities | check"),
   "docs:validate": {
     summary: "validate the Task workspace in .docs",

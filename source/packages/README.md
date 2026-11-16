@@ -5,7 +5,7 @@
 | Directory | Python distribution | Responsibility |
 |---|---|---|
 | [`extraction/`](extraction/README.md) | `mzizi-extraction` | PDF, GeoJSON, CSV and JSON extraction (and OCR through system Tesseract) into structured representations with diagnostics. |
-| [`filesystem/`](filesystem/README.md) | `mzizi-filesystem` | Object access, hashing, deduplication, artifact metadata, uploads and seed publication. |
+| [`filesystem/`](filesystem/README.md) | `mzizi-filesystem` | Versioned files at caller-chosen placements: object keys, hashing, deduplication, retention, lineage, relocation, uploads and directory sync behind one `FilesystemOrchestrator`. No database knowledge. |
 | [`manifest/`](manifest/README.md) | `mzizi-manifest` | Seed/folder manifest handling, lock generation and versioned site-structure validation. |
 | [`scraping/`](scraping/README.md) | `mzizi-scraping` | Deterministic selector, field, transform, link-discovery and challenge-detection primitives driven by manifests. |
 | [`cli/`](cli/README.md) | `mzizi-cli` | The `mzizi` command line: a front door that builds the engine runtime and calls its exposed operations. The only package allowed to import `mzizi_engine`. |
@@ -14,6 +14,6 @@
 
 ## Workspace status
 
-The Python workspace is defined by root `pyproject.toml` and `uv.lock`, with package and engine projects under `source/`. `uv sync --all-packages` resolves cleanly: no package depends on a database. `source/packages/filesystem` is now a pure object-store/hashing/naming library; its former database layer (repository, service, authz, sync, uploads, lineage, transitions, reset, secure, the CLI) moved into `source/backend/engine/src/mzizi_engine/filesystem/`, which is the only place in the Python workspace that opens a database connection (`mzizi_engine.ports.database`). The active database service is [`source/backend/database/`](../backend/database/README.md).
+The Python workspace is defined by root `pyproject.toml` and `uv.lock`, with package and engine projects under `source/`. `uv sync --all-packages` resolves cleanly: no package depends on a database. `source/packages/filesystem` holds all filesystem logic and never knows a database exists; the engine implements its registry port in `mzizi_engine.persistence.filesystem`. The active database service is [`source/backend/database/`](../backend/database/README.md).
 
 Root commands cover setup and tests (`uv sync --all-packages`, `uv run pytest source`) and package/engine CLIs such as `uv run mzizi-manifest check` and `uv run mzizi-engine filesystem sync`. Use the [root command guide](../../scripts/README.md) for current runner commands.

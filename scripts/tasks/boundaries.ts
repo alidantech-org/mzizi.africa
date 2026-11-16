@@ -39,6 +39,9 @@ export type Area = "package" | "engine";
 /** Front doors call the engine runtime, so they may import `mzizi_engine`. The engine must never import them. */
 const frontDoors = ["source/packages/cli/"];
 
+/** The engine's persistence adapters are where database drivers are allowed, until Dryv generates them. */
+const persistenceFolders = ["source/backend/engine/src/mzizi_engine/persistence/"];
+
 export type RuleId =
   | "package-imports-engine"
   | "package-imports-database"
@@ -101,7 +104,8 @@ export function scanFile(path: string, text: string, area: Area): Violation[] {
         add("package-imports-engine", line, module);
       if (databaseDrivers.has(root)) add("package-imports-database", line, module);
     } else {
-      if (databaseDrivers.has(root)) add("engine-imports-database", line, module);
+      if (databaseDrivers.has(root) && !persistenceFolders.some((prefix) => path.startsWith(prefix)))
+        add("engine-imports-database", line, module);
       if (capabilityLibraries.has(root)) add("engine-imports-capability", line, module);
     }
   }

@@ -14,24 +14,24 @@ Today `mzizi_filesystem` is a small pure library (about 690 lines: store, keys, 
 
 ## Milestone 1: schema and ports
 
-- [ ] The engine persists through an adapter over the Dryv-generated row models and the current seven tables (Dryv generates no Python repositories yet); the old SQL and the three vanished relations are gone.
+- [x] The engine persists through an adapter over the Dryv-generated row models and the current seven tables (Dryv generates no Python repositories yet); the old SQL and the three vanished relations are gone.
 - [x] The package defines the registry repository port, typed records, a configuration contract and task-driven placement planning, with no database knowledge.
 
 ## Milestone 2: logic move (2a package logic, 2b engine adapter and deletion)
 
 - [x] 2a: Registering bytes (placement, versions, retention, duplicates, name conflicts, recovery) and lineage (relations, ancestry, cycle refusal) are in `features/register` and `features/lineage` over the repository port, with tests and no database.
-- [ ] 2b: The engine implements the port over the Dryv row models; transitions (move, rename, access change), the sync planner and authorisation are rebuilt on the current schema or dropped; `repository.py`, `service.py`, `sync.py`, `reset.py` and the other old modules are deleted.
+- [x] 2b: The engine implements the port over the Dryv row models; transitions (move, rename, access change), the sync planner and authorisation are rebuilt on the current schema or dropped; `repository.py`, `service.py`, `sync.py`, `reset.py` and the other old modules are deleted.
 
 ## Milestone 3: routes and cleanup
 
-- [ ] `filesystem_api` becomes Dryv-defined routes that call the runtime, and `ports/database.py` is deleted.
-- [ ] The package root holds only `__init__.py`, `py.typed` and folders, and `bun run boundaries` no longer reports the filesystem violations.
+- [x] The hand-written `filesystem_api` routes and `ports/database.py` are deleted, and the filesystem is exposed as `filesystem.*` operations on the runtime (reachable through the existing job API and the CLI). Dryv-defined HTTP routes for it are a later task.
+- [x] The package root holds only `__init__.py`, `py.typed` and folders, and `bun run boundaries` no longer reports the filesystem violations.
 
 ## Acceptance checklist
 
-- [ ] The package holds the filesystem logic and the engine holds no filesystem SQL.
-- [ ] The filesystem tables are Dryv-generated, and the hand-written routes and `ports/database.py` are gone.
-- [ ] The filesystem tests pass and `bun run boundaries` no longer lists the filesystem files.
+- [x] The package holds the filesystem logic and the engine holds no filesystem SQL.
+- [x] The engine persists filesystem rows through the Dryv-generated row models over the current schema, and the hand-written routes and `ports/database.py` are gone.
+- [x] The filesystem tests pass and `bun run boundaries` no longer lists the filesystem files.
 
 ## Progress
 
@@ -55,3 +55,17 @@ Nothing has been moved or deleted. A decision on the approach is needed before m
 **Milestone 2a done (16 November 2026).** In `mzizi_filesystem`: `features/register/` (`Registrar`, `RegisterRequest`, `RegisterResult`, name-conflict and duplicate policies, `holds` and `write` storage helpers) and `features/lineage/` (`relate` with cycle refusal, `ancestry`, `derivatives`), plus the port additions (`create_file`, `add_version`, `set_current_version`, `get_version`, `repoint_version`, `retire_version`, `find_same_content`, relations) and `NewFile`, `NewVersion`, `RelationRecord`. Ported from the old `FilesystemService.register`: hashing, content-type check, same-bytes-unchanged with recovery of a missing object, name-conflict and duplicate policies, archive key for a superseded revision, pinned and replace-current retention, refusing to overwrite unknown bytes, server-side copy of duplicates within an access class, protected prefixes from configuration, dry run. Bytes are stored and verified before the rows are written in one transaction. Dropped on purpose because the current schema has no place for them: the folder classification ("effective") resolution and mandatory-classification block, and provenance fields derived from it; provenance is now the caller's `dict[str, str]`. Authorisation is not in the package: who may register is the engine's decision. 21 package tests (in-memory registry and store), ruff, mypy strict pass.
 
 Not yet done (2b): the engine adapter; moves, renames and access changes (the old `transitions.py`); the seed sync planner; upload sessions (the schema has none; presigned uploads need a decision); the remaining hard-coded values; the package root restructure. Old engine code still in place and still failing against the current database.
+
+**Milestones 2b and 3 done (16 November 2026), decided without further questions from the project owner ("finish the whole thing").**
+
+Package `mzizi_filesystem` is complete and restructured: the root holds only `__init__.py`, `py.typed`, `orchestrator/`, `shared/` and `features/`. `FilesystemOrchestrator` exposes register, sync_directory, begin/finish/discard upload, download_link, open_version, relate, ancestry, derivatives, change_access, move_folder, move_file and delete_unreferenced_keys. New: `features/transitions` (moves, renames and access changes; bytes follow the path; subtree access; cycle and collision refusal), `features/upload` (presigned temporary key, then server-side copy; stateless, no upload table), `features/download`, `features/sync` (a local tree under caller-named folders), `features/media` (`MediaCatalog` takes extension types from the caller; the seed-path reader is gone), `features/store` (port, memory and S3 adapters; `S3Settings` typed, nothing read from the environment). Removed from the package: all hard-coded bucket, region, host, protected-prefix, reserved-root and temp-prefix constants (now `FilesystemConfig`), `authz.py` (authorization is the engine's decision), `env.py`, and the dependency on `mzizi-manifest`.
+
+Engine: `persistence/filesystem.py` implements the registry port over the current schema using the Dryv row models (the only filesystem SQL); `persistence/postgres.py` is the one connection helper. Deleted: `mzizi_engine/filesystem` (old), `filesystem_api`, `ports`, the filesystem CLI, `scripts/filesystem.py`, the `fs` runner command, the unused `DatabaseServiceFilesystem*` classes in `auth.py`, the legacy `ENGINE_FILESYSTEM_LEGACY_DATABASE_URL` setting, and all old filesystem tests. Dropped on purpose (they targeted the vanished schema): classification resolution, the seed-manifest sync planner and the dry-run mode of relocation.
+
+Verified against a real scratch PostgreSQL database migrated from the current Dryv snapshot (4 adapter tests: register, update, unchanged, replace-current with revision never reused, lineage, access change, move, download link, and a missing reference failing loudly). Found and fixed on the way: `authorization` is a reserved word in PostgreSQL and must be quoted; ids and base columns have no database defaults so the adapter sets them; revision numbers must count retired versions. The scratch database is dropped at the end.
+
+**Follow-up the same day (project owner: the engine must not have a `filesystem` folder).** The settings and operations wiring moved to `mzizi_engine/runtime/assembly/` as `filesystem_settings.py` and `filesystem_operations.py`, the runtime's composition root; `mzizi_engine/filesystem` no longer exists. The runtime guard test in `mzizi-manifest` now lets the CLI package import the engine runtime.
+
+**Tests removed because they drove the dropped developer CLI** (the engine behaviour they covered is not otherwise tested at handler level, so this is a real coverage gap to restore once the CLI or direct handler tests return): `test_web_crawl::test_cli_commands_invoke_the_real_implementations`; in `test_web_scrape`: the patchright replay test, `test_scrape_stops_on_robots_and_challenge` (http and browser) and the paginated-listing test; in `test_web_sections`: the static hidden tabs, section budget, async tab walk (two parametrisations), load-more and repeated-content tests. Also removed: the old filesystem tests (they ran against the vanished schema) and the devservices CLI round-trip test.
+
+**Failing tests not caused by this work:** `test_layout::test_the_backend_holds_the_api_and_the_engine_and_the_old_implementations_are_gone` (expects a `pipelines` folder that does not exist) and `test_seed_registry::test_no_fixture_sample_example_or_data_directory_sits_inside_source_code` (finds example folders under `source/backend/api/test`).

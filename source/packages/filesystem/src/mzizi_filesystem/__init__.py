@@ -1,53 +1,40 @@
-"""Reusable filesystem capability: S3 object access, hashing, deduplication, key and code naming and the media
-catalog. This package never knows a database exists (`.docs/rules/typed-code.md`); the engine's own filesystem
-module holds everything that opens a connection and runs SQL, over a database port it owns, and the CLI that was
-here moved with it (`uv run mzizi-engine filesystem --help`).
+"""Filesystem capability: versioned files at caller-chosen placements, object storage, keys and lineage.
+
+One orchestrator, `FilesystemOrchestrator`, exposes everything. This package never knows a database exists: the engine
+supplies a `RegistryRepository`, an `ObjectStore`, a `MediaCatalog` and a `FilesystemConfig`. It names no bucket, host,
+prefix or folder of its own; where things go is decided by the caller, from the task it is doing.
 """
 
-from mzizi_filesystem.access import (
-    ACCESS_CLASSES,
-    BUCKET,
-    REGION,
-    AccessError,
-    check_key_matches_access,
-    is_anonymously_readable,
+from mzizi_filesystem.features.media.catalog import ContentTypeError, MediaCatalog
+from mzizi_filesystem.features.register.contracts import (
+    DuplicatePolicy,
+    NameConflictPolicy,
+    Outcome,
+    RegisterRequest,
+    RegisterResult,
 )
-from mzizi_filesystem.authz import Authorizer, OperatorAuthorizer
-from mzizi_filesystem.hashing import hash_file, hash_stream, sha256_hex
-from mzizi_filesystem.keys import (
-    PROTECTED_PREFIXES,
-    VERSIONS_DIR,
-    archive_key,
-    check_name,
-    current_key,
-    is_protected,
-    sibling_name,
-)
-from mzizi_filesystem.store import MemoryObjectStore, ObjectHead, ObjectStore, S3ObjectStore, StoreError, verify_upload
+from mzizi_filesystem.features.store.memory import MemoryObjectStore
+from mzizi_filesystem.features.store.s3 import S3ObjectStore, S3Settings
+from mzizi_filesystem.features.store.store import ObjectStore, StoreError
+from mzizi_filesystem.orchestrator import FilesystemOrchestrator
+from mzizi_filesystem.shared.config import FilesystemConfig
+from mzizi_filesystem.shared.contracts import Access, Retention
 
 __all__ = [
-    "ACCESS_CLASSES",
-    "BUCKET",
-    "PROTECTED_PREFIXES",
-    "REGION",
-    "VERSIONS_DIR",
-    "AccessError",
-    "Authorizer",
+    "Access",
+    "ContentTypeError",
+    "DuplicatePolicy",
+    "FilesystemConfig",
+    "FilesystemOrchestrator",
+    "MediaCatalog",
     "MemoryObjectStore",
-    "ObjectHead",
+    "NameConflictPolicy",
     "ObjectStore",
-    "OperatorAuthorizer",
+    "Outcome",
+    "RegisterRequest",
+    "RegisterResult",
+    "Retention",
     "S3ObjectStore",
+    "S3Settings",
     "StoreError",
-    "archive_key",
-    "check_key_matches_access",
-    "check_name",
-    "current_key",
-    "hash_file",
-    "hash_stream",
-    "is_anonymously_readable",
-    "is_protected",
-    "sha256_hex",
-    "sibling_name",
-    "verify_upload",
 ]

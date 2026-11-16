@@ -24,7 +24,6 @@ from mzizi_engine.capabilities import build_default_registry
 from mzizi_engine.config import Settings
 from mzizi_engine.database_store import DatabaseServiceStore
 from mzizi_engine.executor import Executor
-from mzizi_engine.filesystem_api import router as filesystem_router
 from mzizi_engine.runtime.operations import OperationRegistry
 from mzizi_engine.store import MemoryStore, Store
 
@@ -214,5 +213,4 @@ def create_app(
             stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
         )
 
-    app.include_router(filesystem_router)
     return app

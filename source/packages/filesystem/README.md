@@ -1,16 +1,17 @@
 # mzizi-filesystem
 
-S3 object access, hashing, deduplication and seed publication to a registry.
+Versioned files at caller-chosen placements. One class, `FilesystemOrchestrator`, does everything; the package never knows a database exists and names no bucket, host, prefix or folder.
 
-Schema and behavior: `.docs/design/data/FILESYSTEM_SCHEMA.md`. Modules: `repository.py` (SQL), `service.py` (hash, dedup, upload, verify, register), `sync.py` (manifests and planning), `uploads.py`, `lineage.py`, `transitions.py`, `download.py`, `authz.py`, `store.py`, `livecheck.py`. Command: `uv run mzizi-filesystem --help`.
+The caller (the engine, deciding from the task it is doing: scraping, hunting a country's data, and so on) supplies:
 
-See [../README.md](../README.md) for the package map and workspace commands. Tests: `uv run pytest source/packages/filesystem`.
+- a `FilesystemConfig` (bucket, region, public endpoint, protected key prefixes, reserved top-level folders, temp prefix),
+- a `RegistryRepository` (the persistence port; the engine implements it over its database),
+- an `ObjectStore` (`S3ObjectStore(S3Settings, protected_prefixes)` or `MemoryObjectStore`),
+- a `MediaCatalog` (extension to media type, reference data),
+- and, per call, a typed `Placement`: the folder names, access, retention and role for that file.
 
+What it does: register bytes (`register`) with hashing, content-type checks, versions, retention (`preserve_history` or `replace_current`, pinned versions never dropped), duplicate and name-conflict policies, recovery of missing objects and server-side copies inside an access class; two-step presigned uploads; download links; exact lineage between versions with cycle refusal; moves, renames and access changes where bytes follow the registry path; a directory sync that registers a local tree under folders the caller names.
 
-## Environment and security files
+Layout (`orchestrator/`, `shared/`, `features/<capability>/`): `features/{keys,media,store,placement,register,lineage,transitions,upload,download,sync,registry}`. Object keys are readable registry paths: `<access>/<folder path>/<file name>`, and superseded revisions sit under `_versions/<name>/rNNNN/`.
 
-`mzizi-filesystem` loads the repository-root `.env` (git-ignored) for unset variables; `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_DEFAULT_REGION` alias the `S3_*` names. Security files are stored only under the private `/security` folder and fetched with `mzizi-filesystem secure-get <path>` (or `fetch_secure_file`) into `.local/secure/`.
-
-## Codes
-
-Folders and files carry an optional `code` that follows `.docs/rules/code-columns.md`. Root folders in a manifest set an explicit code; everything below derives (`seeds.global.auth.roles_csv`, `legacy_artifacts.backups.<name>`). `identities` in a sync manifest may give a file an explicit code. `registry_prefix` no longer exists.
+Not here, by design: who may do what (authorization is the engine's decision), classification of folders, and any source-specific naming. Tests use an in-memory registry and store; `uv run pytest source/packages/filesystem`. The engine's tests run the same orchestrator over the real PostgreSQL schema.

@@ -145,3 +145,7 @@ These block specific moves:
 4. **Does `devservices/vector` become a `meaning` package?** It blocks step 9.
 5. **Can `media.py` in `browser` depend on `extraction`?** The dependency direction in the design puts both at the same level, so a port may be needed.
 6. **Is the `mzizi_filesystem` library the same as the target `filesystem` package, or does the engine's filesystem logic form a separate package beside it?**
+
+## Status update, 16 November 2026
+
+Done since this inventory was written: `web/search` is the `mzizi_search` package; `devcli`, `bindings`, `ports`, `filesystem`, `filesystem_api` and the filesystem tests are gone from the engine; the runtime owns the operations registry (`runtime/operations.py`) and the composition root (`runtime/assembly/`); the filesystem is the `mzizi_filesystem` package with its persistence adapter in `persistence/filesystem.py`; the CLI is a small `mzizi_cli` package. The boundary total fell from 70 to 42. Still to do: `browser`, `crawl`, `watch`, `policy`, vector and Mongo developer services, and clearing the engine root (task TSK-314C989DB948).

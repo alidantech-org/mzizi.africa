@@ -184,21 +184,3 @@ def test_qdrant_round_trip_with_deterministic_ids(run_folder: Path) -> None:
         for name in list(store.collections()):
             store.drop(name)
         store.close()
-
-
-@needs_mongo
-def test_cli_mongo_and_vector_commands_use_the_real_services(
-    tmp_path: Path, run_folder: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    from typer.testing import CliRunner
-
-    from mzizi_cli.orchestrator.app import app
-
-    monkeypatch.setenv("MZIZI_DEV_ROOT", str(tmp_path / "dev"))
-    runner = CliRunner()
-    mongo = runner.invoke(app, ["--no-input", "--json", "mongo", "test"])
-    assert mongo.exit_code == 0 and json.loads(mongo.output)["round_trip"] is True
-    status = runner.invoke(app, ["--no-input", "--json", "status", "--group", "mongo"])
-    assert {r["capability"]: r["state"] for r in json.loads(status.output)}["mongo.test"] == "ready"
-    missing = runner.invoke(app, ["--no-input", "--json", "mongo", "load", "--run", str(tmp_path / "nope")])
-    assert missing.exit_code != 0

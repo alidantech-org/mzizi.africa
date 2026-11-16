@@ -1,9 +1,9 @@
 [project]
 name = "mzizi-filesystem"
 version = "0.1.0"
-description = "Reusable filesystem capability: S3 object access, hashing, deduplication, key and code naming and the media catalog. No database knowledge; the engine owns metadata storage."
+description = "Filesystem capability: versioned files at caller-chosen placements, S3 object access, keys, lineage, relocation, uploads and directory sync behind one orchestrator. No database knowledge."
 requires-python = ">=3.12"
-dependencies = ["boto3", "pyyaml", "jsonschema", "mzizi-manifest", "pydantic>=2.7"]
+dependencies = ["boto3", "pydantic>=2.7"]
 
 [build-system]
 requires = ["setuptools>=68"]

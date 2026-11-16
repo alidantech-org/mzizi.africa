@@ -5,7 +5,6 @@ ENGINE_AUTH                   oidc (default) or off (development only; refused u
 AUTH_ISSUER, AUTH_JWKS_URL    OIDC verification (shared with the NestJS API)   AUTH_AUDIENCE optional
 DATABASE_SERVICE_URL          named database operations service
 DATABASE_SERVICE_TOKEN        internal service credential for named database operations
-ENGINE_FILESYSTEM_LEGACY_DATABASE_URL  temporary direct-DB fallback for filesystem operations not yet migrated
 ENGINE_SERVICE_TOKEN          internal credential for Temporal capability execution
 ENGINE_STORE                  database_service (default when DATABASE_SERVICE_URL and token are set) or memory
 NESTJS_CALLBACK_URL           where results/events are delivered (HTTP POST, retried from the outbox)   ENGINE_CALLBACK_TOKEN bearer for that call
@@ -27,7 +26,6 @@ class Settings:
     issuer: str | None = None
     jwks_url: str | None = None
     audience: str | None = None
-    database_url: str | None = None
     database_service_url: str | None = None
     database_service_token: str | None = None
     service_token: str | None = None
@@ -56,7 +54,6 @@ class Settings:
             issuer=env.get("AUTH_ISSUER"),
             jwks_url=env.get("AUTH_JWKS_URL"),
             audience=env.get("AUTH_AUDIENCE"),
-            database_url=env.get("ENGINE_FILESYSTEM_LEGACY_DATABASE_URL"),
             database_service_url=service_url,
             database_service_token=service_token,
             service_token=env.get("ENGINE_SERVICE_TOKEN"),

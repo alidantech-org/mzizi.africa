@@ -42,7 +42,6 @@
     "db:ts": "bun scripts/mz.ts db:ts",
     "db": "bun scripts/mz.ts db",
     "seed": "bun scripts/mz.ts seed",
-    "fs": "bun scripts/mz.ts fs",
     "engine": "bun scripts/mz.ts engine",
     "docs:validate": "bun scripts/mz.ts docs:validate",
     "dryv:database:plan": "bun scripts/mz.ts dryv:database:plan",

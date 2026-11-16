@@ -41,6 +41,7 @@ class RegisterRequest(Frozen):
     declared_type: str | None
     original_filename: str | None
     provenance: dict[str, str]
+    created_by: dict[str, str]
     on_name_conflict: NameConflictPolicy
     on_duplicate: DuplicatePolicy
     pinned: bool
