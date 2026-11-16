@@ -27,7 +27,8 @@ seed/
 
 ## What is in it
 
-- `data/global/reference/schemes.csv` (5 schemes) and `values.csv` (103 values): continents, UN M49 regions and subregions, recognition statuses, currencies and country designations, added on 16 November 2026 with the owner's approval. The countries dataset links to them by code. They are not yet registered in a `manifest.yaml`.
+- `data/global/reference/schemes.csv` (5 schemes) and `values.csv` (103 values): continents, UN M49 regions and subregions, recognition statuses, currencies and country designations, added on 16 November 2026 with the owner's approval. They are not yet registered in a `manifest.yaml`.
+- `data/global/reference/countries.csv`: Kenya only, added on 16 November 2026 as the first country row. It links to the schemes and values above by code. The 55 African Union members are prepared as a draft for review and not yet added.
 - `engine/web/classification.yaml` (code `global.engine.web.classification`): the web classification data (URL kinds, challenge markers, file signatures) read by `mzizi-fetch`, validated by `source/schema/engine/web.schema.json`. It was moved here on 16 November 2026 at the owner's request; its schema comes first.
 
 ## Large inputs (proposal)

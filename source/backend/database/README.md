@@ -18,7 +18,7 @@ Run from the repository root (`bun run db <command>`) or from this folder.
 | Command | Needs the database | Does |
 |---|---|---|
 | `format [--check] [file…]` | no | Formats generated SQL with sql-formatter (the snapshot by default); `--check` only reports. Dryv runs it automatically after generation |
-| `assemble` | no | Turns `sql/schema.sql` into `migrations/0001_init.sql` and records its checksum; refuses a changed snapshot |
+| `assemble` | no | Turns `sql/schema.sql` into `migrations/0001_init.sql` and records its checksum; refuses a changed snapshot. Later releases are written by hand (see `migrations/README.md`) |
 | `plan` | yes | Lists pending releases and verifies checksums without applying anything |
 | `status` | yes | Shows applied and pending releases |
 | `migrate` | yes | Applies pending releases under an advisory lock, each in one transaction with its ledger row |
