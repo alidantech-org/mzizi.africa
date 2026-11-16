@@ -159,19 +159,19 @@ export const MANDATES_AS_MANY_RELATION_CONFIG = {
 
 export const MANDATES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<MandatesRelationKey>().one(
-    InstitutionsConfig.INSTITUTIONS_AS_ONE_RELATION_CONFIG,
+    () => InstitutionsConfig.INSTITUTIONS_AS_ONE_RELATION_CONFIG,
     "institution",
   ),
   Q.createRelationKeyMapper<MandatesRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "mandateKind",
   ),
   Q.createRelationKeyMapper<MandatesRelationKey>().one(
-    OfficesConfig.OFFICES_AS_ONE_RELATION_CONFIG,
+    () => OfficesConfig.OFFICES_AS_ONE_RELATION_CONFIG,
     "office",
   ),
   Q.createRelationKeyMapper<MandatesRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
 ] as const;

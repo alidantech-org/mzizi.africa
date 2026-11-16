@@ -147,11 +147,11 @@ export const IDENTIFIERS_AS_MANY_RELATION_CONFIG = {
 
 export const IDENTIFIERS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<IdentifiersRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "feature",
   ),
   Q.createRelationKeyMapper<IdentifiersRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "identifierScheme",
   ),
 ] as const;

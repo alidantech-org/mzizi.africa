@@ -138,11 +138,11 @@ export const VALUE_RELATION_AS_MANY_RELATION_CONFIG = {
 
 export const VALUE_RELATION_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ValueRelationRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "sourceValue",
   ),
   Q.createRelationKeyMapper<ValueRelationRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "targetValue",
   ),
 ] as const;

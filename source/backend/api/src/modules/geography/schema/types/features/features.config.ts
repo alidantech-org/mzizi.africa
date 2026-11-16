@@ -126,7 +126,7 @@ export const FEATURES_AS_MANY_RELATION_CONFIG = {
 
 export const FEATURES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<FeaturesRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "featureType",
   ),
 ] as const;

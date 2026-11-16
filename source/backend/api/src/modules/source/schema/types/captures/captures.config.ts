@@ -162,19 +162,19 @@ export const CAPTURES_AS_MANY_RELATION_CONFIG = {
 
 export const CAPTURES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<CapturesRelationKey>().one(
-    DocumentsConfig.DOCUMENTS_AS_ONE_RELATION_CONFIG,
+    () => DocumentsConfig.DOCUMENTS_AS_ONE_RELATION_CONFIG,
     "document",
   ),
   Q.createRelationKeyMapper<CapturesRelationKey>().one(
-    FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
+    () => FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
     "fileVersion",
   ),
   Q.createRelationKeyMapper<CapturesRelationKey>().one(
-    ManifestReleasesConfig.MANIFEST_RELEASES_AS_ONE_RELATION_CONFIG,
+    () => ManifestReleasesConfig.MANIFEST_RELEASES_AS_ONE_RELATION_CONFIG,
     "manifestRelease",
   ),
   Q.createRelationKeyMapper<CapturesRelationKey>().one(
-    SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
+    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
     "source",
   ),
 ] as const;

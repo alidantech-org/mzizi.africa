@@ -132,27 +132,47 @@ export interface IManyRelationConfig<
 // RELATION CONFIG KEY MAPPER
 // ----------------------------------
 
+/**
+ * A relation config, or a function that returns one. Generated config modules reference each other (a publisher relates to an
+ * entity that relates to a citation that relates to a publisher), so a direct reference would be read before its module has
+ * finished loading. A function is called on first use instead, after every module has loaded.
+ */
+export type Lazy<T> = T | (() => T);
+
+function resolveRelation<T extends object>(source: Lazy<T>, override: Partial<T>): T {
+  if (typeof source !== "function") {
+    return { ...source, ...override };
+  }
+  let cached: T | undefined;
+  const resolved = (): T => (cached ??= { ...(source as () => T)(), ...override });
+  return new Proxy({} as T, {
+    get: (_target, key) => Reflect.get(resolved(), key),
+    has: (_target, key) => key in resolved(),
+    ownKeys: () => Reflect.ownKeys(resolved()),
+    getOwnPropertyDescriptor: (_target, key) => {
+      const descriptor = Reflect.getOwnPropertyDescriptor(resolved(), key);
+      return descriptor ? { ...descriptor, configurable: true } : undefined;
+    },
+  });
+}
+
 export function createRelationKeyMapper<TParentRelationKey extends string>() {
   return {
     one: <TCustomKey extends TParentRelationKey, TSelectableField extends string>(
-      config: IOneRelationConfig<string, TSelectableField>,
+      config: Lazy<IOneRelationConfig<string, TSelectableField>>,
       customKey: TCustomKey,
-    ): IOneRelationConfig<TCustomKey, TSelectableField> => ({
-      ...config,
-      relation: customKey,
-    }),
+    ): IOneRelationConfig<TCustomKey, TSelectableField> =>
+      resolveRelation(config, { relation: customKey }) as IOneRelationConfig<TCustomKey, TSelectableField>,
 
     many: <
       TCustomKey extends TParentRelationKey,
       TSelectableField extends string,
       TSortableField extends string,
     >(
-      config: IManyRelationConfig<string, TSelectableField, TSortableField>,
+      config: Lazy<IManyRelationConfig<string, TSelectableField, TSortableField>>,
       customKey: TCustomKey,
-    ): IManyRelationConfig<TCustomKey, TSelectableField, TSortableField> => ({
-      ...config,
-      relation: customKey,
-    }),
+    ): IManyRelationConfig<TCustomKey, TSelectableField, TSortableField> =>
+      resolveRelation(config, { relation: customKey }) as IManyRelationConfig<TCustomKey, TSelectableField, TSortableField>,
   };
 }
 

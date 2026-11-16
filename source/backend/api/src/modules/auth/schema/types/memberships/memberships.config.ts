@@ -151,15 +151,15 @@ export const MEMBERSHIPS_AS_MANY_RELATION_CONFIG = {
 
 export const MEMBERSHIPS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<MembershipsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "account",
   ),
   Q.createRelationKeyMapper<MembershipsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "revokedByRelation",
   ),
   Q.createRelationKeyMapper<MembershipsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "verifiedByRelation",
   ),
 ] as const;

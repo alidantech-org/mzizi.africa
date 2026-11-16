@@ -32,6 +32,7 @@ from mzizi_engine.runtime.http.auth import (
     oidc_verifier,
     require,
 )
+from mzizi_engine.runtime.http.overview import SystemOverview, build_overview
 from mzizi_engine.runtime.operations import OperationRegistry
 from mzizi_engine.runtime.runtime import EngineRuntime
 
@@ -93,6 +94,12 @@ def create_app(
     app.state.runtime = runtime
     app.state.authority = selected_authority
     app.state.verifier = verifier or oidc_verifier(settings)
+
+    @app.get("/", response_model=SystemOverview, include_in_schema=False)
+    async def overview() -> SystemOverview:
+        return build_overview(
+            app, registry, version=__version__, runtime=runtime.state.value, store=settings.store, auth=settings.auth
+        )
 
     @app.get("/health")
     async def health() -> dict:

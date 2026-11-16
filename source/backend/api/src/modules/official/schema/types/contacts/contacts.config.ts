@@ -165,23 +165,23 @@ export const CONTACTS_AS_MANY_RELATION_CONFIG = {
 
 export const CONTACTS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ContactsRelationKey>().one(
-    EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "entity",
   ),
   Q.createRelationKeyMapper<ContactsRelationKey>().one(
-    IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
+    () => IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
     "individual",
   ),
   Q.createRelationKeyMapper<ContactsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "kind",
   ),
   Q.createRelationKeyMapper<ContactsRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
   Q.createRelationKeyMapper<ContactsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "visibility",
   ),
 ] as const;

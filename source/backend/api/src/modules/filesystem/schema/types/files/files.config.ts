@@ -144,11 +144,11 @@ export const FILES_AS_MANY_RELATION_CONFIG = {
 
 export const FILES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<FilesRelationKey>().one(
-    FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
+    () => FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
     "currentVersion",
   ),
   Q.createRelationKeyMapper<FilesRelationKey>().one(
-    FoldersConfig.FOLDERS_AS_ONE_RELATION_CONFIG,
+    () => FoldersConfig.FOLDERS_AS_ONE_RELATION_CONFIG,
     "folder",
   ),
 ] as const;

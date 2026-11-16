@@ -159,8 +159,8 @@ export const commands: Record<string, Command> = {
   },
   "dryv:verify": { summary: "fail when the generated output is not current", run: () => dryv.verify() },
   catalog: {
-    summary: "regenerate the web data catalog from the API list routes",
-    run: () => group("catalog", dryv.catalogSteps()),
+    summary: "generate the system catalogs with Dryv, then the web data catalog from the API list routes",
+    run: async () => (await dryv.catalog()) && group("catalog", dryv.catalogSteps()),
   },
   "db:up": {
     summary: "start the local PostGIS container (MZIZI_PG_CONTAINER, default postgis)",

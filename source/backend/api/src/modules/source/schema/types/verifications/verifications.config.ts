@@ -161,11 +161,11 @@ export const VERIFICATIONS_AS_MANY_RELATION_CONFIG = {
 
 export const VERIFICATIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<VerificationsRelationKey>().one(
-    EvidenceConfig.EVIDENCE_AS_ONE_RELATION_CONFIG,
+    () => EvidenceConfig.EVIDENCE_AS_ONE_RELATION_CONFIG,
     "evidence",
   ),
   Q.createRelationKeyMapper<VerificationsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "method",
   ),
 ] as const;

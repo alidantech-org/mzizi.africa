@@ -1,0 +1,29 @@
+version: dryv.pack/v1alpha1
+key: mzizi.system-catalog
+source: templates
+
+info:
+  title: Mzizi system catalog
+  version: 0.1.0
+  description: One JSON document per application listing every HTTP operation, grouped by group and feature, with the contract's method, path, role, description, inputs, output and failures. Served by the root pages and read by the web app.
+  purpose: documentation
+  languages: [json]
+  tags: [catalog, endpoints, features]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+selections:
+  operations:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: all
+
+# <destination>/catalog.json: the application's operations, generated from its contracts.
+templates:
+  catalog:
+    $ref: '#/selections/operations'
+    output:
+      name: catalog

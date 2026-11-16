@@ -154,11 +154,11 @@ export const NAMES_AS_MANY_RELATION_CONFIG = {
 
 export const NAMES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<NamesRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "feature",
   ),
   Q.createRelationKeyMapper<NamesRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "nameKind",
   ),
 ] as const;

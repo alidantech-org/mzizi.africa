@@ -138,7 +138,7 @@ export const MANIFESTS_AS_MANY_RELATION_CONFIG = {
 
 export const MANIFESTS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ManifestsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "kind",
   ),
 ] as const;

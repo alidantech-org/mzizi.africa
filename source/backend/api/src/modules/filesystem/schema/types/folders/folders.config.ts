@@ -144,7 +144,7 @@ export const FOLDERS_AS_MANY_RELATION_CONFIG = {
 
 export const FOLDERS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<FoldersRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "role",
   ),
 ] as const;

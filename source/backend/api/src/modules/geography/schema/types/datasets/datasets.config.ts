@@ -184,19 +184,19 @@ export const DATASETS_AS_MANY_RELATION_CONFIG = {
 
 export const DATASETS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<DatasetsRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "coverageFeature",
   ),
   Q.createRelationKeyMapper<DatasetsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "representation",
   ),
   Q.createRelationKeyMapper<DatasetsRelationKey>().one(
-    UnitConfig.UNIT_AS_ONE_RELATION_CONFIG,
+    () => UnitConfig.UNIT_AS_ONE_RELATION_CONFIG,
     "resolutionUnit",
   ),
   Q.createRelationKeyMapper<DatasetsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "subject",
   ),
 ] as const;

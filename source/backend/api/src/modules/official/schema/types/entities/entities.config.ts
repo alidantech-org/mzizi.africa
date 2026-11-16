@@ -152,15 +152,15 @@ export const ENTITIES_AS_MANY_RELATION_CONFIG = {
 
 export const ENTITIES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<EntitiesRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "kind",
   ),
   Q.createRelationKeyMapper<EntitiesRelationKey>().one(
-    CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
+    () => CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
     "registrationCountry",
   ),
   Q.createRelationKeyMapper<EntitiesRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
 ] as const;

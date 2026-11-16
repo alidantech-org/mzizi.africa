@@ -107,7 +107,7 @@ export const PLACES_AS_MANY_RELATION_CONFIG = {
 
 export const PLACES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<PlacesRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "feature",
   ),
 ] as const;

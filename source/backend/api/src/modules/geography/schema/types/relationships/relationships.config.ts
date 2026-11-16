@@ -158,19 +158,19 @@ export const RELATIONSHIPS_AS_MANY_RELATION_CONFIG = {
 
 export const RELATIONSHIPS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "objectFeature",
   ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "relationshipKind",
   ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "subjectFeature",
   ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "system",
   ),
 ] as const;

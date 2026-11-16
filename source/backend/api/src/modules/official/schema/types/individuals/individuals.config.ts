@@ -138,7 +138,7 @@ export const INDIVIDUALS_AS_MANY_RELATION_CONFIG = {
 
 export const INDIVIDUALS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<IndividualsRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
 ] as const;

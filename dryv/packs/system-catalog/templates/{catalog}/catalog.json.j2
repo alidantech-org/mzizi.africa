@@ -1,0 +1,18 @@
+{
+  "generatedBy": "dryv:mzizi.system-catalog",
+  "operations": [
+{%- for operation in operations %}{% set http = operation.facets.http %}
+    {
+      "name": {{ operation.name.pascal | tojson }},
+      "group": {{ operation.group.name.kebab | tojson }},
+      "feature": {{ operation.feature.name.kebab | tojson }},
+      "method": {{ http.method | tojson }},
+      "path": {{ http.path.local | tojson }},
+      "role": {{ operation.role | string | tojson }},
+      "inputs": [{% for binding in http.inputs %}{{ binding.port.name.camel | tojson }}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "output": {% if operation.output and operation.output.value.is.schema %}{{ operation.output.value.schema.name.pascal | tojson }}{% else %}null{% endif %},
+      "summary": {{ (operation.description or operation.name.title) | tojson }}
+    }{% if not loop.last %},{% endif %}
+{%- endfor %}
+  ]
+}

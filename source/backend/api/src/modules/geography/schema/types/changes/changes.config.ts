@@ -156,15 +156,15 @@ export const CHANGES_AS_MANY_RELATION_CONFIG = {
 
 export const CHANGES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ChangesRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "changeKind",
   ),
   Q.createRelationKeyMapper<ChangesRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "predecessorFeature",
   ),
   Q.createRelationKeyMapper<ChangesRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "successorFeature",
   ),
 ] as const;

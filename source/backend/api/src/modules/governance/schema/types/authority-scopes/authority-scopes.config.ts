@@ -171,27 +171,27 @@ export const AUTHORITY_SCOPES_AS_MANY_RELATION_CONFIG = {
 
 export const AUTHORITY_SCOPES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<AuthorityScopesRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "authorityKind",
   ),
   Q.createRelationKeyMapper<AuthorityScopesRelationKey>().one(
-    CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
+    () => CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
     "country",
   ),
   Q.createRelationKeyMapper<AuthorityScopesRelationKey>().one(
-    InstitutionsConfig.INSTITUTIONS_AS_ONE_RELATION_CONFIG,
+    () => InstitutionsConfig.INSTITUTIONS_AS_ONE_RELATION_CONFIG,
     "institution",
   ),
   Q.createRelationKeyMapper<AuthorityScopesRelationKey>().one(
-    OfficesConfig.OFFICES_AS_ONE_RELATION_CONFIG,
+    () => OfficesConfig.OFFICES_AS_ONE_RELATION_CONFIG,
     "office",
   ),
   Q.createRelationKeyMapper<AuthorityScopesRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
   Q.createRelationKeyMapper<AuthorityScopesRelationKey>().one(
-    UnitsConfig.UNITS_AS_ONE_RELATION_CONFIG,
+    () => UnitsConfig.UNITS_AS_ONE_RELATION_CONFIG,
     "unitFeature",
   ),
 ] as const;

@@ -171,19 +171,19 @@ export const NAMES_AS_MANY_RELATION_CONFIG = {
 
 export const NAMES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<NamesRelationKey>().one(
-    EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "entity",
   ),
   Q.createRelationKeyMapper<NamesRelationKey>().one(
-    IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
+    () => IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
     "individual",
   ),
   Q.createRelationKeyMapper<NamesRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "nameKind",
   ),
   Q.createRelationKeyMapper<NamesRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
 ] as const;

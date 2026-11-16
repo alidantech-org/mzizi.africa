@@ -132,6 +132,33 @@ export async function generate(): Promise<boolean> {
   return database("generate", []);
 }
 
+/** Generate the system catalogs (`catalog.json` beside each service) from the API and engine contracts. */
+export async function catalog(check = false): Promise<boolean> {
+  const stop = await ensureApi();
+  try {
+    const run = (app: string, pack: string): Step => {
+      const args = [
+        "bun",
+        `${dryvHome()}/source/apps/cli/bin/dryv.ts`,
+        "--api",
+        dryvApiUrl(),
+        "--yes",
+        "--no-input",
+        "generate",
+        "--app",
+        app,
+        "--pack",
+        pack,
+      ];
+      if (check) args.push("--check");
+      return step(`${app} catalog`, root, args, dryvEnv());
+    };
+    return await group("Dryv system catalogs", [run("api", "catalog-api"), run("engine", "catalog-engine")]);
+  } finally {
+    stop();
+  }
+}
+
 /** Trust the project packs; needed once per machine before the first generation. */
 export async function trust(): Promise<boolean> {
   const stop = await ensureApi();

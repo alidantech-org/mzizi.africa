@@ -158,15 +158,15 @@ export const ATTRIBUTIONS_AS_MANY_RELATION_CONFIG = {
 
 export const ATTRIBUTIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<AttributionsRelationKey>().one(
-    FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
+    () => FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
     "fileVersion",
   ),
   Q.createRelationKeyMapper<AttributionsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "licenseValue",
   ),
   Q.createRelationKeyMapper<AttributionsRelationKey>().one(
-    PublishersConfig.PUBLISHERS_AS_ONE_RELATION_CONFIG,
+    () => PublishersConfig.PUBLISHERS_AS_ONE_RELATION_CONFIG,
     "publisher",
   ),
 ] as const;

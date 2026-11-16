@@ -158,15 +158,15 @@ export const DOCUMENTS_AS_MANY_RELATION_CONFIG = {
 
 export const DOCUMENTS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<DocumentsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "kind",
   ),
   Q.createRelationKeyMapper<DocumentsRelationKey>().one(
-    PublishersConfig.PUBLISHERS_AS_ONE_RELATION_CONFIG,
+    () => PublishersConfig.PUBLISHERS_AS_ONE_RELATION_CONFIG,
     "publisher",
   ),
   Q.createRelationKeyMapper<DocumentsRelationKey>().one(
-    SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
+    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
     "source",
   ),
 ] as const;

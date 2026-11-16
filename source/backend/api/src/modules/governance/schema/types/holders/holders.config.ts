@@ -162,23 +162,23 @@ export const HOLDERS_AS_MANY_RELATION_CONFIG = {
 
 export const HOLDERS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<HoldersRelationKey>().one(
-    EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "appointedByEntity",
   ),
   Q.createRelationKeyMapper<HoldersRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "appointmentKind",
   ),
   Q.createRelationKeyMapper<HoldersRelationKey>().one(
-    IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
+    () => IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
     "individual",
   ),
   Q.createRelationKeyMapper<HoldersRelationKey>().one(
-    OfficesConfig.OFFICES_AS_ONE_RELATION_CONFIG,
+    () => OfficesConfig.OFFICES_AS_ONE_RELATION_CONFIG,
     "office",
   ),
   Q.createRelationKeyMapper<HoldersRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
 ] as const;

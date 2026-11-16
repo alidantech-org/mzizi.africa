@@ -1,0 +1,115 @@
+{
+  "generatedBy": "dryv:mzizi.system-catalog",
+  "operations": [
+    {
+      "name": "GetMyAccount",
+      "group": "auth",
+      "feature": "accounts",
+      "method": "GET",
+      "path": "/v1/account",
+      "role": "detail",
+      "inputs": [],
+      "output": "AccountRead",
+      "summary": "The signed-in person\u0027s own account."
+    },
+    {
+      "name": "ListAccounts",
+      "group": "auth",
+      "feature": "accounts",
+      "method": "GET",
+      "path": "/v1/admin/accounts",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "AccountCollection",
+      "summary": "Page through accounts, optionally by status. Administrators only."
+    },
+    {
+      "name": "BrowseUnits",
+      "group": "geography",
+      "feature": "places",
+      "method": "GET",
+      "path": "/v1/geography/units",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "UnitCollection",
+      "summary": "Browse administrative units with their names, optionally for one country or by code prefix."
+    },
+    {
+      "name": "GetUnit",
+      "group": "geography",
+      "feature": "places",
+      "method": "GET",
+      "path": "/v1/geography/units/{featureId}",
+      "role": "detail",
+      "inputs": ["featureId"],
+      "output": "UnitDetail",
+      "summary": "One administrative unit with its names."
+    },
+    {
+      "name": "BrowseInstitutions",
+      "group": "governance",
+      "feature": "institutions",
+      "method": "GET",
+      "path": "/v1/governance/institutions",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "InstitutionCollection",
+      "summary": "Page through public institutions with their names, optionally by code prefix."
+    },
+    {
+      "name": "GetInstitution",
+      "group": "governance",
+      "feature": "institutions",
+      "method": "GET",
+      "path": "/v1/governance/institutions/{institutionId}",
+      "role": "detail",
+      "inputs": ["institutionId"],
+      "output": "InstitutionDetail",
+      "summary": "One institution with its mandates and offices."
+    },
+    {
+      "name": "GetOffice",
+      "group": "governance",
+      "feature": "institutions",
+      "method": "GET",
+      "path": "/v1/governance/offices/{officeId}",
+      "role": "detail",
+      "inputs": ["officeId"],
+      "output": "OfficeDetail",
+      "summary": "One office with everyone who has held it, newest first."
+    },
+    {
+      "name": "BrowseSchemeMembers",
+      "group": "reference",
+      "feature": "catalogue",
+      "method": "GET",
+      "path": "/v1/reference/values",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "MemberCollection",
+      "summary": "Page through the members of one scheme, including superseded members."
+    },
+    {
+      "name": "BrowseSchemes",
+      "group": "reference",
+      "feature": "catalogue",
+      "method": "GET",
+      "path": "/v1/reference/schemes",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "SchemeCollection",
+      "summary": "Page through classification schemes in code order."
+    },
+    {
+      "name": "LookupMember",
+      "group": "reference",
+      "feature": "catalogue",
+      "method": "GET",
+      "path": "/v1/reference/lookup",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "FoundMember",
+      "summary": "Find one classification member from its code (codes are unique across every scheme)."
+    }
+  ]
+}

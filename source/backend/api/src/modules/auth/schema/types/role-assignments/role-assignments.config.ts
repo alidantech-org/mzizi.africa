@@ -175,31 +175,31 @@ export const ROLE_ASSIGNMENTS_AS_MANY_RELATION_CONFIG = {
 
 export const ROLE_ASSIGNMENTS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<RoleAssignmentsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "account",
   ),
   Q.createRelationKeyMapper<RoleAssignmentsRelationKey>().one(
-    DelegationsConfig.DELEGATIONS_AS_ONE_RELATION_CONFIG,
+    () => DelegationsConfig.DELEGATIONS_AS_ONE_RELATION_CONFIG,
     "delegation",
   ),
   Q.createRelationKeyMapper<RoleAssignmentsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "grantedByRelation",
   ),
   Q.createRelationKeyMapper<RoleAssignmentsRelationKey>().one(
-    MembershipsConfig.MEMBERSHIPS_AS_ONE_RELATION_CONFIG,
+    () => MembershipsConfig.MEMBERSHIPS_AS_ONE_RELATION_CONFIG,
     "membership",
   ),
   Q.createRelationKeyMapper<RoleAssignmentsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "revokedByRelation",
   ),
   Q.createRelationKeyMapper<RoleAssignmentsRelationKey>().one(
-    RolesConfig.ROLES_AS_ONE_RELATION_CONFIG,
+    () => RolesConfig.ROLES_AS_ONE_RELATION_CONFIG,
     "role",
   ),
   Q.createRelationKeyMapper<RoleAssignmentsRelationKey>().one(
-    ScopesConfig.SCOPES_AS_ONE_RELATION_CONFIG,
+    () => ScopesConfig.SCOPES_AS_ONE_RELATION_CONFIG,
     "scope",
   ),
 ] as const;

@@ -147,19 +147,19 @@ export const DELEGATIONS_AS_MANY_RELATION_CONFIG = {
 
 export const DELEGATIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<DelegationsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "delegateAccount",
   ),
   Q.createRelationKeyMapper<DelegationsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "delegatorAccount",
   ),
   Q.createRelationKeyMapper<DelegationsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "revokedByRelation",
   ),
   Q.createRelationKeyMapper<DelegationsRelationKey>().one(
-    ScopesConfig.SCOPES_AS_ONE_RELATION_CONFIG,
+    () => ScopesConfig.SCOPES_AS_ONE_RELATION_CONFIG,
     "scope",
   ),
 ] as const;

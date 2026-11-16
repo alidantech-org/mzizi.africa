@@ -1,0 +1,170 @@
+{
+  "generatedBy": "dryv:mzizi.system-catalog",
+  "operations": [
+    {
+      "name": "CancelJob",
+      "group": "engine",
+      "feature": "jobs",
+      "method": "POST",
+      "path": "/v1/jobs/{jobId}/cancel",
+      "role": "update",
+      "inputs": ["jobId"],
+      "output": "Job",
+      "summary": "Cancel a queued or running job."
+    },
+    {
+      "name": "GetJob",
+      "group": "engine",
+      "feature": "jobs",
+      "method": "GET",
+      "path": "/v1/jobs/{jobId}",
+      "role": "detail",
+      "inputs": ["jobId"],
+      "output": "Job",
+      "summary": "One job with its status and result."
+    },
+    {
+      "name": "ListCapabilities",
+      "group": "engine",
+      "feature": "jobs",
+      "method": "GET",
+      "path": "/capabilities",
+      "role": "list",
+      "inputs": [],
+      "output": "CapabilityList",
+      "summary": "What the engine can run."
+    },
+    {
+      "name": "ListJobs",
+      "group": "engine",
+      "feature": "jobs",
+      "method": "GET",
+      "path": "/v1/jobs",
+      "role": "list",
+      "inputs": ["status", "limit"],
+      "output": "JobList",
+      "summary": "Recent jobs, newest first, optionally by status."
+    },
+    {
+      "name": "SubmitJob",
+      "group": "engine",
+      "feature": "jobs",
+      "method": "POST",
+      "path": "/v1/jobs",
+      "role": "create",
+      "inputs": ["body"],
+      "output": "Job",
+      "summary": "Queue a job. Repeating an idempotency key returns the first job."
+    },
+    {
+      "name": "GetRun",
+      "group": "runtime",
+      "feature": "runs",
+      "method": "GET",
+      "path": "/v1/runs/{runId}",
+      "role": "detail",
+      "inputs": ["runId"],
+      "output": "Run",
+      "summary": "One run with its status and the jobs it started."
+    },
+    {
+      "name": "ListRunEvents",
+      "group": "runtime",
+      "feature": "runs",
+      "method": "GET",
+      "path": "/v1/run-events",
+      "role": "list",
+      "inputs": ["runId", "after", "limit"],
+      "output": "EventList",
+      "summary": "A run\u0027s events in order, optionally only those after a sequence number (for polling)."
+    },
+    {
+      "name": "ListRuns",
+      "group": "runtime",
+      "feature": "runs",
+      "method": "GET",
+      "path": "/v1/runs",
+      "role": "list",
+      "inputs": ["status", "limit"],
+      "output": "RunList",
+      "summary": "Recent runs, newest first, optionally by status."
+    },
+    {
+      "name": "DecideCandidate",
+      "group": "staging",
+      "feature": "candidates",
+      "method": "POST",
+      "path": "/v1/candidates/{candidateId}/decision",
+      "role": "update",
+      "inputs": ["candidateId", "decision"],
+      "output": "Candidate",
+      "summary": "Record a review decision. Approval queues promotion through the change ledger; nothing is written to domain tables here."
+    },
+    {
+      "name": "GetCandidate",
+      "group": "staging",
+      "feature": "candidates",
+      "method": "GET",
+      "path": "/v1/candidates/{candidateId}",
+      "role": "detail",
+      "inputs": ["candidateId"],
+      "output": "Candidate",
+      "summary": "One candidate with its payload, confidence and the captures it came from."
+    },
+    {
+      "name": "GetCapture",
+      "group": "staging",
+      "feature": "captures",
+      "method": "GET",
+      "path": "/v1/captures/{captureId}",
+      "role": "detail",
+      "inputs": ["captureId"],
+      "output": "Capture",
+      "summary": "One capture: where it came from, its hash and where the raw bytes are stored."
+    },
+    {
+      "name": "ListCandidates",
+      "group": "staging",
+      "feature": "candidates",
+      "method": "GET",
+      "path": "/v1/candidates",
+      "role": "list",
+      "inputs": ["kind", "status", "limit"],
+      "output": "CandidateList",
+      "summary": "Candidates awaiting or past review, optionally by kind or status."
+    },
+    {
+      "name": "ListCaptures",
+      "group": "staging",
+      "feature": "captures",
+      "method": "GET",
+      "path": "/v1/captures",
+      "role": "list",
+      "inputs": ["sourceId", "limit"],
+      "output": "CaptureList",
+      "summary": "Recent captures, newest first, optionally for one source."
+    },
+    {
+      "name": "GetHealth",
+      "group": "system",
+      "feature": "health",
+      "method": "GET",
+      "path": "/health",
+      "role": "detail",
+      "inputs": [],
+      "output": "Health",
+      "summary": "Liveness: the process is up."
+    },
+    {
+      "name": "GetReadiness",
+      "group": "system",
+      "feature": "health",
+      "method": "GET",
+      "path": "/ready",
+      "role": "detail",
+      "inputs": [],
+      "output": "Readiness",
+      "summary": "Readiness: each dependency and whether it answers."
+    }
+  ]
+}

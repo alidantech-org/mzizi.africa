@@ -147,7 +147,7 @@ export const EVIDENCE_AS_MANY_RELATION_CONFIG = {
 
 export const EVIDENCE_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<EvidenceRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "kind",
   ),
 ] as const;

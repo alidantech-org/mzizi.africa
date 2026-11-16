@@ -149,11 +149,11 @@ export const INVITATIONS_AS_MANY_RELATION_CONFIG = {
 
 export const INVITATIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<InvitationsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "acceptedAccount",
   ),
   Q.createRelationKeyMapper<InvitationsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "invitedByRelation",
   ),
 ] as const;

@@ -167,23 +167,23 @@ export const CITATIONS_AS_MANY_RELATION_CONFIG = {
 
 export const CITATIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<CitationsRelationKey>().one(
-    CapturesConfig.CAPTURES_AS_ONE_RELATION_CONFIG,
+    () => CapturesConfig.CAPTURES_AS_ONE_RELATION_CONFIG,
     "capture",
   ),
   Q.createRelationKeyMapper<CitationsRelationKey>().one(
-    DocumentsConfig.DOCUMENTS_AS_ONE_RELATION_CONFIG,
+    () => DocumentsConfig.DOCUMENTS_AS_ONE_RELATION_CONFIG,
     "document",
   ),
   Q.createRelationKeyMapper<CitationsRelationKey>().one(
-    EvidenceConfig.EVIDENCE_AS_ONE_RELATION_CONFIG,
+    () => EvidenceConfig.EVIDENCE_AS_ONE_RELATION_CONFIG,
     "evidence",
   ),
   Q.createRelationKeyMapper<CitationsRelationKey>().one(
-    FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
+    () => FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
     "fileVersion",
   ),
   Q.createRelationKeyMapper<CitationsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "locatorKind",
   ),
 ] as const;

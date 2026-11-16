@@ -154,15 +154,15 @@ export const INSTITUTIONS_AS_MANY_RELATION_CONFIG = {
 
 export const INSTITUTIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
-    EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "entity",
   ),
   Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "institutionKind",
   ),
   Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
 ] as const;

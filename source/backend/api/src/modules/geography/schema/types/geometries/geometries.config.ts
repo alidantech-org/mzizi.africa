@@ -163,11 +163,11 @@ export const GEOMETRIES_AS_MANY_RELATION_CONFIG = {
 
 export const GEOMETRIES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<GeometriesRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "feature",
   ),
   Q.createRelationKeyMapper<GeometriesRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "geometryRole",
   ),
 ] as const;

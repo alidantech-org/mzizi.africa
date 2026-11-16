@@ -172,23 +172,23 @@ export const IDENTIFIERS_AS_MANY_RELATION_CONFIG = {
 
 export const IDENTIFIERS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<IdentifiersRelationKey>().one(
-    EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "entity",
   ),
   Q.createRelationKeyMapper<IdentifiersRelationKey>().one(
-    IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
+    () => IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
     "individual",
   ),
   Q.createRelationKeyMapper<IdentifiersRelationKey>().one(
-    EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "issuerEntity",
   ),
   Q.createRelationKeyMapper<IdentifiersRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "scheme",
   ),
   Q.createRelationKeyMapper<IdentifiersRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
 ] as const;

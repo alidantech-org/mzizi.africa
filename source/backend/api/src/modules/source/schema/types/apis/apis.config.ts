@@ -127,7 +127,7 @@ export const APIS_AS_MANY_RELATION_CONFIG = {
 
 export const APIS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ApisRelationKey>().one(
-    SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
+    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
     "source",
   ),
 ] as const;

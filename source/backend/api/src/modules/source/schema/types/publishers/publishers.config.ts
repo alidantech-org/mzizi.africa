@@ -149,15 +149,15 @@ export const PUBLISHERS_AS_MANY_RELATION_CONFIG = {
 
 export const PUBLISHERS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<PublishersRelationKey>().one(
-    CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
+    () => CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
     "country",
   ),
   Q.createRelationKeyMapper<PublishersRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "kind",
   ),
   Q.createRelationKeyMapper<PublishersRelationKey>().one(
-    EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "officialEntity",
   ),
 ] as const;

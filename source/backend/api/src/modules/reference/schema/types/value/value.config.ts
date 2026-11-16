@@ -135,7 +135,7 @@ export const VALUE_AS_MANY_RELATION_CONFIG = {
 
 export const VALUE_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ValueRelationKey>().one(
-    SchemeConfig.SCHEME_AS_ONE_RELATION_CONFIG,
+    () => SchemeConfig.SCHEME_AS_ONE_RELATION_CONFIG,
     "scheme",
   ),
 ] as const;

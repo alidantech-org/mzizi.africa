@@ -159,19 +159,19 @@ export const OFFICES_AS_MANY_RELATION_CONFIG = {
 
 export const OFFICES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<OfficesRelationKey>().one(
-    InstitutionsConfig.INSTITUTIONS_AS_ONE_RELATION_CONFIG,
+    () => InstitutionsConfig.INSTITUTIONS_AS_ONE_RELATION_CONFIG,
     "institution",
   ),
   Q.createRelationKeyMapper<OfficesRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "officeKind",
   ),
   Q.createRelationKeyMapper<OfficesRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
   Q.createRelationKeyMapper<OfficesRelationKey>().one(
-    UnitsConfig.UNITS_AS_ONE_RELATION_CONFIG,
+    () => UnitsConfig.UNITS_AS_ONE_RELATION_CONFIG,
     "unitFeature",
   ),
 ] as const;

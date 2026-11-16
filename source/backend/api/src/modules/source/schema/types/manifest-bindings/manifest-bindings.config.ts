@@ -153,11 +153,11 @@ export const MANIFEST_BINDINGS_AS_MANY_RELATION_CONFIG = {
 
 export const MANIFEST_BINDINGS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ManifestBindingsRelationKey>().one(
-    ManifestReleasesConfig.MANIFEST_RELEASES_AS_ONE_RELATION_CONFIG,
+    () => ManifestReleasesConfig.MANIFEST_RELEASES_AS_ONE_RELATION_CONFIG,
     "manifestRelease",
   ),
   Q.createRelationKeyMapper<ManifestBindingsRelationKey>().one(
-    SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
+    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
     "source",
   ),
 ] as const;

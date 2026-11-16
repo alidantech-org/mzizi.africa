@@ -130,7 +130,7 @@ export const WEBSITES_AS_MANY_RELATION_CONFIG = {
 
 export const WEBSITES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<WebsitesRelationKey>().one(
-    SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
+    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
     "source",
   ),
 ] as const;

@@ -183,11 +183,11 @@ export const FILE_VERSIONS_AS_MANY_RELATION_CONFIG = {
 
 export const FILE_VERSIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<FileVersionsRelationKey>().one(
-    FileExtensionsConfig.FILE_EXTENSIONS_AS_ONE_RELATION_CONFIG,
+    () => FileExtensionsConfig.FILE_EXTENSIONS_AS_ONE_RELATION_CONFIG,
     "fileExtension",
   ),
   Q.createRelationKeyMapper<FileVersionsRelationKey>().one(
-    FilesConfig.FILES_AS_ONE_RELATION_CONFIG,
+    () => FilesConfig.FILES_AS_ONE_RELATION_CONFIG,
     "file",
   ),
 ] as const;

@@ -119,11 +119,11 @@ export const UNITS_AS_MANY_RELATION_CONFIG = {
 
 export const UNITS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<UnitsRelationKey>().one(
-    CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
+    () => CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
     "country",
   ),
   Q.createRelationKeyMapper<UnitsRelationKey>().one(
-    FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "feature",
   ),
 ] as const;

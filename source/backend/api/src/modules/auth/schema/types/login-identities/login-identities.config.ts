@@ -136,7 +136,7 @@ export const LOGIN_IDENTITIES_AS_MANY_RELATION_CONFIG = {
 
 export const LOGIN_IDENTITIES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<LoginIdentitiesRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "account",
   ),
 ] as const;

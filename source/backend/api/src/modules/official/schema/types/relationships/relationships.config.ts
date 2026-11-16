@@ -171,27 +171,27 @@ export const RELATIONSHIPS_AS_MANY_RELATION_CONFIG = {
 
 export const RELATIONSHIPS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "fromEntity",
   ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
+    () => IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
     "fromIndividual",
   ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "kind",
   ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
+    () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
   ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "toEntity",
   ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
+    () => IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
     "toIndividual",
   ),
 ] as const;

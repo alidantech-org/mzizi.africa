@@ -114,11 +114,11 @@ export const DELEGATION_ROLES_AS_MANY_RELATION_CONFIG = {
 
 export const DELEGATION_ROLES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<DelegationRolesRelationKey>().one(
-    DelegationsConfig.DELEGATIONS_AS_ONE_RELATION_CONFIG,
+    () => DelegationsConfig.DELEGATIONS_AS_ONE_RELATION_CONFIG,
     "delegation",
   ),
   Q.createRelationKeyMapper<DelegationRolesRelationKey>().one(
-    RolesConfig.ROLES_AS_ONE_RELATION_CONFIG,
+    () => RolesConfig.ROLES_AS_ONE_RELATION_CONFIG,
     "role",
   ),
 ] as const;

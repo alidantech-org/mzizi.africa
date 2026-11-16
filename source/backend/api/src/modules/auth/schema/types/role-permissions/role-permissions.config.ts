@@ -126,15 +126,15 @@ export const ROLE_PERMISSIONS_AS_MANY_RELATION_CONFIG = {
 
 export const ROLE_PERMISSIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<RolePermissionsRelationKey>().one(
-    AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
+    () => AccountsConfig.ACCOUNTS_AS_ONE_RELATION_CONFIG,
     "grantedByRelation",
   ),
   Q.createRelationKeyMapper<RolePermissionsRelationKey>().one(
-    PermissionsConfig.PERMISSIONS_AS_ONE_RELATION_CONFIG,
+    () => PermissionsConfig.PERMISSIONS_AS_ONE_RELATION_CONFIG,
     "permission",
   ),
   Q.createRelationKeyMapper<RolePermissionsRelationKey>().one(
-    RolesConfig.ROLES_AS_ONE_RELATION_CONFIG,
+    () => RolesConfig.ROLES_AS_ONE_RELATION_CONFIG,
     "role",
   ),
 ] as const;

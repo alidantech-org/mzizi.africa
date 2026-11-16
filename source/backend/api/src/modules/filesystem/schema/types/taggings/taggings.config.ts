@@ -138,15 +138,15 @@ export const TAGGINGS_AS_MANY_RELATION_CONFIG = {
 
 export const TAGGINGS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<TaggingsRelationKey>().one(
-    FilesConfig.FILES_AS_ONE_RELATION_CONFIG,
+    () => FilesConfig.FILES_AS_ONE_RELATION_CONFIG,
     "file",
   ),
   Q.createRelationKeyMapper<TaggingsRelationKey>().one(
-    FoldersConfig.FOLDERS_AS_ONE_RELATION_CONFIG,
+    () => FoldersConfig.FOLDERS_AS_ONE_RELATION_CONFIG,
     "folder",
   ),
   Q.createRelationKeyMapper<TaggingsRelationKey>().one(
-    TagsConfig.TAGS_AS_ONE_RELATION_CONFIG,
+    () => TagsConfig.TAGS_AS_ONE_RELATION_CONFIG,
     "tag",
   ),
 ] as const;

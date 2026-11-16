@@ -181,11 +181,11 @@ export const MANIFEST_RELEASES_AS_MANY_RELATION_CONFIG = {
 
 export const MANIFEST_RELEASES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ManifestReleasesRelationKey>().one(
-    FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
+    () => FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
     "fileVersion",
   ),
   Q.createRelationKeyMapper<ManifestReleasesRelationKey>().one(
-    ManifestsConfig.MANIFESTS_AS_ONE_RELATION_CONFIG,
+    () => ManifestsConfig.MANIFESTS_AS_ONE_RELATION_CONFIG,
     "manifest",
   ),
 ] as const;
