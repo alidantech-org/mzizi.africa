@@ -229,3 +229,21 @@ def test_the_runtime_exposes_operations_and_calls_them_by_name():
     assert engine.call("echo.say", {"text": "hi"}) == {"said": "hi"}
     with pytest.raises(KeyError):
         engine.call("missing", {})
+
+
+def test_the_default_runtime_registers_its_packages_and_reports_their_health():
+    from mzizi_engine.runtime.assembly import build_default_runtime
+    from mzizi_engine.runtime.http.settings import Settings
+
+    engine = build_default_runtime(Settings(limits={"crawler": 2}))
+    engine.start()
+    try:
+        health = engine.health()
+        assert health.state is RuntimeState.RUNNING
+        by_name = {c.name: c for c in health.capabilities}
+        assert set(by_name) == {"crawler", "browser"} and by_name["crawler"].max_concurrency == 2
+        assert "scraping.links" in engine.operations.names()
+        assert engine.call("scraping.links", {"html": '<a href="/x">X</a>', "base_url": "https://a.org/"})["links"]
+    finally:
+        engine.stop()
+    assert engine.state is RuntimeState.STOPPED

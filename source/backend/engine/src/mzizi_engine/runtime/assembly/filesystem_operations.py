@@ -12,8 +12,8 @@ from collections.abc import Callable
 from pathlib import Path
 
 from mzizi_engine.jsonvalue import Payload
-from mzizi_engine.persistence.filesystem import PostgresRegistry
-from mzizi_engine.persistence.postgres import connect
+from mzizi_engine.persistence.postgres.connection import connect
+from mzizi_engine.persistence.postgres.filesystem import PostgresRegistry
 from mzizi_engine.runtime.assembly.filesystem_settings import FilesystemSettings
 from mzizi_engine.runtime.operations import Operation, OperationRegistry
 from mzizi_filesystem import (

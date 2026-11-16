@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from mzizi_fetch.models import Frozen
+from mzizi_fetch.shared.models import Frozen
 
 
 class FetchResult(Frozen):

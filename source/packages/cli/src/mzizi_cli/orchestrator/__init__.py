@@ -1,1 +1,1 @@
-"""The single public entry of the CLI package (arrives with milestone 3)."""
+"""The CLI entry: the Typer app and the command runner."""

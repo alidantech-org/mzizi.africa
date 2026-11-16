@@ -10,29 +10,22 @@ dependencies = [
   "httpx",
   "pyjwt[crypto]",
   "pyyaml",
+  "pymongo>=4.20.0",
   "psycopg[binary]",
   "mzizi-filesystem",
   "mzizi-manifest",
-  "mzizi-scraping",
   "mzizi-fetch",
   "mzizi-search",
+  "mzizi-crawler",
+  "mzizi-browser",
   "mzizi-extraction",
-  "tldextract>=5.4.0",
 ]
 
 [project.scripts]
 mzizi-engine = "mzizi_engine.cli.main:main"
 
 [project.optional-dependencies]
-browser = [
-    "patchright>=1.64.4",
-    "playwright>=1.65.1",
-]
-services = [
-    "fastembed>=0.9.1",
-    "pymongo>=4.20.0",
-    "qdrant-client>=1.20.0",
-]
+browser = ["mzizi-browser[browser]"]
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -47,9 +40,10 @@ where = ["src"]
 [tool.uv.sources]
 mzizi-filesystem = { workspace = true }
 mzizi-manifest = { workspace = true }
-mzizi-scraping = { workspace = true }
 mzizi-fetch = { workspace = true }
 mzizi-search = { workspace = true }
+mzizi-crawler = { workspace = true }
+mzizi-browser = { workspace = true }
 mzizi-extraction = { workspace = true }
 
 [tool.pytest.ini_options]

@@ -1,1 +1,1 @@
-"""One self-contained folder per CLI capability."""
+"""One folder per CLI capability."""

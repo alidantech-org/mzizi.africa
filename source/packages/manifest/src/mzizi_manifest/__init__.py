@@ -1,7 +1,6 @@
-"""Shared input-contract support: seed manifest and folder metadata, site-structure bundle validation."""
+"""Shared input-contract support: the seed manifest and folder metadata, and the lock."""
 
-from mzizi_manifest import bundle, seed_registry
-from mzizi_manifest.validate import Report, validate
+from mzizi_manifest.features.seeds import seed_registry
 
-__all__ = ["Report", "bundle", "seed_registry", "validate"]
+__all__ = ["seed_registry"]
 __version__ = "0.1.0"

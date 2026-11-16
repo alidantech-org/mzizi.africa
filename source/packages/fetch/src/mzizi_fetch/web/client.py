@@ -21,7 +21,7 @@ import httpx
 from mzizi_fetch.http.cache import CachedResponse, ResponseCache
 from mzizi_fetch.http.models import FetchResult
 from mzizi_fetch.http.rate import RateLimiter
-from mzizi_fetch.models import Frozen
+from mzizi_fetch.shared.models import Frozen
 from mzizi_fetch.web.blocks import Block, BlockDecision, BlockPolicy, Response, detect_block
 from mzizi_fetch.web.policy import Decision, SourcePolicy, robots_decision, scope_decision
 from mzizi_fetch.web.urls import host_of, normalize, origin_of

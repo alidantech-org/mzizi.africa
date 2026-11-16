@@ -1,9 +1,9 @@
 [project]
 name = "mzizi-cli"
 version = "0.1.0"
-description = "The Mzizi command line: a small front door that builds the engine runtime and calls its exposed operations."
+description = "The Mzizi developer command line: a front door that builds the engine runtime and calls its operations on local files and URLs."
 requires-python = ">=3.12"
-dependencies = ["pydantic>=2.7", "rich>=15.0.0", "typer>=0.29.1", "mzizi-engine"]
+dependencies = ["pydantic>=2.7", "rich>=15.0.0", "typer>=0.29.1", "questionary>=2.1.1", "mzizi-engine", "mzizi-crawler", "mzizi-browser", "mzizi-extraction", "mzizi-fetch"]
 
 [project.scripts]
 mzizi = "mzizi_cli.orchestrator.app:main"
@@ -23,3 +23,7 @@ testpaths = ["tests"]
 
 [tool.uv.sources]
 mzizi-engine = { workspace = true }
+mzizi-crawler = { workspace = true }
+mzizi-browser = { workspace = true }
+mzizi-extraction = { workspace = true }
+mzizi-fetch = { workspace = true }

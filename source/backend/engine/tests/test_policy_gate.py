@@ -3,8 +3,8 @@ from datetime import datetime
 
 import pytest
 
-from mzizi_engine.policy import decide
-from mzizi_manifest.paths import SEED_ROOT
+from mzizi_engine.runtime.policy import decide
+from mzizi_manifest.shared.paths import SEED_ROOT
 
 VECTORS = json.loads((SEED_ROOT / "_fixtures" / "contracts" / "gate-vectors.json").read_text())
 

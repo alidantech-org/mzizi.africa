@@ -2,6 +2,6 @@
 
 import sys
 
-from mzizi_manifest.cli import main
+from mzizi_manifest.orchestrator.cli import main
 
 sys.exit(main())

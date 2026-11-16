@@ -107,3 +107,11 @@ The full module-by-module inventory is a separate task.
 2. **Authentication and authorisation.** It could be a package with Dryv tables or part of the runtime.
 3. **Crawl and browser.** They are separate packages by default so the browser stays reusable; this can be revisited.
 4. **Placement of text helpers** such as `markdown_repair` (`scraping` or `extraction`).
+
+## Corrections after owner review, 16 November 2026
+
+- **Data types and models belong to the engine**, not to a shared package: the JSON payload types and `OperationSpec` live in `mzizi_engine.jsonvalue` and `mzizi_engine.runtime.operations`. Packages return typed models; the engine decides which functions to expose as operations and under which names (`runtime/assembly/`).
+- **Persistence is the engine's** (PostgreSQL, MongoDB, vector skeleton), never a package. A package that needs to record something defines a port; the engine implements it.
+- **Policy is not a package.** The collection gate is engine logic (`runtime/policy/`); personal data is not filtered at collection, only when a public API is built.
+- **One crawler package** covers scraping, crawling, site watching and site-structure bundles; **search by scraping** belongs to it, and `search` stays for API-based search.
+- **No dev services, no test-support package.**

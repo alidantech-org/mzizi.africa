@@ -11,10 +11,12 @@ from mzizi_extraction.document import (
     OcrMode,
     TableColumn,
     TableSchema,
+    chunk_markdown,
     encode_document,
     extract_html_document,
     extract_pdf_document,
     learn_boilerplate,
+    render_markdown,
 )
 from mzizi_extraction.encode import WireOutput, encode_output
 from mzizi_extraction.geo import extract_geojson
@@ -46,6 +48,7 @@ __all__ = [
     "TableColumn",
     "TableSchema",
     "WireOutput",
+    "chunk_markdown",
     "encode_document",
     "encode_output",
     "extract_csv",
@@ -56,5 +59,6 @@ __all__ = [
     "extract_pdf_document",
     "learn_boilerplate",
     "parse_profile",
+    "render_markdown",
 ]
 __version__ = "0.1.0"

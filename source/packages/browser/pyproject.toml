@@ -1,0 +1,26 @@
+[project]
+name = "mzizi-browser"
+version = "0.1.0"
+description = "Browser automation behind one orchestrator: interchangeable Playwright/Patchright sessions, tabs, navigation traversal, media inventory, challenge detection and scripted actions."
+requires-python = ">=3.12"
+dependencies = ["pydantic>=2.7", "pyyaml", "beautifulsoup4", "mzizi-fetch", "mzizi-extraction"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[project.optional-dependencies]
+browser = ["patchright>=1.64.4", "playwright>=1.65.1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.uv.sources]
+mzizi-fetch = { workspace = true }
+mzizi-extraction = { workspace = true }

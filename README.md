@@ -14,8 +14,8 @@ source/
 │   └── www/                    Next.js public landing experience
 ├── backend/
 │   ├── api/                    NestJS product API
-│   ├── database/               Bun TypeScript database service and CLI
-│   ├── engine/                 Python operational API, job runner and capability orchestrator
+│   ├── database/               Bun CLI, generated SQL and immutable migrations (no server)
+│   ├── engine/                 Python runtime: EngineRuntime, HTTP front door, persistence (PostgreSQL, MongoDB)
 │   └── README.md
 ├── packages/
 │   ├── extraction/             PDF, GeoJSON, CSV and JSON extraction, with OCR
@@ -38,13 +38,13 @@ source/
 ## How the active components fit
 
 - The public site, research dashboard and Flutter client are consumers. They do not own canonical domain rules.
-- The NestJS API serves product contracts and forwards authorized write operations to the database service.
-- The TypeScript database service applies SQL releases and owns named database operations. The disposable local database is `mzizi_new`.
-- The Python engine runs operational jobs and calls reusable capabilities.
-- Python packages provide fetching, scraping, extraction (including OCR), filesystem operations and manifest validation. There is no intelligence service yet; `source/backend/agent/` is a README-only proposal.
+- The NestJS API serves product contracts and connects to PostgreSQL directly with its own role.
+- The Bun database CLI applies SQL releases; there is no database service.
+- The Python engine is the runtime: it assembles package capabilities, schedules their work and owns PostgreSQL, MongoDB and (later) vector persistence.
+- Python packages provide browsing, crawling and scraping, fetching, extraction (including OCR), filesystem operations, search and manifest validation. There is no intelligence service yet; `source/backend/agent/` is a README-only proposal.
 - SQL lives in `source/schema/database/`; site, seed, exchange and pipeline input shapes live in the corresponding `source/schema/` folders.
 
-The evidence path is intended to preserve the original artifact while creating attributable extraction and review proposals. Some handoffs remain in migration: filesystem and seed operations still have Python PostgreSQL callers, the engine schema is provisional, and the Python workspace references a `mzizi-database` member that is absent from the source tree. The active database service is `source/backend/database`; this mismatch is documented rather than treated as a second package.
+The evidence path is intended to preserve the original artifact while creating attributable extraction and review proposals. Some handoffs are still in migration: persistent job state, per-folder authorization and the vector store are not built yet.
 
 ## Run from the repository root
 

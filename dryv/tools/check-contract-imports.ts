@@ -1,3 +1,4 @@
+/** Checks that every Dryv contract file imports only what the contract rules allow (run by `bun run dryv:check`). */
 import { Glob } from "bun";
 import { resolve } from "node:path";
 import ts from "typescript-parser";

@@ -6,7 +6,7 @@ import hashlib
 from pathlib import Path
 
 from mzizi_fetch.http.models import FetchResult
-from mzizi_fetch.models import Frozen
+from mzizi_fetch.shared.models import Frozen
 
 VALIDATORS = ("etag", "last-modified")
 

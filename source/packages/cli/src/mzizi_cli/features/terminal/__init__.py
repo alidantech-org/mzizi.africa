@@ -1,1 +1,1 @@
-"""Terminal output and logging."""
+"""Terminal output, prompts and bounded path search."""

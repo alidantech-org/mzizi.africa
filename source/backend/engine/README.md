@@ -1,59 +1,46 @@
 # Mzizi engine
 
-One complete Python project: orchestration, an operational API, workers and the callback outbox. It orchestrates the packages in `source/packages`; it does not duplicate the NestJS product API, has no user interface, no user accounts, and never writes domain schemas. The NestJS API owns decisions, the UI and canonical database writes; the engine prepares data into artifacts and proposals and delivers results to NestJS.
+The Python runtime. It does three things: it assembles package capabilities into one `EngineRuntime` and schedules their work, it persists through PostgreSQL adapters over the Dryv-generated row models, and it exposes the runtime to front doors (its own command line and a local HTTP API). Every capability lives in a package under `source/packages/` with one orchestrator; the engine imports orchestrators only in the runtime's composition root. Design: [ENGINE_RUNTIME_AND_PACKAGES](../../../.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md), module history: [ENGINE_MODULE_INVENTORY](../../../.docs/design/architecture/ENGINE_MODULE_INVENTORY.md).
 
-## Runtime (target entry point, skeleton only)
+```text
+src/mzizi_engine/
+  runtime/
+    runtime.py, operations.py     EngineRuntime: registration, config snapshots, concurrency plans, operations registry, call()
+    assembly/                     composition root: build_default_runtime(), default operations, filesystem and search wiring
+    executor/                     job queue, retries, cancellation, events, outbox; the in-memory job store
+    http/                         the local FastAPI app, authentication, settings
+    policy/                       the collection gate (typed assessments, checks, decision)
+    contracts/, tools/            runtime contracts and helpers
+  persistence/                    postgres/ (filesystem registry over the generated row models), mongo/ (activity store), vector/ (skeleton); see ENGINE_PERSISTENCE
+  cli/                            `mzizi-engine` (serve, capabilities, check)
+  api/                            Dryv-generated routes and schemas (never hand-edited)
+```
 
-`mzizi_engine.runtime` is the start of the restructure in [ENGINE_RUNTIME_AND_PACKAGES](../../../.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md): one `EngineRuntime` class that registers capabilities with a typed configuration and an execution plan, hands each job the configuration snapshot current when it started, limits concurrency per capability, cancels jobs on stop and reports health. It is new, tested with a stub capability, and **nothing in the engine uses it yet**: `executor.py`, `capabilities.py` and `app.py` still run the system, now over the runtime's `OperationRegistry` (`runtime.operations`), until capabilities move into packages and are registered here. Job timeouts and the persistence bindings are not part of the skeleton.
+The developer command line `mzizi` is the separate [`mzizi-cli`](../../packages/cli/README.md) package; the engine knows nothing about it.
 
 ## Run
 
-The Python workspace installs cleanly from a checkout (`uv sync --all-packages`): no package or the engine depends on a `mzizi-database` project that does not exist. `mzizi_engine.ports.database` is the one module in the workspace that opens a database connection (`Connection`/`Cursor` protocols, a psycopg adapter today); `source/packages/filesystem` and the other packages hold no database code at all (TSK-E55B1BC4011A).
-
 ```bash
-uv sync --all-packages
-bun run db migrate                                       # ordered schema releases are applied by the Bun database owner
-bun run db provision-local-roles && bun run db verify
-ENGINE_AUTH=off ENGINE_STORE=database_service DATABASE_SERVICE_URL=http://127.0.0.1:3301 DATABASE_SERVICE_TOKEN=local-token uv run mzizi-engine serve   # 127.0.0.1:8760
-uv run mzizi-engine capabilities                         # print the registered capability contracts
+uv sync --all-packages --all-extras
+ENGINE_AUTH=off uv run mzizi-engine serve        # 127.0.0.1:8760
+uv run mzizi-engine capabilities                 # the operations the runtime exposes
 uv run pytest source/backend/engine/tests
 ```
 
-The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (development only) is refused on any other address. In normal mode a bearer token is verified against the same OIDC issuer as the NestJS API (`AUTH_ISSUER`, `AUTH_JWKS_URL`), then account resolution and platform permissions go through named TypeScript database-service operations (`DATABASE_SERVICE_URL`, `DATABASE_SERVICE_TOKEN`). Persistent jobs, events, and callback outbox records also go through those operations; the Python engine no longer has a PostgreSQL-backed job store. The filesystem is a package ([`mzizi-filesystem`](../../packages/filesystem/README.md)); the engine only wires it. `mzizi_engine.persistence.filesystem` implements the package's registry port over the Dryv `filesystem` tables (and holds the only filesystem SQL, until Dryv generates Python repositories), and `mzizi_engine.runtime.assembly` (`filesystem_settings`, `filesystem_operations`) reads its settings and registers the `filesystem.*` operations on the runtime. Where files go is decided by the caller of each operation, from its task; nothing in the engine names a folder. TypeScript services and tools run with Bun only, including the Temporal worker.
+The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (development only) is refused on any other address. In normal mode a bearer token is verified against the same OIDC issuer as the NestJS API (`AUTH_ISSUER`, `AUTH_JWKS_URL`). Jobs, runs and events are kept in memory (`ENGINE_STORE=memory`, the only store): the Bun database service that once held them was removed, and persistent job state returns with the engine's own persistence. Account and permission lookups that used that service are likewise not available yet.
 
 ## Filesystem settings
 
-`filesystem.*` operations need, in the environment: `MZIZI_DB_URL`; `S3_BUCKET`, `S3_REGION`, `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` and optionally `S3_PUBLIC_ENDPOINT`; `FILESYSTEM_PROTECTED_PREFIXES`, `FILESYSTEM_RESERVED_ROOTS` and `FILESYSTEM_TEMP_PREFIX` (comma-separated, `-` for none); optionally `FILESYSTEM_MEDIA_FORMATS` (a media reference JSON) and `ENGINE_INPUT_ROOT` (the folder files may be read from by path). `ENGINE_STORE_MEMORY=1` swaps S3 for an in-memory store (development only). Missing values are named in the error; nothing is defaulted. Database tests: `MZIZI_FS_TEST_DATABASE_URL=postgres://… uv run pytest source/backend/engine/tests/filesystem` against a scratch database migrated with `bun run db migrate`.
+`filesystem.*` operations need, in the environment: `MZIZI_DB_URL`; `S3_BUCKET`, `S3_REGION`, `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` and optionally `S3_PUBLIC_ENDPOINT`; `FILESYSTEM_PROTECTED_PREFIXES`, `FILESYSTEM_RESERVED_ROOTS` and `FILESYSTEM_TEMP_PREFIX` (comma-separated, `-` for none); optionally `FILESYSTEM_MEDIA_FORMATS` (a media reference JSON) and `ENGINE_INPUT_ROOT` (the folder files may be read from by path). `ENGINE_STORE_MEMORY=1` swaps S3 for an in-memory store (development only). Missing values are named in the error; nothing is defaulted. Where files go is decided by the caller of each operation, never by the engine. Database tests: `MZIZI_FS_TEST_DATABASE_URL=postgres://… uv run pytest source/backend/engine/tests/filesystem` against a scratch database migrated with `bun run db migrate`.
 
-## Command lines
+## MongoDB settings
 
-`mzizi-engine` (`mzizi_engine/cli/`) is the engine's own front door: `serve`, `capabilities`, `check` and `filesystem`. It builds the runtime and calls it. The developer command line `mzizi` is a separate package, [`mzizi-cli`](../../packages/cli/README.md), which depends on the engine runtime; the engine knows nothing about it. The earlier large `mzizi_engine.devcli` was removed rather than ported and is in git history; it returns in small pieces as capabilities connect to the runtime.
+The crawler's activity store needs `MZIZI_MONGO_URL` and `MZIZI_MONGO_DATABASE`; without them (or with `ENGINE_ACTIVITY_STORE=files`, or when MongoDB is unreachable) the crawler writes files only. Records that cannot reach MongoDB are spooled to disk and replayed later.
 
-## Initial API
+## Operations and jobs
 
-| Method and path | Purpose | Permission |
-|---|---|---|
-| `GET /health` | status, store, auth mode, capability count, active jobs | open |
-| `GET /capabilities` | registered package capabilities with version, package, CPU-bound flag and input schema | `engine.read` |
-| `POST /v1/jobs` | submit `{kind, input, idempotency_key?, run_id?}`; repeated idempotency key returns the same job | `engine.edit` |
-| `GET /v1/jobs`, `GET /v1/jobs/{id}` | list and read jobs | `engine.read` |
-| `POST /v1/jobs/{id}/cancel` | cancel a queued or running job | `engine.edit` |
-| `POST /v1/runs`, `GET /v1/runs/{id}` | group jobs into a run | `engine.edit` / `engine.read` |
-| `GET /v1/events?after=&job_id=&once=` | SSE stream with `id` = event `seq`; resume with `after` or `Last-Event-ID`; `once=true` ends after replay | `engine.read` |
-| `POST /v1/manifests/validate` | validate the seed registry | `engine.read` |
-| `POST /v1/filesystem/sync` | manifest sync job (preview by default; the actor is the authenticated principal) | any authenticated actor; folder-scoped `filesystem.*` checks in the `auth` schema |
-| `GET/POST /v1/filesystem/folders...`, `GET /v1/filesystem/files/{id}`, `GET .../versions/{id}/download`, `POST .../folders/{id}/access`, `POST .../uploads`, `POST .../uploads/{id}/complete`, `POST .../uploads/cleanup`, `POST .../relations`, `POST .../derived`, `GET .../versions/{id}/lineage` | the filesystem operations (see `.docs/design/data/FILESYSTEM_SCHEMA.md`) | folder-scoped `filesystem.read`/`edit`/`publish`/`delete` |
+`GET /capabilities` lists the registered operations; `POST /v1/jobs` runs one (`{"kind", "input"}`) through the executor with limits, retries and cancellation (`ENGINE_CAPABILITY_LIMITS="name=n,..."`), and results are delivered to `NESTJS_CALLBACK_URL` through an outbox with `Idempotency-Key` retries. For `filesystem.*` kinds the engine stamps the authenticated principal into the payload as `actor`; a client-supplied actor is overwritten.
 
-## Execution boundary
+## Status
 
-Everything runs through one `Executor`: a single queue feeding dispatch tasks, per-capability concurrency limits (`ENGINE_CAPABILITY_LIMITS`, capability defaults), retries with exponential backoff (non-retryable errors fail at once), cancellation, and progress events. I/O-bound capabilities run on threads under asyncio; CPU-bound capabilities (PDF, GeoJSON) run in worker processes (`ENGINE_PROCESS_WORKERS`). Jobs interrupted by a restart are requeued from the store.
-
-Delivery to NestJS: every event is also written to an outbox row; a dispatcher POSTs `{event}` to `NESTJS_CALLBACK_URL` with `Idempotency-Key: event-<seq>` and the service bearer token, retrying with backoff and marking an event dead after 8 attempts. NestJS relays the SSE stream to the admin/developer site; the browser never talks to the engine.
-
-## Honest status
-
-Built and tested: health, capability registry and calls, queue/limits/retries/cancel, worker processes, SSE replay, outbox delivery and retry, restart recovery, database-service auth client, scoped filesystem authorization, filesystem endpoints and sync job. The former `mzizi-database` gap is closed: the workspace installs cleanly and every package is free of database code; the one remaining Python database writer is `mzizi_engine.filesystem`, behind `mzizi_engine.ports.database`. **Migration gaps:** that module's raw-SQL repository/service/sync/uploads/lineage/transitions/reset/secure/cli code (and `mzizi_engine/filesystem_api/`, its HTTP routes) still connect to PostgreSQL directly with loosely typed rows, instead of the TypeScript/Rust database service; those writers must move behind it and Temporal pipeline before the target architecture is complete. The `engine` schema remains provisional (`source/schema/database/engine/0001_engine.sql`); source-specific candidate promotion, review evidence lineage, and filesystem upload-recovery acceptance also remain in progress.
-
-## Policy module
-
-`mzizi_engine.policy` holds the typed collection gate (`policy/gate/`: `models`, `parse`, `checks`, `evaluate`, `edge.decide`; moved from the former `mzizi-source` package and tested against `seed/_fixtures/contracts/gate-vectors.json`) and personal-data hints. The `source.gate` capability calls it. `mzizi-fetch` expects the engine to inject the gate and `mzizi_scraping.detect_challenge`. See [ENGINE_JOB_MODEL](../../../.docs/design/architecture/ENGINE_JOB_MODEL.md) (proposal).
+Built and tested: the runtime and its operations registry, queue, limits, retries, cancellation, worker processes, event replay, outbox delivery, the filesystem adapter against a real PostgreSQL schema, and every package's own tests. Not built: persistent job state, per-folder authorization, Dryv-defined HTTP routes for the filesystem, and typed contracts for the legacy runtime modules still excused from strict typing in the root `pyproject.toml` (`runtime/http`, `runtime/executor`, `runtime/assembly/default_operations`).

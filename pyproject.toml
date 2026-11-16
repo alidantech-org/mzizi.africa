@@ -53,14 +53,14 @@ ban-relative-imports = "all"
 
 [tool.ruff.lint.flake8-bugbear]
 # FastAPI declares dependencies as argument defaults by design.
-extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "fastapi.Header", "mzizi_engine.auth.require"]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "fastapi.Header", "mzizi_engine.runtime.http.auth.require"]
 
 [tool.ruff.lint.per-file-ignores]
 # Tests may assert on any exception, use short names and inline lambdas.
 "**/tests/**" = ["B017", "E731", "E741"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["mzizi_engine", "mzizi_extraction", "mzizi_filesystem", "mzizi_manifest", "mzizi_scraping", "mzizi_fetch", "mzizi_search", "mzizi_cli"]
+known-first-party = ["mzizi_engine", "mzizi_extraction", "mzizi_filesystem", "mzizi_manifest", "mzizi_fetch", "mzizi_search", "mzizi_cli", "mzizi_browser", "mzizi_crawler"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -94,7 +94,7 @@ ignore_missing_imports = true
 # raw-SQL business logic (repository, service, sync, uploads, reset, transitions, lineage, livecheck, download, cli)
 # is still legacy and is the remaining, larger part of that task: typed row contracts instead of `dict`, and
 # splitting modules over ~400 lines.
-module = ["mzizi_manifest.*", "mzizi_engine", "mzizi_engine.app", "mzizi_engine.auth", "mzizi_engine.capabilities", "mzizi_engine.cli", "mzizi_engine.config", "mzizi_engine.database_store", "mzizi_engine.executor", "mzizi_engine.filesystem.*", "mzizi_engine.filesystem_api.*", "mzizi_engine.store"]
+module = ["mzizi_manifest.*", "mzizi_crawler.shared.bundles.*", "mzizi_engine", "mzizi_engine.runtime.http.*", "mzizi_engine.runtime.executor.*", "mzizi_engine.runtime.assembly.default_operations"]
 disallow_any_explicit = false
 disallow_any_generics = false
 disallow_any_decorated = false

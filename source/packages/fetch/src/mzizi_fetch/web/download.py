@@ -23,7 +23,7 @@ from urllib.parse import urljoin, urlparse
 
 import httpx
 
-from mzizi_fetch.models import Frozen
+from mzizi_fetch.shared.models import Frozen
 from mzizi_fetch.web.client import trust_store
 from mzizi_fetch.web.urls import host_of
 from mzizi_fetch.web.vocabulary import vocabulary

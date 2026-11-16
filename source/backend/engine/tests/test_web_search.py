@@ -6,7 +6,7 @@ import httpx
 import pytest
 
 from mzizi_engine.runtime import CapabilityConfig, EngineRuntime, ExecutionPlan, Exposure, RuntimeConfig
-from mzizi_engine.web.search.environment import MAX_RESULTS, orchestrator_for, search_settings
+from mzizi_engine.runtime.assembly.search_settings import MAX_RESULTS, orchestrator_for, search_settings
 from mzizi_search import ProviderName, SearchError, SearchOrchestrator, SearchQuery
 
 ALL = {"BRAVE_API_KEY": "b", "GOOGLE_CSE_API_KEY": "g", "GOOGLE_CSE_ID": "cx"}

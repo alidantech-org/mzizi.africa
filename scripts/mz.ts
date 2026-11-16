@@ -98,23 +98,25 @@ export const commands: Record<string, Command> = {
     run: ({ rest }) => checkBoundaries(rest.includes("--strict")),
   },
   check: {
-    summary: "format:check, lint, typecheck, structure and test",
+    summary: "format:check, lint, typecheck, structure, boundaries and test",
     run: async ({ only }) => {
       const structure = checkStructure();
-      return (await stages(checkStages(only))) && structure;
+      const boundaries = checkBoundaries(true);
+      return (await stages(checkStages(only))) && structure && boundaries;
     },
   },
   "check:all": {
     summary: "check, plus Dryv contract checks, seed registry, docs validation and builds",
     run: async ({ only }) => {
       const structure = checkStructure();
+      const boundaries = checkBoundaries(true);
       const extra: [string, ReturnType<typeof qualitySteps>][] = [
         ["dryv:check", dryv.checkSteps()],
         ["seed", [rootStep("Seed registry", ["uv", "run", "mzizi-manifest", "check"])]],
         ["docs", [rootStep("Task workspace", ["task", "validate"])]],
         ["build", qualitySteps("build", select(only))],
       ];
-      return (await stages([...checkStages(only), ...extra])) && structure;
+      return (await stages([...checkStages(only), ...extra])) && structure && boundaries;
     },
   },
   "dryv:link": {

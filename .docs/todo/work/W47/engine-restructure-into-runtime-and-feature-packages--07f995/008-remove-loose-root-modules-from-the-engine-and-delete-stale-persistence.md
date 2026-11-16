@@ -1,5 +1,5 @@
 ---
-{id: TSK-314C989DB948,name: Remove loose root modules from the engine and delete stale persistence,type: task,status: planned,priority: medium,created_at: 2026-11-16T07:35:54.640Z,updated_at: 2026-11-16T07:35:54.640Z,order: 8192}
+{id: TSK-314C989DB948,name: Remove loose root modules from the engine and delete stale persistence,type: task,status: completed,priority: medium,created_at: 2026-11-16T07:35:54.640Z,updated_at: 2026-11-16T08:44:29.333Z,order: 8192,extra: {status_history: [{from: planned,to: completed,at: 2026-11-16T08:18:43.527Z},{from: completed,to: planned,at: 2026-11-16T08:18:49.061Z},{from: planned,to: completed,at: 2026-11-16T08:44:29.333Z}]}}
 ---
 
 # Remove loose root modules from the engine and delete stale persistence
@@ -14,21 +14,27 @@ Leave the engine root holding only `__init__.py`, `py.typed` and folders. Delete
 
 ## Milestone 1: delete stale code
 
-- [ ] `database_store.py`, `store.py` and the tests that only describe them are deleted after checking nothing still imports them.
-- [ ] `config.py` entries for the removed service are removed.
+- [x] `database_store.py`, `store.py` and the tests that only describe them are deleted after checking nothing still imports them.
+- [x] `config.py` entries for the removed service are removed.
 
 ## Milestone 2: runtime wiring
 
-- [ ] `executor.py`, `capabilities.py`, `app.py` and `cli.py` move into `runtime/` or `bindings/` and use the runtime where it already fits.
-- [ ] `jsonvalue.py` moves to its parsing-boundary home.
+- [x] `executor.py`, `capabilities.py`, `app.py` and `cli.py` move into `runtime/` or `bindings/` and use the runtime where it already fits.
+- [x] `jsonvalue.py` moves to its parsing-boundary home.
 
 ## Milestone 3: remaining modules
 
-- [ ] `auth.py`, `activity.py`, `layout.py`, `names.py` and `sitestore.py` are placed according to the decided owner and split under the size limit.
-- [ ] `bun run boundaries` reports zero engine-root modules and `bun run structure` passes.
+- [x] `auth.py`, `activity.py`, `layout.py`, `names.py` and `sitestore.py` are placed according to the decided owner and split under the size limit.
+- [x] `bun run boundaries` reports zero engine-root modules and `bun run structure` passes.
 
 ## Acceptance checklist
 
-- [ ] The engine root holds only `__init__.py`, `py.typed` and folders.
-- [ ] No module describes the removed Bun database service, and no engine file exceeds 400 lines.
-- [ ] `bun run boundaries` reports zero engine-root modules and `bun run structure` passes.
+- [x] The engine root holds only `__init__.py`, `py.typed` and folders.
+- [x] No module describes the removed Bun database service, and no engine file exceeds 400 lines.
+- [x] `bun run boundaries` reports zero engine-root modules and `bun run structure` passes.
+
+## Comments
+
+### 2026-11-16T08:44:28.639Z · PETER IRUNGU
+
+Done as part of TSK-DC0B356ED404: the engine root holds only folders; database_store and store were removed or moved.

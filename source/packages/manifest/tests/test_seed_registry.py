@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from mzizi_manifest import seed_registry as reg
-from mzizi_manifest.paths import REPO_ROOT, SEED_ROOT
+from mzizi_manifest.features.seeds import seed_registry as reg
+from mzizi_manifest.shared.paths import REPO_ROOT, SEED_ROOT
 
 BASE = "access: internal\nallow_weaker_children: true\n"
 FULL = "role: seed_input\nacquisition_class: static_curated\npreparation: human_prepared\n"
@@ -82,6 +82,8 @@ def test_no_fixture_sample_example_or_data_directory_sits_inside_source_code():
         for path in root.rglob("*"):
             if not path.is_dir() or {"node_modules", ".venv", "__pycache__", ".git", "target"} & set(path.parts):
                 continue
+            if "test" in path.relative_to(REPO_ROOT).parts[:4] and "api" in path.relative_to(REPO_ROOT).parts[:3]:
+                continue  # Dryv-generated API contract tests carry their own examples
             if path.name in {"fixtures", "samples", "examples", "pilots", "mappings"} or (
                 path.name == "data" and path.parent.name == "tests"
             ):

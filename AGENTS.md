@@ -21,9 +21,9 @@ Use `.docs/docs/ROADMAP.md` for current priorities. Proposals under `.docs/_plan
 source/apps/{mobile,web,www}       Flutter client and Next.js applications
 source/backend/api                 NestJS product API
 source/backend/database            Bun CLI, generated SQL and immutable migrations for the single PostgreSQL database
-source/backend/engine               Python operational API, workers and package orchestrator
+source/backend/engine               Python runtime: EngineRuntime, its HTTP front door and executor, persistence adapters, Dryv-generated code
 source/backend/agent                README-only proposal for a future assistive AI application
-source/packages/{extraction,fetch,filesystem,manifest,scraping}
+source/packages/{browser,cli,crawler,extraction,fetch,filesystem,manifest,search}
 source/schema/{contracts,database,pipeline,seed,site/v1}
 ```
 
@@ -32,9 +32,9 @@ Read the local maps for current ownership and commands: `source/backend/README.m
 The responsibilities are distinct even when they share a runtime:
 
 - `source/apps/` contains clients. They consume API contracts; they do not own canonical domain rules.
-- `source/backend/api/` is the NestJS product API. It reads product data and sends authorized named write commands to the database service; it does not run migrations, seed data, scrape or execute extraction.
+- `source/backend/api/` is the NestJS product API. It reads product data and sends authorized named write commands to PostgreSQL with its own role; it does not run migrations, seed data, scrape or execute extraction.
 - `source/backend/database/` owns TypeScript SQL migration/seed commands and named database operations.
-- `source/backend/engine/` is the Python operational API and capability orchestrator, not the product API.
+- `source/backend/engine/` is the Python runtime, not the product API: `runtime/` (the `EngineRuntime`, its operations registry, `assembly/` composition root, `policy/` collection gate, HTTP front door and executor), `persistence/` (PostgreSQL adapters, the MongoDB activity store and a vector-store skeleton), `cli/` (`mzizi-engine`) and Dryv-generated `api/`. Every capability lives in a package under `source/packages/` with one orchestrator; the engine root holds only folders.
 - `source/packages/` contains reusable Python libraries, not separate services. `source/backend/agent/` is a README-only proposal; no intelligence service or agent package currently exists. Packages must not know a database exists, but may own network and browser adapters behind ports. Target design (proposal, not implemented): the engine is one runtime class plus Dryv-generated persistence, and every capability lives in a package with one orchestrator class and code under `features/<capability>/` (see `.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md`).
 - `source/schema/` contains SQL and machine-readable input/exchange schemas. Authored API/database contracts remain in `dryv/`; prepared inputs remain in root `seed/`.
 

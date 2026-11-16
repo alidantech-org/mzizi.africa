@@ -12,8 +12,8 @@ from uuid import uuid4
 
 import pytest
 
-from mzizi_engine.persistence.filesystem import PostgresRegistry
-from mzizi_engine.persistence.postgres import Connection, connect
+from mzizi_engine.persistence.postgres.connection import Connection, connect
+from mzizi_engine.persistence.postgres.filesystem import PostgresRegistry
 from mzizi_filesystem import (
     Access,
     DuplicatePolicy,

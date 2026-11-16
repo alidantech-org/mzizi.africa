@@ -8,7 +8,7 @@ from openpyxl import Workbook
 from pdfmaker import make_pdf
 
 from mzizi_extraction import DocumentProfile, OcrMode, encode_document, extract_pdf_document
-from mzizi_extraction.stream import pdf_batches, stream_records
+from mzizi_extraction.tabular.stream import pdf_batches, stream_records
 
 
 @pytest.mark.parametrize(

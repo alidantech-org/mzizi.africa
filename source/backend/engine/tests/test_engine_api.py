@@ -13,11 +13,11 @@ import httpx
 import pytest
 from engine_helpers import settings, wait_for
 
-from mzizi_engine.capabilities import build_default_registry
-from mzizi_engine.config import Settings
-from mzizi_engine.executor import Executor
+from mzizi_engine.runtime.assembly.default_operations import build_default_registry
+from mzizi_engine.runtime.executor.executor import Executor
+from mzizi_engine.runtime.executor.memory_store import MemoryStore
+from mzizi_engine.runtime.http.settings import Settings
 from mzizi_engine.runtime.operations import Operation
-from mzizi_engine.store import MemoryStore
 
 
 def job_done(client, job_id):
@@ -284,9 +284,6 @@ def test_settings_refuse_unauthenticated_mode_off_loopback():
     assert Settings.from_env(
         {"ENGINE_CAPABILITY_LIMITS": "extraction.pdf=2,scraping.links=5", "DATABASE_URL": "postgres://x/mzizi_new"}
     ).limits == {"extraction.pdf": 2, "scraping.links": 5}
-    assert (
-        Settings.from_env({"DATABASE_SERVICE_URL": "http://127.0.0.1:3301", "DATABASE_SERVICE_TOKEN": "local"}).store
-        == "database_service"
-    )
-    with pytest.raises(ValueError, match="Python PostgreSQL persistence has been removed"):
+    assert Settings.from_env({}).store == "memory"
+    with pytest.raises(ValueError, match="ENGINE_STORE must be memory"):
         Settings(store="postgres").check()

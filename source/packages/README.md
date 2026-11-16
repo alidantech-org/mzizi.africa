@@ -4,13 +4,16 @@
 
 | Directory | Python distribution | Responsibility |
 |---|---|---|
-| [`extraction/`](extraction/README.md) | `mzizi-extraction` | PDF, GeoJSON, CSV and JSON extraction (and OCR through system Tesseract) into structured representations with diagnostics. |
-| [`filesystem/`](filesystem/README.md) | `mzizi-filesystem` | Versioned files at caller-chosen placements: object keys, hashing, deduplication, retention, lineage, relocation, uploads and directory sync behind one `FilesystemOrchestrator`. No database knowledge. |
-| [`manifest/`](manifest/README.md) | `mzizi-manifest` | Seed/folder manifest handling, lock generation and versioned site-structure validation. |
-| [`scraping/`](scraping/README.md) | `mzizi-scraping` | Deterministic selector, field, transform, link-discovery and challenge-detection primitives driven by manifests. |
+| [`browser/`](browser/README.md) | `mzizi-browser` | Browser automation behind `BrowserOrchestrator`: interchangeable Playwright/Patchright sessions, tabs, navigation, media inventory, pagination detection, challenge detection and actions. |
 | [`cli/`](cli/README.md) | `mzizi-cli` | The `mzizi` command line: a front door that builds the engine runtime and calls its exposed operations. The only package allowed to import `mzizi_engine`. |
-| [`search/`](search/README.md) | `mzizi-search` | Web search through official Brave and Google APIs behind one `SearchOrchestrator` with typed contracts; the first package in the `orchestrator/`, `shared/`, `features/<capability>/` shape. |
+| [`crawler/`](crawler/README.md) | `mzizi-crawler` | All web acquisition behind `CrawlerOrchestrator`: crawling, selectors and scraping, survey, sections, attachments, downloads, ranking, inspection, site watching, site-structure bundles and the local evidence store. |
+| [`extraction/`](extraction/README.md) | `mzizi-extraction` | PDF, GeoJSON, CSV and JSON extraction (and OCR through system Tesseract) into structured representations with diagnostics. |
 | [`fetch/`](fetch/README.md) | `mzizi-fetch` | Identified HTTP/API fetching, rate limits and stop rules (gate and challenge checks injected), plus the web core: URL handling, source and block policy, an HTTP client and a safe streaming downloader. |
+| [`filesystem/`](filesystem/README.md) | `mzizi-filesystem` | Versioned files at caller-chosen placements: object keys, hashing, deduplication, retention, lineage, relocation, uploads and directory sync behind one `FilesystemOrchestrator`. No database knowledge. |
+| [`manifest/`](manifest/README.md) | `mzizi-manifest` | Seed and folder manifest handling and lock generation. |
+| [`search/`](search/README.md) | `mzizi-search` | Search through official Brave and Google APIs behind one `SearchOrchestrator`; kept for when API-based search is wanted (search by scraping result pages belongs to the crawler). |
+
+Persistence is not a package: PostgreSQL, MongoDB and the (skeleton) vector store are handled by the engine in `source/backend/engine/src/mzizi_engine/persistence/`, and data types and models (JSON payloads, operations, policy) are the engine's own. Test fixtures (a loopback website and safe environment defaults) sit beside the tests that use them, in each package's `tests/` folder.
 
 ## Workspace status
 

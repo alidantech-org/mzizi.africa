@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import time
 
-from mzizi_engine.config import Settings
+from mzizi_engine.runtime.http.settings import Settings
 
 
 def settings(**overrides) -> Settings:

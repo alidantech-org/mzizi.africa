@@ -1,0 +1,1 @@
+"""The attachments feature."""

@@ -1,0 +1,25 @@
+[project]
+name = "mzizi-crawler"
+version = "0.1.0"
+description = "Web acquisition behind one orchestrator: polite crawling, selectors and scraping, survey, sections, attachments, downloads, ranking, inspection and site watching, with the local evidence store."
+requires-python = ">=3.12"
+dependencies = ["pydantic>=2.7", "httpx", "pyyaml", "beautifulsoup4", "soupsieve", "Pillow", "tldextract>=5.4.0", "mzizi-fetch", "mzizi-extraction", "mzizi-manifest", "jsonschema", "referencing", "mzizi-browser"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.uv.sources]
+mzizi-fetch = { workspace = true }
+mzizi-extraction = { workspace = true }
+mzizi-manifest = { workspace = true }
+mzizi-browser = { workspace = true }

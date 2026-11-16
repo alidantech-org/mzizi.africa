@@ -11,7 +11,7 @@ from mzizi_engine.runtime.assembly import build_default_runtime
 
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
-    from mzizi_engine.config import Settings
+    from mzizi_engine.runtime.http.settings import Settings
 
     parser = argparse.ArgumentParser(prog="mzizi-engine")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -19,11 +19,11 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("capabilities", help="print the operations the runtime exposes")
     sub.add_parser("check", help="validate settings")
     args = parser.parse_args(argv)
-    runtime = build_default_runtime()
+    settings = Settings.from_env()
+    runtime = build_default_runtime(settings)
     if args.command == "capabilities":
         print(json.dumps([info.model_dump(mode="json") for info in runtime.operations.describe()], indent=2))
         return 0
-    settings = Settings.from_env()
     settings.check()
     if args.command == "check":
         print(
@@ -32,9 +32,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     import uvicorn
 
-    from mzizi_engine.app import create_app
+    from mzizi_engine.runtime.http.app import create_app
 
-    uvicorn.run(create_app(settings, registry=runtime.operations), host=settings.host, port=settings.port)
+    uvicorn.run(create_app(settings, runtime=runtime), host=settings.host, port=settings.port)
     return 0
 
 

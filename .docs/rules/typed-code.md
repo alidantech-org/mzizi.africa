@@ -37,7 +37,7 @@ These rules apply to **all hand-written code in this repository, in every langua
 
 ## 5. Imports are absolute, from the package root
 
-- Python never uses a relative import (`from .module import x`, `from ..pkg.module import x`, `from . import x`). Every import names its package from the root: `from mzizi_scraping.links import extract_links`, `from mzizi_engine.filesystem import Repository`, never `from .links import extract_links` or `from ..filesystem import Repository`. Enforced by ruff (`TID252`, `ban-relative-imports = "all"`).
+- Python never uses a relative import (`from .module import x`, `from ..pkg.module import x`, `from . import x`). Every import names its package from the root: `from mzizi_crawler.shared.scraping.links import extract_links`, `from mzizi_filesystem import FilesystemOrchestrator`, never `from .links import extract_links` or `from ..filesystem import Repository`. Enforced by ruff (`TID252`, `ban-relative-imports = "all"`).
 - TypeScript and Rust follow the same rule with their own absolute forms (a package/workspace import, not a long run of `../../..`); a sibling module in the same folder may still use `./name`, but never climbs directories with `../`.
 - This is about where an import starts, not how a package is laid out: files still sit in nested folders by responsibility (rule 6 below); only the import statement must spell out the full package path instead of walking up to it.
 

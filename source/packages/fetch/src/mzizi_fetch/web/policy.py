@@ -10,7 +10,7 @@ from __future__ import annotations
 from enum import StrEnum
 from urllib.parse import urlparse
 
-from mzizi_fetch.models import Frozen
+from mzizi_fetch.shared.models import Frozen
 from mzizi_fetch.web.urls import host_of, same_site
 
 

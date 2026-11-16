@@ -37,14 +37,14 @@ source/
 | `source/apps/mobile` | Flutter geography client that calls `/v1/geography/*` on the NestJS API. |
 | `source/backend/api` | NestJS product API. Most contract-facing API types and modules are generated from root `dryv/`; selected use cases, auth and adapters are hand-written. |
 | `source/backend/database` | Bun TypeScript migration/seed CLI and internal named database operations. |
-| `source/backend/engine` | Python operational API, job lifecycle, workers and package orchestration. |
+| `source/backend/engine` | The Python runtime: `EngineRuntime`, its HTTP front door and executor, PostgreSQL/MongoDB adapters and the vector skeleton. No capability logic. |
 | `source/packages/*` | Reusable Python capabilities; these are libraries, not separately deployed services. |
 | `source/schema/*` | Ordered SQL and JSON Schemas for exchange, pipeline, seed and site inputs. |
 | root `dryv/` | Authored API/database contracts and generation/audit tooling. |
 | root `seed/` | Prepared system inputs, manifests and fixtures. |
 | root `scripts/` | Bun command runner for setup, services, checks, databases and package entry points. |
 
-`source/backend/agent` is a README-only proposal; no intelligence service exists. The Python workspace has no database package: the engine's `mzizi_engine.ports.database` is the one place that opens a connection, and `uv sync --all-packages` resolves cleanly. The active database service is TypeScript under `source/backend/database` (Rust foundation in progress).
+`source/backend/agent` is a README-only proposal; no intelligence service exists. The Python workspace has no database package: the engine's `persistence/` folder is the one place that opens a database connection (see [ENGINE_PERSISTENCE](../data/ENGINE_PERSISTENCE.md)), and `uv sync --all-packages` resolves cleanly. Database administration is the Bun CLI under `source/backend/database`; there is no database service.
 
 Former Python API/data/database implementations are historical and non-executable under `.docs/_archives/2026-11-08-rewrite-snapshot/`. A path in `.docs/_plan/` is a proposal or historical planning reference, not evidence that code exists.
 

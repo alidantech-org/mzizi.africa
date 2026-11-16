@@ -55,7 +55,7 @@ class PoliteFetcher:
     sleep: Callable[[float], None] = time.sleep
     clock: Callable[[], float] = time.monotonic
     robots_policy: str = ROBOTS_RESPECT
-    # Injected response check (for example mzizi_scraping.detect_challenge); returns a reason to stop the run.
+    # Injected response check (for example mzizi_crawler.shared.scraping.detect_challenge); returns a reason to stop the run.
     challenge_check: ChallengeCheck | None = None
     # Path prefixes of a documented machine API that robots.txt (written for crawlers) disallows. Such requests skip
     # the robots check but still pass the gate, the rate limit and the stop rules (DEC-WIKIMEDIA-API-ACCESS).

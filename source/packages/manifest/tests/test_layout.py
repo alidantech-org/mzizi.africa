@@ -6,7 +6,7 @@ import re
 
 import pytest
 
-from mzizi_manifest.paths import REPO_ROOT
+from mzizi_manifest.shared.paths import REPO_ROOT
 
 ACTIVE_ROOTS = ["source", "scripts", "dryv", "seed", "dryv.yaml", "pyproject.toml", "task.yaml"]
 SUFFIXES = {".py", ".ts", ".tsx", ".json", ".yaml", ".yml", ".toml", ".sh", ".mjs", ".cjs"}
@@ -62,7 +62,6 @@ def test_the_backend_holds_the_api_and_the_engine_and_the_old_implementations_ar
         "api",
         "database",
         "engine",
-        "pipelines",
     ]
     for gone in (
         "source/apps/api",
@@ -98,7 +97,7 @@ def test_packages_do_not_import_the_engine_or_each_others_private_modules():
         front_door = "cli" in path.relative_to(packages).parts[:1]  # the CLI calls the engine runtime by design
         assert front_door or "mzizi_engine" not in text, path
         own = path.relative_to(packages).parts[0]
-        for other in names - {own}:
+        for other in names - {own, "contracts", "testing"}:  # the contracts layer and test support are public modules
             assert not re.search(
                 rf"from mzizi_{other}\.(?!paths\b)[a-z_]+ import|import mzizi_{other}\.[a-z_]+", text
-            ) or (other in ("manifest",) and "mzizi_manifest.paths" in text), (path, other)
+            ) or (other in ("manifest",) and "mzizi_manifest.shared.paths" in text), (path, other)

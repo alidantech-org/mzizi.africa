@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import httpx
 
-from mzizi_fetch.models import Frozen
 from mzizi_fetch.policy import Limits, TooLarge
+from mzizi_fetch.shared.models import Frozen
 
 
 class RawResponse(Frozen):

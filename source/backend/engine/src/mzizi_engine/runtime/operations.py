@@ -10,6 +10,8 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from pydantic import BaseModel
+
 from mzizi_engine.jsonvalue import Payload
 from mzizi_engine.runtime.contracts.base import Frozen
 
@@ -67,3 +69,22 @@ class OperationRegistry:
 
     def describe(self) -> tuple[OperationInfo, ...]:
         return tuple(self._items[name].info() for name in self.names())
+
+
+@dataclass(frozen=True)
+class OperationSpec:
+    name: str
+    description: str
+    run: Callable[[Payload], Payload]
+    #: Highest number of simultaneous runs; `None` leaves the runtime's default.
+    concurrency: int | None = None
+
+
+def operation[R: BaseModel](
+    name: str, description: str, model: type[R], handler: Callable[[R], BaseModel], concurrency: int | None = None
+) -> OperationSpec:
+    def run(payload: Payload) -> Payload:
+        return handler(model.model_validate(payload, strict=False)).model_dump(mode="json")
+
+    run.__name__ = handler.__name__
+    return OperationSpec(name, description, run, concurrency)
