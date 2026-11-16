@@ -162,3 +162,16 @@ def test_ranking_rules_validate_and_must_target_stored_tables():
     assert validate_ranking(good) == []
     bad = {"rules": [{"target": "nope.table", "label": "x", "conditions": [{"signal": "section", "contains": ["a"]}]}]}
     assert validate_ranking(bad) == ["ranking.yml: unknown target 'nope.table'"]
+
+
+def test_example_mappings_with_expected_columns_pass_the_table_checks_and_duplicate_inputs_are_found():
+    import yaml
+
+    from mzizi_crawler.shared.bundles.validate import _mapping_problems, input_names, targets
+
+    folder = SCHEMA_ROOT / "engine" / "_example"
+    allocations = yaml.safe_load((folder / "mapping-county-allocations.yml").read_text())
+    assert input_names(allocations) == ["county", "allocation", "fiscal_year"]
+    assert _mapping_problems("m.yml", allocations, targets()) == []
+    allocations["inputs"].append("county")
+    assert any("input 'county' is listed twice" in e for e in _mapping_problems("m.yml", allocations, targets()))

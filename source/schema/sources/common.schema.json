@@ -380,8 +380,7 @@
       "enum": [
         "database",
         "engine",
-        "web",
-        "extraction"
+        "web"
       ],
       "description": "Areas for things that are not database rows, named by how they are used (database is the generated table schemas themselves). The registry reads this list."
     }

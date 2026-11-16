@@ -38,3 +38,5 @@ Built 16 November 2026: `source/schema/mapping/mapping.schema.json` with `inputs
 ### 2026-11-16T14:28:08.830Z · PETER IRUNGU
 
 Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.
+
+Extraction expectations merged into mappings on 16 November 2026 at the owner's request: a mapping's `inputs` may be objects with `name`, `aliases`, `type`, `required` and `units`, and `table.header_rows` describes table sources (example `source/schema/engine/_example/mapping-county-allocations.yml`). The extraction kind, the `extraction` system area, `uses.extraction`, the `seed/extraction/` folder and `engine/extraction.schema.json` are retired; the extraction package keeps its typed `TableSchema` for ad-hoc `--table-schema` runs.

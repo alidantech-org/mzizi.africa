@@ -52,7 +52,7 @@ def test_the_example_tree_resolves_every_code() -> None:
     assert kinds["ke.source.websites.example-ministry"] is Kind.SOURCE
     assert kinds["global.reference.countries.example-statistics"] is Kind.MAPPING
     assert kinds["ke.reference.patterns.office-names"] is Kind.TERMS
-    assert kinds["ke.extraction.county-allocations"] is Kind.EXTRACTION
+    assert kinds["ke.finance.flows.county-allocations"] is Kind.MAPPING
     assert kinds["ke.engine.jobs.example-ministry-publications"] is Kind.JOB
     users = result.registry.users_of("ke.reference.patterns.office-names")
     assert [e.code for e in users] == ["ke.source.websites.example-ministry"]
@@ -147,13 +147,12 @@ def test_a_code_must_name_a_real_scope_area_and_table(tmp_path: Path, code: str,
     assert any(expected in p for p in problems(root)), problems(root)
 
 
-def test_a_source_extraction_and_mapping_must_fit_their_kind(tmp_path: Path) -> None:
+def test_a_source_job_and_mapping_must_fit_their_kind(tmp_path: Path) -> None:
     root = write(
         tmp_path,
         {
             "a.yml": source("ke.governance.holders.a"),
             "b.yml": source("ke.source.apis.b"),
-            "c.yml": "code: ke.reference.patterns.c\ncolumns: []\n",
             "d.yml": mapping("ke.governance.holders.d", table="official.individuals"),
             "e.json": '{"code": "ke.reference.patterns.e", "spec_version": 1, "stages": []}',
         },
@@ -163,7 +162,6 @@ def test_a_source_extraction_and_mapping_must_fit_their_kind(tmp_path: Path) -> 
     assert any(
         "a website source code must be <scope>.source.websites.<name>, not 'ke.source.apis.b'" in p for p in found
     )
-    assert any("an extraction expectation code must be <scope>.extraction.<name>" in p for p in found)
     assert any("a job spec code must be <scope>.engine.jobs.<name>" in p for p in found)
     assert any("named after the table it writes first (official.individuals)" in p for p in found)
 

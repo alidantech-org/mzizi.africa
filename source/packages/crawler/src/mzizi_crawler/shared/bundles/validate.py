@@ -109,10 +109,19 @@ def module_errors(document: object, where: str) -> list[str]:
     return _schema_errors(_validator("module"), document, where)
 
 
+def input_names(mapping: dict) -> list[str]:
+    """The names a mapping reads: an input is a plain name or an object with a `name` and the expected column."""
+    return [item["name"] if isinstance(item, dict) else item for item in mapping.get("inputs", [])]
+
+
 def _mapping_problems(where: str, mapping: dict, known: dict[str, dict]) -> list[str]:
     """Check a mapping's tables, columns, references and inputs against the generated database schemas."""
     problems: list[str] = []
-    inputs, aliases = set(mapping.get("inputs", [])), {y.get("as") for y in mapping.get("yields", [])}
+    names = input_names(mapping)
+    inputs, aliases = set(names), {y.get("as") for y in mapping.get("yields", [])}
+    problems.extend(
+        f"{where}: input {name!r} is listed twice" for name in sorted({n for n in names if names.count(n) > 1})
+    )
     for item in mapping.get("yields", []):
         table = known.get(item.get("table", ""))
         if table is None:
@@ -197,7 +206,7 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             )
         in_bundle = next((m for m in bundle.mappings.values() if m.get("code") == named), None)
         if named and in_bundle is not None:
-            missing = [f for f in in_bundle.get("inputs", []) if f not in module.get("extract", {}).get("fields", {})]
+            missing = [f for f in input_names(in_bundle) if f not in module.get("extract", {}).get("fields", {})]
             if missing:
                 report.errors.append(
                     f"module {name}: mapping {named!r} reads fields it does not extract: {', '.join(missing)}"

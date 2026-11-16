@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/mapping.schema.json
+# Example mapping for a table source: the inputs also say which columns to expect in the PDF table.
+code: ke.finance.flows.county-allocations
+describe: A county's allocation for a fiscal year, from a published table.
+inputs:
+  - { name: county, aliases: [County name], type: text, required: true }
+  - { name: allocation, type: quantity, units: [KES, KSh], required: true }
+  - { name: fiscal_year, type: text }
+table: { header_rows: 1 }
+yields:
+  - as: flow
+    table: finance.flows
+    key: [occurred_on]
+    fields:
+      amount_minor_units: { from: allocation }
+      occurred_on:        { from: fiscal_year, transform: { fy_start: 7 } }
+provenance: { method: extracted, locator: { page: $page } }
+expect: { min_rows: 1, required_fields: [county, allocation] }

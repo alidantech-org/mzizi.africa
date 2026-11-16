@@ -1,6 +1,6 @@
 """The cross-reference registry: every manifest code in a tree, and the checks that each reference resolves.
 
-A source, mapping, term list or extraction file declares a dotted `code`. Another manifest names it in `uses`, `extends` or
+A source, mapping or term list file declares a dotted `code`. Another manifest names it in `uses`, `extends` or
 a module's `mapping`. This module only answers "does that code exist, is it the right kind, and may this manifest see it?":
 
 - a code is unique across the tree;
@@ -10,7 +10,7 @@ a module's `mapping`. This module only answers "does that code exist, is it the 
 - a reference cycle (for example one website extending another that extends it back) is an error;
 - a job spec is `<scope>.engine.jobs.<name>`;
 - the second segment is an area: a database group (the third segment is then one of its tables) or a system area;
-- a source is `<scope>.source.<websites|apis>.<name>` and its kind agrees; an extraction expectation is in `extraction`;
+- a source is `<scope>.source.<websites|apis>.<name>` and its kind agrees;
 - a mapping is named after the table it writes first: `<scope>.<schema>.<table>.<name>`.
 
 Reading the files is in `scan.py`; nothing here touches the file system.
@@ -33,7 +33,6 @@ class Kind(StrEnum):
     SOURCE = "source"
     MAPPING = "mapping"
     TERMS = "terms"
-    EXTRACTION = "extraction"
     JOB = "job"
 
 
@@ -136,10 +135,6 @@ def code_problems(entry: Entry, areas: Areas) -> list[str]:
             )
     elif entry.kind is Kind.JOB and area != "engine":
         problems.append(f"{where}: a job spec code must be <scope>.engine.jobs.<name>, not {entry.code!r}")
-    elif entry.kind is Kind.EXTRACTION and area != "extraction":
-        problems.append(
-            f"{where}: an extraction expectation code must be <scope>.extraction.<name>, not {entry.code!r}"
-        )
     elif entry.kind is Kind.MAPPING and entry.detail and ".".join(segments[1:3]) != entry.detail:
         problems.append(
             f"{where}: a mapping is named after the table it writes first ({entry.detail}); "

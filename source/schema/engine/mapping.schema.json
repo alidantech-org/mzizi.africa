@@ -21,9 +21,16 @@
     "inputs": {
       "type": "array",
       "minItems": 1,
-      "uniqueItems": true,
+      "description": "The fields the mapping reads. A plain name, or an object that also states the expected column of a table source (a PDF or spreadsheet table): aliases, type, required, units.",
       "items": {
-        "$ref": "#/$defs/inputName"
+        "oneOf": [
+          {
+            "$ref": "#/$defs/inputName"
+          },
+          {
+            "$ref": "#/$defs/inputColumn"
+          }
+        ]
       }
     },
     "yields": {
@@ -250,6 +257,19 @@
           "minimum": 1
         }
       }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Only for table sources (PDF, spreadsheet): how the table is laid out.",
+      "properties": {
+        "header_rows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "default": 1
+        }
+      }
     }
   },
   "$defs": {
@@ -260,6 +280,74 @@
     "alias": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "inputColumn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/inputName"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        },
+        "type": {
+          "enum": [
+            "text",
+            "integer",
+            "number",
+            "date",
+            "quantity"
+          ],
+          "default": "text"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "units": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      },
+      "if": {
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "quantity"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "units"
+        ],
+        "properties": {
+          "units": {
+            "minItems": 1
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "units": {
+            "maxItems": 0
+          }
+        }
+      }
     }
   }
 }

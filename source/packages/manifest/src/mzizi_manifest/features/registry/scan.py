@@ -6,7 +6,6 @@ folders under `source/schema/`:
 - a source has `code` and `kind` (`website` or `api`);
 - a mapping has `code` and `yields`;
 - a term list has `code` and `terms` (or `url_kinds`, the web classification data);
-- an extraction expectation has `code` and `columns`;
 - a job spec has `code`, `spec_version` and `stages`;
 - a module has `module`; its `mapping` is checked in the scope of the source folder that owns it.
 
@@ -67,8 +66,6 @@ def _kind(document: dict) -> Kind | None:
         return Kind.MAPPING
     if "terms" in document or "url_kinds" in document:
         return Kind.TERMS
-    if "columns" in document:
-        return Kind.EXTRACTION
     if "stages" in document and "spec_version" in document:
         return Kind.JOB
     return None
@@ -81,10 +78,6 @@ def _references(document: dict, kind: Kind) -> list[Reference]:
         Reference(f"uses.mappings[{i}]", code, Kind.MAPPING) for i, code in enumerate(_codes(document, "mappings"))
     ]
     references += [Reference(f"uses.terms[{i}]", code, Kind.TERMS) for i, code in enumerate(_codes(document, "terms"))]
-    references += [
-        Reference(f"uses.extraction[{i}]", code, Kind.EXTRACTION)
-        for i, code in enumerate(_codes(document, "extraction"))
-    ]
     if isinstance(document.get("extends"), str):
         references.append(Reference("extends", document["extends"], Kind.SOURCE))
     return references
@@ -107,7 +100,6 @@ KIND_FOLDERS = {
     Kind.SOURCE: "sources",
     Kind.MAPPING: "mappings",
     Kind.TERMS: "terms",
-    Kind.EXTRACTION: "extraction",
     Kind.JOB: "jobs",
 }
 

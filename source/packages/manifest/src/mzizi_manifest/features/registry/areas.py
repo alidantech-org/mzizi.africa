@@ -14,7 +14,7 @@ from mzizi_manifest.shared.paths import SCHEMA_ROOT
 class Areas:
     #: Database group -> the names of its tables, from the generated `source/schema/database/` files.
     tables: dict[str, frozenset[str]]
-    #: Areas for things that are not database rows (engine, web, extraction), from `systemArea` in `sources/common.schema.json`.
+    #: Areas for things that are not database rows (database, engine, web), from `systemArea` in `sources/common.schema.json`.
     system: frozenset[str]
 
 

@@ -17,7 +17,6 @@ seed/
 ├── sources/<scope>/source/<websites|apis>/<name>/      manifest.yml, modules/, examples/, NOTES.md
 ├── mappings/<scope>/<domain>/<table>/<name>.yml
 ├── terms/<scope>/<area>/.../<name>.yml
-├── extraction/<scope>/extraction/<name>.yml
 ├── jobs/<scope>/engine/jobs/<name>.json
 └── _fixtures/               tests only
 ```

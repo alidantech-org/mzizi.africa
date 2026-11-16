@@ -39,3 +39,5 @@ Built 16 November 2026 in `source/schema/sources/`: `source.schema.json` (entry,
 ### 2026-11-16T14:28:08.310Z · PETER IRUNGU
 
 Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.
+
+Updated 16 November 2026: `uses.extraction` is removed from the source header; expected table columns are part of the mapping.

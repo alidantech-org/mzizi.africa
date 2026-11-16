@@ -16,7 +16,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("check", help="validate folder metadata, manifest, dependencies, consumers and the lock (no writes)")
     sub.add_parser("lock", help="regenerate seed/manifest.lock.yaml")
     sub.add_parser("report", help="effective metadata per artifact")
-    refs = sub.add_parser("refs", help="check that every source, mapping, terms and extraction code resolves")
+    refs = sub.add_parser("refs", help="check that every source, mapping and terms code resolves")
     refs.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder to scan (default: seed/)")
     refs.add_argument(
         "--no-paths", action="store_true", help="do not require folder paths to mirror codes (flat example folders)"

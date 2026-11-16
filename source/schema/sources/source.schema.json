@@ -43,9 +43,6 @@
         },
         "terms": {
           "$ref": "common.schema.json#/$defs/codeList"
-        },
-        "extraction": {
-          "$ref": "common.schema.json#/$defs/codeList"
         }
       }
     },

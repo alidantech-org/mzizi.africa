@@ -200,12 +200,33 @@ def test_a_term_list_validates() -> None:
     assert _errors("engine/terms.schema.json", {"code": "ke.reference.patterns.office-names", "terms": []})
 
 
+def test_a_mapping_input_may_state_the_expected_table_column() -> None:
+    document = {
+        "code": "ke.finance.flows.county-allocations",
+        "inputs": [
+            "slug",
+            {"name": "allocation", "aliases": ["Amount"], "type": "quantity", "units": ["KES"], "required": True},
+            {"name": "year", "type": "integer"},
+        ],
+        "table": {"header_rows": 2},
+        "yields": [
+            {"as": "f", "table": "finance.flows", "key": ["occurred_on"], "fields": {"occurred_on": {"from": "year"}}}
+        ],
+    }
+    assert _errors("engine/mapping.schema.json", document) == []
+    quantity_without_units = {**document, "inputs": [{"name": "allocation", "type": "quantity"}]}
+    units_on_text = {**document, "inputs": [{"name": "allocation", "type": "text", "units": ["KES"]}]}
+    unknown_type = {**document, "inputs": [{"name": "allocation", "type": "money"}]}
+    too_many_header_rows = {**document, "table": {"header_rows": 9}}
+    for bad in (quantity_without_units, units_on_text, unknown_type, too_many_header_rows):
+        assert _errors("engine/mapping.schema.json", bad)
+
+
 CODED = [
     "sources/source.schema.json",
     "engine/mapping.schema.json",
     "engine/terms.schema.json",
     "engine/web.schema.json",
-    "engine/extraction.schema.json",
     "engine/job.schema.json",
 ]
 
