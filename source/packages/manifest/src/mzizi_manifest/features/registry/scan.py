@@ -5,7 +5,8 @@ folders under `source/schema/`:
 
 - a source has `code` and `kind` (`website` or `api`);
 - a mapping has `code` and `yields`;
-- a term list has `code` and `terms` (or `url_kinds`, the web classification data);
+- a term list has `code` and `terms`;
+- engine data has `code` and `url_kinds` (the web classification the fetch package reads);
 - a job spec has `code`, `spec_version` and `stages`;
 - a module has `module`; its `mapping` is checked in the scope of the source folder that owns it.
 
@@ -64,8 +65,10 @@ def _kind(document: dict) -> Kind | None:
         return Kind.SOURCE
     if "yields" in document:
         return Kind.MAPPING
-    if "terms" in document or "url_kinds" in document:
+    if "terms" in document:
         return Kind.TERMS
+    if "url_kinds" in document:
+        return Kind.ENGINE
     if "stages" in document and "spec_version" in document:
         return Kind.JOB
     return None
@@ -100,20 +103,28 @@ KIND_FOLDERS = {
     Kind.SOURCE: "sources",
     Kind.MAPPING: "mappings",
     Kind.TERMS: "terms",
-    Kind.JOB: "jobs",
+    Kind.JOB: "engine",
+    Kind.ENGINE: "engine",
 }
 
 
 def mirror_problems(entry: Entry) -> list[str]:
     """A file's folder path mirrors its code: `mappings/ke/governance/holders/office-holders.yml`.
 
-    A source's code is the folder that holds its manifest (`sources/ke/source/websites/iebc/manifest.yml`).
+    A source's code is the folder that holds its manifest (`sources/ke/source/websites/iebc/manifest.yml`). Engine data and
+    job specs are flat: `<scope>.engine.<rest>` lives at `engine/<rest>`, with a `<scope>/` folder only when the scope is not
+    `global` (`engine/web-classification.yaml`, `engine/jobs/<name>.json`, `engine/sw/web-classification.yaml`).
     """
     parts, segments = entry.path.parts, entry.code.split(".")
     expected_folder = KIND_FOLDERS[entry.kind]
     if entry.kind is Kind.SOURCE:
         mirrored = list(parts[1:-1]) == segments
         shown = "/".join([expected_folder, *segments, "<manifest>"])
+    elif entry.kind in (Kind.ENGINE, Kind.JOB):
+        rest = segments[2:] or segments[-1:]
+        folders = ([] if segments[0] == "global" else [segments[0]]) + rest[:-1]
+        mirrored = list(parts[1:-1]) == folders and Path(parts[-1]).stem == rest[-1]
+        shown = "/".join([expected_folder, *folders, f"{rest[-1]}.<ext>"])
     else:
         mirrored = list(parts[1:-1]) == segments[:-1] and Path(parts[-1]).stem == segments[-1]
         shown = "/".join([expected_folder, *segments[:-1], f"{segments[-1]}.yml"])

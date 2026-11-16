@@ -17,7 +17,7 @@ seed/
 ├── sources/<scope>/source/<websites|apis>/<name>/      manifest.yml, modules/, examples/, NOTES.md
 ├── mappings/<scope>/<domain>/<table>/<name>.yml
 ├── terms/<scope>/<area>/.../<name>.yml
-├── jobs/<scope>/engine/jobs/<name>.json
+├── engine/                  flat engine data and jobs: web-classification.yaml, jobs/<name>.json (a non-global scope adds a folder)
 └── _fixtures/               tests only
 ```
 
@@ -26,7 +26,7 @@ seed/
 
 ## What is in it
 
-- `terms/global/web/classification.yaml` (code `global.web.classification`): the web classification data (URL kinds, challenge markers, file signatures) read by `mzizi-fetch`, validated by `source/schema/engine/web.schema.json`. It was moved here on 16 November 2026 at the owner's request; its schema comes first.
+- `engine/web-classification.yaml` (code `global.engine.web-classification`): the web classification data (URL kinds, challenge markers, file signatures) read by `mzizi-fetch`, validated by `source/schema/engine/web.schema.json`. It was moved here on 16 November 2026 at the owner's request; its schema comes first.
 
 ## Large inputs (proposal)
 

@@ -8,7 +8,7 @@ a module's `mapping`. This module only answers "does that code exist, is it the 
 - a manifest may use items in its own scope or in `global`, never in another country, and `global` never uses a country;
 - a reference to a code of the wrong kind is an error;
 - a reference cycle (for example one website extending another that extends it back) is an error;
-- a job spec is `<scope>.engine.jobs.<name>`;
+- a job spec is `<scope>.engine.jobs.<name>` and other engine data is `<scope>.engine.<name>`;
 - the second segment is an area: a database group (the third segment is then one of its tables) or a system area;
 - a source is `<scope>.source.<websites|apis>.<name>` and its kind agrees;
 - a mapping is named after the table it writes first: `<scope>.<schema>.<table>.<name>`.
@@ -33,6 +33,8 @@ class Kind(StrEnum):
     SOURCE = "source"
     MAPPING = "mapping"
     TERMS = "terms"
+    #: Flat engine data and configuration, such as the web classification the fetch package reads.
+    ENGINE = "engine"
     JOB = "job"
 
 
@@ -133,8 +135,10 @@ def code_problems(entry: Entry, areas: Areas) -> list[str]:
             problems.append(
                 f"{where}: a {entry.detail} source code must be <scope>.source.{table}.<name>, not {entry.code!r}"
             )
-    elif entry.kind is Kind.JOB and area != "engine":
+    elif entry.kind is Kind.JOB and (area != "engine" or segments[2:3] != ["jobs"]):
         problems.append(f"{where}: a job spec code must be <scope>.engine.jobs.<name>, not {entry.code!r}")
+    elif entry.kind is Kind.ENGINE and area != "engine":
+        problems.append(f"{where}: engine data code must be <scope>.engine.<name>, not {entry.code!r}")
     elif entry.kind is Kind.MAPPING and entry.detail and ".".join(segments[1:3]) != entry.detail:
         problems.append(
             f"{where}: a mapping is named after the table it writes first ({entry.detail}); "

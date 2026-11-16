@@ -18,15 +18,16 @@ Every source, mapping, terms and job-spec manifest, and every database row that 
 
 - **Source:** `<scope>.source.<websites|apis>.<name>`, where the table matches the manifest's `kind`. It equals `source.sources.code`. Modules have no codes of their own: their full name is the source code plus the module name.
 - **Mapping:** named after the first table it yields: `<scope>.<schema>.<table>.<name>`.
-- **Terms:** a database area and table when it feeds one (`ke.reference.patterns.office-names`), otherwise a system area (`global.web.classification`).
+- **Terms:** only real term lists (`terms.schema.json`), named by the database area and table they feed (`ke.reference.patterns.office-names`).
+- **Engine data** (what the engine and its packages read, such as the web classification): `<scope>.engine.<name>`, for example `global.engine.web-classification`. It is flat: `seed/engine/web-classification.yaml`; a scope other than `global` (a language, say) adds a folder, `seed/engine/sw/web-classification.yaml`.
 - **Expected table columns** (what a PDF or spreadsheet table should contain) are not a manifest of their own: they are the object form of a mapping's `inputs`.
-- **Job spec:** `<scope>.engine.jobs.<name>`, in the optional `code` field of the spec; its files live under `jobs/`.
+- **Job spec:** `<scope>.engine.jobs.<name>`, in the optional `code` field of the spec; its files live under `seed/engine/jobs/`.
 - **Generated database schemas:** each `source/schema/database/<group>.schema.json` has the code `global.database.<group>` (`database` is a system area), and each table in it carries `x-code` = `global.<group>.<table>`. A seed CSV for a table is the same code with the scope changed: `data/ke/reference/values.csv` is `ke.reference.values`.
 - **CSV seed files** are already shaped this way by their path: `data/<scope>/<domain>/<table>.csv`.
 
 ## The folder mirrors the code
 
-A file's folder path under `seed/` mirrors its code. `seed/mappings/ke/governance/holders/office-holders.yml` has the code `ke.governance.holders.office-holders`; a source's code is the folder that holds its manifest, `seed/sources/ke/source/websites/iebc/`. The first folder names the kind: `sources`, `mappings`, `terms`, `jobs`.
+A file's folder path under `seed/` mirrors its code. `seed/mappings/ke/governance/holders/office-holders.yml` has the code `ke.governance.holders.office-holders`; a source's code is the folder that holds its manifest, `seed/sources/ke/source/websites/iebc/`. The first folder names the kind: `sources`, `mappings`, `terms`, `engine`.
 
 `uv run mzizi-manifest refs [folder]` checks all of this: the area and table against the generated `source/schema/database/` files, the kind rules, the path, unknown, duplicate and wrong-kind references, scope visibility and cycles. The flat `_example/` folders use `--no-paths`.
 

@@ -185,6 +185,42 @@ def test_the_path_must_mirror_the_code(tmp_path: Path) -> None:
     assert any("wrong-name.yml: the path must mirror the code" in p for p in found)
 
 
+def test_engine_data_and_jobs_are_flat_and_only_a_non_global_scope_adds_a_folder(tmp_path: Path) -> None:
+    web = "code: global.engine.web-classification\nversion: 1\nurl_kinds: {}\n"
+    job = '{"code": "global.engine.jobs.nightly", "spec_version": 1, "stages": []}'
+    scoped = "code: sw.engine.web-classification\nversion: 1\nurl_kinds: {}\n"
+    root = write(
+        tmp_path,
+        {
+            "engine/web-classification.yaml": web,
+            "engine/jobs/nightly.json": job,
+            "engine/sw/web-classification.yaml": scoped,
+        },
+    )
+    result = scan(root)
+    assert result.problems == []
+    assert {e.kind for e in result.registry.entries.values()} == {Kind.ENGINE, Kind.JOB}
+
+
+def test_engine_data_in_the_wrong_place_or_area_is_rejected(tmp_path: Path) -> None:
+    web = "code: global.engine.web-classification\nversion: 1\nurl_kinds: {}\n"
+    root = write(
+        tmp_path,
+        {
+            "terms/global/web/classification.yaml": web,
+            "engine/ke/jobs/x.json": '{"code": "global.engine.jobs.x", "spec_version": 1, "stages": []}',
+            "engine/y.yaml": "code: global.reference.countries.y\nversion: 1\nurl_kinds: {}\n",
+        },
+    )
+    found = problems(root, mirror=True)
+    assert any("terms/global/web/classification.yaml: the path must mirror the code" in p for p in found)
+    assert any(
+        "engine/ke/jobs/x.json: the path must mirror the code 'global.engine.jobs.x': engine/jobs/x.<ext>" in p
+        for p in found
+    )
+    assert any("engine data code must be <scope>.engine.<name>" in p for p in found)
+
+
 def test_a_module_needs_one_owning_source_and_a_known_mapping(tmp_path: Path) -> None:
     root = write(
         tmp_path,
