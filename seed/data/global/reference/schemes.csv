@@ -16,3 +16,4 @@ geo.identifier.scheme,Registries that identify geographic features,mzizi curated
 src.publisher.kind,Kinds of publisher,mzizi curated
 src.document.kind,Kinds of document,mzizi curated
 src.dataset.category,Categories of dataset,mzizi curated
+leg.instrument.kind,Kinds of legal instrument,mzizi curated

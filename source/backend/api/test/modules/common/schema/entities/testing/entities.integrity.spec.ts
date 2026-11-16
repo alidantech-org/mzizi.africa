@@ -1657,6 +1657,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
+          "unique:institution_id,office_id,authority_kind_id,unit_feature_id,valid_from",
           "institution_id",
           "office_id",
           "unit_feature_id,valid_from,valid_until",
@@ -1837,7 +1838,12 @@ describe("entity schema matches the contract", () => {
         )
         .sort();
       expect(indexes).toEqual(
-        expect.arrayContaining(["institution_id", "office_id", "source_citation_id"]),
+        expect.arrayContaining([
+          "unique:institution_id,office_id,mandate_kind_id,description",
+          "institution_id",
+          "office_id",
+          "source_citation_id",
+        ]),
       );
     });
 
@@ -1951,6 +1957,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
+          "unique:subject_institution_id,object_institution_id,relationship_kind_id,valid_from",
           "subject_institution_id,relationship_kind_id",
           "object_institution_id,relationship_kind_id",
           "source_citation_id",
@@ -2250,6 +2257,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
+          "unique:entity_id,individual_id,name_kind_id,language_tag,name",
           "entity_id",
           "individual_id",
           "name_kind_id",

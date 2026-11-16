@@ -133,6 +133,138 @@
         }
       }
     },
+    "bases": {
+      "title": "legal.bases",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.legal.bases",
+      "x-id": "#/schemas/legal.Bases",
+      "x-table": "legal.bases",
+      "x-primaryKey": ["id"],"x-naturalKey": ["table_name", "record_code", "provision_code", "relation"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["table_name", "record_code", "provision_id", "relation"]
+      ],
+      "required": [
+        "id"
+        ,"provision_id"
+        ,"record_code"
+        ,"relation"
+        ,"table_name"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "note"
+          ,"provision_code"
+          ,"record_code"
+          ,"record_id"
+          ,"relation"
+          ,"table_name"
+          ,"valid_from"
+          ,"valid_until"
+        ],
+        "required": [
+          "provision_code"
+          ,"record_code"
+          ,"relation"
+          ,"table_name"
+        ]
+      },
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"note": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 4000,
+          "x-role": "data"
+        }
+        ,"provision_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "provision_code" }
+        }
+        ,"record_code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 500,
+          "minLength": 1,
+          "x-role": "key"
+        }
+        ,"record_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "data"
+        }
+        ,"relation": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["defined-by", "derives-from", "established-by", "governed-by", "implements", "limited-by"],
+          "x-role": "key"
+        }
+        ,"table_name": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 100,
+          "minLength": 1,
+          "x-role": "key"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"valid_from": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "instrument_versions": {
       "title": "legal.instrument_versions",
       "type": "object",
@@ -140,16 +272,16 @@
       "x-code": "sys.tbl.legal.instrument-versions",
       "x-id": "#/schemas/legal.InstrumentVersions",
       "x-table": "legal.instrument_versions",
-      "x-primaryKey": ["id"],"x-naturalKey": ["instrument_code", "edition"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["instrument_id", "edition"]
+        ["code"]
+        ,["instrument_id", "edition"]
       ],
       "required": [
-        "content_hash"
+        "code"
+        ,"document_id"
         ,"edition"
-        ,"evidence_id"
-        ,"file_version_id"
         ,"id"
         ,"instrument_id"
         ,"observed_at"
@@ -164,22 +296,21 @@
         ],
         "columns": [
           "ceased_on"
+          ,"code"
           ,"commenced_on"
           ,"consolidated_on"
-          ,"content_hash"
+          ,"document_code"
           ,"edition"
           ,"evidence_code"
-          ,"file_version_code"
           ,"instrument_code"
           ,"observed_at"
           ,"repealed_on"
           ,"supersedes_code"
         ],
         "required": [
-          "content_hash"
+          "code"
+          ,"document_code"
           ,"edition"
-          ,"evidence_code"
-          ,"file_version_code"
           ,"instrument_code"
           ,"observed_at"
         ]
@@ -191,6 +322,14 @@
           "format": "date",
           "x-role": "data"
         }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
+        }
         ,"commenced_on": {
           "type": ["string", "null"],
           "x-type": "date",
@@ -201,14 +340,6 @@
           "type": ["string", "null"],
           "x-type": "date",
           "format": "date",
-          "x-role": "data"
-        }
-        ,"content_hash": {
-          "type": "string",
-          "x-type": "text",
-          "minLength": 64,
-          "maxLength": 64,
-          "pattern": "^[a-f0-9]{64}$",
           "x-role": "data"
         }
         ,"created_at": {
@@ -225,26 +356,26 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"document_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Documents", "column": "id", "alias": "document_code" }
+        }
         ,"edition": {
           "type": "string",
           "x-type": "text",
           "maxLength": 255,
           "minLength": 1,
-          "x-role": "key"
+          "x-role": "data"
         }
         ,"evidence_id": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Evidence", "column": "id", "alias": "evidence_code" }
-        }
-        ,"file_version_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/filesystem.FileVersions", "column": "id", "alias": "file_version_code" }
         }
         ,"id": {
           "type": "string",
@@ -257,7 +388,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Instruments", "column": "id", "alias": "instrument_code" }
         }
         ,"observed_at": {
@@ -422,6 +553,303 @@
         }
       }
     },
+    "provision_references": {
+      "title": "legal.provision_references",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.legal.provision-references",
+      "x-id": "#/schemas/legal.ProvisionReferences",
+      "x-table": "legal.provision_references",
+      "x-primaryKey": ["id"],"x-naturalKey": ["source_version_code", "translation_code", "span_start"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["source_version_id", "translation_id", "span_start"]
+      ],
+      "required": [
+        "id"
+        ,"method"
+        ,"relation"
+        ,"review_status"
+        ,"source_version_id"
+        ,"span_end"
+        ,"span_start"
+        ,"span_text"
+        ,"target_provision_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "method"
+          ,"relation"
+          ,"review_status"
+          ,"source_version_code"
+          ,"span_end"
+          ,"span_start"
+          ,"span_text"
+          ,"target_provision_code"
+          ,"translation_code"
+        ],
+        "required": [
+          "method"
+          ,"relation"
+          ,"review_status"
+          ,"source_version_code"
+          ,"span_end"
+          ,"span_start"
+          ,"span_text"
+          ,"target_provision_code"
+        ]
+      },
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"method": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["human", "model", "parser"],
+          "x-role": "data"
+        }
+        ,"relation": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["amends", "as-defined-in", "in-accordance-with", "read-with", "refers-to", "repeals", "subject-to", "under"],
+          "x-role": "data"
+        }
+        ,"review_status": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["accepted", "proposed", "rejected", "reviewed"],
+          "x-role": "data"
+        }
+        ,"source_version_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/legal.ProvisionVersions", "column": "id", "alias": "source_version_code" }
+        }
+        ,"span_end": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"span_start": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-role": "key"
+        }
+        ,"span_text": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 500,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"target_provision_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "target_provision_code" }
+        }
+        ,"translation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/legal.ProvisionTranslations", "column": "id", "alias": "translation_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "provision_translations": {
+      "title": "legal.provision_translations",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.legal.provision-translations",
+      "x-id": "#/schemas/legal.ProvisionTranslations",
+      "x-table": "legal.provision_translations",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+        ,["provision_version_id", "language_tag", "kind"]
+      ],
+      "required": [
+        "code"
+        ,"id"
+        ,"kind"
+        ,"language_tag"
+        ,"provision_version_id"
+        ,"review_status"
+        ,"text"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"document_code"
+          ,"kind"
+          ,"language_tag"
+          ,"produced_by"
+          ,"provision_version_code"
+          ,"review_status"
+          ,"reviewed_at"
+          ,"reviewed_by_snapshot"
+          ,"text"
+        ],
+        "required": [
+          "code"
+          ,"kind"
+          ,"language_tag"
+          ,"provision_version_code"
+          ,"review_status"
+          ,"text"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"document_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Documents", "column": "id", "alias": "document_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"kind": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["machine-proposed", "official", "proposed-draft", "unofficial"],
+          "x-role": "data"
+        }
+        ,"language_tag": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 35,
+          "minLength": 2,
+          "x-role": "data"
+        }
+        ,"produced_by": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "x-role": "data"
+        }
+        ,"provision_version_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/legal.ProvisionVersions", "column": "id", "alias": "provision_version_code" }
+        }
+        ,"review_status": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["accepted", "proposed", "rejected", "reviewed"],
+          "x-role": "data"
+        }
+        ,"reviewed_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"reviewed_by_snapshot": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "x-role": "data"
+        }
+        ,"text": {
+          "type": "string",
+          "x-type": "text",
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "provision_versions": {
       "title": "legal.provision_versions",
       "type": "object",
@@ -429,20 +857,21 @@
       "x-code": "sys.tbl.legal.provision-versions",
       "x-id": "#/schemas/legal.ProvisionVersions",
       "x-table": "legal.provision_versions",
-      "x-primaryKey": ["id"],"x-naturalKey": ["provision_code", "instrument_version_code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["provision_id", "instrument_version_id"]
+        ["code"]
+        ,["provision_id", "instrument_version_id"]
       ],
       "required": [
-        "citation_id"
+        "code"
         ,"id"
         ,"instrument_id"
         ,"instrument_version_id"
+        ,"language_tag"
         ,"observed_at"
         ,"provision_id"
         ,"text"
-        ,"text_hash"
       ],
       "x-seed": {
         "system": [
@@ -454,33 +883,43 @@
         ],
         "columns": [
           "citation_code"
+          ,"code"
           ,"effective_from"
           ,"effective_until"
           ,"instrument_code"
           ,"instrument_version_code"
+          ,"language_tag"
+          ,"locator"
           ,"observed_at"
           ,"provision_code"
           ,"supersedes_code"
           ,"text"
-          ,"text_hash"
         ],
         "required": [
-          "citation_code"
+          "code"
           ,"instrument_code"
           ,"instrument_version_code"
+          ,"language_tag"
           ,"observed_at"
           ,"provision_code"
           ,"text"
-          ,"text_hash"
         ]
       },
       "properties": {
         "citation_id": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "citation_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"created_at": {
           "type": "string",
@@ -526,8 +965,22 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.InstrumentVersions", "column": "id", "alias": "instrument_version_code" }
+        }
+        ,"language_tag": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 35,
+          "minLength": 2,
+          "x-role": "data"
+        }
+        ,"locator": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 1000,
+          "minLength": 1,
+          "x-role": "data"
         }
         ,"observed_at": {
           "type": "string",
@@ -539,7 +992,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "provision_code" }
         }
         ,"supersedes_id": {
@@ -553,14 +1006,6 @@
           "type": "string",
           "x-type": "text",
           "minLength": 1,
-          "x-role": "data"
-        }
-        ,"text_hash": {
-          "type": "string",
-          "x-type": "text",
-          "minLength": 64,
-          "maxLength": 64,
-          "pattern": "^[a-f0-9]{64}$",
           "x-role": "data"
         }
         ,"updated_at": {
@@ -589,12 +1034,15 @@
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
+        ,["parent_id", "position"]
       ],
       "required": [
         "code"
         ,"designation"
         ,"id"
         ,"instrument_id"
+        ,"kind"
+        ,"position"
       ],
       "x-seed": {
         "system": [
@@ -608,13 +1056,17 @@
           "code"
           ,"designation"
           ,"instrument_code"
+          ,"kind"
           ,"parent_code"
+          ,"position"
           ,"title"
         ],
         "required": [
           "code"
           ,"designation"
           ,"instrument_code"
+          ,"kind"
+          ,"position"
         ]
       },
       "properties": {
@@ -661,12 +1113,23 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Instruments", "column": "id", "alias": "instrument_code" }
         }
+        ,"kind": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["article", "chapter", "clause", "definition", "item", "paragraph", "part", "preamble", "schedule", "subparagraph"],
+          "x-role": "data"
+        }
         ,"parent_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "parent_code" }
+        }
+        ,"position": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"title": {
           "type": ["string", "null"],

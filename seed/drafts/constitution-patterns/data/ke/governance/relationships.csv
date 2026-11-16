@@ -1,0 +1,11 @@
+subject_institution_code,object_institution_code,relationship_kind_code,valid_from
+ke.the-presidency,ke.national-executive,gov.relationship.kind.part-of,
+ke.cabinet,ke.national-executive,gov.relationship.kind.part-of,
+ke.state-departments,ke.national-executive,gov.relationship.kind.part-of,
+ke.national-assembly,ke.parliament,gov.relationship.kind.part-of,
+ke.senate,ke.parliament,gov.relationship.kind.part-of,
+ke.supreme-court,ke.judiciary,gov.relationship.kind.part-of,
+ke.court-of-appeal,ke.judiciary,gov.relationship.kind.part-of,
+ke.high-court,ke.judiciary,gov.relationship.kind.part-of,
+ke.subordinate-courts,ke.judiciary,gov.relationship.kind.part-of,
+ke.kadhis-courts,ke.subordinate-courts,gov.relationship.kind.part-of,

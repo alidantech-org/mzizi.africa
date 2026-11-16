@@ -1,0 +1,31 @@
+code,scheme_code,label
+ofc.entity.kind.state-organ,ofc.entity.kind,State organ or constitutional body
+ofc.name.kind.official,ofc.name.kind,Official name
+gov.institution.kind.constitutional-commission,gov.institution.kind,Constitutional commission
+gov.institution.kind.court,gov.institution.kind,Court
+gov.institution.kind.executive-organ,gov.institution.kind,Executive organ
+gov.institution.kind.independent-office,gov.institution.kind,Independent office
+gov.institution.kind.legislative-chamber,gov.institution.kind,Legislative chamber
+gov.institution.kind.security-organ,gov.institution.kind,Security organ
+gov.office.kind.attorney-general,gov.office.kind,Attorney general
+gov.office.kind.auditor,gov.office.kind,Auditor
+gov.office.kind.cabinet-secretary,gov.office.kind,Cabinet secretary
+gov.office.kind.cabinet-secretary-office,gov.office.kind,Cabinet secretary office
+gov.office.kind.central-bank-governor,gov.office.kind,Central bank governor
+gov.office.kind.chairperson,gov.office.kind,Chairperson
+gov.office.kind.chief-justice,gov.office.kind,Chief justice
+gov.office.kind.commissioner,gov.office.kind,Commissioner
+gov.office.kind.controller,gov.office.kind,Controller
+gov.office.kind.deputy-chief-justice,gov.office.kind,Deputy chief justice
+gov.office.kind.deputy-head,gov.office.kind,Deputy head
+gov.office.kind.head-of-state-and-government,gov.office.kind,Head of state and government
+gov.office.kind.inspector-general,gov.office.kind,Inspector general
+gov.office.kind.judge,gov.office.kind,Judge
+gov.office.kind.legislator,gov.office.kind,Legislator
+gov.office.kind.party-leader-in-parliament,gov.office.kind,Party leader in parliament
+gov.office.kind.presiding-officer,gov.office.kind,Presiding officer
+gov.office.kind.principal-secretary,gov.office.kind,Principal secretary
+gov.office.kind.prosecutor,gov.office.kind,Prosecutor
+gov.office.kind.registrar,gov.office.kind,Registrar
+gov.mandate.kind.constitutional,gov.mandate.kind,Constitutional mandate
+gov.relationship.kind.part-of,gov.relationship.kind,Part of

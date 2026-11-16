@@ -22,6 +22,8 @@ CATEGORIES = {
     "ref": "reference",
     "source": "source",
     "src": "source",
+    "legal": "legal",
+    "leg": "legal",
 }
 DATASETS_FILE = Path("data/global/source/datasets.csv")
 

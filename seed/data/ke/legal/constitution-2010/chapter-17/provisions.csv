@@ -1,0 +1,115 @@
+code,instrument_code,parent_code,kind,designation,title,position
+ke.constitution-2010.ch-17,ke.constitution-2010,,chapter,Chapter 17,General Provisions,18
+ke.constitution-2010.art-258,ke.constitution-2010,ke.constitution-2010.ch-17,article,Article 258,Enforcement of this Constitution,1
+ke.constitution-2010.art-258.cl-1,ke.constitution-2010,ke.constitution-2010.art-258,clause,(1),,1
+ke.constitution-2010.art-258.cl-2,ke.constitution-2010,ke.constitution-2010.art-258,clause,(2),,2
+ke.constitution-2010.art-258.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-258.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-258.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-258.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-258.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-258.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-258.cl-2.pa-d,ke.constitution-2010,ke.constitution-2010.art-258.cl-2,paragraph,(d),,4
+ke.constitution-2010.art-259,ke.constitution-2010,ke.constitution-2010.ch-17,article,Article 259,Construing this Constitution,2
+ke.constitution-2010.art-259.cl-1,ke.constitution-2010,ke.constitution-2010.art-259,clause,(1),,1
+ke.constitution-2010.art-259.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-259.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-259.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-259.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-259.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-259.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-259.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-259.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-259.cl-2,ke.constitution-2010,ke.constitution-2010.art-259,clause,(2),,2
+ke.constitution-2010.art-259.cl-3,ke.constitution-2010,ke.constitution-2010.art-259,clause,(3),,3
+ke.constitution-2010.art-259.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-259.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-259.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-259.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-259.cl-3.pa-c,ke.constitution-2010,ke.constitution-2010.art-259.cl-3,paragraph,(c),,3
+ke.constitution-2010.art-259.cl-3.pa-d,ke.constitution-2010,ke.constitution-2010.art-259.cl-3,paragraph,(d),,4
+ke.constitution-2010.art-259.cl-4,ke.constitution-2010,ke.constitution-2010.art-259,clause,(4),,4
+ke.constitution-2010.art-259.cl-4.pa-a,ke.constitution-2010,ke.constitution-2010.art-259.cl-4,paragraph,(a),,1
+ke.constitution-2010.art-259.cl-4.pa-b,ke.constitution-2010,ke.constitution-2010.art-259.cl-4,paragraph,(b),,2
+ke.constitution-2010.art-259.cl-5,ke.constitution-2010,ke.constitution-2010.art-259,clause,(5),,5
+ke.constitution-2010.art-259.cl-5.pa-a,ke.constitution-2010,ke.constitution-2010.art-259.cl-5,paragraph,(a),,1
+ke.constitution-2010.art-259.cl-5.pa-b,ke.constitution-2010,ke.constitution-2010.art-259.cl-5,paragraph,(b),,2
+ke.constitution-2010.art-259.cl-5.pa-b.sp-i,ke.constitution-2010,ke.constitution-2010.art-259.cl-5.pa-b,subparagraph,(i),,1
+ke.constitution-2010.art-259.cl-5.pa-b.sp-ii,ke.constitution-2010,ke.constitution-2010.art-259.cl-5.pa-b,subparagraph,(ii),,2
+ke.constitution-2010.art-259.cl-5.pa-c,ke.constitution-2010,ke.constitution-2010.art-259.cl-5,paragraph,(c),,3
+ke.constitution-2010.art-259.cl-6,ke.constitution-2010,ke.constitution-2010.art-259,clause,(6),,6
+ke.constitution-2010.art-259.cl-7,ke.constitution-2010,ke.constitution-2010.art-259,clause,(7),,7
+ke.constitution-2010.art-259.cl-8,ke.constitution-2010,ke.constitution-2010.art-259,clause,(8),,8
+ke.constitution-2010.art-259.cl-9,ke.constitution-2010,ke.constitution-2010.art-259,clause,(9),,9
+ke.constitution-2010.art-259.cl-10,ke.constitution-2010,ke.constitution-2010.art-259,clause,(10),,10
+ke.constitution-2010.art-259.cl-11,ke.constitution-2010,ke.constitution-2010.art-259,clause,(11),,11
+ke.constitution-2010.art-260,ke.constitution-2010,ke.constitution-2010.ch-17,article,Article 260,Interpretation,3
+ke.constitution-2010.art-260.def-1,ke.constitution-2010,ke.constitution-2010.art-260,definition,adult,,1
+ke.constitution-2010.art-260.def-2,ke.constitution-2010,ke.constitution-2010.art-260,definition,affirmative action,,2
+ke.constitution-2010.art-260.def-3,ke.constitution-2010,ke.constitution-2010.art-260,definition,child,,3
+ke.constitution-2010.art-260.def-4,ke.constitution-2010,ke.constitution-2010.art-260,definition,contravene,,4
+ke.constitution-2010.art-260.def-5,ke.constitution-2010,ke.constitution-2010.art-260,definition,county legislation,,5
+ke.constitution-2010.art-260.def-6,ke.constitution-2010,ke.constitution-2010.art-260,definition,disability,,6
+ke.constitution-2010.art-260.def-7,ke.constitution-2010,ke.constitution-2010.art-260,definition,document,,7
+ke.constitution-2010.art-260.def-7.pa-a,ke.constitution-2010,ke.constitution-2010.art-260.def-7,paragraph,(a),,1
+ke.constitution-2010.art-260.def-7.pa-b,ke.constitution-2010,ke.constitution-2010.art-260.def-7,paragraph,(b),,2
+ke.constitution-2010.art-260.def-8,ke.constitution-2010,ke.constitution-2010.art-260,definition,effective date,,8
+ke.constitution-2010.art-260.def-9,ke.constitution-2010,ke.constitution-2010.art-260,definition,fail,,9
+ke.constitution-2010.art-260.def-10,ke.constitution-2010,ke.constitution-2010.art-260,definition,financial year,,10
+ke.constitution-2010.art-260.def-11,ke.constitution-2010,ke.constitution-2010.art-260,definition,Gazette,,11
+ke.constitution-2010.art-260.def-12,ke.constitution-2010,ke.constitution-2010.art-260,definition,guarantee,,12
+ke.constitution-2010.art-260.def-13,ke.constitution-2010,ke.constitution-2010.art-260,definition,judicial officer,,13
+ke.constitution-2010.art-260.def-14,ke.constitution-2010,ke.constitution-2010.art-260,definition,land,,14
+ke.constitution-2010.art-260.def-14.pa-a,ke.constitution-2010,ke.constitution-2010.art-260.def-14,paragraph,(a),,1
+ke.constitution-2010.art-260.def-14.pa-b,ke.constitution-2010,ke.constitution-2010.art-260.def-14,paragraph,(b),,2
+ke.constitution-2010.art-260.def-14.pa-c,ke.constitution-2010,ke.constitution-2010.art-260.def-14,paragraph,(c),,3
+ke.constitution-2010.art-260.def-14.pa-d,ke.constitution-2010,ke.constitution-2010.art-260.def-14,paragraph,(d),,4
+ke.constitution-2010.art-260.def-14.pa-e,ke.constitution-2010,ke.constitution-2010.art-260.def-14,paragraph,(e),,5
+ke.constitution-2010.art-260.def-15,ke.constitution-2010,ke.constitution-2010.art-260,definition,legislation,,15
+ke.constitution-2010.art-260.def-15.pa-a,ke.constitution-2010,ke.constitution-2010.art-260.def-15,paragraph,(a),,1
+ke.constitution-2010.art-260.def-15.pa-b,ke.constitution-2010,ke.constitution-2010.art-260.def-15,paragraph,(b),,2
+ke.constitution-2010.art-260.def-16,ke.constitution-2010,ke.constitution-2010.art-260,definition,loan,,16
+ke.constitution-2010.art-260.def-17,ke.constitution-2010,ke.constitution-2010.art-260,definition,marginalised community,,17
+ke.constitution-2010.art-260.def-17.pa-a,ke.constitution-2010,ke.constitution-2010.art-260.def-17,paragraph,(a),,1
+ke.constitution-2010.art-260.def-17.pa-b,ke.constitution-2010,ke.constitution-2010.art-260.def-17,paragraph,(b),,2
+ke.constitution-2010.art-260.def-17.pa-c,ke.constitution-2010,ke.constitution-2010.art-260.def-17,paragraph,(c),,3
+ke.constitution-2010.art-260.def-17.pa-d,ke.constitution-2010,ke.constitution-2010.art-260.def-17,paragraph,(d),,4
+ke.constitution-2010.art-260.def-17.pa-d.sp-i,ke.constitution-2010,ke.constitution-2010.art-260.def-17.pa-d,subparagraph,(i),,1
+ke.constitution-2010.art-260.def-17.pa-d.sp-ii,ke.constitution-2010,ke.constitution-2010.art-260.def-17.pa-d,subparagraph,(ii),,2
+ke.constitution-2010.art-260.def-18,ke.constitution-2010,ke.constitution-2010.art-260,definition,marginalised group,,18
+ke.constitution-2010.art-260.def-19,ke.constitution-2010,ke.constitution-2010.art-260,definition,national legislation,,19
+ke.constitution-2010.art-260.def-20,ke.constitution-2010,ke.constitution-2010.art-260,definition,natural resources,,20
+ke.constitution-2010.art-260.def-20.pa-a,ke.constitution-2010,ke.constitution-2010.art-260.def-20,paragraph,(a),,1
+ke.constitution-2010.art-260.def-20.pa-b,ke.constitution-2010,ke.constitution-2010.art-260.def-20,paragraph,(b),,2
+ke.constitution-2010.art-260.def-20.pa-c,ke.constitution-2010,ke.constitution-2010.art-260.def-20,paragraph,(c),,3
+ke.constitution-2010.art-260.def-20.pa-d,ke.constitution-2010,ke.constitution-2010.art-260.def-20,paragraph,(d),,4
+ke.constitution-2010.art-260.def-21,ke.constitution-2010,ke.constitution-2010.art-260,definition,older member of society,,21
+ke.constitution-2010.art-260.def-22,ke.constitution-2010,ke.constitution-2010.art-260,definition,person,,22
+ke.constitution-2010.art-260.def-23,ke.constitution-2010,ke.constitution-2010.art-260,definition,political party,,23
+ke.constitution-2010.art-260.def-24,ke.constitution-2010,ke.constitution-2010.art-260,definition,property,,24
+ke.constitution-2010.art-260.def-24.pa-a,ke.constitution-2010,ke.constitution-2010.art-260.def-24,paragraph,(a),,1
+ke.constitution-2010.art-260.def-24.pa-b,ke.constitution-2010,ke.constitution-2010.art-260.def-24,paragraph,(b),,2
+ke.constitution-2010.art-260.def-24.pa-c,ke.constitution-2010,ke.constitution-2010.art-260.def-24,paragraph,(c),,3
+ke.constitution-2010.art-260.def-24.pa-d,ke.constitution-2010,ke.constitution-2010.art-260.def-24,paragraph,(d),,4
+ke.constitution-2010.art-260.def-25,ke.constitution-2010,ke.constitution-2010.art-260,definition,public officer,,25
+ke.constitution-2010.art-260.def-25.pa-a,ke.constitution-2010,ke.constitution-2010.art-260.def-25,paragraph,(a),,1
+ke.constitution-2010.art-260.def-25.pa-b,ke.constitution-2010,ke.constitution-2010.art-260.def-25,paragraph,(b),,2
+ke.constitution-2010.art-260.def-26,ke.constitution-2010,ke.constitution-2010.art-260,definition,public office,,26
+ke.constitution-2010.art-260.def-27,ke.constitution-2010,ke.constitution-2010.art-260,definition,public service,,27
+ke.constitution-2010.art-260.def-28,ke.constitution-2010,ke.constitution-2010.art-260,definition,Republic,,28
+ke.constitution-2010.art-260.def-29,ke.constitution-2010,ke.constitution-2010.art-260,definition,State,,29
+ke.constitution-2010.art-260.def-30,ke.constitution-2010,ke.constitution-2010.art-260,definition,State office,,30
+ke.constitution-2010.art-260.def-30.pa-a,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(a),,1
+ke.constitution-2010.art-260.def-30.pa-b,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(b),,2
+ke.constitution-2010.art-260.def-30.pa-c,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(c),,3
+ke.constitution-2010.art-260.def-30.pa-d,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(d),,4
+ke.constitution-2010.art-260.def-30.pa-e,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(e),,5
+ke.constitution-2010.art-260.def-30.pa-f,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(f),,6
+ke.constitution-2010.art-260.def-30.pa-g,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(g),,7
+ke.constitution-2010.art-260.def-30.pa-h,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(h),,8
+ke.constitution-2010.art-260.def-30.pa-i,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(i),,9
+ke.constitution-2010.art-260.def-30.pa-j,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(j),,10
+ke.constitution-2010.art-260.def-30.pa-k,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(k),,11
+ke.constitution-2010.art-260.def-30.pa-l,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(l),,12
+ke.constitution-2010.art-260.def-30.pa-m,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(m),,13
+ke.constitution-2010.art-260.def-30.pa-n,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(n),,14
+ke.constitution-2010.art-260.def-30.pa-o,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(o),,15
+ke.constitution-2010.art-260.def-30.pa-p,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(p),,16
+ke.constitution-2010.art-260.def-30.pa-q,ke.constitution-2010,ke.constitution-2010.art-260.def-30,paragraph,(q),,17
+ke.constitution-2010.art-260.def-31,ke.constitution-2010,ke.constitution-2010.art-260,definition,State officer,,31
+ke.constitution-2010.art-260.def-32,ke.constitution-2010,ke.constitution-2010.art-260,definition,State organ,,32
+ke.constitution-2010.art-260.def-33,ke.constitution-2010,ke.constitution-2010.art-260,definition,writing,,33
+ke.constitution-2010.art-260.def-34,ke.constitution-2010,ke.constitution-2010.art-260,definition,youth,,34
+ke.constitution-2010.art-260.def-34.pa-a,ke.constitution-2010,ke.constitution-2010.art-260.def-34,paragraph,(a),,1
+ke.constitution-2010.art-260.def-34.pa-b,ke.constitution-2010,ke.constitution-2010.art-260.def-34,paragraph,(b),,2

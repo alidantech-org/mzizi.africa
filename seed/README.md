@@ -75,3 +75,17 @@ Each feature carries its IEBC place code (`KE-030`, `KE-027-144`, `KE-030-0787`:
 `uv run mzizi-engine register-files [--apply]` stores the files themselves in the object store through the filesystem package: the downloaded originals listed in `data/ke/source/_files.yaml` (under `sources/downloads/<source>/`, with a credit and a rights statement written to `source.attributions`) and every seed CSV (under `seed/…`). It links each `source.documents` and `source.datasets` row to its stored file version. Run again, it stores nothing new.
 
 To start from scratch: drop and recreate the database, `bun run db migrate` (the single `0001_init` release built from the current schema), `bun run db roles`, then `mzizi-engine seed --apply` and `mzizi-engine register-files --apply`.
+
+## The Constitution of Kenya, 2010
+
+`data/ke/legal/constitution-2010/` holds the Constitution as one statement per row: a folder per chapter (`chapter-01/` to `chapter-18/`), the preamble and each schedule (`schedule-1/` to `schedule-6/`), each with a small `provisions.csv` (the tree: chapter, part, article, clause, paragraph, sub-paragraph, definition, schedule item), `provision_versions.csv` (the English wording, with a KLRC link or PDF page in `locator`), `provision_translations.csv` (the Kiswahili text, `unofficial` and `proposed`, aligned by article, clause and paragraph number) and `provision_references.csv` (every "Article 24 (1) (b)", "Chapter Four" or "Fifth Schedule" in the English wording, with the exact characters of the mention, so a reader can follow it like a link). `data/ke/legal/bases/geography.bases.csv` links the country, the 47 counties, the 290 constituencies and their kinds to the provision that creates them; the same `legal.bases` table links any record in any table to its legal basis.
+
+The files are generated, not typed: `uv run python scripts/seed/build_constitution.py` reads the PDFs in `.dev/datasets/kenya-constitution/` and the KLRC link map in `.dev/datasets/klrc/` with the extraction package (`mzizi_extraction.legislation`) and rewrites them. The English text is the NCLR print (Laws of Kenya, with the authority of the Attorney General); the Kiswahili text is URAIA's translation of it and the English governs (Article 259). The 6 May 2010 Kiswahili *proposed* constitution is stored as a document only. KLRC page addresses for 209 of 264 articles come from its chapter and part pages (`data/global/source/paths.csv`); the rest cite the PDF page.
+
+## Drafts that wait for approval
+
+`seed/drafts/` is outside `seed/data/`, so nothing in it is loaded. `drafts/constitution-patterns/` drafts the patterns, institutions, offices and mandates the Constitution establishes (its README lists them with the articles they rest on). `uv run python scripts/seed/check_drafts.py` checks a draft against the schemas together with the real seed. Approving a draft means moving the files you accept into `seed/data/`.
+
+## Never delete objects to make registration succeed
+
+If the database is rebuilt while the object store keeps the old files, `register-files` refuses to overwrite an object that no registry row owns. Remove only objects you created and can regenerate (the seed CSVs), never other stored artifacts: the old seed files under `internal/seed/countries/…` are archives and stay.

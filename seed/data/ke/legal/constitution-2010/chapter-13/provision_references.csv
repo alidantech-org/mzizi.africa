@@ -1,0 +1,5 @@
+source_version_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
+ke.constitution-2010.art-234.cl-2.pa-c.v-2010,,ke.constitution-2010.art-10,refers-to,47,58,Articles 10,parser,proposed
+ke.constitution-2010.art-234.cl-2.pa-c.v-2010,,ke.constitution-2010.art-232,refers-to,63,66,232,parser,proposed
+ke.constitution-2010.art-234.cl-2.pa-h.v-2010,,ke.constitution-2010.art-10,refers-to,114,125,Articles 10,parser,proposed
+ke.constitution-2010.art-234.cl-2.pa-h.v-2010,,ke.constitution-2010.art-232,refers-to,130,133,232,parser,proposed

@@ -2,3 +2,8 @@ code,name,kind_code,country_code
 geoboundaries,geoBoundaries (William & Mary geoLab),src.publisher.kind.research-institution,
 ocha,United Nations Office for the Coordination of Humanitarian Affairs (OCHA),src.publisher.kind.international-organisation,
 american-red-cross,American Red Cross,src.publisher.kind.non-profit,
+nclr,National Council for Law Reporting (Kenya Law),src.publisher.kind.government-agency,ke
+klrc,Kenya Law Reform Commission,src.publisher.kind.government-agency,ke
+constitutionnet,ConstitutionNet (International IDEA),src.publisher.kind.international-organisation,
+uraia,URAIA Trust,src.publisher.kind.non-profit,ke
+ke-attorney-general,Office of the Attorney General of Kenya,src.publisher.kind.government-agency,ke

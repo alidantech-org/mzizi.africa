@@ -16,7 +16,10 @@ class ProvisionVersionsRow(BaseModel):
 
     table: ClassVar[str] = "legal.provision_versions"
 
-    citation_id: UUID
+    citation_id: UUID | None = None
+    code: Annotated[
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+    ]
     created_at: datetime
     deleted_at: datetime | None = None
     effective_from: date | None = None
@@ -24,10 +27,11 @@ class ProvisionVersionsRow(BaseModel):
     id: UUID
     instrument_id: UUID
     instrument_version_id: UUID
+    language_tag: Annotated[str, Field(min_length=2, max_length=35)]
+    locator: Annotated[str, Field(min_length=1, max_length=1000)] | None = None
     observed_at: datetime
     provision_id: UUID
     supersedes_id: UUID | None = None
     text: Annotated[str, Field(min_length=1)]
-    text_hash: Annotated[str, Field(min_length=64, max_length=64, pattern="^[a-f0-9]{64}$")]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -1,0 +1,85 @@
+code,instrument_code,parent_code,kind,designation,title,position
+ke.constitution-2010.ch-13,ke.constitution-2010,,chapter,Chapter 13,The Public Service,14
+ke.constitution-2010.ch-13.pt-1,ke.constitution-2010,ke.constitution-2010.ch-13,part,Part 1,Values and Principles of Public Service,1
+ke.constitution-2010.art-232,ke.constitution-2010,ke.constitution-2010.ch-13.pt-1,article,Article 232,Values and principles of public service,1
+ke.constitution-2010.art-232.cl-1,ke.constitution-2010,ke.constitution-2010.art-232,clause,(1),,1
+ke.constitution-2010.art-232.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-232.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-232.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-232.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-232.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-232.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-232.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-232.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-232.cl-1.pa-e,ke.constitution-2010,ke.constitution-2010.art-232.cl-1,paragraph,(e),,5
+ke.constitution-2010.art-232.cl-1.pa-f,ke.constitution-2010,ke.constitution-2010.art-232.cl-1,paragraph,(f),,6
+ke.constitution-2010.art-232.cl-1.pa-g,ke.constitution-2010,ke.constitution-2010.art-232.cl-1,paragraph,(g),,7
+ke.constitution-2010.art-232.cl-1.pa-h,ke.constitution-2010,ke.constitution-2010.art-232.cl-1,paragraph,(h),,8
+ke.constitution-2010.art-232.cl-1.pa-i,ke.constitution-2010,ke.constitution-2010.art-232.cl-1,paragraph,(i),,9
+ke.constitution-2010.art-232.cl-1.pa-i.sp-i,ke.constitution-2010,ke.constitution-2010.art-232.cl-1.pa-i,subparagraph,(i),,1
+ke.constitution-2010.art-232.cl-1.pa-i.sp-ii,ke.constitution-2010,ke.constitution-2010.art-232.cl-1.pa-i,subparagraph,(ii),,2
+ke.constitution-2010.art-232.cl-1.pa-i.sp-iii,ke.constitution-2010,ke.constitution-2010.art-232.cl-1.pa-i,subparagraph,(iii),,3
+ke.constitution-2010.art-232.cl-2,ke.constitution-2010,ke.constitution-2010.art-232,clause,(2),,2
+ke.constitution-2010.art-232.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-232.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-232.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-232.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-232.cl-3,ke.constitution-2010,ke.constitution-2010.art-232,clause,(3),,3
+ke.constitution-2010.ch-13.pt-2,ke.constitution-2010,ke.constitution-2010.ch-13,part,Part 2,The Public Service Commission,2
+ke.constitution-2010.art-233,ke.constitution-2010,ke.constitution-2010.ch-13.pt-2,article,Article 233,The Public Service Commission,1
+ke.constitution-2010.art-233.cl-1,ke.constitution-2010,ke.constitution-2010.art-233,clause,(1),,1
+ke.constitution-2010.art-233.cl-2,ke.constitution-2010,ke.constitution-2010.art-233,clause,(2),,2
+ke.constitution-2010.art-233.cl-3,ke.constitution-2010,ke.constitution-2010.art-233,clause,(3),,3
+ke.constitution-2010.art-233.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-233.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-233.cl-3.pa-a.sp-i,ke.constitution-2010,ke.constitution-2010.art-233.cl-3.pa-a,subparagraph,(i),,1
+ke.constitution-2010.art-233.cl-3.pa-a.sp-ii,ke.constitution-2010,ke.constitution-2010.art-233.cl-3.pa-a,subparagraph,(ii),,2
+ke.constitution-2010.art-233.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-233.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-233.cl-3.pa-c,ke.constitution-2010,ke.constitution-2010.art-233.cl-3,paragraph,(c),,3
+ke.constitution-2010.art-233.cl-3.pa-d,ke.constitution-2010,ke.constitution-2010.art-233.cl-3,paragraph,(d),,4
+ke.constitution-2010.art-233.cl-4,ke.constitution-2010,ke.constitution-2010.art-233,clause,(4),,4
+ke.constitution-2010.art-233.cl-5,ke.constitution-2010,ke.constitution-2010.art-233,clause,(5),,5
+ke.constitution-2010.art-233.cl-6,ke.constitution-2010,ke.constitution-2010.art-233,clause,(6),,6
+ke.constitution-2010.art-233.cl-6.pa-a,ke.constitution-2010,ke.constitution-2010.art-233.cl-6,paragraph,(a),,1
+ke.constitution-2010.art-233.cl-6.pa-b,ke.constitution-2010,ke.constitution-2010.art-233.cl-6,paragraph,(b),,2
+ke.constitution-2010.art-234,ke.constitution-2010,ke.constitution-2010.ch-13.pt-2,article,Article 234,Functions and powers of the Public Service Commission,2
+ke.constitution-2010.art-234.cl-1,ke.constitution-2010,ke.constitution-2010.art-234,clause,(1),,1
+ke.constitution-2010.art-234.cl-2,ke.constitution-2010,ke.constitution-2010.art-234,clause,(2),,2
+ke.constitution-2010.art-234.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-234.cl-2.pa-a.sp-i,ke.constitution-2010,ke.constitution-2010.art-234.cl-2.pa-a,subparagraph,(i),,1
+ke.constitution-2010.art-234.cl-2.pa-a.sp-ii,ke.constitution-2010,ke.constitution-2010.art-234.cl-2.pa-a,subparagraph,(ii),,2
+ke.constitution-2010.art-234.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-234.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-234.cl-2.pa-d,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(d),,4
+ke.constitution-2010.art-234.cl-2.pa-e,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(e),,5
+ke.constitution-2010.art-234.cl-2.pa-f,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(f),,6
+ke.constitution-2010.art-234.cl-2.pa-g,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(g),,7
+ke.constitution-2010.art-234.cl-2.pa-h,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(h),,8
+ke.constitution-2010.art-234.cl-2.pa-i,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(i),,9
+ke.constitution-2010.art-234.cl-2.pa-j,ke.constitution-2010,ke.constitution-2010.art-234.cl-2,paragraph,(j),,10
+ke.constitution-2010.art-234.cl-3,ke.constitution-2010,ke.constitution-2010.art-234,clause,(3),,3
+ke.constitution-2010.art-234.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-234.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-234.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-234.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-234.cl-3.pa-c,ke.constitution-2010,ke.constitution-2010.art-234.cl-3,paragraph,(c),,3
+ke.constitution-2010.art-234.cl-3.pa-c.sp-i,ke.constitution-2010,ke.constitution-2010.art-234.cl-3.pa-c,subparagraph,(i),,1
+ke.constitution-2010.art-234.cl-3.pa-c.sp-ii,ke.constitution-2010,ke.constitution-2010.art-234.cl-3.pa-c,subparagraph,(ii),,2
+ke.constitution-2010.art-234.cl-3.pa-c.sp-iii,ke.constitution-2010,ke.constitution-2010.art-234.cl-3.pa-c,subparagraph,(iii),,3
+ke.constitution-2010.art-234.cl-3.pa-c.sp-iv,ke.constitution-2010,ke.constitution-2010.art-234.cl-3.pa-c,subparagraph,(iv),,4
+ke.constitution-2010.art-234.cl-4,ke.constitution-2010,ke.constitution-2010.art-234,clause,(4),,4
+ke.constitution-2010.art-234.cl-5,ke.constitution-2010,ke.constitution-2010.art-234,clause,(5),,5
+ke.constitution-2010.art-235,ke.constitution-2010,ke.constitution-2010.ch-13.pt-2,article,Article 235,Staffing of county governments,3
+ke.constitution-2010.art-235.cl-1,ke.constitution-2010,ke.constitution-2010.art-235,clause,(1),,1
+ke.constitution-2010.art-235.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-235.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-235.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-235.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-235.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-235.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-235.cl-2,ke.constitution-2010,ke.constitution-2010.art-235,clause,(2),,2
+ke.constitution-2010.art-236,ke.constitution-2010,ke.constitution-2010.ch-13.pt-2,article,Article 236,Protection of public officers,4
+ke.constitution-2010.art-236.pa-a,ke.constitution-2010,ke.constitution-2010.art-236,paragraph,(a),,1
+ke.constitution-2010.art-236.pa-b,ke.constitution-2010,ke.constitution-2010.art-236,paragraph,(b),,2
+ke.constitution-2010.ch-13.pt-3,ke.constitution-2010,ke.constitution-2010.ch-13,part,Part 3,Teachers Service Commission,3
+ke.constitution-2010.art-237,ke.constitution-2010,ke.constitution-2010.ch-13.pt-3,article,Article 237,Teachers Service Commission,1
+ke.constitution-2010.art-237.cl-1,ke.constitution-2010,ke.constitution-2010.art-237,clause,(1),,1
+ke.constitution-2010.art-237.cl-2,ke.constitution-2010,ke.constitution-2010.art-237,clause,(2),,2
+ke.constitution-2010.art-237.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-237.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-237.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-237.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-237.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-237.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-237.cl-2.pa-d,ke.constitution-2010,ke.constitution-2010.art-237.cl-2,paragraph,(d),,4
+ke.constitution-2010.art-237.cl-2.pa-e,ke.constitution-2010,ke.constitution-2010.art-237.cl-2,paragraph,(e),,5
+ke.constitution-2010.art-237.cl-2.pa-f,ke.constitution-2010,ke.constitution-2010.art-237.cl-2,paragraph,(f),,6
+ke.constitution-2010.art-237.cl-3,ke.constitution-2010,ke.constitution-2010.art-237,clause,(3),,3
+ke.constitution-2010.art-237.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-237.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-237.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-237.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-237.cl-3.pa-c,ke.constitution-2010,ke.constitution-2010.art-237.cl-3,paragraph,(c),,3

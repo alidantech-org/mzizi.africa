@@ -499,9 +499,10 @@
       "x-code": "sys.tbl.official.names",
       "x-id": "#/schemas/official.Names",
       "x-table": "official.names",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["entity_code", "individual_code", "name_kind_code", "language_tag", "name"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["entity_id", "individual_id", "name_kind_id", "language_tag", "name"]
       ],
       "required": [
         "id"
@@ -513,12 +514,12 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "entity_code"
-          ,"id"
           ,"individual_code"
           ,"is_preferred"
           ,"language_tag"
@@ -529,8 +530,7 @@
           ,"valid_until"
         ],
         "required": [
-          "id"
-          ,"is_preferred"
+          "is_preferred"
           ,"name"
           ,"name_kind_code"
         ]
@@ -554,7 +554,7 @@
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "entity_code" }
         }
         ,"id": {
@@ -562,13 +562,13 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"individual_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "individual_code" }
         }
         ,"is_preferred": {
@@ -581,20 +581,20 @@
           "x-type": "text",
           "maxLength": 35,
           "minLength": 2,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"name": {
           "type": "string",
           "x-type": "text",
           "maxLength": 300,
           "minLength": 1,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"name_kind_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "name_kind_code" }
         }
         ,"source_citation_id": {

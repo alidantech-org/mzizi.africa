@@ -18,6 +18,9 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One dated, typed relationship between two government institutions.
  */
 @Entity({ schema: "governance", name: "relationships" })
+@Index(["subjectInstitutionId", "objectInstitutionId", "relationshipKindId", "validFrom"], {
+  unique: true,
+})
 @Index(["subjectInstitutionId", "relationshipKindId"])
 @Index(["objectInstitutionId", "relationshipKindId"])
 @Index(["sourceCitationId"])

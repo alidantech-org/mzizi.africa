@@ -1,0 +1,34 @@
+entity_code,individual_code,name_kind_code,language_tag,name,is_preferred
+ke.national-executive,,ofc.name.kind.official,en,The National Executive,true
+ke.the-presidency,,ofc.name.kind.official,en,The President and Deputy President,true
+ke.cabinet,,ofc.name.kind.official,en,Cabinet,true
+ke.state-departments,,ofc.name.kind.official,en,State departments,true
+ke.office-of-the-attorney-general,,ofc.name.kind.official,en,Office of the Attorney-General,true
+ke.office-of-the-director-of-public-prosecutions,,ofc.name.kind.official,en,Office of the Director of Public Prosecutions,true
+ke.parliament,,ofc.name.kind.official,en,Parliament,true
+ke.national-assembly,,ofc.name.kind.official,en,The National Assembly,true
+ke.senate,,ofc.name.kind.official,en,The Senate,true
+ke.parliamentary-service-commission,,ofc.name.kind.official,en,Parliamentary Service Commission,true
+ke.judiciary,,ofc.name.kind.official,en,The Judiciary,true
+ke.supreme-court,,ofc.name.kind.official,en,The Supreme Court,true
+ke.court-of-appeal,,ofc.name.kind.official,en,The Court of Appeal,true
+ke.high-court,,ofc.name.kind.official,en,The High Court,true
+ke.subordinate-courts,,ofc.name.kind.official,en,Subordinate courts,true
+ke.kadhis-courts,,ofc.name.kind.official,en,Kadhis' courts,true
+ke.judicial-service-commission,,ofc.name.kind.official,en,Judicial Service Commission,true
+ke.independent-electoral-and-boundaries-commission,,ofc.name.kind.official,en,Independent Electoral and Boundaries Commission,true
+ke.commission-on-revenue-allocation,,ofc.name.kind.official,en,Commission on Revenue Allocation,true
+ke.salaries-and-remuneration-commission,,ofc.name.kind.official,en,Salaries and Remuneration Commission,true
+ke.public-service-commission,,ofc.name.kind.official,en,The Public Service Commission,true
+ke.teachers-service-commission,,ofc.name.kind.official,en,Teachers Service Commission,true
+ke.national-police-service-commission,,ofc.name.kind.official,en,National Police Service Commission,true
+ke.national-land-commission,,ofc.name.kind.official,en,National Land Commission,true
+ke.kenya-national-human-rights-and-equality-commission,,ofc.name.kind.official,en,Kenya National Human Rights and Equality Commission,true
+ke.ethics-and-anti-corruption-commission,,ofc.name.kind.official,en,Ethics and Anti-Corruption Commission,true
+ke.office-of-the-controller-of-budget,,ofc.name.kind.official,en,Office of the Controller of Budget,true
+ke.office-of-the-auditor-general,,ofc.name.kind.official,en,Office of the Auditor-General,true
+ke.central-bank-of-kenya,,ofc.name.kind.official,en,Central Bank of Kenya,true
+ke.national-security-council,,ofc.name.kind.official,en,National Security Council,true
+ke.defence-forces,,ofc.name.kind.official,en,Kenya Defence Forces,true
+ke.national-intelligence-service,,ofc.name.kind.official,en,National Intelligence Service,true
+ke.national-police-service,,ofc.name.kind.official,en,National Police Service,true

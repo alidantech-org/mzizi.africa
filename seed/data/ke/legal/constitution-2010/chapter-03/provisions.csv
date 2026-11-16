@@ -1,0 +1,44 @@
+code,instrument_code,parent_code,kind,designation,title,position
+ke.constitution-2010.ch-3,ke.constitution-2010,,chapter,Chapter 3,Citizenship,4
+ke.constitution-2010.art-12,ke.constitution-2010,ke.constitution-2010.ch-3,article,Article 12,Entitlements of citizens,1
+ke.constitution-2010.art-12.cl-1,ke.constitution-2010,ke.constitution-2010.art-12,clause,(1),,1
+ke.constitution-2010.art-12.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-12.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-12.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-12.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-12.cl-2,ke.constitution-2010,ke.constitution-2010.art-12,clause,(2),,2
+ke.constitution-2010.art-13,ke.constitution-2010,ke.constitution-2010.ch-3,article,Article 13,Retention and acquisition of citizenship,2
+ke.constitution-2010.art-13.cl-1,ke.constitution-2010,ke.constitution-2010.art-13,clause,(1),,1
+ke.constitution-2010.art-13.cl-2,ke.constitution-2010,ke.constitution-2010.art-13,clause,(2),,2
+ke.constitution-2010.art-13.cl-3,ke.constitution-2010,ke.constitution-2010.art-13,clause,(3),,3
+ke.constitution-2010.art-14,ke.constitution-2010,ke.constitution-2010.ch-3,article,Article 14,Citizenship by birth,3
+ke.constitution-2010.art-14.cl-1,ke.constitution-2010,ke.constitution-2010.art-14,clause,(1),,1
+ke.constitution-2010.art-14.cl-2,ke.constitution-2010,ke.constitution-2010.art-14,clause,(2),,2
+ke.constitution-2010.art-14.cl-3,ke.constitution-2010,ke.constitution-2010.art-14,clause,(3),,3
+ke.constitution-2010.art-14.cl-4,ke.constitution-2010,ke.constitution-2010.art-14,clause,(4),,4
+ke.constitution-2010.art-14.cl-5,ke.constitution-2010,ke.constitution-2010.art-14,clause,(5),,5
+ke.constitution-2010.art-15,ke.constitution-2010,ke.constitution-2010.ch-3,article,Article 15,Citizenship by registration,4
+ke.constitution-2010.art-15.cl-1,ke.constitution-2010,ke.constitution-2010.art-15,clause,(1),,1
+ke.constitution-2010.art-15.cl-2,ke.constitution-2010,ke.constitution-2010.art-15,clause,(2),,2
+ke.constitution-2010.art-15.cl-3,ke.constitution-2010,ke.constitution-2010.art-15,clause,(3),,3
+ke.constitution-2010.art-15.cl-4,ke.constitution-2010,ke.constitution-2010.art-15,clause,(4),,4
+ke.constitution-2010.art-15.cl-5,ke.constitution-2010,ke.constitution-2010.art-15,clause,(5),,5
+ke.constitution-2010.art-16,ke.constitution-2010,ke.constitution-2010.ch-3,article,Article 16,Dual citizenship,5
+ke.constitution-2010.art-17,ke.constitution-2010,ke.constitution-2010.ch-3,article,Article 17,Revocation of citizenship,6
+ke.constitution-2010.art-17.cl-1,ke.constitution-2010,ke.constitution-2010.art-17,clause,(1),,1
+ke.constitution-2010.art-17.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-17.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-17.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-17.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-17.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-17.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-17.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-17.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-17.cl-1.pa-d.sp-i,ke.constitution-2010,ke.constitution-2010.art-17.cl-1.pa-d,subparagraph,(i),,1
+ke.constitution-2010.art-17.cl-1.pa-d.sp-ii,ke.constitution-2010,ke.constitution-2010.art-17.cl-1.pa-d,subparagraph,(ii),,2
+ke.constitution-2010.art-17.cl-2,ke.constitution-2010,ke.constitution-2010.art-17,clause,(2),,2
+ke.constitution-2010.art-17.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-17.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-17.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-17.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-17.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-17.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-18,ke.constitution-2010,ke.constitution-2010.ch-3,article,Article 18,Legislation on citizenship,7
+ke.constitution-2010.art-18.pa-a,ke.constitution-2010,ke.constitution-2010.art-18,paragraph,(a),,1
+ke.constitution-2010.art-18.pa-b,ke.constitution-2010,ke.constitution-2010.art-18,paragraph,(b),,2
+ke.constitution-2010.art-18.pa-c,ke.constitution-2010,ke.constitution-2010.art-18,paragraph,(c),,3
+ke.constitution-2010.art-18.pa-d,ke.constitution-2010,ke.constitution-2010.art-18,paragraph,(d),,4
+ke.constitution-2010.art-18.pa-e,ke.constitution-2010,ke.constitution-2010.art-18,paragraph,(e),,5
+ke.constitution-2010.art-18.pa-f,ke.constitution-2010,ke.constitution-2010.art-18,paragraph,(f),,6
+ke.constitution-2010.art-18.pa-g,ke.constitution-2010,ke.constitution-2010.art-18,paragraph,(g),,7

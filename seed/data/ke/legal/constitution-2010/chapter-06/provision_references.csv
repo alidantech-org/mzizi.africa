@@ -1,0 +1,5 @@
+source_version_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
+ke.constitution-2010.art-74.v-2010,,ke.constitution-2010.sch-3,refers-to,215,229,Third Schedule,parser,proposed
+ke.constitution-2010.art-75.cl-2.v-2010,,ke.constitution-2010.art-76,refers-to,40,50,Article 76,parser,proposed
+ke.constitution-2010.art-79.v-2010,,ke.constitution-2010.ch-15,under,170,185,Chapter Fifteen,parser,proposed
+ke.constitution-2010.art-80.pa-b.v-2010,,ke.constitution-2010.art-75,refers-to,71,81,Article 75,parser,proposed

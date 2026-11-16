@@ -1,0 +1,4 @@
+code,scheme_code,label,parent_code
+leg.instrument.kind.constitution,leg.instrument.kind,Constitution,
+leg.instrument.kind.act,leg.instrument.kind,Act of Parliament,
+leg.instrument.kind.regulation,leg.instrument.kind,Regulation,

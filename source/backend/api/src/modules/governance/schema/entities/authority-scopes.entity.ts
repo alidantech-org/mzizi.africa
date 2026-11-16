@@ -21,6 +21,9 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One institution or office authority over a required Geography unit for an effective period.
  */
 @Entity({ schema: "governance", name: "authority_scopes" })
+@Index(["institutionId", "officeId", "authorityKindId", "unitFeatureId", "validFrom"], {
+  unique: true,
+})
 @Index(["institutionId"])
 @Index(["officeId"])
 @Index(["unitFeatureId", "validFrom", "validUntil"])

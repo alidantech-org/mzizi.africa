@@ -17,14 +17,16 @@ class InstrumentVersionsRow(BaseModel):
     table: ClassVar[str] = "legal.instrument_versions"
 
     ceased_on: date | None = None
+    code: Annotated[
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+    ]
     commenced_on: date | None = None
     consolidated_on: date | None = None
-    content_hash: Annotated[str, Field(min_length=64, max_length=64, pattern="^[a-f0-9]{64}$")]
     created_at: datetime
     deleted_at: datetime | None = None
+    document_id: UUID
     edition: Annotated[str, Field(min_length=1, max_length=255)]
-    evidence_id: UUID
-    file_version_id: UUID
+    evidence_id: UUID | None = None
     id: UUID
     instrument_id: UUID
     observed_at: datetime

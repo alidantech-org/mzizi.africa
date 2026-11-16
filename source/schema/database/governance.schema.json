@@ -13,9 +13,10 @@
       "x-code": "sys.tbl.governance.authority-scopes",
       "x-id": "#/schemas/governance.AuthorityScopes",
       "x-table": "governance.authority_scopes",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["institution_code", "office_code", "authority_kind_code", "unit_feature_code", "valid_from"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["institution_id", "office_id", "authority_kind_id", "unit_feature_id", "valid_from"]
       ],
       "required": [
         "authority_kind_id"
@@ -26,13 +27,13 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "authority_kind_code"
           ,"country_code"
-          ,"id"
           ,"institution_code"
           ,"office_code"
           ,"source_citation_code"
@@ -42,7 +43,6 @@
         ],
         "required": [
           "authority_kind_code"
-          ,"id"
           ,"unit_feature_code"
         ]
       },
@@ -51,7 +51,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "authority_kind_code" }
         }
         ,"country_id": {
@@ -80,20 +80,20 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"institution_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
         }
         ,"office_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/governance.Offices", "column": "id", "alias": "office_code" }
         }
         ,"source_citation_id": {
@@ -107,7 +107,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
         }
         ,"updated_at": {
@@ -121,7 +121,7 @@
           "type": ["string", "null"],
           "x-type": "date",
           "format": "date",
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"valid_until": {
           "type": ["string", "null"],
@@ -387,9 +387,10 @@
       "x-code": "sys.tbl.governance.mandates",
       "x-id": "#/schemas/governance.Mandates",
       "x-table": "governance.mandates",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["institution_code", "office_code", "mandate_kind_code", "description"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["institution_id", "office_id", "mandate_kind_id", "description"]
       ],
       "required": [
         "description"
@@ -400,12 +401,12 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "description"
-          ,"id"
           ,"institution_code"
           ,"mandate_kind_code"
           ,"office_code"
@@ -415,7 +416,6 @@
         ],
         "required": [
           "description"
-          ,"id"
           ,"mandate_kind_code"
         ]
       },
@@ -438,34 +438,34 @@
           "type": "string",
           "x-type": "text",
           "maxLength": 4000,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"institution_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
         }
         ,"mandate_kind_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "mandate_kind_code" }
         }
         ,"office_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/governance.Offices", "column": "id", "alias": "office_code" }
         }
         ,"source_citation_id": {
@@ -635,9 +635,10 @@
       "x-code": "sys.tbl.governance.relationships",
       "x-id": "#/schemas/governance.Relationships",
       "x-table": "governance.relationships",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["subject_institution_code", "object_institution_code", "relationship_kind_code", "valid_from"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["subject_institution_id", "object_institution_id", "relationship_kind_id", "valid_from"]
       ],
       "required": [
         "id"
@@ -649,12 +650,12 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "id"
-          ,"object_institution_code"
+          "object_institution_code"
           ,"relationship_kind_code"
           ,"source_citation_code"
           ,"subject_institution_code"
@@ -662,8 +663,7 @@
           ,"valid_until"
         ],
         "required": [
-          "id"
-          ,"object_institution_code"
+          "object_institution_code"
           ,"relationship_kind_code"
           ,"subject_institution_code"
         ]
@@ -688,20 +688,20 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"object_institution_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "object_institution_code" }
         }
         ,"relationship_kind_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "relationship_kind_code" }
         }
         ,"source_citation_id": {
@@ -715,7 +715,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "subject_institution_code" }
         }
         ,"updated_at": {
@@ -729,7 +729,7 @@
           "type": ["string", "null"],
           "x-type": "date",
           "format": "date",
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"valid_until": {
           "type": ["string", "null"],

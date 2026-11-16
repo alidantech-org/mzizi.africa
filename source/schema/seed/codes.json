@@ -170,11 +170,20 @@
     "legal.amendments": {
       "short": "amd"
     },
+    "legal.bases": {
+      "short": "bas"
+    },
     "legal.instrument_versions": {
       "short": "ivr"
     },
     "legal.instruments": {
       "short": "ins"
+    },
+    "legal.provision_references": {
+      "short": "prf"
+    },
+    "legal.provision_translations": {
+      "short": "ptr"
     },
     "legal.provision_versions": {
       "short": "pvr"

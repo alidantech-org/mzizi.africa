@@ -29,3 +29,15 @@ documents:
     path: .dev/datasets/geoboundaries/KEN/KEN-ADM3-simplified.geojson
     credit: "geoBoundaries (William & Mary geoLab), KEN ADM3; boundary source Benedict Aboki Omare and George Omare"
     rights: "Creative Commons Attribution 4.0 International (CC BY 4.0): reuse with credit to the source."
+  ke-constitution-2010-en-nclr:
+    path: .dev/datasets/kenya-constitution/en-constitutionnet-final-constitution-2010.pdf
+    credit: "Laws of Kenya: the Constitution of Kenya, 2010, National Council for Law Reporting with the authority of the Attorney General"
+    rights: "Kenya Law publishes laws for public use; reuse with credit to the National Council for Law Reporting."
+  ke-constitution-2010-sw-uraia:
+    path: .dev/datasets/kenya-constitution/sw-uraia-katiba-ya-kenya.pdf
+    credit: "URAIA Trust, Katiba ya Kenya (Kiswahili translation of the NCLR print of 27 August 2010)"
+    rights: "Published by URAIA for public use; an unofficial translation, the English text governs."
+  ke-constitution-2010-sw-proposed-draft:
+    path: .dev/datasets/kenya-constitution/sw-constitutionnet-katiba-inayopendekezwa-2010-05-06.pdf
+    credit: "Republic of Kenya, Katiba Inayopendekezwa ya Kenya, 6 May 2010, via ConstitutionNet"
+    rights: "A pre-referendum draft published for public use; not the final text."

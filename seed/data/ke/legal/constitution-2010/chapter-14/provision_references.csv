@@ -1,0 +1,4 @@
+source_version_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
+ke.constitution-2010.art-239.cl-2.v-2010,,ke.constitution-2010.art-238.cl-2,refers-to,164,179,Article 238 (2),parser,proposed
+ke.constitution-2010.art-245.cl-5.v-2010,,ke.constitution-2010.art-157.cl-4,under,213,227,Article 157(4),parser,proposed
+ke.constitution-2010.art-245.cl-7.pa-a.v-2010,,ke.constitution-2010.ch-6,refers-to,86,97,Chapter Six,parser,proposed

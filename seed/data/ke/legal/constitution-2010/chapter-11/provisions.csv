@@ -1,0 +1,240 @@
+code,instrument_code,parent_code,kind,designation,title,position
+ke.constitution-2010.ch-11,ke.constitution-2010,,chapter,Chapter 11,Devolved Government,12
+ke.constitution-2010.ch-11.pt-1,ke.constitution-2010,ke.constitution-2010.ch-11,part,Part 1,Objects and Principles of Devolved Government,1
+ke.constitution-2010.art-174,ke.constitution-2010,ke.constitution-2010.ch-11.pt-1,article,Article 174,Objects of devolution,1
+ke.constitution-2010.art-174.pa-a,ke.constitution-2010,ke.constitution-2010.art-174,paragraph,(a),,1
+ke.constitution-2010.art-174.pa-b,ke.constitution-2010,ke.constitution-2010.art-174,paragraph,(b),,2
+ke.constitution-2010.art-174.pa-c,ke.constitution-2010,ke.constitution-2010.art-174,paragraph,(c),,3
+ke.constitution-2010.art-174.pa-d,ke.constitution-2010,ke.constitution-2010.art-174,paragraph,(d),,4
+ke.constitution-2010.art-174.pa-e,ke.constitution-2010,ke.constitution-2010.art-174,paragraph,(e),,5
+ke.constitution-2010.art-174.pa-f,ke.constitution-2010,ke.constitution-2010.art-174,paragraph,(f),,6
+ke.constitution-2010.art-174.pa-g,ke.constitution-2010,ke.constitution-2010.art-174,paragraph,(g),,7
+ke.constitution-2010.art-174.pa-h,ke.constitution-2010,ke.constitution-2010.art-174,paragraph,(h),,8
+ke.constitution-2010.art-174.pa-i,ke.constitution-2010,ke.constitution-2010.art-174,paragraph,(i),,9
+ke.constitution-2010.art-175,ke.constitution-2010,ke.constitution-2010.ch-11.pt-1,article,Article 175,Principles of devolved government,2
+ke.constitution-2010.art-175.pa-a,ke.constitution-2010,ke.constitution-2010.art-175,paragraph,(a),,1
+ke.constitution-2010.art-175.pa-b,ke.constitution-2010,ke.constitution-2010.art-175,paragraph,(b),,2
+ke.constitution-2010.art-175.pa-c,ke.constitution-2010,ke.constitution-2010.art-175,paragraph,(c),,3
+ke.constitution-2010.ch-11.pt-2,ke.constitution-2010,ke.constitution-2010.ch-11,part,Part 2,County Governments,2
+ke.constitution-2010.art-176,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 176,County governments,1
+ke.constitution-2010.art-176.cl-1,ke.constitution-2010,ke.constitution-2010.art-176,clause,(1),,1
+ke.constitution-2010.art-176.cl-2,ke.constitution-2010,ke.constitution-2010.art-176,clause,(2),,2
+ke.constitution-2010.art-177,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 177,Membership of county assembly,2
+ke.constitution-2010.art-177.cl-1,ke.constitution-2010,ke.constitution-2010.art-177,clause,(1),,1
+ke.constitution-2010.art-177.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-177.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-177.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-177.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-177.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-177.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-177.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-177.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-177.cl-2,ke.constitution-2010,ke.constitution-2010.art-177,clause,(2),,2
+ke.constitution-2010.art-177.cl-3,ke.constitution-2010,ke.constitution-2010.art-177,clause,(3),,3
+ke.constitution-2010.art-177.cl-4,ke.constitution-2010,ke.constitution-2010.art-177,clause,(4),,4
+ke.constitution-2010.art-178,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 178,Speaker of a county assembly,3
+ke.constitution-2010.art-178.cl-1,ke.constitution-2010,ke.constitution-2010.art-178,clause,(1),,1
+ke.constitution-2010.art-178.cl-2,ke.constitution-2010,ke.constitution-2010.art-178,clause,(2),,2
+ke.constitution-2010.art-178.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-178.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-178.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-178.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-178.cl-3,ke.constitution-2010,ke.constitution-2010.art-178,clause,(3),,3
+ke.constitution-2010.art-179,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 179,County executive committees,4
+ke.constitution-2010.art-179.cl-1,ke.constitution-2010,ke.constitution-2010.art-179,clause,(1),,1
+ke.constitution-2010.art-179.cl-2,ke.constitution-2010,ke.constitution-2010.art-179,clause,(2),,2
+ke.constitution-2010.art-179.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-179.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-179.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-179.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-179.cl-3,ke.constitution-2010,ke.constitution-2010.art-179,clause,(3),,3
+ke.constitution-2010.art-179.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-179.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-179.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-179.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-179.cl-4,ke.constitution-2010,ke.constitution-2010.art-179,clause,(4),,4
+ke.constitution-2010.art-179.cl-5,ke.constitution-2010,ke.constitution-2010.art-179,clause,(5),,5
+ke.constitution-2010.art-179.cl-6,ke.constitution-2010,ke.constitution-2010.art-179,clause,(6),,6
+ke.constitution-2010.art-179.cl-7,ke.constitution-2010,ke.constitution-2010.art-179,clause,(7),,7
+ke.constitution-2010.art-180,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 180,Election of county governor and deputy county governor,5
+ke.constitution-2010.art-180.cl-1,ke.constitution-2010,ke.constitution-2010.art-180,clause,(1),,1
+ke.constitution-2010.art-180.cl-2,ke.constitution-2010,ke.constitution-2010.art-180,clause,(2),,2
+ke.constitution-2010.art-180.cl-3,ke.constitution-2010,ke.constitution-2010.art-180,clause,(3),,3
+ke.constitution-2010.art-180.cl-4,ke.constitution-2010,ke.constitution-2010.art-180,clause,(4),,4
+ke.constitution-2010.art-180.cl-5,ke.constitution-2010,ke.constitution-2010.art-180,clause,(5),,5
+ke.constitution-2010.art-180.cl-6,ke.constitution-2010,ke.constitution-2010.art-180,clause,(6),,6
+ke.constitution-2010.art-180.cl-7,ke.constitution-2010,ke.constitution-2010.art-180,clause,(7),,7
+ke.constitution-2010.art-180.cl-7.pa-a,ke.constitution-2010,ke.constitution-2010.art-180.cl-7,paragraph,(a),,1
+ke.constitution-2010.art-180.cl-7.pa-b,ke.constitution-2010,ke.constitution-2010.art-180.cl-7,paragraph,(b),,2
+ke.constitution-2010.art-180.cl-8,ke.constitution-2010,ke.constitution-2010.art-180,clause,(8),,8
+ke.constitution-2010.art-181,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 181,Removal of a county government,6
+ke.constitution-2010.art-181.cl-1,ke.constitution-2010,ke.constitution-2010.art-181,clause,(1),,1
+ke.constitution-2010.art-181.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-181.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-181.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-181.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-181.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-181.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-181.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-181.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-181.cl-2,ke.constitution-2010,ke.constitution-2010.art-181,clause,(2),,2
+ke.constitution-2010.art-182,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 182,Vacancy in the office of county governor,7
+ke.constitution-2010.art-182.cl-1,ke.constitution-2010,ke.constitution-2010.art-182,clause,(1),,1
+ke.constitution-2010.art-182.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-182.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-182.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-182.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-182.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-182.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-182.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-182.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-182.cl-1.pa-e,ke.constitution-2010,ke.constitution-2010.art-182.cl-1,paragraph,(e),,5
+ke.constitution-2010.art-182.cl-2,ke.constitution-2010,ke.constitution-2010.art-182,clause,(2),,2
+ke.constitution-2010.art-182.cl-3,ke.constitution-2010,ke.constitution-2010.art-182,clause,(3),,3
+ke.constitution-2010.art-182.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-182.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-182.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-182.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-182.cl-4,ke.constitution-2010,ke.constitution-2010.art-182,clause,(4),,4
+ke.constitution-2010.art-182.cl-5,ke.constitution-2010,ke.constitution-2010.art-182,clause,(5),,5
+ke.constitution-2010.art-182.cl-6,ke.constitution-2010,ke.constitution-2010.art-182,clause,(6),,6
+ke.constitution-2010.art-183,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 183,Functions of county executive committees,8
+ke.constitution-2010.art-183.cl-1,ke.constitution-2010,ke.constitution-2010.art-183,clause,(1),,1
+ke.constitution-2010.art-183.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-183.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-183.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-183.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-183.cl-2,ke.constitution-2010,ke.constitution-2010.art-183,clause,(2),,2
+ke.constitution-2010.art-183.cl-3,ke.constitution-2010,ke.constitution-2010.art-183,clause,(3),,3
+ke.constitution-2010.art-184,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 184,Urban areas and cities,9
+ke.constitution-2010.art-184.cl-1,ke.constitution-2010,ke.constitution-2010.art-184,clause,(1),,1
+ke.constitution-2010.art-184.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-184.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-184.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-184.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-184.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-184.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-184.cl-2,ke.constitution-2010,ke.constitution-2010.art-184,clause,(2),,2
+ke.constitution-2010.art-185,ke.constitution-2010,ke.constitution-2010.ch-11.pt-2,article,Article 185,Legislative authority of county assemblies,10
+ke.constitution-2010.art-185.cl-1,ke.constitution-2010,ke.constitution-2010.art-185,clause,(1),,1
+ke.constitution-2010.art-185.cl-2,ke.constitution-2010,ke.constitution-2010.art-185,clause,(2),,2
+ke.constitution-2010.art-185.cl-3,ke.constitution-2010,ke.constitution-2010.art-185,clause,(3),,3
+ke.constitution-2010.art-185.cl-4,ke.constitution-2010,ke.constitution-2010.art-185,clause,(4),,4
+ke.constitution-2010.art-185.cl-4.pa-a,ke.constitution-2010,ke.constitution-2010.art-185.cl-4,paragraph,(a),,1
+ke.constitution-2010.art-185.cl-4.pa-b,ke.constitution-2010,ke.constitution-2010.art-185.cl-4,paragraph,(b),,2
+ke.constitution-2010.ch-11.pt-3,ke.constitution-2010,ke.constitution-2010.ch-11,part,Part 3,Functions and Powers of County Governments,3
+ke.constitution-2010.art-186,ke.constitution-2010,ke.constitution-2010.ch-11.pt-3,article,Article 186,Respective functions and powers of national and county governments,1
+ke.constitution-2010.art-186.cl-1,ke.constitution-2010,ke.constitution-2010.art-186,clause,(1),,1
+ke.constitution-2010.art-186.cl-2,ke.constitution-2010,ke.constitution-2010.art-186,clause,(2),,2
+ke.constitution-2010.art-186.cl-3,ke.constitution-2010,ke.constitution-2010.art-186,clause,(3),,3
+ke.constitution-2010.art-186.cl-4,ke.constitution-2010,ke.constitution-2010.art-186,clause,(4),,4
+ke.constitution-2010.art-187,ke.constitution-2010,ke.constitution-2010.ch-11.pt-3,article,Article 187,Transfer of functions and powers between levels of government,2
+ke.constitution-2010.art-187.cl-1,ke.constitution-2010,ke.constitution-2010.art-187,clause,(1),,1
+ke.constitution-2010.art-187.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-187.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-187.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-187.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-187.cl-2,ke.constitution-2010,ke.constitution-2010.art-187,clause,(2),,2
+ke.constitution-2010.art-187.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-187.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-187.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-187.cl-2,paragraph,(b),,2
+ke.constitution-2010.ch-11.pt-4,ke.constitution-2010,ke.constitution-2010.ch-11,part,Part 4,The Boundaries of Counties,4
+ke.constitution-2010.art-188,ke.constitution-2010,ke.constitution-2010.ch-11.pt-4,article,Article 188,Boundaries of counties,1
+ke.constitution-2010.art-188.cl-1,ke.constitution-2010,ke.constitution-2010.art-188,clause,(1),,1
+ke.constitution-2010.art-188.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-188.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-188.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-188.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-188.cl-1.pa-b.sp-i,ke.constitution-2010,ke.constitution-2010.art-188.cl-1.pa-b,subparagraph,(i),,1
+ke.constitution-2010.art-188.cl-1.pa-b.sp-ii,ke.constitution-2010,ke.constitution-2010.art-188.cl-1.pa-b,subparagraph,(ii),,2
+ke.constitution-2010.art-188.cl-2,ke.constitution-2010,ke.constitution-2010.art-188,clause,(2),,2
+ke.constitution-2010.art-188.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-188.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-188.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-188.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-188.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-188.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-188.cl-2.pa-d,ke.constitution-2010,ke.constitution-2010.art-188.cl-2,paragraph,(d),,4
+ke.constitution-2010.art-188.cl-2.pa-e,ke.constitution-2010,ke.constitution-2010.art-188.cl-2,paragraph,(e),,5
+ke.constitution-2010.art-188.cl-2.pa-f,ke.constitution-2010,ke.constitution-2010.art-188.cl-2,paragraph,(f),,6
+ke.constitution-2010.art-188.cl-2.pa-g,ke.constitution-2010,ke.constitution-2010.art-188.cl-2,paragraph,(g),,7
+ke.constitution-2010.ch-11.pt-5,ke.constitution-2010,ke.constitution-2010.ch-11,part,Part 5,Relationships Between Governments,5
+ke.constitution-2010.art-189,ke.constitution-2010,ke.constitution-2010.ch-11.pt-5,article,Article 189,Cooperation between national and county governments,1
+ke.constitution-2010.art-189.cl-1,ke.constitution-2010,ke.constitution-2010.art-189,clause,(1),,1
+ke.constitution-2010.art-189.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-189.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-189.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-189.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-189.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-189.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-189.cl-2,ke.constitution-2010,ke.constitution-2010.art-189,clause,(2),,2
+ke.constitution-2010.art-189.cl-3,ke.constitution-2010,ke.constitution-2010.art-189,clause,(3),,3
+ke.constitution-2010.art-189.cl-4,ke.constitution-2010,ke.constitution-2010.art-189,clause,(4),,4
+ke.constitution-2010.art-190,ke.constitution-2010,ke.constitution-2010.ch-11.pt-5,article,Article 190,Support for county governments,2
+ke.constitution-2010.art-190.cl-1,ke.constitution-2010,ke.constitution-2010.art-190,clause,(1),,1
+ke.constitution-2010.art-190.cl-2,ke.constitution-2010,ke.constitution-2010.art-190,clause,(2),,2
+ke.constitution-2010.art-190.cl-3,ke.constitution-2010,ke.constitution-2010.art-190,clause,(3),,3
+ke.constitution-2010.art-190.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-190.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-190.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-190.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-190.cl-4,ke.constitution-2010,ke.constitution-2010.art-190,clause,(4),,4
+ke.constitution-2010.art-190.cl-4.pa-a,ke.constitution-2010,ke.constitution-2010.art-190.cl-4,paragraph,(a),,1
+ke.constitution-2010.art-190.cl-4.pa-b,ke.constitution-2010,ke.constitution-2010.art-190.cl-4,paragraph,(b),,2
+ke.constitution-2010.art-190.cl-5,ke.constitution-2010,ke.constitution-2010.art-190,clause,(5),,5
+ke.constitution-2010.art-190.cl-5.pa-a,ke.constitution-2010,ke.constitution-2010.art-190.cl-5,paragraph,(a),,1
+ke.constitution-2010.art-190.cl-5.pa-b,ke.constitution-2010,ke.constitution-2010.art-190.cl-5,paragraph,(b),,2
+ke.constitution-2010.art-190.cl-5.pa-c,ke.constitution-2010,ke.constitution-2010.art-190.cl-5,paragraph,(c),,3
+ke.constitution-2010.art-190.cl-5.pa-d,ke.constitution-2010,ke.constitution-2010.art-190.cl-5,paragraph,(d),,4
+ke.constitution-2010.art-191,ke.constitution-2010,ke.constitution-2010.ch-11.pt-5,article,Article 191,Conflict of laws,3
+ke.constitution-2010.art-191.cl-1,ke.constitution-2010,ke.constitution-2010.art-191,clause,(1),,1
+ke.constitution-2010.art-191.cl-2,ke.constitution-2010,ke.constitution-2010.art-191,clause,(2),,2
+ke.constitution-2010.art-191.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-191.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-191.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-191.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-191.cl-2.pa-b.sp-i,ke.constitution-2010,ke.constitution-2010.art-191.cl-2.pa-b,subparagraph,(i),,1
+ke.constitution-2010.art-191.cl-2.pa-b.sp-ii,ke.constitution-2010,ke.constitution-2010.art-191.cl-2.pa-b,subparagraph,(ii),,2
+ke.constitution-2010.art-191.cl-3,ke.constitution-2010,ke.constitution-2010.art-191,clause,(3),,3
+ke.constitution-2010.art-191.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-191.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-191.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-191.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-191.cl-3.pa-b.sp-i,ke.constitution-2010,ke.constitution-2010.art-191.cl-3.pa-b,subparagraph,(i),,1
+ke.constitution-2010.art-191.cl-3.pa-b.sp-ii,ke.constitution-2010,ke.constitution-2010.art-191.cl-3.pa-b,subparagraph,(ii),,2
+ke.constitution-2010.art-191.cl-3.pa-c,ke.constitution-2010,ke.constitution-2010.art-191.cl-3,paragraph,(c),,3
+ke.constitution-2010.art-191.cl-3.pa-c.sp-i,ke.constitution-2010,ke.constitution-2010.art-191.cl-3.pa-c,subparagraph,(i),,1
+ke.constitution-2010.art-191.cl-3.pa-c.sp-ii,ke.constitution-2010,ke.constitution-2010.art-191.cl-3.pa-c,subparagraph,(ii),,2
+ke.constitution-2010.art-191.cl-3.pa-c.sp-iii,ke.constitution-2010,ke.constitution-2010.art-191.cl-3.pa-c,subparagraph,(iii),,3
+ke.constitution-2010.art-191.cl-3.pa-c.sp-iv,ke.constitution-2010,ke.constitution-2010.art-191.cl-3.pa-c,subparagraph,(iv),,4
+ke.constitution-2010.art-191.cl-3.pa-c.sp-v,ke.constitution-2010,ke.constitution-2010.art-191.cl-3.pa-c,subparagraph,(v),,5
+ke.constitution-2010.art-191.cl-3.pa-c.sp-vi,ke.constitution-2010,ke.constitution-2010.art-191.cl-3.pa-c,subparagraph,(vi),,6
+ke.constitution-2010.art-191.cl-4,ke.constitution-2010,ke.constitution-2010.art-191,clause,(4),,4
+ke.constitution-2010.art-191.cl-5,ke.constitution-2010,ke.constitution-2010.art-191,clause,(5),,5
+ke.constitution-2010.art-191.cl-6,ke.constitution-2010,ke.constitution-2010.art-191,clause,(6),,6
+ke.constitution-2010.ch-11.pt-6,ke.constitution-2010,ke.constitution-2010.ch-11,part,Part 6,Suspension of County Governments,6
+ke.constitution-2010.art-192,ke.constitution-2010,ke.constitution-2010.ch-11.pt-6,article,Article 192,Suspension of county government,1
+ke.constitution-2010.art-192.cl-1,ke.constitution-2010,ke.constitution-2010.art-192,clause,(1),,1
+ke.constitution-2010.art-192.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-192.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-192.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-192.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-192.cl-2,ke.constitution-2010,ke.constitution-2010.art-192,clause,(2),,2
+ke.constitution-2010.art-192.cl-3,ke.constitution-2010,ke.constitution-2010.art-192,clause,(3),,3
+ke.constitution-2010.art-192.cl-4,ke.constitution-2010,ke.constitution-2010.art-192,clause,(4),,4
+ke.constitution-2010.art-192.cl-5,ke.constitution-2010,ke.constitution-2010.art-192,clause,(5),,5
+ke.constitution-2010.art-192.cl-6,ke.constitution-2010,ke.constitution-2010.art-192,clause,(6),,6
+ke.constitution-2010.ch-11.pt-7,ke.constitution-2010,ke.constitution-2010.ch-11,part,Part 7,General,7
+ke.constitution-2010.art-193,ke.constitution-2010,ke.constitution-2010.ch-11.pt-7,article,Article 193,Qualifications for election as member of county assembly,1
+ke.constitution-2010.art-193.cl-1,ke.constitution-2010,ke.constitution-2010.art-193,clause,(1),,1
+ke.constitution-2010.art-193.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-193.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-193.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-193.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-193.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-193.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-193.cl-1.pa-c.sp-i,ke.constitution-2010,ke.constitution-2010.art-193.cl-1.pa-c,subparagraph,(i),,1
+ke.constitution-2010.art-193.cl-1.pa-c.sp-ii,ke.constitution-2010,ke.constitution-2010.art-193.cl-1.pa-c,subparagraph,(ii),,2
+ke.constitution-2010.art-193.cl-2,ke.constitution-2010,ke.constitution-2010.art-193,clause,(2),,2
+ke.constitution-2010.art-193.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-193.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-193.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-193.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-193.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-193.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-193.cl-2.pa-d,ke.constitution-2010,ke.constitution-2010.art-193.cl-2,paragraph,(d),,4
+ke.constitution-2010.art-193.cl-2.pa-e,ke.constitution-2010,ke.constitution-2010.art-193.cl-2,paragraph,(e),,5
+ke.constitution-2010.art-193.cl-2.pa-f,ke.constitution-2010,ke.constitution-2010.art-193.cl-2,paragraph,(f),,6
+ke.constitution-2010.art-193.cl-2.pa-g,ke.constitution-2010,ke.constitution-2010.art-193.cl-2,paragraph,(g),,7
+ke.constitution-2010.art-193.cl-3,ke.constitution-2010,ke.constitution-2010.art-193,clause,(3),,3
+ke.constitution-2010.art-194,ke.constitution-2010,ke.constitution-2010.ch-11.pt-7,article,Article 194,Vacation of office of member of county assembly,2
+ke.constitution-2010.art-194.cl-1,ke.constitution-2010,ke.constitution-2010.art-194,clause,(1),,1
+ke.constitution-2010.art-194.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-194.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-194.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-194.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-194.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-194.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-194.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-194.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-194.cl-1.pa-e,ke.constitution-2010,ke.constitution-2010.art-194.cl-1,paragraph,(e),,5
+ke.constitution-2010.art-194.cl-1.pa-e.sp-i,ke.constitution-2010,ke.constitution-2010.art-194.cl-1.pa-e,subparagraph,(i),,1
+ke.constitution-2010.art-194.cl-1.pa-e.sp-ii,ke.constitution-2010,ke.constitution-2010.art-194.cl-1.pa-e,subparagraph,(ii),,2
+ke.constitution-2010.art-194.cl-1.pa-f,ke.constitution-2010,ke.constitution-2010.art-194.cl-1,paragraph,(f),,6
+ke.constitution-2010.art-194.cl-1.pa-g,ke.constitution-2010,ke.constitution-2010.art-194.cl-1,paragraph,(g),,7
+ke.constitution-2010.art-194.cl-2,ke.constitution-2010,ke.constitution-2010.art-194,clause,(2),,2
+ke.constitution-2010.art-195,ke.constitution-2010,ke.constitution-2010.ch-11.pt-7,article,Article 195,County assembly power to summon witnesses,3
+ke.constitution-2010.art-195.cl-1,ke.constitution-2010,ke.constitution-2010.art-195,clause,(1),,1
+ke.constitution-2010.art-195.cl-2,ke.constitution-2010,ke.constitution-2010.art-195,clause,(2),,2
+ke.constitution-2010.art-195.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-195.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-195.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-195.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-195.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-195.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-196,ke.constitution-2010,ke.constitution-2010.ch-11.pt-7,article,Article 196,"Public participation and county assembly powers, privileges and immunities",4
+ke.constitution-2010.art-196.cl-1,ke.constitution-2010,ke.constitution-2010.art-196,clause,(1),,1
+ke.constitution-2010.art-196.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-196.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-196.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-196.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-196.cl-2,ke.constitution-2010,ke.constitution-2010.art-196,clause,(2),,2
+ke.constitution-2010.art-196.cl-3,ke.constitution-2010,ke.constitution-2010.art-196,clause,(3),,3
+ke.constitution-2010.art-197,ke.constitution-2010,ke.constitution-2010.ch-11.pt-7,article,Article 197,County assembly gender balance and diversity,5
+ke.constitution-2010.art-197.cl-1,ke.constitution-2010,ke.constitution-2010.art-197,clause,(1),,1
+ke.constitution-2010.art-197.cl-2,ke.constitution-2010,ke.constitution-2010.art-197,clause,(2),,2
+ke.constitution-2010.art-197.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-197.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-197.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-197.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-198,ke.constitution-2010,ke.constitution-2010.ch-11.pt-7,article,Article 198,County government during transition,6
+ke.constitution-2010.art-199,ke.constitution-2010,ke.constitution-2010.ch-11.pt-7,article,Article 199,Publication of county legislation,7
+ke.constitution-2010.art-199.cl-1,ke.constitution-2010,ke.constitution-2010.art-199,clause,(1),,1
+ke.constitution-2010.art-199.cl-2,ke.constitution-2010,ke.constitution-2010.art-199,clause,(2),,2
+ke.constitution-2010.art-200,ke.constitution-2010,ke.constitution-2010.ch-11.pt-7,article,Article 200,Legislation on Chapter,8
+ke.constitution-2010.art-200.cl-1,ke.constitution-2010,ke.constitution-2010.art-200,clause,(1),,1
+ke.constitution-2010.art-200.cl-2,ke.constitution-2010,ke.constitution-2010.art-200,clause,(2),,2
+ke.constitution-2010.art-200.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-200.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-200.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-200.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-200.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-200.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-200.cl-2.pa-d,ke.constitution-2010,ke.constitution-2010.art-200.cl-2,paragraph,(d),,4
+ke.constitution-2010.art-200.cl-2.pa-e,ke.constitution-2010,ke.constitution-2010.art-200.cl-2,paragraph,(e),,5

@@ -40,6 +40,7 @@ type Cell = str | int | None
 
 PROVENANCE = "source.provenance"
 DATASETS = "source.datasets"
+BASES = "legal.bases"
 
 
 @dataclass(frozen=True)
@@ -118,6 +119,8 @@ def _desired(
             values[stored] = stored_code(glossary.tables[table.qualified_name], raw)
         else:
             values[stored] = _cell(raw)
+    if table.qualified_name == BASES and row.values.get("table_name") and row.values.get("record_code"):
+        values["record_id"] = str(stable_id(row.values["table_name"], row.values["record_code"]))
     if table.qualified_name == DATASETS:
         location = row.values.get("location", "")
         local = seed_root.parent / location

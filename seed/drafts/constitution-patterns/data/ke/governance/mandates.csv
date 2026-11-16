@@ -1,0 +1,34 @@
+institution_code,office_code,mandate_kind_code,description
+ke.national-executive,,gov.mandate.kind.constitutional,Established or described by Article 130; its functions are those the Constitution and legislation give it.
+ke.the-presidency,,gov.mandate.kind.constitutional,"Established or described by Article 131, Article 147; its functions are those the Constitution and legislation give it."
+ke.cabinet,,gov.mandate.kind.constitutional,Established or described by Article 152; its functions are those the Constitution and legislation give it.
+ke.state-departments,,gov.mandate.kind.constitutional,Established or described by Article 155; its functions are those the Constitution and legislation give it.
+ke.office-of-the-attorney-general,,gov.mandate.kind.constitutional,Established or described by Article 156; its functions are those the Constitution and legislation give it.
+ke.office-of-the-director-of-public-prosecutions,,gov.mandate.kind.constitutional,Established or described by Article 157; its functions are those the Constitution and legislation give it.
+ke.parliament,,gov.mandate.kind.constitutional,Established or described by Article 93; its functions are those the Constitution and legislation give it.
+ke.national-assembly,,gov.mandate.kind.constitutional,"Established or described by Article 95, Article 97; its functions are those the Constitution and legislation give it."
+ke.senate,,gov.mandate.kind.constitutional,"Established or described by Article 96, Article 98; its functions are those the Constitution and legislation give it."
+ke.parliamentary-service-commission,,gov.mandate.kind.constitutional,Established or described by Article 127; its functions are those the Constitution and legislation give it.
+ke.judiciary,,gov.mandate.kind.constitutional,"Established or described by Article 159, Article 160; its functions are those the Constitution and legislation give it."
+ke.supreme-court,,gov.mandate.kind.constitutional,Established or described by Article 163; its functions are those the Constitution and legislation give it.
+ke.court-of-appeal,,gov.mandate.kind.constitutional,Established or described by Article 164; its functions are those the Constitution and legislation give it.
+ke.high-court,,gov.mandate.kind.constitutional,Established or described by Article 165; its functions are those the Constitution and legislation give it.
+ke.subordinate-courts,,gov.mandate.kind.constitutional,Established or described by Article 169; its functions are those the Constitution and legislation give it.
+ke.kadhis-courts,,gov.mandate.kind.constitutional,Established or described by Article 170; its functions are those the Constitution and legislation give it.
+ke.judicial-service-commission,,gov.mandate.kind.constitutional,"Established or described by Article 171, Article 172; its functions are those the Constitution and legislation give it."
+ke.independent-electoral-and-boundaries-commission,,gov.mandate.kind.constitutional,Established or described by Article 88; its functions are those the Constitution and legislation give it.
+ke.commission-on-revenue-allocation,,gov.mandate.kind.constitutional,"Established or described by Article 215, Article 216; its functions are those the Constitution and legislation give it."
+ke.salaries-and-remuneration-commission,,gov.mandate.kind.constitutional,Established or described by Article 230; its functions are those the Constitution and legislation give it.
+ke.public-service-commission,,gov.mandate.kind.constitutional,"Established or described by Article 233, Article 234; its functions are those the Constitution and legislation give it."
+ke.teachers-service-commission,,gov.mandate.kind.constitutional,Established or described by Article 237; its functions are those the Constitution and legislation give it.
+ke.national-police-service-commission,,gov.mandate.kind.constitutional,Established or described by Article 246; its functions are those the Constitution and legislation give it.
+ke.national-land-commission,,gov.mandate.kind.constitutional,Established or described by Article 67; its functions are those the Constitution and legislation give it.
+ke.kenya-national-human-rights-and-equality-commission,,gov.mandate.kind.constitutional,Established or described by Article 59; its functions are those the Constitution and legislation give it.
+ke.ethics-and-anti-corruption-commission,,gov.mandate.kind.constitutional,Established or described by Article 79; its functions are those the Constitution and legislation give it.
+ke.office-of-the-controller-of-budget,,gov.mandate.kind.constitutional,Established or described by Article 228; its functions are those the Constitution and legislation give it.
+ke.office-of-the-auditor-general,,gov.mandate.kind.constitutional,Established or described by Article 229; its functions are those the Constitution and legislation give it.
+ke.central-bank-of-kenya,,gov.mandate.kind.constitutional,Established or described by Article 231; its functions are those the Constitution and legislation give it.
+ke.national-security-council,,gov.mandate.kind.constitutional,Established or described by Article 240; its functions are those the Constitution and legislation give it.
+ke.defence-forces,,gov.mandate.kind.constitutional,Established or described by Article 241; its functions are those the Constitution and legislation give it.
+ke.national-intelligence-service,,gov.mandate.kind.constitutional,Established or described by Article 242; its functions are those the Constitution and legislation give it.
+ke.national-police-service,,gov.mandate.kind.constitutional,"Established or described by Article 243, Article 244; its functions are those the Constitution and legislation give it."

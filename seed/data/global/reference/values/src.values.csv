@@ -8,3 +8,5 @@ src.document.kind.dataset-file,src.document.kind,Dataset file
 src.dataset.category.geography,src.dataset.category,Geography
 src.dataset.category.reference,src.dataset.category,Reference
 src.dataset.category.source,src.dataset.category,Source
+src.document.kind.legal-text,src.document.kind,Legal text
+src.dataset.category.legal,src.dataset.category,Legal

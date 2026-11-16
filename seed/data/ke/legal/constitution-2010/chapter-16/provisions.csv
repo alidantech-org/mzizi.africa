@@ -1,0 +1,46 @@
+code,instrument_code,parent_code,kind,designation,title,position
+ke.constitution-2010.ch-16,ke.constitution-2010,,chapter,Chapter 16,Amendment of This Constitution,17
+ke.constitution-2010.art-255,ke.constitution-2010,ke.constitution-2010.ch-16,article,Article 255,Amendment of this Constitution,1
+ke.constitution-2010.art-255.cl-1,ke.constitution-2010,ke.constitution-2010.art-255,clause,(1),,1
+ke.constitution-2010.art-255.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-255.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-255.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-255.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-255.cl-1.pa-e,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(e),,5
+ke.constitution-2010.art-255.cl-1.pa-f,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(f),,6
+ke.constitution-2010.art-255.cl-1.pa-g,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(g),,7
+ke.constitution-2010.art-255.cl-1.pa-h,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(h),,8
+ke.constitution-2010.art-255.cl-1.pa-i,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(i),,9
+ke.constitution-2010.art-255.cl-1.pa-j,ke.constitution-2010,ke.constitution-2010.art-255.cl-1,paragraph,(j),,10
+ke.constitution-2010.art-255.cl-2,ke.constitution-2010,ke.constitution-2010.art-255,clause,(2),,2
+ke.constitution-2010.art-255.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-255.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-255.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-255.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-255.cl-3,ke.constitution-2010,ke.constitution-2010.art-255,clause,(3),,3
+ke.constitution-2010.art-255.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-255.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-255.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-255.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-256,ke.constitution-2010,ke.constitution-2010.ch-16,article,Article 256,Amendment by parliamentary initiative,2
+ke.constitution-2010.art-256.cl-1,ke.constitution-2010,ke.constitution-2010.art-256,clause,(1),,1
+ke.constitution-2010.art-256.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-256.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-256.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-256.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-256.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-256.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-256.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-256.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-256.cl-2,ke.constitution-2010,ke.constitution-2010.art-256,clause,(2),,2
+ke.constitution-2010.art-256.cl-3,ke.constitution-2010,ke.constitution-2010.art-256,clause,(3),,3
+ke.constitution-2010.art-256.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-256.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-256.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-256.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-256.cl-4,ke.constitution-2010,ke.constitution-2010.art-256,clause,(4),,4
+ke.constitution-2010.art-256.cl-5,ke.constitution-2010,ke.constitution-2010.art-256,clause,(5),,5
+ke.constitution-2010.art-256.cl-5.pa-a,ke.constitution-2010,ke.constitution-2010.art-256.cl-5,paragraph,(a),,1
+ke.constitution-2010.art-256.cl-5.pa-b,ke.constitution-2010,ke.constitution-2010.art-256.cl-5,paragraph,(b),,2
+ke.constitution-2010.art-257,ke.constitution-2010,ke.constitution-2010.ch-16,article,Article 257,Amendment by popular initiative,3
+ke.constitution-2010.art-257.cl-1,ke.constitution-2010,ke.constitution-2010.art-257,clause,(1),,1
+ke.constitution-2010.art-257.cl-2,ke.constitution-2010,ke.constitution-2010.art-257,clause,(2),,2
+ke.constitution-2010.art-257.cl-3,ke.constitution-2010,ke.constitution-2010.art-257,clause,(3),,3
+ke.constitution-2010.art-257.cl-4,ke.constitution-2010,ke.constitution-2010.art-257,clause,(4),,4
+ke.constitution-2010.art-257.cl-5,ke.constitution-2010,ke.constitution-2010.art-257,clause,(5),,5
+ke.constitution-2010.art-257.cl-6,ke.constitution-2010,ke.constitution-2010.art-257,clause,(6),,6
+ke.constitution-2010.art-257.cl-7,ke.constitution-2010,ke.constitution-2010.art-257,clause,(7),,7
+ke.constitution-2010.art-257.cl-8,ke.constitution-2010,ke.constitution-2010.art-257,clause,(8),,8
+ke.constitution-2010.art-257.cl-9,ke.constitution-2010,ke.constitution-2010.art-257,clause,(9),,9
+ke.constitution-2010.art-257.cl-10,ke.constitution-2010,ke.constitution-2010.art-257,clause,(10),,10
+ke.constitution-2010.art-257.cl-11,ke.constitution-2010,ke.constitution-2010.art-257,clause,(11),,11

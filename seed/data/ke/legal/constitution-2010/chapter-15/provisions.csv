@@ -1,0 +1,86 @@
+code,instrument_code,parent_code,kind,designation,title,position
+ke.constitution-2010.ch-15,ke.constitution-2010,,chapter,Chapter 15,Commissions and Independent Offices,16
+ke.constitution-2010.art-248,ke.constitution-2010,ke.constitution-2010.ch-15,article,Article 248,Application of Chapter,1
+ke.constitution-2010.art-248.cl-1,ke.constitution-2010,ke.constitution-2010.art-248,clause,(1),,1
+ke.constitution-2010.art-248.cl-2,ke.constitution-2010,ke.constitution-2010.art-248,clause,(2),,2
+ke.constitution-2010.art-248.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-248.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-248.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-248.cl-2.pa-d,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(d),,4
+ke.constitution-2010.art-248.cl-2.pa-e,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(e),,5
+ke.constitution-2010.art-248.cl-2.pa-f,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(f),,6
+ke.constitution-2010.art-248.cl-2.pa-g,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(g),,7
+ke.constitution-2010.art-248.cl-2.pa-h,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(h),,8
+ke.constitution-2010.art-248.cl-2.pa-i,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(i),,9
+ke.constitution-2010.art-248.cl-2.pa-j,ke.constitution-2010,ke.constitution-2010.art-248.cl-2,paragraph,(j),,10
+ke.constitution-2010.art-248.cl-3,ke.constitution-2010,ke.constitution-2010.art-248,clause,(3),,3
+ke.constitution-2010.art-248.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-248.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-248.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-248.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-249,ke.constitution-2010,ke.constitution-2010.ch-15,article,Article 249,"Objects, authority and funding of commissions and independent offices",2
+ke.constitution-2010.art-249.cl-1,ke.constitution-2010,ke.constitution-2010.art-249,clause,(1),,1
+ke.constitution-2010.art-249.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-249.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-249.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-249.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-249.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-249.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-249.cl-2,ke.constitution-2010,ke.constitution-2010.art-249,clause,(2),,2
+ke.constitution-2010.art-249.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-249.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-249.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-249.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-249.cl-3,ke.constitution-2010,ke.constitution-2010.art-249,clause,(3),,3
+ke.constitution-2010.art-250,ke.constitution-2010,ke.constitution-2010.ch-15,article,Article 250,"Composition, appointment and terms of office",3
+ke.constitution-2010.art-250.cl-1,ke.constitution-2010,ke.constitution-2010.art-250,clause,(1),,1
+ke.constitution-2010.art-250.cl-2,ke.constitution-2010,ke.constitution-2010.art-250,clause,(2),,2
+ke.constitution-2010.art-250.cl-2.pa-a,ke.constitution-2010,ke.constitution-2010.art-250.cl-2,paragraph,(a),,1
+ke.constitution-2010.art-250.cl-2.pa-b,ke.constitution-2010,ke.constitution-2010.art-250.cl-2,paragraph,(b),,2
+ke.constitution-2010.art-250.cl-2.pa-c,ke.constitution-2010,ke.constitution-2010.art-250.cl-2,paragraph,(c),,3
+ke.constitution-2010.art-250.cl-3,ke.constitution-2010,ke.constitution-2010.art-250,clause,(3),,3
+ke.constitution-2010.art-250.cl-4,ke.constitution-2010,ke.constitution-2010.art-250,clause,(4),,4
+ke.constitution-2010.art-250.cl-5,ke.constitution-2010,ke.constitution-2010.art-250,clause,(5),,5
+ke.constitution-2010.art-250.cl-6,ke.constitution-2010,ke.constitution-2010.art-250,clause,(6),,6
+ke.constitution-2010.art-250.cl-6.pa-a,ke.constitution-2010,ke.constitution-2010.art-250.cl-6,paragraph,(a),,1
+ke.constitution-2010.art-250.cl-6.pa-b,ke.constitution-2010,ke.constitution-2010.art-250.cl-6,paragraph,(b),,2
+ke.constitution-2010.art-250.cl-7,ke.constitution-2010,ke.constitution-2010.art-250,clause,(7),,7
+ke.constitution-2010.art-250.cl-8,ke.constitution-2010,ke.constitution-2010.art-250,clause,(8),,8
+ke.constitution-2010.art-250.cl-9,ke.constitution-2010,ke.constitution-2010.art-250,clause,(9),,9
+ke.constitution-2010.art-250.cl-10,ke.constitution-2010,ke.constitution-2010.art-250,clause,(10),,10
+ke.constitution-2010.art-250.cl-10.pa-a,ke.constitution-2010,ke.constitution-2010.art-250.cl-10,paragraph,(a),,1
+ke.constitution-2010.art-250.cl-10.pa-b,ke.constitution-2010,ke.constitution-2010.art-250.cl-10,paragraph,(b),,2
+ke.constitution-2010.art-250.cl-11,ke.constitution-2010,ke.constitution-2010.art-250,clause,(11),,11
+ke.constitution-2010.art-250.cl-12,ke.constitution-2010,ke.constitution-2010.art-250,clause,(12),,12
+ke.constitution-2010.art-250.cl-12.pa-a,ke.constitution-2010,ke.constitution-2010.art-250.cl-12,paragraph,(a),,1
+ke.constitution-2010.art-250.cl-12.pa-b,ke.constitution-2010,ke.constitution-2010.art-250.cl-12,paragraph,(b),,2
+ke.constitution-2010.art-251,ke.constitution-2010,ke.constitution-2010.ch-15,article,Article 251,Removal from office,4
+ke.constitution-2010.art-251.cl-1,ke.constitution-2010,ke.constitution-2010.art-251,clause,(1),,1
+ke.constitution-2010.art-251.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-251.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-251.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-251.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-251.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-251.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-251.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-251.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-251.cl-1.pa-e,ke.constitution-2010,ke.constitution-2010.art-251.cl-1,paragraph,(e),,5
+ke.constitution-2010.art-251.cl-2,ke.constitution-2010,ke.constitution-2010.art-251,clause,(2),,2
+ke.constitution-2010.art-251.cl-3,ke.constitution-2010,ke.constitution-2010.art-251,clause,(3),,3
+ke.constitution-2010.art-251.cl-4,ke.constitution-2010,ke.constitution-2010.art-251,clause,(4),,4
+ke.constitution-2010.art-251.cl-4.pa-a,ke.constitution-2010,ke.constitution-2010.art-251.cl-4,paragraph,(a),,1
+ke.constitution-2010.art-251.cl-4.pa-b,ke.constitution-2010,ke.constitution-2010.art-251.cl-4,paragraph,(b),,2
+ke.constitution-2010.art-251.cl-5,ke.constitution-2010,ke.constitution-2010.art-251,clause,(5),,5
+ke.constitution-2010.art-251.cl-5.pa-a,ke.constitution-2010,ke.constitution-2010.art-251.cl-5,paragraph,(a),,1
+ke.constitution-2010.art-251.cl-5.pa-b,ke.constitution-2010,ke.constitution-2010.art-251.cl-5,paragraph,(b),,2
+ke.constitution-2010.art-251.cl-5.pa-c,ke.constitution-2010,ke.constitution-2010.art-251.cl-5,paragraph,(c),,3
+ke.constitution-2010.art-251.cl-6,ke.constitution-2010,ke.constitution-2010.art-251,clause,(6),,6
+ke.constitution-2010.art-251.cl-7,ke.constitution-2010,ke.constitution-2010.art-251,clause,(7),,7
+ke.constitution-2010.art-252,ke.constitution-2010,ke.constitution-2010.ch-15,article,Article 252,General functions and powers,5
+ke.constitution-2010.art-252.cl-1,ke.constitution-2010,ke.constitution-2010.art-252,clause,(1),,1
+ke.constitution-2010.art-252.cl-1.pa-a,ke.constitution-2010,ke.constitution-2010.art-252.cl-1,paragraph,(a),,1
+ke.constitution-2010.art-252.cl-1.pa-b,ke.constitution-2010,ke.constitution-2010.art-252.cl-1,paragraph,(b),,2
+ke.constitution-2010.art-252.cl-1.pa-c,ke.constitution-2010,ke.constitution-2010.art-252.cl-1,paragraph,(c),,3
+ke.constitution-2010.art-252.cl-1.pa-d,ke.constitution-2010,ke.constitution-2010.art-252.cl-1,paragraph,(d),,4
+ke.constitution-2010.art-252.cl-2,ke.constitution-2010,ke.constitution-2010.art-252,clause,(2),,2
+ke.constitution-2010.art-252.cl-3,ke.constitution-2010,ke.constitution-2010.art-252,clause,(3),,3
+ke.constitution-2010.art-252.cl-3.pa-a,ke.constitution-2010,ke.constitution-2010.art-252.cl-3,paragraph,(a),,1
+ke.constitution-2010.art-252.cl-3.pa-b,ke.constitution-2010,ke.constitution-2010.art-252.cl-3,paragraph,(b),,2
+ke.constitution-2010.art-252.cl-3.pa-c,ke.constitution-2010,ke.constitution-2010.art-252.cl-3,paragraph,(c),,3
+ke.constitution-2010.art-252.cl-3.pa-d,ke.constitution-2010,ke.constitution-2010.art-252.cl-3,paragraph,(d),,4
+ke.constitution-2010.art-253,ke.constitution-2010,ke.constitution-2010.ch-15,article,Article 253,Incorporation of commissions and independent offices,6
+ke.constitution-2010.art-253.pa-a,ke.constitution-2010,ke.constitution-2010.art-253,paragraph,(a),,1
+ke.constitution-2010.art-253.pa-b,ke.constitution-2010,ke.constitution-2010.art-253,paragraph,(b),,2
+ke.constitution-2010.art-254,ke.constitution-2010,ke.constitution-2010.ch-15,article,Article 254,Reporting by commissions and independent offices,7
+ke.constitution-2010.art-254.cl-1,ke.constitution-2010,ke.constitution-2010.art-254,clause,(1),,1
+ke.constitution-2010.art-254.cl-2,ke.constitution-2010,ke.constitution-2010.art-254,clause,(2),,2
+ke.constitution-2010.art-254.cl-3,ke.constitution-2010,ke.constitution-2010.art-254,clause,(3),,3

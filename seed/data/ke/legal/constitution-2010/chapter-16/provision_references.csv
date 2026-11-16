@@ -1,0 +1,10 @@
+source_version_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
+ke.constitution-2010.art-255.cl-1.v-2010,,ke.constitution-2010.art-256,in-accordance-with,78,89,Article 256,parser,proposed
+ke.constitution-2010.art-255.cl-1.pa-d.v-2010,,ke.constitution-2010.art-10.cl-2.pa-a,refers-to,62,80,Article 10 (2) (a),parser,proposed
+ke.constitution-2010.art-255.cl-1.pa-g.v-2010,,ke.constitution-2010.ch-15,refers-to,87,102,Chapter Fifteen,parser,proposed
+ke.constitution-2010.art-255.cl-3.pa-a.v-2010,,ke.constitution-2010.art-256,in-accordance-with,34,45,Article 256,parser,proposed
+ke.constitution-2010.art-255.cl-3.pa-b.v-2010,,ke.constitution-2010.art-257,in-accordance-with,49,60,Article 257,parser,proposed
+ke.constitution-2010.art-256.cl-5.v-2010,,ke.constitution-2010.art-255.cl-1,refers-to,93,108,Article 255 (1),parser,proposed
+ke.constitution-2010.art-256.cl-5.pa-b.v-2010,,ke.constitution-2010.art-255.cl-2,in-accordance-with,178,193,Article 255 (2),parser,proposed
+ke.constitution-2010.art-257.cl-9.v-2010,,ke.constitution-2010.art-256.cl-4,in-accordance-with,100,116,Articles 256 (4),parser,proposed
+ke.constitution-2010.art-257.cl-11.v-2010,,ke.constitution-2010.art-255.cl-2,refers-to,0,15,Article 255 (2),parser,proposed

@@ -1,0 +1,18 @@
+source_version_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
+ke.constitution-2010.art-203.cl-1.v-2010,,ke.constitution-2010.art-202,under,106,117,Article 202,parser,proposed
+ke.constitution-2010.art-206.cl-2.pa-b.v-2010,,ke.constitution-2010.art-222,in-accordance-with,19,30,Article 222,parser,proposed
+ke.constitution-2010.art-216.cl-3.pa-a.v-2010,,ke.constitution-2010.art-203.cl-1,refers-to,56,71,Article 203 (1),parser,proposed
+ke.constitution-2010.art-216.cl-4.v-2010,,ke.constitution-2010.art-204.cl-2,refers-to,163,178,Article 204 (2),parser,proposed
+ke.constitution-2010.art-217.cl-2.pa-a.v-2010,,ke.constitution-2010.art-203.cl-1,refers-to,21,36,Article 203 (1),parser,proposed
+ke.constitution-2010.art-217.cl-6.pa-b.v-2010,,ke.constitution-2010.art-113,under,109,120,Article 113,parser,proposed
+ke.constitution-2010.art-218.cl-1.pa-b.v-2010,,ke.constitution-2010.art-217,under,204,215,Article 217,parser,proposed
+ke.constitution-2010.art-218.cl-2.pa-b.v-2010,,ke.constitution-2010.art-203.cl-1,refers-to,67,82,Article 203 (1),parser,proposed
+ke.constitution-2010.art-219.v-2010,,ke.constitution-2010.art-225,under,188,199,Article 225,parser,proposed
+ke.constitution-2010.art-221.cl-3.v-2010,,ke.constitution-2010.art-127,under,203,215,Articles 127,parser,proposed
+ke.constitution-2010.art-221.cl-3.v-2010,,ke.constitution-2010.art-173,under,220,223,173,parser,proposed
+ke.constitution-2010.art-224.v-2010,,ke.constitution-2010.art-218,under,72,83,Article 218,parser,proposed
+ke.constitution-2010.art-228.cl-3.v-2010,,ke.constitution-2010.art-251,subject-to,33,44,Article 251,parser,proposed
+ke.constitution-2010.art-228.cl-4.v-2010,,ke.constitution-2010.art-204,under,163,175,Articles 204,parser,proposed
+ke.constitution-2010.art-228.cl-4.v-2010,,ke.constitution-2010.art-206,under,177,180,206,parser,proposed
+ke.constitution-2010.art-228.cl-4.v-2010,,ke.constitution-2010.art-207,under,185,188,207,parser,proposed
+ke.constitution-2010.art-229.cl-3.v-2010,,ke.constitution-2010.art-251,subject-to,45,56,Article 251,parser,proposed

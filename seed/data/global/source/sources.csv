@@ -7,3 +7,9 @@ geoboundaries-ken-adm2,geoBoundaries Kenya ADM2 (constituencies),dataset,geoboun
 geoboundaries-ken-adm3,geoBoundaries Kenya ADM3 (wards),dataset,geoboundaries,KEN-ADM3-90231094; boundary source Benedict Aboki Omare and George Omare; CC BY 4.0.
 redcross-ke-subcounties,Kenya Sub Counties (American Red Cross),dataset,american-red-cross,304 sub-counties with counties and DHIS2 ids. CC BY.
 redcross-ke-wards,Administrative Wards in Kenya 1450 (American Red Cross),dataset,american-red-cross,"1450 wards with county, sub-county and DHIS2 ids. CC BY."
+klrc-constitution,Kenya Law Reform Commission: the Constitution of Kenya,website,klrc,"klrc.go.ke publishes the Constitution as one page per chapter, part and article."
+constitutionnet,ConstitutionNet,website,constitutionnet,"constitutionnet.org hosts copies of constitutions, including the NCLR print and the Kiswahili proposed constitution."
+uraia,URAIA Trust,website,uraia,uraia.or.ke publishes a Kiswahili translation of the Constitution.
+ke-constitution-2010-en-nclr,"Constitution of Kenya, 2010, English (National Council for Law Reporting print)",dataset,nclr,"LAWS OF KENYA, The Constitution of Kenya, 2010, published by the National Council for Law Reporting with the authority of the Attorney General. The English text governs (Article 259)."
+ke-constitution-2010-sw-uraia,"Katiba ya Kenya, 2010, Kiswahili translation (URAIA)",dataset,uraia,A Kiswahili translation made from the NCLR print of 27 August 2010. Not the gazetted text; the English version governs.
+ke-constitution-2010-sw-proposed-draft,"Katiba Inayopendekezwa ya Kenya, 6 May 2010 (Kiswahili proposed constitution)",dataset,ke-attorney-general,"The Kiswahili proposed constitution published before the August 2010 referendum. A draft, not the final text."

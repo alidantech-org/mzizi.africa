@@ -20,6 +20,9 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One responsibility or authority assignment for an institution or office.
  */
 @Entity({ schema: "governance", name: "mandates" })
+@Index(["institutionId", "officeId", "mandateKindId", "description"], {
+  unique: true,
+})
 @Index(["institutionId"])
 @Index(["officeId"])
 @Index(["sourceCitationId"])
