@@ -89,7 +89,7 @@ Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neut
 
 ## Seed inputs
 
-Read `seed/README.md` before changing curated or prepared system inputs. Keep them under root `seed/` with manifest, provenance, scope and access metadata. After seed changes, run `uv run mzizi-manifest check`; refresh the lock with `uv run mzizi-manifest lock` when required. Do not treat an example manifest as executable or delete existing S3 artifacts as part of local database work.
+Read `seed/README.md` before changing curated or prepared system inputs. `seed/` is being rebuilt from empty (old tree archived in `.dev/archives/seed/`): never add a seed file, folder or manifest entry without showing it to the owner and getting approval first, one file or small set at a time. Keep them under root `seed/` with manifest, provenance, scope and access metadata. After seed changes, run `uv run mzizi-manifest check`; refresh the lock with `uv run mzizi-manifest lock` when required. Do not treat an example manifest as executable or delete existing S3 artifacts as part of local database work.
 
 <!-- BEGIN TASK MANAGED TASK-TOOL -->
 ## Task workspace
