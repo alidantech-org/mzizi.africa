@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/module.schema.json
 module: documents
-mapping: ke.source.documents
+mapping: ke.source.documents.example-ministry-publications
 discover:
   listing:
     url: /publications/documents

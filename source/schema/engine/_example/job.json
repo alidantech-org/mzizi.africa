@@ -6,7 +6,7 @@
   "sources": [
     {
       "url": "https://www.example.org/publications/",
-      "authority_ref": "ke.example-ministry"
+      "authority_ref": "ke.source.websites.example-ministry"
     }
   ],
   "mode": "crawl",

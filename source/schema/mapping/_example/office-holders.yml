@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/mapping/mapping.schema.json
 # Example mapping: one extracted row yields an individual and the holding of an office.
-code: ke.official.office-holders
+code: ke.official.individuals.office-holders
 describe: A person holding a public office for a period, as listed on an official page.
 inputs: [slug, name, office_code, start_date]
 yields:

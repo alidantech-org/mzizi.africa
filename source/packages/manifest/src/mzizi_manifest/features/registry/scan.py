@@ -5,7 +5,7 @@ folders under `source/schema/`:
 
 - a source has `code` and `kind` (`website` or `api`);
 - a mapping has `code` and `yields`;
-- a vocabulary has `code` and `terms`;
+- a vocabulary has `code` and `terms` (or `url_kinds`, the web classification data);
 - an extraction expectation has `code` and `columns`;
 - a module has `module`; its `mapping` is checked in the scope of the source folder that owns it.
 
@@ -20,6 +20,7 @@ from pathlib import Path
 
 import yaml
 
+from mzizi_manifest.features.registry.areas import Areas, load_areas
 from mzizi_manifest.features.registry.registry import Entry, Kind, Reference, Registry, check
 
 SUFFIXES = {".yml", ".yaml", ".json"}
@@ -63,7 +64,7 @@ def _kind(document: dict) -> Kind | None:
         return Kind.SOURCE
     if "yields" in document:
         return Kind.MAPPING
-    if "terms" in document:
+    if "terms" in document or "url_kinds" in document:
         return Kind.VOCABULARY
     if "columns" in document:
         return Kind.EXTRACTION
@@ -102,8 +103,47 @@ def _owner(path: Path, sources: dict[Path, str], root: Path) -> tuple[str | None
     return None, "no source manifest in a folder above it"
 
 
-def scan(root: Path) -> Scan:
-    """Build the registry of `root` and collect every problem, including the registry checks."""
+KIND_FOLDERS = {
+    Kind.SOURCE: "sources",
+    Kind.MAPPING: "mappings",
+    Kind.VOCABULARY: "vocabularies",
+    Kind.EXTRACTION: "extraction",
+}
+
+
+def mirror_problems(entry: Entry) -> list[str]:
+    """A file's folder path mirrors its code: `mappings/ke/governance/holders/office-holders.yml`.
+
+    A source's code is the folder that holds its manifest (`sources/ke/source/websites/iebc/manifest.yml`).
+    """
+    parts, segments = entry.path.parts, entry.code.split(".")
+    expected_folder = KIND_FOLDERS[entry.kind]
+    if entry.kind is Kind.SOURCE:
+        mirrored = list(parts[1:-1]) == segments
+        shown = "/".join([expected_folder, *segments, "<manifest>"])
+    else:
+        mirrored = list(parts[1:-1]) == segments[:-1] and Path(parts[-1]).stem == segments[-1]
+        shown = "/".join([expected_folder, *segments[:-1], f"{segments[-1]}.yml"])
+    if parts[:1] == (expected_folder,) and mirrored:
+        return []
+    return [f"{entry.path}: the path must mirror the code {entry.code!r}: {shown}"]
+
+
+def _detail(document: dict, kind: Kind) -> str | None:
+    if kind is Kind.SOURCE:
+        return document.get("kind")
+    if kind is Kind.MAPPING:
+        yields = document.get("yields")
+        first = yields[0] if isinstance(yields, list) and yields and isinstance(yields[0], dict) else {}
+        return first.get("table") if isinstance(first.get("table"), str) else None
+    return None
+
+
+def scan(root: Path, *, mirror_paths: bool = True, areas: Areas | None = None) -> Scan:
+    """Build the registry of `root` and collect every problem, including the registry checks.
+
+    `mirror_paths` also requires each file's folder path to mirror its code; the `_example/` folders are flat and turn it off.
+    """
     result = Scan(Registry({}))
     entries: dict[str, Entry] = {}
     sources: dict[Path, str] = {}
@@ -123,7 +163,7 @@ def scan(root: Path) -> Scan:
         if code in entries:
             result.problems.append(f"{shown}: duplicate code {code!r}, already declared in {entries[code].path}")
             continue
-        entries[code] = Entry(code, kind, shown, tuple(_references(document, kind)))
+        entries[code] = Entry(code, kind, shown, tuple(_references(document, kind)), _detail(document, kind))
         if kind is Kind.SOURCE:
             sources[path] = code
     for path, document in modules:
@@ -141,7 +181,11 @@ def scan(root: Path) -> Scan:
             owning.kind,
             owning.path,
             (*owning.references, Reference(f"module {shown}: mapping", named, Kind.MAPPING)),
+            owning.detail,
         )
     result.registry = Registry(entries)
-    result.problems += check(result.registry)
+    result.problems += check(result.registry, areas or load_areas())
+    if mirror_paths:
+        for entry in entries.values():
+            result.problems += mirror_problems(entry)
     return result

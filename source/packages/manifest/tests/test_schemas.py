@@ -39,7 +39,7 @@ def _errors(schema_path: str, document: object) -> list[str]:
 
 
 def _website(**extra: object) -> dict:
-    return {"code": "ke.iebc", "kind": "website", "modules": ["party-list"], "policy": POLICY, **extra}
+    return {"code": "ke.source.websites.iebc", "kind": "website", "modules": ["party-list"], "policy": POLICY, **extra}
 
 
 def _api(**extra: object) -> dict:
@@ -47,7 +47,7 @@ def _api(**extra: object) -> dict:
         "base_url": "https://api.example.org",
         "endpoints": {"countries": {"path": "/v1/countries", "items": {"jsonpath": "$.data[*]"}}},
     }
-    return {"code": "global.example-api", "kind": "api", "api": {**api, **extra}, "policy": POLICY}
+    return {"code": "global.source.apis.example-api", "kind": "api", "api": {**api, **extra}, "policy": POLICY}
 
 
 @pytest.mark.parametrize("path", _files(), ids=lambda p: f"{p.parent.name}/{p.name}")
@@ -106,7 +106,7 @@ def test_a_credential_is_only_ever_named() -> None:
 def test_modules_may_name_a_mapping_and_an_endpoint() -> None:
     module = {
         "module": "countries",
-        "mapping": "global.reference.countries",
+        "mapping": "global.reference.countries.example-statistics",
         "discover": {"endpoint": {"name": "countries"}},
         "extract": {"fields": {"name": {"from": {"jsonpath": "$.name"}}}},
     }
@@ -116,7 +116,7 @@ def test_modules_may_name_a_mapping_and_an_endpoint() -> None:
 
 def _mapping() -> dict:
     return {
-        "code": "ke.official.office-holders",
+        "code": "ke.official.individuals.office-holders",
         "describe": "A person holding a public office for a period.",
         "inputs": ["name", "office_code", "start_date"],
         "yields": [
@@ -191,6 +191,9 @@ def test_bootstrap_names_environment_variables_only() -> None:
 
 
 def test_a_term_list_validates() -> None:
-    document = {"code": "ke.office-patterns", "terms": [{"value": "governor", "aliases": ["county governor"]}]}
+    document = {
+        "code": "ke.reference.patterns.office-names",
+        "terms": [{"value": "governor", "aliases": ["county governor"]}],
+    }
     assert _errors("vocabulary/terms.schema.json", document) == []
-    assert _errors("vocabulary/terms.schema.json", {"code": "ke.office-patterns", "terms": []})
+    assert _errors("vocabulary/terms.schema.json", {"code": "ke.reference.patterns.office-names", "terms": []})

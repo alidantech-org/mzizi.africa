@@ -18,11 +18,14 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("report", help="effective metadata per artifact")
     refs = sub.add_parser("refs", help="check that every source, mapping, vocabulary and extraction code resolves")
     refs.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder to scan (default: seed/)")
+    refs.add_argument(
+        "--no-paths", action="store_true", help="do not require folder paths to mirror codes (flat example folders)"
+    )
     args = parser.parse_args(argv)
     if args.command == "refs":
         from mzizi_manifest.features.registry.scan import scan
 
-        found = scan(args.root)
+        found = scan(args.root, mirror_paths=not args.no_paths)
         for code, entry in sorted(found.registry.entries.items()):
             print(f"{entry.kind}\t{code}\t{entry.path}")
         for problem in found.problems:

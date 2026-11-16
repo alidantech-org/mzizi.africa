@@ -39,4 +39,4 @@ Partly built 16 November 2026: `source/schema/vocabulary/` holds `web.schema.jso
 
 Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.
 
-Web vocabulary moved 16 November 2026 to `seed/vocabularies/global/web.yaml`, linked to its published schema `source/schema/vocabulary/web.schema.json` (now with an `$id`, generated from the typed model by `mzizi_fetch.web.vocabulary.schema_text`, with a drift test).
+Web vocabulary moved 16 November 2026 to `seed/vocabularies/global/web/classification.yaml`, linked to its published schema `source/schema/vocabulary/web.schema.json` (now with an `$id`, generated from the typed model by `mzizi_fetch.web.vocabulary.schema_text`, with a drift test).

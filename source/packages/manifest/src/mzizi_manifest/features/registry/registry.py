@@ -7,7 +7,10 @@ a module's `mapping`. This module only answers "does that code exist, is it the 
 - the first segment of a code is its scope: `global` or a country code such as `ke`;
 - a manifest may use items in its own scope or in `global`, never in another country, and `global` never uses a country;
 - a reference to a code of the wrong kind is an error;
-- a reference cycle (for example one website extending another that extends it back) is an error.
+- a reference cycle (for example one website extending another that extends it back) is an error;
+- the second segment is an area: a database group (the third segment is then one of its tables) or a system area;
+- a source is `<scope>.source.<websites|apis>.<name>` and its kind agrees; an extraction expectation is in `extraction`;
+- a mapping is named after the table it writes first: `<scope>.<schema>.<table>.<name>`.
 
 Reading the files is in `scan.py`; nothing here touches the file system.
 """
@@ -18,6 +21,8 @@ import re
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
+
+from mzizi_manifest.features.registry.areas import Areas
 
 GLOBAL_SCOPE = "global"
 SCOPE = re.compile(r"^(global|[a-z]{2,3})$")
@@ -45,6 +50,8 @@ class Entry:
     kind: Kind
     path: Path
     references: tuple[Reference, ...]
+    #: A source's `kind`, or the first table a mapping yields; what the code's own segments are checked against.
+    detail: str | None = None
 
 
 @dataclass(frozen=True)
@@ -96,13 +103,53 @@ def _cycle(registry: Registry) -> list[str] | None:
     return None
 
 
-def check(registry: Registry) -> list[str]:
+SOURCE_TABLES = {"website": "websites", "api": "apis"}
+
+
+def code_problems(entry: Entry, areas: Areas) -> list[str]:
+    """Check a code against the contracts: its area, its table and what its kind requires."""
+    where, segments = str(entry.path), entry.code.split(".")
+    if not SCOPE.match(segments[0]):
+        return [f"{where}: code {entry.code!r} must start with a scope: 'global' or a country code"]
+    if len(segments) < 3:
+        return [f"{where}: code {entry.code!r} needs at least <scope>.<area>.<name>"]
+    area = segments[1]
+    problems: list[str] = []
+    if area in areas.tables:
+        if len(segments) < 4 or segments[2] not in areas.tables[area]:
+            problems.append(
+                f"{where}: code {entry.code!r}: {segments[2]!r} is not a table of {area!r} "
+                f"(expected <scope>.{area}.<table>.<name>)"
+            )
+    elif area not in areas.system:
+        allowed = sorted((*areas.tables, *areas.system))
+        problems.append(
+            f"{where}: code {entry.code!r}: {area!r} is not a database group or system area ({', '.join(allowed)})"
+        )
+    if entry.kind is Kind.SOURCE:
+        table = SOURCE_TABLES.get(entry.detail or "")
+        if area != "source" or (table and segments[2:3] != [table]):
+            problems.append(
+                f"{where}: a {entry.detail} source code must be <scope>.source.{table}.<name>, not {entry.code!r}"
+            )
+    elif entry.kind is Kind.EXTRACTION and area != "extraction":
+        problems.append(
+            f"{where}: an extraction expectation code must be <scope>.extraction.<name>, not {entry.code!r}"
+        )
+    elif entry.kind is Kind.MAPPING and entry.detail and ".".join(segments[1:3]) != entry.detail:
+        problems.append(
+            f"{where}: a mapping is named after the table it writes first ({entry.detail}); "
+            f"code {entry.code!r} should be <scope>.{entry.detail}.<name>"
+        )
+    return problems
+
+
+def check(registry: Registry, areas: Areas) -> list[str]:
     """Every problem in the registry; each names the file, the field and the code."""
     problems: list[str] = []
     for code, entry in sorted(registry.entries.items()):
         where = str(entry.path)
-        if not SCOPE.match(scope_of(code)):
-            problems.append(f"{where}: code {code!r} must start with a scope: 'global' or a country code")
+        problems += code_problems(entry, areas)
         for reference in entry.references:
             target = registry.resolve(reference.code)
             if target is None:

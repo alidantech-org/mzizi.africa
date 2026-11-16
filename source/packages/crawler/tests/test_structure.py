@@ -38,7 +38,7 @@ def test_a_site_extending_an_abstract_family_resolves_modules_and_variables():
         "family",
         {
             "manifest.yml": read("manifest.yml").replace(
-                "code: ke.example-ministry", "code: ke.county-family\nabstract: true"
+                "code: ke.source.websites.example-ministry", "code: ke.source.websites.county-family\nabstract: true"
             ),
             "modules/tenders.yml": "module: tenders\ndiscover:\n  listing:\n    url: ${tenders_path}\n    items: { css: li }\nextract:\n  fields:\n    title: { from: link_text }\n",
             "NOTES.md": "x" * 100,
@@ -49,7 +49,7 @@ def test_a_site_extending_an_abstract_family_resolves_modules_and_variables():
         {
             "manifest.yml": read("manifest.yml").replace(
                 "modules: [documents]",
-                "modules: []\nextends: ke.county-family\nvars: { tenders_path: /publications/tenders }",
+                "modules: []\nextends: ke.source.websites.county-family\nvars: { tenders_path: /publications/tenders }",
             ),
             "NOTES.md": "x" * 100,
         },
@@ -65,29 +65,29 @@ def test_a_site_extending_an_abstract_family_resolves_modules_and_variables():
 
 
 def test_unknown_transform_and_unknown_mapping_column_are_rejected():
-    mapping = read("mappings/documents.yml")
+    mapping = read("mappings/example-ministry-publications.yml")
     transformed = mapping.replace("{ from: slug }", "{ from: slug, transform: shell_exec }")
     assert any(
-        "unknown transform 'shell_exec'" in e for e in validate(mutate("mappings/documents.yml", transformed)).errors
+        "unknown transform 'shell_exec'" in e for e in validate(mutate("mappings/example-ministry-publications.yml", transformed)).errors
     )
     renamed = mapping.replace("published_on:", "made_up_column:")
     assert any(
-        "has no column 'made_up_column'" in e for e in validate(mutate("mappings/documents.yml", renamed)).errors
+        "has no column 'made_up_column'" in e for e in validate(mutate("mappings/example-ministry-publications.yml", renamed)).errors
     )
 
 
 def test_a_mapping_may_only_use_stored_tables_inputs_and_yields():
-    mapping = read("mappings/documents.yml")
+    mapping = read("mappings/example-ministry-publications.yml")
     assert any(
         "is not a stored table" in e
         for e in validate(
-            mutate("mappings/documents.yml", mapping.replace("table: source.documents", "table: source.nothing"))
+            mutate("mappings/example-ministry-publications.yml", mapping.replace("table: source.documents", "table: source.nothing"))
         ).errors
     )
     assert any(
         "not in inputs" in e
         for e in validate(
-            mutate("mappings/documents.yml", mapping.replace("from: title", "from: unknown_field"))
+            mutate("mappings/example-ministry-publications.yml", mapping.replace("from: title", "from: unknown_field"))
         ).errors
     )
 

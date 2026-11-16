@@ -21,7 +21,7 @@ PAIRS = [
     ("sources/_example/api-source.yml", "sources/source.schema.json"),
     ("sources/_example/website-bundle/modules/documents.yml", "sources/module.schema.json"),
     ("sources/_example/api-module.yml", "sources/module.schema.json"),
-    ("sources/_example/website-bundle/mappings/documents.yml", "mapping/mapping.schema.json"),
+    ("sources/_example/website-bundle/mappings/example-ministry-publications.yml", "mapping/mapping.schema.json"),
     ("mapping/_example/office-holders.yml", "mapping/mapping.schema.json"),
     ("seed/_example/manifest.yaml", "seed/manifest.schema.json"),
     ("seed/_example/_folder.yaml", "seed/folder.schema.json"),

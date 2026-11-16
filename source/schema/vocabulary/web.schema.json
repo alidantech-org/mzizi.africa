@@ -278,6 +278,10 @@
       "title": "Cms Media Paths",
       "type": "array"
     },
+    "code": {
+      "title": "Code",
+      "type": "string"
+    },
     "content_query_keys": {
       "default": [],
       "items": {
@@ -405,6 +409,7 @@
     }
   },
   "required": [
+    "code",
     "version",
     "url_kinds",
     "media_tags",

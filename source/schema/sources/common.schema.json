@@ -5,9 +5,9 @@
   "$defs": {
     "code": {
       "type": "string",
-      "pattern": "^[a-z][a-z0-9_-]*(\\.[a-z0-9][a-z0-9_-]*)*$",
+      "pattern": "^(global|[a-z]{2,3})(\\.[a-z0-9][a-z0-9_-]*){2,}$",
       "maxLength": 200,
-      "description": "Dotted lowercase code, unique across the seed tree. A source's code equals source.sources.code."
+      "description": "<scope>.<area>.<table-or-name>.<name>...: scope is global or a country code; area is a database group (then the next segment is one of its tables) or a system area; a file's folder path mirrors its code. A source's code equals source.sources.code."
     },
     "name": {
       "type": "string",
@@ -375,6 +375,14 @@
           }
         }
       }
+    },
+    "systemArea": {
+      "enum": [
+        "engine",
+        "web",
+        "extraction"
+      ],
+      "description": "Areas for things that are not database rows, named by how they are used. The registry reads this list."
     }
   }
 }

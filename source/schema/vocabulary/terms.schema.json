@@ -11,9 +11,7 @@
   ],
   "properties": {
     "code": {
-      "type": "string",
-      "pattern": "^[a-z][a-z0-9_-]*(\\.[a-z0-9][a-z0-9_-]*)*$",
-      "maxLength": 200
+      "$ref": "../sources/common.schema.json#/$defs/code"
     },
     "describe": {
       "type": "string"

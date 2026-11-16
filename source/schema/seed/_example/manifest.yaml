@@ -16,5 +16,5 @@ entries:
     media_type: text/csv
     depends_on: [data.global.reference]
   - id: sources.ke.example-ministry
-    glob: sources/ke/example-ministry/**
+    glob: sources/ke/source/websites/example-ministry/**
     depends_on: [data.global.reference]
