@@ -186,15 +186,15 @@ def test_the_path_must_mirror_the_code(tmp_path: Path) -> None:
 
 
 def test_engine_data_and_jobs_are_flat_and_only_a_non_global_scope_adds_a_folder(tmp_path: Path) -> None:
-    web = "code: global.engine.web-classification\nversion: 1\nurl_kinds: {}\n"
+    web = "code: global.engine.web.classification\nversion: 1\nurl_kinds: {}\n"
     job = '{"code": "global.engine.jobs.nightly", "spec_version": 1, "stages": []}'
-    scoped = "code: sw.engine.web-classification\nversion: 1\nurl_kinds: {}\n"
+    scoped = "code: sw.engine.web.classification\nversion: 1\nurl_kinds: {}\n"
     root = write(
         tmp_path,
         {
-            "engine/web-classification.yaml": web,
+            "engine/web/classification.yaml": web,
             "engine/jobs/nightly.json": job,
-            "engine/sw/web-classification.yaml": scoped,
+            "engine/sw/web/classification.yaml": scoped,
         },
     )
     result = scan(root)
@@ -203,7 +203,7 @@ def test_engine_data_and_jobs_are_flat_and_only_a_non_global_scope_adds_a_folder
 
 
 def test_engine_data_in_the_wrong_place_or_area_is_rejected(tmp_path: Path) -> None:
-    web = "code: global.engine.web-classification\nversion: 1\nurl_kinds: {}\n"
+    web = "code: global.engine.web.classification\nversion: 1\nurl_kinds: {}\n"
     root = write(
         tmp_path,
         {

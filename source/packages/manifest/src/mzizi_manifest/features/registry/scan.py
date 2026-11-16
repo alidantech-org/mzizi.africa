@@ -113,7 +113,7 @@ def mirror_problems(entry: Entry) -> list[str]:
 
     A source's code is the folder that holds its manifest (`sources/ke/source/websites/iebc/manifest.yml`). Engine data and
     job specs are flat: `<scope>.engine.<rest>` lives at `engine/<rest>`, with a `<scope>/` folder only when the scope is not
-    `global` (`engine/web-classification.yaml`, `engine/jobs/<name>.json`, `engine/sw/web-classification.yaml`).
+    `global` (`engine/web/classification.yaml`, `engine/jobs/<name>.json`, `engine/sw/web/classification.yaml`).
     """
     parts, segments = entry.path.parts, entry.code.split(".")
     expected_folder = KIND_FOLDERS[entry.kind]

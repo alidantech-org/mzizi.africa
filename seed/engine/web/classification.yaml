@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/web.schema.json
 # Web classification: engine data for URL kinds, tracking parameters, challenge markers and file signatures.
 # Read by mzizi-fetch (mzizi_fetch.web.vocabulary); its shape is engine/web.schema.json. Extend here, not in code.
-code: global.engine.web-classification
+code: global.engine.web.classification
 version: 1
 url_kinds:
   image: [png, jpg, jpeg, gif, webp, svg, bmp, ico, tif, tiff, avif]
