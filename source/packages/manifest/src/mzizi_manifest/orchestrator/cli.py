@@ -16,6 +16,10 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("check", help="validate folder metadata, manifest, dependencies, consumers and the lock (no writes)")
     sub.add_parser("lock", help="regenerate seed/manifest.lock.yaml")
     sub.add_parser("report", help="effective metadata per artifact")
+    data = sub.add_parser(
+        "data", help="check seed CSV files (data/<scope>/<domain>/<table>.csv) against the database schemas"
+    )
+    data.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
     refs = sub.add_parser("refs", help="check that every source, mapping and terms code resolves")
     refs.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder to scan (default: seed/)")
     refs.add_argument(
@@ -32,6 +36,16 @@ def main(argv: list[str] | None = None) -> int:
             print(f"error: {problem}", file=sys.stderr)
         print(f"{len(found.registry.entries)} codes, {len(found.problems)} problems")
         return 1 if found.problems else 0
+    if args.command == "data":
+        from mzizi_manifest.features.data.check import check_data
+
+        checked = check_data(args.root)
+        for table in checked.order:
+            print(f"{table}\t{len(checked.rows[table])} rows")
+        for problem in checked.problems:
+            print(f"error: {problem}", file=sys.stderr)
+        print(f"{len(checked.rows)} tables, {len(checked.problems)} problems")
+        return 1 if checked.problems else 0
     lock_path = SEED_ROOT / reg.LOCK_NAME
     if args.command == "lock":
         result = reg.validate_manifest()

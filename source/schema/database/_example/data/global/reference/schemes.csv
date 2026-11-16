@@ -1,2 +1,2 @@
-id,code,title,owner_snapshot,created_at,updated_at,version
-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa,source.document-kind,Kinds of source document,system,2026-11-16T00:00:00Z,2026-11-16T00:00:00Z,1
+code,title,owner_snapshot
+source.document_kind,Kinds of source document,mzizi

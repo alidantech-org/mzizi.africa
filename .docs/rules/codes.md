@@ -32,3 +32,15 @@ A file's folder path under `seed/` mirrors its code. `seed/mappings/ke/governanc
 `uv run mzizi-manifest refs [folder]` checks all of this: the area and table against the generated `source/schema/database/` files, the kind rules, the path, unknown, duplicate and wrong-kind references, scope visibility and cycles. The flat `_example/` folders use `--no-paths`.
 
 Row codes inside data (`source.document-kind.report`) are data, not manifests, and follow the code-column rule only. Never invent a new area, scope shape or segment rule without asking the owner.
+
+## Seed rows: identity by code, links by code
+
+A seed CSV row is written in the seed view of its table (`x-seed` in `source/schema/database/<group>.schema.json`):
+
+- It is identified by its natural key, normally `code`. It never carries `id` or the system fields `version`, `created_at`, `updated_at` and `deleted_at`; the loader assigns them. The id is derived from the table and the code (`mzizi_manifest.features.seeds.ids.stable_id`), so the same code always gives the same id. A code is therefore never edited in place: a rename is a new row linked by supersession.
+- A foreign key is written as the target's code, not its id: `values.scheme_code`, `countries.continent_code`. The generated schema names each link's seed column (`x-link.alias`).
+- Row codes follow the code-column rule: lowercase dot-separated segments of letters, digits and underscores (no hyphens): `geography.subregion.eastern_africa`, `finance.currency.kes`. A value's code starts with its scheme's code.
+- A table without a natural key cannot be seeded by CSV until its contract declares one.
+
+`uv run mzizi-manifest data [folder]` checks every `data/<scope>/<domain>/<table>.csv` against these rules: allowed and required columns, values, unique keys, that every code link resolves, and that the tables load in a dependency order.
+

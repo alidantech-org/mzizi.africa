@@ -24,15 +24,52 @@ export const reference = dryv
 
 /*---------------- Reference schema contracts ----------------*/
 
+const countryProperties = reference.properties({
+  /** ISO 3166-1 alpha-2, upper case: KE. */
+  IsoAlpha2: dryv.property.string().length({ exact: 2 }).pattern({ match: ["^[A-Z]{2}$"] }),
+  /** ISO 3166-1 alpha-3, upper case: KEN. */
+  IsoAlpha3: dryv.property.string().length({ exact: 3 }).pattern({ match: ["^[A-Z]{3}$"] }),
+  /** ISO 3166-1 numeric, three digits with leading zeros: 404. */
+  IsoNumeric: dryv.property.string().length({ exact: 3 }).pattern({ match: ["^[0-9]{3}$"] }),
+  /** ITU country calling code with its plus sign: +254. A shared code such as +1 is the country's main code. */
+  CallingCode: dryv.property.string().length({ min: 2, max: 5 }).pattern({ match: ["^\\+[0-9]{1,4}$"] }),
+});
+
+/**
+ * Canonical identity for a modern country.
+ *
+ * Every classification link is optional and points at `reference.values`, which points at `reference.schemes`; nothing
+ * there points back at a country, so the link graph stays acyclic and a country can be loaded before its classifications
+ * are complete. The scheme each link must belong to is checked when seed files are validated, from the seed manifest.
+ */
 export const Country = reference
   .schema("Country", {
     name: dryv.field(sharedProperties.Name),
+    officialName: dryv.field(sharedProperties.Name).maybe(),
+    isoAlpha2: dryv.field(countryProperties.IsoAlpha2),
+    isoAlpha3: dryv.field(countryProperties.IsoAlpha3).maybe(),
+    isoNumeric: dryv.field(countryProperties.IsoNumeric).maybe(),
+    callingCode: dryv.field(countryProperties.CallingCode).maybe(),
+    continentId: belongsTo(() => Value).maybe(),
+    subregionId: belongsTo(() => Value).maybe(),
+    currencyId: belongsTo(() => Value).maybe(),
+    recognitionStatusId: belongsTo(() => Value).maybe(),
+    designationId: belongsTo(() => Value).maybe(),
+    establishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .description("Canonical identity for a modern country; not a geographic unit or historical polity.")
   .role("entity")
   .facets({
-    storage: dryv.storage("countries").index("name"),
+    storage: dryv
+      .storage("countries")
+      .index("name")
+      .unique("isoAlpha2")
+      .index("continentId")
+      .index("subregionId")
+      .index("currencyId")
+      .index("recognitionStatusId")
+      .index("designationId"),
   });
 
 /** Country identity is independent of whether another record has a country relationship. */

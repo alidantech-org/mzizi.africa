@@ -5,7 +5,8 @@ This folder was emptied on 16 November 2026 so the seed inputs can be rebuilt fr
 ## How it is rebuilt
 
 - The owner reviews and approves every seed file before it is added. Agents propose a file or a small set of files, show them, and wait; nothing is added in bulk.
-- Files are added one by one, and each must pass the validators once they exist (`uv run mzizi-manifest refs seed` checks codes, kinds, scope and paths today).
+- Files are added one by one, and each must pass the validators: `uv run mzizi-manifest refs seed` checks codes, kinds, scope and paths, and `uv run mzizi-manifest data seed` checks every CSV against the database schemas.
+- A CSV row is identified by its `code` and links to other rows by code (`scheme_code`); it never carries ids or system fields (`.docs/rules/codes.md`).
 - No version appears in a folder or file name (`.docs/rules/versioning.md`).
 
 ## The planned layout
@@ -17,7 +18,7 @@ seed/
 ├── sources/<scope>/source/<websites|apis>/<name>/      manifest.yml, modules/, examples/, NOTES.md
 ├── mappings/<scope>/<domain>/<table>/<name>.yml
 ├── terms/<scope>/<area>/.../<name>.yml
-├── engine/                  flat engine data and jobs: web/classification.yaml, jobs/<name>.json (a non-global scope adds a folder)
+├── engine/<domain | capability>/                  flat engine data and jobs: web/classification.yaml, jobs/<name>.json (a non-global scope adds a folder)
 └── _fixtures/               tests only
 ```
 

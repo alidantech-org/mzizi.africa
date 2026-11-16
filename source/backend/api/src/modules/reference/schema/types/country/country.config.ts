@@ -9,6 +9,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
+import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -30,29 +31,62 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const COUNTRY_RELATION_KEYS = [] as const satisfies readonly CountryKey[];
+export const COUNTRY_RELATION_KEYS = [
+  "continent",
+  "currency",
+  "designation",
+  "recognitionStatus",
+  "subregion",
+] as const satisfies readonly CountryKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
 // ----------------------------------
 
 export const COUNTRY_SORTABLE_FIELDS = [
+  "callingCode",
   "code",
+  "continentId",
   "createdAt",
+  "currencyId",
   "deletedAt",
+  "designationId",
+  "establishedOn",
   "id",
+  "isoAlpha2",
+  "isoAlpha3",
+  "isoNumeric",
   "name",
+  "officialName",
+  "recognitionStatusId",
+  "subregionId",
   "updatedAt",
   "version",
 ] as const satisfies readonly CountryKey[];
 
-export const COUNTRY_SEARCHABLE_FIELDS = ["code", "name"] as const satisfies readonly CountryKey[];
+export const COUNTRY_SEARCHABLE_FIELDS = [
+  "callingCode",
+  "code",
+  "isoAlpha2",
+  "isoAlpha3",
+  "isoNumeric",
+  "name",
+  "officialName",
+] as const satisfies readonly CountryKey[];
 
-export const COUNTRY_FILTERABLE_FIELDS = ["id"] as const satisfies readonly CountryKey[];
+export const COUNTRY_FILTERABLE_FIELDS = [
+  "continentId",
+  "currencyId",
+  "designationId",
+  "id",
+  "recognitionStatusId",
+  "subregionId",
+] as const satisfies readonly CountryKey[];
 
 export const COUNTRY_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "establishedOn",
   "updatedAt",
 ] as const satisfies readonly CountryKey[];
 
@@ -67,21 +101,43 @@ export const COUNTRY_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<ICountry>
 // ----------------------------------
 
 export const COUNTRY_SELECTABLE_FIELDS = [
+  "callingCode",
   "code",
+  "continentId",
   "createdAt",
+  "currencyId",
   "deletedAt",
+  "designationId",
+  "establishedOn",
   "id",
+  "isoAlpha2",
+  "isoAlpha3",
+  "isoNumeric",
   "name",
+  "officialName",
+  "recognitionStatusId",
+  "subregionId",
   "updatedAt",
   "version",
 ] as const satisfies readonly CountryKey[];
 
 export const COUNTRY_DEFAULT_SELECT_FIELDS = [
+  "callingCode",
   "code",
+  "continentId",
   "createdAt",
+  "currencyId",
   "deletedAt",
+  "designationId",
+  "establishedOn",
   "id",
+  "isoAlpha2",
+  "isoAlpha3",
+  "isoNumeric",
   "name",
+  "officialName",
+  "recognitionStatusId",
+  "subregionId",
   "updatedAt",
   "version",
 ] as const satisfies readonly CountrySelectableField[];
@@ -90,7 +146,21 @@ export const COUNTRY_DEFAULT_SELECT_FIELDS = [
 // EDITABLE FIELD CONFIG
 // ----------------------------------
 
-export const COUNTRY_EDITABLE_FIELDS = ["code", "name"] as const satisfies readonly CountryKey[];
+export const COUNTRY_EDITABLE_FIELDS = [
+  "callingCode",
+  "code",
+  "continentId",
+  "currencyId",
+  "designationId",
+  "establishedOn",
+  "isoAlpha2",
+  "isoAlpha3",
+  "isoNumeric",
+  "name",
+  "officialName",
+  "recognitionStatusId",
+  "subregionId",
+] as const satisfies readonly CountryKey[];
 
 // ----------------------------------
 // RELATION CONFIGS
@@ -117,7 +187,28 @@ export const COUNTRY_AS_MANY_RELATION_CONFIG = {
 // RELATION QUERY OPTIONS
 // ----------------------------------
 
-export const COUNTRY_ONE_RELATION_QUERY_OPTIONS = [] as const;
+export const COUNTRY_ONE_RELATION_QUERY_OPTIONS = [
+  Q.createRelationKeyMapper<CountryRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "continent",
+  ),
+  Q.createRelationKeyMapper<CountryRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "currency",
+  ),
+  Q.createRelationKeyMapper<CountryRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "designation",
+  ),
+  Q.createRelationKeyMapper<CountryRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "recognitionStatus",
+  ),
+  Q.createRelationKeyMapper<CountryRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "subregion",
+  ),
+] as const;
 
 export const COUNTRY_MANY_RELATION_QUERY_OPTIONS = [] as const;
 

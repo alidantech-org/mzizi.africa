@@ -1375,11 +1375,22 @@ CREATE TABLE "politics"."results" (
 );
 
 CREATE TABLE "reference"."countries" (
+    "calling_code" varchar(5),
     "code" varchar(255) NOT NULL,
+    "continent_id" uuid,
     "created_at" timestamptz NOT NULL,
+    "currency_id" uuid,
     "deleted_at" timestamptz,
+    "designation_id" uuid,
+    "established_on" date,
     "id" uuid NOT NULL,
+    "iso_alpha2" char(2) NOT NULL,
+    "iso_alpha3" char(3),
+    "iso_numeric" char(3),
     "name" varchar(300) NOT NULL,
+    "official_name" varchar(300),
+    "recognition_status_id" uuid,
+    "subregion_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -3089,11 +3100,38 @@ CREATE INDEX "ix_results__unit_feature_id" ON "politics"."results" ("unit_featur
 
 CREATE INDEX "ix_results__source_citation_id" ON "politics"."results" ("source_citation_id");
 
+ALTER TABLE "reference"."countries"
+ADD CONSTRAINT "fk_countries_continent_id" FOREIGN KEY ("continent_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."countries"
+ADD CONSTRAINT "fk_countries_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."countries"
+ADD CONSTRAINT "fk_countries_designation_id" FOREIGN KEY ("designation_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."countries"
+ADD CONSTRAINT "fk_countries_recognition_status_id" FOREIGN KEY ("recognition_status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."countries"
+ADD CONSTRAINT "fk_countries_subregion_id" FOREIGN KEY ("subregion_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_countries__code" ON "reference"."countries" ("code")
 WHERE
     ("deleted_at" IS NULL);
 
 CREATE INDEX "ix_countries__name" ON "reference"."countries" ("name");
+
+CREATE UNIQUE INDEX "uq_countries__iso_alpha2" ON "reference"."countries" ("iso_alpha2");
+
+CREATE INDEX "ix_countries__continent_id" ON "reference"."countries" ("continent_id");
+
+CREATE INDEX "ix_countries__subregion_id" ON "reference"."countries" ("subregion_id");
+
+CREATE INDEX "ix_countries__currency_id" ON "reference"."countries" ("currency_id");
+
+CREATE INDEX "ix_countries__recognition_status_id" ON "reference"."countries" ("recognition_status_id");
+
+CREATE INDEX "ix_countries__designation_id" ON "reference"."countries" ("designation_id");
 
 CREATE UNIQUE INDEX "uq_patterns__code" ON "reference"."patterns" ("code")
 WHERE

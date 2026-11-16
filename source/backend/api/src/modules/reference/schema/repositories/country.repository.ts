@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IsNull, type Repository } from "typeorm";
 import { EntityRepository, type IUpdatableRepository } from "#/database/base/entity-repository.ts";
+import { BaseQueryDto } from "#/database/base/base-query.dto.ts";
+import type { IFindAllResponse } from "#/database/base/query.types.ts";
 import { CountryEntity } from "#/modules/reference/schema/entities/country.entity.ts";
 import * as Country from "#/modules/reference/schema/types/country/index.ts";
 
@@ -37,8 +39,55 @@ export class CountryRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find country by continent id, paged by the shared query. */
+  async findByContinent(
+    query: BaseQueryDto<CountryEntity>,
+    continentId: NonNullable<CountryEntity["continentId"]>,
+  ): Promise<IFindAllResponse<CountryEntity>> {
+    return await this.findByQuery(query, { continentId, deletedAt: IsNull() });
+  }
+
+  /** Find country by currency id, paged by the shared query. */
+  async findByCurrency(
+    query: BaseQueryDto<CountryEntity>,
+    currencyId: NonNullable<CountryEntity["currencyId"]>,
+  ): Promise<IFindAllResponse<CountryEntity>> {
+    return await this.findByQuery(query, { currencyId, deletedAt: IsNull() });
+  }
+
+  /** Find country by designation id, paged by the shared query. */
+  async findByDesignation(
+    query: BaseQueryDto<CountryEntity>,
+    designationId: NonNullable<CountryEntity["designationId"]>,
+  ): Promise<IFindAllResponse<CountryEntity>> {
+    return await this.findByQuery(query, { designationId, deletedAt: IsNull() });
+  }
+
+  /** Find country by recognition status id, paged by the shared query. */
+  async findByRecognitionStatus(
+    query: BaseQueryDto<CountryEntity>,
+    recognitionStatusId: NonNullable<CountryEntity["recognitionStatusId"]>,
+  ): Promise<IFindAllResponse<CountryEntity>> {
+    return await this.findByQuery(query, { recognitionStatusId, deletedAt: IsNull() });
+  }
+
+  /** Find country by subregion id, paged by the shared query. */
+  async findBySubregion(
+    query: BaseQueryDto<CountryEntity>,
+    subregionId: NonNullable<CountryEntity["subregionId"]>,
+  ): Promise<IFindAllResponse<CountryEntity>> {
+    return await this.findByQuery(query, { subregionId, deletedAt: IsNull() });
+  }
+
   /** Find the country with this code (unique). */
   async findByCode(code: NonNullable<CountryEntity["code"]>): Promise<CountryEntity | null> {
     return await this.findOne({ code, deletedAt: IsNull() });
+  }
+
+  /** Find the country with this iso alpha2 (unique). */
+  async findByIsoAlpha2(
+    isoAlpha2: NonNullable<CountryEntity["isoAlpha2"]>,
+  ): Promise<CountryEntity | null> {
+    return await this.findOne({ isoAlpha2, deletedAt: IsNull() });
   }
 }

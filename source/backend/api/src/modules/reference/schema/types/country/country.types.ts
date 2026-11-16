@@ -8,6 +8,7 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -30,8 +31,24 @@ import type {
 
 /** Canonical identity for a modern country; not a geographic unit or historical polity. */
 export interface ICountry extends B.IBase {
+  callingCode: string | null;
   code: string;
+  continentId: string | null;
+  currencyId: string | null;
+  designationId: string | null;
+  establishedOn: Date | null;
+  isoAlpha2: string;
+  isoAlpha3: string | null;
+  isoNumeric: string | null;
   name: string;
+  officialName: string | null;
+  recognitionStatusId: string | null;
+  subregionId: string | null;
+  readonly continent?: ValueTypes.IValue;
+  readonly currency?: ValueTypes.IValue;
+  readonly designation?: ValueTypes.IValue;
+  readonly recognitionStatus?: ValueTypes.IValue;
+  readonly subregion?: ValueTypes.IValue;
 }
 
 // ----------------------------------
@@ -120,7 +137,13 @@ export type ICountryAsManyRelationQuery = Q.IAsManyRelationQuery<
 // RELATION MAP
 // ----------------------------------
 
-export interface ICountryRelationMap extends Record<CountryRelationKey, unknown> {}
+export interface ICountryRelationMap extends Record<CountryRelationKey, unknown> {
+  continent: ValueTypes.IValueAsOneRelationQuery;
+  currency: ValueTypes.IValueAsOneRelationQuery;
+  designation: ValueTypes.IValueAsOneRelationQuery;
+  recognitionStatus: ValueTypes.IValueAsOneRelationQuery;
+  subregion: ValueTypes.IValueAsOneRelationQuery;
+}
 
 // ----------------------------------
 // QUERY CONTRACTS

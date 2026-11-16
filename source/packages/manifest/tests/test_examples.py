@@ -1,6 +1,5 @@
 """Every `_example/` document validates against its schema, and the example CSV files match the generated table schemas."""
 
-import csv
 import json
 import re
 from pathlib import Path
@@ -13,7 +12,6 @@ from referencing import Registry, Resource
 from mzizi_manifest.features.database.tables import load_tables
 
 SCHEMA_ROOT = Path(__file__).resolve().parents[3] / "schema"
-UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 
 #: (example file, schema file) pairs, relative to `source/schema/`.
 PAIRS = [
@@ -78,42 +76,27 @@ def test_every_schema_folder_has_an_example_folder() -> None:
     assert folders and all((SCHEMA_ROOT / folder / "_example").is_dir() for folder in folders)
 
 
-def _rows(path: Path) -> list[dict[str, str]]:
-    with path.open(newline="", encoding="utf-8") as handle:
-        return list(csv.DictReader(handle))
-
-
 def test_example_csv_files_match_the_generated_table_schemas() -> None:
-    tables = load_tables(SCHEMA_ROOT)
-    root = SCHEMA_ROOT / "database" / "_example" / "data"
-    ids: dict[str, set[str]] = {}
-    files = sorted(root.glob("*/*/*.csv"))
-    assert files
-    for file in files:
-        table = tables[f"{file.parent.name}.{file.stem}"]  # the table is named by the path
-        rows = _rows(file)
-        header = set(rows[0])
-        assert header <= set(table.columns), f"{file.name}: unknown columns {header - set(table.columns)}"
-        supplied = {column.name for column in table.columns.values() if column.required}
-        assert supplied <= header, f"{file.name}: missing {supplied - header}"
-        ids[table.qualified_name] = {row["id"] for row in rows}
-        for row in rows:
-            for name, value in row.items():
-                if table.columns[name].kind == "uuid":
-                    assert UUID.match(value), f"{file.name}: {name} is not a UUID"
-    by_id = {table.id: table.qualified_name for table in tables.values()}
-    for file in files:
-        table = tables[f"{file.parent.name}.{file.stem}"]
-        for column in table.columns.values():
-            if column.references and column.name in _rows(file)[0]:
-                for row in _rows(file):
-                    assert row[column.name] in ids[by_id[column.references[0]]], f"{file.name}: {column.name}"
+    from mzizi_manifest.features.data.check import check_data
+
+    result = check_data(SCHEMA_ROOT / "database" / "_example", SCHEMA_ROOT)
+    assert result.problems == []
+    assert result.order == ["reference.schemes", "reference.values"]
+    assert [row.values["code"] for row in result.rows["reference.values"]] == [
+        "source.document_kind.report",
+        "source.document_kind.gazette",
+    ]
 
 
 def test_system_managed_columns_are_marked_and_not_required() -> None:
     values = load_tables(SCHEMA_ROOT)["reference.values"]
     for name in ("created_at", "updated_at", "version", "deleted_at"):
         assert values.columns[name].managed and not values.columns[name].required
-    assert values.columns["id"].required and not values.columns["id"].managed
+        assert values.columns[name].role == "system" and name in values.seed.system
+    assert values.columns["id"].role == "system" and "id" in values.seed.system
+    assert values.columns["scheme_id"].role == "link" and values.columns["scheme_id"].link.alias == "scheme_code"
     assert values.columns["scheme_id"].references == ("#/schemas/reference.Scheme", "id")
+    assert values.natural_key == ("code",) and values.seedable
+    assert values.seed.columns == ("code", "label", "scheme_code", "supersedes_code")
+    assert values.seed.required == ("code", "label", "scheme_code")
     assert ("code",) in values.unique_keys

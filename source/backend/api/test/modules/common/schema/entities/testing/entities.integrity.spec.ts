@@ -2321,15 +2321,41 @@ describe("entity schema matches the contract", () => {
       expect(columns(metadata())).toEqual(
         (
           [
+            ["calling_code", true, false],
             ["code", false, false],
+            ["continent_id", true, false],
             ["created_at", false, false],
+            ["currency_id", true, false],
             ["deleted_at", true, false],
+            ["designation_id", true, false],
+            ["established_on", true, false],
             ["id", false, true],
+            ["iso_alpha2", false, false],
+            ["iso_alpha3", true, false],
+            ["iso_numeric", true, false],
             ["name", false, false],
+            ["official_name", true, false],
+            ["recognition_status_id", true, false],
+            ["subregion_id", true, false],
             ["updated_at", false, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "continent_id->reference.values",
+          "currency_id->reference.values",
+          "designation_id->reference.values",
+          "recognition_status_id->reference.values",
+          "subregion_id->reference.values",
+        ].sort(),
       );
     });
 
@@ -2340,7 +2366,18 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "name"]));
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:code",
+          "name",
+          "unique:iso_alpha2",
+          "continent_id",
+          "subregion_id",
+          "currency_id",
+          "recognition_status_id",
+          "designation_id",
+        ]),
+      );
     });
 
     it("rejects a row without its required columns", async () => {
