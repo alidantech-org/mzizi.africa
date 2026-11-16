@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/mapping/mapping.schema.json
+# Example mapping: one extracted row yields a country.
+code: global.reference.countries
+describe: A country listed by a statistics API.
+inputs: [code, name]
+yields:
+  - as: country
+    table: reference.countries
+    key: [code]
+    fields:
+      code: { from: code }
+      name: { from: name }
+provenance: { method: extracted }
+expect: { min_rows: 1, required_fields: [code, name] }

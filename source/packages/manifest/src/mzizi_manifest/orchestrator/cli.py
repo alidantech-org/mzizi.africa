@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
 from mzizi_manifest.features.seeds import seed_registry as reg
 from mzizi_manifest.shared.paths import SEED_ROOT
@@ -15,7 +16,19 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("check", help="validate folder metadata, manifest, dependencies, consumers and the lock (no writes)")
     sub.add_parser("lock", help="regenerate seed/manifest.lock.yaml")
     sub.add_parser("report", help="effective metadata per artifact")
+    refs = sub.add_parser("refs", help="check that every source, mapping, vocabulary and extraction code resolves")
+    refs.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder to scan (default: seed/)")
     args = parser.parse_args(argv)
+    if args.command == "refs":
+        from mzizi_manifest.features.registry.scan import scan
+
+        found = scan(args.root)
+        for code, entry in sorted(found.registry.entries.items()):
+            print(f"{entry.kind}\t{code}\t{entry.path}")
+        for problem in found.problems:
+            print(f"error: {problem}", file=sys.stderr)
+        print(f"{len(found.registry.entries)} codes, {len(found.problems)} problems")
+        return 1 if found.problems else 0
     lock_path = SEED_ROOT / reg.LOCK_NAME
     if args.command == "lock":
         result = reg.validate_manifest()

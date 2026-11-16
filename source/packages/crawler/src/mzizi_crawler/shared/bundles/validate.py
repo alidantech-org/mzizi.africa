@@ -158,8 +158,10 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             report.errors.append(f"modules/{name}.yml: module name {module.get('module')!r} must equal the file name")
     for name, mapping in bundle.mappings.items():
         report.errors += _schema_errors(_validator("mapping"), mapping, f"mappings/{name}.yml")
-        if mapping.get("code") != name:
-            report.errors.append(f"mappings/{name}.yml: mapping code {mapping.get('code')!r} must equal the file name")
+        if str(mapping.get("code", "")).rsplit(".", 1)[-1] != name:
+            report.errors.append(
+                f"mappings/{name}.yml: the last segment of mapping code {mapping.get('code')!r} must equal the file name"
+            )
     report.errors += validate_ranking(bundle.ranking or manifest.get("rank") or {"rules": []})
     if report.errors:
         return report
@@ -193,12 +195,9 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             report.warnings.append(
                 f"module {name}: mapping {named!r} is not in this bundle (resolved by code elsewhere)"
             )
-        if named and named in bundle.mappings:
-            missing = [
-                f
-                for f in bundle.mappings[named].get("inputs", [])
-                if f not in module.get("extract", {}).get("fields", {})
-            ]
+        in_bundle = next((m for m in bundle.mappings.values() if m.get("code") == named), None)
+        if named and in_bundle is not None:
+            missing = [f for f in in_bundle.get("inputs", []) if f not in module.get("extract", {}).get("fields", {})]
             if missing:
                 report.errors.append(
                     f"module {name}: mapping {named!r} reads fields it does not extract: {', '.join(missing)}"

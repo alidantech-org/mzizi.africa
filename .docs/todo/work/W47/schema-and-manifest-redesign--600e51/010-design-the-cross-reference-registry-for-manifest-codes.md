@@ -1,5 +1,5 @@
 ---
-{id: TSK-6033104AA031,name: Design the cross-reference registry for manifest codes,type: task,status: planned,priority: medium,created_at: 2026-11-16T13:49:37.355Z,updated_at: 2026-11-16T13:49:38.266Z,order: 10240,depends_on: [TSK-9A8E9A0A16B1]}
+{id: TSK-6033104AA031,name: Design the cross-reference registry for manifest codes,type: task,status: completed,priority: medium,created_at: 2026-11-16T13:49:37.355Z,updated_at: 2026-11-16T14:38:09.412Z,order: 10240,depends_on: [TSK-9A8E9A0A16B1],extra: {status_history: [{from: planned,to: completed,at: 2026-11-16T14:38:09.412Z}]}}
 ---
 
 # Design the cross-reference registry for manifest codes
@@ -16,14 +16,14 @@ The approved layout lets a source declare a `uses` block listing mapping, vocabu
 
 Work on a Build item starts only after the Approval item is ticked.
 
-- [ ] Design: Define the code format (dotted, lowercase) and where a manifest declares its code, and state that a source's code equals `source.sources.code`.
-- [ ] Design: Define visibility: a manifest may use items in its own scope or in `global`, never in another country.
-- [ ] Design: Define the errors: unknown code, duplicate code, cycle and out-of-scope use, each naming the file, the field and the code.
-- [ ] Design: Define the registry's public surface (build, resolve, list users of a code) so the other validators can share it.
+- [x] Design: Define the code format (dotted, lowercase) and where a manifest declares its code, and state that a source's code equals `source.sources.code`.
+- [x] Design: Define visibility: a manifest may use items in its own scope or in `global`, never in another country.
+- [x] Design: Define the errors: unknown code, duplicate code, cycle and out-of-scope use, each naming the file, the field and the code.
+- [x] Design: Define the registry's public surface (build, resolve, list users of a code) so the other validators can share it.
 - [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
-- [ ] Build, only after approval: Implement the registry as one small typed module in the manifest package.
-- [ ] Build, only after approval: Add tests using deliberately broken seed trees for each error.
-- [ ] Build, only after approval: `task validate` and the relevant checks pass, and every README and design link that mentions the changed files is updated.
+- [x] Build, only after approval: Implement the registry as one small typed module in the manifest package.
+- [x] Build, only after approval: Add tests using deliberately broken seed trees for each error.
+- [x] Build, only after approval: `task validate` and the relevant checks pass, and every README and design link that mentions the changed files is updated.
 
 ## Notes
 
@@ -34,3 +34,8 @@ Record findings, rejected options and the approval here.
 ### 2026-11-16T14:28:11.436Z · PETER IRUNGU
 
 Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.
+
+## Progress
+
+Built 16 November 2026 in `source/packages/manifest/src/mzizi_manifest/features/registry/`: `registry.py` (kinds, scope rule, checks, cycle detection) and `scan.py` (classifies files by their keys: source, mapping, vocabulary, extraction; a module is checked in the scope of the one source in the nearest folder above it). `uv run mzizi-manifest refs [folder]` reports problems and exits non-zero. 16 tests in `test_registry.py` cover the valid tree, unknown code, duplicate, cycle, cross-country and global-to-country use, wrong kind, missing scope, module without an owning source, unreadable files, and the example tree, which resolves 7 codes with no problems. The extraction schema gained an optional `code`, and the example codes now start with their scope.
+

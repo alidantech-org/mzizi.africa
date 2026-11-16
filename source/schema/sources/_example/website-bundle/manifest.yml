@@ -9,6 +9,7 @@ fetch: { mode: http }
 modules: [documents]
 uses:
   vocabularies: [ke.office-patterns]
+  extraction: [ke.county-allocations]
 policy:
   assessment: { ref: assess-example-ministry }
   licence: { ref: ogl, source: "https://example.org/terms" }

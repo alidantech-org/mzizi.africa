@@ -12,6 +12,10 @@
       "type": "string",
       "description": "Optional link to this schema, for editors."
     },
+    "code": {
+      "$ref": "../sources/common.schema.json#/$defs/code",
+      "description": "Code a source names in uses.extraction."
+    },
     "header_rows": {
       "type": "integer",
       "minimum": 1,

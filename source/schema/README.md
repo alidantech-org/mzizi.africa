@@ -29,3 +29,7 @@ The previous site-bundle schemas (`site/v1/`), target catalogue and hand-kept ex
 `bun run catalog` regenerates `database/`. Change contract-derived files through `dryv/`. Change SQL through reviewed releases. Do not copy publisher- or country-specific values into these generic schemas.
 
 `uv run pytest source/packages/manifest/tests/test_schemas.py` checks that every schema is valid and that each accepts and rejects the documents it should.
+
+## Codes and references
+
+Sources, mappings, vocabularies and extraction expectations declare a dotted `code` whose first segment is its scope (`global` or a country code such as `ke`). A source names the others in `uses` (`mappings`, `vocabularies`, `extraction`) and `extends`; a module names a mapping. `uv run mzizi-manifest refs [folder]` (default `seed/`; try `source/schema`) scans a tree and fails on an unknown code, a duplicate code, a code of the wrong kind, a reference to another country or from `global` to a country, or a cycle, naming the file, the field and the code.

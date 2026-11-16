@@ -81,7 +81,7 @@ def test_a_mapping_may_only_use_stored_tables_inputs_and_yields():
     assert any(
         "is not a stored table" in e
         for e in validate(
-            mutate("mappings/documents.yml", mapping.replace("source.documents", "source.nothing"))
+            mutate("mappings/documents.yml", mapping.replace("table: source.documents", "table: source.nothing"))
         ).errors
     )
     assert any(
