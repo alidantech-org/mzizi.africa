@@ -1,0 +1,1 @@
+"""The brave search feature."""

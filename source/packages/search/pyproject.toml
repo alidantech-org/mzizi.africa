@@ -1,0 +1,22 @@
+[project]
+name = "mzizi-search"
+version = "0.1.0"
+description = "Web search through official provider APIs (Brave Search, Google Programmable Search) behind one orchestrator with typed contracts. Knows nothing about a database."
+requires-python = ">=3.12"
+dependencies = ["httpx", "pydantic>=2.7", "mzizi-fetch"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.uv.sources]
+mzizi-fetch = { workspace = true }

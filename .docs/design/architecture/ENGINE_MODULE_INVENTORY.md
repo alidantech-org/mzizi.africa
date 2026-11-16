@@ -96,7 +96,7 @@ A script parsed the 142 hand-written files (17,635 lines; the ~4,350 lines of Dr
 
 ### `search` package (the pilot move)
 
-`web/search/models.py` (47), `providers.py` (156), `service.py` (27): 232 lines, one `httpx` dependency, one test file (`test_web_search.py`). It is the smallest self-contained capability.
+`web/search/models.py` (47), `providers.py` (156), `service.py` (27): 232 lines, one `httpx` dependency, one test file (`test_web_search.py`). It is the smallest self-contained capability. **Moved on 16 November 2026** to the `mzizi_search` package (the pilot, TSK-AD0B1F21D30D); the engine keeps only `web/search/environment.py`.
 
 ### `policy` package
 

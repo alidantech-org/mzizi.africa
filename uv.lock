@@ -16,6 +16,7 @@ members = [
     "mzizi-filesystem",
     "mzizi-manifest",
     "mzizi-scraping",
+    "mzizi-search",
     "mzizi-workspace",
 ]
 
@@ -1403,6 +1404,7 @@ dependencies = [
     { name = "mzizi-filesystem" },
     { name = "mzizi-manifest" },
     { name = "mzizi-scraping" },
+    { name = "mzizi-search" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic" },
     { name = "pyjwt", extra = ["crypto"] },
@@ -1435,6 +1437,7 @@ requires-dist = [
     { name = "mzizi-filesystem", editable = "source/packages/filesystem" },
     { name = "mzizi-manifest", editable = "source/packages/manifest" },
     { name = "mzizi-scraping", editable = "source/packages/scraping" },
+    { name = "mzizi-search", editable = "source/packages/search" },
     { name = "patchright", marker = "extra == 'browser'", specifier = ">=1.64.4" },
     { name = "playwright", marker = "extra == 'browser'", specifier = ">=1.65.1" },
     { name = "psycopg", extras = ["binary"] },
@@ -1551,6 +1554,23 @@ dependencies = [
 requires-dist = [
     { name = "beautifulsoup4" },
     { name = "lxml" },
+    { name = "pydantic", specifier = ">=2.7" },
+]
+
+[[package]]
+name = "mzizi-search"
+version = "0.1.0"
+source = { editable = "source/packages/search" }
+dependencies = [
+    { name = "httpx" },
+    { name = "mzizi-fetch" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx" },
+    { name = "mzizi-fetch", editable = "source/packages/fetch" },
     { name = "pydantic", specifier = ">=2.7" },
 ]
 

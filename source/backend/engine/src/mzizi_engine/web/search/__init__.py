@@ -1,1 +1,1 @@
-"""Web search through official provider APIs. Consumer result pages are never scraped."""
+"""Engine binding for the `mzizi_search` package: environment settings in, the package orchestrator out."""

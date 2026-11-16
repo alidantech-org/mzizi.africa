@@ -1,0 +1,1 @@
+"""The collect search feature."""

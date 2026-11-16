@@ -22,7 +22,7 @@ This document describes what the code does today. Proposals stay in `design/acqu
 | Single-page extraction | `mzizi_engine.web.handlers.scrape` | site module validation, field extraction from saved, fetched or rendered HTML, capture and audit | Implemented |
 | Site profile, family and draft | `mzizi_scraping.profile`, `mzizi_engine.web.handlers.survey` | sections, coarse page templates, repeated blocks, shared navigation, family similarity score, draft bundle for review | Implemented; heuristics, drafts are proposals |
 | Crawler | `mzizi_engine.web.crawl` | breadth-first crawl, inventories, resume, exports | Implemented |
-| Search | `mzizi_engine.web.search` | Brave Search API and Google Custom Search JSON API behind one interface | Implemented, tested with mocked APIs only |
+| Search | `mzizi_search` package (`SearchOrchestrator`); the engine keeps only an environment binding in `mzizi_engine.web.search` | Brave Search API and Google Custom Search JSON API behind one interface | Implemented, tested with mocked APIs only |
 
 ## Policy
 

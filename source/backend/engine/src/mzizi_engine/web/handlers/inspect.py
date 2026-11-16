@@ -14,9 +14,7 @@ from mzizi_engine.web.export import write_table
 from mzizi_engine.web.handlers.common import browser_config, out_dir, profiles_root, site_of
 from mzizi_engine.web.identity import user_agent
 from mzizi_engine.web.requests import SearchRequest, UrlRequest
-from mzizi_engine.web.search.models import SearchResult
-from mzizi_engine.web.search.providers import make_provider
-from mzizi_engine.web.search.service import search
+from mzizi_engine.web.search.environment import orchestrator_for, provider_name
 from mzizi_extraction import extract_html_document
 from mzizi_extraction.document import render_markdown
 from mzizi_fetch.web.blocks import detect_block
@@ -24,6 +22,7 @@ from mzizi_fetch.web.client import WebClient
 from mzizi_fetch.web.policy import Decision, SourcePolicy
 from mzizi_fetch.web.urls import classify, host_of, same_site
 from mzizi_scraping import extract_links, extract_references
+from mzizi_search import SearchQuery, SearchResult
 
 
 def _client(url: str, delay: float) -> WebClient:
@@ -187,12 +186,23 @@ class SearchResults(BaseModel):
 def web_search(request: SearchRequest) -> SearchResults:
     import httpx
 
-    with httpx.Client() as http:
-        found = search(make_provider(request.engine, http), request.query, request.count, request.offset)
-    files = write_table(
-        out_dir(request), "results", found, list(SearchResult.model_fields), request.formats, ordered=True
+    query = SearchQuery(
+        provider=provider_name(request.engine),
+        query=request.query,
+        count=max(1, request.count),
+        offset=max(0, request.offset),
     )
-    return SearchResults(query=request.query, provider=request.engine, results=tuple(found), files=tuple(files))
+    with httpx.Client() as http:
+        outcome = orchestrator_for(request.engine, http).search(query)
+    files = write_table(
+        out_dir(request),
+        "results",
+        list(outcome.results),
+        list(SearchResult.model_fields),
+        request.formats,
+        ordered=True,
+    )
+    return SearchResults(query=request.query, provider=request.engine, results=outcome.results, files=tuple(files))
 
 
 def browser_snapshot(request: UrlRequest) -> PageInfo:

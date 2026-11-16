@@ -24,7 +24,7 @@ from mzizi_engine.devcli.runner import Session, run_command, status_table
 from mzizi_engine.devcli.theme import configure_logging, err, out
 from mzizi_engine.devcli.types import ArgValues, ExitCode
 from mzizi_engine.devcli.workspace import Workspace
-from mzizi_engine.web.search.providers import required_settings
+from mzizi_engine.web.search.environment import provider_name, required_settings
 
 app = typer.Typer(
     name="mzizi",
@@ -190,7 +190,7 @@ def _providers_table() -> Table:
     for column in ("Provider", "State", "Settings"):
         table.add_column(column, overflow="fold")
     for provider in ("brave", "google"):
-        names = required_settings(provider)
+        names = required_settings(provider_name(provider))
         missing = [n for n in names if not os.environ.get(n)]
         state = "[ok]configured[/ok]" if not missing else f"[warn]missing {', '.join(missing)}[/warn]"
         table.add_row(provider, state, ", ".join(names))
