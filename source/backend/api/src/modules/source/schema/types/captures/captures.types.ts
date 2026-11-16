@@ -9,8 +9,8 @@ import * as B from "#/modules/common/schema/types/base";
 // RELATED ENTITY TYPES
 // ----------------------------------
 import type * as DocumentsTypes from "#/modules/source/schema/types/documents/documents.types";
-import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
 import type * as ManifestReleasesTypes from "#/modules/source/schema/types/manifest-releases/manifest-releases.types";
+import type * as PathsTypes from "#/modules/source/schema/types/paths/paths.types";
 import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
@@ -32,19 +32,20 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** Immutable accepted retrieval snapshot with exact bytes; failed requests remain in Operations. */
+/** One retrieval of a path by a source: when, from which link, with what response. The content is a document, shared by every capture of the same bytes; failed requests remain in Operations. */
 export interface ICaptures extends B.IBase {
-  contentHash: string;
+  code: string;
   documentId: string | null;
-  fileVersionId: string;
   manifestReleaseId: string | null;
+  originalUrl: string;
+  pathId: string | null;
   responseMetadata: string;
   retrievedAt: Date;
-  retrievedUrl: string;
+  retrievedUrl: string | null;
   sourceId: string;
   readonly document?: DocumentsTypes.IDocuments;
-  readonly fileVersion?: FileVersionsTypes.IFileVersions;
   readonly manifestRelease?: ManifestReleasesTypes.IManifestReleases;
+  readonly path?: PathsTypes.IPaths;
   readonly source?: SourcesTypes.ISources;
 }
 
@@ -139,8 +140,8 @@ export type ICapturesAsManyRelationQuery = Q.IAsManyRelationQuery<
 
 export interface ICapturesRelationMap extends Record<CapturesRelationKey, unknown> {
   document: DocumentsTypes.IDocumentsAsOneRelationQuery;
-  fileVersion: FileVersionsTypes.IFileVersionsAsOneRelationQuery;
   manifestRelease: ManifestReleasesTypes.IManifestReleasesAsOneRelationQuery;
+  path: PathsTypes.IPathsAsOneRelationQuery;
   source: SourcesTypes.ISourcesAsOneRelationQuery;
 }
 

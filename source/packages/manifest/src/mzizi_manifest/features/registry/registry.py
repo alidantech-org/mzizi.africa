@@ -5,7 +5,7 @@ A source, mapping, term list, job spec or piece of engine data declares a dotted
 and does the code say what the thing is?":
 
 - a code is well formed (`.docs/rules/codes.md`) and unique across the tree;
-- a source is `pg.src.<websites|apis short>.<scope>.<name>` and its kind agrees (a source is a database row, so `pg`);
+- a source is `pg.src.<sources short>.<scope>.<name>` and its kind agrees (a source is a database row, so `pg`);
 - a mapping is `sys.map.<schema short>.<table short>.<scope>.<name>`, named after the table it writes first;
 - a term list is `sys.trm.<schema short>.<table short>.<scope>.<name>` for a real table;
 - a job spec is `sys.eng.job.<scope>.<name>`, other engine data `sys.eng.<name path>`;
@@ -27,7 +27,7 @@ from mzizi_manifest.features.codes.grammar import segments_problem
 
 GLOBAL_SCOPE = "global"
 SCOPE = re.compile(r"^(global|[a-z]{2,3})$")
-SOURCE_TABLES = {"website": "source.websites", "api": "source.apis"}
+SOURCE_TABLES = {"website": "source.sources", "api": "source.sources"}
 
 
 class Kind(StrEnum):

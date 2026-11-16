@@ -8,9 +8,9 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
+import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as PublishersTypes from "#/modules/source/schema/types/publishers/publishers.types";
-import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -31,18 +31,22 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** Stable published document identity; repeated captures retain independent retrieval history. */
+/** A distinct piece of content identified by its sha256. The same file fetched from many sources is one document with many captures. */
 export interface IDocuments extends B.IBase {
-  canonicalUrl: string | null;
   code: string;
+  contentType: string | null;
+  fileVersionId: string | null;
   kindId: string;
+  parentId: string | null;
   publishedOn: Date | null;
-  publisherId: string;
-  sourceId: string;
+  publisherId: string | null;
+  sha256: string;
+  sizeBytes: number | null;
   title: string;
+  readonly fileVersion?: FileVersionsTypes.IFileVersions;
   readonly kind?: ValueTypes.IValue;
+  readonly parent?: IDocuments;
   readonly publisher?: PublishersTypes.IPublishers;
-  readonly source?: SourcesTypes.ISources;
 }
 
 // ----------------------------------
@@ -144,9 +148,10 @@ export type IDocumentsAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IDocumentsRelationMap extends Record<DocumentsRelationKey, unknown> {
+  fileVersion: FileVersionsTypes.IFileVersionsAsOneRelationQuery;
   kind: ValueTypes.IValueAsOneRelationQuery;
+  parent: IDocumentsAsOneRelationQuery;
   publisher: PublishersTypes.IPublishersAsOneRelationQuery;
-  source: SourcesTypes.ISourcesAsOneRelationQuery;
 }
 
 // ----------------------------------

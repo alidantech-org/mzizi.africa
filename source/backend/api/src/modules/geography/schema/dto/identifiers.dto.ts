@@ -51,12 +51,6 @@ export class IdentifiersDto {
   @MaxLength(255)
   namespace?: NonEmptyString255 | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.sourceId !== null)
-  @IsString()
-  @IsUUID()
-  sourceId?: Id | null;
-
   @IsISO8601({})
   updatedAt!: Instant;
 

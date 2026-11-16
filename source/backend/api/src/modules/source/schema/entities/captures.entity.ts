@@ -7,30 +7,31 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
-import { FileVersionsEntity } from "#/modules/filesystem/schema/entities/file-versions.entity.ts";
 import { DocumentsEntity } from "#/modules/source/schema/entities/documents.entity.ts";
 import { ManifestReleasesEntity } from "#/modules/source/schema/entities/manifest-releases.entity.ts";
+import { PathsEntity } from "#/modules/source/schema/entities/paths.entity.ts";
 import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
-import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 
 /**
- * Immutable accepted retrieval snapshot with exact bytes; failed requests remain in Operations.
+ * One retrieval of a path by a source: when, from which link, with what response. The content is a document, shared by every capture of the same bytes; failed requests remain in Operations.
  */
 @Entity({ schema: "source", name: "captures" })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["sourceId"])
+@Index(["pathId"])
 @Index(["documentId"])
-@Index(["fileVersionId"])
 @Index(["manifestReleaseId"])
 export class CapturesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
-  @Column({ name: "content_hash", type: "char", length: 64 })
-  contentHash!: Sha256;
+  @Column({ name: "code", type: "varchar", length: 255 })
+  code!: IdentityCode;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
@@ -45,13 +46,6 @@ export class CapturesEntity {
   @JoinColumn({ name: "document_id" })
   document?: Relation<DocumentsEntity>;
 
-  @Column({ name: "file_version_id", type: "uuid" })
-  fileVersionId!: Id;
-
-  @ManyToOne(() => FileVersionsEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "file_version_id" })
-  fileVersion?: Relation<FileVersionsEntity>;
-
   @Column({ name: "manifest_release_id", type: "uuid", nullable: true })
   manifestReleaseId?: Id | null;
 
@@ -59,14 +53,29 @@ export class CapturesEntity {
   @JoinColumn({ name: "manifest_release_id" })
   manifestRelease?: Relation<ManifestReleasesEntity>;
 
+  @Column({ name: "original_url", type: "varchar", length: 2048 })
+  originalUrl!: Url;
+
+  @Column({ name: "path_id", type: "uuid", nullable: true })
+  pathId?: Id | null;
+
+  @ManyToOne(() => PathsEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "path_id" })
+  path?: Relation<PathsEntity>;
+
   @Column({ name: "response_metadata", type: "text" })
   responseMetadata!: JsonText;
 
   @Column({ name: "retrieved_at", type: "timestamptz" })
   retrievedAt!: Date;
 
-  @Column({ name: "retrieved_url", type: "varchar", length: 2048 })
-  retrievedUrl!: Url;
+  @Column({
+    name: "retrieved_url",
+    type: "varchar",
+    length: 2048,
+    nullable: true,
+  })
+  retrievedUrl?: Url | null;
 
   @Column({ name: "source_id", type: "uuid" })
   sourceId!: Id;

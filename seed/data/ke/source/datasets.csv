@@ -1,0 +1,20 @@
+code,title,format,assembly,category_code,location,description
+ke.geo.constituencies.features,Kenya constituencies: features,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/constituencies/features.csv,Seed rows for geography.features
+ke.geo.constituencies.identifiers,Kenya constituencies: identifiers,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/constituencies/identifiers.csv,Seed rows for geography.identifiers
+ke.geo.constituencies.names,Kenya constituencies: names,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/constituencies/names.csv,Seed rows for geography.names
+ke.geo.constituencies.relationships,Kenya constituencies: relationships,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/constituencies/relationships.csv,Seed rows for geography.relationships
+ke.geo.counties.features,Kenya counties: features,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/counties/features.csv,Seed rows for geography.features
+ke.geo.counties.identifiers,Kenya counties: identifiers,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/counties/identifiers.csv,Seed rows for geography.identifiers
+ke.geo.counties.names,Kenya counties: names,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/counties/names.csv,Seed rows for geography.names
+ke.geo.counties.relationships,Kenya counties: relationships,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/counties/relationships.csv,Seed rows for geography.relationships
+ke.geo.provinces.features,Kenya provinces: features,csv,authored,src.dataset.category.geography,seed/data/ke/geo/provinces/features.csv,Seed rows for geography.features
+ke.geo.provinces.names,Kenya provinces: names,csv,authored,src.dataset.category.geography,seed/data/ke/geo/provinces/names.csv,Seed rows for geography.names
+ke.geo.provinces.relationships,Kenya provinces: relationships,csv,authored,src.dataset.category.geography,seed/data/ke/geo/provinces/relationships.csv,Seed rows for geography.relationships
+ke.geo.sub-counties.features,Kenya sub counties: features,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/sub-counties/features.csv,Seed rows for geography.features
+ke.geo.sub-counties.identifiers,Kenya sub counties: identifiers,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/sub-counties/identifiers.csv,Seed rows for geography.identifiers
+ke.geo.sub-counties.names,Kenya sub counties: names,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/sub-counties/names.csv,Seed rows for geography.names
+ke.geo.sub-counties.relationships,Kenya sub counties: relationships,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/sub-counties/relationships.csv,Seed rows for geography.relationships
+ke.geo.wards.features,Kenya wards: features,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/wards/features.csv,Seed rows for geography.features
+ke.geo.wards.identifiers,Kenya wards: identifiers,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/wards/identifiers.csv,Seed rows for geography.identifiers
+ke.geo.wards.names,Kenya wards: names,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/wards/names.csv,Seed rows for geography.names
+ke.geo.wards.relationships,Kenya wards: relationships,csv,assembled,src.dataset.category.geography,seed/data/ke/geo/wards/relationships.csv,Seed rows for geography.relationships

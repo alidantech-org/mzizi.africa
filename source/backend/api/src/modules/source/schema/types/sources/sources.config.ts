@@ -9,7 +9,6 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
 import * as PublishersConfig from "#/modules/source/schema/types/publishers/publishers.config";
 
@@ -34,7 +33,6 @@ import type {
 // ----------------------------------
 
 export const SOURCES_RELATION_KEYS = [
-  "kind",
   "officialEntity",
   "publisher",
 ] as const satisfies readonly SourcesKey[];
@@ -46,10 +44,11 @@ export const SOURCES_RELATION_KEYS = [
 export const SOURCES_SORTABLE_FIELDS = [
   "code",
   "createdAt",
+  "credentialBinding",
   "deletedAt",
   "description",
   "id",
-  "kindId",
+  "kind",
   "officialEntityId",
   "publisherId",
   "title",
@@ -59,13 +58,14 @@ export const SOURCES_SORTABLE_FIELDS = [
 
 export const SOURCES_SEARCHABLE_FIELDS = [
   "code",
+  "credentialBinding",
   "description",
   "title",
 ] as const satisfies readonly SourcesKey[];
 
 export const SOURCES_FILTERABLE_FIELDS = [
   "id",
-  "kindId",
+  "kind",
   "officialEntityId",
   "publisherId",
 ] as const satisfies readonly SourcesKey[];
@@ -89,10 +89,11 @@ export const SOURCES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<ISources>
 export const SOURCES_SELECTABLE_FIELDS = [
   "code",
   "createdAt",
+  "credentialBinding",
   "deletedAt",
   "description",
   "id",
-  "kindId",
+  "kind",
   "officialEntityId",
   "publisherId",
   "title",
@@ -103,10 +104,11 @@ export const SOURCES_SELECTABLE_FIELDS = [
 export const SOURCES_DEFAULT_SELECT_FIELDS = [
   "code",
   "createdAt",
+  "credentialBinding",
   "deletedAt",
   "description",
   "id",
-  "kindId",
+  "kind",
   "officialEntityId",
   "publisherId",
   "title",
@@ -120,8 +122,9 @@ export const SOURCES_DEFAULT_SELECT_FIELDS = [
 
 export const SOURCES_EDITABLE_FIELDS = [
   "code",
+  "credentialBinding",
   "description",
-  "kindId",
+  "kind",
   "officialEntityId",
   "publisherId",
   "title",
@@ -153,10 +156,6 @@ export const SOURCES_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const SOURCES_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<SourcesRelationKey>().one(
-    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
-    "kind",
-  ),
   Q.createRelationKeyMapper<SourcesRelationKey>().one(
     () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "officialEntity",

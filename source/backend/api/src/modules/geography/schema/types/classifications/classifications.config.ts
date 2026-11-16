@@ -10,7 +10,6 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // RELATED ENTITY CONFIGS
 // ----------------------------------
 import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
-import * as SourcesConfig from "#/modules/source/schema/types/sources/sources.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 
 // ----------------------------------
@@ -35,7 +34,6 @@ import type {
 
 export const CLASSIFICATIONS_RELATION_KEYS = [
   "feature",
-  "source",
   "value",
 ] as const satisfies readonly ClassificationsKey[];
 
@@ -48,7 +46,6 @@ export const CLASSIFICATIONS_SORTABLE_FIELDS = [
   "deletedAt",
   "featureId",
   "id",
-  "sourceId",
   "updatedAt",
   "validFrom",
   "validFromEarliest",
@@ -66,7 +63,6 @@ export const CLASSIFICATIONS_SEARCHABLE_FIELDS =
 export const CLASSIFICATIONS_FILTERABLE_FIELDS = [
   "featureId",
   "id",
-  "sourceId",
   "valueId",
 ] as const satisfies readonly ClassificationsKey[];
 
@@ -97,7 +93,6 @@ export const CLASSIFICATIONS_SELECTABLE_FIELDS = [
   "deletedAt",
   "featureId",
   "id",
-  "sourceId",
   "updatedAt",
   "validFrom",
   "validFromEarliest",
@@ -114,7 +109,6 @@ export const CLASSIFICATIONS_DEFAULT_SELECT_FIELDS = [
   "deletedAt",
   "featureId",
   "id",
-  "sourceId",
   "updatedAt",
   "validFrom",
   "validFromEarliest",
@@ -132,7 +126,6 @@ export const CLASSIFICATIONS_DEFAULT_SELECT_FIELDS = [
 
 export const CLASSIFICATIONS_EDITABLE_FIELDS = [
   "featureId",
-  "sourceId",
   "validFrom",
   "validFromEarliest",
   "validFromLatest",
@@ -171,10 +164,6 @@ export const CLASSIFICATIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ClassificationsRelationKey>().one(
     () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "feature",
-  ),
-  Q.createRelationKeyMapper<ClassificationsRelationKey>().one(
-    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
-    "source",
   ),
   Q.createRelationKeyMapper<ClassificationsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,

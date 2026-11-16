@@ -12,8 +12,8 @@ from mzizi_manifest.orchestrator.cli import main
 SCHEMA_ROOT = Path(__file__).resolve().parents[3] / "schema"
 SEED_ROOT = SCHEMA_ROOT.parents[1] / "seed"
 
-A = "pg.src.wbs.ke.a"
-B = "pg.src.wbs.ke.b"
+A = "pg.src.srs.ke.a"
+B = "pg.src.srs.ke.b"
 M_GLOBAL = "sys.map.ref.cty.global.base"
 M_KE = "sys.map.ref.cty.ke.local"
 V_KE = "sys.trm.ref.pat.ke.names"
@@ -47,13 +47,13 @@ def test_the_example_tree_resolves_every_code() -> None:
     result = scan(SCHEMA_ROOT, mirror_paths=False)
     assert result.problems == []
     kinds = {code: entry.kind for code, entry in result.registry.entries.items()}
-    assert kinds["pg.src.wbs.ke.example-ministry"] is Kind.SOURCE
+    assert kinds["pg.src.srs.ke.example-ministry"] is Kind.SOURCE
     assert kinds["sys.map.ref.cty.global.example-statistics"] is Kind.MAPPING
     assert kinds["sys.trm.ref.pat.ke.office-names"] is Kind.TERMS
     assert kinds["sys.map.fin.flw.ke.county-allocations"] is Kind.MAPPING
     assert kinds["sys.eng.job.ke.example-ministry-publications"] is Kind.JOB
     users = result.registry.users_of("sys.trm.ref.pat.ke.office-names")
-    assert [e.code for e in users] == ["pg.src.wbs.ke.example-ministry"]
+    assert [e.code for e in users] == ["pg.src.srs.ke.example-ministry"]
 
 
 def test_the_real_seed_tree_has_no_problems() -> None:
@@ -66,8 +66,8 @@ def test_a_valid_tree_with_a_module_mapping_and_global_sharing(tmp_path: Path) -
     root = write(
         tmp_path,
         {
-            "sources/wbs/ke/a/manifest.yml": source(A, uses=f"uses: {{ mappings: [{M_GLOBAL}], terms: [{V_KE}] }}\n"),
-            "sources/wbs/ke/a/modules/x.yml": f"module: x\nmapping: {M_KE}\n",
+            "sources/srs/ke/a/manifest.yml": source(A, uses=f"uses: {{ mappings: [{M_GLOBAL}], terms: [{V_KE}] }}\n"),
+            "sources/srs/ke/a/modules/x.yml": f"module: x\nmapping: {M_KE}\n",
             "mappings/ref/cty/global/base.yml": mapping(M_GLOBAL),
             "mappings/ref/cty/ke/local.yml": mapping(M_KE),
             "terms/ref/pat/ke/names.yml": terms(V_KE),
@@ -105,7 +105,7 @@ def test_a_manifest_may_not_use_another_country_and_global_may_not_use_a_country
         tmp_path,
         {
             "s/a/manifest.yml": source(A, uses=f"uses: {{ mappings: [{tz}] }}\n"),
-            "s/g/manifest.yml": source("pg.src.wbs.global.g", uses=f"uses: {{ mappings: [{M_KE}] }}\n"),
+            "s/g/manifest.yml": source("pg.src.srs.global.g", uses=f"uses: {{ mappings: [{M_KE}] }}\n"),
             "m/tz.yml": mapping(tz),
             "m/ke.yml": mapping(M_KE),
         },
@@ -113,7 +113,7 @@ def test_a_manifest_may_not_use_another_country_and_global_may_not_use_a_country
     found = problems(root)
     assert any(f"{tz!r} is in scope 'tz', which {A!r} (scope 'ke') may not use" in p for p in found)
     assert any(
-        f"{M_KE!r} is in scope 'ke', which 'pg.src.wbs.global.g' (scope 'global') may not use" in p for p in found
+        f"{M_KE!r} is in scope 'ke', which 'pg.src.srs.global.g' (scope 'global') may not use" in p for p in found
     )
 
 
@@ -145,16 +145,16 @@ def test_a_source_job_and_mapping_must_fit_their_kind(tmp_path: Path) -> None:
     root = write(
         tmp_path,
         {
-            "a.yml": source("pg.src.api.ke.a", kind="website"),
-            "b.yml": source("pg.src.wbs.ke.b", kind="api"),
+            "a.yml": source("pg.src.cap.ke.a", kind="website"),
+            "b.yml": source("pg.src.doc.ke.b", kind="api"),
             "d.yml": mapping("sys.map.ofc.ind.ke.d"),
             "e.json": '{"code": "sys.eng.run.ke.e", "spec_version": 1, "stages": []}',
             "f.yml": terms("sys.trm.ref.pat.ke.f"),
         },
     )
     found = problems(root)
-    assert any("a website source code must use the short of source.websites, not 'api'" in p for p in found)
-    assert any("an api source code must use the short of source.apis, not 'wbs'" in p for p in found)
+    assert any("a website source code must use the short of source.sources, not 'cap'" in p for p in found)
+    assert any("an api source code must use the short of source.sources, not 'doc'" in p for p in found)
     assert any("a mapping is named after the table it writes first (reference.countries)" in p for p in found)
     assert any("a job spec code must be sys.eng.job.<scope>.<name>" in p for p in found)
     assert not any("f.yml" in p for p in found)
@@ -166,7 +166,7 @@ def test_the_path_must_mirror_the_code(tmp_path: Path) -> None:
         {
             "mappings/ref/cty/ke/local.yml": mapping(M_KE),
             "mappings/elsewhere/local2.yml": mapping("sys.map.ref.cty.ke.local2"),
-            "sources/wbs/ke/a/manifest.yml": source(A),
+            "sources/srs/ke/a/manifest.yml": source(A),
             "terms/ref/pat/ke/wrong-name.yml": terms(V_KE),
         },
     )

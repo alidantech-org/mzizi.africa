@@ -1,49 +1,49 @@
-feature_code,name,name_kind_code,language_tag,source_code
-ke.mombasa,Mombasa,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kwale,Kwale,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kilifi,Kilifi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.tana-river,Tana River,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.lamu,Lamu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.taita-taveta,Taita Taveta,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.garissa,Garissa,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.wajir,Wajir,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mandera,Mandera,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.marsabit,Marsabit,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.isiolo,Isiolo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru,Meru,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.tharaka-nithi,Tharaka-Nithi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.tharaka-nithi,Tharaka,geo.name.kind.short,en,geoboundaries-ken-adm1
-ke.embu,Embu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kitui,Kitui,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.machakos,Machakos,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.makueni,Makueni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyandarua,Nyandarua,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyeri,Nyeri,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kirinyaga,Kirinyaga,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.muranga,Murang'a,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu,Kiambu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.turkana,Turkana,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.west-pokot,West Pokot,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.samburu,Samburu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.trans-nzoia,Trans Nzoia,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.uasin-gishu,Uasin Gishu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.elgeyo-marakwet,Elgeyo-Marakwet,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nandi,Nandi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.baringo,Baringo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.laikipia,Laikipia,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru,Nakuru,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.narok,Narok,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kajiado,Kajiado,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kericho,Kericho,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bomet,Bomet,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega,Kakamega,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.vihiga,Vihiga,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma,Bungoma,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.busia,Busia,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.siaya,Siaya,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisumu,Kisumu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.homa-bay,Homa Bay,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.migori,Migori,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii,Kisii,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyamira,Nyamira,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi,Nairobi,geo.name.kind.official,en,ocha-cod-ab-ken
+feature_code,name,name_kind_code,language_tag
+ke.mombasa,Mombasa,geo.name.kind.official,en
+ke.kwale,Kwale,geo.name.kind.official,en
+ke.kilifi,Kilifi,geo.name.kind.official,en
+ke.tana-river,Tana River,geo.name.kind.official,en
+ke.lamu,Lamu,geo.name.kind.official,en
+ke.taita-taveta,Taita Taveta,geo.name.kind.official,en
+ke.garissa,Garissa,geo.name.kind.official,en
+ke.wajir,Wajir,geo.name.kind.official,en
+ke.mandera,Mandera,geo.name.kind.official,en
+ke.marsabit,Marsabit,geo.name.kind.official,en
+ke.isiolo,Isiolo,geo.name.kind.official,en
+ke.meru,Meru,geo.name.kind.official,en
+ke.tharaka-nithi,Tharaka-Nithi,geo.name.kind.official,en
+ke.tharaka-nithi,Tharaka,geo.name.kind.short,en
+ke.embu,Embu,geo.name.kind.official,en
+ke.kitui,Kitui,geo.name.kind.official,en
+ke.machakos,Machakos,geo.name.kind.official,en
+ke.makueni,Makueni,geo.name.kind.official,en
+ke.nyandarua,Nyandarua,geo.name.kind.official,en
+ke.nyeri,Nyeri,geo.name.kind.official,en
+ke.kirinyaga,Kirinyaga,geo.name.kind.official,en
+ke.muranga,Murang'a,geo.name.kind.official,en
+ke.kiambu,Kiambu,geo.name.kind.official,en
+ke.turkana,Turkana,geo.name.kind.official,en
+ke.west-pokot,West Pokot,geo.name.kind.official,en
+ke.samburu,Samburu,geo.name.kind.official,en
+ke.trans-nzoia,Trans Nzoia,geo.name.kind.official,en
+ke.uasin-gishu,Uasin Gishu,geo.name.kind.official,en
+ke.elgeyo-marakwet,Elgeyo-Marakwet,geo.name.kind.official,en
+ke.nandi,Nandi,geo.name.kind.official,en
+ke.baringo,Baringo,geo.name.kind.official,en
+ke.laikipia,Laikipia,geo.name.kind.official,en
+ke.nakuru,Nakuru,geo.name.kind.official,en
+ke.narok,Narok,geo.name.kind.official,en
+ke.kajiado,Kajiado,geo.name.kind.official,en
+ke.kericho,Kericho,geo.name.kind.official,en
+ke.bomet,Bomet,geo.name.kind.official,en
+ke.kakamega,Kakamega,geo.name.kind.official,en
+ke.vihiga,Vihiga,geo.name.kind.official,en
+ke.bungoma,Bungoma,geo.name.kind.official,en
+ke.busia,Busia,geo.name.kind.official,en
+ke.siaya,Siaya,geo.name.kind.official,en
+ke.kisumu,Kisumu,geo.name.kind.official,en
+ke.homa-bay,Homa Bay,geo.name.kind.official,en
+ke.migori,Migori,geo.name.kind.official,en
+ke.kisii,Kisii,geo.name.kind.official,en
+ke.nyamira,Nyamira,geo.name.kind.official,en
+ke.nairobi,Nairobi,geo.name.kind.official,en

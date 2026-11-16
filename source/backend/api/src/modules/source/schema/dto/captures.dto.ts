@@ -6,27 +6,28 @@ import {
   IsString,
   IsUrl,
   IsUUID,
-  Length,
   Matches,
   MaxLength,
   Min,
+  MinLength,
   ValidateIf,
 } from "class-validator";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
-import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Immutable accepted retrieval snapshot with exact bytes; failed requests remain in Operations. (entity)
+ * One retrieval of a path by a source: when, from which link, with what response. The content is a document, shared by every capture of the same bytes; failed requests remain in Operations. (entity)
  */
 export class CapturesDto {
   @IsString()
-  @Length(64, 64)
-  @Matches(new RegExp("^[a-f0-9]{64}$"))
-  contentHash!: Sha256;
+  @MinLength(1)
+  @MaxLength(255)
+  @Matches(new RegExp("^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$"))
+  code!: IdentityCode;
 
   @IsISO8601({})
   createdAt!: Instant;
@@ -44,10 +45,6 @@ export class CapturesDto {
 
   @IsString()
   @IsUUID()
-  fileVersionId!: Id;
-
-  @IsString()
-  @IsUUID()
   id!: Id;
 
   @IsOptional()
@@ -57,16 +54,29 @@ export class CapturesDto {
   manifestReleaseId?: Id | null;
 
   @IsString()
+  @IsUrl()
+  @MaxLength(2048)
+  originalUrl!: Url;
+
+  @IsOptional()
+  @ValidateIf((object) => object.pathId !== null)
+  @IsString()
+  @IsUUID()
+  pathId?: Id | null;
+
+  @IsString()
   @IsJSON()
   responseMetadata!: JsonText;
 
   @IsISO8601({})
   retrievedAt!: Instant;
 
+  @IsOptional()
+  @ValidateIf((object) => object.retrievedUrl !== null)
   @IsString()
   @IsUrl()
   @MaxLength(2048)
-  retrievedUrl!: Url;
+  retrievedUrl?: Url | null;
 
   @IsString()
   @IsUUID()

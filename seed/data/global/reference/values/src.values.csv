@@ -4,4 +4,7 @@ src.publisher.kind.constitutional-commission,src.publisher.kind,Constitutional c
 src.publisher.kind.international-organisation,src.publisher.kind,International organisation
 src.publisher.kind.research-institution,src.publisher.kind,Research institution
 src.publisher.kind.non-profit,src.publisher.kind,Non profit
-src.source.kind.dataset,src.source.kind,Dataset
+src.document.kind.dataset-file,src.document.kind,Dataset file
+src.dataset.category.geography,src.dataset.category,Geography
+src.dataset.category.reference,src.dataset.category,Reference
+src.dataset.category.source,src.dataset.category,Source

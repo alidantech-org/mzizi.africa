@@ -4,7 +4,7 @@ import { IsNull, type Repository } from "typeorm";
 import { EntityRepository, type IUpdatableRepository } from "#/database/base/entity-repository.ts";
 import { BaseQueryDto } from "#/database/base/base-query.dto.ts";
 import type { IFindAllResponse } from "#/database/base/query.types.ts";
-import { DatasetsEntity } from "#/modules/geography/schema/entities/datasets.entity.ts";
+import { GeographyDatasetsEntity } from "#/modules/geography/schema/entities/datasets.entity.ts";
 import * as Datasets from "#/modules/geography/schema/types/datasets/index.ts";
 
 /**
@@ -15,17 +15,17 @@ import * as Datasets from "#/modules/geography/schema/types/datasets/index.ts";
 @Injectable()
 export class DatasetsRepository
   extends EntityRepository<
-    DatasetsEntity,
+    GeographyDatasetsEntity,
     Datasets.Types.DatasetsSortableField,
     Datasets.Types.DatasetsEditableField,
     Datasets.Types.DatasetsSelectableField,
     Datasets.Types.IDatasetsCreatable
   >
-  implements IUpdatableRepository<DatasetsEntity, Datasets.Types.IDatasetsUpdatable>
+  implements IUpdatableRepository<GeographyDatasetsEntity, Datasets.Types.IDatasetsUpdatable>
 {
   constructor(
-    @InjectRepository(DatasetsEntity)
-    repository: Repository<DatasetsEntity>,
+    @InjectRepository(GeographyDatasetsEntity)
+    repository: Repository<GeographyDatasetsEntity>,
   ) {
     super(repository, Datasets.Config.DATASETS_QUERY_OPTIONS);
   }
@@ -34,53 +34,47 @@ export class DatasetsRepository
   async updateEditable(
     id: string,
     data: Datasets.Types.IDatasetsUpdatable,
-  ): Promise<DatasetsEntity | null> {
+  ): Promise<GeographyDatasetsEntity | null> {
     const stamped = await this.stampUpdate(id, data);
     return stamped === null ? null : await this.update(id, stamped);
   }
 
   /** Find datasets by coverage feature id, paged by the shared query. */
   async findByCoverageFeature(
-    query: BaseQueryDto<DatasetsEntity>,
-    coverageFeatureId: NonNullable<DatasetsEntity["coverageFeatureId"]>,
-  ): Promise<IFindAllResponse<DatasetsEntity>> {
+    query: BaseQueryDto<GeographyDatasetsEntity>,
+    coverageFeatureId: NonNullable<GeographyDatasetsEntity["coverageFeatureId"]>,
+  ): Promise<IFindAllResponse<GeographyDatasetsEntity>> {
     return await this.findByQuery(query, { coverageFeatureId, deletedAt: IsNull() });
   }
 
   /** Find datasets by representation id, paged by the shared query. */
   async findByRepresentation(
-    query: BaseQueryDto<DatasetsEntity>,
-    representationId: NonNullable<DatasetsEntity["representationId"]>,
-  ): Promise<IFindAllResponse<DatasetsEntity>> {
+    query: BaseQueryDto<GeographyDatasetsEntity>,
+    representationId: NonNullable<GeographyDatasetsEntity["representationId"]>,
+  ): Promise<IFindAllResponse<GeographyDatasetsEntity>> {
     return await this.findByQuery(query, { representationId, deletedAt: IsNull() });
   }
 
   /** Find datasets by resolution unit id, paged by the shared query. */
   async findByResolutionUnit(
-    query: BaseQueryDto<DatasetsEntity>,
-    resolutionUnitId: NonNullable<DatasetsEntity["resolutionUnitId"]>,
-  ): Promise<IFindAllResponse<DatasetsEntity>> {
+    query: BaseQueryDto<GeographyDatasetsEntity>,
+    resolutionUnitId: NonNullable<GeographyDatasetsEntity["resolutionUnitId"]>,
+  ): Promise<IFindAllResponse<GeographyDatasetsEntity>> {
     return await this.findByQuery(query, { resolutionUnitId, deletedAt: IsNull() });
-  }
-
-  /** Find datasets by source id, paged by the shared query. */
-  async findBySource(
-    query: BaseQueryDto<DatasetsEntity>,
-    sourceId: NonNullable<DatasetsEntity["sourceId"]>,
-  ): Promise<IFindAllResponse<DatasetsEntity>> {
-    return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
   }
 
   /** Find datasets by subject id, paged by the shared query. */
   async findBySubject(
-    query: BaseQueryDto<DatasetsEntity>,
-    subjectId: NonNullable<DatasetsEntity["subjectId"]>,
-  ): Promise<IFindAllResponse<DatasetsEntity>> {
+    query: BaseQueryDto<GeographyDatasetsEntity>,
+    subjectId: NonNullable<GeographyDatasetsEntity["subjectId"]>,
+  ): Promise<IFindAllResponse<GeographyDatasetsEntity>> {
     return await this.findByQuery(query, { subjectId, deletedAt: IsNull() });
   }
 
   /** Find the datasets with this code (unique). */
-  async findByCode(code: NonNullable<DatasetsEntity["code"]>): Promise<DatasetsEntity | null> {
+  async findByCode(
+    code: NonNullable<GeographyDatasetsEntity["code"]>,
+  ): Promise<GeographyDatasetsEntity | null> {
     return await this.findOne({ code, deletedAt: IsNull() });
   }
 }

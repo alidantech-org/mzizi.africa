@@ -1,16 +1,13 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/mapping.schema.json
-code: sys.map.src.doc.ke.example-ministry-publications
-describe: A publication listed on the ministry page becomes a source document.
+code: sys.map.src.cap.ke.example-ministry-publications
+describe: A publication link listed on the ministry page becomes a capture of that link; the document (its content and sha256) is recorded once the file is downloaded.
 inputs: [title, href, slug, published]
 yields:
-  - as: document
-    table: source.documents
+  - as: capture
+    table: source.captures
     key: [code]
     fields:
-      code:          { from: slug }
-      title:         { from: title }
-      canonical_url: { from: href }
-      published_on:  { from: published }
-      kind_id:       { lookup: { table: reference.values, by: code, const: src.document.kind.report } }
+      code:         { from: slug }
+      original_url: { from: href }
 provenance: { method: extracted, locator: { page: $page, item: $item_index } }
-expect: { min_rows: 3, required_fields: [code, title] }
+expect: { min_rows: 3, required_fields: [code, original_url] }

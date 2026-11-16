@@ -18,9 +18,11 @@ import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts
 import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import { DocumentsEntity } from "#/modules/source/schema/entities/documents.entity.ts";
+import { DomainsEntity } from "#/modules/source/schema/entities/domains.entity.ts";
 import { EvidenceEntity } from "#/modules/source/schema/entities/evidence.entity.ts";
 import { ManifestReleasesEntity } from "#/modules/source/schema/entities/manifest-releases.entity.ts";
 import { ManifestsEntity } from "#/modules/source/schema/entities/manifests.entity.ts";
+import { PathsEntity } from "#/modules/source/schema/entities/paths.entity.ts";
 import { PublishersEntity } from "#/modules/source/schema/entities/publishers.entity.ts";
 import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import { GovernanceInstitutionsRepository } from "#/modules/governance/features/institutions/repositories/institutions.repository.ts";
@@ -55,9 +57,11 @@ import {
       CapturesEntity,
       CitationsEntity,
       DocumentsEntity,
+      DomainsEntity,
       EvidenceEntity,
       ManifestReleasesEntity,
       ManifestsEntity,
+      PathsEntity,
       PublishersEntity,
       SourcesEntity,
     ]),

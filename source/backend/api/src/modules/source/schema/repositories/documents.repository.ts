@@ -39,12 +39,28 @@ export class DocumentsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find documents by file version id, paged by the shared query. */
+  async findByFileVersion(
+    query: BaseQueryDto<DocumentsEntity>,
+    fileVersionId: NonNullable<DocumentsEntity["fileVersionId"]>,
+  ): Promise<IFindAllResponse<DocumentsEntity>> {
+    return await this.findByQuery(query, { fileVersionId, deletedAt: IsNull() });
+  }
+
   /** Find documents by kind id, paged by the shared query. */
   async findByKind(
     query: BaseQueryDto<DocumentsEntity>,
     kindId: NonNullable<DocumentsEntity["kindId"]>,
   ): Promise<IFindAllResponse<DocumentsEntity>> {
     return await this.findByQuery(query, { kindId, deletedAt: IsNull() });
+  }
+
+  /** Find documents by parent id, paged by the shared query. */
+  async findByParent(
+    query: BaseQueryDto<DocumentsEntity>,
+    parentId: NonNullable<DocumentsEntity["parentId"]>,
+  ): Promise<IFindAllResponse<DocumentsEntity>> {
+    return await this.findByQuery(query, { parentId, deletedAt: IsNull() });
   }
 
   /** Find documents by publisher id, paged by the shared query. */
@@ -55,16 +71,15 @@ export class DocumentsRepository
     return await this.findByQuery(query, { publisherId, deletedAt: IsNull() });
   }
 
-  /** Find documents by source id, paged by the shared query. */
-  async findBySource(
-    query: BaseQueryDto<DocumentsEntity>,
-    sourceId: NonNullable<DocumentsEntity["sourceId"]>,
-  ): Promise<IFindAllResponse<DocumentsEntity>> {
-    return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
-  }
-
   /** Find the documents with this code (unique). */
   async findByCode(code: NonNullable<DocumentsEntity["code"]>): Promise<DocumentsEntity | null> {
     return await this.findOne({ code, deletedAt: IsNull() });
+  }
+
+  /** Find the documents with this sha256 (unique). */
+  async findBySha256(
+    sha256: NonNullable<DocumentsEntity["sha256"]>,
+  ): Promise<DocumentsEntity | null> {
+    return await this.findOne({ sha256, deletedAt: IsNull() });
   }
 }

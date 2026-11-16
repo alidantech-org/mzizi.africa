@@ -23,7 +23,6 @@ class ChangesRow(BaseModel):
     explanation: Annotated[str, Field(max_length=4000)] | None = None
     id: UUID
     predecessor_feature_id: UUID | None = None
-    source_id: UUID | None = None
     successor_feature_id: UUID | None = None
     transformation_id: UUID
     updated_at: datetime

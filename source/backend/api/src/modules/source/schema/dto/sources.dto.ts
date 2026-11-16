@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -10,15 +11,18 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
+
+import { SourceKind } from "#/modules/source/schema/enum/source-kind.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Stable publication-channel identity independent of any public website. (entity)
+ * A publication channel, named by anything but its domain: a real website, a real API, or a dataset (files or data obtained from somewhere that is neither). Only websites and APIs have domains and paths; the dataset tables record what we prepared from sources. (entity)
  */
 export class SourcesDto {
   @IsString()
@@ -29,6 +33,13 @@ export class SourcesDto {
 
   @IsISO8601({})
   createdAt!: Instant;
+
+  @IsOptional()
+  @ValidateIf((object) => object.credentialBinding !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(255)
+  credentialBinding?: NonEmptyString255 | null;
 
   @IsOptional()
   @ValidateIf((object) => object.deletedAt !== null)
@@ -45,9 +56,8 @@ export class SourcesDto {
   @IsUUID()
   id!: Id;
 
-  @IsString()
-  @IsUUID()
-  kindId!: Id;
+  @IsEnum(SourceKind)
+  kind!: SourceKind;
 
   @IsOptional()
   @ValidateIf((object) => object.officialEntityId !== null)

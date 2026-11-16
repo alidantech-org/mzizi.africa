@@ -55,12 +55,4 @@ export class IdentifiersRepository
   ): Promise<IFindAllResponse<GeographyIdentifiersEntity>> {
     return await this.findByQuery(query, { identifierSchemeId, deletedAt: IsNull() });
   }
-
-  /** Find identifiers by source id, paged by the shared query. */
-  async findBySource(
-    query: BaseQueryDto<GeographyIdentifiersEntity>,
-    sourceId: NonNullable<GeographyIdentifiersEntity["sourceId"]>,
-  ): Promise<IFindAllResponse<GeographyIdentifiersEntity>> {
-    return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
-  }
 }

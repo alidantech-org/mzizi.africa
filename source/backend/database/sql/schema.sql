@@ -570,7 +570,6 @@ CREATE TABLE "geography"."changes" (
     "explanation" varchar(4000),
     "id" uuid NOT NULL,
     "predecessor_feature_id" uuid,
-    "source_id" uuid,
     "successor_feature_id" uuid,
     "transformation_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
@@ -583,7 +582,6 @@ CREATE TABLE "geography"."classifications" (
     "deleted_at" timestamptz,
     "feature_id" uuid NOT NULL,
     "id" uuid NOT NULL,
-    "source_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "valid_from" date,
     "valid_from_earliest" date,
@@ -630,7 +628,6 @@ CREATE TABLE "geography"."datasets" (
     "representation_id" uuid NOT NULL,
     "resolution" double precision,
     "resolution_unit_id" uuid,
-    "source_id" uuid,
     "subject_id" uuid NOT NULL,
     "title" varchar(255) NOT NULL,
     "updated_at" timestamptz NOT NULL,
@@ -699,7 +696,6 @@ CREATE TABLE "geography"."geometries" (
     "min_zoom" integer,
     "observed_at" timestamptz,
     "revision" integer NOT NULL,
-    "source_id" uuid,
     "srid" integer NOT NULL,
     "supersedes_id" uuid,
     "updated_at" timestamptz NOT NULL,
@@ -750,7 +746,6 @@ CREATE TABLE "geography"."identifiers" (
     "id" uuid NOT NULL,
     "identifier_scheme_id" uuid NOT NULL,
     "namespace" varchar(255),
-    "source_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -764,7 +759,6 @@ CREATE TABLE "geography"."names" (
     "language_tag" varchar(35),
     "name" varchar(300) NOT NULL,
     "name_kind_id" uuid NOT NULL,
-    "source_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "valid_from" date,
     "valid_until" date,
@@ -785,7 +779,6 @@ CREATE TABLE "geography"."relationships" (
     "id" uuid NOT NULL,
     "object_feature_id" uuid NOT NULL,
     "relationship_kind_id" uuid NOT NULL,
-    "source_id" uuid,
     "subject_feature_id" uuid NOT NULL,
     "system_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
@@ -1607,18 +1600,6 @@ CREATE TABLE "reference"."value_relations" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "source"."apis" (
-    "base_url" varchar(2048) NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "credential_binding" varchar(255),
-    "deleted_at" timestamptz,
-    "id" uuid NOT NULL,
-    "source_id" uuid NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
 CREATE TABLE "source"."attributions" (
     "assessed_at" timestamptz NOT NULL,
     "assessor_snapshot" text NOT NULL,
@@ -1636,16 +1617,17 @@ CREATE TABLE "source"."attributions" (
 );
 
 CREATE TABLE "source"."captures" (
-    "content_hash" char(64) NOT NULL,
+    "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "document_id" uuid,
-    "file_version_id" uuid NOT NULL,
     "id" uuid NOT NULL,
     "manifest_release_id" uuid,
+    "original_url" varchar(2048) NOT NULL,
+    "path_id" uuid,
     "response_metadata" text NOT NULL,
     "retrieved_at" timestamptz NOT NULL,
-    "retrieved_url" varchar(2048) NOT NULL,
+    "retrieved_url" varchar(2048),
     "source_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -1669,19 +1651,76 @@ CREATE TABLE "source"."citations" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "source"."documents" (
-    "canonical_url" varchar(2048),
+CREATE TABLE "source"."dataset_lineage" (
+    "created_at" timestamptz NOT NULL,
+    "dataset_id" uuid NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "input_capture_id" uuid,
+    "input_dataset_id" uuid,
+    "input_document_id" uuid,
+    "method" varchar(4000),
+    "role" text NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "source"."datasets" (
+    "assembly" text NOT NULL,
+    "category_id" uuid,
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "description" varchar(4000),
+    "file_version_id" uuid,
+    "format" varchar(100) NOT NULL,
     "id" uuid NOT NULL,
-    "kind_id" uuid NOT NULL,
-    "published_on" date,
-    "publisher_id" uuid NOT NULL,
-    "source_id" uuid NOT NULL,
+    "location" varchar(1000),
+    "sha256" char(64),
     "title" varchar(300) NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "source"."documents" (
+    "code" varchar(255) NOT NULL,
+    "content_type" varchar(255),
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "file_version_id" uuid,
+    "id" uuid NOT NULL,
+    "kind_id" uuid NOT NULL,
+    "parent_id" uuid,
+    "published_on" date,
+    "publisher_id" uuid,
+    "sha256" char(64) NOT NULL,
+    "size_bytes" integer,
+    "title" varchar(300) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "source"."domains" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "host" varchar(255) NOT NULL,
+    "id" uuid NOT NULL,
+    "source_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "valid_from" date,
+    "valid_until" date,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_domains_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -1763,6 +1802,37 @@ CREATE TABLE "source"."manifests" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "source"."paths" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "domain_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "kind" text NOT NULL,
+    "method" text,
+    "note" varchar(4000),
+    "path" varchar(1000) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "source"."provenance" (
+    "capture_id" uuid,
+    "column_name" varchar(100),
+    "created_at" timestamptz NOT NULL,
+    "dataset_id" uuid NOT NULL,
+    "deleted_at" timestamptz,
+    "document_id" uuid,
+    "id" uuid NOT NULL,
+    "line" integer,
+    "record_id" uuid NOT NULL,
+    "table_name" varchar(100) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
 CREATE TABLE "source"."publication_receipts" (
     "actor_snapshot" text NOT NULL,
     "contract_version" varchar(255) NOT NULL,
@@ -1797,10 +1867,11 @@ CREATE TABLE "source"."publishers" (
 CREATE TABLE "source"."sources" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
+    "credential_binding" varchar(255),
     "deleted_at" timestamptz,
     "description" varchar(4000),
     "id" uuid NOT NULL,
-    "kind_id" uuid NOT NULL,
+    "kind" text NOT NULL,
     "official_entity_id" uuid,
     "publisher_id" uuid NOT NULL,
     "title" varchar(300) NOT NULL,
@@ -1821,18 +1892,6 @@ CREATE TABLE "source"."verifications" (
     "outcome" text NOT NULL,
     "reviewer_snapshot" text NOT NULL,
     "supersedes_id" uuid,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "source"."websites" (
-    "canonical_url" varchar(2048) NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "id" uuid NOT NULL,
-    "source_id" uuid NOT NULL,
-    "title" varchar(300) NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -2445,9 +2504,6 @@ ALTER TABLE "geography"."changes"
 ADD CONSTRAINT "fk_changes_predecessor_feature_id" FOREIGN KEY ("predecessor_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."changes"
-ADD CONSTRAINT "fk_changes_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."changes"
 ADD CONSTRAINT "fk_changes_successor_feature_id" FOREIGN KEY ("successor_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_changes__transformation_id_predecessor_feature_id_successor_" ON "geography"."changes" USING btree (
@@ -2468,9 +2524,6 @@ ALTER TABLE "geography"."classifications"
 ADD CONSTRAINT "fk_classifications_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."classifications"
-ADD CONSTRAINT "fk_classifications_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."classifications"
 ADD CONSTRAINT "fk_classifications_value_id" FOREIGN KEY ("value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_classifications__feature_id_value_id_valid_from" ON "geography"."classifications" USING btree ("feature_id", "value_id", "valid_from");
@@ -2487,9 +2540,6 @@ ADD CONSTRAINT "fk_datasets_representation_id" FOREIGN KEY ("representation_id")
 
 ALTER TABLE "geography"."datasets"
 ADD CONSTRAINT "fk_datasets_resolution_unit_id" FOREIGN KEY ("resolution_unit_id") REFERENCES "reference"."units" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."datasets"
-ADD CONSTRAINT "fk_datasets_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."datasets"
 ADD CONSTRAINT "fk_datasets_subject_id" FOREIGN KEY ("subject_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -2525,9 +2575,6 @@ ALTER TABLE "geography"."geometries"
 ADD CONSTRAINT "fk_geometries_geometry_role_id" FOREIGN KEY ("geometry_role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."geometries"
-ADD CONSTRAINT "fk_geometries_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."geometries"
 ADD CONSTRAINT "fk_geometries_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "geography"."geometries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_geometries__feature_id_geometry_role_id_revision" ON "geography"."geometries" USING btree ("feature_id", "geometry_role_id", "revision");
@@ -2550,9 +2597,6 @@ ADD CONSTRAINT "fk_identifiers_feature_id" FOREIGN KEY ("feature_id") REFERENCES
 ALTER TABLE "geography"."identifiers"
 ADD CONSTRAINT "fk_identifiers_identifier_scheme_id" FOREIGN KEY ("identifier_scheme_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "geography"."identifiers"
-ADD CONSTRAINT "fk_identifiers_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_identifiers__identifier_scheme_id_namespace_external_id" ON "geography"."identifiers" USING btree (
     "identifier_scheme_id",
     "namespace",
@@ -2566,9 +2610,6 @@ ADD CONSTRAINT "fk_names_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geog
 
 ALTER TABLE "geography"."names"
 ADD CONSTRAINT "fk_names_name_kind_id" FOREIGN KEY ("name_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."names"
-ADD CONSTRAINT "fk_names_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_names__feature_id_name_kind_id_language_tag_name" ON "geography"."names" USING btree (
     "feature_id",
@@ -2588,9 +2629,6 @@ ADD CONSTRAINT "fk_relationships_object_feature_id" FOREIGN KEY ("object_feature
 
 ALTER TABLE "geography"."relationships"
 ADD CONSTRAINT "fk_relationships_relationship_kind_id" FOREIGN KEY ("relationship_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."relationships"
-ADD CONSTRAINT "fk_relationships_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."relationships"
 ADD CONSTRAINT "fk_relationships_subject_feature_id" FOREIGN KEY ("subject_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3475,11 +3513,6 @@ CREATE INDEX "ix_value_relations__source_value_id_relation_kind_valid_from" ON "
 
 CREATE INDEX "ix_value_relations__target_value_id_relation_kind" ON "reference"."value_relations" USING btree ("target_value_id", "relation_kind");
 
-ALTER TABLE "source"."apis"
-ADD CONSTRAINT "fk_apis_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_apis__source_id" ON "source"."apis" USING btree ("source_id");
-
 ALTER TABLE "source"."attributions"
 ADD CONSTRAINT "fk_attributions_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
@@ -3499,27 +3532,25 @@ ALTER TABLE "source"."captures"
 ADD CONSTRAINT "fk_captures_document_id" FOREIGN KEY ("document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "source"."captures"
-ADD CONSTRAINT "fk_captures_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_captures_manifest_release_id" FOREIGN KEY ("manifest_release_id") REFERENCES "source"."manifest_releases" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "source"."captures"
-ADD CONSTRAINT "fk_captures_manifest_release_id" FOREIGN KEY ("manifest_release_id") REFERENCES "source"."manifest_releases" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_captures_path_id" FOREIGN KEY ("path_id") REFERENCES "source"."paths" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "source"."captures"
 ADD CONSTRAINT "fk_captures_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+CREATE UNIQUE INDEX "uq_captures__code_partial_1" ON "source"."captures" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE INDEX "ix_captures__source_id" ON "source"."captures" USING btree ("source_id");
+
+CREATE INDEX "ix_captures__path_id" ON "source"."captures" USING btree ("path_id");
 
 CREATE INDEX "ix_captures__document_id" ON "source"."captures" USING btree ("document_id");
 
-CREATE INDEX "ix_captures__file_version_id" ON "source"."captures" USING btree ("file_version_id");
-
 CREATE INDEX "ix_captures__manifest_release_id" ON "source"."captures" USING btree ("manifest_release_id");
-
-ALTER TABLE "source"."documents"
-ADD CONSTRAINT "uq_documents__document_belongs_to_source_target" UNIQUE ("id", "source_id");
-
-ALTER TABLE "source"."captures"
-ADD CONSTRAINT "fk_captures__document_belongs_to_source" FOREIGN KEY ("document_id", "source_id") REFERENCES "source"."documents" ("id", "source_id");
 
 ALTER TABLE "source"."citations"
 ADD CONSTRAINT "fk_citations_capture_id" FOREIGN KEY ("capture_id") REFERENCES "source"."captures" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3546,24 +3577,83 @@ CREATE INDEX "ix_citations__file_version_id" ON "source"."citations" USING btree
 
 CREATE INDEX "ix_citations__locator_kind_id" ON "source"."citations" USING btree ("locator_kind_id");
 
+ALTER TABLE "source"."dataset_lineage"
+ADD CONSTRAINT "fk_dataset_lineage_dataset_id" FOREIGN KEY ("dataset_id") REFERENCES "source"."datasets" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."dataset_lineage"
+ADD CONSTRAINT "fk_dataset_lineage_input_capture_id" FOREIGN KEY ("input_capture_id") REFERENCES "source"."captures" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."dataset_lineage"
+ADD CONSTRAINT "fk_dataset_lineage_input_dataset_id" FOREIGN KEY ("input_dataset_id") REFERENCES "source"."datasets" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."dataset_lineage"
+ADD CONSTRAINT "fk_dataset_lineage_input_document_id" FOREIGN KEY ("input_document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_dataset_lineage__dataset_id_input_dataset_id_input_document_" ON "source"."dataset_lineage" USING btree (
+    "dataset_id",
+    "input_dataset_id",
+    "input_document_id",
+    "input_capture_id"
+);
+
+CREATE INDEX "ix_dataset_lineage__dataset_id" ON "source"."dataset_lineage" USING btree ("dataset_id");
+
+CREATE INDEX "ix_dataset_lineage__input_dataset_id" ON "source"."dataset_lineage" USING btree ("input_dataset_id");
+
+CREATE INDEX "ix_dataset_lineage__input_document_id" ON "source"."dataset_lineage" USING btree ("input_document_id");
+
+CREATE INDEX "ix_dataset_lineage__input_capture_id" ON "source"."dataset_lineage" USING btree ("input_capture_id");
+
+ALTER TABLE "source"."datasets"
+ADD CONSTRAINT "fk_datasets_category_id" FOREIGN KEY ("category_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."datasets"
+ADD CONSTRAINT "fk_datasets_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_datasets__code_partial_1" ON "source"."datasets" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_datasets__category_id" ON "source"."datasets" USING btree ("category_id");
+
+CREATE INDEX "ix_datasets__file_version_id" ON "source"."datasets" USING btree ("file_version_id");
+
+ALTER TABLE "source"."documents"
+ADD CONSTRAINT "fk_documents_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 ALTER TABLE "source"."documents"
 ADD CONSTRAINT "fk_documents_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "source"."documents"
-ADD CONSTRAINT "fk_documents_publisher_id" FOREIGN KEY ("publisher_id") REFERENCES "source"."publishers" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_documents_parent_id" FOREIGN KEY ("parent_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "source"."documents"
-ADD CONSTRAINT "fk_documents_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_documents_publisher_id" FOREIGN KEY ("publisher_id") REFERENCES "source"."publishers" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_documents__code_partial_1" ON "source"."documents" USING btree ("code")
 WHERE
     ("deleted_at" IS NULL);
 
-CREATE INDEX "ix_documents__source_id" ON "source"."documents" USING btree ("source_id");
+CREATE UNIQUE INDEX "uq_documents__sha256" ON "source"."documents" USING btree ("sha256");
 
 CREATE INDEX "ix_documents__publisher_id" ON "source"."documents" USING btree ("publisher_id");
 
 CREATE INDEX "ix_documents__kind_id" ON "source"."documents" USING btree ("kind_id");
+
+CREATE INDEX "ix_documents__file_version_id" ON "source"."documents" USING btree ("file_version_id");
+
+CREATE INDEX "ix_documents__parent_id" ON "source"."documents" USING btree ("parent_id");
+
+ALTER TABLE "source"."domains"
+ADD CONSTRAINT "fk_domains_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_domains__code_partial_1" ON "source"."domains" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_domains__host" ON "source"."domains" USING btree ("host");
+
+CREATE INDEX "ix_domains__source_id" ON "source"."domains" USING btree ("source_id");
 
 ALTER TABLE "source"."evidence"
 ADD CONSTRAINT "fk_evidence_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3627,6 +3717,36 @@ WHERE
 
 CREATE INDEX "ix_manifests__kind_id" ON "source"."manifests" USING btree ("kind_id");
 
+ALTER TABLE "source"."paths"
+ADD CONSTRAINT "fk_paths_domain_id" FOREIGN KEY ("domain_id") REFERENCES "source"."domains" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_paths__code_partial_1" ON "source"."paths" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_paths__domain_id_path" ON "source"."paths" USING btree ("domain_id", "path");
+
+CREATE INDEX "ix_paths__domain_id" ON "source"."paths" USING btree ("domain_id");
+
+ALTER TABLE "source"."provenance"
+ADD CONSTRAINT "fk_provenance_capture_id" FOREIGN KEY ("capture_id") REFERENCES "source"."captures" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."provenance"
+ADD CONSTRAINT "fk_provenance_dataset_id" FOREIGN KEY ("dataset_id") REFERENCES "source"."datasets" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."provenance"
+ADD CONSTRAINT "fk_provenance_document_id" FOREIGN KEY ("document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_provenance__table_name_record_id_dataset_id_line" ON "source"."provenance" USING btree ("table_name", "record_id", "dataset_id", "line");
+
+CREATE INDEX "ix_provenance__table_name_record_id" ON "source"."provenance" USING btree ("table_name", "record_id");
+
+CREATE INDEX "ix_provenance__dataset_id" ON "source"."provenance" USING btree ("dataset_id");
+
+CREATE INDEX "ix_provenance__capture_id" ON "source"."provenance" USING btree ("capture_id");
+
+CREATE INDEX "ix_provenance__document_id" ON "source"."provenance" USING btree ("document_id");
+
 CREATE UNIQUE INDEX "uq_publication_receipts__idempotency_key" ON "source"."publication_receipts" USING btree ("idempotency_key");
 
 CREATE UNIQUE INDEX "uq_publication_receipts__publication_ref_id" ON "source"."publication_receipts" USING btree ("publication_ref_id");
@@ -3649,9 +3769,6 @@ CREATE INDEX "ix_publishers__kind_id" ON "source"."publishers" USING btree ("kin
 CREATE INDEX "ix_publishers__country_id" ON "source"."publishers" USING btree ("country_id");
 
 ALTER TABLE "source"."sources"
-ADD CONSTRAINT "fk_sources_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "source"."sources"
 ADD CONSTRAINT "fk_sources_official_entity_id" FOREIGN KEY ("official_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "source"."sources"
@@ -3663,7 +3780,7 @@ WHERE
 
 CREATE INDEX "ix_sources__publisher_id" ON "source"."sources" USING btree ("publisher_id");
 
-CREATE INDEX "ix_sources__kind_id" ON "source"."sources" USING btree ("kind_id");
+CREATE INDEX "ix_sources__kind" ON "source"."sources" USING btree ("kind");
 
 ALTER TABLE "source"."verifications"
 ADD CONSTRAINT "fk_verifications_evidence_id" FOREIGN KEY ("evidence_id") REFERENCES "source"."evidence" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3679,13 +3796,6 @@ CREATE INDEX "ix_verifications__evidence_id" ON "source"."verifications" USING b
 CREATE INDEX "ix_verifications__method_id" ON "source"."verifications" USING btree ("method_id");
 
 CREATE INDEX "ix_verifications__supersedes_id" ON "source"."verifications" USING btree ("supersedes_id");
-
-ALTER TABLE "source"."websites"
-ADD CONSTRAINT "fk_websites_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_websites__source_id" ON "source"."websites" USING btree ("source_id");
-
-CREATE UNIQUE INDEX "uq_websites__canonical_url" ON "source"."websites" USING btree ("canonical_url");
 
 CREATE FUNCTION "geography"."scheme_features_feature_type_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN

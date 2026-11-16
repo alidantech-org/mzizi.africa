@@ -9,9 +9,9 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
+import * as FileVersionsConfig from "#/modules/filesystem/schema/types/file-versions/file-versions.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as PublishersConfig from "#/modules/source/schema/types/publishers/publishers.config";
-import * as SourcesConfig from "#/modules/source/schema/types/sources/sources.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -34,9 +34,10 @@ import type {
 // ----------------------------------
 
 export const DOCUMENTS_RELATION_KEYS = [
+  "fileVersion",
   "kind",
+  "parent",
   "publisher",
-  "source",
 ] as const satisfies readonly DocumentsKey[];
 
 // ----------------------------------
@@ -44,15 +45,18 @@ export const DOCUMENTS_RELATION_KEYS = [
 // ----------------------------------
 
 export const DOCUMENTS_SORTABLE_FIELDS = [
-  "canonicalUrl",
   "code",
+  "contentType",
   "createdAt",
   "deletedAt",
+  "fileVersionId",
   "id",
   "kindId",
+  "parentId",
   "publishedOn",
   "publisherId",
-  "sourceId",
+  "sha256",
+  "sizeBytes",
   "title",
   "updatedAt",
   "version",
@@ -60,14 +64,17 @@ export const DOCUMENTS_SORTABLE_FIELDS = [
 
 export const DOCUMENTS_SEARCHABLE_FIELDS = [
   "code",
+  "contentType",
+  "sha256",
   "title",
 ] as const satisfies readonly DocumentsKey[];
 
 export const DOCUMENTS_FILTERABLE_FIELDS = [
+  "fileVersionId",
   "id",
   "kindId",
+  "parentId",
   "publisherId",
-  "sourceId",
 ] as const satisfies readonly DocumentsKey[];
 
 export const DOCUMENTS_DATE_RANGE_FIELDS = [
@@ -88,30 +95,36 @@ export const DOCUMENTS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IDocume
 // ----------------------------------
 
 export const DOCUMENTS_SELECTABLE_FIELDS = [
-  "canonicalUrl",
   "code",
+  "contentType",
   "createdAt",
   "deletedAt",
+  "fileVersionId",
   "id",
   "kindId",
+  "parentId",
   "publishedOn",
   "publisherId",
-  "sourceId",
+  "sha256",
+  "sizeBytes",
   "title",
   "updatedAt",
   "version",
 ] as const satisfies readonly DocumentsKey[];
 
 export const DOCUMENTS_DEFAULT_SELECT_FIELDS = [
-  "canonicalUrl",
   "code",
+  "contentType",
   "createdAt",
   "deletedAt",
+  "fileVersionId",
   "id",
   "kindId",
+  "parentId",
   "publishedOn",
   "publisherId",
-  "sourceId",
+  "sha256",
+  "sizeBytes",
   "title",
   "updatedAt",
   "version",
@@ -122,12 +135,15 @@ export const DOCUMENTS_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const DOCUMENTS_EDITABLE_FIELDS = [
-  "canonicalUrl",
   "code",
+  "contentType",
+  "fileVersionId",
   "kindId",
+  "parentId",
   "publishedOn",
   "publisherId",
-  "sourceId",
+  "sha256",
+  "sizeBytes",
   "title",
 ] as const satisfies readonly DocumentsKey[];
 
@@ -158,16 +174,16 @@ export const DOCUMENTS_AS_MANY_RELATION_CONFIG = {
 
 export const DOCUMENTS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<DocumentsRelationKey>().one(
+    () => FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
+    "fileVersion",
+  ),
+  Q.createRelationKeyMapper<DocumentsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "kind",
   ),
   Q.createRelationKeyMapper<DocumentsRelationKey>().one(
     () => PublishersConfig.PUBLISHERS_AS_ONE_RELATION_CONFIG,
     "publisher",
-  ),
-  Q.createRelationKeyMapper<DocumentsRelationKey>().one(
-    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
-    "source",
   ),
 ] as const;
 

@@ -7,7 +7,7 @@
   "sources": [
     {
       "url": "https://www.example.org/publications/",
-      "authority_ref": "pg.src.wbs.ke.example-ministry"
+      "authority_ref": "pg.src.srs.ke.example-ministry"
     }
   ],
   "mode": "crawl",

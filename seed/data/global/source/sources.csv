@@ -1,0 +1,9 @@
+code,title,kind,publisher_code,description
+hdx,Humanitarian Data Exchange,website,ocha,"data.humdata.org, the OCHA Centre for Humdata open data portal; hosts the OCHA, IEBC and American Red Cross Kenya datasets."
+ocha-cod-ab-ken,"OCHA COD-AB Kenya, levels 0 to 2",dataset,ocha,Kenya counties and constituencies with place codes and parents; data from the IEBC. CC BY-IGO.
+iebc-p-codes,"IEBC place codes for counties, constituencies and wards",dataset,iebc,"The IEBC's own codes and names for counties, constituencies and county assembly wards, republished by the American Red Cross. CC BY."
+geoboundaries-ken-adm1,geoBoundaries Kenya ADM1 (counties),dataset,geoboundaries,KEN-ADM1-32016919; boundary source RCMRD GeoPortal; Public Domain.
+geoboundaries-ken-adm2,geoBoundaries Kenya ADM2 (constituencies),dataset,geoboundaries,KEN-ADM2-3690345; boundary source IEBC and OCHA ROSEA; CC BY 3.0 IGO.
+geoboundaries-ken-adm3,geoBoundaries Kenya ADM3 (wards),dataset,geoboundaries,KEN-ADM3-90231094; boundary source Benedict Aboki Omare and George Omare; CC BY 4.0.
+redcross-ke-subcounties,Kenya Sub Counties (American Red Cross),dataset,american-red-cross,304 sub-counties with counties and DHIS2 ids. CC BY.
+redcross-ke-wards,Administrative Wards in Kenya 1450 (American Red Cross),dataset,american-red-cross,"1450 wards with county, sub-county and DHIS2 ids. CC BY."

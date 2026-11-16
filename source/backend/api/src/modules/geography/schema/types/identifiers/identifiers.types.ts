@@ -10,7 +10,6 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
-import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -37,10 +36,8 @@ export interface IIdentifiers extends B.IBase {
   featureId: string;
   identifierSchemeId: string;
   namespace: string | null;
-  sourceId: string | null;
   readonly feature?: FeaturesTypes.IFeatures;
   readonly identifierScheme?: ValueTypes.IValue;
-  readonly source?: SourcesTypes.ISources;
 }
 
 // ----------------------------------
@@ -144,7 +141,6 @@ export type IIdentifiersAsManyRelationQuery = Q.IAsManyRelationQuery<
 export interface IIdentifiersRelationMap extends Record<IdentifiersRelationKey, unknown> {
   feature: FeaturesTypes.IFeaturesAsOneRelationQuery;
   identifierScheme: ValueTypes.IValueAsOneRelationQuery;
-  source: SourcesTypes.ISourcesAsOneRelationQuery;
 }
 
 // ----------------------------------

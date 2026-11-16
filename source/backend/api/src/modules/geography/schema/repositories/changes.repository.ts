@@ -55,14 +55,6 @@ export class ChangesRepository
     return await this.findByQuery(query, { predecessorFeatureId, deletedAt: IsNull() });
   }
 
-  /** Find changes by source id, paged by the shared query. */
-  async findBySource(
-    query: BaseQueryDto<ChangesEntity>,
-    sourceId: NonNullable<ChangesEntity["sourceId"]>,
-  ): Promise<IFindAllResponse<ChangesEntity>> {
-    return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
-  }
-
   /** Find changes by successor feature id, paged by the shared query. */
   async findBySuccessorFeature(
     query: BaseQueryDto<ChangesEntity>,

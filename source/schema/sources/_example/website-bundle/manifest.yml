@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/source.schema.json
 # Example website source: a small publications page on a government site.
-code: pg.src.wbs.ke.example-ministry
+code: pg.src.srs.ke.example-ministry
 kind: website
 title: Example ministry publications
 description: Documents the ministry publishes under /publications/.

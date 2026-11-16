@@ -53,12 +53,6 @@ export class ChangesDto {
   predecessorFeatureId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceId !== null)
-  @IsString()
-  @IsUUID()
-  sourceId?: Id | null;
-
-  @IsOptional()
   @ValidateIf((object) => object.successorFeatureId !== null)
   @IsString()
   @IsUUID()

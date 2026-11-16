@@ -1,0 +1,30 @@
+dataset_code,input_capture_code,role,method
+ke.geo.constituencies.features,cap-ocha-ken-admin-boundaries,raw,"Names, place codes and parent counties read from the workbook's attribute sheets."
+ke.geo.constituencies.features,cap-geoboundaries-ken-adm2-simplified,raw,geoBoundaries ids matched by name to the constituencies.
+ke.geo.constituencies.identifiers,cap-ocha-ken-admin-boundaries,raw,"Names, place codes and parent counties read from the workbook's attribute sheets."
+ke.geo.constituencies.identifiers,cap-geoboundaries-ken-adm2-simplified,raw,geoBoundaries ids matched by name to the constituencies.
+ke.geo.constituencies.names,cap-ocha-ken-admin-boundaries,raw,"Names, place codes and parent counties read from the workbook's attribute sheets."
+ke.geo.constituencies.names,cap-geoboundaries-ken-adm2-simplified,raw,geoBoundaries ids matched by name to the constituencies.
+ke.geo.constituencies.relationships,cap-ocha-ken-admin-boundaries,raw,"Names, place codes and parent counties read from the workbook's attribute sheets."
+ke.geo.constituencies.relationships,cap-geoboundaries-ken-adm2-simplified,raw,geoBoundaries ids matched by name to the constituencies.
+ke.geo.counties.features,cap-ocha-ken-admin-boundaries,raw,"Names, place codes and parent counties read from the workbook's attribute sheets."
+ke.geo.counties.features,cap-geoboundaries-ken-adm1-simplified,raw,geoBoundaries ids and ISO 3166-2 codes read from the shape properties.
+ke.geo.counties.identifiers,cap-ocha-ken-admin-boundaries,raw,"Names, place codes and parent counties read from the workbook's attribute sheets."
+ke.geo.counties.identifiers,cap-geoboundaries-ken-adm1-simplified,raw,geoBoundaries ids and ISO 3166-2 codes read from the shape properties.
+ke.geo.counties.names,cap-ocha-ken-admin-boundaries,raw,"Names, place codes and parent counties read from the workbook's attribute sheets."
+ke.geo.counties.names,cap-geoboundaries-ken-adm1-simplified,raw,geoBoundaries ids and ISO 3166-2 codes read from the shape properties.
+ke.geo.counties.relationships,cap-ocha-ken-admin-boundaries,raw,"Names, place codes and parent counties read from the workbook's attribute sheets."
+ke.geo.counties.relationships,cap-geoboundaries-ken-adm1-simplified,raw,geoBoundaries ids and ISO 3166-2 codes read from the shape properties.
+ke.geo.sub-counties.features,cap-redcross-ke-subcounty-zip,raw,"Sub-county names, counties and DHIS2 ids read from the shapefile table."
+ke.geo.sub-counties.identifiers,cap-redcross-ke-subcounty-zip,raw,"Sub-county names, counties and DHIS2 ids read from the shapefile table."
+ke.geo.sub-counties.names,cap-redcross-ke-subcounty-zip,raw,"Sub-county names, counties and DHIS2 ids read from the shapefile table."
+ke.geo.sub-counties.relationships,cap-redcross-ke-subcounty-zip,raw,"Sub-county names, counties and DHIS2 ids read from the shapefile table."
+ke.geo.wards.features,cap-iebc-p-codes,raw,"County, constituency and ward codes and names read row by row; the six Diaspora and Prisons rows were left out."
+ke.geo.wards.features,cap-geoboundaries-ken-adm3-simplified,raw,geoBoundaries ids and cased names matched to wards by name within the constituency.
+ke.geo.wards.identifiers,cap-iebc-p-codes,raw,"County, constituency and ward codes and names read row by row; the six Diaspora and Prisons rows were left out."
+ke.geo.wards.identifiers,cap-geoboundaries-ken-adm3-simplified,raw,geoBoundaries ids and cased names matched to wards by name within the constituency.
+ke.geo.wards.names,cap-iebc-p-codes,raw,"County, constituency and ward codes and names read row by row; the six Diaspora and Prisons rows were left out."
+ke.geo.wards.names,cap-geoboundaries-ken-adm3-simplified,raw,geoBoundaries ids and cased names matched to wards by name within the constituency.
+ke.geo.wards.relationships,cap-iebc-p-codes,raw,"County, constituency and ward codes and names read row by row; the six Diaspora and Prisons rows were left out."
+ke.geo.wards.relationships,cap-geoboundaries-ken-adm3-simplified,raw,geoBoundaries ids and cased names matched to wards by name within the constituency.
+ke.geo.wards.relationships,cap-redcross-kenya-wards-zip,raw,Ward to sub-county links matched by county and ward name.

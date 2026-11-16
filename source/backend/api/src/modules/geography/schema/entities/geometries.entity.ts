@@ -10,7 +10,6 @@ import {
 } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
-import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import type { GeometryArea } from "#/modules/geography/schema/type/geometry-area.type.ts";
 import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -130,13 +129,6 @@ export class GeometriesEntity {
 
   @Column({ name: "revision", type: "integer" })
   revision!: PositiveInteger;
-
-  @Column({ name: "source_id", type: "uuid", nullable: true })
-  sourceId?: Id | null;
-
-  @ManyToOne(() => SourcesEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "source_id" })
-  source?: Relation<SourcesEntity>;
 
   @Column({ name: "srid", type: "integer" })
   srid!: PositiveInteger;

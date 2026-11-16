@@ -12,7 +12,6 @@ import {
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { UnitEntity } from "#/modules/reference/schema/entities/unit.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
-import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -30,7 +29,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["representationId"])
 @Index(["coverageFeatureId"])
 @Check("chk_datasets_dataset_resolution_must_be_positive", `resolution = null OR resolution > 0`)
-export class DatasetsEntity {
+export class GeographyDatasetsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
@@ -83,13 +82,6 @@ export class DatasetsEntity {
   @ManyToOne(() => UnitEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "resolution_unit_id" })
   resolutionUnit?: Relation<UnitEntity>;
-
-  @Column({ name: "source_id", type: "uuid", nullable: true })
-  sourceId?: Id | null;
-
-  @ManyToOne(() => SourcesEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "source_id" })
-  source?: Relation<SourcesEntity>;
 
   @Column({ name: "subject_id", type: "uuid" })
   subjectId!: Id;

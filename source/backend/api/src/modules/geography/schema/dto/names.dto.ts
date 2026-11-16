@@ -54,12 +54,6 @@ export class NamesDto {
   @IsUUID()
   nameKindId!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.sourceId !== null)
-  @IsString()
-  @IsUUID()
-  sourceId?: Id | null;
-
   @IsISO8601({})
   updatedAt!: Instant;
 

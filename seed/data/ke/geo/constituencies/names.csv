@@ -1,291 +1,291 @@
-feature_code,name,name_kind_code,language_tag,source_code
-ke.mombasa.changamwe,Changamwe,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mombasa.jomvu,Jomvu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mombasa.kisauni,Kisauni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mombasa.nyali,Nyali,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mombasa.likoni,Likoni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mombasa.mvita,Mvita,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kwale.msambweni,Msambweni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kwale.lunga-lunga,Lunga Lunga,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kwale.matuga,Matuga,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kwale.kinango,Kinango,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kilifi.kilifi-north,Kilifi North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kilifi.kilifi-south,Kilifi South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kilifi.kaloleni,Kaloleni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kilifi.rabai,Rabai,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kilifi.ganze,Ganze,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kilifi.malindi,Malindi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kilifi.magarini,Magarini,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.tana-river.garsen,Garsen,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.tana-river.galole,Galole,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.tana-river.bura,Bura,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.lamu.lamu-east,Lamu East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.lamu.lamu-west,Lamu West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.taita-taveta.taveta,Taveta,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.taita-taveta.wundanyi,Wundanyi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.taita-taveta.mwatate,Mwatate,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.taita-taveta.voi,Voi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.garissa.dujis,Dujis,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.garissa.balambala,Balambala,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.garissa.lagdera,Lagdera,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.garissa.dadaab,Dadaab,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.garissa.fafi,Fafi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.garissa.ijara,Ijara,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.wajir.wajir-north,Wajir North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.wajir.wajir-east,Wajir East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.wajir.tarbaj,Tarbaj,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.wajir.wajir-west,Wajir West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.wajir.eldas,Eldas,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.wajir.wajir-south,Wajir South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mandera.mandera-west,Mandera West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mandera.banissa,Banissa,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mandera.mandera-north,Mandera North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mandera.mandera-south,Mandera South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mandera.mandera-east,Mandera East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.mandera.lafey,Lafey,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.marsabit.moyale,Moyale,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.marsabit.north-horr,North Horr,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.marsabit.saku,Saku,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.marsabit.laisamis,Laisamis,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.isiolo.isiolo-north,Isiolo North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.isiolo.isiolo-south,Isiolo South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru.igembe-south,Igembe South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru.igembe-central,Igembe Central,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru.igembe-north,Igembe North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru.tigania-west,Tigania West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru.tigania-east,Tigania East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru.north-imenti,North Imenti,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru.buuri,Buuri,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru.cental-imenti,Cental Imenti,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.meru.south-imenti,South Imenti,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.tharaka-nithi.nithi,Nithi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.tharaka-nithi.maara,Maara,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.tharaka-nithi.tharaka,Tharaka,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.embu.manyatta,Manyatta,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.embu.runyenjes,Runyenjes,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.embu.gachoka,Gachoka,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.embu.siakago,Siakago,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kitui.mwingi-north,Mwingi North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kitui.mwingi-west,Mwingi West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kitui.mwingi-east,Mwingi East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kitui.kitui-west,Kitui West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kitui.kitui-rural,Kitui Rural,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kitui.kitui-central,Kitui Central,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kitui.kitui-east,Kitui East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kitui.kitui-south,Kitui South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.machakos.masinga,Masinga,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.machakos.yatta,Yatta,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.machakos.kangundo,Kangundo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.machakos.matungulu,Matungulu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.machakos.kathiani,Kathiani,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.machakos.mavoko,Mavoko,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.machakos.machakos-town,Machakos Town,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.machakos.mwala,Mwala,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.makueni.mbooni,Mbooni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.makueni.kilome,Kilome,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.makueni.kaiti,Kaiti,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.makueni.makueni,Makueni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.makueni.kibwezi-west,Kibwezi West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.makueni.kibwezi-east,Kibwezi East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyandarua.kinangop,Kinangop,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyandarua.kipipiri,Kipipiri,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyandarua.ol-kalou,Ol Kalou,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyandarua.ol-jorok,Ol Jorok,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyandarua.ndaragwa,Ndaragwa,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyeri.tetu,Tetu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyeri.kieni,Kieni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyeri.mathira,Mathira,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyeri.othaya,Othaya,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyeri.mukurweni,Mukurweni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyeri.nyeri-town,Nyeri Town,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kirinyaga.mwea,Mwea,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kirinyaga.gichugu,Gichugu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kirinyaga.ndia,Ndia,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kirinyaga.kirinyaga-central,Kirinyaga Central,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.muranga.kangema,Kangema,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.muranga.mathioya,Mathioya,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.muranga.kiharu,Kiharu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.muranga.kigumo,Kigumo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.muranga.maragwa,Maragwa,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.muranga.kandara,Kandara,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.muranga.gatanga,Gatanga,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.gatundu-south,Gatundu South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.gatundu-north,Gatundu North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.juja,Juja,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.thika-town,Thika Town,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.ruiru,Ruiru,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.githunguri,Githunguri,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.kiambu,Kiambu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.kiambaa,Kiambaa,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.kabete,Kabete,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.kikuyu,Kikuyu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.limuru,Limuru,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kiambu.lari,Lari,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.turkana.turkana-north,Turkana North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.turkana.turkana-west,Turkana West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.turkana.turkana-central,Turkana Central,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.turkana.loima,Loima,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.turkana.turkana-south,Turkana South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.turkana.turkana-east,Turkana East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.west-pokot.kapenguria,Kapenguria,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.west-pokot.sigor,Sigor,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.west-pokot.kacheliba,Kacheliba,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.west-pokot.pokot-south,Pokot South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.samburu.samburu-west,Samburu West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.samburu.samburu-north,Samburu North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.samburu.samburu-east,Samburu East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.trans-nzoia.kwanza,Kwanza,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.trans-nzoia.endebess,Endebess,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.trans-nzoia.saboti,Saboti,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.trans-nzoia.kiminini,Kiminini,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.trans-nzoia.cherangany,Cherangany,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.uasin-gishu.soy,Soy,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.uasin-gishu.turbo,Turbo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.uasin-gishu.moiben,Moiben,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.uasin-gishu.ainabkoi,Ainabkoi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.uasin-gishu.kapseret,Kapseret,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.uasin-gishu.kesses,Kesses,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.elgeyo-marakwet.marakwet-east,Marakwet East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.elgeyo-marakwet.marakwet-west,Marakwet West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.elgeyo-marakwet.keiyo-north,Keiyo North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.elgeyo-marakwet.keiyo-south,Keiyo South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nandi.tinderet,Tinderet,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nandi.aldai,Aldai,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nandi.nandi-hills,Nandi Hills,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nandi.chesumei,Chesumei,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nandi.emgwen,Emgwen,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nandi.mosop,Mosop,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.baringo.tiaty,Tiaty,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.baringo.baringo-north,Baringo North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.baringo.baringo-central,Baringo Central,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.baringo.baringo-south,Baringo South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.baringo.mogotio,Mogotio,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.baringo.eldama-ravine,Eldama Ravine,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.laikipia.laikipia-west,Laikipia West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.laikipia.laikipia-east,Laikipia East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.laikipia.laikipia-north,Laikipia North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.molo,Molo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.njoro,Njoro,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.naivasha,Naivasha,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.gilgil,Gilgil,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.kuresoi-south,Kuresoi South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.kuresoi-north,Kuresoi North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.subukia,Subukia,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.rongai,Rongai,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.bahati,Bahati,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.nakuru-town-west,Nakuru Town West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nakuru.nakuru-town-east,Nakuru Town East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.narok.kilgoris,Kilgoris,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.narok.emurua-dikirr,Emurua Dikirr,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.narok.narok-north,Narok North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.narok.narok-east,Narok East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.narok.narok-south,Narok South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.narok.narok-west,Narok West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kajiado.kajiado-north,Kajiado North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kajiado.kajiado-central,Kajiado Central,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kajiado.kajiado-west,Kajiado West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kajiado.kajiado-east,Kajiado East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kajiado.kajiado-south,Kajiado South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kericho.kipkelion-east,Kipkelion East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kericho.kipkelion-west,Kipkelion West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kericho.ainamoi,Ainamoi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kericho.buret,Buret,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kericho.belgut,Belgut,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kericho.sigowet-soin,Sigowet/Soin,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bomet.sotik,Sotik,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bomet.chepalungu,Chepalungu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bomet.bomet-east,Bomet East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bomet.bomet-central,Bomet Central,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bomet.konoin,Konoin,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.lugari,Lugari,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.likuyani,Likuyani,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.malava,Malava,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.lurambi,Lurambi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.navakholo,Navakholo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.mumias-west,Mumias West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.mumias-east,Mumias East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.matungu,Matungu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.butere,Butere,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.khwisero,Khwisero,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.shinyalu,Shinyalu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kakamega.ikolomani,Ikolomani,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.vihiga.vihiga,Vihiga,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.vihiga.sabatia,Sabatia,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.vihiga.hamisi,Hamisi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.vihiga.luanda,Luanda,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.vihiga.emuhaya,Emuhaya,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma.mt-elgon,Mt. Elgon,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma.sirisia,Sirisia,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma.kabuchai,Kabuchai,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma.bumula,Bumula,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma.kanduyi,Kanduyi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma.webuye-east,Webuye East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma.webuye-west,Webuye West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma.kimilili,Kimilili,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.bungoma.tongaren,Tongaren,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.busia.teso-north,Teso North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.busia.teso-south,Teso South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.busia.nambale,Nambale,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.busia.matayos,Matayos,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.busia.butula,Butula,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.busia.funyula,Funyula,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.busia.budalangi,Budalangi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.siaya.ugenya,Ugenya,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.siaya.ugunja,Ugunja,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.siaya.alego-usonga,Alego Usonga,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.siaya.gem,Gem,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.siaya.bondo,Bondo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.siaya.rarieda,Rarieda,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisumu.kisumu-east,Kisumu East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisumu.kisumu-west,Kisumu West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisumu.kisumu-central,Kisumu Central,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisumu.seme,Seme,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisumu.nyando,Nyando,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisumu.muhoroni,Muhoroni,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisumu.nyakach,Nyakach,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.homa-bay.kasipul,Kasipul,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.homa-bay.kabondo-kasipul,Kabondo Kasipul,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.homa-bay.karachuonyo,Karachuonyo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.homa-bay.rangwe,Rangwe,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.homa-bay.homa-bay,Homa Bay,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.homa-bay.ndhiwa,Ndhiwa,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.homa-bay.suba-north,Suba North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.homa-bay.suba-south,Suba South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.migori.rongo,Rongo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.migori.awendo,Awendo,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.migori.suna-east,Suna East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.migori.suna-west,Suna West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.migori.uriri,Uriri,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.migori.nyatike,Nyatike,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.migori.kuria-west,Kuria West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.migori.kuria-east,Kuria East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii.bonchari,Bonchari,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii.south-mugirango,South Mugirango,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii.bomachoge-borabu,Bomachoge Borabu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii.bobasi,Bobasi,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii.bomachoge-chache,Bomachoge Chache,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii.nyaribari-masaba,Nyaribari Masaba,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii.nyaribari-chache,Nyaribari Chache,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii.kitutu-chache-north,Kitutu Chache North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.kisii.kitutu-chache-south,Kitutu Chache South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyamira.kitutu-masaba,Kitutu Masaba,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyamira.west-mugirango,West Mugirango,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyamira.north-mugirango,North Mugirango,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nyamira.borabu,Borabu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.westlands,Westlands,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.kilimani,Kilimani,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.dagoretti,Dagoretti,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.langata,Langata,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.kibra,Kibra,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.roysambu,Roysambu,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.kasarani,Kasarani,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.ruaraka,Ruaraka,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.embakasi-south,Embakasi South,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.embakasi-north,Embakasi North,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.embakasi-central,Embakasi Central,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.embakasi-east,Embakasi East,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.embakasi-west,Embakasi West,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.makadara,Makadara,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.kamukunji,Kamukunji,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.starehe,Starehe,geo.name.kind.official,en,ocha-cod-ab-ken
-ke.nairobi.mathare,Mathare,geo.name.kind.official,en,ocha-cod-ab-ken
+feature_code,name,name_kind_code,language_tag
+ke.mombasa.changamwe,Changamwe,geo.name.kind.official,en
+ke.mombasa.jomvu,Jomvu,geo.name.kind.official,en
+ke.mombasa.kisauni,Kisauni,geo.name.kind.official,en
+ke.mombasa.nyali,Nyali,geo.name.kind.official,en
+ke.mombasa.likoni,Likoni,geo.name.kind.official,en
+ke.mombasa.mvita,Mvita,geo.name.kind.official,en
+ke.kwale.msambweni,Msambweni,geo.name.kind.official,en
+ke.kwale.lunga-lunga,Lunga Lunga,geo.name.kind.official,en
+ke.kwale.matuga,Matuga,geo.name.kind.official,en
+ke.kwale.kinango,Kinango,geo.name.kind.official,en
+ke.kilifi.kilifi-north,Kilifi North,geo.name.kind.official,en
+ke.kilifi.kilifi-south,Kilifi South,geo.name.kind.official,en
+ke.kilifi.kaloleni,Kaloleni,geo.name.kind.official,en
+ke.kilifi.rabai,Rabai,geo.name.kind.official,en
+ke.kilifi.ganze,Ganze,geo.name.kind.official,en
+ke.kilifi.malindi,Malindi,geo.name.kind.official,en
+ke.kilifi.magarini,Magarini,geo.name.kind.official,en
+ke.tana-river.garsen,Garsen,geo.name.kind.official,en
+ke.tana-river.galole,Galole,geo.name.kind.official,en
+ke.tana-river.bura,Bura,geo.name.kind.official,en
+ke.lamu.lamu-east,Lamu East,geo.name.kind.official,en
+ke.lamu.lamu-west,Lamu West,geo.name.kind.official,en
+ke.taita-taveta.taveta,Taveta,geo.name.kind.official,en
+ke.taita-taveta.wundanyi,Wundanyi,geo.name.kind.official,en
+ke.taita-taveta.mwatate,Mwatate,geo.name.kind.official,en
+ke.taita-taveta.voi,Voi,geo.name.kind.official,en
+ke.garissa.dujis,Dujis,geo.name.kind.official,en
+ke.garissa.balambala,Balambala,geo.name.kind.official,en
+ke.garissa.lagdera,Lagdera,geo.name.kind.official,en
+ke.garissa.dadaab,Dadaab,geo.name.kind.official,en
+ke.garissa.fafi,Fafi,geo.name.kind.official,en
+ke.garissa.ijara,Ijara,geo.name.kind.official,en
+ke.wajir.wajir-north,Wajir North,geo.name.kind.official,en
+ke.wajir.wajir-east,Wajir East,geo.name.kind.official,en
+ke.wajir.tarbaj,Tarbaj,geo.name.kind.official,en
+ke.wajir.wajir-west,Wajir West,geo.name.kind.official,en
+ke.wajir.eldas,Eldas,geo.name.kind.official,en
+ke.wajir.wajir-south,Wajir South,geo.name.kind.official,en
+ke.mandera.mandera-west,Mandera West,geo.name.kind.official,en
+ke.mandera.banissa,Banissa,geo.name.kind.official,en
+ke.mandera.mandera-north,Mandera North,geo.name.kind.official,en
+ke.mandera.mandera-south,Mandera South,geo.name.kind.official,en
+ke.mandera.mandera-east,Mandera East,geo.name.kind.official,en
+ke.mandera.lafey,Lafey,geo.name.kind.official,en
+ke.marsabit.moyale,Moyale,geo.name.kind.official,en
+ke.marsabit.north-horr,North Horr,geo.name.kind.official,en
+ke.marsabit.saku,Saku,geo.name.kind.official,en
+ke.marsabit.laisamis,Laisamis,geo.name.kind.official,en
+ke.isiolo.isiolo-north,Isiolo North,geo.name.kind.official,en
+ke.isiolo.isiolo-south,Isiolo South,geo.name.kind.official,en
+ke.meru.igembe-south,Igembe South,geo.name.kind.official,en
+ke.meru.igembe-central,Igembe Central,geo.name.kind.official,en
+ke.meru.igembe-north,Igembe North,geo.name.kind.official,en
+ke.meru.tigania-west,Tigania West,geo.name.kind.official,en
+ke.meru.tigania-east,Tigania East,geo.name.kind.official,en
+ke.meru.north-imenti,North Imenti,geo.name.kind.official,en
+ke.meru.buuri,Buuri,geo.name.kind.official,en
+ke.meru.cental-imenti,Cental Imenti,geo.name.kind.official,en
+ke.meru.south-imenti,South Imenti,geo.name.kind.official,en
+ke.tharaka-nithi.nithi,Nithi,geo.name.kind.official,en
+ke.tharaka-nithi.maara,Maara,geo.name.kind.official,en
+ke.tharaka-nithi.tharaka,Tharaka,geo.name.kind.official,en
+ke.embu.manyatta,Manyatta,geo.name.kind.official,en
+ke.embu.runyenjes,Runyenjes,geo.name.kind.official,en
+ke.embu.gachoka,Gachoka,geo.name.kind.official,en
+ke.embu.siakago,Siakago,geo.name.kind.official,en
+ke.kitui.mwingi-north,Mwingi North,geo.name.kind.official,en
+ke.kitui.mwingi-west,Mwingi West,geo.name.kind.official,en
+ke.kitui.mwingi-east,Mwingi East,geo.name.kind.official,en
+ke.kitui.kitui-west,Kitui West,geo.name.kind.official,en
+ke.kitui.kitui-rural,Kitui Rural,geo.name.kind.official,en
+ke.kitui.kitui-central,Kitui Central,geo.name.kind.official,en
+ke.kitui.kitui-east,Kitui East,geo.name.kind.official,en
+ke.kitui.kitui-south,Kitui South,geo.name.kind.official,en
+ke.machakos.masinga,Masinga,geo.name.kind.official,en
+ke.machakos.yatta,Yatta,geo.name.kind.official,en
+ke.machakos.kangundo,Kangundo,geo.name.kind.official,en
+ke.machakos.matungulu,Matungulu,geo.name.kind.official,en
+ke.machakos.kathiani,Kathiani,geo.name.kind.official,en
+ke.machakos.mavoko,Mavoko,geo.name.kind.official,en
+ke.machakos.machakos-town,Machakos Town,geo.name.kind.official,en
+ke.machakos.mwala,Mwala,geo.name.kind.official,en
+ke.makueni.mbooni,Mbooni,geo.name.kind.official,en
+ke.makueni.kilome,Kilome,geo.name.kind.official,en
+ke.makueni.kaiti,Kaiti,geo.name.kind.official,en
+ke.makueni.makueni,Makueni,geo.name.kind.official,en
+ke.makueni.kibwezi-west,Kibwezi West,geo.name.kind.official,en
+ke.makueni.kibwezi-east,Kibwezi East,geo.name.kind.official,en
+ke.nyandarua.kinangop,Kinangop,geo.name.kind.official,en
+ke.nyandarua.kipipiri,Kipipiri,geo.name.kind.official,en
+ke.nyandarua.ol-kalou,Ol Kalou,geo.name.kind.official,en
+ke.nyandarua.ol-jorok,Ol Jorok,geo.name.kind.official,en
+ke.nyandarua.ndaragwa,Ndaragwa,geo.name.kind.official,en
+ke.nyeri.tetu,Tetu,geo.name.kind.official,en
+ke.nyeri.kieni,Kieni,geo.name.kind.official,en
+ke.nyeri.mathira,Mathira,geo.name.kind.official,en
+ke.nyeri.othaya,Othaya,geo.name.kind.official,en
+ke.nyeri.mukurweni,Mukurweni,geo.name.kind.official,en
+ke.nyeri.nyeri-town,Nyeri Town,geo.name.kind.official,en
+ke.kirinyaga.mwea,Mwea,geo.name.kind.official,en
+ke.kirinyaga.gichugu,Gichugu,geo.name.kind.official,en
+ke.kirinyaga.ndia,Ndia,geo.name.kind.official,en
+ke.kirinyaga.kirinyaga-central,Kirinyaga Central,geo.name.kind.official,en
+ke.muranga.kangema,Kangema,geo.name.kind.official,en
+ke.muranga.mathioya,Mathioya,geo.name.kind.official,en
+ke.muranga.kiharu,Kiharu,geo.name.kind.official,en
+ke.muranga.kigumo,Kigumo,geo.name.kind.official,en
+ke.muranga.maragwa,Maragwa,geo.name.kind.official,en
+ke.muranga.kandara,Kandara,geo.name.kind.official,en
+ke.muranga.gatanga,Gatanga,geo.name.kind.official,en
+ke.kiambu.gatundu-south,Gatundu South,geo.name.kind.official,en
+ke.kiambu.gatundu-north,Gatundu North,geo.name.kind.official,en
+ke.kiambu.juja,Juja,geo.name.kind.official,en
+ke.kiambu.thika-town,Thika Town,geo.name.kind.official,en
+ke.kiambu.ruiru,Ruiru,geo.name.kind.official,en
+ke.kiambu.githunguri,Githunguri,geo.name.kind.official,en
+ke.kiambu.kiambu,Kiambu,geo.name.kind.official,en
+ke.kiambu.kiambaa,Kiambaa,geo.name.kind.official,en
+ke.kiambu.kabete,Kabete,geo.name.kind.official,en
+ke.kiambu.kikuyu,Kikuyu,geo.name.kind.official,en
+ke.kiambu.limuru,Limuru,geo.name.kind.official,en
+ke.kiambu.lari,Lari,geo.name.kind.official,en
+ke.turkana.turkana-north,Turkana North,geo.name.kind.official,en
+ke.turkana.turkana-west,Turkana West,geo.name.kind.official,en
+ke.turkana.turkana-central,Turkana Central,geo.name.kind.official,en
+ke.turkana.loima,Loima,geo.name.kind.official,en
+ke.turkana.turkana-south,Turkana South,geo.name.kind.official,en
+ke.turkana.turkana-east,Turkana East,geo.name.kind.official,en
+ke.west-pokot.kapenguria,Kapenguria,geo.name.kind.official,en
+ke.west-pokot.sigor,Sigor,geo.name.kind.official,en
+ke.west-pokot.kacheliba,Kacheliba,geo.name.kind.official,en
+ke.west-pokot.pokot-south,Pokot South,geo.name.kind.official,en
+ke.samburu.samburu-west,Samburu West,geo.name.kind.official,en
+ke.samburu.samburu-north,Samburu North,geo.name.kind.official,en
+ke.samburu.samburu-east,Samburu East,geo.name.kind.official,en
+ke.trans-nzoia.kwanza,Kwanza,geo.name.kind.official,en
+ke.trans-nzoia.endebess,Endebess,geo.name.kind.official,en
+ke.trans-nzoia.saboti,Saboti,geo.name.kind.official,en
+ke.trans-nzoia.kiminini,Kiminini,geo.name.kind.official,en
+ke.trans-nzoia.cherangany,Cherangany,geo.name.kind.official,en
+ke.uasin-gishu.soy,Soy,geo.name.kind.official,en
+ke.uasin-gishu.turbo,Turbo,geo.name.kind.official,en
+ke.uasin-gishu.moiben,Moiben,geo.name.kind.official,en
+ke.uasin-gishu.ainabkoi,Ainabkoi,geo.name.kind.official,en
+ke.uasin-gishu.kapseret,Kapseret,geo.name.kind.official,en
+ke.uasin-gishu.kesses,Kesses,geo.name.kind.official,en
+ke.elgeyo-marakwet.marakwet-east,Marakwet East,geo.name.kind.official,en
+ke.elgeyo-marakwet.marakwet-west,Marakwet West,geo.name.kind.official,en
+ke.elgeyo-marakwet.keiyo-north,Keiyo North,geo.name.kind.official,en
+ke.elgeyo-marakwet.keiyo-south,Keiyo South,geo.name.kind.official,en
+ke.nandi.tinderet,Tinderet,geo.name.kind.official,en
+ke.nandi.aldai,Aldai,geo.name.kind.official,en
+ke.nandi.nandi-hills,Nandi Hills,geo.name.kind.official,en
+ke.nandi.chesumei,Chesumei,geo.name.kind.official,en
+ke.nandi.emgwen,Emgwen,geo.name.kind.official,en
+ke.nandi.mosop,Mosop,geo.name.kind.official,en
+ke.baringo.tiaty,Tiaty,geo.name.kind.official,en
+ke.baringo.baringo-north,Baringo North,geo.name.kind.official,en
+ke.baringo.baringo-central,Baringo Central,geo.name.kind.official,en
+ke.baringo.baringo-south,Baringo South,geo.name.kind.official,en
+ke.baringo.mogotio,Mogotio,geo.name.kind.official,en
+ke.baringo.eldama-ravine,Eldama Ravine,geo.name.kind.official,en
+ke.laikipia.laikipia-west,Laikipia West,geo.name.kind.official,en
+ke.laikipia.laikipia-east,Laikipia East,geo.name.kind.official,en
+ke.laikipia.laikipia-north,Laikipia North,geo.name.kind.official,en
+ke.nakuru.molo,Molo,geo.name.kind.official,en
+ke.nakuru.njoro,Njoro,geo.name.kind.official,en
+ke.nakuru.naivasha,Naivasha,geo.name.kind.official,en
+ke.nakuru.gilgil,Gilgil,geo.name.kind.official,en
+ke.nakuru.kuresoi-south,Kuresoi South,geo.name.kind.official,en
+ke.nakuru.kuresoi-north,Kuresoi North,geo.name.kind.official,en
+ke.nakuru.subukia,Subukia,geo.name.kind.official,en
+ke.nakuru.rongai,Rongai,geo.name.kind.official,en
+ke.nakuru.bahati,Bahati,geo.name.kind.official,en
+ke.nakuru.nakuru-town-west,Nakuru Town West,geo.name.kind.official,en
+ke.nakuru.nakuru-town-east,Nakuru Town East,geo.name.kind.official,en
+ke.narok.kilgoris,Kilgoris,geo.name.kind.official,en
+ke.narok.emurua-dikirr,Emurua Dikirr,geo.name.kind.official,en
+ke.narok.narok-north,Narok North,geo.name.kind.official,en
+ke.narok.narok-east,Narok East,geo.name.kind.official,en
+ke.narok.narok-south,Narok South,geo.name.kind.official,en
+ke.narok.narok-west,Narok West,geo.name.kind.official,en
+ke.kajiado.kajiado-north,Kajiado North,geo.name.kind.official,en
+ke.kajiado.kajiado-central,Kajiado Central,geo.name.kind.official,en
+ke.kajiado.kajiado-west,Kajiado West,geo.name.kind.official,en
+ke.kajiado.kajiado-east,Kajiado East,geo.name.kind.official,en
+ke.kajiado.kajiado-south,Kajiado South,geo.name.kind.official,en
+ke.kericho.kipkelion-east,Kipkelion East,geo.name.kind.official,en
+ke.kericho.kipkelion-west,Kipkelion West,geo.name.kind.official,en
+ke.kericho.ainamoi,Ainamoi,geo.name.kind.official,en
+ke.kericho.buret,Buret,geo.name.kind.official,en
+ke.kericho.belgut,Belgut,geo.name.kind.official,en
+ke.kericho.sigowet-soin,Sigowet/Soin,geo.name.kind.official,en
+ke.bomet.sotik,Sotik,geo.name.kind.official,en
+ke.bomet.chepalungu,Chepalungu,geo.name.kind.official,en
+ke.bomet.bomet-east,Bomet East,geo.name.kind.official,en
+ke.bomet.bomet-central,Bomet Central,geo.name.kind.official,en
+ke.bomet.konoin,Konoin,geo.name.kind.official,en
+ke.kakamega.lugari,Lugari,geo.name.kind.official,en
+ke.kakamega.likuyani,Likuyani,geo.name.kind.official,en
+ke.kakamega.malava,Malava,geo.name.kind.official,en
+ke.kakamega.lurambi,Lurambi,geo.name.kind.official,en
+ke.kakamega.navakholo,Navakholo,geo.name.kind.official,en
+ke.kakamega.mumias-west,Mumias West,geo.name.kind.official,en
+ke.kakamega.mumias-east,Mumias East,geo.name.kind.official,en
+ke.kakamega.matungu,Matungu,geo.name.kind.official,en
+ke.kakamega.butere,Butere,geo.name.kind.official,en
+ke.kakamega.khwisero,Khwisero,geo.name.kind.official,en
+ke.kakamega.shinyalu,Shinyalu,geo.name.kind.official,en
+ke.kakamega.ikolomani,Ikolomani,geo.name.kind.official,en
+ke.vihiga.vihiga,Vihiga,geo.name.kind.official,en
+ke.vihiga.sabatia,Sabatia,geo.name.kind.official,en
+ke.vihiga.hamisi,Hamisi,geo.name.kind.official,en
+ke.vihiga.luanda,Luanda,geo.name.kind.official,en
+ke.vihiga.emuhaya,Emuhaya,geo.name.kind.official,en
+ke.bungoma.mt-elgon,Mt. Elgon,geo.name.kind.official,en
+ke.bungoma.sirisia,Sirisia,geo.name.kind.official,en
+ke.bungoma.kabuchai,Kabuchai,geo.name.kind.official,en
+ke.bungoma.bumula,Bumula,geo.name.kind.official,en
+ke.bungoma.kanduyi,Kanduyi,geo.name.kind.official,en
+ke.bungoma.webuye-east,Webuye East,geo.name.kind.official,en
+ke.bungoma.webuye-west,Webuye West,geo.name.kind.official,en
+ke.bungoma.kimilili,Kimilili,geo.name.kind.official,en
+ke.bungoma.tongaren,Tongaren,geo.name.kind.official,en
+ke.busia.teso-north,Teso North,geo.name.kind.official,en
+ke.busia.teso-south,Teso South,geo.name.kind.official,en
+ke.busia.nambale,Nambale,geo.name.kind.official,en
+ke.busia.matayos,Matayos,geo.name.kind.official,en
+ke.busia.butula,Butula,geo.name.kind.official,en
+ke.busia.funyula,Funyula,geo.name.kind.official,en
+ke.busia.budalangi,Budalangi,geo.name.kind.official,en
+ke.siaya.ugenya,Ugenya,geo.name.kind.official,en
+ke.siaya.ugunja,Ugunja,geo.name.kind.official,en
+ke.siaya.alego-usonga,Alego Usonga,geo.name.kind.official,en
+ke.siaya.gem,Gem,geo.name.kind.official,en
+ke.siaya.bondo,Bondo,geo.name.kind.official,en
+ke.siaya.rarieda,Rarieda,geo.name.kind.official,en
+ke.kisumu.kisumu-east,Kisumu East,geo.name.kind.official,en
+ke.kisumu.kisumu-west,Kisumu West,geo.name.kind.official,en
+ke.kisumu.kisumu-central,Kisumu Central,geo.name.kind.official,en
+ke.kisumu.seme,Seme,geo.name.kind.official,en
+ke.kisumu.nyando,Nyando,geo.name.kind.official,en
+ke.kisumu.muhoroni,Muhoroni,geo.name.kind.official,en
+ke.kisumu.nyakach,Nyakach,geo.name.kind.official,en
+ke.homa-bay.kasipul,Kasipul,geo.name.kind.official,en
+ke.homa-bay.kabondo-kasipul,Kabondo Kasipul,geo.name.kind.official,en
+ke.homa-bay.karachuonyo,Karachuonyo,geo.name.kind.official,en
+ke.homa-bay.rangwe,Rangwe,geo.name.kind.official,en
+ke.homa-bay.homa-bay,Homa Bay,geo.name.kind.official,en
+ke.homa-bay.ndhiwa,Ndhiwa,geo.name.kind.official,en
+ke.homa-bay.suba-north,Suba North,geo.name.kind.official,en
+ke.homa-bay.suba-south,Suba South,geo.name.kind.official,en
+ke.migori.rongo,Rongo,geo.name.kind.official,en
+ke.migori.awendo,Awendo,geo.name.kind.official,en
+ke.migori.suna-east,Suna East,geo.name.kind.official,en
+ke.migori.suna-west,Suna West,geo.name.kind.official,en
+ke.migori.uriri,Uriri,geo.name.kind.official,en
+ke.migori.nyatike,Nyatike,geo.name.kind.official,en
+ke.migori.kuria-west,Kuria West,geo.name.kind.official,en
+ke.migori.kuria-east,Kuria East,geo.name.kind.official,en
+ke.kisii.bonchari,Bonchari,geo.name.kind.official,en
+ke.kisii.south-mugirango,South Mugirango,geo.name.kind.official,en
+ke.kisii.bomachoge-borabu,Bomachoge Borabu,geo.name.kind.official,en
+ke.kisii.bobasi,Bobasi,geo.name.kind.official,en
+ke.kisii.bomachoge-chache,Bomachoge Chache,geo.name.kind.official,en
+ke.kisii.nyaribari-masaba,Nyaribari Masaba,geo.name.kind.official,en
+ke.kisii.nyaribari-chache,Nyaribari Chache,geo.name.kind.official,en
+ke.kisii.kitutu-chache-north,Kitutu Chache North,geo.name.kind.official,en
+ke.kisii.kitutu-chache-south,Kitutu Chache South,geo.name.kind.official,en
+ke.nyamira.kitutu-masaba,Kitutu Masaba,geo.name.kind.official,en
+ke.nyamira.west-mugirango,West Mugirango,geo.name.kind.official,en
+ke.nyamira.north-mugirango,North Mugirango,geo.name.kind.official,en
+ke.nyamira.borabu,Borabu,geo.name.kind.official,en
+ke.nairobi.westlands,Westlands,geo.name.kind.official,en
+ke.nairobi.kilimani,Kilimani,geo.name.kind.official,en
+ke.nairobi.dagoretti,Dagoretti,geo.name.kind.official,en
+ke.nairobi.langata,Langata,geo.name.kind.official,en
+ke.nairobi.kibra,Kibra,geo.name.kind.official,en
+ke.nairobi.roysambu,Roysambu,geo.name.kind.official,en
+ke.nairobi.kasarani,Kasarani,geo.name.kind.official,en
+ke.nairobi.ruaraka,Ruaraka,geo.name.kind.official,en
+ke.nairobi.embakasi-south,Embakasi South,geo.name.kind.official,en
+ke.nairobi.embakasi-north,Embakasi North,geo.name.kind.official,en
+ke.nairobi.embakasi-central,Embakasi Central,geo.name.kind.official,en
+ke.nairobi.embakasi-east,Embakasi East,geo.name.kind.official,en
+ke.nairobi.embakasi-west,Embakasi West,geo.name.kind.official,en
+ke.nairobi.makadara,Makadara,geo.name.kind.official,en
+ke.nairobi.kamukunji,Kamukunji,geo.name.kind.official,en
+ke.nairobi.starehe,Starehe,geo.name.kind.official,en
+ke.nairobi.mathare,Mathare,geo.name.kind.official,en

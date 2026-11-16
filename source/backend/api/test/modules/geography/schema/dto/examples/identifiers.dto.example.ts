@@ -5,7 +5,6 @@ import {
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
-import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
 /** The contract shape of Identifiers, for generated tests. */
 export const identifiersExample: ContractExample = contractExample({
@@ -52,12 +51,6 @@ export const identifiersExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", minLength: 1, maxLength: 255 },
-    },
-    {
-      name: "sourceId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "updatedAt",

@@ -11,7 +11,6 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
-import * as SourcesConfig from "#/modules/source/schema/types/sources/sources.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -36,7 +35,6 @@ import type {
 export const CHANGES_RELATION_KEYS = [
   "changeKind",
   "predecessorFeature",
-  "source",
   "successorFeature",
 ] as const satisfies readonly ChangesKey[];
 
@@ -52,7 +50,6 @@ export const CHANGES_SORTABLE_FIELDS = [
   "explanation",
   "id",
   "predecessorFeatureId",
-  "sourceId",
   "successorFeatureId",
   "transformationId",
   "updatedAt",
@@ -65,7 +62,6 @@ export const CHANGES_FILTERABLE_FIELDS = [
   "changeKindId",
   "id",
   "predecessorFeatureId",
-  "sourceId",
   "successorFeatureId",
   "transformationId",
 ] as const satisfies readonly ChangesKey[];
@@ -95,7 +91,6 @@ export const CHANGES_SELECTABLE_FIELDS = [
   "explanation",
   "id",
   "predecessorFeatureId",
-  "sourceId",
   "successorFeatureId",
   "transformationId",
   "updatedAt",
@@ -110,7 +105,6 @@ export const CHANGES_DEFAULT_SELECT_FIELDS = [
   "explanation",
   "id",
   "predecessorFeatureId",
-  "sourceId",
   "successorFeatureId",
   "transformationId",
   "updatedAt",
@@ -126,7 +120,6 @@ export const CHANGES_EDITABLE_FIELDS = [
   "effectiveOn",
   "explanation",
   "predecessorFeatureId",
-  "sourceId",
   "successorFeatureId",
   "transformationId",
 ] as const satisfies readonly ChangesKey[];
@@ -164,10 +157,6 @@ export const CHANGES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<ChangesRelationKey>().one(
     () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "predecessorFeature",
-  ),
-  Q.createRelationKeyMapper<ChangesRelationKey>().one(
-    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
-    "source",
   ),
   Q.createRelationKeyMapper<ChangesRelationKey>().one(
     () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,

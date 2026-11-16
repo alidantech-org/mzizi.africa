@@ -10,8 +10,8 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // RELATED ENTITY CONFIGS
 // ----------------------------------
 import * as DocumentsConfig from "#/modules/source/schema/types/documents/documents.config";
-import * as FileVersionsConfig from "#/modules/filesystem/schema/types/file-versions/file-versions.config";
 import * as ManifestReleasesConfig from "#/modules/source/schema/types/manifest-releases/manifest-releases.config";
+import * as PathsConfig from "#/modules/source/schema/types/paths/paths.config";
 import * as SourcesConfig from "#/modules/source/schema/types/sources/sources.config";
 
 // ----------------------------------
@@ -36,8 +36,8 @@ import type {
 
 export const CAPTURES_RELATION_KEYS = [
   "document",
-  "fileVersion",
   "manifestRelease",
+  "path",
   "source",
 ] as const satisfies readonly CapturesKey[];
 
@@ -46,13 +46,14 @@ export const CAPTURES_RELATION_KEYS = [
 // ----------------------------------
 
 export const CAPTURES_SORTABLE_FIELDS = [
-  "contentHash",
+  "code",
   "createdAt",
   "deletedAt",
   "documentId",
-  "fileVersionId",
   "id",
   "manifestReleaseId",
+  "originalUrl",
+  "pathId",
   "responseMetadata",
   "retrievedAt",
   "retrievedUrl",
@@ -61,13 +62,13 @@ export const CAPTURES_SORTABLE_FIELDS = [
   "version",
 ] as const satisfies readonly CapturesKey[];
 
-export const CAPTURES_SEARCHABLE_FIELDS = ["contentHash"] as const satisfies readonly CapturesKey[];
+export const CAPTURES_SEARCHABLE_FIELDS = ["code"] as const satisfies readonly CapturesKey[];
 
 export const CAPTURES_FILTERABLE_FIELDS = [
   "documentId",
-  "fileVersionId",
   "id",
   "manifestReleaseId",
+  "pathId",
   "sourceId",
 ] as const satisfies readonly CapturesKey[];
 
@@ -89,13 +90,14 @@ export const CAPTURES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<ICapture
 // ----------------------------------
 
 export const CAPTURES_SELECTABLE_FIELDS = [
-  "contentHash",
+  "code",
   "createdAt",
   "deletedAt",
   "documentId",
-  "fileVersionId",
   "id",
   "manifestReleaseId",
+  "originalUrl",
+  "pathId",
   "responseMetadata",
   "retrievedAt",
   "retrievedUrl",
@@ -105,13 +107,14 @@ export const CAPTURES_SELECTABLE_FIELDS = [
 ] as const satisfies readonly CapturesKey[];
 
 export const CAPTURES_DEFAULT_SELECT_FIELDS = [
-  "contentHash",
+  "code",
   "createdAt",
   "deletedAt",
   "documentId",
-  "fileVersionId",
   "id",
   "manifestReleaseId",
+  "originalUrl",
+  "pathId",
   "responseMetadata",
   "retrievedAt",
   "retrievedUrl",
@@ -125,10 +128,11 @@ export const CAPTURES_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const CAPTURES_EDITABLE_FIELDS = [
-  "contentHash",
+  "code",
   "documentId",
-  "fileVersionId",
   "manifestReleaseId",
+  "originalUrl",
+  "pathId",
   "responseMetadata",
   "retrievedAt",
   "retrievedUrl",
@@ -166,12 +170,12 @@ export const CAPTURES_ONE_RELATION_QUERY_OPTIONS = [
     "document",
   ),
   Q.createRelationKeyMapper<CapturesRelationKey>().one(
-    () => FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
-    "fileVersion",
-  ),
-  Q.createRelationKeyMapper<CapturesRelationKey>().one(
     () => ManifestReleasesConfig.MANIFEST_RELEASES_AS_ONE_RELATION_CONFIG,
     "manifestRelease",
+  ),
+  Q.createRelationKeyMapper<CapturesRelationKey>().one(
+    () => PathsConfig.PATHS_AS_ONE_RELATION_CONFIG,
+    "path",
   ),
   Q.createRelationKeyMapper<CapturesRelationKey>().one(
     () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,

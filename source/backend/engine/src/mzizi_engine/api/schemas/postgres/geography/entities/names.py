@@ -23,7 +23,6 @@ class GeographyNamesRow(BaseModel):
     language_tag: Annotated[str, Field(min_length=2, max_length=35)] | None = None
     name: Annotated[str, Field(min_length=1, max_length=300)]
     name_kind_id: UUID
-    source_id: UUID | None = None
     updated_at: datetime
     valid_from: date | None = None
     valid_until: date | None = None

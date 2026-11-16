@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/source.schema.json
 # Example API source: a public statistics API. Credentials are named, never stored.
-code: pg.src.api.global.example-statistics
+code: pg.src.srs.global.example-statistics
 kind: api
 title: Example statistics API
 publisher: pg.src.pub.global.example-statistics

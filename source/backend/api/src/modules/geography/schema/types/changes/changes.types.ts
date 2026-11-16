@@ -10,7 +10,6 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
-import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -37,12 +36,10 @@ export interface IChanges extends B.IBase {
   effectiveOn: Date | null;
   explanation: string | null;
   predecessorFeatureId: string | null;
-  sourceId: string | null;
   successorFeatureId: string | null;
   transformationId: string;
   readonly changeKind?: ValueTypes.IValue;
   readonly predecessorFeature?: FeaturesTypes.IFeatures;
-  readonly source?: SourcesTypes.ISources;
   readonly successorFeature?: FeaturesTypes.IFeatures;
 }
 
@@ -135,7 +132,6 @@ export type IChangesAsManyRelationQuery = Q.IAsManyRelationQuery<
 export interface IChangesRelationMap extends Record<ChangesRelationKey, unknown> {
   changeKind: ValueTypes.IValueAsOneRelationQuery;
   predecessorFeature: FeaturesTypes.IFeaturesAsOneRelationQuery;
-  source: SourcesTypes.ISourcesAsOneRelationQuery;
   successorFeature: FeaturesTypes.IFeaturesAsOneRelationQuery;
 }
 

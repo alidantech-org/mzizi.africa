@@ -113,7 +113,7 @@ def mirror_problems(entry: Entry) -> list[str]:
 
     `sys.map.ofc.ind.ke.office-holders` lives at `mappings/ofc/ind/ke/office-holders.yml`; `sys.eng.web.classification` at
     `engine/web/classification.yaml`; a source's code is the folder holding its manifest:
-    `pg.src.wbs.ke.iebc` is `sources/wbs/ke/iebc/manifest.yml`.
+    `pg.src.srs.ke.iebc` is `sources/srs/ke/iebc/manifest.yml`.
     """
     parts, rest = entry.path.parts, entry.code.split(".")[2:]
     folder = KIND_FOLDERS[entry.kind]

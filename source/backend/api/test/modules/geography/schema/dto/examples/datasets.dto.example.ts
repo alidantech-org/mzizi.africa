@@ -6,7 +6,6 @@ import { featuresExample } from "@test/modules/geography/schema/dto/examples/fea
 import { unitExample } from "@test/modules/reference/schema/dto/examples/unit.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
 /** The contract shape of Datasets, for generated tests. */
 export const datasetsExample: ContractExample = contractExample({
@@ -85,12 +84,6 @@ export const datasetsExample: ContractExample = contractExample({
     },
     {
       name: "resolutionUnitId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },

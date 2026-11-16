@@ -92,12 +92,6 @@ export class DatasetsDto {
   @IsUUID()
   resolutionUnitId?: Id | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.sourceId !== null)
-  @IsString()
-  @IsUUID()
-  sourceId?: Id | null;
-
   @IsString()
   @IsUUID()
   subjectId!: Id;

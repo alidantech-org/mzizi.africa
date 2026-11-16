@@ -30,12 +30,6 @@ export class RelationshipsDto {
   @IsUUID()
   relationshipKindId!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.sourceId !== null)
-  @IsString()
-  @IsUUID()
-  sourceId?: Id | null;
-
   @IsString()
   @IsUUID()
   @Satisfies<RelationshipsDto>((object) => object.subjectFeatureId !== object.objectFeatureId, {

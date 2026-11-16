@@ -39,12 +39,12 @@ export class SourcesRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
-  /** Find sources by kind id, paged by the shared query. */
+  /** Find sources by kind, paged by the shared query. */
   async findByKind(
     query: BaseQueryDto<SourcesEntity>,
-    kindId: NonNullable<SourcesEntity["kindId"]>,
+    kind: NonNullable<SourcesEntity["kind"]>,
   ): Promise<IFindAllResponse<SourcesEntity>> {
-    return await this.findByQuery(query, { kindId, deletedAt: IsNull() });
+    return await this.findByQuery(query, { kind, deletedAt: IsNull() });
   }
 
   /** Find sources by official entity id, paged by the shared query. */

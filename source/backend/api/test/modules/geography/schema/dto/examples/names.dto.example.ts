@@ -5,7 +5,6 @@ import {
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { validityEntityExample } from "@test/modules/shared/schema/dto/examples/validity-entity.dto.example.ts";
-import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
 /** The contract shape of Names, for generated tests. */
 export const namesExample: ContractExample = contractExample({
@@ -51,12 +50,6 @@ export const namesExample: ContractExample = contractExample({
       name: "nameKindId",
       optional: false,
       nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceId",
-      optional: true,
-      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {

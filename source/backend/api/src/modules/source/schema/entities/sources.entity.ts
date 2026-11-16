@@ -8,21 +8,22 @@ import {
   type Relation,
 } from "typeorm";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
-import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { PublishersEntity } from "#/modules/source/schema/entities/publishers.entity.ts";
+import { SourceKind } from "#/modules/source/schema/enum/source-kind.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
- * Stable publication-channel identity independent of any public website.
+ * A publication channel, named by anything but its domain: a real website, a real API, or a dataset (files or data obtained from somewhere that is neither). Only websites and APIs have domains and paths; the dataset tables record what we prepared from sources.
  */
 @Entity({ schema: "source", name: "sources" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["publisherId"])
-@Index(["kindId"])
+@Index(["kind"])
 export class SourcesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
@@ -32,6 +33,14 @@ export class SourcesEntity {
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
+
+  @Column({
+    name: "credential_binding",
+    type: "varchar",
+    length: 255,
+    nullable: true,
+  })
+  credentialBinding?: NonEmptyString255 | null;
 
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
@@ -44,12 +53,8 @@ export class SourcesEntity {
   })
   description?: Description | null;
 
-  @Column({ name: "kind_id", type: "uuid" })
-  kindId!: Id;
-
-  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "kind_id" })
-  kind?: Relation<ValueEntity>;
+  @Column({ name: "kind", type: "enum", enum: SourceKind })
+  kind!: SourceKind;
 
   @Column({ name: "official_entity_id", type: "uuid", nullable: true })
   officialEntityId?: Id | null;

@@ -47,14 +47,6 @@ export class CapturesRepository
     return await this.findByQuery(query, { documentId, deletedAt: IsNull() });
   }
 
-  /** Find captures by file version id, paged by the shared query. */
-  async findByFileVersion(
-    query: BaseQueryDto<CapturesEntity>,
-    fileVersionId: NonNullable<CapturesEntity["fileVersionId"]>,
-  ): Promise<IFindAllResponse<CapturesEntity>> {
-    return await this.findByQuery(query, { fileVersionId, deletedAt: IsNull() });
-  }
-
   /** Find captures by manifest release id, paged by the shared query. */
   async findByManifestRelease(
     query: BaseQueryDto<CapturesEntity>,
@@ -63,11 +55,24 @@ export class CapturesRepository
     return await this.findByQuery(query, { manifestReleaseId, deletedAt: IsNull() });
   }
 
+  /** Find captures by path id, paged by the shared query. */
+  async findByPath(
+    query: BaseQueryDto<CapturesEntity>,
+    pathId: NonNullable<CapturesEntity["pathId"]>,
+  ): Promise<IFindAllResponse<CapturesEntity>> {
+    return await this.findByQuery(query, { pathId, deletedAt: IsNull() });
+  }
+
   /** Find captures by source id, paged by the shared query. */
   async findBySource(
     query: BaseQueryDto<CapturesEntity>,
     sourceId: NonNullable<CapturesEntity["sourceId"]>,
   ): Promise<IFindAllResponse<CapturesEntity>> {
     return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
+  }
+
+  /** Find the captures with this code (unique). */
+  async findByCode(code: NonNullable<CapturesEntity["code"]>): Promise<CapturesEntity | null> {
+    return await this.findOne({ code, deletedAt: IsNull() });
   }
 }

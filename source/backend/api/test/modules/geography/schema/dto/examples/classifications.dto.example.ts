@@ -5,7 +5,6 @@ import {
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { historicalValidityEntityExample } from "@test/modules/shared/schema/dto/examples/historical-validity-entity.dto.example.ts";
-import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
 /** The contract shape of Classifications, for generated tests. */
 export const classificationsExample: ContractExample = contractExample({
@@ -33,12 +32,6 @@ export const classificationsExample: ContractExample = contractExample({
       name: "id",
       optional: false,
       nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceId",
-      optional: true,
-      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {

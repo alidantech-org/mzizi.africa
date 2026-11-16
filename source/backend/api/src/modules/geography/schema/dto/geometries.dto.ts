@@ -103,12 +103,6 @@ export class GeometriesDto {
   @Min(1)
   revision!: PositiveInteger;
 
-  @IsOptional()
-  @ValidateIf((object) => object.sourceId !== null)
-  @IsString()
-  @IsUUID()
-  sourceId?: Id | null;
-
   @IsInt()
   @Min(1)
   srid!: PositiveInteger;

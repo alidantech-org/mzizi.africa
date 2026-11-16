@@ -11,7 +11,6 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
-import * as SourcesConfig from "#/modules/source/schema/types/sources/sources.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -37,7 +36,6 @@ export const GEOMETRIES_RELATION_KEYS = [
   "basis",
   "feature",
   "geometryRole",
-  "source",
   "supersedes",
 ] as const satisfies readonly GeometriesKey[];
 
@@ -59,7 +57,6 @@ export const GEOMETRIES_SORTABLE_FIELDS = [
   "minZoom",
   "observedAt",
   "revision",
-  "sourceId",
   "srid",
   "supersedesId",
   "updatedAt",
@@ -80,7 +77,6 @@ export const GEOMETRIES_FILTERABLE_FIELDS = [
   "fileVersionRefId",
   "geometryRoleId",
   "id",
-  "sourceId",
   "supersedesId",
 ] as const satisfies readonly GeometriesKey[];
 
@@ -124,7 +120,6 @@ export const GEOMETRIES_SELECTABLE_FIELDS = [
   "minZoom",
   "observedAt",
   "revision",
-  "sourceId",
   "srid",
   "supersedesId",
   "updatedAt",
@@ -154,7 +149,6 @@ export const GEOMETRIES_DEFAULT_SELECT_FIELDS = [
   "minZoom",
   "observedAt",
   "revision",
-  "sourceId",
   "srid",
   "supersedesId",
   "updatedAt",
@@ -185,7 +179,6 @@ export const GEOMETRIES_EDITABLE_FIELDS = [
   "minZoom",
   "observedAt",
   "revision",
-  "sourceId",
   "srid",
   "supersedesId",
   "validFrom",
@@ -233,10 +226,6 @@ export const GEOMETRIES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<GeometriesRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "geometryRole",
-  ),
-  Q.createRelationKeyMapper<GeometriesRelationKey>().one(
-    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
-    "source",
   ),
 ] as const;
 

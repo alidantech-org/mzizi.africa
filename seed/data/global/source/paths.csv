@@ -1,0 +1,8 @@
+code,domain_code,path,kind,note
+hdx-ken-cod-ab-page,hdx-main,/dataset/cod-ab-ken,page,"OCHA COD-AB Kenya dataset page: description, licence and the four download links."
+hdx-ken-cod-ab-xlsx,hdx-main,/dataset/2c0b7571-4bef-4347-9b81-b2174c13f9ef/resource/c3b91a6c-13d3-49f2-8257-f843ab4702ed/download/ken_admin_boundaries.xlsx,file,The workbook: attribute tables for counties and constituencies with place codes and parents.
+hdx-ken-pcodes-page,hdx-main,/dataset/kenya-p-codes,page,Kenya P-Codes page; links to a Google Drive file.
+hdx-ken-subcounties-page,hdx-main,/dataset/kenya-sub-counties,page,Kenya Sub Counties dataset page.
+hdx-ken-subcounties-zip,hdx-main,/dataset/7a9a2073-beff-443b-9dc2-dfeef7411c3d/resource/bf1919f7-d908-444f-b5c4-821573e29189/download/ke_subcounty.zip,file,Shapefile of 304 sub-counties with DHIS2 ids.
+hdx-ken-wards-page,hdx-main,/dataset/administrative-wards-in-kenya-1450,page,Administrative Wards in Kenya 1450 page.
+hdx-ken-wards-zip,hdx-main,/dataset/e8d06ae7-740b-4491-8749-43f81700cf41/resource/858129b2-7197-4ffe-b34f-c2091b307b2c/download/kenya_wards.zip,file,"Shapefile of 1450 wards with county, sub-county and DHIS2 ids."

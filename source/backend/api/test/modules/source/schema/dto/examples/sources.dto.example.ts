@@ -2,8 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { SourceKind } from "#/modules/source/schema/enum/source-kind.enum.ts";
 import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 import { publishersExample } from "@test/modules/source/schema/dto/examples/publishers.dto.example.ts";
 
@@ -29,6 +29,12 @@ export const sourcesExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
+      name: "credentialBinding",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 255 },
+    },
+    {
       name: "deletedAt",
       optional: true,
       nullable: true,
@@ -47,10 +53,10 @@ export const sourcesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "kindId",
+      name: "kind",
       optional: false,
       nullable: false,
-      spec: { kind: "string", format: "uuid" },
+      spec: { kind: "enum", values: Object.values(SourceKind) },
     },
     {
       name: "officialEntityId",

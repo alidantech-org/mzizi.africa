@@ -9,7 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class DatasetsRow(BaseModel):
+class GeographyDatasetsRow(BaseModel):
     """Catalog metadata for vector, raster, climate, elevation, historical and derived datasets. Large assets remain in the existing Filesystem/SeaweedFS S3 system; external references await executable Source and Filesystem contracts."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
@@ -30,7 +30,6 @@ class DatasetsRow(BaseModel):
     representation_id: UUID
     resolution: float | None = None
     resolution_unit_id: UUID | None = None
-    source_id: UUID | None = None
     subject_id: UUID
     title: Annotated[str, Field(min_length=1, max_length=255)]
     updated_at: datetime

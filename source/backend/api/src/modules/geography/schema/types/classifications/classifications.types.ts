@@ -9,7 +9,6 @@ import * as B from "#/modules/common/schema/types/base";
 // RELATED ENTITY TYPES
 // ----------------------------------
 import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
-import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
@@ -34,7 +33,6 @@ import type {
 /** One dated classification of a feature by a scheme value, so a feature can answer several classification questions and change over time. */
 export interface IClassifications extends B.IBase {
   featureId: string;
-  sourceId: string | null;
   validFrom: Date | null;
   validFromEarliest: Date | null;
   validFromLatest: Date | null;
@@ -43,7 +41,6 @@ export interface IClassifications extends B.IBase {
   validUntilLatest: Date | null;
   valueId: string;
   readonly feature?: FeaturesTypes.IFeatures;
-  readonly source?: SourcesTypes.ISources;
   readonly value?: ValueTypes.IValue;
 }
 
@@ -148,7 +145,6 @@ export type IClassificationsAsManyRelationQuery = Q.IAsManyRelationQuery<
 
 export interface IClassificationsRelationMap extends Record<ClassificationsRelationKey, unknown> {
   feature: FeaturesTypes.IFeaturesAsOneRelationQuery;
-  source: SourcesTypes.ISourcesAsOneRelationQuery;
   value: ValueTypes.IValueAsOneRelationQuery;
 }
 

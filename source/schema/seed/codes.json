@@ -263,9 +263,6 @@
       "kind": "member",
       "parent": "scheme_code"
     },
-    "source.apis": {
-      "short": "api"
-    },
     "source.attributions": {
       "short": "att"
     },
@@ -275,8 +272,17 @@
     "source.citations": {
       "short": "cit"
     },
+    "source.dataset_lineage": {
+      "short": "dsl"
+    },
+    "source.datasets": {
+      "short": "dts"
+    },
     "source.documents": {
       "short": "doc"
+    },
+    "source.domains": {
+      "short": "dom"
     },
     "source.evidence": {
       "short": "evd"
@@ -290,6 +296,12 @@
     "source.manifests": {
       "short": "mnf"
     },
+    "source.paths": {
+      "short": "pth"
+    },
+    "source.provenance": {
+      "short": "prv"
+    },
     "source.publication_receipts": {
       "short": "prc"
     },
@@ -301,9 +313,6 @@
     },
     "source.verifications": {
       "short": "ver"
-    },
-    "source.websites": {
-      "short": "wbs"
     }
   }
 }

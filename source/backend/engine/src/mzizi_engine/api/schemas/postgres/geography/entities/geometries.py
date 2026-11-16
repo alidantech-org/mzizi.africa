@@ -34,7 +34,6 @@ class GeometriesRow(BaseModel):
     min_zoom: Annotated[int, Field(ge=0)] | None = None
     observed_at: datetime | None = None
     revision: Annotated[int, Field(ge=1)]
-    source_id: UUID | None = None
     srid: Annotated[int, Field(ge=1)]
     supersedes_id: UUID | None = None
     updated_at: datetime

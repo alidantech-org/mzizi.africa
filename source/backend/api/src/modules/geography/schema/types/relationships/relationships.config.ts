@@ -11,7 +11,6 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
-import * as SourcesConfig from "#/modules/source/schema/types/sources/sources.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -36,7 +35,6 @@ import type {
 export const RELATIONSHIPS_RELATION_KEYS = [
   "objectFeature",
   "relationshipKind",
-  "source",
   "subjectFeature",
   "system",
 ] as const satisfies readonly RelationshipsKey[];
@@ -51,7 +49,6 @@ export const RELATIONSHIPS_SORTABLE_FIELDS = [
   "id",
   "objectFeatureId",
   "relationshipKindId",
-  "sourceId",
   "subjectFeatureId",
   "systemId",
   "updatedAt",
@@ -70,7 +67,6 @@ export const RELATIONSHIPS_FILTERABLE_FIELDS = [
   "id",
   "objectFeatureId",
   "relationshipKindId",
-  "sourceId",
   "subjectFeatureId",
   "systemId",
 ] as const satisfies readonly RelationshipsKey[];
@@ -103,7 +99,6 @@ export const RELATIONSHIPS_SELECTABLE_FIELDS = [
   "id",
   "objectFeatureId",
   "relationshipKindId",
-  "sourceId",
   "subjectFeatureId",
   "systemId",
   "updatedAt",
@@ -122,7 +117,6 @@ export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
   "id",
   "objectFeatureId",
   "relationshipKindId",
-  "sourceId",
   "subjectFeatureId",
   "systemId",
   "updatedAt",
@@ -142,7 +136,6 @@ export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
 export const RELATIONSHIPS_EDITABLE_FIELDS = [
   "objectFeatureId",
   "relationshipKindId",
-  "sourceId",
   "subjectFeatureId",
   "systemId",
   "validFrom",
@@ -186,10 +179,6 @@ export const RELATIONSHIPS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "relationshipKind",
-  ),
-  Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
-    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
-    "source",
   ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
     () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,

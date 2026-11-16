@@ -38,7 +38,7 @@ def test_a_site_extending_an_abstract_family_resolves_modules_and_variables():
         "family",
         {
             "manifest.yml": read("manifest.yml").replace(
-                "code: pg.src.wbs.ke.example-ministry", "code: pg.src.wbs.ke.county-family\nabstract: true"
+                "code: pg.src.srs.ke.example-ministry", "code: pg.src.srs.ke.county-family\nabstract: true"
             ),
             "modules/tenders.yml": "module: tenders\ndiscover:\n  listing:\n    url: ${tenders_path}\n    items: { css: li }\nextract:\n  fields:\n    title: { from: link_text }\n",
             "NOTES.md": "x" * 100,
@@ -49,7 +49,7 @@ def test_a_site_extending_an_abstract_family_resolves_modules_and_variables():
         {
             "manifest.yml": read("manifest.yml").replace(
                 "modules: [documents]",
-                "modules: []\nextends: pg.src.wbs.ke.county-family\nvars: { tenders_path: /publications/tenders }",
+                "modules: []\nextends: pg.src.srs.ke.county-family\nvars: { tenders_path: /publications/tenders }",
             ),
             "NOTES.md": "x" * 100,
         },
@@ -71,7 +71,7 @@ def test_unknown_transform_and_unknown_mapping_column_are_rejected():
         "unknown transform 'shell_exec'" in e
         for e in validate(mutate("mappings/example-ministry-publications.yml", transformed)).errors
     )
-    renamed = mapping.replace("published_on:", "made_up_column:")
+    renamed = mapping.replace("original_url:", "made_up_column:")
     assert any(
         "has no column 'made_up_column'" in e
         for e in validate(mutate("mappings/example-ministry-publications.yml", renamed)).errors
@@ -85,14 +85,14 @@ def test_a_mapping_may_only_use_stored_tables_inputs_and_yields():
         for e in validate(
             mutate(
                 "mappings/example-ministry-publications.yml",
-                mapping.replace("table: source.documents", "table: source.nothing"),
+                mapping.replace("table: source.captures", "table: source.nothing"),
             )
         ).errors
     )
     assert any(
         "not in inputs" in e
         for e in validate(
-            mutate("mappings/example-ministry-publications.yml", mapping.replace("from: title", "from: unknown_field"))
+            mutate("mappings/example-ministry-publications.yml", mapping.replace("from: href", "from: unknown_field"))
         ).errors
     )
 

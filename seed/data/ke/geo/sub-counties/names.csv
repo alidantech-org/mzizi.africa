@@ -1,305 +1,305 @@
-feature_code,name,name_kind_code,language_tag,source_code
-ke.mombasa.mvita-sub-county,Mvita,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisumu.kisumu-central-sub-county,Kisumu Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kitui.kitui-west-sub-county,Kitui West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.bumula-sub-county,Bumula,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisumu.nyakach-sub-county,Nyakach,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyamira.borabu-sub-county,Borabu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.makueni.makueni-sub-county,Makueni,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kilifi.ganze-sub-county,Ganze,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyeri.kieni-west-sub-county,Kieni West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.meru.tigania-west-sub-county,Tigania West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.wajir.wajir-south-sub-county,Wajir South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.busia.nambale-sub-county,Nambale,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyandarua.olkalou-sub-county,Olkalou,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.roysambu-sub-county,Roysambu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.kibra-sub-county,Kibra,geo.name.kind.official,en,redcross-ke-subcounties
-ke.baringo.koibatek-sub-county,Koibatek,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.ikolomani-sub-county,Ikolomani,geo.name.kind.official,en,redcross-ke-subcounties
-ke.homa-bay.homa-bay-town-sub-county,Homa Bay Town,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisii.bonchari-sub-county,Bonchari,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bomet.chepalungu-sub-county,Chepalungu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kilifi.rabai-sub-county,Rabai,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.dagoretti-south-sub-county,Dagoretti South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.malava-sub-county,Malava,geo.name.kind.official,en,redcross-ke-subcounties
-ke.turkana.turkana-central-sub-county,Turkana Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.vihiga.emuhaya-sub-county,Emuhaya,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kitui.mwingi-west-sub-county,Mwingi West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.laikipia.laikipia-east-sub-county,Laikipia East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mombasa.kisauni-sub-county,Kisauni,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.dagoretti-north-sub-county,Dagoretti North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.kuresoi-south-sub-county,Kuresoi South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.marsabit.north-horr-sub-county,NORTH HORR,geo.name.kind.official,en,redcross-ke-subcounties
-ke.meru.igembe-north-sub-county,Igembe North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.navakholo-sub-county,Navakholo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.juja-sub-county,Juja,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.webuye-west-sub-county,Webuye West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kitui.kitui-central-sub-county,Kitui Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.busia.teso-south-sub-county,Teso South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.kikuyu-sub-county,Kikuyu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyandarua.kipipiri-sub-county,Kipipiri,geo.name.kind.official,en,redcross-ke-subcounties
-ke.uasin-gishu.moiben-sub-county,Moiben,geo.name.kind.official,en,redcross-ke-subcounties
-ke.tharaka-nithi.chuka-sub-county,Chuka,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kericho.belgut-sub-county,Belgut,geo.name.kind.official,en,redcross-ke-subcounties
-ke.wajir.eldas-sub-county,Eldas,geo.name.kind.official,en,redcross-ke-subcounties
-ke.narok.transmara-west-sub-county,Transmara West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.meru.igembe-south-sub-county,Igembe South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.cheptais-sub-county,Cheptais,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyandarua.oljoroorok-sub-county,Oljoroorok,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nandi.emgwen-sub-county,Emgwen,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyamira.masaba-north-sub-county,Masaba North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.machakos.yatta-sub-county,Yatta,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.lari-sub-county,Lari,geo.name.kind.official,en,redcross-ke-subcounties
-ke.meru.igembe-central-sub-county,Igembe Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.muranga.mathioya-sub-county,Mathioya,geo.name.kind.official,en,redcross-ke-subcounties
-ke.muranga.kandara-sub-county,Kandara,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kericho.kipkelion-east-sub-county,Kipkelion East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.machakos.kathiani-sub-county,Kathiani,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bomet.sotik-sub-county,Sotik,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.embakasi-south-sub-county,Embakasi South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mandera.banissa-sub-county,BANISSA,geo.name.kind.official,en,redcross-ke-subcounties
-ke.tharaka-nithi.tharaka-south-sub-county,Tharaka South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.busia.butula-sub-county,Butula,geo.name.kind.official,en,redcross-ke-subcounties
-ke.wajir.wajir-west-sub-county,Wajir West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.gatundu-north-sub-county,Gatundu North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.tharaka-nithi.igambangombe-sub-county,Igambang'ombe,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyamira.nyamira-sub-county,Nyamira,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.kabuchai-sub-county,Kabuchai,geo.name.kind.official,en,redcross-ke-subcounties
-ke.machakos.matungulu-sub-county,Matungulu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyandarua.ndaragwa-sub-county,Ndaragwa,geo.name.kind.official,en,redcross-ke-subcounties
-ke.siaya.rarieda-sub-county,Rarieda,geo.name.kind.official,en,redcross-ke-subcounties
-ke.taita-taveta.wundanyi-sub-county,Wundanyi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.makueni.kaiti-sub-county,Kaiti,geo.name.kind.official,en,redcross-ke-subcounties
-ke.embu.mbeere-south-sub-county,Mbeere South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyeri.tetu-sub-county,Tetu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.migori.nyatike-sub-county,Nyatike,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.gatundu-south-sub-county,Gatundu South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nandi.nandi-east-sub-county,Nandi East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyeri.mathira-east-sub-county,Mathira East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.elgeyo-marakwet.marakwet-east-sub-county-sub-county,Marakwet East sub-county,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kajiado.loitokitok-sub-county,Loitokitok,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisii.bomachoge-borabu-sub-county,Bomachoge Borabu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.laikipia.laikipia-north-sub-county,Laikipia North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kitui.kitui-rural-sub-county,Kitui Rural,geo.name.kind.official,en,redcross-ke-subcounties
-ke.uasin-gishu.turbo-sub-county,Turbo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.embakasi-central-sub-county,Embakasi Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.machakos.mwala-sub-county,Mwala,geo.name.kind.official,en,redcross-ke-subcounties
-ke.trans-nzoia.kwanza-sub-county,Kwanza,geo.name.kind.official,en,redcross-ke-subcounties
-ke.vihiga.vihiga-sub-county,Vihiga,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.kanduyi-sub-county,Kanduyi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.makadara-sub-county,Makadara,geo.name.kind.official,en,redcross-ke-subcounties
-ke.laikipia.laikipia-west-sub-county,Laikipia West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.naivasha-sub-county,Naivasha,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kericho.sigowet-soin-sub-county,Sigowet/Soin,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.embakasi-east-sub-county,Embakasi East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kericho.bureti-sub-county,Bureti,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyeri.nyeri-central-sub-county,Nyeri Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.marsabit.saku-sub-county,SAKU,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mombasa.changamwe-sub-county,Changamwe,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kilifi.kaloleni-sub-county,Kaloleni,geo.name.kind.official,en,redcross-ke-subcounties
-ke.machakos.athi-river-sub-county,Athi River,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisii.south-mugirango-sub-county,South Mugirango,geo.name.kind.official,en,redcross-ke-subcounties
-ke.machakos.masinga-sub-county,Masinga,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kilifi.kilifi-south-sub-county,Kilifi South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.homa-bay.rangwe-sub-county,Rangwe,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kirinyaga.kirinyaga-east-sub-county,Kirinyaga East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mombasa.jomvu-sub-county,Jomvu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.busia.matayos-sub-county,Matayos,geo.name.kind.official,en,redcross-ke-subcounties
-ke.garissa.garissa-sub-county,Garissa,geo.name.kind.official,en,redcross-ke-subcounties
-ke.garissa.dadaab-sub-county,Dadaab,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyeri.mukurweini-sub-county,Mukurweini,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mombasa.nyali-sub-county,Nyali,geo.name.kind.official,en,redcross-ke-subcounties
-ke.embu.runyenjes-sub-county,Runyenjes,geo.name.kind.official,en,redcross-ke-subcounties
-ke.vihiga.hamisi-sub-county,Hamisi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.siaya.gem-sub-county,Gem,geo.name.kind.official,en,redcross-ke-subcounties
-ke.makueni.mbooni-sub-county,Mbooni,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.ruiru-sub-county,Ruiru,geo.name.kind.official,en,redcross-ke-subcounties
-ke.turkana.turkana-west-sub-county,Turkana West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.west-pokot.pokot-south-sub-county,Pokot South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bomet.bomet-central-sub-county,Bomet Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.nakuru-east-sub-county,Nakuru East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.kiambaa-sub-county,Kiambaa,geo.name.kind.official,en,redcross-ke-subcounties
-ke.muranga.muranga-south-sub-county,Muranga South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.khwisero-sub-county,Khwisero,geo.name.kind.official,en,redcross-ke-subcounties
-ke.garissa.fafi-sub-county,Fafi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kilifi.magarini-sub-county,Magarini,geo.name.kind.official,en,redcross-ke-subcounties
-ke.siaya.ugunja-sub-county,Ugunja,geo.name.kind.official,en,redcross-ke-subcounties
-ke.elgeyo-marakwet.keiyo-south-sub-county,Keiyo South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.embu.manyatta-sub-county,Manyatta,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kirinyaga.kirinyaga-west-sub-county,Kirinyaga West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kitui.kitui-east-sub-county,Kitui East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nandi.tinderet-sub-county,Tinderet,geo.name.kind.official,en,redcross-ke-subcounties
-ke.taita-taveta.voi-sub-county,Voi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.tharaka-nithi.mwimbi-sub-county,Mwimbi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.tharaka-nithi.muthambi-sub-county,Muthambi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.narok.transmara-east-sub-county,Transmara East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mandera.mandera-east-sub-county,MANDERA EAST,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisii.kitutu-chache-north-sub-county,Kitutu Chache North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.west-pokot.pokot-north-sub-county,Pokot North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.taita-taveta.taveta-sub-county,Taveta,geo.name.kind.official,en,redcross-ke-subcounties
-ke.wajir.wajir-east-sub-county,Wajir East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.marsabit.moyale-sub-county,MOYALE,geo.name.kind.official,en,redcross-ke-subcounties
-ke.meru.imenti-south-sub-county,Imenti South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bomet.konoin-sub-county,Konoin,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.kiambu-town-sub-county,Kiambu Town,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kajiado.kajiado-east-sub-county,Kajiado East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.nakuru-north-sub-county,Nakuru North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.trans-nzoia.kiminini-sub-county,Kiminini,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.subukia-sub-county,Subukia,geo.name.kind.official,en,redcross-ke-subcounties
-ke.samburu.samburu-central-sub-county,Samburu Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.muranga.kiharu-sub-county,Kiharu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mandera.mandera-west-sub-county,MANDERA WEST,geo.name.kind.official,en,redcross-ke-subcounties
-ke.west-pokot.west-pokot-sub-county,West Pokot,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kwale.lunga-lunga-sub-county,Lunga Lunga,geo.name.kind.official,en,redcross-ke-subcounties
-ke.migori.rongo-sub-county,Rongo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.ruaraka-sub-county,Ruaraka,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.likuyani-sub-county,Likuyani,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.shinyalu-sub-county,Shinyalu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.siaya.bondo-sub-county,Bondo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mandera.mandera-north-sub-county,MANDERA NORTH,geo.name.kind.official,en,redcross-ke-subcounties
-ke.wajir.tarbaj-sub-county,Tarbaj,geo.name.kind.official,en,redcross-ke-subcounties
-ke.homa-bay.suba-sub-county,Suba,geo.name.kind.official,en,redcross-ke-subcounties
-ke.migori.kuria-west-sub-county,Kuria West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.uasin-gishu.kesses-sub-county,Kesses,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.mathare-sub-county,Mathare,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kwale.msambweni-sub-county,Msambweni,geo.name.kind.official,en,redcross-ke-subcounties
-ke.narok.narok-south-sub-county,Narok South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.kasarani-sub-county,Kasarani,geo.name.kind.official,en,redcross-ke-subcounties
-ke.muranga.kangema-sub-county,Kangema,geo.name.kind.official,en,redcross-ke-subcounties
-ke.west-pokot.pokot-central-sub-county,Pokot Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.migori.awendo-sub-county,Awendo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.langata-sub-county,Langata,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nandi.mosop-sub-county,Mosop,geo.name.kind.official,en,redcross-ke-subcounties
-ke.tana-river.galole-sub-county,Galole,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kilifi.malindi-sub-county,Malindi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kajiado.kajiado-central-sub-county,Kajiado Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.kamukunji-sub-county,Kamukunji,geo.name.kind.official,en,redcross-ke-subcounties
-ke.elgeyo-marakwet.keiyo-north-sub-county,Keiyo North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.embu.mbeere-north-sub-county,Mbeere North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisii.kitutu-chache-south-sub-county,Kitutu Chache South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.taita-taveta.mwatate-sub-county,Mwatate,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisii.bobasi-sub-county,Bobasi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.samburu.samburu-north-sub-county,Samburu North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.lurambi-sub-county,Lurambi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.meru.buuri-sub-county,Buuri,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisii.nyaribari-masaba-sub-county,Nyaribari Masaba,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kitui.kitui-south-sub-county,Kitui South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.tana-river.bura-sub-county,Bura,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyamira.nyamira-north-sub-county,Nyamira North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.homa-bay.kabondo-kasipul-sub-county,Kabondo Kasipul,geo.name.kind.official,en,redcross-ke-subcounties
-ke.garissa.balambala-sub-county,Balambala,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisumu.muhoroni-sub-county,Muhoroni,geo.name.kind.official,en,redcross-ke-subcounties
-ke.siaya.ugenya-sub-county,Ugenya,geo.name.kind.official,en,redcross-ke-subcounties
-ke.uasin-gishu.kapseret-sub-county,Kapseret,geo.name.kind.official,en,redcross-ke-subcounties
-ke.garissa.lagdera-sub-county,Lagdera,geo.name.kind.official,en,redcross-ke-subcounties
-ke.homa-bay.kasipul-sub-county,Kasipul,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyeri.kieni-east-sub-county,Kieni East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.machakos.kangundo-sub-county,Kangundo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.mt-elgon-sub-county,Mt Elgon,geo.name.kind.official,en,redcross-ke-subcounties
-ke.turkana.turkana-north-sub-county,Turkana North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.busia.teso-north-sub-county,Teso North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.isiolo.merti-sub-county,Merti,geo.name.kind.official,en,redcross-ke-subcounties
-ke.baringo.marigat-sub-county,Marigat,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kirinyaga.kirinyaga-central-sub-county,Kirinyaga Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.trans-nzoia.endebess-sub-county,Endebess,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisumu.kisumu-east-sub-county,Kisumu East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.marsabit.laisamis-sub-county,LAISAMIS,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mandera.lafey-sub-county,LAFEY,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bomet.bomet-east-sub-county,Bomet East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.samburu.samburu-east-sub-county,Samburu East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kirinyaga.kirinyaga-south-sub-county,Kirinyaga South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.westlands-sub-county,Westlands,geo.name.kind.official,en,redcross-ke-subcounties
-ke.vihiga.sabatia-sub-county,Sabatia,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.gilgil-sub-county,Gilgil,geo.name.kind.official,en,redcross-ke-subcounties
-ke.tana-river.garsen-sub-county,Garsen,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mombasa.likoni-sub-county,Likoni,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kitui.mwingi-central-sub-county-sub-county,Mwingi Central Sub- County,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisumu.seme-sub-county,Seme,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kericho.kipkelion-west-sub-county,Kipkelion West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.turkana.turkana-south-sub-county,Turkana South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.molo-sub-county,Molo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.sirisia-sub-county,Sirisia,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kwale.kinango-sub-county,Kinango,geo.name.kind.official,en,redcross-ke-subcounties
-ke.wajir.wajir-north-sub-county,Wajir North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.matungu-sub-county,Matungu,geo.name.kind.official,en,redcross-ke-subcounties
-ke.muranga.gatanga-sub-county,Gatanga,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nandi.aldai-sub-county,Aldai,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisii.nyaribari-chache-sub-county,Nyaribari Chache,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.thika-town-sub-county,Thika Town,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.kuresoi-north-sub-county,Kuresoi North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisumu.nyando-sub-county,Nyando,geo.name.kind.official,en,redcross-ke-subcounties
-ke.busia.samia-sub-county,Samia,geo.name.kind.official,en,redcross-ke-subcounties
-ke.siaya.alego-usonga-sub-county,Alego Usonga,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nandi.chesumei-sub-county,Chesumei,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisumu.kisumu-west-sub-county,Kisumu West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.baringo.baringo-north-sub-county,Baringo North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.narok.narok-north-sub-county,Narok North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.migori.uriri-sub-county,Uriri,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyeri.nyeri-south-sub-county,Nyeri South,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kirinyaga.kirinyaga-north-mwea-west-sub-county,Kirinyaga North/Mwea West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.mumias-west-sub-county,Mumias West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.lamu.lamu-east-sub-county,LAMU EAST,geo.name.kind.official,en,redcross-ke-subcounties
-ke.garissa.ijara-sub-county,Ijara,geo.name.kind.official,en,redcross-ke-subcounties
-ke.homa-bay.karachuonyo-sub-county,Karachuonyo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.turkana.kibish-sub-county,Kibish,geo.name.kind.official,en,redcross-ke-subcounties
-ke.migori.suna-east-sub-county,Suna East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.nakuru-west-sub-county,Nakuru West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.lamu.lamu-west-sub-county,LAMU WEST,geo.name.kind.official,en,redcross-ke-subcounties
-ke.baringo.mogotio-sub-county,Mogotio,geo.name.kind.official,en,redcross-ke-subcounties
-ke.narok.narok-west-sub-county,Narok West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyeri.mathira-west-sub-county,Mathira West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.webuye-east-sub-county,Webuye East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.kimilili-sub-county,Kimilili,geo.name.kind.official,en,redcross-ke-subcounties
-ke.makueni.kibwezi-east-sub-county,Kibwezi East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.isiolo.garbatulla-sub-county,Garbatulla,geo.name.kind.official,en,redcross-ke-subcounties
-ke.trans-nzoia.cherangany-sub-county,Cherangany,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kajiado.kajiado-west-sub-county,Kajiado West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.bungoma.tongaren-sub-county,Tongaren,geo.name.kind.official,en,redcross-ke-subcounties
-ke.meru.imenti-central-sub-county,Imenti Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.lugari-sub-county,Lugari,geo.name.kind.official,en,redcross-ke-subcounties
-ke.trans-nzoia.saboti-sub-county,Saboti,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.embakasi-north-sub-county,Embakasi North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.makueni.kibwezi-west-sub-county,Kibwezi West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.butere-sub-county,Butere,geo.name.kind.official,en,redcross-ke-subcounties
-ke.baringo.baringo-central-sub-county,Baringo Central,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kajiado.kajiado-north-sub-county,Kajiado North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.turkana.turkana-east-sub-county,Turkana East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.homa-bay.ndhiwa-sub-county,Ndhiwa,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.kabete-sub-county,Kabete,geo.name.kind.official,en,redcross-ke-subcounties
-ke.tharaka-nithi.tharaka-north-sub-county,Tharaka North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.uasin-gishu.soy-sub-county,Soy,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.embakasi-west-sub-county,Embakasi West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.muranga.kigumo-sub-county,Kigumo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyandarua.kinangop-sub-county,Kinangop,geo.name.kind.official,en,redcross-ke-subcounties
-ke.garissa.hulugho-sub-county,Hulugho,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kisii.bomachoge-chache-sub-county,Bomachoge Chache,geo.name.kind.official,en,redcross-ke-subcounties
-ke.turkana.loima-sub-county,Loima,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.limuru-sub-county,Limuru,geo.name.kind.official,en,redcross-ke-subcounties
-ke.isiolo.isiolo-sub-county,Isiolo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.njoro-sub-county,Njoro,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nakuru.rongai-sub-county,Rongai,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kiambu.githunguri-sub-county,Githunguri,geo.name.kind.official,en,redcross-ke-subcounties
-ke.migori.suna-west-sub-county,Suna West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.busia.bunyala-sub-county,Bunyala,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kericho.ainamoi-sub-county,Ainamoi,geo.name.kind.official,en,redcross-ke-subcounties
-ke.narok.narok-east-sub-county,Narok East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.migori.kuria-east-sub-county,Kuria East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kwale.matuga-sub-county,Matuga,geo.name.kind.official,en,redcross-ke-subcounties
-ke.elgeyo-marakwet.marakwet-west-sub-county,Marakwet West,geo.name.kind.official,en,redcross-ke-subcounties
-ke.makueni.kilome-sub-county,Kilome,geo.name.kind.official,en,redcross-ke-subcounties
-ke.meru.tigania-east-sub-county,Tigania East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.vihiga.luanda-sub-county,Luanda,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kilifi.kilifi-north-sub-county,Kilifi North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nyamira.manga-sub-county,Manga,geo.name.kind.official,en,redcross-ke-subcounties
-ke.homa-bay.mbita-sub-county,Mbita,geo.name.kind.official,en,redcross-ke-subcounties
-ke.meru.imenti-north-sub-county,Imenti North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kitui.mwingi-north-sub-county,Mwingi North,geo.name.kind.official,en,redcross-ke-subcounties
-ke.kakamega.mumias-east-sub-county,Mumias East,geo.name.kind.official,en,redcross-ke-subcounties
-ke.nairobi.starehe-sub-county,Starehe,geo.name.kind.official,en,redcross-ke-subcounties
-ke.baringo.tiaty-sub-county,Tiaty,geo.name.kind.official,en,redcross-ke-subcounties
-ke.baringo.east-pokot-sub-county,East Pokot,geo.name.kind.official,en,redcross-ke-subcounties
-ke.machakos.kalama-sub-county,Kalama,geo.name.kind.official,en,redcross-ke-subcounties
-ke.machakos.machakos-sub-county,Machakos,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mandera.kutulo-sub-county,Kutulo,geo.name.kind.official,en,redcross-ke-subcounties
-ke.mandera.mandera-south-sub-county,MANDERA SOUTH,geo.name.kind.official,en,redcross-ke-subcounties
-ke.uasin-gishu.ainabkoi-sub-county,Ainabkoi,geo.name.kind.official,en,redcross-ke-subcounties
+feature_code,name,name_kind_code,language_tag
+ke.mombasa.mvita-sub-county,Mvita,geo.name.kind.official,en
+ke.kisumu.kisumu-central-sub-county,Kisumu Central,geo.name.kind.official,en
+ke.kitui.kitui-west-sub-county,Kitui West,geo.name.kind.official,en
+ke.bungoma.bumula-sub-county,Bumula,geo.name.kind.official,en
+ke.kisumu.nyakach-sub-county,Nyakach,geo.name.kind.official,en
+ke.nyamira.borabu-sub-county,Borabu,geo.name.kind.official,en
+ke.makueni.makueni-sub-county,Makueni,geo.name.kind.official,en
+ke.kilifi.ganze-sub-county,Ganze,geo.name.kind.official,en
+ke.nyeri.kieni-west-sub-county,Kieni West,geo.name.kind.official,en
+ke.meru.tigania-west-sub-county,Tigania West,geo.name.kind.official,en
+ke.wajir.wajir-south-sub-county,Wajir South,geo.name.kind.official,en
+ke.busia.nambale-sub-county,Nambale,geo.name.kind.official,en
+ke.nyandarua.olkalou-sub-county,Olkalou,geo.name.kind.official,en
+ke.nairobi.roysambu-sub-county,Roysambu,geo.name.kind.official,en
+ke.nairobi.kibra-sub-county,Kibra,geo.name.kind.official,en
+ke.baringo.koibatek-sub-county,Koibatek,geo.name.kind.official,en
+ke.kakamega.ikolomani-sub-county,Ikolomani,geo.name.kind.official,en
+ke.homa-bay.homa-bay-town-sub-county,Homa Bay Town,geo.name.kind.official,en
+ke.kisii.bonchari-sub-county,Bonchari,geo.name.kind.official,en
+ke.bomet.chepalungu-sub-county,Chepalungu,geo.name.kind.official,en
+ke.kilifi.rabai-sub-county,Rabai,geo.name.kind.official,en
+ke.nairobi.dagoretti-south-sub-county,Dagoretti South,geo.name.kind.official,en
+ke.kakamega.malava-sub-county,Malava,geo.name.kind.official,en
+ke.turkana.turkana-central-sub-county,Turkana Central,geo.name.kind.official,en
+ke.vihiga.emuhaya-sub-county,Emuhaya,geo.name.kind.official,en
+ke.kitui.mwingi-west-sub-county,Mwingi West,geo.name.kind.official,en
+ke.laikipia.laikipia-east-sub-county,Laikipia East,geo.name.kind.official,en
+ke.mombasa.kisauni-sub-county,Kisauni,geo.name.kind.official,en
+ke.nairobi.dagoretti-north-sub-county,Dagoretti North,geo.name.kind.official,en
+ke.nakuru.kuresoi-south-sub-county,Kuresoi South,geo.name.kind.official,en
+ke.marsabit.north-horr-sub-county,NORTH HORR,geo.name.kind.official,en
+ke.meru.igembe-north-sub-county,Igembe North,geo.name.kind.official,en
+ke.kakamega.navakholo-sub-county,Navakholo,geo.name.kind.official,en
+ke.kiambu.juja-sub-county,Juja,geo.name.kind.official,en
+ke.bungoma.webuye-west-sub-county,Webuye West,geo.name.kind.official,en
+ke.kitui.kitui-central-sub-county,Kitui Central,geo.name.kind.official,en
+ke.busia.teso-south-sub-county,Teso South,geo.name.kind.official,en
+ke.kiambu.kikuyu-sub-county,Kikuyu,geo.name.kind.official,en
+ke.nyandarua.kipipiri-sub-county,Kipipiri,geo.name.kind.official,en
+ke.uasin-gishu.moiben-sub-county,Moiben,geo.name.kind.official,en
+ke.tharaka-nithi.chuka-sub-county,Chuka,geo.name.kind.official,en
+ke.kericho.belgut-sub-county,Belgut,geo.name.kind.official,en
+ke.wajir.eldas-sub-county,Eldas,geo.name.kind.official,en
+ke.narok.transmara-west-sub-county,Transmara West,geo.name.kind.official,en
+ke.meru.igembe-south-sub-county,Igembe South,geo.name.kind.official,en
+ke.bungoma.cheptais-sub-county,Cheptais,geo.name.kind.official,en
+ke.nyandarua.oljoroorok-sub-county,Oljoroorok,geo.name.kind.official,en
+ke.nandi.emgwen-sub-county,Emgwen,geo.name.kind.official,en
+ke.nyamira.masaba-north-sub-county,Masaba North,geo.name.kind.official,en
+ke.machakos.yatta-sub-county,Yatta,geo.name.kind.official,en
+ke.kiambu.lari-sub-county,Lari,geo.name.kind.official,en
+ke.meru.igembe-central-sub-county,Igembe Central,geo.name.kind.official,en
+ke.muranga.mathioya-sub-county,Mathioya,geo.name.kind.official,en
+ke.muranga.kandara-sub-county,Kandara,geo.name.kind.official,en
+ke.kericho.kipkelion-east-sub-county,Kipkelion East,geo.name.kind.official,en
+ke.machakos.kathiani-sub-county,Kathiani,geo.name.kind.official,en
+ke.bomet.sotik-sub-county,Sotik,geo.name.kind.official,en
+ke.nairobi.embakasi-south-sub-county,Embakasi South,geo.name.kind.official,en
+ke.mandera.banissa-sub-county,BANISSA,geo.name.kind.official,en
+ke.tharaka-nithi.tharaka-south-sub-county,Tharaka South,geo.name.kind.official,en
+ke.busia.butula-sub-county,Butula,geo.name.kind.official,en
+ke.wajir.wajir-west-sub-county,Wajir West,geo.name.kind.official,en
+ke.kiambu.gatundu-north-sub-county,Gatundu North,geo.name.kind.official,en
+ke.tharaka-nithi.igambangombe-sub-county,Igambang'ombe,geo.name.kind.official,en
+ke.nyamira.nyamira-sub-county,Nyamira,geo.name.kind.official,en
+ke.bungoma.kabuchai-sub-county,Kabuchai,geo.name.kind.official,en
+ke.machakos.matungulu-sub-county,Matungulu,geo.name.kind.official,en
+ke.nyandarua.ndaragwa-sub-county,Ndaragwa,geo.name.kind.official,en
+ke.siaya.rarieda-sub-county,Rarieda,geo.name.kind.official,en
+ke.taita-taveta.wundanyi-sub-county,Wundanyi,geo.name.kind.official,en
+ke.makueni.kaiti-sub-county,Kaiti,geo.name.kind.official,en
+ke.embu.mbeere-south-sub-county,Mbeere South,geo.name.kind.official,en
+ke.nyeri.tetu-sub-county,Tetu,geo.name.kind.official,en
+ke.migori.nyatike-sub-county,Nyatike,geo.name.kind.official,en
+ke.kiambu.gatundu-south-sub-county,Gatundu South,geo.name.kind.official,en
+ke.nandi.nandi-east-sub-county,Nandi East,geo.name.kind.official,en
+ke.nyeri.mathira-east-sub-county,Mathira East,geo.name.kind.official,en
+ke.elgeyo-marakwet.marakwet-east-sub-county-sub-county,Marakwet East sub-county,geo.name.kind.official,en
+ke.kajiado.loitokitok-sub-county,Loitokitok,geo.name.kind.official,en
+ke.kisii.bomachoge-borabu-sub-county,Bomachoge Borabu,geo.name.kind.official,en
+ke.laikipia.laikipia-north-sub-county,Laikipia North,geo.name.kind.official,en
+ke.kitui.kitui-rural-sub-county,Kitui Rural,geo.name.kind.official,en
+ke.uasin-gishu.turbo-sub-county,Turbo,geo.name.kind.official,en
+ke.nairobi.embakasi-central-sub-county,Embakasi Central,geo.name.kind.official,en
+ke.machakos.mwala-sub-county,Mwala,geo.name.kind.official,en
+ke.trans-nzoia.kwanza-sub-county,Kwanza,geo.name.kind.official,en
+ke.vihiga.vihiga-sub-county,Vihiga,geo.name.kind.official,en
+ke.bungoma.kanduyi-sub-county,Kanduyi,geo.name.kind.official,en
+ke.nairobi.makadara-sub-county,Makadara,geo.name.kind.official,en
+ke.laikipia.laikipia-west-sub-county,Laikipia West,geo.name.kind.official,en
+ke.nakuru.naivasha-sub-county,Naivasha,geo.name.kind.official,en
+ke.kericho.sigowet-soin-sub-county,Sigowet/Soin,geo.name.kind.official,en
+ke.nairobi.embakasi-east-sub-county,Embakasi East,geo.name.kind.official,en
+ke.kericho.bureti-sub-county,Bureti,geo.name.kind.official,en
+ke.nyeri.nyeri-central-sub-county,Nyeri Central,geo.name.kind.official,en
+ke.marsabit.saku-sub-county,SAKU,geo.name.kind.official,en
+ke.mombasa.changamwe-sub-county,Changamwe,geo.name.kind.official,en
+ke.kilifi.kaloleni-sub-county,Kaloleni,geo.name.kind.official,en
+ke.machakos.athi-river-sub-county,Athi River,geo.name.kind.official,en
+ke.kisii.south-mugirango-sub-county,South Mugirango,geo.name.kind.official,en
+ke.machakos.masinga-sub-county,Masinga,geo.name.kind.official,en
+ke.kilifi.kilifi-south-sub-county,Kilifi South,geo.name.kind.official,en
+ke.homa-bay.rangwe-sub-county,Rangwe,geo.name.kind.official,en
+ke.kirinyaga.kirinyaga-east-sub-county,Kirinyaga East,geo.name.kind.official,en
+ke.mombasa.jomvu-sub-county,Jomvu,geo.name.kind.official,en
+ke.busia.matayos-sub-county,Matayos,geo.name.kind.official,en
+ke.garissa.garissa-sub-county,Garissa,geo.name.kind.official,en
+ke.garissa.dadaab-sub-county,Dadaab,geo.name.kind.official,en
+ke.nyeri.mukurweini-sub-county,Mukurweini,geo.name.kind.official,en
+ke.mombasa.nyali-sub-county,Nyali,geo.name.kind.official,en
+ke.embu.runyenjes-sub-county,Runyenjes,geo.name.kind.official,en
+ke.vihiga.hamisi-sub-county,Hamisi,geo.name.kind.official,en
+ke.siaya.gem-sub-county,Gem,geo.name.kind.official,en
+ke.makueni.mbooni-sub-county,Mbooni,geo.name.kind.official,en
+ke.kiambu.ruiru-sub-county,Ruiru,geo.name.kind.official,en
+ke.turkana.turkana-west-sub-county,Turkana West,geo.name.kind.official,en
+ke.west-pokot.pokot-south-sub-county,Pokot South,geo.name.kind.official,en
+ke.bomet.bomet-central-sub-county,Bomet Central,geo.name.kind.official,en
+ke.nakuru.nakuru-east-sub-county,Nakuru East,geo.name.kind.official,en
+ke.kiambu.kiambaa-sub-county,Kiambaa,geo.name.kind.official,en
+ke.muranga.muranga-south-sub-county,Muranga South,geo.name.kind.official,en
+ke.kakamega.khwisero-sub-county,Khwisero,geo.name.kind.official,en
+ke.garissa.fafi-sub-county,Fafi,geo.name.kind.official,en
+ke.kilifi.magarini-sub-county,Magarini,geo.name.kind.official,en
+ke.siaya.ugunja-sub-county,Ugunja,geo.name.kind.official,en
+ke.elgeyo-marakwet.keiyo-south-sub-county,Keiyo South,geo.name.kind.official,en
+ke.embu.manyatta-sub-county,Manyatta,geo.name.kind.official,en
+ke.kirinyaga.kirinyaga-west-sub-county,Kirinyaga West,geo.name.kind.official,en
+ke.kitui.kitui-east-sub-county,Kitui East,geo.name.kind.official,en
+ke.nandi.tinderet-sub-county,Tinderet,geo.name.kind.official,en
+ke.taita-taveta.voi-sub-county,Voi,geo.name.kind.official,en
+ke.tharaka-nithi.mwimbi-sub-county,Mwimbi,geo.name.kind.official,en
+ke.tharaka-nithi.muthambi-sub-county,Muthambi,geo.name.kind.official,en
+ke.narok.transmara-east-sub-county,Transmara East,geo.name.kind.official,en
+ke.mandera.mandera-east-sub-county,MANDERA EAST,geo.name.kind.official,en
+ke.kisii.kitutu-chache-north-sub-county,Kitutu Chache North,geo.name.kind.official,en
+ke.west-pokot.pokot-north-sub-county,Pokot North,geo.name.kind.official,en
+ke.taita-taveta.taveta-sub-county,Taveta,geo.name.kind.official,en
+ke.wajir.wajir-east-sub-county,Wajir East,geo.name.kind.official,en
+ke.marsabit.moyale-sub-county,MOYALE,geo.name.kind.official,en
+ke.meru.imenti-south-sub-county,Imenti South,geo.name.kind.official,en
+ke.bomet.konoin-sub-county,Konoin,geo.name.kind.official,en
+ke.kiambu.kiambu-town-sub-county,Kiambu Town,geo.name.kind.official,en
+ke.kajiado.kajiado-east-sub-county,Kajiado East,geo.name.kind.official,en
+ke.nakuru.nakuru-north-sub-county,Nakuru North,geo.name.kind.official,en
+ke.trans-nzoia.kiminini-sub-county,Kiminini,geo.name.kind.official,en
+ke.nakuru.subukia-sub-county,Subukia,geo.name.kind.official,en
+ke.samburu.samburu-central-sub-county,Samburu Central,geo.name.kind.official,en
+ke.muranga.kiharu-sub-county,Kiharu,geo.name.kind.official,en
+ke.mandera.mandera-west-sub-county,MANDERA WEST,geo.name.kind.official,en
+ke.west-pokot.west-pokot-sub-county,West Pokot,geo.name.kind.official,en
+ke.kwale.lunga-lunga-sub-county,Lunga Lunga,geo.name.kind.official,en
+ke.migori.rongo-sub-county,Rongo,geo.name.kind.official,en
+ke.nairobi.ruaraka-sub-county,Ruaraka,geo.name.kind.official,en
+ke.kakamega.likuyani-sub-county,Likuyani,geo.name.kind.official,en
+ke.kakamega.shinyalu-sub-county,Shinyalu,geo.name.kind.official,en
+ke.siaya.bondo-sub-county,Bondo,geo.name.kind.official,en
+ke.mandera.mandera-north-sub-county,MANDERA NORTH,geo.name.kind.official,en
+ke.wajir.tarbaj-sub-county,Tarbaj,geo.name.kind.official,en
+ke.homa-bay.suba-sub-county,Suba,geo.name.kind.official,en
+ke.migori.kuria-west-sub-county,Kuria West,geo.name.kind.official,en
+ke.uasin-gishu.kesses-sub-county,Kesses,geo.name.kind.official,en
+ke.nairobi.mathare-sub-county,Mathare,geo.name.kind.official,en
+ke.kwale.msambweni-sub-county,Msambweni,geo.name.kind.official,en
+ke.narok.narok-south-sub-county,Narok South,geo.name.kind.official,en
+ke.nairobi.kasarani-sub-county,Kasarani,geo.name.kind.official,en
+ke.muranga.kangema-sub-county,Kangema,geo.name.kind.official,en
+ke.west-pokot.pokot-central-sub-county,Pokot Central,geo.name.kind.official,en
+ke.migori.awendo-sub-county,Awendo,geo.name.kind.official,en
+ke.nairobi.langata-sub-county,Langata,geo.name.kind.official,en
+ke.nandi.mosop-sub-county,Mosop,geo.name.kind.official,en
+ke.tana-river.galole-sub-county,Galole,geo.name.kind.official,en
+ke.kilifi.malindi-sub-county,Malindi,geo.name.kind.official,en
+ke.kajiado.kajiado-central-sub-county,Kajiado Central,geo.name.kind.official,en
+ke.nairobi.kamukunji-sub-county,Kamukunji,geo.name.kind.official,en
+ke.elgeyo-marakwet.keiyo-north-sub-county,Keiyo North,geo.name.kind.official,en
+ke.embu.mbeere-north-sub-county,Mbeere North,geo.name.kind.official,en
+ke.kisii.kitutu-chache-south-sub-county,Kitutu Chache South,geo.name.kind.official,en
+ke.taita-taveta.mwatate-sub-county,Mwatate,geo.name.kind.official,en
+ke.kisii.bobasi-sub-county,Bobasi,geo.name.kind.official,en
+ke.samburu.samburu-north-sub-county,Samburu North,geo.name.kind.official,en
+ke.kakamega.lurambi-sub-county,Lurambi,geo.name.kind.official,en
+ke.meru.buuri-sub-county,Buuri,geo.name.kind.official,en
+ke.kisii.nyaribari-masaba-sub-county,Nyaribari Masaba,geo.name.kind.official,en
+ke.kitui.kitui-south-sub-county,Kitui South,geo.name.kind.official,en
+ke.tana-river.bura-sub-county,Bura,geo.name.kind.official,en
+ke.nyamira.nyamira-north-sub-county,Nyamira North,geo.name.kind.official,en
+ke.homa-bay.kabondo-kasipul-sub-county,Kabondo Kasipul,geo.name.kind.official,en
+ke.garissa.balambala-sub-county,Balambala,geo.name.kind.official,en
+ke.kisumu.muhoroni-sub-county,Muhoroni,geo.name.kind.official,en
+ke.siaya.ugenya-sub-county,Ugenya,geo.name.kind.official,en
+ke.uasin-gishu.kapseret-sub-county,Kapseret,geo.name.kind.official,en
+ke.garissa.lagdera-sub-county,Lagdera,geo.name.kind.official,en
+ke.homa-bay.kasipul-sub-county,Kasipul,geo.name.kind.official,en
+ke.nyeri.kieni-east-sub-county,Kieni East,geo.name.kind.official,en
+ke.machakos.kangundo-sub-county,Kangundo,geo.name.kind.official,en
+ke.bungoma.mt-elgon-sub-county,Mt Elgon,geo.name.kind.official,en
+ke.turkana.turkana-north-sub-county,Turkana North,geo.name.kind.official,en
+ke.busia.teso-north-sub-county,Teso North,geo.name.kind.official,en
+ke.isiolo.merti-sub-county,Merti,geo.name.kind.official,en
+ke.baringo.marigat-sub-county,Marigat,geo.name.kind.official,en
+ke.kirinyaga.kirinyaga-central-sub-county,Kirinyaga Central,geo.name.kind.official,en
+ke.trans-nzoia.endebess-sub-county,Endebess,geo.name.kind.official,en
+ke.kisumu.kisumu-east-sub-county,Kisumu East,geo.name.kind.official,en
+ke.marsabit.laisamis-sub-county,LAISAMIS,geo.name.kind.official,en
+ke.mandera.lafey-sub-county,LAFEY,geo.name.kind.official,en
+ke.bomet.bomet-east-sub-county,Bomet East,geo.name.kind.official,en
+ke.samburu.samburu-east-sub-county,Samburu East,geo.name.kind.official,en
+ke.kirinyaga.kirinyaga-south-sub-county,Kirinyaga South,geo.name.kind.official,en
+ke.nairobi.westlands-sub-county,Westlands,geo.name.kind.official,en
+ke.vihiga.sabatia-sub-county,Sabatia,geo.name.kind.official,en
+ke.nakuru.gilgil-sub-county,Gilgil,geo.name.kind.official,en
+ke.tana-river.garsen-sub-county,Garsen,geo.name.kind.official,en
+ke.mombasa.likoni-sub-county,Likoni,geo.name.kind.official,en
+ke.kitui.mwingi-central-sub-county-sub-county,Mwingi Central Sub- County,geo.name.kind.official,en
+ke.kisumu.seme-sub-county,Seme,geo.name.kind.official,en
+ke.kericho.kipkelion-west-sub-county,Kipkelion West,geo.name.kind.official,en
+ke.turkana.turkana-south-sub-county,Turkana South,geo.name.kind.official,en
+ke.nakuru.molo-sub-county,Molo,geo.name.kind.official,en
+ke.bungoma.sirisia-sub-county,Sirisia,geo.name.kind.official,en
+ke.kwale.kinango-sub-county,Kinango,geo.name.kind.official,en
+ke.wajir.wajir-north-sub-county,Wajir North,geo.name.kind.official,en
+ke.kakamega.matungu-sub-county,Matungu,geo.name.kind.official,en
+ke.muranga.gatanga-sub-county,Gatanga,geo.name.kind.official,en
+ke.nandi.aldai-sub-county,Aldai,geo.name.kind.official,en
+ke.kisii.nyaribari-chache-sub-county,Nyaribari Chache,geo.name.kind.official,en
+ke.kiambu.thika-town-sub-county,Thika Town,geo.name.kind.official,en
+ke.nakuru.kuresoi-north-sub-county,Kuresoi North,geo.name.kind.official,en
+ke.kisumu.nyando-sub-county,Nyando,geo.name.kind.official,en
+ke.busia.samia-sub-county,Samia,geo.name.kind.official,en
+ke.siaya.alego-usonga-sub-county,Alego Usonga,geo.name.kind.official,en
+ke.nandi.chesumei-sub-county,Chesumei,geo.name.kind.official,en
+ke.kisumu.kisumu-west-sub-county,Kisumu West,geo.name.kind.official,en
+ke.baringo.baringo-north-sub-county,Baringo North,geo.name.kind.official,en
+ke.narok.narok-north-sub-county,Narok North,geo.name.kind.official,en
+ke.migori.uriri-sub-county,Uriri,geo.name.kind.official,en
+ke.nyeri.nyeri-south-sub-county,Nyeri South,geo.name.kind.official,en
+ke.kirinyaga.kirinyaga-north-mwea-west-sub-county,Kirinyaga North/Mwea West,geo.name.kind.official,en
+ke.kakamega.mumias-west-sub-county,Mumias West,geo.name.kind.official,en
+ke.lamu.lamu-east-sub-county,LAMU EAST,geo.name.kind.official,en
+ke.garissa.ijara-sub-county,Ijara,geo.name.kind.official,en
+ke.homa-bay.karachuonyo-sub-county,Karachuonyo,geo.name.kind.official,en
+ke.turkana.kibish-sub-county,Kibish,geo.name.kind.official,en
+ke.migori.suna-east-sub-county,Suna East,geo.name.kind.official,en
+ke.nakuru.nakuru-west-sub-county,Nakuru West,geo.name.kind.official,en
+ke.lamu.lamu-west-sub-county,LAMU WEST,geo.name.kind.official,en
+ke.baringo.mogotio-sub-county,Mogotio,geo.name.kind.official,en
+ke.narok.narok-west-sub-county,Narok West,geo.name.kind.official,en
+ke.nyeri.mathira-west-sub-county,Mathira West,geo.name.kind.official,en
+ke.bungoma.webuye-east-sub-county,Webuye East,geo.name.kind.official,en
+ke.bungoma.kimilili-sub-county,Kimilili,geo.name.kind.official,en
+ke.makueni.kibwezi-east-sub-county,Kibwezi East,geo.name.kind.official,en
+ke.isiolo.garbatulla-sub-county,Garbatulla,geo.name.kind.official,en
+ke.trans-nzoia.cherangany-sub-county,Cherangany,geo.name.kind.official,en
+ke.kajiado.kajiado-west-sub-county,Kajiado West,geo.name.kind.official,en
+ke.bungoma.tongaren-sub-county,Tongaren,geo.name.kind.official,en
+ke.meru.imenti-central-sub-county,Imenti Central,geo.name.kind.official,en
+ke.kakamega.lugari-sub-county,Lugari,geo.name.kind.official,en
+ke.trans-nzoia.saboti-sub-county,Saboti,geo.name.kind.official,en
+ke.nairobi.embakasi-north-sub-county,Embakasi North,geo.name.kind.official,en
+ke.makueni.kibwezi-west-sub-county,Kibwezi West,geo.name.kind.official,en
+ke.kakamega.butere-sub-county,Butere,geo.name.kind.official,en
+ke.baringo.baringo-central-sub-county,Baringo Central,geo.name.kind.official,en
+ke.kajiado.kajiado-north-sub-county,Kajiado North,geo.name.kind.official,en
+ke.turkana.turkana-east-sub-county,Turkana East,geo.name.kind.official,en
+ke.homa-bay.ndhiwa-sub-county,Ndhiwa,geo.name.kind.official,en
+ke.kiambu.kabete-sub-county,Kabete,geo.name.kind.official,en
+ke.tharaka-nithi.tharaka-north-sub-county,Tharaka North,geo.name.kind.official,en
+ke.uasin-gishu.soy-sub-county,Soy,geo.name.kind.official,en
+ke.nairobi.embakasi-west-sub-county,Embakasi West,geo.name.kind.official,en
+ke.muranga.kigumo-sub-county,Kigumo,geo.name.kind.official,en
+ke.nyandarua.kinangop-sub-county,Kinangop,geo.name.kind.official,en
+ke.garissa.hulugho-sub-county,Hulugho,geo.name.kind.official,en
+ke.kisii.bomachoge-chache-sub-county,Bomachoge Chache,geo.name.kind.official,en
+ke.turkana.loima-sub-county,Loima,geo.name.kind.official,en
+ke.kiambu.limuru-sub-county,Limuru,geo.name.kind.official,en
+ke.isiolo.isiolo-sub-county,Isiolo,geo.name.kind.official,en
+ke.nakuru.njoro-sub-county,Njoro,geo.name.kind.official,en
+ke.nakuru.rongai-sub-county,Rongai,geo.name.kind.official,en
+ke.kiambu.githunguri-sub-county,Githunguri,geo.name.kind.official,en
+ke.migori.suna-west-sub-county,Suna West,geo.name.kind.official,en
+ke.busia.bunyala-sub-county,Bunyala,geo.name.kind.official,en
+ke.kericho.ainamoi-sub-county,Ainamoi,geo.name.kind.official,en
+ke.narok.narok-east-sub-county,Narok East,geo.name.kind.official,en
+ke.migori.kuria-east-sub-county,Kuria East,geo.name.kind.official,en
+ke.kwale.matuga-sub-county,Matuga,geo.name.kind.official,en
+ke.elgeyo-marakwet.marakwet-west-sub-county,Marakwet West,geo.name.kind.official,en
+ke.makueni.kilome-sub-county,Kilome,geo.name.kind.official,en
+ke.meru.tigania-east-sub-county,Tigania East,geo.name.kind.official,en
+ke.vihiga.luanda-sub-county,Luanda,geo.name.kind.official,en
+ke.kilifi.kilifi-north-sub-county,Kilifi North,geo.name.kind.official,en
+ke.nyamira.manga-sub-county,Manga,geo.name.kind.official,en
+ke.homa-bay.mbita-sub-county,Mbita,geo.name.kind.official,en
+ke.meru.imenti-north-sub-county,Imenti North,geo.name.kind.official,en
+ke.kitui.mwingi-north-sub-county,Mwingi North,geo.name.kind.official,en
+ke.kakamega.mumias-east-sub-county,Mumias East,geo.name.kind.official,en
+ke.nairobi.starehe-sub-county,Starehe,geo.name.kind.official,en
+ke.baringo.tiaty-sub-county,Tiaty,geo.name.kind.official,en
+ke.baringo.east-pokot-sub-county,East Pokot,geo.name.kind.official,en
+ke.machakos.kalama-sub-county,Kalama,geo.name.kind.official,en
+ke.machakos.machakos-sub-county,Machakos,geo.name.kind.official,en
+ke.mandera.kutulo-sub-county,Kutulo,geo.name.kind.official,en
+ke.mandera.mandera-south-sub-county,MANDERA SOUTH,geo.name.kind.official,en
+ke.uasin-gishu.ainabkoi-sub-county,Ainabkoi,geo.name.kind.official,en

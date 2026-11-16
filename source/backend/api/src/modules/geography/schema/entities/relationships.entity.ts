@@ -10,7 +10,6 @@ import {
 } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
-import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
@@ -63,13 +62,6 @@ export class GeographyRelationshipsEntity {
   @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "relationship_kind_id" })
   relationshipKind?: Relation<ValueEntity>;
-
-  @Column({ name: "source_id", type: "uuid", nullable: true })
-  sourceId?: Id | null;
-
-  @ManyToOne(() => SourcesEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "source_id" })
-  source?: Relation<SourcesEntity>;
 
   @Column({ name: "subject_feature_id", type: "uuid" })
   subjectFeatureId!: Id;

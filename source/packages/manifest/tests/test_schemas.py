@@ -40,7 +40,7 @@ def _errors(schema_path: str, document: object) -> list[str]:
 
 
 def _website(**extra: object) -> dict:
-    return {"code": "pg.src.wbs.ke.iebc", "kind": "website", "modules": ["party-list"], "policy": POLICY, **extra}
+    return {"code": "pg.src.srs.ke.iebc", "kind": "website", "modules": ["party-list"], "policy": POLICY, **extra}
 
 
 def _api(**extra: object) -> dict:
@@ -48,7 +48,7 @@ def _api(**extra: object) -> dict:
         "base_url": "https://api.example.org",
         "endpoints": {"countries": {"path": "/v1/countries", "items": {"jsonpath": "$.data[*]"}}},
     }
-    return {"code": "pg.src.api.global.example-api", "kind": "api", "api": {**api, **extra}, "policy": POLICY}
+    return {"code": "pg.src.srs.global.example-api", "kind": "api", "api": {**api, **extra}, "policy": POLICY}
 
 
 @pytest.mark.parametrize("path", _files(), ids=lambda p: f"{p.parent.name}/{p.name}")
