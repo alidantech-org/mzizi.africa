@@ -132,7 +132,10 @@ export async function generate(): Promise<boolean> {
   return database("generate", []);
 }
 
-/** Generate the system catalogs (`catalog.json` beside each service) from the API and engine contracts. */
+/**
+ * Generate the system catalogs (`catalog.json` beside each service) from the API and engine contracts, and the table
+ * schemas (`source/schema/tables/<schema>.table-schema.json`) that seed CSV files are validated against.
+ */
 export async function catalog(check = false): Promise<boolean> {
   const stop = await ensureApi();
   try {
@@ -153,7 +156,11 @@ export async function catalog(check = false): Promise<boolean> {
       if (check) args.push("--check");
       return step(`${app} catalog`, root, args, dryvEnv());
     };
-    return await group("Dryv system catalogs", [run("api", "catalog-api"), run("engine", "catalog-engine")]);
+    return await group("Dryv system catalogs", [
+      run("api", "catalog-api"),
+      run("engine", "catalog-engine"),
+      run("pgsql", "table-schemas"),
+    ]);
   } finally {
     stop();
   }

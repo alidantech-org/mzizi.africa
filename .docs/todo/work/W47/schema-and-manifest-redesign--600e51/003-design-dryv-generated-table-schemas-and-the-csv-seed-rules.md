@@ -29,3 +29,14 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+
+## Progress
+
+16 November 2026: the generation half was built early at the owner's request, so the owner can review real output. The Dryv pack `dryv/packs/table-schemas` (activated on the `pgsql` application as `table-schemas`) writes one `source/schema/tables/<schema>.table-schema.json` per PostgreSQL schema: 12 files, 94 tables, 288 foreign keys, all of which resolve to a generated table. Each column carries `name`, `type` (uuid, text, boolean, integer, decimal, number, date, time, interval, timestamp), `required`, `nullable`, `primaryKey`, and where present `maxLength`, `precision`, `scale`, `enum` and `references`. A table carries `id`, `table`, `primaryKey` and `uniqueKeys`. `bun run catalog` regenerates the files and `--check` fails when they drift.
+
+Findings for the design review:
+
+- Dryv templates cannot see tables outside their own group, so a foreign key names its target by contract id (`references.tableId`) and the validator resolves it across the loaded files.
+- Building lists of contract objects inside a template (`namespace` appends) crashes the Jinja template server; loop with a first-item flag instead.
+- The contracts declare no literal column defaults, so `default` never appears. System-managed columns (`created_at`, `updated_at`, `version`) are not yet marked, which is the open "automatic columns" decision above.
+- The CSV rules and the fate of the five auth CSVs are still unapproved designs; the manifest package does not read these files yet.

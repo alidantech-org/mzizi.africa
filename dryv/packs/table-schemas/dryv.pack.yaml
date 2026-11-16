@@ -1,0 +1,31 @@
+version: dryv.pack/v1alpha1
+key: mzizi.table-schemas
+source: templates
+
+info:
+  title: Mzizi table schemas
+  version: 0.1.0
+  description: One JSON file per PostgreSQL schema describing every table the contracts store, with each column's type, nullability, default, allowed values and foreign key. The seed validator checks CSV files against these files, so no second table catalogue is kept by hand.
+  purpose: validation
+  languages: [json]
+  tags: [tables, csv, seed, validation]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+capabilities: { persistence: true, stores: true, references: true }
+
+selections:
+  tables:
+    subject: schema
+    filter:
+      all: { role: entity, facet: storage }
+    scope: collects.group
+
+# <destination>/<group>.table-schema.json: every stored table of one group.
+templates:
+  table-schema:
+    $ref: '#/selections/tables'
+    output:
+      name: $(group.name.kebab)
