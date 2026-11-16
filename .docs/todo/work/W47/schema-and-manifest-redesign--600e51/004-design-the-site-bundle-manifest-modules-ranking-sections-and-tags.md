@@ -30,3 +30,6 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+## Progress
+
+Built 16 November 2026 in `source/schema/sources/`: `source.schema.json` (entry, header, `uses`, policy), `website.schema.json` (modules, family `extends`, `rank` folded in), `api.schema.json` (GET only, `https` base URL, credential named by `auth.binding`, static non-secret headers, endpoints, the crawler's pagination styles), `module.schema.json` (`mapping`, `discover.endpoint`) and `common.schema.json`. Sections and tags schemas are not carried over. The crawler still reads `site/v1/` until its validator moves.

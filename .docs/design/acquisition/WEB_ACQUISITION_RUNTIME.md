@@ -11,7 +11,7 @@ This document describes what the code does today. Proposals stay in `design/acqu
 | Layer | Package / module | Responsibility | Status |
 |---|---|---|---|
 | URL handling | `mzizi_fetch.web.urls` | normalisation, tracking-parameter removal, scope, classification, deduplication | Implemented |
-| Classification data | `source/schema/web/vocabulary.v1.yaml` (+ `.schema.json`) | extensions by URL kind, challenge markers, file signatures, default block responses | Implemented (data, not code) |
+| Classification data | `source/schema/vocabulary/web.yaml` (+ `.schema.json`) | extensions by URL kind, challenge markers, file signatures, default block responses | Implemented (data, not code) |
 | Source policy | `mzizi_fetch.web.policy` | allowed hosts/paths, budgets, robots mode, authorisation record, audited decisions | Implemented |
 | Block policy | `mzizi_fetch.web.blocks` | classify failures, configured response, recorded reason | Implemented |
 | HTTP client | `mzizi_fetch.web.client` | GET/HEAD, conditional requests, retries with backoff and jitter, spacing, concurrency, provenance | Implemented |
@@ -64,7 +64,7 @@ Add `--render browser --adapter patchright` to extract from a rendered DOM. The 
 
 A suite can also list `pdfs` with saved paths and expectations for page counts, table locations, row counts and exact cells. PDF replay runs the multi-strategy table extractor.
 
-Each result records the expected and observed evidence in `coverage.json`. The CLI returns a failing exit code if a check differs. See the [small checked fixture](../../../seed/_fixtures/extraction/web-replay/expectations.json) for the format. Counts and CSS selectors can be paired with exact row and cell expectations to detect offset columns or omitted references.
+Each result records the expected and observed evidence in `coverage.json`. The CLI returns a failing exit code if a check differs. The small checked fixture that showed the format was in the old seed tree, now archived; it returns with the rebuilt `seed/_fixtures/`. Counts and CSS selectors can be paired with exact row and cell expectations to detect offset columns or omitted references.
 
 ## Rendered media inventory
 

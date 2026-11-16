@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/sources/website.schema.json",
+  "title": "Website fields",
+  "description": "Fields added to the source header when kind is website.",
+  "type": "object",
+  "required": [
+    "modules"
+  ],
+  "properties": {
+    "fetch": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "http",
+            "browser"
+          ]
+        }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/name"
+      },
+      "uniqueItems": true
+    },
+    "abstract": {
+      "type": "boolean",
+      "description": "A family template that is never crawled itself; other websites extend it."
+    },
+    "extends": {
+      "$ref": "common.schema.json#/$defs/code",
+      "description": "Code of an abstract website whose modules and variables this one inherits."
+    },
+    "vars": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "overlay": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "modules": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "replace": {
+              "type": "array",
+              "items": {
+                "$ref": "common.schema.json#/$defs/name"
+              }
+            },
+            "add": {
+              "type": "array",
+              "items": {
+                "$ref": "common.schema.json#/$defs/name"
+              }
+            },
+            "remove": {
+              "type": "array",
+              "items": {
+                "$ref": "common.schema.json#/$defs/name"
+              }
+            }
+          }
+        },
+        "tags": {
+          "$ref": "common.schema.json#/$defs/tags"
+        }
+      }
+    },
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "domain_role": {
+          "enum": [
+            "primary",
+            "alias",
+            "mirror"
+          ]
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/pathPrefix"
+          }
+        }
+      }
+    },
+    "rank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rules"
+      ],
+      "description": "Prioritises discovered files. A rank is a priority, never a verified fact.",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "target",
+              "label",
+              "conditions"
+            ],
+            "properties": {
+              "target": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                "description": "A real table as <schema>.<table>; the validator checks it against source/schema/database/."
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "confidence_cap": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 1
+              },
+              "provenance": {
+                "enum": [
+                  "custom-prepared",
+                  "discovered",
+                  "ai-proposed",
+                  "reviewed"
+                ]
+              },
+              "conditions": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "signal",
+                    "contains"
+                  ],
+                  "properties": {
+                    "signal": {
+                      "enum": [
+                        "section",
+                        "anchor_text",
+                        "nearby_heading",
+                        "filename",
+                        "source_page_title",
+                        "source_page_path",
+                        "extension"
+                      ]
+                    },
+                    "contains": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "weight": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

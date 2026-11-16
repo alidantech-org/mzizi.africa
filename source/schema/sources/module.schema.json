@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/sources/module.schema.json",
+  "title": "Source module",
+  "description": "How to discover and extract one kind of content from a source. A module's extracted field names are the inputs of the mapping it names.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "module",
+    "discover",
+    "extract"
+  ],
+  "properties": {
+    "module": {
+      "$ref": "common.schema.json#/$defs/name"
+    },
+    "tags": {
+      "$ref": "common.schema.json#/$defs/tags"
+    },
+    "mapping": {
+      "$ref": "common.schema.json#/$defs/code",
+      "description": "Code of the mapping that turns this module's fields into table records."
+    },
+    "discover": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "listing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "url",
+            "items"
+          ],
+          "description": "Website only.",
+          "properties": {
+            "url": {
+              "type": "string",
+              "pattern": "^(/|\\$\\{)"
+            },
+            "items": {
+              "$ref": "common.schema.json#/$defs/selectors"
+            },
+            "paginate": {
+              "$ref": "common.schema.json#/$defs/pagination"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "description": "API only: the name of an endpoint in the source's api.endpoints.",
+          "properties": {
+            "name": {
+              "$ref": "common.schema.json#/$defs/name"
+            }
+          }
+        },
+        "sitemap": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "url"
+          ],
+          "description": "Website only.",
+          "properties": {
+            "url": {
+              "type": "string",
+              "pattern": "^/"
+            },
+            "include": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "fetch": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resource": {
+          "enum": [
+            "html",
+            "json",
+            "csv",
+            "xlsx",
+            "pdf",
+            "geojson",
+            "shapefile",
+            "xml"
+          ]
+        },
+        "link": {
+          "$ref": "common.schema.json#/$defs/selectors"
+        }
+      }
+    },
+    "extract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fields"
+      ],
+      "properties": {
+        "fields": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "from": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "common.schema.json#/$defs/selectors"
+                  }
+                ]
+              },
+              "regex": {
+                "type": "string"
+              },
+              "parse": {
+                "$ref": "common.schema.json#/$defs/transform"
+              },
+              "const": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ]
+              },
+              "tags": {
+                "$ref": "common.schema.json#/$defs/tags"
+              }
+            }
+          }
+        }
+      }
+    },
+    "expect": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_items": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_items": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "required_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

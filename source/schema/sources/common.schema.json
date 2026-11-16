@@ -1,0 +1,380 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/sources/common.schema.json",
+  "title": "Shared definitions for source manifests",
+  "$defs": {
+    "code": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*(\\.[a-z0-9][a-z0-9_-]*)*$",
+      "maxLength": 200,
+      "description": "Dotted lowercase code, unique across the seed tree. A source's code equals source.sources.code."
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$",
+      "maxLength": 80
+    },
+    "field": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "codeList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/code"
+      },
+      "uniqueItems": true
+    },
+    "tag": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*:[a-z0-9][a-z0-9_.-]*$"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/tag"
+      },
+      "uniqueItems": true
+    },
+    "hostname": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$"
+    },
+    "pathPrefix": {
+      "type": "string",
+      "pattern": "^/"
+    },
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "css": {
+          "type": "string"
+        },
+        "xpath": {
+          "type": "string"
+        },
+        "jsonpath": {
+          "type": "string"
+        },
+        "regex": {
+          "type": "string"
+        },
+        "attr": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "css"
+          ]
+        },
+        {
+          "required": [
+            "xpath"
+          ]
+        },
+        {
+          "required": [
+            "jsonpath"
+          ]
+        },
+        {
+          "required": [
+            "regex"
+          ]
+        }
+      ]
+    },
+    "selectors": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/selector"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selector"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "transform": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 1
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "minProperties": 1,
+                "maxProperties": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "pagination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "description": "Only the styles the crawler implements today.",
+      "properties": {
+        "type": {
+          "enum": [
+            "query",
+            "path",
+            "next_link",
+            "none"
+          ]
+        },
+        "param": {
+          "type": "string"
+        },
+        "start": {
+          "type": "integer"
+        },
+        "max_pages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "next": {
+          "$ref": "#/$defs/selectors"
+        },
+        "stop_when": {
+          "enum": [
+            "empty_items",
+            "no_next",
+            "max_pages"
+          ]
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "rate",
+        "identify",
+        "robots",
+        "auth"
+      ],
+      "description": "How collection is limited. A valid policy is still refused by the collection gate unless the source has a current approved assessment.",
+      "properties": {
+        "assessment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ref"
+          ],
+          "properties": {
+            "ref": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "licence": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ref": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "hosts"
+          ],
+          "properties": {
+            "hosts": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/hostname"
+              }
+            },
+            "schemes": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "https",
+                  "http"
+                ]
+              },
+              "minItems": 1
+            },
+            "paths": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "allow": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/pathPrefix"
+                  }
+                },
+                "deny": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/pathPrefix"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "rate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "requests_per_second"
+          ],
+          "properties": {
+            "requests_per_second": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 5
+            },
+            "max_concurrency": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            }
+          }
+        },
+        "retries": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "backoff": {
+              "enum": [
+                "exponential_jitter"
+              ]
+            }
+          }
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "max_response_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 268435456
+            },
+            "timeout_seconds": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 120
+            }
+          }
+        },
+        "identify": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "user_agent"
+          ],
+          "properties": {
+            "user_agent": {
+              "type": "string",
+              "pattern": "^\\S+/\\S+ \\(\\+https?://\\S+[;,] ?\\S+@\\S+\\)$"
+            }
+          }
+        },
+        "robots": {
+          "enum": [
+            "respect"
+          ],
+          "description": "Override is approved direction but not implemented, so it is not accepted yet."
+        },
+        "auth": {
+          "enum": [
+            "none",
+            "binding"
+          ],
+          "description": "none, or binding when the source is an API whose credential is named in its api.auth block."
+        },
+        "stop_on": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "401",
+              "403",
+              "429",
+              "repeated_5xx",
+              "access_challenge",
+              "block_notice"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "excluded_categories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "on_unexpected": {
+              "enum": [
+                "quarantine"
+              ]
+            }
+          }
+        },
+        "purposes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "research",
+              "public_atlas",
+              "publish"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

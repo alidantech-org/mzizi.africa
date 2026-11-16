@@ -1,0 +1,227 @@
+{
+  "$defs": {
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "NonEmpty": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "Payload": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "type": "object"
+    },
+    "PlacementHint": {
+      "additionalProperties": false,
+      "properties": {
+        "manifest_ref": {
+          "$ref": "#/$defs/NonEmpty"
+        }
+      },
+      "required": [
+        "manifest_ref"
+      ],
+      "title": "PlacementHint",
+      "type": "object"
+    },
+    "RankingSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "rules_ref": {
+          "$ref": "#/$defs/NonEmpty"
+        }
+      },
+      "required": [
+        "rules_ref"
+      ],
+      "title": "RankingSpec",
+      "type": "object"
+    },
+    "RunLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_bytes": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Bytes"
+        },
+        "max_requests": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Requests"
+        },
+        "max_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Seconds"
+        }
+      },
+      "title": "RunLimits",
+      "type": "object"
+    },
+    "SourceAuthority": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_ref": {
+          "$ref": "#/$defs/NonEmpty"
+        },
+        "url": {
+          "$ref": "#/$defs/NonEmpty"
+        }
+      },
+      "required": [
+        "url",
+        "authority_ref"
+      ],
+      "title": "SourceAuthority",
+      "type": "object"
+    },
+    "StageInput": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "$ref": "#/$defs/NonEmpty"
+        },
+        "params": {
+          "$ref": "#/$defs/Payload"
+        }
+      },
+      "required": [
+        "operation",
+        "params"
+      ],
+      "title": "StageInput",
+      "type": "object"
+    }
+  },
+  "$id": "https://mzizi.africa/schemas/engine/job.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "$ref": "#/$defs/NonEmpty"
+    },
+    "limits": {
+      "$ref": "#/$defs/RunLimits",
+      "default": {
+        "max_bytes": null,
+        "max_requests": null,
+        "max_seconds": null
+      }
+    },
+    "mode": {
+      "default": "crawl",
+      "enum": [
+        "crawl",
+        "hunt"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "name": {
+      "$ref": "#/$defs/NonEmpty"
+    },
+    "placement_hints": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PlacementHint"
+      },
+      "title": "Placement Hints",
+      "type": "array"
+    },
+    "ranking": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RankingSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "sources": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SourceAuthority"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "spec_version": {
+      "const": 1,
+      "title": "Spec Version",
+      "type": "integer"
+    },
+    "stages": {
+      "items": {
+        "$ref": "#/$defs/StageInput"
+      },
+      "minItems": 1,
+      "title": "Stages",
+      "type": "array"
+    }
+  },
+  "required": [
+    "spec_version",
+    "kind",
+    "name",
+    "stages"
+  ],
+  "title": "JobInput",
+  "type": "object"
+}

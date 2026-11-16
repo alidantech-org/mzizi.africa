@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/vocabulary/terms.schema.json",
+  "title": "Term list vocabulary",
+  "description": "A named list of words or phrases a source, ranking rule or pattern can use by code (for example office name patterns). The web classification data has its own typed schema in web.schema.json. Vector settings are not defined yet: the vector store is only a skeleton.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "terms"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*(\\.[a-z0-9][a-z0-9_-]*)*$",
+      "maxLength": 200
+    },
+    "describe": {
+      "type": "string"
+    },
+    "terms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "meaning": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

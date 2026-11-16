@@ -29,3 +29,6 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+## Progress
+
+Partly done 16 November 2026: `web/`, `extraction/v1/` and `pipeline/` are gone and `foundation-query` is removed. `site/v1/` and `contracts/` stay until the crawler validator and the exchange decision move; see `source/schema/README.md`.

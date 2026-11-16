@@ -28,3 +28,6 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+## Progress
+
+Built 16 November 2026: `source/schema/engine/job.schema.json` generated from the typed job model by `runtime/runs/schema.py`, with a drift test. The old pipeline schema is removed. A run-bundle schema is not needed yet.

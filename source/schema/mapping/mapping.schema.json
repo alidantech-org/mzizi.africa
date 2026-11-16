@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/mapping/mapping.schema.json",
+  "title": "Mapping",
+  "description": "Turns the fields a source module extracts into records for real tables. Every table, column, reference and lookup is checked against source/schema/database/ by the validator; nothing here repeats a table definition.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "inputs",
+    "yields"
+  ],
+  "properties": {
+    "code": {
+      "$ref": "../sources/common.schema.json#/$defs/code"
+    },
+    "describe": {
+      "type": "string",
+      "description": "What the source data means, in plain language. An AI may propose a mapping from it; the proposal is only reviewable until it passes validation."
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/inputName"
+      }
+    },
+    "yields": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "as",
+          "table",
+          "key",
+          "fields"
+        ],
+        "properties": {
+          "as": {
+            "$ref": "#/$defs/alias"
+          },
+          "table": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+            "description": "A real table as <schema>.<table>; the validator checks it against source/schema/database/."
+          },
+          "key": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "description": "Columns that identify an existing row, so a rerun updates instead of duplicating."
+          },
+          "fields": {
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "$ref": "#/$defs/inputName",
+                  "description": "A field extracted by the module."
+                },
+                "const": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                },
+                "ref": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                  "description": "<alias>.<column> of another yield in this mapping."
+                },
+                "lookup": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "table",
+                    "by"
+                  ],
+                  "description": "Find an existing row by a unique column.",
+                  "properties": {
+                    "table": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                      "description": "A real table as <schema>.<table>; the validator checks it against source/schema/database/."
+                    },
+                    "by": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*$"
+                    },
+                    "from": {
+                      "$ref": "#/$defs/inputName"
+                    },
+                    "const": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                      ]
+                    }
+                  },
+                  "oneOf": [
+                    {
+                      "required": [
+                        "from"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "const"
+                      ]
+                    }
+                  ]
+                },
+                "transform": {
+                  "$ref": "../sources/common.schema.json#/$defs/transform"
+                },
+                "precision": {
+                  "enum": [
+                    "exact",
+                    "month",
+                    "year",
+                    "decade",
+                    "century",
+                    "approximate"
+                  ]
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "from"
+                  ]
+                },
+                {
+                  "required": [
+                    "const"
+                  ]
+                },
+                {
+                  "required": [
+                    "ref"
+                  ]
+                },
+                {
+                  "required": [
+                    "lookup"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method"
+      ],
+      "properties": {
+        "locator": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "method": {
+          "enum": [
+            "extracted",
+            "inferred",
+            "curated",
+            "ai_assisted"
+          ]
+        }
+      }
+    },
+    "tags": {
+      "$ref": "../sources/common.schema.json#/$defs/tags"
+    },
+    "expect": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What a healthy result looks like; a failed expectation is reported, never silently accepted.",
+      "properties": {
+        "min_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "required_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "uniqueItems": true
+        },
+        "value_ranges": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "period": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "field": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "expected": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "max_age_days": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  },
+  "$defs": {
+    "inputName": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "alias": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    }
+  }
+}

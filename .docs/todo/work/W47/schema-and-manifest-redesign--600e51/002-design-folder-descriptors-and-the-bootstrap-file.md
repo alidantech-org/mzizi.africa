@@ -29,3 +29,6 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+## Progress
+
+Built 16 November 2026: `source/schema/seed/folder.schema.json` (roles, access, preparation, review, authorization required for public, overrides with reasons) and `bootstrap.schema.json` (environment variable names only). The Python vocabulary in `seed_vocabulary.py` (including the hard-coded loader list) is replaced in task 009.

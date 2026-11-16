@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/sources/source.schema.json",
+  "title": "Source manifest",
+  "description": "One website or API source. The header is shared; kind selects the extra fields (website.schema.json or api.schema.json).",
+  "type": "object",
+  "required": [
+    "code",
+    "kind",
+    "policy"
+  ],
+  "properties": {
+    "code": {
+      "$ref": "common.schema.json#/$defs/code"
+    },
+    "kind": {
+      "enum": [
+        "website",
+        "api"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "publisher": {
+      "$ref": "common.schema.json#/$defs/code",
+      "description": "Code of the publisher row in source.publishers."
+    },
+    "tags": {
+      "$ref": "common.schema.json#/$defs/tags"
+    },
+    "uses": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Shared definitions this source reuses, by code; the registry resolves each one.",
+      "properties": {
+        "mappings": {
+          "$ref": "common.schema.json#/$defs/codeList"
+        },
+        "vocabularies": {
+          "$ref": "common.schema.json#/$defs/codeList"
+        },
+        "extraction": {
+          "$ref": "common.schema.json#/$defs/codeList"
+        }
+      }
+    },
+    "policy": {
+      "$ref": "common.schema.json#/$defs/policy"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "website"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "$ref": "website.schema.json"
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "api"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "$ref": "api.schema.json"
+      }
+    }
+  ],
+  "unevaluatedProperties": false
+}

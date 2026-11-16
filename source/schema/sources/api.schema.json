@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/sources/api.schema.json",
+  "title": "API fields",
+  "description": "Fields added to the source header when kind is api. Only what the fetch and crawler packages implement today is accepted: GET requests, query parameters, JSON items and the pagination styles in common.pagination. Anything else is planned and rejected until implemented.",
+  "type": "object",
+  "required": [
+    "api"
+  ],
+  "properties": {
+    "api": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "base_url",
+        "endpoints"
+      ],
+      "properties": {
+        "base_url": {
+          "type": "string",
+          "pattern": "^https://[^\\s/@]+(/\\S*)?$",
+          "description": "HTTPS only, no credentials in the URL."
+        },
+        "auth": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding"
+          ],
+          "description": "The credential is named, never stored. The engine resolves the binding from its own configuration; it matches source.apis.credential_binding.",
+          "properties": {
+            "binding": {
+              "$ref": "common.schema.json#/$defs/name"
+            },
+            "placement": {
+              "enum": [
+                "header",
+                "query"
+              ]
+            },
+            "parameter": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+            }
+          }
+        },
+        "headers": {
+          "type": "object",
+          "description": "Static non-secret request headers. Names that carry credentials are rejected.",
+          "propertyNames": {
+            "pattern": "^(?!(?i:authorization|proxy-authorization|cookie|x-api-key|api-key|x-auth-token|x-access-token)$)[A-Za-z][A-Za-z0-9-]*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "endpoints": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "maxLength": 80
+          },
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "items"
+            ],
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/"
+              },
+              "query": {
+                "type": "object",
+                "propertyNames": {
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+                },
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                }
+              },
+              "response": {
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              },
+              "items": {
+                "$ref": "common.schema.json#/$defs/selectors"
+              },
+              "paginate": {
+                "$ref": "common.schema.json#/$defs/pagination"
+              },
+              "describe": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

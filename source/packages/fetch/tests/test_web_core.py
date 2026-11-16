@@ -203,7 +203,7 @@ def test_vocabulary_is_data_and_its_schema_is_in_sync() -> None:
     from mzizi_fetch.web.vocabulary import DEFAULT_PATH, Vocabulary, parse_vocabulary, vocabulary
 
     assert vocabulary().version == 1 and "pdf" in vocabulary().url_kinds.document
-    schema = Path(DEFAULT_PATH).parent / "vocabulary.schema.json"
+    schema = Path(DEFAULT_PATH).parent / "web.schema.json"
     assert json.loads(schema.read_text()) == json.loads(json.dumps(Vocabulary.model_json_schema(), sort_keys=True))
     assert parse_vocabulary(DEFAULT_PATH.read_text()).file_signatures[0].magic_bytes == b"%PDF"
 

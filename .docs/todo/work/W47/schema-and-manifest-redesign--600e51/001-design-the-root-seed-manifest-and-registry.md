@@ -34,3 +34,5 @@ Record findings, rejected options and the approval here.
 ## Progress
 
 16 November 2026: the owner decided that versions may live inside a file as an approved field, but never in folder or file names for now, and that agents must never invent a version without being asked. The rule is `.docs/rules/versioning.md`. Consequence for this design: the root manifest drops `schema_version` unless the owner approves a version field for it, and all later designs flatten their version folders.
+
+Built 16 November 2026 at the owner's request: `source/schema/seed/manifest.schema.json` drops `schema_version`, `loader`, `target`, `database_target_state`, `key_columns`, `consumers` and `loader_status`; entries now only register files (id, path or glob, depends_on, versioning, pin, origin, notes). The table of a CSV comes from its path. The seed is empty, so there are no entries to migrate. The old validator code still expects the removed fields and is replaced in task 009.

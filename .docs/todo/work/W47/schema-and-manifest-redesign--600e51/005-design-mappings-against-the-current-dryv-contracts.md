@@ -29,3 +29,6 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+## Progress
+
+Built 16 November 2026: `source/schema/mapping/mapping.schema.json` with `inputs`, `yields` (table, key, fields), `ref`, `lookup`, `describe`, provenance and expectations. Table and column checks against `database/` belong to the validator in task 009. The old mappings are in the archived seed.

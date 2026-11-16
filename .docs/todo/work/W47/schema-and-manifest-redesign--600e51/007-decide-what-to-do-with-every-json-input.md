@@ -29,3 +29,6 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+## Progress
+
+Partly built 16 November 2026: `source/schema/vocabulary/` holds `web.schema.json` and `web.yaml` (moved from `web/`, read by `mzizi-fetch`) and `terms.schema.json`. Decisions for the archived JSON inputs are still open.

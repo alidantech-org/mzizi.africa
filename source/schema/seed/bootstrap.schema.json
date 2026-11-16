@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mzizi.africa/schemas/seed/bootstrap.schema.json",
+  "title": "Bootstrap definition (bootstrap.yaml)",
+  "description": "Defines the first administrator without storing an identity. Values are names of environment variables, never the identity itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "role",
+    "scope",
+    "identity"
+  ],
+  "properties": {
+    "role": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "scope": {
+      "enum": [
+        "platform"
+      ]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issuer_env",
+        "subject_env"
+      ],
+      "properties": {
+        "issuer_env": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "subject_env": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "display_name_env": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        }
+      }
+    }
+  }
+}
