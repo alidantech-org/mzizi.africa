@@ -28,7 +28,7 @@ export const geography = dryv
 export const Features = geography
   .schema("Features", {
     /** Scheme geo.feature.kind. A kind says whether a feature is a country, county, river, dam, road or territory. */
-    featureTypeId: belongsTo(() => Value).tags("scheme:geo.feature.kind"),
+    featureTypeId: belongsTo(() => Value).tags("scheme:ref.sch.geo.feature.kind"),
   })
   .extends(baseSchemas.CodedHistoricalEntity)
   .description(
@@ -47,7 +47,7 @@ export const Names = geography
     featureId: belongsTo(() => Features),
     name: dryv.field(sharedProperties.Name),
     languageTag: dryv.field(sharedProperties.LanguageTag).maybe(),
-    nameKindId: belongsTo(() => Value).tags("scheme:geo.name.kind"),
+    nameKindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.name.kind"),
   })
   .extends(baseSchemas.ValidityEntity)
   .description(
@@ -90,7 +90,7 @@ export const Identifiers = geography
   .schema("Identifiers", {
     featureId: belongsTo(() => Features),
     identifierSchemeId: belongsTo(() => Value).tags(
-      "scheme:geo.identifier.scheme",
+      "scheme:ref.sch.geo.identifier.scheme",
     ),
     namespace: dryv.field(sharedProperties.NonEmptyString255).maybe(),
     externalId: dryv.field(sharedProperties.NonEmptyString500),
@@ -123,9 +123,9 @@ export const Geometries = geography
   .schema("Geometries", {
     featureId: belongsTo(() => Features),
     /** Expected scheme: geo.geometry.role (outline, centroid, label point, claimed outline). */
-    geometryRoleId: belongsTo(() => Value).tags("scheme:geo.geometry.role"),
+    geometryRoleId: belongsTo(() => Value).tags("scheme:ref.sch.geo.geometry.role"),
     /** Expected scheme: geo.geometry.basis (surveyed, reconstructed, approximate, illustrative, traditional claim). */
-    basisId: belongsTo(() => Value).tags("scheme:geo.geometry.basis"),
+    basisId: belongsTo(() => Value).tags("scheme:ref.sch.geo.geometry.basis"),
     /** 1 for the first drawing of this role, rising with each new drawing of the same feature and role. */
     revision: dryv.field(sharedProperties.PositiveInteger),
     /** The geometry this one replaces; a feature keeps every earlier drawing. */
@@ -193,10 +193,10 @@ export const Relationships = geography
     objectFeatureId: belongsTo(() => Features),
     /** Expected scheme: geo.relationship.kind (part-of, flows-through, located-on, connects, borders, replaced-by). */
     relationshipKindId: belongsTo(() => Value).tags(
-      "scheme:geo.relationship.kind",
+      "scheme:ref.sch.geo.relationship.kind",
     ),
     /** Expected scheme: geo.relationship.system (administrative, electoral, statistical, hydrological, historical). */
-    systemId: belongsTo(() => Value).tags("scheme:geo.relationship.system"),
+    systemId: belongsTo(() => Value).tags("scheme:ref.sch.geo.relationship.system"),
   })
   .extends(baseSchemas.HistoricalValidityEntity)
   .rule(

@@ -24,6 +24,10 @@ def main(argv: list[str] | None = None) -> int:
         "verify", help="check seed rows against the real datasets named in each folder's _source.yaml"
     )
     verify.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
+    datasets = sub.add_parser(
+        "datasets", help="write data/global/source/datasets.csv: one dataset row for every seed CSV"
+    )
+    datasets.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
     refs = sub.add_parser("refs", help="check that every source, mapping and terms code resolves")
     refs.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder to scan (default: seed/)")
     refs.add_argument(
@@ -40,6 +44,11 @@ def main(argv: list[str] | None = None) -> int:
             print(f"error: {problem}", file=sys.stderr)
         print(f"{len(found.registry.entries)} codes, {len(found.problems)} problems")
         return 1 if found.problems else 0
+    if args.command == "datasets":
+        from mzizi_manifest.features.data.datasets import write_datasets
+
+        print(f"wrote {write_datasets(args.root)} dataset rows")
+        return 0
     if args.command == "verify":
         from mzizi_manifest.features.provenance.verify import verify as run_verify
 

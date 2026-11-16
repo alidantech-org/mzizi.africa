@@ -475,7 +475,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "feature_type_code", "scheme": "geo.feature.kind" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "feature_type_code", "scheme": "ref.sch.geo.feature.kind" }
         }
         ,"id": {
           "type": "string",
@@ -608,7 +608,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "basis_code", "scheme": "geo.geometry.basis" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "basis_code", "scheme": "ref.sch.geo.geometry.basis" }
         }
         ,"centroid": {
           "type": "object",
@@ -664,7 +664,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "geometry_role_code", "scheme": "geo.geometry.role" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "geometry_role_code", "scheme": "ref.sch.geo.geometry.role" }
         }
         ,"id": {
           "type": "string",
@@ -836,7 +836,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "identifier_scheme_code", "scheme": "geo.identifier.scheme" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "identifier_scheme_code", "scheme": "ref.sch.geo.identifier.scheme" }
         }
         ,"namespace": {
           "type": ["string", "null"],
@@ -948,7 +948,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "name_kind_code", "scheme": "geo.name.kind" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "name_kind_code", "scheme": "ref.sch.geo.name.kind" }
         }
         ,"updated_at": {
           "type": "string",
@@ -1057,7 +1057,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "relationship_kind_code", "scheme": "geo.relationship.kind" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "relationship_kind_code", "scheme": "ref.sch.geo.relationship.kind" }
         }
         ,"subject_feature_id": {
           "type": "string",
@@ -1071,7 +1071,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "system_code", "scheme": "geo.relationship.system" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "system_code", "scheme": "ref.sch.geo.relationship.system" }
         }
         ,"updated_at": {
           "type": "string",

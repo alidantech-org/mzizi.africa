@@ -74,7 +74,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "continent_code", "scheme": "geo.continent" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "continent_code", "scheme": "ref.sch.geo.continent" }
         }
         ,"created_at": {
           "type": "string",
@@ -88,7 +88,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "currency_code", "scheme": "fin.currency" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "currency_code", "scheme": "ref.sch.fin.currency" }
         }
         ,"deleted_at": {
           "type": ["string", "null"],
@@ -102,7 +102,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "designation_code", "scheme": "ref.country.designation" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "designation_code", "scheme": "ref.sch.ref.country.designation" }
         }
         ,"established_on": {
           "type": ["string", "null"],
@@ -160,14 +160,14 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "recognition_status_code", "scheme": "geo.recognition.status" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "recognition_status_code", "scheme": "ref.sch.geo.recognition.status" }
         }
         ,"subregion_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "subregion_code", "scheme": "geo.subregion" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "subregion_code", "scheme": "ref.sch.geo.subregion" }
         }
         ,"updated_at": {
           "type": "string",

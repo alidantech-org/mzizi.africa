@@ -53,7 +53,7 @@ def test_existing_folders_are_reused_and_missing_ones_are_planned_with_derived_c
     repo = Folders(folder("1", None, "kenya", "Kenya"))
     result = plan(ask("Kenya", "Budget Reports", "2025"), repo)
     assert [s.existing is not None for s in result.steps] == [True, False, False]
-    assert [s.code for s in result.steps] == ["kenya", "kenya.budget_reports", "kenya.budget_reports.2025"]
+    assert [s.code for s in result.steps] == ["kenya", "kenya.budget-reports", "kenya.budget-reports.2025"]
     assert [s.name for s in result.creates] == ["Budget Reports", "2025"]
 
 

@@ -66,19 +66,19 @@ export const Country = reference
     isoNumeric: dryv.field(countryProperties.IsoNumeric).maybe(),
     callingCode: dryv.field(countryProperties.CallingCode).maybe(),
     continentId: belongsTo(() => Value)
-      .tags("scheme:geo.continent")
+      .tags("scheme:ref.sch.geo.continent")
       .maybe(),
     subregionId: belongsTo(() => Value)
-      .tags("scheme:geo.subregion")
+      .tags("scheme:ref.sch.geo.subregion")
       .maybe(),
     currencyId: belongsTo(() => Value)
-      .tags("scheme:fin.currency")
+      .tags("scheme:ref.sch.fin.currency")
       .maybe(),
     recognitionStatusId: belongsTo(() => Value)
-      .tags("scheme:geo.recognition.status")
+      .tags("scheme:ref.sch.geo.recognition.status")
       .maybe(),
     designationId: belongsTo(() => Value)
-      .tags("scheme:ref.country.designation")
+      .tags("scheme:ref.sch.ref.country.designation")
       .maybe(),
     establishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })

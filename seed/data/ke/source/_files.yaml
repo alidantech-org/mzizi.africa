@@ -1,0 +1,31 @@
+# The downloaded originals behind the documents in documents.csv: where the local copy is (outside git), who gets the credit and
+# the rights that apply. `mzizi-engine register-files` stores each file and links the document to the stored version.
+documents:
+  ocha-ken-admin-boundaries:
+    path: .dev/datasets/ocha-cod-ab-ken/ken_admin_boundaries.xlsx
+    credit: "OCHA Regional Office for Southern and Eastern Africa (ROSEA) and OCHA FIS, from IEBC data, via the Humanitarian Data Exchange"
+    rights: "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO): reuse with credit to the source."
+  iebc-p-codes:
+    path: .dev/datasets/redcross-kenya/P-CODES.xlsx
+    credit: "Independent Electoral and Boundaries Commission (IEBC) place codes, republished by the American Red Cross on the Humanitarian Data Exchange"
+    rights: "Creative Commons Attribution (CC BY): reuse with credit to the source."
+  redcross-ke-subcounty-zip:
+    path: .dev/datasets/redcross-kenya/ke_subcounty.zip
+    credit: "American Red Cross, Kenya Sub Counties, via the Humanitarian Data Exchange"
+    rights: "Creative Commons Attribution (CC BY): reuse with credit to the source."
+  redcross-kenya-wards-zip:
+    path: .dev/datasets/redcross-kenya/kenya_wards.zip
+    credit: "American Red Cross, Administrative Wards in Kenya 1450, via the Humanitarian Data Exchange"
+    rights: "Creative Commons Attribution (CC BY): reuse with credit to the source."
+  geoboundaries-ken-adm1-simplified:
+    path: .dev/archives/seed/_fixtures/extraction/geoboundaries/KEN-ADM1-simplified.geojson
+    credit: "geoBoundaries (William & Mary geoLab), KEN ADM1; boundary source RCMRD GeoPortal"
+    rights: "Public Domain."
+  geoboundaries-ken-adm2-simplified:
+    path: .dev/datasets/geoboundaries/KEN/KEN-ADM2-simplified.geojson
+    credit: "geoBoundaries (William & Mary geoLab), KEN ADM2; boundary source IEBC and OCHA ROSEA"
+    rights: "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO): reuse with credit to the source."
+  geoboundaries-ken-adm3-simplified:
+    path: .dev/datasets/geoboundaries/KEN/KEN-ADM3-simplified.geojson
+    credit: "geoBoundaries (William & Mary geoLab), KEN ADM3; boundary source Benedict Aboki Omare and George Omare"
+    rights: "Creative Commons Attribution 4.0 International (CC BY 4.0): reuse with credit to the source."

@@ -1,16 +1,16 @@
-"""Codes follow `.docs/rules/code-columns.md`: dot-separated lowercase segments, hierarchical by prefix, reproducible from names."""
+"""Codes follow `.docs/rules/codes.md`: dot-separated lowercase segments (dots mean narrower than), the words of one name joined by dashes, no underscores; reproducible from names."""
 
 from __future__ import annotations
 
 import re
 
-CODE_SHAPE = re.compile(r"^[a-z0-9][a-z0-9_]*(\.[a-z0-9][a-z0-9_]*)*$")
+CODE_SHAPE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*(\.[a-z0-9]+(-[a-z0-9]+)*)*$")
 MAX_LENGTH, MAX_SEGMENTS = 255, 16
 
 
 def code_segment(text: str) -> str:
-    """Mirror of SQL `filesystem.code_segment`: lowercase, runs outside a-z0-9 become one underscore, outer underscores removed."""
-    return re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
+    """Lowercase; every run outside a-z0-9 becomes one dash; outer dashes are removed."""
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
 def is_code(value: str) -> bool:

@@ -45,6 +45,6 @@ Use a fresh database. The earlier databases (`mzizi`, `mzizi_dev`, `mzizi_new`) 
 ## Known limits
 
 - Releases are immutable and no schema-evolution releases are generated, so a changed contract needs a deliberate new stream or a hand-authored release.
-- `seed` is not implemented; there is no reviewed seed set (`seed/_fixtures` is test-only).
+- Seeding is `mzizi-engine seed` and `mzizi-engine register-files` (see `seed/README.md`), not a command here.
 - `geography.geometries` has no geometry column yet (see [DRYV_GAPS](../../../.docs/design/data/DRYV_GAPS.md)).
 - Staging, acquisition, engine-run and analytics tables were removed from PostgreSQL; their replacement is MongoDB (planned).

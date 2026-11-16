@@ -61,10 +61,10 @@ def test_names_are_checked_and_sibling_names_disambiguate_by_hash() -> None:
 
 
 def test_code_segments_are_reproducible_and_shape_is_checked() -> None:
-    assert code_segment("World GeoBoundaries (v2).json") == "world_geoboundaries_v2_json"
+    assert code_segment("World GeoBoundaries (v2).json") == "world-geoboundaries-v2-json"
     assert child_code("seeds.global", "auth") == "seeds.global.auth"
     assert child_code(None, "x") is None
-    assert is_code("seeds.global.auth.roles_csv") and not is_code("Seeds") and not is_code("a-b")
+    assert is_code("seeds.global.auth.roles-csv") and not is_code("Seeds") and not is_code("a_b")
 
 
 def test_hashing_matches_hashlib_for_both_bytes_and_streams(tmp_path: Path) -> None:

@@ -28,6 +28,7 @@ from mzizi_manifest.features.codes.grammar import (
     segments_problem,
     stored_code,
 )
+from mzizi_manifest.features.data.datasets import dataset_rows
 from mzizi_manifest.features.database.tables import Column, Table, load_order, load_tables, table_cycle
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
@@ -244,6 +245,14 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                     result.problems.append(f"{where}: {alias}: unknown {target.qualified_name} code {value!r}")
                 if target.qualified_name != name:
                     edges[name].add(target.qualified_name)
+
+    if "source.datasets" in result.rows:
+        known = {row.values.get("code", "") for row in result.rows["source.datasets"]}
+        for expected in dataset_rows(root):
+            if expected.code not in known:
+                result.problems.append(
+                    f"{expected.location}: no dataset row {expected.code!r}; run `mzizi-manifest datasets`"
+                )
 
     names = set(result.rows)
     if (cycle := table_cycle(tables, names)) is not None:

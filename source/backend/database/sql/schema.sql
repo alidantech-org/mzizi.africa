@@ -3803,7 +3803,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."feature_type_id" AND s."code" = 'geo.feature.kind'
+    WHERE v."id" = NEW."feature_type_id" AND s."code" = 'ref.sch.geo.feature.kind'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -3833,7 +3833,7 @@ EXECUTE FUNCTION "geography"."scheme_features_feature_type_id_membership" ();
 
 CREATE FUNCTION "geography"."scheme_features_feature_type_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.feature.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.feature.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "geography"."features" t
     JOIN "reference"."values" v ON v."id" = t."feature_type_id"
     WHERE v."scheme_id" = OLD."id"
@@ -3854,7 +3854,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."basis_id" AND s."code" = 'geo.geometry.basis'
+    WHERE v."id" = NEW."basis_id" AND s."code" = 'ref.sch.geo.geometry.basis'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -3884,7 +3884,7 @@ EXECUTE FUNCTION "geography"."scheme_geometries_basis_id_membership" ();
 
 CREATE FUNCTION "geography"."scheme_geometries_basis_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.geometry.basis' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.geometry.basis' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "geography"."geometries" t
     JOIN "reference"."values" v ON v."id" = t."basis_id"
     WHERE v."scheme_id" = OLD."id"
@@ -3905,7 +3905,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."geometry_role_id" AND s."code" = 'geo.geometry.role'
+    WHERE v."id" = NEW."geometry_role_id" AND s."code" = 'ref.sch.geo.geometry.role'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -3935,7 +3935,7 @@ EXECUTE FUNCTION "geography"."scheme_geometries_geometry_role_id_membership" ();
 
 CREATE FUNCTION "geography"."scheme_geometries_geometry_role_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.geometry.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.geometry.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "geography"."geometries" t
     JOIN "reference"."values" v ON v."id" = t."geometry_role_id"
     WHERE v."scheme_id" = OLD."id"
@@ -3968,7 +3968,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."identifier_scheme_id" AND s."code" = 'geo.identifier.scheme'
+    WHERE v."id" = NEW."identifier_scheme_id" AND s."code" = 'ref.sch.geo.identifier.scheme'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -3998,7 +3998,7 @@ EXECUTE FUNCTION "geography"."scheme_identifiers_identifier_scheme_id_membership
 
 CREATE FUNCTION "geography"."scheme_identifiers_identifier_scheme_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.identifier.scheme' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.identifier.scheme' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "geography"."identifiers" t
     JOIN "reference"."values" v ON v."id" = t."identifier_scheme_id"
     WHERE v."scheme_id" = OLD."id"
@@ -4019,7 +4019,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."name_kind_id" AND s."code" = 'geo.name.kind'
+    WHERE v."id" = NEW."name_kind_id" AND s."code" = 'ref.sch.geo.name.kind'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -4049,7 +4049,7 @@ EXECUTE FUNCTION "geography"."scheme_names_name_kind_id_membership" ();
 
 CREATE FUNCTION "geography"."scheme_names_name_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.name.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.name.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "geography"."names" t
     JOIN "reference"."values" v ON v."id" = t."name_kind_id"
     WHERE v."scheme_id" = OLD."id"
@@ -4070,7 +4070,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."relationship_kind_id" AND s."code" = 'geo.relationship.kind'
+    WHERE v."id" = NEW."relationship_kind_id" AND s."code" = 'ref.sch.geo.relationship.kind'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -4100,7 +4100,7 @@ EXECUTE FUNCTION "geography"."scheme_relationships_relationship_kind_id_membersh
 
 CREATE FUNCTION "geography"."scheme_relationships_relationship_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.relationship.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.relationship.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "geography"."relationships" t
     JOIN "reference"."values" v ON v."id" = t."relationship_kind_id"
     WHERE v."scheme_id" = OLD."id"
@@ -4121,7 +4121,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."system_id" AND s."code" = 'geo.relationship.system'
+    WHERE v."id" = NEW."system_id" AND s."code" = 'ref.sch.geo.relationship.system'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -4151,7 +4151,7 @@ EXECUTE FUNCTION "geography"."scheme_relationships_system_id_membership" ();
 
 CREATE FUNCTION "geography"."scheme_relationships_system_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.relationship.system' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.relationship.system' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "geography"."relationships" t
     JOIN "reference"."values" v ON v."id" = t."system_id"
     WHERE v."scheme_id" = OLD."id"
@@ -4172,7 +4172,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."continent_id" AND s."code" = 'geo.continent'
+    WHERE v."id" = NEW."continent_id" AND s."code" = 'ref.sch.geo.continent'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -4202,7 +4202,7 @@ EXECUTE FUNCTION "reference"."scheme_countries_continent_id_membership" ();
 
 CREATE FUNCTION "reference"."scheme_countries_continent_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.continent' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.continent' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "reference"."countries" t
     JOIN "reference"."values" v ON v."id" = t."continent_id"
     WHERE v."scheme_id" = OLD."id"
@@ -4223,7 +4223,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."currency_id" AND s."code" = 'fin.currency'
+    WHERE v."id" = NEW."currency_id" AND s."code" = 'ref.sch.fin.currency'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -4253,7 +4253,7 @@ EXECUTE FUNCTION "reference"."scheme_countries_currency_id_membership" ();
 
 CREATE FUNCTION "reference"."scheme_countries_currency_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'fin.currency' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.fin.currency' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "reference"."countries" t
     JOIN "reference"."values" v ON v."id" = t."currency_id"
     WHERE v."scheme_id" = OLD."id"
@@ -4274,7 +4274,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."designation_id" AND s."code" = 'ref.country.designation'
+    WHERE v."id" = NEW."designation_id" AND s."code" = 'ref.sch.ref.country.designation'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -4304,7 +4304,7 @@ EXECUTE FUNCTION "reference"."scheme_countries_designation_id_membership" ();
 
 CREATE FUNCTION "reference"."scheme_countries_designation_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'ref.country.designation' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.ref.country.designation' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "reference"."countries" t
     JOIN "reference"."values" v ON v."id" = t."designation_id"
     WHERE v."scheme_id" = OLD."id"
@@ -4325,7 +4325,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."recognition_status_id" AND s."code" = 'geo.recognition.status'
+    WHERE v."id" = NEW."recognition_status_id" AND s."code" = 'ref.sch.geo.recognition.status'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -4355,7 +4355,7 @@ EXECUTE FUNCTION "reference"."scheme_countries_recognition_status_id_membership"
 
 CREATE FUNCTION "reference"."scheme_countries_recognition_status_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.recognition.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.recognition.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "reference"."countries" t
     JOIN "reference"."values" v ON v."id" = t."recognition_status_id"
     WHERE v."scheme_id" = OLD."id"
@@ -4376,7 +4376,7 @@ BEGIN
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."subregion_id" AND s."code" = 'geo.subregion'
+    WHERE v."id" = NEW."subregion_id" AND s."code" = 'ref.sch.geo.subregion'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -4406,7 +4406,7 @@ EXECUTE FUNCTION "reference"."scheme_countries_subregion_id_membership" ();
 
 CREATE FUNCTION "reference"."scheme_countries_subregion_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'geo.subregion' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'ref.sch.geo.subregion' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "reference"."countries" t
     JOIN "reference"."values" v ON v."id" = t."subregion_id"
     WHERE v."scheme_id" = OLD."id"

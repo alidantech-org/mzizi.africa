@@ -15,6 +15,7 @@ from mzizi_engine.jsonvalue import Payload
 from mzizi_engine.persistence.postgres.connection import Connection, connect
 from mzizi_engine.persistence.postgres.filesystem import PostgresRegistry
 from mzizi_engine.persistence.postgres.reference import PostgresReference
+from mzizi_engine.runtime.assembly.dataset_files import register_files
 from mzizi_engine.runtime.assembly.filesystem_seed import SeedPlanError, plan_seed, run_seed_sync
 from mzizi_engine.runtime.operations import Operation, OperationRegistry, Requirement
 from mzizi_filesystem import (
@@ -182,6 +183,21 @@ def sync_seed(payload: Payload) -> Payload:
     return _open(payload, act)
 
 
+def sync_source_files(payload: Payload) -> Payload:
+    """Register the downloaded originals and the seed CSVs, and link their documents and datasets (a dry run unless `apply`)."""
+    apply = payload.get("apply") is True
+    root_text = payload.get("seed_root")
+    root = Path(root_text) if isinstance(root_text, str) and root_text else SEED_ROOT
+
+    def act(fs: FilesystemOrchestrator, wiring: _Wiring, conn: Connection) -> Payload:
+        report = register_files(
+            fs, conn, root, apply=apply, created_by={"task": "register source files", **_actor(payload)}
+        )
+        return {**report.model_dump(mode="json"), "ok": report.ok}
+
+    return _open(payload, act)
+
+
 def upload_begin(payload: Payload) -> Payload:
     return _run(
         payload,
@@ -271,6 +287,11 @@ _OPERATIONS: tuple[tuple[str, str, Callable[[Payload], Payload]], ...] = (
         "filesystem.sync_seed",
         "Register the seed files the manifest lists, in the folders its descriptors describe (dry run unless apply is true)",
         sync_seed,
+    ),
+    (
+        "filesystem.sync_source_files",
+        "Register the downloaded source files and seed CSVs and link their documents and datasets (dry run unless apply is true)",
+        sync_source_files,
     ),
     ("filesystem.upload_begin", "Presigned upload URL to a temporary key", upload_begin),
     ("filesystem.upload_finish", "Register uploaded bytes at a caller-chosen placement", upload_finish),

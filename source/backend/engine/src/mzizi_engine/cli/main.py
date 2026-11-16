@@ -44,8 +44,35 @@ def main(argv: list[str] | None = None) -> int:
     publish.add_argument(
         "--prune", action="store_true", help="delete public schema objects no schema file produces any more"
     )
+    seed = sub.add_parser("seed", help="load the seed CSVs into PostgreSQL (a dry run unless --apply)")
+    seed.add_argument("--apply", action="store_true", help="write the changes; without it the run is rolled back")
+    seed.add_argument("--root", type=Path, default=None, help="folder holding data/ (default: seed/)")
+    files = sub.add_parser(
+        "register-files",
+        help="store the downloaded source files and seed CSVs and link their records (dry run unless --apply)",
+    )
+    files.add_argument("--apply", action="store_true", help="write to the object store and the database")
+    files.add_argument("--root", type=Path, default=None, help="folder holding data/ (default: seed/)")
     args = parser.parse_args(argv)
     config = EngineConfig.load()
+    if args.command == "register-files":
+        from mzizi_engine.runtime.assembly.filesystem_operations import sync_source_files
+
+        outcome = sync_source_files({"apply": args.apply, **({"seed_root": str(args.root)} if args.root else {})})
+        print(json.dumps(outcome, indent=2))
+        return 0 if outcome.get("ok") else 1
+    if args.command == "seed":
+        from mzizi_engine.persistence.postgres.connection import connect
+        from mzizi_engine.persistence.postgres.seed_loader import load_seed, summarise
+        from mzizi_manifest.shared.paths import SEED_ROOT
+
+        with connect(config.require_postgres().url) as conn:
+            outcome = load_seed(conn, args.root or SEED_ROOT, apply=args.apply)
+        for problem in outcome.problems:
+            print(f"error: {problem}", file=sys.stderr)
+        if outcome.ok:
+            print(summarise(outcome))
+        return 0 if outcome.ok else 1
     if args.command == "publish-schemas":
         from mzizi_engine.runtime.assembly.schemas import publish_schemas
 
