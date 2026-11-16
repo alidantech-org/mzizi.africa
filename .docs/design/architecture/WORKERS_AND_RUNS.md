@@ -7,7 +7,13 @@ tags: [engine, workers, runs, jobs, s3, mongo, proposal]
 
 # Workers, runs and sealed run bundles
 
-**Status: approved design, not implemented (16 November 2026).** Decision record: [DEC-WORKERS-AND-RUNS-20261116](../../decisions/DEC-WORKERS-AND-RUNS-20261116.md). Handoff for the implementing agent: [HANDOFF-WORKERS-AND-RUNS-20261116](../../handoffs/HANDOFF-WORKERS-AND-RUNS-20261116.md). Builds on [ENGINE_RUNTIME_AND_PACKAGES](ENGINE_RUNTIME_AND_PACKAGES.md) and [ENGINE_PERSISTENCE](../data/ENGINE_PERSISTENCE.md).
+**Status: phase 1 implemented (16 November 2026). Phases 2–5 describe the approved design.** Decision record: [DEC-WORKERS-AND-RUNS-20261116](../../decisions/DEC-WORKERS-AND-RUNS-20261116.md). Handoff for the implementing agent: [HANDOFF-WORKERS-AND-RUNS-20261116](../../handoffs/HANDOFF-WORKERS-AND-RUNS-20261116.md). Builds on [ENGINE_RUNTIME_AND_PACKAGES](ENGINE_RUNTIME_AND_PACKAGES.md) and [ENGINE_PERSISTENCE](../data/ENGINE_PERSISTENCE.md).
+
+## Phase 1
+
+The engine parses a version-1 job spec, retains each registered request model in its stage, and hashes the resulting canonical JSON. Legacy operations without a request model are rejected during parsing. The in-process runner executes `scraping.crawl` and `site.watch`, using the union of declared requirements and a separate Mongo ledger requirement. A successful in-process run records `completed` after the stage returns. A handler error records `failed` with the exception type. Interrupted runs retain their last recorded state.
+
+The local store streams new bytes to `.dev/runs/<run_id>/artifacts/` and records their hashes. Run audit events go to both MongoDB and `logs/` in the local store. The existing crawl evidence stays in its caller-selected output folder and site watch keeps its normal per-site evidence layout. Manifest writes are available on the local store. Automatic artifact staging, verified sealing, source-gate integration for spec authority references, scheduling, and retention enforcement for local files are later work. The existing HTTP job API continues to use its own in-memory executor store.
 
 ## The idea
 
@@ -18,7 +24,7 @@ The engine can spin a **worker** that carries everything one piece of work needs
 | Term | Meaning |
 |---|---|
 | **Job spec** | A typed, versioned, immutable manifest of what to do: the stages, their parameters, the sources and their recorded authority, limits and optional ranking. It has a hash. |
-| **Stage** | One step of a spec, backed by one registered operation (for example `web.crawl`, `web.download`, `extraction.markdown`). Its parameters are validated by that operation's request model. |
+| **Stage** | One step of a spec, backed by one registered operation (for example `scraping.crawl`, `web.download`, `extraction.markdown`). Its parameters are validated by that operation's request model. |
 | **Run** | One execution of a spec: an id, a state, attempts, checkpoints, a log. Stored in the Mongo ledger. |
 | **Worker** | A process that executes one run. It is generic: it holds no capability logic of its own. |
 | **Worker context** | The services a worker is built with, containing only what the spec's stages require (Postgres, S3, Mongo, a browser, a user agent, search keys, the input root). |
@@ -60,17 +66,19 @@ PostgreSQL holds approved data only. Mongo holds everything about work in progre
 ## The run store
 
 ```text
-RunStore.put(run_id, relative_path, source) -> ArtifactRecord   (hash computed while writing)
+RunStore.put(run_id, relative_path, source, provenance) -> ArtifactRecord   (hash computed while writing)
 RunStore.open(run_id, relative_path) -> stream
 RunStore.list(run_id, prefix) -> records
-RunStore.seal(run_id, manifest) -> manifest hash
+RunStore.write_manifest(manifest) -> manifest hash
 RunStore.delete(run_id)
 ```
 
-- **Local backend** (development): `.dev/runs/<run_id>/artifacts/...`, `logs/`, `manifest.json`. This is the layout the engine already uses for site work; phase 1 wraps the existing behaviour, it does not move data.
+- **Local backend** (development): `.dev/runs/<run_id>/artifacts/...`, `logs/`, `manifest.json`. This layout sits alongside the existing per-site and dated run folders.
 - **S3-temp backend** (production): `private/tmp/runs/<run_id>/artifacts/...`, `logs/runs/<run_id>/*.jsonl.gz`, `manifest.json`. Per-file objects, not a zip.
 - Same relative layout in both, so the same worker code runs in both. The backend is chosen by the engine configuration (`ENGINE_RUN_STORE=local|s3`), never by the worker.
 - The S3 backend must be tested against the real local object store, not only against the in-memory fake, so development cannot diverge from production.
+
+The later sealing step verifies the artifacts and records the manifest hash in the ledger.
 
 ## Scratch and cleanup
 
@@ -107,11 +115,11 @@ Detailed logs: S3 `logs/runs/<run_id>/` as compressed JSON lines with a lifecycl
 
 ## Configuration
 
-All settings enter through `mzizi_engine/config/engine_config.py` only (one config file, no other environment readers). New section `runs`: store (`local` or `s3`), scratch root, local root, run and log retention days, worker ceiling. Optional `redis` URL for the governor. Packages receive values by injection, never by reading the environment.
+All settings enter through `mzizi_engine/config/engine_config.py` only (one config file, no other environment readers). The `runs` section declares store, scratch root, local root, run and log retention days, and worker ceiling. Phase 1 uses `ENGINE_RUN_STORE=local` and `ENGINE_RUN_LOG_RETENTION_DAYS`. MongoDB uses a BSON timestamp on the generated event document's `expiresAt` field with a TTL index. The scratch root, run-object retention, worker ceiling and Redis governor are for later phases. Crawl and watch receive their settings from the `crawler` section.
 
 ## Build order
 
-1. Job spec, run store (local backend and Mongo ledger), worker context with lazy requirements; the existing crawl operation runs through it with no behaviour change.
+1. **Implemented:** Job spec, run store (local backend and Mongo ledger), worker context with lazy requirements; the existing crawl operation runs through it with no behaviour change.
 2. Subprocess workers, leases, heartbeats, cancellation, shared per-host governor.
 3. S3-temp run store, sealing, expiry, promotion step.
 4. Spec-driven stage pipelines (crawl, download, convert, extract, publish) that resume from checkpoints.

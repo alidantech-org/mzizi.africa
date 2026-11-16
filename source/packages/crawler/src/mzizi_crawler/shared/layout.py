@@ -13,7 +13,6 @@ Folders are created on first write, never in advance.
 
 from __future__ import annotations
 
-import os
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import urlparse
@@ -22,8 +21,8 @@ import tldextract
 from pydantic import BaseModel, ConfigDict
 
 from mzizi_crawler.shared.names import page_slug, path_segments, slug
+from mzizi_crawler.shared.settings import crawler_settings
 
-WORKSPACE_ENV = "MZIZI_DEV_ROOT"
 APEX = "_root"
 UNSORTED = "_other"
 TYPES = ("pdf", "document", "data", "image", "media", "archive", "other")
@@ -105,9 +104,12 @@ class DevLayout:
 
     @classmethod
     def locate(cls, cwd: Path | None = None) -> DevLayout:
-        override = os.environ.get(WORKSPACE_ENV)
+        return cls.resolve(crawler_settings().dev_root, cwd)
+
+    @classmethod
+    def resolve(cls, override: Path | None, cwd: Path | None = None) -> DevLayout:
         if override:
-            return cls(Path(override).expanduser().resolve())
+            return cls(override.expanduser().resolve())
         start = (cwd or Path.cwd()).resolve()
         for candidate in (start, *start.parents):
             if (candidate / ".git").exists() and (candidate / "pyproject.toml").exists():

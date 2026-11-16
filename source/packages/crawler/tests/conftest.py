@@ -23,8 +23,10 @@ def site() -> Iterator[str]:
 
 
 @pytest.fixture(autouse=True)
-def identity() -> None:
-    configure_user_agent("MziziTest/1.0 (+https://mzizi-test.africa/bot; research@mzizi-test.africa)")
+def identity(monkeypatch: pytest.MonkeyPatch) -> None:
+    identity = "MziziTest/1.0 (+https://mzizi-test.africa/bot; research@mzizi-test.africa)"
+    configure_user_agent(identity)
+    monkeypatch.setenv("MZIZI_USER_AGENT", identity)
 
 
 @pytest.fixture(autouse=True)

@@ -6,14 +6,12 @@ kind are data, not code. This module holds the typed contract and the one parsin
 
 from __future__ import annotations
 
-import os
 from functools import lru_cache
 from pathlib import Path
 
 import yaml
 from pydantic import BaseModel, ConfigDict
 
-VOCABULARY_ENV = "MZIZI_WEB_VOCABULARY"
 # .../source/packages/fetch/src/mzizi_fetch/web/vocabulary.py -> parents[5] is `source/`
 DEFAULT_PATH = Path(__file__).resolve().parents[5] / "schema" / "web" / "vocabulary.v1.yaml"
 
@@ -101,7 +99,18 @@ def parse_vocabulary(text: str) -> Vocabulary:
     return Vocabulary.model_validate(yaml.safe_load(text), strict=False)
 
 
-@lru_cache(maxsize=1)
+_path = DEFAULT_PATH
+
+
+def configure_vocabulary(path: Path | None) -> None:
+    global _path
+    _path = path or DEFAULT_PATH
+
+
 def vocabulary() -> Vocabulary:
-    path = Path(os.environ.get(VOCABULARY_ENV) or DEFAULT_PATH)
+    return _load(_path)
+
+
+@lru_cache(maxsize=1)
+def _load(path: Path) -> Vocabulary:
     return parse_vocabulary(path.read_text(encoding="utf-8"))

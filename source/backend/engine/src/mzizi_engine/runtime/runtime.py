@@ -11,6 +11,8 @@ import threading
 import time
 from collections.abc import Callable
 
+from pydantic import BaseModel
+
 from mzizi_engine.jsonvalue import Payload
 from mzizi_engine.runtime.contracts.config import CapabilityConfig, ConfigSnapshot, RuntimeConfig
 from mzizi_engine.runtime.contracts.errors import (
@@ -21,7 +23,7 @@ from mzizi_engine.runtime.contracts.errors import (
 )
 from mzizi_engine.runtime.contracts.health import CapabilityHealth, RuntimeHealth, RuntimeState
 from mzizi_engine.runtime.contracts.plan import ExecutionPlan, Exposure
-from mzizi_engine.runtime.operations import OperationRegistry
+from mzizi_engine.runtime.operations import Operation, OperationRegistry
 from mzizi_engine.runtime.tools.cancel import CancellationToken
 from mzizi_engine.runtime.tools.capability import RuntimeCapability
 from mzizi_engine.runtime.tools.handles import CapabilityRef, Lease
@@ -44,11 +46,20 @@ class EngineRuntime:
 
     def call(self, name: str, payload: Payload) -> Payload:
         """Run one exposed operation. Unknown names raise `KeyError`; the runtime must be running."""
+        return self._operation_for_call(name).handler(payload)
+
+    def call_validated(self, name: str, request: BaseModel) -> Payload:
+        """Invoke an operation with a request already parsed against its registered model."""
+        operation = self._operation_for_call(name)
+        if operation.invoke_model is None:
+            raise ValueError(f"Operation {name!r} has no typed handler")
+        return operation.invoke_model(request)
+
+    def _operation_for_call(self, name: str) -> Operation:
         with self._lock:
             if self._state is not RuntimeState.RUNNING:
                 raise RuntimeStateError(f"operations only run while the runtime is running (state: {self._state})")
-            operation = self._operations.get(name)
-        return operation.handler(payload)
+            return self._operations.get(name)
 
     @property
     def state(self) -> RuntimeState:

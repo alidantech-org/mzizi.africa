@@ -19,6 +19,7 @@ from mzizi_crawler.shared.activity import Activity, Document
 from mzizi_crawler.shared.engine.cancel import CANCEL
 from mzizi_crawler.shared.layout import DevLayout
 from mzizi_crawler.shared.requests import FetchQueueRequest
+from mzizi_crawler.shared.settings import crawler_settings
 from mzizi_crawler.shared.sitestore import SiteStore
 from mzizi_extraction import extract_html_document, learn_boilerplate, render_markdown
 from mzizi_extraction.document.boilerplate import Boilerplate
@@ -39,7 +40,8 @@ class MarkdownPool:
 
     def __init__(self, store: SiteStore, workers: int | None = None) -> None:
         self.store = store
-        count = workers or int(os.environ.get("MZIZI_MARKDOWN_WORKERS") or max(1, min(4, (os.cpu_count() or 2) - 1)))
+        configured = crawler_settings().markdown_workers
+        count = workers or (configured if configured is not None else max(1, min(4, (os.cpu_count() or 2) - 1)))
         self._executor = ProcessPoolExecutor(max_workers=count, mp_context=multiprocessing.get_context("spawn"))
         self._lock = threading.Lock()
         self._samples: list[str] = []

@@ -14,6 +14,15 @@ def register_specs(registry: OperationRegistry, specs: Iterable[OperationSpec], 
     for spec in specs:
         registry.register(
             Operation(
-                spec.name, version, package, spec.description, spec.run, _ANY_OBJECT, concurrency=spec.concurrency
+                spec.name,
+                version,
+                package,
+                spec.description,
+                spec.run,
+                _ANY_OBJECT,
+                concurrency=spec.concurrency,
+                request_model=spec.request_model,
+                requires=spec.requires,
+                invoke_model=spec.invoke_model,
             )
         )

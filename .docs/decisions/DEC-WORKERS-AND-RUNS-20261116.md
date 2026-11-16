@@ -3,7 +3,7 @@ id: DEC-WORKERS-AND-RUNS-20261116
 name: Typed job specs, subprocess workers and sealed run bundles
 type: decision
 tags: [engine, workers, runs, s3, mongo, owner-approved]
-extra: {status: accepted, approved_by: project owner, approved_on: 2026-11-16, implementation: not_started}
+extra: {status: accepted, approved_by: project owner, approved_on: 2026-11-16, implementation: phase_1}
 ---
 
 # Typed job specs, subprocess workers and sealed run bundles

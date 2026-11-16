@@ -3,12 +3,12 @@ id: HANDOFF-WORKERS-AND-RUNS-20261116
 name: Workers, runs and sealed run bundles, handoff for the implementing agent
 type: handoff
 tags: [engine, workers, runs, s3, mongo, handoff, production]
-extra: {status: ready_to_start, date: 2026-11-16, implementation: not_started, base_commit: dd610b05}
+extra: {status: ready_to_start, date: 2026-11-16, implementation: phase_1, base_commit: dd610b05}
 ---
 
 # Workers, runs and sealed run bundles: handoff for the implementing agent
 
-You are taking over a design that the project owner approved on 16 November 2026. **Nothing in it is implemented.** This document tells you the project rules, the exact state of the code, how to run every dependency, what to build in which order, how to prove each step, and what not to do. Read all of it before editing a file. The design itself is [WORKERS_AND_RUNS](../design/architecture/WORKERS_AND_RUNS.md); the decision is [DEC-WORKERS-AND-RUNS-20261116](../decisions/DEC-WORKERS-AND-RUNS-20261116.md). Work is tracked in the Task group "Engine restructure into runtime and feature packages" (five tasks: TSK-30C5570B6244 phase 1, TSK-BA70FC4E22AB phase 2, TSK-8FB61DCFD367 phase 3, TSK-1F71EC3D265C phase 4, TSK-CBB8B40CF8E0 phase 5).
+You are taking over a design that the project owner approved on 16 November 2026. **Phase 1 is implemented.** The baseline and startup instructions below record the handoff before phase 1; see the task progress for implementation and checks. This document tells you the project rules, the exact state of the code, how to run every dependency, what to build in which order, how to prove each step, and what not to do. Read all of it before editing a file. The design itself is [WORKERS_AND_RUNS](../design/architecture/WORKERS_AND_RUNS.md); the decision is [DEC-WORKERS-AND-RUNS-20261116](../decisions/DEC-WORKERS-AND-RUNS-20261116.md). Work is tracked in the Task group "Engine restructure into runtime and feature packages" (five tasks: TSK-30C5570B6244 phase 1, TSK-BA70FC4E22AB phase 2, TSK-8FB61DCFD367 phase 3, TSK-1F71EC3D265C phase 4, TSK-CBB8B40CF8E0 phase 5).
 
 **Be very careful.** This is production-grade infrastructure: it fetches third-party websites, stores evidence that must stay intact, and decides what becomes public data. Prefer small verified steps over big rewrites. If something here contradicts what you find in the code, trust the code, then stop and report the contradiction.
 

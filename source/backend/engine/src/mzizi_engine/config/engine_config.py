@@ -18,7 +18,10 @@ Variables (the root `.env` already carries most of them):
     filesystem  FILESYSTEM_PROTECTED_PREFIXES FILESYSTEM_RESERVED_ROOTS FILESYSTEM_TEMP_PREFIX (comma lists, `-` for none),
                 FILESYSTEM_MEDIA_FORMATS (optional file)
     search      BRAVE_API_KEY, GOOGLE_CSE_API_KEY and GOOGLE_CSE_ID (each provider optional)
-    crawler     MZIZI_USER_AGENT, ENGINE_INPUT_ROOT (optional folder files may be read from by path)
+    crawler     MZIZI_USER_AGENT, ENGINE_INPUT_ROOT, MZIZI_DEV_ROOT, MZIZI_MARKDOWN_WORKERS,
+                MZIZI_MIN_FREE_GB, MZIZI_DEBUG_STACKS, MZIZI_WEB_VOCABULARY
+    runs        ENGINE_RUN_STORE, ENGINE_RUN_LOCAL_ROOT, ENGINE_RUN_SCRATCH_ROOT, ENGINE_RUN_RETENTION_DAYS,
+                ENGINE_RUN_LOG_RETENTION_DAYS, ENGINE_WORKER_CEILING
 """
 
 from __future__ import annotations
@@ -27,8 +30,9 @@ import os
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, PositiveInt
 
 # ---------------------------------------------------------------------------------------------------- errors
 
@@ -142,6 +146,33 @@ class SearchKeys(_Frozen):
 class CrawlerConfig(_Frozen):
     user_agent: str | None
     input_root: Path | None
+    dev_root: Path | None = None
+    markdown_workers: int | None = None
+    min_free_bytes: int = 8 * 1024**3
+    debug_stack_seconds: int | None = None
+    vocabulary_path: Path | None = None
+
+
+class RunsConfig(_Frozen):
+    store: Literal["local", "s3"] = "local"
+    local_root: Path | None = None
+    scratch_root: Path | None = None
+    retention_days: PositiveInt | None = None
+    log_retention_days: PositiveInt | None = None
+    worker_ceiling: PositiveInt = 1
+
+    def require_log_retention(self) -> int:
+        if self.log_retention_days is None:
+            raise _missing("run ledger", ["ENGINE_RUN_LOG_RETENTION_DAYS"])
+        return self.log_retention_days
+
+
+def _path(value: str | None) -> Path | None:
+    return Path(value) if value else None
+
+
+def _int(value: str | None) -> int | None:
+    return int(value) if value else None
 
 
 # Provider names to the variables each needs (names only; values are never shown).
@@ -160,6 +191,7 @@ class EngineConfig(_Frozen):
     memory_store: bool
     filesystem: FilesystemRules | None
     search: SearchKeys
+    runs: RunsConfig = RunsConfig()
     crawler: CrawlerConfig
     #: `files` turns the MongoDB activity store off (tests, CI); anything else uses MongoDB when it is configured.
     activity_store: str
@@ -222,7 +254,25 @@ class EngineConfig(_Frozen):
                 google_key=first("GOOGLE_CSE_API_KEY"),
                 google_cx=first("GOOGLE_CSE_ID"),
             ),
-            crawler=CrawlerConfig(user_agent=user_agent, input_root=Path(input_root).resolve() if input_root else None),
+            crawler=CrawlerConfig(
+                user_agent=user_agent,
+                input_root=Path(input_root).resolve() if input_root else None,
+                dev_root=_path(first("MZIZI_DEV_ROOT")),
+                markdown_workers=_int(first("MZIZI_MARKDOWN_WORKERS")),
+                min_free_bytes=int(float(env.get("MZIZI_MIN_FREE_GB", "8")) * 1024**3),
+                debug_stack_seconds=_int(first("MZIZI_DEBUG_STACKS")),
+                vocabulary_path=_path(first("MZIZI_WEB_VOCABULARY")),
+            ),
+            runs=RunsConfig.model_validate(
+                {
+                    "store": env.get("ENGINE_RUN_STORE", "local"),
+                    "local_root": _path(first("ENGINE_RUN_LOCAL_ROOT")),
+                    "scratch_root": _path(first("ENGINE_RUN_SCRATCH_ROOT")),
+                    "retention_days": _int(first("ENGINE_RUN_RETENTION_DAYS")),
+                    "log_retention_days": _int(first("ENGINE_RUN_LOG_RETENTION_DAYS")),
+                    "worker_ceiling": int(env.get("ENGINE_WORKER_CEILING", "1")),
+                }
+            ),
             activity_store=env.get("ENGINE_ACTIVITY_STORE", "mongo"),
         )
 
@@ -236,6 +286,35 @@ class EngineConfig(_Frozen):
         if self.mongo is None:
             raise _missing("MongoDB", ["MZIZI_MONGO_URL", "MZIZI_MONGO_DATABASE"])
         return self.mongo
+
+    def require_user_agent(self) -> str:
+        if self.crawler.user_agent is None:
+            raise _missing("crawler", ["MZIZI_USER_AGENT"])
+        return self.crawler.user_agent
+
+    def require_input_root(self) -> Path:
+        return self.crawler.input_root or _repository_root() / "seed"
+
+    def require_search_keys(self) -> SearchKeys:
+        brave = self.search_missing("brave")
+        google = self.search_missing("google")
+        if brave and google:
+            raise _missing("search (configure either provider)", brave + google)
+        return self.search
+
+    def require_s3(self) -> S3Config | None:
+        if self.s3 is None and not self.memory_store:
+            raise _missing(
+                "S3",
+                [
+                    "S3_ENDPOINT",
+                    "S3_BUCKET",
+                    "S3_ACCESS_KEY or AWS_ACCESS_KEY_ID",
+                    "S3_SECRET_KEY or AWS_SECRET_ACCESS_KEY",
+                    "S3_REGION or AWS_DEFAULT_REGION",
+                ],
+            )
+        return self.s3
 
     def require_filesystem(self) -> tuple[PostgresConfig, FilesystemRules, S3Config | None]:
         """Everything a `filesystem.*` operation needs; S3 is not needed when the in-memory store is selected."""

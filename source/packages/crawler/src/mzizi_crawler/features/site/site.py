@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import faulthandler
-import os
 import shutil
 import signal
 import threading
@@ -36,6 +35,7 @@ from mzizi_crawler.shared.layout import DevLayout
 from mzizi_crawler.shared.pipeline import DownloadPool, MarkdownPool
 from mzizi_crawler.shared.records import LinkRecord, PageRecord
 from mzizi_crawler.shared.requests import FetchQueueRequest, WatchRequest
+from mzizi_crawler.shared.settings import crawler_settings
 from mzizi_crawler.shared.sitestore import (
     Outcome,
     SiteStore,
@@ -49,10 +49,9 @@ from mzizi_fetch.web.urls import host_of
 def watch_site(request: WatchRequest) -> WatchReport:
     """Crawls a site, saving pages as they arrive; Markdown conversion, file hunting and downloads run beside it."""
     layout = DevLayout.locate()
-    if os.environ.get(
-        "MZIZI_DEBUG_STACKS"
-    ):  # diagnosis: print every thread's stack when a run is still going after N seconds
-        faulthandler.dump_traceback_later(int(os.environ["MZIZI_DEBUG_STACKS"]), repeat=True)
+    debug_stack_seconds = crawler_settings().debug_stack_seconds
+    if debug_stack_seconds is not None:
+        faulthandler.dump_traceback_later(debug_stack_seconds, repeat=True)
     CANCEL.clear()
     if threading.current_thread() is threading.main_thread():  # a stop signal ends fetching, then everything is saved
         for signum in (signal.SIGTERM, signal.SIGINT):

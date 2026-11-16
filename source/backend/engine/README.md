@@ -6,12 +6,13 @@ The Python runtime. It does three things: it assembles package capabilities into
 src/mzizi_engine/
   runtime/
     runtime.py, operations.py     EngineRuntime: registration, config snapshots, concurrency plans, operations registry, call()
-    assembly/                     composition root: build_default_runtime(), default operations, filesystem and search wiring
+    assembly/                     composition root: default operations, filesystem, search and spec-run wiring
+    runs/                         job specs, worker context, in-process runner, local run store
     executor/                     job queue, retries, cancellation, events, outbox; the in-memory job store
     http/                         the local FastAPI app, authentication, settings
     policy/                       the collection gate (typed assessments, checks, decision)
     contracts/, tools/            runtime contracts and helpers
-  persistence/                    postgres/ (filesystem registry over the generated row models), mongo/ (activity store), vector/ (skeleton); see ENGINE_PERSISTENCE
+  persistence/                    postgres/ (filesystem registry over the generated row models), mongo/ (activity store and run ledger), vector/ (skeleton); see ENGINE_PERSISTENCE
   cli/                            `mzizi-engine` (serve, capabilities, check)
   api/                            Dryv-generated routes and schemas (never hand-edited)
 ```
@@ -27,11 +28,11 @@ uv run mzizi-engine capabilities                 # the operations the runtime ex
 uv run pytest source/backend/engine/tests
 ```
 
-The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (development only) is refused on any other address. In normal mode a bearer token is verified against the same OIDC issuer as the NestJS API (`AUTH_ISSUER`, `AUTH_JWKS_URL`). Jobs, runs and events are kept in memory (`ENGINE_STORE=memory`, the only store): the Bun database service that once held them was removed, and persistent job state returns with the engine's own persistence. Account and permission lookups that used that service are likewise not available yet.
+The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (development only) is refused on any other address. In normal mode a bearer token is verified against the same OIDC issuer as the NestJS API (`AUTH_ISSUER`, `AUTH_JWKS_URL`). HTTP executor jobs, runs and events are kept in memory (`ENGINE_STORE=memory`, the only store): the Bun database service that once held them was removed, and persistent job state returns with the engine's own persistence. Account and permission lookups that used that service are likewise not available yet.
 
 ## Configuration
 
-One file reads the environment: [`config/engine_config.py`](src/mzizi_engine/config/engine_config.py). `EngineConfig.load()` reads the git-ignored root `.env` (without overriding variables already set) and builds the sections: `server`, `postgres` (`DATABASE_WRITE_URL`), `mongo` (`MZIZI_MONGO_URL`, `MZIZI_MONGO_DATABASE`), `vector`, `s3` (`S3_ENDPOINT`, `S3_BUCKET`, credentials from `S3_ACCESS_KEY` or `AWS_ACCESS_KEY_ID` and so on, public endpoint from `S3_PUBLIC_ENDPOINT` or `S3_PUBLIC_ORIGIN`), `filesystem` (`FILESYSTEM_PROTECTED_PREFIXES`, `FILESYSTEM_RESERVED_ROOTS`, `FILESYSTEM_TEMP_PREFIX`), `search` and `crawler` (`MZIZI_USER_AGENT`, `ENGINE_INPUT_ROOT`). A section whose variables are missing is absent, and the first use of it raises one error naming every missing variable; nothing is guessed. `ENGINE_STORE_MEMORY=1` swaps S3 for an in-memory store (development only); `ENGINE_ACTIVITY_STORE=files` turns the MongoDB activity store off. `.env.example` lists every variable. Where files go is decided by the caller of each operation, never by the engine. Database tests: `MZIZI_FS_TEST_DATABASE_URL=postgres://… uv run pytest source/backend/engine/tests/filesystem` against a scratch database migrated with `bun run db migrate`.
+One file reads the environment: [`config/engine_config.py`](src/mzizi_engine/config/engine_config.py). `EngineConfig.load()` reads the git-ignored root `.env` (without overriding variables already set) and builds the sections: `server`, `postgres` (`DATABASE_WRITE_URL`), `mongo` (`MZIZI_MONGO_URL`, `MZIZI_MONGO_DATABASE`), `vector`, `s3` (`S3_ENDPOINT`, `S3_BUCKET`, credentials from `S3_ACCESS_KEY` or `AWS_ACCESS_KEY_ID` and so on, public endpoint from `S3_PUBLIC_ENDPOINT` or `S3_PUBLIC_ORIGIN`), `filesystem` (`FILESYSTEM_PROTECTED_PREFIXES`, `FILESYSTEM_RESERVED_ROOTS`, `FILESYSTEM_TEMP_PREFIX`), `search`, `crawler` and `runs`. A section whose variables are missing is absent, and the first use of it raises one error naming every missing variable; nothing is guessed. `ENGINE_STORE_MEMORY=1` swaps S3 for an in-memory store (development only); `ENGINE_ACTIVITY_STORE=files` turns the MongoDB activity store off. `.env.example` lists every variable. Where files go is decided by the caller of each operation, never by the engine. Database tests: `MZIZI_FS_TEST_DATABASE_URL=postgres://… uv run pytest source/backend/engine/tests/filesystem` against a scratch database migrated with `bun run db migrate`.
 
 ## Seed upload
 
@@ -41,6 +42,19 @@ One file reads the environment: [`config/engine_config.py`](src/mzizi_engine/con
 
 `GET /capabilities` lists the registered operations; `POST /v1/jobs` runs one (`{"kind", "input"}`) through the executor with limits, retries and cancellation (`ENGINE_CAPABILITY_LIMITS="name=n,..."`), and results are delivered to `NESTJS_CALLBACK_URL` through an outbox with `Idempotency-Key` retries. For `filesystem.*` kinds the engine stamps the authenticated principal into the payload as `actor`; a client-supplied actor is overwritten.
 
+## Spec-driven runs
+
+The Python entry point `mzizi_engine.runtime.assembly.run_operations.run_job_spec` accepts version-1 JSON and returns a run record plus operation outputs. Phase 1 runs `scraping.crawl` and `site.watch` in process. The registry validates each stage's parameters against its request model before starting work. Keep the caller's crawl output folder and the existing `.dev/websites/` location. The run store writes its audit logs under `.dev/runs/<run_id>/logs/` and exposes an artifact-bytes API for explicit staging.
+
+Set `MZIZI_USER_AGENT`, `MZIZI_MONGO_URL`, `MZIZI_MONGO_DATABASE` and `ENGINE_RUN_LOG_RETENTION_DAYS` for a spec run. `ENGINE_RUN_LOCAL_ROOT` overrides the run-store location. See the [workers and runs design](../../../.docs/design/architecture/WORKERS_AND_RUNS.md) for status and the [Mongo contracts](../../../dryv/contracts/schemas/mongo/run-ledger.ts) for document shapes.
+
+For the real Mongo integration test, use a local MongoDB and an empty scratch database. The test removes it on exit.
+
+```bash
+MZIZI_ENV_FILE=/dev/null MZIZI_MONGO_URL=mongodb://127.0.0.1:27017 MZIZI_MONGO_DATABASE=mzizi_runs_test \
+  uv run pytest source/backend/engine/tests/runs -q
+```
+
 ## Status
 
-Built and tested: the runtime and its operations registry, queue, limits, retries, cancellation, worker processes, event replay, outbox delivery, the filesystem adapter against a real PostgreSQL schema, and every package's own tests. Not built: persistent job state, per-folder authorization, Dryv-defined HTTP routes for the filesystem, and typed contracts for the legacy runtime modules still excused from strict typing in the root `pyproject.toml` (`runtime/http`, `runtime/executor`, `runtime/assembly/default_operations`).
+Built and tested: the runtime and its operations registry, queue, limits, retries, cancellation, worker processes, event replay, outbox delivery, the filesystem adapter against a real PostgreSQL schema, and every package's own tests. Not built: persistent HTTP executor job state, spec subprocess workers, bundle sealing, per-folder authorization, Dryv-defined HTTP routes for the filesystem, and typed contracts for the legacy runtime modules still excused from strict typing in the root `pyproject.toml` (`runtime/http`, `runtime/executor`, `runtime/assembly/default_operations`).

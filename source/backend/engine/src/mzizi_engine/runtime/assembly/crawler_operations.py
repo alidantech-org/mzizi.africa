@@ -41,8 +41,11 @@ from mzizi_crawler.shared.requests import (
     Workspace,
 )
 from mzizi_engine.runtime.assembly.specs import register_specs
-from mzizi_engine.runtime.operations import OperationRegistry, operation
+from mzizi_engine.runtime.operations import OperationRegistry, Requirement, operation
 
+NETWORK = frozenset({Requirement.USER_AGENT})
+BROWSER = NETWORK | {Requirement.BROWSER}
+ACTIVITY = frozenset({Requirement.MONGO})
 VERSION = "0.2.0"
 PACKAGE = "mzizi-crawler"
 
@@ -57,6 +60,7 @@ def register_crawler(registry: OperationRegistry) -> None:
                 CrawlRequest,
                 crawl.crawl_site,
                 1,
+                requires=NETWORK,
             ),
             operation(
                 "scraping.markdown",
@@ -64,6 +68,7 @@ def register_crawler(registry: OperationRegistry) -> None:
                 MarkdownRequest,
                 crawl.page_markdown,
                 1,
+                requires=NETWORK,
             ),
             operation(
                 "scraping.sections",
@@ -71,11 +76,19 @@ def register_crawler(registry: OperationRegistry) -> None:
                 SectionsRequest,
                 sections.page_sections,
                 1,
+                requires=NETWORK,
             ),
             operation(
                 "scraping.extract", "Apply a site module to saved HTML", ScrapeFileRequest, scrape.scrape_file, 1
             ),
-            operation("scraping.url", "Apply a site module to one source page", ScrapeUrlRequest, scrape.scrape_url, 1),
+            operation(
+                "scraping.url",
+                "Apply a site module to one source page",
+                ScrapeUrlRequest,
+                scrape.scrape_url,
+                1,
+                requires=NETWORK,
+            ),
             operation("scraping.select", "Run a CSS selector on saved HTML", SelectRequest, scrape.select_file, 1),
             operation(
                 "web.export",
@@ -96,7 +109,12 @@ def register_crawler(registry: OperationRegistry) -> None:
             ),
             operation("web.draft", "Draft a site structure bundle from a crawl", DraftRequest, survey.draft_bundle, 1),
             operation(
-                "web.survey", "Crawl, profile and draft a bundle in one run", SurveyRequest, survey.survey_site, 1
+                "web.survey",
+                "Crawl, profile and draft a bundle in one run",
+                SurveyRequest,
+                survey.survey_site,
+                1,
+                requires=NETWORK,
             ),
             operation(
                 "web.rank",
@@ -111,6 +129,7 @@ def register_crawler(registry: OperationRegistry) -> None:
                 EnqueueRequest,
                 queue.enqueue,
                 1,
+                requires=ACTIVITY,
             ),
             operation(
                 "download.run",
@@ -118,6 +137,7 @@ def register_crawler(registry: OperationRegistry) -> None:
                 FetchQueueRequest,
                 queue.fetch_queue,
                 1,
+                requires=NETWORK | ACTIVITY,
             ),
             operation(
                 "download.queue",
@@ -125,6 +145,7 @@ def register_crawler(registry: OperationRegistry) -> None:
                 QueueStatusRequest,
                 queue.queue_status,
                 1,
+                requires=ACTIVITY,
             ),
             operation(
                 "site.watch",
@@ -132,16 +153,34 @@ def register_crawler(registry: OperationRegistry) -> None:
                 WatchRequest,
                 site.watch_site,
                 1,
+                requires=NETWORK,
             ),
             operation(
-                "site.batch", "Run many sites at once, resumable, losing nothing", BatchRequest, batch.run_batch, 1
+                "site.batch",
+                "Run many sites at once, resumable, losing nothing",
+                BatchRequest,
+                batch.run_batch,
+                1,
+                requires=NETWORK,
             ),
             operation(
                 "web.diff", "Compare two crawls: pages added, removed and changed", DiffRequest, changes.diff_crawls, 1
             ),
-            operation("fetch.url", "One identified, policy-checked HTTP request", UrlRequest, inspect.fetch_one, 1),
             operation(
-                "fetch.robots", "The robots.txt decision for a URL, recorded", UrlRequest, inspect.robots_policy, 1
+                "fetch.url",
+                "One identified, policy-checked HTTP request",
+                UrlRequest,
+                inspect.fetch_one,
+                1,
+                requires=NETWORK,
+            ),
+            operation(
+                "fetch.robots",
+                "The robots.txt decision for a URL, recorded",
+                UrlRequest,
+                inspect.robots_policy,
+                1,
+                requires=NETWORK,
             ),
             operation(
                 "web.links",
@@ -149,6 +188,7 @@ def register_crawler(registry: OperationRegistry) -> None:
                 UrlRequest,
                 inspect.web_links,
                 1,
+                requires=NETWORK,
             ),
             operation(
                 "scraping.challenge",
@@ -156,6 +196,7 @@ def register_crawler(registry: OperationRegistry) -> None:
                 UrlRequest,
                 inspect.inspect_challenge,
                 1,
+                requires=NETWORK,
             ),
             operation(
                 "browser.open",
@@ -163,10 +204,23 @@ def register_crawler(registry: OperationRegistry) -> None:
                 UrlRequest,
                 inspect.browser_open,
                 1,
+                requires=BROWSER,
             ),
-            operation("browser.snapshot", "Rendered HTML and a screenshot", UrlRequest, inspect.browser_snapshot, 1),
             operation(
-                "browser.navigate", "Run a click/fill/scroll/wait action script", UrlRequest, inspect.browser_script, 1
+                "browser.snapshot",
+                "Rendered HTML and a screenshot",
+                UrlRequest,
+                inspect.browser_snapshot,
+                1,
+                requires=BROWSER,
+            ),
+            operation(
+                "browser.navigate",
+                "Run a click/fill/scroll/wait action script",
+                UrlRequest,
+                inspect.browser_script,
+                1,
+                requires=BROWSER,
             ),
             operation(
                 "browser.click",
@@ -174,17 +228,42 @@ def register_crawler(registry: OperationRegistry) -> None:
                 UrlRequest,
                 inspect.browser_click,
                 1,
+                requires=BROWSER,
             ),
-            operation("browser.fill", "Fill one field on a page", UrlRequest, inspect.browser_fill, 1),
-            operation("browser.start", "Open the one shared dev browser window", UrlRequest, inspect.browser_start, 1),
-            operation("browser.stop", "Close the shared dev browser", UrlRequest, inspect.browser_stop, 1),
-            operation("browser.compare", "HTTP result versus browser result", UrlRequest, inspect.browser_compare, 1),
+            operation(
+                "browser.fill", "Fill one field on a page", UrlRequest, inspect.browser_fill, 1, requires=BROWSER
+            ),
+            operation(
+                "browser.start",
+                "Open the one shared dev browser window",
+                UrlRequest,
+                inspect.browser_start,
+                1,
+                requires=BROWSER,
+            ),
+            operation(
+                "browser.stop",
+                "Close the shared dev browser",
+                UrlRequest,
+                inspect.browser_stop,
+                1,
+                requires=frozenset({Requirement.BROWSER}),
+            ),
+            operation(
+                "browser.compare",
+                "HTTP result versus browser result",
+                UrlRequest,
+                inspect.browser_compare,
+                1,
+                requires=BROWSER,
+            ),
             operation(
                 "web.download",
                 "Safe, resumable, throttled downloads into quarantine",
                 DownloadRequest,
                 downloads.download_files,
                 1,
+                requires=NETWORK,
             ),
             operation("web.downloads", "Status of downloads in a folder", Workspace, downloads.download_status, 1),
         ),

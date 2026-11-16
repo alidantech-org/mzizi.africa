@@ -7,6 +7,7 @@
  * server interface in the engine.
  */
 import { dryv } from "@dryvcode/author";
+import { runLedger } from "#/schemas/mongo/run-ledger.ts";
 import { shared } from "#/schemas/_shared.ts";
 import { engineApi } from "./engine.ts";
 import { runtimeApi } from "./runtime.ts";
@@ -33,4 +34,4 @@ export default dryv
     systemApi.GetHealth,
     systemApi.GetReadiness,
   )
-  .groups(shared, engineApi.engine, runtimeApi.runtime, stagingApi.staging, systemApi.system);
+  .groups(shared, engineApi.engine, runtimeApi.runtime, stagingApi.staging, systemApi.system, runLedger);

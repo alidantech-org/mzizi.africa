@@ -7,7 +7,6 @@ downloaded and flagged by the downloader, never opened. Each queue item records 
 from __future__ import annotations
 
 import hashlib
-import os
 import shutil
 import time
 from datetime import UTC, datetime
@@ -38,6 +37,7 @@ from mzizi_crawler.shared.requests import (
     FetchQueueRequest,
     QueueStatusRequest,
 )
+from mzizi_crawler.shared.settings import crawler_settings
 from mzizi_fetch.web.download import Downloader
 from mzizi_fetch.web.vocabulary import vocabulary
 
@@ -49,13 +49,10 @@ RESOURCE_TABLES = {  # inventory table of each kind (`candidate` rows come from 
     "file": "files",
 }
 MAX_ATTEMPTS = 3
-MIN_FREE_BYTES = int(
-    float(os.environ.get("MZIZI_MIN_FREE_GB", "8")) * 1024**3
-)  # downloads stop taking new files below this much free disk
 
 
 def disk_is_low(path: Path) -> bool:
-    return shutil.disk_usage(path).free < MIN_FREE_BYTES
+    return shutil.disk_usage(path).free < crawler_settings().min_free_bytes
 
 
 GATE_BUDGET = 1_000_000

@@ -3,5 +3,13 @@
 from mzizi_crawler.orchestrator.crawler_orchestrator import CrawlerOrchestrator
 from mzizi_crawler.shared.activity import Activity, configure_activity
 from mzizi_crawler.shared.identity import configure_user_agent
+from mzizi_crawler.shared.settings import CrawlerSettings, configure_crawler
 
-__all__ = ["Activity", "CrawlerOrchestrator", "configure_activity", "configure_user_agent"]
+__all__ = [
+    "Activity",
+    "CrawlerOrchestrator",
+    "CrawlerSettings",
+    "configure_activity",
+    "configure_crawler",
+    "configure_user_agent",
+]

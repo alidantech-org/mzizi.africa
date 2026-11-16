@@ -16,7 +16,7 @@ from mzizi_engine.persistence.postgres.connection import Connection, connect
 from mzizi_engine.persistence.postgres.filesystem import PostgresRegistry
 from mzizi_engine.persistence.postgres.reference import PostgresReference
 from mzizi_engine.runtime.assembly.filesystem_seed import SeedPlanError, plan_seed, run_seed_sync
-from mzizi_engine.runtime.operations import Operation, OperationRegistry
+from mzizi_engine.runtime.operations import Operation, OperationRegistry, Requirement
 from mzizi_filesystem import (
     Access,
     FilesystemConfig,
@@ -288,5 +288,8 @@ _OPERATIONS: tuple[tuple[str, str, Callable[[Payload], Payload]], ...] = (
 
 
 def register_filesystem(registry: OperationRegistry) -> None:
+    requires = frozenset({Requirement.POSTGRES, Requirement.S3})
     for name, description, handler in _OPERATIONS:
-        registry.register(Operation(name, VERSION, PACKAGE, description, handler, _OBJECT, concurrency=1))
+        registry.register(
+            Operation(name, VERSION, PACKAGE, description, handler, _OBJECT, concurrency=1, requires=requires)
+        )

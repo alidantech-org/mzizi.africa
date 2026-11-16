@@ -9,11 +9,24 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 from mzizi_engine.jsonvalue import Payload
 from mzizi_engine.runtime.contracts.base import Frozen
+
+
+class Requirement(StrEnum):
+    """A service or configuration required by an operation."""
+
+    POSTGRES = "postgres"
+    S3 = "s3"
+    MONGO = "mongo"
+    BROWSER = "browser"
+    USER_AGENT = "user_agent"
+    SEARCH_KEYS = "search_keys"
+    INPUT_ROOT = "input_root"
 
 
 class OperationInfo(Frozen):
@@ -37,6 +50,9 @@ class Operation:
     input_schema: Payload
     cpu_bound: bool = False
     concurrency: int | None = None
+    request_model: type[BaseModel] | None = None
+    requires: frozenset[Requirement] = frozenset()
+    invoke_model: Callable[[BaseModel], Payload] | None = None
 
     def info(self) -> OperationInfo:
         return OperationInfo(
@@ -78,13 +94,27 @@ class OperationSpec:
     run: Callable[[Payload], Payload]
     #: Highest number of simultaneous runs; `None` leaves the runtime's default.
     concurrency: int | None = None
+    request_model: type[BaseModel] | None = None
+    requires: frozenset[Requirement] = frozenset()
+    invoke_model: Callable[[BaseModel], Payload] | None = None
 
 
 def operation[R: BaseModel](
-    name: str, description: str, model: type[R], handler: Callable[[R], BaseModel], concurrency: int | None = None
+    name: str,
+    description: str,
+    model: type[R],
+    handler: Callable[[R], BaseModel],
+    concurrency: int | None = None,
+    *,
+    requires: frozenset[Requirement] = frozenset(),
 ) -> OperationSpec:
+    def invoke_model(request: BaseModel) -> Payload:
+        if not isinstance(request, model):
+            raise TypeError(f"Operation {name!r} requires a {model.__name__} request")
+        return handler(request).model_dump(mode="json")
+
     def run(payload: Payload) -> Payload:
-        return handler(model.model_validate(payload, strict=False)).model_dump(mode="json")
+        return invoke_model(model.model_validate(payload, strict=False))
 
     run.__name__ = handler.__name__
-    return OperationSpec(name, description, run, concurrency)
+    return OperationSpec(name, description, run, concurrency, model, requires, invoke_model)

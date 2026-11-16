@@ -10,15 +10,16 @@ from __future__ import annotations
 import base64
 from collections.abc import Callable
 
+from mzizi_engine.config import EngineConfig
 from mzizi_engine.jsonvalue import Payload
-from mzizi_engine.runtime.operations import Operation, OperationRegistry
+from mzizi_engine.runtime.assembly.crawler_settings import configure_acquisition
+from mzizi_engine.runtime.operations import Operation, OperationRegistry, Requirement
 
 
 def _bytes_input(payload: dict) -> bytes:
     """`content_base64` or a `path` below the configured input root (default: the repository seed folder)."""
     if "content_base64" in payload:
         return base64.b64decode(payload["content_base64"])
-    from mzizi_engine.config import EngineConfig
     from mzizi_manifest.shared.paths import SEED_ROOT
 
     root = (EngineConfig.load().crawler.input_root or SEED_ROOT).resolve()
@@ -55,6 +56,8 @@ _MARKDOWN_SCHEMA: Payload = {
 }
 
 # Feature-name property keys, until profiles carry them from manifests (tracked in the patterns task).
+_INPUT = frozenset({Requirement.INPUT_ROOT})
+
 _NAME_KEYS = ("shapeName", "name", "NAME", "NAME_1", "NAME_2", "ADM1_EN", "ADM2_EN", "COUNTY", "county")
 
 
@@ -151,16 +154,21 @@ def process_info(payload: dict) -> dict:
     return {"pid": os.getpid()}
 
 
-def build_default_registry() -> OperationRegistry:
-    reg = OperationRegistry()
-    from mzizi_crawler import configure_activity, configure_user_agent
-    from mzizi_engine.config import EngineConfig
+def build_default_registry(config: EngineConfig | None = None) -> OperationRegistry:
+    from mzizi_crawler import configure_activity
     from mzizi_engine.persistence.mongo.activity import activity_opener
+
+    config = config or EngineConfig.load()
+    configure_activity(activity_opener(config))
+    configure_acquisition(config.crawler)
+    return build_operation_registry()
+
+
+def build_operation_registry() -> OperationRegistry:
+    """Describe the operations without configuring or opening acquisition services."""
     from mzizi_engine.runtime.assembly.crawler_operations import register_crawler
 
-    config = EngineConfig.load()
-    configure_activity(activity_opener(config))
-    configure_user_agent(config.crawler.user_agent)
+    reg = OperationRegistry()
     register_crawler(reg)
     from mzizi_engine.runtime.assembly.filesystem_operations import register_filesystem
 
@@ -174,7 +182,11 @@ def build_default_registry() -> OperationRegistry:
         ("csv", extract_csv, "CSV rows", False),
         ("json", extract_json, "JSON records", False),
     ]:
-        reg.register(Operation(f"extraction.{kind}", "0.1.0", "mzizi-extraction", desc, fn, _SOURCE, cpu_bound=cpu))
+        reg.register(
+            Operation(
+                f"extraction.{kind}", "0.1.0", "mzizi-extraction", desc, fn, _SOURCE, cpu_bound=cpu, requires=_INPUT
+            )
+        )
     reg.register(
         Operation(
             "extraction.markdown",
@@ -184,6 +196,7 @@ def build_default_registry() -> OperationRegistry:
             extract_markdown,
             _MARKDOWN_SCHEMA,
             cpu_bound=True,
+            requires=_INPUT,
         )
     )
     reg.register(

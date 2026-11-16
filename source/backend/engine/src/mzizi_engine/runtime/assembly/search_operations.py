@@ -8,7 +8,8 @@ from mzizi_crawler.shared.common import out_dir
 from mzizi_crawler.shared.export import write_table
 from mzizi_crawler.shared.requests import SearchRequest
 from mzizi_engine.runtime.assembly.search_settings import orchestrator_for, provider_name
-from mzizi_engine.runtime.operations import Operation, OperationRegistry, operation
+from mzizi_engine.runtime.assembly.specs import register_specs
+from mzizi_engine.runtime.operations import OperationRegistry, Requirement, operation
 from mzizi_search import SearchQuery, SearchResult
 
 
@@ -42,7 +43,12 @@ def web_search(request: SearchRequest) -> SearchResults:
 
 
 def register_search(registry: OperationRegistry) -> None:
-    spec = operation("search.web", "Web search through the official Brave or Google API", SearchRequest, web_search, 1)
-    registry.register(
-        Operation(spec.name, "0.2.0", "mzizi-search", spec.description, spec.run, {"type": "object"}, concurrency=1)
+    spec = operation(
+        "search.web",
+        "Web search through the official Brave or Google API",
+        SearchRequest,
+        web_search,
+        1,
+        requires=frozenset({Requirement.SEARCH_KEYS}),
     )
+    register_specs(registry, (spec,), "mzizi-search", "0.2.0")
