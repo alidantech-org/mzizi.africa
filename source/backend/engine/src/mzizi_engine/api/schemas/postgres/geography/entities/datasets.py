@@ -30,7 +30,7 @@ class DatasetsRow(BaseModel):
     representation_id: UUID
     resolution: float | None = None
     resolution_unit_id: UUID | None = None
-    source_ref_id: UUID | None = None
+    source_id: UUID | None = None
     subject_id: UUID
     title: Annotated[str, Field(min_length=1, max_length=255)]
     updated_at: datetime

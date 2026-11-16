@@ -9,7 +9,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One shared tag catalogue for files and folders.
  */
 @Entity({ schema: "filesystem", name: "tags" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 export class TagsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;

@@ -19,7 +19,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Durable evidence bundle whose exact supporting items are normalized citations.
  */
 @Entity({ schema: "source", name: "evidence" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["kindId"])
 export class EvidenceEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })

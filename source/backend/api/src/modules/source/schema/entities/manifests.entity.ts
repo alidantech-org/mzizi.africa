@@ -18,7 +18,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Stable API, website or extraction configuration identity; contents remain versioned artifacts.
  */
 @Entity({ schema: "source", name: "manifests" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["kindId"])
 export class ManifestsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })

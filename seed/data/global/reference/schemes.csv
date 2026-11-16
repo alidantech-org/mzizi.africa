@@ -13,3 +13,5 @@ geo.geometry.role,Roles of a feature geometry,mzizi curated
 geo.geometry.basis,How a geometry was established,mzizi curated
 geo.name.kind,Kinds of geographic name,mzizi curated
 geo.identifier.scheme,Registries that identify geographic features,mzizi curated
+src.publisher.kind,Kinds of publisher,mzizi curated
+src.source.kind,Kinds of source,mzizi curated

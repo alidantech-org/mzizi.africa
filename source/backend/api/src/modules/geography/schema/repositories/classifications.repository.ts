@@ -48,6 +48,14 @@ export class ClassificationsRepository
     return await this.findByQuery(query, { featureId, deletedAt: IsNull() });
   }
 
+  /** Find classifications by source id, paged by the shared query. */
+  async findBySource(
+    query: BaseQueryDto<ClassificationsEntity>,
+    sourceId: NonNullable<ClassificationsEntity["sourceId"]>,
+  ): Promise<IFindAllResponse<ClassificationsEntity>> {
+    return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
+  }
+
   /** Find classifications by value id, paged by the shared query. */
   async findByValue(
     query: BaseQueryDto<ClassificationsEntity>,

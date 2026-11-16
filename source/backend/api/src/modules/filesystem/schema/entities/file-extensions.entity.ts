@@ -10,7 +10,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Technical filename suffix and media-type hint; never a semantic document classification.
  */
 @Entity({ schema: "filesystem", name: "file_extensions" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["extension"], { unique: true })
 export class FileExtensionsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })

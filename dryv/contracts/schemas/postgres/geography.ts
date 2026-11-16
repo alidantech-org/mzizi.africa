@@ -14,6 +14,7 @@ import { rule, when } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { Unit, Value } from "./reference.ts";
+import { Sources } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
@@ -48,7 +49,7 @@ export const Names = geography
     name: dryv.field(sharedProperties.Name),
     languageTag: dryv.field(sharedProperties.LanguageTag).maybe(),
     nameKindId: belongsTo(() => Value).tags("scheme:geo.name.kind"),
-    sourceRefId: dryv.field(sharedProperties.Id).maybe(),
+    sourceId: belongsTo(() => Sources).maybe(),
   })
   .extends(baseSchemas.ValidityEntity)
   .description(
@@ -73,7 +74,7 @@ export const Classifications = geography
      * reconstructed, legendary). A feature's main kind stays on `features`; these add the other answers, with dates.
      */
     valueId: belongsTo(() => Value),
-    sourceRefId: dryv.field(sharedProperties.Id).maybe(),
+    sourceId: belongsTo(() => Sources).maybe(),
   })
   .extends(baseSchemas.HistoricalValidityEntity)
   .description(
@@ -96,7 +97,7 @@ export const Identifiers = geography
     ),
     namespace: dryv.field(sharedProperties.NonEmptyString255).maybe(),
     externalId: dryv.field(sharedProperties.NonEmptyString500),
-    sourceRefId: dryv.field(sharedProperties.Id).maybe(),
+    sourceId: belongsTo(() => Sources).maybe(),
   })
   .extends(baseSchemas.Entity)
   .description(
@@ -150,7 +151,7 @@ export const Geometries = geography
       .generated(calculations.GeometryArea),
     srid: dryv.field(sharedProperties.PositiveInteger),
     observedAt: dryv.field(sharedProperties.Instant).maybe(),
-    sourceRefId: dryv.field(sharedProperties.Id).maybe(),
+    sourceId: belongsTo(() => Sources).maybe(),
     fileVersionRefId: dryv.field(sharedProperties.Id).maybe(),
   })
   .extends(baseSchemas.HistoricalValidityEntity)
@@ -201,7 +202,7 @@ export const Relationships = geography
     ),
     /** Expected scheme: geo.relationship.system (administrative, electoral, statistical, hydrological, historical). */
     systemId: belongsTo(() => Value).tags("scheme:geo.relationship.system"),
-    sourceRefId: dryv.field(sharedProperties.Id).maybe(),
+    sourceId: belongsTo(() => Sources).maybe(),
   })
   .extends(baseSchemas.HistoricalValidityEntity)
   .rule(
@@ -234,7 +235,7 @@ export const Changes = geography
     successorFeatureId: belongsTo(() => Features).maybe(),
     changeKindId: belongsTo(() => Value),
     effectiveOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    sourceRefId: dryv.field(sharedProperties.Id).maybe(),
+    sourceId: belongsTo(() => Sources).maybe(),
     explanation: dryv.field(sharedProperties.Description).maybe(),
   })
   .extends(baseSchemas.Entity)
@@ -264,7 +265,7 @@ export const Datasets = geography
     resolution: dryv.field(sharedProperties.Number).maybe(),
     resolutionUnitId: belongsTo(() => Unit).maybe(),
     coverageFeatureId: belongsTo(() => Features).maybe(),
-    sourceRefId: dryv.field(sharedProperties.Id).maybe(),
+    sourceId: belongsTo(() => Sources).maybe(),
     fileVersionRefId: dryv.field(sharedProperties.Id).maybe(),
     qualityNotes: dryv.field(sharedProperties.Description).maybe(),
   })

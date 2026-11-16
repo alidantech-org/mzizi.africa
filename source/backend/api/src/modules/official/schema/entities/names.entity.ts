@@ -22,8 +22,6 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One attested name form for exactly one entity or individual, with optional language and validity.
  */
 @Entity({ schema: "official", name: "names" })
-@Index(["entityId", "languageTag"], { unique: true })
-@Index(["individualId", "languageTag"], { unique: true })
 @Index(["entityId"])
 @Index(["individualId"])
 @Index(["nameKindId"])

@@ -10,6 +10,7 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -34,7 +35,7 @@ import type {
 export interface IRelationships extends B.IBase {
   objectFeatureId: string;
   relationshipKindId: string;
-  sourceRefId: string | null;
+  sourceId: string | null;
   subjectFeatureId: string;
   systemId: string;
   validFrom: Date | null;
@@ -45,6 +46,7 @@ export interface IRelationships extends B.IBase {
   validUntilLatest: Date | null;
   readonly objectFeature?: FeaturesTypes.IFeatures;
   readonly relationshipKind?: ValueTypes.IValue;
+  readonly source?: SourcesTypes.ISources;
   readonly subjectFeature?: FeaturesTypes.IFeatures;
   readonly system?: ValueTypes.IValue;
 }
@@ -150,6 +152,7 @@ export type IRelationshipsAsManyRelationQuery = Q.IAsManyRelationQuery<
 export interface IRelationshipsRelationMap extends Record<RelationshipsRelationKey, unknown> {
   objectFeature: FeaturesTypes.IFeaturesAsOneRelationQuery;
   relationshipKind: ValueTypes.IValueAsOneRelationQuery;
+  source: SourcesTypes.ISourcesAsOneRelationQuery;
   subjectFeature: FeaturesTypes.IFeaturesAsOneRelationQuery;
   system: ValueTypes.IValueAsOneRelationQuery;
 }

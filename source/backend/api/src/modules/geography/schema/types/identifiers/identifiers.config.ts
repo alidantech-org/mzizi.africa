@@ -11,6 +11,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as SourcesConfig from "#/modules/source/schema/types/sources/sources.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -35,6 +36,7 @@ import type {
 export const IDENTIFIERS_RELATION_KEYS = [
   "feature",
   "identifierScheme",
+  "source",
 ] as const satisfies readonly IdentifiersKey[];
 
 // ----------------------------------
@@ -49,7 +51,7 @@ export const IDENTIFIERS_SORTABLE_FIELDS = [
   "id",
   "identifierSchemeId",
   "namespace",
-  "sourceRefId",
+  "sourceId",
   "updatedAt",
   "version",
 ] as const satisfies readonly IdentifiersKey[];
@@ -63,7 +65,7 @@ export const IDENTIFIERS_FILTERABLE_FIELDS = [
   "featureId",
   "id",
   "identifierSchemeId",
-  "sourceRefId",
+  "sourceId",
 ] as const satisfies readonly IdentifiersKey[];
 
 export const IDENTIFIERS_DATE_RANGE_FIELDS = [
@@ -90,7 +92,7 @@ export const IDENTIFIERS_SELECTABLE_FIELDS = [
   "id",
   "identifierSchemeId",
   "namespace",
-  "sourceRefId",
+  "sourceId",
   "updatedAt",
   "version",
 ] as const satisfies readonly IdentifiersKey[];
@@ -103,7 +105,7 @@ export const IDENTIFIERS_DEFAULT_SELECT_FIELDS = [
   "id",
   "identifierSchemeId",
   "namespace",
-  "sourceRefId",
+  "sourceId",
   "updatedAt",
   "version",
 ] as const satisfies readonly IdentifiersSelectableField[];
@@ -117,7 +119,7 @@ export const IDENTIFIERS_EDITABLE_FIELDS = [
   "featureId",
   "identifierSchemeId",
   "namespace",
-  "sourceRefId",
+  "sourceId",
 ] as const satisfies readonly IdentifiersKey[];
 
 // ----------------------------------
@@ -153,6 +155,10 @@ export const IDENTIFIERS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<IdentifiersRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "identifierScheme",
+  ),
+  Q.createRelationKeyMapper<IdentifiersRelationKey>().one(
+    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
+    "source",
   ),
 ] as const;
 

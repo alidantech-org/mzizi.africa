@@ -55,10 +55,10 @@ export class NamesDto {
   nameKindId!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceRefId !== null)
+  @ValidateIf((object) => object.sourceId !== null)
   @IsString()
   @IsUUID()
-  sourceRefId?: Id | null;
+  sourceId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

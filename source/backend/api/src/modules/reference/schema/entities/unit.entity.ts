@@ -21,7 +21,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Measurement unit and conversion to its optional base unit; never a spatial unit.
  */
 @Entity({ schema: "reference", name: "units" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["baseId"])
 @Check("chk_unit_unit_scale_must_be_positive", `scale > 0`)
 export class UnitEntity {

@@ -19,7 +19,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One government institution specialization of an Official entity.
  */
 @Entity({ schema: "governance", name: "institutions" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["entityId"])
 @Index(["sourceCitationId"])
 @Check(

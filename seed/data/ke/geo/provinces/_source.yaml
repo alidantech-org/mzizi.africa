@@ -1,0 +1,6 @@
+# The eight provinces that counties replaced.
+status: unverified
+basis: "General knowledge of Kenya's pre-2013 administrative structure, prepared by the assistant. No dataset has been matched yet. Replace with a gazetted or published list (for example the 2009 census provinces) and set status to verified."
+notes:
+  - "Province end date: valid_until is 4 March 2013 with valid_until_earliest 27 August 2010 (promulgation). Judgment calls."
+  - "Which counties lie in which former province is not recorded yet; counties replaced districts, not provinces, so it needs its own source."

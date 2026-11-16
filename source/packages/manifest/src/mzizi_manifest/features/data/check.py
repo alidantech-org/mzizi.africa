@@ -86,27 +86,24 @@ def _value_problem(column: Column, value: str) -> str | None:
 def _table_for(
     path: Path, root: Path, tables: dict[str, Table], schemas: dict[str, str]
 ) -> tuple[Table | None, str | None]:
-    """The table a seed file feeds: data/<scope>/<domain>/<table>.csv (the domain is a database group or its short, `geo`), or a folder named for the table that holds parts.
+    """The table a seed file feeds, from its name: `<table>.csv` or `<label>.<table>.csv` (`geo.values.csv`).
 
-    A table that grows is split into `data/<scope>/<domain>/<table>/<label>.<table>.csv` (for example
-    `reference/values/geo.values.csv`); the folder may be nested further as a part grows.
+    The path is data/<scope>/<domain>/<usage folders...>/<file>. The domain is a database group or its short (`geo`).
+    The usage folders between the domain and the file group the data however reads best (`counties/`, `wards/`,
+    `values/`); they carry no meaning for the check, so a folder can be split further whenever its files grow.
     """
     parts = path.relative_to(root).parts
     if len(parts) < 4 or parts[0] != "data":
-        return None, "a CSV must be data/<scope>/<domain>/<table>.csv or data/<scope>/<domain>/<table>/<label>.<table>.csv"
-    scope, domain, rest = parts[1], parts[2], parts[3:]
-    domain = {short: name for name, short in schemas.items()}.get(domain, domain)
+        return None, "a CSV must be data/<scope>/<domain>/<usage folders...>/<table>.csv"
+    scope, domain = parts[1], parts[2]
     if not SCOPE.match(scope):
         return None, f"scope {scope!r} must be 'global' or a country code"
-    if len(rest) == 1:
-        name = Path(rest[0]).stem
-    else:
-        name = rest[0]
-        if not Path(rest[-1]).stem.endswith(f".{name}"):
-            return None, f"a file in the {name}/ folder must be named <label>.{name}.csv"
+    domain = {short: name for name, short in schemas.items()}.get(domain, domain)
+    stem = Path(parts[-1]).stem
+    name = stem.rsplit(".", 1)[-1]
     table = tables.get(f"{domain}.{name}")
     if table is None:
-        return None, f"{domain}.{name} is not a stored table"
+        return None, f"{domain}.{name} is not a stored table (name the file <table>.csv or <label>.<table>.csv)"
     if not table.seedable:
         return None, f"{table.qualified_name} has no natural key, so it cannot be seeded by CSV"
     return table, None

@@ -20,7 +20,7 @@ class ClassificationsRow(BaseModel):
     deleted_at: datetime | None = None
     feature_id: UUID
     id: UUID
-    source_ref_id: UUID | None = None
+    source_id: UUID | None = None
     updated_at: datetime
     valid_from: date | None = None
     valid_from_earliest: date | None = None

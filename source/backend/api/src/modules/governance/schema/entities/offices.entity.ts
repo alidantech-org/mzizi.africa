@@ -20,7 +20,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One established public office, independent of any current holder and optionally scoped to a geographic unit.
  */
 @Entity({ schema: "governance", name: "offices" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["unitFeatureId"])
 @Index(["sourceCitationId"])
 @Check(

@@ -21,7 +21,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Logical hierarchy; access escalation requires recorded authorization, independent of object keys.
  */
 @Entity({ schema: "filesystem", name: "folders" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["parentId"])
 @Index(["roleId"])
 @Check("chk_folders_folder_must_not_parent_itself", `id <> parent_id`)

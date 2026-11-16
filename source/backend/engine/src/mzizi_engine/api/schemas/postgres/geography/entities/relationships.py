@@ -21,7 +21,7 @@ class GeographyRelationshipsRow(BaseModel):
     id: UUID
     object_feature_id: UUID
     relationship_kind_id: UUID
-    source_ref_id: UUID | None = None
+    source_id: UUID | None = None
     subject_feature_id: UUID
     system_id: UUID
     updated_at: datetime

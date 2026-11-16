@@ -1,0 +1,9 @@
+code,feature_type_code,valid_until,valid_until_earliest
+ke.nairobi-province,geo.feature.kind.province,2013-03-04,2010-08-27
+ke.central-province,geo.feature.kind.province,2013-03-04,2010-08-27
+ke.coast-province,geo.feature.kind.province,2013-03-04,2010-08-27
+ke.eastern-province,geo.feature.kind.province,2013-03-04,2010-08-27
+ke.north-eastern-province,geo.feature.kind.province,2013-03-04,2010-08-27
+ke.nyanza-province,geo.feature.kind.province,2013-03-04,2010-08-27
+ke.rift-valley-province,geo.feature.kind.province,2013-03-04,2010-08-27
+ke.western-province,geo.feature.kind.province,2013-03-04,2010-08-27

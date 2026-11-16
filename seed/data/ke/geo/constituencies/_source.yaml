@@ -1,0 +1,22 @@
+# Where this folder's rows come from. Rows were built from the downloaded files in .data/datasets/ (outside git); the CSV extract named below is a plain dump of the source columns, rebuilt from those files, and `mzizi-manifest verify` compares the seed against it.
+status: verified
+dataset:
+  name: OCHA COD-AB Kenya level 2 (290 constituencies), place codes by IEBC
+  publisher: OCHA Regional Office for Southern and Eastern Africa and OCHA FIS; data from the IEBC
+  licence: CC BY-IGO
+  url: https://data.humdata.org/dataset/cod-ab-ken
+  boundary_id: COD-AB-KEN-v01
+  local_copy: .data/datasets/extracts/ocha-ken-adm2.csv
+  sha256: cdb8654ae4d3e6c76a8ef449b316de710be0bfc0081b6fe9c3766db220576844
+  original: {file: ken_admin_boundaries.xlsx, sha256: 530f002f4b1561c5675f6978713770fe5f7f739af9d703f1a3881b5b469e88fc}
+checks:
+  complete: true
+  identifiers:
+    - {scheme: geo.identifier.scheme.ke-iebc-pcode, property: iebc_pcode}
+    - {scheme: geo.identifier.scheme.ocha-pcode, property: pcode}
+  names:
+    - {kind: geo.name.kind.official, property: name}
+notes:
+  - "The county of each constituency is given by the dataset (adm1_pcode), not computed. An earlier area-overlap guess placed Buret in Bomet; the dataset (IEBC) says Kericho."
+  - "The geoBoundaries ADM2 id on each constituency is from KEN-ADM2-3690345 (CC BY 3.0 IGO) and is not checked by verify. geoBoundaries labels its ADM2 level Sub-Counties, but its 290 units are the constituencies."
+  - "Start date 4 March 2013 is a judgment call."

@@ -19,7 +19,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Accepted publisher; an optional official identity distinguishes organization from publication channel.
  */
 @Entity({ schema: "source", name: "publishers" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["kindId"])
 @Index(["countryId"])
 export class PublishersEntity {

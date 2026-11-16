@@ -54,4 +54,12 @@ export class NamesRepository
   ): Promise<IFindAllResponse<GeographyNamesEntity>> {
     return await this.findByQuery(query, { nameKindId, deletedAt: IsNull() });
   }
+
+  /** Find names by source id, paged by the shared query. */
+  async findBySource(
+    query: BaseQueryDto<GeographyNamesEntity>,
+    sourceId: NonNullable<GeographyNamesEntity["sourceId"]>,
+  ): Promise<IFindAllResponse<GeographyNamesEntity>> {
+    return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
+  }
 }

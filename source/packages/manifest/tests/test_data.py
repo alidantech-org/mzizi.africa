@@ -169,7 +169,7 @@ def test_the_path_must_name_a_seedable_table_in_a_valid_scope(tmp_path: Path) ->
     assert any("scope 'nowhere'" in p for p in problems)
     assert any("reference.nonsense is not a stored table" in p for p in problems)
     assert any("audit.events has no natural key" in p for p in problems)
-    assert any("a CSV must be data/<scope>/<domain>/<table>.csv" in p for p in problems)
+    assert any("a CSV must be data/<scope>/<domain>/<usage folders...>/<table>.csv" in p for p in problems)
 
 
 def test_a_link_to_a_table_with_no_file_is_reported(tmp_path: Path) -> None:
@@ -229,9 +229,15 @@ def test_a_growing_table_is_split_into_a_folder_of_parts(tmp_path: Path) -> None
     assert len(result.rows["reference.values"]) == 3
 
 
-def test_a_part_in_a_table_folder_must_be_named_for_the_table(tmp_path: Path) -> None:
-    files = {"global/reference/values/geo.csv": VALUES}
-    assert any("must be named <label>.values.csv" in p for p in check_data(tree(tmp_path, files)).problems)
+def test_usage_folders_group_files_and_the_file_name_gives_the_table(tmp_path: Path) -> None:
+    files = {
+        "global/reference/schemes.csv": SCHEMES,
+        "global/reference/values/geo.values.csv": VALUES,
+        "global/reference/some/deeper/folder/countries.csv": COUNTRIES,
+    }
+    assert check_data(tree(tmp_path, files)).problems == []
+    wrong = {"global/reference/values/geo.csv": VALUES}
+    assert any("reference.geo is not a stored table" in p for p in check_data(tree(tmp_path / "x", wrong)).problems)
 
 
 def test_a_table_with_no_code_is_keyed_by_its_unique_columns(tmp_path: Path) -> None:

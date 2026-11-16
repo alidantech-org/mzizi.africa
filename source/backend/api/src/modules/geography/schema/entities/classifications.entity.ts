@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
@@ -49,8 +50,12 @@ export class ClassificationsEntity {
   @JoinColumn({ name: "feature_id" })
   feature?: Relation<FeaturesEntity>;
 
-  @Column({ name: "source_ref_id", type: "uuid", nullable: true })
-  sourceRefId?: Id | null;
+  @Column({ name: "source_id", type: "uuid", nullable: true })
+  sourceId?: Id | null;
+
+  @ManyToOne(() => SourcesEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "source_id" })
+  source?: Relation<SourcesEntity>;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

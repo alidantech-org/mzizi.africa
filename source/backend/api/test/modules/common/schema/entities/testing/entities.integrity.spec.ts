@@ -221,11 +221,22 @@ beforeAll(async () => {
     "source",
   ]);
   for (const namespace of namespaces) db.createSchema(namespace);
+  db.registerExtension("postgis", (schema) =>
+    schema.registerEquivalentType({
+      name: "geometry",
+      equivalentTo: DataType.jsonb,
+      isValid: () => true,
+    }),
+  );
   dataSource = await db.adapters.createTypeormDataSource({
     type: "postgres",
     entities,
   });
   await dataSource.initialize();
+  // pg-mem can synchronize a geometry stand-in without PostGIS type modifiers.
+  const createFullType = dataSource.driver.createFullType.bind(dataSource.driver);
+  dataSource.driver.createFullType = (column) =>
+    column.type === "geometry" ? "geometry" : createFullType(column);
   await dataSource.synchronize();
 });
 
@@ -783,7 +794,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "unique:extension"]));
+      expect(indexes).toEqual(expect.arrayContaining(["unique:extension"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -954,9 +965,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(
-        expect.arrayContaining(["unique:code", "folder_id", "current_version_id"]),
-      );
+      expect(indexes).toEqual(expect.arrayContaining(["folder_id", "current_version_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -1004,7 +1013,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "parent_id", "role_id"]));
+      expect(indexes).toEqual(expect.arrayContaining(["parent_id", "role_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -1100,7 +1109,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code"]));
+      expect(indexes).toEqual(expect.arrayContaining([]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -1125,7 +1134,7 @@ describe("entity schema matches the contract", () => {
             ["explanation", true, false],
             ["id", false, true],
             ["predecessor_feature_id", true, false],
-            ["source_ref_id", true, false],
+            ["source_id", true, false],
             ["successor_feature_id", true, false],
             ["transformation_id", false, false],
             ["updated_at", false, false],
@@ -1143,6 +1152,7 @@ describe("entity schema matches the contract", () => {
         [
           "change_kind_id->reference.values",
           "predecessor_feature_id->geography.features",
+          "source_id->source.sources",
           "successor_feature_id->geography.features",
         ].sort(),
       );
@@ -1185,7 +1195,7 @@ describe("entity schema matches the contract", () => {
             ["deleted_at", true, false],
             ["feature_id", false, false],
             ["id", false, true],
-            ["source_ref_id", true, false],
+            ["source_id", true, false],
             ["updated_at", false, false],
             ["valid_from", true, false],
             ["valid_from_earliest", true, false],
@@ -1204,7 +1214,13 @@ describe("entity schema matches the contract", () => {
       const keys = metadata()
         .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
         .sort();
-      expect(keys).toEqual(["feature_id->geography.features", "value_id->reference.values"].sort());
+      expect(keys).toEqual(
+        [
+          "feature_id->geography.features",
+          "source_id->source.sources",
+          "value_id->reference.values",
+        ].sort(),
+      );
     });
 
     it("declares the contract's indexes", () => {
@@ -1246,7 +1262,7 @@ describe("entity schema matches the contract", () => {
             ["representation_id", false, false],
             ["resolution", true, false],
             ["resolution_unit_id", true, false],
-            ["source_ref_id", true, false],
+            ["source_id", true, false],
             ["subject_id", false, false],
             ["title", false, false],
             ["updated_at", false, false],
@@ -1265,6 +1281,7 @@ describe("entity schema matches the contract", () => {
           "coverage_feature_id->geography.features",
           "representation_id->reference.values",
           "resolution_unit_id->reference.units",
+          "source_id->source.sources",
           "subject_id->reference.values",
         ].sort(),
       );
@@ -1278,12 +1295,7 @@ describe("entity schema matches the contract", () => {
         )
         .sort();
       expect(indexes).toEqual(
-        expect.arrayContaining([
-          "unique:code",
-          "subject_id",
-          "representation_id",
-          "coverage_feature_id",
-        ]),
+        expect.arrayContaining(["subject_id", "representation_id", "coverage_feature_id"]),
       );
     });
 
@@ -1335,7 +1347,7 @@ describe("entity schema matches the contract", () => {
         )
         .sort();
       expect(indexes).toEqual(
-        expect.arrayContaining(["unique:code", "feature_type_id", "valid_from,valid_until"]),
+        expect.arrayContaining(["feature_type_id", "valid_from,valid_until"]),
       );
     });
 
@@ -1370,7 +1382,7 @@ describe("entity schema matches the contract", () => {
             ["min_zoom", true, false],
             ["observed_at", true, false],
             ["revision", false, false],
-            ["source_ref_id", true, false],
+            ["source_id", true, false],
             ["srid", false, false],
             ["supersedes_id", true, false],
             ["updated_at", false, false],
@@ -1395,6 +1407,7 @@ describe("entity schema matches the contract", () => {
           "basis_id->reference.values",
           "feature_id->geography.features",
           "geometry_role_id->reference.values",
+          "source_id->source.sources",
           "supersedes_id->geography.geometries",
         ].sort(),
       );
@@ -1410,11 +1423,9 @@ describe("entity schema matches the contract", () => {
       expect(indexes).toEqual(
         expect.arrayContaining([
           "unique:feature_id,geometry_role_id,revision",
-          "unique:feature_id,geometry_role_id",
           "feature_id,geometry_role_id",
           "valid_from,valid_until",
           "basis_id",
-          "geometry",
         ]),
       );
     });
@@ -1441,7 +1452,7 @@ describe("entity schema matches the contract", () => {
             ["id", false, true],
             ["identifier_scheme_id", false, false],
             ["namespace", true, false],
-            ["source_ref_id", true, false],
+            ["source_id", true, false],
             ["updated_at", false, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
@@ -1454,7 +1465,11 @@ describe("entity schema matches the contract", () => {
         .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
         .sort();
       expect(keys).toEqual(
-        ["feature_id->geography.features", "identifier_scheme_id->reference.values"].sort(),
+        [
+          "feature_id->geography.features",
+          "identifier_scheme_id->reference.values",
+          "source_id->source.sources",
+        ].sort(),
       );
     });
 
@@ -1492,7 +1507,7 @@ describe("entity schema matches the contract", () => {
             ["language_tag", true, false],
             ["name", false, false],
             ["name_kind_id", false, false],
-            ["source_ref_id", true, false],
+            ["source_id", true, false],
             ["updated_at", false, false],
             ["valid_from", true, false],
             ["valid_until", true, false],
@@ -1507,7 +1522,11 @@ describe("entity schema matches the contract", () => {
         .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
         .sort();
       expect(keys).toEqual(
-        ["feature_id->geography.features", "name_kind_id->reference.values"].sort(),
+        [
+          "feature_id->geography.features",
+          "name_kind_id->reference.values",
+          "source_id->source.sources",
+        ].sort(),
       );
     });
 
@@ -1548,7 +1567,7 @@ describe("entity schema matches the contract", () => {
             ["id", false, true],
             ["object_feature_id", false, false],
             ["relationship_kind_id", false, false],
-            ["source_ref_id", true, false],
+            ["source_id", true, false],
             ["subject_feature_id", false, false],
             ["system_id", false, false],
             ["updated_at", false, false],
@@ -1572,6 +1591,7 @@ describe("entity schema matches the contract", () => {
         [
           "object_feature_id->geography.features",
           "relationship_kind_id->reference.values",
+          "source_id->source.sources",
           "subject_feature_id->geography.features",
           "system_id->reference.values",
         ].sort(),
@@ -1776,9 +1796,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(
-        expect.arrayContaining(["unique:code", "entity_id", "source_citation_id"]),
-      );
+      expect(indexes).toEqual(expect.arrayContaining(["entity_id", "source_citation_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -1892,9 +1910,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(
-        expect.arrayContaining(["unique:code", "unit_feature_id", "source_citation_id"]),
-      );
+      expect(indexes).toEqual(expect.arrayContaining(["unit_feature_id", "source_citation_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -2075,12 +2091,7 @@ describe("entity schema matches the contract", () => {
         )
         .sort();
       expect(indexes).toEqual(
-        expect.arrayContaining([
-          "unique:code",
-          "kind_id",
-          "registration_country_id",
-          "source_citation_id",
-        ]),
+        expect.arrayContaining(["kind_id", "registration_country_id", "source_citation_id"]),
       );
     });
 
@@ -2195,7 +2206,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "source_citation_id"]));
+      expect(indexes).toEqual(expect.arrayContaining(["source_citation_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -2255,8 +2266,6 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:entity_id,language_tag",
-          "unique:individual_id,language_tag",
           "entity_id",
           "individual_id",
           "name_kind_id",
@@ -2395,7 +2404,6 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:code",
           "name",
           "unique:iso_alpha2",
           "continent_id",
@@ -2441,7 +2449,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code"]));
+      expect(indexes).toEqual(expect.arrayContaining([]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -2479,7 +2487,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code"]));
+      expect(indexes).toEqual(expect.arrayContaining([]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -2524,7 +2532,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "parent_id"]));
+      expect(indexes).toEqual(expect.arrayContaining(["parent_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -2572,7 +2580,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "base_id"]));
+      expect(indexes).toEqual(expect.arrayContaining(["base_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -2625,9 +2633,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(
-        expect.arrayContaining(["unique:code", "scheme_id", "supersedes_id", "parent_id"]),
-      );
+      expect(indexes).toEqual(expect.arrayContaining(["scheme_id", "supersedes_id", "parent_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -3021,9 +3027,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(
-        expect.arrayContaining(["unique:code", "source_id", "publisher_id", "kind_id"]),
-      );
+      expect(indexes).toEqual(expect.arrayContaining(["source_id", "publisher_id", "kind_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -3071,7 +3075,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "kind_id"]));
+      expect(indexes).toEqual(expect.arrayContaining(["kind_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -3230,7 +3234,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "kind_id"]));
+      expect(indexes).toEqual(expect.arrayContaining(["kind_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -3328,7 +3332,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "kind_id", "country_id"]));
+      expect(indexes).toEqual(expect.arrayContaining(["kind_id", "country_id"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -3382,7 +3386,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["unique:code", "publisher_id", "kind_id"]));
+      expect(indexes).toEqual(expect.arrayContaining(["publisher_id", "kind_id"]));
     });
 
     it("rejects a row without its required columns", async () => {

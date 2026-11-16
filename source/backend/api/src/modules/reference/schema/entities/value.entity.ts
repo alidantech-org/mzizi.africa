@@ -19,7 +19,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * A controlled classification member within one scheme, with optional supersession and an optional broader parent value in the same scheme. Wider, cross-scheme or many-parent links use value relations.
  */
 @Entity({ schema: "reference", name: "values" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["schemeId"])
 @Index(["supersedesId"])
 @Index(["parentId"])

@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import type { GeometryArea } from "#/modules/geography/schema/type/geometry-area.type.ts";
 import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -21,11 +22,13 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  */
 @Entity({ schema: "geography", name: "geometries" })
 @Index(["featureId", "geometryRoleId", "revision"], { unique: true })
-@Index(["featureId", "geometryRoleId"], { unique: true })
+@Index(["featureId", "geometryRoleId"], {
+  unique: true,
+  where: '"valid_until" IS NULL',
+})
 @Index(["featureId", "geometryRoleId"])
 @Index(["validFrom", "validUntil"])
 @Index(["basisId"])
-@Index(["geometry"])
 @Check(
   "chk_geometries_validity_window_is_ordered",
   `valid_from = null OR valid_until = null OR valid_from < valid_until`,
@@ -47,8 +50,13 @@ export class GeometriesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
-  @Column({ name: "area", type: "double precision" })
-  area!: GeometryArea;
+  @Column({
+    name: "area",
+    type: "double precision",
+    insert: false,
+    update: false,
+  })
+  readonly area!: GeometryArea;
 
   @Column({ name: "basis_id", type: "uuid" })
   basisId!: Id;
@@ -57,8 +65,15 @@ export class GeometriesEntity {
   @JoinColumn({ name: "basis_id" })
   basis?: Relation<ValueEntity>;
 
-  @Column({ name: "centroid", type: "jsonb" })
-  centroid!: unknown;
+  @Column({
+    name: "centroid",
+    type: "geometry",
+    spatialFeatureType: "Point",
+    srid: 4326,
+    insert: false,
+    update: false,
+  })
+  readonly centroid!: import("typeorm").Geometry;
 
   @Column({ name: "confidence", type: "double precision", nullable: true })
   confidence?: Confidence | null;
@@ -69,8 +84,15 @@ export class GeometriesEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
-  @Column({ name: "envelope", type: "jsonb" })
-  envelope!: unknown;
+  @Column({
+    name: "envelope",
+    type: "geometry",
+    spatialFeatureType: "Geometry",
+    srid: 4326,
+    insert: false,
+    update: false,
+  })
+  readonly envelope!: import("typeorm").Geometry;
 
   @Column({ name: "feature_id", type: "uuid" })
   featureId!: Id;
@@ -82,8 +104,13 @@ export class GeometriesEntity {
   @Column({ name: "file_version_ref_id", type: "uuid", nullable: true })
   fileVersionRefId?: Id | null;
 
-  @Column({ name: "geometry", type: "jsonb" })
-  geometry!: unknown;
+  @Column({
+    name: "geometry",
+    type: "geometry",
+    spatialFeatureType: "Geometry",
+    srid: 4326,
+  })
+  geometry!: import("typeorm").Geometry;
 
   @Column({ name: "geometry_role_id", type: "uuid" })
   geometryRoleId!: Id;
@@ -104,8 +131,12 @@ export class GeometriesEntity {
   @Column({ name: "revision", type: "integer" })
   revision!: PositiveInteger;
 
-  @Column({ name: "source_ref_id", type: "uuid", nullable: true })
-  sourceRefId?: Id | null;
+  @Column({ name: "source_id", type: "uuid", nullable: true })
+  sourceId?: Id | null;
+
+  @ManyToOne(() => SourcesEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "source_id" })
+  source?: Relation<SourcesEntity>;
 
   @Column({ name: "srid", type: "integer" })
   srid!: PositiveInteger;

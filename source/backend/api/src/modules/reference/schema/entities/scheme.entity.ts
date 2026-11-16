@@ -9,7 +9,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Stable identity and stewardship snapshot for a controlled vocabulary scheme.
  */
 @Entity({ schema: "reference", name: "schemes" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 export class SchemeEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;

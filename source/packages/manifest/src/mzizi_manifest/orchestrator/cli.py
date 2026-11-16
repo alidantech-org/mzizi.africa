@@ -20,6 +20,10 @@ def main(argv: list[str] | None = None) -> int:
         "data", help="check seed CSV files (data/<scope>/<domain>/<table>.csv) against the database schemas"
     )
     data.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
+    verify = sub.add_parser(
+        "verify", help="check seed rows against the real datasets named in each folder's _source.yaml"
+    )
+    verify.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
     refs = sub.add_parser("refs", help="check that every source, mapping and terms code resolves")
     refs.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder to scan (default: seed/)")
     refs.add_argument(
@@ -36,6 +40,22 @@ def main(argv: list[str] | None = None) -> int:
             print(f"error: {problem}", file=sys.stderr)
         print(f"{len(found.registry.entries)} codes, {len(found.problems)} problems")
         return 1 if found.problems else 0
+    if args.command == "verify":
+        from mzizi_manifest.features.provenance.verify import verify as run_verify
+
+        outcome = run_verify(args.root, args.root.parent)
+        for line in outcome.checked:
+            print(f"verified\t{line}")
+        for line in outcome.unavailable:
+            print(f"unavailable\t{line}")
+        for line in outcome.unverified:
+            print(f"unverified\t{line}")
+        for problem in outcome.problems:
+            print(f"error: {problem}", file=sys.stderr)
+        print(
+            f"{len(outcome.checked)} verified, {len(outcome.unverified)} unverified, {len(outcome.problems)} problems"
+        )
+        return 1 if outcome.problems else 0
     if args.command == "data":
         from mzizi_manifest.features.data.check import check_data
 

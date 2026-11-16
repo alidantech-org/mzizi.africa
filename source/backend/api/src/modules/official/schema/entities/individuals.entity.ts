@@ -16,7 +16,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One real human identity; names, identifiers and contacts are normalized in shared tables.
  */
 @Entity({ schema: "official", name: "individuals" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["sourceCitationId"])
 export class IndividualsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })

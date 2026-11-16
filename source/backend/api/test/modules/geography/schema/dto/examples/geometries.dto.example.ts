@@ -5,6 +5,7 @@ import {
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { historicalValidityEntityExample } from "@test/modules/shared/schema/dto/examples/historical-validity-entity.dto.example.ts";
+import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
 /** The contract shape of Geometries, for generated tests. */
 export const geometriesExample: ContractExample = contractExample({
@@ -107,7 +108,7 @@ export const geometriesExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
     {
-      name: "sourceRefId",
+      name: "sourceId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },

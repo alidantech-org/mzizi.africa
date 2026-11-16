@@ -63,6 +63,14 @@ export class DatasetsRepository
     return await this.findByQuery(query, { resolutionUnitId, deletedAt: IsNull() });
   }
 
+  /** Find datasets by source id, paged by the shared query. */
+  async findBySource(
+    query: BaseQueryDto<DatasetsEntity>,
+    sourceId: NonNullable<DatasetsEntity["sourceId"]>,
+  ): Promise<IFindAllResponse<DatasetsEntity>> {
+    return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
+  }
+
   /** Find datasets by subject id, paged by the shared query. */
   async findBySubject(
     query: BaseQueryDto<DatasetsEntity>,

@@ -570,7 +570,7 @@ CREATE TABLE "geography"."changes" (
     "explanation" varchar(4000),
     "id" uuid NOT NULL,
     "predecessor_feature_id" uuid,
-    "source_ref_id" uuid,
+    "source_id" uuid,
     "successor_feature_id" uuid,
     "transformation_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
@@ -583,7 +583,7 @@ CREATE TABLE "geography"."classifications" (
     "deleted_at" timestamptz,
     "feature_id" uuid NOT NULL,
     "id" uuid NOT NULL,
-    "source_ref_id" uuid,
+    "source_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "valid_from" date,
     "valid_from_earliest" date,
@@ -630,7 +630,7 @@ CREATE TABLE "geography"."datasets" (
     "representation_id" uuid NOT NULL,
     "resolution" double precision,
     "resolution_unit_id" uuid,
-    "source_ref_id" uuid,
+    "source_id" uuid,
     "subject_id" uuid NOT NULL,
     "title" varchar(255) NOT NULL,
     "updated_at" timestamptz NOT NULL,
@@ -699,7 +699,7 @@ CREATE TABLE "geography"."geometries" (
     "min_zoom" integer,
     "observed_at" timestamptz,
     "revision" integer NOT NULL,
-    "source_ref_id" uuid,
+    "source_id" uuid,
     "srid" integer NOT NULL,
     "supersedes_id" uuid,
     "updated_at" timestamptz NOT NULL,
@@ -750,7 +750,7 @@ CREATE TABLE "geography"."identifiers" (
     "id" uuid NOT NULL,
     "identifier_scheme_id" uuid NOT NULL,
     "namespace" varchar(255),
-    "source_ref_id" uuid,
+    "source_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -764,7 +764,7 @@ CREATE TABLE "geography"."names" (
     "language_tag" varchar(35),
     "name" varchar(300) NOT NULL,
     "name_kind_id" uuid NOT NULL,
-    "source_ref_id" uuid,
+    "source_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "valid_from" date,
     "valid_until" date,
@@ -785,7 +785,7 @@ CREATE TABLE "geography"."relationships" (
     "id" uuid NOT NULL,
     "object_feature_id" uuid NOT NULL,
     "relationship_kind_id" uuid NOT NULL,
-    "source_ref_id" uuid,
+    "source_id" uuid,
     "subject_feature_id" uuid NOT NULL,
     "system_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
@@ -2445,6 +2445,9 @@ ALTER TABLE "geography"."changes"
 ADD CONSTRAINT "fk_changes_predecessor_feature_id" FOREIGN KEY ("predecessor_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."changes"
+ADD CONSTRAINT "fk_changes_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."changes"
 ADD CONSTRAINT "fk_changes_successor_feature_id" FOREIGN KEY ("successor_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_changes__transformation_id_predecessor_feature_id_successor_" ON "geography"."changes" USING btree (
@@ -2465,6 +2468,9 @@ ALTER TABLE "geography"."classifications"
 ADD CONSTRAINT "fk_classifications_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."classifications"
+ADD CONSTRAINT "fk_classifications_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."classifications"
 ADD CONSTRAINT "fk_classifications_value_id" FOREIGN KEY ("value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_classifications__feature_id_value_id_valid_from" ON "geography"."classifications" USING btree ("feature_id", "value_id", "valid_from");
@@ -2481,6 +2487,9 @@ ADD CONSTRAINT "fk_datasets_representation_id" FOREIGN KEY ("representation_id")
 
 ALTER TABLE "geography"."datasets"
 ADD CONSTRAINT "fk_datasets_resolution_unit_id" FOREIGN KEY ("resolution_unit_id") REFERENCES "reference"."units" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."datasets"
+ADD CONSTRAINT "fk_datasets_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."datasets"
 ADD CONSTRAINT "fk_datasets_subject_id" FOREIGN KEY ("subject_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -2516,6 +2525,9 @@ ALTER TABLE "geography"."geometries"
 ADD CONSTRAINT "fk_geometries_geometry_role_id" FOREIGN KEY ("geometry_role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."geometries"
+ADD CONSTRAINT "fk_geometries_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."geometries"
 ADD CONSTRAINT "fk_geometries_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "geography"."geometries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_geometries__feature_id_geometry_role_id_revision" ON "geography"."geometries" USING btree ("feature_id", "geometry_role_id", "revision");
@@ -2538,6 +2550,9 @@ ADD CONSTRAINT "fk_identifiers_feature_id" FOREIGN KEY ("feature_id") REFERENCES
 ALTER TABLE "geography"."identifiers"
 ADD CONSTRAINT "fk_identifiers_identifier_scheme_id" FOREIGN KEY ("identifier_scheme_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "geography"."identifiers"
+ADD CONSTRAINT "fk_identifiers_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_identifiers__identifier_scheme_id_namespace_external_id" ON "geography"."identifiers" USING btree (
     "identifier_scheme_id",
     "namespace",
@@ -2551,6 +2566,9 @@ ADD CONSTRAINT "fk_names_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geog
 
 ALTER TABLE "geography"."names"
 ADD CONSTRAINT "fk_names_name_kind_id" FOREIGN KEY ("name_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."names"
+ADD CONSTRAINT "fk_names_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_names__feature_id_name_kind_id_language_tag_name" ON "geography"."names" USING btree (
     "feature_id",
@@ -2570,6 +2588,9 @@ ADD CONSTRAINT "fk_relationships_object_feature_id" FOREIGN KEY ("object_feature
 
 ALTER TABLE "geography"."relationships"
 ADD CONSTRAINT "fk_relationships_relationship_kind_id" FOREIGN KEY ("relationship_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."relationships"
+ADD CONSTRAINT "fk_relationships_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."relationships"
 ADD CONSTRAINT "fk_relationships_subject_feature_id" FOREIGN KEY ("subject_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;

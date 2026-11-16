@@ -63,6 +63,14 @@ export class GeometriesRepository
     return await this.findByQuery(query, { geometryRoleId, deletedAt: IsNull() });
   }
 
+  /** Find geometries by source id, paged by the shared query. */
+  async findBySource(
+    query: BaseQueryDto<GeometriesEntity>,
+    sourceId: NonNullable<GeometriesEntity["sourceId"]>,
+  ): Promise<IFindAllResponse<GeometriesEntity>> {
+    return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
+  }
+
   /** Find geometries by supersedes id, paged by the shared query. */
   async findBySupersedes(
     query: BaseQueryDto<GeometriesEntity>,

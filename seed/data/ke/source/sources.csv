@@ -1,0 +1,8 @@
+code,title,kind_code,publisher_code,description
+ke-iebc-pcodes,"Kenya IEBC place codes (counties, constituencies, county assembly wards)",src.source.kind.dataset,american-red-cross,"P-CODES.xlsx: the IEBC place codes for all counties, constituencies and wards since the 2010 constitution, republished on HDX by the American Red Cross (CC BY). The codes and names are IEBC's; this copy is the secondary source."
+ocha-cod-ab-ken,"Kenya subnational administrative boundaries, levels 0 to 2 (COD-AB)",src.source.kind.dataset,ocha,"OCHA COD-AB Kenya v01: 47 counties and 290 constituencies with place codes and parents, boundaries from IEBC via OCHA ROSEA (CC BY-IGO)."
+geoboundaries-ken-adm1,geoBoundaries gbOpen Kenya ADM1 (counties),src.source.kind.dataset,geoboundaries,"KEN-ADM1-32016919, simplified; boundary source RCMRD GeoPortal; Public Domain."
+geoboundaries-ken-adm2,geoBoundaries gbOpen Kenya ADM2 (constituencies),src.source.kind.dataset,geoboundaries,"KEN-ADM2-3690345, simplified; boundary source IEBC and OCHA ROSEA; CC BY 3.0 IGO."
+geoboundaries-ken-adm3,geoBoundaries gbOpen Kenya ADM3 (wards),src.source.kind.dataset,geoboundaries,"KEN-ADM3-90231094, simplified; boundary source Benedict Aboki Omare and George Omare; CC BY 4.0."
+redcross-ke-subcounties,"Kenya sub-counties (American Red Cross, HDX)",src.source.kind.dataset,american-red-cross,ke_subcounty shapefile: 304 sub-counties with counties and DHIS2 ids (CC BY).
+redcross-ke-wards,"Administrative wards in Kenya 1450 (American Red Cross, HDX)",src.source.kind.dataset,american-red-cross,"Kenya_Wards shapefile: 1450 wards with county, sub-county and DHIS2 ids (CC BY)."

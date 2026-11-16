@@ -20,7 +20,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Stable publication-channel identity independent of any public website.
  */
 @Entity({ schema: "source", name: "sources" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["publisherId"])
 @Index(["kindId"])
 export class SourcesEntity {

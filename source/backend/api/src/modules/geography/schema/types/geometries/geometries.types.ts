@@ -10,6 +10,7 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
+import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -45,7 +46,7 @@ export interface IGeometries extends B.IBase {
   minZoom: number | null;
   observedAt: Date | null;
   revision: number;
-  sourceRefId: string | null;
+  sourceId: string | null;
   srid: number;
   supersedesId: string | null;
   validFrom: Date | null;
@@ -57,6 +58,7 @@ export interface IGeometries extends B.IBase {
   readonly basis?: ValueTypes.IValue;
   readonly feature?: FeaturesTypes.IFeatures;
   readonly geometryRole?: ValueTypes.IValue;
+  readonly source?: SourcesTypes.ISources;
   readonly supersedes?: IGeometries;
 }
 
@@ -162,6 +164,7 @@ export interface IGeometriesRelationMap extends Record<GeometriesRelationKey, un
   basis: ValueTypes.IValueAsOneRelationQuery;
   feature: FeaturesTypes.IFeaturesAsOneRelationQuery;
   geometryRole: ValueTypes.IValueAsOneRelationQuery;
+  source: SourcesTypes.ISourcesAsOneRelationQuery;
   supersedes: IGeometriesAsOneRelationQuery;
 }
 

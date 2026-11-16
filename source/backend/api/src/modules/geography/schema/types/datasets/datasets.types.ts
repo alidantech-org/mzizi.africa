@@ -11,6 +11,7 @@ import * as B from "#/modules/common/schema/types/base";
 import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as UnitTypes from "#/modules/reference/schema/types/unit/unit.types";
+import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -42,12 +43,13 @@ export interface IDatasets extends B.IBase {
   representationId: string;
   resolution: number | null;
   resolutionUnitId: string | null;
-  sourceRefId: string | null;
+  sourceId: string | null;
   subjectId: string;
   title: string;
   readonly coverageFeature?: FeaturesTypes.IFeatures;
   readonly representation?: ValueTypes.IValue;
   readonly resolutionUnit?: UnitTypes.IUnit;
+  readonly source?: SourcesTypes.ISources;
   readonly subject?: ValueTypes.IValue;
 }
 
@@ -144,6 +146,7 @@ export interface IDatasetsRelationMap extends Record<DatasetsRelationKey, unknow
   coverageFeature: FeaturesTypes.IFeaturesAsOneRelationQuery;
   representation: ValueTypes.IValueAsOneRelationQuery;
   resolutionUnit: UnitTypes.IUnitAsOneRelationQuery;
+  source: SourcesTypes.ISourcesAsOneRelationQuery;
   subject: ValueTypes.IValueAsOneRelationQuery;
 }
 

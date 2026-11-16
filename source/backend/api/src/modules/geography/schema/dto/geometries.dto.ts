@@ -104,10 +104,10 @@ export class GeometriesDto {
   revision!: PositiveInteger;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceRefId !== null)
+  @ValidateIf((object) => object.sourceId !== null)
   @IsString()
   @IsUUID()
-  sourceRefId?: Id | null;
+  sourceId?: Id | null;
 
   @IsInt()
   @Min(1)

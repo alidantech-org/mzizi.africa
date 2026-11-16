@@ -12,6 +12,7 @@ from mzizi_engine.api.schemas.postgres.geography.entities.names import Geography
 from mzizi_engine.api.schemas.postgres.geography.entities.relationships import GeographyRelationshipsRow
 from mzizi_engine.api.schemas.postgres.reference.entities.unit import UnitRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
+from mzizi_engine.api.schemas.postgres.source.entities.sources import SourcesRow
 
 __all__ = [
     "ChangesRow",
@@ -22,6 +23,7 @@ __all__ = [
     "GeographyNamesRow",
     "GeographyRelationshipsRow",
     "GeometriesRow",
+    "SourcesRow",
     "UnitRow",
     "ValueRow",
 ]

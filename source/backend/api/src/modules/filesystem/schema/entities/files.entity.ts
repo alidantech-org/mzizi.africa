@@ -19,7 +19,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Stable logical file identity; equal content hashes may belong to different files.
  */
 @Entity({ schema: "filesystem", name: "files" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["folderId"])
 @Index(["currentVersionId"])
 export class FilesEntity {

@@ -1,0 +1,4 @@
+code,name,kind_code,country_code
+geoboundaries,geoBoundaries (William & Mary geoLab),src.publisher.kind.research-institution,
+ocha,United Nations Office for the Coordination of Humanitarian Affairs (OCHA),src.publisher.kind.international-organisation,
+american-red-cross,American Red Cross,src.publisher.kind.non-profit,

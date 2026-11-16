@@ -18,7 +18,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Cross-domain discovery topic hierarchy; topics do not own domain records.
  */
 @Entity({ schema: "reference", name: "topics" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["parentId"])
 @Check("chk_topic_topic_does_not_parent_itself", `id <> parent_id`)
 export class TopicEntity {

@@ -1,0 +1,20 @@
+# Where this folder's rows come from. Rows were built from the downloaded files in .data/datasets/ (outside git); the CSV extract named below is a plain dump of the source columns, rebuilt from those files, and `mzizi-manifest verify` compares the seed against it.
+status: verified
+dataset:
+  name: IEBC place codes for county assembly wards (P-CODES.xlsx)
+  publisher: American Red Cross (HDX, kenya-p-codes), republishing the IEBC's codes and names
+  licence: CC BY
+  url: https://data.humdata.org/dataset/kenya-p-codes
+  boundary_id: kenya-p-codes
+  local_copy: .data/datasets/extracts/iebc-ken-wards.csv
+  sha256: 3669d75b5016d2be79dd1a0351c0f5dc2fab5f9a840aab89cd33606dea435be1
+  original: {file: P-CODES.xlsx, sha256: 88652bec5e91b82ee6d7fad96008e02afed7004aff2aabeafee567f6527b479a}
+checks:
+  complete: true
+  identifiers:
+    - {scheme: geo.identifier.scheme.ke-iebc-pcode, property: iebc_pcode}
+notes:
+  - "The sheet has 1456 rows: 1450 wards in the 290 constituencies, plus six Diaspora and Prisons rows that are not geography. Only the 1450 are seeded; their county agrees with the OCHA constituency's county in every case."
+  - "The ward code is KE-<county code>-<ward code>, for example KE-030-0787. Ward names come from geoBoundaries ADM3 (KEN-ADM3-90231094, CC BY 4.0) where a ward matched within its constituency (1357 of 1450, by name or a close spelling) and from the IEBC name in title case for the other 93. Ward names are not checked by verify."
+  - "Ward to constituency is the IEBC list. Ward to sub-county comes from the Red Cross wards shapefile (county and ward name match) and links 1365 of 1450 wards; the rest have no sub-county yet."
+  - "Start date 4 March 2013 is a judgment call."

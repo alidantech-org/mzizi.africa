@@ -36,7 +36,7 @@
           ,"effective_on"
           ,"explanation"
           ,"predecessor_feature_code"
-          ,"source_ref_id"
+          ,"source_code"
           ,"successor_feature_code"
           ,"transformation_id"
         ],
@@ -93,11 +93,12 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "predecessor_feature_code" }
         }
-        ,"source_ref_id": {
+        ,"source_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Sources", "column": "id", "alias": "source_code" }
         }
         ,"successor_feature_id": {
           "type": ["string", "null"],
@@ -154,7 +155,7 @@
         ],
         "columns": [
           "feature_code"
-          ,"source_ref_id"
+          ,"source_code"
           ,"valid_from"
           ,"valid_from_earliest"
           ,"valid_from_latest"
@@ -197,11 +198,12 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"source_ref_id": {
+        ,"source_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Sources", "column": "id", "alias": "source_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -299,7 +301,7 @@
           ,"representation_code"
           ,"resolution"
           ,"resolution_unit_code"
-          ,"source_ref_id"
+          ,"source_code"
           ,"subject_code"
           ,"title"
         ],
@@ -393,11 +395,12 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Unit", "column": "id", "alias": "resolution_unit_code" }
         }
-        ,"source_ref_id": {
+        ,"source_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Sources", "column": "id", "alias": "source_code" }
         }
         ,"subject_id": {
           "type": "string",
@@ -599,7 +602,7 @@
           ,"min_zoom"
           ,"observed_at"
           ,"revision"
-          ,"source_ref_id"
+          ,"source_code"
           ,"srid"
           ,"supersedes_code"
           ,"valid_from"
@@ -716,11 +719,12 @@
           "x-type": "integer",
           "x-role": "key"
         }
-        ,"source_ref_id": {
+        ,"source_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Sources", "column": "id", "alias": "source_code" }
         }
         ,"srid": {
           "type": "integer",
@@ -816,7 +820,7 @@
           ,"feature_code"
           ,"identifier_scheme_code"
           ,"namespace"
-          ,"source_ref_id"
+          ,"source_code"
         ],
         "required": [
           "external_id"
@@ -874,11 +878,12 @@
           "minLength": 1,
           "x-role": "key"
         }
-        ,"source_ref_id": {
+        ,"source_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Sources", "column": "id", "alias": "source_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -926,7 +931,7 @@
           ,"language_tag"
           ,"name"
           ,"name_kind_code"
-          ,"source_ref_id"
+          ,"source_code"
           ,"valid_from"
           ,"valid_until"
         ],
@@ -986,11 +991,12 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "name_kind_code", "scheme": "geo.name.kind" }
         }
-        ,"source_ref_id": {
+        ,"source_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Sources", "column": "id", "alias": "source_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -1049,7 +1055,7 @@
         "columns": [
           "object_feature_code"
           ,"relationship_kind_code"
-          ,"source_ref_id"
+          ,"source_code"
           ,"subject_feature_code"
           ,"system_code"
           ,"valid_from"
@@ -1102,11 +1108,12 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "relationship_kind_code", "scheme": "geo.relationship.kind" }
         }
-        ,"source_ref_id": {
+        ,"source_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Sources", "column": "id", "alias": "source_code" }
         }
         ,"subject_feature_id": {
           "type": "string",

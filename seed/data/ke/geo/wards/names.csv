@@ -1,0 +1,1451 @@
+feature_code,name,name_kind_code,language_tag,source_code
+ke.mombasa.changamwe.port-reitz,Port Reitz,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.changamwe.kipevu,Kipevu,geo.name.kind.official,en,ke-iebc-pcodes
+ke.mombasa.changamwe.airport,Airport,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.changamwe.changamwe,Changamwe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.changamwe.chaani,Chaani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.jomvu.jomvu-kuu,Jomvu Kuu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.jomvu.miritini,Miritini,geo.name.kind.official,en,ke-iebc-pcodes
+ke.mombasa.jomvu.mikindani,Mikindani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.kisauni.mjambere,Mjambere,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.kisauni.junda,Junda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.kisauni.bamburi,Bamburi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.kisauni.mwakirunge,Mwakirunge,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.kisauni.mtopanga,Mtopanga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.kisauni.magogoni,Magogoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.kisauni.shanzu,Shanzu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.nyali.frere-town,Frere Town,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.nyali.ziwa-la-ngombe,Ziwa La Ng'ombe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.nyali.mkomani,Mkomani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.nyali.kongowea,Kongowea,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.nyali.kadzandani,Kadzandani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.likoni.mtongwe,Mtongwe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.likoni.shika-adabu,Shika Adabu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.likoni.bofu,Bofu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.likoni.likoni,Likoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.likoni.timbwani,Timbwani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.mvita.mji-wa-kale-makadara,Mji Wa Kale/Makadara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.mvita.tudor,Tudor,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.mvita.tononoka,Tononoka,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.mvita.shimanzi-ganjoni,Shimanzi/Ganjoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mombasa.mvita.majengo,Majengo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.msambweni.gombatobongwe,Gombatobongwe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.msambweni.ukunda,Ukunda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.msambweni.kinondo,Kinondo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.msambweni.ramisi,Ramisi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.lunga-lunga.pongwekikoneni,Pongwekikoneni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.lunga-lunga.dzombo,Dzombo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.lunga-lunga.mwereni,Mwereni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.lunga-lunga.vanga,Vanga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.matuga.tsimba-golini,Tsimba Golini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.matuga.waa,Waa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.matuga.tiwi,Tiwi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.matuga.kubo-south,Kubo South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.matuga.mkongani,Mkongani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.kinango.nadavaya,Nadavaya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.kinango.puma,Puma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.kinango.kinango,Kinango,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.kinango.mackinnon-road,Mackinnon-Road,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.kinango.chengoni-samburu,Chengoni/Samburu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.kinango.mwavumbo,Mwavumbo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kwale.kinango.kasemeni,Kasemeni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-north.tezo,Tezo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-north.sokoni,Sokoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-north.kibarani,Kibarani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-north.dabaso,Dabaso,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-north.matsangoni,Matsangoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-north.watamu,Watamu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-north.mnarani,Mnarani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-south.junju,Junju,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-south.mwarakaya,Mwarakaya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-south.shimo-la-tewa,Shimo La Tewa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-south.chasimba,Chasimba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kilifi-south.mtepeni,Mtepeni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kaloleni.mariakani,Mariakani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kaloleni.kayafungo,Kayafungo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kaloleni.kaloleni,Kaloleni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.kaloleni.mwanamwinga,Mwanamwinga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.rabai.mwawesa,Mwawesa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.rabai.ruruma,Ruruma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.rabai.kambe-ribe,Kambe/Ribe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.rabai.rabai-kisurutini,Rabai/Kisurutini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.ganze.ganze,Ganze,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.ganze.bamba,Bamba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.ganze.jaribuni,Jaribuni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.ganze.sokoke,Sokoke,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.malindi.jilore,Jilore,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.malindi.kakuyuni,Kakuyuni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.malindi.ganda,Ganda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.malindi.malindi-town,Malindi Town,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.malindi.shella,Shella,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.magarini.marafa,Marafa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.magarini.magarini,Magarini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.magarini.gongoni,Gongoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.magarini.adu,Adu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.magarini.garashi,Garashi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kilifi.magarini.sabaki,Sabaki,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.garsen.kipini-east,Kipini East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.garsen.garsen-south,Garsen South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.garsen.kipini-west,Kipini West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.garsen.garsen-central,Garsen Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.garsen.garsen-west,Garsen West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.garsen.garsen-north,Garsen North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.galole.kinakomba,Kinakomba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.galole.mikinduni,Mikinduni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.galole.chewani,Chewani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.galole.wayu,Wayu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.bura.chewele,Chewele,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.bura.hirimani,Hirimani,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tana-river.bura.bangale,Bangale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.bura.sala,Sala,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tana-river.bura.madogo,Madogo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.lamu.lamu-east.faza,Faza,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.lamu.lamu-east.kiunga,Kiunga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.lamu.lamu-east.basuba,Basuba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.lamu.lamu-west.shella,Shella,geo.name.kind.official,en,ke-iebc-pcodes
+ke.lamu.lamu-west.mkomani,Mkomani,geo.name.kind.official,en,ke-iebc-pcodes
+ke.lamu.lamu-west.hindi,Hindi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.lamu.lamu-west.mkunumbi,Mkunumbi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.lamu.lamu-west.hongwe,Hongwe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.lamu.lamu-west.witu,Witu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.lamu.lamu-west.bahari,Bahari,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.taveta.chala,Chala,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.taveta.mahoo,Mahoo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.taveta.bomeni,Bomeni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.taveta.mboghoni,Mboghoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.taveta.mata,Mata,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.wundanyi.wundanyi-mbale,Wundanyi/Mbale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.wundanyi.werugha,Werugha,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.wundanyi.wumingu-kishushe,Wumingu/Kishushe,geo.name.kind.official,en,ke-iebc-pcodes
+ke.taita-taveta.wundanyi.mwanda-mgange,Mwanda/Mgange,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.mwatate.ronge,Rong'E,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.mwatate.mwatate,Mwatate,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.mwatate.bura,Bura,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.mwatate.chawia,Chawia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.mwatate.wusi-kishamba,Wusi/Kishamba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.voi.mbololo,Mbololo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.voi.sagalla,Sagalla,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.voi.kaloleni,Kaloleni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.voi.marungu,Marungu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.taita-taveta.voi.kasigau,Kasigau,geo.name.kind.official,en,ke-iebc-pcodes
+ke.taita-taveta.voi.ngolia,Ngolia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.dujis.waberi,Waberi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.dujis.galbet,Galbet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.dujis.township,Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.dujis.iftin,Iftin,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.balambala.balambala,Balambala,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.balambala.danyere,Danyere,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.balambala.jara-jara,Jara Jara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.balambala.saka,Saka,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.balambala.sankuri,Sankuri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.lagdera.modogashe,Modogashe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.lagdera.benane,Benane,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.lagdera.goreale,Goreale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.lagdera.maalimin,Maalimin,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.lagdera.sabena,Sabena,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.lagdera.baraki,Baraki,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.dadaab.dertu,Dertu,geo.name.kind.official,en,ke-iebc-pcodes
+ke.garissa.dadaab.dadaab,Dadaab,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.dadaab.labasigale,Labasigale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.dadaab.damajale,Damajale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.dadaab.liboi,Liboi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.dadaab.abakaile,Abakaile,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.fafi.bura,Bura,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.fafi.dekaharia,Dekaharia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.fafi.jarajila,Jarajila,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.fafi.fafi,Fafi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.fafi.nanighi,Nanighi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.ijara.hulugho,Hulugho,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.ijara.sangailu,Sangailu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.ijara.ijara,Ijara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.garissa.ijara.masalani,Masalani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-north.gurar,Gurar,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-north.bute,Bute,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-north.korondile,Korondile,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-north.malkagufu,Malkagufu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-north.batalu,Batalu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-north.danaba,Danaba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-north.godoma,Godoma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-east.wagberi,Wagberi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-east.township,Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-east.barwago,Barwago,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-east.khorof-harar,Khorof/Harar,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.tarbaj.elben,Elben,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.tarbaj.sarman,Sarman,geo.name.kind.official,en,ke-iebc-pcodes
+ke.wajir.tarbaj.tarbaj,Tarbaj,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.tarbaj.wargadud,Wargadud,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-west.arbajahan,Arbajahan,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-west.hadado-athibohol,Hadado/Athibohol,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-west.adamasajide,Adamasajide,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-west.ganyure-wagalla,Ganyure/Wagalla,geo.name.kind.official,en,ke-iebc-pcodes
+ke.wajir.eldas.eldas,Eldas,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.eldas.della,Della,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.eldas.lakoley-south-basir,Lakoley South/Basir,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.eldas.elnur-tula-tula,Elnur/Tula Tula,geo.name.kind.official,en,ke-iebc-pcodes
+ke.wajir.wajir-south.benane,Benane,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-south.burder,Burder,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-south.dadaja-bulla,Dadaja Bulla,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-south.habasswein,Habasswein,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-south.lagboghol-south,Lagboghol South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-south.ibrahim-ure,Ibrahim Ure,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.wajir.wajir-south.diif,Diif,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-west.takaba-south,Takaba South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-west.takaba,Takaba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-west.lag-sure,Lag Sure,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-west.dandu,Dandu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-west.gither,Gither,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.banissa.banissa,Banissa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.banissa.derkhale,Derkhale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.banissa.guba,Guba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.banissa.malkamari,Malkamari,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.banissa.kiliwehiri,Kiliwehiri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-north.ashabito,Ashabito,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-north.guticha,Guticha,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-north.morothile,Morothile,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-north.rhamu,Rhamu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-north.rhamu-dimtu,Rhamu-Dimtu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-south.wargudud,Wargudud,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-south.kutulo,Kutulo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-south.elwak-south,Elwak South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-south.elwak-north,Elwak North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-south.shimbir-fatuma,Shimbir Fatuma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-east.arabia,Arabia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-east.township,Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-east.neboi,Neboi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-east.khalalio,Khalalio,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.mandera-east.libehia,Libehia,geo.name.kind.official,en,ke-iebc-pcodes
+ke.mandera.lafey.sala,Sala,geo.name.kind.official,en,ke-iebc-pcodes
+ke.mandera.lafey.fino,Fino,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.lafey.lafey,Lafey,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.lafey.warankara,Warankara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.mandera.lafey.alango-gof,Alango Gof,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.moyale.butiye,Butiye,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.moyale.sololo,Sololo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.moyale.heilu-manyatta,Heilu-Manyatta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.moyale.golbo,Golbo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.moyale.moyale-township,Moyale Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.moyale.uran,Uran,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.moyale.obbu,Obbu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.north-horr.dukana,Dukana,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.north-horr.maikona,Maikona,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.north-horr.turbi,Turbi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.north-horr.north-horr,North Horr,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.north-horr.illeret,Illeret,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.saku.sagante-jaldesa,Sagante/Jaldesa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.saku.karare,Karare,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.saku.marsabit-central,Marsabit Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.laisamis.loiyangalani,Loiyangalani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.laisamis.kargi-south-horr,Kargi/South Horr,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.laisamis.korr-ngurunit,Korr/Ngurunit,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.marsabit.laisamis.logo-logo,Logo Logo,geo.name.kind.official,en,ke-iebc-pcodes
+ke.marsabit.laisamis.laisamis,Laisamis,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-north.wabera,Wabera,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-north.bulla-pesa,Bulla Pesa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-north.chari,Chari,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-north.cherab,Cherab,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-north.ngare-mara,Ngare Mara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-north.burat,Burat,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-north.oldonyiro,Oldonyiro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-south.garbatulla,Garbatulla,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-south.kinna,Kinna,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.isiolo.isiolo-south.sericho,Sericho,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-south.maua,Maua,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-south.kiegoi-antubochiu,Kiegoi/Antubochiu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-south.athiru-gaiti,Athiru Gaiti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-south.akachiu,Akachiu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-south.kanuni,Kanuni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-central.akirangondu,Akirang'Ondu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-central.athiru-ruujine,Athiru Ruujine,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-central.igembe-east,Igembe East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-central.njia,Njia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-central.kangeta,Kangeta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-north.antuambui,Antuambui,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-north.ntunene,Ntunene,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-north.antubetwe-kiongo,Antubetwe Kiongo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-north.naathu,Naathu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.igembe-north.amwathi,Amwathi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.tigania-west.athwana,Athwana,geo.name.kind.official,en,ke-iebc-pcodes
+ke.meru.tigania-west.akithii,Akithii,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.tigania-west.kianjai,Kianjai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.tigania-west.nkomo,Nkomo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.tigania-west.mbeu,Mbeu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.tigania-east.thangatha,Thangatha,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.tigania-east.mikinduri,Mikinduri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.tigania-east.kiguchwa,Kiguchwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.tigania-east.muthara,Muthara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.tigania-east.karama,Karama,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.north-imenti.municipality,Municipality,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.north-imenti.ntima-east,Ntima East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.north-imenti.ntima-west,Ntima West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.north-imenti.nyaki-west,Nyaki West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.north-imenti.nyaki-east,Nyaki East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.buuri.timau,Timau,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.buuri.kisima,Kisima,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.buuri.kiirua-naari,Kiirua/Naari,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.buuri.ruiri-rwarera,Ruiri/Rwarera,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.cental-imenti.mwanganthia,Mwanganthia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.cental-imenti.abothuguchi-central,Abothuguchi Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.cental-imenti.abothuguchi-west,Abothuguchi West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.cental-imenti.kiagu,Kiagu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.buuri.kibirichia,Kibirichia,geo.name.kind.official,en,ke-iebc-pcodes
+ke.meru.south-imenti.mitunguu,Mitunguu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.south-imenti.igoji-east,Igoji East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.south-imenti.igoji-west,Igoji West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.south-imenti.abogeta-east,Abogeta East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.south-imenti.abogeta-west,Abogeta West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.meru.south-imenti.nkuene,Nkuene,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.nithi.mitheru,Mitheru,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.nithi.muthambi,Muthambi,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.nithi.mwimbi,Mwimbi,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.nithi.ganga,Ganga,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.nithi.chogoria,Chogoria,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.maara.mariani,Mariani,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.maara.karingani,Karingani,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.maara.magumoni,Magumoni,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.maara.mugwe,Mugwe,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.maara.igambangombe,Igambang'ombe,geo.name.kind.official,en,ke-iebc-pcodes
+ke.tharaka-nithi.tharaka.gatunga,Gatunga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tharaka-nithi.tharaka.mukothima,Mukothima,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tharaka-nithi.tharaka.nkondi,Nkondi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tharaka-nithi.tharaka.chiakariga,Chiakariga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.tharaka-nithi.tharaka.marimanti,Marimanti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.manyatta.ruguru-ngandori,Ruguru/Ngandori,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.manyatta.kithimu,Kithimu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.manyatta.nginda,Nginda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.manyatta.mbeti-north,Mbeti North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.manyatta.kirimari,Kirimari,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.manyatta.gaturi-south,Gaturi South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.runyenjes.gaturi-north,Gaturi North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.runyenjes.kagaari-south,Kagaari South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.runyenjes.central-ward,Central Ward,geo.name.kind.official,en,ke-iebc-pcodes
+ke.embu.runyenjes.kagaari-north,Kagaari North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.runyenjes.kyeni-north,Kyeni North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.runyenjes.kyeni-south,Kyeni South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.gachoka.mwea,Mwea,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.gachoka.makima,Makima,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.gachoka.mbeti-south,Mbeti South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.gachoka.mavuria,Mavuria,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.gachoka.kiambere,Kiambere,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.siakago.nthawa,Nthawa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.siakago.muminji,Muminji,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.embu.siakago.evurore,Evurore,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-north.ngomeni,Ngomeni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-north.kyuso,Kyuso,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-north.mumoni,Mumoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-north.tseikuru,Tseikuru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-north.tharaka,Tharaka,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-west.kyome-thaana,Kyome/Thaana,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-west.nguutani,Nguutani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-west.migwani,Migwani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-west.kiomo-kyethani,Kiomo/Kyethani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-east.central,Central,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kitui.mwingi-east.kivou,Kivou,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-east.nguni,Nguni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-east.nuu,Nuu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-east.mui,Mui,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.mwingi-east.waita,Waita,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-west.mutonguni,Mutonguni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-west.kauwi,Kauwi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-west.matinyani,Matinyani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-west.kwa-mutonga-kithumula,Kwa Mutonga/Kithumula,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-rural.kisasi,Kisasi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-rural.mbitini,Mbitini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-rural.kwavonza-yatta,Kwavonza/Yatta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-rural.kanyangi,Kanyangi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-central.miambani,Miambani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-central.township,Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-central.kyangwithya-west,Kyangwithya West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-central.mulango,Mulango,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-central.kyangwithya-east,Kyangwithya East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-east.zombe-mwitika,Zombe/Mwitika,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-east.nzambani,Nzambani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-east.chuluni,Chuluni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-east.voo-kyamatu,Voo/Kyamatu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-east.endau-malalani,Endau/Malalani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-east.mutito-kaliku,Mutito/Kaliku,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-south.ikanga-kyatune,Ikanga/Kyatune,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-south.mutomo,Mutomo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-south.mutha,Mutha,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-south.ikutha,Ikutha,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-south.kanziko,Kanziko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kitui.kitui-south.athi,Athi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.masinga.kivaa,Kivaa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.masinga.masinga-central,Masinga Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.masinga.ekalakala,Ekalakala,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.masinga.muthesya,Muthesya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.masinga.ndithini,Ndithini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.yatta.ndalani,Ndalani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.yatta.matuu,Matuu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.yatta.kithimani,Kithimani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.yatta.ikombe,Ikombe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.yatta.katangi,Katangi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.kangundo.kangundo-north,Kangundo North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.kangundo.kangundo-central,Kangundo Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.kangundo.kangundo-east,Kangundo East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.kangundo.kangundo-west,Kangundo West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.matungulu.tala,Tala,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.matungulu.matungulu-north,Matungulu North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.matungulu.matungulu-east,Matungulu East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.matungulu.matungulu-west,Matungulu West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.matungulu.kyeleni,Kyeleni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.kathiani.mitaboni,Mitaboni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.kathiani.kathiani-central,Kathiani Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.kathiani.upper-kaewa-iveti,Upper Kaewa/Iveti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.kathiani.lower-kaewa-kaani,Lower Kaewa/Kaani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mavoko.athi-river,Athi River,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mavoko.kinanie,Kinanie,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mavoko.muthwani,Muthwani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mavoko.syokimau-mulolongo,Syokimau/Mulolongo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.machakos-town.kalama,Kalama,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.machakos-town.mua,Mua,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.machakos-town.mutituni,Mutituni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.machakos-town.machakos-central,Machakos Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.machakos-town.mumbuni-north,Mumbuni North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.machakos-town.muvuti-kiima-kimwe,Muvuti/Kiima-Kimwe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.machakos-town.kola,Kola,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mwala.mbiuni,Mbiuni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mwala.makutano-mwala,Makutano/Mwala,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mwala.masii,Masii,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mwala.muthetheni,Muthetheni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mwala.wamunyu,Wamunyu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.machakos.mwala.kibauni,Kibauni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.mbooni.tulimani,Tulimani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.mbooni.mbooni,Mbooni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.mbooni.kithungo-kitundu,Kithungo/Kitundu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.mbooni.kiteta-kisau,Kiteta/Kisau,geo.name.kind.official,en,ke-iebc-pcodes
+ke.makueni.mbooni.waia-kako,Waia/Kako,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.mbooni.kalawa,Kalawa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kilome.kasikeu,Kasikeu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kilome.mukaa,Mukaa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kilome.kiima-kiu-kalanzoni,Kiima Kiu/Kalanzoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kaiti.ukia,Ukia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kaiti.kee,Kee,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kaiti.kilungu,Kilungu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kaiti.ilima,Ilima,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.makueni.wote,Wote,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.makueni.muvau-kikuumini,Muvau/Kikuumini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.makueni.mavindini,Mavindini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.makueni.kitise-kithuki,Kitise/Kithuki,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.makueni.kathonzweni,Kathonzweni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.makueni.nzaui-kilili-kalamba,Nzaui/Kilili/Kalamba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.makueni.mbitini,Mbitini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kibwezi-west.makindu,Makindu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kibwezi-west.nguumo,Nguumo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kibwezi-west.kikumbulyu-north,Kikumbulyu North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kibwezi-west.kikumbulyu-south,Kikumbulyu South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kibwezi-west.nguu-masumba,Nguu/Masumba,geo.name.kind.official,en,ke-iebc-pcodes
+ke.makueni.kibwezi-west.emali-mulala,Emali/Mulala,geo.name.kind.official,en,ke-iebc-pcodes
+ke.makueni.kibwezi-east.masongaleni,Masongaleni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kibwezi-east.mtito-andei,Mtito Andei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kibwezi-east.thange,Thange,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.makueni.kibwezi-east.ivingoni-nzambani,Ivingoni/Nzambani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kinangop.engineer,Engineer,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kinangop.gathara,Gathara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kinangop.north-kinangop,North Kinangop,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nyandarua.kinangop.murungaru,Murungaru,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nyandarua.kinangop.njabini-kiburu,Njabini/Kiburu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kinangop.nyakio,Nyakio,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kinangop.githabai,Githabai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kinangop.magumu,Magumu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kipipiri.wanjohi,Wanjohi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kipipiri.kipipiri,Kipipiri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kipipiri.geta,Geta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.kipipiri.githioro,Githioro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ol-kalou.karau,Karau,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ol-kalou.kanjuiri-range,Kanjuiri Range,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nyandarua.ol-kalou.mirangine,Mirangine,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nyandarua.ol-kalou.kaimbaga,Kaimbaga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ol-kalou.rurii,Rurii,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nyandarua.ol-jorok.gathanji,Gathanji,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ol-jorok.gatimu,Gatimu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ol-jorok.weru,Weru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ol-jorok.charagita,Charagita,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ndaragwa.leshau-pondo,Leshau Pondo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ndaragwa.kiriita,Kiriita,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ndaragwa.central,Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyandarua.ndaragwa.shamata,Shamata,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.tetu.dedan-kimanthi,Dedan Kimanthi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.tetu.wamagana,Wamagana,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.tetu.aguthi-gaaki,Aguthi-Gaaki,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.kieni.mweiga,Mweiga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.kieni.naromoru-kiamathaga,Naromoru Kiamathaga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.kieni.mwiyogo-endarasha,Mwiyogo/Endarasha,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.kieni.mugunda,Mugunda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.kieni.gatarakwa,Gatarakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.kieni.thegu-river,Thegu River,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.kieni.kabaru,Kabaru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.kieni.gakawa,Gakawa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mathira.ruguru,Ruguru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mathira.magutu,Magutu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mathira.iriaini,Iriaini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mathira.konyu,Konyu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mathira.kirimukuyu,Kirimukuyu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mathira.karatina-town,Karatina Town,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.othaya.mahiga,Mahiga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.othaya.iria-ini,Iria-Ini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.othaya.chinga,Chinga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.othaya.karima,Karima,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mukurweni.gikondi,Gikondi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mukurweni.rugi,Rugi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mukurweni.mukurwe-ini-west,Mukurwe-Ini West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.mukurweni.mukurwe-ini-central,Mukurwe-Ini Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.nyeri-town.kiganjo-mathari,Kiganjo/Mathari,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.nyeri-town.rware,Rware,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.nyeri-town.gatitu-muruguru,Gatitu/Muruguru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.nyeri-town.ruringu,Ruring'U,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyeri.nyeri-town.kamakwa-mukaro,Kamakwa/Mukaro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.mwea.mutithi,Mutithi,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kirinyaga.mwea.kangai,Kangai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.mwea.thiba,Thiba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.mwea.wamumu,Wamumu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.mwea.nyangati,Nyangati,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.mwea.murinduko,Murinduko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.mwea.gathigiriri,Gathigiriri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.mwea.tebere,Tebere,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.gichugu.kabare,Kabare,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.gichugu.baragwi,Baragwi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.gichugu.njukiini,Njukiini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.gichugu.ngariama,Ngariama,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.gichugu.karumandi,Karumandi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.ndia.mukure,Mukure,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.ndia.kiine,Kiine,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.ndia.kariti,Kariti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.kirinyaga-central.mutira,Mutira,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.kirinyaga-central.kanyeki-ini,Kanyeki-Ini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.kirinyaga-central.kerugoya,Kerugoya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kirinyaga.kirinyaga-central.inoi,Inoi,geo.name.kind.official,en,ke-iebc-pcodes
+ke.muranga.kangema.kanyenyaini,Kanyenyaini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kangema.muguru,Muguru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kangema.rwathia,Rwathia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.mathioya.gitugi,Gitugi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.mathioya.kiru,Kiru,geo.name.kind.official,en,ke-iebc-pcodes
+ke.muranga.mathioya.kamacharia,Kamacharia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kiharu.wangu,Wangu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kiharu.mugoiri,Mugoiri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kiharu.mbiri,Mbiri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kiharu.township,Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kiharu.murarandia,Murarandia,geo.name.kind.official,en,ke-iebc-pcodes
+ke.muranga.kiharu.gaturi,Gaturi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kigumo.kahumbu,Kahumbu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kigumo.muthithi,Muthithi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kigumo.kigumo,Kigumo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kigumo.kangari,Kangari,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kigumo.kinyona,Kinyona,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.maragwa.kimorori-wempa,Kimorori/Wempa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.maragwa.makuyu,Makuyu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.maragwa.kambiti,Kambiti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.maragwa.kamahuha,Kamahuha,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.maragwa.ichagaki,Ichagaki,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.maragwa.nginda,Nginda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kandara.ngararia,Ng'Araria,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kandara.muruka,Muruka,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kandara.kagundu-ini,Kagundu-Ini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kandara.gaichanjiru,Gaichanjiru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kandara.ithiru,Ithiru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.kandara.ruchu,Ruchu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.gatanga.ithanga,Ithanga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.gatanga.kakuzi-mitubiri,Kakuzi/Mitubiri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.gatanga.mugumo-ini,Mugumo-Ini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.gatanga.kihumbu-ini,Kihumbu-Ini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.gatanga.gatanga,Gatanga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.muranga.gatanga.kariara,Kariara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.gatundu-south.kiamwangi,Kiamwangi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.gatundu-south.kiganjo,Kiganjo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.gatundu-south.ndarugu,Ndarugu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.gatundu-south.ngenda,Ngenda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.gatundu-north.gituamba,Gituamba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.gatundu-north.githobokoni,Githobokoni,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.gatundu-north.chania,Chania,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.gatundu-north.mangu,Mang'U,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.juja.murera,Murera,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.juja.theta,Theta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.juja.juja,Juja,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.juja.witeithie,Witeithie,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.juja.kalimoni,Kalimoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.thika-town.township,Township,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.thika-town.kamenu,Kamenu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.thika-town.hospital,Hospital,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.thika-town.gatuanyaga,Gatuanyaga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.thika-town.ngoliba,Ngoliba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.ruiru.gitothua,Gitothua,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.ruiru.biashara,Biashara,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.ruiru.gatongora,Gatongora,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.ruiru.kahawa-sukari,Kahawa Sukari,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.ruiru.kahawa-wendani,Kahawa Wendani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.ruiru.kiuu,Kiuu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.ruiru.mwiki,Mwiki,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.ruiru.mwihoko,Mwihoko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.githunguri.githunguri,Githunguri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.githunguri.githiga,Githiga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.githunguri.ikinu,Ikinu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.githunguri.ngewa,Ngewa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.githunguri.komothai,Komothai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kiambu.tinganga,Ting'ang'a,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kiambu.ndumberi,Ndumberi,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.kiambu.riabai,Riabai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kiambu.township,Township,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.kiambaa.cianda,Cianda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kiambaa.karuri,Karuri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kiambaa.ndenderu,Ndenderu,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.kiambaa.muchatha,Muchatha,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kiambaa.kihara,Kihara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kabete.gitaru,Gitaru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kabete.muguga,Muguga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kabete.nyadhuna,Nyadhuna,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.kabete.kabete,Kabete,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kabete.uthiru,Uthiru,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kiambu.kikuyu.karai,Karai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kikuyu.nachu,Nachu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kikuyu.sigona,Sigona,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kikuyu.kikuyu,Kikuyu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.kikuyu.kinoo,Kinoo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.limuru.bibirioni,Bibirioni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.limuru.limuru-central,Limuru Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.limuru.ndeiya,Ndeiya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.limuru.limuru-east,Limuru East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.limuru.ngecha-tigoni,Ngecha Tigoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.lari.kinale,Kinale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.lari.kijabe,Kijabe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.lari.nyanduma,Nyanduma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.lari.kamburu,Kamburu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kiambu.lari.lari-kirenga,Lari/Kirenga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-north.kaeris,Kaeris,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-north.lake-zone,Lake Zone,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-north.lapur,Lapur,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-north.kaaleng-kaikor,Kaaleng/Kaikor,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-north.kibish,Kibish,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-north.nakalale,Nakalale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-west.kakuma,Kakuma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-west.lopur,Lopur,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-west.letea,Letea,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-west.songot,Songot,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-west.kalobeyei,Kalobeyei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-west.lokichoggio,Lokichoggio,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-west.nanaam,Nanaam,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-central.kerio-delta,Kerio Delta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-central.kangatotha,Kang'Atotha,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-central.kalokol,Kalokol,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-central.lodwar-township,Lodwar Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-central.kanamkemer,Kanamkemer,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.loima.kotaruk-lobei,Kotaruk/Lobei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.loima.turkwel,Turkwel,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.loima.loima,Loima,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.loima.lokiriama-lorengippi,Lokiriama/Lorengippi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-south.kaputir,Kaputir,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-south.katilu,Katilu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-south.lobokat,Lobokat,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-south.kalapata,Kalapata,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-south.lokichar,Lokichar,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-east.kapedo-napeitom,Kapedo/Napeitom,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-east.katilia,Katilia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.turkana.turkana-east.lokori-kochodin,Lokori/Kochodin,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kapenguria.riwo,Riwo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kapenguria.kapenguria,Kapenguria,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kapenguria.mnagei,Mnagei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kapenguria.siyoi,Siyoi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kapenguria.endugh,Endugh,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kapenguria.sook,Sook,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.sigor.sekerr,Sekerr,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.sigor.masool,Masool,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.sigor.lomut,Lomut,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.sigor.weiwei,Weiwei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kacheliba.suam,Suam,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kacheliba.kodich,Kodich,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kacheliba.kasei,Kasei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kacheliba.kapckok,Kapckok,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kacheliba.kiwawa,Kiwawa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.kacheliba.alale,Alale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.pokot-south.chepareria,Chepareria,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.pokot-south.batei,Batei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.pokot-south.lelan,Lelan,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.west-pokot.pokot-south.tapach,Tapach,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-west.lodokejek,Lodokejek,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-west.suguta-marmar,Suguta Marmar,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-west.maralal,Maralal,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-west.loosuk,Loosuk,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-west.poro,Poro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-north.el-barta,El-Barta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-north.nachola,Nachola,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-north.ndoto,Ndoto,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-north.nyiro,Nyiro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-north.angata-nanyokie,Angata Nanyokie,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-north.baawa,Baawa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-east.waso,Waso,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-east.wamba-west,Wamba West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-east.wamba-east,Wamba East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.samburu.samburu-east.wamba-north,Wamba North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kwanza.kapomboi,Kapomboi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kwanza.kwanza,Kwanza,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kwanza.keiyo,Keiyo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kwanza.bidii,Bidii,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.endebess.chepchoina,Chepchoina,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.endebess.endebess,Endebess,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.endebess.matumbei,Matumbei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.saboti.kinyoro,Kinyoro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.saboti.matisi,Matisi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.saboti.tuwani,Tuwani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.saboti.saboti,Saboti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.saboti.machewa,Machewa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kiminini.kiminini,Kiminini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kiminini.waitaluk,Waitaluk,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kiminini.sirende,Sirende,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kiminini.hospital,Hospital,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kiminini.sikhendu,Sikhendu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.kiminini.nabiswa,Nabiswa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.cherangany.sinyerere,Sinyerere,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.cherangany.makutano,Makutano,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.cherangany.kaplamai,Kaplamai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.cherangany.motosiet,Motosiet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.cherangany.cherangany-suwerwa,Cherangany/Suwerwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.cherangany.chepsiro-kiptoror,Chepsiro/Kiptoror,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.trans-nzoia.cherangany.sitatunga,Sitatunga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.soy.mois-bridge,Moi'S Bridge,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.soy.kapkures,Kapkures,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.soy.ziwa,Ziwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.soy.segero-barsombe,Segero/Barsombe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.soy.kipsomba,Kipsomba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.soy.soy,Soy,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.soy.kuinet-kapsuswa,Kuinet/Kapsuswa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.turbo.ngenyilel,Ngenyilel,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.turbo.tapsagoi,Tapsagoi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.turbo.kamagut,Kamagut,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.turbo.kiplombe,Kiplombe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.turbo.kapsaos,Kapsaos,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.turbo.huruma,Huruma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.moiben.tembelio,Tembelio,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.moiben.sergoit,Sergoit,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.moiben.karuna-meibeki,Karuna/Meibeki,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.moiben.moiben,Moiben,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.moiben.kimumu,Kimumu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.ainabkoi.kapsoya,Kapsoya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.ainabkoi.kaptagat,Kaptagat,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.ainabkoi.ainabkoi-olare,Ainabkoi/Olare,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.kapseret.simat-kapseret,Simat/Kapseret,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.kapseret.kipkenyo,Kipkenyo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.kapseret.ngeria,Ngeria,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.kapseret.megun,Megun,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.kapseret.langas,Langas,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.kesses.racecourse,Racecourse,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.kesses.cheptiret-kipchamo,Cheptiret/Kipchamo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.kesses.tulwet-chuiyat,Tulwet/Chuiyat,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.uasin-gishu.kesses.tarakwa,Tarakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-east.kapyego,Kapyego,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-east.sambirir,Sambirir,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-east.endo,Endo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-east.embobut-embulot,Embobut /Embulot,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-west.lelan,Lelan,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-west.sengwer,Sengwer,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-west.cherangany-chebororwa,Cherang'Any/Chebororwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-west.moiben-kuserwo,Moiben/Kuserwo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-west.kapsowar,Kapsowar,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.marakwet-west.arror,Arror,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-north.emsoo,Emsoo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-north.kamariny,Kamariny,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-north.kapchemutwa,Kapchemutwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-north.tambach,Tambach,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-south.kaptarakwa,Kaptarakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-south.chepkorio,Chepkorio,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-south.soy-north,Soy North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-south.soy-south,Soy South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-south.kabiemit,Kabiemit,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.elgeyo-marakwet.keiyo-south.metkei,Metkei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.tinderet.songhor-soba,Songhor/Soba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.tinderet.tindiret,Tindiret,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.tinderet.chemelil-chemase,Chemelil/Chemase,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nandi.tinderet.kapsimotwo,Kapsimotwo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.aldai.kabwareng,Kabwareng,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.aldai.terik,Terik,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.aldai.kemeloi-maraba,Kemeloi-Maraba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.aldai.kobujoi,Kobujoi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.aldai.kaptumo-kaboi,Kaptumo-Kaboi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.aldai.koyo-ndurio,Koyo-Ndurio,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.nandi-hills.nandi-hills,Nandi Hills,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.nandi-hills.chepkunyuk,Chepkunyuk,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.nandi-hills.ollessos,Ol'Lessos,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.nandi-hills.kapchorua,Kapchorua,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.chesumei.chemundu-kapngetuny,Chemundu/Kapng'Etuny,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.chesumei.kosirai,Kosirai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.chesumei.lelmokwo-ngechek,Lelmokwo/Ngechek,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.chesumei.kaptel-kamoiywo,Kaptel/Kamoiywo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.chesumei.kiptuya,Kiptuya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.emgwen.chepkumia,Chepkumia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.emgwen.kapkangani,Kapkangani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.emgwen.kapsabet,Kapsabet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.emgwen.kilibwoni,Kilibwoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.mosop.chepterwai,Chepterwai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.mosop.kipkaren,Kipkaren,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.mosop.kurgung-surungai,Kurgung/Surungai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.mosop.kabiyet,Kabiyet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.mosop.ndalat,Ndalat,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.mosop.kabisaga,Kabisaga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nandi.mosop.sangalo-kebulonik,Sangalo/Kebulonik,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.tiaty.tirioko,Tirioko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.tiaty.kolowa,Kolowa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.tiaty.ribkwo,Ribkwo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.tiaty.silale,Silale,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.tiaty.loiyamorock,Loiyamorock,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.tiaty.tangulbei-korossi,Tangulbei/Korossi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.tiaty.churo-amaya,Churo/Amaya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-north.barwessa,Barwessa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-north.kabartonjo,Kabartonjo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-north.saimo-kipsaraman,Saimo/Kipsaraman,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-north.saimo-soi,Saimo/Soi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-north.bartabwa,Bartabwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-central.kabarnet,Kabarnet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-central.sacho,Sacho,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-central.tenges,Tenges,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-central.ewalel-chapchap,Ewalel Chapchap,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-central.kapropita,Kapropita,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-south.marigat,Marigat,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-south.ilchamus,Ilchamus,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.baringo-south.mochongoi,Mochongoi,geo.name.kind.official,en,ke-iebc-pcodes
+ke.baringo.baringo-south.mukutani,Mukutani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.mogotio.mogotio,Mogotio,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.mogotio.emining,Emining,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.mogotio.kisanana,Kisanana,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.eldama-ravine.lembus,Lembus,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.eldama-ravine.lembus-kwen,Lembus Kwen,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.eldama-ravine.ravine,Ravine,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.eldama-ravine.mumberes-maji-mazuri,Mumberes/Maji Mazuri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.eldama-ravine.lembus-perkerra,Lembus/Perkerra,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.baringo.eldama-ravine.koibatek,Koibatek,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.laikipia.laikipia-west.ol-moran,Ol-Moran,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-west.rumuruti-township,Rumuruti Township,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-west.githiga,Githiga,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-west.marmanet,Marmanet,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-west.igwamiti,Igwamiti,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-west.salama,Salama,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-east.ngobit,Ngobit,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-east.tigithi,Tigithi,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-east.thingithu,Thingithu,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-east.nanyuki,Nanyuki,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-east.umande,Umande,geo.name.kind.official,en,ke-iebc-pcodes
+ke.laikipia.laikipia-north.sosian,Sosian,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.laikipia.laikipia-north.segera,Segera,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.laikipia.laikipia-north.mukogondo-west,Mukogondo West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.laikipia.laikipia-north.mukogondo-east,Mukogondo East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.molo.mariashoni,Mariashoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.molo.elburgon,Elburgon,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.molo.turi,Turi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.molo.molo,Molo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.njoro.maunarok,Maunarok,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.njoro.mauche,Mauche,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.njoro.kihingo,Kihingo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.njoro.nessuit,Nessuit,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.njoro.lare,Lare,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.njoro.njoro,Njoro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.naivasha.biashara,Biashara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.naivasha.hells-gate,Hells Gate,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.naivasha.lakeview,Lakeview,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.naivasha.maai-mahiu,Maai-Mahiu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.naivasha.maiella,Maiella,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.naivasha.olkaria,Olkaria,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.naivasha.naivasha-east,Naivasha East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.naivasha.viwandani,Viwandani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.gilgil.gilgil,Gilgil,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.gilgil.elementaita,Elementaita,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.gilgil.mbaruk-eburu,Mbaruk/Eburu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.gilgil.malewa-west,Malewa West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.gilgil.murindati,Murindati,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.kuresoi-south.amalo,Amalo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.kuresoi-south.keringet,Keringet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.kuresoi-south.kiptagich,Kiptagich,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.kuresoi-south.tinet,Tinet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.kuresoi-north.kiptororo,Kiptororo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.kuresoi-north.nyota,Nyota,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.kuresoi-north.sirikwa,Sirikwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.kuresoi-north.kamara,Kamara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.subukia.subukia,Subukia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.subukia.waseges,Waseges,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.subukia.kabazi,Kabazi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.rongai.menengai-west,Menengai West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.rongai.soin,Soin,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.rongai.visoi,Visoi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.rongai.mosop,Mosop,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.rongai.solai,Solai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.bahati.dundori,Dundori,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.bahati.kabatini,Kabatini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.bahati.kiamaina,Kiamaina,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.bahati.lanet-umoja,Lanet/Umoja,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.bahati.bahati,Bahati,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-west.barut,Barut,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-west.london,London,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-west.kaptembwo,Kaptembwo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-west.kapkures,Kapkures,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-west.rhoda,Rhoda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-west.shaabab,Shaabab,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-east.biashara,Biashara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-east.kivumbini,Kivumbini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-east.flamingo,Flamingo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-east.menengai,Menengai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nakuru.nakuru-town-east.nakuru-east,Nakuru East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.kilgoris.kilgoris-central,Kilgoris Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.kilgoris.keyian,Keyian,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.kilgoris.angata-barikoi,Angata Barikoi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.kilgoris.shankoe,Shankoe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.kilgoris.kimintet,Kimintet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.kilgoris.lolgorian,Lolgorian,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.emurua-dikirr.ilkerin,Ilkerin,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.emurua-dikirr.ololmasani,Ololmasani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.emurua-dikirr.mogondo,Mogondo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.emurua-dikirr.kapsasian,Kapsasian,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-north.olpusimoru,Olpusimoru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-north.olokurto,Olokurto,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-north.narok-town,Narok Town,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-north.nkareta,Nkareta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-north.olorropil,Olorropil,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-north.melili,Melili,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-east.mosiro,Mosiro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-east.ildamat,Ildamat,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-east.keekonyokie,Keekonyokie,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-east.suswa,Suswa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-south.majimoto-naroosura,Majimoto/Naroosura,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-south.ololulunga,Ololulung'a,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-south.melelo,Melelo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-south.loita,Loita,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-south.sogoo,Sogoo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-south.sagamian,Sagamian,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-west.ilmotiok,Ilmotiok,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-west.mara,Mara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-west.siana,Siana,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.narok.narok-west.naikarra,Naikarra,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-north.olkeri,Olkeri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-north.ongata-rongai,Ongata Rongai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-north.nkaimurunya,Nkaimurunya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-north.oloolua,Oloolua,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-north.ngong,Ngong,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-central.purko,Purko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-central.ildamat,Ildamat,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-central.dalalekutuk,Dalalekutuk,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-central.matapato-north,Matapato North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-central.matapato-south,Matapato South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-west.kaputiei-north,Kaputiei North,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-west.kitengela,Kitengela,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-west.oloosirkon-sholinke,Oloosirkon/Sholinke,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-west.kenyawa-poka,Kenyawa-Poka,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-west.imaroro,Imaroro,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-east.keekonyokie,Keekonyokie,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-east.iloodokilani,Iloodokilani,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-east.magadi,Magadi,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-east.ewuaso-oonkidongi,Ewuaso Oonkidong'i,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-east.mosiro,Mosiro,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kajiado.kajiado-south.entonet-lenkisim,Entonet/Lenkisim,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-south.mbirikani-eselenkei,Mbirikani/Eselenkei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-south.kuku,Kuku,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-south.rombo,Rombo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kajiado.kajiado-south.kimana,Kimana,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.kipkelion-east.londiani,Londiani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.kipkelion-east.kedowa-kimugul,Kedowa/Kimugul,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.kipkelion-east.chepseon,Chepseon,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.kipkelion-east.tendeno-sorget,Tendeno/Sorget,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.kipkelion-west.kunyak,Kunyak,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.kipkelion-west.kamasian,Kamasian,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.kipkelion-west.kipkelion,Kipkelion,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.kipkelion-west.chilchila,Chilchila,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.ainamoi.kapsoit,Kapsoit,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.ainamoi.ainamoi,Ainamoi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.ainamoi.kapkugerwet,Kapkugerwet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.ainamoi.kipchebor,Kipchebor,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.ainamoi.kipchimchim,Kipchimchim,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.ainamoi.kapsaos,Kapsaos,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.buret.kisiara,Kisiara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.buret.tebesonik,Tebesonik,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.buret.cheboin,Cheboin,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.buret.chemosot,Chemosot,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.buret.litein,Litein,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.buret.cheplanget,Cheplanget,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.buret.kapkatet,Kapkatet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.belgut.waldai,Waldai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.belgut.kabianga,Kabianga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.belgut.cheptororiet-seretut,Cheptororiet/Seretut,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.belgut.chaik,Chaik,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.belgut.kapsuser,Kapsuser,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.sigowet-soin.sigowet,Sigowet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.sigowet-soin.kaplelartet,Kaplelartet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.sigowet-soin.soliat,Soliat,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kericho.sigowet-soin.soin,Soin,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.sotik.ndanai-abosi,Ndanai/Abosi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.sotik.chemagel,Chemagel,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.sotik.kipsonoi,Kipsonoi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.sotik.kapletundo,Kapletundo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.sotik.rongena-manaret,Rongena/Manaret,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.chepalungu.kongasis,Kong'Asis,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.chepalungu.nyangores,Nyangores,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.chepalungu.sigor,Sigor,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.chepalungu.chebunyo,Chebunyo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.chepalungu.siongiroi,Siongiroi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-east.merigi,Merigi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-east.kembu,Kembu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-east.longisa,Longisa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-east.kipreres,Kipreres,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-east.chemaner,Chemaner,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-central.silibwet-township,Silibwet Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-central.ndaraweta,Ndaraweta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-central.singorwet,Singorwet,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-central.chesoen,Chesoen,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.bomet-central.mutarakwa,Mutarakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.konoin.chepchabas,Chepchabas,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.konoin.kimulot,Kimulot,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.konoin.mogogosiek,Mogogosiek,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.konoin.boito,Boito,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bomet.konoin.embomos,Embomos,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lugari.mautuma,Mautuma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lugari.lugari,Lugari,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lugari.lumakanda,Lumakanda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lugari.chekalini,Chekalini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lugari.chevaywa,Chevaywa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lugari.lwandeti,Lwandeti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.likuyani.likuyani,Likuyani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.likuyani.sango,Sango,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.likuyani.kongoni,Kongoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.likuyani.nzoia,Nzoia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.likuyani.sinoko,Sinoko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.malava.west-kabras,West Kabras,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.malava.chemuche,Chemuche,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.malava.east-kabras,East Kabras,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.malava.butali-chegulo,Butali/Chegulo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.malava.manda-shivanga,Manda-Shivanga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.malava.shirugu-mugai,Shirugu-Mugai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.malava.south-kabras,South Kabras,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lurambi.butsotso-east,Butsotso East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lurambi.butsotso-south,Butsotso South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lurambi.butsotso-central,Butsotso Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lurambi.sheywe,Sheywe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lurambi.mahiakalo,Mahiakalo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.lurambi.shirere,Shirere,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.navakholo.ingostse-mathia,Ingostse-Mathia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.navakholo.shinoyi-shikomari-esumeiya,Shinoyi-Shikomari-Esumeiya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.navakholo.bunyala-west,Bunyala West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.navakholo.bunyala-east,Bunyala East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.navakholo.bunyala-central,Bunyala Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.mumias-west.mumias-central,Mumias Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.mumias-west.mumias-north,Mumias North,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kakamega.mumias-west.etenje,Etenje,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.mumias-west.musanda,Musanda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.mumias-east.lusheya-lubinu,Lusheya/Lubinu,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kakamega.mumias-east.malaha-isongo-makunga,Malaha/Isongo/Makunga,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kakamega.mumias-east.east-wanga,East Wanga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.matungu.koyonzo,Koyonzo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.matungu.kholera,Kholera,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.matungu.khalaba,Khalaba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.matungu.mayoni,Mayoni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.matungu.namamali,Namamali,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.butere.marama-west,Marama West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.butere.marama-central,Marama Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.butere.marenyo-shianda,Marenyo-Shianda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.butere.marama-north,Marama North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.butere.marama-south,Marama South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.khwisero.kisa-north,Kisa North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.khwisero.kisa-east,Kisa East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.khwisero.kisa-west,Kisa West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.khwisero.kisa-central,Kisa Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.shinyalu.isukha-north,Isukha North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.shinyalu.murhanda,Murhanda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.shinyalu.isukha-central,Isukha Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.shinyalu.isukha-south,Isukha South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.shinyalu.isukha-east,Isukha East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.shinyalu.isukha-west,Isukha West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.ikolomani.idakho-south,Idakho South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.ikolomani.idakho-east,Idakho East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.ikolomani.idakho-north,Idakho North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kakamega.ikolomani.idakho-central,Idakho Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.vihiga.lugaga-wamuluma,Lugaga-Wamuluma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.vihiga.south-maragoli,South Maragoli,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.vihiga.central-maragoli,Central Maragoli,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.vihiga.mungoma,Mungoma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.sabatia.lyaduywa-izava,Lyaduywa/Izava,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.sabatia.west-sabatia,West Sabatia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.sabatia.chavakali,Chavakali,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.sabatia.north-maragoli,North Maragoli,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.sabatia.wodanga,Wodanga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.sabatia.busali,Busali,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.hamisi.shiru,Shiru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.hamisi.gisambai,Gisambai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.hamisi.shamakhokho,Shamakhokho,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.hamisi.banja,Banja,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.hamisi.muhudu,Muhudu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.hamisi.tambua,Tambua,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.hamisi.jepkoyai,Jepkoyai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.luanda.luanda-township,Luanda Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.luanda.wemilabi,Wemilabi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.luanda.mwibona,Mwibona,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.luanda.luanda-south,Luanda South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.luanda.emabungo,Emabungo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.emuhaya.north-east-bunyore,North East Bunyore,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.emuhaya.central-bunyore,Central Bunyore,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.vihiga.emuhaya.west-bunyore,West Bunyore,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.mt-elgon.cheptais,Cheptais,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.mt-elgon.chesikaki,Chesikaki,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.mt-elgon.chepyuk,Chepyuk,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.mt-elgon.kapkateny,Kapkateny,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.mt-elgon.kaptama,Kaptama,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.mt-elgon.elgon,Elgon,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.sirisia.namwela,Namwela,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.sirisia.malakisi-south-kulisiru,Malakisi/South Kulisiru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.sirisia.lwandanyi,Lwandanyi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kabuchai.kabuchai-chwele,Kabuchai/Chwele,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kabuchai.west-nalondo,West Nalondo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kabuchai.bwake-luuya,Bwake/Luuya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kabuchai.mukuyuni,Mukuyuni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.bumula.south-bukusu,South Bukusu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.bumula.bumula,Bumula,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.bumula.khasoko,Khasoko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.bumula.kabula,Kabula,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.bumula.kimaeti,Kimaeti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.bumula.west-bukusu,West Bukusu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.bumula.siboti,Siboti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kanduyi.bukembe-west,Bukembe West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kanduyi.bukembe-east,Bukembe East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kanduyi.township,Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kanduyi.khalaba,Khalaba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kanduyi.musikoma,Musikoma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kanduyi.east-sangalo,East Sang'Alo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kanduyi.marakaru-tuuti,Marakaru/Tuuti,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kanduyi.west-sangalo,West Sang'alo,geo.name.kind.official,en,ke-iebc-pcodes
+ke.bungoma.webuye-east.mihuu,Mihuu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.webuye-east.ndivisi,Ndivisi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.webuye-east.maraka,Maraka,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.webuye-west.misikhu,Misikhu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.webuye-west.sitikho,Sitikho,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.webuye-west.matulo,Matulo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.webuye-west.bokoli,Bokoli,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kimilili.kibingei,Kibingei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kimilili.kimilili,Kimilili,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kimilili.maeni,Maeni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.kimilili.kamukuywa,Kamukuywa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.tongaren.mbakalo,Mbakalo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.tongaren.naitiri-kabuyefwe,Naitiri/Kabuyefwe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.tongaren.milima,Milima,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.tongaren.ndalu-tabani,Ndalu/Tabani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.tongaren.tongaren,Tongaren,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.bungoma.tongaren.soysambu-mitua,Soysambu/Mitua,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-north.malaba-central,Malaba Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-north.malaba-north,Malaba North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-north.angurai-south,Ang'Urai South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-north.angurai-north,Ang'Urai North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-north.angurai-east,Ang'Urai East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-north.malaba-south,Malaba South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-south.angorom,Ang'Orom,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-south.chakol-south,Chakol South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-south.chakol-north,Chakol North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-south.amukura-west,Amukura West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-south.amukura-east,Amukura East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.teso-south.amukura-central,Amukura Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.nambale.nambale-township,Nambale Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.nambale.bukhayo-north-waltsi,Bukhayo North/Waltsi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.nambale.bukhayo-east,Bukhayo East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.nambale.bukhayo-central,Bukhayo Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.matayos.bukhayo-west,Bukhayo West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.matayos.mayenje,Mayenje,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.matayos.matayos-south,Matayos South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.matayos.busibwabo,Busibwabo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.matayos.burumba,Burumba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.butula.marachi-west,Marachi West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.butula.kingandole,Kingandole,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.butula.marachi-central,Marachi Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.butula.marachi-east,Marachi East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.butula.marachi-north,Marachi North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.butula.elugulu,Elugulu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.funyula.namboboto-nambuku,Namboboto Nambuku,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.funyula.nangina,Nangina,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.funyula.agenga-nanguba,Ageng'A Nanguba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.funyula.bwiri,Bwiri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.budalangi.bunyala-central,Bunyala Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.budalangi.bunyala-north,Bunyala North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.budalangi.bunyala-west,Bunyala West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.busia.budalangi.bunyala-south,Bunyala South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.ugenya.west-ugenya,West Ugenya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.ugenya.ukwala,Ukwala,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.ugenya.north-ugenya,North Ugenya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.ugenya.east-ugenya,East Ugenya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.ugunja.sidindi,Sidindi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.ugunja.sigomere,Sigomere,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.ugunja.ugunja,Ugunja,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.alego-usonga.usonga,Usonga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.alego-usonga.west-alego,West Alego,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.alego-usonga.central-alego,Central Alego,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.alego-usonga.siaya-township,Siaya Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.alego-usonga.north-alego,North Alego,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.alego-usonga.south-east-alego,South East Alego,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.gem.north-gem,North Gem,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.gem.west-gem,West Gem,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.gem.central-gem,Central Gem,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.gem.yala-township,Yala Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.gem.east-gem,East Gem,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.gem.south-gem,South Gem,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.bondo.west-yimbo,West Yimbo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.bondo.central-sakwa,Central Sakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.bondo.south-sakwa,South Sakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.bondo.yimbo-east,Yimbo East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.bondo.west-sakwa,West Sakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.bondo.north-sakwa,North Sakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.rarieda.east-asembo,East Asembo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.rarieda.west-asembo,West Asembo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.rarieda.north-uyoma,North Uyoma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.rarieda.south-uyoma,South Uyoma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.siaya.rarieda.west-uyoma,West Uyoma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-east.kajulu,Kajulu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-east.kolwa-east,Kolwa East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-east.manyatta-b,Manyatta 'b',geo.name.kind.official,en,ke-iebc-pcodes
+ke.kisumu.kisumu-east.nyalenda-b,Nyalenda B,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-east.kolwa-central,Kolwa Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-west.south-west-kisumu,South West Kisumu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-west.central-kisumu,Central Kisumu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-west.kisumu-north,Kisumu North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-west.west-kisumu,West Kisumu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-west.north-west-kisumu,North West Kisumu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-central.railways,Railways,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-central.migosi,Migosi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-central.shaurimoyo-kaloleni,Shaurimoyo Kaloleni,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kisumu.kisumu-central.market-milimani,Market Milimani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-central.kondele,Kondele,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.kisumu-central.nyalenda-a,Nyalenda 'A',geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.seme.west-seme,West Seme,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.seme.central-seme,Central Seme,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.seme.east-seme,East Seme,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.seme.north-seme,North Seme,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyando.east-kano-wawidhi,East Kano/Wawidhi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyando.awasi-onjiko,Awasi/Onjiko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyando.ahero,Ahero,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyando.kabonyo-kanyagwal,Kabonyo/Kanyagwal,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyando.kobura,Kobura,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.muhoroni.miwani,Miwani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.muhoroni.ombeyi,Ombeyi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.muhoroni.masogo-nyangoma,Masogo/Nyang'Oma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.muhoroni.chemelil,Chemelil,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.muhoroni.muhoroni-koru,Muhoroni/Koru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyakach.south-west-nyakach,South West Nyakach,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyakach.north-nyakach,North Nyakach,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyakach.central-nyakach,Central Nyakach,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyakach.west-nyakach,West Nyakach,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisumu.nyakach.south-east-nyakach,South East Nyakach,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.kasipul.west-kasipul,West Kasipul,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.kasipul.south-kasipul,South Kasipul,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.kasipul.central-kasipul,Central Kasipul,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.kasipul.east-kamagak,East Kamagak,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.kasipul.west-kamagak,West Kamagak,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.kabondo-kasipul.kabondo-east,Kabondo East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.kabondo-kasipul.kabondo-west,Kabondo West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.kabondo-kasipul.kokwanyo-kakelo,Kokwanyo/Kakelo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.kabondo-kasipul.kojwach,Kojwach,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.karachuonyo.west-karachuonyo,West Karachuonyo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.karachuonyo.north-karachuonyo,North Karachuonyo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.karachuonyo.central,Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.karachuonyo.kanyaluo,Kanyaluo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.karachuonyo.kibiri,Kibiri,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.karachuonyo.wangchieng,Wangchieng,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.karachuonyo.kendu-bay-town,Kendu Bay Town,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.rangwe.west-gem,West Gem,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.rangwe.east-gem,East Gem,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.rangwe.kagan,Kagan,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.rangwe.kochia,Kochia,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.homa-bay.homa-bay-central,Homa Bay Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.homa-bay.homa-bay-arujo,Homa Bay Arujo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.homa-bay.homa-bay-west,Homa Bay West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.homa-bay.homa-bay-east,Homa Bay East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.ndhiwa.kwabwai,Kwabwai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.ndhiwa.kanyadoto,Kanyadoto,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.ndhiwa.kanyikela,Kanyikela,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.ndhiwa.kabuoch-north,Kabuoch North,geo.name.kind.official,en,ke-iebc-pcodes
+ke.homa-bay.ndhiwa.kabuoch-south-pala,Kabuoch South/Pala,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.ndhiwa.kanyamwa-kologi,Kanyamwa Kologi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.ndhiwa.kanyamwa-kosewe,Kanyamwa Kosewe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.suba-north.mfangano-island,Mfangano Island,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.suba-north.rusinga-island,Rusinga Island,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.suba-north.kasgunga,Kasgunga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.suba-north.gembe,Gembe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.suba-north.lambwe,Lambwe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.suba-south.gwassi-south,Gwassi South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.suba-south.gwassi-north,Gwassi North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.suba-south.kaksingri-west,Kaksingri West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.homa-bay.suba-south.ruma-kaksingri-east,Ruma Kaksingri East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.rongo.north-kamagambo,North Kamagambo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.rongo.central-kamagambo,Central Kamagambo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.rongo.east-kamagambo,East Kamagambo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.rongo.south-kamagambo,South Kamagambo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.awendo.north-sakwa,North Sakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.awendo.south-sakwa,South Sakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.awendo.west-sakwa,West Sakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.awendo.central-sakwa,Central Sakwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.suna-east.god-jope,God Jope,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.suna-east.suna-central,Suna Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.suna-east.kakrao,Kakrao,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.suna-east.kwa,Kwa,geo.name.kind.official,en,ke-iebc-pcodes
+ke.migori.suna-west.wiga,Wiga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.suna-west.wasweta-ii,Wasweta Ii,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.suna-west.ragana-oruba,Ragana-Oruba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.suna-west.wasimbete,Wasimbete,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.uriri.west-kanyamkago,West Kanyamkago,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.uriri.north-kanyamkago,North Kanyamkago,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.uriri.central-kanyamkago,Central Kanyamkago,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.uriri.south-kanyamkago,South Kanyamkago,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.uriri.east-kanyamkago,East Kanyamkago,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.nyatike.kachieng,Kachien'g,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.nyatike.kanyasa,Kanyasa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.nyatike.north-kadem,North Kadem,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.nyatike.macalder-kanyarwanda,Macalder/Kanyarwanda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.nyatike.kaler,Kaler,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.nyatike.got-kachola,Got Kachola,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.nyatike.muhuru,Muhuru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-west.bukira-east,Bukira East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-west.bukira-centrl-ikerege,Bukira Centrl/Ikerege,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-west.isibania,Isibania,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-west.makerero,Makerero,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-west.masaba,Masaba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-west.tagare,Tagare,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-west.nyamosense-komosoko,Nyamosense/Komosoko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-east.gokeharaka-getambwega,Gokeharaka/Getambwega,geo.name.kind.official,en,ke-iebc-pcodes
+ke.migori.kuria-east.ntimaru-west,Ntimaru West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-east.ntimaru-east,Ntimaru East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-east.nyabasi-east,Nyabasi East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.migori.kuria-east.nyabasi-west,Nyabasi West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bonchari.bomariba,Bomariba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bonchari.bogiakumu,Bogiakumu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bonchari.bomorenda,Bomorenda,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bonchari.riana,Riana,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.south-mugirango.tabaka,Tabaka,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.south-mugirango.boikanga,Boikang'A,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.south-mugirango.bogetenga,Bogetenga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.south-mugirango.borabu-chitago,Borabu/Chitago,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.south-mugirango.moticho,Moticho,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.south-mugirango.getenga,Getenga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bomachoge-borabu.bombaba-borabu,Bombaba Borabu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bomachoge-borabu.boochi-borabu,Boochi Borabu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bomachoge-borabu.bokimonge,Bokimonge,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bomachoge-borabu.magenche,Magenche,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bobasi.masige-west,Masige West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bobasi.masige-east,Masige East,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bobasi.bobasi-central,Bobasi Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bobasi.nyacheki,Nyacheki,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bobasi.bobasi-bogetaorio,Bobasi Bogetaorio,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bobasi.bobasi-chache,Bobasi Chache,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bobasi.sameta-mokwerero,Sameta/Mokwerero,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bobasi.bobasi-boitangare,Bobasi Boitangare,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bomachoge-chache.majoge-basi,Majoge Basi,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kisii.bomachoge-chache.boochi-tendere,Boochi/Tendere,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.bomachoge-chache.bosoti-sengera,Bosoti/Sengera,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-masaba.ichuni,Ichuni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-masaba.nyamasibi,Nyamasibi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-masaba.masimba,Masimba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-masaba.gesusu,Gesusu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-masaba.kiamokama,Kiamokama,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-chache.bobaracho,Bobaracho,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-chache.kisii-central,Kisii Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-chache.keumbu,Keumbu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-chache.kiogoro,Kiogoro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-chache.birongo,Birongo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.nyaribari-chache.ibeno,Ibeno,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.kitutu-chache-north.monyerero,Monyerero,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.kitutu-chache-north.sensi,Sensi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.kitutu-chache-north.marani,Marani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.kitutu-chache-north.kegogi,Kegogi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.kitutu-chache-south.bogusero,Bogusero,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.kitutu-chache-south.bogeka,Bogeka,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.kitutu-chache-south.nyakoe,Nyakoe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.kisii.kitutu-chache-south.kitutu-central,Kitutu Central,geo.name.kind.official,en,ke-iebc-pcodes
+ke.kisii.kitutu-chache-south.nyatieko,Nyatieko,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.kitutu-masaba.rigoma,Rigoma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.kitutu-masaba.gachuba,Gachuba,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.kitutu-masaba.kemera,Kemera,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.kitutu-masaba.magombo,Magombo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.kitutu-masaba.manga,Manga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.kitutu-masaba.gesima,Gesima,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.west-mugirango.nyamaiya,Nyamaiya,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.west-mugirango.bogichora,Bogichora,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.west-mugirango.bosamaro,Bosamaro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.west-mugirango.bonyamatuta,Bonyamatuta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.west-mugirango.township,Township,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.north-mugirango.itibo,Itibo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.north-mugirango.bomwagamo,Bomwagamo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.north-mugirango.bokeira,Bokeira,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.north-mugirango.magwagwa,Magwagwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.north-mugirango.ekerenyo,Ekerenyo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.borabu.mekenene,Mekenene,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.borabu.kiabonyoru,Kiabonyoru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.borabu.nyansiongo,Nyansiongo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nyamira.borabu.esise,Esise,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.westlands.kitisuru,Kitisuru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.westlands.parklands-highridge,Parklands/Highridge,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.westlands.karura,Karura,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.westlands.kangemi,Kangemi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.westlands.mountain-view,Mountain View,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kilimani.kilimani,Kilimani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kilimani.kawangware,Kawangware,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kilimani.gatina,Gatina,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kilimani.kileleshwa,Kileleshwa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kilimani.kabiro,Kabiro,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.dagoretti.mutuini,Mutuini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.dagoretti.ngando,Ngando,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.dagoretti.riruta,Riruta,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.dagoretti.uthiru-ruthimitu,Uthiru/Ruthimitu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.dagoretti.waithaka,Waithaka,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.langata.karen,Karen,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.langata.nairobi-west,Nairobi West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.langata.mugumo-ini,Mugumo-Ini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.langata.south-c,South-C,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.langata.nyayo-highrise,Nyayo Highrise,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kibra.laini-saba,Laini Saba,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nairobi.kibra.lindi,Lindi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kibra.makina,Makina,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kibra.woodley-kenyatta-golf,Woodley/Kenyatta Golf,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kibra.sarangombe,Sarangombe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.roysambu.githurai,Githurai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.roysambu.kahawa-west,Kahawa West,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.roysambu.zimmerman,Zimmerman,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.roysambu.roysambu,Roysambu,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.roysambu.kahawa,Kahawa,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kasarani.claycity,Claycity,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kasarani.mwiki,Mwiki,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kasarani.kasarani,Kasarani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kasarani.njiru,Njiru,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kasarani.ruai,Ruai,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.ruaraka.babadogo,Babadogo,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.ruaraka.utalii,Utalii,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.ruaraka.mathare-north,Mathare North,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nairobi.ruaraka.lucky-summer,Lucky Summer,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.ruaraka.korogocho,Korogocho,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-south.imara-daima,Imara Daima,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-south.kwa-njenga,Kwa Njenga,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-south.kwa-reuben,Kwa Reuben,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-south.pipeline,Pipeline,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-south.kware,Kware,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-north.kariobangi-north,Kariobangi North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-north.dandora-area-i,Dandora Area I,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-north.dandora-area-ii,Dandora Area Ii,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-north.dandora-area-iii,Dandora Area Iii,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-north.dandora-area-iv,Dandora Area Iv,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nairobi.embakasi-central.kayole-north,Kayole North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-central.kayole-central,Kayole Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-central.kayole-south,Kayole South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-central.komarock,Komarock,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-central.matopeni-spring-valley,Matopeni/Spring Valley,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nairobi.embakasi-east.upper-savannah,Upper Savannah,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-east.lower-savannah,Lower Savannah,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-east.embakasi,Embakasi,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-east.utawala,Utawala,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-east.mihango,Mihango,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-west.umoja-i,Umoja I,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-west.umoja-ii,Umoja II,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-west.mowlem,Mowlem,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.embakasi-west.kariobangi-south,Kariobangi South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.makadara.maringo-hamza,Maringo/Hamza,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.makadara.viwandani,Viwandani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.makadara.harambee,Harambee,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.makadara.makongeni,Makongeni,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kamukunji.pumwani,Pumwani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kamukunji.eastleigh-north,Eastleigh North,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kamukunji.eastleigh-south,Eastleigh South,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nairobi.kamukunji.airbase,Airbase,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.kamukunji.california,California,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.starehe.nairobi-central,Nairobi Central,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.starehe.ngara,Ngara,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.starehe.pangani,Pangani,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.starehe.ziwani-kariokor,Ziwani/Kariokor,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.starehe.landimawe,Landimawe,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.starehe.nairobi-south,Nairobi South,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.mathare.hospital,Hospital,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.mathare.mabatini,Mabatini,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.mathare.huruma,Huruma,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.mathare.ngei,Ngei,geo.name.kind.official,en,geoboundaries-ken-adm3
+ke.nairobi.mathare.mlango-kubwa,Mlango Kubwa,geo.name.kind.official,en,ke-iebc-pcodes
+ke.nairobi.mathare.kiamaiko,Kiamaiko,geo.name.kind.official,en,geoboundaries-ken-adm3

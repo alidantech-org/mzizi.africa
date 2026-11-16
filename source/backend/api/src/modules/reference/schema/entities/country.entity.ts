@@ -21,7 +21,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Canonical identity for a modern country; not a geographic unit or historical polity.
  */
 @Entity({ schema: "reference", name: "countries" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["name"])
 @Index(["isoAlpha2"], { unique: true })
 @Index(["continentId"])

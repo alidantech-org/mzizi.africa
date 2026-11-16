@@ -23,6 +23,6 @@ class GeographyIdentifiersRow(BaseModel):
     id: UUID
     identifier_scheme_id: UUID
     namespace: Annotated[str, Field(min_length=1, max_length=255)] | None = None
-    source_ref_id: UUID | None = None
+    source_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

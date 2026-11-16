@@ -17,7 +17,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here.
  */
 @Entity({ schema: "geography", name: "features" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["featureTypeId"])
 @Index(["validFrom", "validUntil"])
 @Check(

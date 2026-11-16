@@ -52,10 +52,10 @@ export class IdentifiersDto {
   namespace?: NonEmptyString255 | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceRefId !== null)
+  @ValidateIf((object) => object.sourceId !== null)
   @IsString()
   @IsUUID()
-  sourceRefId?: Id | null;
+  sourceId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

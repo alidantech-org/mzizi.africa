@@ -11,6 +11,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as SourcesConfig from "#/modules/source/schema/types/sources/sources.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -32,7 +33,11 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const NAMES_RELATION_KEYS = ["feature", "nameKind"] as const satisfies readonly NamesKey[];
+export const NAMES_RELATION_KEYS = [
+  "feature",
+  "nameKind",
+  "source",
+] as const satisfies readonly NamesKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -46,7 +51,7 @@ export const NAMES_SORTABLE_FIELDS = [
   "languageTag",
   "name",
   "nameKindId",
-  "sourceRefId",
+  "sourceId",
   "updatedAt",
   "validFrom",
   "validUntil",
@@ -62,7 +67,7 @@ export const NAMES_FILTERABLE_FIELDS = [
   "featureId",
   "id",
   "nameKindId",
-  "sourceRefId",
+  "sourceId",
 ] as const satisfies readonly NamesKey[];
 
 export const NAMES_DATE_RANGE_FIELDS = [
@@ -91,7 +96,7 @@ export const NAMES_SELECTABLE_FIELDS = [
   "languageTag",
   "name",
   "nameKindId",
-  "sourceRefId",
+  "sourceId",
   "updatedAt",
   "validFrom",
   "validUntil",
@@ -106,7 +111,7 @@ export const NAMES_DEFAULT_SELECT_FIELDS = [
   "languageTag",
   "name",
   "nameKindId",
-  "sourceRefId",
+  "sourceId",
   "updatedAt",
   "validFrom",
   "validUntil",
@@ -122,7 +127,7 @@ export const NAMES_EDITABLE_FIELDS = [
   "languageTag",
   "name",
   "nameKindId",
-  "sourceRefId",
+  "sourceId",
   "validFrom",
   "validUntil",
 ] as const satisfies readonly NamesKey[];
@@ -160,6 +165,10 @@ export const NAMES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<NamesRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "nameKind",
+  ),
+  Q.createRelationKeyMapper<NamesRelationKey>().one(
+    () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
+    "source",
   ),
 ] as const;
 

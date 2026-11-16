@@ -8,7 +8,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Stable identity for a reusable, reviewed pattern definition.
  */
 @Entity({ schema: "reference", name: "patterns" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 export class PatternEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;

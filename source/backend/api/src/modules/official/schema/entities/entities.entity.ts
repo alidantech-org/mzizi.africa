@@ -19,7 +19,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Stable identity for one organization or legally identified entity; its names are stored in official.names.
  */
 @Entity({ schema: "official", name: "entities" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["kindId"])
 @Index(["registrationCountryId"])
 @Index(["sourceCitationId"])

@@ -24,7 +24,7 @@ sources:
     # support; switch back to the GitHub repository once that commit is published.
     official:
       repository: file:///home/alidante/Projects/personal/alidantech-org/codepot/packs
-      ref: f6efc2383cca00e7b1df6a1d67757ed1ee95a085
+      ref: c8bac0850ae3ed2a54dfc18d32b22fe81f96ca6d
       root: packs
     project: { path: dryv/packs }
 

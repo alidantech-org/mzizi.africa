@@ -56,6 +56,14 @@ export class RelationshipsRepository
     return await this.findByQuery(query, { relationshipKindId, deletedAt: IsNull() });
   }
 
+  /** Find relationships by source id, paged by the shared query. */
+  async findBySource(
+    query: BaseQueryDto<GeographyRelationshipsEntity>,
+    sourceId: NonNullable<GeographyRelationshipsEntity["sourceId"]>,
+  ): Promise<IFindAllResponse<GeographyRelationshipsEntity>> {
+    return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
+  }
+
   /** Find relationships by subject feature id, paged by the shared query. */
   async findBySubjectFeature(
     query: BaseQueryDto<GeographyRelationshipsEntity>,

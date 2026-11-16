@@ -15,7 +15,7 @@ This folder was emptied on 16 November 2026 so the seed inputs can be rebuilt fr
 seed/
 ├── manifest.yaml            registers files; never loads data (generated manifest.lock.yaml beside it)
 ├── codes: see source/schema/seed/codes.json (short names)
-├── data/<scope>/<domain>/<table>.csv            (or <table>/<label>.<table>.csv once a table grows)
+├── data/<scope>/<domain>/<usage folders...>/<table>.csv   (<label>.<table>.csv when several files feed one table)
 ├── sources/wbs|api/<scope>/<name>/manifest.yml           (+ modules/, examples/, NOTES.md)
 ├── mappings/<schema short>/<table short>/<scope>/<name>.yml
 ├── terms/<schema short>/<table short>/<scope>/<name>.yml
@@ -42,3 +42,21 @@ A table that gets large is split into a folder named for the table, holding part
 ## Geography classification and Kenya
 
 `geo.feature.kind` is one hierarchy (natural, built, administrative, cultural; kinds such as water body and river below them) written with `parent_code` in `values/geo.values.csv`. A feature stores its kind and the category follows from the hierarchy. Other questions have their own schemes: `geo.feature.function`, `geo.feature.reality`, relationship kind and system, geometry role and basis, name kind and identifier scheme. Kenya's first rows are in `data/ke/geo/`: the country feature, three names and three identifiers. The outline is a large input and is not seeded. The domain folder may use the schema short (`geo`).
+
+## Usage folders and where data comes from
+
+Between the domain and the file, folders group the data the way it reads best: `data/ke/geo/counties/`, `data/global/reference/values/`. The file name alone says which table it feeds (`names.csv`, or `geo.values.csv` for the values table); folders carry no other meaning and can be split further as they grow.
+
+Every real-world folder should say where its rows come from in a `_source.yaml` beside the CSV files. `status: verified` names a dataset (publisher, licence, url, a local copy and its sha256) and what to compare; `mzizi-manifest verify` then checks that every identifier is one the dataset has, names match the dataset, and, with `complete: true`, that no dataset feature is missing. `status: unverified` records that no dataset has been matched yet, and the command keeps reporting it. Do not seed a country's divisions from memory without saying so there.
+
+Kenya's administrative levels under `data/ke/geo/` are verified against real datasets with `mzizi-manifest verify` (each folder's `_source.yaml` names the dataset, licence, url and sha256; the dataset files live in `.data/datasets/`, outside git, and `verify` reports a folder as unavailable when its copy is missing):
+
+| folder | rows | dataset |
+|---|---|---|
+| `counties/` | 47 | OCHA COD-AB Kenya level 1, place codes by the IEBC |
+| `constituencies/` | 290 | OCHA COD-AB Kenya level 2, place codes by the IEBC |
+| `wards/` | 1450 | IEBC place codes for county assembly wards (American Red Cross, HDX) |
+| `sub-counties/` | 304 | Kenya Sub Counties (American Red Cross, HDX; DHIS2 ids) |
+| `provinces/` | 8 | unverified: general knowledge, no dataset matched yet |
+
+Each feature carries its IEBC place code (`KE-030`, `KE-027-144`, `KE-030-0787`: county, constituency and ward) as an identifier, plus the OCHA code, geoBoundaries id or DHIS2 id where the dataset gives one. Rows point at their dataset through `source_code` (`data/ke/source/sources.csv`, `data/global/source/publishers.csv`). Constituencies and sub-counties are different layers (290 and 304). Districts are not seeded: no dataset for them has been found.

@@ -20,7 +20,7 @@ import type { Url } from "#/modules/shared/schema/type/url.type.ts";
  * Stable published document identity; repeated captures retain independent retrieval history.
  */
 @Entity({ schema: "source", name: "documents" })
-@Index(["code"], { unique: true })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["sourceId"])
 @Index(["publisherId"])
 @Index(["kindId"])
