@@ -11,6 +11,7 @@
 import { group, rootStep, stages, step } from "./lib/exec.ts";
 import { root } from "./lib/paths.ts";
 import { select } from "./lib/projects.ts";
+import { checkBoundaries } from "./tasks/boundaries.ts";
 import * as dryv from "./tasks/dryv.ts";
 import { type QualityKind, qualitySteps } from "./tasks/quality.ts";
 import { type Mode, serve } from "./tasks/serve.ts";
@@ -91,6 +92,10 @@ export const commands: Record<string, Command> = {
   structure: {
     summary: "enforce folder layout, file headers and hard file size limits for manual code",
     run: () => checkStructure(),
+  },
+  boundaries: {
+    summary: "report import-boundary violations of packages and the engine (--strict fails on any)",
+    run: ({ rest }) => checkBoundaries(rest.includes("--strict")),
   },
   check: {
     summary: "format:check, lint, typecheck, structure and test",

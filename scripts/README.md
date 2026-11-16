@@ -27,6 +27,7 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 | `bun run typecheck`                       | mypy for Python; `tsc` for every TypeScript project                                                                                              |
 | `bun run test`                            | pytest, `bun test` and vitest                                                                                                                    |
 | `bun run structure`                       | folder layout, file headers and hard file size limits for hand-written code                                                                      |
+| `bun run boundaries`                      | report-only import-boundary check for packages and the engine (see ENGINE_RUNTIME_AND_PACKAGES); `-- --strict` fails on any violation          |
 | `bun run check`                           | `format:check`, `lint`, `typecheck`, `structure` and `test`                                                                                      |
 | `bun run check:all`                       | `check`, plus Dryv contract checks, the seed registry, `task validate` and the builds                                                            |
 | `bun run dryv:link`                       | links the local Dryv author and compiler into `dryv/node_modules`                                                                                |

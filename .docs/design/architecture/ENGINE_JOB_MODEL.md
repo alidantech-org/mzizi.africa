@@ -7,7 +7,7 @@ tags: [engine, packages, staging, agent, proposal]
 
 # Engine job model, packages and staging store
 
-**Status: proposal, 13 November 2026.** Nothing here is implemented unless stated. Decision record: [DEC-ENGINE-JOB-MODEL-20261113](../../decisions/DEC-ENGINE-JOB-MODEL-20261113.md). Work is tracked in the task group "Engine job model and package consolidation".
+**Status: proposal, 13 November 2026. Superseded in part, 16 November 2026:** the engine is now one runtime class and packages own their capabilities and adapters; see [ENGINE_RUNTIME_AND_PACKAGES](ENGINE_RUNTIME_AND_PACKAGES.md). The staging store and job vocabulary below still stand. Nothing here is implemented unless stated. Decision record: [DEC-ENGINE-JOB-MODEL-20261113](../../decisions/DEC-ENGINE-JOB-MODEL-20261113.md). Work is tracked in the task group "Engine job model and package consolidation".
 
 ## Why
 

@@ -45,5 +45,5 @@ These rules apply to **all hand-written code in this repository, in every langua
 
 - Python: `mypy --strict` with the pydantic plugin plus `disallow_any_explicit` and `disallow_any_generics`; ruff with annotation rules (including `ANN401`). Rust: `clippy -D warnings`, no `unwrap`/`expect` outside tests, no `serde_json::Value` in contracts. TypeScript: strict `tsc` with `noImplicitAny`, no `any`, Biome.
 - `bun run check` must pass, including `bun run structure` (hard file-size limits; split by responsibility, never raise the limit). Package roots hold only `__init__`/`mod`/`index` files; code sits in folders by responsibility.
-- Packages are pure libraries: no database or network knowledge, with side effects behind injected ports (see `.docs/design/architecture/ENGINE_JOB_MODEL.md`).
+- Packages are libraries with no database knowledge. They may own network and browser adapters, with side effects behind ports. A package keeps its code under `features/<capability>/` and exposes one orchestrator class (see `.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md`, a proposal).
 - Review checklist: any `dict`, `Any`, `any`, `Value`, inline regex or inline category list in a diff is a defect unless it sits in a parser, encoder or pattern module.
