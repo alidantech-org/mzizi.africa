@@ -1,5 +1,5 @@
 ---
-{id: TSK-CEAD0A06ABC2,name: Close the Dryv gaps that block the database design,type: task,status: planned,priority: medium,created_at: 2026-11-15T16:54:07.000Z,updated_at: 2026-11-15T16:54:07.000Z,order: 10240}
+{id: TSK-CEAD0A06ABC2,name: Close the Dryv gaps that block the database design,type: task,status: in-progress,priority: medium,created_at: 2026-11-15T16:54:07.000Z,updated_at: 2026-11-16T19:59:32.559Z,order: 10240,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-16T19:59:32.559Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-CEAD0A06ABC2/1794859172570-start,started_at: 2026-11-16T19:59:32.894Z}]}}}
 ---
 
 # Close the Dryv gaps that block the database design
@@ -24,3 +24,9 @@ The register lists fourteen gaps with evidence: no change-aware SQL, no Mongo dr
 On 15 November 2026 the API and engine contracts were authored (apps/api: auth, reference, geography, governance; apps/engine: jobs) as flat files, one per group, with Dryv queries, schema.fromQuery rows and policy stubs. The database app was replaced by a dedicated pgsql app for SQL generation. Stale tools were removed from dryv/tools. Gaps 15 to 24 were added to DRYV_GAPS; gaps 18 to 21 block five of the nine API queries from passing engine validation (the author compiler accepts them).
 
 On 15 November 2026 the api app (auth, reference, geography, governance) was generated through the NestJS packs: 788 files, `generate --check` clean, package typecheck clean, 3,296 generated tests pass and 15 fail. Dryv fixes landed in the Dryv repository (TSK-596E5D13DB78) and two local commits in the packs repository (TypeORM store support, null-safe invariants). Gaps 15 to 29 are updated in DRYV_GAPS; gap 27 (same-named schemas across groups) is the remaining generation blocker for a fully green generated test run.
+
+## Comments
+
+### 2026-11-16T20:13:50.054Z · PETER IRUNGU
+
+The local SQL and seed-schema pack sources now support geometry, index methods, generated columns, views and scheme tags. An isolated pgsql generation of the in-progress geography schema with these declarations passed, including real format-sql, a disposable PostGIS execution and a stable overwrite receipt. The in-progress geography source and generated files in this checkout were left to their owning task.

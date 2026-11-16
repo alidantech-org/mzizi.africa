@@ -3,7 +3,8 @@
 {%- macro qualified(schema) -%}{{ schema.facets.storage.namespace }}.{{ table_of(schema) }}{%- endmacro -%}
 {%- macro kind(field) -%}
 {%- set value = field.value -%}
-{%- if value.is.primitive -%}
+{%- if value.is.geometry -%}geometry
+{%- elif value.is.primitive -%}
   {%- set primitive = value.property.primitive -%}
   {%- if primitive.is.string and primitive.is.uuid -%}uuid
   {%- elif primitive.is.string -%}text
@@ -27,12 +28,13 @@
 {%- macro is_primary(storage, field) -%}
 {%- for key in storage.primary_key -%}{%- if key.raw == field.name.raw -%}yes{%- endif -%}{%- endfor -%}
 {%- endmacro -%}
-{%- macro managed(field) -%}{%- if field.mutation == 'system' -%}yes{%- endif -%}{%- endmacro -%}
+{%- macro managed(field) -%}{%- if field.mutation == 'system' or field.generated is not none -%}yes{%- endif -%}{%- endmacro -%}
 {%- macro alias_of(field) -%}{{ ((field.name.snake ~ '|') | replace('_id|', '_code')) | replace('|', '_code') }}{%- endmacro -%}
 {%- macro is_link(field) -%}{%- if field.relation is not none and field.relation.enforcement == 'foreign-key' -%}yes{%- endif -%}{%- endmacro -%}
 {%- macro json_type(field) -%}
 {%- set k = kind(field) | trim -%}
-{%- if k == 'boolean' -%}"boolean"
+{%- if k == 'geometry' -%}"object"
+{%- elif k == 'boolean' -%}"boolean"
 {%- elif k == 'integer' -%}"integer"
 {%- elif k == 'number' -%}"number"
 {%- else -%}"string"
@@ -56,12 +58,12 @@
       "x-table": {{ qualified(schema) | trim | tojson }},
       "x-primaryKey": [{% for key in storage.primary_key %}{{ key.snake | tojson }}{% if not loop.last %}, {% endif %}{% endfor %}],
 {%- set nk = namespace(has=false) -%}
-{%- for index in storage.indexes %}{% if index.unique and (index.fields | length) == 1 %}{% for item in index.fields %}{% if item.snake == 'code' %}{% set nk.has = true %}{% endif %}{% endfor %}{% endif %}{% endfor %}
+{%- for index in storage.indexes %}{% if index.unique and index.where is none and (index.fields | length) == 1 %}{% for item in index.fields %}{% if item.snake == 'code' %}{% set nk.has = true %}{% endif %}{% endfor %}{% endif %}{% endfor %}
       "x-naturalKey": [{% if nk.has %}"code"{% endif %}],
       "x-seedable": {{ 'true' if nk.has else 'false' }},
       "x-uniqueKeys": [
 {%- set firstkey = namespace(value=true) -%}
-{%- for index in storage.indexes %}{% if index.unique %}
+{%- for index in storage.indexes %}{% if index.unique and index.where is none %}
         {% if not firstkey.value %},{% endif %}{% set firstkey.value = false %}[{% for item in index.fields %}{{ item.snake | tojson }}{% if not loop.last %}, {% endif %}{% endfor %}]
 {%- endif %}{% endfor %}
       ],
@@ -136,7 +138,7 @@
 {%- endif %},
           "x-role": {% if (managed(field) | trim) or (nk.has and (is_primary(storage, field) | trim)) %}"system"{% elif nk.has and field.name.snake == 'code' %}"key"{% elif is_link(field) | trim %}"link"{% else %}"data"{% endif %}
 {%- if is_link(field) | trim %},
-          "x-link": { "tableId": {{ field.relation.target.schema.id | tojson }}, "column": {{ field.relation.target.field.snake | tojson }}, "alias": {{ alias_of(field) | trim | tojson }} }
+          "x-link": { "tableId": {{ field.relation.target.schema.id | tojson }}, "column": {{ field.relation.target.field.snake | tojson }}, "alias": {{ alias_of(field) | trim | tojson }}{% for tag in field.tags %}{% if (tag | string)[:7] == 'scheme:' %}, "scheme": {{ (tag | string)[7:] | tojson }}{% endif %}{% endfor %} }
 {%- endif %}
         }
 {%- endif %}{% endfor %}

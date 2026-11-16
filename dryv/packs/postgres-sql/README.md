@@ -17,3 +17,12 @@ replacement. Null comparisons emit IS NULL / IS NOT NULL. Boolean, arithmetic an
 rules render from the canonical expression tree up to five levels; unsupported operators,
 structured literals and storage constraint kinds fail explicitly. Cross-store references never
 become SQL foreign keys. Decimal precision/scale comes from canonical property constraints.
+
+Spatial fields use the authored shape, dimensions and SRID. The pack enables PostGIS before
+creating spatial tables, emits the selected index access method, and renders stored envelope,
+centroid and area columns. `schema.views` emits views after the source tables and indexes exist.
+
+Use one `scheme:<code>` tag on a foreign key to `reference.Value`. The SQL snapshot checks the
+value's scheme on insert or update of the link. It also protects a used value from changing
+scheme and a used scheme from changing code. The seed schema publishes the expected scheme in
+`x-link.scheme`. Generated columns appear as system-managed fields in the seed schema.
