@@ -15,15 +15,19 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-from mzizi_crawler.shared.bundles import sections
 from mzizi_crawler.shared.bundles.bundle import Bundle
 from mzizi_crawler.shared.bundles.effective import effective_modules
 from mzizi_crawler.shared.scraping import extract, parse_module, transforms
-from mzizi_manifest.shared.paths import SCHEMA_ROOT, SEED_ROOT
+from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
-SCHEMA_DIR = SCHEMA_ROOT / "site" / "v1"
-CONTRACTS = SCHEMA_ROOT / "contracts"
-TAG_VOCABULARY = SEED_ROOT / "global" / "reference" / "site-tags.json"
+SCHEMA_FOLDERS = ("sources", "mapping")
+DATABASE_SCHEMAS = SCHEMA_ROOT / "database"
+#: Which schema file validates which part of a bundle.
+SCHEMA_FILES = {
+    "manifest": "sources/source.schema.json",
+    "module": "sources/module.schema.json",
+    "mapping": "mapping/mapping.schema.json",
+}
 
 SECRET_PATTERNS = [
     (
@@ -54,29 +58,35 @@ class Report:
 
 def _registry() -> Registry:
     registry: Registry = Registry()
-    for path in SCHEMA_DIR.glob("*.json"):
-        schema = json.loads(path.read_text())
-        registry = registry.with_resource(
-            f"https://mzizi.africa/schemas/site/v1/{path.stem.replace('.schema', '')}", Resource.from_contents(schema)
-        )
-        registry = registry.with_resource(path.name, Resource.from_contents(schema))
+    for folder in SCHEMA_FOLDERS:
+        for path in (SCHEMA_ROOT / folder).glob("*.schema.json"):
+            schema = json.loads(path.read_text())
+            registry = registry.with_resource(schema["$id"], Resource.from_contents(schema))
     return registry
 
 
 def _validator(name: str) -> Draft202012Validator:
-    schema = json.loads((SCHEMA_DIR / f"{name}.schema.json").read_text())
+    schema = json.loads((SCHEMA_ROOT / SCHEMA_FILES[name]).read_text())
     return Draft202012Validator(schema, registry=_registry(), format_checker=Draft202012Validator.FORMAT_CHECKER)
 
 
-def vocabulary() -> set[str]:
-    """Known tags as `namespace:value`, from the site-tag classification seed."""
-    rows = json.loads(TAG_VOCABULARY.read_text())["rows"]
-    return {row["values"]["label"] for row in rows if row["entity"] == "ClassificationRecordEntity"}
+def _rank_validator() -> Draft202012Validator:
+    """Ranking rules are the `rank` block of a website source; a standalone rules file has the same shape."""
+    website = json.loads((SCHEMA_ROOT / "sources" / "website.schema.json").read_text())
+    return Draft202012Validator(website["properties"]["rank"], registry=_registry())
 
 
 def targets() -> dict[str, dict]:
-    path = CONTRACTS / "targets.json"
-    return json.loads(path.read_text()) if path.exists() else {}
+    """Every stored table as `schema.table`, with its column names and required columns, from the generated schemas."""
+    found: dict[str, dict] = {}
+    for path in sorted(DATABASE_SCHEMAS.glob("*.schema.json")):
+        for table in json.loads(path.read_text())["tables"]:
+            columns = table["columns"]
+            found[table["table"]] = {
+                "fields": [column["name"] for column in columns],
+                "required": [column["name"] for column in columns if column["required"]],
+            }
+    return found
 
 
 def _schema_errors(validator: Draft202012Validator, document: Any, where: str) -> list[str]:
@@ -86,23 +96,9 @@ def _schema_errors(validator: Draft202012Validator, document: Any, where: str) -
     ]
 
 
-def _collect_tags(value: Any) -> list[str]:
-    found: list[str] = []
-    if isinstance(value, dict):
-        for key, item in value.items():
-            if key == "tags" and isinstance(item, list):
-                found.extend(t for t in item if isinstance(t, str))
-            else:
-                found.extend(_collect_tags(item))
-    elif isinstance(value, list):
-        for item in value:
-            found.extend(_collect_tags(item))
-    return found
-
-
 def validate_ranking(document: object) -> list[str]:
     """Validate a standalone ranking rules file, including that every target exists in the targets contract."""
-    problems = _schema_errors(_validator("ranking"), document, "ranking.yml")
+    problems = _schema_errors(_rank_validator(), document, "ranking.yml")
     if problems or not isinstance(document, dict):
         return problems
     known = targets()
@@ -118,11 +114,46 @@ def module_errors(document: object, where: str) -> list[str]:
     return _schema_errors(_validator("module"), document, where)
 
 
+def _mapping_problems(where: str, mapping: dict, known: dict[str, dict]) -> list[str]:
+    """Check a mapping's tables, columns, references and inputs against the generated database schemas."""
+    problems: list[str] = []
+    inputs, aliases = set(mapping.get("inputs", [])), {y.get("as") for y in mapping.get("yields", [])}
+    for item in mapping.get("yields", []):
+        table = known.get(item.get("table", ""))
+        if table is None:
+            problems.append(f"{where}: {item.get('table')!r} is not a stored table")
+            continue
+        columns, fields = set(table["fields"]), item.get("fields", {})
+        for column in [*fields, *item.get("key", [])]:
+            if column not in columns:
+                problems.append(f"{where}: {item['table']} has no column {column!r}")
+        for column in item.get("key", []):
+            if column not in fields:
+                problems.append(f"{where}: key {column!r} of {item['as']!r} is not a mapped field")
+        for column, spec in fields.items():
+            if "from" in spec and spec["from"] not in inputs:
+                problems.append(f"{where}: field {column!r} reads {spec['from']!r}, which is not in inputs")
+            if "ref" in spec and spec["ref"].split(".")[0] not in aliases:
+                problems.append(
+                    f"{where}: field {column!r} references {spec['ref']!r}, which is not a yield of this mapping"
+                )
+            lookup = spec.get("lookup")
+            if lookup:
+                target = known.get(lookup.get("table", ""))
+                if target is None or lookup.get("by") not in target["fields"]:
+                    problems.append(f"{where}: lookup {lookup.get('table')}.{lookup.get('by')} is not a stored column")
+                if "from" in lookup and lookup["from"] not in inputs:
+                    problems.append(f"{where}: lookup reads {lookup['from']!r}, which is not in inputs")
+            if "transform" in spec and not transforms.known(spec["transform"]):
+                problems.append(f"{where}: unknown transform {transforms.split(spec['transform'])[0]!r}")
+    return problems
+
+
 def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True) -> Report:
     report = Report(errors=list(bundle.errors))
     if report.errors:
         return report
-    manifest, vocab, known_targets = bundle.manifest, vocabulary(), targets()
+    manifest, known_targets = bundle.manifest, targets()
 
     # 1. JSON Schema
     report.errors += _schema_errors(_validator("manifest"), manifest, "manifest.yml")
@@ -132,32 +163,19 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
             report.errors.append(f"modules/{name}.yml: module name {module.get('module')!r} must equal the file name")
     for name, mapping in bundle.mappings.items():
         report.errors += _schema_errors(_validator("mapping"), mapping, f"mappings/{name}.yml")
-        if mapping.get("mapping") != name:
-            report.errors.append(
-                f"mappings/{name}.yml: mapping name {mapping.get('mapping')!r} must equal the file name"
-            )
-    if bundle.tags:
-        report.errors += _schema_errors(_validator("tags"), bundle.tags, "tags.yml")
-    if bundle.ranking:
-        report.errors += _schema_errors(_validator("ranking"), bundle.ranking, "ranking.yml")
-        known = targets()
-        for rule in bundle.ranking.get("rules", []) if isinstance(bundle.ranking, dict) else []:
-            if rule.get("target") not in known:
-                report.errors.append(f"ranking.yml: unknown target {rule.get('target')!r}")
-    if bundle.sections:
-        report.errors += _schema_errors(_validator("sections"), bundle.sections, "sections.yml")
-        if not report.errors:
-            report.errors += sections.validate_sections(bundle.sections)
+        if mapping.get("code") != name:
+            report.errors.append(f"mappings/{name}.yml: mapping code {mapping.get('code')!r} must equal the file name")
+    report.errors += validate_ranking(bundle.ranking or manifest.get("rank") or {"rules": []})
     if report.errors:
         return report
 
     # 2. Static checks
     extends = manifest.get("extends")
-    if extends and manifest.get("kind") == "family":
-        report.errors.append("manifest.yml: a family cannot extend another family (one level of inheritance only)")
+    if extends and manifest.get("abstract"):
+        report.errors.append("manifest.yml: an abstract family cannot extend another (one level of inheritance only)")
     if extends and family is None:
         report.warnings.append(
-            f"extends {extends['family']} but no family bundle was supplied; inherited modules were not checked"
+            f"extends {extends} but no family bundle was supplied; inherited modules were not checked"
         )
     modules = effective_modules(bundle, family)
     for name in manifest["modules"]:
@@ -173,36 +191,22 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
         if name not in bundle.modules:
             report.errors.append(f"overlay names module {name!r} but modules/{name}.yml does not exist")
     for name, mapping in bundle.mappings.items():
-        if "module" not in mapping and "extractor" not in mapping:
-            report.errors.append(
-                f"mappings/{name}.yml: needs a module (structure mapping) or an extractor (dataset import)"
+        report.errors += _mapping_problems(f"mappings/{name}.yml", mapping, known_targets)
+    for name, module in modules.items():
+        named = module.get("mapping")
+        if named and named not in {mapping.get("code") for mapping in bundle.mappings.values()}:
+            report.warnings.append(
+                f"module {name}: mapping {named!r} is not in this bundle (resolved by code elsewhere)"
             )
-        elif "module" in mapping and mapping["module"] not in modules:
-            report.errors.append(f"mappings/{name}.yml: module {mapping['module']!r} does not exist")
-        target = known_targets.get(mapping["target_kind"])
-        if known_targets and target is None:
-            report.errors.append(f"mappings/{name}.yml: target {mapping['target_kind']!r} is not a stored table")
-        elif target:
-            for key in mapping["fields"]:
-                if key not in target["fields"]:
-                    report.errors.append(f"mappings/{name}.yml: {mapping['target_kind']} has no field {key!r}")
-            for key in mapping["key"]:
-                if key not in mapping["fields"]:
-                    report.errors.append(f"mappings/{name}.yml: key {key!r} is not a mapped field")
-            missing = [f for f in target["required"] if f not in mapping["fields"] and f not in ("isCurrent",)]
+        if named and named in bundle.mappings:
+            missing = [
+                f
+                for f in bundle.mappings[named].get("inputs", [])
+                if f not in module.get("extract", {}).get("fields", {})
+            ]
             if missing:
-                report.warnings.append(
-                    f"mappings/{name}.yml: required fields not mapped (supplied by the engine or defaults?): {', '.join(missing)}"
-                )
-        module_fields = set(modules.get(mapping.get("module", ""), {}).get("extract", {}).get("fields", {}))
-        for key, spec in mapping["fields"].items():
-            if "from" in spec and module_fields and spec["from"].split(".")[0] not in module_fields:
                 report.errors.append(
-                    f"mappings/{name}.yml: field {key!r} reads {spec['from']!r}, which module {mapping['module']!r} does not extract"
-                )
-            if "transform" in spec and not transforms.known(spec["transform"]):
-                report.errors.append(
-                    f"mappings/{name}.yml: unknown transform {transforms.split(spec['transform'])[0]!r}"
+                    f"module {name}: mapping {named!r} reads fields it does not extract: {', '.join(missing)}"
                 )
     for name, module in modules.items():
         for field_name, spec in module.get("extract", {}).get("fields", {}).items():
@@ -210,29 +214,11 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
                 report.errors.append(
                     f"module {name}: field {field_name}: unknown transform {transforms.split(spec['parse'])[0]!r}"
                 )
-        if module.get("fetch", {}).get("resource") == "html" and manifest.get("fetch", {}).get("mode") == "api":
-            report.warnings.append(f"module {name}: html resource in an api-mode site")
-
-    proposed = {entry["tag"] for entry in bundle.tags.get("tags", [])} if bundle.tags else set()
-    namespaces = {tag.split(":")[0] for tag in vocab}
-    for tag in {
-        *_collect_tags(manifest),
-        *[t for m in modules.values() for t in _collect_tags(m)],
-        *[t for m in bundle.mappings.values() for t in _collect_tags(m)],
-    }:
-        if tag in vocab or tag in proposed:
-            continue
-        report.errors.append(
-            f"unknown tag {tag!r}"
-            + (
-                " (the namespace is known; add it to tags.yml to propose a new value)"
-                if tag.split(":")[0] in namespaces
-                else " (unknown namespace)"
-            )
-        )
-    for tag in proposed:
-        if tag.split(":")[0] not in namespaces:
-            report.errors.append(f"tags.yml proposes {tag!r} in an unknown namespace")
+        if module.get("fetch", {}).get("resource") == "html" and manifest.get("kind") == "api":
+            report.warnings.append(f"module {name}: html resource in an api source")
+        endpoint = module.get("discover", {}).get("endpoint", {}).get("name")
+        if endpoint and endpoint not in (manifest.get("api") or {}).get("endpoints", {}):
+            report.errors.append(f"module {name}: endpoint {endpoint!r} is not declared in the source's api.endpoints")
 
     # 3. Secrets, notes, scope
     for path, text in bundle.files.items():
@@ -247,7 +233,7 @@ def validate(bundle: Bundle, family: Bundle | None = None, run_dry: bool = True)
         report.errors.append("NOTES.md is missing or too short: record findings, gaps and limitations")
     scope = manifest["policy"]["scope"]
     for name, module in modules.items():
-        for key in ("listing", "api"):
+        for key in ("listing",):
             url = module.get("discover", {}).get(key, {}).get("url", "")
             allow = scope.get("paths", {}).get("allow")
             if url.startswith("/") and allow and not any(url.startswith(prefix) for prefix in allow):

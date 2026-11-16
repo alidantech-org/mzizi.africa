@@ -152,6 +152,19 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
+    "$schema": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional link to the schema, for editors.",
+      "title": "$Schema"
+    },
     "kind": {
       "$ref": "#/$defs/NonEmpty"
     },

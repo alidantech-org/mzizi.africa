@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../bootstrap.schema.json
+# Example first-administrator definition. The identity is never stored; these are variable names.
+role: admin
+scope: platform
+identity:
+  issuer_env: AUTH_BOOTSTRAP_ISSUER
+  subject_env: AUTH_BOOTSTRAP_SUBJECT
+  display_name_env: AUTH_BOOTSTRAP_NAME

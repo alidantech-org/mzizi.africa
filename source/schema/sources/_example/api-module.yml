@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../module.schema.json
+module: countries
+mapping: global.reference.countries
+discover:
+  endpoint: { name: countries }
+extract:
+  fields:
+    code: { from: { jsonpath: "$.iso2" } }
+    name: { from: { jsonpath: "$.name" } }
+expect: { min_items: 1, required_fields: [code, name] }

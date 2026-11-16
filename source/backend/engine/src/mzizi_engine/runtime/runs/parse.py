@@ -18,6 +18,9 @@ class StageInput(Frozen):
 
 
 class JobInput(JobFields):
+    schema_link: Annotated[
+        str | None, Field(alias="$schema", description="Optional link to the schema, for editors.")
+    ] = None
     stages: Annotated[tuple[StageInput, ...], Field(min_length=1)]
 
 
@@ -38,7 +41,7 @@ def parse_job_spec(data: str | bytes, registry: OperationRegistry) -> JobSpec:
         except ValidationError as problem:
             raise ValueError(f"Invalid parameters for {stage.operation!r}: {problem}") from problem
         stages.append(StageSpec(operation=stage.operation, params=params))
-    fields = JobFields.model_validate(wire.model_dump(exclude={"stages"}))
+    fields = JobFields.model_validate(wire.model_dump(exclude={"stages", "schema_link"}))
     return JobSpec(
         spec_version=fields.spec_version,
         kind=fields.kind,

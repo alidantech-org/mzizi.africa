@@ -11,7 +11,10 @@
 | `vocabulary/` | `web.schema.json` and `web.yaml` (web classification data read by `mzizi-fetch`), and `terms.schema.json` (named term lists). | `web.schema.json` is generated from the typed model; a test keeps it in sync. |
 | `engine/` | `job.schema.json`: the job spec the engine parses. | Generated from the typed model; `MZIZI_WRITE_SCHEMAS=1 uv run pytest source/backend/engine/tests/runs/test_job_schema.py` regenerates it. |
 | `extraction/` | `table.schema.json`: optional expected columns for PDF table comparison. | Hand-written. |
-| `site/v1/`, `contracts/` | The previous site-bundle schemas, target catalogue and hand-kept exchange schema. | **Being replaced.** The crawler's bundle validator still reads `site/v1/` and `targets.json`; they are removed when that validator moves to `sources/` and `database/`. |
+
+Every folder has an `_example/` folder with valid documents. Each example names the schema it defines, so an editor validates it: YAML files start with `# yaml-language-server: $schema=<relative path>` and JSON files carry a `"$schema"` key. Real files should do the same. `database/_example/` shows seed CSV files and their path rule.
+
+The previous site-bundle schemas (`site/v1/`), target catalogue and hand-kept exchange schema were retired on 16 November 2026; copies are in `.dev/archives/schema-retired/` on the machine that removed them and in Git history. The crawler's bundle validator now reads `sources/`, `mapping/` and the generated `database/` schemas.
 
 `bun run catalog` regenerates `database/`. Change contract-derived files through `dryv/`. Change SQL through reviewed releases. Do not copy publisher- or country-specific values into these generic schemas.
 

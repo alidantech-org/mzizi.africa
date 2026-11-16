@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../source.schema.json
+# Example API source: a public statistics API. Credentials are named, never stored.
+code: global.example-statistics-api
+kind: api
+title: Example statistics API
+publisher: global.example-statistics
+uses:
+  mappings: [global.reference.countries]
+policy:
+  assessment: { ref: assess-example-statistics }
+  scope:
+    hosts: [api.example.org]
+    schemes: [https]
+    paths: { allow: [/v1/] }
+  rate: { requests_per_second: 1, max_concurrency: 2 }
+  identify: { user_agent: "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)" }
+  robots: respect
+  auth: binding
+api:
+  base_url: https://api.example.org
+  auth: { binding: example-statistics-key, placement: header, parameter: X-Api-Key }
+  headers: { Accept: application/json }
+  endpoints:
+    countries:
+      method: GET
+      path: /v1/countries
+      query: { per_page: 100 }
+      items: { jsonpath: "$.data[*]" }
+      paginate: { type: query, param: page, start: 1, max_pages: 10, stop_when: empty_items }
+      describe: One row per country.

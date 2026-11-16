@@ -38,7 +38,6 @@ class RankRule(External):
 
 
 class RankingRules(External):
-    schema_version: str = Field(default="mzizi.ranking/v1", alias="schema")
     rules: tuple[RankRule, ...] = ()
 
 

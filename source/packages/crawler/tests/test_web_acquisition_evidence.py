@@ -15,7 +15,7 @@ from mzizi_crawler.features.crawl_site.crawl_site import crawl_site
 from mzizi_crawler.features.replay.replay import ReplayRequest, ReplaySuite, replay
 from mzizi_crawler.shared.requests import CrawlRequest, Render
 
-FIXTURE = Path(__file__).resolve().parents[4] / "seed" / "_fixtures" / "extraction" / "web-replay"
+FIXTURE = Path(__file__).resolve().parent / "fixtures" / "web-replay"
 REPORTS = TypeAdapter(tuple[ListingReport, ...])
 
 

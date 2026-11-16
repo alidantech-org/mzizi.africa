@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../module.schema.json
+module: documents
+mapping: documents
+discover:
+  listing:
+    url: /publications/documents
+    items:
+      - { css: "article.pub", confidence: 0.95 }
+    paginate: { type: query, param: page, start: 1, max_pages: 20, stop_when: empty_items }
+fetch: { resource: pdf }
+extract:
+  fields:
+    title:     { from: link_text }
+    href:      { from: link_href }
+    slug:      { from: link_href, regex: "/([a-z0-9-]+)\\.pdf$" }
+    published: { from: { css: ".date" }, parse: { date: "%d %B %Y" } }
+expect: { min_items: 3, required_fields: [title, href] }

@@ -23,8 +23,8 @@ def test_ranked_attachment_selection_reserves_bytes_and_tracks_reviewed_value(si
     crawl_site(CrawlRequest(url=site + "/list", out_dir=str(source), max_depth=0, delay=0, sitemap=False))
     rules = tmp_path / "rules.yaml"
     rules.write_text(
-        "schema: mzizi.ranking/v1\nrules:\n"
-        "  - target: finance.transfers\n    label: Annual budget\n"
+        "rules:\n"
+        "  - target: finance.flows\n    label: Annual budget\n"
         "    conditions: [{signal: nearby_heading, contains: [annual budget]}]\n",
     )
     review = tmp_path / "review.json"
@@ -68,7 +68,7 @@ def test_attachment_size_unknown_private_host_and_file_cap_are_explicit(
     crawl_site(CrawlRequest(url=site + "/list", out_dir=str(folder), max_depth=0, delay=0, sitemap=False))
     rules = tmp_path / "rules.yaml"
     rules.write_text(
-        "schema: mzizi.ranking/v1\nrules:\n  - target: source.documents\n"
+        "rules:\n  - target: source.documents\n"
         "    label: Documents\n    conditions: [{signal: extension, contains: [pdf]}]\n",
     )
     request = AttachmentRequest(
@@ -115,7 +115,7 @@ def test_an_html_error_at_an_attachment_url_is_reported_before_useful_accounting
     crawl_site(CrawlRequest(url=site + "/list", out_dir=str(folder), max_depth=0, delay=0, sitemap=False))
     rules = tmp_path / "rules.yaml"
     rules.write_text(
-        "schema: mzizi.ranking/v1\nrules:\n  - target: source.documents\n"
+        "rules:\n  - target: source.documents\n"
         "    label: Documents\n    conditions: [{signal: extension, contains: [pdf]}]\n",
     )
     review = tmp_path / "review.json"

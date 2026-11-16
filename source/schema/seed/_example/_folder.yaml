@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../folder.schema.json
+# Example folder descriptor for a country folder; children inherit these facts.
+description: Kenya-specific seed inputs.
+scope: { kind: jurisdiction, code: ke }
+role: seed_input
+acquisition_class: static_curated
+preparation: human_and_ai_assisted
+access: internal
+review: { status: needs_review, note: Prepared with an AI assistant; confirm before registration. }

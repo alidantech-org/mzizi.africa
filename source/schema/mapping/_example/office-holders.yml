@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../mapping.schema.json
+# Example mapping: one extracted row yields an individual and the holding of an office.
+code: ke.official.office-holders
+describe: A person holding a public office for a period, as listed on an official page.
+inputs: [slug, name, office_code, start_date]
+yields:
+  - as: person
+    table: official.individuals
+    key: [code]
+    fields:
+      code: { from: slug }
+  - as: holder
+    table: governance.holders
+    key: [individual_id, office_id]
+    fields:
+      individual_id: { ref: person.id }
+      office_id:     { lookup: { table: governance.offices, by: code, from: office_code } }
+      started_on:    { from: start_date, precision: exact }
+provenance: { method: extracted, locator: { page: $page } }
+expect: { min_rows: 1, required_fields: [slug, office_code] }

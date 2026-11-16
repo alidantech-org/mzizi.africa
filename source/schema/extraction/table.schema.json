@@ -8,6 +8,10 @@
     "columns"
   ],
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional link to this schema, for editors."
+    },
     "header_rows": {
       "type": "integer",
       "minimum": 1,

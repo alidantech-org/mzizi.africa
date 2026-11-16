@@ -1,0 +1,26 @@
+{
+  "$schema": "../job.schema.json",
+  "spec_version": 1,
+  "kind": "collection",
+  "name": "example-ministry-publications",
+  "sources": [
+    {
+      "url": "https://www.example.org/publications/",
+      "authority_ref": "ke.example-ministry"
+    }
+  ],
+  "mode": "crawl",
+  "limits": {
+    "max_requests": 200,
+    "max_seconds": 600
+  },
+  "stages": [
+    {
+      "operation": "scraping.crawl",
+      "params": {
+        "url": "https://www.example.org/publications/",
+        "out_dir": "./output"
+      }
+    }
+  ]
+}

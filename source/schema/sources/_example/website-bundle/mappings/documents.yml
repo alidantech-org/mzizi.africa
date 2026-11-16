@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../mapping/mapping.schema.json
+code: documents
+describe: A publication listed on the ministry page becomes a source document.
+inputs: [title, href, slug, published]
+yields:
+  - as: document
+    table: source.documents
+    key: [code]
+    fields:
+      code:          { from: slug }
+      title:         { from: title }
+      canonical_url: { from: href }
+      published_on:  { from: published }
+      kind_id:       { lookup: { table: reference.values, by: code, const: source.document-kind.report } }
+provenance: { method: extracted, locator: { page: $page, item: $item_index } }
+expect: { min_rows: 3, required_fields: [code, title] }

@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../terms.schema.json
+code: ke.office-patterns
+describe: Words that mark a public office in Kenyan sources.
+terms:
+  - { value: governor, aliases: [county governor], meaning: Head of a county executive }
+  - { value: senator, meaning: Member of the Senate }

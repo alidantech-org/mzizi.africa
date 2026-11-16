@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../source.schema.json
+# Example website source: a small publications page on a government site.
+code: ke.example-ministry
+kind: website
+title: Example ministry publications
+description: Documents the ministry publishes under /publications/.
+tags: [purpose:publications]
+fetch: { mode: http }
+modules: [documents]
+uses:
+  vocabularies: [ke.office-patterns]
+policy:
+  assessment: { ref: assess-example-ministry }
+  licence: { ref: ogl, source: "https://example.org/terms" }
+  scope:
+    hosts: [www.example.org]
+    schemes: [https]
+    paths: { allow: [/publications/], deny: [/admin, /login] }
+  rate: { requests_per_second: 0.5, max_concurrency: 1 }
+  retries: { max: 2, backoff: exponential_jitter }
+  limits: { max_response_bytes: 10485760, timeout_seconds: 30 }
+  identify: { user_agent: "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)" }
+  robots: respect
+  auth: none
+  stop_on: ["401", "403", "429", repeated_5xx, access_challenge]
+  purposes: [research]
+rank:
+  rules:
+    - target: source.documents
+      label: report
+      conditions:
+        - { signal: anchor_text, contains: [report, estimates], weight: 2 }
+        - { signal: extension, contains: [pdf] }

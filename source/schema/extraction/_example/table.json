@@ -1,0 +1,27 @@
+{
+  "$schema": "../table.schema.json",
+  "header_rows": 1,
+  "columns": [
+    {
+      "name": "County",
+      "aliases": [
+        "County name"
+      ],
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "Allocation",
+      "type": "quantity",
+      "units": [
+        "KES",
+        "KSh"
+      ],
+      "required": true
+    },
+    {
+      "name": "Year",
+      "type": "integer"
+    }
+  ]
+}

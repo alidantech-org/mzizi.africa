@@ -191,8 +191,8 @@ def draft_bundle(request: DraftRequest) -> DraftResult:
                 }
                 break
     manifest = {
-        "schema": "mzizi.site/v1",
-        "site": request.site or profile.host.replace(".", "-"),
+        "code": request.site or profile.host.replace(".", "-"),
+        "kind": "website",
         "fetch": {"mode": "browser" if request.browser else "http"},
         "modules": sorted(modules),
         "policy": {

@@ -18,8 +18,6 @@ class Bundle:
     manifest: dict[str, Any] = field(default_factory=dict)
     modules: dict[str, dict] = field(default_factory=dict)
     mappings: dict[str, dict] = field(default_factory=dict)
-    tags: dict[str, Any] = field(default_factory=dict)
-    sections: dict[str, Any] = field(default_factory=dict)
     ranking: dict[str, Any] = field(default_factory=dict)
     examples: dict[str, str] = field(default_factory=dict)
     notes: str = ""
@@ -49,12 +47,8 @@ def from_files(root: str, files: dict[str, str]) -> Bundle:
             bundle.modules[Path(path).stem] = _parse(path, text, bundle.errors) or {}
         elif path.startswith("mappings/") and path.endswith(".yml"):
             bundle.mappings[Path(path).stem] = _parse(path, text, bundle.errors) or {}
-        elif path == "tags.yml":
-            bundle.tags = _parse(path, text, bundle.errors) or {}
         elif path == "ranking.yml":
             bundle.ranking = _parse(path, text, bundle.errors) or {}
-        elif path == "sections.yml":
-            bundle.sections = _parse(path, text, bundle.errors) or {}
         elif path == "NOTES.md":
             bundle.notes = text
         elif path.startswith("examples/"):
