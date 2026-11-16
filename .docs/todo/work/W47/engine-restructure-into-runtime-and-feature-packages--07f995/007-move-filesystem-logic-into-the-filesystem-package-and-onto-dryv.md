@@ -1,5 +1,5 @@
 ---
-{id: TSK-EC2E2EB98972,name: Move filesystem logic into the filesystem package and onto Dryv,type: task,status: in-progress,priority: medium,created_at: 2026-11-16T07:35:54.303Z,updated_at: 2026-11-16T07:48:52.462Z,order: 7168,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-16T07:48:52.462Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-EC2E2EB98972/1794815332464-start,started_at: 2026-11-16T07:48:52.696Z}]}}}
+{id: TSK-EC2E2EB98972,name: Move filesystem logic into the filesystem package and onto Dryv,type: task,status: in-progress,priority: medium,created_at: 2026-11-16T07:35:54.303Z,updated_at: 2026-11-16T07:58:41.732Z,order: 7168,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-16T07:48:52.462Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-EC2E2EB98972/1794815332464-start,started_at: 2026-11-16T07:48:52.696Z}]}}}
 ---
 
 # Move filesystem logic into the filesystem package and onto Dryv
@@ -14,13 +14,13 @@ Today `mzizi_filesystem` is a small pure library (about 690 lines: store, keys, 
 
 ## Milestone 1: schema and ports
 
-- [x] The engine persists through an adapter over the Dryv-generated row models and the current seven tables (Dryv generates no Python repositories yet); the old SQL and the three vanished relations are gone.
+- [ ] The engine persists through an adapter over the Dryv-generated row models and the current seven tables (Dryv generates no Python repositories yet); the old SQL and the three vanished relations are gone.
 - [x] The package defines the registry repository port, typed records, a configuration contract and task-driven placement planning, with no database knowledge.
 
-## Milestone 2: logic move
+## Milestone 2: logic move (2a package logic, 2b engine adapter and deletion)
 
-- [ ] Transitions, lineage, authorisation decisions, uploads and sync planning move into `features/` folders with one orchestrator and tests.
-- [ ] The engine binds the ports to the generated repositories and `repository.py`, `service.py`, `sync.py` and `reset.py` are deleted.
+- [x] 2a: Registering bytes (placement, versions, retention, duplicates, name conflicts, recovery) and lineage (relations, ancestry, cycle refusal) are in `features/register` and `features/lineage` over the repository port, with tests and no database.
+- [ ] 2b: The engine implements the port over the Dryv row models; transitions (move, rename, access change), the sync planner and authorisation are rebuilt on the current schema or dropped; `repository.py`, `service.py`, `sync.py`, `reset.py` and the other old modules are deleted.
 
 ## Milestone 3: routes and cleanup
 
@@ -51,3 +51,7 @@ Nothing has been moved or deleted. A decision on the approach is needed before m
 **Milestone 1 done.** New in `mzizi_filesystem`: `shared/contracts.py` (Access, Retention, folder, file and version records, new-folder), `shared/config.py` (`FilesystemConfig`: bucket, region, public endpoint, protected prefixes, reserved roots, temp prefix: all supplied by the caller), `features/registry/ports.py` (`FolderLookup`, `RegistryRepository`), and `features/placement/` (`Placement`, `plan_placement`: reuse existing folders, plan missing ones, derive codes, refuse bad names and reserved roots, require a recorded authorization when a new folder's access differs from its parent's; this access rule is my reading of the Dryv description and needs confirming). 12 package tests, ruff, mypy strict pass. The existing modules are untouched.
 
 **Hard-coded filesystem knowledge still to remove (found in this survey).** In the package: `access.py` (`BUCKET="mzizi"`, `REGION`), `keys.py` (`RESERVED_ROOTS`, `PROTECTED_PREFIXES="public/raw/"`, `TMP_PREFIX`), `store.py` (`MemoryObjectStore` default public host `res.alidantech.org`), `catalog.py` (reads a fixed seed path; extension table `EXTRA`). In the engine: bucket and prefixes in `filesystem/livecheck.py`, `secure.py`, `uploads.py`, and the `mzizi_new` schema names throughout. They become `FilesystemConfig` values or manifest data in milestone 2.
+
+**Milestone 2a done (16 November 2026).** In `mzizi_filesystem`: `features/register/` (`Registrar`, `RegisterRequest`, `RegisterResult`, name-conflict and duplicate policies, `holds` and `write` storage helpers) and `features/lineage/` (`relate` with cycle refusal, `ancestry`, `derivatives`), plus the port additions (`create_file`, `add_version`, `set_current_version`, `get_version`, `repoint_version`, `retire_version`, `find_same_content`, relations) and `NewFile`, `NewVersion`, `RelationRecord`. Ported from the old `FilesystemService.register`: hashing, content-type check, same-bytes-unchanged with recovery of a missing object, name-conflict and duplicate policies, archive key for a superseded revision, pinned and replace-current retention, refusing to overwrite unknown bytes, server-side copy of duplicates within an access class, protected prefixes from configuration, dry run. Bytes are stored and verified before the rows are written in one transaction. Dropped on purpose because the current schema has no place for them: the folder classification ("effective") resolution and mandatory-classification block, and provenance fields derived from it; provenance is now the caller's `dict[str, str]`. Authorisation is not in the package: who may register is the engine's decision. 21 package tests (in-memory registry and store), ruff, mypy strict pass.
+
+Not yet done (2b): the engine adapter; moves, renames and access changes (the old `transitions.py`); the seed sync planner; upload sessions (the schema has none; presigned uploads need a decision); the remaining hard-coded values; the package root restructure. Old engine code still in place and still failing against the current database.

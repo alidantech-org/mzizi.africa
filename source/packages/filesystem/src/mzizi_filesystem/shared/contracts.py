@@ -69,3 +69,31 @@ class NewFolder(Frozen):
     access: Access
     authorization: str | None
     role_id: str
+
+
+class NewFile(Frozen):
+    folder_id: str
+    code: str
+    name: str
+    retention: Retention
+
+
+class NewVersion(Frozen):
+    file_id: str
+    revision: int = Field(ge=1)
+    s3_key: str
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    size_bytes: int = Field(ge=0)
+    content_type: str
+    original_filename: str | None
+    access: Access
+    pinned: bool
+    #: Caller-supplied facts about where the bytes came from; the adapter stores them as one JSON text column.
+    provenance: dict[str, str]
+
+
+class RelationRecord(Frozen):
+    source_version_id: str
+    derived_version_id: str
+    kind_id: str
+    processing_provenance: dict[str, str]
