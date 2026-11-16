@@ -1,0 +1,6 @@
+code,scheme_code,label
+geo.recognition.status.un-member-state,geo.recognition.status,UN member state
+geo.recognition.status.un-observer-state,geo.recognition.status,UN non-member observer state
+geo.recognition.status.partially-recognized,geo.recognition.status,Partially recognized state: claims sovereignty and is recognized by some UN member states
+geo.recognition.status.unrecognized,geo.recognition.status,Unrecognized state: governs territory but is recognized by no UN member state
+geo.recognition.status.free-association,geo.recognition.status,"State in free association: self-governing, sharing defence and foreign affairs with another state"

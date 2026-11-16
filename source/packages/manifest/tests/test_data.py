@@ -33,9 +33,9 @@ def tree(tmp_path: Path, files: dict[str, str]) -> Path:
 
 def good() -> dict[str, str]:
     return {
-        "global/reference/schemes.csv": SCHEMES,
-        "global/reference/values.csv": VALUES,
-        "global/reference/countries.csv": COUNTRIES,
+        "global/reference/vocab/reference.schemes.csv": SCHEMES,
+        "global/reference/vocab/reference.values.csv": VALUES,
+        "global/reference/country/reference.countries.csv": COUNTRIES,
     }
 
 
@@ -49,82 +49,94 @@ def test_a_valid_release_loads_in_dependency_order_and_links_by_code(tmp_path: P
 @pytest.mark.parametrize(
     ("file", "text", "expected"),
     [
-        ("global/reference/values.csv", "id,code,scheme_code,label\n1,a,b,c\n", "'id' is filled by the system"),
         (
-            "global/reference/values.csv",
+            "global/reference/vocab/reference.values.csv",
+            "id,code,scheme_code,label\n1,a,b,c\n",
+            "'id' is filled by the system",
+        ),
+        (
+            "global/reference/vocab/reference.values.csv",
             "code,scheme_code,label,version\na,b,c,1\n",
             "'version' is filled by the system",
         ),
-        ("global/reference/values.csv", "code,scheme_id,label\na,b,c\n", "unknown column 'scheme_id'"),
-        ("global/reference/values.csv", "code,label\na,b\n", "missing required column 'scheme_code'"),
+        ("global/reference/vocab/reference.values.csv", "code,scheme_id,label\na,b,c\n", "unknown column 'scheme_id'"),
+        ("global/reference/vocab/reference.values.csv", "code,label\na,b\n", "missing required column 'scheme_code'"),
         (
-            "global/reference/values.csv",
+            "global/reference/vocab/reference.values.csv",
             "code,scheme_code,label\ngeo.continent.north_america,geo.continent,x\n",
             "use a dash, not an underscore",
         ),
         (
-            "global/reference/values.csv",
+            "global/reference/vocab/reference.values.csv",
             "code,scheme_code,label\nGeo.Continent.x,geo.continent,x\n",
             "must be lowercase words joined by dashes",
         ),
         (
-            "global/reference/values.csv",
+            "global/reference/vocab/reference.values.csv",
             "code,scheme_code,label\nfin.currency.x,geo.continent,x\n",
             "must start with its parent's code 'geo.continent'",
         ),
         (
-            "global/reference/values.csv",
+            "global/reference/vocab/reference.values.csv",
             "code,scheme_code,label\ngeo.continent.a.b,geo.continent,x\n",
             "must add exactly one segment",
         ),
         (
-            "global/reference/values.csv",
+            "global/reference/vocab/reference.values.csv",
             "code,scheme_code,label\ngeo.continent.x,geo.continent,\n",
             "label is required",
         ),
         (
-            "global/reference/values.csv",
+            "global/reference/vocab/reference.values.csv",
             "code,scheme_code,label\nnope.scheme.x,nope.scheme,X\n",
             "unknown reference.schemes code 'nope.scheme'",
         ),
         (
-            "global/reference/schemes.csv",
+            "global/reference/vocab/reference.schemes.csv",
             "code,title,owner_snapshot\nbad.concept,T,o\n",
             "must start with a schema short",
         ),
         (
-            "global/reference/schemes.csv",
+            "global/reference/vocab/reference.schemes.csv",
             "code,title,owner_snapshot\ngeo.north-america,T,o\n",
             "concept 'north-america' must be a single word",
         ),
-        ("global/reference/countries.csv", "code,name,iso_alpha2\nke,Kenya,ke\n", "iso_alpha2: 'ke' does not match"),
         (
-            "global/reference/countries.csv",
+            "global/reference/country/reference.countries.csv",
+            "code,name,iso_alpha2\nke,Kenya,ke\n",
+            "iso_alpha2: 'ke' does not match",
+        ),
+        (
+            "global/reference/country/reference.countries.csv",
             "code,name,iso_alpha2,calling_code\nke,Kenya,KE,254\n",
             "calling_code: '254' does not match",
         ),
         (
-            "global/reference/countries.csv",
+            "global/reference/country/reference.countries.csv",
             "code,name,iso_alpha2,established_on\nke,Kenya,KE,1963-13-01\n",
             "not a valid date",
         ),
         (
-            "global/reference/countries.csv",
+            "global/reference/country/reference.countries.csv",
             "code,name,iso_alpha2\nke,Kenya,KE\nke2,Kenya Two,KE\n",
             "duplicate iso_alpha2 'KE'",
         ),
         (
-            "global/reference/countries.csv",
+            "global/reference/country/reference.countries.csv",
             "code,name,iso_alpha2\nke,Kenya,KE\nke,Kenya Again,KX\n",
             "duplicate code 'ke'",
         ),
-        ("global/reference/countries.csv", "code,name\nnorthern-cyprus,Northern Cyprus\n,,\nso,Somaliland\n", None),
+        (
+            "global/reference/country/reference.countries.csv",
+            "code,name\nnorthern-cyprus,Northern Cyprus\n,,\nso,Somaliland\n",
+            None,
+        ),
     ],
 )
 def test_broken_rows_are_reported_with_file_line_and_column(
     tmp_path: Path, file: str, text: str, expected: str | None
 ) -> None:
-    files = {"global/reference/schemes.csv": SCHEMES, file: text}
+    files = {"global/reference/vocab/reference.schemes.csv": SCHEMES, file: text}
     problems = check_data(tree(tmp_path, files)).problems
     if expected is None:
         assert problems == []
@@ -142,7 +154,13 @@ def test_a_self_link_may_point_forward_but_never_in_a_circle(tmp_path: Path) -> 
     )
     assert (
         check_data(
-            tree(tmp_path, {"global/reference/schemes.csv": schemes, "global/reference/values.csv": forward})
+            tree(
+                tmp_path,
+                {
+                    "global/reference/vocab/reference.schemes.csv": schemes,
+                    "global/reference/vocab/reference.values.csv": forward,
+                },
+            )
         ).problems
         == []
     )
@@ -153,35 +171,82 @@ def test_a_self_link_may_point_forward_but_never_in_a_circle(tmp_path: Path) -> 
     )
     other = tmp_path / "other"
     problems = check_data(
-        tree(other, {"global/reference/schemes.csv": schemes, "global/reference/values.csv": circle})
+        tree(
+            other,
+            {
+                "global/reference/vocab/reference.schemes.csv": schemes,
+                "global/reference/vocab/reference.values.csv": circle,
+            },
+        )
     ).problems
     assert any("supersedes_code cycle" in p for p in problems)
 
 
-def test_the_path_must_name_a_seedable_table_in_a_valid_scope(tmp_path: Path) -> None:
+def test_the_path_gives_scope_domain_and_usage_and_the_file_name_gives_the_table(tmp_path: Path) -> None:
     files = {
-        "nowhere/reference/schemes.csv": SCHEMES,
-        "global/reference/nonsense.csv": SCHEMES,
-        "global/reference/value_relations.csv": "id\n1\n",
-        "global/schemes.csv": SCHEMES,
+        "nowhere/reference/part/reference.schemes.csv": SCHEMES,
+        "global/nonsense/part/reference.schemes.csv": SCHEMES,
+        "global/reference/Bad_Folder/reference.schemes.csv": SCHEMES,
+        "global/reference/part/reference.nonsense.csv": SCHEMES,
+        "global/reference/part/schemes.csv": SCHEMES,
+        "global/reference/part/reference.value_relations.csv": "id\n1\n",
+        "global/reference.schemes.csv": SCHEMES,
     }
     problems = check_data(tree(tmp_path, files)).problems
     assert any("scope 'nowhere'" in p for p in problems)
+    assert any("domain 'nonsense' must be a database group" in p for p in problems)
+    assert any("folder 'Bad_Folder' must be lowercase words joined by dashes" in p for p in problems)
     assert any("reference.nonsense is not a stored table" in p for p in problems)
+    assert any("schemes is not a stored table (name the file <schema>.<table>.csv)" in p for p in problems)
     assert any("reference.value_relations has no natural key" in p for p in problems)
-    assert any("a CSV must be data/<scope>/<domain>/<table>.csv" in p for p in problems)
+    assert any("a CSV must be data/<scope>/<domain>/<usage...>/<schema>.<table>.csv" in p for p in problems)
+
+
+def test_each_part_carries_its_own_schemes_and_values_and_links_resolve_across_parts(tmp_path: Path) -> None:
+    files = {
+        "global/geography/continent/reference.schemes.csv": "code,title,owner_snapshot\ngeo.continent,Continents,un\n",
+        "global/geography/continent/reference.values.csv": "code,scheme_code,label\ngeo.continent.africa,geo.continent,Africa\n",
+        "global/finance/currency/reference.schemes.csv": "code,title,owner_snapshot\nfin.currency,Currencies,iso\n",
+        "global/finance/currency/reference.values.csv": "code,scheme_code,label\nfin.currency.kes,fin.currency,Kenyan shilling\n",
+        "global/reference/country/reference.countries.csv": COUNTRIES,
+    }
+    result = check_data(tree(tmp_path, files))
+    assert result.problems == []
+    assert len(result.rows["reference.values"]) == 2 and len(result.rows["reference.schemes"]) == 2
+    assert result.order.index("reference.values") < result.order.index("reference.countries")
+
+
+def test_a_one_to_one_extension_table_is_keyed_by_its_link(tmp_path: Path) -> None:
+    files = {
+        "global/geography/feature-type/reference.schemes.csv": "code,title,owner_snapshot\ngeo.feature.type,Kinds,mzizi\n",
+        "global/geography/feature-type/reference.values.csv": "code,scheme_code,label\ngeo.feature.type.country,geo.feature.type,Country\n",
+        "ke/geography/country/geography.features.csv": "code,feature_type_code\nke,geo.feature.type.country\n",
+        "ke/geography/country/geography.units.csv": "feature_code,country_code\nke,ke\n",
+        "global/reference/country/reference.countries.csv": "code,name,iso_alpha2\nke,Kenya,KE\n",
+    }
+    result = check_data(tree(tmp_path, files))
+    assert result.problems == []
+    assert result.order.index("geography.features") < result.order.index("geography.units")
+    units = load_tables()["geography.units"]
+    assert units.natural_key == ("feature_code",) and units.seed.required == ("feature_code",)
+    twice = {**files, "ke/geography/country/more/geography.units.csv": "feature_code\nke\n"}
+    assert any("duplicate feature_code 'ke'" in p for p in check_data(tree(tmp_path / "two", twice)).problems)
+    unknown = {**files, "ke/geography/country/geography.units.csv": "feature_code\nuganda\n"}
+    assert any(
+        "unknown geography.features code 'uganda'" in p for p in check_data(tree(tmp_path / "three", unknown)).problems
+    )
 
 
 def test_a_link_to_a_table_with_no_file_is_reported(tmp_path: Path) -> None:
-    problems = check_data(tree(tmp_path, {"global/reference/countries.csv": COUNTRIES})).problems
+    problems = check_data(tree(tmp_path, {"global/reference/country/reference.countries.csv": COUNTRIES})).problems
     assert any("continent_code" in p and "has no seed file" in p for p in problems)
 
 
 def test_the_same_code_in_two_scopes_is_a_duplicate(tmp_path: Path) -> None:
     files = {
-        "global/reference/schemes.csv": SCHEMES,
-        "global/reference/values.csv": VALUES,
-        "ke/reference/values.csv": "code,scheme_code,label\ngeo.continent.africa,geo.continent,Africa again\n",
+        "global/reference/vocab/reference.schemes.csv": SCHEMES,
+        "global/reference/vocab/reference.values.csv": VALUES,
+        "ke/reference/other/reference.values.csv": "code,scheme_code,label\ngeo.continent.africa,geo.continent,Africa again\n",
     }
     assert any("duplicate code" in p for p in check_data(tree(tmp_path, files)).problems)
 
@@ -210,7 +275,7 @@ def test_the_reference_group_links_without_a_cycle_and_the_whole_database_has_on
 
 
 def test_the_command_reports_problems_and_exits_nonzero(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    root = tree(tmp_path, {"global/reference/schemes.csv": "code,title\nx,y\n"})
+    root = tree(tmp_path, {"global/reference/vocab/reference.schemes.csv": "code,title\nx,y\n"})
     assert main(["data", str(root)]) == 1
     assert "missing required column 'owner_snapshot'" in capsys.readouterr().err
     other = tree(tmp_path / "ok", good())

@@ -1,40 +1,4 @@
 code,scheme_code,label
-geo.continent.africa,geo.continent,Africa
-geo.continent.antarctica,geo.continent,Antarctica
-geo.continent.asia,geo.continent,Asia
-geo.continent.europe,geo.continent,Europe
-geo.continent.north-america,geo.continent,North America
-geo.continent.oceania,geo.continent,Oceania
-geo.continent.south-america,geo.continent,South America
-geo.subregion.northern-africa,geo.subregion,Northern Africa
-geo.subregion.sub-saharan-africa,geo.subregion,Sub-Saharan Africa
-geo.subregion.eastern-africa,geo.subregion,Eastern Africa
-geo.subregion.middle-africa,geo.subregion,Middle Africa
-geo.subregion.southern-africa,geo.subregion,Southern Africa
-geo.subregion.western-africa,geo.subregion,Western Africa
-geo.subregion.latin-america-and-the-caribbean,geo.subregion,Latin America and the Caribbean
-geo.subregion.caribbean,geo.subregion,Caribbean
-geo.subregion.central-america,geo.subregion,Central America
-geo.subregion.south-america,geo.subregion,South America
-geo.subregion.northern-america,geo.subregion,Northern America
-geo.subregion.central-asia,geo.subregion,Central Asia
-geo.subregion.eastern-asia,geo.subregion,Eastern Asia
-geo.subregion.south-eastern-asia,geo.subregion,South-eastern Asia
-geo.subregion.southern-asia,geo.subregion,Southern Asia
-geo.subregion.western-asia,geo.subregion,Western Asia
-geo.subregion.eastern-europe,geo.subregion,Eastern Europe
-geo.subregion.northern-europe,geo.subregion,Northern Europe
-geo.subregion.southern-europe,geo.subregion,Southern Europe
-geo.subregion.western-europe,geo.subregion,Western Europe
-geo.subregion.australia-and-new-zealand,geo.subregion,Australia and New Zealand
-geo.subregion.melanesia,geo.subregion,Melanesia
-geo.subregion.micronesia,geo.subregion,Micronesia
-geo.subregion.polynesia,geo.subregion,Polynesia
-geo.recognition.status.un-member-state,geo.recognition.status,UN member state
-geo.recognition.status.un-observer-state,geo.recognition.status,UN non-member observer state
-geo.recognition.status.partially-recognized,geo.recognition.status,Partially recognized state: claims sovereignty and is recognized by some UN member states
-geo.recognition.status.unrecognized,geo.recognition.status,Unrecognized state: governs territory but is recognized by no UN member state
-geo.recognition.status.free-association,geo.recognition.status,"State in free association: self-governing, sharing defence and foreign affairs with another state"
 fin.currency.aed,fin.currency,United Arab Emirates dirham
 fin.currency.afn,fin.currency,Afghan afghani
 fin.currency.all,fin.currency,Albanian lek
@@ -178,31 +142,3 @@ fin.currency.yer,fin.currency,Yemeni rial
 fin.currency.zar,fin.currency,South African rand
 fin.currency.zmw,fin.currency,Zambian kwacha
 fin.currency.zwg,fin.currency,Zimbabwe Gold
-ref.country.designation.republic,ref.country.designation,Republic
-ref.country.designation.democratic-republic,ref.country.designation,Democratic Republic
-ref.country.designation.federal-republic,ref.country.designation,Federal Republic
-ref.country.designation.federal-democratic-republic,ref.country.designation,Federal Democratic Republic
-ref.country.designation.peoples-democratic-republic,ref.country.designation,People's Democratic Republic
-ref.country.designation.democratic-peoples-republic,ref.country.designation,Democratic People's Republic
-ref.country.designation.peoples-republic,ref.country.designation,People's Republic
-ref.country.designation.islamic-republic,ref.country.designation,Islamic Republic
-ref.country.designation.arab-republic,ref.country.designation,Arab Republic
-ref.country.designation.united-republic,ref.country.designation,United Republic
-ref.country.designation.democratic-socialist-republic,ref.country.designation,Democratic Socialist Republic
-ref.country.designation.socialist-republic,ref.country.designation,Socialist Republic
-ref.country.designation.bolivarian-republic,ref.country.designation,Bolivarian Republic
-ref.country.designation.oriental-republic,ref.country.designation,Oriental Republic
-ref.country.designation.plurinational-state,ref.country.designation,Plurinational State
-ref.country.designation.kingdom,ref.country.designation,Kingdom
-ref.country.designation.sultanate,ref.country.designation,Sultanate
-ref.country.designation.emirate,ref.country.designation,Emirate
-ref.country.designation.principality,ref.country.designation,Principality
-ref.country.designation.grand-duchy,ref.country.designation,Grand Duchy
-ref.country.designation.commonwealth,ref.country.designation,Commonwealth
-ref.country.designation.federation,ref.country.designation,Federation
-ref.country.designation.confederation,ref.country.designation,Confederation
-ref.country.designation.union,ref.country.designation,Union
-ref.country.designation.united-states,ref.country.designation,United States
-ref.country.designation.united-kingdom,ref.country.designation,United Kingdom
-ref.country.designation.state,ref.country.designation,State
-ref.country.designation.other,ref.country.designation,Other
