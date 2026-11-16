@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mzizi.africa/schemas/seed/manifest.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/seed/manifest.schema.json",
   "title": "Seed manifest (seed/manifest.yaml)",
   "description": "The one authored manifest of the seed tree. It registers files and their versioning; it never loads data. A CSV's table comes from its path (data/<scope>/<domain>/<table>.csv), a source's identity from its code. Per-folder facts live in _folder.yaml; hashes and object keys are generated into manifest.lock.yaml.",
   "type": "object",

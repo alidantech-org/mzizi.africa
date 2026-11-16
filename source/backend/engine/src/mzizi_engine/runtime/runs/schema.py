@@ -4,7 +4,7 @@ import json
 
 from mzizi_engine.runtime.runs.parse import JobInput
 
-SCHEMA_ID = "https://mzizi.africa/schemas/engine/job.schema.json"
+SCHEMA_ID = "https://res.alidantech.org/mzizi/public/schemas/engine/job.schema.json"
 
 
 def job_schema_text() -> str:

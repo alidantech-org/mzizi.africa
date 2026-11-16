@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mzizi.africa/schemas/mapping/mapping.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/mapping/mapping.schema.json",
   "title": "Mapping",
   "description": "Turns the fields a source module extracts into records for real tables. Every table, column, reference and lookup is checked against source/schema/database/ by the validator; nothing here repeats a table definition.",
   "type": "object",

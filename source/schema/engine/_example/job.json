@@ -1,5 +1,5 @@
 {
-  "$schema": "../job.schema.json",
+  "$schema": "https://res.alidantech.org/mzizi/public/schemas/engine/job.schema.json",
   "spec_version": 1,
   "kind": "collection",
   "name": "example-ministry-publications",

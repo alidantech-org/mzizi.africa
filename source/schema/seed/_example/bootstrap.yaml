@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../bootstrap.schema.json
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/seed/bootstrap.schema.json
 # Example first-administrator definition. The identity is never stored; these are variable names.
 role: admin
 scope: platform

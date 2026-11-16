@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mzizi.africa/schemas/sources/website.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/sources/website.schema.json",
   "title": "Website fields",
   "description": "Fields added to the source header when kind is website.",
   "type": "object",

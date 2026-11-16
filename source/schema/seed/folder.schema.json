@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mzizi.africa/schemas/seed/folder.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/seed/folder.schema.json",
   "title": "Folder descriptor (_folder.yaml)",
   "description": "Facts about a folder that its children inherit. scope and domain are read from the path (data/ke/geography), so a descriptor states them only where the path cannot.",
   "type": "object",

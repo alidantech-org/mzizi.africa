@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../manifest.schema.json
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/seed/manifest.schema.json
 # Example seed manifest: it registers files; it never loads data. A CSV's table comes from its path.
 release: 2026-11-16.1
 bucket: mzizi

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mzizi.africa/schemas/sources/common.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/sources/common.schema.json",
   "title": "Shared definitions for source manifests",
   "$defs": {
     "code": {

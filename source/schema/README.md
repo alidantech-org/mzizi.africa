@@ -12,7 +12,17 @@
 | `engine/` | `job.schema.json`: the job spec the engine parses. | Generated from the typed model; `MZIZI_WRITE_SCHEMAS=1 uv run pytest source/backend/engine/tests/runs/test_job_schema.py` regenerates it. |
 | `extraction/` | `table.schema.json`: optional expected columns for PDF table comparison. | Hand-written. |
 
-Every folder has an `_example/` folder with valid documents. Each example names the schema it defines, so an editor validates it: YAML files start with `# yaml-language-server: $schema=<relative path>` and JSON files carry a `"$schema"` key. Real files should do the same. `database/_example/` shows seed CSV files and their path rule.
+## Public URLs
+
+Every schema is served anonymously at `https://res.alidantech.org/mzizi/public/schemas/<folder>/<name>.schema.json` (object key `public/schemas/<folder>/<name>.schema.json`; only `public/` is anonymously readable). A schema's `$id` is that URL, so relative `$ref`s and editor links resolve there. Upload after changing a schema, with no database involved:
+
+```bash
+uv run mzizi-engine publish-schemas
+```
+
+`--dry-run` lists the keys without connecting. The command uploads only changed files, then reads each public URL anonymously and fails if it does not return the same bytes. These objects are not registered in the filesystem tables. Plain HTTP responses carry no CORS headers, which editors do not need.
+
+Every folder has an `_example/` folder with valid documents. Each example names the schema it defines, so an editor validates it: YAML files start with `# yaml-language-server: $schema=<public URL>` and JSON files carry a `"$schema"` key. Real files should do the same. `database/_example/` shows seed CSV files and their path rule.
 
 The previous site-bundle schemas (`site/v1/`), target catalogue and hand-kept exchange schema were retired on 16 November 2026; copies are in `.dev/archives/schema-retired/` on the machine that removed them and in Git history. The crawler's bundle validator now reads `sources/`, `mapping/` and the generated `database/` schemas.
 

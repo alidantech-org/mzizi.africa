@@ -39,8 +39,17 @@ def main(argv: list[str] | None = None) -> int:
     release.add_argument("placements", type=Path)
     release.add_argument("--approval", type=Path, required=True)
     sub.add_parser("sweep-runs", help="remove expired temporary run objects and logs")
+    publish = sub.add_parser("publish-schemas", help="upload source/schema files to the public object-store prefix")
+    publish.add_argument("--dry-run", action="store_true", help="list what would be uploaded without connecting")
     args = parser.parse_args(argv)
     config = EngineConfig.load()
+    if args.command == "publish-schemas":
+        from mzizi_engine.runtime.assembly.schemas import publish_schemas
+
+        results = publish_schemas(config, dry_run=args.dry_run)
+        for item in results:
+            print(item.model_dump_json())
+        return 0 if all(item.public_matches is not False for item in results) else 1
     if args.command in ("seal-run", "plan-release", "release-run", "sweep-runs"):
         from mzizi_engine.runtime.assembly.release import ReleaseManifest, plan_release, release_run, seal, sweep
         from mzizi_engine.runtime.runs.contracts.records import ReleaseApproval

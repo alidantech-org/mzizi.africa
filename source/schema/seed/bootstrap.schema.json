@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mzizi.africa/schemas/seed/bootstrap.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/seed/bootstrap.schema.json",
   "title": "Bootstrap definition (bootstrap.yaml)",
   "description": "Defines the first administrator without storing an identity. Values are names of environment variables, never the identity itself.",
   "type": "object",

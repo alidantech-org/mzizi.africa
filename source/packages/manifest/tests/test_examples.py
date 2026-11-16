@@ -57,7 +57,7 @@ def test_example_validates(example: str, schema: str) -> None:
 
 @pytest.mark.parametrize(("example", "schema"), PAIRS, ids=[pair[0] for pair in PAIRS])
 def test_example_links_to_the_schema_it_defines(example: str, schema: str) -> None:
-    """Editors validate a file from this link: a `$schema` key in JSON, a yaml-language-server comment in YAML."""
+    """Editors validate a file from this public link: a `$schema` key in JSON, a yaml-language-server comment in YAML."""
     path = SCHEMA_ROOT / example
     text = path.read_text(encoding="utf-8")
     if path.suffix == ".json":
@@ -66,7 +66,8 @@ def test_example_links_to_the_schema_it_defines(example: str, schema: str) -> No
         found = re.search(r"^# yaml-language-server: \$schema=(\S+)$", text, re.MULTILINE)
         assert found, "missing yaml-language-server schema comment"
         link = found.group(1)
-    assert (path.parent / link).resolve() == (SCHEMA_ROOT / schema).resolve()
+    assert link == f"https://res.alidantech.org/mzizi/public/schemas/{schema}"
+    assert json.loads((SCHEMA_ROOT / schema).read_text(encoding="utf-8"))["$id"] == link
 
 
 def test_every_schema_folder_has_an_example_folder() -> None:
@@ -114,3 +115,17 @@ def test_example_csv_files_match_the_generated_table_schemas() -> None:
             if target and column["name"] in _rows(file)[0]:
                 for row in _rows(file):
                     assert row[column["name"]] in ids[by_id[target["tableId"]]], f"{file.name}: {column['name']}"
+
+
+def test_every_schema_id_is_its_public_url_and_every_file_is_planned_for_publication() -> None:
+    from mzizi_manifest.features.publish.schema_publication import id_problems, plan
+
+    assert id_problems(SCHEMA_ROOT) == []
+    planned = plan(SCHEMA_ROOT)
+    assert {item.key for item in planned} >= {
+        "public/schemas/mapping/mapping.schema.json",
+        "public/schemas/database/reference.schema.json",
+    }
+    assert all(
+        "_example" not in item.key and item.url.endswith(item.key.removeprefix("public/schemas/")) for item in planned
+    )

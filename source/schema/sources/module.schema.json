@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mzizi.africa/schemas/sources/module.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/sources/module.schema.json",
   "title": "Source module",
   "description": "How to discover and extract one kind of content from a source. A module's extracted field names are the inputs of the mapping it names.",
   "type": "object",

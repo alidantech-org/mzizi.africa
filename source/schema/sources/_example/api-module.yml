@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../module.schema.json
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/module.schema.json
 module: countries
 mapping: global.reference.countries
 discover:

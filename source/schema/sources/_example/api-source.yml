@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../source.schema.json
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/source.schema.json
 # Example API source: a public statistics API. Credentials are named, never stored.
 code: global.example-statistics-api
 kind: api

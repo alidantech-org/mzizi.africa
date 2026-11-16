@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mzizi.africa/schemas/sources/source.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/sources/source.schema.json",
   "title": "Source manifest",
   "description": "One website or API source. The header is shared; kind selects the extra fields (website.schema.json or api.schema.json).",
   "type": "object",

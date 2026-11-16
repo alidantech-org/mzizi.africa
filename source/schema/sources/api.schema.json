@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mzizi.africa/schemas/sources/api.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/sources/api.schema.json",
   "title": "API fields",
   "description": "Fields added to the source header when kind is api. Only what the fetch and crawler packages implement today is accepted: GET requests, query parameters, JSON items and the pagination styles in common.pagination. Anything else is planned and rejected until implemented.",
   "type": "object",

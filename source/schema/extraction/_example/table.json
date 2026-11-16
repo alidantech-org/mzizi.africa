@@ -1,5 +1,5 @@
 {
-  "$schema": "../table.schema.json",
+  "$schema": "https://res.alidantech.org/mzizi/public/schemas/extraction/table.schema.json",
   "header_rows": 1,
   "columns": [
     {

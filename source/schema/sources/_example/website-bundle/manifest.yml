@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../source.schema.json
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/source.schema.json
 # Example website source: a small publications page on a government site.
 code: ke.example-ministry
 kind: website

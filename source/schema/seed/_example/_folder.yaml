@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../folder.schema.json
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/seed/folder.schema.json
 # Example folder descriptor for a country folder; children inherit these facts.
 description: Kenya-specific seed inputs.
 scope: { kind: jurisdiction, code: ke }
