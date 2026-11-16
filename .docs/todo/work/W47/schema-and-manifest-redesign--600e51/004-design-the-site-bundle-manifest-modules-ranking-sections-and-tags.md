@@ -21,7 +21,7 @@ Work on a Build item starts only after the Approval item is ticked.
 - [ ] Design: Decide whether ranking folds into the manifest and where sections and tags go.
 - [ ] Design: Define the `uses` block for linking to mappings, vocabularies and extraction expectations by code.
 - [ ] Design: Define how `authority_ref` resolves to a source code and what the worker does when it does not.
-- [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
+- [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Add the sources schemas and migrate the two real Kenya sites and the geoboundaries source, one at a time.
 - [ ] Build, only after approval: Reject any literal secret in an API manifest, by rule.
 - [ ] Build, only after approval: Add the authority resolver as a typed port and reject unresolved references before any fetch.
@@ -33,3 +33,9 @@ Record findings, rejected options and the approval here.
 ## Progress
 
 Built 16 November 2026 in `source/schema/sources/`: `source.schema.json` (entry, header, `uses`, policy), `website.schema.json` (modules, family `extends`, `rank` folded in), `api.schema.json` (GET only, `https` base URL, credential named by `auth.binding`, static non-secret headers, endpoints, the crawler's pagination styles), `module.schema.json` (`mapping`, `discover.endpoint`) and `common.schema.json`. Sections and tags schemas are not carried over. The crawler still reads `site/v1/` until its validator moves.
+
+## Comments
+
+### 2026-11-16T14:28:08.310Z · PETER IRUNGU
+
+Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.

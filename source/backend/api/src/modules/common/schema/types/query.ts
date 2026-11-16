@@ -162,7 +162,10 @@ export function createRelationKeyMapper<TParentRelationKey extends string>() {
       config: Lazy<IOneRelationConfig<string, TSelectableField>>,
       customKey: TCustomKey,
     ): IOneRelationConfig<TCustomKey, TSelectableField> =>
-      resolveRelation(config, { relation: customKey }) as IOneRelationConfig<TCustomKey, TSelectableField>,
+      resolveRelation(config, { relation: customKey }) as IOneRelationConfig<
+        TCustomKey,
+        TSelectableField
+      >,
 
     many: <
       TCustomKey extends TParentRelationKey,
@@ -172,7 +175,11 @@ export function createRelationKeyMapper<TParentRelationKey extends string>() {
       config: Lazy<IManyRelationConfig<string, TSelectableField, TSortableField>>,
       customKey: TCustomKey,
     ): IManyRelationConfig<TCustomKey, TSelectableField, TSortableField> =>
-      resolveRelation(config, { relation: customKey }) as IManyRelationConfig<TCustomKey, TSelectableField, TSortableField>,
+      resolveRelation(config, { relation: customKey }) as IManyRelationConfig<
+        TCustomKey,
+        TSelectableField,
+        TSortableField
+      >,
   };
 }
 

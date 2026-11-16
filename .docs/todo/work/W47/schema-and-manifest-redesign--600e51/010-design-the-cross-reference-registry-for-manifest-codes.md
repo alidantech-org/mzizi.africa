@@ -20,7 +20,7 @@ Work on a Build item starts only after the Approval item is ticked.
 - [ ] Design: Define visibility: a manifest may use items in its own scope or in `global`, never in another country.
 - [ ] Design: Define the errors: unknown code, duplicate code, cycle and out-of-scope use, each naming the file, the field and the code.
 - [ ] Design: Define the registry's public surface (build, resolve, list users of a code) so the other validators can share it.
-- [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
+- [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Implement the registry as one small typed module in the manifest package.
 - [ ] Build, only after approval: Add tests using deliberately broken seed trees for each error.
 - [ ] Build, only after approval: `task validate` and the relevant checks pass, and every README and design link that mentions the changed files is updated.
@@ -28,3 +28,9 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+
+## Comments
+
+### 2026-11-16T14:28:11.436Z · PETER IRUNGU
+
+Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.

@@ -20,7 +20,7 @@ Work on a Build item starts only after the Approval item is ticked.
 - [ ] Design: Decide how automatic columns are handled and how the generated schema marks them.
 - [ ] Design: Decide what happens to the five existing auth CSVs: migrate to current tables or archive.
 - [ ] Design: Specify the validation report format produced before any database write.
-- [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
+- [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Keep the Dryv pack output current and add a verify step that fails when the generated schemas drift.
 - [ ] Build, only after approval: Remove `targets.json` and update every reference to it.
 - [ ] Build, only after approval: Add tests with valid and deliberately broken CSV files.
@@ -40,3 +40,11 @@ Findings for the design review:
 - Building lists of contract objects inside a template (`namespace` appends) crashes the Jinja template server; loop with a first-item flag instead.
 - The contracts declare no literal column defaults, so `default` never appears. System-managed columns (`created_at`, `updated_at`, `version`) are not yet marked, which is the open "automatic columns" decision above.
 - The CSV rules and the fate of the five auth CSVs are still unapproved designs; the manifest package does not read these files yet.
+
+## Comments
+
+### 2026-11-16T14:28:07.786Z · PETER IRUNGU
+
+Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.
+
+Automatic columns resolved 16 November 2026: the contracts mark `version`, `created_at`, `updated_at` and `deleted_at` with Dryv's `.system()` (dryv/contracts/schemas/_base.ts), and the generated schemas publish them as `x-managed: true`. A seed author supplies only the columns listed in `required`; managed columns are optional and, if present, must still be valid. The generated `database/<group>.schema.json` files are now real JSON Schemas (`$id`, one row schema per table under `$defs`, extension keys `x-table`, `x-id`, `x-primaryKey`, `x-uniqueKeys`, `x-type`, `x-managed`, `x-references`) read through `mzizi_manifest.features.database.tables`.

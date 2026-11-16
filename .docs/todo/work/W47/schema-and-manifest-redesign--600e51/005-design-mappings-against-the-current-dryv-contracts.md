@@ -20,7 +20,7 @@ Work on a Build item starts only after the Approval item is ticked.
 - [ ] Design: Specify the checks against `database/<group>.schema.json`: table and columns exist, types are compatible, required columns are covered, references and lookups resolve.
 - [ ] Design: Classify every existing mapping as migrate, archive or delete, with a reason.
 - [ ] Design: Decide how AI-proposed mappings are marked and reviewed.
-- [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
+- [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Add the mapping schema and migrate the mappings that are kept.
 - [ ] Build, only after approval: Archive the rest with a note, outside the active seed tree.
 - [ ] Build, only after approval: Add tests that fail when a mapping names a missing table, column, reference or lookup.
@@ -32,3 +32,9 @@ Record findings, rejected options and the approval here.
 ## Progress
 
 Built 16 November 2026: `source/schema/mapping/mapping.schema.json` with `inputs`, `yields` (table, key, fields), `ref`, `lookup`, `describe`, provenance and expectations. Table and column checks against `database/` belong to the validator in task 009. The old mappings are in the archived seed.
+
+## Comments
+
+### 2026-11-16T14:28:08.830Z · PETER IRUNGU
+
+Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.

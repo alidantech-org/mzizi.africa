@@ -21,7 +21,7 @@ Work on a Build item starts only after the Approval item is ticked.
 - [ ] Design: Define the states a file passes through: registered, validated, imported, and who runs each step.
 - [ ] Design: List every current entry and say whether it stays, moves, is archived or is deleted, with the archive location.
 - [ ] Design: Decide how a source's `code` is checked against `source.sources.code`, as a read-only report.
-- [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
+- [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Update `source/schema/seed/manifest.schema.json` and `seed/manifest.yaml` to the approved design.
 - [ ] Build, only after approval: Keep the lock generated and add a check that it matches the manifest.
 - [ ] Build, only after approval: Add tests for the new fields and for rejecting registered files that were never validated.
@@ -36,3 +36,9 @@ Record findings, rejected options and the approval here.
 16 November 2026: the owner decided that versions may live inside a file as an approved field, but never in folder or file names for now, and that agents must never invent a version without being asked. The rule is `.docs/rules/versioning.md`. Consequence for this design: the root manifest drops `schema_version` unless the owner approves a version field for it, and all later designs flatten their version folders.
 
 Built 16 November 2026 at the owner's request: `source/schema/seed/manifest.schema.json` drops `schema_version`, `loader`, `target`, `database_target_state`, `key_columns`, `consumers` and `loader_status`; entries now only register files (id, path or glob, depends_on, versioning, pin, origin, notes). The table of a CSV comes from its path. The seed is empty, so there are no entries to migrate. The old validator code still expects the removed fields and is replaced in task 009.
+
+## Comments
+
+### 2026-11-16T14:28:06.751Z · PETER IRUNGU
+
+Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.

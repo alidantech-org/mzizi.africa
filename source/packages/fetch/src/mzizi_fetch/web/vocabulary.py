@@ -1,4 +1,4 @@
-"""The web vocabulary: typed classification data read from `source/schema/vocabulary/web.yaml`.
+"""The web vocabulary: typed classification data read from `seed/vocabularies/global/web.yaml`.
 
 URL kinds by extension, tracking parameters, challenge markers, file signatures and the default response to each block
 kind are data, not code. This module holds the typed contract and the one parsing boundary that builds it.
@@ -6,14 +6,16 @@ kind are data, not code. This module holds the typed contract and the one parsin
 
 from __future__ import annotations
 
+import json
 from functools import lru_cache
 from pathlib import Path
 
 import yaml
 from pydantic import BaseModel, ConfigDict
 
-# .../source/packages/fetch/src/mzizi_fetch/web/vocabulary.py -> parents[5] is `source/`
-DEFAULT_PATH = Path(__file__).resolve().parents[5] / "schema" / "vocabulary" / "web.yaml"
+# .../source/packages/fetch/src/mzizi_fetch/web/vocabulary.py -> parents[6] is the repository root
+DEFAULT_PATH = Path(__file__).resolve().parents[6] / "seed" / "vocabularies" / "global" / "web.yaml"
+SCHEMA_ID = "https://res.alidantech.org/mzizi/public/schemas/vocabulary/web.schema.json"
 
 
 class _Data(BaseModel):
@@ -92,6 +94,16 @@ class Vocabulary(_Data):
     generic_file_stems: tuple[str, ...] = ()  # file names too vague to label a file (`download`, `file`, `view`)
     risky_groups: tuple[str, ...]
     block_responses: dict[str, str]
+
+
+def schema_text() -> str:
+    """The canonical text of `source/schema/vocabulary/web.schema.json`, generated from the typed model."""
+    document = {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": SCHEMA_ID,
+        **Vocabulary.model_json_schema(),
+    }
+    return json.dumps(document, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
 
 def parse_vocabulary(text: str) -> Vocabulary:

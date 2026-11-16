@@ -222,6 +222,8 @@
       "type": "object"
     }
   },
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/vocabulary/web.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
     "api_path_segments": {

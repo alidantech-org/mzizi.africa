@@ -16,11 +16,11 @@ const EntityBase = dryv
   .schema({
     id: dryv.field(sharedProperties.Id),
     /** Optimistic-concurrency version; starts at 1 and increases on every update. */
-    version: dryv.field(sharedProperties.PositiveInteger),
-    createdAt: dryv.field(sharedProperties.Instant),
-    updatedAt: dryv.field(sharedProperties.Instant),
+    version: dryv.field(sharedProperties.PositiveInteger).system(),
+    createdAt: dryv.field(sharedProperties.Instant).system(),
+    updatedAt: dryv.field(sharedProperties.Instant).system(),
     /** Soft delete marker; null while the record is live. */
-    deletedAt: dryv.field(sharedProperties.Instant).maybe(),
+    deletedAt: dryv.field(sharedProperties.Instant).maybe().system(),
   })
   .abstract()
   .description("Base for versioned records: id, version, created/updated timestamps and soft delete.")
@@ -30,8 +30,8 @@ const EntityBase = dryv
 const AssociationBase = dryv
   .schema({
     id: dryv.field(sharedProperties.Id),
-    createdAt: dryv.field(sharedProperties.Instant),
-    deletedAt: dryv.field(sharedProperties.Instant).maybe(),
+    createdAt: dryv.field(sharedProperties.Instant).system(),
+    deletedAt: dryv.field(sharedProperties.Instant).maybe().system(),
   })
   .abstract()
   .description("Base for association rows: id, created timestamp and soft delete.")
@@ -64,7 +64,7 @@ const operationsGroup = shared.schemas({ Identified: IdentifiedBase, Immutable: 
 
 /** Identity and creation time. */
 const CreatedBase = dryv
-  .schema({ createdAt: dryv.field(sharedProperties.Instant) })
+  .schema({ createdAt: dryv.field(sharedProperties.Instant).system() })
   .extends(operationsGroup.Identified)
   .abstract()
   .description("Base for operational records: identity and creation time.");
@@ -84,14 +84,14 @@ const operationsChildGroup = shared.schemas({ Created: CreatedBase, CodedIdentif
 
 /** Identity, creation and last-change time. */
 const TimestampedBase = dryv
-  .schema({ updatedAt: dryv.field(sharedProperties.Instant) })
+  .schema({ updatedAt: dryv.field(sharedProperties.Instant).system() })
   .extends(operationsChildGroup.Created)
   .abstract()
   .description("Base for operational records: identity, creation time and last-change time.");
 
 /** Coded identity and creation time. */
 const CodedCreatedBase = dryv
-  .schema({ createdAt: dryv.field(sharedProperties.Instant) })
+  .schema({ createdAt: dryv.field(sharedProperties.Instant).system() })
   .extends(operationsChildGroup.CodedIdentified)
   .abstract()
   .description("Base for operational records with a unique identity code and creation time.");

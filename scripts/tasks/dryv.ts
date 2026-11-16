@@ -29,6 +29,10 @@ const apiCommand = (): string[] => [
   "source/engine/python/api/dryv.server.yaml",
   // Dryv's development mode: the engine is bound to 127.0.0.1 and accepts any key, so no Dryv Platform login is needed.
   "--insecure-no-auth",
+  // The API allows 60 requests a minute per key by default, and one generation makes several. Beyond that it answers 429,
+  // which the Dryv CLI reports as "authentication failed". A local development engine has no reason to throttle itself.
+  "--requests-per-key-per-minute",
+  "1200",
 ];
 
 /** Environment for every Dryv tool: the checkout to use and the API to talk to. */

@@ -18,10 +18,10 @@ from referencing import Registry, Resource
 from mzizi_crawler.shared.bundles.bundle import Bundle
 from mzizi_crawler.shared.bundles.effective import effective_modules
 from mzizi_crawler.shared.scraping import extract, parse_module, transforms
+from mzizi_manifest.features.database.tables import load_tables
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
 SCHEMA_FOLDERS = ("sources", "mapping")
-DATABASE_SCHEMAS = SCHEMA_ROOT / "database"
 #: Which schema file validates which part of a bundle.
 SCHEMA_FILES = {
     "manifest": "sources/source.schema.json",
@@ -77,16 +77,11 @@ def _rank_validator() -> Draft202012Validator:
 
 
 def targets() -> dict[str, dict]:
-    """Every stored table as `schema.table`, with its column names and required columns, from the generated schemas."""
-    found: dict[str, dict] = {}
-    for path in sorted(DATABASE_SCHEMAS.glob("*.schema.json")):
-        for table in json.loads(path.read_text())["tables"]:
-            columns = table["columns"]
-            found[table["table"]] = {
-                "fields": [column["name"] for column in columns],
-                "required": [column["name"] for column in columns if column["required"]],
-            }
-    return found
+    """Every stored table as `schema.table`, with its column names and the columns an author must supply."""
+    return {
+        name: {"fields": list(table.columns), "required": [c.name for c in table.columns.values() if c.required]}
+        for name, table in load_tables().items()
+    }
 
 
 def _schema_errors(validator: Draft202012Validator, document: Any, where: str) -> list[str]:

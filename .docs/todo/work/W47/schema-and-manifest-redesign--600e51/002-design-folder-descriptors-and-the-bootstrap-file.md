@@ -20,7 +20,7 @@ Work on a Build item starts only after the Approval item is ticked.
 - [ ] Design: Decide which of the 29 folder files can be deleted because the root manifest default or the path covers them.
 - [ ] Design: Define the bootstrap file's fields and where its secrets must come from.
 - [ ] Design: Say where each rule is enforced, and by which module.
-- [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
+- [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Add `source/schema/seed/folder.schema.json` and a bootstrap schema.
 - [ ] Build, only after approval: Remove redundant `_folder.yaml` files and keep inherited results identical.
 - [ ] Build, only after approval: Add tests that compare inherited metadata before and after the cleanup.
@@ -32,3 +32,9 @@ Record findings, rejected options and the approval here.
 ## Progress
 
 Built 16 November 2026: `source/schema/seed/folder.schema.json` (roles, access, preparation, review, authorization required for public, overrides with reasons) and `bootstrap.schema.json` (environment variable names only). The Python vocabulary in `seed_vocabulary.py` (including the hard-coded loader list) is replaced in task 009.
+
+## Comments
+
+### 2026-11-16T14:28:07.257Z · PETER IRUNGU
+
+Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.

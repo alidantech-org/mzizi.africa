@@ -8,7 +8,7 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 SCHEMA_ROOT = Path(__file__).resolve().parents[3] / "schema"
-FOLDERS = ("sources", "mapping", "seed", "vocabulary", "engine", "extraction")
+FOLDERS = ("database", "sources", "mapping", "seed", "vocabulary", "engine", "extraction")
 UA = "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)"
 POLICY = {
     "scope": {"hosts": ["example.org"]},

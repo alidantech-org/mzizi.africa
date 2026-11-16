@@ -6,8 +6,8 @@
  *   bun run schemas:sync -- --dry-run   regenerate, check and list the keys that would be uploaded
  *   bun run schemas:sync -- --no-dryv   skip the Dryv generation (the table schemas and catalogs)
  *
- * Generated schemas: the table schemas under `source/schema/database/` (Dryv) and `engine/job.schema.json` (the typed job
- * model). Hand-written schemas are only checked and uploaded. Publishing needs the S3 settings in the root `.env`.
+ * Generated schemas: the table schemas under `source/schema/database/` (Dryv), `engine/job.schema.json` (the typed job
+ * model) and `vocabulary/web.schema.json` (the typed web vocabulary). Hand-written schemas are only checked and uploaded. Publishing needs the S3 settings in the root `.env`.
  */
 import { group, step } from "../lib/exec.ts";
 import { root } from "../lib/paths.ts";
@@ -34,6 +34,7 @@ export async function syncSchemas(args: readonly string[]): Promise<boolean> {
       "run",
       "pytest",
       "source/backend/engine/tests/runs/test_job_schema.py",
+      "source/packages/fetch/tests/test_web_core.py",
       "-q",
     ],
     { MZIZI_WRITE_SCHEMAS: "1" },
@@ -45,6 +46,7 @@ export async function syncSchemas(args: readonly string[]): Promise<boolean> {
     "source/packages/manifest/tests/test_schemas.py",
     "source/packages/manifest/tests/test_examples.py",
     "source/backend/engine/tests/runs/test_job_schema.py",
+    "source/packages/fetch/tests/test_web_core.py",
     "-q",
   ]);
   if (

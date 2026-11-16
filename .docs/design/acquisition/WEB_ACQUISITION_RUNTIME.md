@@ -11,7 +11,7 @@ This document describes what the code does today. Proposals stay in `design/acqu
 | Layer | Package / module | Responsibility | Status |
 |---|---|---|---|
 | URL handling | `mzizi_fetch.web.urls` | normalisation, tracking-parameter removal, scope, classification, deduplication | Implemented |
-| Classification data | `source/schema/vocabulary/web.yaml` (+ `.schema.json`) | extensions by URL kind, challenge markers, file signatures, default block responses | Implemented (data, not code) |
+| Classification data | `seed/vocabularies/global/web.yaml` (schema: `source/schema/vocabulary/web.schema.json`) | extensions by URL kind, challenge markers, file signatures, default block responses | Implemented (data, not code) |
 | Source policy | `mzizi_fetch.web.policy` | allowed hosts/paths, budgets, robots mode, authorisation record, audited decisions | Implemented |
 | Block policy | `mzizi_fetch.web.blocks` | classify failures, configured response, recorded reason | Implemented |
 | HTTP client | `mzizi_fetch.web.client` | GET/HEAD, conditional requests, retries with backoff and jitter, spacing, concurrency, provenance | Implemented |

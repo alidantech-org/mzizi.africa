@@ -19,7 +19,7 @@ Work on a Build item starts only after the Approval item is ticked.
 - [ ] Design: Specify the job spec fields, including the authority reference (a source code) and the placements block.
 - [ ] Design: Decide how the JSON schema is generated from the engine models so the two cannot drift.
 - [ ] Design: Say how `seed/system/pipelines/pdf-extraction.v1.json` is migrated or retired, and whether a run-bundle schema is needed now.
-- [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
+- [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Generate `source/schema/engine/job.schema.json` from the typed models and add a drift check.
 - [ ] Build, only after approval: Remove the old pipeline schema and update its references.
 - [ ] Build, only after approval: Add tests that valid specs pass and malformed placements fail.
@@ -31,3 +31,9 @@ Record findings, rejected options and the approval here.
 ## Progress
 
 Built 16 November 2026: `source/schema/engine/job.schema.json` generated from the typed job model by `runtime/runs/schema.py`, with a drift test. The old pipeline schema is removed. A run-bundle schema is not needed yet.
+
+## Comments
+
+### 2026-11-16T14:28:09.337Z · PETER IRUNGU
+
+Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.

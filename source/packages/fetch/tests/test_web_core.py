@@ -197,14 +197,18 @@ def test_rate_limit_spacing_is_applied_and_concurrent_fetch_keeps_order() -> Non
 
 
 def test_vocabulary_is_data_and_its_schema_is_in_sync() -> None:
-    import json
+    import os
     from pathlib import Path
 
-    from mzizi_fetch.web.vocabulary import DEFAULT_PATH, Vocabulary, parse_vocabulary, vocabulary
+    from mzizi_fetch.web.vocabulary import DEFAULT_PATH, parse_vocabulary, schema_text, vocabulary
 
     assert vocabulary().version == 1 and "pdf" in vocabulary().url_kinds.document
-    schema = Path(DEFAULT_PATH).parent / "web.schema.json"
-    assert json.loads(schema.read_text()) == json.loads(json.dumps(Vocabulary.model_json_schema(), sort_keys=True))
+    schema = Path(__file__).resolve().parents[3] / "schema" / "vocabulary" / "web.schema.json"
+    if os.environ.get("MZIZI_WRITE_SCHEMAS") == "1":
+        schema.write_text(schema_text(), encoding="utf-8")
+    assert schema.read_text(encoding="utf-8") == schema_text(), "run with MZIZI_WRITE_SCHEMAS=1 to regenerate"
+    first = DEFAULT_PATH.read_text().splitlines()[0]
+    assert first == f"# yaml-language-server: $schema={__import__('json').loads(schema_text())['$id']}"
     assert parse_vocabulary(DEFAULT_PATH.read_text()).file_signatures[0].magic_bytes == b"%PDF"
 
 

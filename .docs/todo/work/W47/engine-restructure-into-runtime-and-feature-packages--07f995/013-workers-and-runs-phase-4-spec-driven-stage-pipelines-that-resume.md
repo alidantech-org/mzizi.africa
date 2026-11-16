@@ -24,3 +24,9 @@ Depends on phases 1 to 3. Reuse the crawl engine, the markdown and download pool
 - [ ] A loopback-site run produces raw files, Markdown and extracted CSV, seals, and resumes correctly after a simulated crash in each stage.
 - [ ] An extraction-only spec needs no network settings; a crawl spec reports every missing setting by name.
 - [ ] Strict typing, boundaries 0, structure clean, suite unchanged or better, `task validate` passes, docs and the task note updated.
+
+## Comments
+
+### 2026-11-16T14:28:06.248Z · PETER IRUNGU
+
+Owner decisions that unblock this task (16 Nov 2026), from the schema redesign. 1) Source authority: spec authority_ref names a SOURCE CODE (dotted, equal to source.sources.code), for example ke.example-ministry. The worker resolves it from the source manifest under seed/sources/<scope>/<institution>/<source>/ (policy, scope, rate limits, robots, assessment.ref), through a small typed port so it can later read an approved Postgres assessment instead. No separate operator-managed registry. Unresolved references are rejected before any fetch. The cross-reference registry is task TSK-6033104AA031 in the Schema and manifest redesign group; example: source/schema/engine/_example/job.json. 2) Publishing: confirmed. A job spec stage never publishes. The spec declares placements and the existing approved release command promotes. The job schema is generated from the typed model: source/schema/engine/job.schema.json.

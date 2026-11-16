@@ -20,7 +20,7 @@ Work on a Build item starts only after the Approval item is ticked.
 - [ ] Design: List every file that is deleted, archived or moved, with a reason, including the decision on `exchange.schema.json`.
 - [ ] Design: Decide where archived files live and how their history is kept.
 - [ ] Design: Order the moves so each moved source passes the new validator before its old file is removed.
-- [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
+- [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Perform the moves in one reviewable change per folder.
 - [ ] Build, only after approval: Update every README, design guide and link that mentions a moved path.
 - [ ] Build, only after approval: Run the full seed check after each move.
@@ -32,3 +32,11 @@ Record findings, rejected options and the approval here.
 ## Progress
 
 Partly done 16 November 2026: `web/`, `extraction/v1/` and `pipeline/` are gone and `foundation-query` is removed. `site/v1/` and `contracts/` stay until the crawler validator and the exchange decision move; see `source/schema/README.md`.
+
+## Comments
+
+### 2026-11-16T14:28:10.387Z · PETER IRUNGU
+
+Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.
+
+Decisions 16 November 2026: the hand-kept exchange schema is retired for good (copy in `.dev/archives/schema-retired/`); the seed layout `data/`, `sources/`, `mappings/`, `vocabularies/` is kept; the web data catalog is now generated from the API's Dryv catalog.

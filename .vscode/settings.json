@@ -12,7 +12,8 @@
             "**/.next": true,
             "**/dist": true,
             "**/build": true,
-            "**/coverage": true
+            "**/coverage": true,
+            "**/py.typed": true,
       },
       "search.exclude": {
             "**/node_modules": true,

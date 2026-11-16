@@ -19,7 +19,7 @@ Work on a Build item starts only after the Approval item is ticked.
 - [ ] Design: Write the validator design: the layers (shape, registry, CSV by path, mappings, sources), the report format and which errors stop a release.
 - [ ] Design: Define the command line surface and exit codes.
 - [ ] Design: Agree the test plan using real and deliberately broken seed files.
-- [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
+- [x] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Rewrite the validators in layers: YAML shape, registry, CSV against generated schemas, mappings, then sources.
 - [ ] Build, only after approval: Produce a validation report before any database write.
 - [ ] Build, only after approval: Run the new checks over every seed file and fix or retire each failure.
@@ -28,3 +28,9 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+
+## Comments
+
+### 2026-11-16T14:28:10.916Z · PETER IRUNGU
+
+Design approved by the owner on 16 November 2026 (chat reply to the redesign status). Seed layout kept as designed; exchange schema retired; web vocabulary moves into the seed tree with a real schema; system-managed columns are marked by Dryv's .system() and published as x-managed.

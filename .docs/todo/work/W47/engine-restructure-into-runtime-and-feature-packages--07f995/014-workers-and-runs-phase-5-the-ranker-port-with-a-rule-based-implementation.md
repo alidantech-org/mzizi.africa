@@ -24,3 +24,9 @@ Depends on phase 4. Ranking and `expect` rules are specified in `.docs/design/ac
 - [ ] Criteria mode fetches only candidates above the threshold and records the rest; hunt mode fetches all matches and ranks afterwards.
 - [ ] No hard-coded site, country or classification knowledge; no regular expressions outside the pattern modules.
 - [ ] Strict typing, boundaries 0, structure clean, suite unchanged or better, `task validate` passes, docs and the task note updated.
+
+## Comments
+
+### 2026-11-16T14:28:06.485Z · PETER IRUNGU
+
+Note from the schema redesign (16 Nov 2026): ranking rules are now the rank block of a website source manifest (source/schema/sources/website.schema.json, example in source/schema/sources/_example/website-bundle/manifest.yml), not a standalone ranking.yml with a schema marker. A rule's target must be a stored table listed in the generated source/schema/database/*.schema.json. The crawler already validates rules this way (validate_ranking).

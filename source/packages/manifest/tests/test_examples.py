@@ -10,6 +10,8 @@ import yaml
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+from mzizi_manifest.features.database.tables import load_tables
+
 SCHEMA_ROOT = Path(__file__).resolve().parents[3] / "schema"
 UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 
@@ -75,57 +77,42 @@ def test_every_schema_folder_has_an_example_folder() -> None:
     assert folders and all((SCHEMA_ROOT / folder / "_example").is_dir() for folder in folders)
 
 
-def _tables() -> dict[str, dict]:
-    found: dict[str, dict] = {}
-    for path in (SCHEMA_ROOT / "database").glob("*.schema.json"):
-        for table in json.loads(path.read_text(encoding="utf-8"))["tables"]:
-            found[table["table"]] = table
-    return found
-
-
 def _rows(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
 
 
 def test_example_csv_files_match_the_generated_table_schemas() -> None:
-    tables = _tables()
+    tables = load_tables(SCHEMA_ROOT)
     root = SCHEMA_ROOT / "database" / "_example" / "data"
     ids: dict[str, set[str]] = {}
     files = sorted(root.glob("*/*/*.csv"))
     assert files
     for file in files:
-        domain, table_name = file.parent.name, file.stem
-        table = tables[f"{domain}.{table_name}"]  # the table is named by the path
-        columns = {column["name"]: column for column in table["columns"]}
+        table = tables[f"{file.parent.name}.{file.stem}"]  # the table is named by the path
         rows = _rows(file)
         header = set(rows[0])
-        assert header <= set(columns), f"{file.name}: unknown columns {header - set(columns)}"
-        assert {name for name, column in columns.items() if column["required"]} <= header
-        ids[table["table"]] = {row["id"] for row in rows}
+        assert header <= set(table.columns), f"{file.name}: unknown columns {header - set(table.columns)}"
+        supplied = {column.name for column in table.columns.values() if column.required}
+        assert supplied <= header, f"{file.name}: missing {supplied - header}"
+        ids[table.qualified_name] = {row["id"] for row in rows}
         for row in rows:
             for name, value in row.items():
-                if columns[name]["type"] == "uuid":
+                if table.columns[name].kind == "uuid":
                     assert UUID.match(value), f"{file.name}: {name} is not a UUID"
-    by_id = {table["id"]: table["table"] for table in tables.values()}
+    by_id = {table.id: table.qualified_name for table in tables.values()}
     for file in files:
         table = tables[f"{file.parent.name}.{file.stem}"]
-        for column in table["columns"]:
-            target = column.get("references")
-            if target and column["name"] in _rows(file)[0]:
+        for column in table.columns.values():
+            if column.references and column.name in _rows(file)[0]:
                 for row in _rows(file):
-                    assert row[column["name"]] in ids[by_id[target["tableId"]]], f"{file.name}: {column['name']}"
+                    assert row[column.name] in ids[by_id[column.references[0]]], f"{file.name}: {column.name}"
 
 
-def test_every_schema_id_is_its_public_url_and_every_file_is_planned_for_publication() -> None:
-    from mzizi_manifest.features.publish.schema_publication import id_problems, plan
-
-    assert id_problems(SCHEMA_ROOT) == []
-    planned = plan(SCHEMA_ROOT)
-    assert {item.key for item in planned} >= {
-        "public/schemas/mapping/mapping.schema.json",
-        "public/schemas/database/reference.schema.json",
-    }
-    assert all(
-        "_example" not in item.key and item.url.endswith(item.key.removeprefix("public/schemas/")) for item in planned
-    )
+def test_system_managed_columns_are_marked_and_not_required() -> None:
+    values = load_tables(SCHEMA_ROOT)["reference.values"]
+    for name in ("created_at", "updated_at", "version", "deleted_at"):
+        assert values.columns[name].managed and not values.columns[name].required
+    assert values.columns["id"].required and not values.columns["id"].managed
+    assert values.columns["scheme_id"].references == ("#/schemas/reference.Scheme", "id")
+    assert ("code",) in values.unique_keys
