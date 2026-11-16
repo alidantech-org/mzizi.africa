@@ -232,10 +232,10 @@ def test_the_runtime_exposes_operations_and_calls_them_by_name():
 
 
 def test_the_default_runtime_registers_its_packages_and_reports_their_health():
+    from mzizi_engine.config import ServerConfig
     from mzizi_engine.runtime.assembly import build_default_runtime
-    from mzizi_engine.runtime.http.settings import Settings
 
-    engine = build_default_runtime(Settings(limits={"crawler": 2}))
+    engine = build_default_runtime(ServerConfig(limits={"crawler": 2}))
     engine.start()
     try:
         health = engine.health()

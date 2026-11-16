@@ -13,10 +13,10 @@ import httpx
 import pytest
 from engine_helpers import settings, wait_for
 
+from mzizi_engine.config import ServerConfig
 from mzizi_engine.runtime.assembly.default_operations import build_default_registry
 from mzizi_engine.runtime.executor.executor import Executor
 from mzizi_engine.runtime.executor.memory_store import MemoryStore
-from mzizi_engine.runtime.http.settings import Settings
 from mzizi_engine.runtime.operations import Operation
 
 
@@ -279,11 +279,11 @@ def test_the_actor_of_a_filesystem_job_is_the_authenticated_principal_never_clie
 
 def test_settings_refuse_unauthenticated_mode_off_loopback():
     with pytest.raises(ValueError, match="loopback"):
-        Settings(auth="off", host="0.0.0.0").check()
-    Settings(auth="off", host="127.0.0.1").check()
-    assert Settings.from_env(
+        ServerConfig(auth="off", host="0.0.0.0").check()
+    ServerConfig(auth="off", host="127.0.0.1").check()
+    assert ServerConfig.from_env(
         {"ENGINE_CAPABILITY_LIMITS": "extraction.pdf=2,scraping.links=5", "DATABASE_URL": "postgres://x/mzizi_new"}
     ).limits == {"extraction.pdf": 2, "scraping.links": 5}
-    assert Settings.from_env({}).store == "memory"
+    assert ServerConfig.from_env({}).store == "memory"
     with pytest.raises(ValueError, match="ENGINE_STORE must be memory"):
-        Settings(store="postgres").check()
+        ServerConfig(store="postgres").check()

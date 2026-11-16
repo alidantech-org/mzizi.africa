@@ -21,11 +21,6 @@ def site() -> Iterator[str]:
 
 
 @pytest.fixture(autouse=True)
-def identity(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("MZIZI_USER_AGENT", "MziziTest/1.0 (+https://mzizi-test.africa/bot; research@mzizi-test.africa)")
-
-
-@pytest.fixture(autouse=True)
 def no_dev_browser_windows(monkeypatch: pytest.MonkeyPatch) -> None:
     """Tests never open the shared dev browser window."""
     monkeypatch.setenv("MZIZI_DEV_BROWSER", "headless")

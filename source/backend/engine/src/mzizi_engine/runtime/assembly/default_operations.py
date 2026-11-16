@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import base64
 from collections.abc import Callable
-from pathlib import Path
 
 from mzizi_engine.jsonvalue import Payload
 from mzizi_engine.runtime.operations import Operation, OperationRegistry
@@ -19,11 +18,10 @@ def _bytes_input(payload: dict) -> bytes:
     """`content_base64` or a `path` below the configured input root (default: the repository seed folder)."""
     if "content_base64" in payload:
         return base64.b64decode(payload["content_base64"])
-    import os
-
+    from mzizi_engine.config import EngineConfig
     from mzizi_manifest.shared.paths import SEED_ROOT
 
-    root = Path(os.environ.get("ENGINE_INPUT_ROOT") or SEED_ROOT).resolve()
+    root = (EngineConfig.load().crawler.input_root or SEED_ROOT).resolve()
     target = (root / payload["path"]).resolve()
     if root not in target.parents and target != root:
         raise ValueError("path escapes the engine input root")
@@ -155,13 +153,14 @@ def process_info(payload: dict) -> dict:
 
 def build_default_registry() -> OperationRegistry:
     reg = OperationRegistry()
-    import os
-
-    from mzizi_crawler import configure_activity
+    from mzizi_crawler import configure_activity, configure_user_agent
+    from mzizi_engine.config import EngineConfig
     from mzizi_engine.persistence.mongo.activity import activity_opener
     from mzizi_engine.runtime.assembly.crawler_operations import register_crawler
 
-    configure_activity(activity_opener(os.environ))
+    config = EngineConfig.load()
+    configure_activity(activity_opener(config))
+    configure_user_agent(config.crawler.user_agent)
     register_crawler(reg)
     from mzizi_engine.runtime.assembly.filesystem_operations import register_filesystem
 

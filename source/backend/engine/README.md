@@ -29,13 +29,9 @@ uv run pytest source/backend/engine/tests
 
 The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (development only) is refused on any other address. In normal mode a bearer token is verified against the same OIDC issuer as the NestJS API (`AUTH_ISSUER`, `AUTH_JWKS_URL`). Jobs, runs and events are kept in memory (`ENGINE_STORE=memory`, the only store): the Bun database service that once held them was removed, and persistent job state returns with the engine's own persistence. Account and permission lookups that used that service are likewise not available yet.
 
-## Filesystem settings
+## Configuration
 
-`filesystem.*` operations need, in the environment: `MZIZI_DB_URL`; `S3_BUCKET`, `S3_REGION`, `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` and optionally `S3_PUBLIC_ENDPOINT`; `FILESYSTEM_PROTECTED_PREFIXES`, `FILESYSTEM_RESERVED_ROOTS` and `FILESYSTEM_TEMP_PREFIX` (comma-separated, `-` for none); optionally `FILESYSTEM_MEDIA_FORMATS` (a media reference JSON) and `ENGINE_INPUT_ROOT` (the folder files may be read from by path). `ENGINE_STORE_MEMORY=1` swaps S3 for an in-memory store (development only). Missing values are named in the error; nothing is defaulted. Where files go is decided by the caller of each operation, never by the engine. Database tests: `MZIZI_FS_TEST_DATABASE_URL=postgres://… uv run pytest source/backend/engine/tests/filesystem` against a scratch database migrated with `bun run db migrate`.
-
-## MongoDB settings
-
-The crawler's activity store needs `MZIZI_MONGO_URL` and `MZIZI_MONGO_DATABASE`; without them (or with `ENGINE_ACTIVITY_STORE=files`, or when MongoDB is unreachable) the crawler writes files only. Records that cannot reach MongoDB are spooled to disk and replayed later.
+One file reads the environment: [`config/engine_config.py`](src/mzizi_engine/config/engine_config.py). `EngineConfig.load()` reads the git-ignored root `.env` (without overriding variables already set) and builds the sections: `server`, `postgres` (`DATABASE_WRITE_URL`), `mongo` (`MZIZI_MONGO_URL`, `MZIZI_MONGO_DATABASE`), `vector`, `s3` (`S3_ENDPOINT`, `S3_BUCKET`, credentials from `S3_ACCESS_KEY` or `AWS_ACCESS_KEY_ID` and so on, public endpoint from `S3_PUBLIC_ENDPOINT` or `S3_PUBLIC_ORIGIN`), `filesystem` (`FILESYSTEM_PROTECTED_PREFIXES`, `FILESYSTEM_RESERVED_ROOTS`, `FILESYSTEM_TEMP_PREFIX`), `search` and `crawler` (`MZIZI_USER_AGENT`, `ENGINE_INPUT_ROOT`). A section whose variables are missing is absent, and the first use of it raises one error naming every missing variable; nothing is guessed. `ENGINE_STORE_MEMORY=1` swaps S3 for an in-memory store (development only); `ENGINE_ACTIVITY_STORE=files` turns the MongoDB activity store off. `.env.example` lists every variable. Where files go is decided by the caller of each operation, never by the engine. Database tests: `MZIZI_FS_TEST_DATABASE_URL=postgres://… uv run pytest source/backend/engine/tests/filesystem` against a scratch database migrated with `bun run db migrate`.
 
 ## Operations and jobs
 

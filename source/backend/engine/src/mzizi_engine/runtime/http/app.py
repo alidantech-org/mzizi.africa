@@ -19,6 +19,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from mzizi_engine import __version__
+from mzizi_engine.config import EngineConfig, ServerConfig
 from mzizi_engine.runtime.assembly import DRAIN_TIMEOUT_SECONDS, build_default_runtime
 from mzizi_engine.runtime.contracts.config import RuntimeConfig
 from mzizi_engine.runtime.executor.executor import Executor
@@ -31,7 +32,6 @@ from mzizi_engine.runtime.http.auth import (
     oidc_verifier,
     require,
 )
-from mzizi_engine.runtime.http.settings import Settings
 from mzizi_engine.runtime.operations import OperationRegistry
 from mzizi_engine.runtime.runtime import EngineRuntime
 
@@ -47,12 +47,12 @@ class RunRequest(BaseModel):
     name: str
 
 
-def _store(settings: Settings) -> Store:
+def _store(settings: ServerConfig) -> Store:
     return MemoryStore()
 
 
 def create_app(
-    settings: Settings | None = None,
+    settings: ServerConfig | None = None,
     store: Store | None = None,
     registry: OperationRegistry | None = None,
     runtime: EngineRuntime | None = None,
@@ -60,7 +60,7 @@ def create_app(
     verifier: TokenVerifier | None = None,
     callback_client: httpx.AsyncClient | None = None,
 ) -> FastAPI:
-    settings = settings or Settings.from_env()
+    settings = settings or EngineConfig.load().server
     settings.check()
     if runtime is None:
         runtime = (

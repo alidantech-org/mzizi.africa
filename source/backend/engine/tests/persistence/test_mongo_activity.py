@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
+from mzizi_engine.config import ConfigError, EngineConfig
 from mzizi_engine.persistence.mongo import activity as module
-from mzizi_engine.persistence.mongo.settings import MongoSettings, MongoSettingsError
 from mzizi_engine.persistence.mongo.store import Document, MongoStore
 
 
@@ -42,12 +42,13 @@ def test_records_are_spooled_when_mongodb_is_down_and_replayed_later(
     assert [d["_id"] for d in up.stored] == ["a", "b"] and not list((tmp_path / "spool").glob("*.jsonl"))
 
 
-def test_settings_are_required_and_the_store_can_be_switched_off() -> None:
-    with pytest.raises(MongoSettingsError, match="MZIZI_MONGO_URL, MZIZI_MONGO_DATABASE"):
-        MongoSettings.from_env({})
-    assert MongoSettings.from_env({"MZIZI_MONGO_URL": "mongodb://x", "MZIZI_MONGO_DATABASE": "d"}).database == "d"
-    assert module.activity_opener({"ENGINE_ACTIVITY_STORE": "files"})() is None
-    assert module.activity_opener({})() is None  # unconfigured: files only, no crash
+def test_mongo_is_configured_from_the_engine_config_and_the_store_can_be_switched_off() -> None:
+    with pytest.raises(ConfigError, match="MZIZI_MONGO_URL, MZIZI_MONGO_DATABASE"):
+        EngineConfig.from_env({}).require_mongo()
+    configured = EngineConfig.from_env({"MZIZI_MONGO_URL": "mongodb://x", "MZIZI_MONGO_DATABASE": "d"})
+    assert configured.require_mongo().database == "d"
+    assert module.activity_opener(EngineConfig.from_env({"ENGINE_ACTIVITY_STORE": "files"}))() is None
+    assert module.activity_opener(EngineConfig.from_env({}))() is None  # unconfigured: files only, no crash
 
 
 def test_the_store_type_is_importable_without_a_server() -> None:

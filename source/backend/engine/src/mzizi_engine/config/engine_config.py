@@ -1,0 +1,304 @@
+"""The engine's one configuration: every setting the engine reads from the environment, assembled in this file.
+
+Nothing else in the engine reads the environment. `EngineConfig.load()` reads the repository's git-ignored `.env` (without
+overriding variables already set), then builds each section; `EngineConfig.from_env(mapping)` does the same from a mapping,
+for tests. A section whose required variables are missing is `None`, and `require_*` raises one error that names them, so a
+capability that is not used never needs its settings.
+
+Variables (the root `.env` already carries most of them):
+
+    server      ENGINE_HOST ENGINE_PORT ENGINE_AUTH AUTH_ISSUER AUTH_JWKS_URL AUTH_AUDIENCE ENGINE_SERVICE_TOKEN
+                ENGINE_STORE NESTJS_CALLBACK_URL ENGINE_CALLBACK_TOKEN ENGINE_PROCESS_WORKERS ENGINE_CAPABILITY_LIMITS
+    postgres    DATABASE_WRITE_URL (the engine writes; the read-only DATABASE_URL is never used for writes)
+    mongo       MZIZI_MONGO_URL MZIZI_MONGO_DATABASE   (ENGINE_ACTIVITY_STORE=files turns the activity store off)
+    vector      MZIZI_VECTOR_URL (optional; the vector store is a skeleton)
+    s3          S3_ENDPOINT S3_BUCKET, credentials S3_ACCESS_KEY/AWS_ACCESS_KEY_ID and S3_SECRET_KEY/AWS_SECRET_ACCESS_KEY,
+                region S3_REGION/AWS_DEFAULT_REGION, public endpoint S3_PUBLIC_ENDPOINT/S3_PUBLIC_ORIGIN (optional);
+                ENGINE_STORE_MEMORY=1 swaps S3 for an in-memory store (development and tests only)
+    filesystem  FILESYSTEM_PROTECTED_PREFIXES FILESYSTEM_RESERVED_ROOTS FILESYSTEM_TEMP_PREFIX (comma lists, `-` for none),
+                FILESYSTEM_MEDIA_FORMATS (optional file)
+    search      BRAVE_API_KEY, GOOGLE_CSE_API_KEY and GOOGLE_CSE_ID (each provider optional)
+    crawler     MZIZI_USER_AGENT, ENGINE_INPUT_ROOT (optional folder files may be read from by path)
+"""
+
+from __future__ import annotations
+
+import os
+from collections.abc import Mapping
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from pydantic import BaseModel, ConfigDict
+
+# ---------------------------------------------------------------------------------------------------- errors
+
+
+class ConfigError(ValueError):
+    """Required settings are missing or invalid; the message names each variable."""
+
+
+def _missing(section: str, names: list[str]) -> ConfigError:
+    return ConfigError(f"{section} settings missing: {', '.join(names)}")
+
+
+# ---------------------------------------------------------------------------------------------------- sections
+
+
+@dataclass
+class ServerConfig:
+    """The HTTP front door and the executor: bind address, authentication, retries, concurrency and callbacks."""
+
+    host: str = "127.0.0.1"
+    port: int = 8760
+    auth: str = "oidc"
+    issuer: str | None = None
+    jwks_url: str | None = None
+    audience: str | None = None
+    database_service_url: str | None = None
+    database_service_token: str | None = None
+    service_token: str | None = None
+    store: str = "memory"
+    callback_url: str | None = None
+    callback_token: str | None = None
+    process_workers: int = 2
+    default_concurrency: int = 4
+    limits: dict[str, int] = field(default_factory=dict)
+    max_attempts: int = 3
+    retry_base_seconds: float = 1.0
+
+    @classmethod
+    def from_env(cls, env: Mapping[str, str]) -> ServerConfig:
+        limits: dict[str, int] = {}
+        for part in filter(None, (env.get("ENGINE_CAPABILITY_LIMITS") or "").split(",")):
+            name, _, count = part.partition("=")
+            limits[name.strip()] = int(count)
+        return cls(
+            host=env.get("ENGINE_HOST", "127.0.0.1"),
+            port=int(env.get("ENGINE_PORT", "8760")),
+            auth=env.get("ENGINE_AUTH", "oidc"),
+            issuer=env.get("AUTH_ISSUER"),
+            jwks_url=env.get("AUTH_JWKS_URL"),
+            audience=env.get("AUTH_AUDIENCE"),
+            database_service_url=env.get("DATABASE_SERVICE_URL"),
+            database_service_token=env.get("DATABASE_SERVICE_TOKEN"),
+            service_token=env.get("ENGINE_SERVICE_TOKEN"),
+            store=env.get("ENGINE_STORE", "memory"),
+            callback_url=env.get("NESTJS_CALLBACK_URL"),
+            callback_token=env.get("ENGINE_CALLBACK_TOKEN"),
+            process_workers=int(env.get("ENGINE_PROCESS_WORKERS", "2")),
+            limits=limits,
+        )
+
+    def check(self) -> None:
+        if self.auth not in ("oidc", "off"):
+            raise ValueError("ENGINE_AUTH must be oidc or off")
+        if self.store != "memory":
+            raise ValueError(
+                "ENGINE_STORE must be memory: persistent job state returns with the engine's own persistence"
+            )
+        if self.auth == "off" and self.host not in ("127.0.0.1", "::1", "localhost"):
+            raise ValueError("ENGINE_AUTH=off is allowed only when bound to a loopback address")
+
+
+class _Frozen(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+
+class PostgresConfig(_Frozen):
+    url: str
+
+
+class MongoConfig(_Frozen):
+    url: str
+    database: str
+
+
+class VectorConfig(_Frozen):
+    url: str
+
+
+class S3Config(_Frozen):
+    endpoint: str
+    public_endpoint: str | None
+    access_key: str
+    secret_key: str
+    bucket: str
+    region: str
+
+
+class FilesystemRules(_Frozen):
+    protected_prefixes: tuple[str, ...]
+    reserved_roots: tuple[str, ...]
+    temp_prefix: str
+    media_formats_path: Path | None
+
+
+class SearchKeys(_Frozen):
+    brave_key: str | None
+    google_key: str | None
+    google_cx: str | None
+
+
+class CrawlerConfig(_Frozen):
+    user_agent: str | None
+    input_root: Path | None
+
+
+# Provider names to the variables each needs (names only; values are never shown).
+SEARCH_VARIABLES = {"brave": ("BRAVE_API_KEY",), "google": ("GOOGLE_CSE_API_KEY", "GOOGLE_CSE_ID")}
+
+
+# ---------------------------------------------------------------------------------------------------- the config
+
+
+class EngineConfig(_Frozen):
+    server: ServerConfig
+    postgres: PostgresConfig | None
+    mongo: MongoConfig | None
+    vector: VectorConfig | None
+    s3: S3Config | None
+    memory_store: bool
+    filesystem: FilesystemRules | None
+    search: SearchKeys
+    crawler: CrawlerConfig
+    #: `files` turns the MongoDB activity store off (tests, CI); anything else uses MongoDB when it is configured.
+    activity_store: str
+
+    model_config = ConfigDict(frozen=True, extra="forbid", arbitrary_types_allowed=True)
+
+    @classmethod
+    def load(cls, env_file: Path | None = None) -> EngineConfig:
+        """Read the git-ignored `.env` (never overriding what is already set), then the environment."""
+        candidate = env_file or Path(os.environ.get("MZIZI_ENV_FILE") or _repository_root() / ".env")
+        if candidate.is_file():
+            for key, value in parse_env(candidate.read_text(encoding="utf-8")).items():
+                os.environ.setdefault(key, value)
+        return cls.from_env(os.environ)
+
+    @classmethod
+    def from_env(cls, env: Mapping[str, str]) -> EngineConfig:
+        def first(*names: str) -> str | None:
+            return next((env[name] for name in names if env.get(name)), None)
+
+        write_url = first("DATABASE_WRITE_URL")
+        mongo_url, mongo_db = first("MZIZI_MONGO_URL"), first("MZIZI_MONGO_DATABASE")
+        endpoint, bucket = first("S3_ENDPOINT"), first("S3_BUCKET")
+        access, secret = first("S3_ACCESS_KEY", "AWS_ACCESS_KEY_ID"), first("S3_SECRET_KEY", "AWS_SECRET_ACCESS_KEY")
+        region = first("S3_REGION", "AWS_DEFAULT_REGION")
+        public = first("S3_PUBLIC_ENDPOINT", "S3_PUBLIC_ORIGIN")
+        rules = [
+            first(name)
+            for name in ("FILESYSTEM_PROTECTED_PREFIXES", "FILESYSTEM_RESERVED_ROOTS", "FILESYSTEM_TEMP_PREFIX")
+        ]
+        vector_url = first("MZIZI_VECTOR_URL")
+        user_agent, input_root = first("MZIZI_USER_AGENT"), first("ENGINE_INPUT_ROOT")
+        media = first("FILESYSTEM_MEDIA_FORMATS")
+        return cls(
+            server=ServerConfig.from_env(env),
+            postgres=PostgresConfig(url=write_url) if write_url else None,
+            mongo=MongoConfig(url=mongo_url, database=mongo_db) if mongo_url and mongo_db else None,
+            vector=VectorConfig(url=vector_url) if vector_url else None,
+            s3=S3Config(
+                endpoint=endpoint,
+                public_endpoint=public,
+                access_key=access,
+                secret_key=secret,
+                bucket=bucket,
+                region=region,
+            )
+            if endpoint and access and secret and bucket and region
+            else None,
+            memory_store=env.get("ENGINE_STORE_MEMORY") == "1",
+            filesystem=FilesystemRules(
+                protected_prefixes=_list(rules[0] or ""),
+                reserved_roots=_list(rules[1] or ""),
+                temp_prefix=rules[2] or "",
+                media_formats_path=Path(media) if media else None,
+            )
+            if all(rules)
+            else None,
+            search=SearchKeys(
+                brave_key=first("BRAVE_API_KEY"),
+                google_key=first("GOOGLE_CSE_API_KEY"),
+                google_cx=first("GOOGLE_CSE_ID"),
+            ),
+            crawler=CrawlerConfig(user_agent=user_agent, input_root=Path(input_root).resolve() if input_root else None),
+            activity_store=env.get("ENGINE_ACTIVITY_STORE", "mongo"),
+        )
+
+    # -- sections a capability needs: one error that names every missing variable -----------------------------
+    def require_postgres(self) -> PostgresConfig:
+        if self.postgres is None:
+            raise _missing("PostgreSQL", ["DATABASE_WRITE_URL"])
+        return self.postgres
+
+    def require_mongo(self) -> MongoConfig:
+        if self.mongo is None:
+            raise _missing("MongoDB", ["MZIZI_MONGO_URL", "MZIZI_MONGO_DATABASE"])
+        return self.mongo
+
+    def require_filesystem(self) -> tuple[PostgresConfig, FilesystemRules, S3Config | None]:
+        """Everything a `filesystem.*` operation needs; S3 is not needed when the in-memory store is selected."""
+        missing = []
+        if self.postgres is None:
+            missing.append("DATABASE_WRITE_URL")
+        if self.filesystem is None:
+            missing += ["FILESYSTEM_PROTECTED_PREFIXES", "FILESYSTEM_RESERVED_ROOTS", "FILESYSTEM_TEMP_PREFIX"]
+        if self.s3 is None and not self.memory_store:
+            missing += [
+                "S3_ENDPOINT",
+                "S3_BUCKET",
+                "S3 credentials (S3_ACCESS_KEY or AWS_ACCESS_KEY_ID, S3_SECRET_KEY or AWS_SECRET_ACCESS_KEY)",
+                "S3_REGION or AWS_DEFAULT_REGION",
+            ]
+        if missing or self.postgres is None or self.filesystem is None:
+            raise _missing("filesystem", missing)
+        return self.postgres, self.filesystem, self.s3
+
+    def search_missing(self, provider: str) -> list[str]:
+        """The variables a search provider still needs; empty when it is configured."""
+        present = {
+            "BRAVE_API_KEY": self.search.brave_key,
+            "GOOGLE_CSE_API_KEY": self.search.google_key,
+            "GOOGLE_CSE_ID": self.search.google_cx,
+        }
+        return [name for name in SEARCH_VARIABLES[provider] if not present[name]]
+
+
+# ---------------------------------------------------------------------------------------------------- helpers
+
+
+def _list(text: str) -> tuple[str, ...]:
+    """A comma-separated setting; `-` means an explicitly empty list."""
+    return () if text.strip() == "-" else tuple(part.strip() for part in text.split(",") if part.strip())
+
+
+def _repository_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "seed").is_dir() and (parent / "pyproject.toml").is_file():
+            return parent
+    return Path.cwd()
+
+
+def parse_env(text: str) -> dict[str, str]:
+    """`KEY=value` lines; comments, blank lines, `export`, matching quotes and multi-line quoted values (PEM keys)."""
+    values: dict[str, str] = {}
+    lines = iter(text.splitlines())
+    for raw in lines:
+        line = raw.strip().removeprefix("export ").strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        value = value.strip()
+        if value[:1] in "\"'" and not (len(value) > 1 and value.endswith(value[0])):
+            quote, parts = value[0], [value[1:]]
+            for more in lines:
+                if more.rstrip().endswith(quote):
+                    parts.append(more.rstrip()[:-1])
+                    break
+                parts.append(more)
+            value = "\n".join(parts)
+        elif value[:1] in "\"'" and value.endswith(value[0]):
+            value = value[1:-1]
+        values[key.strip()] = value
+    return values

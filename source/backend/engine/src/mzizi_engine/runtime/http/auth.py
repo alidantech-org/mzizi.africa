@@ -14,7 +14,7 @@ from typing import Any, Protocol
 import httpx
 from fastapi import Depends, HTTPException, Request
 
-from mzizi_engine.runtime.http.settings import Settings
+from mzizi_engine.config import ServerConfig
 
 
 @dataclass(frozen=True)
@@ -57,7 +57,7 @@ class TokenVerifier(Protocol):
     async def __call__(self, token: str) -> tuple[str, str]: ...
 
 
-def oidc_verifier(settings: Settings) -> TokenVerifier:
+def oidc_verifier(settings: ServerConfig) -> TokenVerifier:
     """Verifies signature, issuer, expiry (and audience if set) with the issuer's JWKS; returns (issuer, subject)."""
     import jwt
 

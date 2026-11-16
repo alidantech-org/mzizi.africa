@@ -5,6 +5,7 @@ from __future__ import annotations
 import httpx
 import pytest
 
+from mzizi_engine.config import EngineConfig
 from mzizi_engine.runtime import CapabilityConfig, EngineRuntime, ExecutionPlan, Exposure, RuntimeConfig
 from mzizi_engine.runtime.assembly.search_settings import MAX_RESULTS, orchestrator_for, search_settings
 from mzizi_search import ProviderName, SearchError, SearchOrchestrator, SearchQuery
@@ -13,21 +14,24 @@ ALL = {"BRAVE_API_KEY": "b", "GOOGLE_CSE_API_KEY": "g", "GOOGLE_CSE_ID": "cx"}
 
 
 def test_settings_include_only_fully_configured_providers() -> None:
-    assert search_settings({}).brave is None and search_settings({}).google is None
-    only_key = search_settings({"GOOGLE_CSE_API_KEY": "g"})
+    assert (
+        search_settings(EngineConfig.from_env({})).brave is None
+        and search_settings(EngineConfig.from_env({})).google is None
+    )
+    only_key = search_settings(EngineConfig.from_env({"GOOGLE_CSE_API_KEY": "g"}))
     assert only_key.google is None
-    full = search_settings(ALL)
+    full = search_settings(EngineConfig.from_env(ALL))
     assert full.max_results == MAX_RESULTS and full.brave is not None and full.google is not None
 
 
 def test_missing_credentials_and_unknown_providers_are_clear() -> None:
     with httpx.Client() as client:
         with pytest.raises(SearchError, match="BRAVE_API_KEY"):
-            orchestrator_for("brave", client, {})
+            orchestrator_for("brave", client, EngineConfig.from_env({}))
         with pytest.raises(SearchError, match="GOOGLE_CSE_API_KEY, GOOGLE_CSE_ID"):
-            orchestrator_for("google", client, {})
+            orchestrator_for("google", client, EngineConfig.from_env({}))
         with pytest.raises(SearchError, match="unknown"):
-            orchestrator_for("bing", client, ALL)
+            orchestrator_for("bing", client, EngineConfig.from_env(ALL))
 
 
 class SearchRuntimeConfig(CapabilityConfig):
@@ -41,7 +45,7 @@ def test_the_orchestrator_runs_as_a_runtime_capability() -> None:
         )
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
-    orchestrator = orchestrator_for("brave", client, ALL)
+    orchestrator = orchestrator_for("brave", client, EngineConfig.from_env(ALL))
     assert isinstance(orchestrator, SearchOrchestrator)
     runtime = EngineRuntime(RuntimeConfig(drain_timeout_seconds=1.0))
     ref = runtime.register(

@@ -44,7 +44,7 @@ A Postgres record links back to staging with a soft reference (collection, docum
 
 - **One database** named `mzizi`, identified by `public.mzizi_target`. Twelve schemas and 94 tables are generated from the Dryv contracts in `dryv/contracts/schemas/postgres/` (verified: 294 foreign keys, 70 unique constraints, 42 checks, 3 exclusion constraints, 282 indexes).
 - **Roles.** `mzizi_engine` and `mzizi_api` may read and write every domain schema. They cannot run DDL and cannot read the `public` ledger tables. The administrative role is read only by the CLI (`MZIZI_DB_ADMIN_URL`).
-- **Connection strings** (engine and API read their own role; the CLI reads the admin URL): `MZIZI_DB_URL` for the application role of the process, `MZIZI_DB_ADMIN_URL` for the CLI, `MZIZI_DB_ENGINE_PASSWORD` and `MZIZI_DB_API_PASSWORD` when provisioning roles.
+- **Connection strings** (engine and API read their own role; the CLI reads the admin URL): `DATABASE_WRITE_URL` for the engine (the single engine configuration file reads it) and `DATABASE_URL` for the read-only API role, `MZIZI_DB_ADMIN_URL` for the CLI, `MZIZI_DB_ENGINE_PASSWORD` and `MZIZI_DB_API_PASSWORD` when provisioning roles.
 - **Write rules.** The engine is the only writer of facts promoted from staging. The API writes the schemas it owns (authentication, accountability read models it persists, audit events it raises). Named operations, not caller-supplied SQL, are the write surface for each side.
 
 ## Migrations and the Bun CLI

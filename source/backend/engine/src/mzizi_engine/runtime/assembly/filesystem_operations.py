@@ -7,23 +7,24 @@ The actor, when present, is stamped into `created_by` by the engine from the aut
 from __future__ import annotations
 
 import base64
-import os
 from collections.abc import Callable
 from pathlib import Path
 
+from mzizi_engine.config import EngineConfig
 from mzizi_engine.jsonvalue import Payload
 from mzizi_engine.persistence.postgres.connection import connect
 from mzizi_engine.persistence.postgres.filesystem import PostgresRegistry
-from mzizi_engine.runtime.assembly.filesystem_settings import FilesystemSettings
 from mzizi_engine.runtime.operations import Operation, OperationRegistry
 from mzizi_filesystem import (
     Access,
+    FilesystemConfig,
     FilesystemOrchestrator,
     MediaCatalog,
     MemoryObjectStore,
     ObjectStore,
     RegisterRequest,
     S3ObjectStore,
+    S3Settings,
 )
 from mzizi_filesystem.features.media.parse import load_media_formats
 from mzizi_filesystem.features.register.storage import Source
@@ -34,19 +35,45 @@ VERSION = "0.1.0"
 PACKAGE = "mzizi-filesystem"
 
 
-def _store(settings: FilesystemSettings) -> ObjectStore:
-    protected = settings.config.protected_prefixes
-    if settings.s3 is None:
-        return MemoryObjectStore(settings.config.bucket, settings.config.public_endpoint or "memory://", protected)
-    return S3ObjectStore(settings.s3, protected)
+class _Wiring:
+    """What a `filesystem.*` operation needs, built from the engine configuration: package settings and the file store."""
+
+    def __init__(self, config: EngineConfig) -> None:
+        postgres, rules, s3 = config.require_filesystem()
+        self.database_url = postgres.url
+        self.input_root = config.crawler.input_root
+        self.media_formats_path = rules.media_formats_path
+        self.config = FilesystemConfig(
+            bucket=s3.bucket if s3 else "memory",
+            region=s3.region if s3 else "memory",
+            public_endpoint=s3.public_endpoint if s3 else None,
+            protected_prefixes=rules.protected_prefixes,
+            reserved_roots=rules.reserved_roots,
+            temp_prefix=rules.temp_prefix,
+        )
+        self.store: ObjectStore = (
+            S3ObjectStore(
+                S3Settings(
+                    endpoint=s3.endpoint,
+                    public_endpoint=s3.public_endpoint,
+                    access_key=s3.access_key,
+                    secret_key=s3.secret_key,
+                    bucket=s3.bucket,
+                    region=s3.region,
+                ),
+                rules.protected_prefixes,
+            )
+            if s3
+            else MemoryObjectStore(self.config.bucket, "memory://", rules.protected_prefixes)
+        )
 
 
-def _run(payload: Payload, action: Callable[[FilesystemOrchestrator, FilesystemSettings], Payload]) -> Payload:
-    settings = FilesystemSettings.from_env(os.environ)
-    catalog = MediaCatalog(load_media_formats(settings.media_formats_path) if settings.media_formats_path else {})
-    with connect(settings.database_url) as conn:
-        orchestrator = FilesystemOrchestrator(settings.config, PostgresRegistry(conn), _store(settings), catalog)
-        return action(orchestrator, settings)
+def _run(payload: Payload, action: Callable[[FilesystemOrchestrator, _Wiring], Payload]) -> Payload:
+    wiring = _Wiring(EngineConfig.load())
+    catalog = MediaCatalog(load_media_formats(wiring.media_formats_path) if wiring.media_formats_path else {})
+    with connect(wiring.database_url) as conn:
+        orchestrator = FilesystemOrchestrator(wiring.config, PostgresRegistry(conn), wiring.store, catalog)
+        return action(orchestrator, wiring)
 
 
 def _actor(payload: Payload) -> dict[str, str]:
@@ -62,16 +89,16 @@ def _request(payload: Payload, key: str = "request") -> RegisterRequest:
     return request.model_copy(update={"created_by": {**request.created_by, **_actor(payload)}})
 
 
-def _under_input_root(settings: FilesystemSettings, relative: str) -> Path:
+def _under_input_root(settings: _Wiring, relative: str) -> Path:
     if settings.input_root is None:
-        raise ValueError(f"{'ENGINE_INPUT_ROOT'} must be set to read files by path")
+        raise ValueError("ENGINE_INPUT_ROOT must be set to read files by path")
     target = (settings.input_root / relative).resolve()
     if settings.input_root not in target.parents and target != settings.input_root:
         raise ValueError("path escapes the engine input root")
     return target
 
 
-def _source(payload: Payload, settings: FilesystemSettings) -> Source:
+def _source(payload: Payload, settings: _Wiring) -> Source:
     content = payload.get("content_base64")
     if isinstance(content, str):
         return base64.b64decode(content)
@@ -103,7 +130,7 @@ def register(payload: Payload) -> Payload:
 
 
 def sync_directory(payload: Payload) -> Payload:
-    def act(fs: FilesystemOrchestrator, settings: FilesystemSettings) -> Payload:
+    def act(fs: FilesystemOrchestrator, settings: _Wiring) -> Payload:
         raw = payload.get("spec")
         if not isinstance(raw, dict):
             raise ValueError("'spec' must be an object")
@@ -143,7 +170,7 @@ def download(payload: Payload) -> Payload:
 
 
 def relate(payload: Payload) -> Payload:
-    def act(fs: FilesystemOrchestrator, settings: FilesystemSettings) -> Payload:
+    def act(fs: FilesystemOrchestrator, settings: _Wiring) -> Payload:
         raw = payload.get("relation")
         if not isinstance(raw, dict):
             raise ValueError("'relation' must be an object")
@@ -153,7 +180,7 @@ def relate(payload: Payload) -> Payload:
 
 
 def lineage(payload: Payload) -> Payload:
-    def act(fs: FilesystemOrchestrator, settings: FilesystemSettings) -> Payload:
+    def act(fs: FilesystemOrchestrator, settings: _Wiring) -> Payload:
         version = _text(payload, "version_id")
         limit = payload.get("limit")
         return {

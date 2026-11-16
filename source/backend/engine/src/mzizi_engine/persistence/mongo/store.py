@@ -5,8 +5,8 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+from mzizi_engine.config import MongoConfig
 from mzizi_engine.jsonvalue import JsonValue
-from mzizi_engine.persistence.mongo.settings import MongoSettings
 
 if TYPE_CHECKING:
     from pymongo import MongoClient
@@ -22,7 +22,7 @@ class MongoUnavailable(RuntimeError):
 
 
 class MongoStore:
-    def __init__(self, settings: MongoSettings) -> None:
+    def __init__(self, settings: MongoConfig) -> None:
         import pymongo
 
         self.settings = settings
