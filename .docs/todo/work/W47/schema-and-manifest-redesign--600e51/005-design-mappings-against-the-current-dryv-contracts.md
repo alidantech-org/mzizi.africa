@@ -1,28 +1,29 @@
 ---
-{id: TSK-DA4793ED6FC2,name: Design mappings against the current Dryv contracts,type: task,status: planned,priority: medium,created_at: 2026-11-16T13:05:54.342Z,updated_at: 2026-11-16T13:06:00.806Z,order: 5120,depends_on: [TSK-A9FDBDC9B96C,TSK-0C7E435CA201]}
+{id: TSK-DA4793ED6FC2,name: Design mappings against the generated database schemas,type: task,status: planned,priority: medium,created_at: 2026-11-16T13:05:54.342Z,updated_at: 2026-11-16T13:49:38.941Z,order: 5120,depends_on: [TSK-A9FDBDC9B96C,TSK-0C7E435CA201]}
 ---
 
-# Design mappings against the current Dryv contracts
+# Design mappings against the generated database schemas
 
 ## Goal
 
-Define one mapping schema that turns extracted source fields into candidate records for tables that actually exist, and decide what to do with the roughly 60 old mapping files.
+Define one mapping schema, with files under `seed/mappings/<scope>/<domain>/<name>.yml`, that turns extracted source fields into records for real tables and is verified against the generated table schemas.
 
 ## Context
 
-The mapping schema allows free target names, so mappings still point at tables such as `reference.jurisdictions` and `person.individuals` and fields such as `url` where the table now uses `canonical_url`. Most old mappings live under `seed/countries/ke/mappings/` and belong to archived importers. This task is part of the schema and manifest redesign group. Nothing in it is built until the owner has approved the design in a task comment, and the group goal and plan describe how the pieces fit together. Related material: `.docs/design/acquisition/SITE_STRUCTURE_SPEC.md`, `source/schema/README.md`, `seed/README.md` and `AGENTS.md`.
+The current mapping schema allows free target names, so mappings still point at tables such as `reference.jurisdictions` and `person.individuals`, and fields such as `url` where the table now uses `canonical_url`. About 60 old mappings live under `seed/countries/ke/mappings/` and belong to archived importers. A mapping may yield several records (for example an individual, a name and a holder), link them with `ref`, look up existing rows with `lookup`, and carry a natural-language `describe` that an AI can use to propose a mapping. A proposal is never accepted without the validator. This task belongs to the schema and manifest redesign group. The owner approved the sources layout on 16 November 2026: schemas live under `source/schema/` in `database/`, `seed/`, `sources/`, `mapping/`, `vocabulary/`, `engine/` and `extraction/`, and seed inputs live under `seed/` in `data/`, `sources/`, `mappings/`, `vocabularies/` and `_fixtures/`. No version appears in any folder or file name (`.docs/rules/versioning.md`). Nothing is built until the owner approves this task's design in a task comment. Related material: `.docs/design/acquisition/SITE_STRUCTURE_SPEC.md`, `source/schema/README.md`, `seed/README.md` and `AGENTS.md`.
 
 ## Acceptance checklist
 
 Work on a Build item starts only after the Approval item is ticked.
 
-- [ ] Design: Specify the mapping fields, typed references (by code, by id) and provenance rules.
-- [ ] Design: Specify how a target and its fields are validated against the generated table schemas.
+- [ ] Design: Specify the mapping fields: module, describe, yields (table, fields), `ref` between yields, `lookup` by a unique column, and provenance.
+- [ ] Design: Specify the checks against `database/<group>.schema.json`: table and columns exist, types are compatible, required columns are covered, references and lookups resolve.
 - [ ] Design: Classify every existing mapping as migrate, archive or delete, with a reason.
+- [ ] Design: Decide how AI-proposed mappings are marked and reviewed.
 - [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
-- [ ] Build, only after approval: Update the mapping schema and migrate the mappings that are kept.
+- [ ] Build, only after approval: Add the mapping schema and migrate the mappings that are kept.
 - [ ] Build, only after approval: Archive the rest with a note, outside the active seed tree.
-- [ ] Build, only after approval: Add tests that fail when a mapping names a missing table or field.
+- [ ] Build, only after approval: Add tests that fail when a mapping names a missing table, column, reference or lookup.
 - [ ] Build, only after approval: `task validate` and the relevant checks pass, and every README and design link that mentions the changed files is updated.
 
 ## Notes

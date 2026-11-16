@@ -4,7 +4,7 @@
 
 # Goal
 
-Make every manifest, schema and seed input in Mzizi small, current and easy to understand, and make the manifest package verify them against approved designs instead of against its own code. Today about eighteen schema files, roughly a hundred YAML files and several JSON inputs describe the same few ideas in overlapping ways, and several describe a database model that no longer exists. Success means one approved design per file type, one generated source of truth for table shapes, a rewritten manifest package that validates every seed file against both, and every stale input retired or archived with a record of why.
+Make every manifest, schema and seed input in Mzizi small, current and easy to understand, grouped by concern (database, seed, sources, mapping, vocabulary, engine, extraction), and make the manifest package verify them against approved designs instead of against its own code. Today about eighteen schema files, roughly a hundred YAML files and several JSON inputs describe the same few ideas in overlapping ways, and several describe a database model that no longer exists. Success means one approved design per file type, one generated source of truth for table shapes, a rewritten manifest package that validates every seed file against both, and every stale input retired or archived with a record of why.
 
 # Why this matters
 

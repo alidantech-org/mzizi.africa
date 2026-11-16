@@ -8,17 +8,23 @@ Design first, build second. Every task in this group begins with a design sectio
 
 # Milestones
 
-1. Root seed manifest and registry design.
-2. Folder descriptor and bootstrap design.
-3. Dryv-generated table schemas and the CSV seed rules.
-4. Site bundle design: manifest, modules, ranking, sections, tags and source authority resolution.
-5. Mapping design against the current Dryv contracts.
-6. Job specification and placements design, replacing the old pipeline manifest.
-7. JSON input inventory and decision for each file.
-8. Folder layout and retirement of stale inputs.
-9. Rewrite of the manifest package and verification of every seed file.
+1. Root seed manifest and registry design (the roots `data`, `sources`, `mappings`, `vocabularies`).
+2. Cross-reference registry for manifest codes: unique codes, scope visibility, cycles, clear errors.
+3. Table schemas and CSV rules: the table comes from the path `data/<scope>/<domain>/<table>.csv`.
+4. Folder descriptors and bootstrap design.
+5. Sources schemas: shared header, website, API, module and extraction, with authority resolution.
+6. Mapping design against the generated database schemas, in `seed/mappings/`.
+7. Engine job spec and placements, generated from the typed models.
+8. JSON input decisions and vocabularies.
+9. Final folder layout and archive-first moves.
+10. Rewrite of the manifest package and verification of every seed file.
 
 # Risks
+
+- The cross-reference registry is new validator work, so it is designed and tested first, with deliberately broken seed trees.
+- The authored `sources/` folder shares a name with the database `source` group, so the plural is used and the glossary states the difference.
+- API manifests may only name credential bindings, never secrets, and the API schema covers only what the fetch package implements.
+- Migration is archive-first and one source at a time.
 
 - The Dryv API has been unreliable under load, so generation steps should be retried and checked with the verify command.
 - Retiring stale mappings may remove the only record of an importer's intent, so each retirement keeps an archived copy and a note.

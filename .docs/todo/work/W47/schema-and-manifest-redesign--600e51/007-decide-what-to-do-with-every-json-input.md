@@ -1,16 +1,16 @@
 ---
-{id: TSK-9631BBC16202,name: Decide what to do with every JSON input,type: task,status: planned,priority: medium,created_at: 2026-11-16T13:05:55.096Z,updated_at: 2026-11-16T13:06:01.391Z,order: 7168,depends_on: [TSK-A9FDBDC9B96C]}
+{id: TSK-9631BBC16202,name: Decide what to do with every JSON input and define vocabularies,type: task,status: planned,priority: medium,created_at: 2026-11-16T13:05:55.096Z,updated_at: 2026-11-16T13:49:39.505Z,order: 7168,depends_on: [TSK-A9FDBDC9B96C,TSK-0C7E435CA201]}
 ---
 
-# Decide what to do with every JSON input
+# Decide what to do with every JSON input and define vocabularies
 
 ## Goal
 
-Give each authored JSON file under `seed/` and `source/schema/` a decision: schema, convert to YAML or CSV, move to the database, or archive.
+Give each authored JSON file under `seed/` and `source/schema/` a decision (schema, convert to YAML or CSV, move to the database, or archive), and define `source/schema/vocabulary/` and `seed/vocabularies/`.
 
 ## Context
 
-JSON appears as catalogues, governance and office-holder data, patterns, policy lists, the web vocabulary, fixtures and schemas. Only some have a schema, and the manifest registers them with free-text loaders. This task is part of the schema and manifest redesign group. Nothing in it is built until the owner has approved the design in a task comment, and the group goal and plan describe how the pieces fit together. Related material: `.docs/design/acquisition/SITE_STRUCTURE_SPEC.md`, `source/schema/README.md`, `seed/README.md` and `AGENTS.md`.
+JSON appears as catalogues, governance and office-holder data, patterns, policy lists, the web vocabulary, fixtures and schemas. Only some have a schema, and the manifest registers them with free-text loaders. The web vocabulary (URL kinds, challenge markers, file signatures) and the name and office patterns are word lists that sources can use by code through the `uses` block. Vector settings are left out because the vector store is only a skeleton. This task belongs to the schema and manifest redesign group. The owner approved the sources layout on 16 November 2026: schemas live under `source/schema/` in `database/`, `seed/`, `sources/`, `mapping/`, `vocabulary/`, `engine/` and `extraction/`, and seed inputs live under `seed/` in `data/`, `sources/`, `mappings/`, `vocabularies/` and `_fixtures/`. No version appears in any folder or file name (`.docs/rules/versioning.md`). Nothing is built until the owner approves this task's design in a task comment. Related material: `.docs/design/acquisition/SITE_STRUCTURE_SPEC.md`, `source/schema/README.md`, `seed/README.md` and `AGENTS.md`.
 
 ## Acceptance checklist
 
@@ -18,6 +18,7 @@ Work on a Build item starts only after the Approval item is ticked.
 
 - [ ] Design: List every JSON file with its owner, its consumer and whether it has a schema.
 - [ ] Design: Choose a decision for each file and give the reason.
+- [ ] Design: Define the vocabulary schema and how a source references a vocabulary by code.
 - [ ] Design: Define which fixtures stay under the test-only folder.
 - [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Apply the approved decisions: add schemas, convert or move files.

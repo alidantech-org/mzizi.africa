@@ -6,20 +6,21 @@
 
 ## Goal
 
-Decide what `seed/manifest.yaml` and its generated lock are for, field by field, so that registering a file can never be mistaken for loading data into PostgreSQL.
+Decide what `seed/manifest.yaml` and its generated lock are for, field by field, so that registering a file can never be mistaken for loading data into PostgreSQL, and so that a seed file's identity comes from where it lives.
 
 ## Context
 
-The manifest has about 59 entries. Only 9 target the current database; 45 are marked legacy, 3 evidence only and 2 test only. The `loader` and `target` fields are free text, and the validator checks paths, hashes, dependencies and duplicate key values but not columns. The lock file records hashes and storage keys only. This task is part of the schema and manifest redesign group. Nothing in it is built until the owner has approved the design in a task comment, and the group goal and plan describe how the pieces fit together. Related material: `.docs/design/acquisition/SITE_STRUCTURE_SPEC.md`, `source/schema/README.md`, `seed/README.md` and `AGENTS.md`.
+The manifest has about 59 entries. Only 9 target the current database; 45 are marked legacy, 3 evidence only and 2 test only. The `loader` and `target` fields are free text, and the validator checks paths, hashes, dependencies and duplicate key values but not columns. A CSV under `seed/data/<scope>/<domain>/<table>.csv` already names its table by its path, so the manifest does not need a `table:` field. A source's `code` should equal `source.sources.code` in the database. This task belongs to the schema and manifest redesign group. The owner approved the sources layout on 16 November 2026: schemas live under `source/schema/` in `database/`, `seed/`, `sources/`, `mapping/`, `vocabulary/`, `engine/` and `extraction/`, and seed inputs live under `seed/` in `data/`, `sources/`, `mappings/`, `vocabularies/` and `_fixtures/`. No version appears in any folder or file name (`.docs/rules/versioning.md`). Nothing is built until the owner approves this task's design in a task comment. Related material: `.docs/design/acquisition/SITE_STRUCTURE_SPEC.md`, `source/schema/README.md`, `seed/README.md` and `AGENTS.md`.
 
 ## Acceptance checklist
 
 Work on a Build item starts only after the Approval item is ticked.
 
-- [ ] Design: Write a field table for the manifest: keep, rename, remove or add, with the reason for each.
-- [ ] Design: Decide whether table seeds are declared by a `table:` field on each entry, and what import settings the entry carries.
+- [ ] Design: Write a field table for the manifest: keep, remove or add, with the reason, including dropping `schema_version` under the versioning rule.
+- [ ] Design: Define how entries cover the roots `data/`, `sources/`, `mappings/` and `vocabularies/`, and which fields they keep (id, path or glob, dependencies, access, retention).
 - [ ] Design: Define the states a file passes through: registered, validated, imported, and who runs each step.
-- [ ] Design: List every current entry and say whether it stays, moves, is archived or is deleted.
+- [ ] Design: List every current entry and say whether it stays, moves, is archived or is deleted, with the archive location.
+- [ ] Design: Decide how a source's `code` is checked against `source.sources.code`, as a read-only report.
 - [ ] Approval: The owner has approved the design in a task comment, and the comment is quoted under Notes.
 - [ ] Build, only after approval: Update `source/schema/seed/manifest.schema.json` and `seed/manifest.yaml` to the approved design.
 - [ ] Build, only after approval: Keep the lock generated and add a check that it matches the manifest.
