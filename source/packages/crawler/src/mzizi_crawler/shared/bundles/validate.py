@@ -21,12 +21,12 @@ from mzizi_crawler.shared.scraping import extract, parse_module, transforms
 from mzizi_manifest.features.database.tables import load_tables
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
-SCHEMA_FOLDERS = ("sources", "mapping")
+SCHEMA_FOLDERS = ("sources", "engine")
 #: Which schema file validates which part of a bundle.
 SCHEMA_FILES = {
     "manifest": "sources/source.schema.json",
     "module": "sources/module.schema.json",
-    "mapping": "mapping/mapping.schema.json",
+    "mapping": "engine/mapping.schema.json",
 }
 
 SECRET_PATTERNS = [

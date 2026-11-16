@@ -9,7 +9,7 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 SCHEMA_ROOT = Path(__file__).resolve().parents[3] / "schema"
-FOLDERS = ("database", "sources", "mapping", "seed", "vocabulary", "engine", "extraction")
+FOLDERS = ("database", "sources", "seed", "vocabulary", "engine")
 UA = "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)"
 POLICY = {
     "scope": {"hosts": ["example.org"]},
@@ -142,7 +142,7 @@ def _mapping() -> dict:
 
 
 def test_a_mapping_may_yield_several_tables() -> None:
-    assert _errors("mapping/mapping.schema.json", _mapping()) == []
+    assert _errors("engine/mapping.schema.json", _mapping()) == []
 
 
 def test_a_mapping_needs_real_looking_tables_keys_and_one_value_source() -> None:
@@ -153,7 +153,7 @@ def test_a_mapping_needs_real_looking_tables_keys_and_one_value_source() -> None
     two_sources = _mapping()
     two_sources["yields"][0]["fields"]["full_name"] = {"from": "name", "const": "x"}
     for document in (bad_table, no_key, two_sources):
-        assert _errors("mapping/mapping.schema.json", document)
+        assert _errors("engine/mapping.schema.json", document)
 
 
 def test_the_seed_manifest_registers_files_and_never_names_loaders() -> None:
@@ -202,10 +202,10 @@ def test_a_term_list_validates() -> None:
 
 CODED = [
     "sources/source.schema.json",
-    "mapping/mapping.schema.json",
+    "engine/mapping.schema.json",
     "vocabulary/terms.schema.json",
     "vocabulary/web.schema.json",
-    "extraction/table.schema.json",
+    "engine/extraction.schema.json",
     "engine/job.schema.json",
 ]
 

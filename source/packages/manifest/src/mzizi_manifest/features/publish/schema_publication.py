@@ -14,7 +14,7 @@ from pathlib import Path
 #: Public origin of the bucket (S3_PUBLIC_ORIGIN) plus the public prefix every schema key sits under.
 BASE_URL = "https://res.alidantech.org/mzizi/public/schemas"
 KEY_PREFIX = "public/schemas"
-FOLDERS = ("database", "engine", "extraction", "mapping", "seed", "sources", "vocabulary")
+FOLDERS = ("database", "engine", "seed", "sources", "vocabulary")
 CONTENT_TYPE = "application/schema+json"
 
 

@@ -5,6 +5,7 @@
  *   bun run schemas:sync -- --local     regenerate and check only (no upload)
  *   bun run schemas:sync -- --dry-run   regenerate, check and list the keys that would be uploaded
  *   bun run schemas:sync -- --no-dryv   skip the Dryv generation (the table schemas and catalogs)
+ *   bun run schemas:sync -- --prune     also delete public schema objects no schema file produces any more
  *
  * Generated schemas: the table schemas under `source/schema/database/` (Dryv), `engine/job.schema.json` (the typed job
  * model) and `vocabulary/web.schema.json` (the typed web vocabulary). Hand-written schemas are only checked and uploaded. Publishing needs the S3 settings in the root `.env`.
@@ -16,7 +17,7 @@ import { group, step } from "../lib/exec.ts";
 import { root } from "../lib/paths.ts";
 import * as dryv from "./dryv.ts";
 
-const FLAGS = new Set(["--local", "--dry-run", "--no-dryv"]);
+const FLAGS = new Set(["--local", "--dry-run", "--no-dryv", "--prune"]);
 
 export async function syncSchemas(args: readonly string[]): Promise<boolean> {
   const unknown = args.filter((arg) => !FLAGS.has(arg));

@@ -41,12 +41,15 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("sweep-runs", help="remove expired temporary run objects and logs")
     publish = sub.add_parser("publish-schemas", help="upload source/schema files to the public object-store prefix")
     publish.add_argument("--dry-run", action="store_true", help="list what would be uploaded without connecting")
+    publish.add_argument(
+        "--prune", action="store_true", help="delete public schema objects no schema file produces any more"
+    )
     args = parser.parse_args(argv)
     config = EngineConfig.load()
     if args.command == "publish-schemas":
         from mzizi_engine.runtime.assembly.schemas import publish_schemas
 
-        results = publish_schemas(config, dry_run=args.dry_run)
+        results = publish_schemas(config, dry_run=args.dry_run, prune=args.prune)
         for item in results:
             print(item.model_dump_json())
         return 0 if all(item.public_matches is not False for item in results) else 1

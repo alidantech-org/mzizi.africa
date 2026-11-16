@@ -21,13 +21,13 @@ PAIRS = [
     ("sources/_example/api-source.yml", "sources/source.schema.json"),
     ("sources/_example/website-bundle/modules/documents.yml", "sources/module.schema.json"),
     ("sources/_example/api-module.yml", "sources/module.schema.json"),
-    ("sources/_example/website-bundle/mappings/example-ministry-publications.yml", "mapping/mapping.schema.json"),
-    ("mapping/_example/office-holders.yml", "mapping/mapping.schema.json"),
+    ("sources/_example/website-bundle/mappings/example-ministry-publications.yml", "engine/mapping.schema.json"),
+    ("engine/_example/mapping-office-holders.yml", "engine/mapping.schema.json"),
     ("seed/_example/manifest.yaml", "seed/manifest.schema.json"),
     ("seed/_example/_folder.yaml", "seed/folder.schema.json"),
     ("seed/_example/bootstrap.yaml", "seed/bootstrap.schema.json"),
     ("vocabulary/_example/terms.yml", "vocabulary/terms.schema.json"),
-    ("extraction/_example/table.json", "extraction/table.schema.json"),
+    ("engine/_example/extraction.json", "engine/extraction.schema.json"),
     ("engine/_example/job.json", "engine/job.schema.json"),
 ]
 

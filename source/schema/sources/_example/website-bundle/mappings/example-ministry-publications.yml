@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/mapping/mapping.schema.json
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/mapping.schema.json
 code: ke.source.documents.example-ministry-publications
 describe: A publication listed on the ministry page becomes a source document.
 inputs: [title, href, slug, published]

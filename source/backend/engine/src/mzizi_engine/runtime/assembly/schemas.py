@@ -8,7 +8,7 @@ from enum import StrEnum
 from mzizi_engine.config import EngineConfig
 from mzizi_engine.runtime.contracts.base import Frozen
 from mzizi_filesystem.features.store.s3 import S3ObjectStore, S3Settings
-from mzizi_manifest.features.publish.schema_publication import plan
+from mzizi_manifest.features.publish.schema_publication import BASE_URL, KEY_PREFIX, plan
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
 CACHE_CONTROL = "public, max-age=300"
@@ -19,6 +19,9 @@ class PublishAction(StrEnum):
     PLANNED = "planned"
     UPLOADED = "uploaded"
     UNCHANGED = "unchanged"
+    #: An object under the public schema prefix that no schema file produces any more (an old URL).
+    ORPHAN = "orphan"
+    DELETED = "deleted"
 
 
 class PublishedSchema(Frozen):
@@ -40,8 +43,11 @@ def _read_public(url: str) -> tuple[int, str | None]:
         return 0, None
 
 
-def publish_schemas(config: EngineConfig, *, dry_run: bool) -> tuple[PublishedSchema, ...]:
-    """Upload every changed schema, then read each public URL anonymously to prove it resolves to the same bytes."""
+def publish_schemas(config: EngineConfig, *, dry_run: bool, prune: bool = False) -> tuple[PublishedSchema, ...]:
+    """Upload every changed schema, then read each public URL anonymously to prove it resolves to the same bytes.
+
+    Objects under the public prefix that no schema produces any more are reported as orphans and deleted only with `prune`.
+    """
     items = plan(SCHEMA_ROOT)
     if dry_run:
         return tuple(PublishedSchema(key=i.key, url=i.url, action=PublishAction.PLANNED) for i in items)
@@ -76,6 +82,19 @@ def publish_schemas(config: EngineConfig, *, dry_run: bool) -> tuple[PublishedSc
                 action=action,
                 public_status=status,
                 public_matches=digest == item.sha256 if digest else False,
+            )
+        )
+    planned = {item.key for item in items}
+    for key, _size in sorted(store.list_keys(f"{KEY_PREFIX}/")):
+        if key in planned:
+            continue
+        if prune:
+            store.delete(key)
+        results.append(
+            PublishedSchema(
+                key=key,
+                url=f"{BASE_URL}/{key.removeprefix(KEY_PREFIX + '/')}",
+                action=PublishAction.DELETED if prune else PublishAction.ORPHAN,
             )
         )
     return tuple(results)

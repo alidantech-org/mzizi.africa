@@ -37,7 +37,7 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 | `bun run dryv:api` / `dryv:api:stop`      | runs or stops the local Dryv engine API by hand                                                                                                  |
 | `bun scripts/mz.ts dryv:trust`            | trusts the project packs (once per machine)                                                                                                      |
 | `bun run catalog`                         | regenerates the dashboard's data catalog from the API list routes                                                                                |
-| `bun run schemas:sync`                    | regenerates the Dryv table schemas and the job schema, checks the schemas and examples, then uploads changed schemas to the public prefix (`-- --local`, `-- --dry-run`, `-- --no-dryv`) |
+| `bun run schemas:sync`                    | regenerates the Dryv table schemas and the job schema (`-- --prune` also deletes orphaned public objects), checks the schemas and examples, then uploads changed schemas to the public prefix (`-- --local`, `-- --dry-run`, `-- --no-dryv`) |
 | `bun run schemas:forget-cache`            | deletes the YAML extension's cached copies of the published schemas; then reload the editor window |
 | `bun run db:up` / `db:down`               | starts or stops the local PostGIS container (`MZIZI_PG_CONTAINER`, default `postgis`)                                                            |
 | `bun run db generate` / `bun run db plan` | regenerates the Dryv persistence catalog and reports table-name coverage against current SQL migrations                                          |

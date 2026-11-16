@@ -1,5 +1,5 @@
 {
-  "$schema": "https://res.alidantech.org/mzizi/public/schemas/extraction/table.schema.json",
+  "$schema": "https://res.alidantech.org/mzizi/public/schemas/engine/extraction.schema.json",
   "code": "ke.extraction.county-allocations",
   "header_rows": 1,
   "columns": [
