@@ -203,7 +203,7 @@ def test_vocabulary_is_data_and_its_schema_is_in_sync() -> None:
     from mzizi_fetch.web.vocabulary import DEFAULT_PATH, parse_vocabulary, schema_text, vocabulary
 
     assert vocabulary().version == 1 and "pdf" in vocabulary().url_kinds.document
-    schema = Path(__file__).resolve().parents[3] / "schema" / "vocabulary" / "web.schema.json"
+    schema = Path(__file__).resolve().parents[3] / "schema" / "engine" / "web.schema.json"
     if os.environ.get("MZIZI_WRITE_SCHEMAS") == "1":
         schema.write_text(schema_text(), encoding="utf-8")
     assert schema.read_text(encoding="utf-8") == schema_text(), "run with MZIZI_WRITE_SCHEMAS=1 to regenerate"

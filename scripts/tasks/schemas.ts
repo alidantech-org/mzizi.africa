@@ -8,7 +8,7 @@
  *   bun run schemas:sync -- --prune     also delete public schema objects no schema file produces any more
  *
  * Generated schemas: the table schemas under `source/schema/database/` (Dryv), `engine/job.schema.json` (the typed job
- * model) and `vocabulary/web.schema.json` (the typed web vocabulary). Hand-written schemas are only checked and uploaded. Publishing needs the S3 settings in the root `.env`.
+ * model) and `engine/web.schema.json` (the typed web vocabulary). Hand-written schemas are only checked and uploaded. Publishing needs the S3 settings in the root `.env`.
  */
 import { existsSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { homedir } from "node:os";

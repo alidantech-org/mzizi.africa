@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://res.alidantech.org/mzizi/public/schemas/vocabulary/terms.schema.json",
+  "$id": "https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json",
   "title": "Term list vocabulary",
   "description": "A named list of words or phrases a source, ranking rule or pattern can use by code (for example office name patterns). The web classification data has its own typed schema in web.schema.json. Vector settings are not defined yet: the vector store is only a skeleton.",
   "type": "object",

@@ -11,4 +11,4 @@ This folder was emptied on 16 November 2026 so the seed inputs can be rebuilt fr
 
 ## What is in it
 
-- `vocabularies/global/web/classification.yaml` (code `global.web.classification`): the web classification data (URL kinds, challenge markers, file signatures) read by `mzizi-fetch`, validated by `source/schema/vocabulary/web.schema.json`. It was moved here on 16 November 2026 at the owner's request; its schema comes first.
+- `vocabularies/global/web/classification.yaml` (code `global.web.classification`): the web classification data (URL kinds, challenge markers, file signatures) read by `mzizi-fetch`, validated by `source/schema/engine/web.schema.json`. It was moved here on 16 November 2026 at the owner's request; its schema comes first.

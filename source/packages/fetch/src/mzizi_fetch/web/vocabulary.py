@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict
 
 # .../source/packages/fetch/src/mzizi_fetch/web/vocabulary.py -> parents[6] is the repository root
 DEFAULT_PATH = Path(__file__).resolve().parents[6] / "seed" / "vocabularies" / "global" / "web" / "classification.yaml"
-SCHEMA_ID = "https://res.alidantech.org/mzizi/public/schemas/vocabulary/web.schema.json"
+SCHEMA_ID = "https://res.alidantech.org/mzizi/public/schemas/engine/web.schema.json"
 
 
 class _Data(BaseModel):
@@ -98,7 +98,7 @@ class Vocabulary(_Data):
 
 
 def schema_text() -> str:
-    """The canonical text of `source/schema/vocabulary/web.schema.json`, generated from the typed model."""
+    """The canonical text of `source/schema/engine/web.schema.json`, generated from the typed model."""
     document = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": SCHEMA_ID,

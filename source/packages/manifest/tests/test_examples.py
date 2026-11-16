@@ -26,7 +26,7 @@ PAIRS = [
     ("seed/_example/manifest.yaml", "seed/manifest.schema.json"),
     ("seed/_example/_folder.yaml", "seed/folder.schema.json"),
     ("seed/_example/bootstrap.yaml", "seed/bootstrap.schema.json"),
-    ("vocabulary/_example/terms.yml", "vocabulary/terms.schema.json"),
+    ("engine/_example/terms.yml", "engine/terms.schema.json"),
     ("engine/_example/extraction.json", "engine/extraction.schema.json"),
     ("engine/_example/job.json", "engine/job.schema.json"),
 ]

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/vocabulary/terms.schema.json
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
 code: ke.reference.patterns.office-names
 describe: Words that mark a public office in Kenyan sources.
 terms:

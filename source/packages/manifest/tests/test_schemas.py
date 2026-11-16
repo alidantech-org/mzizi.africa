@@ -9,7 +9,7 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 SCHEMA_ROOT = Path(__file__).resolve().parents[3] / "schema"
-FOLDERS = ("database", "sources", "seed", "vocabulary", "engine")
+FOLDERS = ("database", "sources", "seed", "engine")
 UA = "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)"
 POLICY = {
     "scope": {"hosts": ["example.org"]},
@@ -28,7 +28,7 @@ def _registry() -> Registry:
     registry: Registry = Registry()
     for path in _files():
         schema = json.loads(path.read_text(encoding="utf-8"))
-        if "$id" in schema:  # vocabulary/web.schema.json is generated from a typed model and has no id
+        if "$id" in schema:  # database files and any schema without an id are not registered
             registry = registry.with_resource(schema["$id"], Resource.from_contents(schema))
     return registry
 
@@ -196,15 +196,15 @@ def test_a_term_list_validates() -> None:
         "code": "ke.reference.patterns.office-names",
         "terms": [{"value": "governor", "aliases": ["county governor"]}],
     }
-    assert _errors("vocabulary/terms.schema.json", document) == []
-    assert _errors("vocabulary/terms.schema.json", {"code": "ke.reference.patterns.office-names", "terms": []})
+    assert _errors("engine/terms.schema.json", document) == []
+    assert _errors("engine/terms.schema.json", {"code": "ke.reference.patterns.office-names", "terms": []})
 
 
 CODED = [
     "sources/source.schema.json",
     "engine/mapping.schema.json",
-    "vocabulary/terms.schema.json",
-    "vocabulary/web.schema.json",
+    "engine/terms.schema.json",
+    "engine/web.schema.json",
     "engine/extraction.schema.json",
     "engine/job.schema.json",
 ]
