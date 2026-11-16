@@ -14,7 +14,7 @@ import { select } from "./lib/projects.ts";
 import { checkBoundaries } from "./tasks/boundaries.ts";
 import * as dryv from "./tasks/dryv.ts";
 import { type QualityKind, qualitySteps } from "./tasks/quality.ts";
-import { syncSchemas } from "./tasks/schemas.ts";
+import { forgetEditorCache, syncSchemas } from "./tasks/schemas.ts";
 import { type Mode, serve } from "./tasks/serve.ts";
 import { clean, doctor, prepareSteps, syncSteps } from "./tasks/setup.ts";
 import { checkStructure } from "./tasks/structure.ts";
@@ -166,6 +166,10 @@ export const commands: Record<string, Command> = {
   "schemas:sync": {
     summary: "regenerate, check and publish source/schema (--local, --dry-run, --no-dryv)",
     run: ({ rest }) => syncSchemas(rest),
+  },
+  "schemas:forget-cache": {
+    summary: "delete the editor's cached copies of the published schemas (then reload the editor window)",
+    run: () => forgetEditorCache(),
   },
   "db:up": {
     summary: "start the local PostGIS container (MZIZI_PG_CONTAINER, default postgis)",

@@ -8,6 +8,7 @@ a module's `mapping`. This module only answers "does that code exist, is it the 
 - a manifest may use items in its own scope or in `global`, never in another country, and `global` never uses a country;
 - a reference to a code of the wrong kind is an error;
 - a reference cycle (for example one website extending another that extends it back) is an error;
+- a job spec is `<scope>.engine.jobs.<name>`;
 - the second segment is an area: a database group (the third segment is then one of its tables) or a system area;
 - a source is `<scope>.source.<websites|apis>.<name>` and its kind agrees; an extraction expectation is in `extraction`;
 - a mapping is named after the table it writes first: `<scope>.<schema>.<table>.<name>`.
@@ -33,6 +34,7 @@ class Kind(StrEnum):
     MAPPING = "mapping"
     VOCABULARY = "vocabulary"
     EXTRACTION = "extraction"
+    JOB = "job"
 
 
 @dataclass(frozen=True)
@@ -132,6 +134,8 @@ def code_problems(entry: Entry, areas: Areas) -> list[str]:
             problems.append(
                 f"{where}: a {entry.detail} source code must be <scope>.source.{table}.<name>, not {entry.code!r}"
             )
+    elif entry.kind is Kind.JOB and area != "engine":
+        problems.append(f"{where}: a job spec code must be <scope>.engine.jobs.<name>, not {entry.code!r}")
     elif entry.kind is Kind.EXTRACTION and area != "extraction":
         problems.append(
             f"{where}: an extraction expectation code must be <scope>.extraction.<name>, not {entry.code!r}"

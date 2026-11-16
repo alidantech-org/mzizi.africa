@@ -7,6 +7,7 @@ folders under `source/schema/`:
 - a mapping has `code` and `yields`;
 - a vocabulary has `code` and `terms` (or `url_kinds`, the web classification data);
 - an extraction expectation has `code` and `columns`;
+- a job spec has `code`, `spec_version` and `stages`;
 - a module has `module`; its `mapping` is checked in the scope of the source folder that owns it.
 
 Anything else (the seed manifest, folder descriptors, schemas, CSV, notes) is not a manifest with a code and is skipped.
@@ -68,6 +69,8 @@ def _kind(document: dict) -> Kind | None:
         return Kind.VOCABULARY
     if "columns" in document:
         return Kind.EXTRACTION
+    if "stages" in document and "spec_version" in document:
+        return Kind.JOB
     return None
 
 
@@ -108,6 +111,7 @@ KIND_FOLDERS = {
     Kind.MAPPING: "mappings",
     Kind.VOCABULARY: "vocabularies",
     Kind.EXTRACTION: "extraction",
+    Kind.JOB: "jobs",
 }
 
 

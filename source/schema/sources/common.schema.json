@@ -378,11 +378,12 @@
     },
     "systemArea": {
       "enum": [
+        "database",
         "engine",
         "web",
         "extraction"
       ],
-      "description": "Areas for things that are not database rows, named by how they are used. The registry reads this list."
+      "description": "Areas for things that are not database rows, named by how they are used (database is the generated table schemas themselves). The registry reads this list."
     }
   }
 }

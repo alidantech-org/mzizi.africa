@@ -1,6 +1,7 @@
 """The authored schemas under `source/schema/` are valid and accept and reject the documents they should."""
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -197,3 +198,33 @@ def test_a_term_list_validates() -> None:
     }
     assert _errors("vocabulary/terms.schema.json", document) == []
     assert _errors("vocabulary/terms.schema.json", {"code": "ke.reference.patterns.office-names", "terms": []})
+
+
+CODED = [
+    "sources/source.schema.json",
+    "mapping/mapping.schema.json",
+    "vocabulary/terms.schema.json",
+    "vocabulary/web.schema.json",
+    "extraction/table.schema.json",
+    "engine/job.schema.json",
+]
+
+
+@pytest.mark.parametrize("schema", CODED)
+def test_every_schema_for_a_coded_manifest_accepts_a_code(schema: str) -> None:
+    document = json.loads((SCHEMA_ROOT / schema).read_text(encoding="utf-8"))
+    assert "code" in document["properties"], f"{schema} must allow `code`"
+
+
+def test_database_schemas_carry_codes_for_the_group_and_each_table() -> None:
+    pattern = re.compile(r"^(global|[a-z]{2,3})(\.[a-z0-9][a-z0-9_-]*){2,}$")
+    files = sorted((SCHEMA_ROOT / "database").glob("*.schema.json"))
+    assert files
+    for path in files:
+        document = json.loads(path.read_text(encoding="utf-8"))
+        group = path.name.removesuffix(".schema.json")
+        assert document["code"] == f"global.database.{group}"
+        assert pattern.match(document["code"])
+        for name, table in document["$defs"].items():
+            assert table["x-code"] == f"global.{group}.{name}" and pattern.match(table["x-code"])
+            assert table["x-table"] == f"{group}.{name}"

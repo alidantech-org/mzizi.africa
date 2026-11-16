@@ -20,12 +20,13 @@ Every source, mapping, vocabulary and extraction manifest, and every database ro
 - **Mapping:** named after the first table it yields: `<scope>.<schema>.<table>.<name>`.
 - **Vocabulary:** a database area and table when it feeds one (`ke.reference.patterns.office-names`), otherwise a system area (`global.web.classification`).
 - **Extraction expectation:** `<scope>.extraction.<name>`.
-- **Engine things** (job specs and the like) use the `engine` area: `ke.engine.jobs.<name>`.
+- **Job spec:** `<scope>.engine.jobs.<name>`, in the optional `code` field of the spec; its files live under `jobs/`.
+- **Generated database schemas:** each `source/schema/database/<group>.schema.json` has the code `global.database.<group>` (`database` is a system area), and each table in it carries `x-code` = `global.<group>.<table>`. A seed CSV for a table is the same code with the scope changed: `data/ke/reference/values.csv` is `ke.reference.values`.
 - **CSV seed files** are already shaped this way by their path: `data/<scope>/<domain>/<table>.csv`.
 
 ## The folder mirrors the code
 
-A file's folder path under `seed/` mirrors its code. `seed/mappings/ke/governance/holders/office-holders.yml` has the code `ke.governance.holders.office-holders`; a source's code is the folder that holds its manifest, `seed/sources/ke/source/websites/iebc/`. The first folder names the kind: `sources`, `mappings`, `vocabularies`, `extraction`.
+A file's folder path under `seed/` mirrors its code. `seed/mappings/ke/governance/holders/office-holders.yml` has the code `ke.governance.holders.office-holders`; a source's code is the folder that holds its manifest, `seed/sources/ke/source/websites/iebc/`. The first folder names the kind: `sources`, `mappings`, `vocabularies`, `extraction`, `jobs`.
 
 `uv run mzizi-manifest refs [folder]` checks all of this: the area and table against the generated `source/schema/database/` files, the kind rules, the path, unknown, duplicate and wrong-kind references, scope visibility and cycles. The flat `_example/` folders use `--no-paths`.
 

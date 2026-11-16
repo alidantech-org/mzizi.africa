@@ -33,6 +33,8 @@ class Column:
 @dataclass(frozen=True)
 class Table:
     id: str
+    #: `global.<group>.<table>`: the table's own code; a seed CSV for it is `<scope>.<group>.<table>`.
+    code: str
     qualified_name: str
     primary_key: tuple[str, ...]
     unique_keys: tuple[tuple[str, ...], ...]
@@ -63,6 +65,7 @@ def load_tables(schema_root: Path = SCHEMA_ROOT) -> dict[str, Table]:
             required = set(definition["required"])
             tables[definition["x-table"]] = Table(
                 id=definition["x-id"],
+                code=definition["x-code"],
                 qualified_name=definition["x-table"],
                 primary_key=tuple(definition["x-primaryKey"]),
                 unique_keys=tuple(tuple(key) for key in definition["x-uniqueKeys"]),

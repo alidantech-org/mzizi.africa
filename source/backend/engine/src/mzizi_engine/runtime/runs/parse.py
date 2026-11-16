@@ -46,6 +46,7 @@ def parse_job_spec(data: str | bytes, registry: OperationRegistry) -> JobSpec:
         spec_version=fields.spec_version,
         kind=fields.kind,
         name=fields.name,
+        code=fields.code,
         sources=fields.sources,
         stages=tuple(stages),
         mode=fields.mode,

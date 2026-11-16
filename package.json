@@ -36,6 +36,7 @@
     "dryv:verify": "bun scripts/mz.ts dryv:verify",
     "catalog": "bun scripts/mz.ts catalog",
     "schemas:sync": "bun scripts/mz.ts schemas:sync",
+    "schemas:forget-cache": "bun scripts/mz.ts schemas:forget-cache",
     "db:up": "bun scripts/mz.ts db:up",
     "db:down": "bun scripts/mz.ts db:down",
     "infra:up": "bun scripts/mz.ts infra:up",

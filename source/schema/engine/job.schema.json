@@ -165,6 +165,17 @@
       "description": "Optional link to the schema, for editors.",
       "title": "$Schema"
     },
+    "code": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NonEmpty"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
     "kind": {
       "$ref": "#/$defs/NonEmpty"
     },
