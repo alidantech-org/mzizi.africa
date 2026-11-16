@@ -14,7 +14,7 @@ from mzizi_crawler.shared.engine.state import CrawlState
 from mzizi_crawler.shared.requests import CrawlRequest
 from mzizi_engine.jsonvalue import JsonValue, Payload
 
-LIST_ARGUMENTS = frozenset({"allowed-hosts", "allowed-paths", "excluded-paths", "urls"})
+LIST_ARGUMENTS = frozenset({"allowed-hosts", "allowed-paths", "excluded-paths", "urls", "entries"})
 
 
 def file_payload(values: ArgValues, ws: Workspace, key: str = "input") -> Payload:

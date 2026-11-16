@@ -160,3 +160,22 @@ def test_a_missing_reference_is_a_database_error_not_a_silent_success(fs: Filesy
 
     with pytest.raises(psycopg.Error):
         fs.register(ask(str(uuid4()), f"t{uuid4().hex[:8]}"), b"a\n1\n")
+
+
+def test_the_seed_sync_registers_files_in_the_described_folders_and_is_idempotent(
+    fs: FilesystemOrchestrator, conn: Connection
+) -> None:
+    from mzizi_engine.persistence.postgres.reference import PostgresReference
+    from mzizi_engine.runtime.assembly.filesystem_seed import plan_seed, run_seed_sync
+    from mzizi_manifest.shared.paths import SEED_ROOT
+
+    items = plan_seed()[:6]
+    roles = PostgresReference(conn).role_ids({item.role for item in items}, create=True)
+    assert PostgresReference(conn).role_ids({item.role for item in items}, create=True) == roles
+    args = {"apply": True, "release": "test", "created_by": {"task": "test"}}
+    first = run_seed_sync(fs, items, roles, SEED_ROOT, **args)
+    assert first.ok and first.outcomes == {"created": len(items)}
+    again = run_seed_sync(fs, items, roles, SEED_ROOT, **args)
+    assert again.ok and again.outcomes == {"unchanged": len(items)}
+    planned = run_seed_sync(fs, items, {}, SEED_ROOT, apply=False, release="test", created_by={})
+    assert planned.dry_run and planned.outcomes == {"unchanged": len(items)}

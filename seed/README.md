@@ -20,7 +20,7 @@ Country-specific inputs belong under `countries/<code>/`; do not place them in g
 ## Owners and available commands
 
 - The TypeScript database owner is `source/backend/database/`. Its current seed loaders apply the reviewed auth and reference baseline files. They do not apply every manifest entry.
-- The Python manifest and filesystem packages provide validation and filesystem registration capabilities. Their workspace currently has an unresolved `mzizi-database` dependency: `source/packages/database/` is absent while the engine and filesystem project metadata still reference it. Consequently, a fresh `uv sync --all-packages` and Python seed validation are currently blocked.
+- `mzizi fs sync` (the engine operation `filesystem.sync_seed`) registers the manifest's files in S3 and the Postgres `filesystem` schema from the manifest and the `_folder.yaml` descriptors; without `--apply` it only plans. The Python manifest and filesystem packages provide the validation and registration it uses.
 - Other manifest entries may be preparation inputs or historical loader records; the manifest is not proof that every input is loaded into the database.
 
 The root Bun command runner documents the supported entry points in [`scripts/README.md`](../scripts/README.md). Database operations are available through `bun run db`; the seed wrapper is `bun run seed -- <command>`. Do not rely on Python CLI commands until the missing workspace dependency is resolved.

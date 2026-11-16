@@ -12,8 +12,10 @@ from pathlib import Path
 
 from mzizi_engine.config import EngineConfig
 from mzizi_engine.jsonvalue import Payload
-from mzizi_engine.persistence.postgres.connection import connect
+from mzizi_engine.persistence.postgres.connection import Connection, connect
 from mzizi_engine.persistence.postgres.filesystem import PostgresRegistry
+from mzizi_engine.persistence.postgres.reference import PostgresReference
+from mzizi_engine.runtime.assembly.filesystem_seed import SeedPlanError, plan_seed, run_seed_sync
 from mzizi_engine.runtime.operations import Operation, OperationRegistry
 from mzizi_filesystem import (
     Access,
@@ -30,6 +32,8 @@ from mzizi_filesystem.features.media.parse import load_media_formats
 from mzizi_filesystem.features.register.storage import Source
 from mzizi_filesystem.features.sync.sync import DirectorySpec
 from mzizi_filesystem.shared.contracts import RelationRecord
+from mzizi_manifest.features.seeds import seed_registry as seeds
+from mzizi_manifest.shared.paths import SEED_ROOT
 
 VERSION = "0.1.0"
 PACKAGE = "mzizi-filesystem"
@@ -40,6 +44,7 @@ class _Wiring:
 
     def __init__(self, config: EngineConfig) -> None:
         postgres, rules, s3 = config.require_filesystem()
+        s3 = None if config.memory_store else s3  # the in-memory store wins when it is selected
         self.database_url = postgres.url
         self.input_root = config.crawler.input_root
         self.media_formats_path = rules.media_formats_path
@@ -68,12 +73,17 @@ class _Wiring:
         )
 
 
-def _run(payload: Payload, action: Callable[[FilesystemOrchestrator, _Wiring], Payload]) -> Payload:
+def _open(payload: Payload, action: Callable[[FilesystemOrchestrator, _Wiring, Connection], Payload]) -> Payload:
+    """Open the connection and the orchestrator from the engine configuration and run one action inside the connection."""
     wiring = _Wiring(EngineConfig.load())
     catalog = MediaCatalog(load_media_formats(wiring.media_formats_path) if wiring.media_formats_path else {})
     with connect(wiring.database_url) as conn:
         orchestrator = FilesystemOrchestrator(wiring.config, PostgresRegistry(conn), wiring.store, catalog)
-        return action(orchestrator, wiring)
+        return action(orchestrator, wiring, conn)
+
+
+def _run(payload: Payload, action: Callable[[FilesystemOrchestrator, _Wiring], Payload]) -> Payload:
+    return _open(payload, lambda fs, wiring, _: action(fs, wiring))
 
 
 def _actor(payload: Payload) -> dict[str, str]:
@@ -146,6 +156,30 @@ def sync_directory(payload: Payload) -> Payload:
         }
 
     return _run(payload, act)
+
+
+def sync_seed(payload: Payload) -> Payload:
+    """Register the seed files the manifest lists, in the folders its descriptors describe (a dry run unless `apply` is true)."""
+    apply = payload.get("apply") is True
+    raw = payload.get("entries")
+    entries = tuple(str(item) for item in raw) if isinstance(raw, list) else ()
+    root_text = payload.get("seed_root")
+    root = Path(root_text) if isinstance(root_text, str) and root_text else SEED_ROOT
+    try:
+        items = plan_seed(root, entries)
+    except SeedPlanError as problem:
+        return {"dry_run": not apply, "ok": False, "problems": [str(problem)]}
+    release = str(seeds.load_manifest(root).get("release", ""))
+
+    def act(fs: FilesystemOrchestrator, wiring: _Wiring, conn: Connection) -> Payload:
+        roles = {item.role for item in items}
+        role_ids = PostgresReference(conn).role_ids(roles, create=apply)
+        report = run_seed_sync(
+            fs, items, role_ids, root, apply=apply, release=release, created_by={"task": "seed sync", **_actor(payload)}
+        )
+        return {**report.model_dump(mode="json"), "ok": report.ok}
+
+    return _open(payload, act)
 
 
 def upload_begin(payload: Payload) -> Payload:
@@ -232,6 +266,11 @@ _OPERATIONS: tuple[tuple[str, str, Callable[[Payload], Payload]], ...] = (
         "filesystem.sync_directory",
         "Register a directory tree under caller-chosen folders (dry run unless apply is true)",
         sync_directory,
+    ),
+    (
+        "filesystem.sync_seed",
+        "Register the seed files the manifest lists, in the folders its descriptors describe (dry run unless apply is true)",
+        sync_seed,
     ),
     ("filesystem.upload_begin", "Presigned upload URL to a temporary key", upload_begin),
     ("filesystem.upload_finish", "Register uploaded bytes at a caller-chosen placement", upload_finish),

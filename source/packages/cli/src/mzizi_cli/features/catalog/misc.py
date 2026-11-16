@@ -27,6 +27,17 @@ COMMANDS: tuple[Command, ...] = (
     ),
     Command(
         "fs",
+        "sync",
+        "Register the seed files the manifest lists, in the folders its _folder.yaml files describe (plan only without --apply)",
+        "filesystem.sync_seed",
+        (
+            Arg("entries", ArgKind.TEXT, "Manifest entry ids, comma separated (default: all)", optional=True),
+            Arg("apply", ArgKind.FLAG, "Upload to the object store and write the registry rows"),
+        ),
+        passthrough,
+    ),
+    Command(
+        "fs",
         "lineage",
         "Ancestry and derivatives of a registered file version",
         "filesystem.lineage",

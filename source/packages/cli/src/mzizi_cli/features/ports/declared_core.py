@@ -36,6 +36,12 @@ CORE: tuple[Port, ...] = (
         2,
         "Effective-manifest rendering is not exposed as a capability yet.",
     ),
+    declare(
+        "filesystem.sync_seed",
+        "mzizi-filesystem",
+        "Register the seed manifest's files in the folders its descriptors describe",
+        2,
+    ),
     declare("filesystem.register", "mzizi-filesystem", "Register bytes at a caller-chosen placement", 2),
     declare("filesystem.sync_directory", "mzizi-filesystem", "Register a directory tree under caller-named folders", 2),
     declare("filesystem.upload_begin", "mzizi-filesystem", "Presigned upload URL to a temporary key", 2),

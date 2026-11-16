@@ -25,6 +25,10 @@ persistence/
 4. Hand-written SQL lives only in `persistence/postgres/` until Dryv generates Python repositories; the boundary check (`bun run boundaries`) fails if a database driver is imported anywhere else.
 5. A write that cannot reach MongoDB is spooled to disk and replayed, so a record is not lost; the PostgreSQL adapter fails loudly instead.
 
+## Seeds and approved files
+
+Approved files (the seed manifest today, accepted evidence later) live in S3 under `<access>/<path>` with their folders, files and versions in the Postgres `filesystem` schema. `filesystem.sync_seed` plans placements from `seed/manifest.yaml` and the `_folder.yaml` descriptors and registers them through the filesystem package; folder roles are reference values the engine creates on first use (`persistence/postgres/reference.py`). Downloaded and browser-captured files are to be staged under a temporary S3 prefix with their metadata in MongoDB and promoted to this layout on approval (the package already copies a staged object server-side); that staging flow is not built yet.
+
 ## Vector (planned)
 
 Not implemented. The port fixes the shape: a caller upserts typed points (id, vector, a string payload that traces a hit back to its source) into a named collection and searches by vector. The implementation will choose the store, the embedding model and the collection naming; none of that is decided here, and nothing in the engine may depend on a particular client.
