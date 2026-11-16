@@ -15,3 +15,4 @@ System architecture details. These documents are supporting detail; the eight ro
 - [ENGINE_JOB_MODEL](ENGINE_JOB_MODEL.md) — superseded stub (see ENGINE_RUNTIME_AND_PACKAGES)
 - [PATTERN_MATCHING](PATTERN_MATCHING.md) — proposal: manifest-driven rules, safe string matcher, semantic vector index
 - [DATABASE_ACCESS_AND_LIFECYCLE](DATABASE_ACCESS_AND_LIFECYCLE.md) — superseded stub (see DATABASE_ARCHITECTURE)
+- [WORKERS_AND_RUNS](WORKERS_AND_RUNS.md) — approved design, not built: job specs, subprocess workers, run store, sealed run bundles and the release step
