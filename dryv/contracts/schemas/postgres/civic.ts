@@ -8,7 +8,7 @@ import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { Features, Places, Units } from "./geography.ts";
+import { Features } from "./geography.ts";
 import { Institutions } from "./governance.ts";
 import { Entities } from "./official.ts";
 import { Country, Value } from "./reference.ts";
@@ -29,8 +29,8 @@ export const Services = civic
     serviceKindId: belongsTo(() => Value),
     name: dryv.field(sharedProperties.Name),
     description: dryv.field(sharedProperties.Description),
-    placeFeatureId: belongsTo(() => Places, { to: "featureId" }).maybe(),
-    scopeUnitFeatureId: belongsTo(() => Units, { to: "featureId" }).maybe(),
+    placeFeatureId: belongsTo(() => Features).maybe(),
+    scopeUnitFeatureId: belongsTo(() => Features).maybe(),
     startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
@@ -59,7 +59,7 @@ export const Projects = civic
     sponsorEntityId: belongsTo(() => Entities).maybe(),
     implementingEntityId: belongsTo(() => Entities).maybe(),
     countryId: belongsTo(() => Country).maybe(),
-    scopeUnitFeatureId: belongsTo(() => Units, { to: "featureId" }).maybe(),
+    scopeUnitFeatureId: belongsTo(() => Features).maybe(),
     statusId: belongsTo(() => Value),
     startedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     completedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
@@ -155,7 +155,7 @@ export const Deliveries = civic
     amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits).maybe(),
     currencyId: belongsTo(() => Value).maybe(),
     deliveredOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    unitFeatureId: belongsTo(() => Units, { to: "featureId" }).maybe(),
+    unitFeatureId: belongsTo(() => Features).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.Entity)

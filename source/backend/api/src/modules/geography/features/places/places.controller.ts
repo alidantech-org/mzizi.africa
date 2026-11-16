@@ -1,23 +1,23 @@
 import { Controller, Get, HttpCode, Param, Query } from "@nestjs/common";
 
-import { UnitCollectionDto } from "#/modules/geography/schema/dto/unit-collection.dto.ts";
-import { UnitDetailDto } from "#/modules/geography/schema/dto/unit-detail.dto.ts";
-import { UnitWindowDto } from "#/modules/geography/schema/dto/unit-window.dto.ts";
+import { FeatureCollectionDto } from "#/modules/geography/schema/dto/feature-collection.dto.ts";
+import { FeatureDetailDto } from "#/modules/geography/schema/dto/feature-detail.dto.ts";
+import { FeatureWindowDto } from "#/modules/geography/schema/dto/feature-window.dto.ts";
 import { GeographyPlacesService } from "./places.service.ts";
 
 @Controller()
 export class GeographyPlacesController {
   constructor(private readonly service: GeographyPlacesService) {}
 
-  @Get("/v1/geography/units")
+  @Get("/v1/geography/features")
   @HttpCode(200)
-  browseUnits(@Query() input: UnitWindowDto): Promise<UnitCollectionDto> {
-    return this.service.browseUnits(input);
+  browseFeatures(@Query() input: FeatureWindowDto): Promise<FeatureCollectionDto> {
+    return this.service.browseFeatures(input);
   }
 
-  @Get("/v1/geography/units/:featureId")
+  @Get("/v1/geography/features/:featureId")
   @HttpCode(200)
-  getUnit(@Param("featureId") featureId: string): Promise<UnitDetailDto> {
-    return this.service.getUnit({ featureId });
+  getFeature(@Param("featureId") featureId: string): Promise<FeatureDetailDto> {
+    return this.service.getFeature({ featureId });
   }
 }

@@ -2,7 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { unitsExample } from "@test/modules/geography/schema/dto/examples/units.dto.example.ts";
+import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedValidityEntityExample } from "@test/modules/shared/schema/dto/examples/coded-validity-entity.dto.example.ts";

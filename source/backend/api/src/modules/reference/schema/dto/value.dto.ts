@@ -19,7 +19,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A controlled classification member within one scheme, with optional supersession. (entity)
+ * A controlled classification member within one scheme, with optional supersession and an optional broader parent value in the same scheme. Wider, cross-scheme or many-parent links use value relations. (entity)
  */
 export class ValueDto {
   @IsString()
@@ -41,12 +41,21 @@ export class ValueDto {
   @Satisfies<ValueDto>((object) => object.id !== object.supersedesId, {
     message: "Value Does Not Supersede Itself",
   })
+  @Satisfies<ValueDto>((object) => object.id !== object.parentId, {
+    message: "Value Does Not Parent Itself",
+  })
   id!: Id;
 
   @IsString()
   @MinLength(1)
   @MaxLength(300)
   label!: Name;
+
+  @IsOptional()
+  @ValidateIf((object) => object.parentId !== null)
+  @IsString()
+  @IsUUID()
+  parentId?: Id | null;
 
   @IsString()
   @IsUUID()

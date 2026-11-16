@@ -14,7 +14,7 @@ import * as CountryConfig from "#/modules/reference/schema/types/country/country
 import * as InstitutionsConfig from "#/modules/governance/schema/types/institutions/institutions.config";
 import * as OfficesConfig from "#/modules/governance/schema/types/offices/offices.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
-import * as UnitsConfig from "#/modules/geography/schema/types/units/units.config";
+import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -191,7 +191,7 @@ export const AUTHORITY_SCOPES_ONE_RELATION_QUERY_OPTIONS = [
     "sourceCitation",
   ),
   Q.createRelationKeyMapper<AuthorityScopesRelationKey>().one(
-    () => UnitsConfig.UNITS_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "unitFeature",
   ),
 ] as const;

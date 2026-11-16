@@ -24,26 +24,26 @@
       "summary": "Page through accounts, optionally by status. Administrators only."
     },
     {
-      "name": "BrowseUnits",
+      "name": "BrowseFeatures",
       "group": "geography",
       "feature": "places",
       "method": "GET",
-      "path": "/v1/geography/units",
+      "path": "/v1/geography/features",
       "role": "list",
       "inputs": ["input"],
-      "output": "UnitCollection",
-      "summary": "Browse administrative units with their names, optionally for one country or by code prefix."
+      "output": "FeatureCollection",
+      "summary": "Browse geographic features with their names, optionally of one type or by code prefix."
     },
     {
-      "name": "GetUnit",
+      "name": "GetFeature",
       "group": "geography",
       "feature": "places",
       "method": "GET",
-      "path": "/v1/geography/units/{featureId}",
+      "path": "/v1/geography/features/{featureId}",
       "role": "detail",
       "inputs": ["featureId"],
-      "output": "UnitDetail",
-      "summary": "One administrative unit with its names."
+      "output": "FeatureDetail",
+      "summary": "One geographic feature with its names."
     },
     {
       "name": "BrowseInstitutions",

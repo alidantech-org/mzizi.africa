@@ -13,8 +13,7 @@
       "x-code": "sys.tbl.civic.bids",
       "x-id": "#/schemas/civic.Bids",
       "x-table": "civic.bids",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -138,8 +137,7 @@
       "x-code": "sys.tbl.civic.contracts",
       "x-id": "#/schemas/civic.Contracts",
       "x-table": "civic.contracts",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -273,8 +271,7 @@
       "x-code": "sys.tbl.civic.deliveries",
       "x-id": "#/schemas/civic.Deliveries",
       "x-table": "civic.deliveries",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -372,7 +369,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Units", "column": "feature_id", "alias": "unit_feature_code" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -396,8 +393,7 @@
       "x-code": "sys.tbl.civic.procurements",
       "x-id": "#/schemas/civic.Procurements",
       "x-table": "civic.procurements",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -524,9 +520,8 @@
       "x-code": "sys.tbl.civic.project-features",
       "x-id": "#/schemas/civic.ProjectFeatures",
       "x-table": "civic.project_features",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["project_code", "feature_code", "feature_kind_code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["project_id", "feature_id", "feature_kind_id"]
       ],
@@ -540,20 +535,19 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "feature_code"
           ,"feature_kind_code"
-          ,"id"
           ,"project_code"
           ,"source_citation_code"
         ],
         "required": [
           "feature_code"
           ,"feature_kind_code"
-          ,"id"
           ,"project_code"
         ]
       },
@@ -576,14 +570,14 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
         ,"feature_kind_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "feature_kind_code" }
         }
         ,"id": {
@@ -591,13 +585,13 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"project_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/civic.Projects", "column": "id", "alias": "project_code" }
         }
         ,"source_citation_id": {
@@ -629,8 +623,7 @@
       "x-code": "sys.tbl.civic.projects",
       "x-id": "#/schemas/civic.Projects",
       "x-table": "civic.projects",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -746,7 +739,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Units", "column": "feature_id", "alias": "scope_unit_feature_code" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "scope_unit_feature_code" }
         }
         ,"source_citation_id": {
           "type": ["string", "null"],
@@ -797,8 +790,7 @@
       "x-code": "sys.tbl.civic.services",
       "x-id": "#/schemas/civic.Services",
       "x-table": "civic.services",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -894,7 +886,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Places", "column": "feature_id", "alias": "place_feature_code" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "place_feature_code" }
         }
         ,"provider_entity_id": {
           "type": "string",
@@ -915,7 +907,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Units", "column": "feature_id", "alias": "scope_unit_feature_code" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "scope_unit_feature_code" }
         }
         ,"service_kind_id": {
           "type": "string",

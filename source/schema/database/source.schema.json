@@ -13,8 +13,7 @@
       "x-code": "sys.tbl.source.apis",
       "x-id": "#/schemas/source.Apis",
       "x-table": "source.apis",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
         ["source_id"]
@@ -107,8 +106,7 @@
       "x-code": "sys.tbl.source.attributions",
       "x-id": "#/schemas/source.Attributions",
       "x-table": "source.attributions",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -237,8 +235,7 @@
       "x-code": "sys.tbl.source.captures",
       "x-id": "#/schemas/source.Captures",
       "x-table": "source.captures",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -376,8 +373,7 @@
       "x-code": "sys.tbl.source.citations",
       "x-id": "#/schemas/source.Citations",
       "x-table": "source.citations",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -514,8 +510,7 @@
       "x-code": "sys.tbl.source.documents",
       "x-id": "#/schemas/source.Documents",
       "x-table": "source.documents",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -645,8 +640,7 @@
       "x-code": "sys.tbl.source.evidence",
       "x-id": "#/schemas/source.Evidence",
       "x-table": "source.evidence",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -766,9 +760,8 @@
       "x-code": "sys.tbl.source.manifest-bindings",
       "x-id": "#/schemas/source.ManifestBindings",
       "x-table": "source.manifest_bindings",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["source_code", "manifest_release_code", "effective_from"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["source_id", "manifest_release_id", "effective_from"]
       ],
@@ -783,6 +776,7 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -791,14 +785,12 @@
           ,"deactivated_at"
           ,"effective_from"
           ,"effective_until"
-          ,"id"
           ,"manifest_release_code"
           ,"source_code"
         ],
         "required": [
           "activated_at"
           ,"effective_from"
-          ,"id"
           ,"manifest_release_code"
           ,"source_code"
         ]
@@ -834,7 +826,7 @@
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"effective_until": {
           "type": ["string", "null"],
@@ -847,20 +839,20 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"manifest_release_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/source.ManifestReleases", "column": "id", "alias": "manifest_release_code" }
         }
         ,"source_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/source.Sources", "column": "id", "alias": "source_code" }
         }
         ,"updated_at": {
@@ -885,9 +877,8 @@
       "x-code": "sys.tbl.source.manifest-releases",
       "x-id": "#/schemas/source.ManifestReleases",
       "x-table": "source.manifest_releases",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["manifest_code", "release_label"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["manifest_id", "release_label"]
       ],
@@ -909,6 +900,7 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -919,7 +911,6 @@
           ,"effective_from"
           ,"effective_until"
           ,"file_version_code"
-          ,"id"
           ,"input_schema_code"
           ,"input_schema_version"
           ,"manifest_code"
@@ -933,7 +924,6 @@
           ,"content_hash"
           ,"effective_from"
           ,"file_version_code"
-          ,"id"
           ,"input_schema_code"
           ,"input_schema_version"
           ,"manifest_code"
@@ -1000,7 +990,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"input_schema_code": {
           "type": "string",
@@ -1021,7 +1011,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/source.Manifests", "column": "id", "alias": "manifest_code" }
         }
         ,"release_label": {
@@ -1029,7 +1019,7 @@
           "x-type": "text",
           "maxLength": 100,
           "minLength": 1,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"required_capabilities": {
           "type": "string",
@@ -1064,8 +1054,7 @@
       "x-code": "sys.tbl.source.manifests",
       "x-id": "#/schemas/source.Manifests",
       "x-table": "source.manifests",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -1168,8 +1157,7 @@
       "x-code": "sys.tbl.source.publication-receipts",
       "x-id": "#/schemas/source.PublicationReceipts",
       "x-table": "source.publication_receipts",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
         ["idempotency_key"]
@@ -1312,8 +1300,7 @@
       "x-code": "sys.tbl.source.publishers",
       "x-id": "#/schemas/source.Publishers",
       "x-table": "source.publishers",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -1425,8 +1412,7 @@
       "x-code": "sys.tbl.source.sources",
       "x-id": "#/schemas/source.Sources",
       "x-table": "source.sources",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -1547,8 +1533,7 @@
       "x-code": "sys.tbl.source.verifications",
       "x-id": "#/schemas/source.Verifications",
       "x-table": "source.verifications",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -1682,8 +1667,7 @@
       "x-code": "sys.tbl.source.websites",
       "x-id": "#/schemas/source.Websites",
       "x-table": "source.websites",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
         ["source_id"]

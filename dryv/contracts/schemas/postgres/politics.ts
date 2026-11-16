@@ -8,7 +8,7 @@ import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { Units } from "./geography.ts";
+import { Features } from "./geography.ts";
 import { Offices } from "./governance.ts";
 import { Entities, Individuals } from "./official.ts";
 import { Country, Topic, Value } from "./reference.ts";
@@ -101,7 +101,7 @@ export const Contests = politics
   .schema("Contests", {
     electionId: belongsTo(() => Elections),
     officeId: belongsTo(() => Offices).maybe(),
-    unitFeatureId: belongsTo(() => Units, { to: "featureId" }),
+    unitFeatureId: belongsTo(() => Features),
     contestKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
@@ -131,7 +131,7 @@ export const Candidates = politics
 export const Electorates = politics
   .schema("Electorates", {
     contestId: belongsTo(() => Contests),
-    unitFeatureId: belongsTo(() => Units, { to: "featureId" }),
+    unitFeatureId: belongsTo(() => Features),
     registeredVoters: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
     ballotsCast: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
     validBallots: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
@@ -153,7 +153,7 @@ export const Electorates = politics
 export const Results = politics
   .schema("Results", {
     candidateId: belongsTo(() => Candidates),
-    unitFeatureId: belongsTo(() => Units, { to: "featureId" }),
+    unitFeatureId: belongsTo(() => Features),
     votes: dryv.field(sharedProperties.NonNegativeInt64),
     statusId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
@@ -214,7 +214,7 @@ export const ReferendumOptions = politics
 export const OptionResults = politics
   .schema("OptionResults", {
     optionId: belongsTo(() => ReferendumOptions),
-    unitFeatureId: belongsTo(() => Units, { to: "featureId" }),
+    unitFeatureId: belongsTo(() => Features),
     votes: dryv.field(sharedProperties.NonNegativeInt64),
     statusId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),

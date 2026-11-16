@@ -38,7 +38,11 @@ export interface IRelationships extends B.IBase {
   subjectFeatureId: string;
   systemId: string;
   validFrom: Date | null;
+  validFromEarliest: Date | null;
+  validFromLatest: Date | null;
   validUntil: Date | null;
+  validUntilEarliest: Date | null;
+  validUntilLatest: Date | null;
   readonly objectFeature?: FeaturesTypes.IFeatures;
   readonly relationshipKind?: ValueTypes.IValue;
   readonly subjectFeature?: FeaturesTypes.IFeatures;

@@ -19,6 +19,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * An official, local, alternative, translated or historical name for a feature, with optional language, validity and provenance reference.
  */
 @Entity({ schema: "geography", name: "names" })
+@Index(["featureId", "nameKindId", "languageTag", "name"], { unique: true })
 @Index(["featureId"])
 @Index(["nameKindId"])
 @Index(["languageTag"])

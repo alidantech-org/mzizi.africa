@@ -13,8 +13,7 @@
       "x-code": "sys.tbl.filesystem.file-extensions",
       "x-id": "#/schemas/filesystem.FileExtensions",
       "x-table": "filesystem.file_extensions",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -118,9 +117,8 @@
       "x-code": "sys.tbl.filesystem.file-relations",
       "x-id": "#/schemas/filesystem.FileRelations",
       "x-table": "filesystem.file_relations",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["source_version_code", "derived_version_code", "kind_code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["source_version_id", "derived_version_id", "kind_id"]
       ],
@@ -135,19 +133,18 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "derived_version_code"
-          ,"id"
           ,"kind_code"
           ,"processing_provenance"
           ,"source_version_code"
         ],
         "required": [
           "derived_version_code"
-          ,"id"
           ,"kind_code"
           ,"processing_provenance"
           ,"source_version_code"
@@ -172,7 +169,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/filesystem.FileVersions", "column": "id", "alias": "derived_version_code" }
         }
         ,"id": {
@@ -180,13 +177,13 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"kind_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code" }
         }
         ,"processing_provenance": {
@@ -198,7 +195,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/filesystem.FileVersions", "column": "id", "alias": "source_version_code" }
         }
         ,"updated_at": {
@@ -223,9 +220,8 @@
       "x-code": "sys.tbl.filesystem.file-versions",
       "x-id": "#/schemas/filesystem.FileVersions",
       "x-table": "filesystem.file_versions",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["file_code", "revision"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["file_id", "revision"]
       ],
@@ -247,6 +243,7 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -256,7 +253,6 @@
           ,"created_by_snapshot"
           ,"file_extension_code"
           ,"file_code"
-          ,"id"
           ,"original_filename"
           ,"pinned"
           ,"provenance"
@@ -271,7 +267,6 @@
           ,"content_type"
           ,"created_by_snapshot"
           ,"file_code"
-          ,"id"
           ,"pinned"
           ,"provenance"
           ,"revision"
@@ -325,7 +320,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/filesystem.Files", "column": "id", "alias": "file_code" }
         }
         ,"id": {
@@ -333,7 +328,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"original_filename": {
           "type": ["string", "null"],
@@ -355,7 +350,7 @@
         ,"revision": {
           "type": "integer",
           "x-type": "integer",
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"s3_key": {
           "type": "string",
@@ -405,8 +400,7 @@
       "x-code": "sys.tbl.filesystem.files",
       "x-id": "#/schemas/filesystem.Files",
       "x-table": "filesystem.files",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -519,8 +513,7 @@
       "x-code": "sys.tbl.filesystem.folders",
       "x-id": "#/schemas/filesystem.Folders",
       "x-table": "filesystem.folders",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -639,9 +632,8 @@
       "x-code": "sys.tbl.filesystem.taggings",
       "x-id": "#/schemas/filesystem.Taggings",
       "x-table": "filesystem.taggings",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["tag_code", "file_code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["tag_id", "file_id"]
         ,["tag_id", "folder_id"]
@@ -654,18 +646,17 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "file_code"
           ,"folder_code"
-          ,"id"
           ,"tag_code"
         ],
         "required": [
-          "id"
-          ,"tag_code"
+          "tag_code"
         ]
       },
       "properties": {
@@ -687,7 +678,7 @@
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/filesystem.Files", "column": "id", "alias": "file_code" }
         }
         ,"folder_id": {
@@ -702,13 +693,13 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"tag_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/filesystem.Tags", "column": "id", "alias": "tag_code" }
         }
         ,"updated_at": {
@@ -733,8 +724,7 @@
       "x-code": "sys.tbl.filesystem.tags",
       "x-id": "#/schemas/filesystem.Tags",
       "x-table": "filesystem.tags",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]

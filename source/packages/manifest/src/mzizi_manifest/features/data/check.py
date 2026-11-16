@@ -83,16 +83,30 @@ def _value_problem(column: Column, value: str) -> str | None:
     return None
 
 
-def _table_for(path: Path, root: Path, tables: dict[str, Table]) -> tuple[Table | None, str | None]:
+def _table_for(
+    path: Path, root: Path, tables: dict[str, Table], schemas: dict[str, str]
+) -> tuple[Table | None, str | None]:
+    """The table a seed file feeds: data/<scope>/<domain>/<table>.csv (the domain is a database group or its short, `geo`), or a folder named for the table that holds parts.
+
+    A table that grows is split into `data/<scope>/<domain>/<table>/<label>.<table>.csv` (for example
+    `reference/values/geo.values.csv`); the folder may be nested further as a part grows.
+    """
     parts = path.relative_to(root).parts
-    if len(parts) != 4 or parts[0] != "data":
-        return None, "a CSV must be data/<scope>/<domain>/<table>.csv"
-    _, scope, domain, name = parts
+    if len(parts) < 4 or parts[0] != "data":
+        return None, "a CSV must be data/<scope>/<domain>/<table>.csv or data/<scope>/<domain>/<table>/<label>.<table>.csv"
+    scope, domain, rest = parts[1], parts[2], parts[3:]
+    domain = {short: name for name, short in schemas.items()}.get(domain, domain)
     if not SCOPE.match(scope):
         return None, f"scope {scope!r} must be 'global' or a country code"
-    table = tables.get(f"{domain}.{Path(name).stem}")
+    if len(rest) == 1:
+        name = Path(rest[0]).stem
+    else:
+        name = rest[0]
+        if not Path(rest[-1]).stem.endswith(f".{name}"):
+            return None, f"a file in the {name}/ folder must be named <label>.{name}.csv"
+    table = tables.get(f"{domain}.{name}")
     if table is None:
-        return None, f"{domain}.{Path(name).stem} is not a stored table"
+        return None, f"{domain}.{name} is not a stored table"
     if not table.seedable:
         return None, f"{table.qualified_name} has no natural key, so it cannot be seeded by CSV"
     return table, None
@@ -143,7 +157,7 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
     files = sorted((root / "data").rglob("*.csv")) if (root / "data").is_dir() else []
     for path in files:
         shown = str(path.relative_to(root))
-        table, why = _table_for(path, root, tables)
+        table, why = _table_for(path, root, tables, glossary.schemas)
         if table is None:
             result.problems.append(f"{shown}: {why}")
             continue

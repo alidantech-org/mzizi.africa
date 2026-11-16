@@ -7,7 +7,7 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy. (entity)
+ * A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind. (entity)
  */
 export class ValueRelationDto {
   @IsISO8601({})

@@ -21,9 +21,8 @@ import type { BaseRepository } from "#/database/base/base.repository.ts";
 import { NAMES_AS_MANY_RELATION_CONFIG } from "#/modules/geography/schema/types/names/names.config.ts";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { GeographyNamesEntity } from "#/modules/geography/schema/entities/names.entity.ts";
-import { UnitsEntity } from "#/modules/geography/schema/entities/units.entity.ts";
 import { FeaturesRepository } from "#/modules/geography/schema/repositories/features.repository.ts";
-import { UnitsRepository } from "#/modules/geography/schema/repositories/units.repository.ts";
+import { NamesRepository } from "#/modules/geography/schema/repositories/names.repository.ts";
 
 /**
  * Reads of the Places feature: one named method per declared query, written out
@@ -47,73 +46,73 @@ export class GeographyPlacesRepository {
     return new repository(this.dataSource.getRepository(entity));
   }
 
-  /** Browse administrative units with their names, optionally for one country or by code prefix. */
-  async browseUnits(input: Row, context: ReadContext = {}): Promise<Row[]> {
+  /** Browse geographic features with their names, optionally of one type or by code prefix. */
+  async browseFeatures(input: Row, context: ReadContext = {}): Promise<Row[]> {
     const params: Row = {
       codePrefix: input.codePrefix,
-      countryId: input.countryId,
+      featureTypeId: input.featureTypeId,
       limit: input.limit,
       offset: input.offset,
     };
-    const query = this.repositoryOf(UnitsRepository, UnitsEntity).query("r", context.manager);
+    const query = this.repositoryOf(FeaturesRepository, FeaturesEntity).query("r", context.manager);
     query.select([]);
-    if (params.countryId !== undefined) {
-      query.andWhere("r.countryId = :w_countryId", { w_countryId: params.countryId });
+    if (params.featureTypeId !== undefined) {
+      query.andWhere("r.featureTypeId = :w_featureTypeId", {
+        w_featureTypeId: params.featureTypeId,
+      });
     }
-    query.leftJoin(FeaturesEntity, "r_featureId", "r_featureId.id = r.featureId");
     if (params.codePrefix !== undefined) {
-      query.andWhere("r_featureId.code LIKE :w_codePrefix", {
+      query.andWhere("r.code LIKE :w_codePrefix", {
         w_codePrefix: prefixPattern(params.codePrefix),
       });
     }
-    query.addSelect("r_featureId.code", "code");
-    query.addSelect("r.countryId", "countryId");
-    query.addSelect("r.featureId", "featureId");
+    query.addSelect("r.code", "code");
+    query.addSelect("r.id", "featureId");
+    query.addSelect("r.featureTypeId", "featureTypeId");
     query.addSelect("r.validFrom", "validFrom");
     query.addSelect("r.validUntil", "validUntil");
-    query.addSelect("r.featureId", "__key_featureId");
-    query.orderBy("r_featureId.code", "ASC");
-    query.addOrderBy("r.featureId", "ASC");
+    query.addSelect("r.id", "__key_id");
+    query.orderBy("r.code", "ASC");
+    query.addOrderBy("r.id", "ASC");
     const page = pageWindow(params.limit, params.offset, 200);
     query.limit(page.limit).offset(page.offset);
     const raws = await query.getRawMany<Row>();
     const rows: Row[] = raws.map((raw) => ({
       code: raw.code,
-      countryId: raw.countryId,
       featureId: raw.featureId,
+      featureTypeId: raw.featureTypeId,
       validFrom: dateOnly(raw.validFrom),
       validUntil: dateOnly(raw.validUntil),
     }));
-    const namesByOwner = await this.load_BrowseUnits_names(
-      raws.map((raw) => raw.__key_featureId),
+    const namesByOwner = await this.load_BrowseFeatures_names(
+      raws.map((raw) => raw.__key_id),
       context,
     );
     rows.forEach((row, index) => {
-      const owned = namesByOwner.get(raws[index]?.__key_featureId);
+      const owned = namesByOwner.get(raws[index]?.__key_id);
       row.names = owned ?? [];
     });
     return rows;
   }
 
   /** The names of the owners, grouped by the owner's key. */
-  private async load_BrowseUnits_names(
+  private async load_BrowseFeatures_names(
     owners: unknown[],
     context: ReadContext,
   ): Promise<Map<unknown, Row[]>> {
     if (owners.length === 0) return new Map();
-    const query = this.repositoryOf(FeaturesRepository, FeaturesEntity).query(
+    const query = this.repositoryOf(NamesRepository, GeographyNamesEntity).query(
       "r1",
       context.manager,
     );
     query.select([]);
-    query.where("r1.id IN (:...owners)", { owners });
-    query.addSelect("r1.id", "__owner");
-    query.leftJoin(GeographyNamesEntity, "r2", "r2.featureId = r1.id");
-    query.addSelect("r2.featureId", "__hit");
-    query.addSelect("r2.languageTag", "languageTag");
-    query.addSelect("r2.name", "name");
-    query.orderBy("r2.name", "ASC");
-    query.addOrderBy("r2.id", "ASC");
+    query.where("r1.featureId IN (:...owners)", { owners });
+    query.addSelect("r1.featureId", "__owner");
+    query.addSelect("r1.featureId", "__hit");
+    query.addSelect("r1.languageTag", "languageTag");
+    query.addSelect("r1.name", "name");
+    query.orderBy("r1.name", "ASC");
+    query.addOrderBy("r1.id", "ASC");
     const raws = await query.getRawMany<Row>();
     const rows: Row[] = raws.map((raw) => ({ languageTag: raw.languageTag, name: raw.name }));
     const grouped = new Map<unknown, Row[]>();
@@ -127,66 +126,64 @@ export class GeographyPlacesRepository {
     return grouped;
   }
 
-  /** One administrative unit with its names. */
-  async getUnit(input: Row, context: ReadContext = {}): Promise<Row> {
+  /** One geographic feature with its names. */
+  async getFeature(input: Row, context: ReadContext = {}): Promise<Row> {
     const params: Row = {
       featureId: input.featureId,
     };
     if (params.featureId === undefined) throw new Error("featureId is required");
-    const query = this.repositoryOf(UnitsRepository, UnitsEntity).query("r", context.manager);
+    const query = this.repositoryOf(FeaturesRepository, FeaturesEntity).query("r", context.manager);
     query.select([]);
     if (params.featureId !== undefined) {
-      query.andWhere("r.featureId = :w_featureId", { w_featureId: params.featureId });
+      query.andWhere("r.id = :w_featureId", { w_featureId: params.featureId });
     }
-    query.leftJoin(FeaturesEntity, "r_featureId", "r_featureId.id = r.featureId");
-    query.addSelect("r_featureId.code", "code");
-    query.addSelect("r.countryId", "countryId");
-    query.addSelect("r.featureId", "featureId");
+    query.addSelect("r.code", "code");
+    query.addSelect("r.id", "featureId");
+    query.addSelect("r.featureTypeId", "featureTypeId");
     query.addSelect("r.validFrom", "validFrom");
     query.addSelect("r.validUntil", "validUntil");
-    query.addSelect("r.featureId", "__key_featureId");
-    query.orderBy("r.featureId", "ASC");
+    query.addSelect("r.id", "__key_id");
+    query.orderBy("r.id", "ASC");
     query.limit(1);
     const raws = await query.getRawMany<Row>();
     if (raws.length === 0)
       throw missing("not_found", "The requested resource does not exist.", 404);
     const rows: Row[] = raws.map((raw) => ({
       code: raw.code,
-      countryId: raw.countryId,
       featureId: raw.featureId,
+      featureTypeId: raw.featureTypeId,
       validFrom: dateOnly(raw.validFrom),
       validUntil: dateOnly(raw.validUntil),
     }));
-    const namesByOwner = await this.load_GetUnit_names(
-      raws.map((raw) => raw.__key_featureId),
+    const namesByOwner = await this.load_GetFeature_names(
+      raws.map((raw) => raw.__key_id),
       context,
     );
     rows.forEach((row, index) => {
-      const owned = namesByOwner.get(raws[index]?.__key_featureId);
+      const owned = namesByOwner.get(raws[index]?.__key_id);
       row.names = owned ?? [];
     });
     return rows[0] as Row;
   }
 
   /** The names of the owners, grouped by the owner's key. */
-  private async load_GetUnit_names(
+  private async load_GetFeature_names(
     owners: unknown[],
     context: ReadContext,
   ): Promise<Map<unknown, Row[]>> {
     if (owners.length === 0) return new Map();
-    const query = this.repositoryOf(FeaturesRepository, FeaturesEntity).query(
+    const query = this.repositoryOf(NamesRepository, GeographyNamesEntity).query(
       "r1",
       context.manager,
     );
     query.select([]);
-    query.where("r1.id IN (:...owners)", { owners });
-    query.addSelect("r1.id", "__owner");
-    query.leftJoin(GeographyNamesEntity, "r2", "r2.featureId = r1.id");
-    query.addSelect("r2.featureId", "__hit");
-    query.addSelect("r2.languageTag", "languageTag");
-    query.addSelect("r2.name", "name");
-    query.orderBy("r2.name", "ASC");
-    query.addOrderBy("r2.id", "ASC");
+    query.where("r1.featureId IN (:...owners)", { owners });
+    query.addSelect("r1.featureId", "__owner");
+    query.addSelect("r1.featureId", "__hit");
+    query.addSelect("r1.languageTag", "languageTag");
+    query.addSelect("r1.name", "name");
+    query.orderBy("r1.name", "ASC");
+    query.addOrderBy("r1.id", "ASC");
     const raws = await query.getRawMany<Row>();
     const rows: Row[] = raws.map((raw) => ({ languageTag: raw.languageTag, name: raw.name }));
     const grouped = new Map<unknown, Row[]>();

@@ -26,5 +26,9 @@ class GeographyRelationshipsRow(BaseModel):
     system_id: UUID
     updated_at: datetime
     valid_from: date | None = None
+    valid_from_earliest: date | None = None
+    valid_from_latest: date | None = None
     valid_until: date | None = None
+    valid_until_earliest: date | None = None
+    valid_until_latest: date | None = None
     version: Annotated[int, Field(ge=1)]

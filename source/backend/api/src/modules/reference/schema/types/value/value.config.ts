@@ -31,7 +31,11 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const VALUE_RELATION_KEYS = ["scheme", "supersedes"] as const satisfies readonly ValueKey[];
+export const VALUE_RELATION_KEYS = [
+  "parent",
+  "scheme",
+  "supersedes",
+] as const satisfies readonly ValueKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -43,6 +47,7 @@ export const VALUE_SORTABLE_FIELDS = [
   "deletedAt",
   "id",
   "label",
+  "parentId",
   "schemeId",
   "supersedesId",
   "updatedAt",
@@ -53,6 +58,7 @@ export const VALUE_SEARCHABLE_FIELDS = ["code", "label"] as const satisfies read
 
 export const VALUE_FILTERABLE_FIELDS = [
   "id",
+  "parentId",
   "schemeId",
   "supersedesId",
 ] as const satisfies readonly ValueKey[];
@@ -79,6 +85,7 @@ export const VALUE_SELECTABLE_FIELDS = [
   "deletedAt",
   "id",
   "label",
+  "parentId",
   "schemeId",
   "supersedesId",
   "updatedAt",
@@ -91,6 +98,7 @@ export const VALUE_DEFAULT_SELECT_FIELDS = [
   "deletedAt",
   "id",
   "label",
+  "parentId",
   "schemeId",
   "supersedesId",
   "updatedAt",
@@ -104,6 +112,7 @@ export const VALUE_DEFAULT_SELECT_FIELDS = [
 export const VALUE_EDITABLE_FIELDS = [
   "code",
   "label",
+  "parentId",
   "schemeId",
   "supersedesId",
 ] as const satisfies readonly ValueKey[];

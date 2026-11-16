@@ -8,7 +8,7 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
-import { UnitsEntity } from "#/modules/geography/schema/entities/units.entity.ts";
+import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { InstitutionsEntity } from "#/modules/governance/schema/entities/institutions.entity.ts";
 import { OfficesEntity } from "#/modules/governance/schema/entities/offices.entity.ts";
 import { CountryEntity } from "#/modules/reference/schema/entities/country.entity.ts";
@@ -78,9 +78,9 @@ export class AuthorityScopesEntity {
   @Column({ name: "unit_feature_id", type: "uuid" })
   unitFeatureId!: Id;
 
-  @ManyToOne(() => UnitsEntity, { onDelete: "RESTRICT" })
+  @ManyToOne(() => FeaturesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "unit_feature_id" })
-  unitFeature?: Relation<UnitsEntity>;
+  unitFeature?: Relation<FeaturesEntity>;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

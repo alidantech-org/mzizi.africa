@@ -97,6 +97,6 @@ def test_system_managed_columns_are_marked_and_not_required() -> None:
     assert values.columns["scheme_id"].role == "link" and values.columns["scheme_id"].link.alias == "scheme_code"
     assert values.columns["scheme_id"].references == ("#/schemas/reference.Scheme", "id")
     assert values.natural_key == ("code",) and values.seedable
-    assert values.seed.columns == ("code", "label", "scheme_code", "supersedes_code")
+    assert values.seed.columns == ("code", "label", "parent_code", "scheme_code", "supersedes_code")
     assert values.seed.required == ("code", "label", "scheme_code")
     assert ("code",) in values.unique_keys

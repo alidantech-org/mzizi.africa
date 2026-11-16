@@ -162,13 +162,13 @@ def test_the_path_must_name_a_seedable_table_in_a_valid_scope(tmp_path: Path) ->
     files = {
         "nowhere/reference/schemes.csv": SCHEMES,
         "global/reference/nonsense.csv": SCHEMES,
-        "global/reference/value_relations.csv": "id\n1\n",
+        "global/audit/events.csv": "id\n1\n",
         "global/schemes.csv": SCHEMES,
     }
     problems = check_data(tree(tmp_path, files)).problems
     assert any("scope 'nowhere'" in p for p in problems)
     assert any("reference.nonsense is not a stored table" in p for p in problems)
-    assert any("reference.value_relations has no natural key" in p for p in problems)
+    assert any("audit.events has no natural key" in p for p in problems)
     assert any("a CSV must be data/<scope>/<domain>/<table>.csv" in p for p in problems)
 
 
@@ -215,3 +215,58 @@ def test_the_command_reports_problems_and_exits_nonzero(tmp_path: Path, capsys: 
     assert "missing required column 'owner_snapshot'" in capsys.readouterr().err
     other = tree(tmp_path / "ok", good())
     assert main(["data", str(other)]) == 0
+
+
+def test_a_growing_table_is_split_into_a_folder_of_parts(tmp_path: Path) -> None:
+    files = {
+        "global/reference/schemes.csv": SCHEMES,
+        "global/reference/values/geo.values.csv": VALUES.split("fin.currency.kes")[0],
+        "global/reference/values/deeper/fin.values.csv": "code,scheme_code,label\nfin.currency.kes,fin.currency,Kenyan shilling\n",
+        "global/reference/countries.csv": COUNTRIES,
+    }
+    result = check_data(tree(tmp_path, files))
+    assert result.problems == []
+    assert len(result.rows["reference.values"]) == 3
+
+
+def test_a_part_in_a_table_folder_must_be_named_for_the_table(tmp_path: Path) -> None:
+    files = {"global/reference/values/geo.csv": VALUES}
+    assert any("must be named <label>.values.csv" in p for p in check_data(tree(tmp_path, files)).problems)
+
+
+def test_a_table_with_no_code_is_keyed_by_its_unique_columns(tmp_path: Path) -> None:
+    labels = (
+        "value_code,language_tag,label_kind,label\n"
+        "geo.continent.africa,sw,preferred,Afrika\n"
+        "geo.continent.africa,en,alternative,Africa\n"
+        "geo.continent.asia,sw,preferred,Asia\n"
+    )
+    files = {**good(), "global/reference/value_labels.csv": labels}
+    result = check_data(tree(tmp_path, files))
+    assert result.problems == []
+    assert load_tables(Path(__file__).resolve().parents[3] / "schema")["reference.value_labels"].natural_key == (
+        "value_code",
+        "language_tag",
+        "label_kind",
+        "label",
+    )
+    assert result.order.index("reference.values") < result.order.index("reference.value_labels")
+
+
+def test_a_repeated_composite_key_and_an_unknown_link_are_reported(tmp_path: Path) -> None:
+    labels = (
+        "value_code,language_tag,label_kind,label\n"
+        "geo.continent.africa,sw,preferred,Afrika\n"
+        "geo.continent.africa,sw,preferred,Afrika\n"
+        "geo.continent.nowhere,sw,preferred,Hakuna\n"
+    )
+    problems = check_data(tree(tmp_path, {**good(), "global/reference/value_labels.csv": labels})).problems
+    assert any("duplicate value_code/language_tag/label_kind/label" in p for p in problems)
+    assert any("unknown reference.values code 'geo.continent.nowhere'" in p for p in problems)
+
+
+def test_the_domain_folder_may_use_the_schema_short(tmp_path: Path) -> None:
+    files = {**good(), "ke/geo/features.csv": "code,feature_type_code\nke,geo.continent.africa\n"}
+    result = check_data(tree(tmp_path, files))
+    assert "geography.features" in result.rows
+    assert not any("ke/geo" in p and "not a stored table" in p for p in result.problems)

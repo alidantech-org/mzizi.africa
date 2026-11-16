@@ -9,7 +9,7 @@ import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { FileVersions } from "./filesystem.ts";
-import { Units } from "./geography.ts";
+import { Features } from "./geography.ts";
 import { Entities } from "./official.ts";
 import { Value } from "./reference.ts";
 import { Citations, Evidence } from "./source.ts";
@@ -25,7 +25,7 @@ export const Instruments = legal
   .schema("Instruments", {
     title: dryv.field(sharedProperties.Name),
     kindId: belongsTo(() => Value),
-    issuingUnitId: belongsTo(() => Units, { to: "featureId" }),
+    issuingUnitId: belongsTo(() => Features),
     issuingEntityId: belongsTo(() => Entities).maybe(),
     enactedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),

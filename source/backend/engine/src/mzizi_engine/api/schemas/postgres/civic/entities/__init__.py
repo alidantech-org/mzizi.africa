@@ -10,8 +10,6 @@ from mzizi_engine.api.schemas.postgres.civic.entities.project_features import Pr
 from mzizi_engine.api.schemas.postgres.civic.entities.projects import ProjectsRow
 from mzizi_engine.api.schemas.postgres.civic.entities.services import ServicesRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
-from mzizi_engine.api.schemas.postgres.geography.entities.places import PlacesRow
-from mzizi_engine.api.schemas.postgres.geography.entities.units import UnitsRow
 from mzizi_engine.api.schemas.postgres.governance.entities.institutions import InstitutionsRow
 from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
 from mzizi_engine.api.schemas.postgres.reference.entities.country import CountryRow
@@ -27,11 +25,9 @@ __all__ = [
     "EntitiesRow",
     "FeaturesRow",
     "InstitutionsRow",
-    "PlacesRow",
     "ProcurementsRow",
     "ProjectFeaturesRow",
     "ProjectsRow",
     "ServicesRow",
-    "UnitsRow",
     "ValueRow",
 ]

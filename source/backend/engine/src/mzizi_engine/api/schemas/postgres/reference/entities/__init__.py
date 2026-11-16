@@ -8,6 +8,7 @@ from mzizi_engine.api.schemas.postgres.reference.entities.scheme import SchemeRo
 from mzizi_engine.api.schemas.postgres.reference.entities.topic import TopicRow
 from mzizi_engine.api.schemas.postgres.reference.entities.unit import UnitRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
+from mzizi_engine.api.schemas.postgres.reference.entities.value_label import ValueLabelRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value_relation import ValueRelationRow
 
 __all__ = [
@@ -16,6 +17,7 @@ __all__ = [
     "SchemeRow",
     "TopicRow",
     "UnitRow",
+    "ValueLabelRow",
     "ValueRelationRow",
     "ValueRow",
 ]

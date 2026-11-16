@@ -11,7 +11,7 @@ import { sharedProperties } from "#/schemas/_shared.ts";
 import { Projects, Contracts, Procurements, Services } from "./civic.ts";
 import { BudgetVersions, FiscalPeriods } from "./finance.ts";
 import { Institutions } from "./governance.ts";
-import { Units } from "./geography.ts";
+import { Features } from "./geography.ts";
 import { Manifestos, ManifestoItems } from "./politics.ts";
 import { Country, Topic, Value } from "./reference.ts";
 
@@ -90,7 +90,7 @@ export const ProjectPerformance = accountability
 
 export const ServiceCoverage = accountability
   .schema("ServiceCoverage", {
-    unitFeatureId: belongsTo(() => Units, { to: "featureId" }),
+    unitFeatureId: belongsTo(() => Features),
     serviceKindId: belongsTo(() => Value),
     activeServiceCount: dryv.field(sharedProperties.NonNegativeInteger),
     providerCount: dryv.field(sharedProperties.NonNegativeInteger),

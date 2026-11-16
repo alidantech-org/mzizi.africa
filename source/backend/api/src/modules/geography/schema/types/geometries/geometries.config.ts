@@ -9,8 +9,8 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -33,8 +33,10 @@ import type {
 // ----------------------------------
 
 export const GEOMETRIES_RELATION_KEYS = [
+  "basis",
   "feature",
   "geometryRole",
+  "supersedes",
 ] as const satisfies readonly GeometriesKey[];
 
 // ----------------------------------
@@ -42,29 +44,42 @@ export const GEOMETRIES_RELATION_KEYS = [
 // ----------------------------------
 
 export const GEOMETRIES_SORTABLE_FIELDS = [
+  "area",
+  "basisId",
+  "confidence",
   "createdAt",
   "deletedAt",
   "featureId",
   "fileVersionRefId",
   "geometryRoleId",
   "id",
+  "maxZoom",
+  "minZoom",
   "observedAt",
+  "revision",
   "sourceRefId",
   "srid",
+  "supersedesId",
   "updatedAt",
   "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
   "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
   "version",
 ] as const satisfies readonly GeometriesKey[];
 
 export const GEOMETRIES_SEARCHABLE_FIELDS = [] as const satisfies readonly GeometriesKey[];
 
 export const GEOMETRIES_FILTERABLE_FIELDS = [
+  "basisId",
   "featureId",
   "fileVersionRefId",
   "geometryRoleId",
   "id",
   "sourceRefId",
+  "supersedesId",
 ] as const satisfies readonly GeometriesKey[];
 
 export const GEOMETRIES_DATE_RANGE_FIELDS = [
@@ -73,7 +88,11 @@ export const GEOMETRIES_DATE_RANGE_FIELDS = [
   "observedAt",
   "updatedAt",
   "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
   "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
 ] as const satisfies readonly GeometriesKey[];
 
 export const GEOMETRIES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IGeometries> = {
@@ -87,36 +106,62 @@ export const GEOMETRIES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IGeome
 // ----------------------------------
 
 export const GEOMETRIES_SELECTABLE_FIELDS = [
+  "area",
+  "basisId",
+  "centroid",
+  "confidence",
   "createdAt",
   "deletedAt",
+  "envelope",
   "featureId",
   "fileVersionRefId",
   "geometry",
   "geometryRoleId",
   "id",
+  "maxZoom",
+  "minZoom",
   "observedAt",
+  "revision",
   "sourceRefId",
   "srid",
+  "supersedesId",
   "updatedAt",
   "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
   "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
   "version",
 ] as const satisfies readonly GeometriesKey[];
 
 export const GEOMETRIES_DEFAULT_SELECT_FIELDS = [
+  "area",
+  "basisId",
+  "centroid",
+  "confidence",
   "createdAt",
   "deletedAt",
+  "envelope",
   "featureId",
   "fileVersionRefId",
   "geometry",
   "geometryRoleId",
   "id",
+  "maxZoom",
+  "minZoom",
   "observedAt",
+  "revision",
   "sourceRefId",
   "srid",
+  "supersedesId",
   "updatedAt",
   "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
   "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
   "version",
 ] as const satisfies readonly GeometriesSelectableField[];
 
@@ -125,15 +170,28 @@ export const GEOMETRIES_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const GEOMETRIES_EDITABLE_FIELDS = [
+  "area",
+  "basisId",
+  "centroid",
+  "confidence",
+  "envelope",
   "featureId",
   "fileVersionRefId",
   "geometry",
   "geometryRoleId",
+  "maxZoom",
+  "minZoom",
   "observedAt",
+  "revision",
   "sourceRefId",
   "srid",
+  "supersedesId",
   "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
   "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
 ] as const satisfies readonly GeometriesKey[];
 
 // ----------------------------------
@@ -162,6 +220,10 @@ export const GEOMETRIES_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const GEOMETRIES_ONE_RELATION_QUERY_OPTIONS = [
+  Q.createRelationKeyMapper<GeometriesRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "basis",
+  ),
   Q.createRelationKeyMapper<GeometriesRelationKey>().one(
     () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "feature",

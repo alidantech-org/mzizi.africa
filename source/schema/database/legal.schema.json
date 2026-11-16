@@ -13,8 +13,7 @@
       "x-code": "sys.tbl.legal.amendments",
       "x-id": "#/schemas/legal.Amendments",
       "x-table": "legal.amendments",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -141,9 +140,8 @@
       "x-code": "sys.tbl.legal.instrument-versions",
       "x-id": "#/schemas/legal.InstrumentVersions",
       "x-table": "legal.instrument_versions",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["instrument_code", "edition"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["instrument_id", "edition"]
       ],
@@ -160,6 +158,7 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -171,7 +170,6 @@
           ,"edition"
           ,"evidence_code"
           ,"file_version_code"
-          ,"id"
           ,"instrument_code"
           ,"observed_at"
           ,"repealed_on"
@@ -182,7 +180,6 @@
           ,"edition"
           ,"evidence_code"
           ,"file_version_code"
-          ,"id"
           ,"instrument_code"
           ,"observed_at"
         ]
@@ -233,7 +230,7 @@
           "x-type": "text",
           "maxLength": 255,
           "minLength": 1,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"evidence_id": {
           "type": "string",
@@ -254,13 +251,13 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"instrument_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/legal.Instruments", "column": "id", "alias": "instrument_code" }
         }
         ,"observed_at": {
@@ -304,8 +301,7 @@
       "x-code": "sys.tbl.legal.instruments",
       "x-id": "#/schemas/legal.Instruments",
       "x-table": "legal.instruments",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -389,7 +385,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Units", "column": "feature_id", "alias": "issuing_unit_code" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "issuing_unit_code" }
         }
         ,"kind_id": {
           "type": "string",
@@ -433,9 +429,8 @@
       "x-code": "sys.tbl.legal.provision-versions",
       "x-id": "#/schemas/legal.ProvisionVersions",
       "x-table": "legal.provision_versions",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["provision_code", "instrument_version_code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["provision_id", "instrument_version_id"]
       ],
@@ -453,6 +448,7 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -460,7 +456,6 @@
           "citation_code"
           ,"effective_from"
           ,"effective_until"
-          ,"id"
           ,"instrument_code"
           ,"instrument_version_code"
           ,"observed_at"
@@ -471,7 +466,6 @@
         ],
         "required": [
           "citation_code"
-          ,"id"
           ,"instrument_code"
           ,"instrument_version_code"
           ,"observed_at"
@@ -519,7 +513,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"instrument_id": {
           "type": "string",
@@ -532,7 +526,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/legal.InstrumentVersions", "column": "id", "alias": "instrument_version_code" }
         }
         ,"observed_at": {
@@ -545,7 +539,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "provision_code" }
         }
         ,"supersedes_id": {
@@ -591,8 +585,7 @@
       "x-code": "sys.tbl.legal.provisions",
       "x-id": "#/schemas/legal.Provisions",
       "x-table": "legal.provisions",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]

@@ -1,0 +1,4 @@
+feature_code,name,name_kind_code,language_tag
+ke,Republic of Kenya,geo.name.kind.official,en
+ke,Kenya,geo.name.kind.short,en
+ke,Jamhuri ya Kenya,geo.name.kind.official,sw

@@ -44,6 +44,12 @@ export const FEATURES_SORTABLE_FIELDS = [
   "featureTypeId",
   "id",
   "updatedAt",
+  "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
+  "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
   "version",
 ] as const satisfies readonly FeaturesKey[];
 
@@ -58,6 +64,12 @@ export const FEATURES_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
+  "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
+  "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
 ] as const satisfies readonly FeaturesKey[];
 
 export const FEATURES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IFeatures> = {
@@ -77,6 +89,12 @@ export const FEATURES_SELECTABLE_FIELDS = [
   "featureTypeId",
   "id",
   "updatedAt",
+  "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
+  "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
   "version",
 ] as const satisfies readonly FeaturesKey[];
 
@@ -87,6 +105,12 @@ export const FEATURES_DEFAULT_SELECT_FIELDS = [
   "featureTypeId",
   "id",
   "updatedAt",
+  "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
+  "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
   "version",
 ] as const satisfies readonly FeaturesSelectableField[];
 
@@ -97,6 +121,12 @@ export const FEATURES_DEFAULT_SELECT_FIELDS = [
 export const FEATURES_EDITABLE_FIELDS = [
   "code",
   "featureTypeId",
+  "validFrom",
+  "validFromEarliest",
+  "validFromLatest",
+  "validUntil",
+  "validUntilEarliest",
+  "validUntilLatest",
 ] as const satisfies readonly FeaturesKey[];
 
 // ----------------------------------

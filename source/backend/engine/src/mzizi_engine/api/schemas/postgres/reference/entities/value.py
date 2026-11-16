@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class ValueRow(BaseModel):
-    """A controlled classification member within one scheme, with optional supersession."""
+    """A controlled classification member within one scheme, with optional supersession and an optional broader parent value in the same scheme. Wider, cross-scheme or many-parent links use value relations."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -23,6 +23,7 @@ class ValueRow(BaseModel):
     deleted_at: datetime | None = None
     id: UUID
     label: Annotated[str, Field(min_length=1, max_length=300)]
+    parent_id: UUID | None = None
     scheme_id: UUID
     supersedes_id: UUID | None = None
     updated_at: datetime

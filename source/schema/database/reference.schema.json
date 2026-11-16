@@ -13,8 +13,7 @@
       "x-code": "sys.tbl.reference.countries",
       "x-id": "#/schemas/reference.Country",
       "x-table": "reference.countries",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -75,7 +74,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "continent_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "continent_code", "scheme": "geo.continent" }
         }
         ,"created_at": {
           "type": "string",
@@ -89,7 +88,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "currency_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "currency_code", "scheme": "fin.currency" }
         }
         ,"deleted_at": {
           "type": ["string", "null"],
@@ -103,7 +102,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "designation_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "designation_code", "scheme": "ref.country.designation" }
         }
         ,"established_on": {
           "type": ["string", "null"],
@@ -161,14 +160,14 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "recognition_status_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "recognition_status_code", "scheme": "geo.recognition.status" }
         }
         ,"subregion_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "subregion_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "subregion_code", "scheme": "geo.subregion" }
         }
         ,"updated_at": {
           "type": "string",
@@ -192,8 +191,7 @@
       "x-code": "sys.tbl.reference.patterns",
       "x-id": "#/schemas/reference.Pattern",
       "x-table": "reference.patterns",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -279,8 +277,7 @@
       "x-code": "sys.tbl.reference.schemes",
       "x-id": "#/schemas/reference.Scheme",
       "x-table": "reference.schemes",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -376,8 +373,7 @@
       "x-code": "sys.tbl.reference.topics",
       "x-id": "#/schemas/reference.Topic",
       "x-table": "reference.topics",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -471,8 +467,7 @@
       "x-code": "sys.tbl.reference.units",
       "x-id": "#/schemas/reference.Unit",
       "x-table": "reference.units",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -594,8 +589,7 @@
       "x-code": "sys.tbl.reference.values",
       "x-id": "#/schemas/reference.Value",
       "x-table": "reference.values",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -617,6 +611,7 @@
         "columns": [
           "code"
           ,"label"
+          ,"parent_code"
           ,"scheme_code"
           ,"supersedes_code"
         ],
@@ -663,6 +658,13 @@
           "minLength": 1,
           "x-role": "data"
         }
+        ,"parent_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "parent_code" }
+        }
         ,"scheme_id": {
           "type": "string",
           "x-type": "uuid",
@@ -692,6 +694,124 @@
         }
       }
     },
+    "value_labels": {
+      "title": "reference.value_labels",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.reference.value-labels",
+      "x-id": "#/schemas/reference.ValueLabel",
+      "x-table": "reference.value_labels",
+      "x-primaryKey": ["id"],"x-naturalKey": ["value_code", "language_tag", "label_kind", "label"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["value_id", "language_tag", "label_kind", "label"]
+      ],
+      "required": [
+        "id"
+        ,"label"
+        ,"label_kind"
+        ,"language_tag"
+        ,"value_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "label"
+          ,"label_kind"
+          ,"language_tag"
+          ,"valid_from"
+          ,"valid_until"
+          ,"value_code"
+        ],
+        "required": [
+          "label"
+          ,"label_kind"
+          ,"language_tag"
+          ,"value_code"
+        ]
+      },
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"label": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 300,
+          "minLength": 1,
+          "x-role": "key"
+        }
+        ,"label_kind": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["abbreviation", "alternative", "definition", "preferred"],
+          "x-role": "key"
+        }
+        ,"language_tag": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 35,
+          "minLength": 2,
+          "x-role": "key"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"valid_from": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"value_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "value_code" }
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "value_relations": {
       "title": "reference.value_relations",
       "type": "object",
@@ -699,10 +819,10 @@
       "x-code": "sys.tbl.reference.value-relations",
       "x-id": "#/schemas/reference.ValueRelation",
       "x-table": "reference.value_relations",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["source_value_code", "target_value_code", "relation_kind"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["source_value_id", "target_value_id", "relation_kind"]
       ],
       "required": [
         "id"
@@ -714,18 +834,17 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
         ],
         "columns": [
-          "id"
-          ,"relation_kind"
+          "relation_kind"
           ,"source_value_code"
           ,"target_value_code"
           ,"valid_from"
           ,"valid_until"
         ],
         "required": [
-          "id"
-          ,"relation_kind"
+          "relation_kind"
           ,"source_value_code"
           ,"target_value_code"
         ]
@@ -750,26 +869,26 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"relation_kind": {
           "type": "string",
           "x-type": "text",
           "enum": ["broader_than", "narrower_than", "related_to"],
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"source_value_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "source_value_code" }
         }
         ,"target_value_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "target_value_code" }
         }
         ,"valid_from": {

@@ -36,6 +36,14 @@ export class ValueRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find value by parent id, paged by the shared query. */
+  async findByParent(
+    query: BaseQueryDto<ValueEntity>,
+    parentId: NonNullable<ValueEntity["parentId"]>,
+  ): Promise<IFindAllResponse<ValueEntity>> {
+    return await this.findByQuery(query, { parentId, deletedAt: IsNull() });
+  }
+
   /** Find value by scheme id, paged by the shared query. */
   async findByScheme(
     query: BaseQueryDto<ValueEntity>,

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from mzizi_engine.api.schemas.postgres.filesystem.entities.file_versions import FileVersionsRow
-from mzizi_engine.api.schemas.postgres.geography.entities.units import UnitsRow
+from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
 from mzizi_engine.api.schemas.postgres.legal.entities.amendments import AmendmentsRow
 from mzizi_engine.api.schemas.postgres.legal.entities.instrument_versions import InstrumentVersionsRow
 from mzizi_engine.api.schemas.postgres.legal.entities.instruments import InstrumentsRow
@@ -19,11 +19,11 @@ __all__ = [
     "CitationsRow",
     "EntitiesRow",
     "EvidenceRow",
+    "FeaturesRow",
     "FileVersionsRow",
     "InstrumentVersionsRow",
     "InstrumentsRow",
     "ProvisionVersionsRow",
     "ProvisionsRow",
-    "UnitsRow",
     "ValueRow",
 ]

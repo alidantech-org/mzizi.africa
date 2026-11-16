@@ -42,7 +42,7 @@ pg.<schema short>.<table short>.<identity path>      qualified (repository)
 
 ## Seed files hold the short form
 
-In a seed CSV (`data/<scope>/<domain>/<table>.csv`) the file and the link column already say which table, so the `code` cell and every link cell hold the **identity path alone**: `ke`, `geo.continent.africa`. A seed row never carries `id` or the system columns (`version`, `created_at`, `updated_at`, `deleted_at`); the loader assigns them, deriving the id from the table and the code (`mzizi_manifest.features.seeds.ids.stable_id`). Links are written as the target's code (`continent_code`), never an id. Manifests, logs and the API use the full code.
+In a seed CSV (`data/<scope>/<domain>/<table>.csv`, or a folder named for the table holding `<label>.<table>.csv` parts) the file and the link column already say which table, so the `code` cell and every link cell hold the **identity path alone**: `ke`, `geo.continent.africa`. A seed row never carries `id` or the system columns (`version`, `created_at`, `updated_at`, `deleted_at`); the loader assigns them, deriving the id from the table and the code (`mzizi_manifest.features.seeds.ids.stable_id`). Links are written as the target's code (`continent_code`), never an id. Manifests, logs and the API use the full code.
 
 ## System things
 

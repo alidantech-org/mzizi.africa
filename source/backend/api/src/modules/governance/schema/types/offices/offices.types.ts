@@ -11,7 +11,7 @@ import * as B from "#/modules/common/schema/types/base";
 import type * as InstitutionsTypes from "#/modules/governance/schema/types/institutions/institutions.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
-import type * as UnitsTypes from "#/modules/geography/schema/types/units/units.types";
+import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -44,7 +44,7 @@ export interface IOffices extends B.IBase {
   readonly institution?: InstitutionsTypes.IInstitutions;
   readonly officeKind?: ValueTypes.IValue;
   readonly sourceCitation?: CitationsTypes.ICitations;
-  readonly unitFeature?: UnitsTypes.IUnits;
+  readonly unitFeature?: FeaturesTypes.IFeatures;
 }
 
 // ----------------------------------
@@ -137,7 +137,7 @@ export interface IOfficesRelationMap extends Record<OfficesRelationKey, unknown>
   institution: InstitutionsTypes.IInstitutionsAsOneRelationQuery;
   officeKind: ValueTypes.IValueAsOneRelationQuery;
   sourceCitation: CitationsTypes.ICitationsAsOneRelationQuery;
-  unitFeature: UnitsTypes.IUnitsAsOneRelationQuery;
+  unitFeature: FeaturesTypes.IFeaturesAsOneRelationQuery;
 }
 
 // ----------------------------------

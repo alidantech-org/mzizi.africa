@@ -13,8 +13,7 @@
       "x-code": "sys.tbl.auth.accounts",
       "x-id": "#/schemas/auth.Accounts",
       "x-table": "auth.accounts",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -107,8 +106,7 @@
       "x-code": "sys.tbl.auth.delegation-roles",
       "x-id": "#/schemas/auth.DelegationRoles",
       "x-table": "auth.delegation_roles",
-      "x-primaryKey": ["delegation_id", "role_id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["delegation_id", "role_id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -154,8 +152,7 @@
       "x-code": "sys.tbl.auth.delegations",
       "x-id": "#/schemas/auth.Delegations",
       "x-table": "auth.delegations",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -256,8 +253,7 @@
       "x-code": "sys.tbl.auth.invitations",
       "x-id": "#/schemas/auth.Invitations",
       "x-table": "auth.invitations",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
         ["token_digest"]
@@ -367,9 +363,8 @@
       "x-code": "sys.tbl.auth.login-identities",
       "x-id": "#/schemas/auth.LoginIdentities",
       "x-table": "auth.login_identities",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["issuer", "subject"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["issuer", "subject"]
       ],
@@ -382,10 +377,10 @@
       ],
       "x-seed": {
         "system": [
+          "id"
         ],
         "columns": [
           "account_code"
-          ,"id"
           ,"issuer"
           ,"last_authenticated_at"
           ,"linked_at"
@@ -394,7 +389,6 @@
         ],
         "required": [
           "account_code"
-          ,"id"
           ,"issuer"
           ,"linked_at"
           ,"subject"
@@ -413,14 +407,14 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"issuer": {
           "type": "string",
           "x-type": "text",
           "maxLength": 500,
           "minLength": 1,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"last_authenticated_at": {
           "type": ["string", "null"],
@@ -439,7 +433,7 @@
           "x-type": "text",
           "maxLength": 500,
           "minLength": 1,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"unlinked_at": {
           "type": ["string", "null"],
@@ -456,8 +450,7 @@
       "x-code": "sys.tbl.auth.memberships",
       "x-id": "#/schemas/auth.Memberships",
       "x-table": "auth.memberships",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -563,8 +556,7 @@
       "x-code": "sys.tbl.auth.permissions",
       "x-id": "#/schemas/auth.Permissions",
       "x-table": "auth.permissions",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -651,8 +643,7 @@
       "x-code": "sys.tbl.auth.role-assignments",
       "x-id": "#/schemas/auth.RoleAssignments",
       "x-table": "auth.role_assignments",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -786,8 +777,7 @@
       "x-code": "sys.tbl.auth.role-permissions",
       "x-id": "#/schemas/auth.RolePermissions",
       "x-table": "auth.role_permissions",
-      "x-primaryKey": ["role_id", "permission_id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["role_id", "permission_id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -852,8 +842,7 @@
       "x-code": "sys.tbl.auth.roles",
       "x-id": "#/schemas/auth.Roles",
       "x-table": "auth.roles",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -955,8 +944,7 @@
       "x-code": "sys.tbl.auth.scopes",
       "x-id": "#/schemas/auth.Scopes",
       "x-table": "auth.scopes",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
         ["scope_hash"]

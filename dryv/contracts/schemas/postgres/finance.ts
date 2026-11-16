@@ -8,7 +8,7 @@ import * as dryv from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { Contracts, Projects } from "./civic.ts";
-import { Units } from "./geography.ts";
+import { Features } from "./geography.ts";
 import { Entities } from "./official.ts";
 import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
@@ -79,7 +79,7 @@ export const Appropriations = finance
     parentAppropriationId: belongsTo(dryv.self).maybe(),
     recipientEntityId: belongsTo(() => Entities).maybe(),
     projectId: belongsTo(() => Projects).maybe(),
-    unitFeatureId: belongsTo(() => Units, { to: "featureId" }).maybe(),
+    unitFeatureId: belongsTo(() => Features).maybe(),
     classificationId: belongsTo(() => Value),
     // Same two fields as MoneyEntity; this schema is coded, and a schema inherits from one base only.
     amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits),

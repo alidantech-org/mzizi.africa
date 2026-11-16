@@ -29,10 +29,16 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** The sole canonical identity for each geographic entity, independent of type, country or geometry. */
+/** The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here. */
 export interface IFeatures extends B.IBase {
   code: string;
   featureTypeId: string;
+  validFrom: Date | null;
+  validFromEarliest: Date | null;
+  validFromLatest: Date | null;
+  validUntil: Date | null;
+  validUntilEarliest: Date | null;
+  validUntilLatest: Date | null;
   readonly featureType?: ValueTypes.IValue;
 }
 

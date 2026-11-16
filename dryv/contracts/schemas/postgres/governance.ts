@@ -8,7 +8,7 @@ import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { Units } from "./geography.ts";
+import { Features } from "./geography.ts";
 import { Entities, Individuals } from "./official.ts";
 import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
@@ -36,7 +36,7 @@ export const Offices = governance
   .schema("Offices", {
     institutionId: belongsTo(() => Institutions),
     officeKindId: belongsTo(() => Value),
-    unitFeatureId: belongsTo(() => Units, { to: "featureId" }).maybe(),
+    unitFeatureId: belongsTo(() => Features).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedValidityEntity)
@@ -108,7 +108,7 @@ export const AuthorityScopes = governance
     institutionId: belongsTo(() => Institutions).maybe(),
     officeId: belongsTo(() => Offices).maybe(),
     countryId: belongsTo(() => Country).maybe(),
-    unitFeatureId: belongsTo(() => Units, { to: "featureId" }),
+    unitFeatureId: belongsTo(() => Features),
     authorityKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })

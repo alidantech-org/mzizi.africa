@@ -13,8 +13,7 @@
       "x-code": "sys.tbl.governance.authority-scopes",
       "x-id": "#/schemas/governance.AuthorityScopes",
       "x-table": "governance.authority_scopes",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -109,7 +108,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Units", "column": "feature_id", "alias": "unit_feature_code" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -145,8 +144,7 @@
       "x-code": "sys.tbl.governance.holders",
       "x-id": "#/schemas/governance.Holders",
       "x-table": "governance.holders",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -271,8 +269,7 @@
       "x-code": "sys.tbl.governance.institutions",
       "x-id": "#/schemas/governance.Institutions",
       "x-table": "governance.institutions",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -390,8 +387,7 @@
       "x-code": "sys.tbl.governance.mandates",
       "x-id": "#/schemas/governance.Mandates",
       "x-table": "governance.mandates",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -513,8 +509,7 @@
       "x-code": "sys.tbl.governance.offices",
       "x-id": "#/schemas/governance.Offices",
       "x-table": "governance.offices",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -604,7 +599,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Units", "column": "feature_id", "alias": "unit_feature_code" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -640,8 +635,7 @@
       "x-code": "sys.tbl.governance.relationships",
       "x-id": "#/schemas/governance.Relationships",
       "x-table": "governance.relationships",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],

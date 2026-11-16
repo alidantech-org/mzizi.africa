@@ -17,6 +17,9 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * An edge in a geographic transformation; multiple rows sharing transformation_id represent splits, mergers, creation or dissolution without overwriting predecessor identities.
  */
 @Entity({ schema: "geography", name: "changes" })
+@Index(["transformationId", "predecessorFeatureId", "successorFeatureId"], {
+  unique: true,
+})
 @Index(["transformationId"])
 @Index(["predecessorFeatureId"])
 @Index(["successorFeatureId"])

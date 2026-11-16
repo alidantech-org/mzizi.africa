@@ -145,9 +145,41 @@ const CodedValidityEntityBase = dryv
     storage: dryv.storage().unique("code").where(baseRules.LiveRecord),
   });
 
+/**
+ * Validity whose ends may be uncertain, for historical records: `validFrom`/`validUntil` are the best estimate and the
+ * earliest/latest pairs bound it ("between 1400 and 1600"). Any of them may be unknown.
+ */
+const HistoricalValidityEntityBase = dryv
+  .schema({
+    validFromEarliest: dryv.field(sharedProperties.CalendarDate).maybe(),
+    validFromLatest: dryv.field(sharedProperties.CalendarDate).maybe(),
+    validUntilEarliest: dryv.field(sharedProperties.CalendarDate).maybe(),
+    validUntilLatest: dryv.field(sharedProperties.CalendarDate).maybe(),
+  })
+  .extends(validityGroup.ValidityEntity)
+  .abstract()
+  .description("Base for versioned records valid over a period whose start and end may be uncertain.");
+HistoricalValidityEntityBase.rule(shared, "StartBoundsAreOrdered", dryv.rule.ordered("validFromEarliest", "validFromLatest"));
+HistoricalValidityEntityBase.rule(shared, "EndBoundsAreOrdered", dryv.rule.ordered("validUntilEarliest", "validUntilLatest"));
+
+const historicalGroup = shared.schemas({ HistoricalValidityEntity: HistoricalValidityEntityBase });
+
+/** Historical validity entity that also carries a stable, globally unique identity code. */
+const CodedHistoricalEntityBase = dryv
+  .schema({
+    code: dryv.field(sharedProperties.IdentityCode),
+  })
+  .extends(historicalGroup.HistoricalValidityEntity)
+  .abstract()
+  .description("Base for versioned records with a unique identity code and an uncertain validity period.")
+  .facets({
+    storage: dryv.storage().unique("code").where(baseRules.LiveRecord),
+  });
+
 const effectiveGroup = shared.schemas({
   CodedEntity: CodedEntityBase,
   CodedValidityEntity: CodedValidityEntityBase,
+  CodedHistoricalEntity: CodedHistoricalEntityBase,
 });
 
 export const baseSchemas = {
@@ -156,5 +188,6 @@ export const baseSchemas = {
   ...operationsChildGroup,
   ...operationsLeafGroup,
   ...validityGroup,
+  ...historicalGroup,
   ...effectiveGroup,
 };

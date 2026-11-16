@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.reference.enums.value_relation_kind impor
 
 
 class ValueRelationRow(BaseModel):
-    """Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy."""
+    """A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

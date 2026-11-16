@@ -45,6 +45,12 @@ export const valueExample: ContractExample = contractExample({
       spec: { kind: "string", minLength: 1, maxLength: 300 },
     },
     {
+      name: "parentId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "schemeId",
       optional: false,
       nullable: false,
@@ -77,6 +83,16 @@ export const valueExample: ContractExample = contractExample({
           left: { field: "id" },
           operator: "not-equal",
           right: { field: "supersedesId" },
+        },
+      ],
+    },
+    {
+      any: false,
+      comparisons: [
+        {
+          left: { field: "id" },
+          operator: "not-equal",
+          right: { field: "parentId" },
         },
       ],
     },

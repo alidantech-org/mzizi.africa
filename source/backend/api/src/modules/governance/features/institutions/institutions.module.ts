@@ -5,7 +5,6 @@ import { FileVersionsEntity } from "#/modules/filesystem/schema/entities/file-ve
 import { FilesEntity } from "#/modules/filesystem/schema/entities/files.entity.ts";
 import { FoldersEntity } from "#/modules/filesystem/schema/entities/folders.entity.ts";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
-import { UnitsEntity } from "#/modules/geography/schema/entities/units.entity.ts";
 import { HoldersEntity } from "#/modules/governance/schema/entities/holders.entity.ts";
 import { InstitutionsEntity } from "#/modules/governance/schema/entities/institutions.entity.ts";
 import { MandatesEntity } from "#/modules/governance/schema/entities/mandates.entity.ts";
@@ -43,7 +42,6 @@ import {
       FilesEntity,
       FoldersEntity,
       FeaturesEntity,
-      UnitsEntity,
       HoldersEntity,
       InstitutionsEntity,
       MandatesEntity,

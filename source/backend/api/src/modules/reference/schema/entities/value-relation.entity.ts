@@ -13,9 +13,10 @@ import { ValueRelationKind } from "#/modules/reference/schema/enum/value-relatio
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 
 /**
- * Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.
+ * A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind.
  */
 @Entity({ schema: "reference", name: "value_relations" })
+@Index(["sourceValueId", "targetValueId", "relationKind"], { unique: true })
 @Index(["sourceValueId", "relationKind", "validFrom"])
 @Index(["targetValueId", "relationKind"])
 @Check(

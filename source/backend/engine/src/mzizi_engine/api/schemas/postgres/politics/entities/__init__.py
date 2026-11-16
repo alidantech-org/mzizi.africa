@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from mzizi_engine.api.schemas.postgres.geography.entities.units import UnitsRow
+from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
 from mzizi_engine.api.schemas.postgres.governance.entities.offices import OfficesRow
 from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
 from mzizi_engine.api.schemas.postgres.official.entities.individuals import IndividualsRow
@@ -36,6 +36,7 @@ __all__ = [
     "ElectionsRow",
     "ElectoratesRow",
     "EntitiesRow",
+    "FeaturesRow",
     "IndividualsRow",
     "ManifestoItemsRow",
     "ManifestosRow",
@@ -46,6 +47,5 @@ __all__ = [
     "ReferendumOptionsRow",
     "ResultsRow",
     "TopicRow",
-    "UnitsRow",
     "ValueRow",
 ]

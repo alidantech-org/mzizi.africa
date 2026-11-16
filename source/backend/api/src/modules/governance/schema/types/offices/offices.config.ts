@@ -12,7 +12,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 import * as InstitutionsConfig from "#/modules/governance/schema/types/institutions/institutions.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
-import * as UnitsConfig from "#/modules/geography/schema/types/units/units.config";
+import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -171,7 +171,7 @@ export const OFFICES_ONE_RELATION_QUERY_OPTIONS = [
     "sourceCitation",
   ),
   Q.createRelationKeyMapper<OfficesRelationKey>().one(
-    () => UnitsConfig.UNITS_AS_ONE_RELATION_CONFIG,
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "unitFeature",
   ),
 ] as const;

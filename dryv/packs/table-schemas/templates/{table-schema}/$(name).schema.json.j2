@@ -58,12 +58,16 @@
       "x-table": {{ qualified(schema) | trim | tojson }},
       "x-primaryKey": [{% for key in storage.primary_key %}{{ key.snake | tojson }}{% if not loop.last %}, {% endif %}{% endfor %}],
 {%- set nk = namespace(has=false) -%}
-{%- for index in storage.indexes %}{% if index.unique and index.where is none and (index.fields | length) == 1 %}{% for item in index.fields %}{% if item.snake == 'code' %}{% set nk.has = true %}{% endif %}{% endfor %}{% endif %}{% endfor %}
-      "x-naturalKey": [{% if nk.has %}"code"{% endif %}],
-      "x-seedable": {{ 'true' if nk.has else 'false' }},
+{%- for index in storage.indexes %}{% if index.unique and (index.fields | length) == 1 %}{% for item in index.fields %}{% if item.snake == 'code' %}{% set nk.has = true %}{% endif %}{% endfor %}{% endif %}{% endfor %}
+{%- set ck = namespace(done=false, names=[], raw=[], links=[]) -%}
+{%- for field in schema.fields %}{% if field.related is none and field.value is not none and (is_link(field) | trim) %}{% set ck.links = ck.links + [field.name.snake] %}{% endif %}{% endfor %}
+{%- if not nk.has %}{% for index in storage.indexes %}{% if index.unique and index.where is none and not ck.done and (index.fields | length) > 1 %}{% set ck.done = true %}{% for item in index.fields %}{% if item.snake in ck.links %}{% set ck.names = ck.names + [((item.snake ~ '|') | replace('_id|', '_code')) | replace('|', '_code')] %}{% else %}{% set ck.names = ck.names + [item.snake] %}{% endif %}{% set ck.raw = ck.raw + [item.snake] %}{% endfor %}{% endif %}{% endfor %}{% endif %}
+{%- set sk = namespace(has=nk.has or ck.done) -%}
+      "x-naturalKey": [{% if nk.has %}"code"{% else %}{% for name in ck.names %}{{ name | tojson }}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}],
+      "x-seedable": {{ 'true' if sk.has else 'false' }},
       "x-uniqueKeys": [
 {%- set firstkey = namespace(value=true) -%}
-{%- for index in storage.indexes %}{% if index.unique and index.where is none %}
+{%- for index in storage.indexes %}{% if index.unique and (index.where is none or (index.fields | length) == 1) %}
         {% if not firstkey.value %},{% endif %}{% set firstkey.value = false %}[{% for item in index.fields %}{{ item.snake | tojson }}{% if not loop.last %}, {% endif %}{% endfor %}]
 {%- endif %}{% endfor %}
       ],
@@ -76,19 +80,19 @@
       "x-seed": {
         "system": [
 {%- set fs = namespace(value=true) -%}
-{%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown %}{% if (managed(field) | trim) or (nk.has and (is_primary(storage, field) | trim)) %}
+{%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown %}{% if (managed(field) | trim) or (sk.has and (is_primary(storage, field) | trim)) %}
           {% if not fs.value %},{% endif %}{% set fs.value = false %}{{ field.name.snake | tojson }}
 {%- endif %}{% endif %}{% endfor %}
         ],
         "columns": [
 {%- set fc = namespace(value=true) -%}
-{%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown %}{% if not ((managed(field) | trim) or (nk.has and (is_primary(storage, field) | trim))) %}
+{%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown %}{% if not ((managed(field) | trim) or (sk.has and (is_primary(storage, field) | trim))) %}
           {% if not fc.value %},{% endif %}{% set fc.value = false %}{% if is_link(field) | trim %}{{ alias_of(field) | trim | tojson }}{% else %}{{ field.name.snake | tojson }}{% endif %}
 {%- endif %}{% endif %}{% endfor %}
         ],
         "required": [
 {%- set fr = namespace(value=true) -%}
-{%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown %}{% if not ((managed(field) | trim) or (nk.has and (is_primary(storage, field) | trim)) or field.optional or field.nullable or (field.default is not none and field.default.kind == 'value')) %}
+{%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown %}{% if not ((managed(field) | trim) or (sk.has and (is_primary(storage, field) | trim)) or field.optional or field.nullable or (field.default is not none and field.default.kind == 'value')) %}
           {% if not fr.value %},{% endif %}{% set fr.value = false %}{% if is_link(field) | trim %}{{ alias_of(field) | trim | tojson }}{% else %}{{ field.name.snake | tojson }}{% endif %}
 {%- endif %}{% endif %}{% endfor %}
         ]
@@ -136,7 +140,7 @@
 {%- if managed(field) | trim %},
           "x-managed": true
 {%- endif %},
-          "x-role": {% if (managed(field) | trim) or (nk.has and (is_primary(storage, field) | trim)) %}"system"{% elif nk.has and field.name.snake == 'code' %}"key"{% elif is_link(field) | trim %}"link"{% else %}"data"{% endif %}
+          "x-role": {% if (managed(field) | trim) or (sk.has and (is_primary(storage, field) | trim)) %}"system"{% elif (nk.has and field.name.snake == 'code') or (field.name.snake in ck.raw) %}"key"{% elif is_link(field) | trim %}"link"{% else %}"data"{% endif %}
 {%- if is_link(field) | trim %},
           "x-link": { "tableId": {{ field.relation.target.schema.id | tojson }}, "column": {{ field.relation.target.field.snake | tojson }}, "alias": {{ alias_of(field) | trim | tojson }}{% for tag in field.tags %}{% if (tag | string)[:7] == 'scheme:' %}, "scheme": {{ (tag | string)[7:] | tojson }}{% endif %}{% endfor %} }
 {%- endif %}

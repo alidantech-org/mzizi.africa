@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, ClassVar
 from uuid import UUID
 
@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class FeaturesRow(BaseModel):
-    """The sole canonical identity for each geographic entity, independent of type, country or geometry."""
+    """The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -24,4 +24,10 @@ class FeaturesRow(BaseModel):
     feature_type_id: UUID
     id: UUID
     updated_at: datetime
+    valid_from: date | None = None
+    valid_from_earliest: date | None = None
+    valid_from_latest: date | None = None
+    valid_until: date | None = None
+    valid_until_earliest: date | None = None
+    valid_until_latest: date | None = None
     version: Annotated[int, Field(ge=1)]

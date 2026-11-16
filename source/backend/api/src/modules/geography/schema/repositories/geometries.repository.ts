@@ -39,6 +39,14 @@ export class GeometriesRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find geometries by basis id, paged by the shared query. */
+  async findByBasis(
+    query: BaseQueryDto<GeometriesEntity>,
+    basisId: NonNullable<GeometriesEntity["basisId"]>,
+  ): Promise<IFindAllResponse<GeometriesEntity>> {
+    return await this.findByQuery(query, { basisId, deletedAt: IsNull() });
+  }
+
   /** Find geometries by feature id, paged by the shared query. */
   async findByFeature(
     query: BaseQueryDto<GeometriesEntity>,
@@ -53,5 +61,13 @@ export class GeometriesRepository
     geometryRoleId: NonNullable<GeometriesEntity["geometryRoleId"]>,
   ): Promise<IFindAllResponse<GeometriesEntity>> {
     return await this.findByQuery(query, { geometryRoleId, deletedAt: IsNull() });
+  }
+
+  /** Find geometries by supersedes id, paged by the shared query. */
+  async findBySupersedes(
+    query: BaseQueryDto<GeometriesEntity>,
+    supersedesId: NonNullable<GeometriesEntity["supersedesId"]>,
+  ): Promise<IFindAllResponse<GeometriesEntity>> {
+    return await this.findByQuery(query, { supersedesId, deletedAt: IsNull() });
   }
 }

@@ -19,20 +19,34 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const reference = dryv
   .group({ name: "reference" })
-  .description("Shared country identities, controlled meanings, measurement units and reviewed patterns.")
+  .description(
+    "Shared country identities, controlled meanings, measurement units and reviewed patterns.",
+  )
   .facets({ storage: { namespace: "reference", store: "main" } });
 
 /*---------------- Reference schema contracts ----------------*/
 
 const countryProperties = reference.properties({
   /** ISO 3166-1 alpha-2, upper case: KE. */
-  IsoAlpha2: dryv.property.string().length({ exact: 2 }).pattern({ match: ["^[A-Z]{2}$"] }),
+  IsoAlpha2: dryv.property
+    .string()
+    .length({ exact: 2 })
+    .pattern({ match: ["^[A-Z]{2}$"] }),
   /** ISO 3166-1 alpha-3, upper case: KEN. */
-  IsoAlpha3: dryv.property.string().length({ exact: 3 }).pattern({ match: ["^[A-Z]{3}$"] }),
+  IsoAlpha3: dryv.property
+    .string()
+    .length({ exact: 3 })
+    .pattern({ match: ["^[A-Z]{3}$"] }),
   /** ISO 3166-1 numeric, three digits with leading zeros: 404. */
-  IsoNumeric: dryv.property.string().length({ exact: 3 }).pattern({ match: ["^[0-9]{3}$"] }),
+  IsoNumeric: dryv.property
+    .string()
+    .length({ exact: 3 })
+    .pattern({ match: ["^[0-9]{3}$"] }),
   /** ITU country calling code with its plus sign: +254. A shared code such as +1 is the country's main code. */
-  CallingCode: dryv.property.string().length({ min: 2, max: 5 }).pattern({ match: ["^\\+[0-9]{1,4}$"] }),
+  CallingCode: dryv.property
+    .string()
+    .length({ min: 2, max: 5 })
+    .pattern({ match: ["^\\+[0-9]{1,4}$"] }),
 });
 
 /**
@@ -51,15 +65,27 @@ export const Country = reference
     isoAlpha3: dryv.field(countryProperties.IsoAlpha3).maybe(),
     isoNumeric: dryv.field(countryProperties.IsoNumeric).maybe(),
     callingCode: dryv.field(countryProperties.CallingCode).maybe(),
-    continentId: belongsTo(() => Value).maybe(),
-    subregionId: belongsTo(() => Value).maybe(),
-    currencyId: belongsTo(() => Value).maybe(),
-    recognitionStatusId: belongsTo(() => Value).maybe(),
-    designationId: belongsTo(() => Value).maybe(),
+    continentId: belongsTo(() => Value)
+      .tags("scheme:geo.continent")
+      .maybe(),
+    subregionId: belongsTo(() => Value)
+      .tags("scheme:geo.subregion")
+      .maybe(),
+    currencyId: belongsTo(() => Value)
+      .tags("scheme:fin.currency")
+      .maybe(),
+    recognitionStatusId: belongsTo(() => Value)
+      .tags("scheme:geo.recognition.status")
+      .maybe(),
+    designationId: belongsTo(() => Value)
+      .tags("scheme:ref.country.designation")
+      .maybe(),
     establishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("Canonical identity for a modern country; not a geographic unit or historical polity.")
+  .description(
+    "Canonical identity for a modern country; not a geographic unit or historical polity.",
+  )
   .role("entity")
   .facets({
     storage: dryv
@@ -82,7 +108,9 @@ export const Scheme = reference
     ownerSnapshot: dryv.field(sharedProperties.NonEmptyString255),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("Stable identity and stewardship snapshot for a controlled vocabulary scheme.")
+  .description(
+    "Stable identity and stewardship snapshot for a controlled vocabulary scheme.",
+  )
   .role("entity")
   .facets({
     storage: dryv.storage("schemes"),
@@ -93,18 +121,59 @@ export const Value = reference
     schemeId: belongsTo(Scheme),
     label: dryv.field(sharedProperties.Name),
     supersedesId: belongsTo(dryv.self).maybe(),
+    /** The broader value in the same scheme (river under water body, water body under natural); a value has at most one. */
+    parentId: belongsTo(dryv.self).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .rule("ValueDoesNotSupersedeItself", (v) => v.id.ne(v.supersedesId))
-  .description("A controlled classification member within one scheme, with optional supersession.")
+  .rule("ValueDoesNotParentItself", (v) => v.id.ne(v.parentId))
+  .description(
+    "A controlled classification member within one scheme, with optional supersession and an optional broader parent value in the same scheme. Wider, cross-scheme or many-parent links use value relations.",
+  )
   .role("entity")
   .facets({
     storage: dryv
       .storage("values")
-      .sameAs("SupersessionStaysInScheme", { field: "supersedesId", match: ["schemeId"] })
+      .sameAs("SupersessionStaysInScheme", {
+        field: "supersedesId",
+        match: ["schemeId"],
+      })
+      .sameAs("ParentStaysInScheme", { field: "parentId", match: ["schemeId"] })
       .acyclic("SupersessionAcyclic", { field: "supersedesId" })
+      .acyclic("ParentAcyclic", { field: "parentId" })
       .index("schemeId")
-      .index("supersedesId"),
+      .index("supersedesId")
+      .index("parentId"),
+  });
+
+const labelProperties = reference.properties({
+  /** preferred, alternative, abbreviation or definition. */
+  ValueLabelKind: dryv.property.enum([
+    "preferred",
+    "alternative",
+    "abbreviation",
+    "definition",
+  ]),
+});
+
+export const ValueLabel = reference
+  .schema("ValueLabel", {
+    valueId: belongsTo(Value),
+    languageTag: dryv.field(sharedProperties.LanguageTag),
+    label: dryv.field(sharedProperties.Name),
+    labelKind: dryv.field(labelProperties.ValueLabelKind),
+  })
+  .extends(baseSchemas.ValidityEntity)
+  .description(
+    "A label of a value in one language and of one kind, so a value can be shown in English, Swahili and other languages, with alternative names, abbreviations and definitions. The value's own label is the default display text.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("value_labels")
+      .unique("valueId", "languageTag", "labelKind", "label")
+      .index("valueId")
+      .index("languageTag"),
   });
 
 const unitProperties = reference.properties({
@@ -123,10 +192,15 @@ export const Unit = reference
   })
   .extends(baseSchemas.CodedEntity)
   .rule("UnitScaleMustBePositive", (v) => v.scale.gt(0))
-  .description("Measurement unit and conversion to its optional base unit; never a spatial unit.")
+  .description(
+    "Measurement unit and conversion to its optional base unit; never a spatial unit.",
+  )
   .role("entity")
   .facets({
-    storage: dryv.storage("units").acyclic("BaseUnitAcyclic", { field: "baseId" }).index("baseId"),
+    storage: dryv
+      .storage("units")
+      .acyclic("BaseUnitAcyclic", { field: "baseId" })
+      .index("baseId"),
   });
 
 export const Topic = reference
@@ -136,10 +210,15 @@ export const Topic = reference
   })
   .extends(baseSchemas.CodedEntity)
   .rule("TopicDoesNotParentItself", (v) => v.id.ne(v.parentId))
-  .description("Cross-domain discovery topic hierarchy; topics do not own domain records.")
+  .description(
+    "Cross-domain discovery topic hierarchy; topics do not own domain records.",
+  )
   .role("entity")
   .facets({
-    storage: dryv.storage("topics").acyclic("TopicParentAcyclic", { field: "parentId" }).index("parentId"),
+    storage: dryv
+      .storage("topics")
+      .acyclic("TopicParentAcyclic", { field: "parentId" })
+      .index("parentId"),
   });
 
 export const Pattern = reference
@@ -154,7 +233,11 @@ export const Pattern = reference
   });
 
 export const referenceProposalEnums = reference.properties({
-  ValueRelationKind: dryv.property.enum(["broader_than", "narrower_than", "related_to"]),
+  ValueRelationKind: dryv.property.enum([
+    "broader_than",
+    "narrower_than",
+    "related_to",
+  ]),
 });
 
 export const ValueRelation = reference
@@ -166,15 +249,21 @@ export const ValueRelation = reference
     validUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.Association)
-  .rule("ValueRelationMustNotBeSelfReferential", (v) => v.sourceValueId.ne(v.targetValueId))
-  .rule("ValueRelationWindowMustBeOrdered", rule.ordered("validFrom", "validUntil"))
+  .rule("ValueRelationMustNotBeSelfReferential", (v) =>
+    v.sourceValueId.ne(v.targetValueId),
+  )
+  .rule(
+    "ValueRelationWindowMustBeOrdered",
+    rule.ordered("validFrom", "validUntil"),
+  )
   .description(
-    "Proposed directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy.",
+    "A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind.",
   )
   .role("entity")
   .facets({
     storage: dryv
       .storage("value_relations")
+      .unique("sourceValueId", "targetValueId", "relationKind")
       .index("sourceValueId", "relationKind", "validFrom")
       .index("targetValueId", "relationKind"),
   });

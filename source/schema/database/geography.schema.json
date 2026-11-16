@@ -13,10 +13,10 @@
       "x-code": "sys.tbl.geography.changes",
       "x-id": "#/schemas/geography.Changes",
       "x-table": "geography.changes",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["transformation_id", "predecessor_feature_code", "successor_feature_code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["transformation_id", "predecessor_feature_id", "successor_feature_id"]
       ],
       "required": [
         "change_kind_id"
@@ -27,6 +27,7 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -34,7 +35,6 @@
           "change_kind_code"
           ,"effective_on"
           ,"explanation"
-          ,"id"
           ,"predecessor_feature_code"
           ,"source_ref_id"
           ,"successor_feature_code"
@@ -42,7 +42,6 @@
         ],
         "required": [
           "change_kind_code"
-          ,"id"
           ,"transformation_id"
         ]
       },
@@ -85,13 +84,13 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"predecessor_feature_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "predecessor_feature_code" }
         }
         ,"source_ref_id": {
@@ -104,14 +103,14 @@
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "successor_feature_code" }
         }
         ,"transformation_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"updated_at": {
           "type": "string",
@@ -128,6 +127,140 @@
         }
       }
     },
+    "classifications": {
+      "title": "geography.classifications",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.geography.classifications",
+      "x-id": "#/schemas/geography.Classifications",
+      "x-table": "geography.classifications",
+      "x-primaryKey": ["id"],"x-naturalKey": ["feature_code", "value_code", "valid_from"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["feature_id", "value_id", "valid_from"]
+      ],
+      "required": [
+        "feature_id"
+        ,"id"
+        ,"value_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "feature_code"
+          ,"source_ref_id"
+          ,"valid_from"
+          ,"valid_from_earliest"
+          ,"valid_from_latest"
+          ,"valid_until"
+          ,"valid_until_earliest"
+          ,"valid_until_latest"
+          ,"value_code"
+        ],
+        "required": [
+          "feature_code"
+          ,"value_code"
+        ]
+      },
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"feature_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"source_ref_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"valid_from": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "key"
+        }
+        ,"valid_from_earliest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_from_latest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until_earliest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until_latest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"value_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "value_code" }
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "datasets": {
       "title": "geography.datasets",
       "type": "object",
@@ -135,8 +268,7 @@
       "x-code": "sys.tbl.geography.datasets",
       "x-id": "#/schemas/geography.Datasets",
       "x-table": "geography.datasets",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -303,8 +435,7 @@
       "x-code": "sys.tbl.geography.features",
       "x-id": "#/schemas/geography.Features",
       "x-table": "geography.features",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -325,6 +456,12 @@
         "columns": [
           "code"
           ,"feature_type_code"
+          ,"valid_from"
+          ,"valid_from_earliest"
+          ,"valid_from_latest"
+          ,"valid_until"
+          ,"valid_until_earliest"
+          ,"valid_until_latest"
         ],
         "required": [
           "code"
@@ -359,7 +496,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "feature_type_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "feature_type_code", "scheme": "geo.feature.kind" }
         }
         ,"id": {
           "type": "string",
@@ -374,6 +511,42 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
+        }
+        ,"valid_from": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_from_earliest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_from_latest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until_earliest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until_latest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -390,44 +563,87 @@
       "x-code": "sys.tbl.geography.geometries",
       "x-id": "#/schemas/geography.Geometries",
       "x-table": "geography.geometries",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["feature_code", "geometry_role_code", "revision"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["feature_id", "geometry_role_id", "revision"]
       ],
       "required": [
-        "feature_id"
+        "basis_id"
+        ,"feature_id"
+        ,"geometry"
         ,"geometry_role_id"
         ,"id"
+        ,"revision"
         ,"srid"
       ],
       "x-seed": {
         "system": [
-          "created_at"
+          "area"
+          ,"centroid"
+          ,"created_at"
           ,"deleted_at"
+          ,"envelope"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "feature_code"
+          "basis_code"
+          ,"confidence"
+          ,"feature_code"
           ,"file_version_ref_id"
+          ,"geometry"
           ,"geometry_role_code"
-          ,"id"
+          ,"max_zoom"
+          ,"min_zoom"
           ,"observed_at"
+          ,"revision"
           ,"source_ref_id"
           ,"srid"
+          ,"supersedes_code"
           ,"valid_from"
+          ,"valid_from_earliest"
+          ,"valid_from_latest"
           ,"valid_until"
+          ,"valid_until_earliest"
+          ,"valid_until_latest"
         ],
         "required": [
-          "feature_code"
+          "basis_code"
+          ,"feature_code"
+          ,"geometry"
           ,"geometry_role_code"
-          ,"id"
+          ,"revision"
           ,"srid"
         ]
       },
       "properties": {
-        "created_at": {
+        "area": {
+          "type": "number",
+          "x-type": "number",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"basis_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "basis_code", "scheme": "geo.geometry.basis" }
+        }
+        ,"centroid": {
+          "type": "object",
+          "x-type": "geometry",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"confidence": {
+          "type": ["number", "null"],
+          "x-type": "number",
+          "x-role": "data"
+        }
+        ,"created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -441,11 +657,17 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"envelope": {
+          "type": "object",
+          "x-type": "geometry",
+          "x-managed": true,
+          "x-role": "system"
+        }
         ,"feature_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
         ,"file_version_ref_id": {
@@ -454,18 +676,33 @@
           "format": "uuid",
           "x-role": "data"
         }
+        ,"geometry": {
+          "type": "object",
+          "x-type": "geometry",
+          "x-role": "data"
+        }
         ,"geometry_role_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "geometry_role_code" }
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "geometry_role_code", "scheme": "geo.geometry.role" }
         }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"max_zoom": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"min_zoom": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
           "x-role": "data"
         }
         ,"observed_at": {
@@ -473,6 +710,11 @@
           "x-type": "timestamp",
           "format": "date-time",
           "x-role": "data"
+        }
+        ,"revision": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-role": "key"
         }
         ,"source_ref_id": {
           "type": ["string", "null"],
@@ -484,6 +726,13 @@
           "type": "integer",
           "x-type": "integer",
           "x-role": "data"
+        }
+        ,"supersedes_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Geometries", "column": "id", "alias": "supersedes_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -498,7 +747,31 @@
           "format": "date",
           "x-role": "data"
         }
+        ,"valid_from_earliest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_from_latest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"valid_until": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until_earliest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until_latest": {
           "type": ["string", "null"],
           "x-type": "date",
           "format": "date",
@@ -519,9 +792,8 @@
       "x-code": "sys.tbl.geography.identifiers",
       "x-id": "#/schemas/geography.Identifiers",
       "x-table": "geography.identifiers",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["identifier_scheme_code", "namespace", "external_id"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["identifier_scheme_id", "namespace", "external_id"]
       ],
@@ -535,13 +807,13 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "external_id"
           ,"feature_code"
-          ,"id"
           ,"identifier_scheme_code"
           ,"namespace"
           ,"source_ref_id"
@@ -549,7 +821,6 @@
         "required": [
           "external_id"
           ,"feature_code"
-          ,"id"
           ,"identifier_scheme_code"
         ]
       },
@@ -573,7 +844,7 @@
           "x-type": "text",
           "maxLength": 500,
           "minLength": 1,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"feature_id": {
           "type": "string",
@@ -587,21 +858,21 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"identifier_scheme_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "identifier_scheme_code" }
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "identifier_scheme_code", "scheme": "geo.identifier.scheme" }
         }
         ,"namespace": {
           "type": ["string", "null"],
           "x-type": "text",
           "maxLength": 255,
           "minLength": 1,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"source_ref_id": {
           "type": ["string", "null"],
@@ -631,10 +902,10 @@
       "x-code": "sys.tbl.geography.names",
       "x-id": "#/schemas/geography.Names",
       "x-table": "geography.names",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["feature_code", "name_kind_code", "language_tag", "name"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["feature_id", "name_kind_id", "language_tag", "name"]
       ],
       "required": [
         "feature_id"
@@ -646,12 +917,12 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "feature_code"
-          ,"id"
           ,"language_tag"
           ,"name"
           ,"name_kind_code"
@@ -661,7 +932,6 @@
         ],
         "required": [
           "feature_code"
-          ,"id"
           ,"name"
           ,"name_kind_code"
         ]
@@ -685,7 +955,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
         ,"id": {
@@ -693,28 +963,28 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"language_tag": {
           "type": ["string", "null"],
           "x-type": "text",
           "maxLength": 35,
           "minLength": 2,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"name": {
           "type": "string",
           "x-type": "text",
           "maxLength": 300,
           "minLength": 1,
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"name_kind_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "name_kind_code" }
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "name_kind_code", "scheme": "geo.name.kind" }
         }
         ,"source_ref_id": {
           "type": ["string", "null"],
@@ -749,48 +1019,6 @@
         }
       }
     },
-    "places": {
-      "title": "geography.places",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.geography.places",
-      "x-id": "#/schemas/geography.Places",
-      "x-table": "geography.places",
-      "x-primaryKey": ["feature_id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
-      "x-uniqueKeys": [
-      ],
-      "required": [
-        "feature_id"
-      ],
-      "x-seed": {
-        "system": [
-        ],
-        "columns": [
-          "feature_code"
-          ,"is_inhabited"
-        ],
-        "required": [
-          "feature_code"
-        ]
-      },
-      "properties": {
-        "feature_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
-        }
-        ,"is_inhabited": {
-          "type": ["boolean", "null"],
-          "x-type": "boolean",
-          "x-role": "data"
-        }
-      }
-    },
     "relationships": {
       "title": "geography.relationships",
       "type": "object",
@@ -798,10 +1026,10 @@
       "x-code": "sys.tbl.geography.relationships",
       "x-id": "#/schemas/geography.Relationships",
       "x-table": "geography.relationships",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["subject_feature_code", "object_feature_code", "relationship_kind_code", "system_code", "valid_from"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["subject_feature_id", "object_feature_id", "relationship_kind_id", "system_id", "valid_from"]
       ],
       "required": [
         "id"
@@ -814,22 +1042,25 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "id"
-          ,"object_feature_code"
+          "object_feature_code"
           ,"relationship_kind_code"
           ,"source_ref_id"
           ,"subject_feature_code"
           ,"system_code"
           ,"valid_from"
+          ,"valid_from_earliest"
+          ,"valid_from_latest"
           ,"valid_until"
+          ,"valid_until_earliest"
+          ,"valid_until_latest"
         ],
         "required": [
-          "id"
-          ,"object_feature_code"
+          "object_feature_code"
           ,"relationship_kind_code"
           ,"subject_feature_code"
           ,"system_code"
@@ -855,21 +1086,21 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"object_feature_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "object_feature_code" }
         }
         ,"relationship_kind_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "relationship_kind_code" }
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "relationship_kind_code", "scheme": "geo.relationship.kind" }
         }
         ,"source_ref_id": {
           "type": ["string", "null"],
@@ -881,15 +1112,15 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "subject_feature_code" }
         }
         ,"system_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "system_code" }
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "system_code", "scheme": "geo.relationship.system" }
         }
         ,"updated_at": {
           "type": "string",
@@ -902,9 +1133,33 @@
           "type": ["string", "null"],
           "x-type": "date",
           "format": "date",
+          "x-role": "key"
+        }
+        ,"valid_from_earliest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_from_latest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
           "x-role": "data"
         }
         ,"valid_until": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until_earliest": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until_latest": {
           "type": ["string", "null"],
           "x-type": "date",
           "format": "date",
@@ -915,64 +1170,6 @@
           "x-type": "integer",
           "x-managed": true,
           "x-role": "system"
-        }
-      }
-    },
-    "units": {
-      "title": "geography.units",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.geography.units",
-      "x-id": "#/schemas/geography.Units",
-      "x-table": "geography.units",
-      "x-primaryKey": ["feature_id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
-      "x-uniqueKeys": [
-      ],
-      "required": [
-        "feature_id"
-      ],
-      "x-seed": {
-        "system": [
-        ],
-        "columns": [
-          "country_code"
-          ,"feature_code"
-          ,"valid_from"
-          ,"valid_until"
-        ],
-        "required": [
-          "feature_code"
-        ]
-      },
-      "properties": {
-        "country_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
-        }
-        ,"feature_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
       }
     }

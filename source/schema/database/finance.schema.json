@@ -13,8 +13,7 @@
       "x-code": "sys.tbl.finance.appropriations",
       "x-id": "#/schemas/finance.Appropriations",
       "x-table": "finance.appropriations",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -144,7 +143,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Units", "column": "feature_id", "alias": "unit_feature_code" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -168,9 +167,8 @@
       "x-code": "sys.tbl.finance.budget-versions",
       "x-id": "#/schemas/finance.BudgetVersions",
       "x-table": "finance.budget_versions",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["budget_code", "revision"],
+      "x-seedable": true,
       "x-uniqueKeys": [
         ["budget_id", "revision"]
       ],
@@ -184,12 +182,12 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "budget_code"
-          ,"id"
           ,"released_on"
           ,"revision"
           ,"source_citation_code"
@@ -197,7 +195,6 @@
         ],
         "required": [
           "budget_code"
-          ,"id"
           ,"revision"
           ,"status_code"
         ]
@@ -207,7 +204,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/finance.Budgets", "column": "id", "alias": "budget_code" }
         }
         ,"created_at": {
@@ -229,7 +226,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"released_on": {
           "type": ["string", "null"],
@@ -240,7 +237,7 @@
         ,"revision": {
           "type": "integer",
           "x-type": "integer",
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"source_citation_id": {
           "type": ["string", "null"],
@@ -278,8 +275,7 @@
       "x-code": "sys.tbl.finance.budgets",
       "x-id": "#/schemas/finance.Budgets",
       "x-table": "finance.budgets",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -399,8 +395,7 @@
       "x-code": "sys.tbl.finance.debts",
       "x-id": "#/schemas/finance.Debts",
       "x-table": "finance.debts",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -541,8 +536,7 @@
       "x-code": "sys.tbl.finance.fiscal-periods",
       "x-id": "#/schemas/finance.FiscalPeriods",
       "x-table": "finance.fiscal_periods",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
@@ -662,8 +656,7 @@
       "x-code": "sys.tbl.finance.flows",
       "x-id": "#/schemas/finance.Flows",
       "x-table": "finance.flows",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": [],
+      "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
@@ -821,8 +814,7 @@
       "x-code": "sys.tbl.finance.funds",
       "x-id": "#/schemas/finance.Funds",
       "x-table": "finance.funds",
-      "x-primaryKey": ["id"],
-      "x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]

@@ -1,0 +1,4 @@
+feature_code,identifier_scheme_code,external_id
+ke,geo.identifier.scheme.reference-country,ke
+ke,geo.identifier.scheme.iso-3166-1-alpha2,KE
+ke,geo.identifier.scheme.geoboundaries,KEN-ADM0-21065076

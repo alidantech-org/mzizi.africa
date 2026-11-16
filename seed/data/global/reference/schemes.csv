@@ -4,3 +4,12 @@ geo.subregion,UN M49 regions and sub-regions,"United Nations Statistics Division
 geo.recognition.status,Recognition status of a country,mzizi curated; how an entity is a country
 fin.currency,Currencies (ISO 4217),ISO 4217 maintenance agency (SIX Group); curated by mzizi
 ref.country.designation,Country designations,mzizi curated; how a country names its form of state
+geo.feature.kind,"What a geographic feature is, from broad category to specific kind",mzizi curated
+geo.feature.function,What a geographic feature is used for,mzizi curated
+geo.feature.reality,How real a geographic feature is,mzizi curated
+geo.relationship.kind,Kinds of relationship between features,mzizi curated
+geo.relationship.system,The system a feature relationship belongs to,mzizi curated
+geo.geometry.role,Roles of a feature geometry,mzizi curated
+geo.geometry.basis,How a geometry was established,mzizi curated
+geo.name.kind,Kinds of geographic name,mzizi curated
+geo.identifier.scheme,Registries that identify geographic features,mzizi curated

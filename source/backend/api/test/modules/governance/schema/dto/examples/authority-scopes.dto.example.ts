@@ -2,7 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { unitsExample } from "@test/modules/geography/schema/dto/examples/units.dto.example.ts";
+import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
 import { officesExample } from "@test/modules/governance/schema/dto/examples/offices.dto.example.ts";
 import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";

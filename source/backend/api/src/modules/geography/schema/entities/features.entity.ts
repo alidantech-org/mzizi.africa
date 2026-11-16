@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   Entity,
   Index,
@@ -13,11 +14,24 @@ import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.ty
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
- * The sole canonical identity for each geographic entity, independent of type, country or geometry.
+ * The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here.
  */
 @Entity({ schema: "geography", name: "features" })
 @Index(["code"], { unique: true })
 @Index(["featureTypeId"])
+@Index(["validFrom", "validUntil"])
+@Check(
+  "chk_features_validity_window_is_ordered",
+  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
+@Check(
+  "chk_features_start_bounds_are_ordered",
+  `valid_from_earliest = null OR valid_from_latest = null OR valid_from_earliest < valid_from_latest`,
+)
+@Check(
+  "chk_features_end_bounds_are_ordered",
+  `valid_until_earliest = null OR valid_until_latest = null OR valid_until_earliest < valid_until_latest`,
+)
 export class FeaturesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
@@ -40,6 +54,24 @@ export class FeaturesEntity {
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
+
+  @Column({ name: "valid_from", type: "date", nullable: true })
+  validFrom?: Date | null;
+
+  @Column({ name: "valid_from_earliest", type: "date", nullable: true })
+  validFromEarliest?: Date | null;
+
+  @Column({ name: "valid_from_latest", type: "date", nullable: true })
+  validFromLatest?: Date | null;
+
+  @Column({ name: "valid_until", type: "date", nullable: true })
+  validUntil?: Date | null;
+
+  @Column({ name: "valid_until_earliest", type: "date", nullable: true })
+  validUntilEarliest?: Date | null;
+
+  @Column({ name: "valid_until_latest", type: "date", nullable: true })
+  validUntilLatest?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

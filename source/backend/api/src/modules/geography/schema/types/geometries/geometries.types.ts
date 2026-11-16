@@ -8,8 +8,8 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -30,19 +30,34 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** A dated spatial representation version for a feature. The geometry field remains an unsupported Dryv placeholder and is excluded from generation. */
+/** One drawing of a feature: a revision with a role, a basis, a confidence, a zoom range, a validity period and the stored file it came from. A feature has many; the current one has no end date. */
 export interface IGeometries extends B.IBase {
+  area: number;
+  basisId: string;
+  centroid: unknown;
+  confidence: number | null;
+  envelope: unknown;
   featureId: string;
   fileVersionRefId: string | null;
   geometry: unknown;
   geometryRoleId: string;
+  maxZoom: number | null;
+  minZoom: number | null;
   observedAt: Date | null;
+  revision: number;
   sourceRefId: string | null;
   srid: number;
+  supersedesId: string | null;
   validFrom: Date | null;
+  validFromEarliest: Date | null;
+  validFromLatest: Date | null;
   validUntil: Date | null;
+  validUntilEarliest: Date | null;
+  validUntilLatest: Date | null;
+  readonly basis?: ValueTypes.IValue;
   readonly feature?: FeaturesTypes.IFeatures;
   readonly geometryRole?: ValueTypes.IValue;
+  readonly supersedes?: IGeometries;
 }
 
 // ----------------------------------
@@ -144,8 +159,10 @@ export type IGeometriesAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IGeometriesRelationMap extends Record<GeometriesRelationKey, unknown> {
+  basis: ValueTypes.IValueAsOneRelationQuery;
   feature: FeaturesTypes.IFeaturesAsOneRelationQuery;
   geometryRole: ValueTypes.IValueAsOneRelationQuery;
+  supersedes: IGeometriesAsOneRelationQuery;
 }
 
 // ----------------------------------

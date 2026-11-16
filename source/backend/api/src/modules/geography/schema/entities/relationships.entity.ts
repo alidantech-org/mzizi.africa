@@ -17,12 +17,23 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * A typed, dated directed relationship between features; separate rows allow overlapping administrative, electoral, statistical and other systems.
  */
 @Entity({ schema: "geography", name: "relationships" })
+@Index(["subjectFeatureId", "objectFeatureId", "relationshipKindId", "systemId", "validFrom"], {
+  unique: true,
+})
 @Index(["subjectFeatureId", "relationshipKindId"])
 @Index(["objectFeatureId", "relationshipKindId"])
 @Index(["validFrom", "validUntil"])
 @Check(
   "chk_relationships_validity_window_is_ordered",
   `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+)
+@Check(
+  "chk_relationships_start_bounds_are_ordered",
+  `valid_from_earliest = null OR valid_from_latest = null OR valid_from_earliest < valid_from_latest`,
+)
+@Check(
+  "chk_relationships_end_bounds_are_ordered",
+  `valid_until_earliest = null OR valid_until_latest = null OR valid_until_earliest < valid_until_latest`,
 )
 @Check(
   "chk_relationships_relationship_must_not_be_self_referential",
@@ -75,8 +86,20 @@ export class GeographyRelationshipsEntity {
   @Column({ name: "valid_from", type: "date", nullable: true })
   validFrom?: Date | null;
 
+  @Column({ name: "valid_from_earliest", type: "date", nullable: true })
+  validFromEarliest?: Date | null;
+
+  @Column({ name: "valid_from_latest", type: "date", nullable: true })
+  validFromLatest?: Date | null;
+
   @Column({ name: "valid_until", type: "date", nullable: true })
   validUntil?: Date | null;
+
+  @Column({ name: "valid_until_earliest", type: "date", nullable: true })
+  validUntilEarliest?: Date | null;
+
+  @Column({ name: "valid_until_latest", type: "date", nullable: true })
+  validUntilLatest?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

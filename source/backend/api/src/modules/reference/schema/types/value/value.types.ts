@@ -29,12 +29,14 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** A controlled classification member within one scheme, with optional supersession. */
+/** A controlled classification member within one scheme, with optional supersession and an optional broader parent value in the same scheme. Wider, cross-scheme or many-parent links use value relations. */
 export interface IValue extends B.IBase {
   code: string;
   label: string;
+  parentId: string | null;
   schemeId: string;
   supersedesId: string | null;
+  readonly parent?: IValue;
   readonly scheme?: SchemeTypes.IScheme;
   readonly supersedes?: IValue;
 }
@@ -121,6 +123,7 @@ export type IValueAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IValueRelationMap extends Record<ValueRelationKey, unknown> {
+  parent: IValueAsOneRelationQuery;
   scheme: SchemeTypes.ISchemeAsOneRelationQuery;
   supersedes: IValueAsOneRelationQuery;
 }

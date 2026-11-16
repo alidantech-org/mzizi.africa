@@ -63,9 +63,47 @@ export class RelationshipsDto {
   validFrom?: CalendarDate | null;
 
   @IsOptional()
+  @ValidateIf((object) => object.validFromEarliest !== null)
+  @IsISO8601({ strict: true })
+  @Satisfies<RelationshipsDto>(
+    (object) =>
+      object.validFromEarliest == null ||
+      object.validFromLatest == null ||
+      object.validFromEarliest < object.validFromLatest,
+    {
+      message: "Start Bounds Are Ordered",
+    },
+  )
+  validFromEarliest?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.validFromLatest !== null)
+  @IsISO8601({ strict: true })
+  validFromLatest?: CalendarDate | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.validUntil !== null)
   @IsISO8601({ strict: true })
   validUntil?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.validUntilEarliest !== null)
+  @IsISO8601({ strict: true })
+  @Satisfies<RelationshipsDto>(
+    (object) =>
+      object.validUntilEarliest == null ||
+      object.validUntilLatest == null ||
+      object.validUntilEarliest < object.validUntilLatest,
+    {
+      message: "End Bounds Are Ordered",
+    },
+  )
+  validUntilEarliest?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.validUntilLatest !== null)
+  @IsISO8601({ strict: true })
+  validUntilLatest?: CalendarDate | null;
 
   @IsInt()
   @Min(1)

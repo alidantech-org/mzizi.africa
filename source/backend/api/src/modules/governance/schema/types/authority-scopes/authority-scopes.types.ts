@@ -13,7 +13,7 @@ import type * as CountryTypes from "#/modules/reference/schema/types/country/cou
 import type * as InstitutionsTypes from "#/modules/governance/schema/types/institutions/institutions.types";
 import type * as OfficesTypes from "#/modules/governance/schema/types/offices/offices.types";
 import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
-import type * as UnitsTypes from "#/modules/geography/schema/types/units/units.types";
+import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -49,7 +49,7 @@ export interface IAuthorityScopes extends B.IBase {
   readonly institution?: InstitutionsTypes.IInstitutions;
   readonly office?: OfficesTypes.IOffices;
   readonly sourceCitation?: CitationsTypes.ICitations;
-  readonly unitFeature?: UnitsTypes.IUnits;
+  readonly unitFeature?: FeaturesTypes.IFeatures;
 }
 
 // ----------------------------------
@@ -157,7 +157,7 @@ export interface IAuthorityScopesRelationMap extends Record<AuthorityScopesRelat
   institution: InstitutionsTypes.IInstitutionsAsOneRelationQuery;
   office: OfficesTypes.IOfficesAsOneRelationQuery;
   sourceCitation: CitationsTypes.ICitationsAsOneRelationQuery;
-  unitFeature: UnitsTypes.IUnitsAsOneRelationQuery;
+  unitFeature: FeaturesTypes.IFeaturesAsOneRelationQuery;
 }
 
 // ----------------------------------

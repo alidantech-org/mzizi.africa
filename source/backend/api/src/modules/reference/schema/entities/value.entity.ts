@@ -16,13 +16,15 @@ import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
- * A controlled classification member within one scheme, with optional supersession.
+ * A controlled classification member within one scheme, with optional supersession and an optional broader parent value in the same scheme. Wider, cross-scheme or many-parent links use value relations.
  */
 @Entity({ schema: "reference", name: "values" })
 @Index(["code"], { unique: true })
 @Index(["schemeId"])
 @Index(["supersedesId"])
+@Index(["parentId"])
 @Check("chk_value_value_does_not_supersede_itself", `id <> supersedes_id`)
+@Check("chk_value_value_does_not_parent_itself", `id <> parent_id`)
 export class ValueEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
@@ -38,6 +40,13 @@ export class ValueEntity {
 
   @Column({ name: "label", type: "varchar", length: 300 })
   label!: Name;
+
+  @Column({ name: "parent_id", type: "uuid", nullable: true })
+  parentId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "parent_id" })
+  parent?: Relation<ValueEntity>;
 
   @Column({ name: "scheme_id", type: "uuid" })
   schemeId!: Id;
