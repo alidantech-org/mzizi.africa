@@ -14,16 +14,16 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
+from mzizi_cli.features.terminal.theme import err, log, out
+from mzizi_cli.features.workspace.workspace import RunStatus, Workspace
+from mzizi_cli.shared.errors import CliError, NotYetAdded, Unavailable
+from mzizi_cli.shared.types import ArgValues, ExitCode
 from mzizi_engine.capabilities import CapabilityRegistry, build_default_registry
 from mzizi_engine.devcli.artifacts import DocumentSummary, write_document_artifacts
 from mzizi_engine.devcli.catalog import Command
 from mzizi_engine.devcli.catalog.builders import with_dev_browser_defaults
-from mzizi_engine.devcli.errors import CliError, NotYetAdded, Unavailable
 from mzizi_engine.devcli.ports import PLAN_DOC, PortState, PortStatus, get_port, port_status
 from mzizi_engine.devcli.prompts import Prompter
-from mzizi_engine.devcli.theme import err, log, out
-from mzizi_engine.devcli.types import ArgValues, ExitCode
-from mzizi_engine.devcli.workspace import RunStatus, Workspace
 from mzizi_engine.jsonvalue import Payload
 from mzizi_engine.web.browser.adapter import BrowserUnavailable
 from mzizi_fetch import IdentityMissing

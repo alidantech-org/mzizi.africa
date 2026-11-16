@@ -268,8 +268,8 @@ def test_legacy_timeout_state_remains_resumable(tmp_path: Path) -> None:
 
 
 def test_resume_builder_restores_original_scope_and_rejects_a_different_scope(site: str, tmp_path: Path) -> None:
+    from mzizi_cli.features.workspace.workspace import Workspace
     from mzizi_engine.devcli.catalog.builders import resume_payload
-    from mzizi_engine.devcli.workspace import Workspace
     from mzizi_engine.web.crawl.state import CrawlState, digest_of, load_state
 
     request = CrawlRequest(

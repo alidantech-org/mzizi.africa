@@ -6,8 +6,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 
-from mzizi_engine.devcli.types import ArgValues
-from mzizi_engine.devcli.workspace import Workspace
+from mzizi_cli.features.workspace.workspace import Workspace
+from mzizi_cli.shared.types import ArgValues
 from mzizi_engine.jsonvalue import Payload
 
 

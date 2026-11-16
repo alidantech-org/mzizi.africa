@@ -90,12 +90,12 @@ def build_index(
         queue: list[tuple[Path, int]] = [(root, 0)]
         while queue:
             folder, depth = queue.pop(0)
-            if scanned >= budget.max_entries or time.monotonic() - started > budget.max_seconds:
-                truncated = True
-                break
             try:
                 with os.scandir(folder) as entries:
                     for entry in entries:
+                        if scanned >= budget.max_entries or time.monotonic() - started > budget.max_seconds:
+                            truncated = True
+                            break
                         scanned += 1
                         path = Path(entry.path)
                         if entry.is_dir(follow_symlinks=False):
@@ -109,6 +109,8 @@ def build_index(
                             found.append(Candidate(path, _label(root, path), _mtime(entry)))
             except OSError:
                 continue
+            if truncated:
+                break
         if truncated:
             break
     return PathIndex(tuple(found), scanned, time.monotonic() - started, truncated)

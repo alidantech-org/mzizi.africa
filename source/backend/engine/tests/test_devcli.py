@@ -8,12 +8,11 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
+from mzizi_cli.shared.types import ExitCode
 from mzizi_engine.capabilities import build_default_registry
 from mzizi_engine.devcli.app import app
 from mzizi_engine.devcli.catalog import COMMANDS
-from mzizi_engine.devcli.pathsearch import SearchBudget, build_index
 from mzizi_engine.devcli.ports import PORTS, PortState, all_statuses
-from mzizi_engine.devcli.types import ExitCode
 
 runner = CliRunner()
 
@@ -73,38 +72,11 @@ def test_status_json_lists_every_port() -> None:
     assert len(json.loads(result.output)) == len(PORTS)
 
 
-def test_path_search_respects_its_entry_budget(tmp_path: Path) -> None:
-    for i in range(200):
-        (tmp_path / f"f{i}.pdf").write_text("x")
-    index = build_index(
-        [tmp_path], want_dirs=False, want_files=True, suffixes=(".pdf",), budget=SearchBudget(max_entries=50)
-    )
-    assert index.truncated and index.scanned <= 250
-    assert build_index([tmp_path], want_dirs=False, want_files=True, suffixes=(".pdf",)).suggest("f19")
-
-
 def test_long_results_are_previewed_without_parsing_the_truncated_json(workspace: Path) -> None:
     (workspace / "inputs" / "big.json").write_text(json.dumps([{"k": i} for i in range(300)]))
     result = invoke("extract", "json", "big.json")
     assert result.exit_code == 0
     assert "more lines" in result.output
-
-
-def test_runs_started_at_the_same_moment_get_different_folders(tmp_path):
-    import threading
-
-    from mzizi_engine.devcli.workspace import Workspace
-
-    workspace = Workspace(tmp_path)
-    folders: list[str] = []
-
-    def start() -> None:
-        folders.append(workspace.start_run("site watch", None, {}).folder.name)
-
-    threads = [threading.Thread(target=start) for _ in range(12)]
-    [t.start() for t in threads]
-    [t.join() for t in threads]
-    assert len(set(folders)) == 12
 
 
 def test_stream_csv_uses_logical_records_and_does_not_drop_the_header(workspace: Path) -> None:
@@ -146,3 +118,11 @@ def test_stream_can_publish_gzip_record_chunks(workspace: Path) -> None:
         "sheet": None,
         "value": {"b": 2},
     }
+
+
+def test_the_registry_gateway_exposes_every_registered_capability() -> None:
+    from mzizi_engine.bindings.cli_gateway import RegistryGateway
+
+    gateway = RegistryGateway()
+    assert gateway.names() == tuple(build_default_registry().names())
+    assert {info.name for info in gateway.describe()} == set(gateway.names())

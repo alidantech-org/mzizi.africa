@@ -14,16 +14,16 @@ import typer
 from rich.panel import Panel
 from rich.table import Table
 
+from mzizi_cli.features.terminal.theme import configure_logging, err, out
+from mzizi_cli.features.workspace.workspace import Workspace
+from mzizi_cli.shared.errors import Cancelled
+from mzizi_cli.shared.types import ArgValues, ExitCode
 from mzizi_engine.capabilities import build_default_registry
 from mzizi_engine.devcli.catalog import COMMANDS, GROUP_HELP, Arg, ArgKind, Command
-from mzizi_engine.devcli.errors import Cancelled
 from mzizi_engine.devcli.ports import PORTS, PortState, all_statuses, check_requirement
 from mzizi_engine.devcli.ports.models import binary, module
 from mzizi_engine.devcli.prompts import is_interactive
 from mzizi_engine.devcli.runner import Session, run_command, status_table
-from mzizi_engine.devcli.theme import configure_logging, err, out
-from mzizi_engine.devcli.types import ArgValues, ExitCode
-from mzizi_engine.devcli.workspace import Workspace
 from mzizi_engine.web.search.environment import provider_name, required_settings
 
 app = typer.Typer(

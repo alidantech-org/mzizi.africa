@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from mzizi_engine.devcli.types import ExitCode
+from mzizi_cli.shared.types import ExitCode
 
 
 class CliError(Exception):

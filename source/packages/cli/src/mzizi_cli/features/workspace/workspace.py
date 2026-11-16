@@ -11,7 +11,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-from mzizi_engine.devcli.types import ArgValues
+from mzizi_cli.shared.types import ArgValues
 
 WORKSPACE_ENV = "MZIZI_DEV_ROOT"
 KEEP_RUNS = 500

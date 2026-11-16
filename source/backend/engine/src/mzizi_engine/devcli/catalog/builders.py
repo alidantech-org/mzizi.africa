@@ -6,9 +6,9 @@ import base64
 import os
 from pathlib import Path
 
-from mzizi_engine.devcli.errors import CliError
-from mzizi_engine.devcli.types import ArgValues
-from mzizi_engine.devcli.workspace import RunRecord, Workspace
+from mzizi_cli.features.workspace.workspace import RunRecord, Workspace
+from mzizi_cli.shared.errors import CliError
+from mzizi_cli.shared.types import ArgValues
 from mzizi_engine.jsonvalue import JsonValue, Payload
 from mzizi_engine.web.crawl.inventory import CrawlSummary
 from mzizi_engine.web.crawl.state import CrawlState

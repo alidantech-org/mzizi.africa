@@ -16,6 +16,7 @@ dependencies = [
   "mzizi-scraping",
   "mzizi-fetch",
   "mzizi-search",
+  "mzizi-cli",
   "mzizi-extraction",
   "typer>=0.29.1",
   "rich>=15.0.0",
@@ -54,6 +55,7 @@ mzizi-manifest = { workspace = true }
 mzizi-scraping = { workspace = true }
 mzizi-fetch = { workspace = true }
 mzizi-search = { workspace = true }
+mzizi-cli = { workspace = true }
 mzizi-extraction = { workspace = true }
 
 [tool.pytest.ini_options]

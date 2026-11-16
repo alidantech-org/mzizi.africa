@@ -11,12 +11,12 @@ from urllib.parse import urlparse
 
 import questionary
 
+from mzizi_cli.features.terminal.pathsearch import build_index
+from mzizi_cli.features.terminal.theme import err, log
+from mzizi_cli.features.workspace.workspace import Workspace
+from mzizi_cli.shared.errors import Cancelled, CliError, MissingArgument
+from mzizi_cli.shared.types import ArgValue
 from mzizi_engine.devcli.catalog import Arg, ArgKind
-from mzizi_engine.devcli.errors import Cancelled, CliError, MissingArgument
-from mzizi_engine.devcli.pathsearch import build_index
-from mzizi_engine.devcli.theme import err, log
-from mzizi_engine.devcli.types import ArgValue
-from mzizi_engine.devcli.workspace import Workspace
 
 _MAX_ATTEMPTS = 3
 
