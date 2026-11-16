@@ -8,7 +8,7 @@ tags: [purpose:publications]
 fetch: { mode: http }
 modules: [documents]
 uses:
-  vocabularies: [ke.reference.patterns.office-names]
+  terms: [ke.reference.patterns.office-names]
   extraction: [ke.extraction.county-allocations]
 policy:
   assessment: { ref: assess-example-ministry }

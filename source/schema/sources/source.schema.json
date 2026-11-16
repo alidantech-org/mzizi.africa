@@ -41,7 +41,7 @@
         "mappings": {
           "$ref": "common.schema.json#/$defs/codeList"
         },
-        "vocabularies": {
+        "terms": {
           "$ref": "common.schema.json#/$defs/codeList"
         },
         "extraction": {

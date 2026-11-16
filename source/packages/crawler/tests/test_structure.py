@@ -68,11 +68,13 @@ def test_unknown_transform_and_unknown_mapping_column_are_rejected():
     mapping = read("mappings/example-ministry-publications.yml")
     transformed = mapping.replace("{ from: slug }", "{ from: slug, transform: shell_exec }")
     assert any(
-        "unknown transform 'shell_exec'" in e for e in validate(mutate("mappings/example-ministry-publications.yml", transformed)).errors
+        "unknown transform 'shell_exec'" in e
+        for e in validate(mutate("mappings/example-ministry-publications.yml", transformed)).errors
     )
     renamed = mapping.replace("published_on:", "made_up_column:")
     assert any(
-        "has no column 'made_up_column'" in e for e in validate(mutate("mappings/example-ministry-publications.yml", renamed)).errors
+        "has no column 'made_up_column'" in e
+        for e in validate(mutate("mappings/example-ministry-publications.yml", renamed)).errors
     )
 
 
@@ -81,7 +83,10 @@ def test_a_mapping_may_only_use_stored_tables_inputs_and_yields():
     assert any(
         "is not a stored table" in e
         for e in validate(
-            mutate("mappings/example-ministry-publications.yml", mapping.replace("table: source.documents", "table: source.nothing"))
+            mutate(
+                "mappings/example-ministry-publications.yml",
+                mapping.replace("table: source.documents", "table: source.nothing"),
+            )
         ).errors
     )
     assert any(

@@ -29,7 +29,7 @@ def mapping(code: str, table: str = "reference.countries") -> str:
     return f"code: {code}\ninputs: [a]\nyields:\n  - {{ as: x, table: {table}, key: [code], fields: {{}} }}\n"
 
 
-def vocabulary(code: str) -> str:
+def terms(code: str) -> str:
     return f"code: {code}\nterms: []\n"
 
 
@@ -51,7 +51,7 @@ def test_the_example_tree_resolves_every_code() -> None:
     kinds = {code: entry.kind for code, entry in result.registry.entries.items()}
     assert kinds["ke.source.websites.example-ministry"] is Kind.SOURCE
     assert kinds["global.reference.countries.example-statistics"] is Kind.MAPPING
-    assert kinds["ke.reference.patterns.office-names"] is Kind.VOCABULARY
+    assert kinds["ke.reference.patterns.office-names"] is Kind.TERMS
     assert kinds["ke.extraction.county-allocations"] is Kind.EXTRACTION
     assert kinds["ke.engine.jobs.example-ministry-publications"] is Kind.JOB
     users = result.registry.users_of("ke.reference.patterns.office-names")
@@ -67,12 +67,12 @@ def test_a_valid_tree_with_a_module_mapping_and_global_sharing(tmp_path: Path) -
         tmp_path,
         {
             "sources/ke/source/websites/a/manifest.yml": source(
-                A, uses=f"uses: {{ mappings: [{M_GLOBAL}], vocabularies: [{V_KE}] }}\n"
+                A, uses=f"uses: {{ mappings: [{M_GLOBAL}], terms: [{V_KE}] }}\n"
             ),
             "sources/ke/source/websites/a/modules/x.yml": f"module: x\nmapping: {M_KE}\n",
             "mappings/global/reference/countries/base.yml": mapping(M_GLOBAL),
             "mappings/ke/reference/countries/local.yml": mapping(M_KE),
-            "vocabularies/ke/reference/patterns/names.yml": vocabulary(V_KE),
+            "terms/ke/reference/patterns/names.yml": terms(V_KE),
         },
     )
     assert problems(root, mirror=True) == []
@@ -127,9 +127,9 @@ def test_a_manifest_may_not_use_another_country_and_global_may_not_use_a_country
 def test_a_code_of_the_wrong_kind_is_an_error(tmp_path: Path) -> None:
     root = write(
         tmp_path,
-        {"s/a/manifest.yml": source(A, uses=f"uses: {{ vocabularies: [{M_KE}] }}\n"), "m/m.yml": mapping(M_KE)},
+        {"s/a/manifest.yml": source(A, uses=f"uses: {{ terms: [{M_KE}] }}\n"), "m/m.yml": mapping(M_KE)},
     )
-    assert any(f"{M_KE!r} is a mapping" in p and "not a vocabulary" in p for p in problems(root))
+    assert any(f"{M_KE!r} is a mapping" in p and "not a terms" in p for p in problems(root))
 
 
 @pytest.mark.parametrize(
@@ -175,7 +175,7 @@ def test_the_path_must_mirror_the_code(tmp_path: Path) -> None:
             "mappings/ke/reference/countries/local.yml": mapping(M_KE),
             "mappings/ke/elsewhere/local2.yml": mapping("ke.reference.countries.local2"),
             "sources/ke/source/websites/a/manifest.yml": source(A),
-            "vocabularies/ke/reference/patterns/wrong-name.yml": vocabulary(V_KE),
+            "terms/ke/reference/patterns/wrong-name.yml": terms(V_KE),
         },
     )
     found = problems(root, mirror=True)

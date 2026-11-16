@@ -1,4 +1,4 @@
-"""The web vocabulary: typed classification data read from `seed/vocabularies/global/web/classification.yaml`.
+"""The web vocabulary: typed classification data read from `seed/terms/global/web/classification.yaml`.
 
 URL kinds by extension, tracking parameters, challenge markers, file signatures and the default response to each block
 kind are data, not code. This module holds the typed contract and the one parsing boundary that builds it.
@@ -14,7 +14,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict
 
 # .../source/packages/fetch/src/mzizi_fetch/web/vocabulary.py -> parents[6] is the repository root
-DEFAULT_PATH = Path(__file__).resolve().parents[6] / "seed" / "vocabularies" / "global" / "web" / "classification.yaml"
+DEFAULT_PATH = Path(__file__).resolve().parents[6] / "seed" / "terms" / "global" / "web" / "classification.yaml"
 SCHEMA_ID = "https://res.alidantech.org/mzizi/public/schemas/engine/web.schema.json"
 
 

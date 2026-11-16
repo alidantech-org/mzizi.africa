@@ -5,7 +5,7 @@ folders under `source/schema/`:
 
 - a source has `code` and `kind` (`website` or `api`);
 - a mapping has `code` and `yields`;
-- a vocabulary has `code` and `terms` (or `url_kinds`, the web classification data);
+- a term list has `code` and `terms` (or `url_kinds`, the web classification data);
 - an extraction expectation has `code` and `columns`;
 - a job spec has `code`, `spec_version` and `stages`;
 - a module has `module`; its `mapping` is checked in the scope of the source folder that owns it.
@@ -66,7 +66,7 @@ def _kind(document: dict) -> Kind | None:
     if "yields" in document:
         return Kind.MAPPING
     if "terms" in document or "url_kinds" in document:
-        return Kind.VOCABULARY
+        return Kind.TERMS
     if "columns" in document:
         return Kind.EXTRACTION
     if "stages" in document and "spec_version" in document:
@@ -80,10 +80,7 @@ def _references(document: dict, kind: Kind) -> list[Reference]:
     references = [
         Reference(f"uses.mappings[{i}]", code, Kind.MAPPING) for i, code in enumerate(_codes(document, "mappings"))
     ]
-    references += [
-        Reference(f"uses.vocabularies[{i}]", code, Kind.VOCABULARY)
-        for i, code in enumerate(_codes(document, "vocabularies"))
-    ]
+    references += [Reference(f"uses.terms[{i}]", code, Kind.TERMS) for i, code in enumerate(_codes(document, "terms"))]
     references += [
         Reference(f"uses.extraction[{i}]", code, Kind.EXTRACTION)
         for i, code in enumerate(_codes(document, "extraction"))
@@ -109,7 +106,7 @@ def _owner(path: Path, sources: dict[Path, str], root: Path) -> tuple[str | None
 KIND_FOLDERS = {
     Kind.SOURCE: "sources",
     Kind.MAPPING: "mappings",
-    Kind.VOCABULARY: "vocabularies",
+    Kind.TERMS: "terms",
     Kind.EXTRACTION: "extraction",
     Kind.JOB: "jobs",
 }

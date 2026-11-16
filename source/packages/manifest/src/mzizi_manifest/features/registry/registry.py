@@ -1,6 +1,6 @@
 """The cross-reference registry: every manifest code in a tree, and the checks that each reference resolves.
 
-A source, mapping, vocabulary or extraction file declares a dotted `code`. Another manifest names it in `uses`, `extends` or
+A source, mapping, term list or extraction file declares a dotted `code`. Another manifest names it in `uses`, `extends` or
 a module's `mapping`. This module only answers "does that code exist, is it the right kind, and may this manifest see it?":
 
 - a code is unique across the tree;
@@ -32,7 +32,7 @@ SCOPE = re.compile(r"^(global|[a-z]{2,3})$")
 class Kind(StrEnum):
     SOURCE = "source"
     MAPPING = "mapping"
-    VOCABULARY = "vocabulary"
+    TERMS = "terms"
     EXTRACTION = "extraction"
     JOB = "job"
 
