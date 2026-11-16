@@ -1,0 +1,104 @@
+code,scheme_code,label
+geography.continent.africa,geography.continent,Africa
+geography.continent.antarctica,geography.continent,Antarctica
+geography.continent.asia,geography.continent,Asia
+geography.continent.europe,geography.continent,Europe
+geography.continent.north_america,geography.continent,North America
+geography.continent.oceania,geography.continent,Oceania
+geography.continent.south_america,geography.continent,South America
+geography.subregion.northern_africa,geography.subregion,Northern Africa
+geography.subregion.sub_saharan_africa,geography.subregion,Sub-Saharan Africa
+geography.subregion.eastern_africa,geography.subregion,Eastern Africa
+geography.subregion.middle_africa,geography.subregion,Middle Africa
+geography.subregion.southern_africa,geography.subregion,Southern Africa
+geography.subregion.western_africa,geography.subregion,Western Africa
+geography.subregion.latin_america_and_the_caribbean,geography.subregion,Latin America and the Caribbean
+geography.subregion.caribbean,geography.subregion,Caribbean
+geography.subregion.central_america,geography.subregion,Central America
+geography.subregion.south_america,geography.subregion,South America
+geography.subregion.northern_america,geography.subregion,Northern America
+geography.subregion.central_asia,geography.subregion,Central Asia
+geography.subregion.eastern_asia,geography.subregion,Eastern Asia
+geography.subregion.south_eastern_asia,geography.subregion,South-eastern Asia
+geography.subregion.southern_asia,geography.subregion,Southern Asia
+geography.subregion.western_asia,geography.subregion,Western Asia
+geography.subregion.eastern_europe,geography.subregion,Eastern Europe
+geography.subregion.northern_europe,geography.subregion,Northern Europe
+geography.subregion.southern_europe,geography.subregion,Southern Europe
+geography.subregion.western_europe,geography.subregion,Western Europe
+geography.subregion.australia_and_new_zealand,geography.subregion,Australia and New Zealand
+geography.subregion.melanesia,geography.subregion,Melanesia
+geography.subregion.micronesia,geography.subregion,Micronesia
+geography.subregion.polynesia,geography.subregion,Polynesia
+geography.recognition_status.recognized,geography.recognition_status,Recognized
+geography.recognition_status.partially_recognized,geography.recognition_status,Partially recognized
+geography.recognition_status.unrecognized,geography.recognition_status,Unrecognized
+finance.currency.dzd,finance.currency,Algerian dinar
+finance.currency.aoa,finance.currency,Angolan kwanza
+finance.currency.bwp,finance.currency,Botswana pula
+finance.currency.bif,finance.currency,Burundian franc
+finance.currency.cve,finance.currency,Cape Verdean escudo
+finance.currency.kmf,finance.currency,Comorian franc
+finance.currency.cdf,finance.currency,Congolese franc
+finance.currency.djf,finance.currency,Djiboutian franc
+finance.currency.egp,finance.currency,Egyptian pound
+finance.currency.ern,finance.currency,Eritrean nakfa
+finance.currency.szl,finance.currency,Swazi lilangeni
+finance.currency.etb,finance.currency,Ethiopian birr
+finance.currency.gmd,finance.currency,Gambian dalasi
+finance.currency.ghs,finance.currency,Ghanaian cedi
+finance.currency.gnf,finance.currency,Guinean franc
+finance.currency.kes,finance.currency,Kenyan shilling
+finance.currency.lsl,finance.currency,Lesotho loti
+finance.currency.lrd,finance.currency,Liberian dollar
+finance.currency.lyd,finance.currency,Libyan dinar
+finance.currency.mga,finance.currency,Malagasy ariary
+finance.currency.mwk,finance.currency,Malawian kwacha
+finance.currency.mru,finance.currency,Mauritanian ouguiya
+finance.currency.mur,finance.currency,Mauritian rupee
+finance.currency.mad,finance.currency,Moroccan dirham
+finance.currency.mzn,finance.currency,Mozambican metical
+finance.currency.nad,finance.currency,Namibian dollar
+finance.currency.ngn,finance.currency,Nigerian naira
+finance.currency.rwf,finance.currency,Rwandan franc
+finance.currency.stn,finance.currency,São Tomé and Príncipe dobra
+finance.currency.scr,finance.currency,Seychellois rupee
+finance.currency.sle,finance.currency,Sierra Leonean leone
+finance.currency.sos,finance.currency,Somali shilling
+finance.currency.zar,finance.currency,South African rand
+finance.currency.ssp,finance.currency,South Sudanese pound
+finance.currency.sdg,finance.currency,Sudanese pound
+finance.currency.tzs,finance.currency,Tanzanian shilling
+finance.currency.tnd,finance.currency,Tunisian dinar
+finance.currency.ugx,finance.currency,Ugandan shilling
+finance.currency.zmw,finance.currency,Zambian kwacha
+finance.currency.zwg,finance.currency,Zimbabwe Gold
+finance.currency.xof,finance.currency,West African CFA franc
+finance.currency.xaf,finance.currency,Central African CFA franc
+finance.currency.usd,finance.currency,United States dollar
+finance.currency.eur,finance.currency,Euro
+finance.currency.gbp,finance.currency,Pound sterling
+reference.country_designation.republic,reference.country_designation,Republic
+reference.country_designation.democratic_republic,reference.country_designation,Democratic Republic
+reference.country_designation.federal_republic,reference.country_designation,Federal Republic
+reference.country_designation.federal_democratic_republic,reference.country_designation,Federal Democratic Republic
+reference.country_designation.peoples_democratic_republic,reference.country_designation,People's Democratic Republic
+reference.country_designation.peoples_republic,reference.country_designation,People's Republic
+reference.country_designation.islamic_republic,reference.country_designation,Islamic Republic
+reference.country_designation.arab_republic,reference.country_designation,Arab Republic
+reference.country_designation.united_republic,reference.country_designation,United Republic
+reference.country_designation.democratic_socialist_republic,reference.country_designation,Democratic Socialist Republic
+reference.country_designation.socialist_republic,reference.country_designation,Socialist Republic
+reference.country_designation.kingdom,reference.country_designation,Kingdom
+reference.country_designation.sultanate,reference.country_designation,Sultanate
+reference.country_designation.emirate,reference.country_designation,Emirate
+reference.country_designation.principality,reference.country_designation,Principality
+reference.country_designation.grand_duchy,reference.country_designation,Grand Duchy
+reference.country_designation.commonwealth,reference.country_designation,Commonwealth
+reference.country_designation.federation,reference.country_designation,Federation
+reference.country_designation.confederation,reference.country_designation,Confederation
+reference.country_designation.union,reference.country_designation,Union
+reference.country_designation.united_states,reference.country_designation,United States
+reference.country_designation.united_kingdom,reference.country_designation,United Kingdom
+reference.country_designation.state,reference.country_designation,State
+reference.country_designation.other,reference.country_designation,Other
