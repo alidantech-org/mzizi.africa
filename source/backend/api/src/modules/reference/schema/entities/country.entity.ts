@@ -69,8 +69,8 @@ export class CountryEntity {
   @Column({ name: "established_on", type: "date", nullable: true })
   establishedOn?: Date | null;
 
-  @Column({ name: "iso_alpha2", type: "char", length: 2 })
-  isoAlpha2!: IsoAlpha2;
+  @Column({ name: "iso_alpha2", type: "char", length: 2, nullable: true })
+  isoAlpha2?: IsoAlpha2 | null;
 
   @Column({ name: "iso_alpha3", type: "char", length: 3, nullable: true })
   isoAlpha3?: IsoAlpha3 | null;

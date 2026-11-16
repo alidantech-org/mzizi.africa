@@ -23,7 +23,6 @@
       "required": [
         "code"
         ,"id"
-        ,"iso_alpha2"
         ,"name"
       ],
       "x-seed": {
@@ -51,7 +50,6 @@
         ],
         "required": [
           "code"
-          ,"iso_alpha2"
           ,"name"
         ]
       },
@@ -121,7 +119,7 @@
           "x-role": "system"
         }
         ,"iso_alpha2": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "text",
           "minLength": 2,
           "maxLength": 2,

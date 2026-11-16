@@ -1384,7 +1384,7 @@ CREATE TABLE "reference"."countries" (
     "designation_id" uuid,
     "established_on" date,
     "id" uuid NOT NULL,
-    "iso_alpha2" char(2) NOT NULL,
+    "iso_alpha2" char(2),
     "iso_alpha3" char(3),
     "iso_numeric" char(3),
     "name" varchar(300) NOT NULL,

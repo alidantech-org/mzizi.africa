@@ -46,7 +46,8 @@ export const Country = reference
   .schema("Country", {
     name: dryv.field(sharedProperties.Name),
     officialName: dryv.field(sharedProperties.Name).maybe(),
-    isoAlpha2: dryv.field(countryProperties.IsoAlpha2),
+    /** Optional: some entities have no ISO 3166 code (Somaliland, Transnistria); `code` identifies them. */
+    isoAlpha2: dryv.field(countryProperties.IsoAlpha2).maybe(),
     isoAlpha3: dryv.field(countryProperties.IsoAlpha3).maybe(),
     isoNumeric: dryv.field(countryProperties.IsoNumeric).maybe(),
     callingCode: dryv.field(countryProperties.CallingCode).maybe(),

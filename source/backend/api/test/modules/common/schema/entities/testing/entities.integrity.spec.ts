@@ -2330,7 +2330,7 @@ describe("entity schema matches the contract", () => {
             ["designation_id", true, false],
             ["established_on", true, false],
             ["id", false, true],
-            ["iso_alpha2", false, false],
+            ["iso_alpha2", true, false],
             ["iso_alpha3", true, false],
             ["iso_numeric", true, false],
             ["name", false, false],

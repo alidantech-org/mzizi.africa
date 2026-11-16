@@ -75,8 +75,8 @@ export const countryExample: ContractExample = contractExample({
     },
     {
       name: "isoAlpha2",
-      optional: false,
-      nullable: false,
+      optional: true,
+      nullable: true,
       spec: { kind: "string", exactLength: 2, patterns: ["^[A-Z]{2}$"] },
     },
     {

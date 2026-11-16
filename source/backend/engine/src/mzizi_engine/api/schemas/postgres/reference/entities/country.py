@@ -27,7 +27,7 @@ class CountryRow(BaseModel):
     designation_id: UUID | None = None
     established_on: date | None = None
     id: UUID
-    iso_alpha2: Annotated[str, Field(min_length=2, max_length=2, pattern="^[A-Z]{2}$")]
+    iso_alpha2: Annotated[str, Field(min_length=2, max_length=2, pattern="^[A-Z]{2}$")] | None = None
     iso_alpha3: Annotated[str, Field(min_length=3, max_length=3, pattern="^[A-Z]{3}$")] | None = None
     iso_numeric: Annotated[str, Field(min_length=3, max_length=3, pattern="^[0-9]{3}$")] | None = None
     name: Annotated[str, Field(min_length=1, max_length=300)]

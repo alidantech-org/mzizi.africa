@@ -37,7 +37,7 @@ export interface ICountry extends B.IBase {
   currencyId: string | null;
   designationId: string | null;
   establishedOn: Date | null;
-  isoAlpha2: string;
+  isoAlpha2: string | null;
   isoAlpha3: string | null;
   isoNumeric: string | null;
   name: string;

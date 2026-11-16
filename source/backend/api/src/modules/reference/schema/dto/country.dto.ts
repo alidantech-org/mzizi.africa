@@ -76,10 +76,12 @@ export class CountryDto {
   @IsUUID()
   id!: Id;
 
+  @IsOptional()
+  @ValidateIf((object) => object.isoAlpha2 !== null)
   @IsString()
   @Length(2, 2)
   @Matches(new RegExp("^[A-Z]{2}$"))
-  isoAlpha2!: IsoAlpha2;
+  isoAlpha2?: IsoAlpha2 | null;
 
   @IsOptional()
   @ValidateIf((object) => object.isoAlpha3 !== null)
