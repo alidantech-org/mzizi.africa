@@ -1,13 +1,13 @@
 {
   "$schema": "https://res.alidantech.org/mzizi/public/schemas/engine/job.schema.json",
-  "code": "ke.engine.jobs.example-ministry-publications",
+  "code": "sys.eng.job.ke.example-ministry-publications",
   "spec_version": 1,
   "kind": "collection",
   "name": "example-ministry-publications",
   "sources": [
     {
       "url": "https://www.example.org/publications/",
-      "authority_ref": "ke.source.websites.example-ministry"
+      "authority_ref": "pg.src.wbs.ke.example-ministry"
     }
   ],
   "mode": "crawl",

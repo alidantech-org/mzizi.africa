@@ -19,11 +19,15 @@ const scalarProperties = shared.properties({
   Description: dryv.property.string().length({ max: 4000 }),
   Message: dryv.property.string().length({ min: 1, max: 2000 }),
   BusinessCode: dryv.property.string().length({ min: 2, max: 200 }),
-  /** Stable identity code: lowercase, dot-separated segments, maximum 255 characters. */
+  /**
+   * Stable identity code as stored: `<schema short>.<table short>.<identity path>` (`ref.cty.ke`). Lowercase dot-separated
+   * segments (a dot means "narrower than"); a dash joins the words of one real name (`north-america`); no underscores.
+   * See `.docs/rules/codes.md`.
+   */
   IdentityCode: dryv.property
     .string()
     .length({ min: 1, max: 255 })
-    .pattern({ match: ["^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*){0,15}$"] }),
+    .pattern({ match: ["^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$"] }),
   StatusCode: dryv.property.string().length({ min: 1, max: 100 }),
   Email: dryv.property.string.email(),
   Url: dryv.property.string.url().length({ max: 2048 }),

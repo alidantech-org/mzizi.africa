@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/mapping.schema.json
 # Example mapping: one extracted row yields a country.
-code: global.reference.countries.example-statistics
+code: sys.map.ref.cty.global.example-statistics
 describe: A country listed by a statistics API.
 inputs: [code, name]
 yields:

@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/source.schema.json
 # Example API source: a public statistics API. Credentials are named, never stored.
-code: global.source.apis.example-statistics
+code: pg.src.api.global.example-statistics
 kind: api
 title: Example statistics API
-publisher: global.source.publishers.example-statistics
+publisher: pg.src.pub.global.example-statistics
 uses:
-  mappings: [global.reference.countries.example-statistics]
+  mappings: [sys.map.ref.cty.global.example-statistics]
 policy:
   assessment: { ref: assess-example-statistics }
   scope:

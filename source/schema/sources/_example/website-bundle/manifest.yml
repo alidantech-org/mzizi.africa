@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/source.schema.json
 # Example website source: a small publications page on a government site.
-code: ke.source.websites.example-ministry
+code: pg.src.wbs.ke.example-ministry
 kind: website
 title: Example ministry publications
 description: Documents the ministry publishes under /publications/.
@@ -8,7 +8,7 @@ tags: [purpose:publications]
 fetch: { mode: http }
 modules: [documents]
 uses:
-  terms: [ke.reference.patterns.office-names]
+  terms: [sys.trm.ref.pat.ke.office-names]
 policy:
   assessment: { ref: assess-example-ministry }
   licence: { ref: ogl, source: "https://example.org/terms" }

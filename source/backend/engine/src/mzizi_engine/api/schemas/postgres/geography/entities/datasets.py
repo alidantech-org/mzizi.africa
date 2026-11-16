@@ -17,7 +17,7 @@ class DatasetsRow(BaseModel):
     table: ClassVar[str] = "geography.datasets"
 
     code: Annotated[
-        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*){0,15}$")
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
     ]
     coverage_feature_id: UUID | None = None
     created_at: datetime

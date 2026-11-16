@@ -1,17 +1,16 @@
 """The cross-reference registry: every manifest code in a tree, and the checks that each reference resolves.
 
-A source, mapping or term list file declares a dotted `code`. Another manifest names it in `uses`, `extends` or
-a module's `mapping`. This module only answers "does that code exist, is it the right kind, and may this manifest see it?":
+A source, mapping, term list, job spec or piece of engine data declares a dotted `code`. Another manifest names it in `uses`,
+`extends` or a module's `mapping`. This module answers "does that code exist, is it the right kind, may this manifest see it,
+and does the code say what the thing is?":
 
-- a code is unique across the tree;
-- the first segment of a code is its scope: `global` or a country code such as `ke`;
+- a code is well formed (`.docs/rules/codes.md`) and unique across the tree;
+- a source is `pg.src.<websites|apis short>.<scope>.<name>` and its kind agrees (a source is a database row, so `pg`);
+- a mapping is `sys.map.<schema short>.<table short>.<scope>.<name>`, named after the table it writes first;
+- a term list is `sys.trm.<schema short>.<table short>.<scope>.<name>` for a real table;
+- a job spec is `sys.eng.job.<scope>.<name>`, other engine data `sys.eng.<name path>`;
 - a manifest may use items in its own scope or in `global`, never in another country, and `global` never uses a country;
-- a reference to a code of the wrong kind is an error;
-- a reference cycle (for example one website extending another that extends it back) is an error;
-- a job spec is `<scope>.engine.jobs.<name>` and other engine data is `<scope>.engine.<name>`;
-- the second segment is an area: a database group (the third segment is then one of its tables) or a system area;
-- a source is `<scope>.source.<websites|apis>.<name>` and its kind agrees;
-- a mapping is named after the table it writes first: `<scope>.<schema>.<table>.<name>`.
+- a reference to a code of the wrong kind, or a reference cycle, is an error.
 
 Reading the files is in `scan.py`; nothing here touches the file system.
 """
@@ -23,19 +22,21 @@ from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 
-from mzizi_manifest.features.registry.areas import Areas
+from mzizi_manifest.features.codes.glossary import Glossary
+from mzizi_manifest.features.codes.grammar import segments_problem
 
 GLOBAL_SCOPE = "global"
 SCOPE = re.compile(r"^(global|[a-z]{2,3})$")
+SOURCE_TABLES = {"website": "source.websites", "api": "source.apis"}
 
 
 class Kind(StrEnum):
     SOURCE = "source"
     MAPPING = "mapping"
     TERMS = "terms"
+    JOB = "job"
     #: Flat engine data and configuration, such as the web classification the fetch package reads.
     ENGINE = "engine"
-    JOB = "job"
 
 
 @dataclass(frozen=True)
@@ -69,9 +70,11 @@ class Registry:
         return tuple(e for e in self.entries.values() if any(r.code == code for r in e.references))
 
 
-def scope_of(code: str) -> str:
-    """The scope of a code is its first dotted segment."""
-    return code.split(".", 1)[0]
+def scope_of(entry: Entry) -> str:
+    """The scope segment of a manifest code; engine data has no scope and counts as `global`."""
+    segments = entry.code.split(".")
+    index = {Kind.SOURCE: 3, Kind.MAPPING: 4, Kind.TERMS: 4, Kind.JOB: 3}.get(entry.kind)
+    return segments[index] if index is not None and len(segments) > index else GLOBAL_SCOPE
 
 
 def can_see(user_scope: str, target_scope: str) -> bool:
@@ -87,8 +90,7 @@ def _cycle(registry: Registry) -> list[str] | None:
     def visit(code: str) -> list[str] | None:
         state[code] = 1
         path.append(code)
-        entry = registry.entries[code]
-        for reference in entry.references:
+        for reference in registry.entries[code].references:
             target = reference.code
             if target not in registry.entries:
                 continue
@@ -106,53 +108,61 @@ def _cycle(registry: Registry) -> list[str] | None:
     return None
 
 
-SOURCE_TABLES = {"website": "websites", "api": "apis"}
-
-
-def code_problems(entry: Entry, areas: Areas) -> list[str]:
-    """Check a code against the contracts: its area, its table and what its kind requires."""
-    where, segments = str(entry.path), entry.code.split(".")
-    if not SCOPE.match(segments[0]):
-        return [f"{where}: code {entry.code!r} must start with a scope: 'global' or a country code"]
-    if len(segments) < 3:
-        return [f"{where}: code {entry.code!r} needs at least <scope>.<area>.<name>"]
-    area = segments[1]
+def code_problems(entry: Entry, glossary: Glossary) -> list[str]:
+    """Check a code against the grammar, the glossary and what its kind requires."""
+    where, code = str(entry.path), entry.code
+    if reason := segments_problem(code):
+        return [f"{where}: code {code!r} {reason}"]
+    segments = code.split(".")
     problems: list[str] = []
-    if area in areas.tables:
-        if len(segments) < 4 or segments[2] not in areas.tables[area]:
-            problems.append(
-                f"{where}: code {entry.code!r}: {segments[2]!r} is not a table of {area!r} "
-                f"(expected <scope>.{area}.<table>.<name>)"
-            )
-    elif area not in areas.system:
-        allowed = sorted((*areas.tables, *areas.system))
-        problems.append(
-            f"{where}: code {entry.code!r}: {area!r} is not a database group or system area ({', '.join(allowed)})"
-        )
+
+    def expect(pattern: str, minimum: int) -> bool:
+        if segments[:2] != pattern.split(".")[:2] or len(segments) < minimum:
+            problems.append(f"{where}: code {code!r} must look like {pattern}")
+            return False
+        return True
+
+    def scope_ok(index: int) -> None:
+        if len(segments) > index and not SCOPE.match(segments[index]):
+            problems.append(f"{where}: code {code!r}: {segments[index]!r} must be 'global' or a country code")
+
     if entry.kind is Kind.SOURCE:
-        table = SOURCE_TABLES.get(entry.detail or "")
-        if area != "source" or (table and segments[2:3] != [table]):
-            problems.append(
-                f"{where}: a {entry.detail} source code must be <scope>.source.{table}.<name>, not {entry.code!r}"
-            )
-    elif entry.kind is Kind.JOB and (area != "engine" or segments[2:3] != ["jobs"]):
-        problems.append(f"{where}: a job spec code must be <scope>.engine.jobs.<name>, not {entry.code!r}")
-    elif entry.kind is Kind.ENGINE and area != "engine":
-        problems.append(f"{where}: engine data code must be <scope>.engine.<name>, not {entry.code!r}")
-    elif entry.kind is Kind.MAPPING and entry.detail and ".".join(segments[1:3]) != entry.detail:
-        problems.append(
-            f"{where}: a mapping is named after the table it writes first ({entry.detail}); "
-            f"code {entry.code!r} should be <scope>.{entry.detail}.<name>"
-        )
+        wanted = SOURCE_TABLES.get(entry.detail or "")
+        if expect("pg.src.<table short>.<scope>.<name>", 5):
+            table = glossary.table_for(segments[1], segments[2])
+            if table is None or table.qualified_name != wanted:
+                article = "an" if entry.detail == "api" else "a"
+                problems.append(
+                    f"{where}: {article} {entry.detail} source code must use the short of {wanted}, not {segments[2]!r}"
+                )
+            scope_ok(3)
+    elif entry.kind in (Kind.MAPPING, Kind.TERMS):
+        prefix = "sys.map" if entry.kind is Kind.MAPPING else "sys.trm"
+        if expect(f"{prefix}.<schema short>.<table short>.<scope>.<name>", 6):
+            table = glossary.table_for(segments[2], segments[3])
+            if table is None:
+                problems.append(f"{where}: code {code!r}: {segments[2]}.{segments[3]} is not a schema and table short")
+            elif entry.kind is Kind.MAPPING and entry.detail and table.qualified_name != entry.detail:
+                problems.append(
+                    f"{where}: a mapping is named after the table it writes first ({entry.detail}); "
+                    f"code {code!r} names {table.qualified_name}"
+                )
+            scope_ok(4)
+    elif entry.kind is Kind.JOB:
+        if expect("sys.eng.job.<scope>.<name>", 5) and segments[2] != "job":
+            problems.append(f"{where}: a job spec code must be sys.eng.job.<scope>.<name>, not {code!r}")
+        scope_ok(3)
+    elif entry.kind is Kind.ENGINE and expect("sys.eng.<name path>", 3) and segments[2] == "job":
+        problems.append(f"{where}: engine data code must not use the job path: {code!r}")
     return problems
 
 
-def check(registry: Registry, areas: Areas) -> list[str]:
+def check(registry: Registry, glossary: Glossary) -> list[str]:
     """Every problem in the registry; each names the file, the field and the code."""
     problems: list[str] = []
-    for code, entry in sorted(registry.entries.items()):
+    for _code, entry in sorted(registry.entries.items()):
         where = str(entry.path)
-        problems += code_problems(entry, areas)
+        problems += code_problems(entry, glossary)
         for reference in entry.references:
             target = registry.resolve(reference.code)
             if target is None:
@@ -163,10 +173,10 @@ def check(registry: Registry, areas: Areas) -> list[str]:
                     f"{where}: {reference.field}: {reference.code!r} is a {target.kind} (in {target.path}), "
                     f"not a {reference.expected}"
                 )
-            if not can_see(scope_of(code), scope_of(reference.code)):
+            if not can_see(scope_of(entry), scope_of(target)):
                 problems.append(
-                    f"{where}: {reference.field}: {reference.code!r} is in scope {scope_of(reference.code)!r}, "
-                    f"which {code!r} (scope {scope_of(code)!r}) may not use"
+                    f"{where}: {reference.field}: {reference.code!r} is in scope {scope_of(target)!r}, "
+                    f"which {entry.code!r} (scope {scope_of(entry)!r}) may not use"
                 )
     if cycle := _cycle(registry):
         problems.append(f"reference cycle: {' -> '.join(cycle)}")

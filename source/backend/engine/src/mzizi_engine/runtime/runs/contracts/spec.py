@@ -37,7 +37,7 @@ class JobFields(Frozen):
     spec_version: Literal[1]
     kind: NonEmpty
     name: NonEmpty
-    #: `<scope>.engine.jobs.<name>` (`.docs/rules/codes.md`); optional so existing specs stay valid.
+    #: `sys.eng.job.<scope>.<name>` (`.docs/rules/codes.md`); optional so existing specs stay valid.
     code: NonEmpty | None = None
     sources: tuple[SourceAuthority, ...] = ()
     mode: Literal["crawl", "hunt"] = "crawl"

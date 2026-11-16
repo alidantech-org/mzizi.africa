@@ -1,46 +1,61 @@
 ---
-{id: RULE-CODES,name: Manifest and row codes,type: rule,tags: [schema,manifest,agent-guidance]}
+{id: RULE-CODES,name: Codes,type: rule,tags: [schema,manifest,agent-guidance]}
 ---
 
 # Codes
 
-Every source, mapping, terms and job-spec manifest, and every database row that a manifest names, has a dotted lowercase `code`. The shape is the same everywhere, agreed with the owner on 16 November 2026.
+Every database row that has a `code`, and every source, mapping, term list, job spec and piece of engine data, is identified by a dotted lowercase code. The rule was agreed with the owner on 16 November 2026. It has one grammar, two forms for a database row, and a fixed list of short names.
+
+## Grammar
+
+- Segments are lowercase `a-z0-9` words. **A dash joins the words of one real name** (`north-america`, `un-member-state`). **A dot means "narrower than"** (`geo.continent.north-america`: a value of the continent scheme). **Never an underscore.**
+- Concept words (the parts of a scheme code) are single words: `recognition.status`, `country.designation`. Only a name, the last segment of a member or an entity, may contain dashes.
+- At most 16 segments and 255 characters. Codes are unique, immutable, and never reused: a rename is a new code linked by supersession, because ids derive from codes.
+
+## Spaces: where the code lives
+
+A code starts with its space.
+
+| Space | Means |
+|---|---|
+| `pg` | identifies a **PostgreSQL row** |
+| `sys` | identifies a **system thing** that is not a row: a mapping, a term list, a job, engine data, a schema |
+| `mg` | MongoDB, reserved; not used yet |
+
+The database stores a row's code without `pg.`; the repository writes it with. `mzizi_manifest.features.codes.grammar.qualify` and `strip` are the only conversions; never add or remove the space by hand.
+
+## Short names
+
+Schemas and tables have fixed short names in `source/schema/seed/codes.json` (`reference` is `ref`, `geography` is `geo`, `legal` is `leg`, `official` is `ofc`, `governance` is `gov`, `politics` is `pol`, `civic` is `civ`, `finance` is `fin`, `source` is `src`, `filesystem` is `fil`, `auth` is `aut`, `audit` is `aud`; tables such as `countries` are `cty`, `values` are `val`, `schemes` are `sch`, `websites` are `wbs`). A short is unique within its level and never changes. A test fails when a generated table has no short.
+
+## Database rows
 
 ```text
-<scope>.<area>.<table-or-name>.<name>[.<child>...]
+pg.<schema short>.<table short>.<identity path>      qualified (repository)
+<schema short>.<table short>.<identity path>         stored (database)
 ```
 
-- **scope** is `global` or a country code (`ke`). A manifest may use items of its own scope or `global`, never another country; `global` uses only `global`.
-- **area** is a database group (`reference`, `governance`, `official`, `source`, and so on) when the thing relates to the database. The next segment is then a real table of that group (`ke.governance.holders.office-holders`). Otherwise the area is a system area named by use: `engine`, `web`, `extraction` (the list is `systemArea` in `source/schema/sources/common.schema.json`).
-- **name and children** are kebab-case segments in the same hierarchy; a child extends its parent's code.
+- **Entity** (default): the identity path is a name path: `pg.ref.cty.ke`, `pg.ref.cty.northern-cyprus`.
+- **Scheme** (`reference.schemes`): the path is `<schema short>.<concept>(.<concept>)*`, starting with the schema that owns the meaning: `geo.continent`, `geo.recognition.status`, `fin.currency`. Qualified: `pg.ref.sch.geo.continent`.
+- **Member** (`reference.values`): the path is the scheme's path plus exactly one name: `geo.continent.north-america`, `geo.recognition.status.un-member-state`, `fin.currency.kes`. Qualified: `pg.ref.val.geo.continent.north-america`.
+- A hierarchy that is part of identity (a row whose parent is part of its name) extends its parent's code by one segment. A hierarchy that is only classification lives in relations, not in the code: which subregion a country is in is its `subregion_code` link, so the code never changes.
 
-## Rules by kind
+## Seed files hold the short form
 
-- **Source:** `<scope>.source.<websites|apis>.<name>`, where the table matches the manifest's `kind`. It equals `source.sources.code`. Modules have no codes of their own: their full name is the source code plus the module name.
-- **Mapping:** named after the first table it yields: `<scope>.<schema>.<table>.<name>`.
-- **Terms:** only real term lists (`terms.schema.json`), named by the database area and table they feed (`ke.reference.patterns.office-names`).
-- **Engine data** (what the engine and its packages read, such as the web classification): `<scope>.engine.<name>`, for example `global.engine.web.classification`. It is flat: `seed/engine/web/classification.yaml`; a scope other than `global` (a language, say) adds a folder, `seed/engine/sw/web/classification.yaml`.
-- **Expected table columns** (what a PDF or spreadsheet table should contain) are not a manifest of their own: they are the object form of a mapping's `inputs`.
-- **Job spec:** `<scope>.engine.jobs.<name>`, in the optional `code` field of the spec; its files live under `seed/engine/jobs/`.
-- **Generated database schemas:** each `source/schema/database/<group>.schema.json` has the code `global.database.<group>` (`database` is a system area), and each table in it carries `x-code` = `global.<group>.<table>`. A seed CSV for a table is the same code with the scope changed: `data/ke/reference/values.csv` is `ke.reference.values`.
-- **CSV seed files** are already shaped this way by their path: `data/<scope>/<domain>/<table>.csv`.
+In a seed CSV (`data/<scope>/<domain>/<table>.csv`) the file and the link column already say which table, so the `code` cell and every link cell hold the **identity path alone**: `ke`, `geo.continent.africa`. A seed row never carries `id` or the system columns (`version`, `created_at`, `updated_at`, `deleted_at`); the loader assigns them, deriving the id from the table and the code (`mzizi_manifest.features.seeds.ids.stable_id`). Links are written as the target's code (`continent_code`), never an id. Manifests, logs and the API use the full code.
 
-## The folder mirrors the code
+## System things
 
-A file's folder path under `seed/` mirrors its code. `seed/mappings/ke/governance/holders/office-holders.yml` has the code `ke.governance.holders.office-holders`; a source's code is the folder that holds its manifest, `seed/sources/ke/source/websites/iebc/`. The first folder names the kind: `sources`, `mappings`, `terms`, `engine`.
+| Thing | Code | Lives at |
+|---|---|---|
+| Source (website, API) | `pg.src.<wbs\|api>.<scope>.<name>` (a source is a row) | `seed/sources/wbs/<scope>/<name>/manifest.yml` |
+| Mapping | `sys.map.<schema short>.<table short>.<scope>.<name>`, named after the table it writes first | `seed/mappings/<schema short>/<table short>/<scope>/<name>.yml` |
+| Term list | `sys.trm.<schema short>.<table short>.<scope>.<name>` | `seed/terms/<schema short>/<table short>/<scope>/<name>.yml` |
+| Job spec | `sys.eng.job.<scope>.<name>` | `seed/engine/job/<scope>/<name>.json` |
+| Engine data | `sys.eng.<name path>`, for example `sys.eng.web.classification` | `seed/engine/web/classification.yaml` |
 
-`uv run mzizi-manifest refs [folder]` checks all of this: the area and table against the generated `source/schema/database/` files, the kind rules, the path, unknown, duplicate and wrong-kind references, scope visibility and cycles. The flat `_example/` folders use `--no-paths`.
+`<scope>` is `global` or a country code. A manifest may use items of its own scope or `global`, never another country; `global` uses only `global`. A file's folder path mirrors its code without the first two segments. Expected table columns are not a manifest: they are the object form of a mapping's `inputs`.
 
-Row codes inside data (`source.document-kind.report`) are data, not manifests, and follow the code-column rule only. Never invent a new area, scope shape or segment rule without asking the owner.
+## Checks
 
-## Seed rows: identity by code, links by code
-
-A seed CSV row is written in the seed view of its table (`x-seed` in `source/schema/database/<group>.schema.json`):
-
-- It is identified by its natural key, normally `code`. It never carries `id` or the system fields `version`, `created_at`, `updated_at` and `deleted_at`; the loader assigns them. The id is derived from the table and the code (`mzizi_manifest.features.seeds.ids.stable_id`), so the same code always gives the same id. A code is therefore never edited in place: a rename is a new row linked by supersession.
-- A foreign key is written as the target's code, not its id: `values.scheme_code`, `countries.continent_code`. The generated schema names each link's seed column (`x-link.alias`).
-- Row codes follow the code-column rule: lowercase dot-separated segments of letters, digits and underscores (no hyphens): `geography.subregion.eastern_africa`, `finance.currency.kes`. A value's code starts with its scheme's code.
-- A table without a natural key cannot be seeded by CSV until its contract declares one.
-
-`uv run mzizi-manifest data [folder]` checks every `data/<scope>/<domain>/<table>.csv` against these rules: allowed and required columns, values, unique keys, that every code link resolves, and that the tables load in a dependency order.
-
+`uv run mzizi-manifest refs [folder]` checks manifest codes, kinds, scope, references, cycles and paths. `uv run mzizi-manifest data [folder]` checks every seed CSV: the grammar, the scheme and member rules, uniqueness, and that every code link resolves. Never invent a new space, short name, scheme shape or segment rule without asking the owner.

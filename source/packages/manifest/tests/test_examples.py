@@ -83,8 +83,8 @@ def test_example_csv_files_match_the_generated_table_schemas() -> None:
     assert result.problems == []
     assert result.order == ["reference.schemes", "reference.values"]
     assert [row.values["code"] for row in result.rows["reference.values"]] == [
-        "source.document_kind.report",
-        "source.document_kind.gazette",
+        "src.document.kind.report",
+        "src.document.kind.gazette",
     ]
 
 

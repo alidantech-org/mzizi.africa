@@ -5,9 +5,9 @@
   "$defs": {
     "code": {
       "type": "string",
-      "pattern": "^(global|[a-z]{2,3})(\\.[a-z0-9][a-z0-9_-]*){2,}$",
-      "maxLength": 200,
-      "description": "<scope>.<area>.<table-or-name>.<name>...: scope is global or a country code; area is a database group (then the next segment is one of its tables) or a system area; a file's folder path mirrors its code. A source's code equals source.sources.code."
+      "pattern": "^(pg|sys|mg)(\\.[a-z0-9]+(-[a-z0-9]+)*){3,}$",
+      "maxLength": 255,
+      "description": "A repository code: a space (pg = PostgreSQL row, sys = system thing, mg = MongoDB, reserved) then dotted lowercase segments; a dot means narrower than, a dash joins the words of one name. See .docs/rules/codes.md."
     },
     "name": {
       "type": "string",
@@ -375,13 +375,6 @@
           }
         }
       }
-    },
-    "systemArea": {
-      "enum": [
-        "database",
-        "engine"
-      ],
-      "description": "Areas for things that are not database rows, named by how they are used (database is the generated table schemas themselves). The registry reads this list."
     }
   }
 }

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/mapping.schema.json
-code: ke.source.documents.example-ministry-publications
+code: sys.map.src.doc.ke.example-ministry-publications
 describe: A publication listed on the ministry page becomes a source document.
 inputs: [title, href, slug, published]
 yields:
@@ -11,6 +11,6 @@ yields:
       title:         { from: title }
       canonical_url: { from: href }
       published_on:  { from: published }
-      kind_id:       { lookup: { table: reference.values, by: code, const: source.document-kind.report } }
+      kind_id:       { lookup: { table: reference.values, by: code, const: src.document.kind.report } }
 provenance: { method: extracted, locator: { page: $page, item: $item_index } }
 expect: { min_rows: 3, required_fields: [code, title] }

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
-code: ke.reference.patterns.office-names
+code: sys.trm.ref.pat.ke.office-names
 describe: Words that mark a public office in Kenyan sources.
 terms:
   - { value: governor, aliases: [county governor], meaning: Head of a county executive }

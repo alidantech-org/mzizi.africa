@@ -10,16 +10,16 @@ from mzizi_manifest.features.database.tables import load_order, load_tables, tab
 from mzizi_manifest.features.seeds.ids import SEED_NAMESPACE, stable_id
 from mzizi_manifest.orchestrator.cli import main
 
-SCHEMES = "code,title,owner_snapshot\ngeography.continent,Continents,un\nfinance.currency,Currencies,iso\n"
+SCHEMES = "code,title,owner_snapshot\ngeo.continent,Continents,un\nfin.currency,Currencies,iso\n"
 VALUES = (
     "code,scheme_code,label\n"
-    "geography.continent.africa,geography.continent,Africa\n"
-    "geography.continent.asia,geography.continent,Asia\n"
-    "finance.currency.kes,finance.currency,Kenyan shilling\n"
+    "geo.continent.africa,geo.continent,Africa\n"
+    "geo.continent.asia,geo.continent,Asia\n"
+    "fin.currency.kes,fin.currency,Kenyan shilling\n"
 )
 COUNTRIES = (
     "code,name,official_name,iso_alpha2,iso_alpha3,iso_numeric,calling_code,continent_code,currency_code\n"
-    "ke,Kenya,Republic of Kenya,KE,KEN,404,+254,geography.continent.africa,finance.currency.kes\n"
+    "ke,Kenya,Republic of Kenya,KE,KEN,404,+254,geo.continent.africa,fin.currency.kes\n"
 )
 
 
@@ -57,16 +57,45 @@ def test_a_valid_release_loads_in_dependency_order_and_links_by_code(tmp_path: P
         ),
         ("global/reference/values.csv", "code,scheme_id,label\na,b,c\n", "unknown column 'scheme_id'"),
         ("global/reference/values.csv", "code,label\na,b\n", "missing required column 'scheme_code'"),
-        ("global/reference/values.csv", "code,scheme_code,label\nBad Code,geography.continent,x\n", "does not match"),
         (
             "global/reference/values.csv",
-            "code,scheme_code,label\ngeography.continent.x,geography.continent,\n",
+            "code,scheme_code,label\ngeo.continent.north_america,geo.continent,x\n",
+            "use a dash, not an underscore",
+        ),
+        (
+            "global/reference/values.csv",
+            "code,scheme_code,label\nGeo.Continent.x,geo.continent,x\n",
+            "must be lowercase words joined by dashes",
+        ),
+        (
+            "global/reference/values.csv",
+            "code,scheme_code,label\nfin.currency.x,geo.continent,x\n",
+            "must start with its parent's code 'geo.continent'",
+        ),
+        (
+            "global/reference/values.csv",
+            "code,scheme_code,label\ngeo.continent.a.b,geo.continent,x\n",
+            "must add exactly one segment",
+        ),
+        (
+            "global/reference/values.csv",
+            "code,scheme_code,label\ngeo.continent.x,geo.continent,\n",
             "label is required",
         ),
         (
             "global/reference/values.csv",
-            "code,scheme_code,label\ngeography.continent.x,nope.scheme,X\n",
+            "code,scheme_code,label\nnope.scheme.x,nope.scheme,X\n",
             "unknown reference.schemes code 'nope.scheme'",
+        ),
+        (
+            "global/reference/schemes.csv",
+            "code,title,owner_snapshot\nbad.concept,T,o\n",
+            "must start with a schema short",
+        ),
+        (
+            "global/reference/schemes.csv",
+            "code,title,owner_snapshot\ngeo.north-america,T,o\n",
+            "concept 'north-america' must be a single word",
         ),
         ("global/reference/countries.csv", "code,name,iso_alpha2\nke,Kenya,ke\n", "iso_alpha2: 'ke' does not match"),
         (
@@ -89,7 +118,7 @@ def test_a_valid_release_loads_in_dependency_order_and_links_by_code(tmp_path: P
             "code,name,iso_alpha2\nke,Kenya,KE\nke,Kenya Again,KX\n",
             "duplicate code 'ke'",
         ),
-        ("global/reference/countries.csv", "code,name,iso_alpha2\nke,Kenya,KE\n,,\nug,Uganda,UG\n", None),
+        ("global/reference/countries.csv", "code,name\nnorthern-cyprus,Northern Cyprus\n,,\nso,Somaliland\n", None),
     ],
 )
 def test_broken_rows_are_reported_with_file_line_and_column(
@@ -105,11 +134,11 @@ def test_broken_rows_are_reported_with_file_line_and_column(
 
 
 def test_a_self_link_may_point_forward_but_never_in_a_circle(tmp_path: Path) -> None:
-    schemes = "code,title,owner_snapshot\ngeography.continent,Continents,un\n"
+    schemes = "code,title,owner_snapshot\ngeo.continent,Continents,un\n"
     forward = (
         "code,scheme_code,label,supersedes_code\n"
-        "geography.continent.new,geography.continent,New,geography.continent.old\n"
-        "geography.continent.old,geography.continent,Old,\n"
+        "geo.continent.new,geo.continent,New,geo.continent.old\n"
+        "geo.continent.old,geo.continent,Old,\n"
     )
     assert (
         check_data(
@@ -119,8 +148,8 @@ def test_a_self_link_may_point_forward_but_never_in_a_circle(tmp_path: Path) -> 
     )
     circle = (
         "code,scheme_code,label,supersedes_code\n"
-        "geography.continent.a,geography.continent,A,geography.continent.b\n"
-        "geography.continent.b,geography.continent,B,geography.continent.a\n"
+        "geo.continent.a,geo.continent,A,geo.continent.b\n"
+        "geo.continent.b,geo.continent,B,geo.continent.a\n"
     )
     other = tmp_path / "other"
     problems = check_data(
@@ -152,7 +181,7 @@ def test_the_same_code_in_two_scopes_is_a_duplicate(tmp_path: Path) -> None:
     files = {
         "global/reference/schemes.csv": SCHEMES,
         "global/reference/values.csv": VALUES,
-        "ke/reference/values.csv": "code,scheme_code,label\ngeography.continent.africa,geography.continent,Africa again\n",
+        "ke/reference/values.csv": "code,scheme_code,label\ngeo.continent.africa,geo.continent,Africa again\n",
     }
     assert any("duplicate code" in p for p in check_data(tree(tmp_path, files)).problems)
 

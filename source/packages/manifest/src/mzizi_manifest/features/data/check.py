@@ -20,6 +20,14 @@ from datetime import date, datetime, time
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
+from mzizi_manifest.features.codes.glossary import load_glossary
+from mzizi_manifest.features.codes.grammar import (
+    MAX_LENGTH,
+    member_path_problem,
+    scheme_path_problem,
+    segments_problem,
+    stored_code,
+)
 from mzizi_manifest.features.database.tables import Column, Table, load_order, load_tables, table_cycle
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
@@ -123,8 +131,13 @@ def _columns_by_seed_name(table: Table) -> dict[str, Column]:
 
 
 def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
-    """Check every CSV under `root/data` and return the problems, the rows and the load order."""
+    """Check every CSV under `root/data` and return the problems, the rows and the load order.
+
+    A `code` cell and a link cell hold the identity path alone (`ke`, `geo.continent.africa`): the file and the link column
+    already say which table. The stored code is `<schema short>.<table short>.<path>` (`ref.cty.ke`).
+    """
     tables = load_tables(schema_root)
+    glossary = load_glossary(schema_root)
     by_id = {table.id: table for table in tables.values()}
     result = DataResult()
     files = sorted((root / "data").rglob("*.csv")) if (root / "data").is_dir() else []
@@ -158,6 +171,21 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                     continue
                 if (problem := _value_problem(column, value)) and not column.link:
                     result.problems.append(f"{where}: {seed_name}: {problem}")
+            identity = row.values.get("code", "")
+            tcode = glossary.tables.get(name)
+            if identity and tcode is None:
+                result.problems.append(f"{where}: {name} has no short name in seed/codes.json")
+            elif identity and tcode is not None:
+                reason = segments_problem(identity)
+                if reason is None and len(stored_code(tcode, identity)) > MAX_LENGTH:
+                    reason = f"the stored code would be longer than {MAX_LENGTH}"
+                if reason is None and tcode.kind == "scheme":
+                    reason = scheme_path_problem(identity, glossary)
+                if reason is None and tcode.kind == "member":
+                    parent_path = row.values.get(tcode.parent or "", "")
+                    reason = member_path_problem(identity, parent_path) if parent_path else None
+                if reason:
+                    result.problems.append(f"{where}: code {identity!r} {reason}")
             key = tuple(row.values.get(k, "") for k in natural)
             if all(key):
                 if key in seen:
@@ -197,6 +225,9 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                     result.problems.append(
                         f"{where}: {alias}: {value!r} is a {target.qualified_name} code but that table has no seed file"
                     )
+                    continue
+                if reason := segments_problem(value):
+                    result.problems.append(f"{where}: {alias} {value!r} {reason}")
                     continue
                 if (value,) not in keys.get(target.qualified_name, {}):
                     result.problems.append(f"{where}: {alias}: unknown {target.qualified_name} code {value!r}")

@@ -18,7 +18,7 @@ class DocumentsRow(BaseModel):
 
     canonical_url: Annotated[str, Field(max_length=2048)] | None = None
     code: Annotated[
-        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*){0,15}$")
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
     ]
     created_at: datetime
     deleted_at: datetime | None = None

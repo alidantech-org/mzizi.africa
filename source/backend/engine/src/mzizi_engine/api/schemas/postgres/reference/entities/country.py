@@ -18,7 +18,7 @@ class CountryRow(BaseModel):
 
     calling_code: Annotated[str, Field(min_length=2, max_length=5, pattern="^\\+[0-9]{1,4}$")] | None = None
     code: Annotated[
-        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*){0,15}$")
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
     ]
     continent_id: UUID | None = None
     created_at: datetime

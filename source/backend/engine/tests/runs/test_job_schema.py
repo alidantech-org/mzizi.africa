@@ -22,4 +22,4 @@ def test_the_example_job_parses_with_the_real_registry() -> None:
 
     example = SCHEMA_FILE.parent / "_example" / "job.json"
     spec = parse_job_spec(example.read_text(encoding="utf-8"), build_default_registry(EngineConfig.from_env({})))
-    assert spec.sources[0].authority_ref == "ke.source.websites.example-ministry" and spec.stages[0].operation == "scraping.crawl"
+    assert spec.sources[0].authority_ref == "pg.src.wbs.ke.example-ministry" and spec.stages[0].operation == "scraping.crawl"

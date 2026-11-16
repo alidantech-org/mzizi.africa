@@ -1,0 +1,309 @@
+{
+  "description": "Short names for codes (`.docs/rules/codes.md`). A schema or table short is fixed forever; every generated table must have one, unique within its schema. `kind` says how a table's row codes are built: entity (default: a name path), scheme (`<schema short>.<concept>...`, single-word concepts) or member (extends the code of its `parent` link).",
+  "spaces": {
+    "pg": "PostgreSQL: identifies a database row",
+    "sys": "System: identifies something that is not a row (mapping, term list, job, engine data)",
+    "mg": "MongoDB: reserved, not used yet"
+  },
+  "schemas": {
+    "audit": "aud",
+    "auth": "aut",
+    "civic": "civ",
+    "filesystem": "fil",
+    "finance": "fin",
+    "geography": "geo",
+    "governance": "gov",
+    "legal": "leg",
+    "official": "ofc",
+    "politics": "pol",
+    "reference": "ref",
+    "source": "src"
+  },
+  "tables": {
+    "audit.decisions": {
+      "short": "dec"
+    },
+    "audit.events": {
+      "short": "evt"
+    },
+    "auth.accounts": {
+      "short": "acc"
+    },
+    "auth.delegation_roles": {
+      "short": "drl"
+    },
+    "auth.delegations": {
+      "short": "del"
+    },
+    "auth.invitations": {
+      "short": "inv"
+    },
+    "auth.login_identities": {
+      "short": "lid"
+    },
+    "auth.memberships": {
+      "short": "mem"
+    },
+    "auth.permissions": {
+      "short": "prm"
+    },
+    "auth.role_assignments": {
+      "short": "ras"
+    },
+    "auth.role_permissions": {
+      "short": "rpm"
+    },
+    "auth.roles": {
+      "short": "rol"
+    },
+    "auth.scopes": {
+      "short": "scp"
+    },
+    "civic.bids": {
+      "short": "bid"
+    },
+    "civic.contracts": {
+      "short": "con"
+    },
+    "civic.deliveries": {
+      "short": "dlv"
+    },
+    "civic.procurements": {
+      "short": "prc"
+    },
+    "civic.project_features": {
+      "short": "pft"
+    },
+    "civic.projects": {
+      "short": "prj"
+    },
+    "civic.services": {
+      "short": "svc"
+    },
+    "filesystem.file_extensions": {
+      "short": "fxt"
+    },
+    "filesystem.file_relations": {
+      "short": "frl"
+    },
+    "filesystem.file_versions": {
+      "short": "fvr"
+    },
+    "filesystem.files": {
+      "short": "fle"
+    },
+    "filesystem.folders": {
+      "short": "fld"
+    },
+    "filesystem.taggings": {
+      "short": "tgg"
+    },
+    "filesystem.tags": {
+      "short": "tag"
+    },
+    "finance.appropriations": {
+      "short": "apr"
+    },
+    "finance.budget_versions": {
+      "short": "bvr"
+    },
+    "finance.budgets": {
+      "short": "bud"
+    },
+    "finance.debts": {
+      "short": "dbt"
+    },
+    "finance.fiscal_periods": {
+      "short": "fpr"
+    },
+    "finance.flows": {
+      "short": "flw"
+    },
+    "finance.funds": {
+      "short": "fnd"
+    },
+    "geography.changes": {
+      "short": "chg"
+    },
+    "geography.datasets": {
+      "short": "dts"
+    },
+    "geography.features": {
+      "short": "ftr"
+    },
+    "geography.geometries": {
+      "short": "gmt"
+    },
+    "geography.identifiers": {
+      "short": "idn"
+    },
+    "geography.names": {
+      "short": "nam"
+    },
+    "geography.places": {
+      "short": "plc"
+    },
+    "geography.relationships": {
+      "short": "rel"
+    },
+    "geography.units": {
+      "short": "unt"
+    },
+    "governance.authority_scopes": {
+      "short": "asc"
+    },
+    "governance.holders": {
+      "short": "hld"
+    },
+    "governance.institutions": {
+      "short": "ins"
+    },
+    "governance.mandates": {
+      "short": "mnd"
+    },
+    "governance.offices": {
+      "short": "ofs"
+    },
+    "governance.relationships": {
+      "short": "rel"
+    },
+    "legal.amendments": {
+      "short": "amd"
+    },
+    "legal.instrument_versions": {
+      "short": "ivr"
+    },
+    "legal.instruments": {
+      "short": "ins"
+    },
+    "legal.provision_versions": {
+      "short": "pvr"
+    },
+    "legal.provisions": {
+      "short": "prv"
+    },
+    "official.contacts": {
+      "short": "cnt"
+    },
+    "official.entities": {
+      "short": "ent"
+    },
+    "official.identifiers": {
+      "short": "idn"
+    },
+    "official.individuals": {
+      "short": "ind"
+    },
+    "official.names": {
+      "short": "nam"
+    },
+    "official.relationships": {
+      "short": "rel"
+    },
+    "politics.alignments": {
+      "short": "aln"
+    },
+    "politics.candidates": {
+      "short": "cnd"
+    },
+    "politics.coalitions": {
+      "short": "coa"
+    },
+    "politics.contests": {
+      "short": "cts"
+    },
+    "politics.elections": {
+      "short": "elc"
+    },
+    "politics.electorates": {
+      "short": "elt"
+    },
+    "politics.manifesto_items": {
+      "short": "mit"
+    },
+    "politics.manifestos": {
+      "short": "man"
+    },
+    "politics.memberships": {
+      "short": "mem"
+    },
+    "politics.option_results": {
+      "short": "opr"
+    },
+    "politics.parties": {
+      "short": "par"
+    },
+    "politics.referendum_options": {
+      "short": "rop"
+    },
+    "politics.results": {
+      "short": "res"
+    },
+    "reference.countries": {
+      "short": "cty"
+    },
+    "reference.patterns": {
+      "short": "pat"
+    },
+    "reference.schemes": {
+      "short": "sch",
+      "kind": "scheme"
+    },
+    "reference.topics": {
+      "short": "top"
+    },
+    "reference.units": {
+      "short": "unt"
+    },
+    "reference.value_relations": {
+      "short": "vrl"
+    },
+    "reference.values": {
+      "short": "val",
+      "kind": "member",
+      "parent": "scheme_code"
+    },
+    "source.apis": {
+      "short": "api"
+    },
+    "source.attributions": {
+      "short": "att"
+    },
+    "source.captures": {
+      "short": "cap"
+    },
+    "source.citations": {
+      "short": "cit"
+    },
+    "source.documents": {
+      "short": "doc"
+    },
+    "source.evidence": {
+      "short": "evd"
+    },
+    "source.manifest_bindings": {
+      "short": "mbd"
+    },
+    "source.manifest_releases": {
+      "short": "mrl"
+    },
+    "source.manifests": {
+      "short": "mnf"
+    },
+    "source.publication_receipts": {
+      "short": "prc"
+    },
+    "source.publishers": {
+      "short": "pub"
+    },
+    "source.sources": {
+      "short": "srs"
+    },
+    "source.verifications": {
+      "short": "ver"
+    },
+    "source.websites": {
+      "short": "wbs"
+    }
+  }
+}

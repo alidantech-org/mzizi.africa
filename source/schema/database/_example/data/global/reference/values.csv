@@ -1,3 +1,3 @@
 code,scheme_code,label
-source.document_kind.report,source.document_kind,Report
-source.document_kind.gazette,source.document_kind,Gazette notice
+src.document.kind.report,src.document.kind,Report
+src.document.kind.gazette,src.document.kind,Gazette notice

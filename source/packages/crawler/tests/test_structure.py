@@ -38,7 +38,7 @@ def test_a_site_extending_an_abstract_family_resolves_modules_and_variables():
         "family",
         {
             "manifest.yml": read("manifest.yml").replace(
-                "code: ke.source.websites.example-ministry", "code: ke.source.websites.county-family\nabstract: true"
+                "code: pg.src.wbs.ke.example-ministry", "code: pg.src.wbs.ke.county-family\nabstract: true"
             ),
             "modules/tenders.yml": "module: tenders\ndiscover:\n  listing:\n    url: ${tenders_path}\n    items: { css: li }\nextract:\n  fields:\n    title: { from: link_text }\n",
             "NOTES.md": "x" * 100,
@@ -49,7 +49,7 @@ def test_a_site_extending_an_abstract_family_resolves_modules_and_variables():
         {
             "manifest.yml": read("manifest.yml").replace(
                 "modules: [documents]",
-                "modules: []\nextends: ke.source.websites.county-family\nvars: { tenders_path: /publications/tenders }",
+                "modules: []\nextends: pg.src.wbs.ke.county-family\nvars: { tenders_path: /publications/tenders }",
             ),
             "NOTES.md": "x" * 100,
         },

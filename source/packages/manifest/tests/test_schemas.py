@@ -40,7 +40,7 @@ def _errors(schema_path: str, document: object) -> list[str]:
 
 
 def _website(**extra: object) -> dict:
-    return {"code": "ke.source.websites.iebc", "kind": "website", "modules": ["party-list"], "policy": POLICY, **extra}
+    return {"code": "pg.src.wbs.ke.iebc", "kind": "website", "modules": ["party-list"], "policy": POLICY, **extra}
 
 
 def _api(**extra: object) -> dict:
@@ -48,7 +48,7 @@ def _api(**extra: object) -> dict:
         "base_url": "https://api.example.org",
         "endpoints": {"countries": {"path": "/v1/countries", "items": {"jsonpath": "$.data[*]"}}},
     }
-    return {"code": "global.source.apis.example-api", "kind": "api", "api": {**api, **extra}, "policy": POLICY}
+    return {"code": "pg.src.api.global.example-api", "kind": "api", "api": {**api, **extra}, "policy": POLICY}
 
 
 @pytest.mark.parametrize("path", _files(), ids=lambda p: f"{p.parent.name}/{p.name}")
@@ -62,7 +62,7 @@ def test_every_schema_is_valid_and_has_an_unversioned_id(path: Path) -> None:
 
 
 def test_a_website_and_an_api_source_validate() -> None:
-    assert _errors("sources/source.schema.json", _website(uses={"mappings": ["ke.official.party-list"]})) == []
+    assert _errors("sources/source.schema.json", _website(uses={"mappings": ["sys.map.ref.cty.ke.party-list"]})) == []
     assert _errors("sources/source.schema.json", _api()) == []
 
 
@@ -107,7 +107,7 @@ def test_a_credential_is_only_ever_named() -> None:
 def test_modules_may_name_a_mapping_and_an_endpoint() -> None:
     module = {
         "module": "countries",
-        "mapping": "global.reference.countries.example-statistics",
+        "mapping": "sys.map.ref.cty.global.example-statistics",
         "discover": {"endpoint": {"name": "countries"}},
         "extract": {"fields": {"name": {"from": {"jsonpath": "$.name"}}}},
     }
@@ -117,7 +117,7 @@ def test_modules_may_name_a_mapping_and_an_endpoint() -> None:
 
 def _mapping() -> dict:
     return {
-        "code": "ke.official.individuals.office-holders",
+        "code": "sys.map.ofc.ind.ke.office-holders",
         "describe": "A person holding a public office for a period.",
         "inputs": ["name", "office_code", "start_date"],
         "yields": [
@@ -193,16 +193,16 @@ def test_bootstrap_names_environment_variables_only() -> None:
 
 def test_a_term_list_validates() -> None:
     document = {
-        "code": "ke.reference.patterns.office-names",
+        "code": "sys.trm.ref.pat.ke.office-names",
         "terms": [{"value": "governor", "aliases": ["county governor"]}],
     }
     assert _errors("engine/terms.schema.json", document) == []
-    assert _errors("engine/terms.schema.json", {"code": "ke.reference.patterns.office-names", "terms": []})
+    assert _errors("engine/terms.schema.json", {"code": "sys.trm.ref.pat.ke.office-names", "terms": []})
 
 
 def test_a_mapping_input_may_state_the_expected_table_column() -> None:
     document = {
-        "code": "ke.finance.flows.county-allocations",
+        "code": "sys.map.fin.flw.ke.county-allocations",
         "inputs": [
             "slug",
             {"name": "allocation", "aliases": ["Amount"], "type": "quantity", "units": ["KES"], "required": True},
@@ -238,14 +238,25 @@ def test_every_schema_for_a_coded_manifest_accepts_a_code(schema: str) -> None:
 
 
 def test_database_schemas_carry_codes_for_the_group_and_each_table() -> None:
-    pattern = re.compile(r"^(global|[a-z]{2,3})(\.[a-z0-9][a-z0-9_-]*){2,}$")
+    pattern = re.compile(r"^sys(\.[a-z0-9]+(-[a-z0-9]+)*){2,}$")
     files = sorted((SCHEMA_ROOT / "database").glob("*.schema.json"))
     assert files
     for path in files:
         document = json.loads(path.read_text(encoding="utf-8"))
         group = path.name.removesuffix(".schema.json")
-        assert document["code"] == f"global.database.{group}"
-        assert pattern.match(document["code"])
+        assert document["code"] == f"sys.sch.{group}" and pattern.match(document["code"])
         for name, table in document["$defs"].items():
-            assert table["x-code"] == f"global.{group}.{name}" and pattern.match(table["x-code"])
+            assert table["x-code"] == f"sys.tbl.{group}.{name.replace('_', '-')}" and pattern.match(table["x-code"])
             assert table["x-table"] == f"{group}.{name}"
+
+
+def test_the_code_pattern_accepts_the_three_spaces_and_rejects_loose_codes() -> None:
+    schema = {"$ref": "https://res.alidantech.org/mzizi/public/schemas/sources/common.schema.json#/$defs/code"}
+    registry = _registry()
+    from jsonschema import Draft202012Validator
+
+    validator = Draft202012Validator(schema, registry=registry)
+    for good in ("pg.ref.cty.ke", "sys.map.ref.cty.ke.office-holders", "mg.log.runs.today"):
+        assert not list(validator.iter_errors(good)), good
+    for bad in ("ref.cty.ke", "pg.ref.cty", "pg.ref_cty.ke", "pg.Ref.cty.ke", "db.ref.cty.ke", "pg.ref..cty"):
+        assert list(validator.iter_errors(bad)), bad

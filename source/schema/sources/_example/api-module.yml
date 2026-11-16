@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/module.schema.json
 module: countries
-mapping: global.reference.countries.example-statistics
+mapping: sys.map.ref.cty.global.example-statistics
 discover:
   endpoint: { name: countries }
 extract:

@@ -17,7 +17,7 @@ class RolesRow(BaseModel):
     table: ClassVar[str] = "auth.roles"
 
     code: Annotated[
-        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9][a-z0-9_]*(\\.[a-z0-9][a-z0-9_]*){0,15}$")
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
     ]
     created_at: datetime
     description: Annotated[str, Field(max_length=4000)] | None = None

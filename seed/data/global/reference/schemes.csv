@@ -1,6 +1,6 @@
 code,title,owner_snapshot
-geography.continent,Continents,mzizi curated; continent list follows the UN M49 geoscheme
-geography.subregion,UN M49 regions and sub-regions,"United Nations Statistics Division, M49 geoscheme; curated by mzizi"
-geography.recognition_status,Recognition status of a country,mzizi curated; definitions are in the seed notes
-finance.currency,Currencies (ISO 4217),ISO 4217 maintenance agency (SIX Group); curated by mzizi
-reference.country_designation,Country designations,mzizi curated; how a country names its form of state
+geo.continent,Continents,mzizi curated; continent list follows the UN M49 geoscheme
+geo.subregion,UN M49 regions and sub-regions,"United Nations Statistics Division, M49 geoscheme; curated by mzizi"
+geo.recognition.status,Recognition status of a country,mzizi curated; how an entity is a country
+fin.currency,Currencies (ISO 4217),ISO 4217 maintenance agency (SIX Group); curated by mzizi
+ref.country.designation,Country designations,mzizi curated; how a country names its form of state

@@ -1,16 +1,22 @@
-"""The cross-reference registry resolves codes, scopes and kinds, checks them against the contracts, and reports each problem
+"""The cross-reference registry resolves codes, scopes and kinds, checks codes against the glossary, and reports each problem
 with file, field and code."""
 
 from pathlib import Path
 
 import pytest
 
-from mzizi_manifest.features.registry.registry import Kind, can_see, scope_of
+from mzizi_manifest.features.registry.registry import Kind, can_see
 from mzizi_manifest.features.registry.scan import scan
 from mzizi_manifest.orchestrator.cli import main
 
 SCHEMA_ROOT = Path(__file__).resolve().parents[3] / "schema"
 SEED_ROOT = SCHEMA_ROOT.parents[1] / "seed"
+
+A = "pg.src.wbs.ke.a"
+B = "pg.src.wbs.ke.b"
+M_GLOBAL = "sys.map.ref.cty.global.base"
+M_KE = "sys.map.ref.cty.ke.local"
+V_KE = "sys.trm.ref.pat.ke.names"
 
 
 def write(root: Path, files: dict[str, str]) -> Path:
@@ -33,14 +39,6 @@ def terms(code: str) -> str:
     return f"code: {code}\nterms: []\n"
 
 
-# Compliant codes used below.
-A = "ke.source.websites.a"
-B = "ke.source.websites.b"
-M_GLOBAL = "global.reference.countries.base"
-M_KE = "ke.reference.countries.local"
-V_KE = "ke.reference.patterns.names"
-
-
 def problems(root: Path, *, mirror: bool = False) -> list[str]:
     return scan(root, mirror_paths=mirror).problems
 
@@ -49,42 +47,39 @@ def test_the_example_tree_resolves_every_code() -> None:
     result = scan(SCHEMA_ROOT, mirror_paths=False)
     assert result.problems == []
     kinds = {code: entry.kind for code, entry in result.registry.entries.items()}
-    assert kinds["ke.source.websites.example-ministry"] is Kind.SOURCE
-    assert kinds["global.reference.countries.example-statistics"] is Kind.MAPPING
-    assert kinds["ke.reference.patterns.office-names"] is Kind.TERMS
-    assert kinds["ke.finance.flows.county-allocations"] is Kind.MAPPING
-    assert kinds["ke.engine.jobs.example-ministry-publications"] is Kind.JOB
-    users = result.registry.users_of("ke.reference.patterns.office-names")
-    assert [e.code for e in users] == ["ke.source.websites.example-ministry"]
+    assert kinds["pg.src.wbs.ke.example-ministry"] is Kind.SOURCE
+    assert kinds["sys.map.ref.cty.global.example-statistics"] is Kind.MAPPING
+    assert kinds["sys.trm.ref.pat.ke.office-names"] is Kind.TERMS
+    assert kinds["sys.map.fin.flw.ke.county-allocations"] is Kind.MAPPING
+    assert kinds["sys.eng.job.ke.example-ministry-publications"] is Kind.JOB
+    users = result.registry.users_of("sys.trm.ref.pat.ke.office-names")
+    assert [e.code for e in users] == ["pg.src.wbs.ke.example-ministry"]
 
 
 def test_the_real_seed_tree_has_no_problems() -> None:
-    assert scan(SEED_ROOT).problems == []
+    result = scan(SEED_ROOT)
+    assert result.problems == []
+    assert result.registry.resolve("sys.eng.web.classification").kind is Kind.ENGINE  # type: ignore[union-attr]
 
 
 def test_a_valid_tree_with_a_module_mapping_and_global_sharing(tmp_path: Path) -> None:
     root = write(
         tmp_path,
         {
-            "sources/ke/source/websites/a/manifest.yml": source(
-                A, uses=f"uses: {{ mappings: [{M_GLOBAL}], terms: [{V_KE}] }}\n"
-            ),
-            "sources/ke/source/websites/a/modules/x.yml": f"module: x\nmapping: {M_KE}\n",
-            "mappings/global/reference/countries/base.yml": mapping(M_GLOBAL),
-            "mappings/ke/reference/countries/local.yml": mapping(M_KE),
-            "terms/ke/reference/patterns/names.yml": terms(V_KE),
+            "sources/wbs/ke/a/manifest.yml": source(A, uses=f"uses: {{ mappings: [{M_GLOBAL}], terms: [{V_KE}] }}\n"),
+            "sources/wbs/ke/a/modules/x.yml": f"module: x\nmapping: {M_KE}\n",
+            "mappings/ref/cty/global/base.yml": mapping(M_GLOBAL),
+            "mappings/ref/cty/ke/local.yml": mapping(M_KE),
+            "terms/ref/pat/ke/names.yml": terms(V_KE),
         },
     )
     assert problems(root, mirror=True) == []
 
 
 def test_unknown_codes_name_the_file_the_field_and_the_code(tmp_path: Path) -> None:
-    root = write(
-        tmp_path, {"sources/ke/a/manifest.yml": source(A, uses="uses: { mappings: [ke.reference.countries.nope] }\n")}
-    )
-    assert problems(root) == [
-        "sources/ke/a/manifest.yml: uses.mappings[0]: unknown mapping code 'ke.reference.countries.nope'"
-    ]
+    missing = "sys.map.ref.cty.ke.nope"
+    root = write(tmp_path, {"sources/a/manifest.yml": source(A, uses=f"uses: {{ mappings: [{missing}] }}\n")})
+    assert problems(root) == [f"sources/a/manifest.yml: uses.mappings[0]: unknown mapping code {missing!r}"]
 
 
 def test_duplicate_codes_are_rejected_and_name_both_files(tmp_path: Path) -> None:
@@ -105,22 +100,20 @@ def test_a_reference_cycle_is_an_error(tmp_path: Path) -> None:
 
 
 def test_a_manifest_may_not_use_another_country_and_global_may_not_use_a_country(tmp_path: Path) -> None:
+    tz = "sys.map.ref.cty.tz.m"
     root = write(
         tmp_path,
         {
-            "s/a/manifest.yml": source(A, uses="uses: { mappings: [tz.reference.countries.m] }\n"),
-            "s/g/manifest.yml": source("global.source.websites.g", uses=f"uses: {{ mappings: [{M_KE}] }}\n"),
-            "m/tz.yml": mapping("tz.reference.countries.m"),
+            "s/a/manifest.yml": source(A, uses=f"uses: {{ mappings: [{tz}] }}\n"),
+            "s/g/manifest.yml": source("pg.src.wbs.global.g", uses=f"uses: {{ mappings: [{M_KE}] }}\n"),
+            "m/tz.yml": mapping(tz),
             "m/ke.yml": mapping(M_KE),
         },
     )
     found = problems(root)
+    assert any(f"{tz!r} is in scope 'tz', which {A!r} (scope 'ke') may not use" in p for p in found)
     assert any(
-        "'tz.reference.countries.m' is in scope 'tz', which 'ke.source.websites.a' (scope 'ke') may not use" in p
-        for p in found
-    )
-    assert any(
-        f"{M_KE!r} is in scope 'ke', which 'global.source.websites.g' (scope 'global') may not use" in p for p in found
+        f"{M_KE!r} is in scope 'ke', which 'pg.src.wbs.global.g' (scope 'global') may not use" in p for p in found
     )
 
 
@@ -135,14 +128,15 @@ def test_a_code_of_the_wrong_kind_is_an_error(tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     ("code", "expected"),
     [
-        ("kenya.reference.countries.m", "must start with a scope"),
-        ("ke.m", "needs at least <scope>.<area>.<name>"),
-        ("ke.nowhere.countries.m", "'nowhere' is not a database group or system area"),
-        ("ke.reference.nonsense.m", "'nonsense' is not a table of 'reference'"),
-        ("ke.reference.countries", "is not a table of 'reference'"),
+        ("sys.map.ref_cty.ke.m", "use a dash, not an underscore"),
+        ("sys.map.ref.cty.ke.North-America", "must be lowercase words joined by dashes"),
+        ("sys.map.ref.cty", "must look like sys.map.<schema short>.<table short>.<scope>.<name>"),
+        ("sys.map.ref.nope.ke.m", "ref.nope is not a schema and table short"),
+        ("sys.map.ref.cty.kenya.m", "'kenya' must be 'global' or a country code"),
+        ("pg.map.ref.cty.ke.m", "must look like sys.map"),
     ],
 )
-def test_a_code_must_name_a_real_scope_area_and_table(tmp_path: Path, code: str, expected: str) -> None:
+def test_a_mapping_code_must_say_what_it_is(tmp_path: Path, code: str, expected: str) -> None:
     root = write(tmp_path, {"m/m.yml": mapping(code)})
     assert any(expected in p for p in problems(root)), problems(root)
 
@@ -151,74 +145,54 @@ def test_a_source_job_and_mapping_must_fit_their_kind(tmp_path: Path) -> None:
     root = write(
         tmp_path,
         {
-            "a.yml": source("ke.governance.holders.a"),
-            "b.yml": source("ke.source.apis.b"),
-            "d.yml": mapping("ke.governance.holders.d", table="official.individuals"),
-            "e.json": '{"code": "ke.reference.patterns.e", "spec_version": 1, "stages": []}',
+            "a.yml": source("pg.src.api.ke.a", kind="website"),
+            "b.yml": source("pg.src.wbs.ke.b", kind="api"),
+            "d.yml": mapping("sys.map.ofc.ind.ke.d"),
+            "e.json": '{"code": "sys.eng.run.ke.e", "spec_version": 1, "stages": []}',
+            "f.yml": terms("sys.trm.ref.pat.ke.f"),
         },
     )
     found = problems(root)
-    assert any("a website source code must be <scope>.source.websites.<name>" in p for p in found)
-    assert any(
-        "a website source code must be <scope>.source.websites.<name>, not 'ke.source.apis.b'" in p for p in found
-    )
-    assert any("a job spec code must be <scope>.engine.jobs.<name>" in p for p in found)
-    assert any("named after the table it writes first (official.individuals)" in p for p in found)
+    assert any("a website source code must use the short of source.websites, not 'api'" in p for p in found)
+    assert any("an api source code must use the short of source.apis, not 'wbs'" in p for p in found)
+    assert any("a mapping is named after the table it writes first (reference.countries)" in p for p in found)
+    assert any("a job spec code must be sys.eng.job.<scope>.<name>" in p for p in found)
+    assert not any("f.yml" in p for p in found)
 
 
 def test_the_path_must_mirror_the_code(tmp_path: Path) -> None:
     root = write(
         tmp_path,
         {
-            "mappings/ke/reference/countries/local.yml": mapping(M_KE),
-            "mappings/ke/elsewhere/local2.yml": mapping("ke.reference.countries.local2"),
-            "sources/ke/source/websites/a/manifest.yml": source(A),
-            "terms/ke/reference/patterns/wrong-name.yml": terms(V_KE),
+            "mappings/ref/cty/ke/local.yml": mapping(M_KE),
+            "mappings/elsewhere/local2.yml": mapping("sys.map.ref.cty.ke.local2"),
+            "sources/wbs/ke/a/manifest.yml": source(A),
+            "terms/ref/pat/ke/wrong-name.yml": terms(V_KE),
         },
     )
     found = problems(root, mirror=True)
     assert len(found) == 2
     assert any(
-        "mappings/ke/elsewhere/local2.yml: the path must mirror the code 'ke.reference.countries.local2'" in p
-        for p in found
+        "mappings/elsewhere/local2.yml: the path must mirror the code 'sys.map.ref.cty.ke.local2'" in p for p in found
     )
     assert any("wrong-name.yml: the path must mirror the code" in p for p in found)
 
 
-def test_engine_data_and_jobs_are_flat_and_only_a_non_global_scope_adds_a_folder(tmp_path: Path) -> None:
-    web = "code: global.engine.web.classification\nversion: 1\nurl_kinds: {}\n"
-    job = '{"code": "global.engine.jobs.nightly", "spec_version": 1, "stages": []}'
-    scoped = "code: sw.engine.web.classification\nversion: 1\nurl_kinds: {}\n"
-    root = write(
-        tmp_path,
-        {
-            "engine/web/classification.yaml": web,
-            "engine/jobs/nightly.json": job,
-            "engine/sw/web/classification.yaml": scoped,
-        },
-    )
+def test_engine_data_and_jobs_live_in_a_flat_engine_folder(tmp_path: Path) -> None:
+    web = "code: sys.eng.web.classification\nversion: 1\nurl_kinds: {}\n"
+    job = '{"code": "sys.eng.job.ke.nightly", "spec_version": 1, "stages": []}'
+    root = write(tmp_path, {"engine/web/classification.yaml": web, "engine/job/ke/nightly.json": job})
     result = scan(root)
     assert result.problems == []
     assert {e.kind for e in result.registry.entries.values()} == {Kind.ENGINE, Kind.JOB}
-
-
-def test_engine_data_in_the_wrong_place_or_area_is_rejected(tmp_path: Path) -> None:
-    web = "code: global.engine.web.classification\nversion: 1\nurl_kinds: {}\n"
-    root = write(
-        tmp_path,
-        {
-            "terms/global/web/classification.yaml": web,
-            "engine/ke/jobs/x.json": '{"code": "global.engine.jobs.x", "spec_version": 1, "stages": []}',
-            "engine/y.yaml": "code: global.reference.countries.y\nversion: 1\nurl_kinds: {}\n",
-        },
-    )
-    found = problems(root, mirror=True)
+    wrong = write(tmp_path / "wrong", {"terms/global/web/classification.yaml": web, "engine/ke/nightly.json": job})
+    found = problems(wrong, mirror=True)
     assert any("terms/global/web/classification.yaml: the path must mirror the code" in p for p in found)
     assert any(
-        "engine/ke/jobs/x.json: the path must mirror the code 'global.engine.jobs.x': engine/jobs/x.<ext>" in p
+        "engine/ke/nightly.json: the path must mirror the code 'sys.eng.job.ke.nightly': engine/job/ke/nightly.<ext>"
+        in p
         for p in found
     )
-    assert any("engine data code must be <scope>.engine.<name>" in p for p in found)
 
 
 def test_a_module_needs_one_owning_source_and_a_known_mapping(tmp_path: Path) -> None:
@@ -226,12 +200,12 @@ def test_a_module_needs_one_owning_source_and_a_known_mapping(tmp_path: Path) ->
         tmp_path,
         {
             "s/a/manifest.yml": source(A),
-            "s/a/modules/x.yml": "module: x\nmapping: ke.reference.countries.missing\n",
+            "s/a/modules/x.yml": "module: x\nmapping: sys.map.ref.cty.ke.missing\n",
             "orphan/modules/y.yml": f"module: y\nmapping: {M_KE}\n",
         },
     )
     found = problems(root)
-    assert any("modules/x.yml: mapping: unknown mapping code 'ke.reference.countries.missing'" in p for p in found)
+    assert any("modules/x.yml: mapping: unknown mapping code 'sys.map.ref.cty.ke.missing'" in p for p in found)
     assert any("orphan/modules/y.yml" in p and "no source manifest in a folder above it" in p for p in found)
 
 
@@ -260,13 +234,11 @@ def test_files_that_are_not_manifests_are_ignored_and_unreadable_ones_are_report
 )
 def test_scope_visibility(user: str, target: str, visible: bool) -> None:
     assert can_see(user, target) is visible
-    assert scope_of("ke.official.x") == "ke"
 
 
 def test_the_command_exits_nonzero_on_a_problem(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    write(
-        tmp_path, {"sources/ke/a/manifest.yml": source(A, uses="uses: { mappings: [ke.reference.countries.nope] }\n")}
-    )
+    missing = "sys.map.ref.cty.ke.nope"
+    write(tmp_path, {"sources/a/manifest.yml": source(A, uses=f"uses: {{ mappings: [{missing}] }}\n")})
     assert main(["refs", str(tmp_path), "--no-paths"]) == 1
-    assert "unknown mapping code 'ke.reference.countries.nope'" in capsys.readouterr().err
+    assert f"unknown mapping code {missing!r}" in capsys.readouterr().err
     assert main(["refs", str(SCHEMA_ROOT), "--no-paths"]) == 0

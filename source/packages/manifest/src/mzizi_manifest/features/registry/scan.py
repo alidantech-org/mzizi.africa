@@ -21,7 +21,7 @@ from pathlib import Path
 
 import yaml
 
-from mzizi_manifest.features.registry.areas import Areas, load_areas
+from mzizi_manifest.features.codes.glossary import Glossary, load_glossary
 from mzizi_manifest.features.registry.registry import Entry, Kind, Reference, Registry, check
 
 SUFFIXES = {".yml", ".yaml", ".json"}
@@ -109,26 +109,21 @@ KIND_FOLDERS = {
 
 
 def mirror_problems(entry: Entry) -> list[str]:
-    """A file's folder path mirrors its code: `mappings/ke/governance/holders/office-holders.yml`.
+    """A file's folder path mirrors its code, without the first two segments (the space and the kind or schema).
 
-    A source's code is the folder that holds its manifest (`sources/ke/source/websites/iebc/manifest.yml`). Engine data and
-    job specs are flat: `<scope>.engine.<rest>` lives at `engine/<rest>`, with a `<scope>/` folder only when the scope is not
-    `global` (`engine/web/classification.yaml`, `engine/jobs/<name>.json`, `engine/sw/web/classification.yaml`).
+    `sys.map.ofc.ind.ke.office-holders` lives at `mappings/ofc/ind/ke/office-holders.yml`; `sys.eng.web.classification` at
+    `engine/web/classification.yaml`; a source's code is the folder holding its manifest:
+    `pg.src.wbs.ke.iebc` is `sources/wbs/ke/iebc/manifest.yml`.
     """
-    parts, segments = entry.path.parts, entry.code.split(".")
-    expected_folder = KIND_FOLDERS[entry.kind]
+    parts, rest = entry.path.parts, entry.code.split(".")[2:]
+    folder = KIND_FOLDERS[entry.kind]
     if entry.kind is Kind.SOURCE:
-        mirrored = list(parts[1:-1]) == segments
-        shown = "/".join([expected_folder, *segments, "<manifest>"])
-    elif entry.kind in (Kind.ENGINE, Kind.JOB):
-        rest = segments[2:] or segments[-1:]
-        folders = ([] if segments[0] == "global" else [segments[0]]) + rest[:-1]
-        mirrored = list(parts[1:-1]) == folders and Path(parts[-1]).stem == rest[-1]
-        shown = "/".join([expected_folder, *folders, f"{rest[-1]}.<ext>"])
+        mirrored = list(parts[1:-1]) == rest
+        shown = "/".join([folder, *rest, "<manifest>"])
     else:
-        mirrored = list(parts[1:-1]) == segments[:-1] and Path(parts[-1]).stem == segments[-1]
-        shown = "/".join([expected_folder, *segments[:-1], f"{segments[-1]}.yml"])
-    if parts[:1] == (expected_folder,) and mirrored:
+        mirrored = bool(rest) and list(parts[1:-1]) == rest[:-1] and Path(parts[-1]).stem == rest[-1]
+        shown = "/".join([folder, *rest[:-1], f"{rest[-1] if rest else '?'}.<ext>"])
+    if parts[:1] == (folder,) and mirrored:
         return []
     return [f"{entry.path}: the path must mirror the code {entry.code!r}: {shown}"]
 
@@ -143,7 +138,7 @@ def _detail(document: dict, kind: Kind) -> str | None:
     return None
 
 
-def scan(root: Path, *, mirror_paths: bool = True, areas: Areas | None = None) -> Scan:
+def scan(root: Path, *, mirror_paths: bool = True, glossary: Glossary | None = None) -> Scan:
     """Build the registry of `root` and collect every problem, including the registry checks.
 
     `mirror_paths` also requires each file's folder path to mirror its code; the `_example/` folders are flat and turn it off.
@@ -188,7 +183,7 @@ def scan(root: Path, *, mirror_paths: bool = True, areas: Areas | None = None) -
             owning.detail,
         )
     result.registry = Registry(entries)
-    result.problems += check(result.registry, areas or load_areas())
+    result.problems += check(result.registry, glossary or load_glossary())
     if mirror_paths:
         for entry in entries.values():
             result.problems += mirror_problems(entry)
