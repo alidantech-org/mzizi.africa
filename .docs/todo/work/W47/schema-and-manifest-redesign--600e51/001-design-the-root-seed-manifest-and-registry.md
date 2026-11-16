@@ -29,3 +29,7 @@ Work on a Build item starts only after the Approval item is ticked.
 ## Notes
 
 Record findings, rejected options and the approval here.
+
+## Progress
+
+16 November 2026: the owner decided that versions may live inside a file as an approved field, but never in folder or file names for now, and that agents must never invent a version without being asked. The rule is `.docs/rules/versioning.md`. Consequence for this design: the root manifest drops `schema_version` unless the owner approves a version field for it, and all later designs flatten their version folders.

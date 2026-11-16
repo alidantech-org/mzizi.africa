@@ -73,6 +73,7 @@ Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neut
 ## Documentation and repository hygiene
 
 - Keep exactly the eight overview documents in `.docs/docs/`. Put detailed design in an existing topic under `.docs/design/`, and planning proposals in `.docs/_plan/`.
+- Never invent versions: no version folders, file-name suffixes or new version fields unless the owner asks. Read `.docs/rules/versioning.md`.
 - Put contributor and agent process in `.docs/rules/`. Do not recreate `.docs/guidance/`.
 - All hand-written Python, Rust and TypeScript follows `.docs/rules/typed-code.md`: named typed contracts (no free `dict`/`Any`/`any`/`serde_json::Value` past the parsing boundary), no hard-coded source or classification knowledge (it lives in manifests), and pattern matching only in the pattern-matching packages.
 - When paths or behavior change, update the affected README/design guide and every link that points to it in the same work. Mark incomplete behavior and proposals clearly.
