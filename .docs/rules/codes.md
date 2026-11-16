@@ -42,9 +42,7 @@ pg.<schema short>.<table short>.<identity path>      qualified (repository)
 
 ## Seed files hold the short form
 
-In a seed CSV (`data/<scope>/<domain>/<usage...>/<schema>.<table>.csv`) the file name and the link column already say which table, so the `code` cell and every link cell hold the **identity path alone**: `ke`, `geo.continent.africa`. A seed row never carries `id` or the system columns (`version`, `created_at`, `updated_at`, `deleted_at`); the loader assigns them, deriving the id from the table and the code (`mzizi_manifest.features.seeds.ids.stable_id`). Links are written as the target's code (`continent_code`), never an id. A one-to-one extension table (such as `geography.units`, whose primary key is its feature) is keyed by that link: its natural key is `feature_code`, and its id derives from the feature's code.
-
-The folders give scope, domain and usage; the file name gives the table. Each part carries its own schemes and values (`data/global/geography/continent/` holds the continent scheme and its values), so no single file grows into a catalogue. Rows of one table from any number of files are combined, and codes stay unique across all of them. Manifests, logs and the API use the full code.
+In a seed CSV (`data/<scope>/<domain>/<table>.csv`) the file and the link column already say which table, so the `code` cell and every link cell hold the **identity path alone**: `ke`, `geo.continent.africa`. A seed row never carries `id` or the system columns (`version`, `created_at`, `updated_at`, `deleted_at`); the loader assigns them, deriving the id from the table and the code (`mzizi_manifest.features.seeds.ids.stable_id`). Links are written as the target's code (`continent_code`), never an id. Manifests, logs and the API use the full code.
 
 ## System things
 
@@ -60,4 +58,4 @@ The folders give scope, domain and usage; the file name gives the table. Each pa
 
 ## Checks
 
-`uv run mzizi-manifest refs [folder]` checks manifest codes, kinds, scope, references, cycles and paths. `uv run mzizi-manifest data [folder]` checks every seed CSV (the table from the file name, scope and domain from the folders): the grammar, the scheme and member rules, uniqueness, and that every code link resolves. Never invent a new space, short name, scheme shape or segment rule without asking the owner.
+`uv run mzizi-manifest refs [folder]` checks manifest codes, kinds, scope, references, cycles and paths. `uv run mzizi-manifest data [folder]` checks every seed CSV: the grammar, the scheme and member rules, uniqueness, and that every code link resolves. Never invent a new space, short name, scheme shape or segment rule without asking the owner.

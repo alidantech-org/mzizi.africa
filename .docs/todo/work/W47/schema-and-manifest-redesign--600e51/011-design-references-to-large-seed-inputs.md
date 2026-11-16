@@ -26,7 +26,3 @@ The owner decided on 16 November 2026 that large files such as GeoJSON are not s
 ## Notes
 
 Record findings, rejected options and the approval here.
-
-## Progress
-
-16 November 2026: input found for this design. The archived seed (`.dev/archives/seed/_fixtures/extraction/geoboundaries/`) holds geoBoundaries outlines of Kenya: `KEN-ADM0` (the country, 183 KB simplified) and `KEN-ADM1` (the 47 counties, 862 KB simplified), each with a metadata file. The ADM0 metadata gives `boundaryID` KEN-ADM0-21065076, year represented 2020, source "RCMRD GeoPortal, geoBoundaries", licence "Public Domain", the download URLs under github.com/wmgeolab/geoBoundaries and a build date of 12 December 2023. They are the first inputs the artifact-reference record must describe; the geometry files themselves stay out of `seed/`.

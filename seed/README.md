@@ -15,7 +15,7 @@ This folder was emptied on 16 November 2026 so the seed inputs can be rebuilt fr
 seed/
 ├── manifest.yaml            registers files; never loads data (generated manifest.lock.yaml beside it)
 ├── codes: see source/schema/seed/codes.json (short names)
-├── data/<scope>/<domain>/<usage...>/<schema>.<table>.csv
+├── data/<scope>/<domain>/<table>.csv
 ├── sources/wbs|api/<scope>/<name>/manifest.yml           (+ modules/, examples/, NOTES.md)
 ├── mappings/<schema short>/<table short>/<scope>/<name>.yml
 ├── terms/<schema short>/<table short>/<scope>/<name>.yml
@@ -28,10 +28,7 @@ seed/
 
 ## What is in it
 
-- `data/global/` parts, each with its own `reference.schemes.csv` and `reference.values.csv`: `geography/continent`, `geography/subregion`, `geography/recognition-status`, `geography/feature-type`, `finance/currency` and `reference/country-designation`, plus `reference/country/reference.countries.csv` (205 countries).
-  - Every known country, whether or not the UN recognises it, was added on 16 November 2026 with the owner's approval. A country is a country by its recognition status (`geo.recognition.status`): 193 UN member states, 2 UN observer states, 6 partially recognized, 2 unrecognized, 2 in free association.
-  - `established_on` is the date of independence or, where there is none, the date the current state was founded; the judgment calls (Japan, Thailand, Ethiopia, Iran, Nepal, the UK and others) are for the owner to review. Official names, ISO numerics and calling codes are from the preparer's knowledge, not a checked source.
-- `data/ke/geography/country/`: Kenya as a geographic feature (`geography.features.csv`) and unit (`geography.units.csv`), the first geography rows. No counties or other sub-units yet. The boundary outlines are large inputs and are not seed files.
+- `data/global/reference/schemes.csv` (5 schemes), `values.csv` (207 values) and `countries.csv` (205 countries): every known country, whether or not the UN recognises it, added on 16 November 2026 with the owner's approval. A country is a country by its recognition status (`geo.recognition.status`): 193 UN member states, 2 UN observer states, 6 partially recognized, 2 unrecognized, 2 in free association. `established_on` is the date of independence or, where there is none, the date the current state was founded; the judgment calls (Japan, Thailand, Ethiopia, Iran, Nepal, the UK and others) are for the owner to review. Official names, ISO numerics and calling codes are from the preparer's knowledge, not a checked source. Codes follow `.docs/rules/codes.md`. They are not yet registered in a `manifest.yaml`.
 - `engine/web/classification.yaml` (code `sys.eng.web.classification`): the web classification data (URL kinds, challenge markers, file signatures) read by `mzizi-fetch`, validated by `source/schema/engine/web.schema.json`. It was moved here on 16 November 2026 at the owner's request; its schema comes first.
 
 ## Large inputs (proposal)

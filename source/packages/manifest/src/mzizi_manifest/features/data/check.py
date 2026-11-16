@@ -1,6 +1,6 @@
 """Check seed CSV files against the generated database schemas, before anything is written to a database.
 
-A file `data/<scope>/<domain>/<usage...>/<schema>.<table>.csv` holds the rows of `<schema>.<table>`; the folders say where it applies (scope), which area it belongs to (domain) and what it is for (usage), and each part carries its own schemes and values. A row is written in the seed view of the
+A file `data/<scope>/<domain>/<table>.csv` holds the rows of `<domain>.<table>`. A row is written in the seed view of the
 table: its natural key (`code`), its data, and links written as the target's code (`scheme_code`). It never carries ids or
 system fields (`version`, `created_at`, `updated_at`, `deleted_at`); the loader assigns them, deriving the id from the
 table and the code (`mzizi_manifest.features.seeds.ids.stable_id`).
@@ -32,7 +32,6 @@ from mzizi_manifest.features.database.tables import Column, Table, load_order, l
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
 SCOPE = re.compile(r"^(global|[a-z]{2,3})$")
-SEGMENT = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 
 
@@ -85,22 +84,15 @@ def _value_problem(column: Column, value: str) -> str | None:
 
 
 def _table_for(path: Path, root: Path, tables: dict[str, Table]) -> tuple[Table | None, str | None]:
-    """The table a file holds, from its name `<schema>.<table>.csv`; its folders give scope, domain and usage."""
     parts = path.relative_to(root).parts
-    if len(parts) < 4 or parts[0] != "data":
-        return None, "a CSV must be data/<scope>/<domain>/<usage...>/<schema>.<table>.csv"
-    scope, domain, folders = parts[1], parts[2], parts[3:-1]
+    if len(parts) != 4 or parts[0] != "data":
+        return None, "a CSV must be data/<scope>/<domain>/<table>.csv"
+    _, scope, domain, name = parts
     if not SCOPE.match(scope):
         return None, f"scope {scope!r} must be 'global' or a country code"
-    if domain not in {name.split(".", 1)[0] for name in tables}:
-        return None, f"domain {domain!r} must be a database group"
-    for folder in folders:
-        if not SEGMENT.match(folder):
-            return None, f"folder {folder!r} must be lowercase words joined by dashes"
-    stem = parts[-1].removesuffix(".csv")
-    table = tables.get(stem)
+    table = tables.get(f"{domain}.{Path(name).stem}")
     if table is None:
-        return None, f"{stem} is not a stored table (name the file <schema>.<table>.csv)"
+        return None, f"{domain}.{Path(name).stem} is not a stored table"
     if not table.seedable:
         return None, f"{table.qualified_name} has no natural key, so it cannot be seeded by CSV"
     return table, None
@@ -226,7 +218,7 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                 if not value:
                     continue
                 where = f"{row.file.relative_to(root)}:{row.line}"
-                if len(target.natural_key) != 1:
+                if target.natural_key != ("code",):
                     result.problems.append(f"{where}: {alias}: {target.qualified_name} cannot be linked by code")
                     break
                 if target.qualified_name not in result.rows:
