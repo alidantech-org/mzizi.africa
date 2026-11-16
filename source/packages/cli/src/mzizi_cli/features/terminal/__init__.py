@@ -1,1 +1,1 @@
-"""Terminal output, logging and path search."""
+"""Terminal output and logging."""

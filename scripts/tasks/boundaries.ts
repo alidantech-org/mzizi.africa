@@ -36,6 +36,9 @@ export const capabilityLibraries: ReadonlySet<string> = new Set([
 
 export type Area = "package" | "engine";
 
+/** Front doors call the engine runtime, so they may import `mzizi_engine`. The engine must never import them. */
+const frontDoors = ["source/packages/cli/"];
+
 export type RuleId =
   | "package-imports-engine"
   | "package-imports-database"
@@ -54,7 +57,7 @@ export type Violation = {
 
 /** What each rule protects, printed above its violations. */
 export const ruleSummaries: Readonly<Record<RuleId, string>> = {
-  "package-imports-engine": "a package imports mzizi_engine; packages never depend on the engine",
+  "package-imports-engine": "a package imports mzizi_engine; only front doors (the CLI) may, and only its runtime",
   "package-imports-database": "a package imports a database driver; packages never know a database exists",
   "engine-imports-database": "the engine imports a database driver; persistence must be Dryv-generated code",
   "engine-imports-capability": "the engine imports a capability library; capabilities live in packages",
@@ -94,7 +97,8 @@ export function scanFile(path: string, text: string, area: Area): Violation[] {
   for (const { module, line } of importedModules(text)) {
     const root = topLevel(module);
     if (area === "package") {
-      if (root === "mzizi_engine") add("package-imports-engine", line, module);
+      if (root === "mzizi_engine" && !frontDoors.some((prefix) => path.startsWith(prefix)))
+        add("package-imports-engine", line, module);
       if (databaseDrivers.has(root)) add("package-imports-database", line, module);
     } else {
       if (databaseDrivers.has(root)) add("engine-imports-database", line, module);

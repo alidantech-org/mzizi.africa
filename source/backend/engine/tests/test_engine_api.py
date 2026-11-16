@@ -13,9 +13,10 @@ import httpx
 import pytest
 from engine_helpers import settings, wait_for
 
-from mzizi_engine.capabilities import Capability, build_default_registry
+from mzizi_engine.capabilities import build_default_registry
 from mzizi_engine.config import Settings
 from mzizi_engine.executor import Executor
+from mzizi_engine.runtime.operations import Operation
 from mzizi_engine.store import MemoryStore
 
 
@@ -91,8 +92,8 @@ def test_retryable_failures_retry_with_backoff_and_non_retryable_ones_fail_at_on
         raise ValueError("invalid input")
 
     registry = build_default_registry()
-    registry.register(Capability("test.flaky", "1", "tests", "fails twice", flaky, {}))
-    registry.register(Capability("test.bad", "1", "tests", "always invalid", bad, {}))
+    registry.register(Operation("test.flaky", "1", "tests", "fails twice", flaky, {}))
+    registry.register(Operation("test.bad", "1", "tests", "always invalid", bad, {}))
     client = make_client(registry)
     good = job_done(client, client.post("/v1/jobs", json={"kind": "test.flaky"}).json()["id"])
     assert good["status"] == "succeeded" and good["attempts"] == 3
@@ -104,7 +105,7 @@ def test_a_running_job_can_be_cancelled_and_a_queued_job_never_starts(make_clien
     gate = threading.Event()
     registry = build_default_registry()
     registry.register(
-        Capability("test.slow", "1", "tests", "blocks", lambda payload: gate.wait(5) or {}, {}, concurrency=1)
+        Operation("test.slow", "1", "tests", "blocks", lambda payload: gate.wait(5) or {}, {}, concurrency=1)
     )
     client = make_client(registry)
     running = client.post("/v1/jobs", json={"kind": "test.slow"}).json()["id"]
@@ -120,7 +121,7 @@ def test_a_running_job_can_be_cancelled_and_a_queued_job_never_starts(make_clien
 def test_per_capability_concurrency_limits_bound_parallelism(make_client):
     registry = build_default_registry()
     registry.register(
-        Capability("test.sleep", "1", "tests", "sleeps", lambda payload: time.sleep(0.15) or {}, {}, concurrency=2)
+        Operation("test.sleep", "1", "tests", "sleeps", lambda payload: time.sleep(0.15) or {}, {}, concurrency=2)
     )
     client = make_client(registry)
     ids = [client.post("/v1/jobs", json={"kind": "test.sleep"}).json()["id"] for _ in range(6)]

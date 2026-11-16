@@ -4,7 +4,7 @@ One complete Python project: orchestration, an operational API, workers and the 
 
 ## Runtime (target entry point, skeleton only)
 
-`mzizi_engine.runtime` is the start of the restructure in [ENGINE_RUNTIME_AND_PACKAGES](../../../.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md): one `EngineRuntime` class that registers capabilities with a typed configuration and an execution plan, hands each job the configuration snapshot current when it started, limits concurrency per capability, cancels jobs on stop and reports health. It is new, tested with a stub capability, and **nothing in the engine uses it yet**: `executor.py`, `capabilities.py` and `app.py` still run the system until capabilities move into packages and are registered here. Job timeouts and the persistence bindings are not part of the skeleton.
+`mzizi_engine.runtime` is the start of the restructure in [ENGINE_RUNTIME_AND_PACKAGES](../../../.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md): one `EngineRuntime` class that registers capabilities with a typed configuration and an execution plan, hands each job the configuration snapshot current when it started, limits concurrency per capability, cancels jobs on stop and reports health. It is new, tested with a stub capability, and **nothing in the engine uses it yet**: `executor.py`, `capabilities.py` and `app.py` still run the system, now over the runtime's `OperationRegistry` (`runtime.operations`), until capabilities move into packages and are registered here. Job timeouts and the persistence bindings are not part of the skeleton.
 
 ## Run
 
@@ -21,82 +21,9 @@ uv run pytest source/backend/engine/tests
 
 The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (development only) is refused on any other address. In normal mode a bearer token is verified against the same OIDC issuer as the NestJS API (`AUTH_ISSUER`, `AUTH_JWKS_URL`), then account resolution and platform permissions go through named TypeScript database-service operations (`DATABASE_SERVICE_URL`, `DATABASE_SERVICE_TOKEN`). Persistent jobs, events, and callback outbox records also go through those operations; the Python engine no longer has a PostgreSQL-backed job store. Filesystem folder/file detail reads, download-key authorization, folder creation, upload reservation/cleanup, exact-version lineage writes, and scoped authorization use named database-service operations; Python handles object-store transfer and signing. Failed cleanup remains retryable because the DB owner keeps the session until the object operation succeeds. Other filesystem metadata operations (repository, service, authz, sync, uploads, lineage, transitions, reset, secure, cli) still use direct PostgreSQL through `mzizi_engine.filesystem`, behind the port above; these remain migration gaps against the TypeScript/Rust database service, and that module's raw-SQL rows are still typed loosely (`Row = Mapping[str, Any]`), not as named per-query contracts. Those legacy routes require an explicit `ENGINE_FILESYSTEM_LEGACY_DATABASE_URL`; they no longer inherit `DATABASE_URL` or the database administrator connection. TypeScript services and tools run with Bun only, including the Temporal worker.
 
-## Developer CLI (`mzizi`)
+## Command lines
 
-`uv run mzizi` runs capabilities on local files and URLs and shows the result; it holds no extraction, scraping or fetching logic, only typed payload building over registered capability handlers (`mzizi_engine.devcli`). Run it with no arguments for an interactive menu; missing values are asked for on a terminal (bounded file search, recent-URL completion) and are a usage error otherwise. Plan: [`.docs/_plan/mzizi-engine/`](../../../.docs/_plan/mzizi-engine/README.md); runtime design: [`WEB_ACQUISITION_RUNTIME.md`](../../../.docs/design/acquisition/WEB_ACQUISITION_RUNTIME.md).
-
-```bash
-uv run mzizi dev init                  # create the git-ignored .dev workspace
-uv run mzizi status [--group web]      # every port: ready / needs setup / not yet added, and why
-uv run mzizi doctor                    # tools, libraries, services and search-provider settings
-export MZIZI_USER_AGENT='Name/1.0 (+https://your.site/bot; you@your.site)'   # required for live requests
-```
-
-| Group | Commands |
-|---|---|
-| `extract` | `pdf`, `markdown` (structured PDF to Markdown, figures, tables, per-page OCR), `csv`, `json`, `geojson` |
-| `web` | `links URL`, `robots`/`fetch robots URL`, `challenge`, `markdown URL`, `crawl URL`, `resume FOLDER`, `export FOLDER` |
-| `fetch` | `url`, `robots` |
-| `download` | `get URL`, `many FILE`, `status` |
-| `browser` | `open`, `snapshot`, `navigate`, `click`, `fill`, `compare` with optional `--adapter playwright\|patchright` |
-| `web survey/profile/family/draft/diff` | `survey URL` crawls, profiles and drafts a bundle in one run; `profile --source RUN`, `family --left RUN --right RUN` (template similarity and the varying host part), `draft --source RUN` (draft bundle under `draft-bundle/`, validated, every selector a low-confidence proposal), `diff --baseline RUN --current RUN` |
-| `scrape` | `url URL --manifest MODULE`, `file HTML --manifest MODULE`, `select HTML --css SELECTOR`, `links` |
-| `search` | `web QUERY --engine brave\|google` |
-| `mongo` | `test`, `stats`, `load --run`, `find COLLECTION`, `drop-dev` (dev MongoDB, database `mzizi_dev`) |
-| `vector` | `test`, `status`, `index --run`, `search QUERY`, `classify FILE --labels`, `drop-dev` (dev Qdrant) |
-| `manifest`, `capability`, `dev` | seed/structure checks, registry inspection, workspace |
-
-`web crawl` options include `--max-pages --max-depth --delay --render http|browser --adapter playwright|patchright --on-block backoff|skip|stop|pause --allowed-hosts --allowed-paths --excluded-paths --include-subdomains --no-sitemap --no-markdown --inspect-resources --jsonl --headed`. Brave uses `BRAVE_API_KEY`. Google Custom Search uses `GOOGLE_CSE_API_KEY` and `GOOGLE_CSE_ID`.
-
-```bash
-uv sync --all-packages --extra browser
-uv run --package mzizi-engine --extra browser patchright install chromium
-uv run --no-sync mzizi --allow-outside-inputs scrape url https://example.org/ \
-  --manifest ./example-module.yml --render browser --adapter patchright
-```
-
-Use `--allow-outside-inputs` for files outside the CLI's `.dev/inputs` directory. The manifest argument takes a [site module YAML](../../../.docs/design/acquisition/WEB_ACQUISITION_RUNTIME.md#single-page-extraction). The run saves the captured HTML and records the module and capture hashes. Public page scraping uses `MZIZI_USER_AGENT` and requires no API key. Playwright remains the default driver and uses system Chrome. Patchright uses its bundled Chromium. `web crawl` and `web markdown` accept the same browser flags.
-
-**Dev-mode browser default:** `mzizi` web, scrape and browser commands load pages in a visible Patchright window automatically. Pass `--headless` to hide the window, `--adapter playwright` to change driver, or `--render http` to skip the browser. The window and its tab persist between commands (one shared browser attached over CDP); `uv run mzizi browser start` opens it explicitly (any web command also starts it if none is open); starts are serialised by a lock so only one window is ever valid, and a new one opens only after the first is closed. `uv run mzizi browser stop` closes it. **Tabs:** every site gets its own tab in that one window (`.dev/browser/tabs.json`), so commands for different sites run at the same time; a command takes a lease on its site, so two commands never drive one site's tab. A site has at most two tabs: its working tab and one pop-up (`target=_blank`, `window.open`) at a time; pop-ups are recorded in the page result (`popups`, `deferred_popups`, `blank_links`) and closed once seen. Above 24 tabs the least recently used idle ones are closed. A site's extra CA bundle in `.dev/secure/<name>-ca-bundle.pem` (for example `knbs-ca-bundle.pem`) is added to the HTTP client's trust store. Set `MZIZI_DEV_BROWSER=headless` to disable windows (tests do). A module listing's `paginate` rule (query, path or next_link) is followed by `scrape url`. The engine API itself is unchanged and stays headless.
-
-`web markdown URL --css-images` and `web crawl URL --css-images` include HTTP(S) background image references from inline CSS in Markdown. Pass the flag again when using `web resume`. This works on an HTTP capture or a rendered DOM, including inline styles added by JavaScript. The converter does not fetch the referenced images.
-
-Use `--render browser --rendered-media` with `web markdown`, `web crawl` or `web sections` to record computed backgrounds and responsive images. Crawls save per-view media and `listings.json` for pagination evidence. In auto mode, if browser rendering is unavailable after an HTTP capture, the crawl keeps the HTML and records a listing gap and any requested media gap. HTML table captures write structured JSON alongside Markdown. `web replay EXPECTATIONS.json` compares saved captures offline and returns a failing exit code when evidence differs. `download select RUN --rules RULES.yml --max-bytes BYTES` ranks references and reserves a byte budget before the optional `--apply` transfer. See [web acquisition runtime](../../../.docs/design/acquisition/WEB_ACQUISITION_RUNTIME.md#offline-coverage-replay).
-
-`uv run --no-sync mzizi web sections URL --render auto` captures tabbed or expandable listings into `sections.md`, individual views, and a `sections.json` coverage report. Use `--render browser` to verify the rendered listing, `--max-sections` and `--max-view-steps` to scope the run, and `--adapter playwright --headless` for an isolated installed-Chrome session. See the [supported navigation and stop reasons](../../../.docs/design/acquisition/WEB_ACQUISITION_RUNTIME.md#same-document-listing-sections).
-
-**Pages are waited for:** after load the browser waits for the network to go quiet, then until the app root is filled, no loader or spinner is visible (selectors in the vocabulary), enough text is present and no content has changed for 0.8 s, up to 25 s per page (`stable_max_ms`); the result reports `ready: stable|timeout`. **Pagination:** `mzizi_scraping.pagination` finds `rel=next`, next links, page numbers (with a URL template), next *buttons* (single-page apps), `load more` buttons and infinite-scroll hints; crawls follow next links, and in the browser click next buttons, load more and scroll, saving each further page as `<path>#page-N` (up to `--max-list-pages`, 25 by default; `--no-paginate` turns it off). A row of identical `View More` buttons is not treated as pagination. A click that cannot complete because the window is not painting falls back to a script click, and screenshots fall back to a browser-side capture.
-
-**Layout (`.dev/, git-ignored, folders appear on first write):** `websites/<reversed suffix>/<registrable label>/<host label>/` per site, for example `websites/ke/go/ngcdf/kasarani/` (the apex host is `_root`, `www` is its own folder), holding `pages/<path>/<slug>.html|md|png`, `pages/<path>/versions/` (only after a meaningful change), `scraped/files/<pdf|document|data|image|media|archive|other>/<label>--<sha8>.<ext>`, `inventory/*.csv` (one current set, rewritten), `visited.txt`, `extracted/`, `drafts/`. Also `runs/<date>/` (newest 50 one-off runs), `browser/`, `logs/`, `cache/`, `inputs/`, `secure/`, `stack/`. Paths and names come from `mzizi_engine.layout` and `mzizi_engine.names` only. `uv run mzizi site watch URL` needs only a URL: it crawls, fingerprints every page (raw, normalised DOM, text, link set, per-heading blocks), writes a new version only when the text, a block or the links change outside blocks that change on every visit, and reports new/changed/unchanged/noise. Markdown carries front matter naming its source HTML and hashes. `download enqueue SITE` and `download run SITE` queue and fetch the site's inventory into readable names.
-
-**Storage:** MongoDB (the existing local `mongodb` container, no credentials; `DEV_MONGO_URL`) holds everything the engine builds: crawl rows and run summaries (`crawl_*`), audit trail, the download queue (`download_queue`), downloaded-file catalog with link context (`downloads`), site profiles, family reports and ranking scores (`expectation_scores`). Files stay files: crawl CSVs (linked in `crawl_csv_files` by path and SHA-256), Markdown, raw HTML, screenshots, and every downloaded file of any type (PDF, image, media, data, archives). A JSON file a site itself returned stays a file. `ENGINE_ACTIVITY_STORE=files` (tests) or an unreachable MongoDB falls back to JSON files so nothing is lost. Downloads: `download enqueue --run RUN`, `download run --run RUN`, `download queue --run RUN`.
-
-### Local streaming extraction
-
-For large local files, run `mzizi extract stream`.
-
-```bash
-uv run mzizi --allow-outside-inputs extract stream register.pdf --first-page 9000 --last-page 9002 --chunk-size 2
-uv run mzizi --allow-outside-inputs extract stream records.csv --chunk-size 50000 --gzip
-uv run mzizi --allow-outside-inputs extract stream response.json --json-array records --gzip
-uv run mzizi --allow-outside-inputs extract stream workbook.xlsx --chunk-size 25000
-```
-
-Each run writes a `chunks.jsonl` index in its run folder. PDF batches contain Markdown, structured JSON, table CSVs and diagnostics with the original page numbers. The default is 16 pages, with layout and repeating text inferred within each batch. The copied page batch is a temporary extraction input. Source PDF bytes stay in place. If a page batch is too large, lower the chunk size. Use `--ocr off` on native-text PDFs when OCR is unnecessary.
-
-CSV, TSV, JSON, GeoJSON, JSONL, NDJSON and XLSX write JSON Lines in batches of 5,000 records by default. `--gzip` compresses each record chunk independently. Each record contains a one-based source number, a worksheet name or null, and its value. CSV and TSV emit the header as the first record and count quoted multiline fields as part of one record. JSON accepts a root array or a top-level array named by `--json-array`. GeoJSON defaults to `features`. JSONL and NDJSON retain physical line numbers. XLSX streams worksheet rows and retains formula text. It can load shared strings and styles into memory. One large record or a complex PDF page can still use substantial memory.
-
-Completed chunks remain available if parsing fails. The run reports failure, and the active chunk is discarded if it was still being written. A PDF run can select a later range using `--first-page`. Automatic resume and legacy `.xls` are outside this command's supported formats and behavior.
-
-Use `mzizi extract markdown INPUT.pdf --first-page 101 --last-page 200` to process a large document in batches. Bounds are one-based and inclusive. An omitted bound uses the corresponding end of the document. The page limit applies to the requested batch, the byte limit applies to the original file, and output diagnostics record the source range. Layout and repeated headers are inferred from the selected pages.
-
-Use `mzizi extract markdown INPUT.pdf --strict-table-lines` when decorative rectangles create extra columns in a ruled table. The option excludes rectangle edges during table detection. Use the default for tables whose grid is drawn with rectangles.
-
-Use `mzizi extract markdown INPUT.pdf --auto-tables` to compare detectors by table region. `--table-schema EXPECTED.json` enables comparison and checks a [declared column layout](../../schema/extraction/v1/table.schema.json). Both modes write the preferred CSVs and `table-review.json`, with each table's page, candidate bounding boxes, scores and reasons for review. Flagged tables include the competing rows in the report. Review those rows against the original PDF before treating them as verified data. Keep `--strict-table-lines` as a separate, manual mode.
-
-Every planned command exists. A command whose capability is not registered prints why, logs it to `.dev/logs/mzizi.log`, records a run folder and exits **3**; a missing tool, library or setting exits **4**; a missing value with no terminal exits **2**. Registering a capability of the declared name turns its command live (state is derived from the registry in `devcli/ports/`).
-
-Run `uv run --no-sync pytest source/backend/engine/tests` after syncing the optional browser dependencies to include the loopback browser tests.
+`mzizi-engine` (`mzizi_engine/cli/`) is the engine's own front door: `serve`, `capabilities`, `check` and `filesystem`. It builds the runtime and calls it. The developer command line `mzizi` is a separate package, [`mzizi-cli`](../../packages/cli/README.md), which depends on the engine runtime; the engine knows nothing about it. The earlier large `mzizi_engine.devcli` was removed rather than ported and is in git history; it returns in small pieces as capabilities connect to the runtime.
 
 ## Initial API
 

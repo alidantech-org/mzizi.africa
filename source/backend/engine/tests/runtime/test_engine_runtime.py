@@ -211,3 +211,21 @@ def test_health_lists_each_capability():
     health = engine.health()
     assert health.state is RuntimeState.RUNNING
     assert [(c.name, c.generation, c.in_flight) for c in health.capabilities] == [("stub", 1, 0)]
+
+
+def test_the_runtime_exposes_operations_and_calls_them_by_name():
+    from mzizi_engine.runtime import Operation, OperationRegistry
+
+    registry = OperationRegistry()
+    registry.register(Operation("echo.say", "1", "tests", "echoes", lambda payload: {"said": payload["text"]}, {}))
+    with pytest.raises(ValueError, match="already registered"):
+        registry.register(Operation("echo.say", "1", "tests", "again", lambda payload: payload, {}))
+    engine = EngineRuntime(RuntimeConfig(drain_timeout_seconds=1.0), registry)
+    with pytest.raises(RuntimeStateError):
+        engine.call("echo.say", {"text": "hi"})
+    engine.start()
+    assert engine.operations.names() == ("echo.say",)
+    assert [info.name for info in engine.operations.describe()] == ["echo.say"]
+    assert engine.call("echo.say", {"text": "hi"}) == {"said": "hi"}
+    with pytest.raises(KeyError):
+        engine.call("missing", {})

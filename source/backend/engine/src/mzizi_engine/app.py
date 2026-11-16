@@ -20,11 +20,12 @@ from pydantic import BaseModel, Field
 
 from mzizi_engine import __version__
 from mzizi_engine.auth import Authority, DatabaseServiceAuthority, Principal, TokenVerifier, oidc_verifier, require
-from mzizi_engine.capabilities import CapabilityRegistry, build_default_registry
+from mzizi_engine.capabilities import build_default_registry
 from mzizi_engine.config import Settings
 from mzizi_engine.database_store import DatabaseServiceStore
 from mzizi_engine.executor import Executor
 from mzizi_engine.filesystem_api import router as filesystem_router
+from mzizi_engine.runtime.operations import OperationRegistry
 from mzizi_engine.store import MemoryStore, Store
 
 
@@ -48,7 +49,7 @@ def _store(settings: Settings) -> Store:
 def create_app(
     settings: Settings | None = None,
     store: Store | None = None,
-    registry: CapabilityRegistry | None = None,
+    registry: OperationRegistry | None = None,
     authority: Authority | None = None,
     verifier: TokenVerifier | None = None,
     callback_client: httpx.AsyncClient | None = None,
@@ -93,7 +94,7 @@ def create_app(
 
     @app.get("/capabilities")
     async def capabilities(_: Principal = require("engine.read")) -> dict:
-        return {"capabilities": registry.describe()}
+        return {"capabilities": [item.model_dump(mode="json") for item in registry.describe()]}
 
     @app.post("/internal/v1/capabilities/execute")
     async def execute_internal_capability(body: JobRequest, request: Request) -> dict:

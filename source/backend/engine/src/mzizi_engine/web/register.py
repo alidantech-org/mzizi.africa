@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from mzizi_engine.capabilities import Capability, CapabilityRegistry
 from mzizi_engine.jsonvalue import Payload
+from mzizi_engine.runtime.operations import Operation, OperationRegistry
 from mzizi_engine.web.handlers import (
     attachments,
     batch,
@@ -50,7 +50,7 @@ VERSION = "0.2.0"
 SCHEMA: Payload = {"type": "object"}
 
 
-def register_web(registry: CapabilityRegistry) -> None:
+def register_web(registry: OperationRegistry) -> None:
     for name, description, handler in (
         (
             "scraping.crawl",
@@ -172,4 +172,4 @@ def register_web(registry: CapabilityRegistry) -> None:
             capability(SearchRequest, inspect.web_search),
         ),
     ):
-        registry.register(Capability(name, VERSION, PACKAGE, description, handler, SCHEMA, concurrency=1))
+        registry.register(Operation(name, VERSION, PACKAGE, description, handler, SCHEMA, concurrency=1))

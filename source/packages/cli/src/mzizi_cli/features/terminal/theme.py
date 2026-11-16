@@ -1,4 +1,4 @@
-"""Colored console output and logging for the developer CLI."""
+"""Coloured console output and logging for the CLI."""
 
 from __future__ import annotations
 

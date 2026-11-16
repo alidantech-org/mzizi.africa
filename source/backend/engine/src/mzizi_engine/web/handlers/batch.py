@@ -77,7 +77,7 @@ def _command(request: BatchRequest, url: str) -> list[str]:
         "--download-limit",
         str(request.download_limit),
     ]
-    return [sys.executable, "-c", "from mzizi_engine.devcli.app import main; main()", "--no-input", "--json", *args]
+    return [sys.executable, "-c", "from mzizi_cli.orchestrator.app import main; main()", "--no-input", "--json", *args]
 
 
 def _parse(output: str) -> Document:

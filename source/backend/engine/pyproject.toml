@@ -16,17 +16,12 @@ dependencies = [
   "mzizi-scraping",
   "mzizi-fetch",
   "mzizi-search",
-  "mzizi-cli",
   "mzizi-extraction",
-  "typer>=0.29.1",
-  "rich>=15.0.0",
-  "questionary>=2.1.1",
   "tldextract>=5.4.0",
 ]
 
 [project.scripts]
-mzizi-engine = "mzizi_engine.cli:main"
-mzizi = "mzizi_engine.devcli.app:main"
+mzizi-engine = "mzizi_engine.cli.main:main"
 
 [project.optional-dependencies]
 browser = [
@@ -55,7 +50,6 @@ mzizi-manifest = { workspace = true }
 mzizi-scraping = { workspace = true }
 mzizi-fetch = { workspace = true }
 mzizi-search = { workspace = true }
-mzizi-cli = { workspace = true }
 mzizi-extraction = { workspace = true }
 
 [tool.pytest.ini_options]

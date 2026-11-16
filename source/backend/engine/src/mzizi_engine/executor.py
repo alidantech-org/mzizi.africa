@@ -15,8 +15,8 @@ from datetime import UTC, datetime
 
 import httpx
 
-from mzizi_engine.capabilities import CapabilityRegistry
 from mzizi_engine.config import Settings
+from mzizi_engine.runtime.operations import OperationRegistry
 from mzizi_engine.store import Store
 
 NON_RETRYABLE = (ValueError, KeyError, TypeError)
@@ -32,7 +32,7 @@ class Executor:
     def __init__(
         self,
         store: Store,
-        registry: CapabilityRegistry,
+        registry: OperationRegistry,
         settings: Settings,
         callback_client: httpx.AsyncClient | None = None,
         dispatchers: int = 8,

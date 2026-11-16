@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from mzizi_engine.capabilities import Capability, CapabilityRegistry
 from mzizi_engine.devservices.handlers import mongo, vector
 from mzizi_engine.devservices.requests import ClassifyRequest, FindRequest, NoRequest, RunRequest, SearchRequest
 from mzizi_engine.jsonvalue import Payload
+from mzizi_engine.runtime.operations import Operation, OperationRegistry
 from mzizi_engine.web.handlers.common import capability
 
 PACKAGE = "mzizi-engine"
@@ -13,7 +13,7 @@ VERSION = "0.1.0"
 SCHEMA: Payload = {"type": "object"}
 
 
-def register_devservices(registry: CapabilityRegistry) -> None:
+def register_devservices(registry: OperationRegistry) -> None:
     for name, description, handler in (
         (
             "mongo.test",
@@ -51,4 +51,4 @@ def register_devservices(registry: CapabilityRegistry) -> None:
         ),
         ("vector.drop", "Delete every dev Qdrant collection", capability(NoRequest, vector.vector_drop)),
     ):
-        registry.register(Capability(name, VERSION, PACKAGE, description, handler, SCHEMA, concurrency=1))
+        registry.register(Operation(name, VERSION, PACKAGE, description, handler, SCHEMA, concurrency=1))

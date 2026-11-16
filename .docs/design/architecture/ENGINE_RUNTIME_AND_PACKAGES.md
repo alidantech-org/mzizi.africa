@@ -75,7 +75,7 @@ pattern matching, shared contracts
         -> mzizi_engine (runtime and binding modules)
 ```
 
-Nothing imports `mzizi_engine` except the entry points that start it. A package depends on another only through that package's public contracts and orchestrator.
+Nothing imports `mzizi_engine` except front doors, which call its runtime: the engine's own `cli/` folder and the `cli` package (`mzizi`). The engine never imports a front door. A package depends on another only through that package's public contracts and orchestrator.
 
 ## Where current code goes
 
@@ -87,7 +87,8 @@ Nothing imports `mzizi_engine` except the entry points that start it. A package 
 | `web/search/*` | `search` package with providers behind a protocol |
 | `policy/*` | `policy` package with rules loaded from manifests |
 | `filesystem/*` | `filesystem` package for logic; persistence moves to Dryv-generated repositories behind a port |
-| `devcli/*`, `devservices/*` | `cli` and developer-services packages calling the runtime |
+| `devcli/*` | **Done:** removed; the `cli` package is a small front door over `runtime.operations`. The old developer commands return as capabilities connect to the runtime. |
+| `devservices/*` | developer-services package |
 | `executor.py`, `capabilities.py`, `app.py`, `config.py`, `layout.py`, `activity.py` | folded into the runtime or replaced by it |
 | `auth.py` | undecided: see open questions |
 | `api/` generated routes | stay generated; each handler is one call into the runtime |

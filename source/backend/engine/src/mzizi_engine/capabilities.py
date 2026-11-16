@@ -1,6 +1,6 @@
-"""Registered capabilities: what the engine can run, with their package, version and input contract.
+"""The default operations the engine registers: handlers over package capabilities, with version and input contract.
 
-A capability is a named, versioned function of a package. Handlers take and return JSON-able dicts and live at module
+An operation (see `runtime.operations`) is a named, versioned function of a package. Handlers take and return JSON-able dicts and live at module
 level so they can run in worker processes. Source, country and publisher knowledge never appears here: callers pass it
 as data (manifests, inputs). Registering a capability is code; a request can only name one that is registered.
 """
@@ -9,54 +9,10 @@ from __future__ import annotations
 
 import base64
 from collections.abc import Callable
-from dataclasses import dataclass
 from pathlib import Path
 
 from mzizi_engine.jsonvalue import Payload
-
-
-@dataclass(frozen=True)
-class Capability:
-    name: str
-    version: str
-    package: str
-    description: str
-    handler: Callable[[Payload], Payload]
-    input_schema: Payload
-    cpu_bound: bool = False
-    concurrency: int | None = None
-
-    def describe(self) -> Payload:
-        return {
-            "name": self.name,
-            "version": self.version,
-            "package": self.package,
-            "description": self.description,
-            "cpu_bound": self.cpu_bound,
-            "input_schema": self.input_schema,
-        }
-
-
-class CapabilityRegistry:
-    def __init__(self) -> None:
-        self._items: dict[str, Capability] = {}
-
-    def register(self, capability: Capability) -> Capability:
-        if capability.name in self._items:
-            raise ValueError(f"capability {capability.name!r} is already registered")
-        self._items[capability.name] = capability
-        return capability
-
-    def get(self, name: str) -> Capability:
-        if name not in self._items:
-            raise KeyError(name)
-        return self._items[name]
-
-    def names(self) -> list[str]:
-        return sorted(self._items)
-
-    def describe(self) -> list[dict]:
-        return [self._items[n].describe() for n in self.names()]
+from mzizi_engine.runtime.operations import Operation, OperationRegistry
 
 
 def _bytes_input(payload: dict) -> bytes:
@@ -225,8 +181,8 @@ def process_info(payload: dict) -> dict:
     return {"pid": os.getpid()}
 
 
-def build_default_registry() -> CapabilityRegistry:
-    reg = CapabilityRegistry()
+def build_default_registry() -> OperationRegistry:
+    reg = OperationRegistry()
     from mzizi_engine.web.register import register_web
 
     register_web(reg)
@@ -239,9 +195,9 @@ def build_default_registry() -> CapabilityRegistry:
         ("csv", extract_csv, "CSV rows", False),
         ("json", extract_json, "JSON records", False),
     ]:
-        reg.register(Capability(f"extraction.{kind}", "0.1.0", "mzizi-extraction", desc, fn, _SOURCE, cpu_bound=cpu))
+        reg.register(Operation(f"extraction.{kind}", "0.1.0", "mzizi-extraction", desc, fn, _SOURCE, cpu_bound=cpu))
     reg.register(
-        Capability(
+        Operation(
             "extraction.markdown",
             "0.1.0",
             "mzizi-extraction",
@@ -252,7 +208,7 @@ def build_default_registry() -> CapabilityRegistry:
         )
     )
     reg.register(
-        Capability(
+        Operation(
             "engine.process_info",
             "0.1.0",
             "mzizi-engine",
@@ -263,7 +219,7 @@ def build_default_registry() -> CapabilityRegistry:
         )
     )
     reg.register(
-        Capability(
+        Operation(
             "scraping.links",
             "0.1.0",
             "mzizi-scraping",
@@ -273,7 +229,7 @@ def build_default_registry() -> CapabilityRegistry:
         )
     )
     reg.register(
-        Capability(
+        Operation(
             "manifest.check_seeds",
             "0.1.0",
             "mzizi-manifest",
@@ -283,7 +239,7 @@ def build_default_registry() -> CapabilityRegistry:
         )
     )
     reg.register(
-        Capability(
+        Operation(
             "manifest.validate_structure",
             "0.1.0",
             "mzizi-manifest",
@@ -293,7 +249,7 @@ def build_default_registry() -> CapabilityRegistry:
         )
     )
     reg.register(
-        Capability(
+        Operation(
             "source.gate",
             "0.1.0",
             "mzizi-engine",
@@ -303,7 +259,7 @@ def build_default_registry() -> CapabilityRegistry:
         )
     )
     reg.register(
-        Capability(
+        Operation(
             "filesystem.sync",
             "0.2.0",
             "mzizi-filesystem",

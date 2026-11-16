@@ -30,6 +30,11 @@ describe("scanFile", () => {
     const hits = scanFile(`${packageRoot}/web/client.py`, "from mzizi_engine.app import x\nimport psycopg\n", "package");
     expect(hits.map((hit) => hit.rule)).toEqual(["package-imports-engine", "package-imports-database"]);
   });
+  test("a front door such as the CLI may import the engine runtime", () => {
+    expect(
+      scanFile("source/packages/cli/src/mzizi_cli/orchestrator/app.py", "from mzizi_engine.runtime import X\n", "package"),
+    ).toEqual([]);
+  });
   test("the engine must not import a database driver or a capability library", () => {
     const hits = scanFile(enginePath, "import playwright.sync_api\nimport pymongo\nimport httpx\n", "engine");
     expect(hits.map((hit) => hit.rule)).toEqual(["engine-imports-capability", "engine-imports-database"]);

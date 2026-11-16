@@ -11,6 +11,7 @@ from mzizi_engine.runtime.contracts.errors import (
 )
 from mzizi_engine.runtime.contracts.health import CapabilityHealth, RuntimeHealth, RuntimeState
 from mzizi_engine.runtime.contracts.plan import ExecutionPlan, Exposure
+from mzizi_engine.runtime.operations import Operation, OperationInfo, OperationRegistry
 from mzizi_engine.runtime.runtime import EngineRuntime
 from mzizi_engine.runtime.tools.cancel import CancellationToken
 from mzizi_engine.runtime.tools.capability import RuntimeCapability
@@ -29,6 +30,9 @@ __all__ = [
     "Exposure",
     "JobCancelledError",
     "Lease",
+    "Operation",
+    "OperationInfo",
+    "OperationRegistry",
     "QueueTimeoutError",
     "RuntimeCapability",
     "RuntimeConfig",

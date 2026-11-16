@@ -267,9 +267,7 @@ def test_legacy_timeout_state_remains_resumable(tmp_path: Path) -> None:
     assert len(recovered.deferred) == 1 and recovered.deferred[0].url == request.url
 
 
-def test_resume_builder_restores_original_scope_and_rejects_a_different_scope(site: str, tmp_path: Path) -> None:
-    from mzizi_cli.features.workspace.workspace import Workspace
-    from mzizi_engine.devcli.catalog.builders import resume_payload
+def test_saved_state_restores_original_scope_and_rejects_a_different_scope(site: str, tmp_path: Path) -> None:
     from mzizi_engine.web.crawl.state import CrawlState, digest_of, load_state
 
     request = CrawlRequest(
@@ -295,7 +293,8 @@ def test_resume_builder_restores_original_scope_and_rejects_a_different_scope(si
         request=request,
     )
     (tmp_path / "state.json").write_text(saved.model_dump_json())
-    payload = resume_payload({"folder": str(tmp_path), "max-pages": 12}, Workspace(tmp_path))
+    assert saved.request is not None
+    payload = saved.request.model_dump(mode="json")
     restored = CrawlRequest.model_validate({**payload, "out_dir": str(tmp_path)}, strict=False)
     assert restored.allowed_paths == ("/list",) and restored.max_depth == 0 and restored.item_selector == "article"
     assert digest_of(restored) == saved.digest

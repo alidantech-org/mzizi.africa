@@ -10,7 +10,7 @@ import pytest
 from typer.testing import CliRunner
 from web_site import Handler, page
 
-from mzizi_engine.devcli.app import app
+from mzizi_cli.orchestrator.app import app
 
 RECIPE = """
 module: links

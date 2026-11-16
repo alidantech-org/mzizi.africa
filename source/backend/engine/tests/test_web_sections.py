@@ -9,7 +9,7 @@ import pytest
 from typer.testing import CliRunner
 from web_site import Handler, page
 
-from mzizi_engine.devcli.app import app
+from mzizi_cli.orchestrator.app import app
 from mzizi_engine.web.browser.adapter import discover_chrome
 from mzizi_engine.web.handlers.sections import SectionsReport
 

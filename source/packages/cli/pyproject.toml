@@ -1,9 +1,12 @@
 [project]
 name = "mzizi-cli"
 version = "0.1.0"
-description = "The developer command line for Mzizi: command catalog, prompts, runs and terminal output over a typed engine gateway. Never imports the engine."
+description = "The Mzizi command line: a small front door that builds the engine runtime and calls its exposed operations."
 requires-python = ">=3.12"
-dependencies = ["pydantic>=2.7", "rich>=15.0.0"]
+dependencies = ["pydantic>=2.7", "rich>=15.0.0", "typer>=0.29.1", "mzizi-engine"]
+
+[project.scripts]
+mzizi = "mzizi_cli.orchestrator.app:main"
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -17,3 +20,6 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.uv.sources]
+mzizi-engine = { workspace = true }

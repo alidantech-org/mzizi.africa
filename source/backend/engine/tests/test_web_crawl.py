@@ -156,7 +156,7 @@ def test_exports_are_deterministic_and_csv_escapes(tmp_path: Path) -> None:
 def test_cli_commands_invoke_the_real_implementations(site: str, tmp_path: Path, monkeypatch) -> None:
     from typer.testing import CliRunner
 
-    from mzizi_engine.devcli.app import app
+    from mzizi_cli.orchestrator.app import app
 
     monkeypatch.setenv("MZIZI_DEV_ROOT", str(tmp_path / "dev"))
     runner = CliRunner()

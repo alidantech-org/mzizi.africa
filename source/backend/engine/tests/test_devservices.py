@@ -192,7 +192,7 @@ def test_cli_mongo_and_vector_commands_use_the_real_services(
 ) -> None:
     from typer.testing import CliRunner
 
-    from mzizi_engine.devcli.app import app
+    from mzizi_cli.orchestrator.app import app
 
     monkeypatch.setenv("MZIZI_DEV_ROOT", str(tmp_path / "dev"))
     runner = CliRunner()

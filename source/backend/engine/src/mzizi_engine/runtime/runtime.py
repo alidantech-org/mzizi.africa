@@ -11,6 +11,7 @@ import threading
 import time
 from collections.abc import Callable
 
+from mzizi_engine.jsonvalue import Payload
 from mzizi_engine.runtime.contracts.config import CapabilityConfig, ConfigSnapshot, RuntimeConfig
 from mzizi_engine.runtime.contracts.errors import (
     CapabilityNotExposedError,
@@ -20,6 +21,7 @@ from mzizi_engine.runtime.contracts.errors import (
 )
 from mzizi_engine.runtime.contracts.health import CapabilityHealth, RuntimeHealth, RuntimeState
 from mzizi_engine.runtime.contracts.plan import ExecutionPlan, Exposure
+from mzizi_engine.runtime.operations import OperationRegistry
 from mzizi_engine.runtime.tools.cancel import CancellationToken
 from mzizi_engine.runtime.tools.capability import RuntimeCapability
 from mzizi_engine.runtime.tools.handles import CapabilityRef, Lease
@@ -28,11 +30,25 @@ from mzizi_engine.runtime.tools.slot import Slot
 
 
 class EngineRuntime:
-    def __init__(self, config: RuntimeConfig) -> None:
+    def __init__(self, config: RuntimeConfig, operations: OperationRegistry | None = None) -> None:
         self._config = config
+        self._operations = operations if operations is not None else OperationRegistry()
         self._slots: dict[str, Slot] = {}
         self._state = RuntimeState.CREATED
         self._lock = threading.RLock()
+
+    @property
+    def operations(self) -> OperationRegistry:
+        """The operations front doors may call: what the runtime exposes, by name."""
+        return self._operations
+
+    def call(self, name: str, payload: Payload) -> Payload:
+        """Run one exposed operation. Unknown names raise `KeyError`; the runtime must be running."""
+        with self._lock:
+            if self._state is not RuntimeState.RUNNING:
+                raise RuntimeStateError(f"operations only run while the runtime is running (state: {self._state})")
+            operation = self._operations.get(name)
+        return operation.handler(payload)
 
     @property
     def state(self) -> RuntimeState:
