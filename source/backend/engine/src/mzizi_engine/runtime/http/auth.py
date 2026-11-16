@@ -1,14 +1,10 @@
-"""Engine authentication and authorization: the same OIDC identities and the same `auth` schema as the NestJS API.
-
-The engine invents no accounts or permissions. A bearer token proves (issuer, subject); `auth.resolve_identity` maps it
-to an account and `auth.can_platform` checks a platform permission such as engine.read, engine.edit or engine.publish.
-Service actors (the NestJS API, scripts, agents) are ordinary accounts of the auth schema.
-"""
+"""Authenticate the internal engine API using the configured service key or OIDC authority."""
 
 from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass
+from hmac import compare_digest
 from typing import Any, Protocol
 
 import httpx
@@ -19,7 +15,7 @@ from mzizi_engine.config import ServerConfig
 
 @dataclass(frozen=True)
 class Principal:
-    account_id: str | None  # None only when ENGINE_AUTH=off
+    account_id: str | None  # Service and unauthenticated calls have no end-user account.
 
 
 class Authority(Protocol):
@@ -88,31 +84,21 @@ def oidc_verifier(settings: ServerConfig) -> TokenVerifier:
 
 
 def require(permission: str) -> Any:
-    """FastAPI dependency: 401 without a valid token or known identity, 403 for a blocked account or missing permission."""
+    """Authenticate requests and apply platform permission checks to OIDC accounts."""
 
     async def dependency(request: Request) -> Principal:
-        state = request.app.state
-        if state.settings.auth == "off":
-            return Principal(None)
-        header = request.headers.get("authorization", "")
-        scheme, _, token = header.partition(" ")
-        if scheme.lower() != "bearer" or not token:
-            raise HTTPException(401, "a bearer token is required")
-        issuer, subject = await state.verifier(token)
-        account_id, outcome = await state.authority.resolve(issuer, subject)
-        if outcome == "account_not_active":
-            raise HTTPException(403, "account_not_active")
-        if outcome != "ok" or not account_id:
-            raise HTTPException(401, outcome)
-        if not await state.authority.can(account_id, permission):
+        principal = await authenticated(request)
+        if principal.account_id is not None and not await request.app.state.authority.can(
+            principal.account_id, permission
+        ):
             raise HTTPException(403, f"{permission} is required")
-        return Principal(account_id)
+        return principal
 
     return Depends(dependency)
 
 
 async def authenticated(request: Request) -> Principal:
-    """Authenticated principal without a platform permission: record-level checks happen in the package against the `auth` schema."""
+    """Resolve the service or OIDC principal for the protected route."""
     state = request.app.state
     if state.settings.auth == "off":
         return Principal(None)
@@ -120,6 +106,11 @@ async def authenticated(request: Request) -> Principal:
     scheme, _, token = header.partition(" ")
     if scheme.lower() != "bearer" or not token:
         raise HTTPException(401, "a bearer token is required")
+    if state.settings.auth == "service":
+        expected = state.settings.service_token
+        if not expected or not compare_digest(token.encode(), expected.encode()):
+            raise HTTPException(403, "invalid service credential")
+        return Principal(None)
     issuer, subject = await state.verifier(token)
     account_id, outcome = await state.authority.resolve(issuer, subject)
     if outcome == "account_not_active":

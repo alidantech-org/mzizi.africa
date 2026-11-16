@@ -14,7 +14,9 @@ persistence/
   postgres/   connection.py (one connect helper), filesystem.py (the filesystem registry port over the Dryv row models)
   mongo/      store.py (MongoStore: ping, upsert_many, find, counts),
               activity.py (the crawler's Activity port: retry through outages, disk spool, replay),
-              run_ledger.py and run_codec.py (spec runs, generated document bindings)
+              run_ledger.py and run_codec.py (spec runs, leases and checkpoints),
+              host_governor.py (shared host permits over generated documents)
+  redis/      host_governor.py (optional Redis atomic host permit store)
   vector/     port.py (VectorStore protocol, VectorPoint, VectorHit) and UnimplementedVectorStore: every call refuses
 ```
 
@@ -28,11 +30,11 @@ persistence/
 
 ## Run ledger
 
-The engine generates the documents for `runs`, `run_events`, `run_artifacts` and `run_summaries` from [run-ledger.ts](../../../dryv/contracts/schemas/mongo/run-ledger.ts). The Mongo adapter writes those models using the generated field aliases. It checks the spec hash on read and compares the previous state before a transition. Dryv currently generates the document schemas, so the adapter creates the TTL index after resolving the generated `expiresAt` field. Only run events have a TTL.
+The engine generates the documents for `runs`, `run_events`, `run_artifacts` and `run_summaries` from [run-ledger.ts](../../../dryv/contracts/schemas/mongo/run-ledger.ts). The Mongo adapter writes those models using the generated field aliases. It checks the spec hash on read and compares the previous state before a transition. Dryv currently generates the document schemas, so the adapter creates the TTL index after resolving the generated `expiresAt` field. Run events and idle host-permit state have TTL indexes. Run records and permanent summaries remain available.
 
 ## Seeds and approved files
 
-Approved files (the seed manifest today, accepted evidence later) live in S3 under `<access>/<path>` with their folders, files and versions in the Postgres `filesystem` schema. `filesystem.sync_seed` plans placements from `seed/manifest.yaml` and the `_folder.yaml` descriptors and registers them through the filesystem package; folder roles are reference values the engine creates on first use (`persistence/postgres/reference.py`). Downloaded and browser-captured files are to be staged under a temporary S3 prefix with their metadata in MongoDB and promoted to this layout on approval (the package already copies a staged object server-side); that staging flow is not built yet.
+Approved files (the seed manifest today, accepted evidence later) live in S3 under `<access>/<path>` with their folders, files and versions in the Postgres `filesystem` schema. `filesystem.sync_seed` plans placements from `seed/manifest.yaml` and the `_folder.yaml` descriptors and registers them through the filesystem package; folder roles are reference values the engine creates on first use (`persistence/postgres/reference.py`). Supervised HTTP stages can stage their output files in a sealed temporary S3 bundle. The release CLI verifies the manifest, records an approval tied to the placement plan, and registers server-side copies in the filesystem schema.
 
 ## Vector (planned)
 

@@ -19,11 +19,15 @@ class RunSummaryDocument(BaseModel):
 
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
+    approval_json: str | None = Field(default=None, alias="approvalJson")
     approver: Annotated[str, Field(min_length=1)] | None = Field(default=None, alias="approver")
     counts: list[LedgerStageCount] = Field(alias="counts")
     decisions: list[LedgerDecision] = Field(alias="decisions")
     files: list[RunArtifactDocument] = Field(alias="files")
     finished_at: datetime = Field(alias="finishedAt")
+    manifest_hash: Annotated[str, Field(min_length=64, max_length=64, pattern="^[a-f0-9]{64}$")] | None = Field(
+        default=None, alias="manifestHash"
+    )
     run_id: UUID = Field(alias="runId")
     spec_hash: Annotated[str, Field(min_length=64, max_length=64, pattern="^[a-f0-9]{64}$")] = Field(alias="specHash")
     state: LedgerRunState = Field(alias="state")

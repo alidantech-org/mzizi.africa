@@ -151,6 +151,10 @@ class Registrar:
         if isinstance(source, StoredObject):
             with self._store.open_stream(source.key) as stream:
                 sha, size = hash_stream(stream)
+            if (source.expected_sha256 is not None and sha != source.expected_sha256) or (
+                source.expected_size is not None and size != source.expected_size
+            ):
+                raise StoreError("Stored object does not match its expected checksum or size")
             with self._store.open_stream(source.key) as stream:
                 return sha, size, stream.read(4096)
         sha, size = hash_stream(io.BytesIO(source))

@@ -7,12 +7,12 @@ src/mzizi_engine/
   runtime/
     runtime.py, operations.py     EngineRuntime: registration, config snapshots, concurrency plans, operations registry, call()
     assembly/                     composition root: default operations, filesystem, search and spec-run wiring
-    runs/                         job specs, worker context, in-process runner, local run store
+    runs/                         job specs, local run store, worker, supervisor, and host governor
     executor/                     job queue, retries, cancellation, events, outbox; the in-memory job store
     http/                         the local FastAPI app, authentication, settings
     policy/                       the collection gate (typed assessments, checks, decision)
     contracts/, tools/            runtime contracts and helpers
-  persistence/                    postgres/ (filesystem registry over the generated row models), mongo/ (activity store and run ledger), vector/ (skeleton); see ENGINE_PERSISTENCE
+  persistence/                    postgres/ (filesystem registry over the generated row models), mongo/ (activity, run ledger and host permits), redis/ (host permits), vector/ (skeleton); see ENGINE_PERSISTENCE
   cli/                            `mzizi-engine` (serve, capabilities, check)
   api/                            Dryv-generated routes and schemas (never hand-edited)
 ```
@@ -23,12 +23,12 @@ The developer command line `mzizi` is the separate [`mzizi-cli`](../../packages/
 
 ```bash
 uv sync --all-packages --all-extras
-ENGINE_AUTH=off uv run mzizi-engine serve        # 127.0.0.1:8760
+uv run mzizi-engine serve                       # 127.0.0.1:8760 with the settings below
 uv run mzizi-engine capabilities                 # the operations the runtime exposes
 uv run pytest source/backend/engine/tests
 ```
 
-The API is local: it binds to loopback by default, and `ENGINE_AUTH=off` (development only) is refused on any other address. In normal mode a bearer token is verified against the same OIDC issuer as the NestJS API (`AUTH_ISSUER`, `AUTH_JWKS_URL`). HTTP executor jobs, runs and events are kept in memory (`ENGINE_STORE=memory`, the only store): the Bun database service that once held them was removed, and persistent job state returns with the engine's own persistence. Account and permission lookups that used that service are likewise not available yet.
+The internal API binds to loopback by default. Set `ENGINE_AUTH=service` and generate `ENGINE_SERVICE_TOKEN` with `openssl rand -hex 32`. Give the main API the same token and set its `ENGINE_URL`. It sends the key as an Authorization bearer token and owns end-user authorization. Service calls carry no end-user account ID. The engine also supports the existing OIDC mode when an OIDC authority is available, and the unauthenticated development mode is limited to loopback. HTTP executor jobs, runs and events are kept in memory (`ENGINE_STORE=memory`, the only store): the Bun database service that once held them was removed, and persistent job state returns with the engine's own persistence. Account and permission lookups that used that service are likewise not available yet.
 
 ## Configuration
 
@@ -55,6 +55,35 @@ MZIZI_ENV_FILE=/dev/null MZIZI_MONGO_URL=mongodb://127.0.0.1:27017 MZIZI_MONGO_D
   uv run pytest source/backend/engine/tests/runs -q
 ```
 
+## Subprocess workers
+
+Choose `ENGINE_HOST_REQUESTS_PER_SECOND`, `ENGINE_HOST_CONCURRENCY`, and `ENGINE_HOST_DAILY_BUDGET` for worker traffic. Set `ENGINE_WORKER_CEILING` for the total subprocess limit and `ENGINE_CAPABILITY_LIMITS` for tighter operation limits. The supervisor checks free space using `MZIZI_MIN_FREE_GB`. Use one supervisor per Mongo run ledger. The local run root holds a lock to prevent two supervisors using the same directory.
+
+```bash
+uv run mzizi-engine supervise            # run in one terminal
+uv run mzizi-engine submit-run spec.json  # use the returned run ID
+uv run mzizi-engine show-run <run-id>
+uv run mzizi-engine cancel-run <run-id>
+```
+
+The supervisor starts and reaps `mzizi-engine worker --run <id>` subprocesses. Each owns one lease and checkpoints after each completed stage. A failed attempt retries from the first unfinished stage with backoff. Mongo shares host permits by default. Set `ENGINE_REDIS_URL` to use Redis and give every worker the same endpoint and limits. The governed subprocess path currently accepts HTTP rendering. Standalone browser acquisition remains available through its existing entry points.
+
+## Sealed S3 runs and release
+
+Set `ENGINE_RUN_STORE=s3` with the existing S3 settings and the worker governor settings. A supervised crawl stages output in local scratch, uploads it to the run prefix, writes its upload receipt, and checkpoints. A successful worker seals its bundle. `seal-run` can finish the transition after an interruption. Use one supervisor and a common local run root for all engine processes accessing these bundles.
+
+```bash
+uv run mzizi-engine show-run <run-id>
+uv run mzizi-engine seal-run <run-id>
+uv run mzizi-engine plan-release <run-id> placements.json
+uv run mzizi-engine release-run <run-id> placements.json --approval approval.json
+uv run mzizi-engine sweep-runs
+```
+
+The placement JSON contains `entries`, with one `path` and `placement` per artifact. Placement supplies `folders`, `file_name`, `access`, `retention`, `role_id`, and `authorization`. Add `relation_kind_id` where the manifest has raw-to-derived links. The plan output gives the hash to place in an approval JSON file alongside `approver`, `method` (`human` or `ai`), and `reason`. Apply uses the filesystem registry and server-side copy. A different content hash at an existing destination is a conflict.
+
+Set `ENGINE_RUN_RETENTION_DAYS` to enable automated temporary-artifact expiry. Gzip JSON Lines logs use `ENGINE_RUN_LOG_RETENTION_DAYS`. Mongo keeps the permanent summary. Supervised S3 `site.watch` requires `download=false` and `hunt=false` while the staged download pipeline is pending. Governed workers accept HTTP rendering.
+
 ## Status
 
-Built and tested: the runtime and its operations registry, queue, limits, retries, cancellation, worker processes, event replay, outbox delivery, the filesystem adapter against a real PostgreSQL schema, and every package's own tests. Not built: persistent HTTP executor job state, spec subprocess workers, bundle sealing, per-folder authorization, Dryv-defined HTTP routes for the filesystem, and typed contracts for the legacy runtime modules still excused from strict typing in the root `pyproject.toml` (`runtime/http`, `runtime/executor`, `runtime/assembly/default_operations`).
+Built and tested: the runtime and its operations registry, queue, limits, retries, cancellation, worker processes, event replay, outbox delivery, the filesystem adapter against a real PostgreSQL schema, and every package's own tests. Not built: persistent HTTP executor job state, browser request interception for governed workers, staged download pipelines, per-folder authorization, Dryv-defined HTTP routes for the filesystem, and typed contracts for the legacy runtime modules still excused from strict typing in the root `pyproject.toml` (`runtime/http`, `runtime/executor`, `runtime/assembly/default_operations`).

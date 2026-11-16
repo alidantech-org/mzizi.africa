@@ -17,7 +17,14 @@ from mzizi_engine.api.schemas.mongo.run_ledger.models.run_summary_document impor
 from mzizi_engine.api.schemas.mongo.run_ledger.models.worker_run_document import WorkerRunDocument
 from mzizi_engine.jsonvalue import JsonValue
 from mzizi_engine.runtime.operations import OperationRegistry
-from mzizi_engine.runtime.runs.contracts.records import ArtifactRecord, RunEvent, RunRecord, RunState, RunSummary
+from mzizi_engine.runtime.runs.contracts.records import (
+    ArtifactRecord,
+    ReleaseApproval,
+    RunEvent,
+    RunRecord,
+    RunState,
+    RunSummary,
+)
 from mzizi_engine.runtime.runs.encode import canonical_json
 from mzizi_engine.runtime.runs.parse import parse_job_spec
 
@@ -37,6 +44,10 @@ def alias(model: type[BaseModel], field: str) -> str:
 RUN_STATE = alias(WorkerRunDocument, "state")
 RUN_SPEC_HASH = alias(WorkerRunDocument, "spec_hash")
 EVENT_EXPIRY = alias(RunEventDocument, "expires_at")
+RUN_REVISION = alias(WorkerRunDocument, "revision")
+RUN_AVAILABLE_AT = alias(WorkerRunDocument, "available_at")
+RUN_LEASE_EXPIRY = alias(WorkerRunDocument, "lease_expires_at")
+RUN_REQUESTED_AT = alias(WorkerRunDocument, "requested_at")
 
 
 def encode_run(record: RunRecord) -> BsonDocument:
@@ -52,14 +63,32 @@ def encode_run(record: RunRecord) -> BsonDocument:
         requested_by=record.requested_by,
         manifest_hash=record.manifest_hash,
         failure_type=record.failure_type,
+        revision=record.revision,
+        lease_id=record.lease_id,
+        lease_expires_at=record.lease_expires_at,
+        heartbeat_at=record.heartbeat_at,
+        available_at=record.available_at,
+        stages_completed=record.stages_completed,
+        cancel_requested_at=record.cancel_requested_at,
+        sealed_at=record.sealed_at,
+        run_store=record.run_store,
+        approval_json=canonical_json(record.approval).decode() if record.approval else None,
+        release_plan_hash=record.release_plan_hash,
+        logs_expired=record.logs_expired,
     )
-    return _bson(model, str(record.run_id))
+    document = _bson(model, str(record.run_id))
+    for key, value in ((RUN_AVAILABLE_AT, record.available_at), (RUN_LEASE_EXPIRY, record.lease_expires_at)):
+        document[key] = value
+    return document
 
 
 def decode_run(document: BsonDocument, registry: OperationRegistry) -> RunRecord:
     model = WorkerRunDocument.model_validate({key: value for key, value in document.items() if key != "_id"})
     if sha256(model.spec_json.encode("utf-8")).hexdigest() != model.spec_hash:
         raise ValueError(f"Persisted spec hash mismatch for run {model.run_id}")
+    run_store = model.run_store or "local"
+    if run_store not in ("local", "s3"):
+        raise ValueError("Unknown run-store backend in the ledger")
     return RunRecord(
         run_id=model.run_id,
         spec_hash=model.spec_hash,
@@ -72,6 +101,18 @@ def decode_run(document: BsonDocument, registry: OperationRegistry) -> RunRecord
         requested_by=model.requested_by,
         manifest_hash=model.manifest_hash,
         failure_type=model.failure_type,
+        revision=model.revision or 0,
+        lease_id=model.lease_id,
+        lease_expires_at=model.lease_expires_at,
+        heartbeat_at=model.heartbeat_at,
+        available_at=model.available_at,
+        stages_completed=model.stages_completed or 0,
+        cancel_requested_at=model.cancel_requested_at,
+        sealed_at=model.sealed_at,
+        run_store="s3" if run_store == "s3" else "local",
+        approval=ReleaseApproval.model_validate_json(model.approval_json) if model.approval_json else None,
+        release_plan_hash=model.release_plan_hash,
+        logs_expired=bool(model.logs_expired),
     )
 
 
@@ -116,6 +157,8 @@ def encode_summary(record: RunSummary) -> BsonDocument:
         state=LedgerRunState(record.state),
         finished_at=record.finished_at,
         approver=record.approver,
+        approval_json=canonical_json(record.approval).decode() if record.approval else None,
+        manifest_hash=record.manifest_hash,
         files=[_artifact(record.run_id, artifact) for artifact in record.files],
         counts=[LedgerStageCount(stage=count.stage, files=count.files) for count in record.counts],
         decisions=[

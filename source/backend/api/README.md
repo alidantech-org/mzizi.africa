@@ -15,3 +15,8 @@ The API uses `DATABASE_URL` for product reads and `DATABASE_SERVICE_URL` plus a 
 From this directory, the project provides `bun run typecheck` and `bun run test`. PostgreSQL integration suites require a configured `TEST_DATABASE_URL`; see the root command guide before running the full repository checks.
 
 The inherited Python API is historical under `.docs/_archives/2026-11-08-rewrite-snapshot/`, not at `source/backend/api-legacy`.
+
+
+## Internal engine client
+
+NestJS modules that send engine requests can import `EngineModule` and inject `EngineClient`. Set `ENGINE_URL` to the internal engine address and use the same `ENGINE_SERVICE_TOKEN` as the engine in service mode. Apply product authorization before calling the engine. The client sends the bearer key from the server and refuses redirects.

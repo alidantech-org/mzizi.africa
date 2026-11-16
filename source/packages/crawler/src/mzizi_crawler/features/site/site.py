@@ -25,6 +25,7 @@ from mzizi_crawler.features.site.steps import (
 )
 from mzizi_crawler.shared.activity import open_activity
 from mzizi_crawler.shared.engine.cancel import CANCEL
+from mzizi_crawler.shared.engine.governor import active_governor
 from mzizi_crawler.shared.engine.service import client_for, extra_ca_bundle
 from mzizi_crawler.shared.hunt import (
     looks_like_download,
@@ -52,13 +53,16 @@ def watch_site(request: WatchRequest) -> WatchReport:
     debug_stack_seconds = crawler_settings().debug_stack_seconds
     if debug_stack_seconds is not None:
         faulthandler.dump_traceback_later(debug_stack_seconds, repeat=True)
-    CANCEL.clear()
+    if active_governor() is None:
+        CANCEL.clear()
     if threading.current_thread() is threading.main_thread():  # a stop signal ends fetching, then everything is saved
         for signum in (signal.SIGTERM, signal.SIGINT):
             signal.signal(signum, lambda *_: CANCEL.set())
     start = request.starts[0] if request.starts else request.url
     activity = open_activity()
-    landed = canonical_url(start, extra_ca_bundle(host_of(start)))
+    # Standalone watch probes canonical redirects. Governed watch lets the scoped WebClient
+    # handle redirects after checking robots and the host policy.
+    landed = start if active_governor() is not None else canonical_url(start, extra_ca_bundle(host_of(start)))
     if (
         activity is not None
     ):  # remember where a start URL lands, so a slow answer later cannot send us to the wrong host

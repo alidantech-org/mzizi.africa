@@ -17,6 +17,7 @@ import socket
 import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import AbstractContextManager, nullcontext
 from email.message import Message
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
@@ -157,6 +158,7 @@ class Downloader:
         policy: DownloadPolicy | None = None,
         transport: httpx.BaseTransport | None = None,
         extra_ca_bundle: Path | None = None,
+        permit: Callable[[str], AbstractContextManager[None]] | None = None,
     ) -> None:
         self.destination = destination
         self.policy = policy or DownloadPolicy()
@@ -175,6 +177,7 @@ class Downloader:
             verify=trust_store(extra_ca_bundle),
         )
         self._count = 0
+        self.permit = permit or (lambda _: nullcontext())
 
     def _ident(self, url: str) -> str:
         return hashlib.sha256(url.encode()).hexdigest()[:12]
@@ -210,7 +213,7 @@ class Downloader:
                 if validators.get("etag") or validators.get("last-modified"):
                     request_headers["If-Range"] = validators.get("etag") or validators["last-modified"]
             try:
-                with self.client.stream("GET", current, headers=request_headers) as response:
+                with self.permit(current), self.client.stream("GET", current, headers=request_headers) as response:
                     if response.is_redirect and response.headers.get("location"):
                         current = urljoin(current, response.headers["location"])
                         continue

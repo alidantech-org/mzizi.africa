@@ -11,6 +11,7 @@ class LedgerRunState(StrEnum):
     CHECKING = "checking"
     COMPLETED = "completed"
     EXPIRED = "expired"
+    EXPIRING = "expiring"
     FAILED = "failed"
     LEASED = "leased"
     PARTIAL = "partial"

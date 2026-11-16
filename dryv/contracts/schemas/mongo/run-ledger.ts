@@ -23,6 +23,7 @@ const state = runLedger.properties({
       "rejected",
       "partial",
       "promoted",
+      "expiring",
       "expired",
     ])
     .tags("mongo"),
@@ -61,6 +62,13 @@ const shapes = runLedger.schemas({
 });
 
 runLedger.schemas({
+  HostGovernorDocument: dryv
+    .schema({
+      revision: dryv.field(p.Id),
+      stateJson: dryv.field(p.JsonText),
+      expiresAt: dryv.field(p.Instant),
+    })
+    .tags("mongo"),
   WorkerRunDocument: dryv
     .schema({
       runId: dryv.field(p.Id),
@@ -68,6 +76,18 @@ runLedger.schemas({
       specJson: dryv.field(p.JsonText),
       state: dryv.field(state.LedgerRunState),
       attempts: dryv.field(p.NonNegativeInteger),
+      revision: dryv.field(p.NonNegativeInteger).optional(),
+      leaseId: dryv.field(p.Id).optional(),
+      leaseExpiresAt: dryv.field(p.Instant).optional(),
+      heartbeatAt: dryv.field(p.Instant).optional(),
+      availableAt: dryv.field(p.Instant).optional(),
+      stagesCompleted: dryv.field(p.NonNegativeInteger).optional(),
+      cancelRequestedAt: dryv.field(p.Instant).optional(),
+      sealedAt: dryv.field(p.Instant).optional(),
+      runStore: dryv.field(p.NonEmptyString).optional(),
+      approvalJson: dryv.field(p.JsonText).optional(),
+      releasePlanHash: dryv.field(p.Sha256).optional(),
+      logsExpired: dryv.field(p.Flag).optional(),
       requestedAt: dryv.field(p.Instant),
       startedAt: dryv.field(p.Instant).optional(),
       finishedAt: dryv.field(p.Instant).optional(),
@@ -98,6 +118,8 @@ runLedger.schemas({
       files: dryv.field(shapes.RunArtifactDocument).array(),
       decisions: dryv.field(shapes.LedgerDecision).array(),
       approver: dryv.field(p.NonEmptyString).optional(),
+      approvalJson: dryv.field(p.JsonText).optional(),
+      manifestHash: dryv.field(p.Sha256).optional(),
     })
     .tags("mongo"),
 });

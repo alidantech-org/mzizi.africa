@@ -6,11 +6,11 @@ answered by the configured block policy; each decision and each request is kept 
 
 from __future__ import annotations
 
-import ssl
 import threading
 import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import AbstractContextManager, nullcontext
 from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
@@ -24,6 +24,7 @@ from mzizi_fetch.http.rate import RateLimiter
 from mzizi_fetch.shared.models import Frozen
 from mzizi_fetch.web.blocks import Block, BlockDecision, BlockPolicy, Response, detect_block
 from mzizi_fetch.web.policy import Decision, SourcePolicy, robots_decision, scope_decision
+from mzizi_fetch.web.tls import trust_store as trust_store
 from mzizi_fetch.web.urls import host_of, normalize, origin_of
 
 MAX_REDIRECTS = 10
@@ -98,15 +99,6 @@ class WebResponse(Frozen):
         return self.refused is None and not self.error and self.block is None and 200 <= self.status < 400
 
 
-def trust_store(extra: Path | None) -> ssl.SSLContext | bool:
-    """The system trust store plus one extra CA bundle (for a site that sends an incomplete certificate chain)."""
-    if extra is None:
-        return True
-    context = ssl.create_default_context()
-    context.load_verify_locations(cafile=str(extra))
-    return context
-
-
 class WebClient:
     def __init__(
         self,
@@ -124,12 +116,15 @@ class WebClient:
         extra_ca_bundle: Path | None = None,
         sleep: Callable[[float], None] = time.sleep,
         clock: Callable[[], float] = time.monotonic,
+        permit: Callable[[str], AbstractContextManager[None]] | None = None,
     ) -> None:
         policy.validate_authorization()
         self.user_agent, self.policy, self.start_hosts = user_agent, policy, start_hosts
         self.blocks = blocks or BlockPolicy()
         self.max_bytes, self.sleep, self.clock = max_bytes, sleep, clock
         self.body_deadline = body_deadline
+        self._governed = permit is not None
+        self.permit = permit or (lambda _: nullcontext())
         self.headers = {"User-Agent": user_agent, "Accept": "*/*", **(headers or {})}
         self.http = httpx.Client(
             follow_redirects=False, timeout=timeout, transport=transport, verify=trust_store(extra_ca_bundle)
@@ -166,7 +161,9 @@ class WebClient:
     def _load_robots(self, origin: str) -> RobotFileParser | None:
         parser = RobotFileParser()
         try:
-            response = self.http.get(f"{origin}/robots.txt", headers=self.headers)
+            url = f"{origin}/robots.txt"
+            with self.permit(url):
+                response = self.http.get(url, headers=self.headers)
         except httpx.HTTPError:
             return None
         if response.status_code >= SERVER_ERROR_FLOOR:
@@ -303,7 +300,17 @@ class WebClient:
         current = url
         try:
             for _ in range(MAX_REDIRECTS + 1):
-                with self.http.stream(method, current, headers=headers) as reply:
+                if chain and self._governed and not (robots := self.robots_for(current)).allowed:
+                    return WebResponse(
+                        url=url,
+                        final_url=current,
+                        status=0,
+                        headers={},
+                        body=b"",
+                        redirects=tuple(chain),
+                        refused=robots,
+                    )
+                with self.permit(current), self.http.stream(method, current, headers=headers) as reply:
                     if reply.is_redirect and reply.headers.get("location"):
                         target = urljoin(current, reply.headers["location"])
                         chain.append(target)

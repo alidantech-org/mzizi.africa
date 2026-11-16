@@ -13,6 +13,8 @@ class StoredObject(Frozen):
     """Bytes that already sit in the store (an upload waiting at a temporary key); registering copies them server-side."""
 
     key: str
+    expected_sha256: str | None = None
+    expected_size: int | None = None
 
 
 type Source = Path | bytes | StoredObject

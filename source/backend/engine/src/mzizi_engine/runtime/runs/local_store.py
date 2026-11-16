@@ -14,20 +14,9 @@ from uuid import UUID
 
 from mzizi_engine.runtime.runs.contracts.records import ArtifactProvenance, ArtifactRecord, RunManifest
 from mzizi_engine.runtime.runs.encode import canonical_json
+from mzizi_engine.runtime.runs.paths import run_path
 
 _CHUNK_BYTES = 1024 * 1024
-_AREAS = frozenset({"artifacts", "logs"})
-
-
-def _parts(relative_path: str) -> tuple[str, ...]:
-    parts = tuple(relative_path.split("/"))
-    if (
-        parts[0] not in _AREAS
-        or any(part in ("", ".", "..") for part in parts)
-        or any(character in relative_path for character in ("\\", "\x00"))
-    ):
-        raise ValueError("Expected a safe relative path under artifacts/ or logs/")
-    return parts
 
 
 def _child(directory: Path, *parts: str) -> Path:
@@ -80,7 +69,7 @@ class LocalRunStore:
         return _child(self.root, str(run_id))
 
     def put(self, run_id: UUID, relative_path: str, source: BinaryIO, provenance: ArtifactProvenance) -> ArtifactRecord:
-        parts = _parts(relative_path)
+        parts = run_path(relative_path)
         if len(parts) < 2:
             raise ValueError("An artifact or log path must include a filename")
         run = self._run(run_id)
@@ -88,6 +77,8 @@ class LocalRunStore:
         target = _child(run, *parts)
         metadata = _child(run, ".metadata", f"{key}.json")
         with self._lock:
+            if self.read_manifest(run_id) is not None:
+                raise FileExistsError(f"Run {run_id} is sealed")
             digest, size = _write(target, source)
             record = ArtifactRecord(
                 path=relative_path,
@@ -102,13 +93,13 @@ class LocalRunStore:
             return record
 
     def open(self, run_id: UUID, relative_path: str) -> BinaryIO:
-        parts = _parts(relative_path)
+        parts = run_path(relative_path)
         return _child(self._run(run_id), *parts).open("rb")
 
     def list(self, run_id: UUID, prefix: str = "") -> tuple[ArtifactRecord, ...]:
         prefix = prefix.rstrip("/")
         if prefix:
-            _parts(prefix)
+            run_path(prefix, area_allowed=True)
         metadata = _child(self._run(run_id), ".metadata")
         with self._lock:
             records = (
@@ -125,6 +116,12 @@ class LocalRunStore:
                     key=lambda record: record.path,
                 )
             )
+
+    def read_manifest(self, run_id: UUID) -> bytes | None:
+        try:
+            return _child(self._run(run_id), "manifest.json").read_bytes()
+        except FileNotFoundError:
+            return None
 
     def write_manifest(self, manifest: RunManifest) -> str:
         with self._lock:

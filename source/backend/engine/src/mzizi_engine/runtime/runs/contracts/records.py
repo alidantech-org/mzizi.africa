@@ -1,7 +1,7 @@
 """Run lifecycle, events, and evidence metadata for storage and audit."""
 
 from enum import StrEnum
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import AwareDatetime, NonNegativeInt, StringConstraints
@@ -25,6 +25,7 @@ class RunState(StrEnum):
     REJECTED = "rejected"
     PARTIAL = "partial"
     PROMOTED = "promoted"
+    EXPIRING = "expiring"
     EXPIRED = "expired"
 
 
@@ -39,6 +40,13 @@ class EventLevel(StrEnum):
     ERROR = "error"
 
 
+class ReleaseApproval(Frozen):
+    approver: NonEmpty
+    method: Literal["human", "ai"]
+    reason: NonEmpty
+    plan_hash: Sha256
+
+
 class RunRecord(Frozen):
     run_id: UUID
     spec_hash: Sha256
@@ -51,6 +59,18 @@ class RunRecord(Frozen):
     requested_by: str | None = None
     manifest_hash: Sha256 | None = None
     failure_type: str | None = None
+    revision: NonNegativeInt = 0
+    lease_id: UUID | None = None
+    lease_expires_at: AwareDatetime | None = None
+    heartbeat_at: AwareDatetime | None = None
+    available_at: AwareDatetime | None = None
+    stages_completed: NonNegativeInt = 0
+    cancel_requested_at: AwareDatetime | None = None
+    sealed_at: AwareDatetime | None = None
+    run_store: Literal["local", "s3"] = "local"
+    approval: ReleaseApproval | None = None
+    release_plan_hash: Sha256 | None = None
+    logs_expired: bool = False
 
 
 class ArtifactProvenance(Frozen):
@@ -115,3 +135,11 @@ class RunSummary(Frozen):
     files: tuple[ArtifactRecord, ...] = ()
     decisions: tuple[RunDecision, ...] = ()
     approver: str | None = None
+    approval: ReleaseApproval | None = None
+    manifest_hash: Sha256 | None = None
+
+
+class StageReceipt(Frozen):
+    index: NonNegativeInt
+    files: tuple[ArtifactRecord, ...]
+    decisions: tuple[RunDecision, ...] = ()

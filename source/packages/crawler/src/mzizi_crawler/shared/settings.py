@@ -1,6 +1,7 @@
 """Process configuration supplied by the engine for local crawl and watch paths."""
 
 from pathlib import Path
+from shutil import disk_usage
 
 from pydantic import BaseModel, ConfigDict
 
@@ -24,3 +25,7 @@ def configure_crawler(settings: CrawlerSettings) -> None:
 
 def crawler_settings() -> CrawlerSettings:
     return _settings
+
+
+def disk_is_low(path: Path) -> bool:
+    return disk_usage(path).free < crawler_settings().min_free_bytes

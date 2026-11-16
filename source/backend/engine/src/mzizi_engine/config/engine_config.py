@@ -21,7 +21,10 @@ Variables (the root `.env` already carries most of them):
     crawler     MZIZI_USER_AGENT, ENGINE_INPUT_ROOT, MZIZI_DEV_ROOT, MZIZI_MARKDOWN_WORKERS,
                 MZIZI_MIN_FREE_GB, MZIZI_DEBUG_STACKS, MZIZI_WEB_VOCABULARY
     runs        ENGINE_RUN_STORE, ENGINE_RUN_LOCAL_ROOT, ENGINE_RUN_SCRATCH_ROOT, ENGINE_RUN_RETENTION_DAYS,
-                ENGINE_RUN_LOG_RETENTION_DAYS, ENGINE_WORKER_CEILING
+                ENGINE_RUN_LOG_RETENTION_DAYS, ENGINE_WORKER_CEILING, ENGINE_RUN_LEASE_SECONDS,
+                ENGINE_RUN_CANCEL_GRACE_SECONDS, ENGINE_RUN_MAX_ATTEMPTS, ENGINE_RUN_RETRY_SECONDS
+    governor    ENGINE_HOST_REQUESTS_PER_SECOND, ENGINE_HOST_CONCURRENCY, ENGINE_HOST_DAILY_BUDGET,
+                ENGINE_REDIS_URL (optional; MongoDB is the fallback)
 """
 
 from __future__ import annotations
@@ -32,7 +35,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, PositiveInt
+from pydantic import BaseModel, ConfigDict, PositiveFloat, PositiveInt
+
+from mzizi_engine.config.parse import parse_env as parse_env
 
 # ---------------------------------------------------------------------------------------------------- errors
 
@@ -94,8 +99,10 @@ class ServerConfig:
         )
 
     def check(self) -> None:
-        if self.auth not in ("oidc", "off"):
-            raise ValueError("ENGINE_AUTH must be oidc or off")
+        if self.auth not in ("service", "oidc", "off"):
+            raise ValueError("ENGINE_AUTH must be service, oidc or off")
+        if self.auth == "service" and not self.service_token:
+            raise ValueError("ENGINE_SERVICE_TOKEN is required when ENGINE_AUTH=service")
         if self.store != "memory":
             raise ValueError(
                 "ENGINE_STORE must be memory: persistent job state returns with the engine's own persistence"
@@ -160,11 +167,24 @@ class RunsConfig(_Frozen):
     retention_days: PositiveInt | None = None
     log_retention_days: PositiveInt | None = None
     worker_ceiling: PositiveInt = 1
+    lease_seconds: PositiveInt = 15
+    cancel_grace_seconds: PositiveFloat = 5
+    max_attempts: PositiveInt = 3
+    retry_seconds: PositiveFloat = 1
 
     def require_log_retention(self) -> int:
         if self.log_retention_days is None:
             raise _missing("run ledger", ["ENGINE_RUN_LOG_RETENTION_DAYS"])
         return self.log_retention_days
+
+
+class GovernorConfig(_Frozen):
+    model_config = ConfigDict(frozen=True, extra="forbid", allow_inf_nan=False)
+
+    requests_per_second: PositiveFloat
+    concurrency: PositiveInt
+    daily_budget: PositiveInt
+    redis_url: str | None = None
 
 
 def _path(value: str | None) -> Path | None:
@@ -192,6 +212,7 @@ class EngineConfig(_Frozen):
     filesystem: FilesystemRules | None
     search: SearchKeys
     runs: RunsConfig = RunsConfig()
+    governor: GovernorConfig | None = None
     crawler: CrawlerConfig
     #: `files` turns the MongoDB activity store off (tests, CI); anything else uses MongoDB when it is configured.
     activity_store: str
@@ -225,6 +246,9 @@ class EngineConfig(_Frozen):
         vector_url = first("MZIZI_VECTOR_URL")
         user_agent, input_root = first("MZIZI_USER_AGENT"), first("ENGINE_INPUT_ROOT")
         media = first("FILESYSTEM_MEDIA_FORMATS")
+        rate = first("ENGINE_HOST_REQUESTS_PER_SECOND")
+        concurrency = first("ENGINE_HOST_CONCURRENCY")
+        daily_budget = first("ENGINE_HOST_DAILY_BUDGET")
         return cls(
             server=ServerConfig.from_env(env),
             postgres=PostgresConfig(url=write_url) if write_url else None,
@@ -271,8 +295,20 @@ class EngineConfig(_Frozen):
                     "retention_days": _int(first("ENGINE_RUN_RETENTION_DAYS")),
                     "log_retention_days": _int(first("ENGINE_RUN_LOG_RETENTION_DAYS")),
                     "worker_ceiling": int(env.get("ENGINE_WORKER_CEILING", "1")),
+                    "lease_seconds": int(env.get("ENGINE_RUN_LEASE_SECONDS", "15")),
+                    "cancel_grace_seconds": float(env.get("ENGINE_RUN_CANCEL_GRACE_SECONDS", "5")),
+                    "max_attempts": int(env.get("ENGINE_RUN_MAX_ATTEMPTS", "3")),
+                    "retry_seconds": float(env.get("ENGINE_RUN_RETRY_SECONDS", "1")),
                 }
             ),
+            governor=GovernorConfig(
+                requests_per_second=float(rate),
+                concurrency=int(concurrency),
+                daily_budget=int(daily_budget),
+                redis_url=first("ENGINE_REDIS_URL"),
+            )
+            if rate and concurrency and daily_budget
+            else None,
             activity_store=env.get("ENGINE_ACTIVITY_STORE", "mongo"),
         )
 
@@ -357,27 +393,3 @@ def _repository_root() -> Path:
         if (parent / "seed").is_dir() and (parent / "pyproject.toml").is_file():
             return parent
     return Path.cwd()
-
-
-def parse_env(text: str) -> dict[str, str]:
-    """`KEY=value` lines; comments, blank lines, `export`, matching quotes and multi-line quoted values (PEM keys)."""
-    values: dict[str, str] = {}
-    lines = iter(text.splitlines())
-    for raw in lines:
-        line = raw.strip().removeprefix("export ").strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, _, value = line.partition("=")
-        value = value.strip()
-        if value[:1] in "\"'" and not (len(value) > 1 and value.endswith(value[0])):
-            quote, parts = value[0], [value[1:]]
-            for more in lines:
-                if more.rstrip().endswith(quote):
-                    parts.append(more.rstrip()[:-1])
-                    break
-                parts.append(more)
-            value = "\n".join(parts)
-        elif value[:1] in "\"'" and value.endswith(value[0]):
-            value = value[1:-1]
-        values[key.strip()] = value
-    return values

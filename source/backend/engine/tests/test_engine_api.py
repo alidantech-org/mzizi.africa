@@ -8,10 +8,12 @@ import json
 import os
 import threading
 import time
+from collections.abc import Callable
 
 import httpx
 import pytest
 from engine_helpers import settings, wait_for
+from fastapi.testclient import TestClient
 
 from mzizi_engine.config import ServerConfig
 from mzizi_engine.runtime.assembly.default_operations import build_default_registry
@@ -275,6 +277,26 @@ def test_the_actor_of_a_filesystem_job_is_the_authenticated_principal_never_clie
     assert job_done(client, spoof["id"])["input"]["actor"] is None
     check = client.post("/v1/manifests/validate").json()
     assert check["ok"] is True and check["entries"] > 40
+
+
+def test_service_key_authenticates_job_routes_without_an_oidc_authority(
+    make_client: Callable[..., TestClient],
+) -> None:
+    client = make_client(settings=settings(auth="service", service_token="local-fixture-key"))
+    key = {"Authorization": "Bearer local-fixture-key"}
+    assert client.get("/capabilities").status_code == 401
+    assert client.get("/capabilities", headers={"Authorization": "Bearer incorrect"}).status_code == 403
+    assert client.get("/capabilities", headers=key).status_code == 200
+    job = {"kind": "scraping.links", "input": {"html": "<a href='/test'>test</a>", "base_url": "https://example.test"}}
+    assert client.post("/v1/jobs", json=job).status_code == 401
+    submitted = client.post("/v1/jobs", json=job, headers=key)
+    assert submitted.status_code == 202
+    assert client.get(f"/v1/jobs/{submitted.json()['id']}", headers=key).status_code == 200
+
+
+def test_service_auth_requires_a_key() -> None:
+    with pytest.raises(ValueError, match="ENGINE_SERVICE_TOKEN"):
+        ServerConfig(auth="service").check()
 
 
 def test_settings_refuse_unauthenticated_mode_off_loopback():

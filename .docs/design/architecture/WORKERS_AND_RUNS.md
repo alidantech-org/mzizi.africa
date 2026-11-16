@@ -7,13 +7,23 @@ tags: [engine, workers, runs, jobs, s3, mongo, proposal]
 
 # Workers, runs and sealed run bundles
 
-**Status: phase 1 implemented (16 November 2026). Phases 2–5 describe the approved design.** Decision record: [DEC-WORKERS-AND-RUNS-20261116](../../decisions/DEC-WORKERS-AND-RUNS-20261116.md). Handoff for the implementing agent: [HANDOFF-WORKERS-AND-RUNS-20261116](../../handoffs/HANDOFF-WORKERS-AND-RUNS-20261116.md). Builds on [ENGINE_RUNTIME_AND_PACKAGES](ENGINE_RUNTIME_AND_PACKAGES.md) and [ENGINE_PERSISTENCE](../data/ENGINE_PERSISTENCE.md).
+**Phases 1–3 are implemented for HTTP acquisition (16 November 2026). Browser traffic interception and phases 4–5 remain planned.** Decision record: [DEC-WORKERS-AND-RUNS-20261116](../../decisions/DEC-WORKERS-AND-RUNS-20261116.md). Handoff for the implementing agent: [HANDOFF-WORKERS-AND-RUNS-20261116](../../handoffs/HANDOFF-WORKERS-AND-RUNS-20261116.md). Builds on [ENGINE_RUNTIME_AND_PACKAGES](ENGINE_RUNTIME_AND_PACKAGES.md) and [ENGINE_PERSISTENCE](../data/ENGINE_PERSISTENCE.md).
 
 ## Phase 1
 
 The engine parses a version-1 job spec, retains each registered request model in its stage, and hashes the resulting canonical JSON. Legacy operations without a request model are rejected during parsing. The in-process runner executes `scraping.crawl` and `site.watch`, using the union of declared requirements and a separate Mongo ledger requirement. A successful in-process run records `completed` after the stage returns. A handler error records `failed` with the exception type. Interrupted runs retain their last recorded state.
 
-The local store streams new bytes to `.dev/runs/<run_id>/artifacts/` and records their hashes. Run audit events go to both MongoDB and `logs/` in the local store. The existing crawl evidence stays in its caller-selected output folder and site watch keeps its normal per-site evidence layout. Manifest writes are available on the local store. Automatic artifact staging, verified sealing, source-gate integration for spec authority references, scheduling, and retention enforcement for local files are later work. The existing HTTP job API continues to use its own in-memory executor store.
+The local store streams new bytes to `.dev/runs/<run_id>/artifacts/` and records their hashes. Run audit events go to both MongoDB and `logs/` in the local store. The existing crawl evidence stays in its caller-selected output folder and site watch keeps its normal per-site evidence layout. Manifest writes are available on the local store. Source-gate integration for spec authority references and retention enforcement for local files remain pending. The existing HTTP job API continues to use its own in-memory executor store.
+
+## Phase 3
+
+Supervised S3 runs put files under `private/tmp/runs/<run_id>/artifacts/` and gzip audit events under `logs/runs/<run_id>/`. An upload receipt records the file hashes before the worker advances the Mongo stage cursor. A retry reuses a completed receipt. An interrupted upload can reuse identical staged bytes from surviving scratch. The store rejects a conflicting byte stream at the same key.
+
+Sealing checks that uploaded artifacts and logs match the manifest and verifies each checksum before writing the manifest once. The Mongo ledger records its SHA-256. The store refuses writes after sealing. The current deployment shares one local supervisor and local lock directory across worker and release processes. Scratch is cleaned on worker exit and the supervisor scans for orphans at startup.
+
+The release CLI verifies sealed files, builds a plan from an explicit placement manifest, and requires approval with the plan hash before applying the existing filesystem registration and lineage operations. The file access prefix comes from the approved placement. Release retries use the same approval and plan and reject conflicting destination bytes.
+
+The engine sweeps expired S3 artifacts and logs on separate retention periods. It reserves the expiry transition in Mongo before deleting bytes, cleans incomplete multipart uploads in the owned run prefixes, and retains the permanent summary. SeaweedFS accepted a lifecycle rule in the disposable test bucket. The test did not observe automatic expiry, so the engine sweeper provides the verified deletion path.
 
 ## The idea
 
@@ -78,7 +88,7 @@ RunStore.delete(run_id)
 - Same relative layout in both, so the same worker code runs in both. The backend is chosen by the engine configuration (`ENGINE_RUN_STORE=local|s3`), never by the worker.
 - The S3 backend must be tested against the real local object store, not only against the in-memory fake, so development cannot diverge from production.
 
-The later sealing step verifies the artifacts and records the manifest hash in the ledger.
+The S3 sealing step verifies the artifacts and records the manifest hash in the ledger.
 
 ## Scratch and cleanup
 
@@ -100,6 +110,12 @@ JSON with: run id, spec hash, start and finish times, `files` (path, sha256, siz
 
 ## Workers, concurrency and politeness
 
+The supervised HTTP path is available through the engine CLI. Mongo owns the run lease and its compare-and-set revision. A worker heartbeats and records a stage cursor after a successful operation. A dead worker or expired lease requeues the run with backoff until the attempt limit. Completed stages are skipped on retry. The existing operation is replayed from its own entry point for an interrupted stage.
+
+One supervisor admits work per ledger and local run root. It counts live claims after a supervisor restart and enforces the configured ceiling, operation limits, and disk floor. A cancelled worker stops cooperatively where possible and the supervisor kills its process group after the grace period. The HTTP executor keeps its existing job and event API.
+
+Host permits account for HTTP requests to each normalized hostname across subprocesses, including robots fetches, redirects, retries and downloads. The governor uses a token bucket with a burst of one, a concurrent permit limit and a UTC daily request budget. A denied permit waits and observes cancellation. Mongo is the shared default. Redis replaces it when configured, and its keys are namespaced by ledger database. Governed workers reject browser or auto rendering because browser background requests and redirect hops can bypass the HTTP transport.
+
 - The engine spawns a worker as a **subprocess** (`mzizi-engine worker --run <id>`): it reads its spec from the ledger, so it can later run on another machine or container unchanged. Browsers and OCR never share the API process.
 - Admission control uses the runtime's per-capability concurrency plans, a global worker ceiling and a free-disk check. Cancellation is cooperative with a hard kill after a grace period.
 - **Per-host governor**: many workers may target one site, so rate limits and request budgets are shared per host, not per worker. Backends: in-memory for one process, Redis (container exists) or a Mongo lease collection across processes. A governor refusal is a wait, never a skipped request.
@@ -115,12 +131,12 @@ Detailed logs: S3 `logs/runs/<run_id>/` as compressed JSON lines with a lifecycl
 
 ## Configuration
 
-All settings enter through `mzizi_engine/config/engine_config.py` only (one config file, no other environment readers). The `runs` section declares store, scratch root, local root, run and log retention days, and worker ceiling. Phase 1 uses `ENGINE_RUN_STORE=local` and `ENGINE_RUN_LOG_RETENTION_DAYS`. MongoDB uses a BSON timestamp on the generated event document's `expiresAt` field with a TTL index. The scratch root, run-object retention, worker ceiling and Redis governor are for later phases. Crawl and watch receive their settings from the `crawler` section.
+All settings enter through `mzizi_engine/config/engine_config.py` only (one config file, no other environment readers). The `runs` section declares store, scratch root, local root, run and log retention days, and worker ceiling. Phase 1 uses `ENGINE_RUN_STORE=local` and `ENGINE_RUN_LOG_RETENTION_DAYS`. MongoDB uses a BSON timestamp on the generated event document's `expiresAt` field with a TTL index. Phase 2 uses the scratch root for disk admission and the worker ceiling for scheduling. Phase 3 uses the configured run and log retention periods for the S3 sweeper. Crawl and watch receive their settings from the `crawler` section.
 
 ## Build order
 
 1. **Implemented:** Job spec, run store (local backend and Mongo ledger), worker context with lazy requirements; the existing crawl operation runs through it with no behaviour change.
-2. Subprocess workers, leases, heartbeats, cancellation, shared per-host governor.
-3. S3-temp run store, sealing, expiry, promotion step.
+2. **Implemented for HTTP:** subprocess workers, leases, heartbeats, cancellation, and the shared per-host governor.
+3. **Implemented for HTTP stage outputs:** S3-temp run store, sealing, expiry and approved promotion.
 4. Spec-driven stage pipelines (crawl, download, convert, extract, publish) that resume from checkpoints.
 5. The `Ranker` port with the rule-based implementation.

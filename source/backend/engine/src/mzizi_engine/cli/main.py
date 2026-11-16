@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from pathlib import Path
+from uuid import UUID
 
 from mzizi_engine.runtime.assembly import build_default_runtime
 
@@ -18,8 +20,75 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("serve", help="run the API (ENGINE_HOST/ENGINE_PORT, default 127.0.0.1:8760)")
     sub.add_parser("capabilities", help="print the operations the runtime exposes")
     sub.add_parser("check", help="validate settings")
+    worker = sub.add_parser("worker", help="execute a leased run")
+    worker.add_argument("--run", type=UUID, required=True)
+    worker.add_argument("--lease", type=UUID)
+    submit = sub.add_parser("submit-run", help="queue a run from a job spec")
+    submit.add_argument("spec", type=Path)
+    sub.add_parser("supervise", help="admit and supervise queued runs")
+    for command in ("show-run", "cancel-run"):
+        status = sub.add_parser(command, help="inspect or cancel a queued or active run")
+        status.add_argument("run_id", type=UUID)
+    seal_parser = sub.add_parser("seal-run", help="verify and seal a completed run")
+    seal_parser.add_argument("run_id", type=UUID)
+    plan = sub.add_parser("plan-release", help="verify a sealed bundle and plan filesystem placement")
+    plan.add_argument("run_id", type=UUID)
+    plan.add_argument("placements", type=Path)
+    release = sub.add_parser("release-run", help="promote a sealed run with a recorded approval")
+    release.add_argument("run_id", type=UUID)
+    release.add_argument("placements", type=Path)
+    release.add_argument("--approval", type=Path, required=True)
+    sub.add_parser("sweep-runs", help="remove expired temporary run objects and logs")
     args = parser.parse_args(argv)
-    settings = EngineConfig.load().server
+    config = EngineConfig.load()
+    if args.command in ("seal-run", "plan-release", "release-run", "sweep-runs"):
+        from mzizi_engine.runtime.assembly.release import ReleaseManifest, plan_release, release_run, seal, sweep
+        from mzizi_engine.runtime.runs.contracts.records import ReleaseApproval
+
+        if args.command == "sweep-runs":
+            print(json.dumps({"swept": sweep(config)}))
+        elif args.command == "seal-run":
+            print(seal(args.run_id, config).model_dump_json())
+        else:
+            placements = ReleaseManifest.model_validate_json(args.placements.read_bytes())
+            if args.command == "plan-release":
+                print(plan_release(args.run_id, placements, config).model_dump_json())
+            else:
+                approval = ReleaseApproval.model_validate_json(args.approval.read_bytes())
+                print(release_run(args.run_id, placements, approval, config).model_dump_json())
+        return 0
+    if args.command in ("worker", "submit-run", "supervise", "show-run", "cancel-run"):
+        from mzizi_engine.runtime.assembly.workers import (
+            execute_worker,
+            read_worker_run,
+            submit_worker_run,
+            supervise_workers,
+        )
+
+        if args.command == "worker":
+            return execute_worker(args.run, args.lease, config)
+        if args.command == "supervise":
+            supervise_workers(config)
+            return 0
+        if args.command == "submit-run":
+            record = submit_worker_run(args.spec.read_bytes(), config)
+        else:
+            found = read_worker_run(args.run_id, config, cancel=args.command == "cancel-run")
+            if found is None:
+                parser.error("run not found")
+            record = found
+        print(
+            json.dumps(
+                {
+                    "run_id": str(record.run_id),
+                    "state": record.state,
+                    "attempts": record.attempts,
+                    "stages_completed": record.stages_completed,
+                }
+            )
+        )
+        return 0
+    settings = config.server
     runtime = build_default_runtime(settings)
     if args.command == "capabilities":
         print(json.dumps([info.model_dump(mode="json") for info in runtime.operations.describe()], indent=2))

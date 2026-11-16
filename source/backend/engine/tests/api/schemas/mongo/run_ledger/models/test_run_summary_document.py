@@ -8,11 +8,13 @@ from mzizi_engine.api.schemas.mongo.run_ledger.models.run_summary_document impor
 def test_fields_match_contract() -> None:
     fields = RunSummaryDocument.model_fields
     assert {name: field.alias for name, field in fields.items()} == {
+        "approval_json": "approvalJson",
         "approver": "approver",
         "counts": "counts",
         "decisions": "decisions",
         "files": "files",
         "finished_at": "finishedAt",
+        "manifest_hash": "manifestHash",
         "run_id": "runId",
         "spec_hash": "specHash",
         "state": "state",

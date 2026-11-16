@@ -85,7 +85,7 @@ def create_app(
         if settings.database_service_url and settings.database_service_token
         else None
     )
-    if settings.auth != "off" and selected_authority is None:
+    if settings.auth == "oidc" and selected_authority is None:
         raise ValueError("authenticated engine mode requires DATABASE_SERVICE_URL and DATABASE_SERVICE_TOKEN")
 
     app = FastAPI(title="Mzizi engine", version=__version__, lifespan=lifespan)
@@ -120,7 +120,7 @@ def create_app(
         supplied = request.headers.get("authorization", "")
         if not expected:
             raise HTTPException(503, "Temporal capability service token is not configured")
-        if not secrets.compare_digest(supplied, f"Bearer {expected}"):
+        if not secrets.compare_digest(supplied.encode(), f"Bearer {expected}".encode()):
             raise HTTPException(403, "invalid service credential")
         allowed = {
             "extraction.pdf",

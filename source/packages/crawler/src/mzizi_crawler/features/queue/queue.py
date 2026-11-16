@@ -25,6 +25,7 @@ from mzizi_crawler.features.downloads.downloads import (
     ident,
 )
 from mzizi_crawler.shared.activity import Activity, Document, open_activity
+from mzizi_crawler.shared.engine.governor import active_governor, permit
 from mzizi_crawler.shared.engine.service import client_for, extra_ca_bundle
 from mzizi_crawler.shared.export import read_csv
 from mzizi_crawler.shared.identity import user_agent
@@ -37,7 +38,7 @@ from mzizi_crawler.shared.requests import (
     FetchQueueRequest,
     QueueStatusRequest,
 )
-from mzizi_crawler.shared.settings import crawler_settings
+from mzizi_crawler.shared.settings import disk_is_low
 from mzizi_fetch.web.download import Downloader
 from mzizi_fetch.web.vocabulary import vocabulary
 
@@ -49,10 +50,6 @@ RESOURCE_TABLES = {  # inventory table of each kind (`candidate` rows come from 
     "file": "files",
 }
 MAX_ATTEMPTS = 3
-
-
-def disk_is_low(path: Path) -> bool:
-    return shutil.disk_usage(path).free < crawler_settings().min_free_bytes
 
 
 GATE_BUDGET = 1_000_000
@@ -202,7 +199,11 @@ class FileFetcher:
         self.stage = site.root / "scraped" / ".incoming" / stage_name
         self.stage.mkdir(parents=True, exist_ok=True)
         self.downloader = Downloader(
-            self.stage, user_agent(), _policy_for(request), extra_ca_bundle=extra_ca_bundle(self.host)
+            self.stage,
+            user_agent(),
+            _policy_for(request),
+            extra_ca_bundle=extra_ca_bundle(self.host),
+            permit=permit,
         )
         # the gate only checks robots.txt and scope for each file: a huge budget keeps it from refusing files for "using up" requests
         self.gate = client_for(
@@ -220,6 +221,9 @@ class FileFetcher:
 
     def _is_html_page(self, url: str) -> bool:
         """True when a HEAD request says the address serves an HTML page; any doubt (an error, no answer) is False."""
+        if active_governor() is not None:
+            result = self.gate.head(url)
+            return result.usable and result.content_type.startswith("text/html")
         try:
             reply = self.downloader.client.head(url, follow_redirects=True, timeout=15)
         except Exception:

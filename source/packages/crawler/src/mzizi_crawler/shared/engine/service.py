@@ -8,6 +8,7 @@ from pathlib import Path
 from mzizi_crawler.shared.engine.backends import PageBackend
 from mzizi_crawler.shared.engine.engine import run, start_crawl
 from mzizi_crawler.shared.engine.evidence import CrawlEvidence
+from mzizi_crawler.shared.engine.governor import active_governor, permit
 from mzizi_crawler.shared.engine.inventory import CrawlSummary, finish
 from mzizi_crawler.shared.layout import DevLayout, address_of
 from mzizi_crawler.shared.records import LinkRecord, PageRecord
@@ -67,6 +68,7 @@ def client_for(request: CrawlRequest, user_agent: str) -> WebClient:
         policy_for(request),
         tuple(sorted({host_of(u) for u in request.starts})),
         blocks=block_policy_for(request),
+        permit=permit if active_governor() is not None else None,
         extra_ca_bundle=extra_ca_bundle(first) if first else None,
     )
 

@@ -19,6 +19,7 @@ dependencies = [
   "mzizi-crawler",
   "mzizi-browser",
   "mzizi-extraction",
+  "redis>=6,<8",
 ]
 
 [project.scripts]
