@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from mzizi_engine.runtime.cancel import CancellationToken
 from mzizi_engine.runtime.contracts.config import CapabilityConfig, ConfigSnapshot
+from mzizi_engine.runtime.tools.cancel import CancellationToken
 
 
 @dataclass(frozen=True)
