@@ -32,7 +32,7 @@ Record findings, rejected options and the approval here.
 
 ## Progress
 
-16 November 2026: the generation half was built early at the owner's request, so the owner can review real output. The Dryv pack `dryv/packs/table-schemas` (activated on the `pgsql` application as `table-schemas`) writes one `source/schema/tables/<schema>.table-schema.json` per PostgreSQL schema: 12 files, 94 tables, 288 foreign keys, all of which resolve to a generated table. Each column carries `name`, `type` (uuid, text, boolean, integer, decimal, number, date, time, interval, timestamp), `required`, `nullable`, `primaryKey`, and where present `maxLength`, `precision`, `scale`, `enum` and `references`. A table carries `id`, `table`, `primaryKey` and `uniqueKeys`. `bun run catalog` regenerates the files and `--check` fails when they drift.
+16 November 2026: the generation half was built early at the owner's request, so the owner can review real output. The Dryv pack `dryv/packs/table-schemas` (activated on the `pgsql` application as `table-schemas`) writes one `source/schema/database/<group>.schema.json` per PostgreSQL schema: 12 files, 94 tables, 288 foreign keys, all of which resolve to a generated table. Each column carries `name`, `type` (uuid, text, boolean, integer, decimal, number, date, time, interval, timestamp), `required`, `nullable`, `primaryKey`, and where present `maxLength`, `precision`, `scale`, `enum` and `references`. A table carries `id`, `table`, `primaryKey` and `uniqueKeys`. `bun run catalog` regenerates the files and `--check` fails when they drift.
 
 Findings for the design review:
 

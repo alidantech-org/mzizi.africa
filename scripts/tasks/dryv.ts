@@ -134,7 +134,7 @@ export async function generate(): Promise<boolean> {
 
 /**
  * Generate the system catalogs (`catalog.json` beside each service) from the API and engine contracts, and the table
- * schemas (`source/schema/tables/<schema>.table-schema.json`) that seed CSV files are validated against.
+ * schemas (`source/schema/database/<group>.schema.json`) that seed CSV files are validated against.
  */
 export async function catalog(check = false): Promise<boolean> {
   const stop = await ensureApi();
