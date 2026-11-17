@@ -19,7 +19,7 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS and other local 
 | `bun run sync`                            | runs `uv sync --all-packages` and installs each Bun project                        |
 | `bun run doctor`                          | reports required tools and local files                                                                                                           |
 | `bun run clean`                           | deletes caches and build output; `bun run clean -- --deep` also deletes `.venv` and every `node_modules`                                         |
-| `bun run dev`                             | runs the services in watch mode; name some to run only those: `bun run dev api web`                                                              |
+| `bun run dev`                             | runs the services in watch mode; name some to run only those: `bun run dev api admin`                                                              |
 | `bun run start`                           | runs the services without watchers (run `bun run build` first for the Next.js apps)                                                              |
 | `bun run build`                           | builds the Python wheels into `.dev/dist` and the two Next.js apps                                                                             |
 | `bun run format` / `format:check`         | ruff format; Biome for `scripts/` and `dryv/`; Prettier for the dashboard                                                                        |
@@ -55,12 +55,12 @@ Project commands (`sync`, `format`, `lint`, `typecheck`, `test`, `build`, `check
 
 ```bash
 bun scripts/mz.ts test --only python
-bun scripts/mz.ts typecheck --only api,web
+bun scripts/mz.ts typecheck --only api,admin
 bun scripts/mz.ts check --only bun
 bun scripts/mz.ts test --only mobile      # the Flutter app is opt-in
 ```
 
-Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/engine`), `scripts` (this directory and the Dryv tooling), `dryv`, `api`, `web`, `www`, `mobile`. Kinds: `python`, `bun`, `flutter`, or `all`.
+Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/engine`), `scripts` (this directory and the Dryv tooling), `dryv`, `api`, `admin`, `www`, `mobile`. Kinds: `python`, `bun`, `flutter`, or `all`.
 
 ## Services and ports
 
@@ -68,7 +68,7 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 | ----------- | -------------------------- | ---- | ---------------- |
 | `api`       | `source/backend/api`       | 3000 | `API_PORT`       |
 | `engine`    | `source/backend/engine`    | 8760 | `ENGINE_PORT`    |
-| `web`       | `source/apps/web`          | 3100 | `WEB_PORT`       |
+| `admin`     | `source/apps/admin`        | 3100 | `ADMIN_PORT`     |
 | `www`       | `source/apps/www`          | 3200 | `WWW_PORT`       |
 
 `dev` and `start` give every service the values of the git-ignored root `.env` and its own port, prefix each output line with the service name and stop every service when the runner stops or when one service exits. `PORT` from `.env` is deliberately not passed through, because it would put two services on one port.

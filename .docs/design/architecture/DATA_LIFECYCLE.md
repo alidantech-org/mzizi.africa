@@ -691,7 +691,7 @@ Canonical promotion              -> Engine through authorized writes (planned wo
 Canonical product contracts      -> NestJS API
 Migrations                       -> Bun database CLI
 Public exploration               -> source/apps/www
-Research/review                   -> source/apps/web
+Research/review                   -> source/apps/admin
 ```
 
 ## Final rule

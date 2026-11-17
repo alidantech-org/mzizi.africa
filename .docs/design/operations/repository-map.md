@@ -33,7 +33,7 @@ source/
 | Path | Current code |
 |---|---|
 | `source/apps/www` | Public Next.js landing experience; full public research routes are planned. |
-| `source/apps/web` | Next.js `/review` workbench plus inherited `/admin` pages. The review routes call the NestJS API; legacy admin pages use `SERVER_URL`. |
+| `source/apps/admin` | Next.js `/review` workbench plus inherited `/admin` pages. The review routes call the NestJS API; legacy admin pages use `SERVER_URL`. |
 | `source/apps/mobile` | Flutter geography client that calls `/v1/geography/*` on the NestJS API. |
 | `source/backend/api` | NestJS product API. Most contract-facing API types and modules are generated from root `dryv/`; selected use cases, auth and adapters are hand-written. |
 | `source/backend/database` | Bun TypeScript migration and administration CLI, SQL and named database operations. |

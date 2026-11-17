@@ -266,7 +266,7 @@ Priority routes remain conceptually aligned with:
 - `/stories`;
 - `/sources`.
 
-### `source/apps/web`
+### `source/apps/admin`
 
 The old Katiba Book dashboard should evolve into the Mzizi research and stewardship workbench.
 

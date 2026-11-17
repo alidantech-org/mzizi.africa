@@ -243,7 +243,7 @@ The emphasis is:
 - canonical publication;
 - audit history.
 
-This is primarily `source/apps/web` plus the supporting services.
+This is primarily `source/apps/admin` plus the supporting services.
 
 ## What Mzizi should never become
 

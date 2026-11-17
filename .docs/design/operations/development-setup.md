@@ -43,4 +43,4 @@ Use `source/apps/mobile/README.md` as the source for SDK and platform setup. The
 
 ## API and sites
 
-Follow each application README and package scripts. The active product API is NestJS in `source/backend/api/`; the operational Python API is `source/backend/engine/`. The former Python API is historical under `.docs/_archives/2026-11-08-rewrite-snapshot/`. The research dashboard and public landing experience are separate Next.js apps in `source/apps/web/` and `source/apps/www/`.
+Follow each application README and package scripts. The active product API is NestJS in `source/backend/api/`; the operational Python API is `source/backend/engine/`. The former Python API is historical under `.docs/_archives/2026-11-08-rewrite-snapshot/`. The research dashboard and public landing experience are separate Next.js apps in `source/apps/admin/` and `source/apps/www/`.

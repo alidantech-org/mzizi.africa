@@ -11,7 +11,7 @@ Mzizi turns source material into evidence-backed knowledge that people can revie
 | Path | What it does now |
 |---|---|
 | `source/apps/www` | Next.js public landing experience. The full public atlas and research catalogue remain planned. |
-| `source/apps/web` | Next.js dashboard with a Mzizi `/review` workbench and inherited `/admin` pages that still depend on a legacy `SERVER_URL`. |
+| `source/apps/admin` | Next.js dashboard with a Mzizi `/review` workbench and inherited `/admin` pages that still depend on a legacy `SERVER_URL`. |
 | `source/apps/mobile` | Flutter client for the versioned geography endpoints in the NestJS API. |
 | `source/backend/api` | NestJS product API for application reads and authorized workflow commands. |
 | `source/backend/database` | Generated SQL, immutable migrations and the Bun administration CLI for the single PostgreSQL database. Not a service. |
