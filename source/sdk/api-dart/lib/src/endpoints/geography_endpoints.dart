@@ -6,6 +6,12 @@ class GeographyEndpoints {
   /// GET /v1/geography/features
   String get browseFeatures => '/v1/geography/features';
 
+  /// GET /v1/geography/geometries
+  String get browseGeometries => '/v1/geography/geometries';
+
   /// GET /v1/geography/features/{featureId}
   String getFeature({required String featureId}) => '/v1/geography/features/$featureId';
+
+  /// GET /v1/geography/features/{featureId}/geometries
+  String listFeatureGeometries({required String featureId}) => '/v1/geography/features/$featureId/geometries';
 }

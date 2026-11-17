@@ -34,9 +34,17 @@ const routes: Array<[method: string, path: string]> = [
   ["GET", "/v1/account"],
   ["GET", "/v1/admin/accounts"],
   ["GET", "/v1/geography/features"],
+  ["GET", "/v1/geography/geometries"],
   [
     "GET",
     "/v1/geography/features/{featureId}".replace(
+      "{featureId}",
+      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
+    ),
+  ],
+  [
+    "GET",
+    "/v1/geography/features/{featureId}/geometries".replace(
       "{featureId}",
       encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
     ),

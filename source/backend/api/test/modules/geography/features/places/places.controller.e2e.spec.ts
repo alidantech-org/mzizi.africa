@@ -6,8 +6,10 @@ import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { featureCollectionExample } from "@test/modules/geography/schema/dto/examples/feature-collection.dto.example.ts";
 import { featureDetailExample } from "@test/modules/geography/schema/dto/examples/feature-detail.dto.example.ts";
+import { featureGeometryCollectionExample } from "@test/modules/geography/schema/dto/examples/feature-geometry-collection.dto.example.ts";
 import { featureKeyExample } from "@test/modules/geography/schema/dto/examples/feature-key.dto.example.ts";
 import { featureWindowExample } from "@test/modules/geography/schema/dto/examples/feature-window.dto.example.ts";
+import { geometryWindowExample } from "@test/modules/geography/schema/dto/examples/geometry-window.dto.example.ts";
 
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 import { GeographyPlacesModule } from "#/modules/geography/features/places/places.module.ts";
@@ -38,7 +40,9 @@ class InMemoryDataSourceModule {}
 
 const service = {
   browseFeatures: vi.fn(),
+  browseGeometries: vi.fn(),
   getFeature: vi.fn(),
+  listFeatureGeometries: vi.fn(),
 };
 
 type Sent = {
@@ -118,6 +122,25 @@ describe("GET /v1/geography/features (browseFeatures)", () => {
   });
 });
 
+describe("GET /v1/geography/geometries (browseGeometries)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(geometryWindowExample.valid()) },
+      headers: {},
+    };
+    const result = featureGeometryCollectionExample.valid();
+    service.browseGeometries.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/geography/geometries", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.browseGeometries).toHaveBeenCalledTimes(1);
+    expect(service.browseGeometries).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/geography/features/{featureId} (getFeature)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -133,6 +156,29 @@ describe("GET /v1/geography/features/{featureId} (getFeature)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getFeature).toHaveBeenCalledTimes(1);
     expect(service.getFeature).toHaveBeenCalledWith(
+      expect.objectContaining({
+        featureId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
+      }),
+    );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/geography/features/{featureId}/geometries (listFeatureGeometries)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: { featureId: "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11" },
+      query: {},
+      headers: {},
+    };
+    const result = featureGeometryCollectionExample.valid();
+    service.listFeatureGeometries.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/geography/features/{featureId}/geometries", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.listFeatureGeometries).toHaveBeenCalledTimes(1);
+    expect(service.listFeatureGeometries).toHaveBeenCalledWith(
       expect.objectContaining({
         featureId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
       }),

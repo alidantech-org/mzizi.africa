@@ -5,6 +5,11 @@
 export const geographyRoutes = {
   /** GET /v1/geography/features */
   browseFeatures: "/v1/geography/features",
+  /** GET /v1/geography/geometries */
+  browseGeometries: "/v1/geography/geometries",
   /** GET /v1/geography/features/{featureId} */
   getFeature: (params: { featureId: string }) => `/v1/geography/features/${params.featureId}`,
+  /** GET /v1/geography/features/{featureId}/geometries */
+  listFeatureGeometries: (params: { featureId: string }) =>
+    `/v1/geography/features/${params.featureId}/geometries`,
 } as const;

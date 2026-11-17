@@ -17,6 +17,7 @@ The user wants a small set of useful cross-cutting documents alongside detailed 
 | Document | Role |
 |---|---|
 | [System expansion and advancement proposal](guides/advancement-and-system-expansion.md) | Broad vision, five exploration areas, candidate domains/tables, ownership boundaries, spatial/statistical lifecycle, product capabilities, standards and unresolved questions. Hypothetical and not SQL-approved. This document frames the expansion. |
+| [Frontend assembly from contracts](guides/frontend-assembly-from-contracts.md) | How web and mobile apps are assembled from Dryv contracts and a hand-written component library; inventory of Dryv's frontend vocabulary and the gaps. Planning only; no Dryv change approved. |
 | [Master planning register](guides/mzizi-data-schema-storage-and-pipelines-redesign.md) | Preserves user concerns, prior research, decisions, recommendations, historical inventory and unresolved design questions. **Do not discard this register.** |
 | [Schema redesign folder](schema-redesign/README.md) | Operational, Phase 01 civic accountability and deferred Phase 02 schemas, with a complete relocation inventory and retained proposal dictionaries. |
 | [Data classification and pattern generation](guides/data-categories-and-patterns.md) | Seeded/static, seeded/pattern, collected, derived; eligible table/class tags; pattern ownership, versions, corrections, sync, lineage and UI. |

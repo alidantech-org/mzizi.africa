@@ -1,10 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import type { FeatureCollectionDto } from "#/modules/geography/schema/dto/feature-collection.dto.ts";
 import type { FeatureDetailDto } from "#/modules/geography/schema/dto/feature-detail.dto.ts";
+import type { FeatureGeometryCollectionDto } from "#/modules/geography/schema/dto/feature-geometry-collection.dto.ts";
 import type { FeatureKeyDto } from "#/modules/geography/schema/dto/feature-key.dto.ts";
 import type { FeatureWindowDto } from "#/modules/geography/schema/dto/feature-window.dto.ts";
+import type { GeometryWindowDto } from "#/modules/geography/schema/dto/geometry-window.dto.ts";
 import { BrowseFeaturesUseCase } from "#/modules/geography/features/places/use-cases/browse-features.usecase.ts";
+import { BrowseGeometriesUseCase } from "#/modules/geography/features/places/use-cases/browse-geometries.usecase.ts";
 import { GetFeatureUseCase } from "#/modules/geography/features/places/use-cases/get-feature.usecase.ts";
+import { ListFeatureGeometriesUseCase } from "#/modules/geography/features/places/use-cases/list-feature-geometries.usecase.ts";
 
 /**
  * The Places contract the controller calls, then its implementation: each method
@@ -12,14 +16,18 @@ import { GetFeatureUseCase } from "#/modules/geography/features/places/use-cases
  */
 export abstract class GeographyPlacesService {
   abstract browseFeatures(input: FeatureWindowDto): Promise<FeatureCollectionDto>;
+  abstract browseGeometries(input: GeometryWindowDto): Promise<FeatureGeometryCollectionDto>;
   abstract getFeature(input: FeatureKeyDto): Promise<FeatureDetailDto>;
+  abstract listFeatureGeometries(input: FeatureKeyDto): Promise<FeatureGeometryCollectionDto>;
 }
 
 @Injectable()
 export class GeographyPlacesServiceImpl extends GeographyPlacesService {
   constructor(
     private readonly browseFeaturesUseCase: BrowseFeaturesUseCase,
+    private readonly browseGeometriesUseCase: BrowseGeometriesUseCase,
     private readonly getFeatureUseCase: GetFeatureUseCase,
+    private readonly listFeatureGeometriesUseCase: ListFeatureGeometriesUseCase,
   ) {
     super();
   }
@@ -28,7 +36,15 @@ export class GeographyPlacesServiceImpl extends GeographyPlacesService {
     return this.browseFeaturesUseCase.execute(input);
   }
 
+  browseGeometries(input: GeometryWindowDto): Promise<FeatureGeometryCollectionDto> {
+    return this.browseGeometriesUseCase.execute(input);
+  }
+
   getFeature(input: FeatureKeyDto): Promise<FeatureDetailDto> {
     return this.getFeatureUseCase.execute(input);
+  }
+
+  listFeatureGeometries(input: FeatureKeyDto): Promise<FeatureGeometryCollectionDto> {
+    return this.listFeatureGeometriesUseCase.execute(input);
   }
 }
