@@ -10,6 +10,7 @@ from mzizi_extraction.core import Frozen
 from mzizi_extraction.document.markdown import render_markdown, table_csv, table_path
 from mzizi_extraction.document.models import DocumentOutput, TableBlock
 from mzizi_extraction.document.table_models import TableReviewReport
+from mzizi_extraction.document.table_stitch import stitch_tables
 from mzizi_extraction.encode.wire import WireDiagnostic, _diagnostic
 
 
@@ -52,6 +53,15 @@ def encode_document(output: DocumentOutput) -> DocumentWire:
     for (page_number, index), variants in alternates.items():
         for path, rows in variants:
             tables.append(WireTable(path=path, page=page_number, rows=len(rows), csv=_csv(rows)))
+    for logical in stitch_tables(output.pages):
+        tables.append(
+            WireTable(
+                path=f"tables/merged-{logical.index}-pages-{logical.pages[0]}-{logical.pages[-1]}.csv",
+                page=logical.pages[0],
+                rows=len(logical.rows),
+                csv=_csv(logical.rows),
+            )
+        )
     structure = "[" + ",".join(p.model_dump_json(exclude_none=True) for p in output.pages) + "]"
     return DocumentWire(
         status=output.status.value,

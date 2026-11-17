@@ -137,6 +137,16 @@ def table_draft(reader: ArtifactReader, access: ArtifactAccess, request: TableDr
                         issues.append(DraftIssue(kind="invalid_value", detail=problem, locator=locator))
                 rows.append(DraftRow(locator=locator, source_cells=cells, resolved_code=code))
                 writer.writerow((page.number, block.index, row_number, *cells, code or ""))
+    for decision in document.table_review.tables if document.table_review else ():
+        if decision.review_required:
+            reasons = ", ".join(reason.value for reason in decision.reasons)
+            issues.append(
+                DraftIssue(
+                    kind="structure",
+                    detail=f"Table {decision.table} on page {decision.page} needs review ({reasons}); "
+                    f"{len(decision.candidates)} competing readings were compared",
+                )
+            )
     if not rows:
         issues.append(DraftIssue(kind="structure", detail="No data rows matched the expected table headings"))
     return TableDraftReport(

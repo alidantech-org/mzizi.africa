@@ -65,3 +65,25 @@ def test_gate_tells_prose_from_a_table_and_checks_totals() -> None:
     ok = (("Item", "Cost"), ("a", "10"), ("b", "20"), ("Total", "30"))
     bad = (("Item", "Cost"), ("a", "10"), ("b", "20"), ("Total", "35"))
     assert not totals_mismatch(ok) and totals_mismatch(bad)
+
+
+def test_continuation_tables_are_stitched_without_repeated_headers() -> None:
+    from mzizi_extraction.document.models import BBox, Page, TableBlock
+    from mzizi_extraction.document.table_stitch import stitch_tables
+
+    box: BBox = (0.0, 0.0, 1.0, 1.0)
+
+    def page(number: int, rows: tuple[tuple[str, ...], ...], header_rows: int) -> Page:
+        block = TableBlock(index=1, rows=rows, header_rows=header_rows, page=number, bbox=box)
+        return Page(number=number, width=1.0, height=1.0, blocks=(block,))
+
+    head = ("No", "Party")
+    pages = (
+        page(1, (head, ("1", "A"), ("2", "B")), 1),
+        page(2, (head, ("3", "C")), 1),
+        page(3, (("4", "D"),), 0),
+        page(5, (head, ("9", "Z")), 1),
+    )
+    merged = stitch_tables(pages)
+    assert len(merged) == 1 and merged[0].pages == (1, 2, 3)
+    assert [row[0] for row in merged[0].rows] == ["No", "1", "2", "3", "4"] and merged[0].rows[0] == head
