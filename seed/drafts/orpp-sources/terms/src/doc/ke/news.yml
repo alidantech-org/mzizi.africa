@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.news
+describe: Words that mark newsletters, bulletins, speeches and interviews. Context and quotes, rarely records.
+terms:
+  - { value: bulletin, aliases: [newsletter, edition] }
+  - { value: speech, aliases: [keynote address, remarks, hotuba] }
+  - { value: interview, aliases: [transcript, mahojiano] }
+  - { value: tv show, aliases: [kbc, kbctv, eye on politics, programme, webinar, podcast] }
+  - { value: press statement, aliases: [press release, news article] }

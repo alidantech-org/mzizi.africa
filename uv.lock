@@ -18,6 +18,7 @@ members = [
     "mzizi-fetch",
     "mzizi-filesystem",
     "mzizi-manifest",
+    "mzizi-patterns",
     "mzizi-search",
     "mzizi-workspace",
 ]
@@ -1303,6 +1304,21 @@ requires-dist = [
     { name = "jsonschema" },
     { name = "pyyaml" },
     { name = "referencing" },
+]
+
+[[package]]
+name = "mzizi-patterns"
+version = "0.1.0"
+source = { editable = "source/packages/patterns" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "pyyaml" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pydantic", specifier = ">=2.7" },
+    { name = "pyyaml" },
 ]
 
 [[package]]

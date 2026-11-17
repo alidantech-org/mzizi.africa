@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.funding
+describe: Words that mark public money going to a recipient (funds, allocations, distributions).
+terms:
+  - { value: political parties fund, aliases: [ppf], meaning: The statutory fund for political parties }
+  - { value: allocation, aliases: [allocations, mgao] }
+  - { value: distribution, aliases: [disbursement, disbursed] }
+  - { value: shares, aliases: [share] }
+  - { value: fund, aliases: [mfuko] }
+  - { value: kes, aliases: [ksh, kshs, kenya shillings, shillings] }
+  - { value: financial year, aliases: [fy, mwaka wa fedha] }
+  - { value: appropriation }

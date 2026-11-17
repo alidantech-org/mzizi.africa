@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.form
+describe: Words that mark a blank form, checklist or how-to guide. Useful for process, not for facts.
+terms:
+  - { value: form, aliases: [application form, fomu] }
+  - { value: checklist, aliases: [guide, manual, quick guide, faqs, faq] }
+  - { value: declaration, aliases: [consent form, affidavit] }
+  - { value: template }

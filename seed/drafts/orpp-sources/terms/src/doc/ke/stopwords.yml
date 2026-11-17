@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.stopwords
+describe: Common English and Swahili function words that carry no meaning for ranking.
+terms:
+  - { value: "the" }
+  - { value: "of" }
+  - { value: "and" }
+  - { value: "for" }
+  - { value: "to" }
+  - { value: "in" }
+  - { value: "on" }
+  - { value: "a" }
+  - { value: "an" }
+  - { value: "is" }
+  - { value: "are" }
+  - { value: "by" }
+  - { value: "with" }
+  - { value: "be" }
+  - { value: "as" }
+  - { value: "at" }
+  - { value: "ya" }
+  - { value: "wa" }
+  - { value: "na" }
+  - { value: "za" }
+  - { value: "la" }
+  - { value: "kwa" }
+  - { value: "cha" }

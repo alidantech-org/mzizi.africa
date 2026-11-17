@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.audit-budget
+describe: Words that mark budgets, expenditure, audits and financial reporting.
+terms:
+  - { value: budget, aliases: [bajeti, estimates, medium term expenditure framework, mtef] }
+  - { value: expenditure, aliases: [expenses, spending] }
+  - { value: audit, aliases: [auditor general, audited, ukaguzi, audit report] }
+  - { value: financial statements, aliases: [balance sheet, statement of financial position] }
+  - { value: revenue, aliases: [income, receipts] }
+  - { value: pending bills }
+  - { value: variance }

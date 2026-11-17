@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/sources/source.schema.json
+# DRAFT for owner approval. The policy block records what was observed; the assessment reference and licence are
+# placeholders the owner must confirm before any run is treated as authorised.
+code: pg.src.srs.ke.orpp
+kind: website
+title: Office of the Registrar of Political Parties (Kenya)
+description: Registers, notices, funding schedules, tenders, laws, forms and bulletins published at orpp.or.ke.
+tags: [purpose:publications, domain:politics, domain:finance, domain:procurement]
+fetch: { mode: browser }
+modules: [documents]
+uses:
+  terms:
+    - sys.trm.src.doc.ke.law
+    - sys.trm.src.doc.ke.register
+    - sys.trm.src.doc.ke.funding
+    - sys.trm.src.doc.ke.notice
+    - sys.trm.src.doc.ke.procurement
+    - sys.trm.src.doc.ke.audit-budget
+    - sys.trm.src.doc.ke.court
+    - sys.trm.src.doc.ke.report
+    - sys.trm.src.doc.ke.people-places
+policy:
+  assessment: { ref: assess-orpp }
+  licence: { ref: unconfirmed, source: "https://orpp.or.ke/" }
+  scope:
+    hosts: [orpp.or.ke]
+    schemes: [https]
+    paths: { allow: [/], deny: [/wp-admin, /wp-login.php] }
+  rate: { requests_per_second: 1, max_concurrency: 1 }
+  retries: { max: 2, backoff: exponential_jitter }
+  limits: { max_response_bytes: 52428800, timeout_seconds: 60 }
+  identify: { user_agent: "MziziBot/1.0 (+https://mzizi.africa/bot; contact@mzizi.africa)" }
+  robots: respect
+  auth: none
+  stop_on: ["401", "403", "429", repeated_5xx, access_challenge]
+  purposes: [research]

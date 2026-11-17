@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.report
+describe: Words that mark a periodic or evaluative report with findings and figures.
+terms:
+  - { value: annual report, aliases: [ripoti ya mwaka] }
+  - { value: evaluation report, aliases: [post election evaluation, assessment] }
+  - { value: strategic plan, aliases: [mpango mkakati] }
+  - { value: performance, aliases: [achievements, outcomes] }
+  - { value: findings, aliases: [recommendations] }

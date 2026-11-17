@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.procurement
+describe: Words that mark tendering, bidding, contracts and supplier awards (public money out).
+terms:
+  - { value: tender, aliases: [tenders, zabuni, request for proposals, rfp, rfq, eoi] }
+  - { value: bidder, aliases: [bidders, successful bidders, unsuccessful bidders, tenderer] }
+  - { value: award, aliases: [awarded, notification of award] }
+  - { value: contract, aliases: [contract sum, mkataba] }
+  - { value: supplier, aliases: [suppliers, registration of suppliers, prequalification] }
+  - { value: procuring entity }
+  - { value: addendum, aliases: [addenda, clarification] }
+  - { value: tender price, aliases: [bid price, total price] }
+  - { value: procurement plan }

@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.law
+describe: Words that mark a statute, regulation, bill or constitutional text.
+terms:
+  - { value: act, aliases: [sheria, political parties act, elections act, constitution of kenya], meaning: A statute }
+  - { value: bill, aliases: [mswada], meaning: A proposed law }
+  - { value: constitution, aliases: [katiba], meaning: The constitutional text }
+  - { value: regulations, aliases: [kanuni, legal notice], meaning: Subsidiary legislation }
+  - { value: amendment, aliases: [marekebisho], meaning: A change to a law }
+  - { value: section, meaning: A numbered provision }
+  - { value: subsidiary legislation }
+  - { value: code of conduct, aliases: [kanuni za maadili] }
+  - { value: arrangement of sections, aliases: [be it enacted, short title, laws of kenya, commencement, interpretation, saving provisions] }
+  - { value: schedule, aliases: [first schedule, second schedule, transitional provisions] }

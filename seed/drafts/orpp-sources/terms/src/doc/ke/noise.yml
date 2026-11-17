@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.noise
+describe: "Words that mark documents with no research value here (recruitment, receipts, design files)."
+terms:
+  - { value: vacancy, aliases: [vacancies, advert, job advert, career opportunities, internship, pupillage, nafasi za kazi] }
+  - { value: job description, aliases: [job application, curriculum vitae] }
+  - { value: order, aliases: [amazon, invoice, receipt] }
+  - { value: presentation, aliases: [flat communication] }
