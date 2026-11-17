@@ -11,7 +11,11 @@ const runs = runtime.feature("Runs").description("Watch what the engine ran.").f
 
 const { RunWindow, EventWindow } = runs.schemas({
   RunWindow: schema({ status: field(runtimeEnums.RunStatus).optional(), limit: field(Count).optional() }),
-  EventWindow: schema({ runId: field(JobId), after: field(p.NonNegativeInteger).optional(), limit: field(Count).optional() }),
+  EventWindow: schema({
+    runId: field(JobId),
+    after: field(p.NonNegativeInteger).optional(),
+    limit: field(Count).optional(),
+  }),
 });
 const { RunList, EventList } = runs.schemas({
   RunList: schema({ runs: field(runtimeSchemas.Run).array() }),
@@ -28,7 +32,10 @@ export const ListRuns = runs.operation(
     .authenticated()
     .requires(ServiceKey)
     .facets(({ inputField, output }) => ({
-      http: http("GET", "/v1/runs").input(inputField("status"), query("status")).input(inputField("limit"), query("limit")).output(output),
+      http: http("GET", "/v1/runs")
+        .input(inputField("status"), query("status"))
+        .input(inputField("limit"), query("limit"))
+        .output(output),
     })),
 );
 

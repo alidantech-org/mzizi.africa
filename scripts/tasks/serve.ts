@@ -84,9 +84,7 @@ export async function serve(mode: Mode, names: readonly string[]): Promise<numbe
         [service.portEnv]: port,
         FORCE_COLOR: "1",
         // The API accepts browser calls only from the browser apps running alongside it.
-        ...(service.name === "api" && base.CORS_ORIGINS === undefined
-          ? { CORS_ORIGINS: browserOrigins(chosen, base) }
-          : {}),
+        ...(service.name === "api" && base.CORS_ORIGINS === undefined ? { CORS_ORIGINS: browserOrigins(chosen, base) } : {}),
       },
       stdin: "ignore",
       stdout: "pipe",

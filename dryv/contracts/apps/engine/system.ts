@@ -14,7 +14,9 @@ const { Health, Dependency } = health.schemas({
   Dependency: schema({ name: field(Blurb), state: field(HealthState), detail: field(Blurb).optional() }),
   Health: schema({ state: field(HealthState) }),
 });
-const { Readiness } = health.schemas({ Readiness: schema({ state: field(HealthState), dependencies: field(Dependency).array() }) });
+const { Readiness } = health.schemas({
+  Readiness: schema({ state: field(HealthState), dependencies: field(Dependency).array() }),
+});
 
 /** Public: process managers call it without a key. */
 export const GetHealth = health.operation(

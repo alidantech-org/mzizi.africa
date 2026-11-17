@@ -155,7 +155,8 @@ function exampleString(spec: Extract<FieldSpec, { kind: "string" }>): string {
     const first = spec.patterns[0] as string;
     for (let attempt = 0; attempt < 200; attempt += 1) {
       const generator = new RandExp(first);
-      generator.max = Math.max(1, Math.min(max, 16));
+      // Nested repeats make most long-bounded candidates exceed the length limit, so favour short ones first.
+      generator.max = attempt < 150 ? 2 : Math.max(1, Math.min(max, 16));
       const candidate = generator.gen();
       if (fitsLength(candidate, spec) && matchesPatterns(candidate, spec.patterns))
         return candidate;

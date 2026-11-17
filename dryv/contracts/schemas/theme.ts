@@ -36,7 +36,16 @@ export const themes = brand.themes({
 
       // Type.
       fontDisplay: token.fontFamily("Iowan Old Style", "Palatino Linotype", "Palatino", "Book Antiqua", "Georgia", "serif"),
-      fontBody: token.fontFamily("ui-sans-serif", "-apple-system", "Segoe UI", "Inter", "Roboto", "Helvetica", "Arial", "sans-serif"),
+      fontBody: token.fontFamily(
+        "ui-sans-serif",
+        "-apple-system",
+        "Segoe UI",
+        "Inter",
+        "Roboto",
+        "Helvetica",
+        "Arial",
+        "sans-serif",
+      ),
       fontMono: token.fontFamily("ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"),
 
       // Depth: the main layer of the www shadows (one layer per token).

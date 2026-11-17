@@ -27,7 +27,11 @@ const scalarProperties = shared.properties({
   IdentityCode: dryv.property
     .string()
     .length({ min: 1, max: 255 })
-    .pattern({ match: ["^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$"] }),
+    .pattern({
+      match: [
+        "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+      ],
+    }),
   StatusCode: dryv.property.string().length({ min: 1, max: 100 }),
   Email: dryv.property.string.email(),
   Url: dryv.property.string.url().length({ max: 2048 }),

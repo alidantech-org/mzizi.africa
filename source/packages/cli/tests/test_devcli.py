@@ -45,6 +45,7 @@ def test_registered_capabilities_are_all_declared_as_ports_or_internal() -> None
         "filesystem.sync_source_files",
         "catalog.seed_tables",  # HTTP only: the seed contract catalog
         "extraction.folder",  # a job stage; the CLI extracts one file at a time
+        "patterns.rank",  # a job stage; ranking runs inside a folder extraction
     }
 
 

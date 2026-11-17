@@ -21,10 +21,7 @@ const FLAGS = new Set(["--local", "--dry-run", "--no-dryv", "--prune"]);
 
 export async function syncSchemas(args: readonly string[]): Promise<boolean> {
   const unknown = args.filter((arg) => !FLAGS.has(arg));
-  if (unknown.length)
-    throw new Error(
-      `unknown option ${unknown.join(", ")}; use ${[...FLAGS].join(", ")}`,
-    );
+  if (unknown.length) throw new Error(`unknown option ${unknown.join(", ")}; use ${[...FLAGS].join(", ")}`);
   const local = args.includes("--local");
   const dryRun = args.includes("--dry-run");
 
@@ -53,11 +50,7 @@ export async function syncSchemas(args: readonly string[]): Promise<boolean> {
     "source/packages/fetch/tests/test_web_core.py",
     "-q",
   ]);
-  if (
-    !(await group("generate", [generate])) ||
-    !(await group("check", [check]))
-  )
-    return false;
+  if (!(await group("generate", [generate])) || !(await group("check", [check]))) return false;
   if (local) return true;
   const publish = step("publish schemas", root, [
     "uv",
@@ -66,13 +59,9 @@ export async function syncSchemas(args: readonly string[]): Promise<boolean> {
     "publish-schemas",
     ...(dryRun ? ["--dry-run"] : []),
   ]);
-  const published = await group(dryRun ? "publish (dry run)" : "publish", [
-    publish,
-  ]);
+  const published = await group(dryRun ? "publish (dry run)" : "publish", [publish]);
   if (published && !dryRun)
-    console.log(
-      "\nEditors cache schemas: run `bun run schemas:forget-cache`, then reload the editor window.",
-    );
+    console.log("\nEditors cache schemas: run `bun run schemas:forget-cache`, then reload the editor window.");
   return published;
 }
 
@@ -82,14 +71,7 @@ const PUBLIC_BASE = "https://res.alidantech.org/mzizi/public/schemas/";
 const yamlCaches = (): string[] => {
   const config = process.env.XDG_CONFIG_HOME ?? join(homedir(), ".config");
   return [
-    join(
-      config,
-      "Code",
-      "User",
-      "globalStorage",
-      "redhat.vscode-yaml",
-      "schemas_cache",
-    ),
+    join(config, "Code", "User", "globalStorage", "redhat.vscode-yaml", "schemas_cache"),
     join(
       homedir(),
       "Library",
@@ -114,8 +96,7 @@ export function forgetEditorCache(): boolean {
     for (const name of readdirSync(folder)) {
       const file = join(folder, name);
       try {
-        const id = (JSON.parse(readFileSync(file, "utf8")) as { $id?: unknown })
-          .$id;
+        const id = (JSON.parse(readFileSync(file, "utf8")) as { $id?: unknown }).$id;
         if (typeof id === "string" && id.startsWith(PUBLIC_BASE)) {
           rmSync(file);
           removed += 1;
@@ -125,11 +106,7 @@ export function forgetEditorCache(): boolean {
       }
     }
   }
-  console.log(
-    `removed ${removed} cached schema file(s) from the YAML extension`,
-  );
-  console.log(
-    'In the editor: run "JSON: Clear Schema Cache", then "Developer: Reload Window".',
-  );
+  console.log(`removed ${removed} cached schema file(s) from the YAML extension`);
+  console.log('In the editor: run "JSON: Clear Schema Cache", then "Developer: Reload Window".');
   return true;
 }
