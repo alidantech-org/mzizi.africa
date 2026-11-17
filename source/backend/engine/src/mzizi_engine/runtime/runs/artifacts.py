@@ -60,7 +60,9 @@ class ArtifactReader:
         self._read_run = read_run
         self._select_store = select_store
 
-    def read(self, ref: ArtifactRef, access: ArtifactAccess) -> tuple[ArtifactMetadata, bytes]:
+    def read(
+        self, ref: ArtifactRef, access: ArtifactAccess, *, max_bytes: int = Limits().max_bytes
+    ) -> tuple[ArtifactMetadata, bytes]:
         run = self._read_run(ref.run_id)
         if run is None:
             raise ArtifactReadError(404, "Run not found")
@@ -72,8 +74,8 @@ class ArtifactReader:
         record = self._record(ref, run, store)
         if record.sha256 != ref.sha256:
             raise ArtifactReadError(409, "Artifact hash differs from the requested revision")
-        if record.size > Limits().max_bytes:
-            raise ArtifactReadError(413, "Artifact exceeds the engine extraction byte limit")
+        if record.size > max_bytes:
+            raise ArtifactReadError(413, "Artifact exceeds the operation byte limit")
         try:
             with store.open(ref.run_id, ref.path) as stream:
                 data = stream.read(record.size + 1)

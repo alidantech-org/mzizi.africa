@@ -99,6 +99,7 @@ class WatchRequest(CrawlRequest):
     download_limit: int = 200  # files fetched per run; the queue keeps the rest for the next run
     download_kinds: tuple[str, ...] = DOWNLOAD_KINDS  # which found files to download; ("document",) skips images and media
     hunt: bool = True
+    passes: int = Field(default=1, ge=1, le=20)  # repeat while a pass ends early (a budget) and still found new pages
     min_age_hours: float = (
         12.0  # a page fetched more recently than this is not fetched again; its saved copy feeds the crawl
     )

@@ -19,3 +19,4 @@ knbs-ca-bundle.pem
 .mypy_cache/
 .next/
 target/
+.dart_tool/

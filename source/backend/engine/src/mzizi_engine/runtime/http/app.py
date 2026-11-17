@@ -23,6 +23,7 @@ from mzizi_engine.api.routes.catalog.seed_catalog import build_catalog_seed_cata
 from mzizi_engine.config import EngineConfig, ServerConfig
 from mzizi_engine.runtime.assembly import DRAIN_TIMEOUT_SECONDS, build_default_runtime
 from mzizi_engine.runtime.assembly.artifact_reader import artifact_reader
+from mzizi_engine.runtime.assembly.run_operations import local_run_root
 from mzizi_engine.runtime.contracts.config import RuntimeConfig
 from mzizi_engine.runtime.executor.executor import Executor
 from mzizi_engine.runtime.executor.memory_store import MemoryStore, Store
@@ -36,10 +37,12 @@ from mzizi_engine.runtime.http.auth import (
 )
 from mzizi_engine.runtime.http.overview import SystemOverview, build_overview
 from mzizi_engine.runtime.http.research import research_router
+from mzizi_engine.runtime.http.scripts import scripts_router
 from mzizi_engine.runtime.http.seed_catalog import RuntimeSeedCatalogService
 from mzizi_engine.runtime.operations import OperationRegistry
 from mzizi_engine.runtime.runs.artifacts import ArtifactReader
 from mzizi_engine.runtime.runtime import EngineRuntime
+from mzizi_engine.runtime.scripts.workspace import ScriptWorkspace
 
 
 class JobRequest(BaseModel):
@@ -77,15 +80,29 @@ def create_app(
         )
     registry = runtime.operations
     store = store or _store(settings)
+    reader = research_reader or artifact_reader(registry)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         runtime.start()
         app.state.executor = Executor(store, registry, settings, callback_client)
         await app.state.executor.start()
-        yield
-        await app.state.executor.stop()
-        await asyncio.to_thread(runtime.stop)
+        workspace: ScriptWorkspace | None = None
+        try:
+            config = EngineConfig.load()
+            if config.script_image_id is not None:
+                workspace = await asyncio.to_thread(
+                    ScriptWorkspace, local_run_root(config) / ".scripts", config.script_image_id, reader
+                )
+            app.state.script_workspace = workspace
+            yield
+        finally:
+            try:
+                if workspace is not None:
+                    await asyncio.to_thread(workspace.close)
+            finally:
+                await app.state.executor.stop()
+                await asyncio.to_thread(runtime.stop)
 
     selected_authority = authority or (
         DatabaseServiceAuthority(settings.database_service_url, settings.database_service_token)
@@ -130,7 +147,8 @@ def create_app(
         build_catalog_seed_catalog_router(RuntimeSeedCatalogService(runtime)), dependencies=[require("engine.read")]
     )
 
-    app.include_router(research_router(research_reader or artifact_reader(registry)))
+    app.include_router(research_router(reader))
+    app.include_router(scripts_router())
 
     @app.post("/internal/v1/capabilities/execute")
     async def execute_internal_capability(body: JobRequest, request: Request) -> dict:

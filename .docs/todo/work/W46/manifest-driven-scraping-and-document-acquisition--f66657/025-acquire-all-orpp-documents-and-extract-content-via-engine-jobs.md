@@ -19,3 +19,9 @@ The site is WordPress with paginated document listings (document-category pages)
 - [ ] Extraction produces non-empty text for the PDFs, with OCR used for scanned ones.
 - [ ] Engine gaps found are fixed in the packages with tests, not worked around in the job.
 - [ ] Results and remaining gaps are reported honestly.
+
+## Comments
+
+### 2026-11-17T07:47:25.578Z · PETER IRUNGU
+
+Job .dev/jobs/orpp-documents.json (site.watch) fetched 134 PDFs; stopped at the 2400 s budget (341 pages, 135 listing gaps, incomplete). Extraction without OCR read 100/134 (3.5M chars); 30 scanned PDFs need OCR (eng+swa works, tested on 12). Fixed: download_kinds filter; PDF header junk rejected (2 files). Open: job specs cannot run extraction stages; inventory download_status stale; crawl needs resume passes.

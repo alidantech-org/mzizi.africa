@@ -61,6 +61,20 @@ Configure the Mongo run ledger and local or staged S3 store used by the run. Res
 
 Inspect requires engine read access. Replay and draft require engine edit access. The trusted engine service token can operate on all engine runs. Where account authentication is configured, an account can operate only on runs it owns. Local unauthenticated mode cannot access these routes. Status `404` identifies missing run evidence, `409` a hash or size mismatch, `410` expired staging and `422` invalid inputs. Successful draft export is separate from seed registration and database apply.
 
+### Isolated Python and Bash jobs
+
+Set `ENGINE_SCRIPT_IMAGE_ID` to the full SHA-256 image ID for an operator-reviewed **local** Docker image with `/usr/bin/env`, Python 3 and Bash. The engine uses the local Linux Docker socket. Leave this unset to disable script execution. The runner starts containers as UID 65534 with no network, dropped capabilities, no privilege escalation, a read-only root and a small writable scratch mount. It clears the environment before starting the script. The container receives the script and authorized input copies only.
+
+With engine service authentication, submit a CSV-producing transformation to `POST /v1/research/scripts`:
+
+```json
+{"language":"python","script":"from pathlib import Path\nprint(Path('/workspace/input-0').read_text().upper(), end='')","inputs":[{"runId":"…","path":"artifacts/table.csv","sha256":"…"}],"timeoutSeconds":15}
+```
+
+Input copies are available in request order as `/workspace/input-0`, `/workspace/input-1` and so on. Write the draft to stdout and messages to stderr. Read the status and output at `GET /v1/research/scripts/{jobId}`. Cancel an active container with `POST /v1/research/scripts/{jobId}/cancel`. Submission and cancellation require engine edit access. Reading requires engine read access. The engine checks run ownership for account callers and uses the trusted engine credential for service calls.
+
+One script runs at a time per workspace, with up to eight inputs and 16 MiB of input bytes, at most 60 seconds of execution, and 256 KiB of combined stdout and stderr. The engine stores the image ID, script, pinned input refs, result and original stdout and stderr bytes under `.scripts/` in the local run root. Completed results survive server restarts. An interrupted engine reaps its unfinished containers when the workspace restarts. The execution watchdog runs in the engine. Files under the container's `/tmp` are scratch and are discarded when it exits. A script result remains a research draft until separately validated.
+
 ## Spec-driven runs
 
 The Python entry point `mzizi_engine.runtime.assembly.run_operations.run_job_spec` accepts version-1 JSON and returns a run record plus operation outputs. Phase 1 runs `scraping.crawl` and `site.watch` in process. The registry validates each stage's parameters against its request model before starting work. Keep the caller's crawl output folder and the existing `.dev/websites/` location. The run store writes its audit logs under `.dev/runs/<run_id>/logs/` and exposes an artifact-bytes API for explicit staging.

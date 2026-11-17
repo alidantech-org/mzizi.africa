@@ -216,6 +216,7 @@ class EngineConfig(_Frozen):
     crawler: CrawlerConfig
     #: `files` turns the MongoDB activity store off (tests, CI); anything else uses MongoDB when it is configured.
     activity_store: str
+    script_image_id: str | None = None
 
     model_config = ConfigDict(frozen=True, extra="forbid", arbitrary_types_allowed=True)
 
@@ -310,6 +311,7 @@ class EngineConfig(_Frozen):
             if rate and concurrency and daily_budget
             else None,
             activity_store=env.get("ENGINE_ACTIVITY_STORE", "mongo"),
+            script_image_id=first("ENGINE_SCRIPT_IMAGE_ID"),
         )
 
     # -- sections a capability needs: one error that names every missing variable -----------------------------

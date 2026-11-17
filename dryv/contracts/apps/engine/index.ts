@@ -13,6 +13,7 @@ import { catalogApi } from "./catalog.ts";
 import { engineApi } from "./engine.ts";
 import { researchApi } from "./research.ts";
 import { runtimeApi } from "./runtime.ts";
+import { scriptApi } from "./scripts.ts";
 import { stagingApi } from "./staging.ts";
 import { systemApi } from "./system.ts";
 
@@ -22,6 +23,9 @@ export default dryv
   .provides(
     catalogApi.GetSeedCatalog,
     researchApi.InspectArtifact,
+    scriptApi.SubmitScript,
+    scriptApi.GetScript,
+    scriptApi.CancelScript,
     engineApi.ListCapabilities,
     engineApi.SubmitJob,
     engineApi.GetJob,
@@ -43,6 +47,7 @@ export default dryv
     catalogApi.catalog,
     engineApi.engine,
     researchApi.research,
+    scriptApi.scripts,
     runtimeApi.runtime,
     stagingApi.staging,
     systemApi.system,

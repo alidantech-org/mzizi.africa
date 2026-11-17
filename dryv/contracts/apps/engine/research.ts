@@ -67,4 +67,4 @@ const InspectArtifact = artifacts.operation(
     })),
 );
 
-export const researchApi = { research, InspectArtifact };
+export const researchApi = { research, InspectArtifact, ArtifactRef };

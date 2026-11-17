@@ -112,6 +112,39 @@
       "summary": "Recent runs, newest first, optionally by status."
     },
     {
+      "name": "CancelScript",
+      "group": "scripts",
+      "feature": "script-jobs",
+      "method": "POST",
+      "path": "/v1/research/scripts/{jobId}/cancel",
+      "role": "update",
+      "inputs": ["jobId"],
+      "output": "ScriptJob",
+      "summary": "Request cancellation of an active script."
+    },
+    {
+      "name": "GetScript",
+      "group": "scripts",
+      "feature": "script-jobs",
+      "method": "GET",
+      "path": "/v1/research/scripts/{jobId}",
+      "role": "detail",
+      "inputs": ["jobId"],
+      "output": "ScriptJob",
+      "summary": "Read the current script state and recorded output."
+    },
+    {
+      "name": "SubmitScript",
+      "group": "scripts",
+      "feature": "script-jobs",
+      "method": "POST",
+      "path": "/v1/research/scripts",
+      "role": "create",
+      "inputs": ["script"],
+      "output": "ScriptJob",
+      "summary": "Start a bounded data transformation over verified artifacts."
+    },
+    {
       "name": "DecideCandidate",
       "group": "staging",
       "feature": "candidates",

@@ -180,6 +180,22 @@ def build_operation_registry() -> OperationRegistry:
         "mzizi-engine",
         __version__,
     )
+    from mzizi_extraction.folder import FolderRequest, extract_folder
+
+    register_specs(
+        reg,
+        (
+            operation(
+                "extraction.folder",
+                "Extract text (with OCR for scanned pages) from every file in a folder; unchanged files are skipped",
+                FolderRequest,
+                extract_folder,
+                1,
+            ),
+        ),
+        "mzizi-extraction",
+        __version__,
+    )
     from mzizi_engine.runtime.assembly.filesystem_operations import register_filesystem
 
     register_filesystem(reg)

@@ -1,5 +1,5 @@
 ---
-{id: TSK-7C408B6B4D4B,name: Design and prove isolated engine scripting workspaces,type: task,status: planned,priority: medium,created_at: 2026-11-17T07:36:52.614Z,updated_at: 2026-11-17T07:44:35.238Z,order: 30720,depends_on: [TSK-583968232F6B]}
+{id: TSK-7C408B6B4D4B,name: Design and prove isolated engine scripting workspaces,type: task,status: in-progress,priority: medium,created_at: 2026-11-17T07:36:52.614Z,updated_at: 2026-11-17T08:28:19.256Z,order: 30720,depends_on: [TSK-583968232F6B],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T08:28:19.256Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-7C408B6B4D4B/1794904099259-start,started_at: 2026-11-17T08:28:20.143Z}]}}}
 ---
 
 # Design and prove isolated engine scripting workspaces

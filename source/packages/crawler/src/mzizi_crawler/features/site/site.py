@@ -48,6 +48,28 @@ from mzizi_fetch.web.urls import host_of
 
 
 def watch_site(request: WatchRequest) -> WatchReport:
+    """Runs up to `passes` crawls of one site. A pass that ended on a budget is followed by another, which serves
+    pages fetched moments ago from their saved copies and spends its budget on the pages still missing."""
+    report = _watch_once(request)
+    for _ in range(request.passes - 1):
+        if report.complete or CANCEL.is_set():
+            break
+        following = _watch_once(request.model_copy(update={"min_age_hours": max(request.min_age_hours, 1.0)}))
+        report = following.model_copy(
+            update={
+                "new": report.new + following.new,
+                "changed": report.changed + following.changed,
+                "files_downloaded": report.files_downloaded + following.files_downloaded,
+                "downloads_failed": report.downloads_failed + following.downloads_failed,
+                "changes": report.changes + following.changes,
+            }
+        )
+        if following.new == 0 and following.changed == 0:  # nothing more to learn: stop spending passes
+            break
+    return report
+
+
+def _watch_once(request: WatchRequest) -> WatchReport:
     """Crawls a site, saving pages as they arrive; Markdown conversion, file hunting and downloads run beside it."""
     layout = DevLayout.locate()
     debug_stack_seconds = crawler_settings().debug_stack_seconds

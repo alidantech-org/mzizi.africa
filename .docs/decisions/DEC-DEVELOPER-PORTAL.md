@@ -17,3 +17,5 @@ The pilot preserves source-linked physical office details even where the existin
 See the [developer portal design](../design/architecture/DEVELOPER_PORTAL.md) for current capabilities, examples, and the decisions needed before implementation tasks are drafted.
 
 The engine pilot identifies stored evidence by run ID, artifact-relative path and expected SHA-256. The engine verifies the reference against the run metadata and the stored bytes. A service credential grants engine-wide access. Authenticated accounts must also own the run. Name resolution in the pilot is exact against an explicitly supplied, pinned reference CSV. Unresolved values remain visible in the export.
+
+The first scripting workspace is an opt-in local Docker runner. It uses an operator-selected immutable image ID and stages verified inputs read-only. Scripts may transform data and emit drafts to stdout. The engine keeps the raw output and execution record, and collection continues through the approved acquisition operations.
