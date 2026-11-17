@@ -19,6 +19,8 @@ src/mzizi_engine/
 
 The developer command line `mzizi` is the separate [`mzizi-cli`](../../packages/cli/README.md) package; the engine knows nothing about it.
 
+See the [CLI and engine jobs quickstart](../../../.docs/design/operations/cli-and-jobs.md) for a clean checkout, a first crawl and a complete HTTP job example.
+
 ## Run
 
 ```bash

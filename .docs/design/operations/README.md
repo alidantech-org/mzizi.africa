@@ -8,6 +8,7 @@ type: documentation
 
 Developer setup, repository layout and verification commands. These documents are supporting detail; the eight root documents explain overall system intent.
 
+- [CLI and engine jobs quickstart](cli-and-jobs.md)
 - [development-setup](development-setup.md)
 - [testing-guide](testing-guide.md)
 - [repository-map](repository-map.md)

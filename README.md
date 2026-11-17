@@ -4,13 +4,18 @@ Mzizi is an evidence-first platform for researching African history, heritage, g
 
 Start with [WHY](.docs/docs/WHY.md), [GOALS](.docs/docs/GOALS.md) and [STORY](.docs/docs/STORY.md) for the purpose and product direction. The eight core project documents are indexed in the [documentation guide](.docs/docs/README.md). Detailed designs live under [.docs/design](.docs/design/README.md); planning proposals live under [.docs/_plan](.docs/_plan/README.md).
 
+## CLI and scraping
+
+Start with the [CLI and engine jobs quickstart](.docs/design/operations/cli-and-jobs.md) to install from a fresh checkout, run a bounded crawl or submit a job.
+
 ## Source code map
 
 ```text
 source/
 ├── apps/
 │   ├── mobile/                 Flutter geography client
-│   ├── web/                    Next.js research, review and inherited admin dashboard
+│   ├── admin/                  Next.js research, review and inherited admin dashboard
+│   ├── app/ web/ dev/          Dryv-generated frontend slices
 │   └── www/                    Next.js public landing experience
 ├── backend/
 │   ├── api/                    NestJS product API
@@ -22,14 +27,14 @@ source/
 │   ├── fetch/                  Identified fetching, limits and stop rules
 │   ├── filesystem/             Object storage and filesystem metadata capabilities
 │   ├── manifest/               Seed and site-manifest validation
-│   ├── scraping/               Manifest-driven selectors and transforms
+│   ├── browser/ cli/ crawler/  Browser sessions, developer CLI and web acquisition
+│   ├── search/                 Search capabilities
 │   └── README.md
 └── schema/
-    ├── contracts/              Layer-exchange schemas and target catalog
-    ├── database/               Ordered PostgreSQL schema and service SQL
-    ├── pipeline/               Versioned pipeline manifests
-    ├── seed/                   Seed manifest schema
-    ├── site/v1/                Versioned site-structure schemas
+    ├── database/               Dryv-generated PostgreSQL table and seed schemas
+    ├── engine/                 Job, mapping and classification inputs
+    ├── seed/                   Seed manifest schemas
+    ├── sources/                Source and module schemas
     └── README.md
 ```
 
@@ -42,7 +47,7 @@ source/
 - The Bun database CLI applies SQL releases; there is no database service.
 - The Python engine is the runtime: it assembles package capabilities, schedules their work and owns PostgreSQL, MongoDB and (later) vector persistence.
 - Python packages provide browsing, crawling and scraping, fetching, extraction (including OCR), filesystem operations, search and manifest validation. There is no intelligence service yet; `source/backend/agent/` is a README-only proposal.
-- SQL lives in `source/schema/database/`; site, seed, exchange and pipeline input shapes live in the corresponding `source/schema/` folders.
+- SQL lives in `source/backend/database/`. Machine-readable schemas live in `source/schema/`.
 
 The evidence path is intended to preserve the original artifact while creating attributable extraction and review proposals. Some handoffs are still in migration: persistent job state, per-folder authorization and the vector store are not built yet.
 
@@ -56,4 +61,4 @@ bun run dev
 bun run check
 ```
 
-The Python workspace currently needs its missing `mzizi-database` package reference reconciled before a fresh `uv sync --all-packages` can resolve. Do not run, build or import archived implementations under `.docs/_archives/`.
+The CLI-only install is `uv sync --locked --all-packages`. Use the [quickstart](.docs/design/operations/cli-and-jobs.md) for its independent workflow.
