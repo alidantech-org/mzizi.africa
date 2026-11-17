@@ -9,7 +9,7 @@ from mzizi_engine.runtime.contracts.base import Frozen
 from mzizi_engine.runtime.operations import OperationRegistry
 from mzizi_engine.runtime.runs.contracts.spec import JobFields, JobSpec, NonEmpty, StageSpec
 
-PHASE_ONE_OPERATIONS = frozenset({"scraping.crawl", "site.watch", "extraction.folder"})
+PHASE_ONE_OPERATIONS = frozenset({"scraping.crawl", "site.watch", "extraction.folder", "patterns.rank"})
 
 
 class StageInput(Frozen):

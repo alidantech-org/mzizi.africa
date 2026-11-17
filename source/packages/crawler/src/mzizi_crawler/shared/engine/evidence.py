@@ -95,6 +95,7 @@ class CrawlEvidence:
         return tuple(reports)
 
     def save(self, folder: Path, pages: list[PageRecord], reports: tuple[ListingReport, ...]) -> tuple[str, ...]:
+        folder.mkdir(parents=True, exist_ok=True)
         saved = {page.final_url for page in pages}
         (folder / "listings.json").write_bytes(LISTINGS.dump_json(reports, indent=2) + b"\n")
         if not self.media:

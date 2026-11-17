@@ -6,6 +6,7 @@ unchanged since the last run are skipped, so a repeated job only does new work."
 from __future__ import annotations
 
 import base64
+import csv
 import hashlib
 from pathlib import Path
 
@@ -13,6 +14,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_extraction.core import Status
 from mzizi_extraction.document import DocumentProfile, DocumentWire, OcrMode, encode_document, extract_pdf_document
+from mzizi_extraction.document.boilerplate import Boilerplate
+from mzizi_extraction.folder.html_pages import extract_page, learn, page_urls
 
 
 class FolderRequest(BaseModel):
@@ -24,6 +27,9 @@ class FolderRequest(BaseModel):
     ocr: bool = True  # recognise scanned pages (needs Tesseract; a missing engine is reported, never silent)
     languages: str = "eng"
     limit: int = Field(default=0, ge=0)  # at most this many new files per run; 0 means no limit
+    ranking: str = ""  # a ranking CSV (a `name` column, best first): only these files, in that order
+    top: int = Field(default=0, ge=0)  # with a ranking, only the first N names; 0 means all
+    site: str = ""  # for .html files: the site folder holding state.json, which gives each page its address
 
 
 class FileOutcome(BaseModel):
@@ -64,6 +70,16 @@ def _write_document(out: Path, wire: DocumentWire) -> int:
     return len(wire.markdown)
 
 
+def _selected(source: Path, request: FolderRequest) -> list[Path]:
+    walk = source.rglob("*") if request.site else source.iterdir()
+    files = {p.name: p for p in walk if p.is_file() and p.suffix.lower() in request.suffixes}
+    if not request.ranking:
+        return [files[name] for name in sorted(files)]
+    with Path(request.ranking).open(newline="", encoding="utf-8") as handle:
+        ordered = [row["name"] for row in csv.DictReader(handle) if row["name"] in files]
+    return [files[name] for name in (ordered[: request.top] if request.top else ordered)]
+
+
 def extract_folder(request: FolderRequest) -> FolderReport:
     source, out = Path(request.source), Path(request.out_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -72,7 +88,14 @@ def extract_folder(request: FolderRequest) -> FolderReport:
     )
     outcomes: list[FileOutcome] = []
     extracted = skipped = failed = 0
-    for path in sorted(p for p in source.iterdir() if p.is_file() and p.suffix.lower() in request.suffixes):
+    chosen = _selected(source, request)
+    urls = page_urls(Path(request.site)) if request.site else {}
+    boilerplate = (
+        learn([p.read_text(encoding="utf-8", errors="ignore") for p in chosen if p.suffix == ".html"])
+        if request.site
+        else Boilerplate()
+    )
+    for path in chosen:
         data = path.read_bytes()
         digest = hashlib.sha256(data).hexdigest()
         folder = out / path.stem
@@ -82,8 +105,13 @@ def extract_folder(request: FolderRequest) -> FolderReport:
             continue
         if request.limit and extracted + failed >= request.limit:
             break
-        result = extract_pdf_document(data, profile)
-        wire = encode_document(result)
+        if path.suffix.lower() == ".html":
+            result, wire, _title = extract_page(
+                data.decode("utf-8", errors="ignore"), urls.get(path.name, ""), boilerplate
+            )
+        else:
+            result = extract_pdf_document(data, profile)
+            wire = encode_document(result)
         characters = _write_document(folder, wire)
         unread = tuple(sorted({d.code for d in wire.diagnostics if d.level != "info"}))
         if result.status is Status.FAILED:

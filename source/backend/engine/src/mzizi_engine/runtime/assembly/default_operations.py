@@ -180,7 +180,23 @@ def build_operation_registry() -> OperationRegistry:
         "mzizi-engine",
         __version__,
     )
+    from mzizi_engine.runtime.assembly.rank_site import RankRequest, rank_site
     from mzizi_extraction.folder import FolderRequest, extract_folder
+
+    register_specs(
+        reg,
+        (
+            operation(
+                "patterns.rank",
+                "Rank the files of a folder by kind, subject and impact so extraction can start with the ones that matter",
+                RankRequest,
+                rank_site,
+                1,
+            ),
+        ),
+        "mzizi-patterns",
+        __version__,
+    )
 
     register_specs(
         reg,
