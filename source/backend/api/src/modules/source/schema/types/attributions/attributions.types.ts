@@ -35,6 +35,7 @@ import type {
 export interface IAttributions extends B.IBase {
   assessedAt: Date;
   assessorSnapshot: string;
+  code: string;
   credit: string;
   fileVersionId: string;
   licenseValueId: string | null;

@@ -1,6 +1,7 @@
 /** Immutable Main acknowledgement committed atomically with accepted records and provenance. Same-key different-hash retries must conflict. */
 export interface SourcePublicationReceipts {
   actorSnapshot: string;
+  code: string;
   contractVersion: string;
   createdAt: string;
   deletedAt?: string | null;

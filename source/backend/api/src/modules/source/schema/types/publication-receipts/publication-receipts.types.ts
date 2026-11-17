@@ -31,6 +31,7 @@ import type {
 /** Immutable Main acknowledgement committed atomically with accepted records and provenance. Same-key different-hash retries must conflict. */
 export interface IPublicationReceipts extends B.IBase {
   actorSnapshot: string;
+  code: string;
   contractVersion: string;
   idempotencyKey: string;
   payloadHash: string;

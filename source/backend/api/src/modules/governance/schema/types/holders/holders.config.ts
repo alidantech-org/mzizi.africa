@@ -50,6 +50,7 @@ export const HOLDERS_RELATION_KEYS = [
 export const HOLDERS_SORTABLE_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "code",
   "createdAt",
   "deletedAt",
   "id",
@@ -62,7 +63,7 @@ export const HOLDERS_SORTABLE_FIELDS = [
   "version",
 ] as const satisfies readonly HoldersKey[];
 
-export const HOLDERS_SEARCHABLE_FIELDS = [] as const satisfies readonly HoldersKey[];
+export const HOLDERS_SEARCHABLE_FIELDS = ["code"] as const satisfies readonly HoldersKey[];
 
 export const HOLDERS_FILTERABLE_FIELDS = [
   "appointedByEntityId",
@@ -94,6 +95,7 @@ export const HOLDERS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IHolders>
 export const HOLDERS_SELECTABLE_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "code",
   "createdAt",
   "deletedAt",
   "id",
@@ -109,6 +111,7 @@ export const HOLDERS_SELECTABLE_FIELDS = [
 export const HOLDERS_DEFAULT_SELECT_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "code",
   "createdAt",
   "deletedAt",
   "id",
@@ -128,6 +131,7 @@ export const HOLDERS_DEFAULT_SELECT_FIELDS = [
 export const HOLDERS_EDITABLE_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "code",
   "individualId",
   "officeId",
   "sourceCitationId",

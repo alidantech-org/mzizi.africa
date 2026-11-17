@@ -73,6 +73,13 @@ class Table:
     seed: Seed
     columns: dict[str, Column]
 
+    def seed_name(self, stored_column: str) -> str:
+        """The seed column for a stored one: `scheme_id` is written `scheme_code`; any other column keeps its name."""
+        for column in self.columns.values():
+            if column.name == stored_column and column.link:
+                return column.link.alias
+        return stored_column
+
     def stored_name(self, seed_column: str) -> str:
         """The stored column a seed column fills: `scheme_code` fills `scheme_id`."""
         for column in self.columns.values():

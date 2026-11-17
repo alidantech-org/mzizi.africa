@@ -13,12 +13,14 @@
       "x-code": "sys.tbl.official.contacts",
       "x-id": "#/schemas/official.Contacts",
       "x-table": "official.contacts",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
-        "id"
+        "code"
+        ,"id"
         ,"kind_id"
         ,"value"
         ,"visibility_id"
@@ -27,12 +29,13 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "entity_code"
-          ,"id"
+          "code"
+          ,"entity_code"
           ,"individual_code"
           ,"kind_code"
           ,"source_citation_code"
@@ -42,14 +45,22 @@
           ,"visibility_code"
         ],
         "required": [
-          "id"
+          "code"
           ,"kind_code"
           ,"value"
           ,"visibility_code"
         ]
       },
       "properties": {
-        "created_at": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -75,7 +86,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"individual_id": {
           "type": ["string", "null"],
@@ -640,25 +651,28 @@
       "x-code": "sys.tbl.official.relationships",
       "x-id": "#/schemas/official.Relationships",
       "x-table": "official.relationships",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
-        "id"
+        "code"
+        ,"id"
         ,"kind_id"
       ],
       "x-seed": {
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "from_entity_code"
+          "code"
+          ,"from_entity_code"
           ,"from_individual_code"
-          ,"id"
           ,"kind_code"
           ,"share_percentage"
           ,"source_citation_code"
@@ -668,12 +682,20 @@
           ,"valid_until"
         ],
         "required": [
-          "id"
+          "code"
           ,"kind_code"
         ]
       },
       "properties": {
-        "created_at": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -706,7 +728,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"kind_id": {
           "type": "string",

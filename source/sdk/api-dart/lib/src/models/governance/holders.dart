@@ -3,7 +3,7 @@ import 'package:mzizi_api/src/models/governance/offices.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/official/individuals.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_validity_entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
 part 'holders.g.dart';
@@ -14,6 +14,7 @@ class GovernanceHolders {
   const GovernanceHolders({
     this.appointedByEntityId,
     required this.appointmentKindId,
+    required this.code,
     required this.createdAt,
     this.deletedAt,
     required this.id,
@@ -27,6 +28,7 @@ class GovernanceHolders {
   });
   final String? appointedByEntityId;
   final String appointmentKindId;
+  final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String id;

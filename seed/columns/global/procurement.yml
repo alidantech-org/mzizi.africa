@@ -12,7 +12,7 @@ columns:
     - list: sys.trm.global.dates
       key: date-closing
       role: exclude
-  civic.procurements.buyer_entity_id:
+  civic.procurements.buyer_entity_code:
     means: Who buys
     shape: name
     terms:
@@ -23,7 +23,7 @@ columns:
       key: org-types
       role: value
       says: organisation
-  civic.procurements.procedure_kind_id:
+  civic.procurements.procedure_kind_code:
     means: The procedure used
     terms:
     - list: sys.trm.global.procurement
@@ -32,7 +32,7 @@ columns:
     - list: sys.trm.global.procurement
       key: procedure-words
       role: member
-  civic.bids.bidder_entity_id:
+  civic.bids.bidder_entity_code:
     means: Who bid
     shape: name
     terms:
@@ -88,7 +88,7 @@ columns:
     - list: sys.trm.global.dates
       key: date-submitted
       role: heading
-  civic.bids.outcome_id:
+  civic.bids.outcome_code:
     means: Whether the bid won
     terms:
     - list: sys.trm.global.procurement
@@ -121,7 +121,7 @@ columns:
       key: plain-number
       role: value
       weight: 0.7
-  civic.contracts.contractor_entity_id:
+  civic.contracts.contractor_entity_code:
     means: Who holds the contract
     shape: name
     terms:

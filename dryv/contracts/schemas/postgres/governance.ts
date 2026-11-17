@@ -69,7 +69,7 @@ export const Holders = governance
     appointedByEntityId: belongsTo(() => Entities).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.CodedValidityEntity)
   .description(
     "One person's continuous tenure in one office, with appointment kind and effective dates.",
   )

@@ -13,6 +13,7 @@ import { IndividualsEntity } from "#/modules/official/schema/entities/individual
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-string1000.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
@@ -20,6 +21,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One sourced contact channel for exactly one identity; visibility class governs handling of private values.
  */
 @Entity({ schema: "official", name: "contacts" })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["entityId", "kindId"])
 @Index(["individualId", "kindId"])
 @Index(["visibilityId"])
@@ -32,6 +34,9 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 export class ContactsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
+
+  @Column({ name: "code", type: "varchar", length: 255 })
+  code!: IdentityCode;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;

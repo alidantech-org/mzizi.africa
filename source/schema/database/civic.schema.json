@@ -13,12 +13,14 @@
       "x-code": "sys.tbl.civic.bids",
       "x-id": "#/schemas/civic.Bids",
       "x-table": "civic.bids",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
         "bidder_entity_id"
+        ,"code"
         ,"id"
         ,"outcome_id"
         ,"procurement_id"
@@ -27,14 +29,15 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "amount_minor_units"
           ,"bidder_entity_code"
+          ,"code"
           ,"currency_code"
-          ,"id"
           ,"outcome_code"
           ,"procurement_code"
           ,"source_citation_code"
@@ -42,7 +45,7 @@
         ],
         "required": [
           "bidder_entity_code"
-          ,"id"
+          ,"code"
           ,"outcome_code"
           ,"procurement_code"
         ]
@@ -59,6 +62,14 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "bidder_entity_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"created_at": {
           "type": "string",
@@ -86,7 +97,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"outcome_id": {
           "type": "string",
@@ -137,12 +148,14 @@
       "x-code": "sys.tbl.civic.contracts",
       "x-id": "#/schemas/civic.Contracts",
       "x-table": "civic.contracts",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
         "amount_minor_units"
+        ,"code"
         ,"contractor_entity_id"
         ,"currency_id"
         ,"id"
@@ -152,14 +165,15 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "amount_minor_units"
+          ,"code"
           ,"contractor_entity_code"
           ,"currency_code"
-          ,"id"
           ,"procurement_code"
           ,"project_code"
           ,"signed_on"
@@ -168,9 +182,9 @@
         ],
         "required": [
           "amount_minor_units"
+          ,"code"
           ,"contractor_entity_code"
           ,"currency_code"
-          ,"id"
           ,"status_code"
         ]
       },
@@ -179,6 +193,14 @@
           "type": "integer",
           "x-type": "integer",
           "x-role": "data"
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"contractor_entity_id": {
           "type": "string",
@@ -213,7 +235,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"procurement_id": {
           "type": ["string", "null"],
@@ -271,12 +293,14 @@
       "x-code": "sys.tbl.civic.deliveries",
       "x-id": "#/schemas/civic.Deliveries",
       "x-table": "civic.deliveries",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
-        "contract_id"
+        "code"
+        ,"contract_id"
         ,"delivery_kind_id"
         ,"id"
       ],
@@ -284,23 +308,24 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "amount_minor_units"
+          ,"code"
           ,"contract_code"
           ,"currency_code"
           ,"delivered_on"
           ,"delivery_kind_code"
-          ,"id"
           ,"source_citation_code"
           ,"unit_feature_code"
         ],
         "required": [
-          "contract_code"
+          "code"
+          ,"contract_code"
           ,"delivery_kind_code"
-          ,"id"
         ]
       },
       "properties": {
@@ -308,6 +333,14 @@
           "type": ["integer", "null"],
           "x-type": "integer",
           "x-role": "data"
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"contract_id": {
           "type": "string",
@@ -355,7 +388,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"source_citation_id": {
           "type": ["string", "null"],

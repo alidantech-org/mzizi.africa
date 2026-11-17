@@ -71,9 +71,9 @@ def propose_mapping(
             )
     summaries = []
     for name, mapped in sorted(by_table.items()):
-        have = {m.column.removesuffix("_id").removesuffix("_code") for m in mapped}
+        have = {m.column for m in mapped}
         required = tables[name].seed.required if name in tables else ()
-        missing = tuple(c for c in required if c != "code" and c.removesuffix("_code").removesuffix("_id") not in have)
+        missing = tuple(c for c in required if c != "code" and c not in have)
         summaries.append(TableProposal(table=name, mapped=tuple(mapped), missing_required=missing))
     return MappingProposal(
         source=str(csv_path),

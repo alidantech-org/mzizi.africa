@@ -41,6 +41,13 @@ export class PublicationReceiptsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find the publication receipts with this code (unique). */
+  async findByCode(
+    code: NonNullable<PublicationReceiptsEntity["code"]>,
+  ): Promise<PublicationReceiptsEntity | null> {
+    return await this.findOne({ code, deletedAt: IsNull() });
+  }
+
   /** Find the publication receipts with this idempotency key (unique). */
   async findByIdempotencyKey(
     idempotencyKey: NonNullable<PublicationReceiptsEntity["idempotencyKey"]>,

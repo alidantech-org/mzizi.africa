@@ -26,7 +26,7 @@ columns:
       key: plain-number
       role: value
       weight: 0.7
-  finance.flows.counterparty_entity_id:
+  finance.flows.counterparty_entity_code:
     means: The other side of the money
     shape: name
     terms:
@@ -50,13 +50,13 @@ columns:
     - list: sys.trm.global.dates
       key: date-paid
       role: heading
-  finance.flows.fund_id:
+  finance.flows.fund_code:
     means: Which fund
     terms:
     - list: sys.trm.global.finance
       key: fund-headings
       role: heading
-  finance.flows.fiscal_period_id:
+  finance.flows.fiscal_period_code:
     means: Which financial period
     terms:
     - list: sys.trm.global.dates
@@ -85,7 +85,7 @@ columns:
       key: plain-number
       role: value
       weight: 0.7
-  finance.appropriations.recipient_entity_id:
+  finance.appropriations.recipient_entity_code:
     means: Who receives an appropriation
     shape: name
     terms:
@@ -96,7 +96,7 @@ columns:
       key: organisation-headings
       role: heading
       weight: 0.6
-  finance.budgets.government_entity_id:
+  finance.budgets.government_entity_code:
     means: The government that owns a budget
     shape: name
     terms:

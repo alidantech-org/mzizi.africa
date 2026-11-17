@@ -2,6 +2,7 @@
 export interface GovernanceHolders {
   appointedByEntityId?: string | null;
   appointmentKindId: string;
+  code: string;
   createdAt: string;
   deletedAt?: string | null;
   id: string;

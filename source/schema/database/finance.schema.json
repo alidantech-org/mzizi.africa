@@ -395,13 +395,15 @@
       "x-code": "sys.tbl.finance.debts",
       "x-id": "#/schemas/finance.Debts",
       "x-table": "finance.debts",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
         "amount_minor_units"
         ,"borrower_entity_id"
+        ,"code"
         ,"currency_id"
         ,"debt_kind_id"
         ,"id"
@@ -410,17 +412,18 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "amount_minor_units"
           ,"borrower_entity_code"
+          ,"code"
           ,"contracted_on"
           ,"country_code"
           ,"currency_code"
           ,"debt_kind_code"
-          ,"id"
           ,"lender_entity_code"
           ,"maturity_on"
           ,"source_citation_code"
@@ -428,9 +431,9 @@
         "required": [
           "amount_minor_units"
           ,"borrower_entity_code"
+          ,"code"
           ,"currency_code"
           ,"debt_kind_code"
-          ,"id"
         ]
       },
       "properties": {
@@ -445,6 +448,14 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "borrower_entity_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"contracted_on": {
           "type": ["string", "null"],
@@ -492,7 +503,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"lender_entity_id": {
           "type": ["string", "null"],
@@ -656,12 +667,14 @@
       "x-code": "sys.tbl.finance.flows",
       "x-id": "#/schemas/finance.Flows",
       "x-table": "finance.flows",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
         "amount_minor_units"
+        ,"code"
         ,"currency_id"
         ,"flow_kind_id"
         ,"id"
@@ -671,12 +684,14 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "amount_minor_units"
           ,"appropriation_code"
+          ,"code"
           ,"contract_code"
           ,"counterparty_entity_code"
           ,"currency_code"
@@ -684,15 +699,14 @@
           ,"fiscal_period_code"
           ,"flow_kind_code"
           ,"fund_code"
-          ,"id"
           ,"occurred_on"
           ,"source_citation_code"
         ],
         "required": [
           "amount_minor_units"
+          ,"code"
           ,"currency_code"
           ,"flow_kind_code"
-          ,"id"
           ,"occurred_on"
         ]
       },
@@ -708,6 +722,14 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/finance.Appropriations", "column": "id", "alias": "appropriation_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"contract_id": {
           "type": ["string", "null"],
@@ -777,7 +799,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"occurred_on": {
           "type": "string",

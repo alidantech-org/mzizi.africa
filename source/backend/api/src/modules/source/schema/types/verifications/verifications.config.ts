@@ -44,6 +44,7 @@ export const VERIFICATIONS_RELATION_KEYS = [
 
 export const VERIFICATIONS_SORTABLE_FIELDS = [
   "assessedAt",
+  "code",
   "confidence",
   "createdAt",
   "deletedAt",
@@ -59,6 +60,7 @@ export const VERIFICATIONS_SORTABLE_FIELDS = [
 ] as const satisfies readonly VerificationsKey[];
 
 export const VERIFICATIONS_SEARCHABLE_FIELDS = [
+  "code",
   "explanation",
 ] as const satisfies readonly VerificationsKey[];
 
@@ -89,6 +91,7 @@ export const VERIFICATIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IVe
 
 export const VERIFICATIONS_SELECTABLE_FIELDS = [
   "assessedAt",
+  "code",
   "confidence",
   "createdAt",
   "deletedAt",
@@ -105,6 +108,7 @@ export const VERIFICATIONS_SELECTABLE_FIELDS = [
 
 export const VERIFICATIONS_DEFAULT_SELECT_FIELDS = [
   "assessedAt",
+  "code",
   "confidence",
   "createdAt",
   "deletedAt",
@@ -125,6 +129,7 @@ export const VERIFICATIONS_DEFAULT_SELECT_FIELDS = [
 
 export const VERIFICATIONS_EDITABLE_FIELDS = [
   "assessedAt",
+  "code",
   "confidence",
   "evidenceId",
   "explanation",

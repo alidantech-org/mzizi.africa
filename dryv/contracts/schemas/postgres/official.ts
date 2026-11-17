@@ -141,7 +141,7 @@ export const Contacts = official
     value: dryv.field(sharedProperties.NonEmptyString1000),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.CodedValidityEntity)
   .rule(
     "HasExactlyOneIdentityOwner",
     rule.exactlyOne("entityId", "individualId"),
@@ -169,7 +169,7 @@ export const Relationships = official
     sharePercentage: dryv.field(sharedProperties.Percentage).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.CodedValidityEntity)
   .rule(
     "HasExactlyOneFromIdentity",
     rule.exactlyOne("fromEntityId", "fromIndividualId"),

@@ -62,4 +62,11 @@ export class AttributionsRepository
   ): Promise<IFindAllResponse<AttributionsEntity>> {
     return await this.findByQuery(query, { publisherId, deletedAt: IsNull() });
   }
+
+  /** Find the attributions with this code (unique). */
+  async findByCode(
+    code: NonNullable<AttributionsEntity["code"]>,
+  ): Promise<AttributionsEntity | null> {
+    return await this.findOne({ code, deletedAt: IsNull() });
+  }
 }

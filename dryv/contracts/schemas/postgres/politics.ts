@@ -41,7 +41,7 @@ export const Memberships = politics
     membershipKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.CodedValidityEntity)
   .description("One individual's dated membership in one political party.")
   .role("entity")
   .facets({
@@ -72,7 +72,7 @@ export const Alignments = politics
     alignmentKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.CodedValidityEntity)
   .description("One party's dated alignment with one coalition.")
   .role("entity")
   .facets({
@@ -120,7 +120,7 @@ export const Candidates = politics
     ballotOrder: dryv.field(sharedProperties.PositiveInteger).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description("One person's candidature in one contest, retaining party affiliation at election time.")
   .role("entity")
   .facets({
@@ -175,7 +175,7 @@ export const Manifestos = politics
     sourceCitationId: belongsTo(() => Citations).maybe(),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description("One published party or candidate manifesto associated with its election and source document.")
   .role("entity")
   .facets({ storage: dryv.storage("manifestos").index("partyId").index("candidateId").index("sourceCitationId") });
@@ -190,7 +190,7 @@ export const ManifestoItems = politics
     position: dryv.field(sharedProperties.PositiveInteger).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description("One policy commitment or promise within a manifesto, optionally linked to a Reference topic.")
   .role("entity")
   .facets({

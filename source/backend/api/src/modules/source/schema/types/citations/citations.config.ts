@@ -49,6 +49,7 @@ export const CITATIONS_RELATION_KEYS = [
 
 export const CITATIONS_SORTABLE_FIELDS = [
   "captureId",
+  "code",
   "createdAt",
   "deletedAt",
   "documentId",
@@ -64,6 +65,7 @@ export const CITATIONS_SORTABLE_FIELDS = [
 ] as const satisfies readonly CitationsKey[];
 
 export const CITATIONS_SEARCHABLE_FIELDS = [
+  "code",
   "quotedHash",
 ] as const satisfies readonly CitationsKey[];
 
@@ -95,6 +97,7 @@ export const CITATIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<ICitati
 
 export const CITATIONS_SELECTABLE_FIELDS = [
   "captureId",
+  "code",
   "createdAt",
   "deletedAt",
   "documentId",
@@ -111,6 +114,7 @@ export const CITATIONS_SELECTABLE_FIELDS = [
 
 export const CITATIONS_DEFAULT_SELECT_FIELDS = [
   "captureId",
+  "code",
   "createdAt",
   "deletedAt",
   "documentId",
@@ -131,6 +135,7 @@ export const CITATIONS_DEFAULT_SELECT_FIELDS = [
 
 export const CITATIONS_EDITABLE_FIELDS = [
   "captureId",
+  "code",
   "documentId",
   "evidenceId",
   "fileVersionId",

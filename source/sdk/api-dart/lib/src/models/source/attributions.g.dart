@@ -9,6 +9,7 @@ part of 'attributions.dart';
 SourceAttributions _$SourceAttributionsFromJson(Map<String, dynamic> json) => SourceAttributions(
   assessedAt: DateTime.parse(json['assessedAt'] as String),
   assessorSnapshot: json['assessorSnapshot'] as String,
+  code: json['code'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   credit: json['credit'] as String,
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
@@ -24,6 +25,7 @@ SourceAttributions _$SourceAttributionsFromJson(Map<String, dynamic> json) => So
 Map<String, dynamic> _$SourceAttributionsToJson(SourceAttributions instance) => <String, dynamic>{
   'assessedAt': instance.assessedAt.toIso8601String(),
   'assessorSnapshot': instance.assessorSnapshot,
+  'code': instance.code,
   'createdAt': instance.createdAt.toIso8601String(),
   'credit': instance.credit,
   'deletedAt': ?instance.deletedAt?.toIso8601String(),

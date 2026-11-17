@@ -17,6 +17,9 @@ class PublicationReceiptsRow(BaseModel):
     table: ClassVar[str] = "source.publication_receipts"
 
     actor_snapshot: str
+    code: Annotated[
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+    ]
     contract_version: Annotated[str, Field(min_length=1, max_length=255)]
     created_at: datetime
     deleted_at: datetime | None = None

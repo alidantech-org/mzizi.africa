@@ -361,7 +361,7 @@ export const Citations = source
     quotedHash: dryv.field(sharedProperties.Sha256).maybe(),
     recordedAt: dryv.field(sharedProperties.Instant),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description(
     "Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record.",
   )
@@ -387,7 +387,7 @@ export const Verifications = source
     assessedAt: dryv.field(sharedProperties.Instant),
     supersedesId: belongsTo(dryv.self).maybe(),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description(
     "Append-only attributable assessment; disagreement and insufficient evidence remain explicit outcomes.",
   )
@@ -410,7 +410,7 @@ export const Attributions = source
     assessedAt: dryv.field(sharedProperties.Instant),
     assessorSnapshot: dryv.field(sharedProperties.JsonText),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description(
     "Accepted rights and credit statement tied to exact content and publisher.",
   )
@@ -434,7 +434,7 @@ export const PublicationReceipts = source
     actorSnapshot: dryv.field(sharedProperties.JsonText),
     resultManifest: dryv.field(sharedProperties.JsonText),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description(
     "Immutable Main acknowledgement committed atomically with accepted records and provenance. Same-key different-hash retries must conflict.",
   )

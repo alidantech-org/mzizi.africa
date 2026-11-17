@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   MaxLength,
   Min,
   MinLength,
@@ -12,6 +13,7 @@ import {
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-string1000.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
@@ -23,6 +25,12 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Invariant "HasExactlyOneIdentityOwner" has no simple form, so it isn't validated here.
  */
 export class ContactsDto {
+  @IsString()
+  @MinLength(1)
+  @MaxLength(255)
+  @Matches(new RegExp("^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$"))
+  code!: IdentityCode;
+
   @IsISO8601({})
   createdAt!: Instant;
 

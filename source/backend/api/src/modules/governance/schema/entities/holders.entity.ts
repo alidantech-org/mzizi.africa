@@ -14,12 +14,14 @@ import { IndividualsEntity } from "#/modules/official/schema/entities/individual
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
  * One person's continuous tenure in one office, with appointment kind and effective dates.
  */
 @Entity({ schema: "governance", name: "holders" })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["officeId", "validFrom", "validUntil"])
 @Index(["individualId"])
 @Index(["sourceCitationId"])
@@ -44,6 +46,9 @@ export class HoldersEntity {
   @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "appointment_kind_id" })
   appointmentKind?: Relation<ValueEntity>;
+
+  @Column({ name: "code", type: "varchar", length: 255 })
+  code!: IdentityCode;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;

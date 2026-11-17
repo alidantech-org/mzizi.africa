@@ -70,4 +70,11 @@ export class VerificationsRepository
   ): Promise<IFindAllResponse<VerificationsEntity>> {
     return await this.findByQuery(query, { supersedesId, deletedAt: IsNull() });
   }
+
+  /** Find the verifications with this code (unique). */
+  async findByCode(
+    code: NonNullable<VerificationsEntity["code"]>,
+  ): Promise<VerificationsEntity | null> {
+    return await this.findOne({ code, deletedAt: IsNull() });
+  }
 }

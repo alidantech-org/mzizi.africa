@@ -8,6 +8,7 @@ part of 'verifications.dart';
 
 SourceVerifications _$SourceVerificationsFromJson(Map<String, dynamic> json) => SourceVerifications(
   assessedAt: DateTime.parse(json['assessedAt'] as String),
+  code: json['code'] as String,
   confidence: (json['confidence'] as num?)?.toDouble(),
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
@@ -24,6 +25,7 @@ SourceVerifications _$SourceVerificationsFromJson(Map<String, dynamic> json) => 
 
 Map<String, dynamic> _$SourceVerificationsToJson(SourceVerifications instance) => <String, dynamic>{
   'assessedAt': instance.assessedAt.toIso8601String(),
+  'code': instance.code,
   'confidence': ?instance.confidence,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),

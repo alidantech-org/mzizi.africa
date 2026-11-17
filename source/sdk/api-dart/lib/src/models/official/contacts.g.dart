@@ -7,6 +7,7 @@ part of 'contacts.dart';
 // **************************************************************************
 
 OfficialContacts _$OfficialContactsFromJson(Map<String, dynamic> json) => OfficialContacts(
+  code: json['code'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
   entityId: json['entityId'] as String?,
@@ -23,6 +24,7 @@ OfficialContacts _$OfficialContactsFromJson(Map<String, dynamic> json) => Offici
 );
 
 Map<String, dynamic> _$OfficialContactsToJson(OfficialContacts instance) => <String, dynamic>{
+  'code': instance.code,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),
   'entityId': ?instance.entityId,

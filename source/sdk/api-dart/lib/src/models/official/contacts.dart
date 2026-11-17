@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/official/individuals.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_validity_entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
 part 'contacts.g.dart';
@@ -11,6 +11,7 @@ part 'contacts.g.dart';
 @JsonSerializable(includeIfNull: false)
 class OfficialContacts {
   const OfficialContacts({
+    required this.code,
     required this.createdAt,
     this.deletedAt,
     this.entityId,
@@ -25,6 +26,7 @@ class OfficialContacts {
     required this.version,
     required this.visibilityId,
   });
+  final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String? entityId;

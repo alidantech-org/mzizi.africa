@@ -125,7 +125,7 @@ export const Bids = civic
     submittedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description("One supplier submission to one procurement process, with the reported amount and outcome where known.")
   .role("entity")
   .facets({ storage: dryv.storage("bids").index("procurementId").index("bidderEntityId").index("sourceCitationId") });
@@ -142,7 +142,7 @@ export const Contracts = civic
     signedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description("One executed contract with a contractor, optional procurement/project links and contracted amount.")
   .role("entity")
   .facets({ storage: dryv.storage("contracts").index("procurementId").index("projectId").index("sourceCitationId") });
@@ -158,7 +158,7 @@ export const Deliveries = civic
     unitFeatureId: belongsTo(() => Features).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description("One dated deliverable or milestone under a contract, optionally scoped to a geographic unit.")
   .role("entity")
   .facets({

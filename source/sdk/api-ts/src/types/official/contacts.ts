@@ -1,5 +1,6 @@
 /** One sourced contact channel for exactly one identity; visibility class governs handling of private values. */
 export interface OfficialContacts {
+  code: string;
   createdAt: string;
   deletedAt?: string | null;
   entityId?: string | null;

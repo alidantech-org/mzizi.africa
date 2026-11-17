@@ -12,6 +12,7 @@ import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts
 import { PublishersEntity } from "#/modules/source/schema/entities/publishers.entity.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-string1000.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
@@ -20,6 +21,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Accepted rights and credit statement tied to exact content and publisher.
  */
 @Entity({ schema: "source", name: "attributions" })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["publisherId"])
 @Index(["fileVersionId"])
 @Index(["licenseValueId"])
@@ -32,6 +34,9 @@ export class AttributionsEntity {
 
   @Column({ name: "assessor_snapshot", type: "text" })
   assessorSnapshot!: JsonText;
+
+  @Column({ name: "code", type: "varchar", length: 255 })
+  code!: IdentityCode;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;

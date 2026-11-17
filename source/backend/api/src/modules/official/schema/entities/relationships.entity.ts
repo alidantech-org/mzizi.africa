@@ -13,6 +13,7 @@ import { IndividualsEntity } from "#/modules/official/schema/entities/individual
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Percentage } from "#/modules/shared/schema/type/percentage.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
@@ -20,6 +21,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One directed typed relationship between exactly two Official identities, optionally with an ownership share.
  */
 @Entity({ schema: "official", name: "relationships" })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["fromEntityId", "kindId"])
 @Index(["fromIndividualId", "kindId"])
 @Index(["toEntityId", "kindId"])
@@ -38,6 +40,9 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 export class OfficialRelationshipsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
+
+  @Column({ name: "code", type: "varchar", length: 255 })
+  code!: IdentityCode;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;

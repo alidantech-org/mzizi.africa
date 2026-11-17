@@ -78,4 +78,9 @@ export class ContactsRepository
   ): Promise<IFindAllResponse<ContactsEntity>> {
     return await this.findByQuery(query, { visibilityId, deletedAt: IsNull() });
   }
+
+  /** Find the contacts with this code (unique). */
+  async findByCode(code: NonNullable<ContactsEntity["code"]>): Promise<ContactsEntity | null> {
+    return await this.findOne({ code, deletedAt: IsNull() });
+  }
 }

@@ -13,13 +13,15 @@
       "x-code": "sys.tbl.source.attributions",
       "x-id": "#/schemas/source.Attributions",
       "x-table": "source.attributions",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
         "assessed_at"
         ,"assessor_snapshot"
+        ,"code"
         ,"credit"
         ,"file_version_id"
         ,"id"
@@ -30,15 +32,16 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "assessed_at"
           ,"assessor_snapshot"
+          ,"code"
           ,"credit"
           ,"file_version_code"
-          ,"id"
           ,"license_value_code"
           ,"publisher_code"
           ,"rights_statement"
@@ -46,9 +49,9 @@
         "required": [
           "assessed_at"
           ,"assessor_snapshot"
+          ,"code"
           ,"credit"
           ,"file_version_code"
-          ,"id"
           ,"publisher_code"
           ,"rights_statement"
         ]
@@ -64,6 +67,14 @@
           "type": "string",
           "x-type": "text",
           "x-role": "data"
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"created_at": {
           "type": "string",
@@ -98,7 +109,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"license_value_id": {
           "type": ["string", "null"],
@@ -285,12 +296,14 @@
       "x-code": "sys.tbl.source.citations",
       "x-id": "#/schemas/source.Citations",
       "x-table": "source.citations",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
-        "evidence_id"
+        "code"
+        ,"evidence_id"
         ,"file_version_id"
         ,"id"
         ,"locator"
@@ -301,24 +314,25 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "capture_code"
+          ,"code"
           ,"document_code"
           ,"evidence_code"
           ,"file_version_code"
-          ,"id"
           ,"locator"
           ,"locator_kind_code"
           ,"quoted_hash"
           ,"recorded_at"
         ],
         "required": [
-          "evidence_code"
+          "code"
+          ,"evidence_code"
           ,"file_version_code"
-          ,"id"
           ,"locator"
           ,"locator_kind_code"
           ,"recorded_at"
@@ -331,6 +345,14 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Captures", "column": "id", "alias": "capture_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"created_at": {
           "type": "string",
@@ -372,7 +394,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"locator": {
           "type": "string",
@@ -1707,14 +1729,16 @@
       "x-code": "sys.tbl.source.publication-receipts",
       "x-id": "#/schemas/source.PublicationReceipts",
       "x-table": "source.publication_receipts",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
-        ["idempotency_key"]
+        ["code"]
+        ,["idempotency_key"]
         ,["publication_ref_id"]
       ],
       "required": [
         "actor_snapshot"
+        ,"code"
         ,"contract_version"
         ,"id"
         ,"idempotency_key"
@@ -1728,13 +1752,14 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "actor_snapshot"
+          ,"code"
           ,"contract_version"
-          ,"id"
           ,"idempotency_key"
           ,"payload_hash"
           ,"publication_ref_id"
@@ -1744,8 +1769,8 @@
         ],
         "required": [
           "actor_snapshot"
+          ,"code"
           ,"contract_version"
-          ,"id"
           ,"idempotency_key"
           ,"payload_hash"
           ,"publication_ref_id"
@@ -1759,6 +1784,14 @@
           "type": "string",
           "x-type": "text",
           "x-role": "data"
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"contract_version": {
           "type": "string",
@@ -1786,7 +1819,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"idempotency_key": {
           "type": "string",
@@ -2090,12 +2123,14 @@
       "x-code": "sys.tbl.source.verifications",
       "x-id": "#/schemas/source.Verifications",
       "x-table": "source.verifications",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
         "assessed_at"
+        ,"code"
         ,"evidence_id"
         ,"explanation"
         ,"id"
@@ -2107,15 +2142,16 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "assessed_at"
+          ,"code"
           ,"confidence"
           ,"evidence_code"
           ,"explanation"
-          ,"id"
           ,"method_code"
           ,"outcome"
           ,"reviewer_snapshot"
@@ -2123,9 +2159,9 @@
         ],
         "required": [
           "assessed_at"
+          ,"code"
           ,"evidence_code"
           ,"explanation"
-          ,"id"
           ,"method_code"
           ,"outcome"
           ,"reviewer_snapshot"
@@ -2137,6 +2173,14 @@
           "x-type": "timestamp",
           "format": "date-time",
           "x-role": "data"
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"confidence": {
           "type": ["number", "null"],
@@ -2175,7 +2219,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"method_id": {
           "type": "string",

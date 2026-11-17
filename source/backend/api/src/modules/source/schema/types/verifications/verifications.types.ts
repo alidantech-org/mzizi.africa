@@ -34,6 +34,7 @@ import type {
 /** Append-only attributable assessment; disagreement and insufficient evidence remain explicit outcomes. */
 export interface IVerifications extends B.IBase {
   assessedAt: Date;
+  code: string;
   confidence: number | null;
   evidenceId: string;
   explanation: string;

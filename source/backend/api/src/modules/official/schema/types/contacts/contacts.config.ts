@@ -47,6 +47,7 @@ export const CONTACTS_RELATION_KEYS = [
 // ----------------------------------
 
 export const CONTACTS_SORTABLE_FIELDS = [
+  "code",
   "createdAt",
   "deletedAt",
   "entityId",
@@ -62,7 +63,10 @@ export const CONTACTS_SORTABLE_FIELDS = [
   "visibilityId",
 ] as const satisfies readonly ContactsKey[];
 
-export const CONTACTS_SEARCHABLE_FIELDS = ["value"] as const satisfies readonly ContactsKey[];
+export const CONTACTS_SEARCHABLE_FIELDS = [
+  "code",
+  "value",
+] as const satisfies readonly ContactsKey[];
 
 export const CONTACTS_FILTERABLE_FIELDS = [
   "entityId",
@@ -92,6 +96,7 @@ export const CONTACTS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IContact
 // ----------------------------------
 
 export const CONTACTS_SELECTABLE_FIELDS = [
+  "code",
   "createdAt",
   "deletedAt",
   "entityId",
@@ -108,6 +113,7 @@ export const CONTACTS_SELECTABLE_FIELDS = [
 ] as const satisfies readonly ContactsKey[];
 
 export const CONTACTS_DEFAULT_SELECT_FIELDS = [
+  "code",
   "createdAt",
   "deletedAt",
   "entityId",
@@ -128,6 +134,7 @@ export const CONTACTS_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const CONTACTS_EDITABLE_FIELDS = [
+  "code",
   "entityId",
   "individualId",
   "kindId",

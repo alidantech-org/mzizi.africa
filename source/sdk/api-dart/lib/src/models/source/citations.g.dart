@@ -8,6 +8,7 @@ part of 'citations.dart';
 
 SourceCitations _$SourceCitationsFromJson(Map<String, dynamic> json) => SourceCitations(
   captureId: json['captureId'] as String?,
+  code: json['code'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
   documentId: json['documentId'] as String?,
@@ -24,6 +25,7 @@ SourceCitations _$SourceCitationsFromJson(Map<String, dynamic> json) => SourceCi
 
 Map<String, dynamic> _$SourceCitationsToJson(SourceCitations instance) => <String, dynamic>{
   'captureId': ?instance.captureId,
+  'code': instance.code,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),
   'documentId': ?instance.documentId,

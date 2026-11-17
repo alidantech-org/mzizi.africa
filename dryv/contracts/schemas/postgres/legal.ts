@@ -287,7 +287,7 @@ export const Amendments = legal
     explanation: dryv.field(sharedProperties.Description).maybe(),
     citationId: belongsTo(() => Citations),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .description(
     "An exact authority provision changes an exact affected wording version; both historical texts remain available.",
   )

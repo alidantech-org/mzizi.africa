@@ -1,5 +1,6 @@
 /** One directed typed relationship between exactly two Official identities, optionally with an ownership share. */
 export interface OfficialRelationships {
+  code: string;
   createdAt: string;
   deletedAt?: string | null;
   fromEntityId?: string | null;

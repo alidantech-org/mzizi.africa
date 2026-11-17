@@ -34,4 +34,11 @@ def test_an_unknown_key_and_an_unknown_column_are_reported(tmp_path: Path) -> No
     root = tree(tmp_path, dictionary("no-such-group", "civic.bids.no_such_column"))
     problems = scan(root).problems
     assert any("no group, pattern or heading rule 'no-such-group'" in p for p in problems)
-    assert any("not a database column" in p for p in problems)
+    assert any("not a seed column" in p for p in problems)
+
+
+def test_a_dictionary_must_use_code_columns_never_ids(tmp_path: Path) -> None:
+    root = tree(tmp_path, dictionary("amount-bid", "civic.bids.bidder_entity_id"))
+    assert any("use the _code column, never an id" in p for p in scan(root).problems)
+    ok = tree(tmp_path / "ok", dictionary("amount-bid", "civic.bids.bidder_entity_code"))
+    assert scan(ok).problems == []

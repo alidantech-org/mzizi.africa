@@ -1695,6 +1695,7 @@ describe("entity schema matches the contract", () => {
           [
             ["appointed_by_entity_id", true, false],
             ["appointment_kind_id", false, false],
+            ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["id", false, true],
@@ -1991,6 +1992,7 @@ describe("entity schema matches the contract", () => {
       expect(columns(metadata())).toEqual(
         (
           [
+            ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["entity_id", true, false],
@@ -2293,6 +2295,7 @@ describe("entity schema matches the contract", () => {
       expect(columns(metadata())).toEqual(
         (
           [
+            ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["from_entity_id", true, false],
@@ -2896,6 +2899,7 @@ describe("entity schema matches the contract", () => {
           [
             ["assessed_at", false, false],
             ["assessor_snapshot", false, false],
+            ["code", false, false],
             ["created_at", false, false],
             ["credit", false, false],
             ["deleted_at", true, false],
@@ -3012,6 +3016,7 @@ describe("entity schema matches the contract", () => {
         (
           [
             ["capture_id", true, false],
+            ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["document_id", true, false],
@@ -3626,6 +3631,7 @@ describe("entity schema matches the contract", () => {
         (
           [
             ["actor_snapshot", false, false],
+            ["code", false, false],
             ["contract_version", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
@@ -3775,6 +3781,7 @@ describe("entity schema matches the contract", () => {
         (
           [
             ["assessed_at", false, false],
+            ["code", false, false],
             ["confidence", true, false],
             ["created_at", false, false],
             ["deleted_at", true, false],

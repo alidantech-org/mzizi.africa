@@ -13,13 +13,15 @@
       "x-code": "sys.tbl.politics.alignments",
       "x-id": "#/schemas/politics.Alignments",
       "x-table": "politics.alignments",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
         "alignment_kind_id"
         ,"coalition_id"
+        ,"code"
         ,"id"
         ,"party_id"
       ],
@@ -27,13 +29,14 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "alignment_kind_code"
           ,"coalition_code"
-          ,"id"
+          ,"code"
           ,"party_code"
           ,"source_citation_code"
           ,"valid_from"
@@ -42,7 +45,7 @@
         "required": [
           "alignment_kind_code"
           ,"coalition_code"
-          ,"id"
+          ,"code"
           ,"party_code"
         ]
       },
@@ -60,6 +63,14 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/politics.Coalitions", "column": "id", "alias": "coalition_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"created_at": {
           "type": "string",
@@ -80,7 +91,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"party_id": {
           "type": "string",
@@ -130,12 +141,14 @@
       "x-code": "sys.tbl.politics.candidates",
       "x-id": "#/schemas/politics.Candidates",
       "x-table": "politics.candidates",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
         "candidate_kind_id"
+        ,"code"
         ,"contest_id"
         ,"id"
         ,"individual_id"
@@ -144,22 +157,23 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "ballot_order"
           ,"candidate_kind_code"
+          ,"code"
           ,"contest_code"
-          ,"id"
           ,"individual_code"
           ,"party_id_at_election_code"
           ,"source_citation_code"
         ],
         "required": [
           "candidate_kind_code"
+          ,"code"
           ,"contest_code"
-          ,"id"
           ,"individual_code"
         ]
       },
@@ -175,6 +189,14 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "candidate_kind_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"contest_id": {
           "type": "string",
@@ -202,7 +224,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"individual_id": {
           "type": "string",
@@ -715,12 +737,14 @@
       "x-code": "sys.tbl.politics.manifesto-items",
       "x-id": "#/schemas/politics.ManifestoItems",
       "x-table": "politics.manifesto_items",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
-        "description"
+        "code"
+        ,"description"
         ,"id"
         ,"manifesto_id"
         ,"title"
@@ -729,12 +753,13 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "description"
-          ,"id"
+          "code"
+          ,"description"
           ,"manifesto_code"
           ,"position"
           ,"source_citation_code"
@@ -742,14 +767,22 @@
           ,"topic_code"
         ],
         "required": [
-          "description"
-          ,"id"
+          "code"
+          ,"description"
           ,"manifesto_code"
           ,"title"
         ]
       },
       "properties": {
-        "created_at": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -774,7 +807,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"manifesto_id": {
           "type": "string",
@@ -831,31 +864,34 @@
       "x-code": "sys.tbl.politics.manifestos",
       "x-id": "#/schemas/politics.Manifestos",
       "x-table": "politics.manifestos",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
-        "id"
+        "code"
+        ,"id"
       ],
       "x-seed": {
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "candidate_code"
+          ,"code"
           ,"document_code"
           ,"election_code"
-          ,"id"
           ,"party_code"
           ,"published_on"
           ,"source_citation_code"
         ],
         "required": [
-          "id"
+          "code"
         ]
       },
       "properties": {
@@ -865,6 +901,14 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/politics.Candidates", "column": "id", "alias": "candidate_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"created_at": {
           "type": "string",
@@ -899,7 +943,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"party_id": {
           "type": ["string", "null"],
@@ -943,12 +987,14 @@
       "x-code": "sys.tbl.politics.memberships",
       "x-id": "#/schemas/politics.Memberships",
       "x-table": "politics.memberships",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
-        "id"
+        "code"
+        ,"id"
         ,"individual_id"
         ,"membership_kind_id"
         ,"party_id"
@@ -957,11 +1003,12 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "id"
+          "code"
           ,"individual_code"
           ,"membership_kind_code"
           ,"party_code"
@@ -970,14 +1017,22 @@
           ,"valid_until"
         ],
         "required": [
-          "id"
+          "code"
           ,"individual_code"
           ,"membership_kind_code"
           ,"party_code"
         ]
       },
       "properties": {
-        "created_at": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -996,7 +1051,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"individual_id": {
           "type": "string",

@@ -18,6 +18,9 @@ class BidsRow(BaseModel):
 
     amount_minor_units: Annotated[int, Field(ge=0)] | None = None
     bidder_entity_id: UUID
+    code: Annotated[
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+    ]
     created_at: datetime
     currency_id: UUID | None = None
     deleted_at: datetime | None = None

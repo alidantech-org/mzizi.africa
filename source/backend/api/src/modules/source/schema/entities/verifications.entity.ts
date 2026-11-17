@@ -13,6 +13,7 @@ import { VerificationOutcome } from "#/modules/source/schema/enum/verification-o
 import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
@@ -20,6 +21,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * Append-only attributable assessment; disagreement and insufficient evidence remain explicit outcomes.
  */
 @Entity({ schema: "source", name: "verifications" })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["evidenceId"])
 @Index(["methodId"])
 @Index(["supersedesId"])
@@ -29,6 +31,9 @@ export class VerificationsEntity {
 
   @Column({ name: "assessed_at", type: "timestamptz" })
   assessedAt!: Date;
+
+  @Column({ name: "code", type: "varchar", length: 255 })
+  code!: IdentityCode;
 
   @Column({ name: "confidence", type: "double precision", nullable: true })
   confidence?: Confidence | null;

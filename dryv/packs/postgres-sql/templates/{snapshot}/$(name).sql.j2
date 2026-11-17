@@ -209,6 +209,10 @@
 {%- for extension in pack.connection.extensions -%}
 {%- set needs.extensions = needs.extensions + [extension] -%}
 {%- endfor -%}
+{#- Matching tools the platform relies on: trigram and edit-distance similarity and accent folding for names. -#}
+{%- for extension in ['pg_trgm', 'unaccent', 'fuzzystrmatch'] -%}
+{%- if extension not in needs.extensions -%}{%- set needs.extensions = needs.extensions + [extension] -%}{%- endif -%}
+{%- endfor -%}
 {%- for schema in schemas -%}
 {%- for field in schema.fields -%}
 {%- if field.value.is.geometry and 'postgis' not in needs.extensions -%}{%- set needs.extensions = needs.extensions + ['postgis'] -%}{%- endif -%}

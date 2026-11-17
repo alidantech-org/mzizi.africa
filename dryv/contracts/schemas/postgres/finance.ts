@@ -25,7 +25,7 @@ const MoneyEntity = finance
     amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits),
     currencyId: belongsTo(() => Value),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .abstract()
   .description("Base for records that carry an amount in minor units and its currency.");
 /*---------------- finance.fiscal_periods ----------------*/

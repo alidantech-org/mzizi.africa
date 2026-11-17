@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/source/verification_outcome.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 import 'package:mzizi_api/src/models/source/evidence.dart';
 
 part 'verifications.g.dart';
@@ -11,6 +11,7 @@ part 'verifications.g.dart';
 class SourceVerifications {
   const SourceVerifications({
     required this.assessedAt,
+    required this.code,
     this.confidence,
     required this.createdAt,
     this.deletedAt,
@@ -25,6 +26,7 @@ class SourceVerifications {
     required this.version,
   });
   final DateTime assessedAt;
+  final String code;
   final double? confidence;
   final DateTime createdAt;
   final DateTime? deletedAt;

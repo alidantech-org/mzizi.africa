@@ -2,6 +2,7 @@
 export interface SourceAttributions {
   assessedAt: string;
   assessorSnapshot: string;
+  code: string;
   createdAt: string;
   credit: string;
   deletedAt?: string | null;

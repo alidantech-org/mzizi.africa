@@ -5,13 +5,16 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   MaxLength,
   Min,
   MinLength,
   ValidateIf,
 } from "class-validator";
+
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-string1000.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
@@ -27,6 +30,12 @@ export class AttributionsDto {
   @IsString()
   @IsJSON()
   assessorSnapshot!: JsonText;
+
+  @IsString()
+  @MinLength(1)
+  @MaxLength(255)
+  @Matches(new RegExp("^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$"))
+  code!: IdentityCode;
 
   @IsISO8601({})
   createdAt!: Instant;

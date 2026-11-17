@@ -279,3 +279,10 @@ def test_the_domain_folder_may_use_the_schema_short(tmp_path: Path) -> None:
     result = check_data(tree(tmp_path, files))
     assert "geography.features" in result.rows
     assert not any("ke/geo" in p and "not a stored table" in p for p in result.problems)
+
+
+def test_every_seedable_table_has_a_code_so_no_seed_row_carries_an_id() -> None:
+    tables = load_tables(Path(__file__).resolve().parents[3] / "schema")
+    assert [name for name, table in tables.items() if table.seedable and "id" in table.seed.columns] == []
+    assert tables["official.contacts"].natural_key == ("code",)
+    assert tables["official.contacts"].seed_name("kind_id") == "kind_code"

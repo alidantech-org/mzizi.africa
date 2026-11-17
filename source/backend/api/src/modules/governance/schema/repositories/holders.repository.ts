@@ -78,4 +78,9 @@ export class HoldersRepository
   ): Promise<IFindAllResponse<HoldersEntity>> {
     return await this.findByQuery(query, { sourceCitationId, deletedAt: IsNull() });
   }
+
+  /** Find the holders with this code (unique). */
+  async findByCode(code: NonNullable<HoldersEntity["code"]>): Promise<HoldersEntity | null> {
+    return await this.findOne({ code, deletedAt: IsNull() });
+  }
 }

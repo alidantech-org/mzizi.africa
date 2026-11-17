@@ -2,7 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 
 /** The contract shape of PublicationReceipts, for generated tests. */
 export const publicationReceiptsExample: ContractExample = contractExample({
@@ -13,6 +13,17 @@ export const publicationReceiptsExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "json" },
+    },
+    {
+      name: "code",
+      optional: false,
+      nullable: false,
+      spec: {
+        kind: "string",
+        minLength: 1,
+        maxLength: 255,
+        patterns: ["^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$"],
+      },
     },
     {
       name: "contractVersion",

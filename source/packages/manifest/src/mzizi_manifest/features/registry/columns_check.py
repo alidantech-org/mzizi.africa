@@ -2,7 +2,7 @@
 
 A dictionary (`sys.col.<scope>.<domain>`) says which term groups, patterns and heading rules define each database
 column. This module checks that every link points at a key that exists in the named list (or a list it extends) and that
-every column exists in the generated table schemas. Code and scope rules are in `registry.py`."""
+every column is a seed column of the generated table schemas: a link is its `_code` column, never an id. Code and scope rules are in `registry.py`."""
 
 from __future__ import annotations
 
@@ -50,8 +50,10 @@ def column_problems(root: Path, tables: dict[str, Table] | None = None) -> list[
             where = f"{path}: {column}"
             schema_table, _, name = column.rpartition(".")
             table = tables.get(schema_table)
-            if table is None or name not in table.columns:
-                problems.append(f"{where}: not a database column")
+            if name == "id" or name.endswith("_id"):
+                problems.append(f"{where}: a dictionary names seed columns; use the _code column, never an id")
+            elif table is None or name not in table.seed.columns:
+                problems.append(f"{where}: not a seed column of that table (links are written <name>_code)")
             for index, link in enumerate((entry or {}).get("terms") or []):
                 code, key, role = link.get("list"), link.get("key"), link.get("role")
                 if code not in lists:

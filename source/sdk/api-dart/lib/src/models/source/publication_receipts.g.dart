@@ -8,6 +8,7 @@ part of 'publication_receipts.dart';
 
 SourcePublicationReceipts _$SourcePublicationReceiptsFromJson(Map<String, dynamic> json) => SourcePublicationReceipts(
   actorSnapshot: json['actorSnapshot'] as String,
+  code: json['code'] as String,
   contractVersion: json['contractVersion'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
@@ -24,6 +25,7 @@ SourcePublicationReceipts _$SourcePublicationReceiptsFromJson(Map<String, dynami
 
 Map<String, dynamic> _$SourcePublicationReceiptsToJson(SourcePublicationReceipts instance) => <String, dynamic>{
   'actorSnapshot': instance.actorSnapshot,
+  'code': instance.code,
   'contractVersion': instance.contractVersion,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),

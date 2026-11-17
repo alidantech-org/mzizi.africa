@@ -7,6 +7,7 @@ part of 'relationships.dart';
 // **************************************************************************
 
 OfficialRelationships _$OfficialRelationshipsFromJson(Map<String, dynamic> json) => OfficialRelationships(
+  code: json['code'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
   fromEntityId: json['fromEntityId'] as String?,
@@ -24,6 +25,7 @@ OfficialRelationships _$OfficialRelationshipsFromJson(Map<String, dynamic> json)
 );
 
 Map<String, dynamic> _$OfficialRelationshipsToJson(OfficialRelationships instance) => <String, dynamic>{
+  'code': instance.code,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),
   'fromEntityId': ?instance.fromEntityId,

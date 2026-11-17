@@ -37,6 +37,7 @@ import type {
 export interface IHolders extends B.IBase {
   appointedByEntityId: string | null;
   appointmentKindId: string;
+  code: string;
   individualId: string;
   officeId: string;
   sourceCitationId: string | null;

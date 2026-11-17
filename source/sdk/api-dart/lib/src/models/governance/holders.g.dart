@@ -9,6 +9,7 @@ part of 'holders.dart';
 GovernanceHolders _$GovernanceHoldersFromJson(Map<String, dynamic> json) => GovernanceHolders(
   appointedByEntityId: json['appointedByEntityId'] as String?,
   appointmentKindId: json['appointmentKindId'] as String,
+  code: json['code'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
   id: json['id'] as String,
@@ -24,6 +25,7 @@ GovernanceHolders _$GovernanceHoldersFromJson(Map<String, dynamic> json) => Gove
 Map<String, dynamic> _$GovernanceHoldersToJson(GovernanceHolders instance) => <String, dynamic>{
   'appointedByEntityId': ?instance.appointedByEntityId,
   'appointmentKindId': instance.appointmentKindId,
+  'code': instance.code,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),
   'id': instance.id,

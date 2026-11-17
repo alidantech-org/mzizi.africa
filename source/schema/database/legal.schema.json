@@ -13,14 +13,16 @@
       "x-code": "sys.tbl.legal.amendments",
       "x-id": "#/schemas/legal.Amendments",
       "x-table": "legal.amendments",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["code"]
       ],
       "required": [
         "affected_id"
         ,"authority_id"
         ,"citation_id"
+        ,"code"
         ,"id"
         ,"kind_id"
       ],
@@ -28,6 +30,7 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -35,9 +38,9 @@
           "affected_code"
           ,"authority_code"
           ,"citation_code"
+          ,"code"
           ,"effective_on"
           ,"explanation"
-          ,"id"
           ,"kind_code"
           ,"resulting_version_code"
         ],
@@ -45,7 +48,7 @@
           "affected_code"
           ,"authority_code"
           ,"citation_code"
-          ,"id"
+          ,"code"
           ,"kind_code"
         ]
       },
@@ -70,6 +73,14 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "citation_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
         }
         ,"created_at": {
           "type": "string",
@@ -102,7 +113,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"kind_id": {
           "type": "string",

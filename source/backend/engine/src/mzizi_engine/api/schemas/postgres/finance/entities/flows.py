@@ -18,6 +18,9 @@ class FlowsRow(BaseModel):
 
     amount_minor_units: Annotated[int, Field(ge=0)]
     appropriation_id: UUID | None = None
+    code: Annotated[
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+    ]
     contract_id: UUID | None = None
     counterparty_entity_id: UUID | None = None
     created_at: datetime

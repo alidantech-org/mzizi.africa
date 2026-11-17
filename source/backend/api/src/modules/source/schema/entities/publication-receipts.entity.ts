@@ -1,5 +1,6 @@
 import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
@@ -9,6 +10,7 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
  * Immutable Main acknowledgement committed atomically with accepted records and provenance. Same-key different-hash retries must conflict.
  */
 @Entity({ schema: "source", name: "publication_receipts" })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["idempotencyKey"], { unique: true })
 @Index(["publicationRefId"], { unique: true })
 export class PublicationReceiptsEntity {
@@ -17,6 +19,9 @@ export class PublicationReceiptsEntity {
 
   @Column({ name: "actor_snapshot", type: "text" })
   actorSnapshot!: JsonText;
+
+  @Column({ name: "code", type: "varchar", length: 255 })
+  code!: IdentityCode;
 
   @Column({ name: "contract_version", type: "varchar", length: 255 })
   contractVersion!: NonEmptyString255;

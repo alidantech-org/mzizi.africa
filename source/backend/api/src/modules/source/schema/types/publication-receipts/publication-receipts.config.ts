@@ -39,6 +39,7 @@ export const PUBLICATION_RECEIPTS_RELATION_KEYS =
 
 export const PUBLICATION_RECEIPTS_SORTABLE_FIELDS = [
   "actorSnapshot",
+  "code",
   "contractVersion",
   "createdAt",
   "deletedAt",
@@ -54,6 +55,7 @@ export const PUBLICATION_RECEIPTS_SORTABLE_FIELDS = [
 ] as const satisfies readonly PublicationReceiptsKey[];
 
 export const PUBLICATION_RECEIPTS_SEARCHABLE_FIELDS = [
+  "code",
   "contractVersion",
   "idempotencyKey",
   "payloadHash",
@@ -85,6 +87,7 @@ export const PUBLICATION_RECEIPTS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOpti
 
 export const PUBLICATION_RECEIPTS_SELECTABLE_FIELDS = [
   "actorSnapshot",
+  "code",
   "contractVersion",
   "createdAt",
   "deletedAt",
@@ -101,6 +104,7 @@ export const PUBLICATION_RECEIPTS_SELECTABLE_FIELDS = [
 
 export const PUBLICATION_RECEIPTS_DEFAULT_SELECT_FIELDS = [
   "actorSnapshot",
+  "code",
   "contractVersion",
   "createdAt",
   "deletedAt",
@@ -121,6 +125,7 @@ export const PUBLICATION_RECEIPTS_DEFAULT_SELECT_FIELDS = [
 
 export const PUBLICATION_RECEIPTS_EDITABLE_FIELDS = [
   "actorSnapshot",
+  "code",
   "contractVersion",
   "idempotencyKey",
   "payloadHash",

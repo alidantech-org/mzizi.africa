@@ -13,6 +13,7 @@ import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity
 import { DocumentsEntity } from "#/modules/source/schema/entities/documents.entity.ts";
 import { EvidenceEntity } from "#/modules/source/schema/entities/evidence.entity.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
@@ -21,6 +22,7 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
  * Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record.
  */
 @Entity({ schema: "source", name: "citations" })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["evidenceId"])
 @Index(["documentId"])
 @Index(["captureId"])
@@ -36,6 +38,9 @@ export class CitationsEntity {
   @ManyToOne(() => CapturesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "capture_id" })
   capture?: Relation<CapturesEntity>;
+
+  @Column({ name: "code", type: "varchar", length: 255 })
+  code!: IdentityCode;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;

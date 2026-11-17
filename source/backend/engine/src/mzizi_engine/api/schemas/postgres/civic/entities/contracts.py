@@ -17,6 +17,9 @@ class ContractsRow(BaseModel):
     table: ClassVar[str] = "civic.contracts"
 
     amount_minor_units: Annotated[int, Field(ge=0)]
+    code: Annotated[
+        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+    ]
     contractor_entity_id: UUID
     created_at: datetime
     currency_id: UUID

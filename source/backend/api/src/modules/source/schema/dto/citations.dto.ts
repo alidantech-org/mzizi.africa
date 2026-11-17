@@ -7,10 +7,13 @@ import {
   IsUUID,
   Length,
   Matches,
+  MaxLength,
   Min,
+  MinLength,
   ValidateIf,
 } from "class-validator";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
@@ -25,6 +28,12 @@ export class CitationsDto {
   @IsString()
   @IsUUID()
   captureId?: Id | null;
+
+  @IsString()
+  @MinLength(1)
+  @MaxLength(255)
+  @Matches(new RegExp("^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$"))
+  code!: IdentityCode;
 
   @IsISO8601({})
   createdAt!: Instant;

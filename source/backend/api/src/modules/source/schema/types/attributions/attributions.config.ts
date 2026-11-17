@@ -46,6 +46,7 @@ export const ATTRIBUTIONS_RELATION_KEYS = [
 export const ATTRIBUTIONS_SORTABLE_FIELDS = [
   "assessedAt",
   "assessorSnapshot",
+  "code",
   "createdAt",
   "credit",
   "deletedAt",
@@ -59,6 +60,7 @@ export const ATTRIBUTIONS_SORTABLE_FIELDS = [
 ] as const satisfies readonly AttributionsKey[];
 
 export const ATTRIBUTIONS_SEARCHABLE_FIELDS = [
+  "code",
   "credit",
   "rightsStatement",
 ] as const satisfies readonly AttributionsKey[];
@@ -90,6 +92,7 @@ export const ATTRIBUTIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IAtt
 export const ATTRIBUTIONS_SELECTABLE_FIELDS = [
   "assessedAt",
   "assessorSnapshot",
+  "code",
   "createdAt",
   "credit",
   "deletedAt",
@@ -105,6 +108,7 @@ export const ATTRIBUTIONS_SELECTABLE_FIELDS = [
 export const ATTRIBUTIONS_DEFAULT_SELECT_FIELDS = [
   "assessedAt",
   "assessorSnapshot",
+  "code",
   "createdAt",
   "credit",
   "deletedAt",
@@ -124,6 +128,7 @@ export const ATTRIBUTIONS_DEFAULT_SELECT_FIELDS = [
 export const ATTRIBUTIONS_EDITABLE_FIELDS = [
   "assessedAt",
   "assessorSnapshot",
+  "code",
   "credit",
   "fileVersionId",
   "licenseValueId",

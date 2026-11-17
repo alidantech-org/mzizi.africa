@@ -87,4 +87,11 @@ export class RelationshipsRepository
   ): Promise<IFindAllResponse<OfficialRelationshipsEntity>> {
     return await this.findByQuery(query, { toIndividualId, deletedAt: IsNull() });
   }
+
+  /** Find the relationships with this code (unique). */
+  async findByCode(
+    code: NonNullable<OfficialRelationshipsEntity["code"]>,
+  ): Promise<OfficialRelationshipsEntity | null> {
+    return await this.findOne({ code, deletedAt: IsNull() });
+  }
 }

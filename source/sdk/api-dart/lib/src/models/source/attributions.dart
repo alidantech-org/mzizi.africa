@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/filesystem/file_versions.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 import 'package:mzizi_api/src/models/source/publishers.dart';
 
 part 'attributions.g.dart';
@@ -12,6 +12,7 @@ class SourceAttributions {
   const SourceAttributions({
     required this.assessedAt,
     required this.assessorSnapshot,
+    required this.code,
     required this.createdAt,
     required this.credit,
     this.deletedAt,
@@ -25,6 +26,7 @@ class SourceAttributions {
   });
   final DateTime assessedAt;
   final String assessorSnapshot;
+  final String code;
   final DateTime createdAt;
   final String credit;
   final DateTime? deletedAt;

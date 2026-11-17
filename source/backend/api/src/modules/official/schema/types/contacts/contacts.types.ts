@@ -34,6 +34,7 @@ import type {
 
 /** One sourced contact channel for exactly one identity; visibility class governs handling of private values. */
 export interface IContacts extends B.IBase {
+  code: string;
   entityId: string | null;
   individualId: string | null;
   kindId: string;

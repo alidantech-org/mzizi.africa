@@ -34,6 +34,7 @@ import type {
 
 /** One directed typed relationship between exactly two Official identities, optionally with an ownership share. */
 export interface IRelationships extends B.IBase {
+  code: string;
   fromEntityId: string | null;
   fromIndividualId: string | null;
   kindId: string;

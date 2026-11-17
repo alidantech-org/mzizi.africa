@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 
 part 'publication_receipts.g.dart';
 
@@ -8,6 +8,7 @@ part 'publication_receipts.g.dart';
 class SourcePublicationReceipts {
   const SourcePublicationReceipts({
     required this.actorSnapshot,
+    required this.code,
     required this.contractVersion,
     required this.createdAt,
     this.deletedAt,
@@ -22,6 +23,7 @@ class SourcePublicationReceipts {
     required this.version,
   });
   final String actorSnapshot;
+  final String code;
   final String contractVersion;
   final DateTime createdAt;
   final DateTime? deletedAt;

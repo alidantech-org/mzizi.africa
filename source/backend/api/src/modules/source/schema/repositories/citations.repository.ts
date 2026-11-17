@@ -78,4 +78,9 @@ export class CitationsRepository
   ): Promise<IFindAllResponse<CitationsEntity>> {
     return await this.findByQuery(query, { locatorKindId, deletedAt: IsNull() });
   }
+
+  /** Find the citations with this code (unique). */
+  async findByCode(code: NonNullable<CitationsEntity["code"]>): Promise<CitationsEntity | null> {
+    return await this.findOne({ code, deletedAt: IsNull() });
+  }
 }

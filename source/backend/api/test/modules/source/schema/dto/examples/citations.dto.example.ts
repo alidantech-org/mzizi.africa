@@ -4,7 +4,7 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { fileVersionsExample } from "@test/modules/filesystem/schema/dto/examples/file-versions.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 import { capturesExample } from "@test/modules/source/schema/dto/examples/captures.dto.example.ts";
 import { documentsExample } from "@test/modules/source/schema/dto/examples/documents.dto.example.ts";
 import { evidenceExample } from "@test/modules/source/schema/dto/examples/evidence.dto.example.ts";
@@ -18,6 +18,17 @@ export const citationsExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "code",
+      optional: false,
+      nullable: false,
+      spec: {
+        kind: "string",
+        minLength: 1,
+        maxLength: 255,
+        patterns: ["^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$"],
+      },
     },
     {
       name: "createdAt",

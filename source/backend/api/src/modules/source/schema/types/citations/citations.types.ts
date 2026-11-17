@@ -36,6 +36,7 @@ import type {
 /** Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record. */
 export interface ICitations extends B.IBase {
   captureId: string | null;
+  code: string;
   documentId: string | null;
   evidenceId: string;
   fileVersionId: string;
