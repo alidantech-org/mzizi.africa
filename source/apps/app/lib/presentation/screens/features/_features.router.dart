@@ -1,8 +1,9 @@
 import 'package:go_router/go_router.dart';
 
-import '../../../core/network/app_network_gate.dart';
-import '../../routers/_utils.dart';
-import '../../routers/constants/features_screens.dart';
+import 'package:mzizi_app/core/network/app_network_gate.dart';
+import 'package:mzizi_app/presentation/routers/_utils.dart';
+import 'package:mzizi_app/presentation/routers/constants/features_screens.dart';
+
 import 'feature_list_screen.dart';
 
 /// Routes of the Features screens.

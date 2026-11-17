@@ -1,5 +1,5 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type Job } from "./job.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type Job } from "#/lib/types/job.ts";
 
 /** Job List */
 export interface JobList {

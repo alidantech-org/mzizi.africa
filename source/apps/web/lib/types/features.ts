@@ -1,6 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type CodedHistoricalEntity } from "./coded-historical-entity.ts";
-import { type Value } from "./value.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here. */
 export interface Features {
@@ -24,39 +22,14 @@ export const FeaturesFields: readonly FieldMeta[] = [
   { name: "code", label: "Code", kind: "string", required: true },
   { name: "createdAt", label: "Created At", kind: "date", required: true },
   { name: "deletedAt", label: "Deleted At", kind: "date", required: false },
-  {
-    name: "featureTypeId",
-    label: "Feature Type Id",
-    kind: "string",
-    required: true,
-  },
+  { name: "featureTypeId", label: "Feature Type Id", kind: "string", required: true },
   { name: "id", label: "Id", kind: "string", required: true },
   { name: "updatedAt", label: "Updated At", kind: "date", required: true },
   { name: "validFrom", label: "Valid From", kind: "date", required: false },
-  {
-    name: "validFromEarliest",
-    label: "Valid From Earliest",
-    kind: "date",
-    required: false,
-  },
-  {
-    name: "validFromLatest",
-    label: "Valid From Latest",
-    kind: "date",
-    required: false,
-  },
+  { name: "validFromEarliest", label: "Valid From Earliest", kind: "date", required: false },
+  { name: "validFromLatest", label: "Valid From Latest", kind: "date", required: false },
   { name: "validUntil", label: "Valid Until", kind: "date", required: false },
-  {
-    name: "validUntilEarliest",
-    label: "Valid Until Earliest",
-    kind: "date",
-    required: false,
-  },
-  {
-    name: "validUntilLatest",
-    label: "Valid Until Latest",
-    kind: "date",
-    required: false,
-  },
+  { name: "validUntilEarliest", label: "Valid Until Earliest", kind: "date", required: false },
+  { name: "validUntilLatest", label: "Valid Until Latest", kind: "date", required: false },
   { name: "version", label: "Version", kind: "number", required: true },
 ];

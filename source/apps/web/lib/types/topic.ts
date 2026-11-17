@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type CodedEntity } from "./coded-entity.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Cross-domain discovery topic hierarchy; topics do not own domain records. */
 export interface Topic {

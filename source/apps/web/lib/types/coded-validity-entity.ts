@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type ValidityEntity } from "./validity-entity.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Base for versioned records with a unique identity code and an optional validity period. */
 export interface CodedValidityEntity {

@@ -8,9 +8,9 @@ import { dryv, outputFrom, part, surface, view } from "@dryvcode/author";
 import { shared } from "#/schemas/_shared.ts";
 import { geography } from "#/schemas/postgres/geography.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
-import api from "../api/index.ts";
+import api from "#/apps/api/index.ts";
 import { brand, themes } from "#/schemas/theme.ts";
-import { geographyOperations } from "../api/geography.ts";
+import { geographyOperations } from "#/apps/api/geography.ts";
 
 const web = dryv.group({ name: "web" }).description("The public website: its surface and views.");
 const surfaces = web.surfaces({ Main: surface.web() });

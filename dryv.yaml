@@ -43,7 +43,7 @@ sources:
 actions:
   imports:
     stage: files
-    extensions: [.ts]
+    extensions: [.ts, .tsx]
     commands:
       - run:
           [
@@ -59,7 +59,7 @@ actions:
   # Generated TypeScript is formatted with Prettier defaults, matching the editor.
   format-ts:
     stage: files
-    extensions: [.ts]
+    extensions: [.ts, .tsx]
     commands:
       - run:
           [bun, x, prettier, --config, source/backend/api/.prettierrc, --ignore-path, .prettier-none, --write, $(files)]
@@ -74,6 +74,12 @@ actions:
     after: [install]
     commands:
       - run: [bun, x, tsc, -p, ../../tsconfig.json]
+  # Generated Dart is formatted with dart format (the default 80-column style Flutter projects use).
+  format-dart:
+    stage: files
+    extensions: [.dart]
+    commands:
+      - run: [dart, format, $(files)]
   # Generated Python is formatted and import-sorted with the repository's ruff settings,
   # then type-checked with the repository's strict mypy settings.
   lint-py:
@@ -208,14 +214,36 @@ destinations:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
       - { $ref: "#/actions/typecheck-py" }
-  # Generated frontends. Next.js apps get the app and the server-action bridge (`_gen`); the Flutter app gets
-  # the app and the Dart API bridge package (`sdk/api`).
-  web-app: { path: source/apps/web }
-  web-bridge: { path: source/apps/web/_gen }
-  dev-app: { path: source/apps/dev }
-  dev-bridge: { path: source/apps/dev/_gen }
-  app-app: { path: source/apps/app }
-  app-bridge: { path: source/apps/app/sdk/api }
+  # Generated frontends. They import the shared SDKs under source/sdk and generate no client code of their own.
+  web-app:
+    path: source/apps/web
+    imports: { path: source/apps/web, prefix: "#/" }
+    actions:
+      - { $ref: "#/actions/imports" }
+      - { $ref: "#/actions/format-ts" }
+  dev-app:
+    path: source/apps/dev
+    imports: { path: source/apps/dev, prefix: "#/" }
+    actions:
+      - { $ref: "#/actions/imports" }
+      - { $ref: "#/actions/format-ts" }
+  app-app:
+    path: source/apps/app
+    imports: { path: source/apps/app/lib, prefix: "package:mzizi_app/" }
+    actions:
+      - { $ref: "#/actions/format-dart" }
+  # Shared client SDKs generated from the product API contract; the frontends import these packages.
+  sdk-ts:
+    path: source/sdk/api-ts
+    imports: { path: source/sdk/api-ts/src, prefix: "#sdk/" }
+    actions:
+      - { $ref: "#/actions/imports" }
+      - { $ref: "#/actions/format-ts" }
+  sdk-dart:
+    path: source/sdk/api-dart
+    imports: { path: source/sdk/api-dart/lib, prefix: "package:mzizi_api/" }
+    actions:
+      - { $ref: "#/actions/format-dart" }
   # Generated system catalogs: one JSON document per application, read by the root pages and the web app.
   catalog-api:
     path: source/backend/api/src/system/catalog
@@ -338,59 +366,64 @@ packs:
     destination: { $ref: "#/destinations/postgres-sql" }
     outputs: { snapshot: { name: schema } }
 
+  sdk-ts:
+    source: { $ref: "#/sources/packs/project", path: sdk-ts }
+    destination: { $ref: "#/destinations/sdk-ts" }
+    inputs:
+      package_name: "@mzizi/api-client"
+
+  sdk-dart:
+    source: { $ref: "#/sources/packs/project", path: sdk-dart }
+    destination: { $ref: "#/destinations/sdk-dart" }
+    inputs:
+      package_name: mzizi_api
+
   web-theme:
     source: { $ref: "#/sources/packs/project", path: theme-css }
     destination: { $ref: "#/destinations/web-app" }
     operations: consumed
 
-  web-bridge:
-    source: { $ref: "#/sources/packs/official", path: unit/clients/next-api-bridge }
-    destination: { $ref: "#/destinations/web-bridge" }
-    operations: consumed
-
   web-app:
-    source: { $ref: "#/sources/packs/official", path: unit/frontend/nextjs-app }
+    source: { $ref: "#/sources/packs/project", path: app-next }
     destination: { $ref: "#/destinations/web-app" }
     operations: consumed
+    inputs:
+      port: "3300"
+      sdk_path: ../../sdk/api-ts
+      workspace_root: ../..
     bind:
-      operation.client: { $ref: "#/packs/web-bridge" }
+      operation.client: { $ref: "#/packs/sdk-ts" }
 
   dev-theme:
     source: { $ref: "#/sources/packs/project", path: theme-css }
     destination: { $ref: "#/destinations/dev-app" }
     operations: consumed
 
-  dev-bridge:
-    source: { $ref: "#/sources/packs/official", path: unit/clients/next-api-bridge }
-    destination: { $ref: "#/destinations/dev-bridge" }
-    operations: consumed
-
   dev-app:
-    source: { $ref: "#/sources/packs/official", path: unit/frontend/nextjs-app }
+    source: { $ref: "#/sources/packs/project", path: app-next }
     destination: { $ref: "#/destinations/dev-app" }
     operations: consumed
+    inputs:
+      port: "3400"
+      sdk_path: ../../sdk/api-ts
+      workspace_root: ../..
     bind:
-      operation.client: { $ref: "#/packs/dev-bridge" }
+      operation.client: { $ref: "#/packs/sdk-ts" }
 
   app-theme:
     source: { $ref: "#/sources/packs/project", path: theme-dart }
     destination: { $ref: "#/destinations/app-app" }
     operations: consumed
 
-  app-bridge:
-    source: { $ref: "#/sources/packs/official", path: unit/clients/flutter-api-bridge }
-    destination: { $ref: "#/destinations/app-bridge" }
-    operations: consumed
-
   app-app:
-    source: { $ref: "#/sources/packs/official", path: unit/frontend/flutter-app }
+    source: { $ref: "#/sources/packs/project", path: app-flutter }
     destination: { $ref: "#/destinations/app-app" }
     operations: consumed
     inputs:
-      api_path: sdk/api
+      api_path: ../../sdk/api-dart
     bind:
-      operation.client: { $ref: "#/packs/app-bridge" }
-      schema.types: { $ref: "#/packs/app-bridge" }
+      operation.client: { $ref: "#/packs/sdk-dart" }
+      schema.types: { $ref: "#/packs/sdk-dart" }
 
 applications:
   pgsql:
@@ -418,25 +451,24 @@ applications:
       - { $ref: "#/packs/use-cases" }
       - { $ref: "#/packs/server" }
       - { $ref: "#/packs/catalog-api" }
+      - { $ref: "#/packs/sdk-ts" }
+      - { $ref: "#/packs/sdk-dart" }
   app:
     authoring: { $ref: "#/sources/authoring/app" }
     application: { $ref: "#/applications/mzizi-app" }
     packs:
-      - { $ref: "#/packs/app-bridge" }
       - { $ref: "#/packs/app-app" }
       - { $ref: "#/packs/app-theme" }
   web:
     authoring: { $ref: "#/sources/authoring/web" }
     application: { $ref: "#/applications/mzizi-web" }
     packs:
-      - { $ref: "#/packs/web-bridge" }
       - { $ref: "#/packs/web-app" }
       - { $ref: "#/packs/web-theme" }
   dev:
     authoring: { $ref: "#/sources/authoring/dev" }
     application: { $ref: "#/applications/mzizi-dev" }
     packs:
-      - { $ref: "#/packs/dev-bridge" }
       - { $ref: "#/packs/dev-app" }
       - { $ref: "#/packs/dev-theme" }
 

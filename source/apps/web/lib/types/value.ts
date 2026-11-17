@@ -1,6 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type CodedEntity } from "./coded-entity.ts";
-import { type Scheme } from "./scheme.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** A controlled classification member within one scheme, with optional supersession and an optional broader parent value in the same scheme. Wider, cross-scheme or many-parent links use value relations. */
 export interface Value {
@@ -25,12 +23,7 @@ export const ValueFields: readonly FieldMeta[] = [
   { name: "label", label: "Label", kind: "string", required: true },
   { name: "parentId", label: "Parent Id", kind: "string", required: false },
   { name: "schemeId", label: "Scheme Id", kind: "string", required: true },
-  {
-    name: "supersedesId",
-    label: "Supersedes Id",
-    kind: "string",
-    required: false,
-  },
+  { name: "supersedesId", label: "Supersedes Id", kind: "string", required: false },
   { name: "updatedAt", label: "Updated At", kind: "date", required: true },
   { name: "version", label: "Version", kind: "number", required: true },
 ];

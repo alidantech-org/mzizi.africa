@@ -1,7 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type Entity } from "./entity.ts";
-import { type Features } from "./features.ts";
-import { type Value } from "./value.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** A preserved identifier assigned to a feature by an external geographic registry or source system. */
 export interface Identifiers {
@@ -23,12 +20,7 @@ export const IdentifiersFields: readonly FieldMeta[] = [
   { name: "externalId", label: "External Id", kind: "string", required: true },
   { name: "featureId", label: "Feature Id", kind: "string", required: true },
   { name: "id", label: "Id", kind: "string", required: true },
-  {
-    name: "identifierSchemeId",
-    label: "Identifier Scheme Id",
-    kind: "string",
-    required: true,
-  },
+  { name: "identifierSchemeId", label: "Identifier Scheme Id", kind: "string", required: true },
   { name: "namespace", label: "Namespace", kind: "string", required: false },
   { name: "updatedAt", label: "Updated At", kind: "date", required: true },
   { name: "version", label: "Version", kind: "number", required: true },

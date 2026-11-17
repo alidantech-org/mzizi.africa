@@ -1,0 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
+
+/// {{ property.enum.description or property.enum.name.title }}
+enum {{ file.symbol }} {
+{%- for item in property.enum.values %}
+  @JsonValue({{ item.value | tojson | replace('"', "'") }})
+  {{ item.name.camel }}{% if not loop.last %},{% else %};{% endif %}
+{%- endfor %}
+}

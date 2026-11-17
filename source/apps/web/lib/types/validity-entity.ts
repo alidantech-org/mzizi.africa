@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type Entity } from "./entity.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Base for versioned records valid over an optional period. */
 export interface ValidityEntity {

@@ -64,8 +64,9 @@ class _DryvFormState extends State<DryvForm> {
   }
 
   String? _requiredText(DryvField field, String? value) {
-    if (field.required && (value == null || value.trim().isEmpty))
+    if (field.required && (value == null || value.trim().isEmpty)) {
       return '${field.label} is required';
+    }
     return null;
   }
 

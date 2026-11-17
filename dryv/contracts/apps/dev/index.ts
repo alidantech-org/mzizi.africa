@@ -8,8 +8,8 @@
 import { dryv, outputFrom, part, surface, view } from "@dryvcode/author";
 import { shared } from "#/schemas/_shared.ts";
 import { brand, themes } from "#/schemas/theme.ts";
-import engine from "../engine/index.ts";
-import { engineApi } from "../engine/engine.ts";
+import engine from "#/apps/engine/index.ts";
+import { engineApi } from "#/apps/engine/engine.ts";
 
 const dev = dryv.group({ name: "dev" }).description("The developer portal: its surface and views.");
 const surfaces = dev.surfaces({ Main: surface.web() });

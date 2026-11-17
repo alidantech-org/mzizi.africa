@@ -1,0 +1,133 @@
+version: dryv.pack/v1alpha1
+key: mzizi.sdk-dart
+package:
+  name: { $ref: "#/inputs/package_name" }
+  import_root: lib
+source: templates
+
+info:
+  title: Flutter API Bridge
+  version: 0.1.0
+  description: Generates a Dart package over flutter_api_bridge with typed feature clients per group, endpoint registries, json_serializable models and enums, and a configured package facade.
+  purpose: clients
+  summary: A Dart/Flutter package over flutter_api_bridge with typed features, endpoints and models.
+  languages: [dart]
+  frameworks: [flutter, flutter-api-bridge, json-serializable]
+  tags: [client, sdk, mobile]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+inputs:
+  package_name: { type: string, default: admin_console }
+
+selections:
+  enums:
+    subject: property.enum
+    scope: each
+
+  models:
+    subject: schema
+    scope: each
+
+  # Only operations reachable over HTTP get a client method.
+  groups:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: collects.group
+
+  operations:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: all
+
+templates:
+  enum:
+    $ref: '#/selections/enums'
+    output:
+      path:
+        - $(group.name.snake)
+      name: $(subject.name.snake)
+      symbol: $(group.name.pascal)$(subject.name.pascal)
+
+  model:
+    $ref: '#/selections/models'
+    output:
+      path:
+        - $(group.name.snake)
+      name: $(subject.name.snake)
+      symbol: $(group.name.pascal)$(subject.name.pascal)
+    imports:
+      - $ref: '#/templates/enum'
+      - $ref: '#/templates/model'
+
+  endpoints:
+    $ref: '#/selections/groups'
+    output:
+      name: $(group.name.snake)
+      symbol: $(group.name.pascal)Endpoints
+
+  feature:
+    $ref: '#/selections/groups'
+    output:
+      name: $(group.name.snake)
+      symbol: $(group.name.pascal)Feature
+    imports:
+      - $ref: '#/templates/endpoints'
+      - $ref: '#/templates/model'
+      - $ref: '#/templates/enum'
+
+  client:
+    $ref: '#/selections/operations'
+    imports:
+      - $ref: '#/templates/feature'
+
+  library:
+    exports:
+      - $ref: '#/templates/client'
+      - $ref: '#/templates/feature'
+      - $ref: '#/templates/endpoints'
+      - $ref: '#/templates/model'
+      - $ref: '#/templates/enum'
+
+# Apps bind these: frontend.flutter-app calls operations through the group feature clients and
+# builds request models from the generated models.
+provides:
+  operation.client:
+    $ref: '#/templates/feature'
+  schema.types:
+    $ref: '#/templates/model'
+  property.enum.types:
+    $ref: '#/templates/enum'
+
+# shared:dart-tool:start
+choose:
+  dart.tool: { options: [flutter, dart] }
+# shared:dart-tool:end
+
+actions:
+  final:
+    install:
+      commands:
+        - run: [(flutter|dart), pub, get]
+    generate:
+      name: Generate JSON code
+      description: Runs build_runner for the json_serializable models.
+      after: [install]
+      commands:
+        - run: [dart, run, build_runner, build, --delete-conflicting-outputs]
+    unused-imports:
+      name: Remove unused imports
+      description: Removes imports nothing uses, including in the build_runner output.
+      after: [generate]
+      commands:
+        - run: [dart, fix, --apply, --code=unused_import, lib]
+    format:
+      name: Format Dart
+      description: Formats every file, including the build_runner output.
+      after: [unused-imports]
+      commands:
+        - run: [dart, format, lib]

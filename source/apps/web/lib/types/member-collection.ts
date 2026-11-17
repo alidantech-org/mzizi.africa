@@ -1,5 +1,5 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type MemberEntry } from "./member-entry.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type MemberEntry } from "#/lib/types/member-entry.ts";
 
 /** Member Collection */
 export interface MemberCollection {

@@ -1,0 +1,25 @@
+{
+  "name": "mzizi-dev",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --bun next dev -p 3400",
+    "build": "bun --bun next build",
+    "start": "bun --bun next start -p 3400",
+    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@mzizi/api-client": "file:../../sdk/api-ts",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2"
+  }
+}

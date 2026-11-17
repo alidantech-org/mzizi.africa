@@ -1,0 +1,94 @@
+version: dryv.pack/v1alpha1
+key: mzizi.sdk-ts
+package:
+  name: { $ref: "#/inputs/package_name" }
+  import_root: src
+source: templates
+
+info:
+  title: Next API Bridge
+  version: 0.1.0
+  description: Generates Next.js server actions over next-api-bridge for every HTTP operation, with route maps, useActionState form actions and schema types.
+  purpose: clients
+  summary: Next.js server actions over next-api-bridge, with routes, form actions and types.
+  languages: [typescript]
+  frameworks: [nextjs, next-api-bridge]
+  tags: [client, server-actions, forms, sdk]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+inputs:
+  package_name: { type: string, default: next_api_bridge }
+
+selections:
+  enums:
+    subject: property.enum
+    scope: each
+
+  models:
+    subject: schema
+    scope: each
+
+  # Only operations reachable over HTTP get an action.
+  actions:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: each
+
+  routes:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: collects.group
+
+templates:
+  enum:
+    $ref: "#/selections/enums"
+    output:
+      path:
+        - $(group.name.kebab)
+      name: $(subject.name.kebab)
+      symbol: $(group.name.pascal)$(subject.name.pascal)
+
+  model:
+    $ref: "#/selections/models"
+    output:
+      path:
+        - $(group.name.kebab)
+      name: $(subject.name.kebab)
+      symbol: $(group.name.pascal)$(subject.name.pascal)
+    imports:
+      - $ref: "#/templates/enum"
+      - $ref: "#/templates/model"
+
+  action:
+    $ref: "#/selections/actions"
+    output:
+      name: $(subject.name.kebab)
+      path:
+        - $(group.name.kebab)
+      symbol: $(subject.name.camel)
+    imports:
+      - $ref: "#/templates/model"
+      - $ref: "#/templates/enum"
+
+  routes:
+    $ref: "#/selections/routes"
+    output:
+      name: $(group.name.kebab)
+      symbol: $(group.name.camel)Routes
+
+  routes-index:
+    exports:
+      - $ref: "#/templates/routes"
+
+provides:
+  operation.client:
+    $ref: "#/templates/action"
+  schema.types:
+    $ref: "#/templates/model"
+  property.enum.types:
+    $ref: "#/templates/enum"

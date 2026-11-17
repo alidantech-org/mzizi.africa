@@ -3,28 +3,20 @@ import {
   type ClientResponse,
   type FieldMeta,
   send,
-} from "../../dryv/transport.ts";
-import {
-  type CapabilityList,
-  CapabilityListFields,
-} from "./../../types/capability-list.ts";
+} from "#/lib/dryv/transport.ts";
+import { type CapabilityList, CapabilityListFields } from "#/lib/types/capability-list.ts";
 
 /** Field metadata of the input fields whose value is a schema, by field name. A schema
  * input is listed whole under "input". */
-export const listCapabilitiesInputFields: Readonly<
-  Record<string, readonly FieldMeta[]>
-> = {};
+export const listCapabilitiesInputFields: Readonly<Record<string, readonly FieldMeta[]>> = {};
 /** Field metadata of the output, when it is a schema. */
-export const listCapabilitiesOutputFields: readonly FieldMeta[] | undefined =
-  CapabilityListFields;
+export const listCapabilitiesOutputFields: readonly FieldMeta[] | undefined = CapabilityListFields;
 
 /** Values for each input port of List Capabilities. */
 export type ListCapabilitiesPorts = {};
 
 /** Maps port values to the HTTP request parts of the operation.client convention. */
-export function listCapabilitiesRequest(
-  ports: ListCapabilitiesPorts = {},
-): ClientInput {
+export function listCapabilitiesRequest(ports: ListCapabilitiesPorts = {}): ClientInput {
   return {
     params: {},
     query: {},

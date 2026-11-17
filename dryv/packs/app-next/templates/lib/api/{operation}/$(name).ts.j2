@@ -1,0 +1,80 @@
+{#- The generated symbol of another planned file, found by the subject it represents. -#}
+{%- macro symbol_for(link) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == link.id -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro ts_type(value) -%}
+{%- if value.is.schema -%}{{ symbol_for(value.schema) or 'unknown' }}
+{%- elif value.is.property and value.is.enum -%}{{ symbol_for(value.property.enum) }}
+{%- elif value.is.property and value.is.primitive -%}{{ value.property.primitive.type }}
+{%- elif value.is.property and value.is.temporal -%}string
+{%- else -%}unknown
+{%- endif -%}
+{%- endmacro -%}
+{%- set http = operation.facets.http -%}
+import { type ClientInput, type ClientResponse, type FieldMeta, send } from "#/lib/dryv/transport.ts";
+{%- for dependency in file.dependencies %}{% if dependency.symbol %}
+{%- if dependency.template == 'model' %}
+import { type {{ dependency.symbol }}, {{ dependency.symbol }}Fields } from "{{ dependency.path.prefixed }}";
+{%- else %}
+import type { {{ dependency.symbol }} } from "{{ dependency.path.prefixed }}";
+{%- endif %}
+{%- endif %}{% endfor %}
+
+/** Field metadata of the input fields whose value is a schema, by field name. A schema
+ * input is listed whole under "input". */
+export const {{ file.symbol }}InputFields: Readonly<Record<string, readonly FieldMeta[]>> = {
+{%- if operation.input and operation.input.kind == 'schema' and symbol_for(operation.input.value.schema) %}
+  input: {{ symbol_for(operation.input.value.schema) }}Fields,
+{%- elif operation.input and operation.input.kind == 'fields' %}{% for field in operation.input.fields %}{% if field.value.is.schema and symbol_for(field.value.schema) %}
+  {{ field.name.camel }}: {{ symbol_for(field.value.schema) }}Fields,
+{%- endif %}{% endfor %}{% endif %}
+};
+/** Field metadata of the output, when it is a schema. */
+export const {{ file.symbol }}OutputFields: readonly FieldMeta[] | undefined =
+{%- if operation.output and operation.output.value.is.schema and symbol_for(operation.output.value.schema) %} {{ symbol_for(operation.output.value.schema) }}Fields;
+{%- else %} undefined;
+{%- endif %}
+
+/** Values for each input port of {{ operation.name.title }}. */
+export type {{ operation.name.pascal }}Ports = {
+{%- for binding in http.inputs %}
+  {{ binding.port.name.camel }}?: {{ ts_type(binding.port.value) }};
+{%- endfor %}
+};
+
+/** Maps port values to the HTTP request parts of the operation.client convention. */
+export function {{ file.symbol }}Request(ports: {{ operation.name.pascal }}Ports = {}): ClientInput {
+  return {
+    params: {
+{%- for binding in http.inputs %}{% if binding.is.path %}
+      "{{ binding.name }}": String(ports.{{ binding.port.name.camel }}),
+{%- endif %}{% endfor %}
+    },
+    query: {
+{%- for binding in http.inputs %}{% if binding.is.query %}
+      "{{ binding.name }}": ports.{{ binding.port.name.camel }},
+{%- elif binding.is.query_object %}
+      ...(ports.{{ binding.port.name.camel }} as Record<string, unknown> | undefined),
+{%- endif %}{% endfor %}
+    },
+{%- for binding in http.inputs %}{% if binding.is.body %}
+    body: ports.{{ binding.port.name.camel }},
+{%- endif %}{% endfor %}
+  };
+}
+
+/**
+ * {{ operation.description or operation.name.title }}
+ *
+ * {{ http.method }} {{ http.path.local }}. Used when no operation.client pack is bound.
+ */
+export async function {{ file.symbol }}(input: ClientInput = {}): Promise<ClientResponse<{% if operation.output %}{{ ts_type(operation.output.value) }}{% else %}void{% endif %}>> {
+  const path = "{{ http.path.local }}"
+{%- for binding in http.inputs %}{% if binding.is.path %}
+    .replace("{{ '{' }}{{ binding.name }}{{ '}' }}", encodeURIComponent(input.params?.["{{ binding.name }}"] ?? ""))
+{%- endif %}{% endfor %};
+  return send("{{ http.method }}", path, input);
+}

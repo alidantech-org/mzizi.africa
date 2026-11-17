@@ -1,5 +1,5 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { SortDirection } from "./sort-direction.enum.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { SortDirection } from "#/lib/types/sort-direction.enum.ts";
 
 /** Base Query */
 export interface BaseQuery {

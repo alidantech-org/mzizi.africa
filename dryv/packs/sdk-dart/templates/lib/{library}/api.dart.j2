@@ -1,0 +1,82 @@
+import 'package:flutter_api_bridge/flutter_api_bridge.dart';
+
+import 'src/client.dart';
+
+export 'package:flutter_api_bridge/flutter_api_bridge.dart'
+    show
+        ApiAuth,
+        ApiBridgeConfig,
+        ApiCacheConfig,
+        ApiConnection,
+        ApiGetRequestOptions,
+        ApiLogger,
+        ApiLoggingConfig,
+        ApiRequestOptions,
+        ApiResult,
+        ApiRetryConfig,
+        AuthStrategy,
+        BearerStrategy,
+        CookieStrategy,
+        DeveloperApiLogger,
+        NoAuthStrategy;
+{%- for item in file.exports %}
+export '{{ item.path.prefixed }}';
+{%- endfor %}
+
+/// Root facade for the generated {{ application.name.title }} package.
+///
+/// Applications import only this package. It owns a named flutter_api_bridge connection and
+/// exposes the typed client and safe session controls.
+class {{ application.name.pascal }} {
+  {{ application.name.pascal }}._(ApiConnection connection) : client = {{ application.name.pascal }}Client(connection);
+
+  static const String connectionKey = '{{ application.name.snake }}';
+
+  static {{ application.name.pascal }}? _instance;
+
+  /// Configures the package with the full transport configuration.
+  static Future<void> configure(ApiBridgeConfig config, {bool replace = true}) async {
+    await FlutterApiBridge.configure(key: connectionKey, config: config, replace: replace);
+    _instance = null;
+  }
+
+  /// Configures the package with production defaults.
+  static Future<void> initialize({
+    required Uri baseUri,
+    AuthStrategy auth = const CookieStrategy(),
+    Map<String, String> defaultHeaders = const <String, String>{},
+    bool replace = true,
+  }) =>
+      configure(ApiBridgeConfig(baseUri: baseUri, auth: auth, defaultHeaders: defaultHeaders), replace: replace);
+
+  static ApiConnection get connection => FlutterApiBridge.requireConnection(connectionKey);
+
+  static ApiAuth get auth => connection.auth;
+
+  /// Starts or switches the user session after login; changing it clears the previous cache.
+  static Future<void> initializeUserSession({
+    required String sessionId,
+    String? bearerToken,
+    Map<String, String>? authHeaders,
+  }) =>
+      connection.initializeUserSession(sessionId: sessionId, bearerToken: bearerToken, authHeaders: authHeaders);
+
+  static Future<void> clearActiveSessionCache() => connection.clearActiveSessionCache();
+
+  static Future<void> clearAllCache() => connection.clearAllCache();
+
+  /// Clears the cache, credentials and persistent cookies.
+  static Future<void> logout() async {
+    await connection.logout();
+    _instance = null;
+  }
+
+  static {{ application.name.pascal }} get instance => _instance ??= {{ application.name.pascal }}._(connection);
+
+  static Future<void> dispose() async {
+    _instance = null;
+    await FlutterApiBridge.removeConnection(connectionKey);
+  }
+
+  final {{ application.name.pascal }}Client client;
+}

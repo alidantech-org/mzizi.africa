@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type PageWindow } from "./page-window.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Feature Window */
 export interface FeatureWindow {
@@ -12,12 +11,7 @@ export interface FeatureWindow {
 /** Field metadata for forms and results. */
 export const FeatureWindowFields: readonly FieldMeta[] = [
   { name: "codePrefix", label: "Code Prefix", kind: "string", required: false },
-  {
-    name: "featureTypeId",
-    label: "Feature Type Id",
-    kind: "string",
-    required: false,
-  },
+  { name: "featureTypeId", label: "Feature Type Id", kind: "string", required: false },
   { name: "limit", label: "Limit", kind: "number", required: false },
   { name: "offset", label: "Offset", kind: "number", required: false },
 ];

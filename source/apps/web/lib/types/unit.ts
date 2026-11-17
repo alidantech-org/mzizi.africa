@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type CodedEntity } from "./coded-entity.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Measurement unit and conversion to its optional base unit; never a spatial unit. */
 export interface Unit {

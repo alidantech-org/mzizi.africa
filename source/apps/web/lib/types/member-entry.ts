@@ -1,4 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Member Entry */
 export interface MemberEntry {
@@ -13,10 +13,5 @@ export const MemberEntryFields: readonly FieldMeta[] = [
   { name: "code", label: "Code", kind: "string", required: true },
   { name: "id", label: "Id", kind: "string", required: true },
   { name: "label", label: "Label", kind: "string", required: true },
-  {
-    name: "supersedesId",
-    label: "Supersedes Id",
-    kind: "string",
-    required: false,
-  },
+  { name: "supersedesId", label: "Supersedes Id", kind: "string", required: false },
 ];

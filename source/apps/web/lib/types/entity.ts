@@ -1,4 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Base for versioned records: id, version, created/updated timestamps and soft delete. */
 export interface Entity {

@@ -1,4 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Base for operational records: identity only. */
 export interface Identified {

@@ -1,7 +1,5 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { ValueRelationKind } from "./value-relation-kind.enum.ts";
-import { type Association } from "./association.ts";
-import { type Value } from "./value.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { ValueRelationKind } from "#/lib/types/value-relation-kind.enum.ts";
 
 /** A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind. */
 export interface ValueRelation {
@@ -27,18 +25,8 @@ export const ValueRelationFields: readonly FieldMeta[] = [
     required: true,
     options: Object.values(ValueRelationKind),
   },
-  {
-    name: "sourceValueId",
-    label: "Source Value Id",
-    kind: "string",
-    required: true,
-  },
-  {
-    name: "targetValueId",
-    label: "Target Value Id",
-    kind: "string",
-    required: true,
-  },
+  { name: "sourceValueId", label: "Source Value Id", kind: "string", required: true },
+  { name: "targetValueId", label: "Target Value Id", kind: "string", required: true },
   { name: "validFrom", label: "Valid From", kind: "date", required: false },
   { name: "validUntil", label: "Valid Until", kind: "date", required: false },
 ];

@@ -1,5 +1,5 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { JobStatus } from "./job-status.enum.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { JobStatus } from "#/lib/types/job-status.enum.ts";
 
 /** List Jobs Input */
 export interface ListJobsInput {

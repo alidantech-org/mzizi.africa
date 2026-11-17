@@ -1,0 +1,53 @@
+{#- The generated symbol of another planned file, found by the subject it represents. -#}
+{%- macro symbol_for(link) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == link.id -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro dart_type(value) -%}
+{%- if value.is.schema -%}{{ symbol_for(value.schema) or 'Object?' }}
+{%- elif value.is.property and value.is.enum -%}{{ symbol_for(value.property.enum) }}
+{%- elif value.is.property and value.is.primitive and value.property.primitive.is.boolean -%}bool
+{%- elif value.is.property and value.is.primitive and value.property.primitive.is.number and value.property.primitive.is.integer -%}int
+{%- elif value.is.property and value.is.primitive and value.property.primitive.is.number -%}double
+{%- elif value.is.property and value.is.primitive -%}String
+{%- elif value.is.property and value.is.temporal and value.property.temporal.kind in ['instant', 'date', 'date-time', 'datetime'] -%}DateTime
+{%- elif value.is.property and value.is.temporal -%}String
+{%- elif value.is.property and value.is.record -%}Map<String, dynamic>
+{%- else -%}Object?
+{%- endif -%}
+{%- endmacro -%}
+{%- macro field_type(field) -%}
+{%- if field.array is not none -%}List<{{ dart_type(field.value) }}>{%- else -%}{{ dart_type(field.value) }}{%- endif -%}
+{%- if (field.optional or field.nullable) and dart_type(field.value) != 'Object?' -%}?{%- endif -%}
+{%- endmacro -%}
+import 'package:json_annotation/json_annotation.dart';
+{%- for dependency in file.dependencies %}{% if dependency.symbol and dependency.symbol != file.symbol %}
+import '{{ dependency.path.prefixed }}';
+{%- endif %}{% endfor %}
+
+part '{{ file.path.name | replace(".dart", ".g.dart") }}';
+
+/// {{ schema.description or schema.name.title }}
+@JsonSerializable(includeIfNull: false)
+class {{ file.symbol }} {
+  const {{ file.symbol }}({
+{%- for field in schema.fields %}
+    {% if not field.optional and not field.nullable %}required {% endif %}this.{{ field.name.camel }},
+{%- endfor %}
+  });
+{%- for field in schema.fields %}
+{%- if field.name.raw != field.name.camel %}
+
+  @JsonKey(name: '{{ field.name.raw }}')
+{%- else %}
+
+{%- endif %}
+  final {{ field_type(field) }} {{ field.name.camel }};
+{%- endfor %}
+
+  factory {{ file.symbol }}.fromJson(Map<String, dynamic> json) => _${{ file.symbol }}FromJson(json);
+
+  Map<String, dynamic> toJson() => _${{ file.symbol }}ToJson(this);
+}

@@ -24,29 +24,17 @@ export async function send<T>(
   const base = process.env.NEXT_PUBLIC_API_URL ?? "";
   const url = new URL(path, base === "" ? "http://localhost" : base);
   for (const [key, value] of Object.entries(input.query ?? {})) {
-    if (value !== undefined && value !== null)
-      url.searchParams.set(key, String(value));
+    if (value !== undefined && value !== null) url.searchParams.set(key, String(value));
   }
   try {
-    const response = await fetch(
-      base === "" ? `${url.pathname}${url.search}` : url,
-      {
-        method,
-        headers:
-          input.body === undefined
-            ? undefined
-            : { "content-type": "application/json" },
-        body: input.body === undefined ? undefined : JSON.stringify(input.body),
-      },
-    );
+    const response = await fetch(base === "" ? `${url.pathname}${url.search}` : url, {
+      method,
+      headers: input.body === undefined ? undefined : { "content-type": "application/json" },
+      body: input.body === undefined ? undefined : JSON.stringify(input.body),
+    });
     const text = await response.text();
     const body = text === "" ? null : (JSON.parse(text) as T);
-    return {
-      success: response.ok,
-      message: response.statusText,
-      body,
-      status: response.status,
-    };
+    return { success: response.ok, message: response.statusText, body, status: response.status };
   } catch (error) {
     return {
       success: false,

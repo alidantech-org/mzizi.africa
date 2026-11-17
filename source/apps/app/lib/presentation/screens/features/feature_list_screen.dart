@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../widgets/dryv_result.dart';
+import 'package:mzizi_app/presentation/widgets/dryv_result.dart';
 import 'feature_list_providers.dart';
 
 /// Feature List

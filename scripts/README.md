@@ -70,6 +70,8 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 | `engine`    | `source/backend/engine`    | 8760 | `ENGINE_PORT`    |
 | `admin`     | `source/apps/admin`        | 3100 | `ADMIN_PORT`     |
 | `www`       | `source/apps/www`          | 3200 | `WWW_PORT`       |
+| `web`       | `source/apps/web`          | 3300 | `WEB_PORT`       |
+| `dev`       | `source/apps/dev`          | 3400 | `DEV_PORT`       |
 
 `dev` and `start` give every service the values of the git-ignored root `.env` and its own port, prefix each output line with the service name and stop every service when the runner stops or when one service exits. `PORT` from `.env` is deliberately not passed through, because it would put two services on one port.
 

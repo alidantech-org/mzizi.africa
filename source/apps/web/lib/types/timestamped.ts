@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type Created } from "./created.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Base for operational records: identity, creation time and last-change time. */
 export interface Timestamped {

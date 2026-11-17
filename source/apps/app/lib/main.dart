@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mzizi_app/api.dart';
+import 'package:mzizi_api/api.dart';
 
 import 'core/config/app_config.dart';
 import 'core/theme/mzizi_theme.dart';
@@ -9,7 +9,7 @@ import 'presentation/routers/go_router.dart';
 /// Scaffolded by Dryv once; this file belongs to the app.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await MziziApp.initialize(baseUri: Uri.parse(AppConfig.apiBaseUrl));
+  await MziziApi.initialize(baseUri: Uri.parse(AppConfig.apiBaseUrl));
   runApp(const ProviderScope(child: MziziAppApp()));
 }
 

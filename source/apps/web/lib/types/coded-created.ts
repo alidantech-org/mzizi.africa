@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type CodedIdentified } from "./coded-identified.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Base for operational records with a unique identity code and creation time. */
 export interface CodedCreated {

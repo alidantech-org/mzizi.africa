@@ -1,0 +1,44 @@
+{#- The generated symbol of another planned file, found by the subject it represents. -#}
+{%- macro symbol_for(link) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == link.id -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro ts_type(value) -%}
+{%- if value.is.schema -%}{{ symbol_for(value.schema) or 'unknown' }}
+{%- elif value.is.property and value.is.enum -%}{{ symbol_for(value.property.enum) }}
+{%- elif value.is.property and value.is.primitive -%}{{ value.property.primitive.type }}
+{%- elif value.is.property and value.is.temporal -%}string
+{%- elif value.is.property and value.is.record -%}Record<string, unknown>
+{%- else -%}unknown
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro kind(value) -%}
+{%- if value.is.property and value.is.primitive and value.property.primitive.is.string -%}string
+{%- elif value.is.property and value.is.primitive and value.property.primitive.is.number -%}number
+{%- elif value.is.property and value.is.primitive and value.property.primitive.is.boolean -%}boolean
+{%- elif value.is.property and value.is.enum -%}enum
+{%- elif value.is.property and value.is.temporal -%}date
+{%- else -%}other
+{%- endif -%}
+{%- endmacro -%}
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
+{%- for dependency in file.dependencies %}{% if dependency.symbol and dependency.symbol != file.symbol %}
+import { {% if dependency.template != 'enum' %}type {% endif %}{{ dependency.symbol }} } from "{{ dependency.path.prefixed }}";
+{%- endif %}{% endfor %}
+
+/** {{ schema.description or schema.name.title }} */
+export interface {{ file.symbol }} {
+{%- for field in schema.fields %}
+  {{ field.name.camel }}{% if field.optional %}?{% endif %}: {{ ts_type(field.value) }}{% if field.array is not none %}[]{% endif %}{% if field.nullable %} | null{% endif %};
+{%- endfor %}
+}
+
+/** Field metadata for forms and results. */
+export const {{ file.symbol }}Fields: readonly FieldMeta[] = [
+{%- for field in schema.fields %}
+  { name: "{{ field.name.camel }}", label: {{ field.name.title | tojson }}, kind: "{{ kind(field.value) }}", required: {{ 'false' if field.optional or field.nullable else 'true' }}{% if field.value.is.property and field.value.is.enum %}, options: Object.values({{ symbol_for(field.value.property.enum) }}){% endif %} },
+{%- endfor %}
+];

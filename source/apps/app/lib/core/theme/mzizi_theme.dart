@@ -11,9 +11,31 @@ abstract final class MziziTokens {
   static const Color clay = Color(0xFFB4542F);
   static const Color cream = Color(0xFFFBF7EF);
   static const Color danger = Color(0xFFA63A2B);
-  static const List<String> fontBody = ['ui-sans-serif', '-apple-system', 'Segoe UI', 'Inter', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'];
-  static const List<String> fontDisplay = ['Iowan Old Style', 'Palatino Linotype', 'Palatino', 'Book Antiqua', 'Georgia', 'serif'];
-  static const List<String> fontMono = ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'];
+  static const List<String> fontBody = [
+    'ui-sans-serif',
+    '-apple-system',
+    'Segoe UI',
+    'Inter',
+    'Roboto',
+    'Helvetica',
+    'Arial',
+    'sans-serif',
+  ];
+  static const List<String> fontDisplay = [
+    'Iowan Old Style',
+    'Palatino Linotype',
+    'Palatino',
+    'Book Antiqua',
+    'Georgia',
+    'serif',
+  ];
+  static const List<String> fontMono = [
+    'ui-monospace',
+    'SFMono-Regular',
+    'Menlo',
+    'Consolas',
+    'monospace',
+  ];
   static const Color indigo = Color(0xFF2F4C6E);
   static const Color ink = Color(0xFF2B231C);
   static const Color inkSoft = Color(0xFF7A6B5C);
@@ -45,37 +67,40 @@ abstract final class MziziTokens {
 
 /// The light theme: the semantic roles mapped onto a Material colour scheme.
 ThemeData buildMziziLightTheme() => _build(
-      Brightness.light,
-      ColorScheme.fromSeed(seedColor: MziziTokens.clay).copyWith(
-        error: MziziTokens.danger,
-        primary: MziziTokens.clay,
-        outline: MziziTokens.line,
-        onPrimary: MziziTokens.cream,
-        onSurface: MziziTokens.ink,
-        secondary: MziziTokens.indigo,
-        surface: MziziTokens.oat,
-        surfaceContainerHighest: MziziTokens.cream,
-      ),
-    );
+  Brightness.light,
+  ColorScheme.fromSeed(seedColor: MziziTokens.clay).copyWith(
+    error: MziziTokens.danger,
+    primary: MziziTokens.clay,
+    outline: MziziTokens.line,
+    onPrimary: MziziTokens.cream,
+    onSurface: MziziTokens.ink,
+    secondary: MziziTokens.indigo,
+    surface: MziziTokens.oat,
+    surfaceContainerHighest: MziziTokens.cream,
+  ),
+);
 
 /// The dark theme: the light roles with the dark mode's overrides.
 ThemeData buildMziziDarkTheme() => _build(
-      Brightness.dark,
-      ColorScheme.fromSeed(seedColor: MziziTokens.clay, brightness: Brightness.dark).copyWith(
-        outline: MziziTokens.barkLine,
-        onPrimary: MziziTokens.ink,
-        onSurface: MziziTokens.cream,
-        secondary: MziziTokens.calabash,
-        surface: MziziTokens.ink,
-        surfaceContainerHighest: MziziTokens.bark,
-      ),
-    );
+  Brightness.dark,
+  ColorScheme.fromSeed(
+    seedColor: MziziTokens.clay,
+    brightness: Brightness.dark,
+  ).copyWith(
+    outline: MziziTokens.barkLine,
+    onPrimary: MziziTokens.ink,
+    onSurface: MziziTokens.cream,
+    secondary: MziziTokens.calabash,
+    surface: MziziTokens.ink,
+    surfaceContainerHighest: MziziTokens.bark,
+  ),
+);
 
 ThemeData _build(Brightness brightness, ColorScheme scheme) => ThemeData(
-      useMaterial3: true,
-      brightness: brightness,
-      colorScheme: scheme,
-      scaffoldBackgroundColor: scheme.surface,
-      focusColor: scheme.secondary,
-      dividerColor: scheme.outline,
-    );
+  useMaterial3: true,
+  brightness: brightness,
+  colorScheme: scheme,
+  scaffoldBackgroundColor: scheme.surface,
+  focusColor: scheme.secondary,
+  dividerColor: scheme.outline,
+);

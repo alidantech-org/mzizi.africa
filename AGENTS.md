@@ -18,7 +18,8 @@ Use `.docs/docs/ROADMAP.md` for current priorities. Proposals under `.docs/_plan
 ## Active source layout
 
 ```text
-source/apps/{mobile,admin,www}     Flutter client and Next.js applications (app, web, dev: first slice generated from dryv/contracts/apps, not yet runnable)
+source/sdk/{api-ts,api-dart}      Generated API client SDKs (Dryv)
+source/apps/{mobile,admin,www}     Flutter client and Next.js applications (app, web, dev are generated from dryv/contracts/apps; source/package.json is the Bun workspace for the SDK and the Next.js apps)
 source/backend/api                 NestJS product API
 source/backend/database            Bun CLI, generated SQL and immutable migrations for the single PostgreSQL database
 source/backend/engine               Python runtime: EngineRuntime, its HTTP front door and executor, persistence adapters, Dryv-generated code

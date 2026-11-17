@@ -1,0 +1,10 @@
+# Flutter and Dart build output (also covers sdk/api).
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+*.iml
+.idea/

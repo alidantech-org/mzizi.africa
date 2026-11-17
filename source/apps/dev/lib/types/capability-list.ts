@@ -1,5 +1,5 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type Capability } from "./capability.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type Capability } from "#/lib/types/capability.ts";
 
 /** Capability List */
 export interface CapabilityList {
@@ -8,10 +8,5 @@ export interface CapabilityList {
 
 /** Field metadata for forms and results. */
 export const CapabilityListFields: readonly FieldMeta[] = [
-  {
-    name: "capabilities",
-    label: "Capabilities",
-    kind: "other",
-    required: true,
-  },
+  { name: "capabilities", label: "Capabilities", kind: "other", required: true },
 ];

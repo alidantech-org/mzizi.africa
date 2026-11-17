@@ -1,4 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Base for association rows: id, created timestamp and soft delete. */
 export interface Association {

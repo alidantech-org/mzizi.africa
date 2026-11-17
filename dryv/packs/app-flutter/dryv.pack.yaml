@@ -1,0 +1,98 @@
+version: dryv.pack/v1alpha1
+key: mzizi.app-flutter
+source: templates
+
+info:
+  title: Flutter App
+  version: 0.1.0
+  description: Generates a runnable Flutter app from views, organised by feature with go_router, Riverpod state and calls through the flutter-api-bridge client.
+  purpose: frontend
+  summary: A Flutter app from views — feature screens, go_router routes, Riverpod state, a connectivity gate, calls through flutter-api-bridge.
+  languages: [dart]
+  frameworks: [flutter, go-router, riverpod, flutter-api-bridge]
+  tags: [frontend, mobile, screens, routing]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+inputs:
+  api_path:
+    type: string
+    default: ../../sdk/api-dart
+    description: Path from the app to the generated Dart API SDK package, used as a pubspec path dependency.
+  api_package:
+    type: string
+    default: mzizi_api
+    description: Name of the Dart API SDK package the app imports (the `package:` root).
+  api_facade:
+    type: string
+    default: MziziApi
+    description: Class in the SDK's api.dart that holds the shared connection (`<Facade>.initialize`, `<Facade>.connection`).
+
+selections:
+  # Views that belong to a feature: screens live in the feature's folder.
+  screens:
+    subject: view
+    scope: each
+
+  features:
+    subject: view
+    scope: collects.feature
+
+  app_views:
+    subject: view
+    scope: all
+
+templates:
+  # Same-pack files of the same views import each other by this pack's own naming (a planner
+  # dependency only links referenced subjects, not the subjects a file represents).
+  router:
+    $ref: '#/selections/app_views'
+
+  routes:
+    $ref: '#/selections/features'
+    output:
+      name: $(feature.name.snake)
+      symbol: $(feature.name.pascal)ScreensRoutes
+
+  feature-router:
+    $ref: '#/selections/features'
+    output:
+      name: $(feature.name.snake)
+      path:
+        - $(feature.name.snake)
+      symbol: $(feature.name.camel)RouterRoutes
+
+  providers:
+    $ref: '#/selections/screens'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(feature.name.snake)
+    imports:
+      - $ref: '#/needs/operation.client'
+      - $ref: '#/needs/schema.types'
+
+  screen:
+    $ref: '#/selections/screens'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(feature.name.snake)
+      symbol: $(subject.name.pascal)Screen
+
+needs:
+  operation.client: { required: true }
+  schema.types: { required: true }
+
+# shared:dart-tool:start
+choose:
+  dart.tool: { options: [flutter, dart] }
+# shared:dart-tool:end
+
+actions:
+  final:
+    install:
+      commands:
+        - run: [(flutter|dart), pub, get]

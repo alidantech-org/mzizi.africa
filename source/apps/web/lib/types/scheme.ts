@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type CodedEntity } from "./coded-entity.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Stable identity and stewardship snapshot for a controlled vocabulary scheme. */
 export interface Scheme {
@@ -19,12 +18,7 @@ export const SchemeFields: readonly FieldMeta[] = [
   { name: "createdAt", label: "Created At", kind: "date", required: true },
   { name: "deletedAt", label: "Deleted At", kind: "date", required: false },
   { name: "id", label: "Id", kind: "string", required: true },
-  {
-    name: "ownerSnapshot",
-    label: "Owner Snapshot",
-    kind: "string",
-    required: true,
-  },
+  { name: "ownerSnapshot", label: "Owner Snapshot", kind: "string", required: true },
   { name: "title", label: "Title", kind: "string", required: true },
   { name: "updatedAt", label: "Updated At", kind: "date", required: true },
   { name: "version", label: "Version", kind: "number", required: true },

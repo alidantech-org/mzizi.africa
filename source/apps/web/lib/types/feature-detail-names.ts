@@ -1,4 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Feature Detail Names */
 export interface FeatureDetailNames {
@@ -8,11 +8,6 @@ export interface FeatureDetailNames {
 
 /** Field metadata for forms and results. */
 export const FeatureDetailNamesFields: readonly FieldMeta[] = [
-  {
-    name: "languageTag",
-    label: "Language Tag",
-    kind: "string",
-    required: false,
-  },
+  { name: "languageTag", label: "Language Tag", kind: "string", required: false },
   { name: "name", label: "Name", kind: "string", required: true },
 ];

@@ -3,26 +3,17 @@ import {
   type ClientResponse,
   type FieldMeta,
   send,
-} from "../../dryv/transport.ts";
-import {
-  type FeatureCollection,
-  FeatureCollectionFields,
-} from "./../../types/feature-collection.ts";
-import {
-  type FeatureWindow,
-  FeatureWindowFields,
-} from "./../../types/feature-window.ts";
+} from "#/lib/dryv/transport.ts";
+import { type FeatureCollection, FeatureCollectionFields } from "#/lib/types/feature-collection.ts";
+import { type FeatureWindow, FeatureWindowFields } from "#/lib/types/feature-window.ts";
 
 /** Field metadata of the input fields whose value is a schema, by field name. A schema
  * input is listed whole under "input". */
-export const browseFeaturesInputFields: Readonly<
-  Record<string, readonly FieldMeta[]>
-> = {
+export const browseFeaturesInputFields: Readonly<Record<string, readonly FieldMeta[]>> = {
   input: FeatureWindowFields,
 };
 /** Field metadata of the output, when it is a schema. */
-export const browseFeaturesOutputFields: readonly FieldMeta[] | undefined =
-  FeatureCollectionFields;
+export const browseFeaturesOutputFields: readonly FieldMeta[] | undefined = FeatureCollectionFields;
 
 /** Values for each input port of Browse Features. */
 export type BrowseFeaturesPorts = {
@@ -30,9 +21,7 @@ export type BrowseFeaturesPorts = {
 };
 
 /** Maps port values to the HTTP request parts of the operation.client convention. */
-export function browseFeaturesRequest(
-  ports: BrowseFeaturesPorts = {},
-): ClientInput {
+export function browseFeaturesRequest(ports: BrowseFeaturesPorts = {}): ClientInput {
   return {
     params: {},
     query: {

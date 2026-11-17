@@ -2,32 +2,26 @@
 
 import { useEffect, useState } from "react";
 
-import { DryvForm } from "../../../components/dryv/dryv-form.tsx";
-import { DryvResult } from "../../../components/dryv/dryv-result.tsx";
-import type { ClientResponse } from "../../../lib/dryv/transport.ts";
-import { browseFeatures } from "./../../../_gen/actions/geography/browse-features.actions.ts";
+import { DryvResult } from "#/components/dryv/dryv-result.tsx";
+import type { ClientResponse } from "#/lib/dryv/transport.ts";
+import { browseFeatures } from "@mzizi/api-client/actions/geography/browse-features.actions.ts";
 import {
-  browseFeaturesInputFields,
   browseFeaturesOutputFields,
   browseFeaturesRequest,
-} from "./../../../lib/api/geography/browse-features.ts";
+} from "#/lib/api/geography/browse-features.ts";
 
 /**
  * Feature List
  */
 export default function FeatureListPage() {
-  const [results, setResults] = useState<
-    Record<string, ClientResponse<unknown>>
-  >({});
+  const [results, setResults] = useState<Record<string, ClientResponse<unknown>>>({});
   const keep = (operation: string) => (response: ClientResponse<unknown>) => {
     setResults((current) => ({ ...current, [operation]: response }));
     return response;
   };
 
   useEffect(() => {
-    void browseFeatures(browseFeaturesRequest() as never).then(
-      keep("browseFeatures"),
-    );
+    void browseFeatures(browseFeaturesRequest() as never).then(keep("browseFeatures"));
   }, []);
 
   return (

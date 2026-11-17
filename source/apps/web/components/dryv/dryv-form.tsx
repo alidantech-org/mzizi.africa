@@ -2,7 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 
-import type { FieldMeta } from "../../lib/dryv/transport.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** A form built from a schema's field metadata. Values are typed by each field's kind. */
 export function DryvForm({

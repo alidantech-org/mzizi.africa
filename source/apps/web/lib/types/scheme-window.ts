@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type PageWindow } from "./page-window.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Scheme Window */
 export interface SchemeWindow {

@@ -1,0 +1,99 @@
+version: dryv.pack/v1alpha1
+key: mzizi.app-next
+source: templates
+
+info:
+  title: Next.js App
+  version: 0.1.0
+  description: Generates Next.js App Router pages from views, with typed API calls for HTTP operations and schema-driven forms and results.
+  purpose: frontend
+  summary: Next.js App Router pages from views, typed API calls and schema-driven forms.
+  languages: [typescript]
+  frameworks: [nextjs, react]
+  tags: [frontend, pages, app-router, forms]
+
+plugins:
+  - name: jinja
+    extensions: [.j2]
+
+selections:
+  enums:
+    subject: property.enum
+    scope: each
+
+  models:
+    subject: schema
+    scope: each
+
+  # Pages can only call operations that are reachable over HTTP.
+  operations:
+    subject: operation
+    filter:
+      all: { facet: http }
+    scope: each
+
+  pages:
+    subject: view
+    scope: each
+
+templates:
+  enum:
+    $ref: '#/selections/enums'
+    output:
+      name: $(subject.name.kebab)
+      symbol: $(subject.name.pascal)
+
+  model:
+    $ref: '#/selections/models'
+    output:
+      name: $(subject.name.kebab)
+      symbol: $(subject.name.pascal)
+    imports:
+      - $ref: '#/templates/enum'
+      - $ref: '#/templates/model'
+
+  operation:
+    $ref: '#/selections/operations'
+    output:
+      name: $(subject.name.kebab)
+      path:
+        - $(group.name.kebab)
+      symbol: $(subject.name.camel)
+    imports:
+      - $ref: '#/templates/model'
+      - $ref: '#/templates/enum'
+
+  page:
+    $ref: '#/selections/pages'
+    output:
+      path:
+        - $(group.name.kebab)
+        - $(subject.name.kebab)
+      symbol: $(subject.name.pascal)Page
+    imports:
+      - $ref: '#/needs/operation.client'
+      - $ref: '#/templates/operation'
+      - $ref: '#/templates/model'
+
+# Pages call operations through whichever pack the project binds here (for example
+# clients/next-api-bridge). Unbound, they use this pack's own fetch-based calls.
+needs:
+  operation.client: { required: false }
+
+inputs:
+  port:
+    type: string
+    default: "3000"
+    description: Port of the development and production server.
+  sdk_package:
+    type: string
+    default: "@mzizi/api-client"
+    description: Name of the TypeScript API SDK package the app imports.
+  sdk_path:
+    type: string
+    default: ../sdk/api-ts
+    description: Path from the app to the SDK package, used as a file dependency.
+  workspace_root:
+    type: string
+    default: ..
+    description: Path from the app to the folder both the app and the SDK sit in (the bundler root).

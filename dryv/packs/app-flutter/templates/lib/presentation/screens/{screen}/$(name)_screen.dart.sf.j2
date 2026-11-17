@@ -1,0 +1,56 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+{%- macro has_part(kind) -%}{% for part in view.parts %}{% if part.kind == kind %}yes{% endif %}{% endfor %}{%- endmacro %}
+{%- if has_part('collect') %}
+import 'package:{{ application.name.snake }}/presentation/widgets/dryv_form.dart';
+{%- endif %}
+{%- if has_part('present') %}
+import 'package:{{ application.name.snake }}/presentation/widgets/dryv_result.dart';
+{%- endif %}
+import '{{ view.name.snake }}_providers.dart';
+
+{%- macro fed_by_form(link) -%}
+{%- for part in view.parts %}{% if part.kind == 'collect' and part.collect.target.port is not none and part.collect.target.port.operation.id == link.id %}yes{% endif %}{% endfor -%}
+{%- endmacro %}
+
+/// {{ view.description or view.name.title }}
+///
+/// Scaffolded by Dryv once; this screen belongs to the app. Design it here — state and calls stay
+/// in the generated {{ view.name.snake }}_providers.dart.
+class {{ file.symbol }} extends ConsumerWidget {
+  const {{ file.symbol }}({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('{{ view.name.title }}')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+{%- for part in view.parts %}
+{%- if part.kind == 'present' and part.present.source.port is not none %}
+{%- if fed_by_form(part.present.source.port.operation) %}
+          DryvResultView(result: ref.watch({{ view.name.camel }}{{ part.name.pascal }}Provider), select: const <String>[{% for path in part.present.source.select %}'{{ path.dotted }}'{% if not loop.last %}, {% endif %}{% endfor %}]),
+{%- else %}
+          DryvResultView.async(ref.watch({{ view.name.camel }}{{ part.name.pascal }}Provider), select: const <String>[{% for path in part.present.source.select %}'{{ path.dotted }}'{% if not loop.last %}, {% endif %}{% endfor %}]),
+{%- endif %}
+{%- elif part.kind == 'collect' and part.collect.target.port is not none %}
+          DryvForm(
+            fields: {{ view.name.camel }}{{ part.name.pascal }}Fields,
+            submitLabel: '{{ part.collect.target.port.operation.name.title }}',
+            onSubmit: (values) => submit{{ view.name.pascal }}{{ part.name.pascal }}(ref, values),
+          ),
+{%- elif part.kind == 'invoke' and part.invoke.operation is not none %}
+          FilledButton(
+            onPressed: invoke{{ view.name.pascal }}{{ part.name.pascal }},
+            child: const Text('{{ part.invoke.operation.name.title }}'),
+          ),
+{%- endif %}
+          const SizedBox(height: 16),
+{%- endfor %}
+        ],
+      ),
+    );
+  }
+}

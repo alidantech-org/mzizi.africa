@@ -1,5 +1,4 @@
-import type { FieldMeta } from "../dryv/transport.ts";
-import { type CodedEntity } from "./coded-entity.ts";
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
 
 /** Stable identity for a reusable, reviewed pattern definition. */
 export interface Pattern {
