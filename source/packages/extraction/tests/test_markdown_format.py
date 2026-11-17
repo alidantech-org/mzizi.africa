@@ -49,3 +49,19 @@ def test_prose_page_is_not_turned_into_a_table() -> None:
     data = make_pdf([{"text": [(72, 720 - 18 * i, line) for i, line in enumerate(sentences)]}])
     out = extract_pdf_document(data, DocumentProfile(auto_tables=True))
     assert not any(b.kind == "table" for page in out.pages for b in page.blocks)
+
+
+def test_gate_tells_prose_from_a_table_and_checks_totals() -> None:
+    from mzizi_extraction.document.table_gate import looks_like_prose, totals_mismatch
+
+    prose = (
+        ("Welcome back and thank you so much for staying with us today", "", ""),
+        ("I want us to have a conversation beyond the political parties.", "and", ""),
+        ("Of course it is an office I have been familiar with for some time", "", "now"),
+        ("We have got ninety one registered political parties in the country", "", ""),
+    )
+    table = (("Party", "Members", "Seats"), ("A", "10", "2"), ("B", "20", "3"), ("C", "5", "1"))
+    assert looks_like_prose(prose) and not looks_like_prose(table)
+    ok = (("Item", "Cost"), ("a", "10"), ("b", "20"), ("Total", "30"))
+    bad = (("Item", "Cost"), ("a", "10"), ("b", "20"), ("Total", "35"))
+    assert not totals_mismatch(ok) and totals_mismatch(bad)

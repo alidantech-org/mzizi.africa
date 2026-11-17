@@ -19,6 +19,7 @@ from mzizi_extraction.document.table_models import (
     TableSchema,
     TableStrategy,
 )
+from mzizi_extraction.document.table_gate import looks_like_prose, totals_mismatch
 from mzizi_extraction.document.table_quality import geometry, intersection, layout_score, table_metrics
 from mzizi_extraction.pdf.tables import clean_table
 
@@ -107,7 +108,7 @@ def _candidates(
             coverage, split_share, duplicate_share = geometry(box, cells, words)
             metrics = table_metrics(rows, coverage, split_share, duplicate_share, schema)
             body_rows = len(rows) - header_count
-            if text_mode and metrics.split_word_share > MAX_TEXT_SPLIT_SHARE:
+            if text_mode and (metrics.split_word_share > MAX_TEXT_SPLIT_SHARE or looks_like_prose(rows)):
                 continue  # prose guard: the region stays paragraph text
             if (
                 text_mode
@@ -184,6 +185,10 @@ def _review(group: list[Candidate], winners: list[Candidate], words: list[Word])
         reasons.append(ReviewReason.SCHEMA)
     if winner.strategy is TableStrategy.TEXT and not metrics.schema_headers_match:
         reasons.append(ReviewReason.TEXT_WITHOUT_SCHEMA)
+    if looks_like_prose(winner.rows):
+        reasons.append(ReviewReason.PROSE_LIKE)
+    if totals_mismatch(winner.rows):
+        reasons.append(ReviewReason.TOTALS_MISMATCH)
     if any(abs(winner.score - other.score) < CLOSE_SCORE_MARGIN and winner.rows != other.rows for other in others):
         reasons.append(ReviewReason.CLOSE_SCORES)
     if any(_potential_row_loss(winner, other, words) for other in others):

@@ -64,6 +64,8 @@ class ReviewReason(StrEnum):
     SOURCE_COVERAGE = "low_source_word_coverage"
     DUPLICATE_SOURCE = "source_words_assigned_to_multiple_cells"
     TEXT_WITHOUT_SCHEMA = "text_alignment_without_matching_schema"
+    PROSE_LIKE = "content_reads_as_running_text"
+    TOTALS_MISMATCH = "totals_do_not_add_up"
 
 
 class ColumnMetrics(Frozen):
