@@ -160,8 +160,16 @@ const HistoricalValidityEntityBase = dryv
   .extends(validityGroup.ValidityEntity)
   .abstract()
   .description("Base for versioned records valid over a period whose start and end may be uncertain.");
-HistoricalValidityEntityBase.rule(shared, "StartBoundsAreOrdered", dryv.rule.ordered("validFromEarliest", "validFromLatest"));
-HistoricalValidityEntityBase.rule(shared, "EndBoundsAreOrdered", dryv.rule.ordered("validUntilEarliest", "validUntilLatest"));
+HistoricalValidityEntityBase.rule(
+  shared,
+  "StartBoundsAreOrdered",
+  dryv.rule.ordered("validFromEarliest", "validFromLatest"),
+);
+HistoricalValidityEntityBase.rule(
+  shared,
+  "EndBoundsAreOrdered",
+  dryv.rule.ordered("validUntilEarliest", "validUntilLatest"),
+);
 
 const historicalGroup = shared.schemas({ HistoricalValidityEntity: HistoricalValidityEntityBase });
 

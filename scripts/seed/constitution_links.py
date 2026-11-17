@@ -66,7 +66,7 @@ def relation_before(text: str, start: int) -> str:
 
 
 def references() -> int:
-    """Find "Article 24 (1) (b)", "Chapter Four" and "Fifth Schedule" mentions in each English wording and write them as links."""
+    """Find "Article 24 (1) (b)", "Chapter Four" and "Fifth Schedule" mentions in each English wording and write them as references."""
     provisions: set[str] = set()
     for path in OUT.glob("*/provisions.csv"):
         with path.open(newline="", encoding="utf-8") as handle:
@@ -76,7 +76,7 @@ def references() -> int:
         if not folder.is_dir():
             continue
         rows: list[list[str]] = []
-        with (folder / "provision_versions.csv").open(newline="", encoding="utf-8") as handle:
+        with (folder / "wordings.csv").open(newline="", encoding="utf-8") as handle:
             for version in csv.DictReader(handle):
                 text, own = version["text"], version["provision_code"]
                 found: list[tuple[int, int, str, str]] = []
@@ -119,6 +119,7 @@ def references() -> int:
                     seen.add(start)
                     rows.append(
                         [
+                            f"{version['code']}.s{start}-{hashlib.sha256(f'{code}|{end}'.encode()).hexdigest()[:10]}",
                             version["code"],
                             "",
                             code,
@@ -131,9 +132,10 @@ def references() -> int:
                         ]
                     )
         write(
-            folder / "provision_references.csv",
+            folder / "references.csv",
             [
-                "source_version_code",
+                "code",
+                "wording_code",
                 "translation_code",
                 "target_provision_code",
                 "relation",
@@ -150,7 +152,7 @@ def references() -> int:
 
 
 def bases() -> int:
-    """Link what the Constitution creates or governs to the provision that does it: the country, the counties, constituencies and kinds."""
+    """Record what the Constitution establishes, defines or governs: the country, the counties, constituencies and kinds, as legal effects."""
     ids: dict[str, str] = {}
     with (REPO / "seed/data/ke/geo/counties/identifiers.csv").open(newline="", encoding="utf-8") as handle:
         for row in csv.DictReader(handle):
@@ -201,65 +203,90 @@ def bases() -> int:
         ("geo.feature.kind.ward", "art-177", "Wards, whose elected members sit in the county assemblies."),
     ]:
         rows.append(["reference.values", value, f"{INSTRUMENT}.{art}", "defined-by", note, ""])
+    shorts = {"geography.features": "ftr", "reference.values": "val"}
+    effects = [
+        [
+            f"{provision}.{relation}.{shorts[table]}.{record}",
+            f"{provision}.v-2010",
+            table,
+            record,
+            f"leg.effect.kind.{relation}",
+            valid_from,
+            note,
+            "proposed",
+            OBSERVED,
+        ]
+        for table, record, provision, relation, note, valid_from in rows
+    ]
     write(
-        REPO / "seed/data/ke/legal/bases/geography.bases.csv",
-        ["table_name", "record_code", "provision_code", "relation", "note", "valid_from"],
-        rows,
+        REPO / "seed/data/ke/legal/effects/geography.effects.csv",
+        [
+            "code",
+            "wording_code",
+            "subject_table",
+            "subject_code",
+            "kind_code",
+            "valid_from",
+            "explanation",
+            "review_status",
+            "observed_at",
+        ],
+        effects,
     )
-    return len(rows)
+    return len(effects)
 
 
 def lineage() -> int:
     """Say what each generated CSV was prepared from: the English capture, and the Kiswahili capture for the translations."""
     sys.path.insert(0, str(REPO / "source/packages/manifest/src"))
-    from mzizi_manifest.features.data.datasets import dataset_code
+    from mzizi_manifest.features.data.datasets import dataset_code, is_catalogue
 
     seed = REPO / "seed"
     rows: list[list[str]] = []
+    prepared, supports = "src.relationship.kind.prepared-from", "src.relationship.kind.supports"
+
+    def add(product: str, capture: str, kind: str, method: str) -> None:
+        role = "raw" if kind == prepared else "lookup"
+        rows.append([f"{product}.{capture}", kind, product, capture, f"[{role}] {method}"])
+
     for path in sorted((seed / "data/ke/legal").rglob("*.csv")):
+        if is_catalogue(seed, path):
+            continue
         code = dataset_code(seed, path)
         name = path.stem
-        if name == "provision_translations":
-            rows.append(
-                [
-                    code,
-                    f"cap-{SW_DOC}",
-                    "raw",
-                    "Kiswahili text read from the URAIA translation and aligned to the English provision by article, clause and paragraph number.",
-                ]
+        if name == "translations":
+            add(
+                code,
+                f"cap-{SW_DOC}",
+                prepared,
+                "Kiswahili text read from the URAIA translation and aligned to the English provision by article, clause and paragraph number.",
             )
-            rows.append([code, f"cap-{EN_DOC}", "lookup", "The English provision each translation belongs to."])
-        elif name == "provision_references":
-            rows.append(
-                [
-                    code,
-                    f"cap-{EN_DOC}",
-                    "raw",
-                    "Mentions of other provisions found in the English wording by pattern (Article n, Chapter, Schedule); spans count characters of the stored text.",
-                ]
+            add(code, f"cap-{EN_DOC}", supports, "The English provision each translation belongs to.")
+        elif name == "references":
+            add(
+                code,
+                f"cap-{EN_DOC}",
+                prepared,
+                "Mentions of other provisions found in the English wording by pattern (Article n, Chapter, Schedule); spans count characters of the stored text.",
             )
-        elif name == "geography.bases":
-            rows.append(
-                [
-                    code,
-                    f"cap-{EN_DOC}",
-                    "lookup",
-                    "Articles and Schedule 1 items that establish the country, counties and constituencies.",
-                ]
+        elif name == "geography-effects" or name == "geography.effects":
+            add(
+                code,
+                f"cap-{EN_DOC}",
+                supports,
+                "Articles and Schedule 1 items that establish the country, counties and constituencies.",
             )
         else:
-            rows.append(
-                [
-                    code,
-                    f"cap-{EN_DOC}",
-                    "raw",
-                    "Provisions read from the English NCLR print: structure from the numbering, text from the page, headings from the arrangement of articles.",
-                ]
+            add(
+                code,
+                f"cap-{EN_DOC}",
+                prepared,
+                "Provisions read from the English NCLR print: structure from the numbering, text from the page, headings from the arrangement of articles.",
             )
     ensure(
-        REPO / "seed/data/ke/source/dataset_lineage.csv",
-        ["dataset_code", "input_capture_code", "role", "method"],
-        [r for r in rows],
+        REPO / "seed/data/ke/source/relationships.csv",
+        ["code", "kind_code", "output_product_code", "input_capture_code", "method"],
+        rows,
         key=0,
     )
     return len(rows)

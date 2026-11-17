@@ -132,9 +132,8 @@ def test_replace_current_retires_the_old_version_and_a_revision_is_never_reused(
 
 
 def test_relocation_through_postgres(fs: FilesystemOrchestrator, reference: tuple[str, str]) -> None:
-    role, kind = reference
+    role, _kind = reference
     root = f"t{uuid4().hex[:8]}"
-    raw = fs.register(ask(role, root, "raw"), b"a\n1\n")
     clean = fs.register(ask(role, root, "clean"), b"a\n10\n")
     folder = fs.plan(ask(role, root, "clean").placement).steps[-1].existing
     assert folder is not None

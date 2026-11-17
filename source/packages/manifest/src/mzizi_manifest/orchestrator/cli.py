@@ -25,7 +25,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     verify.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
     datasets = sub.add_parser(
-        "datasets", help="write the seed product, edition and artifact catalogue under data/global/source/: one artifact for every seed CSV"
+        "datasets",
+        help="write the seed product, edition and artifact catalogue under data/global/source/: one artifact for every seed CSV",
     )
     datasets.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
     refs = sub.add_parser("refs", help="check that every source, mapping and terms code resolves")

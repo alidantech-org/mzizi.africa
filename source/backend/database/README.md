@@ -4,12 +4,12 @@
 
 ```text
 sql/schema.sql        generated, formatted schema snapshot (Dryv pack postgres-sql + `db format`); never edited by hand
-migrations/           immutable release stream: 0001_init.sql plus the .snapshot checksum record
+migrations/           immutable release stream: 0001_init.sql, the generated 0002_subject_integrity.sql and the .snapshot checksum record
 src/                  the Bun CLI: cli.ts, commands.ts, ledger.ts, releases.ts, config.ts (+ tests)
 package.json          bun run db | typecheck | test
 ```
 
-Schemas, tables and columns are authored as Dryv contracts in `dryv/contracts/schemas/postgres` and generated; they are never written by hand here. The snapshot currently holds 12 schemas and 94 tables (reference, geography, legal, official, governance, politics, finance, civic, source, filesystem, auth, audit).
+Schemas, tables and columns are authored as Dryv contracts in `dryv/contracts/schemas/postgres` and generated; they are never written by hand here. The snapshot currently holds 12 schemas (reference, geography, legal, official, governance, politics, finance, civic, source, filesystem, auth, audit); Filesystem has 7 tables, Source 13, Geography 8 and Legal 9. Generic single-subject records (`filesystem.media`, `source.verifications`, `legal.effects` and the like) carry the shared `subject_table`/`subject_id` keys; see [SUBJECT_REFERENCES](../../../.docs/design/data/SUBJECT_REFERENCES.md).
 
 ## Commands
 
@@ -33,6 +33,7 @@ Environment: `MZIZI_DB_ADMIN_URL` (administrative connection, used only here), `
 bun run dryv:api                 # starts the Dryv engine API (needs the Dryv checkout; see dryv/README.md)
 bun run dryv:database:generate   # writes sql/schema.sql
 bun run db assemble              # first release only; a changed snapshot is refused
+bun dryv/tools/subject-integrity.ts   # writes 0002_subject_integrity.sql (run from dryv/)
 MZIZI_DB_ADMIN_URL=postgres://… bun run db migrate
 ```
 

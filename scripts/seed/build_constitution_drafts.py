@@ -34,7 +34,7 @@ def load_text() -> tuple[set[str], dict[str, str]]:
     for path in LEGAL.glob("*/provisions.csv"):
         with path.open(newline="", encoding="utf-8") as handle:
             provisions.update(r["code"] for r in csv.DictReader(handle))
-    for path in LEGAL.glob("*/provision_versions.csv"):
+    for path in LEGAL.glob("*/wordings.csv"):
         with path.open(newline="", encoding="utf-8") as handle:
             for r in csv.DictReader(handle):
                 text[r["provision_code"]] = r["text"]

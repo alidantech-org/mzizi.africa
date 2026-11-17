@@ -68,7 +68,7 @@ def test_attachment_size_unknown_private_host_and_file_cap_are_explicit(
     crawl_site(CrawlRequest(url=site + "/list", out_dir=str(folder), max_depth=0, delay=0, sitemap=False))
     rules = tmp_path / "rules.yaml"
     rules.write_text(
-        "rules:\n  - target: source.documents\n"
+        "rules:\n  - target: source.products\n"
         "    label: Documents\n    conditions: [{signal: extension, contains: [pdf]}]\n",
     )
     request = AttachmentRequest(
@@ -115,7 +115,7 @@ def test_an_html_error_at_an_attachment_url_is_reported_before_useful_accounting
     crawl_site(CrawlRequest(url=site + "/list", out_dir=str(folder), max_depth=0, delay=0, sitemap=False))
     rules = tmp_path / "rules.yaml"
     rules.write_text(
-        "rules:\n  - target: source.documents\n"
+        "rules:\n  - target: source.products\n"
         "    label: Documents\n    conditions: [{signal: extension, contains: [pdf]}]\n",
     )
     review = tmp_path / "review.json"

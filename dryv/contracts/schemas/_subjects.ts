@@ -109,6 +109,8 @@ export const subjectFields = {
 const SubjectReferenceBase = dryv
   .schema({ ...subjectFields })
   .abstract()
-  .description("Base for a record about one subject: the subject's fully qualified table and its row id. Contributes no other fields.");
+  .description(
+    "Base for a record about one subject: the subject's fully qualified table and its row id. Contributes no other fields.",
+  );
 
 export const subjectSchemas = shared.schemas({ SubjectReference: SubjectReferenceBase });

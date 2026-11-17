@@ -20,9 +20,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const geography = dryv
   .group({ name: "geography" })
-  .description(
-    "Canonical geographic identities, territorial units, physical places and spatial representations.",
-  )
+  .description("Canonical geographic identities, territorial units, physical places and spatial representations.")
   .facets({ storage: { namespace: "geography", store: "main" } });
 
 /*---------------- Approved Geography table contracts ----------------*/
@@ -37,10 +35,7 @@ export const Features = geography
   )
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("features")
-      .index("featureTypeId")
-      .index("validFrom", "validUntil"),
+    storage: dryv.storage("features").index("featureTypeId").index("validFrom", "validUntil"),
   });
 
 export const Names = geography
@@ -91,32 +86,21 @@ export const Classifications = geography
   )
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("classifications")
-      .unique("featureId", "valueId", "validFrom")
-      .index("featureId")
-      .index("valueId"),
+    storage: dryv.storage("classifications").unique("featureId", "valueId", "validFrom").index("featureId").index("valueId"),
   });
 
 export const Identifiers = geography
   .schema("Identifiers", {
     featureId: belongsTo(() => Features),
-    identifierSchemeId: belongsTo(() => Value).tags(
-      "scheme:ref.sch.geo.identifier.scheme",
-    ),
+    identifierSchemeId: belongsTo(() => Value).tags("scheme:ref.sch.geo.identifier.scheme"),
     namespace: dryv.field(sharedProperties.NonEmptyString255).maybe(),
     externalId: dryv.field(sharedProperties.NonEmptyString500),
   })
   .extends(baseSchemas.Entity)
-  .description(
-    "A preserved identifier assigned to a feature by an external geographic registry or source system.",
-  )
+  .description("A preserved identifier assigned to a feature by an external geographic registry or source system.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("identifiers")
-      .unique("identifierSchemeId", "namespace", "externalId")
-      .index("featureId"),
+    storage: dryv.storage("identifiers").unique("identifierSchemeId", "namespace", "externalId").index("featureId"),
   });
 
 const calculations = geography.expressions({
@@ -125,8 +109,7 @@ const calculations = geography.expressions({
   GeometryArea: dryv.expression.spatial.area("geometry"),
 });
 
-const geometry = (shape: dryv.GeometryShape) =>
-  dryv.geometry({ shape, srid: 4326 });
+const geometry = (shape: dryv.GeometryShape) => dryv.geometry({ shape, srid: 4326 });
 const spatialTypes = geography.properties({
   GeometryArea: dryv.property.number.double(),
 });
@@ -148,15 +131,9 @@ export const Geometries = geography
     minZoom: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
     maxZoom: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
     geometry: dryv.field(geometry("any")),
-    envelope: dryv
-      .field(geometry("any"))
-      .generated(calculations.GeometryEnvelope),
-    centroid: dryv
-      .field(geometry("point"))
-      .generated(calculations.GeometryCentroid),
-    area: dryv
-      .field(spatialTypes.GeometryArea)
-      .generated(calculations.GeometryArea),
+    envelope: dryv.field(geometry("any")).generated(calculations.GeometryEnvelope),
+    centroid: dryv.field(geometry("point")).generated(calculations.GeometryCentroid),
+    area: dryv.field(spatialTypes.GeometryArea).generated(calculations.GeometryArea),
     srid: dryv.field(sharedProperties.PositiveInteger),
     observedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
@@ -204,17 +181,12 @@ export const Relationships = geography
     subjectFeatureId: belongsTo(() => Features),
     objectFeatureId: belongsTo(() => Features),
     /** Expected scheme: geo.relationship.kind (part-of, flows-through, located-on, connects, borders, replaced-by). */
-    relationshipKindId: belongsTo(() => Value).tags(
-      "scheme:ref.sch.geo.relationship.kind",
-    ),
+    relationshipKindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.relationship.kind"),
     /** Expected scheme: geo.relationship.system (administrative, electoral, statistical, hydrological, historical). */
     systemId: belongsTo(() => Value).tags("scheme:ref.sch.geo.relationship.system"),
   })
   .extends(baseSchemas.HistoricalValidityEntity)
-  .rule(
-    "RelationshipMustNotBeSelfReferential",
-    rule.differs("subjectFeatureId", "objectFeatureId"),
-  )
+  .rule("RelationshipMustNotBeSelfReferential", rule.differs("subjectFeatureId", "objectFeatureId"))
   .description(
     "A typed, dated directed relationship between features; separate rows allow overlapping administrative, electoral, statistical and other systems.",
   )
@@ -222,13 +194,7 @@ export const Relationships = geography
   .facets({
     storage: dryv
       .storage("relationships")
-      .unique(
-        "subjectFeatureId",
-        "objectFeatureId",
-        "relationshipKindId",
-        "systemId",
-        "validFrom",
-      )
+      .unique("subjectFeatureId", "objectFeatureId", "relationshipKindId", "systemId", "validFrom")
       .index("subjectFeatureId", "relationshipKindId")
       .index("objectFeatureId", "relationshipKindId")
       .index("validFrom", "validUntil"),

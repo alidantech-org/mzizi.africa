@@ -17,7 +17,9 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const legal = dryv
   .group({ name: "legal" })
-  .description("Legal instruments, their names, editions, provisions, authoritative wordings, translations, references, relationships and effects.")
+  .description(
+    "Legal instruments, their names, editions, provisions, authoritative wordings, translations, references, relationships and effects.",
+  )
   .facets({ storage: { namespace: "legal", store: "main" } });
 
 export const legalEnums = legal.properties({
@@ -36,12 +38,7 @@ export const legalEnums = legal.properties({
   ]),
   /** How a translation was produced. Authority is never implied by the method or by review. */
   TranslationMethod: dryv.property.enum(["human", "machine", "assisted"]),
-  ReviewStatus: dryv.property.enum([
-    "proposed",
-    "reviewed",
-    "accepted",
-    "rejected",
-  ]),
+  ReviewStatus: dryv.property.enum(["proposed", "reviewed", "accepted", "rejected"]),
   ReferenceRelation: dryv.property.enum([
     "refers-to",
     "subject-to",
@@ -86,7 +83,9 @@ export const Names = legal
     isPreferred: dryv.field(sharedProperties.Flag),
   })
   .extends(baseSchemas.CodedValidityEntity)
-  .description("A name of one instrument in one language, with its kind and validity. All forms resolve to the same instrument.")
+  .description(
+    "A name of one instrument in one language, with its kind and validity. All forms resolve to the same instrument.",
+  )
   .role("entity");
 
 const preferredName = legal.expression(
@@ -241,7 +240,9 @@ export const References = legal
   .rule("ExactlyOneOrigin", rule.exactlyOne("wordingId", "translationId"))
   .rule("SpanMustBeOrdered", rule.ordered("spanStart", "spanEnd"))
   .rule("SpanMustBeNonEmpty", rule.differs("spanStart", "spanEnd"))
-  .description("A textual mention of a provision inside a wording or translation, with the exact span. A mention is not an amendment.")
+  .description(
+    "A textual mention of a provision inside a wording or translation, with the exact span. A mention is not an amendment.",
+  )
   .role("entity")
   .facets({
     storage: dryv
@@ -275,7 +276,9 @@ export const Relationships = legal
   .rule("InstrumentEndsTogether", rule.allOrNone("subjectInstrumentId", "objectInstrumentId"))
   .rule("InstrumentsMustDiffer", rule.differs("subjectInstrumentId", "objectInstrumentId"))
   .rule("WordingMustNotAffectItself", rule.differs("affectedWordingId", "resultingWordingId"))
-  .description("A substantive legal operation or hierarchy link between wordings or instruments. Source derivation is not recorded here.")
+  .description(
+    "A substantive legal operation or hierarchy link between wordings or instruments. Source derivation is not recorded here.",
+  )
   .role("entity")
   .facets({
     storage: dryv

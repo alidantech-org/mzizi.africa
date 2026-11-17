@@ -4,21 +4,54 @@ Usage: uv run python scripts/seed/build_constitution.py
 
 Reads (all outside git, in .dev/datasets/): the English NCLR print, the URAIA Kiswahili translation and the KLRC chapter and part
 pages. Writes, under seed/data/ke/legal/constitution-2010/, one small folder per chapter (and the preamble and each schedule)
-holding provisions.csv, provision_versions.csv, provision_translations.csv and provision_references.csv, plus the instrument and
-its version, and the source records (domains, paths, documents, captures) the PDFs and KLRC pages need.
+holding provisions.csv, wordings.csv, translations.csv and references.csv (and, under seed/data/ke/source/constitution-2010/, the
+citations and translation relationships), plus the instrument, its name and its edition, the legal effects, and the source records
+(domains, addresses, products, editions, artifacts, captures) the PDFs and KLRC pages need.
 Run it again after a parser change; it overwrites only what it generates.
 """
 
 # ruff: noqa: F403, F405
 from __future__ import annotations
 
+import json
+import re
 import shutil
+from urllib.parse import urlsplit
 
 from constitution_common import *
 from constitution_links import *
 from constitution_sources import *
 
 from mzizi_extraction.legislation import SWAHILI, parse_instrument
+
+
+PDF_FILES = {EN_PDF.name: EN_DOC, SW_PDF.name: SW_DOC}
+
+
+def citation(code: str, locator: str, page: int) -> list[str]:
+    """The exact citation behind a wording: a PDF page of the NCLR print, or the KLRC page it was read from."""
+    if locator.startswith("http"):
+        parts = urlsplit(locator)
+        address = re.search(r"/(\d+)-[^/]*$", parts.path)
+        if not address:
+            raise ValueError(f"{code}: cannot find the page identity in {locator}")
+        return [
+            code,
+            "",
+            f"klrc-{address.group(1)}",
+            "src.locator.kind.url",
+            json.dumps({"url": locator}, sort_keys=True),
+            OBSERVED,
+        ]
+    name = locator.split(" page ")[0]
+    return [
+        code,
+        PDF_FILES[name],
+        "",
+        "src.locator.kind.page",
+        json.dumps({"file": name, "page": page}, sort_keys=True),
+        OBSERVED,
+    ]
 
 
 def main() -> None:
@@ -33,7 +66,7 @@ def main() -> None:
         by_folder.setdefault(row.folder, []).append(row)
     translated = missing = 0
     for folder, items in by_folder.items():
-        prov, vers, trans = [], [], []
+        prov, vers, trans, cites, trans_rel = [], [], [], [], []
         for r in items:
             n = r.node
             prov.append(
@@ -57,20 +90,32 @@ def main() -> None:
             if not locator:
                 locator = f"{EN_PDF.name} page {n.page}"
             vcode = f"{r.code}.v-2010"
-            vers.append([vcode, INSTRUMENT, VERSION, r.code, "en", locator, OBSERVED, text])
+            vers.append([vcode, INSTRUMENT, r.code, VERSION, "en", vcode, OBSERVED, text])
+            cites.append(citation(vcode, locator, n.page))
             twin = sw_rows.get(r.code)
             sw_text = (twin.node.text.strip() or twin.node.title.strip()) if twin else ""
             if sw_text:
+                tcode = f"{vcode}.sw-uraia"
                 trans.append(
                     [
-                        f"{vcode}.sw-uraia",
+                        tcode,
                         vcode,
                         "sw",
                         sw_text,
-                        "unofficial",
-                        "proposed",
-                        SW_DOC,
+                        "human",
                         '{"basis": "URAIA translation of the NCLR print of 27 August 2010", "alignment": "same article, clause and paragraph numbers"}',
+                        "proposed",
+                        "Earlier classification: unofficial.",
+                    ]
+                )
+                trans_rel.append(
+                    [
+                        f"{tcode}.{SW_DOC}",
+                        "src.relationship.kind.translated-from",
+                        "legal.translations",
+                        tcode,
+                        SW_DOC,
+                        "Translation read from this artifact.",
                     ]
                 )
                 translated += 1
@@ -83,51 +128,73 @@ def main() -> None:
             prov,
         )
         write(
-            base / "provision_versions.csv",
+            base / "wordings.csv",
             [
                 "code",
                 "instrument_code",
-                "instrument_version_code",
                 "provision_code",
+                "edition_code",
                 "language_code",
-                "locator",
+                "citation_code",
                 "observed_at",
                 "text",
             ],
             vers,
         )
         write(
-            base / "provision_translations.csv",
-            [
-                "code",
-                "provision_version_code",
-                "language_code",
-                "text",
-                "kind",
-                "review_status",
-                "document_code",
-                "produced_by",
-            ],
+            base / "translations.csv",
+            ["code", "wording_code", "language_code", "text", "method", "produced_by", "review_status", "notes"],
             trans,
         )
+        source_base = SOURCE_OUT / "constitution-2010" / folder
+        write(
+            source_base / "citations.csv",
+            ["code", "artifact_code", "address_code", "locator_kind_code", "locator", "recorded_at"],
+            cites,
+        )
+        if trans_rel:
+            write(
+                source_base / "translations.relationships.csv",
+                ["code", "kind_code", "subject_table", "subject_code", "input_artifact_code", "method"],
+                trans_rel,
+            )
     write(
         OUT.parent / "instruments.csv",
-        ["code", "title", "kind_code", "issuing_unit_code", "enacted_on", "published_on"],
+        ["code", "kind_code", "issuing_unit_code", "enacted_on", "published_on"],
+        [[INSTRUMENT, "leg.instrument.kind.constitution", "ke", "2010-08-27", "2010-08-27"]],
+    )
+    write(
+        OUT.parent / "names.csv",
+        ["code", "instrument_code", "language_code", "name", "kind_code", "is_preferred"],
         [
             [
+                f"{INSTRUMENT}.formal-title.und",
                 INSTRUMENT,
+                "und",
                 "The Constitution of Kenya, 2010",
-                "leg.instrument.kind.constitution",
-                "ke",
-                "2010-08-27",
-                "2010-08-27",
+                "leg.name.kind.formal-title",
+                "true",
             ]
         ],
     )
     write(
-        OUT.parent / "instrument_versions.csv",
-        ["code", "instrument_code", "edition", "document_code", "observed_at", "commenced_on"],
-        [[VERSION, INSTRUMENT, "2010, National Council for Law Reporting print", EN_DOC, OBSERVED, "2010-08-27"]],
+        OUT.parent / "editions.csv",
+        ["code", "instrument_code", "designation", "observed_at", "commenced_on"],
+        [[VERSION, INSTRUMENT, "2010, National Council for Law Reporting print", OBSERVED, "2010-08-27"]],
+    )
+    write(
+        SOURCE_OUT / "editions.relationships.csv",
+        ["code", "kind_code", "subject_table", "subject_code", "input_artifact_code", "method"],
+        [
+            [
+                f"{VERSION}.{EN_DOC}",
+                "src.relationship.kind.prepared-from",
+                "legal.editions",
+                VERSION,
+                EN_DOC,
+                "Edition read from this artifact.",
+            ]
+        ],
     )
     sources()
     reference_values()

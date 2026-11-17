@@ -30,20 +30,11 @@ export const Entities = official
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .rule(
-    "RegistrationAndDissolutionAreOrdered",
-    rule.ordered("registeredOn", "dissolvedOn", { allowEqual: true }),
-  )
-  .description(
-    "Stable identity for one organization or legally identified entity; its names are stored in official.names.",
-  )
+  .rule("RegistrationAndDissolutionAreOrdered", rule.ordered("registeredOn", "dissolvedOn", { allowEqual: true }))
+  .description("Stable identity for one organization or legally identified entity; its names are stored in official.names.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("entities")
-      .index("kindId")
-      .index("registrationCountryId")
-      .index("sourceCitationId"),
+    storage: dryv.storage("entities").index("kindId").index("registrationCountryId").index("sourceCitationId"),
   });
 
 export const Individuals = official
@@ -53,9 +44,7 @@ export const Individuals = official
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "One real human identity; names, identifiers and contacts are normalized in shared tables.",
-  )
+  .description("One real human identity; names, identifiers and contacts are normalized in shared tables.")
   .role("entity")
   .facets({
     storage: dryv.storage("individuals").index("sourceCitationId"),
@@ -74,10 +63,7 @@ export const Names = official
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.ValidityEntity)
-  .rule(
-    "HasExactlyOneIdentityOwner",
-    rule.exactlyOne("entityId", "individualId"),
-  )
+  .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
   .description(
     "One attested name form for exactly one entity or individual, with its language (`mul` or `und` when none applies) and validity.",
   )
@@ -113,10 +99,7 @@ export const Identifiers = official
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.ValidityEntity)
-  .rule(
-    "HasExactlyOneIdentityOwner",
-    rule.exactlyOne("entityId", "individualId"),
-  )
+  .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
   .description(
     "One exact external identifier assigned to an entity or individual under a Reference scheme and optional issuer.",
   )
@@ -142,13 +125,8 @@ export const Contacts = official
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedValidityEntity)
-  .rule(
-    "HasExactlyOneIdentityOwner",
-    rule.exactlyOne("entityId", "individualId"),
-  )
-  .description(
-    "One sourced contact channel for exactly one identity; visibility class governs handling of private values.",
-  )
+  .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
+  .description("One sourced contact channel for exactly one identity; visibility class governs handling of private values.")
   .role("entity")
   .facets({
     storage: dryv
@@ -170,19 +148,10 @@ export const Relationships = official
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedValidityEntity)
-  .rule(
-    "HasExactlyOneFromIdentity",
-    rule.exactlyOne("fromEntityId", "fromIndividualId"),
-  )
-  .rule(
-    "HasExactlyOneToIdentity",
-    rule.exactlyOne("toEntityId", "toIndividualId"),
-  )
+  .rule("HasExactlyOneFromIdentity", rule.exactlyOne("fromEntityId", "fromIndividualId"))
+  .rule("HasExactlyOneToIdentity", rule.exactlyOne("toEntityId", "toIndividualId"))
   .rule("DoesNotLinkIdentityToItself", (v) =>
-    when.all(
-      v.fromEntityId.ne(v.toEntityId),
-      v.fromIndividualId.ne(v.toIndividualId),
-    ),
+    when.all(v.fromEntityId.ne(v.toEntityId), v.fromIndividualId.ne(v.toIndividualId)),
   )
   .description(
     "One directed typed relationship between exactly two Official identities, optionally with an ownership share.",
@@ -224,4 +193,3 @@ export const Branding = official
       .index("languageId")
       .index("sourceCitationId"),
   });
-

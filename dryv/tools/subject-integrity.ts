@@ -74,21 +74,27 @@ end $$;
 
 ${carriers
   .map(
-    (c) => `alter table ${c} add constraint ck_${nameOf(c)}__subject_table check (subject_table is null or subject_table in (${list(enumTables)}));
+    (
+      c,
+    ) => `alter table ${c} add constraint ck_${nameOf(c)}__subject_table check (subject_table is null or subject_table in (${list(enumTables)}));
 create trigger tr_${nameOf(c)}__subject_exists before insert or update of subject_table, subject_id on ${c}
   for each row execute function public.assert_subject();`,
   )
   .join("\n\n")}
 
 ${enumTables
-  .map((t) => `create trigger tr_${nameOf(t)}__subject_delete before delete on ${t} for each row execute function public.guard_subject_delete();`)
+  .map(
+    (t) =>
+      `create trigger tr_${nameOf(t)}__subject_delete before delete on ${t} for each row execute function public.guard_subject_delete();`,
+  )
   .join("\n")}
 `;
 
 const target = resolve(repo, "source/backend/database/migrations/0002_subject_integrity.sql");
 if (process.argv.includes("--check")) {
   const current = (await Bun.file(target).exists()) ? await Bun.file(target).text() : "";
-  if (current !== sql) errors.push("0002_subject_integrity.sql is missing or stale; run `bun dryv/tools/subject-integrity.ts`");
+  if (current !== sql)
+    errors.push("0002_subject_integrity.sql is missing or stale; run `bun dryv/tools/subject-integrity.ts`");
   if (errors.length) {
     console.error(errors.join("\n"));
     process.exit(1);

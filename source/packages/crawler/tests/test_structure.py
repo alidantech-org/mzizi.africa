@@ -156,7 +156,7 @@ def test_an_invalid_selector_is_a_validation_error_not_a_crash():
 def test_ranking_rules_validate_and_must_target_stored_tables():
     good = {
         "rules": [
-            {"target": "source.documents", "label": "report", "conditions": [{"signal": "section", "contains": ["a"]}]}
+            {"target": "source.products", "label": "report", "conditions": [{"signal": "section", "contains": ["a"]}]}
         ]
     }
     assert validate_ranking(good) == []

@@ -241,3 +241,14 @@ Verify actual Dryv IR and selected SQL output for composite FKs, uniqueness, che
 Use the [SubjectReference standard](SUBJECT_REFERENCES.md) for effects and every equivalent single-subject generic association. No mixed target_table/target_id, table_name/record_id or subject aliases remain for that meaning after the coordinated breaking migration. This does not replace fixed legal wording FKs or collapse distinct I/O endpoint roles.
 
 The owner now authorizes implementation through the implementation handoff, including script-driven repair of existing affected seed CSVs and complete Dryv regeneration/consumer repair. Earlier discussion-only wording documents chronology and must not be treated as a requirement to seek the same approval again. Implementation must preserve exact texts, translations, authority links and historical evidence.
+
+## Implementation record
+
+Implemented on 17 November 2026 under task TSK-A41C603B94BE: the nine tables are authored in `dryv/contracts/schemas/postgres/legal.ts`, generated into the SQL snapshot and verified on a disposable database. Choices made within the approved design:
+
+- `legal.names.language_id` is `und` for the migrated Constitution title because the old title asserted no language; preferred names are unique per instrument and language among current (open-ended) names.
+- `legal.relationships` has two levels (`affected_wording_id` or the instrument pair) selected by a check; the preferred relationship kinds are Reference values (`leg.relationship.kind`), none of which is seeded yet.
+- `legal.references` and `legal.relationships` carry codes so they can be seeded; spans are bounded by `span_start < span_end` and checked against the exact text by the conversion script.
+- `legal.effects` names its wording and subject through `wording_id` and the shared subject keys; the converted legal bases are `proposed` because the old rows carried no review state.
+- Old translation kinds (`official`, `unofficial`, `proposed-draft`, `machine-proposed`) are preserved in `notes`; only `method` (`human`/`machine`) is derived from them, and nothing marks a translation as authority.
+- Each wording's free-text locator became an exact citation: a PDF page of the registered artifact or the KLRC address.

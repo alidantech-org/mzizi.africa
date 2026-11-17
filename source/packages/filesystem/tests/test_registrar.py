@@ -152,7 +152,6 @@ def test_protected_prefixes_dry_runs_and_bad_content_are_refused_without_writing
     assert bad.outcome is Outcome.FAILED and "signature" in bad.detail
 
 
-
 def test_moves_renames_and_access_changes_carry_the_bytes_with_the_rows(parts) -> None:
     from mzizi_filesystem.features.transitions.transitions import RelocationError, Relocator
 

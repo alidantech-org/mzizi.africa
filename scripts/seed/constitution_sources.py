@@ -1,4 +1,4 @@
-"""The source records (domains, paths, documents, captures) and reference values the Constitution builder writes."""
+"""The source records (domains, addresses, products, editions, artifacts, captures) and reference values the Constitution builder writes."""
 
 # ruff: noqa: F403, F405
 from __future__ import annotations
@@ -15,7 +15,7 @@ from constitution_common import *
 
 
 def sources() -> None:
-    """Publishers, sources, domains, paths, documents and captures for the PDFs and the KLRC pages."""
+    """Publishers, websites, domains, addresses, products, editions, artifacts and captures for the PDFs and the KLRC pages."""
     glob = REPO / "seed/data/global/source"
     ensure(
         glob / "publishers.csv",
@@ -63,24 +63,30 @@ def sources() -> None:
                 "uraia",
                 "uraia.or.ke publishes a Kiswahili translation of the Constitution.",
             ],
+        ],
+    )
+    ensure(
+        glob / "products.csv",
+        ["code", "kind_code", "title", "publisher_code", "description"],
+        [
             [
                 EN_DOC,
+                "src.product.kind.legal-text",
                 "Constitution of Kenya, 2010, English (National Council for Law Reporting print)",
-                "dataset",
                 "nclr",
                 "LAWS OF KENYA, The Constitution of Kenya, 2010, published by the National Council for Law Reporting with the authority of the Attorney General. The English text governs (Article 259).",
             ],
             [
                 SW_DOC,
+                "src.product.kind.legal-text",
                 "Katiba ya Kenya, 2010, Kiswahili translation (URAIA)",
-                "dataset",
                 "uraia",
                 "A Kiswahili translation made from the NCLR print of 27 August 2010. Not the gazetted text; the English version governs.",
             ],
             [
                 SW_DRAFT_DOC,
+                "src.product.kind.legal-text",
                 "Katiba Inayopendekezwa ya Kenya, 6 May 2010 (Kiswahili proposed constitution)",
-                "dataset",
                 "ke-attorney-general",
                 "The Kiswahili proposed constitution published before the August 2010 referendum. A draft, not the final text.",
             ],
@@ -133,7 +139,11 @@ def sources() -> None:
             "The URAIA Kiswahili translation.",
         ],
     ]
-    ensure(glob / "paths.csv", ["code", "domain_code", "path", "kind", "note"], paths)
+    ensure(
+        glob / "addresses.csv",
+        ["code", "domain_code", "kind", "method", "path", "query", "note"],
+        [[c, d, k, "GET", *tuple(([u.partition("?")[0], u.partition("?")[2]])), n] for c, d, u, k, n in paths],
+    )
     files = [
         (
             EN_DOC,
@@ -163,41 +173,32 @@ def sources() -> None:
             "A pre-referendum draft published for public use; not the final text.",
         ),
     ]
-    docs, caps, entries = [], [], []
+    docs, caps, entries, editions = [], [], [], []
     import datetime
 
     for code, path, pub, pcode, url, credit, rights in files:
         data = path.read_bytes()
-        docs.append(
-            [
-                code,
-                f"{credit.split(',')[0] if False else code}",
-                "src.document.kind.legal-text",
-                hashlib.sha256(data).hexdigest(),
-                "application/pdf",
-                str(len(data)),
-                pub,
-            ]
-        )
         when = datetime.datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat(timespec="seconds")
-        caps.append([f"cap-{code}", code, pcode, code, url, when, '{"fetched_with": "curl", "headers_kept": false}'])
+        edition = f"{code}.retrieved-{when[:10]}"
+        editions.append([edition, code, f"retrieved {when[:10]}", ""])
+        docs.append([code, edition, hashlib.sha256(data).hexdigest(), "pdf", "application/pdf", str(len(data)), ""])
+        site = {
+            "constitutionnet-en-pdf": "constitutionnet",
+            "constitutionnet-sw-draft-pdf": "constitutionnet",
+            "uraia-sw-pdf": "uraia",
+        }[pcode]
+        caps.append([f"cap-{code}", site, pcode, code, url, when, '{"fetched_with": "curl", "headers_kept": false}'])
         entries.append((code, path, credit, rights))
-    titles = {
-        EN_DOC: "The Constitution of Kenya, 2010 (English, NCLR print)",
-        SW_DOC: "Katiba ya Kenya, 2010 (Kiswahili, URAIA translation)",
-        SW_DRAFT_DOC: "Katiba Inayopendekezwa ya Kenya, 6 May 2010 (Kiswahili draft)",
-    }
-    for d in docs:
-        d[1] = titles[d[0]]
     ke = REPO / "seed/data/ke/source"
+    ensure(glob / "editions.csv", ["code", "product_code", "designation", "description"], editions)
     ensure(
-        ke / "documents.csv",
-        ["code", "title", "kind_code", "sha256", "content_type", "size_bytes", "publisher_code"],
+        glob / "artifacts.csv",
+        ["code", "edition_code", "sha256", "format", "content_type", "size_bytes", "location"],
         docs,
     )
     ensure(
         ke / "captures.csv",
-        ["code", "source_code", "path_code", "document_code", "original_url", "retrieved_at", "response_metadata"],
+        ["code", "source_code", "address_code", "artifact_code", "original_url", "retrieved_at", "response_metadata"],
         caps,
     )
     lines = (ke / "_files.yaml").read_text(encoding="utf-8").rstrip("\n").split("\n")
@@ -208,6 +209,7 @@ def sources() -> None:
         lines += [
             f"  {code}:",
             f"    path: {path.relative_to(REPO)}",
+            f"    product: {code}",
             f'    credit: "{credit}"',
             f'    rights: "{rights}"',
         ]
@@ -219,8 +221,23 @@ def reference_values() -> None:
     ensure(
         ref / "schemes.csv",
         ["code", "title", "owner_snapshot"],
-        [["leg.instrument.kind", "Kinds of legal instrument", "mzizi curated"]],
+        [
+            ["leg.instrument.kind", "Kinds of legal instrument", "mzizi curated"],
+            ["leg.name.kind", "Kinds of legal instrument name", "mzizi curated"],
+            ["leg.effect.kind", "Kinds of legal effect", "mzizi curated"],
+            ["src.product.kind", "Kinds of product", "mzizi curated"],
+            ["src.relationship.kind", "Kinds of source relationship", "mzizi curated"],
+            ["src.locator.kind", "Kinds of citation locator", "mzizi curated"],
+        ],
     )
+    effect_kinds = [
+        ("established-by", "Established by"),
+        ("governed-by", "Governed by"),
+        ("defined-by", "Defined by"),
+        ("limited-by", "Limited by"),
+        ("implements", "Implements"),
+        ("derives-from", "Derives from"),
+    ]
     ensure(
         ref / "values/leg.values.csv",
         ["code", "scheme_code", "label", "parent_code"],
@@ -228,13 +245,21 @@ def reference_values() -> None:
             ["leg.instrument.kind.constitution", "leg.instrument.kind", "Constitution", ""],
             ["leg.instrument.kind.act", "leg.instrument.kind", "Act of Parliament", ""],
             ["leg.instrument.kind.regulation", "leg.instrument.kind", "Regulation", ""],
+            ["leg.name.kind.formal-title", "leg.name.kind", "Formal title", ""],
+            *[[f"leg.effect.kind.{k}", "leg.effect.kind", label, ""] for k, label in effect_kinds],
         ],
     )
     ensure(
         ref / "values/src.values.csv",
         ["code", "scheme_code", "label"],
         [
-            ["src.document.kind.legal-text", "src.document.kind", "Legal text"],
-            ["src.dataset.category.legal", "src.dataset.category", "Legal"],
+            ["src.product.kind.legal-text", "src.product.kind", "Legal text"],
+            ["src.relationship.kind.prepared-from", "src.relationship.kind", "Prepared from"],
+            ["src.relationship.kind.built-from", "src.relationship.kind", "Built from"],
+            ["src.relationship.kind.supports", "src.relationship.kind", "Supports"],
+            ["src.relationship.kind.translated-from", "src.relationship.kind", "Translated from"],
+            ["src.locator.kind.csv-line", "src.locator.kind", "CSV line"],
+            ["src.locator.kind.page", "src.locator.kind", "Page"],
+            ["src.locator.kind.url", "src.locator.kind", "Web address"],
         ],
     )

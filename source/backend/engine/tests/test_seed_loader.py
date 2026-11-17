@@ -83,7 +83,12 @@ def test_a_dry_run_changes_nothing_and_an_apply_then_a_repeat_changes_nothing(co
 
     first = load_seed(conn, root, apply=True)
     assert first.ok and counts(first)["geography.features"] == (1, 0, 0)
-    assert conn.execute("SELECT count(*) AS n FROM source.relationships WHERE subject_table = 'geography.features'").fetchone()["n"] == 1
+    assert (
+        conn.execute(
+            "SELECT count(*) AS n FROM source.relationships WHERE subject_table = 'geography.features'"
+        ).fetchone()["n"]
+        == 1
+    )
     assert conn.execute("SELECT count(*) AS n FROM source.citations").fetchone()["n"] > 0
 
     again = load_seed(conn, root, apply=True)
@@ -107,7 +112,9 @@ def test_a_small_edit_updates_only_that_row_and_bumps_its_version(conn: Connecti
     assert row["version"] == 2 and str(row["valid_from"]) == "2000-01-01"
     assert counts(report)["reference.values"] == (0, 0, 4)
     # The edited CSV is a new artifact; provenance written for the earlier bytes still points at the earlier artifact.
-    artifacts = conn.execute("SELECT count(*) AS n FROM source.artifacts WHERE code LIKE '%ke.geo.features~%'").fetchone()
+    artifacts = conn.execute(
+        "SELECT count(*) AS n FROM source.artifacts WHERE code LIKE '%ke.geo.features~%'"
+    ).fetchone()
     assert artifacts["n"] == 2
 
 

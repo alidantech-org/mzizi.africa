@@ -27,7 +27,7 @@ def main() -> int:
             shutil.copytree(REPO / "seed/data", root / "data")
             shutil.copytree(draft / "data", root / "data", dirs_exist_ok=True)
             result = check_data(root)
-        own = [p for p in result.problems if "datasets.csv" not in p and "no dataset row" not in p]
+        own = [p for p in result.problems if "no artifact row" not in p]
         print(f"{draft.name}: {len(result.rows)} tables, {len(own)} problems")
         for problem in own[:25]:
             print("  ", problem)

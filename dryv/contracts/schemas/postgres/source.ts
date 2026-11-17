@@ -40,7 +40,9 @@ export const Publishers = source
     countryId: belongsTo(() => Country).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("Accepted publisher; an optional official identity distinguishes the organization from its publication channels.")
+  .description(
+    "Accepted publisher; an optional official identity distinguishes the organization from its publication channels.",
+  )
   .role("entity")
   .facets({
     storage: dryv.storage("publishers").index("kindId").index("classificationId").index("countryId"),
@@ -73,7 +75,9 @@ export const Domains = source
     host: dryv.field(sharedProperties.NonEmptyString255),
   })
   .extends(baseSchemas.CodedValidityEntity)
-  .description("A host name a source is served from. A host belongs to one source at a time; its validity period records moves.")
+  .description(
+    "A host name a source is served from. A host belongs to one source at a time; its validity period records moves.",
+  )
   .role("entity")
   .facets({
     storage: dryv.storage("domains").unique("host").index("sourceId"),
@@ -94,7 +98,10 @@ export const Addresses = source
   .description("A page, listing, file or API endpoint on a domain, distinguished by method, path and query.")
   .role("entity");
 
-const withoutQuery = source.expression("AddressWithoutQuery", Addresses.check((v) => v.query.isNull()));
+const withoutQuery = source.expression(
+  "AddressWithoutQuery",
+  Addresses.check((v) => v.query.isNull()),
+);
 
 Addresses.facets({
   storage: dryv
@@ -119,10 +126,17 @@ export const Discoveries = source
     discoveredAt: dryv.field(sharedProperties.Instant),
   })
   .extends(baseSchemas.Entity)
-  .description("An observation that an address exists: where it was found, as what text and when. Retrieval is a separate capture.")
+  .description(
+    "An observation that an address exists: where it was found, as what text and when. Retrieval is a separate capture.",
+  )
   .role("entity")
   .facets({
-    storage: dryv.storage("discoveries").index("addressId").index("foundOnAddressId").index("sourceId").index("discoveredAt"),
+    storage: dryv
+      .storage("discoveries")
+      .index("addressId")
+      .index("foundOnAddressId")
+      .index("sourceId")
+      .index("discoveredAt"),
   });
 
 export const Products = source
@@ -134,7 +148,9 @@ export const Products = source
     description: dryv.field(sharedProperties.Description).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("One logical document or dataset, independent of who served it, in what format or how many times it was downloaded.")
+  .description(
+    "One logical document or dataset, independent of who served it, in what format or how many times it was downloaded.",
+  )
   .role("entity")
   .facets({
     storage: dryv.storage("products").index("kindId").index("publisherId"),
@@ -150,7 +166,9 @@ export const Editions = source
     description: dryv.field(sharedProperties.Description).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("A meaningfully distinct release of a product. Another format or scan of the same wording is an artifact, not an edition.")
+  .description(
+    "A meaningfully distinct release of a product. Another format or scan of the same wording is an artifact, not an edition.",
+  )
   .role("entity")
   .facets({
     storage: dryv.storage("editions").unique("productId", "designation").index("languageId"),
@@ -172,10 +190,17 @@ export const Artifacts = source
     description: dryv.field(sharedProperties.Description).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("One exact representation of an edition, tied to immutable bytes. Identical downloads from many sources are one artifact with many captures.")
+  .description(
+    "One exact representation of an edition, tied to immutable bytes. Identical downloads from many sources are one artifact with many captures.",
+  )
   .role("entity")
   .facets({
-    storage: dryv.storage("artifacts").unique("editionId", "sha256").index("sha256").index("fileVersionId").index("parentId"),
+    storage: dryv
+      .storage("artifacts")
+      .unique("editionId", "sha256")
+      .index("sha256")
+      .index("fileVersionId")
+      .index("parentId"),
   });
 
 export const Captures = source
@@ -192,7 +217,9 @@ export const Captures = source
     responseMetadata: dryv.field(sharedProperties.JsonText),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other.")
+  .description(
+    "One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other.",
+  )
   .role("entity")
   .facets({
     storage: dryv.storage("captures").index("sourceId").index("addressId").index("discoveryId").index("artifactId"),
@@ -228,7 +255,14 @@ export const Relationships = source
   .rule("SubjectKeysTogether", rule.allOrNone("subjectTable", "subjectId"))
   .rule(
     "ExactlyOneOutput",
-    rule.exactlyOne("outputCaptureId", "outputArtifactId", "outputEditionId", "outputProductId", "outputFileVersionId", "subjectId"),
+    rule.exactlyOne(
+      "outputCaptureId",
+      "outputArtifactId",
+      "outputEditionId",
+      "outputProductId",
+      "outputFileVersionId",
+      "subjectId",
+    ),
   )
   .rule(
     "ExactlyOneInput",
@@ -261,7 +295,13 @@ export const Citations = source
   .description("Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp.")
   .role("entity")
   .facets({
-    storage: dryv.storage("citations").index("artifactId").index("captureId").index("addressId").index("subjectTable", "subjectId").index("locatorKindId"),
+    storage: dryv
+      .storage("citations")
+      .index("artifactId")
+      .index("captureId")
+      .index("addressId")
+      .index("subjectTable", "subjectId")
+      .index("locatorKindId"),
   });
 
 export const Verifications = source
@@ -275,7 +315,9 @@ export const Verifications = source
     supersedesId: belongsTo(dryv.self).maybe(),
   })
   .extends(baseSchemas.CodedSubjectEntity)
-  .description("Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit.")
+  .description(
+    "Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit.",
+  )
   .role("entity")
   .facets({
     storage: dryv.storage("verifications").index("subjectTable", "subjectId").index("methodId").index("supersedesId"),
