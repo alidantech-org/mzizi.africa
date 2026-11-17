@@ -103,3 +103,26 @@ def to_iso_date(vocabulary: Vocabulary, text: str) -> str | None:
         if month and 1 <= int(month) <= 12 and 1 <= int(found["day"]) <= 31:
             return f"{int(year):04d}-{int(month):02d}-{int(found['day']):02d}"
     return None
+
+
+def to_minor_units(text: str) -> int | None:
+    """`88,834,394.40` as 8883439440: the digits of an amount, thousands marks removed, in hundredths."""
+    from decimal import Decimal, InvalidOperation
+
+    cleaned = "".join(ch for ch in text if ch.isdigit() or ch in ".,").replace(",", "")
+    if not cleaned or cleaned.count(".") > 1:
+        return None
+    try:
+        return int((Decimal(cleaned) * 100).to_integral_value())
+    except InvalidOperation:
+        return None
+
+
+def prefer_from_document(text: str, profile_path: Path, seed_root: Path, scopes: tuple[str, ...]) -> frozenset[str]:
+    """The database schemas a document is about, from its file name or title scored against the document profile."""
+    from mzizi_patterns import DocumentText, PatternOrchestrator, load_profile
+
+    lists = tuple(load_term_list(p) for p in sorted((seed_root / "terms").rglob("*.yml")))
+    engine = PatternOrchestrator(load_profile(profile_path), lists)
+    document = DocumentText(name=text, filename=text.replace("-", " ").replace("_", " "), title=text)
+    return engine.preferred_schemas(engine.score_one(document))

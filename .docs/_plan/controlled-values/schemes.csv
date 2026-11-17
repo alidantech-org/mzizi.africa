@@ -1,0 +1,16 @@
+code,title,owner_snapshot
+ofc.entity.kind,Kinds of entity,proposed by the preparer for owner approval; not yet seed
+ofc.name.kind,Kinds of name for an entity or person,proposed by the preparer for owner approval; not yet seed
+ofc.identifier.scheme,Registries that identify an entity or person,proposed by the preparer for owner approval; not yet seed
+ofc.contact.kind,Kinds of contact,proposed by the preparer for owner approval; not yet seed
+ofc.contact.visibility,How a contact may be shown,proposed by the preparer for owner approval; not yet seed
+pol.party.kind,Kinds of political party registration,proposed by the preparer for owner approval; not yet seed
+pol.membership.kind,Kinds of party membership,proposed by the preparer for owner approval; not yet seed
+civ.procurement.procedure,Procurement procedures,proposed by the preparer for owner approval; not yet seed
+civ.bid.outcome,Outcomes of a bid,proposed by the preparer for owner approval; not yet seed
+civ.contract.status,Status of a contract,proposed by the preparer for owner approval; not yet seed
+fin.flow.kind,Kinds of money flow,proposed by the preparer for owner approval; not yet seed
+fin.fund.kind,Kinds of fund,proposed by the preparer for owner approval; not yet seed
+fin.budget.kind,Kinds of budget,proposed by the preparer for owner approval; not yet seed
+gov.institution.kind,Kinds of government institution,proposed by the preparer for owner approval; not yet seed
+gov.office.kind,Kinds of public office,proposed by the preparer for owner approval; not yet seed

@@ -186,6 +186,11 @@ def _split(vocab: Vocabulary, probe: ColumnProbe, parts: HeadingParts | None) ->
             rows = [c for c in captured if c]
             return SplitProposal(
                 split=split.split,
+                source_header=probe.header,
+                cell_pattern=split.cell_pattern,
+                domain=domain,
+                main_capture=first,
+                qualifier_capture=second,
                 share=round(share, 2),
                 main_heading=parts.base,
                 qualifier_heading="abbreviation" if parts.qualifier_is == "abbreviation" else parts.qualifier,
@@ -195,25 +200,31 @@ def _split(vocab: Vocabulary, probe: ColumnProbe, parts: HeadingParts | None) ->
     return None
 
 
+DERIVED_WEIGHT = 0.6  # a heading read off a column's own name counts less than a curated one
+
+
 def match_columns(
     probes: tuple[ColumnProbe, ...],
     vocab: Vocabulary,
     dictionaries: tuple[Dictionary, ...],
     prefer: frozenset[str] = frozenset(),
+    derived: dict[str, tuple[str, ...]] | None = None,
 ) -> tuple[ColumnProposal, ...]:
     entries = entries_of(dictionaries)
     weight = token_weights(vocab, entries)
+    covered = {e.column for e in entries}
+    extra = {c: p for c, p in (derived or {}).items() if c not in covered}
     proposals: list[ColumnProposal] = []
     for probe in probes:
         parts = parse_heading(vocab, probe.header)
         split = _split(vocab, probe, parts)
         if split is not None:
             main = ColumnProbe(header=split.main_heading, samples=split.main_cells)
-            extra = ColumnProbe(header=split.qualifier_heading, samples=split.qualifier_cells)
-            first = _one(vocab, entries, weight, main, prefer, None, split)
-            proposals += [first, _one(vocab, entries, weight, extra, prefer, None, None)]
+            extra_probe = ColumnProbe(header=split.qualifier_heading, samples=split.qualifier_cells)
+            first = _one(vocab, entries, weight, main, prefer, None, split, extra)
+            proposals += [first, _one(vocab, entries, weight, extra_probe, prefer, None, None, extra)]
         else:
-            proposals.append(_one(vocab, entries, weight, probe, prefer, parts, None))
+            proposals.append(_one(vocab, entries, weight, probe, prefer, parts, None, extra))
     return tuple(proposals)
 
 
@@ -225,6 +236,7 @@ def _one(
     prefer: frozenset[str],
     parts: HeadingParts | None,
     split: SplitProposal | None,
+    derived: dict[str, tuple[str, ...]],
 ) -> ColumnProposal:
     cells = [c for c in probe.samples if c.strip()]
     detected = shape_shares(probe.samples)
@@ -294,6 +306,22 @@ def _one(
                 preferred=entry.column.split(".")[0] in prefer,
             )
         )
+    for column, phrases in derived.items():
+        best, term = header_score(base, {p: p for p in phrases}, weight)
+        if best >= 0.75:  # a derived heading must nearly equal the column's own name
+            candidates.append(
+                ColumnCandidate(
+                    target=column,
+                    group="(derived from the column name)",
+                    score=round(best * DERIVED_WEIGHT, 4),
+                    matched_term=term,
+                    header_score=round(best, 4),
+                    shape=None,
+                    shape_share=None,
+                    specificity=0,
+                    preferred=column.split(".")[0] in prefer,
+                )
+            )
     candidates.sort(key=lambda c: (-c.score, -c.preferred, c.target))
     unit_text = parts.qualifier if parts and parts.qualifier_is == "unit" else ""
     return _proposal(probe.header, candidates, detected, parts, unit_text, says, split, note)

@@ -1,0 +1,16 @@
+code,scheme_code,label
+gov.institution.kind.ministry,gov.institution.kind,Ministry
+gov.institution.kind.state-department,gov.institution.kind,State department
+gov.institution.kind.commission,gov.institution.kind,Commission
+gov.institution.kind.county-government,gov.institution.kind,County government
+gov.institution.kind.parastatal,gov.institution.kind,State corporation
+gov.institution.kind.court,gov.institution.kind,Court
+gov.institution.kind.legislature,gov.institution.kind,Legislature
+gov.institution.kind.independent-office,gov.institution.kind,Independent office
+gov.office.kind.head,gov.office.kind,Head of institution
+gov.office.kind.deputy,gov.office.kind,Deputy head
+gov.office.kind.member,gov.office.kind,Member
+gov.office.kind.secretary,gov.office.kind,Secretary
+gov.office.kind.chairperson,gov.office.kind,Chairperson
+gov.office.kind.elected,gov.office.kind,Elected seat
+gov.office.kind.appointed,gov.office.kind,Appointed office

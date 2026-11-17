@@ -1,0 +1,10 @@
+code,scheme_code,label
+pol.party.kind.fully-registered,pol.party.kind,Fully registered party
+pol.party.kind.provisionally-registered,pol.party.kind,Provisionally registered party
+pol.party.kind.coalition-party,pol.party.kind,Coalition party
+pol.party.kind.deregistered,pol.party.kind,Deregistered party
+pol.membership.kind.member,pol.membership.kind,Member
+pol.membership.kind.founder,pol.membership.kind,Founder
+pol.membership.kind.official,pol.membership.kind,Party official
+pol.membership.kind.nominee,pol.membership.kind,Nominee
+pol.membership.kind.leader,pol.membership.kind,Party leader

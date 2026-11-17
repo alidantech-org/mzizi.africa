@@ -1,0 +1,20 @@
+code,scheme_code,label
+civ.procurement.procedure.open-tender,civ.procurement.procedure,Open tender
+civ.procurement.procedure.restricted-tender,civ.procurement.procedure,Restricted tender
+civ.procurement.procedure.request-for-quotation,civ.procurement.procedure,Request for quotation
+civ.procurement.procedure.request-for-proposals,civ.procurement.procedure,Request for proposals
+civ.procurement.procedure.expression-of-interest,civ.procurement.procedure,Expression of interest
+civ.procurement.procedure.direct-procurement,civ.procurement.procedure,Direct procurement
+civ.procurement.procedure.framework-agreement,civ.procurement.procedure,Framework agreement
+civ.procurement.procedure.low-value,civ.procurement.procedure,Low-value procurement
+civ.bid.outcome.successful,civ.bid.outcome,Successful
+civ.bid.outcome.unsuccessful,civ.bid.outcome,Unsuccessful
+civ.bid.outcome.non-responsive,civ.bid.outcome,Non-responsive
+civ.bid.outcome.withdrawn,civ.bid.outcome,Withdrawn
+civ.bid.outcome.cancelled,civ.bid.outcome,Cancelled
+civ.bid.outcome.pending,civ.bid.outcome,Pending evaluation
+civ.contract.status.signed,civ.contract.status,Signed
+civ.contract.status.active,civ.contract.status,Active
+civ.contract.status.completed,civ.contract.status,Completed
+civ.contract.status.terminated,civ.contract.status,Terminated
+civ.contract.status.suspended,civ.contract.status,Suspended

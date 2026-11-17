@@ -10,7 +10,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from mzizi_manifest.features.database.tables import load_tables
+from mzizi_manifest.features.database.tables import Table, load_tables
 from mzizi_patterns import ColumnProbe, ColumnProposal, load_dictionary, load_term_list, propose_columns
 
 SAMPLE_ROWS = 25
@@ -37,6 +37,20 @@ class MappingProposal(BaseModel):
     problems: tuple[str, ...]
 
 
+def derived_headings(tables: dict[str, Table]) -> dict[str, tuple[str, ...]]:
+    """Every seed column of every seedable table, with the words of its own name as a weak heading: `valid_from` is "valid from"."""
+    found: dict[str, tuple[str, ...]] = {}
+    for name, table in tables.items():
+        if not table.seedable:
+            continue
+        for column in table.seed.columns:
+            if column in {"code", "id"}:
+                continue
+            base = column.removesuffix("_code").removesuffix("_on")
+            found[f"{name}.{column}"] = tuple(dict.fromkeys((base.replace("_", " "), column.replace("_", " "))))
+    return found
+
+
 def read_probes(path: Path) -> tuple[ColumnProbe, ...]:
     with path.open(newline="", encoding="utf-8-sig") as handle:
         rows = list(csv.reader(handle))
@@ -60,8 +74,8 @@ def propose_mapping(
         for d in (load_dictionary(p) for p in sorted((seed_root / "columns").rglob("*.yml")))
         if d.code.split(".")[2] in scopes
     )
-    proposals = propose_columns(read_probes(csv_path), lists, dictionaries, scopes, prefer)
     tables = load_tables()
+    proposals = propose_columns(read_probes(csv_path), lists, dictionaries, scopes, prefer, derived_headings(tables))
     by_table: dict[str, list[MappedColumn]] = {}
     for proposal in proposals:
         if proposal.chosen is not None and proposal.status != "unmatched":

@@ -1,0 +1,6 @@
+# A Kenyan tender's list of bidders: one bid per bidder, with the outcome the list's title gives.
+describe: Bidder lists published with a tender award
+tables:
+  civic.bids: { outcome_code: civ.bid.outcome.successful }
+  official.names: { language_code: en, is_preferred: "true", name_kind_code: ofc.name.kind.official }
+  official.entities: { kind_code: ofc.entity.kind.company }

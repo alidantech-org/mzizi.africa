@@ -35,9 +35,10 @@ def propose_columns(
     dictionaries: tuple[Dictionary, ...],
     scopes: tuple[str, ...] = ("global",),
     prefer: frozenset[str] = frozenset(),
+    derived: dict[str, tuple[str, ...]] | None = None,
 ) -> tuple[ColumnProposal, ...]:
     """Match source columns to database columns with the term lists of `scopes` and the column dictionaries."""
-    return match_columns(probes, Vocabulary(term_lists, scopes), dictionaries, prefer)
+    return match_columns(probes, Vocabulary(term_lists, scopes), dictionaries, prefer, derived)
 
 
 class PatternOrchestrator:
@@ -62,6 +63,16 @@ class PatternOrchestrator:
             score_document(d, c, self.profile, self._tag_terms, self.axes, frequency, len(documents))
             for d, c in zip(documents, counts, strict=True)
         )
+
+    def score_one(self, document: DocumentText) -> DocumentScore:
+        """Score a single document, with every term treated as rare enough to count (there is no corpus to measure against)."""
+        counts = term_counts(document, self._index, self._stopwords, self.profile.max_ngram)
+        return score_document(document, counts, self.profile, self._tag_terms, self.axes, Counter(), 20)
+
+    def preferred_schemas(self, score: DocumentScore) -> frozenset[str]:
+        """The database schemas the document's kept tags point at."""
+        wanted = {tag for tag in (t.tag for t in score.tags)}
+        return frozenset(schema for rule in self.profile.tags if rule.tag in wanted for schema in rule.schemas)
 
     def near_duplicates(self, documents: tuple[DocumentText, ...], threshold: float = 0.8) -> tuple[DuplicatePair, ...]:
         items = [(d.name, shingles(d.body or d.title)) for d in documents]

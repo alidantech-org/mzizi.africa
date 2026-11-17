@@ -1,0 +1,17 @@
+# Per-source constants for the ORPP register of political parties. A draft run fills these where the source cannot say them;
+# every value is a proposed controlled value from ../values and needs the owner's approval before it is seed.
+describe: ORPP register of fully registered political parties (names, certificate, contacts)
+tables:
+  official.entities: { kind_code: ofc.entity.kind.political-party }
+  official.names: { language_code: en, is_preferred: "false" }
+  official.identifiers: { scheme_code: ofc.identifier.scheme.party-certificate }
+  official.contacts: { visibility_code: ofc.contact.visibility.public }
+  politics.parties: { party_kind_code: pol.party.kind.fully-registered }
+reads_as:
+  abbreviation: { official.names: { name_kind_code: ofc.name.kind.abbreviation } }
+  organisation: { official.names: { name_kind_code: ofc.name.kind.official, is_preferred: "true" } }
+  postal address: { official.contacts: { kind_code: ofc.contact.kind.postal-address } }
+  head office: { official.contacts: { kind_code: ofc.contact.kind.physical-address } }
+emit: [politics.parties]
+copy:
+  politics.parties.valid_from: official.entities.registered_on

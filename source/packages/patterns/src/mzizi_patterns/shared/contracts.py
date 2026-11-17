@@ -200,6 +200,9 @@ class TagRule(Frozen):
     tag: str
     impact: Impact
     weight: float = Field(default=1.0, gt=0)
+    schemas: tuple[
+        str, ...
+    ] = ()  # database schemas a document with this tag is likely about (finance, civic, official)
     group: str  # the term group that evidences this tag; its role decides whether the tag is a kind or a subject
 
 
@@ -368,6 +371,11 @@ class HeadingParts(Frozen):
 
 class SplitProposal(Frozen):
     split: str
+    source_header: str = ""
+    cell_pattern: str = ""
+    domain: str = ""
+    main_capture: str = ""
+    qualifier_capture: str = ""
     share: float
     main_heading: str
     qualifier_heading: str

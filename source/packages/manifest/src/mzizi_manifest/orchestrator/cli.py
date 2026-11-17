@@ -33,7 +33,27 @@ def main(argv: list[str] | None = None) -> int:
     refs.add_argument(
         "--no-paths", action="store_true", help="do not require folder paths to mirror codes (flat example folders)"
     )
+    report = sub.add_parser("columns-report", help="how much of each seedable table the column dictionaries describe")
+    report.add_argument("root", nargs="?", type=Path, default=SEED_ROOT)
+    report.add_argument("--missing", action="store_true", help="list the seed columns no dictionary describes")
     args = parser.parse_args(argv)
+    if args.command == "columns-report":
+        from mzizi_manifest.features.registry.coverage import coverage
+
+        rows = coverage(args.root)
+        have = sum(len(r.covered) for r in rows)
+        total = sum(len([c for c in r.seed_columns if c != "code"]) for r in rows)
+        for r in rows:
+            flags = ("recipe " if r.recipe else "") + ("lookup" if r.lookup else "")
+            print(
+                f"{r.table:38} {len(r.covered):3}/{len([c for c in r.seed_columns if c != 'code']):3} columns  {flags}"
+            )
+            if args.missing and r.uncovered:
+                print(f"    missing: {', '.join(r.uncovered)}")
+        print(
+            f"{len(rows)} seedable tables; {have} of {total} seed columns have terms; derived headings cover the rest weakly"
+        )
+        return 0
     if args.command == "refs":
         from mzizi_manifest.features.registry.scan import scan
 

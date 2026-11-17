@@ -34,6 +34,10 @@ def main(argv: list[str] | None = None) -> int:
         "--scopes", default="global,ke", help="comma-separated scopes whose terms apply (default: global,ke)"
     )
     propose.add_argument(
+        "--document", default="", help="the source document's file name or title: it sets the preferred schemas"
+    )
+    propose.add_argument("--profile", type=Path, default=Path(".docs/_plan/orpp-sources/engine/docs/profile.yaml"))
+    propose.add_argument(
         "--prefer",
         default="",
         help="comma-separated schemas the document is about (finance,civic): their targets win ties",
@@ -63,6 +67,13 @@ def main(argv: list[str] | None = None) -> int:
     draft.add_argument("--scopes", default="global,ke")
     draft.add_argument("--scope", default="ke", help="the country scope the codes are built under")
     draft.add_argument("--prefer", default="")
+    draft.add_argument(
+        "--document", default="", help="the source document's file name or title: it sets the preferred schemas"
+    )
+    draft.add_argument("--profile", type=Path, default=Path(".docs/_plan/orpp-sources/engine/docs/profile.yaml"))
+    draft.add_argument(
+        "--defaults", type=Path, default=None, help="per-source constants (proposed controlled values), a YAML file"
+    )
     submit = sub.add_parser("submit-run", help="queue a run from a job spec")
     submit.add_argument("spec", type=Path)
     sub.add_parser("supervise", help="admit and supervise queued runs")
@@ -136,6 +147,15 @@ def main(argv: list[str] | None = None) -> int:
                 approval = ReleaseApproval.model_validate_json(args.approval.read_bytes())
                 print(release_run(args.run_id, placements, approval, config).model_dump_json())
         return 0
+    if args.command in ("draft-rows", "propose-mapping"):
+        from mzizi_engine.runtime.assembly.knowledge import prefer_from_document
+
+        args.prefer_set = frozenset(filter(None, args.prefer.split(",")))
+        if args.document:
+            args.prefer_set |= prefer_from_document(
+                args.document, args.profile, args.seed, tuple(args.scopes.split(","))
+            )
+            print("preferred schemas from the document:", sorted(args.prefer_set), file=sys.stderr)
     if args.command == "draft-rows":
         from mzizi_engine.runtime.assembly.draft_rows import draft_rows
 
@@ -145,10 +165,12 @@ def main(argv: list[str] | None = None) -> int:
             args.out,
             tuple(args.scopes.split(",")),
             args.scope,
-            frozenset(filter(None, args.prefer.split(","))),
+            args.prefer_set,
+            args.defaults,
         )
         print(f"drafted into {result.out_dir}: {result.rows}")
         print("still needs a person (rows lacking the column):", result.needs_approval)
+        print("proposed values not yet in the seed:", list(result.unapproved_values))
         return 0
     if args.command == "lookup":
         from mzizi_engine.runtime.assembly.knowledge import build_name_index
@@ -190,9 +212,9 @@ def main(argv: list[str] | None = None) -> int:
         from mzizi_engine.runtime.assembly.mapping_proposal import propose_mapping
 
         print(
-            propose_mapping(
-                args.csv, args.seed, tuple(args.scopes.split(",")), frozenset(filter(None, args.prefer.split(",")))
-            ).model_dump_json(indent=1)
+            propose_mapping(args.csv, args.seed, tuple(args.scopes.split(",")), args.prefer_set).model_dump_json(
+                indent=1
+            )
         )
         return 0
     if args.command == "run-job":

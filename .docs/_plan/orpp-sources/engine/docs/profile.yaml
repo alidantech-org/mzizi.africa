@@ -5,15 +5,15 @@ code: sys.eng.docs.profile
 term_lists: [sys.trm.ke.documents]  # extends sys.trm.global.documents
 stopword_group: stopwords
 tags:
-  - { tag: law, group: law, impact: 3, weight: 1.0 }
-  - { tag: register, group: register, impact: 3, weight: 1.2 }
-  - { tag: notice, group: notice, impact: 3, weight: 1.0 }
-  - { tag: procurement, group: procurement, impact: 3, weight: 1.2 }
-  - { tag: court, group: court, impact: 3, weight: 1.0 }
-  - { tag: report, group: report, impact: 2, weight: 1.0 }
+  - { tag: law, schemas: [legal], group: law, impact: 3, weight: 1.0 }
+  - { tag: register, schemas: [official, politics], group: register, impact: 3, weight: 1.2 }
+  - { tag: notice, schemas: [official, governance], group: notice, impact: 3, weight: 1.0 }
+  - { tag: procurement, schemas: [civic, official], group: procurement, impact: 3, weight: 1.2 }
+  - { tag: court, schemas: [legal], group: court, impact: 3, weight: 1.0 }
+  - { tag: report, schemas: [finance, civic], group: report, impact: 2, weight: 1.0 }
   - { tag: form, group: form, impact: 1, weight: 1.0 }
   - { tag: news, group: news, impact: 1, weight: 1.0 }
   - { tag: noise, group: noise, impact: 0, weight: 1.5 }
-  - { tag: funding, group: funding, impact: 3, weight: 1.2 }
-  - { tag: audit-budget, group: audit-budget, impact: 3, weight: 1.2 }
-  - { tag: people-places, group: people-places, impact: 2, weight: 0.8 }
+  - { tag: funding, schemas: [finance, official], group: funding, impact: 3, weight: 1.2 }
+  - { tag: audit-budget, schemas: [finance], group: audit-budget, impact: 3, weight: 1.2 }
+  - { tag: people-places, schemas: [official, geography, governance], group: people-places, impact: 2, weight: 0.8 }
