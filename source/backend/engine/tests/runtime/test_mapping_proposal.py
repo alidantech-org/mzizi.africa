@@ -24,7 +24,8 @@ def test_the_party_register_headings_find_their_columns_and_gaps_are_left_alone(
     assert chosen["Postal Address of Party"] == "official.contacts.value"
     index = next(c for c in proposal.columns if c.header == "S/No")
     assert index.status == "index"
-    assert proposal.unmatched == ("Slogan",)
+    assert chosen["Slogan"] == "official.branding.value"  # branding has a home now
+    assert proposal.unmatched == ()
     tables = {t.table: t for t in proposal.tables}
     assert (
         "scheme_code" in tables["official.identifiers"].missing_required

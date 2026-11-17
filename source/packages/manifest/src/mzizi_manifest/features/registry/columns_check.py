@@ -38,7 +38,7 @@ def _available(code: str, lists: dict[str, dict]) -> set[str]:
     return keys
 
 
-PART_COLUMNS = ("slug", "name_slug", "code", "last", "value", "kind")
+PART_COLUMNS = ("slug", "name_slug", "code", "last", "value", "kind", "qualifier")
 
 
 def _seed_column(ref: str, tables: dict[str, Table]) -> bool:
@@ -59,7 +59,7 @@ def _table_problems(where: str, name: str, spec: dict, tables: dict[str, Table])
         for index, part in enumerate(recipe.get("parts") or []):
             for field in PART_COLUMNS:
                 ref = part.get(field)
-                if ref is not None and not _seed_column(ref, tables):
+                if ref and not ref.startswith("input:") and not _seed_column(ref, tables):
                     problems.append(f"{where}: tables.{name}.code.parts[{index}].{field}: {ref!r} is not a seed column")
         for ref in recipe.get("unique_within") or []:
             if not _seed_column(ref, tables):

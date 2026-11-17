@@ -28,7 +28,12 @@ class ManifestReleasesRow(BaseModel):
     file_version_id: UUID
     id: UUID
     input_schema_code: Annotated[
-        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+        str,
+        Field(
+            min_length=1,
+            max_length=255,
+            pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+        ),
     ]
     input_schema_version: Annotated[str, Field(min_length=1, max_length=100)]
     manifest_id: UUID

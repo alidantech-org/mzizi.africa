@@ -188,3 +188,27 @@ def match_sequences(text: str, sequences: tuple[tuple[Part, ...], ...], lookup: 
                 captures.setdefault(name, []).append(text[tokens[start].start : tokens[end - 1].end])
             return {name: "".join(pieces) if len(pieces) > 1 else pieces[0] for name, pieces in captures.items()}
     return None
+
+
+def split_at_phrases(text: str, phrases: Phrases) -> list[str]:
+    """The pieces of `text` between occurrences of any phrase (the phrases themselves are dropped), in order."""
+    tokens = tokenise(text)
+    pieces: list[str] = []
+    start = 0
+    i = 0
+    while i < len(tokens):
+        hit = 0
+        for phrase in phrases:
+            if phrase and [t.folded for t in tokens[i : i + len(phrase)]] == phrase:
+                hit = len(phrase)
+                break
+        if hit:
+            if i > start:
+                pieces.append(text[tokens[start].start : tokens[i - 1].end].strip())
+            i += hit
+            start = i
+        else:
+            i += 1
+    if start < len(tokens):
+        pieces.append(text[tokens[start].start : tokens[-1].end].strip())
+    return [p.strip(" .,;") for p in pieces if p.strip(" .,;")]

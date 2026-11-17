@@ -10,3 +10,7 @@ Schema evolution releases are not generated yet. Until they are, a change to the
 ## Release 0002
 
 `0002_languages_codes_matching.sql` adds the language registry, a `code` on every seedable table that lacked one, `is_default` on geography names and the `pg_trgm`, `unaccent` and `fuzzystrmatch` extensions. It was produced from a schema diff (migra) of release 0001 against the regenerated snapshot, and checked: 0001 followed by 0002 has no difference from `sql/schema.sql`. It needs a role that may create extensions and tables that are empty.
+
+## Release 0003
+
+`0003_media_branding_qualifier_codes.sql` adds `filesystem.media` and `official.branding`. It was produced and checked the same way as 0002.

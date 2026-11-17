@@ -18,7 +18,12 @@ class ProcurementsRow(BaseModel):
 
     buyer_entity_id: UUID
     code: Annotated[
-        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+        str,
+        Field(
+            min_length=1,
+            max_length=255,
+            pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+        ),
     ]
     country_id: UUID | None = None
     created_at: datetime

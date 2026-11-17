@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from mzizi_patterns.features.cells.matcher import Phrases, match_sequences
+from mzizi_patterns.features.cells.matcher import Phrases, match_sequences, split_at_phrases
 from mzizi_patterns.features.terms.terms import MergedGroup
 from mzizi_patterns.features.tokenise.tokenise import words
 from mzizi_patterns.shared.contracts import HeadingRule, Pattern, Split, TermList
@@ -90,3 +90,7 @@ class Vocabulary:
         if item is None:
             return None
         return match_sequences(text, item.sequences, lambda r: self.phrases(r, key[0]))
+
+    def split_at(self, ref: str, domain: str, text: str) -> list[str]:
+        """The pieces of `text` between words of a group (for example the names after each "formerly")."""
+        return split_at_phrases(text, self.phrases(ref, domain))

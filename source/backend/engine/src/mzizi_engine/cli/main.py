@@ -69,6 +69,13 @@ def main(argv: list[str] | None = None) -> int:
     draft.add_argument("--scope", default="ke", help="the country scope the codes are built under")
     draft.add_argument("--prefer", default="")
     draft.add_argument(
+        "--input",
+        action="append",
+        default=[],
+        metavar="NAME=VALUE",
+        help="a named value for code recipes (tender_reference, buyer, published_on)",
+    )
+    draft.add_argument(
         "--document", default="", help="the source document's file name or title: it sets the preferred schemas"
     )
     draft.add_argument("--profile", type=Path, default=Path(".docs/_plan/orpp-sources/engine/docs/profile.yaml"))
@@ -173,6 +180,7 @@ def main(argv: list[str] | None = None) -> int:
             args.scope,
             args.prefer_set,
             args.defaults,
+            dict(item.split("=", 1) for item in args.input),
         )
         print(f"drafted into {drafted.out_dir}: {drafted.rows}")
         print("still needs a person (rows lacking the column):", drafted.needs_approval)

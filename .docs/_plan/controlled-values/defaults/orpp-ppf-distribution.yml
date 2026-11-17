@@ -4,3 +4,5 @@ tables:
   finance.flows: { flow_kind_code: fin.flow.kind.allocation, currency_code: fin.currency.kes, fund_code: ke.political-parties-fund }
   official.names: { language_code: en, is_preferred: "true", name_kind_code: ofc.name.kind.official }
   official.entities: { kind_code: ofc.entity.kind.political-party }
+reads_as:
+  abbreviation: { official.names: { name_kind_code: ofc.name.kind.abbreviation, is_preferred: "false" } }

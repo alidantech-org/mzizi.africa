@@ -142,3 +142,19 @@ fin.currency.yer,fin.currency,Yemeni rial
 fin.currency.zar,fin.currency,South African rand
 fin.currency.zmw,fin.currency,Zambian kwacha
 fin.currency.zwg,fin.currency,Zimbabwe Gold
+fin.flow.kind.allocation,fin.flow.kind,Allocation
+fin.flow.kind.disbursement,fin.flow.kind,Disbursement
+fin.flow.kind.payment,fin.flow.kind,Payment
+fin.flow.kind.receipt,fin.flow.kind,Receipt
+fin.flow.kind.transfer,fin.flow.kind,Transfer
+fin.flow.kind.grant,fin.flow.kind,Grant
+fin.flow.kind.refund,fin.flow.kind,Refund
+fin.flow.kind.levy,fin.flow.kind,Levy
+fin.fund.kind.statutory-fund,fin.fund.kind,Statutory fund
+fin.fund.kind.development-fund,fin.fund.kind,Development fund
+fin.fund.kind.grant-fund,fin.fund.kind,Grant fund
+fin.fund.kind.equalisation-fund,fin.fund.kind,Equalisation fund
+fin.budget.kind.national,fin.budget.kind,National budget
+fin.budget.kind.county,fin.budget.kind,County budget
+fin.budget.kind.institutional,fin.budget.kind,Institutional budget
+fin.budget.kind.supplementary,fin.budget.kind,Supplementary budget

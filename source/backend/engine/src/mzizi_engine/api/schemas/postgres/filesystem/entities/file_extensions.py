@@ -17,7 +17,12 @@ class FileExtensionsRow(BaseModel):
     table: ClassVar[str] = "filesystem.file_extensions"
 
     code: Annotated[
-        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+        str,
+        Field(
+            min_length=1,
+            max_length=255,
+            pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+        ),
     ]
     content_type: Annotated[str, Field(min_length=1, max_length=255)]
     created_at: datetime

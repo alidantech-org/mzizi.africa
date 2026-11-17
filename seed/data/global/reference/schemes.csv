@@ -22,3 +22,18 @@ ref.language.family,Language families,mzizi curated; language classification for
 ref.script,Writing systems,mzizi curated; language classification for the language registry
 ref.text.direction,Text directions,mzizi curated; language classification for the language registry
 ref.language.status,Language vitality,mzizi curated; language classification for the language registry
+ofc.entity.kind,Kinds of entity,mzizi curated; approved by the owner on 17 November 2026
+ofc.name.kind,Kinds of name for an entity or person,mzizi curated; approved by the owner on 17 November 2026
+ofc.identifier.scheme,Registries that identify an entity or person,mzizi curated; approved by the owner on 17 November 2026
+ofc.contact.kind,Kinds of contact,mzizi curated; approved by the owner on 17 November 2026
+ofc.contact.visibility,How a contact may be shown,mzizi curated; approved by the owner on 17 November 2026
+pol.party.kind,Kinds of political party registration,mzizi curated; approved by the owner on 17 November 2026
+pol.membership.kind,Kinds of party membership,mzizi curated; approved by the owner on 17 November 2026
+civ.procurement.procedure,Procurement procedures,mzizi curated; approved by the owner on 17 November 2026
+civ.bid.outcome,Outcomes of a bid,mzizi curated; approved by the owner on 17 November 2026
+civ.contract.status,Status of a contract,mzizi curated; approved by the owner on 17 November 2026
+fin.flow.kind,Kinds of money flow,mzizi curated; approved by the owner on 17 November 2026
+fin.fund.kind,Kinds of fund,mzizi curated; approved by the owner on 17 November 2026
+fin.budget.kind,Kinds of budget,mzizi curated; approved by the owner on 17 November 2026
+gov.institution.kind,Kinds of government institution,mzizi curated; approved by the owner on 17 November 2026
+gov.office.kind,Kinds of public office,mzizi curated; approved by the owner on 17 November 2026

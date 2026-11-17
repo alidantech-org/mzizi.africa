@@ -20,7 +20,12 @@ class AppropriationsRow(BaseModel):
     budget_version_id: UUID
     classification_id: UUID
     code: Annotated[
-        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+        str,
+        Field(
+            min_length=1,
+            max_length=255,
+            pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+        ),
     ]
     created_at: datetime
     currency_id: UUID

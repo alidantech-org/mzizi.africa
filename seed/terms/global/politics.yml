@@ -318,6 +318,19 @@ groups:
     - maelezo
     - changes in particulars
     kind: concept
+- group: former-markers
+  label: Words that introduce an earlier name
+  terms:
+  - value: formerly
+    aliases:
+    - formerly known as
+    - previously
+    - previously known as
+    - changed name from
+    - renamed from
+    - zamani
+    - iliyojulikana awali kama
+    kind: pattern-word
 - group: candidate-headings
   label: Headings of a candidate
   terms:

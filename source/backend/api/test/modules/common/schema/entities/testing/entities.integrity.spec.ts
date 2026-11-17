@@ -20,6 +20,7 @@ import { FileRelationsEntity } from "#/modules/filesystem/schema/entities/file-r
 import { FileVersionsEntity } from "#/modules/filesystem/schema/entities/file-versions.entity.ts";
 import { FilesEntity } from "#/modules/filesystem/schema/entities/files.entity.ts";
 import { FoldersEntity } from "#/modules/filesystem/schema/entities/folders.entity.ts";
+import { MediaEntity } from "#/modules/filesystem/schema/entities/media.entity.ts";
 import { TaggingsEntity } from "#/modules/filesystem/schema/entities/taggings.entity.ts";
 import { TagsEntity } from "#/modules/filesystem/schema/entities/tags.entity.ts";
 import { ChangesEntity } from "#/modules/geography/schema/entities/changes.entity.ts";
@@ -36,6 +37,7 @@ import { InstitutionsEntity } from "#/modules/governance/schema/entities/institu
 import { MandatesEntity } from "#/modules/governance/schema/entities/mandates.entity.ts";
 import { OfficesEntity } from "#/modules/governance/schema/entities/offices.entity.ts";
 import { GovernanceRelationshipsEntity } from "#/modules/governance/schema/entities/relationships.entity.ts";
+import { BrandingEntity } from "#/modules/official/schema/entities/branding.entity.ts";
 import { ContactsEntity } from "#/modules/official/schema/entities/contacts.entity.ts";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
 import { OfficialIdentifiersEntity } from "#/modules/official/schema/entities/identifiers.entity.ts";
@@ -91,6 +93,7 @@ const entities = [
   FileVersionsEntity,
   FilesEntity,
   FoldersEntity,
+  MediaEntity,
   TaggingsEntity,
   TagsEntity,
   ChangesEntity,
@@ -107,6 +110,7 @@ const entities = [
   MandatesEntity,
   OfficesEntity,
   GovernanceRelationshipsEntity,
+  BrandingEntity,
   ContactsEntity,
   EntitiesEntity,
   OfficialIdentifiersEntity,
@@ -187,6 +191,7 @@ beforeAll(async () => {
     "filesystem",
     "filesystem",
     "filesystem",
+    "filesystem",
     "geography",
     "geography",
     "geography",
@@ -201,6 +206,7 @@ beforeAll(async () => {
     "governance",
     "governance",
     "governance",
+    "official",
     "official",
     "official",
     "official",
@@ -1034,6 +1040,57 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "filesystem"."folders" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Media", () => {
+    const metadata = () => dataSource.getMetadata(MediaEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("media");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["alt_text", true, false],
+            ["caption", true, false],
+            ["code", false, false],
+            ["created_at", false, false],
+            ["deleted_at", true, false],
+            ["file_version_id", true, false],
+            ["id", false, true],
+            ["kind_id", false, false],
+            ["source_url", true, false],
+            ["title", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        ["file_version_id->filesystem.file_versions", "kind_id->reference.values"].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map(
+          (index) =>
+            `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
+        )
+        .sort();
+      expect(indexes).toEqual(expect.arrayContaining(["kind_id", "file_version_id"]));
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "filesystem"."media" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1980,6 +2037,75 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "governance"."relationships" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Branding", () => {
+    const metadata = () => dataSource.getMetadata(BrandingEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("branding");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["code", false, false],
+            ["created_at", false, false],
+            ["deleted_at", true, false],
+            ["entity_id", true, false],
+            ["id", false, true],
+            ["individual_id", true, false],
+            ["kind_id", false, false],
+            ["language_id", false, false],
+            ["media_id", true, false],
+            ["source_citation_id", true, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_until", true, false],
+            ["value", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "entity_id->official.entities",
+          "individual_id->official.individuals",
+          "kind_id->reference.values",
+          "language_id->reference.languages",
+          "media_id->filesystem.media",
+          "source_citation_id->source.citations",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map(
+          (index) =>
+            `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
+        )
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "entity_id,kind_id",
+          "individual_id,kind_id",
+          "media_id",
+          "language_id",
+          "source_citation_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "official"."branding" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });

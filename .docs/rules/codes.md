@@ -8,7 +8,7 @@ This rule governs source, mapping, term, job and engine inputs and the database 
 
 ## Grammar
 
-- Segments are lowercase `a-z0-9` words. **A dash joins the words of one real name** (`north-america`, `un-member-state`). **A dot means "narrower than"** (`geo.continent.north-america`: a value of the continent scheme). **Never an underscore.**
+- Segments are lowercase `a-z0-9` words. **A dash joins the words of one real name** (`north-america`, `un-member-state`). **A dot means "narrower than"** (`geo.continent.north-america`: a value of the continent scheme). **A tilde adds a qualifier to the name it follows** (`ke.orange-democratic-movement~odm`, `ke.kiambu~county`, `ke.rawel-holdings~2`): the same name told apart by an abbreviation, a kind or a number, without making the name longer or mixing it with a hierarchy. The tilde is unreserved in a URL, so a code never needs escaping. **Never an underscore.**
 - Concept words (the parts of a scheme code) are single words: `recognition.status`, `country.designation`. Only a name, the last segment of a member or an entity, may contain dashes.
 - At most 16 segments and 255 characters. Codes are unique, immutable, and never reused: a rename is a new code linked by supersession, because ids derive from codes.
 

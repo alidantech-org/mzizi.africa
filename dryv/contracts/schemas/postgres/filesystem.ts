@@ -163,3 +163,27 @@ export const Taggings = filesystem
  * transactionally verified S3 metadata. ReplaceCurrent never authorizes deleting pinned versions or
  * rewriting accepted bytes. Bucket mzizi, region us-east-1, credentials from env.
  */
+
+/*---------------- media ----------------*/
+export const Media = filesystem
+  .schema("Media", {
+    /** Scheme fil.media.kind: logo, symbol, flag, portrait, photograph, audio, video, document scan. */
+    kindId: belongsTo(() => Value),
+    title: dryv.field(sharedProperties.Name),
+    caption: dryv.field(sharedProperties.Description).maybe(),
+    /** Text for people who cannot see or hear the media. */
+    altText: dryv.field(sharedProperties.NonEmptyString500).maybe(),
+    /** The stored bytes, once the file is registered. A media record can exist before its file does. */
+    fileVersionId: belongsTo(() => FileVersions).maybe(),
+    /** Where the media was found, for a record whose file is not stored yet. */
+    sourceUrl: dryv.field(sharedProperties.Url).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description(
+    "A logo, symbol, photograph, recording or other media an entity or person can point at; its bytes are a filesystem file version.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv.storage("media").index("kindId").index("fileVersionId"),
+  });
+

@@ -30,7 +30,11 @@ export class LanguageDto {
   @IsString()
   @MinLength(1)
   @MaxLength(255)
-  @Matches(new RegExp("^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$"))
+  @Matches(
+    new RegExp(
+      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+    ),
+  )
   code!: IdentityCode;
 
   @IsISO8601({})

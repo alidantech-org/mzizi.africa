@@ -6,12 +6,17 @@ tables:
   official.names: { language_code: en, is_preferred: "false" }
   official.identifiers: { scheme_code: ofc.identifier.scheme.party-certificate }
   official.contacts: { visibility_code: ofc.contact.visibility.public }
+  official.branding: { language_code: und }
   politics.parties: { party_kind_code: pol.party.kind.fully-registered }
 reads_as:
   abbreviation: { official.names: { name_kind_code: ofc.name.kind.abbreviation } }
   organisation: { official.names: { name_kind_code: ofc.name.kind.official, is_preferred: "true" } }
   postal address: { official.contacts: { kind_code: ofc.contact.kind.postal-address } }
   head office: { official.contacts: { kind_code: ofc.contact.kind.physical-address } }
+  slogan: { official.branding: { kind_code: ofc.branding.kind.slogan } }
+  colour: { official.branding: { kind_code: ofc.branding.kind.colours } }
+  symbol: { official.branding: { kind_code: ofc.branding.kind.symbol-description } }
+  former name: { official.names: { name_kind_code: ofc.name.kind.former, is_preferred: "false" } }
 emit: [politics.parties]
 copy:
   politics.parties.valid_from: official.entities.registered_on

@@ -155,18 +155,26 @@ columns:
       role: heading
 tables:
   civic.procurements:
-    describe: One procurement; its code is the buyer and the date.
+    describe: One procurement; its code is the buyer and the tender reference, which the run supplies when the table has no column for
+      it. A bid list can create the procurement before the tender data exists, and the same code completes it later.
     code:
       parts:
       - scope: true
       - last: civic.procurements.buyer_entity_code
-      - value: civic.procurements.published_on
+        optional: true
+      - input: tender_reference
   civic.bids:
-    describe: One bid; its code is the procurement and the bidder.
+    describe: One bid; its code is the procurement, the bidder, and the bid number as a qualifier when the source gives one.
+    inputs:
+      bid_number:
+      - list: sys.trm.global.procurement
+        key: bid-number-headings
     code:
       parts:
       - code: civic.bids.procurement_code
       - last: civic.bids.bidder_entity_code
+      - qualifier: input:bid_number
+        optional: true
   civic.contracts:
     describe: One contract; its code is the procurement and the contractor.
     code:

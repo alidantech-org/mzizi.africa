@@ -35,4 +35,4 @@ tables:
     code:
       parts:
       - scope: true
-      - name_slug: official.names.name
+      - slug: official.names.name

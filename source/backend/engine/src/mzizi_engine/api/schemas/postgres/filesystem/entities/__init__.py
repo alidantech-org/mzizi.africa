@@ -7,6 +7,7 @@ from mzizi_engine.api.schemas.postgres.filesystem.entities.file_relations import
 from mzizi_engine.api.schemas.postgres.filesystem.entities.file_versions import FileVersionsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.files import FilesRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.folders import FoldersRow
+from mzizi_engine.api.schemas.postgres.filesystem.entities.media import MediaRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.taggings import TaggingsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.tags import TagsRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
@@ -17,6 +18,7 @@ __all__ = [
     "FileVersionsRow",
     "FilesRow",
     "FoldersRow",
+    "MediaRow",
     "TaggingsRow",
     "TagsRow",
     "ValueRow",

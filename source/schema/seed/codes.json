@@ -95,6 +95,9 @@
     "filesystem.folders": {
       "short": "fld"
     },
+    "filesystem.media": {
+      "short": "med"
+    },
     "filesystem.taggings": {
       "short": "tgg"
     },
@@ -190,6 +193,9 @@
     },
     "legal.provisions": {
       "short": "prv"
+    },
+    "official.branding": {
+      "short": "brd"
     },
     "official.contacts": {
       "short": "cnt"

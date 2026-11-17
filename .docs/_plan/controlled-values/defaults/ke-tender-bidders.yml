@@ -4,3 +4,11 @@ tables:
   civic.bids: { outcome_code: civ.bid.outcome.successful }
   official.names: { language_code: en, is_preferred: "true", name_kind_code: ofc.name.kind.official }
   official.entities: { kind_code: ofc.entity.kind.company }
+  civic.procurements: { procedure_kind_code: civ.procurement.procedure.open-tender }
+roles:
+  bidder: { kind_code: ofc.entity.kind.company }
+  buyer: { kind_code: ofc.entity.kind.public-body }
+# Give the tender with the run: --input buyer="Office of the Registrar of Political Parties" --input tender_reference=ORPP/OT/012/2024-2025
+# A bid list can be drafted before the tender data exists; the procurement it creates is a placeholder with the same code the tender will get.
+reads_as:
+  abbreviation: { official.names: { name_kind_code: ofc.name.kind.abbreviation, is_preferred: "false" } }

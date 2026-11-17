@@ -19,7 +19,12 @@ class PermissionsRow(BaseModel):
 
     action: AuthAction
     code: Annotated[
-        str, Field(min_length=1, max_length=255, pattern="^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$")
+        str,
+        Field(
+            min_length=1,
+            max_length=255,
+            pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+        ),
     ]
     description: Annotated[str, Field(max_length=4000)] | None = None
     field_group: Annotated[str, Field(min_length=1, max_length=255)] | None = None

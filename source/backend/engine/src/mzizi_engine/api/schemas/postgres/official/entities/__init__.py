@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from mzizi_engine.api.schemas.postgres.filesystem.entities.media import MediaRow
+from mzizi_engine.api.schemas.postgres.official.entities.branding import BrandingRow
 from mzizi_engine.api.schemas.postgres.official.entities.contacts import ContactsRow
 from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
 from mzizi_engine.api.schemas.postgres.official.entities.identifiers import OfficialIdentifiersRow
@@ -14,12 +16,14 @@ from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
 from mzizi_engine.api.schemas.postgres.source.entities.citations import CitationsRow
 
 __all__ = [
+    "BrandingRow",
     "CitationsRow",
     "ContactsRow",
     "CountryRow",
     "EntitiesRow",
     "IndividualsRow",
     "LanguageRow",
+    "MediaRow",
     "OfficialIdentifiersRow",
     "OfficialNamesRow",
     "OfficialRelationshipsRow",

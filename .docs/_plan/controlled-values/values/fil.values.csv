@@ -1,0 +1,9 @@
+code,scheme_code,label
+fil.media.kind.logo,fil.media.kind,Logo
+fil.media.kind.symbol,fil.media.kind,Symbol
+fil.media.kind.flag,fil.media.kind,Flag
+fil.media.kind.portrait,fil.media.kind,Portrait
+fil.media.kind.photograph,fil.media.kind,Photograph
+fil.media.kind.audio,fil.media.kind,Audio recording
+fil.media.kind.video,fil.media.kind,Video recording
+fil.media.kind.document-scan,fil.media.kind,Scanned document

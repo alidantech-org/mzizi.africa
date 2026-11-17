@@ -65,8 +65,9 @@ def test_a_code_follows_its_recipe_and_gaps_are_named() -> None:
 
 
 def test_a_taken_code_gets_a_qualifier_then_a_number() -> None:
-    assert disambiguate("ke.kiambu", {"ke.kiambu"}, ("town",)) == "ke.kiambu-town"
-    assert disambiguate("ke.kiambu", {"ke.kiambu", "ke.kiambu-town"}) == "ke.kiambu-2"
+    assert disambiguate("ke.kiambu", {"ke.kiambu"}, ("town",)) == "ke.kiambu~town"
+    assert disambiguate("ke.kiambu", {"ke.kiambu", "ke.kiambu~town"}) == "ke.kiambu~2"
+    assert disambiguate("ke.a.rawel", {"ke.a.rawel"}, ("107",)) == "ke.a.rawel~107"
     assert slug("Café São Paulo") == "cafe-sao-paulo"
 
 

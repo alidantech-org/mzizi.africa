@@ -21,6 +21,10 @@ columns:
       key: party-abbreviation-headings
       role: heading
       says: abbreviation
+    - list: sys.trm.global.politics
+      key: change-headings
+      role: heading
+      says: former name
     - list: sys.trm.global.people
       key: titled-person
       role: value
@@ -58,6 +62,22 @@ columns:
       key: collectives
       role: value
       says: group
+  official.branding.value:
+    means: 'How an entity or person presents itself: a slogan, colours, a symbol'
+    shape: text
+    terms:
+    - list: sys.trm.global.politics
+      key: slogan-headings
+      role: heading
+      says: slogan
+    - list: sys.trm.global.politics
+      key: colour-headings
+      role: heading
+      says: colour
+    - list: sys.trm.global.politics
+      key: symbol-headings
+      role: heading
+      says: symbol
   official.entities.registered_on:
     means: When the entity was registered
     shape: date
@@ -151,7 +171,7 @@ tables:
     code:
       parts:
       - scope: true
-      - name_slug: official.names.name
+      - slug: official.names.name
       unique_within:
       - official.entities.kind_code
     lookup:
@@ -166,6 +186,24 @@ tables:
       parts:
       - scope: true
       - slug: official.names.name
+  official.branding:
+    describe: A slogan, colours or symbol of an entity. Its code is the owner, the kind and the words.
+    code:
+      parts:
+      - code: official.branding.entity_code
+        optional: true
+      - code: official.branding.individual_code
+        optional: true
+      - last: official.branding.kind_code
+      - value: official.branding.value
+        optional: true
+  filesystem.media:
+    describe: A logo, photograph or recording. Its code is the scope, the kind and the title.
+    code:
+      parts:
+      - scope: true
+      - last: filesystem.media.kind_code
+      - slug: filesystem.media.title
   official.contacts:
     describe: A contact channel. Its code is the owner's code, the kind of channel and the value.
     code:

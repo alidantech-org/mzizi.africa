@@ -1,97 +1,18 @@
 value_code,language_code,label_kind,label
-ofc.entity.kind.company,sw,preferred,Kampuni
-ofc.entity.kind.public-body,sw,preferred,Taasisi ya umma
-ofc.entity.kind.political-party,sw,preferred,Chama cha siasa
-ofc.entity.kind.coalition,sw,preferred,Muungano wa vyama
-ofc.entity.kind.ngo,sw,preferred,Shirika lisilo la kiserikali
-ofc.entity.kind.cooperative,sw,preferred,Chama cha ushirika
-ofc.entity.kind.association,sw,preferred,Chama
-ofc.entity.kind.religious-body,sw,preferred,Taasisi ya kidini
-ofc.entity.kind.trust,sw,preferred,Dhamana
-ofc.entity.kind.partnership,sw,preferred,Ushirika wa kibiashara
-ofc.entity.kind.sole-proprietor,sw,preferred,Mfanyabiashara mmoja
-ofc.entity.kind.parastatal,sw,preferred,Shirika la serikali
-ofc.entity.kind.county-government,sw,preferred,Serikali ya kaunti
-ofc.entity.kind.commission,sw,preferred,Tume
-ofc.entity.kind.court,sw,preferred,Mahakama
-ofc.entity.kind.university,sw,preferred,Chuo kikuu
-ofc.entity.kind.bank,sw,preferred,Benki
-ofc.name.kind.official,sw,preferred,Jina rasmi
-ofc.name.kind.abbreviation,sw,preferred,Kifupi
-ofc.name.kind.short,sw,preferred,Jina fupi
-ofc.name.kind.former,sw,preferred,Jina la zamani
-ofc.name.kind.alternative,sw,preferred,Jina mbadala
-ofc.name.kind.trading,sw,preferred,Jina la biashara
-ofc.name.kind.translated,sw,preferred,Jina lililotafsiriwa
-ofc.name.kind.historical,sw,preferred,Jina la kihistoria
-ofc.contact.kind.postal-address,sw,preferred,Anwani ya posta
-ofc.contact.kind.physical-address,sw,preferred,Anwani ya makazi
-ofc.contact.kind.email,sw,preferred,Barua pepe
-ofc.contact.kind.telephone,sw,preferred,Simu
-ofc.contact.kind.mobile,sw,preferred,Simu ya mkononi
-ofc.contact.kind.fax,sw,preferred,Faksi
-ofc.contact.kind.website,sw,preferred,Tovuti
-ofc.contact.kind.social-media,sw,preferred,Akaunti ya mitandao ya kijamii
-ofc.contact.kind.landmark,sw,preferred,Alama ya eneo
-ofc.contact.visibility.public,sw,preferred,Wazi
-ofc.contact.visibility.restricted,sw,preferred,Imewekewa vikwazo
-ofc.contact.visibility.private,sw,preferred,Binafsi
-pol.party.kind.fully-registered,sw,preferred,Chama kilichosajiliwa kikamilifu
-pol.party.kind.provisionally-registered,sw,preferred,Chama kilichosajiliwa kwa muda
-pol.party.kind.coalition-party,sw,preferred,Chama cha muungano
-pol.party.kind.deregistered,sw,preferred,Chama kilichofutwa
-pol.membership.kind.member,sw,preferred,Mwanachama
-pol.membership.kind.founder,sw,preferred,Mwanzilishi
-pol.membership.kind.official,sw,preferred,Afisa wa chama
-pol.membership.kind.nominee,sw,preferred,Mteule
-pol.membership.kind.leader,sw,preferred,Kiongozi wa chama
-civ.procurement.procedure.open-tender,sw,preferred,Zabuni wazi
-civ.procurement.procedure.restricted-tender,sw,preferred,Zabuni iliyozuiliwa
-civ.procurement.procedure.request-for-quotation,sw,preferred,Ombi la bei
-civ.procurement.procedure.request-for-proposals,sw,preferred,Ombi la mapendekezo
-civ.procurement.procedure.expression-of-interest,sw,preferred,Kuonyesha nia
-civ.procurement.procedure.direct-procurement,sw,preferred,Ununuzi wa moja kwa moja
-civ.procurement.procedure.framework-agreement,sw,preferred,Mkataba wa mfumo
-civ.procurement.procedure.low-value,sw,preferred,Ununuzi wa thamani ndogo
-civ.bid.outcome.successful,sw,preferred,Imefanikiwa
-civ.bid.outcome.unsuccessful,sw,preferred,Haijafanikiwa
-civ.bid.outcome.non-responsive,sw,preferred,Haikidhi masharti
-civ.bid.outcome.withdrawn,sw,preferred,Imejiondoa
-civ.bid.outcome.cancelled,sw,preferred,Imefutwa
-civ.bid.outcome.pending,sw,preferred,Inasubiri tathmini
-civ.contract.status.signed,sw,preferred,Imetiwa saini
-civ.contract.status.active,sw,preferred,Inaendelea
-civ.contract.status.completed,sw,preferred,Imekamilika
-civ.contract.status.terminated,sw,preferred,Imesitishwa
-civ.contract.status.suspended,sw,preferred,Imesimamishwa
-fin.flow.kind.allocation,sw,preferred,Mgao
-fin.flow.kind.disbursement,sw,preferred,Utoaji
-fin.flow.kind.payment,sw,preferred,Malipo
-fin.flow.kind.receipt,sw,preferred,Mapato
-fin.flow.kind.transfer,sw,preferred,Uhamisho
-fin.flow.kind.grant,sw,preferred,Ruzuku
-fin.flow.kind.refund,sw,preferred,Marejesho
-fin.flow.kind.levy,sw,preferred,Ushuru
-fin.fund.kind.statutory-fund,sw,preferred,Mfuko wa kisheria
-fin.fund.kind.development-fund,sw,preferred,Mfuko wa maendeleo
-fin.fund.kind.grant-fund,sw,preferred,Mfuko wa ruzuku
-fin.fund.kind.equalisation-fund,sw,preferred,Mfuko wa usawazishaji
-fin.budget.kind.national,sw,preferred,Bajeti ya kitaifa
-fin.budget.kind.county,sw,preferred,Bajeti ya kaunti
-fin.budget.kind.institutional,sw,preferred,Bajeti ya taasisi
-fin.budget.kind.supplementary,sw,preferred,Bajeti ya nyongeza
-gov.institution.kind.ministry,sw,preferred,Wizara
-gov.institution.kind.state-department,sw,preferred,Idara ya serikali
-gov.institution.kind.commission,sw,preferred,Tume
-gov.institution.kind.county-government,sw,preferred,Serikali ya kaunti
-gov.institution.kind.parastatal,sw,preferred,Shirika la serikali
-gov.institution.kind.court,sw,preferred,Mahakama
-gov.institution.kind.legislature,sw,preferred,Bunge
-gov.institution.kind.independent-office,sw,preferred,Ofisi huru
-gov.office.kind.head,sw,preferred,Mkuu wa taasisi
-gov.office.kind.deputy,sw,preferred,Naibu
-gov.office.kind.member,sw,preferred,Mjumbe
-gov.office.kind.secretary,sw,preferred,Katibu
-gov.office.kind.chairperson,sw,preferred,Mwenyekiti
-gov.office.kind.elected,sw,preferred,Kiti cha kuchaguliwa
-gov.office.kind.appointed,sw,preferred,Wadhifa wa uteuzi
+ofc.branding.kind.slogan,sw,preferred,Kauli mbiu
+ofc.branding.kind.motto,sw,preferred,Msemo
+ofc.branding.kind.colours,sw,preferred,Rangi
+ofc.branding.kind.symbol-description,sw,preferred,Maelezo ya alama
+ofc.branding.kind.logo,sw,preferred,Nembo
+ofc.branding.kind.flag,sw,preferred,Bendera
+ofc.branding.kind.anthem,sw,preferred,Wimbo
+ofc.branding.kind.portrait,sw,preferred,Picha ya uso
+ofc.branding.kind.photograph,sw,preferred,Picha
+fil.media.kind.logo,sw,preferred,Nembo
+fil.media.kind.symbol,sw,preferred,Alama
+fil.media.kind.flag,sw,preferred,Bendera
+fil.media.kind.portrait,sw,preferred,Picha ya uso
+fil.media.kind.photograph,sw,preferred,Picha
+fil.media.kind.audio,sw,preferred,Rekodi ya sauti
+fil.media.kind.video,sw,preferred,Rekodi ya video
+fil.media.kind.document-scan,sw,preferred,Hati iliyochanganuliwa

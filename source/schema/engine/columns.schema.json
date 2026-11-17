@@ -165,6 +165,15 @@
                     "optional": {
                       "type": "boolean",
                       "default": false
+                    },
+                    "input": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*$",
+                      "description": "A named value the run supplies or a source column provides (a tender reference, a bid number), declared under `inputs` or given with the run."
+                    },
+                    "qualifier": {
+                      "type": "string",
+                      "description": "A seed column (<schema>.<table>.<column>) or `input:<name>` whose slug is added to the previous segment after a tilde (`rawel-holdings~107`)."
                     }
                   }
                 }
@@ -237,6 +246,31 @@
                       },
                       "description": "Where the record's kind comes from: the row of `table` whose `key` column equals the code, and its `column` value."
                     }
+                  }
+                }
+              }
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "description": "Named values a source column can supply to this table's code or rows: each name lists the heading words that carry it.",
+            "additionalProperties": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "list",
+                  "key"
+                ],
+                "properties": {
+                  "list": {
+                    "$ref": "../sources/common.schema.json#/$defs/code"
+                  },
+                  "key": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
                   }
                 }
               }

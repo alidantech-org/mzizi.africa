@@ -48,6 +48,7 @@ export 'package:mzizi_api/src/models/filesystem/file_relations.dart';
 export 'package:mzizi_api/src/models/filesystem/file_versions.dart';
 export 'package:mzizi_api/src/models/filesystem/files.dart';
 export 'package:mzizi_api/src/models/filesystem/folders.dart';
+export 'package:mzizi_api/src/models/filesystem/media.dart';
 export 'package:mzizi_api/src/models/filesystem/taggings.dart';
 export 'package:mzizi_api/src/models/filesystem/tags.dart';
 export 'package:mzizi_api/src/models/geography/changes.dart';
@@ -89,6 +90,7 @@ export 'package:mzizi_api/src/models/governance/office_detail_holders_names.dart
 export 'package:mzizi_api/src/models/governance/office_key.dart';
 export 'package:mzizi_api/src/models/governance/offices.dart';
 export 'package:mzizi_api/src/models/governance/relationships.dart';
+export 'package:mzizi_api/src/models/official/branding.dart';
 export 'package:mzizi_api/src/models/official/contacts.dart';
 export 'package:mzizi_api/src/models/official/entities.dart';
 export 'package:mzizi_api/src/models/official/identifiers.dart';

@@ -11,6 +11,7 @@ import * as dryv from "@dryvcode/author";
 import { rule, when } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { Media } from "./filesystem.ts";
 import { Country, Language, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
 
@@ -197,3 +198,34 @@ export const Relationships = official
       .index("toIndividualId", "kindId")
       .index("sourceCitationId"),
   });
+
+export const Branding = official
+  .schema("Branding", {
+    entityId: belongsTo(() => Entities).maybe(),
+    individualId: belongsTo(() => Individuals).maybe(),
+    /** Scheme ofc.branding.kind: slogan, motto, colours, symbol description, logo, flag, anthem, portrait, photograph. */
+    kindId: belongsTo(() => Value),
+    /** Words: a slogan, a list of colours, a description of a symbol. */
+    value: dryv.field(sharedProperties.NonEmptyString1000).maybe(),
+    /** The image, sound or video itself, when there is one. */
+    mediaId: belongsTo(() => Media).maybe(),
+    /** The language the words are in; `mul` or `und` when no single language applies. */
+    languageId: belongsTo(() => Language),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedValidityEntity)
+  .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
+  .description(
+    "How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are media.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("branding")
+      .index("entityId", "kindId")
+      .index("individualId", "kindId")
+      .index("mediaId")
+      .index("languageId")
+      .index("sourceCitationId"),
+  });
+

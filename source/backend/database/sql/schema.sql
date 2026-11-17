@@ -420,6 +420,22 @@ CREATE TABLE "filesystem"."folders" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "filesystem"."media" (
+    "alt_text" varchar(500),
+    "caption" varchar(4000),
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "file_version_id" uuid,
+    "id" uuid NOT NULL,
+    "kind_id" uuid NOT NULL,
+    "source_url" varchar(2048),
+    "title" varchar(300) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
 CREATE TABLE "filesystem"."taggings" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
@@ -1125,6 +1141,44 @@ CREATE TABLE "legal"."provisions" (
     "title" varchar(300),
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "official"."branding" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "entity_id" uuid,
+    "id" uuid NOT NULL,
+    "individual_id" uuid,
+    "kind_id" uuid NOT NULL,
+    "language_id" uuid NOT NULL,
+    "media_id" uuid,
+    "source_citation_id" uuid,
+    "updated_at" timestamptz NOT NULL,
+    "valid_from" date,
+    "valid_until" date,
+    "value" varchar(1000),
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_branding_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
+    CONSTRAINT "chk_branding_has_exactly_one_identity_owner" CHECK (
+        (
+            (
+                ("entity_id" IS NOT NULL)
+                AND ("individual_id" IS NULL)
+            )
+            OR (
+                ("entity_id" IS NULL)
+                AND ("individual_id" IS NOT NULL)
+            )
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -2445,6 +2499,20 @@ CREATE TRIGGER "tr_folders__folder_parent_acyclic"
 BEFORE INSERT OR UPDATE OF "parent_id" ON "filesystem"."folders" FOR EACH ROW
 EXECUTE FUNCTION "filesystem"."folders__folder_parent_acyclic" ();
 
+ALTER TABLE "filesystem"."media"
+ADD CONSTRAINT "fk_media_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."media"
+ADD CONSTRAINT "fk_media_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_media__code_partial_1" ON "filesystem"."media" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_media__kind_id" ON "filesystem"."media" USING btree ("kind_id");
+
+CREATE INDEX "ix_media__file_version_id" ON "filesystem"."media" USING btree ("file_version_id");
+
 ALTER TABLE "filesystem"."taggings"
 ADD CONSTRAINT "fk_taggings_file_id" FOREIGN KEY ("file_id") REFERENCES "filesystem"."files" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
@@ -3216,6 +3284,38 @@ $fn$;
 CREATE TRIGGER "tr_provisions__provision_parent_acyclic"
 BEFORE INSERT OR UPDATE OF "parent_id" ON "legal"."provisions" FOR EACH ROW
 EXECUTE FUNCTION "legal"."provisions__provision_parent_acyclic" ();
+
+ALTER TABLE "official"."branding"
+ADD CONSTRAINT "fk_branding_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."branding"
+ADD CONSTRAINT "fk_branding_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."branding"
+ADD CONSTRAINT "fk_branding_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."branding"
+ADD CONSTRAINT "fk_branding_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."branding"
+ADD CONSTRAINT "fk_branding_media_id" FOREIGN KEY ("media_id") REFERENCES "filesystem"."media" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."branding"
+ADD CONSTRAINT "fk_branding_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_branding__code_partial_1" ON "official"."branding" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_branding__entity_id_kind_id" ON "official"."branding" USING btree ("entity_id", "kind_id");
+
+CREATE INDEX "ix_branding__individual_id_kind_id" ON "official"."branding" USING btree ("individual_id", "kind_id");
+
+CREATE INDEX "ix_branding__media_id" ON "official"."branding" USING btree ("media_id");
+
+CREATE INDEX "ix_branding__language_id" ON "official"."branding" USING btree ("language_id");
+
+CREATE INDEX "ix_branding__source_citation_id" ON "official"."branding" USING btree ("source_citation_id");
 
 ALTER TABLE "official"."contacts"
 ADD CONSTRAINT "fk_contacts_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;

@@ -321,12 +321,19 @@ class CodePart(Frozen):
     last: str = ""
     value: str = ""
     kind: str = ""
+    input: str = ""
+    qualifier: str = ""
     optional: bool = False
 
 
 class CodeRecipe(Frozen):
     parts: tuple[CodePart, ...] = Field(min_length=1)
     unique_within: tuple[str, ...] = ()
+
+
+class InputLink(Frozen):
+    list: str
+    key: str
 
 
 class LookupKind(Frozen):
@@ -351,6 +358,7 @@ class TableSpec(Frozen):
     describe: str = ""
     code: CodeRecipe | None = None
     lookup: TableLookup | None = None
+    inputs: dict[str, tuple[InputLink, ...]] = Field(default_factory=dict)  # named values a source column can supply
 
 
 class Dictionary(Frozen):
