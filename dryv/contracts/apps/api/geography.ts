@@ -20,9 +20,10 @@ const name = Names.asRef();
  */
 const kindShapes = geography.schemas({
   FeatureKind: dryv.schema({
-    id: dryv.field(p.Id),
+    // The option tags say which fields an assembler uses as a choice's value and label.
+    id: dryv.field(p.Id).tags("option:value"),
     code: dryv.field(p.IdentityCode),
-    label: dryv.field(p.Name),
+    label: dryv.field(p.Name).tags("option:label"),
   }),
 });
 const kindIo = geography.schemas({

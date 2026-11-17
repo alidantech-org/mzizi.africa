@@ -22,17 +22,11 @@ extra: {status: proposal, dryv_changes: not_approved, evidence: phase_2_prototyp
 
 **Evidence of done.** The detail view's `load` invoke part and its tag disappear; a pack reads the present part's context binding and the generated detail page calls `getFeature` with the id.
 
-## 2. A field source's operation is a dependency of the files that use the field
+## 2. A field source's operation is a dependency of the files that use the field (withdrawn: no Dryv change needed)
 
-**Observed.** The feature-type filter field declares a source of purpose `options` pointing at `BrowseFeatureKinds`. The probe shows the source on the field (`sources` is in the collect part's port schema context) but the page's `file.dependencies` contains only `browseFeatures`: the source operation is not planned as a dependency, so the page has no import path or symbol for it. A link context carries the operation's id and name variants but not its group, so a path cannot be built from the link without a naming convention duplicated between packs.
+**Update after testing.** The probe showed the source operation missing from the page's dependencies, and the first reading was that dependency planning ignores field sources. Reading the planner proved otherwise: a schema already references the operations its fields' sources name, and a view reaches the schema through its parts. The page simply did not ask for that second hop. Declaring `transitive: true` on the pack's `operation.client` import makes the source operation a dependency of the page (the generated page then imports the `browseFeatureKinds` action), and the unused-import action removes anything the page does not use. The feature-type filter now renders as a real choice backed by the contract's `options` source (37 kinds from the live API; choosing County narrows the table to counties).
 
-**Existing vocabulary tried.** Reading the source from the field context (works); importing the source operation through the pack's `imports` and `transitive` reach (does not reach it, because dependency planning follows the file subject's references, not a field's sources).
-
-**Proposal.** When planning dependencies, treat the operations named by the `sources` of the schema fields a file's subject reaches as references of that subject, in the same way an operation port's schema is. The existing `needs` slot (`operation.client`) then binds them like any other referenced operation. No IR change.
-
-**Why the natural owner.** Field sources are already validated as references to operation ports; dependency planning is the one place that ignores them.
-
-**Evidence of done.** The generated browse page imports the `BrowseFeatureKinds` action from the bound client and the feature-type filter renders as a choice.
+What remains is a convention, not a Dryv change: an `options` source names an output but not which record field is the choice's value and which is its text. The contract marks them with field tags (`option:value`, `option:label`) and the pack reads the tags. If the owner prefers a declared mapping on the source itself, that is a small later proposal.
 
 ## What needs no Dryv change
 
@@ -40,12 +34,12 @@ Selecting views by `role` and tags to pick a pattern template, reading part tags
 
 ## Gap record from the phase 2 prototype
 
-Every gap met while assembling geography browse, detail and search-select for web and Flutter, with the example that shows it. Gaps 1 and 2 are the written proposals above; the rest are recorded here for the owner to rank. Nothing in the Dryv repository was changed.
+Every gap met while assembling geography browse, detail and search-select for web and Flutter, with the example that shows it. Gap 1 is the written proposal above (gap 2 was resolved without a Dryv change); the rest are recorded here for the owner to rank. Nothing in the Dryv repository was changed.
 
 | # | Gap | Failing example | Where it was worked around |
 | --- | --- | --- | --- |
 | 1 | A `present` part cannot bind its operation's input from view context. | `part.collect(inputFrom(GetFeature.in, [], { featureId: "featureId" }))` fails with "input collection selector must be omitted when empty". | An `invoke` part tagged `run:on-open` carries the binding. |
-| 2 | A field source's operation is not a dependency of files that use the field. | The browse page's `file.dependencies` holds `browseFeatures` but not `BrowseFeatureKinds`, though `featureTypeId` declares it as an `options` source. | The filter renders as a text field. |
+| 2 | (Resolved, no Dryv change.) A field source's operation was missing from the page's dependencies. | The browse page's `file.dependencies` held `browseFeatures` but not `BrowseFeatureKinds`. | `transitive: true` on the `operation.client` import reaches it; the filter is now a choice. An `options` source still names no value or label field, so the contract tags them (`option:value`, `option:label`). |
 | 3 | A transition carries no context bindings. | `.transition("openFeature", "browse", "detail", { operation: GetFeature })` cannot say that the row's `featureId` becomes the detail view's `featureId`. | The list passes every text value of the row as address values; the detail view reads the ones it needs by name. |
 | 4 | Part order is lost (the IR sorts parts by name). | `parts({ filters, features })` renders `features` before `filters` in the stock pack. | The pattern template places collect parts in its filter slot and present parts in its results slot. Free-form views would still need an authored order, best on the view's presentation. |
 | 5 | A read query parameter cannot be bound to a constant. | "Members of the scheme `ref.sch.geo.feature.kind`" has no query form: parameters bind only to an operation input or a policy value. | `BrowseFeatureKinds` is a hand-written use case with one named scheme constant. |

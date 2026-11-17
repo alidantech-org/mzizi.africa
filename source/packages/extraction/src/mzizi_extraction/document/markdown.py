@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import io
 
+from mzizi_extraction.document.markdown_format import format_markdown
 from mzizi_extraction.document.models import (
     FigureBlock,
     Heading,
@@ -71,10 +72,14 @@ def _cell(text: str) -> str:
     return text.replace("|", "\\|").replace("\n", " ")
 
 
+def table_path(page: int, index: int, variant: str = "") -> str:
+    return f"tables/page-{page}-table-{index}{variant}.csv"
+
+
 def render_table(table: TableBlock) -> str:
     width = max(len(r) for r in table.rows)
     rows = [[*r, *([""] * (width - len(r)))] for r in table.rows]
-    header_count = table.header_rows if table.cells else 1
+    header_count = min(table.header_rows, max(0, len(rows) - 1)) if rows else 0
     header = (
         [" / ".join(dict.fromkeys(c for c in column if c)) for column in zip(*rows[:header_count], strict=True)]
         if header_count
@@ -91,7 +96,7 @@ def table_csv(table: TableBlock) -> str:
     return buffer.getvalue()
 
 
-def render_markdown(pages: tuple[Page, ...]) -> str:
+def render_markdown(pages: tuple[Page, ...], alternates: dict[tuple[int, int], tuple[str, ...]] | None = None) -> str:
     out: list[str] = []
     for page in pages:
         note = f"page {page.number}" + (f", OCR {page.ocr_confidence:.2f}" if page.ocr and page.ocr_confidence else "")
@@ -99,16 +104,18 @@ def render_markdown(pages: tuple[Page, ...]) -> str:
         previous_list = False
         for block in page.blocks:
             is_list = isinstance(block, ListItem)
-            text = _block(block)
+            text = _block(block, alternates or {})
             if is_list and previous_list and out:
                 out[-1] = out[-1] + "\n" + text
             else:
                 out.append(text)
             previous_list = is_list
-    return "\n\n".join(out).strip() + "\n"
+    return format_markdown("\n\n".join(out))
 
 
-def _block(block: Heading | Paragraph | ListItem | TableBlock | FigureBlock) -> str:
+def _block(
+    block: Heading | Paragraph | ListItem | TableBlock | FigureBlock, alternates: dict[tuple[int, int], tuple[str, ...]]
+) -> str:
     match block:
         case Heading():
             return "#" * min(block.level, 6) + " " + render_spans(block.spans)
@@ -119,7 +126,14 @@ def _block(block: Heading | Paragraph | ListItem | TableBlock | FigureBlock) -> 
             return f"{bullet} {render_spans(block.spans)}"
         case TableBlock():
             caption = f"*{block.caption}*\n\n" if block.caption else ""
-            return caption + render_table(block)
+            links = [f"[CSV]({table_path(block.page, block.index)})"]
+            links += [f"[{name}]({path})" for path, name in _alternate_links(alternates.get((block.page, block.index), ()))]
+            return caption + render_table(block) + "\n\n*Table data: " + " · ".join(links) + "*"
         case FigureBlock():
             caption = f"\n\n*{block.caption}*" if block.caption else ""
             return f"![{block.alt}]({block.asset}){caption}"
+
+
+def _alternate_links(paths: tuple[str, ...]) -> list[tuple[str, str]]:
+    """Other readings of a weak table, named by the detector that produced each."""
+    return [(path, "alternate " + path.rsplit(".alt-", 1)[-1].removesuffix(".csv")) for path in paths]

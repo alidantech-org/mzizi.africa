@@ -20,3 +20,4 @@ knbs-ca-bundle.pem
 .next/
 target/
 .dart_tool/
+*problems-report.html

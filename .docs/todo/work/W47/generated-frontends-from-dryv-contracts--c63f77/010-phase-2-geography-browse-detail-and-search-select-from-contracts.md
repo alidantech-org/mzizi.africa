@@ -83,3 +83,7 @@ Same Dryv findings as the web slice apply (present parts cannot bind context; a 
 ## Gap record
 
 Written: `.docs/_plan/guides/dryv-frontend-proposals.md`, section "Gap record from the phase 2 prototype": 14 gaps, each with its failing example and workaround. Phase 2 is closed except the device run of the Flutter screens, which stays open above.
+
+## Update: the feature-type filter is a real choice (Dryv proposal 2 withdrawn)
+
+The planner already references field-source operations from schemas; the page only needed `transitive: true` on its `operation.client` import. The pack now renders a field with an `options` source as a choice whose options come from the source operation (value and label fields marked by the contract's `option:value` and `option:label` field tags). Verified in the browser against the live API: 37 feature kinds in the select; choosing County listed 20 counties (all of the County type). See the revised proposals document.

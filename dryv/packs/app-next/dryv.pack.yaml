@@ -88,6 +88,7 @@ templates:
       symbol: $(subject.name.pascal)Page
     imports:
       - $ref: '#/needs/operation.client'
+        transitive: true
       - $ref: '#/templates/operation'
 
   detail-page:

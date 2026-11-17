@@ -8,12 +8,28 @@ import { FilterBar } from "@mzizi/ui-web/components/filter-bar.tsx";
 import { PageShell, Section } from "@mzizi/ui-web/components/page-shell.tsx";
 import { Pagination } from "@mzizi/ui-web/components/pagination.tsx";
 import type { FieldSpec, FieldValues, PageWindow } from "@mzizi/ui-web/lib/types.ts";
+import { browseFeatureKinds } from "@mzizi/api-client/actions/geography/browse-feature-kinds.actions.ts";
 import { browseFeatures } from "@mzizi/api-client/actions/geography/browse-features.actions.ts";
 import { browseFeaturesPage, browseFeaturesRequest } from "#/lib/api/geography/browse-features.ts";
 
 /** Browse geographic features, narrowed by feature kind or code prefix. */
 const filterFields: readonly FieldSpec[] = [
-  { kind: "text", name: "featureTypeId", label: "Feature Type Id" },
+  {
+    kind: "choice",
+    name: "featureTypeId",
+    label: "Feature Type Id",
+    // The choices come from BrowseFeatureKinds: its first list of records, each record's
+    // `option:value` field as the value and `option:label` field as the text.
+    loadOptions: async () => {
+      const response = await browseFeatureKinds({} as never);
+      const body = response.body as Record<string, unknown> | null;
+      const records = (body?.["kinds"] as readonly Record<string, unknown>[] | undefined) ?? [];
+      return records.map((record) => ({
+        value: String(record["id"]),
+        label: String(record["label"]),
+      }));
+    },
+  },
   { kind: "text", name: "codePrefix", label: "Code Prefix" },
 ];
 

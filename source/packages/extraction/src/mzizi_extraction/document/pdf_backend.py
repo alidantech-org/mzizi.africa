@@ -14,6 +14,7 @@ import pdfplumber
 import pypdfium2 as pdfium
 
 from mzizi_extraction.core import Code, Diagnostic, Status, error, failed, info, warning
+from mzizi_extraction.document.table_tidy import tidy_rows
 from mzizi_extraction.document.captions import attach_captions
 from mzizi_extraction.document.columns import reading_order
 from mzizi_extraction.document.figures import Box, crop_png, render_image, render_page_png
@@ -98,11 +99,12 @@ def _build_page(
         flush()
         last_group = -1
         if isinstance(payload, _TableItem):
+            tidy, header_rows = tidy_rows(payload.rows)
             blocks.append(
                 TableBlock(
                     index=payload.index,
-                    rows=payload.rows,
-                    header_rows=profile.table_schema.header_rows if profile.table_schema else 1,
+                    rows=tidy,
+                    header_rows=profile.table_schema.header_rows if profile.table_schema else header_rows,
                     page=scan.number,
                     bbox=_bbox(payload.box),
                 )

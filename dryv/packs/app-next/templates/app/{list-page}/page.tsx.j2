@@ -42,7 +42,32 @@ const filterFields: readonly FieldSpec[] = [
 {%- for part in view.parts %}{% if part.kind == 'collect' and part.collect.target.port is not none %}
 {%- set port = part.collect.target.port %}
 {%- for path in part.collect.target.collect %}{% for field in port.value.schema.fields %}{% if field.name.raw == path.dotted %}
+{%- if field.sources | length > 0 %}{% for source in field.sources if source.purpose == 'options' %}{% if loop.first %}
+  {
+    kind: "choice",
+    name: {{ field.name.raw | tojson }},
+    label: {{ field.name.title | tojson }},
+    // The choices come from {{ source.output.operation.name.raw }}: its first list of records, each record's
+    // `option:value` field as the value and `option:label` field as the text.
+    loadOptions: async () => {
+      const response = await {% for dependency in file.dependencies %}{% if dependency.slot == 'operation.client' and dependency.target.id == source.output.operation.id %}{{ dependency.symbol }}{% endif %}{% endfor %}({} as never);
+      const body = response.body as Record<string, unknown> | null;
+{%- for list in source.output.value.schema.fields if list.value.kind == 'schema' and list.array is not none %}{% if loop.first %}
+      const records = (body?.[{{ list.name.raw | tojson }}] as readonly Record<string, unknown>[] | undefined) ?? [];
+      return records.map((record) => ({
+{%- for item in list.value.schema.fields %}{% if 'option:value' in item.tags %}
+        value: String(record[{{ item.name.raw | tojson }}]),
+{%- elif 'option:label' in item.tags %}
+        label: String(record[{{ item.name.raw | tojson }}]),
+{%- endif %}{% endfor %}
+      }));
+{%- endif %}{% endfor %}
+    },
+  },
+{%- endif %}{% endfor %}
+{%- else %}
   { kind: "text", name: {{ field.name.raw | tojson }}, label: {{ field.name.title | tojson }} },
+{%- endif %}
 {%- endif %}{% endfor %}{% endfor %}
 {%- endif %}{% endfor %}
 ];

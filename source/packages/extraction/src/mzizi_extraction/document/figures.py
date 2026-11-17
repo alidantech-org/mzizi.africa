@@ -124,10 +124,13 @@ def crop_png(image: Image.Image, box: Box) -> bytes:
     margin = 2.0
     left, top = max(box.x0 - margin, 0) * FIGURE_SCALE, max(box.top - margin, 0) * FIGURE_SCALE
     right, bottom = (box.x1 + margin) * FIGURE_SCALE, (box.bottom + margin) * FIGURE_SCALE
+    # A figure box can extend past the page (clipped or rotated content); keep it inside the image and non-empty.
+    left_px = min(max(int(left), 0), image.width - 1)
+    top_px = min(max(int(top), 0), image.height - 1)
+    right_px = min(max(int(right), left_px + 1), image.width)
+    bottom_px = min(max(int(bottom), top_px + 1), image.height)
     buffer = io.BytesIO()
-    image.crop((int(left), int(top), min(int(right), image.width), min(int(bottom), image.height))).save(
-        buffer, format="PNG"
-    )
+    image.crop((left_px, top_px, right_px, bottom_px)).save(buffer, format="PNG")
     return buffer.getvalue()
 
 
