@@ -1,5 +1,5 @@
 ---
-{id: TSK-8A0652B2AD28,name: Validate and export schema-aware draft CSVs through engine HTTP,type: task,status: planned,priority: medium,created_at: 2026-11-17T07:36:52.114Z,updated_at: 2026-11-17T07:44:49.981Z,order: 29696,depends_on: [TSK-583968232F6B],links: [{type: relates,task: TSK-C5499450BD6D}]}
+{id: TSK-8A0652B2AD28,name: Validate and export schema-aware draft CSVs through engine HTTP,type: task,status: archived,priority: medium,created_at: 2026-11-17T07:36:52.114Z,updated_at: 2026-11-17T08:25:58.266Z,order: 29696,depends_on: [TSK-583968232F6B],links: [{type: relates,task: TSK-C5499450BD6D}],extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T08:14:06.668Z},{from: in-progress,to: completed,at: 2026-11-17T08:25:57.576Z},{from: completed,to: archived,at: 2026-11-17T08:25:58.266Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-8A0652B2AD28/1794903246674-start,started_at: 2026-11-17T08:14:07.603Z,end_ref: refs/tracking/TSK-8A0652B2AD28/1794903957579-end,ended_at: 2026-11-17T08:25:57.577Z,summary: {files: 649,insertions: 6932,deletions: 3246}}]}}}
 ---
 
 # Validate and export schema-aware draft CSVs through engine HTTP
@@ -14,6 +14,12 @@ The portal design uses the IEBC office-location PDF as a backend-first example. 
 
 ## Acceptance checklist
 
-- [ ] Provide typed HTTP operations to validate a draft and retrieve its report and evidence.
-- [ ] Preserve IEBC location details outside any unsupported seed target and report the contract gap.
-- [ ] Prove repeatable report and draft output from an HTTP client without canonical writes.
+- [x] Provide typed HTTP operations to validate a draft and retrieve its report and evidence.
+- [x] Preserve IEBC location details outside any unsupported seed target and report the contract gap.
+- [x] Prove repeatable report and draft output from an HTTP client without canonical writes.
+
+## Comments
+
+### 2026-11-17T08:25:56.797Z · PETER IRUNGU
+
+Implemented /v1/research/table-draft over verified PDF and pinned reference CSV artifacts. The standalone HTTP engine ran page 1 of the saved IEBC constituency office PDF using a scratch Mongo ledger and local run storage. Two equivalent requests produced identical reports. Ten source rows were exported, nine exact constituency links resolved, and Lungalunga remained unresolved. The report retains office location, landmark and distance fields and reports the missing required governance.offices mappings. Output is local at .dev/runs/iebc-http-pilot-e00c94f1, with draft.csv, report.json and request.json. No PostgreSQL, seed or portal writes. Focused tests passed (167 with 4 skips in the broader focused suite). The root suite still fails repository-wide format, lint, typing and tests, including missing policy/seed fixtures and the admin catalog mismatch.

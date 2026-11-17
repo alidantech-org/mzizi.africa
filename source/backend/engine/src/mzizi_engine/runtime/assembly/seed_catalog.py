@@ -38,7 +38,10 @@ def _seed_table(table: Table, by_id: dict[str, Table]) -> SeedTable:
 
 
 def seed_catalog(request: SeedCatalogRequest) -> SeedCatalog:
-    tables = load_tables()
+    return project_seed_catalog(load_tables(), request)
+
+
+def project_seed_catalog(tables: dict[str, Table], request: SeedCatalogRequest) -> SeedCatalog:
     by_id = {table.id: table for table in tables.values()}
     catalog = tuple(_seed_table(table, by_id) for _, table in sorted(tables.items()) if table.seedable)
     selected = tuple(table for table in catalog if request.table is None or table.name == request.table)

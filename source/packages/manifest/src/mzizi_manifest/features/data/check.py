@@ -52,7 +52,7 @@ class DataResult:
     order: list[str] = field(default_factory=list)
 
 
-def _value_problem(column: Column, value: str) -> str | None:
+def seed_value_problem(column: Column, value: str) -> str | None:
     """Why `value` does not fit `column`, or None."""
     if column.enum is not None and value not in column.enum:
         return f"{value!r} is not one of {', '.join(column.enum)}"
@@ -181,7 +181,7 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                     if seed_name in required:
                         result.problems.append(f"{where}: {seed_name} is required")
                     continue
-                if (problem := _value_problem(column, value)) and not column.link:
+                if (problem := seed_value_problem(column, value)) and not column.link:
                     result.problems.append(f"{where}: {seed_name}: {problem}")
             identity = row.values.get("code", "")
             tcode = glossary.tables.get(name)

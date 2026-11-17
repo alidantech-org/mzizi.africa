@@ -22,6 +22,7 @@ from mzizi_engine import __version__
 from mzizi_engine.api.routes.catalog.seed_catalog import build_catalog_seed_catalog_router
 from mzizi_engine.config import EngineConfig, ServerConfig
 from mzizi_engine.runtime.assembly import DRAIN_TIMEOUT_SECONDS, build_default_runtime
+from mzizi_engine.runtime.assembly.artifact_reader import artifact_reader
 from mzizi_engine.runtime.contracts.config import RuntimeConfig
 from mzizi_engine.runtime.executor.executor import Executor
 from mzizi_engine.runtime.executor.memory_store import MemoryStore, Store
@@ -34,8 +35,10 @@ from mzizi_engine.runtime.http.auth import (
     require,
 )
 from mzizi_engine.runtime.http.overview import SystemOverview, build_overview
+from mzizi_engine.runtime.http.research import research_router
 from mzizi_engine.runtime.http.seed_catalog import RuntimeSeedCatalogService
 from mzizi_engine.runtime.operations import OperationRegistry
+from mzizi_engine.runtime.runs.artifacts import ArtifactReader
 from mzizi_engine.runtime.runtime import EngineRuntime
 
 
@@ -62,6 +65,7 @@ def create_app(
     authority: Authority | None = None,
     verifier: TokenVerifier | None = None,
     callback_client: httpx.AsyncClient | None = None,
+    research_reader: ArtifactReader | None = None,
 ) -> FastAPI:
     settings = settings or EngineConfig.load().server
     settings.check()
@@ -125,6 +129,8 @@ def create_app(
     app.include_router(
         build_catalog_seed_catalog_router(RuntimeSeedCatalogService(runtime)), dependencies=[require("engine.read")]
     )
+
+    app.include_router(research_router(research_reader or artifact_reader(registry)))
 
     @app.post("/internal/v1/capabilities/execute")
     async def execute_internal_capability(body: JobRequest, request: Request) -> dict:

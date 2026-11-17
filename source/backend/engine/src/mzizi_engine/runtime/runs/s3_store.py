@@ -117,7 +117,10 @@ class S3RunStore:
             return record
 
     def open(self, run_id: UUID, relative_path: str) -> BinaryIO:
-        return self._objects.open_stream(self.object_key(run_id, relative_path))
+        key = self.object_key(run_id, relative_path)
+        if self._objects.head(key) is None:
+            raise FileNotFoundError(relative_path)
+        return self._objects.open_stream(key)
 
     def list(self, run_id: UUID, prefix: str = "") -> tuple[ArtifactRecord, ...]:
         prefix = prefix.rstrip("/")

@@ -11,6 +11,7 @@ import { runLedger } from "#/schemas/mongo/run-ledger.ts";
 import { shared } from "#/schemas/_shared.ts";
 import { catalogApi } from "./catalog.ts";
 import { engineApi } from "./engine.ts";
+import { researchApi } from "./research.ts";
 import { runtimeApi } from "./runtime.ts";
 import { stagingApi } from "./staging.ts";
 import { systemApi } from "./system.ts";
@@ -20,6 +21,7 @@ export default dryv
   .info({ title: "Mzizi engine", version: "0.1.0" })
   .provides(
     catalogApi.GetSeedCatalog,
+    researchApi.InspectArtifact,
     engineApi.ListCapabilities,
     engineApi.SubmitJob,
     engineApi.GetJob,
@@ -36,4 +38,13 @@ export default dryv
     systemApi.GetHealth,
     systemApi.GetReadiness,
   )
-  .groups(shared, catalogApi.catalog, engineApi.engine, runtimeApi.runtime, stagingApi.staging, systemApi.system, runLedger);
+  .groups(
+    shared,
+    catalogApi.catalog,
+    engineApi.engine,
+    researchApi.research,
+    runtimeApi.runtime,
+    stagingApi.staging,
+    systemApi.system,
+    runLedger,
+  );

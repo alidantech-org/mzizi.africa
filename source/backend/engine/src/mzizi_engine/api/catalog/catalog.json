@@ -68,6 +68,17 @@
       "summary": "Queue a job. Repeating an idempotency key returns the first job."
     },
     {
+      "name": "InspectArtifact",
+      "group": "research",
+      "feature": "artifacts",
+      "method": "POST",
+      "path": "/v1/research/inspect",
+      "role": "detail",
+      "inputs": ["ref"],
+      "output": "ArtifactMetadata",
+      "summary": "Verify the bytes at an exact artifact reference and return their provenance."
+    },
+    {
       "name": "GetRun",
       "group": "runtime",
       "feature": "runs",
