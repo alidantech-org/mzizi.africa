@@ -4,6 +4,8 @@ import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/routers/navigation.dart';
+import 'package:mzizi_app/presentation/saved/saved_store.dart';
+import 'package:mzizi_app/presentation/widgets/keep_buttons.dart';
 
 String _initials(String name) => name
     .split(' ')
@@ -65,17 +67,31 @@ class OfficialCard extends StatelessWidget {
                       '${tr(language, 'inOffice')} ${holder.tookOfficeOn!.toIso8601String().substring(0, 10)}',
                       style: text.bodySmall,
                     ),
-                  if (evidence != null)
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 36),
+                  Row(
+                    children: [
+                      HeartButton(
+                        kind: SavedKind.leader,
+                        tooltip: tr(language, 'likeLeader'),
+                        item: SavedItem(
+                          id: holder.holderId,
+                          title: holder.personName,
+                          subtitle: holder.officeTitle,
+                          featureId: holder.unitFeatureId,
+                        ),
                       ),
-                      onPressed: () => context.go(
-                        '${AppRoutes.evidenceView}?citationId=${evidence.citationId}',
-                      ),
-                      child: Text('${tr(language, 'seeEvidence')} ›'),
-                    ),
+                      if (evidence != null)
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 36),
+                          ),
+                          onPressed: () => context.go(
+                            '${AppRoutes.evidenceView}?citationId=${evidence.citationId}',
+                          ),
+                          child: Text('${tr(language, 'seeEvidence')} ›'),
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),

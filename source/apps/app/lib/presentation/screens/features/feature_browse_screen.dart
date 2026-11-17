@@ -53,8 +53,9 @@ class _FeatureBrowseScreenState extends State<FeatureBrowseScreen> {
       input[paging.limit] = min(_window.limit, paging.maxLimit);
       input[paging.offset] = _window.offset;
     }
-    final result = await GeographyFeature(MziziApi.connection)
-        .browseFeatures(input: GeographyFeatureWindow.fromJson(input));
+    final result = await GeographyFeature(
+      MziziApi.connection,
+    ).browseFeatures(input: GeographyFeatureWindow.fromJson(input));
     if (!mounted) return;
     setState(() {
       if (result.isError) {

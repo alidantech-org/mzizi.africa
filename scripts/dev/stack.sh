@@ -30,6 +30,7 @@ case "${1:-}" in
     free "$port"
     (cd "source/apps/$app" && rm -rf .next && nohup bun --bun next dev -p "$port" > "$ROOT/.dev/logs/$1.log" 2>&1 &) ;;
   flutter)
+    # Serve only after the build: `flutter build web` recreates the folder, which would leave an older server on a deleted one.
     free 8090
     (cd source/apps/app && flutter build web --release --dart-define=API_URL=http://127.0.0.1:8700)
     (cd source/apps/app/build/web && nohup python3 -m http.server 8090 --bind 127.0.0.1 > "$ROOT/.dev/logs/flutter.log" 2>&1 &) ;;

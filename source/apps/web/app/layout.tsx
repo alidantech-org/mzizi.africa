@@ -6,6 +6,7 @@ import "#/app/globals.css";
 import { SiteFooter } from "#/components/site/site-footer.tsx";
 import { SiteHeader } from "#/components/site/site-header.tsx";
 import { LanguageProvider } from "#/lib/site/i18n.tsx";
+import { SavedProvider } from "#/lib/site/saved.tsx";
 
 export const metadata: Metadata = {
   title: "Mzizi",
@@ -17,9 +18,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         <LanguageProvider>
-          <SiteHeader />
-          <main>{children}</main>
-          <SiteFooter />
+          <SavedProvider>
+            <SiteHeader />
+            <main>{children}</main>
+            <SiteFooter />
+          </SavedProvider>
         </LanguageProvider>
       </body>
     </html>

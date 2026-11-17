@@ -18,7 +18,7 @@ export function AsyncView<T>({
     return (
       <div className="space-y-4" aria-busy="true" aria-label={t("loading")}>
         {[0, 1, 2].map((row) => (
-          <div key={row} className="h-24 animate-pulse rounded-[var(--radius)] bg-surface-sunken" />
+          <div key={row} className="h-24 skeleton rounded-[var(--radius)]" />
         ))}
       </div>
     );

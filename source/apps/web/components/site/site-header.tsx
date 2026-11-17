@@ -5,17 +5,20 @@ import { usePathname } from "next/navigation";
 
 import { LanguageSwitcher } from "#/components/site/language-switcher.tsx";
 import { useLanguage, type Word } from "#/lib/site/i18n.tsx";
+import { useSaved } from "#/lib/site/saved.tsx";
 import { routes } from "#/lib/dryv/routes.ts";
 
 /** The links of the top bar. Paths come from the Dryv-generated route table so a renamed view cannot leave a dead link. */
 const LINKS: readonly { readonly href: string; readonly word: Word }[] = [
   { href: routes.placeSearch, word: "navPlaces" },
   { href: routes.sourceBrowse, word: "navSources" },
+  { href: "/saved", word: "navSaved" },
 ];
 
 export function SiteHeader() {
   const { t } = useLanguage();
   const pathname = usePathname();
+  const { count } = useSaved();
   return (
     <header className="sticky top-0 z-20 border-b border-border-default bg-surface-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center gap-6 px-5 py-3">
@@ -46,6 +49,11 @@ export function SiteHeader() {
                 }`}
               >
                 {t(link.word)}
+                {link.href === "/saved" && count > 0 ? (
+                  <span className="ml-1.5 rounded-full bg-calabash px-1.5 text-[10px] font-bold text-ink">
+                    {count}
+                  </span>
+                ) : null}
               </Link>
             );
           })}

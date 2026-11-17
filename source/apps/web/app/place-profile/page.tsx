@@ -28,7 +28,16 @@ function PlaceProfile() {
   );
   return (
     <div className="mx-auto max-w-5xl px-5 py-12">
-      <AsyncView loaded={loaded}>{(profile) => <ProfileView profile={profile} />}</AsyncView>
+      <AsyncView loaded={loaded}>
+        {(profile) => (
+          <ProfileView
+            profile={profile}
+            position={
+              params.has("lat") && params.has("lng") ? { latitude: lat, longitude: lng } : null
+            }
+          />
+        )}
+      </AsyncView>
     </div>
   );
 }

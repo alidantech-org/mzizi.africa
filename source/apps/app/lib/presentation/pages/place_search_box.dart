@@ -21,10 +21,11 @@ class _PlaceSearchBoxState extends ConsumerState<PlaceSearchBox> {
 
   void _submit() {
     final text = _controller.text.trim();
-    if (text.length >= 2)
+    if (text.length >= 2) {
       context.go(
         '${AppRoutes.placeSearch}?q=${Uri.encodeQueryComponent(text)}',
       );
+    }
   }
 
   @override

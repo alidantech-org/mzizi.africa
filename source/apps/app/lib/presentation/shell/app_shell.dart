@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/routers/navigation.dart';
+import 'package:mzizi_app/presentation/saved/saved_store.dart';
 
 /// The frame around every screen: an app bar with the language switch and a bottom navigation bar. The paths come
 /// from the generated `AppRoutes`; the icons, labels and the choice of destinations are hand-built.
@@ -33,18 +34,26 @@ class AppShell extends ConsumerWidget {
           icon: Icons.menu_book_outlined,
           selectedIcon: Icons.menu_book,
         ),
+        (
+          word: 'saved',
+          path: '/saved',
+          icon: Icons.favorite_border,
+          selectedIcon: Icons.favorite,
+        ),
       ];
 
   /// Profile and evidence screens belong to the Places tab.
   int _selected() {
     if (location == '/') return 0;
     if (location.startsWith(AppRoutes.sourceBrowse)) return 2;
+    if (location.startsWith('/saved')) return 3;
     return 1;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final language = ref.watch(languageProvider);
+    final savedCount = ref.watch(savedProvider.select((s) => s.count));
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 16,
@@ -92,8 +101,16 @@ class AppShell extends ConsumerWidget {
         destinations: [
           for (final tab in _tabs)
             NavigationDestination(
-              icon: Icon(tab.icon),
-              selectedIcon: Icon(tab.selectedIcon),
+              icon: Badge(
+                isLabelVisible: tab.path == '/saved' && savedCount > 0,
+                label: Text('$savedCount'),
+                child: Icon(tab.icon),
+              ),
+              selectedIcon: Badge(
+                isLabelVisible: tab.path == '/saved' && savedCount > 0,
+                label: Text('$savedCount'),
+                child: Icon(tab.selectedIcon),
+              ),
               label: tr(language, tab.word),
             ),
         ],

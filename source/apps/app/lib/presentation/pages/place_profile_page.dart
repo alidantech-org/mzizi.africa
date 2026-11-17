@@ -6,7 +6,12 @@ import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/pages/official_card.dart';
 import 'package:mzizi_app/presentation/routers/navigation.dart';
+import 'package:mzizi_app/presentation/saved/saved_store.dart';
 import 'package:mzizi_app/presentation/widgets/async_page.dart';
+import 'package:mzizi_app/presentation/widgets/keep_buttons.dart';
+import 'package:mzizi_app/presentation/widgets/place_map.dart';
+import 'package:mzizi_app/presentation/widgets/reveal.dart';
+import 'package:latlong2/latlong.dart';
 
 String _money(double? amount, String? currency) {
   if (amount == null) return '—';
@@ -89,6 +94,52 @@ class PlaceProfilePage extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           Chip(label: Text(profile.place.kindLabel)),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              KeepChip(
+                kind: SavedKind.place,
+                item: SavedItem(
+                  id: profile.place.featureId,
+                  title: profile.place.name,
+                  subtitle: profile.place.kindLabel,
+                ),
+                onLabel: tr(language, 'savedPlace'),
+                offLabel: tr(language, 'savePlace'),
+                icon: Icons.star_border,
+              ),
+              if (latitude != null && longitude != null)
+                KeepChip(
+                  kind: SavedKind.spot,
+                  item: SavedItem(
+                    id: '${latitude!.toStringAsFixed(4)},${longitude!.toStringAsFixed(4)}',
+                    title: profile.place.name,
+                    featureId: profile.place.featureId,
+                    latitude: latitude,
+                    longitude: longitude,
+                  ),
+                  onLabel: tr(language, 'spotSaved'),
+                  offLabel: tr(language, 'saveSpot'),
+                  icon: Icons.my_location,
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Reveal(
+            order: 1,
+            child: PlaceMap(
+              key: ValueKey('${profile.place.featureId}|$latitude|$longitude'),
+              units: [
+                for (final unit in profile.chain)
+                  MapUnit(featureId: unit.featureId, name: unit.name),
+              ],
+              position: latitude != null && longitude != null
+                  ? LatLng(latitude!, longitude!)
+                  : null,
+            ),
+          ),
           const SizedBox(height: 20),
           Text(
             tr(language, 'representatives'),

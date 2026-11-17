@@ -38,8 +38,9 @@ class _AsyncPageState<T> extends ConsumerState<AsyncPage<T>> {
     return FutureBuilder<ApiResult<T>>(
       future: _future,
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done)
+        if (snapshot.connectionState != ConnectionState.done) {
           return const LoadingView();
+        }
         final result = snapshot.data;
         final value = result?.dataOrNull;
         if (result == null || result.isError || value == null) {

@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mzizi_app/presentation/pages/evidence_page.dart';
 import 'package:mzizi_app/presentation/pages/place_profile_page.dart';
 import 'package:mzizi_app/presentation/pages/places_page.dart';
+import 'package:mzizi_app/presentation/pages/saved_page.dart';
 import 'package:mzizi_app/presentation/pages/sources_page.dart';
 import 'package:mzizi_app/presentation/routers/_utils.dart';
 import 'package:mzizi_app/presentation/routers/navigation.dart';
@@ -39,6 +40,11 @@ final appRouter = GoRouter(
               ),
             ),
           ),
+        ),
+        GoRoute(
+          path: '/saved',
+          pageBuilder: (context, state) =>
+              fadeTransition(child: const SavedPage()),
         ),
         GoRoute(
           path: AppRoutes.sourceBrowse,

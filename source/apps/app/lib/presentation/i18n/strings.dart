@@ -42,6 +42,22 @@ const _words = <String, Map<String, String>>{
     'edition': 'Edition',
     'sampleNotice':
         'Sample development data: people, parties and amounts are invented.',
+    'likeLeader': 'Follow this leader',
+    'likeProject': 'Like this project',
+    'savePlace': 'Save place',
+    'savedPlace': 'Saved',
+    'saveSpot': 'Save my spot',
+    'spotSaved': 'Spot saved',
+    'saved': 'Saved',
+    'savedBody':
+        'Places, leaders and spots you keep. They stay on this device; nothing is sent anywhere.',
+    'savedEmpty':
+        'Nothing saved yet. Open a place and tap the star or the heart.',
+    'myPlaces': 'Places',
+    'myLeaders': 'Leaders you follow',
+    'myProjects': 'Projects you like',
+    'mySpots': 'Spots from your GPS',
+    'mapTitle': 'On the map',
   },
   'sw': {
     'tagline': 'Nani anakuhudumia, pesa zinakwenda wapi, na ushahidi wake.',
@@ -77,6 +93,22 @@ const _words = <String, Map<String, String>>{
     'locator': 'Mahali kwenye faili',
     'edition': 'Toleo',
     'sampleNotice': 'Data ya majaribio: watu, vyama na kiasi vimebuniwa.',
+    'likeLeader': 'Mfuate kiongozi huyu',
+    'likeProject': 'Penda mradi huu',
+    'savePlace': 'Hifadhi eneo',
+    'savedPlace': 'Imehifadhiwa',
+    'saveSpot': 'Hifadhi mahali pangu',
+    'spotSaved': 'Mahali pamehifadhiwa',
+    'saved': 'Vilivyohifadhiwa',
+    'savedBody':
+        'Maeneo, viongozi na mahali unavyohifadhi. Vinabaki kwenye kifaa hiki; hakuna kinachotumwa popote.',
+    'savedEmpty':
+        'Hujahifadhi chochote bado. Fungua eneo kisha bonyeza nyota au moyo.',
+    'myPlaces': 'Maeneo',
+    'myLeaders': 'Viongozi unaowafuata',
+    'myProjects': 'Miradi unayopenda',
+    'mySpots': 'Mahali kutoka GPS yako',
+    'mapTitle': 'Kwenye ramani',
   },
 };
 

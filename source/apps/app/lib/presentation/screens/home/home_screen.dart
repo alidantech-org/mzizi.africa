@@ -6,6 +6,8 @@ import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/pages/place_search_box.dart';
 import 'package:mzizi_app/presentation/routers/navigation.dart';
+import 'package:mzizi_app/presentation/saved/saved_store.dart';
+import 'package:mzizi_app/presentation/widgets/reveal.dart';
 
 /// The first screen, at `/`: the pitch, a location button and a name search. Scaffolded by Dryv once; hand-built.
 class HomeScreen extends ConsumerStatefulWidget {
@@ -23,8 +25,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     setState(() => _state = 'locating');
     try {
       var permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied)
+      if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
+      }
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
         throw StateError('denied');
@@ -49,6 +52,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final language = ref.watch(languageProvider);
     final text = Theme.of(context).textTheme;
+    final saved = ref.watch(savedProvider);
+    final kept = [...saved.places, ...saved.spots];
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 32, 20, 24),
       children: [
@@ -91,6 +96,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         const SizedBox(height: 16),
         const PlaceSearchBox(),
+        if (kept.isNotEmpty) ...[
+          const SizedBox(height: 22),
+          Text(tr(language, 'myPlaces'), style: text.titleMedium),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 40,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                for (final item in kept)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ActionChip(
+                      avatar: Icon(
+                        item.latitude == null ? Icons.star : Icons.my_location,
+                        size: 16,
+                      ),
+                      label: Text(item.title),
+                      onPressed: () => context.go(
+                        item.latitude == null
+                            ? '${AppRoutes.placeProfile}?featureId=${item.id}'
+                            : '${AppRoutes.placeProfile}?lat=${item.latitude}&lng=${item.longitude}',
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: 28),
         for (final card in [
           (Icons.groups_outlined, 'representatives', AppRoutes.placeSearch),
@@ -101,13 +135,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           (Icons.menu_book_outlined, 'sources', AppRoutes.sourceBrowse),
         ])
-          Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: ListTile(
-              leading: Icon(card.$1, color: MziziTokens.calabash),
-              title: Text(tr(language, card.$2)),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.go(card.$3),
+          Reveal(
+            order: 2,
+            child: Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: ListTile(
+                leading: Icon(card.$1, color: MziziTokens.calabash),
+                title: Text(tr(language, card.$2)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.go(card.$3),
+              ),
             ),
           ),
         const SizedBox(height: 8),

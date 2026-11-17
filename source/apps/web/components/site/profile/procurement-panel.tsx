@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { LikeProject } from "#/components/site/save-buttons.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 import { routes } from "#/lib/dryv/routes.ts";
 import type { ProcurementSummary } from "#/lib/types/procurement-summary.ts";
@@ -47,7 +48,10 @@ export function ProcurementPanel({ summary }: { summary: ProcurementSummary }) {
                 </Link>
               ) : null}
             </div>
-            <p className="font-display text-xl">{money(item.amount, item.currency)}</p>
+            <div className="flex items-center gap-3">
+              <p className="font-display text-xl">{money(item.amount, item.currency)}</p>
+              <LikeProject project={{ id: item.procurementId, title: item.title }} />
+            </div>
           </li>
         ))}
       </ul>

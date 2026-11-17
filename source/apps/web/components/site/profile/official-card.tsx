@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { LikeLeader } from "#/components/site/save-buttons.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 import { routes } from "#/lib/dryv/routes.ts";
 import type { OfficeHolder } from "#/lib/types/office-holder.ts";
@@ -18,7 +19,7 @@ export function OfficialCard({ holder }: { holder: OfficeHolder }) {
   const { t } = useLanguage();
   const evidence = holder.evidence[0];
   return (
-    <article className="flex gap-4 rounded-[var(--radius)] border border-border-default bg-surface-elevated p-5 shadow-[var(--shadow)]">
+    <article className="flex gap-4 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)] rounded-[var(--radius)] border border-border-default bg-surface-elevated p-5 shadow-[var(--shadow)]">
       <div
         aria-hidden
         className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-link font-display text-lg text-content-inverse"
@@ -42,14 +43,24 @@ export function OfficialCard({ holder }: { holder: OfficeHolder }) {
             </div>
           ) : null}
         </dl>
-        {evidence ? (
-          <Link
-            href={`${routes.evidenceView}?citationId=${evidence.citationId}`}
-            className="mt-3 inline-block text-sm font-medium text-link underline-offset-2 hover:underline"
-          >
-            {t("seeEvidence")} →
-          </Link>
-        ) : null}
+        <div className="mt-3 flex items-center gap-3">
+          <LikeLeader
+            leader={{
+              id: holder.holderId,
+              name: holder.personName,
+              office: holder.officeTitle,
+              unitId: holder.unitFeatureId ?? null,
+            }}
+          />
+          {evidence ? (
+            <Link
+              href={`${routes.evidenceView}?citationId=${evidence.citationId}`}
+              className="inline-block text-sm font-medium text-link underline-offset-2 hover:underline"
+            >
+              {t("seeEvidence")} →
+            </Link>
+          ) : null}
+        </div>
       </div>
     </article>
   );
