@@ -152,7 +152,13 @@ def _ordered(rows: list[DesiredRow]) -> list[DesiredRow]:
     return out
 
 
-def _upsert(conn: Connection, table: Table, rows: list[DesiredRow], report: TableReport) -> None:
+def _upsert(
+    conn: Connection,
+    table: Table,
+    rows: list[DesiredRow],
+    report: TableReport,
+    insert_only: frozenset[str] = frozenset(),
+) -> None:
     if not rows:
         return
     schema, name = table.qualified_name.split(".", 1)
@@ -169,15 +175,16 @@ def _upsert(conn: Connection, table: Table, rows: list[DesiredRow], report: Tabl
             placeholders.append(sql.SQL("now()"))
         else:
             placeholders.append(sql.SQL("%s"))
+    changing = [c for c in data_columns if c not in insert_only]
     differs = sql.SQL(" OR ").join(
-        sql.SQL("t.{c} IS DISTINCT FROM EXCLUDED.{c}").format(c=sql.Identifier(c)) for c in data_columns
+        sql.SQL("t.{c} IS DISTINCT FROM EXCLUDED.{c}").format(c=sql.Identifier(c)) for c in changing
     )
-    updates = [sql.SQL("{c} = EXCLUDED.{c}").format(c=sql.Identifier(c)) for c in data_columns]
+    updates = [sql.SQL("{c} = EXCLUDED.{c}").format(c=sql.Identifier(c)) for c in changing]
     if "version" in present:
         updates.append(sql.SQL("version = t.version + 1"))  # type: ignore
     if "updated_at" in present:
         updates.append(sql.SQL("updated_at = now()"))  # type: ignore
-    if data_columns:
+    if changing:
         statement = sql.SQL(
             "INSERT INTO {target} AS t ({cols}) VALUES ({vals}) ON CONFLICT (id) DO UPDATE SET {sets} WHERE {differs} "
             "RETURNING (xmax = 0) AS inserted"
@@ -230,6 +237,7 @@ def load_seed(conn: Connection, seed_root: Path, *, apply: bool, schema_root: Pa
     relationships: list[DesiredRow] = []
     citations: list[DesiredRow] = []
     codes = glossary.tables
+    recorded_at = datetime.now(UTC).isoformat()  # written when a citation is first recorded, never rewritten
     artifacts: dict[Path, str] = {}
     for name in checked.order:
         table = tables[name]
@@ -265,7 +273,7 @@ def load_seed(conn: Connection, seed_root: Path, *, apply: bool, schema_root: Pa
                         "subject_id": str(relationship_id),
                         "locator_kind_id": str(stable_id(VALUES, CSV_LINE)),
                         "locator": json.dumps({"line": row.line}, sort_keys=True),
-                        "recorded_at": datetime.fromtimestamp(row.file.stat().st_mtime, UTC).isoformat(),
+                        "recorded_at": recorded_at,
                     },
                 )
             )
@@ -277,7 +285,7 @@ def load_seed(conn: Connection, seed_root: Path, *, apply: bool, schema_root: Pa
         if ARTIFACTS in desired:
             for table_name, rows in ((RELATIONSHIPS, relationships), (CITATIONS, citations)):
                 provenance_report = TableReport(table_name)
-                _upsert(conn, tables[table_name], rows, provenance_report)
+                _upsert(conn, tables[table_name], rows, provenance_report, frozenset({"recorded_at"}))
                 report.tables.append(provenance_report)
     except Exception:
         conn.rollback()
