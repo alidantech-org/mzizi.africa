@@ -31,3 +31,21 @@ def test_tidy_does_not_treat_a_continued_table_first_row_as_header() -> None:
     rows = (("1", "Tenderer is controlled by another tenderer", "", ""), ("2", "Tenderer receives a subsidy", "", ""))
     _, header_rows = tidy_rows(rows)
     assert header_rows == 0
+
+
+def test_prose_page_is_not_turned_into_a_table() -> None:
+    from pdfmaker import make_pdf
+
+    from mzizi_extraction.document import DocumentProfile, extract_pdf_document
+
+    sentences = [
+        "Welcome back and thank you so much for staying with us today on the programme.",
+        "I want us to have a conversation beyond the political parties and what it means.",
+        "Of course it is an office I have been familiar with for some time now indeed.",
+        "We have got ninety one registered political parties in the country at present.",
+        "That is a very good question and I will try to answer it as clearly as I can.",
+        "When I first got the call I was surprised but also honoured to be asked to serve.",
+    ]
+    data = make_pdf([{"text": [(72, 720 - 18 * i, line) for i, line in enumerate(sentences)]}])
+    out = extract_pdf_document(data, DocumentProfile(auto_tables=True))
+    assert not any(b.kind == "table" for page in out.pages for b in page.blocks)

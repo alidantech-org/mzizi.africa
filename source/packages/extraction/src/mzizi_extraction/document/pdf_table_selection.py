@@ -34,6 +34,8 @@ MIN_TEXT_WORDS = 12
 MIN_TEXT_BODY_ROWS = 3
 MIN_EXTRA_WORDS = 3
 MAX_TEXT_RETRIES_PER_PAGE = 8
+# A real column edge falls between words. Text alignment that cuts through words is reading prose, not a table.
+MAX_TEXT_SPLIT_SHARE = 0.1
 
 
 @dataclass(frozen=True)
@@ -105,6 +107,8 @@ def _candidates(
             coverage, split_share, duplicate_share = geometry(box, cells, words)
             metrics = table_metrics(rows, coverage, split_share, duplicate_share, schema)
             body_rows = len(rows) - header_count
+            if text_mode and metrics.split_word_share > MAX_TEXT_SPLIT_SHARE:
+                continue  # prose guard: the region stays paragraph text
             if (
                 text_mode
                 and not metrics.schema_headers_match
