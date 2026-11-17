@@ -65,7 +65,9 @@ def encode_document(output: DocumentOutput) -> DocumentWire:
     structure = "[" + ",".join(p.model_dump_json(exclude_none=True) for p in output.pages) + "]"
     return DocumentWire(
         status=output.status.value,
-        markdown=render_markdown(output.pages, {key: tuple(path for path, _ in value) for key, value in alternates.items()}),
+        markdown=render_markdown(
+            output.pages, {key: tuple(path for path, _ in value) for key, value in alternates.items()}
+        ),
         pages=len(output.pages),
         counts=counts,
         assets=tuple(

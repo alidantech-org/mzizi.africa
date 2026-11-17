@@ -159,7 +159,7 @@ const labelProperties = reference.properties({
 export const ValueLabel = reference
   .schema("ValueLabel", {
     valueId: belongsTo(Value),
-    languageTag: dryv.field(sharedProperties.LanguageTag),
+    languageId: belongsTo(() => Language),
     label: dryv.field(sharedProperties.Name),
     labelKind: dryv.field(labelProperties.ValueLabelKind),
   })
@@ -171,9 +171,108 @@ export const ValueLabel = reference
   .facets({
     storage: dryv
       .storage("value_labels")
-      .unique("valueId", "languageTag", "labelKind", "label")
+      .unique("valueId", "languageId", "labelKind", "label")
       .index("valueId")
-      .index("languageTag"),
+      .index("languageId"),
+  });
+
+const languageProperties = reference.properties({
+  /** ISO 639-1, lower case: sw. Absent for languages that have none. */
+  Iso6391: dryv.property
+    .string()
+    .length({ exact: 2 })
+    .pattern({ match: ["^[a-z]{2}$"] }),
+  /** ISO 639-2, lower case: swa. */
+  Iso6392: dryv.property
+    .string()
+    .length({ exact: 3 })
+    .pattern({ match: ["^[a-z]{3}$"] }),
+  /** ISO 639-3, lower case: swh. Also the special codes und, mul and zxx. */
+  Iso6393: dryv.property
+    .string()
+    .length({ exact: 3 })
+    .pattern({ match: ["^[a-z]{3}$"] }),
+  /** Glottolog identifier: four letters and four digits, swah1253. */
+  Glottocode: dryv.property
+    .string()
+    .length({ exact: 8 })
+    .pattern({ match: ["^[a-z]{4}[0-9]{4}$"] }),
+  /** endonym (the language's own name for itself), exonym (another language's name for it), alternative or abbreviation. */
+  LanguageNameKind: dryv.property.enum(["endonym", "exonym", "alternative", "abbreviation"]),
+});
+
+/**
+ * The language registry. Every name, label and wording that is in a language points here; nothing stores a language as free text.
+ * Row codes are `ref.lng.<name>` (ref.lng.sw). Three special rows say what a plain NULL cannot: `und` (no language asserted),
+ * `mul` (one form shared by several languages, such as "Kenya") and `zxx` (no linguistic content). A missing language never
+ * means English. Family, script, direction, status and kind are scheme values, so they carry labels in any language.
+ */
+export const Language = reference
+  .schema("Language", {
+    /** The English display name, for people reading data. Names in other languages are in `language_names`. */
+    name: dryv.field(sharedProperties.Name),
+    iso6391: dryv.field(languageProperties.Iso6391).maybe(),
+    iso6392: dryv.field(languageProperties.Iso6392).maybe(),
+    iso6393: dryv.field(languageProperties.Iso6393).maybe(),
+    glottocode: dryv.field(languageProperties.Glottocode).maybe(),
+    /** Scheme ref.language.kind: language, macrolanguage, variety, special. */
+    kindId: belongsTo(() => Value).tags("scheme:ref.sch.ref.language.kind"),
+    /** Scheme ref.language.family: Bantu, Nilotic, Cushitic, Germanic, and so on. */
+    familyId: belongsTo(() => Value)
+      .tags("scheme:ref.sch.ref.language.family")
+      .maybe(),
+    /** Scheme ref.script: the main writing system. */
+    scriptId: belongsTo(() => Value)
+      .tags("scheme:ref.sch.ref.script")
+      .maybe(),
+    /** Scheme ref.text.direction: left to right, right to left. */
+    directionId: belongsTo(() => Value)
+      .tags("scheme:ref.sch.ref.text.direction")
+      .maybe(),
+    /** Scheme ref.language.status: official, national, recognised, minority, extinct, and so on. */
+    statusId: belongsTo(() => Value)
+      .tags("scheme:ref.sch.ref.language.status")
+      .maybe(),
+    /** The macrolanguage a language belongs to, or the language a variety belongs to. */
+    parentId: belongsTo(dryv.self).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule("LanguageIsNotItsOwnParent", (v) => v.id.ne(v.parentId))
+  .description(
+    "A language, macrolanguage, variety or one of the special no-language codes, with its ISO 639 and Glottolog identifiers and its classification as scheme values.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("languages")
+      .unique("iso6391")
+      .unique("iso6393")
+      .unique("glottocode")
+      .acyclic("LanguageParentAcyclic", { field: "parentId" })
+      .index("name")
+      .index("kindId")
+      .index("familyId")
+      .index("scriptId")
+      .index("parentId"),
+  });
+
+export const LanguageName = reference
+  .schema("LanguageName", {
+    languageId: belongsTo(Language),
+    /** The language the name is written in. For an endonym it is the language itself. */
+    inLanguageId: belongsTo(Language),
+    name: dryv.field(sharedProperties.Name),
+    nameKind: dryv.field(languageProperties.LanguageNameKind),
+  })
+  .extends(baseSchemas.ValidityEntity)
+  .description("A name of a language written in a language, such as Kiswahili (endonym) and Swahili (exonym).")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("language_names")
+      .unique("languageId", "inLanguageId", "nameKind", "name")
+      .index("languageId")
+      .index("inLanguageId"),
   });
 
 const unitProperties = reference.properties({

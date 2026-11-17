@@ -14,10 +14,10 @@ export const institutionDetailNamesExample: ContractExample = contractExample({
       spec: { kind: "boolean" },
     },
     {
-      name: "languageTag",
+      name: "languageId",
       optional: false,
-      nullable: true,
-      spec: { kind: "string", minLength: 2, maxLength: 35 },
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "name",

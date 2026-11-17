@@ -1,7 +1,6 @@
 """Turns a finished (or stopped) crawl into Markdown files and the separate inventories, written as CSV/JSON/JSONL."""
 
 from __future__ import annotations
-from mzizi_extraction.document import format_markdown
 
 import json
 from collections import defaultdict
@@ -28,7 +27,7 @@ from mzizi_crawler.shared.records import (
 )
 from mzizi_crawler.shared.requests import Render
 from mzizi_crawler.shared.tables import save_tables
-from mzizi_extraction import extract_html_document, learn_boilerplate, render_markdown
+from mzizi_extraction import extract_html_document, format_markdown, learn_boilerplate, render_markdown
 from mzizi_fetch.web.urls import UrlKind
 
 IMAGE, MEDIA_KINDS = UrlKind.IMAGE.value, (UrlKind.MEDIA.value, UrlKind.EMBED.value)

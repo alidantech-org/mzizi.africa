@@ -10,7 +10,7 @@ import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { Features } from "./geography.ts";
 import { Entities } from "./official.ts";
-import { Value } from "./reference.ts";
+import { Language, Value } from "./reference.ts";
 import { Citations, Documents, Evidence } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
@@ -150,8 +150,8 @@ export const ProvisionVersions = legal
     provisionId: belongsTo(() => Provisions),
     instrumentVersionId: belongsTo(() => InstrumentVersions),
     citationId: belongsTo(() => Citations).maybe(),
-    /** Original language of `text`, a BCP 47 tag. */
-    languageTag: dryv.field(sharedProperties.LanguageTag),
+    /** Original language of `text`. Never inferred from a default. */
+    languageId: belongsTo(() => Language),
     /** Where in the source this wording was read: a page, a link or a locator, for a person to check. */
     locator: dryv.field(sharedProperties.NonEmptyString1000).maybe(),
     text: dryv.field(sharedProperties.NonEmptyString),
@@ -197,7 +197,7 @@ export const ProvisionVersions = legal
 export const ProvisionTranslations = legal
   .schema("ProvisionTranslations", {
     provisionVersionId: belongsTo(() => ProvisionVersions),
-    languageTag: dryv.field(sharedProperties.LanguageTag),
+    languageId: belongsTo(() => Language),
     text: dryv.field(sharedProperties.NonEmptyString),
     kind: dryv.field(legalEnums.TranslationKind),
     reviewStatus: dryv.field(legalEnums.ReviewStatus),
@@ -216,9 +216,9 @@ export const ProvisionTranslations = legal
   .facets({
     storage: dryv
       .storage("provision_translations")
-      .unique("provisionVersionId", "languageTag", "kind")
+      .unique("provisionVersionId", "languageId", "kind")
       .index("provisionVersionId")
-      .index("languageTag")
+      .index("languageId")
       .index("documentId"),
   });
 

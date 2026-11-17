@@ -459,7 +459,7 @@ def main() -> None:
     write(data / "ke/official/entities.csv", ["code", "kind_code", "registration_country_code"], entities)
     write(
         data / "ke/official/names.csv",
-        ["entity_code", "individual_code", "name_kind_code", "language_tag", "name", "is_preferred"],
+        ["entity_code", "individual_code", "name_kind_code", "language_code", "name", "is_preferred"],
         names,
     )
     write(data / "ke/governance/institutions.csv", ["code", "entity_code", "institution_kind_code"], institutions)

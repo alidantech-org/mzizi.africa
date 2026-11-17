@@ -13,6 +13,7 @@ import { EntitiesEntity } from "#/modules/official/schema/entities/entities.enti
 import { IndividualsEntity } from "#/modules/official/schema/entities/individuals.entity.ts";
 import { OfficialNamesEntity } from "#/modules/official/schema/entities/names.entity.ts";
 import { CountryEntity } from "#/modules/reference/schema/entities/country.entity.ts";
+import { LanguageEntity } from "#/modules/reference/schema/entities/language.entity.ts";
 import { SchemeEntity } from "#/modules/reference/schema/entities/scheme.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity.ts";
@@ -52,6 +53,7 @@ import {
       IndividualsEntity,
       OfficialNamesEntity,
       CountryEntity,
+      LanguageEntity,
       SchemeEntity,
       ValueEntity,
       CapturesEntity,

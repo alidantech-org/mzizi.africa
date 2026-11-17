@@ -14,7 +14,6 @@ const scalarProperties = shared.properties({
   NullableString255: dryv.property.string().length({ max: 255 }),
   NullableString500: dryv.property.string().length({ max: 500 }),
   NullableString1000: dryv.property.string().length({ max: 1000 }),
-  LanguageTag: dryv.property.string().length({ min: 2, max: 35 }),
   Name: dryv.property.string().length({ min: 1, max: 300 }),
   Description: dryv.property.string().length({ max: 4000 }),
   Message: dryv.property.string().length({ min: 1, max: 2000 }),

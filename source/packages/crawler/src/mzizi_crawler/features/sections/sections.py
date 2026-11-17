@@ -1,7 +1,6 @@
 """Capture a listing's same-document sections, with Markdown and per-view source evidence."""
 
 from __future__ import annotations
-from mzizi_extraction.document import format_markdown
 
 import hashlib
 from contextlib import ExitStack
@@ -27,7 +26,7 @@ from mzizi_crawler.shared.identity import user_agent
 from mzizi_crawler.shared.requests import Render, SectionsRequest
 from mzizi_crawler.shared.scraping import extract_references
 from mzizi_crawler.shared.tables import save_tables
-from mzizi_extraction import extract_html_document, render_markdown
+from mzizi_extraction import extract_html_document, format_markdown, render_markdown
 from mzizi_fetch.web.client import WebClient, WebResponse
 from mzizi_fetch.web.policy import SourcePolicy
 from mzizi_fetch.web.urls import UrlKind, classify, host_of

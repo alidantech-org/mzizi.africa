@@ -15,6 +15,7 @@ from mzizi_extraction.document import (
     encode_document,
     extract_html_document,
     extract_pdf_document,
+    format_markdown,
     learn_boilerplate,
     render_markdown,
 )
@@ -57,6 +58,7 @@ __all__ = [
     "extract_json",
     "extract_pdf",
     "extract_pdf_document",
+    "format_markdown",
     "learn_boilerplate",
     "parse_profile",
     "render_markdown",

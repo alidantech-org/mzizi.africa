@@ -23,7 +23,7 @@ class ValueLabelRow(BaseModel):
     id: UUID
     label: Annotated[str, Field(min_length=1, max_length=300)]
     label_kind: ValueLabelKind
-    language_tag: Annotated[str, Field(min_length=2, max_length=35)]
+    language_id: UUID
     updated_at: datetime
     valid_from: date | None = None
     valid_until: date | None = None

@@ -9,6 +9,7 @@ import type { ValueLabelKind } from "#/modules/reference/schema/enum/value-label
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
+import type * as LanguageTypes from "#/modules/reference/schema/types/language/language.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
@@ -34,10 +35,11 @@ import type {
 export interface IValueLabel extends B.IBase {
   label: string;
   labelKind: ValueLabelKind;
-  languageTag: string;
+  languageId: string;
   validFrom: Date | null;
   validUntil: Date | null;
   valueId: string;
+  readonly language?: LanguageTypes.ILanguage;
   readonly value?: ValueTypes.IValue;
 }
 
@@ -140,6 +142,7 @@ export type IValueLabelAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IValueLabelRelationMap extends Record<ValueLabelRelationKey, unknown> {
+  language: LanguageTypes.ILanguageAsOneRelationQuery;
   value: ValueTypes.IValueAsOneRelationQuery;
 }
 

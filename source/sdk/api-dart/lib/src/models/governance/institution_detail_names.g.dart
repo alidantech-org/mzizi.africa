@@ -8,12 +8,12 @@ part of 'institution_detail_names.dart';
 
 GovernanceInstitutionDetailNames _$GovernanceInstitutionDetailNamesFromJson(Map<String, dynamic> json) => GovernanceInstitutionDetailNames(
   isPreferred: json['isPreferred'] as bool,
-  languageTag: json['languageTag'] as String?,
+  languageId: json['languageId'] as String,
   name: json['name'] as String,
 );
 
 Map<String, dynamic> _$GovernanceInstitutionDetailNamesToJson(GovernanceInstitutionDetailNames instance) => <String, dynamic>{
   'isPreferred': instance.isPreferred,
-  'languageTag': ?instance.languageTag,
+  'languageId': instance.languageId,
   'name': instance.name,
 };

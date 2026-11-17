@@ -3,6 +3,7 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
+import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { validityEntityExample } from "@test/modules/shared/schema/dto/examples/validity-entity.dto.example.ts";
 
@@ -35,10 +36,16 @@ export const namesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "languageTag",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", minLength: 2, maxLength: 35 },
+      name: "isDefault",
+      optional: false,
+      nullable: false,
+      spec: { kind: "boolean" },
+    },
+    {
+      name: "languageId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "name",

@@ -11,7 +11,7 @@ import * as dryv from "@dryvcode/author";
 import { rule, when } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { Country, Value } from "./reference.ts";
+import { Country, Language, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
@@ -67,7 +67,9 @@ export const Names = official
     individualId: belongsTo(() => Individuals).maybe(),
     name: dryv.field(sharedProperties.Name),
     nameKindId: belongsTo(() => Value),
-    languageTag: dryv.field(sharedProperties.LanguageTag).maybe(),
+    /** The language of this form. `mul` for a form shared by languages, `und` when none is asserted; never blank. */
+    languageId: belongsTo(() => Language),
+    /** The default name for its language: at most one per entity or individual and language. */
     isPreferred: dryv.field(sharedProperties.Flag),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
@@ -77,7 +79,7 @@ export const Names = official
     rule.exactlyOne("entityId", "individualId"),
   )
   .description(
-    "One attested name form for exactly one entity or individual, with optional language and validity.",
+    "One attested name form for exactly one entity or individual, with its language (`mul` or `und` when none applies) and validity.",
   )
   .role("entity");
 
@@ -89,10 +91,10 @@ const preferredName = official.expression(
 Names.facets({
   storage: dryv
     .storage("names")
-    .unique("entityId", "individualId", "nameKindId", "languageTag", "name")
-    .unique("entityId", "languageTag")
+    .unique("entityId", "individualId", "nameKindId", "languageId", "name")
+    .unique("entityId", "languageId")
     .where(preferredName)
-    .unique("individualId", "languageTag")
+    .unique("individualId", "languageId")
     .where(preferredName)
     .index("entityId")
     .index("individualId")

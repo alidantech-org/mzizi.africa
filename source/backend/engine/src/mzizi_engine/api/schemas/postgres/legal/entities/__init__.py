@@ -12,6 +12,7 @@ from mzizi_engine.api.schemas.postgres.legal.entities.provision_translations imp
 from mzizi_engine.api.schemas.postgres.legal.entities.provision_versions import ProvisionVersionsRow
 from mzizi_engine.api.schemas.postgres.legal.entities.provisions import ProvisionsRow
 from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
+from mzizi_engine.api.schemas.postgres.reference.entities.language import LanguageRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
 from mzizi_engine.api.schemas.postgres.source.entities.citations import CitationsRow
 from mzizi_engine.api.schemas.postgres.source.entities.documents import DocumentsRow
@@ -27,6 +28,7 @@ __all__ = [
     "FeaturesRow",
     "InstrumentVersionsRow",
     "InstrumentsRow",
+    "LanguageRow",
     "ProvisionReferencesRow",
     "ProvisionTranslationsRow",
     "ProvisionVersionsRow",

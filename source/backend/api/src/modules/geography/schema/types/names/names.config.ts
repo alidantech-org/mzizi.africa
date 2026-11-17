@@ -10,6 +10,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // RELATED ENTITY CONFIGS
 // ----------------------------------
 import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
+import * as LanguageConfig from "#/modules/reference/schema/types/language/language.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 
 // ----------------------------------
@@ -32,7 +33,11 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const NAMES_RELATION_KEYS = ["feature", "nameKind"] as const satisfies readonly NamesKey[];
+export const NAMES_RELATION_KEYS = [
+  "feature",
+  "language",
+  "nameKind",
+] as const satisfies readonly NamesKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -43,7 +48,8 @@ export const NAMES_SORTABLE_FIELDS = [
   "deletedAt",
   "featureId",
   "id",
-  "languageTag",
+  "isDefault",
+  "languageId",
   "name",
   "nameKindId",
   "updatedAt",
@@ -52,14 +58,13 @@ export const NAMES_SORTABLE_FIELDS = [
   "version",
 ] as const satisfies readonly NamesKey[];
 
-export const NAMES_SEARCHABLE_FIELDS = [
-  "languageTag",
-  "name",
-] as const satisfies readonly NamesKey[];
+export const NAMES_SEARCHABLE_FIELDS = ["name"] as const satisfies readonly NamesKey[];
 
 export const NAMES_FILTERABLE_FIELDS = [
   "featureId",
   "id",
+  "isDefault",
+  "languageId",
   "nameKindId",
 ] as const satisfies readonly NamesKey[];
 
@@ -86,7 +91,8 @@ export const NAMES_SELECTABLE_FIELDS = [
   "deletedAt",
   "featureId",
   "id",
-  "languageTag",
+  "isDefault",
+  "languageId",
   "name",
   "nameKindId",
   "updatedAt",
@@ -100,7 +106,8 @@ export const NAMES_DEFAULT_SELECT_FIELDS = [
   "deletedAt",
   "featureId",
   "id",
-  "languageTag",
+  "isDefault",
+  "languageId",
   "name",
   "nameKindId",
   "updatedAt",
@@ -115,7 +122,8 @@ export const NAMES_DEFAULT_SELECT_FIELDS = [
 
 export const NAMES_EDITABLE_FIELDS = [
   "featureId",
-  "languageTag",
+  "isDefault",
+  "languageId",
   "name",
   "nameKindId",
   "validFrom",
@@ -151,6 +159,10 @@ export const NAMES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<NamesRelationKey>().one(
     () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
     "feature",
+  ),
+  Q.createRelationKeyMapper<NamesRelationKey>().one(
+    () => LanguageConfig.LANGUAGE_AS_ONE_RELATION_CONFIG,
+    "language",
   ),
   Q.createRelationKeyMapper<NamesRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,

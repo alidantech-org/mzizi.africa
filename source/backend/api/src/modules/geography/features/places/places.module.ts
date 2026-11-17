@@ -2,6 +2,7 @@ import { Module, type Type } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { GeographyNamesEntity } from "#/modules/geography/schema/entities/names.entity.ts";
+import { LanguageEntity } from "#/modules/reference/schema/entities/language.entity.ts";
 import { SchemeEntity } from "#/modules/reference/schema/entities/scheme.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { GeographyPlacesRepository } from "#/modules/geography/features/places/repositories/places.repository.ts";
@@ -16,7 +17,13 @@ import { GeographyPlacesService, GeographyPlacesServiceImpl } from "./places.ser
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FeaturesEntity, GeographyNamesEntity, SchemeEntity, ValueEntity]),
+    TypeOrmModule.forFeature([
+      FeaturesEntity,
+      GeographyNamesEntity,
+      LanguageEntity,
+      SchemeEntity,
+      ValueEntity,
+    ]),
   ],
   controllers: [GeographyPlacesController],
   providers: [

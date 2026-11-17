@@ -1,7 +1,6 @@
 """Crawl, one-page Markdown and export capabilities."""
 
 from __future__ import annotations
-from mzizi_extraction.document import format_markdown
 
 import json
 from collections.abc import Callable
@@ -35,7 +34,7 @@ from mzizi_crawler.shared.requests import (
     Render,
 )
 from mzizi_crawler.shared.tables import save_tables
-from mzizi_extraction import extract_html_document, render_markdown
+from mzizi_extraction import extract_html_document, format_markdown, render_markdown
 from mzizi_fetch.web.client import WebClient, WebResponse
 from mzizi_fetch.web.policy import SourcePolicy
 from mzizi_fetch.web.urls import host_of

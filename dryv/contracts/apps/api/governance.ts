@@ -39,7 +39,7 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
         .follow(institution.fields.entityId, entity)
         .reverse(officialName.fields.entityId, officialName)
         .select(
-          (n) => ({ name: n.fields.name, languageTag: n.fields.languageTag, isPreferred: n.fields.isPreferred }),
+          (n) => ({ name: n.fields.name, languageId: n.fields.languageId, isPreferred: n.fields.isPreferred }),
           (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
         ),
     }))
@@ -60,7 +60,7 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
         .follow(institution.fields.entityId, entity)
         .reverse(officialName.fields.entityId, officialName)
         .select(
-          (n) => ({ name: n.fields.name, languageTag: n.fields.languageTag, isPreferred: n.fields.isPreferred }),
+          (n) => ({ name: n.fields.name, languageId: n.fields.languageId, isPreferred: n.fields.isPreferred }),
           (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
         ),
       mandates: row.reverse(mandate.fields.institutionId, mandate).select(

@@ -10,13 +10,15 @@ from mzizi_manifest.features.database.tables import load_order, load_tables, tab
 from mzizi_manifest.features.seeds.ids import SEED_NAMESPACE, stable_id
 from mzizi_manifest.orchestrator.cli import main
 
-SCHEMES = "code,title,owner_snapshot\ngeo.continent,Continents,un\nfin.currency,Currencies,iso\n"
+SCHEMES = "code,title,owner_snapshot\ngeo.continent,Continents,un\nfin.currency,Currencies,iso\nref.language.kind,Language kinds,mzizi\n"
 VALUES = (
     "code,scheme_code,label\n"
     "geo.continent.africa,geo.continent,Africa\n"
     "geo.continent.asia,geo.continent,Asia\n"
     "fin.currency.kes,fin.currency,Kenyan shilling\n"
+    "ref.language.kind.language,ref.language.kind,Language\n"
 )
+LANGUAGES = "code,name,kind_code\nsw,Swahili,ref.language.kind.language\nen,English,ref.language.kind.language\n"
 COUNTRIES = (
     "code,name,official_name,iso_alpha2,iso_alpha3,iso_numeric,calling_code,continent_code,currency_code\n"
     "ke,Kenya,Republic of Kenya,KE,KEN,404,+254,geo.continent.africa,fin.currency.kes\n"
@@ -242,17 +244,17 @@ def test_usage_folders_group_files_and_the_file_name_gives_the_table(tmp_path: P
 
 def test_a_table_with_no_code_is_keyed_by_its_unique_columns(tmp_path: Path) -> None:
     labels = (
-        "value_code,language_tag,label_kind,label\n"
+        "value_code,language_code,label_kind,label\n"
         "geo.continent.africa,sw,preferred,Afrika\n"
         "geo.continent.africa,en,alternative,Africa\n"
         "geo.continent.asia,sw,preferred,Asia\n"
     )
-    files = {**good(), "global/reference/value_labels.csv": labels}
+    files = {**good(), "global/reference/languages.csv": LANGUAGES, "global/reference/value_labels.csv": labels}
     result = check_data(tree(tmp_path, files))
     assert result.problems == []
     assert load_tables(Path(__file__).resolve().parents[3] / "schema")["reference.value_labels"].natural_key == (
         "value_code",
-        "language_tag",
+        "language_code",
         "label_kind",
         "label",
     )
@@ -261,13 +263,14 @@ def test_a_table_with_no_code_is_keyed_by_its_unique_columns(tmp_path: Path) -> 
 
 def test_a_repeated_composite_key_and_an_unknown_link_are_reported(tmp_path: Path) -> None:
     labels = (
-        "value_code,language_tag,label_kind,label\n"
+        "value_code,language_code,label_kind,label\n"
         "geo.continent.africa,sw,preferred,Afrika\n"
         "geo.continent.africa,sw,preferred,Afrika\n"
         "geo.continent.nowhere,sw,preferred,Hakuna\n"
     )
-    problems = check_data(tree(tmp_path, {**good(), "global/reference/value_labels.csv": labels})).problems
-    assert any("duplicate value_code/language_tag/label_kind/label" in p for p in problems)
+    files = {**good(), "global/reference/languages.csv": LANGUAGES, "global/reference/value_labels.csv": labels}
+    problems = check_data(tree(tmp_path, files)).problems
+    assert any("duplicate value_code/language_code/label_kind/label" in p for p in problems)
     assert any("unknown reference.values code 'geo.continent.nowhere'" in p for p in problems)
 
 

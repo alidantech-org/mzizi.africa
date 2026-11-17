@@ -8,10 +8,10 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+import { LanguageEntity } from "#/modules/reference/schema/entities/language.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { ValueLabelKind } from "#/modules/reference/schema/enum/value-label-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { LanguageTag } from "#/modules/shared/schema/type/language-tag.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
@@ -19,9 +19,9 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * A label of a value in one language and of one kind, so a value can be shown in English, Swahili and other languages, with alternative names, abbreviations and definitions. The value's own label is the default display text.
  */
 @Entity({ schema: "reference", name: "value_labels" })
-@Index(["valueId", "languageTag", "labelKind", "label"], { unique: true })
+@Index(["valueId", "languageId", "labelKind", "label"], { unique: true })
 @Index(["valueId"])
-@Index(["languageTag"])
+@Index(["languageId"])
 @Check(
   "chk_value_label_validity_window_is_ordered",
   `valid_from = null OR valid_until = null OR valid_from < valid_until`,
@@ -42,8 +42,12 @@ export class ValueLabelEntity {
   @Column({ name: "label_kind", type: "enum", enum: ValueLabelKind })
   labelKind!: ValueLabelKind;
 
-  @Column({ name: "language_tag", type: "varchar", length: 35 })
-  languageTag!: LanguageTag;
+  @Column({ name: "language_id", type: "uuid" })
+  languageId!: Id;
+
+  @ManyToOne(() => LanguageEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "language_id" })
+  language?: Relation<LanguageEntity>;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

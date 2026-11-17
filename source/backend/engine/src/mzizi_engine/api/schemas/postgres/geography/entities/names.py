@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class GeographyNamesRow(BaseModel):
-    """An official, local, alternative, translated or historical name for a feature, with optional language, validity and provenance reference."""
+    """A canonical, official, local, alternative, translated or historical name for a feature, with its language (`mul` or `und` when no single language applies), validity and provenance reference."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -20,7 +20,8 @@ class GeographyNamesRow(BaseModel):
     deleted_at: datetime | None = None
     feature_id: UUID
     id: UUID
-    language_tag: Annotated[str, Field(min_length=2, max_length=35)] | None = None
+    is_default: bool
+    language_id: UUID
     name: Annotated[str, Field(min_length=1, max_length=300)]
     name_kind_id: UUID
     updated_at: datetime

@@ -47,6 +47,14 @@ export class ValueLabelRepository
     return await this.findByQuery(query, { labelKind, deletedAt: IsNull() });
   }
 
+  /** Find value label by language id, paged by the shared query. */
+  async findByLanguage(
+    query: BaseQueryDto<ValueLabelEntity>,
+    languageId: NonNullable<ValueLabelEntity["languageId"]>,
+  ): Promise<IFindAllResponse<ValueLabelEntity>> {
+    return await this.findByQuery(query, { languageId, deletedAt: IsNull() });
+  }
+
   /** Find value label by value id, paged by the shared query. */
   async findByValue(
     query: BaseQueryDto<ValueLabelEntity>,

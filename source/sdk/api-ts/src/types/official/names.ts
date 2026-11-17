@@ -1,4 +1,4 @@
-/** One attested name form for exactly one entity or individual, with optional language and validity. */
+/** One attested name form for exactly one entity or individual, with its language (`mul` or `und` when none applies) and validity. */
 export interface OfficialNames {
   createdAt: string;
   deletedAt?: string | null;
@@ -6,7 +6,7 @@ export interface OfficialNames {
   id: string;
   individualId?: string | null;
   isPreferred: boolean;
-  languageTag?: string | null;
+  languageId: string;
   name: string;
   nameKindId: string;
   sourceCitationId?: string | null;

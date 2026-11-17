@@ -1,7 +1,6 @@
 """The site store: one site's pages, hashed and versioned, state in the activity store or `state.json`."""
 
 from __future__ import annotations
-from mzizi_extraction.document import format_markdown
 
 import gzip
 import json
@@ -21,6 +20,7 @@ from mzizi_crawler.shared.sitestore.models import (
     PageState,
     Visit,
 )
+from mzizi_extraction import format_markdown
 
 
 class SiteStore:
@@ -191,7 +191,10 @@ class SiteStore:
     def write_markdown(self, visit: Visit, state: PageState, body: str) -> None:
         md_path = self.root / state.md_file
         atomic_write(
-            md_path, (front_matter(visit, state, state.html_file, state.fingerprint.text) + format_markdown(body)).encode("utf-8")
+            md_path,
+            (front_matter(visit, state, state.html_file, state.fingerprint.text) + format_markdown(body)).encode(
+                "utf-8"
+            ),
         )
         if self.activity is not None:
             self.activity.put(

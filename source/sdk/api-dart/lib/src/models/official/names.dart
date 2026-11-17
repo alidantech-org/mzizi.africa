@@ -1,13 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/official/individuals.dart';
+import 'package:mzizi_api/src/models/reference/language.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/validity_entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
 part 'names.g.dart';
 
-/// One attested name form for exactly one entity or individual, with optional language and validity.
+/// One attested name form for exactly one entity or individual, with its language (`mul` or `und` when none applies) and validity.
 @JsonSerializable(includeIfNull: false)
 class OfficialNames {
   const OfficialNames({
@@ -17,7 +18,7 @@ class OfficialNames {
     required this.id,
     this.individualId,
     required this.isPreferred,
-    this.languageTag,
+    required this.languageId,
     required this.name,
     required this.nameKindId,
     this.sourceCitationId,
@@ -32,7 +33,7 @@ class OfficialNames {
   final String id;
   final String? individualId;
   final bool isPreferred;
-  final String? languageTag;
+  final String languageId;
   final String name;
   final String nameKindId;
   final String? sourceCitationId;

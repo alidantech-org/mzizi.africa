@@ -7,7 +7,7 @@ export interface ReferenceValueLabel {
   id: string;
   label: string;
   labelKind: ReferenceValueLabelKind;
-  languageTag: string;
+  languageId: string;
   updatedAt: string;
   validFrom?: string | null;
   validUntil?: string | null;

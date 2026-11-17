@@ -9,6 +9,7 @@ from pdfplumber.table import Table
 
 from mzizi_extraction.core import Code, Diagnostic, Locator, warning
 from mzizi_extraction.document.lines import Word
+from mzizi_extraction.document.table_gate import looks_like_prose, totals_mismatch
 from mzizi_extraction.document.table_models import (
     BBox,
     ReviewReason,
@@ -19,7 +20,6 @@ from mzizi_extraction.document.table_models import (
     TableSchema,
     TableStrategy,
 )
-from mzizi_extraction.document.table_gate import looks_like_prose, totals_mismatch
 from mzizi_extraction.document.table_quality import geometry, intersection, layout_score, table_metrics
 from mzizi_extraction.pdf.tables import clean_table
 

@@ -13,7 +13,7 @@ import { rule, when } from "@dryvcode/author";
 
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { Unit, Value } from "./reference.ts";
+import { Language, Unit, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
@@ -46,22 +46,33 @@ export const Names = geography
   .schema("Names", {
     featureId: belongsTo(() => Features),
     name: dryv.field(sharedProperties.Name),
-    languageTag: dryv.field(sharedProperties.LanguageTag).maybe(),
+    /** The language of this form. `mul` for a form shared by languages ("Kenya"), `und` when none is asserted; never blank. */
+    languageId: belongsTo(() => Language),
     nameKindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.name.kind"),
+    /** The name shown when no other is asked for, in its language: at most one per feature and language. */
+    isDefault: dryv.field(sharedProperties.Flag),
   })
   .extends(baseSchemas.ValidityEntity)
   .description(
-    "An official, local, alternative, translated or historical name for a feature, with optional language, validity and provenance reference.",
+    "A canonical, official, local, alternative, translated or historical name for a feature, with its language (`mul` or `und` when no single language applies), validity and provenance reference.",
   )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("names")
-      .unique("featureId", "nameKindId", "languageTag", "name")
-      .index("featureId")
-      .index("nameKindId")
-      .index("languageTag"),
-  });
+  .role("entity");
+
+const defaultName = geography.expression(
+  "DefaultName",
+  Names.check((v) => v.isDefault.eq(true)),
+);
+
+Names.facets({
+  storage: dryv
+    .storage("names")
+    .unique("featureId", "nameKindId", "languageId", "name")
+    .unique("featureId", "languageId")
+    .where(defaultName)
+    .index("featureId")
+    .index("nameKindId")
+    .index("languageId"),
+});
 
 export const Classifications = geography
   .schema("Classifications", {

@@ -14,7 +14,6 @@ import {
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import { ValueLabelKind } from "#/modules/reference/schema/enum/value-label-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { LanguageTag } from "#/modules/shared/schema/type/language-tag.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
@@ -45,9 +44,8 @@ export class ValueLabelDto {
   labelKind!: ValueLabelKind;
 
   @IsString()
-  @MinLength(2)
-  @MaxLength(35)
-  languageTag!: LanguageTag;
+  @IsUUID()
+  languageId!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;

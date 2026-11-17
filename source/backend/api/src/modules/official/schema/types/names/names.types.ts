@@ -10,6 +10,7 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
 import type * as IndividualsTypes from "#/modules/official/schema/types/individuals/individuals.types";
+import type * as LanguageTypes from "#/modules/reference/schema/types/language/language.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
@@ -32,12 +33,12 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** One attested name form for exactly one entity or individual, with optional language and validity. */
+/** One attested name form for exactly one entity or individual, with its language (`mul` or `und` when none applies) and validity. */
 export interface INames extends B.IBase {
   entityId: string | null;
   individualId: string | null;
   isPreferred: boolean;
-  languageTag: string | null;
+  languageId: string;
   name: string;
   nameKindId: string;
   sourceCitationId: string | null;
@@ -45,6 +46,7 @@ export interface INames extends B.IBase {
   validUntil: Date | null;
   readonly entity?: EntitiesTypes.IEntities;
   readonly individual?: IndividualsTypes.IIndividuals;
+  readonly language?: LanguageTypes.ILanguage;
   readonly nameKind?: ValueTypes.IValue;
   readonly sourceCitation?: CitationsTypes.ICitations;
 }
@@ -133,6 +135,7 @@ export type INamesAsManyRelationQuery = Q.IAsManyRelationQuery<
 export interface INamesRelationMap extends Record<NamesRelationKey, unknown> {
   entity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   individual: IndividualsTypes.IIndividualsAsOneRelationQuery;
+  language: LanguageTypes.ILanguageAsOneRelationQuery;
   nameKind: ValueTypes.IValueAsOneRelationQuery;
   sourceCitation: CitationsTypes.ICitationsAsOneRelationQuery;
 }

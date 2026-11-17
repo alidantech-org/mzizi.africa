@@ -10,19 +10,19 @@ import {
 } from "typeorm";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
 import { IndividualsEntity } from "#/modules/official/schema/entities/individuals.entity.ts";
+import { LanguageEntity } from "#/modules/reference/schema/entities/language.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { LanguageTag } from "#/modules/shared/schema/type/language-tag.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
- * One attested name form for exactly one entity or individual, with optional language and validity.
+ * One attested name form for exactly one entity or individual, with its language (`mul` or `und` when none applies) and validity.
  */
 @Entity({ schema: "official", name: "names" })
-@Index(["entityId", "individualId", "nameKindId", "languageTag", "name"], {
+@Index(["entityId", "individualId", "nameKindId", "languageId", "name"], {
   unique: true,
 })
 @Index(["entityId"])
@@ -61,8 +61,12 @@ export class OfficialNamesEntity {
   @Column({ name: "is_preferred", type: "boolean" })
   isPreferred!: Flag;
 
-  @Column({ name: "language_tag", type: "varchar", length: 35, nullable: true })
-  languageTag?: LanguageTag | null;
+  @Column({ name: "language_id", type: "uuid" })
+  languageId!: Id;
+
+  @ManyToOne(() => LanguageEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "language_id" })
+  language?: Relation<LanguageEntity>;
 
   @Column({ name: "name", type: "varchar", length: 300 })
   name!: Name;

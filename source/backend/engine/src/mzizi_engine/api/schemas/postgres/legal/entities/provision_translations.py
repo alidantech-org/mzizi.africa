@@ -27,7 +27,7 @@ class ProvisionTranslationsRow(BaseModel):
     document_id: UUID | None = None
     id: UUID
     kind: TranslationKind
-    language_tag: Annotated[str, Field(min_length=2, max_length=35)]
+    language_id: UUID
     produced_by: str | None = None
     provision_version_id: UUID
     review_status: ReviewStatus

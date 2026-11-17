@@ -17,3 +17,8 @@ src.publisher.kind,Kinds of publisher,mzizi curated
 src.document.kind,Kinds of document,mzizi curated
 src.dataset.category,Categories of dataset,mzizi curated
 leg.instrument.kind,Kinds of legal instrument,mzizi curated
+ref.language.kind,Language kinds,mzizi curated; language classification for the language registry
+ref.language.family,Language families,mzizi curated; language classification for the language registry
+ref.script,Writing systems,mzizi curated; language classification for the language registry
+ref.text.direction,Text directions,mzizi curated; language classification for the language registry
+ref.language.status,Language vitality,mzizi curated; language classification for the language registry

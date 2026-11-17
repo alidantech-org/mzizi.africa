@@ -40,7 +40,11 @@ def _align_table(lines: list[str]) -> list[str]:
     widths = [
         max(
             [MIN_CELL_WIDTH]
-            + [len(row[i]) for row, sep in zip(rows, is_separator, strict=True) if not sep and len(row[i]) <= MAX_CELL_WIDTH]
+            + [
+                len(row[i])
+                for row, sep in zip(rows, is_separator, strict=True)
+                if not sep and len(row[i]) <= MAX_CELL_WIDTH
+            ]
         )
         for i in range(width)
     ]

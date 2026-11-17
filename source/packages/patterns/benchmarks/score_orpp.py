@@ -1,6 +1,6 @@
 """Score every downloaded ORPP PDF with the proposed terms and profile and print the ranking.
 
-Run: uv run python source/packages/patterns/benchmarks/score_orpp.py [draft-folder]"""
+Run: uv run python source/packages/patterns/benchmarks/score_orpp.py [terms-folder [profile.yaml]]"""
 
 from __future__ import annotations
 
@@ -27,9 +27,10 @@ def text_of(path: Path) -> DocumentText:
 
 
 def main() -> int:
-    draft = Path(sys.argv[1] if len(sys.argv) > 1 else "seed/drafts/orpp-sources")
-    lists = tuple(load_term_list(p) for p in sorted((draft / "terms").rglob("*.yml")))
-    profile = load_profile(draft / "engine/docs/profile.yaml")
+    terms = Path(sys.argv[1] if len(sys.argv) > 1 else "seed/terms")
+    profile_path = Path(sys.argv[2] if len(sys.argv) > 2 else ".docs/_plan/orpp-sources/engine/docs/profile.yaml")
+    lists = tuple(load_term_list(p) for p in sorted(terms.rglob("*.yml")))
+    profile = load_profile(profile_path)
     engine = PatternOrchestrator(profile, lists)
     documents = tuple(text_of(p) for p in sorted(PDFS.glob("*.pdf")))
     scores = engine.score_corpus(documents)

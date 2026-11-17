@@ -14,7 +14,6 @@ import pdfplumber
 import pypdfium2 as pdfium
 
 from mzizi_extraction.core import Code, Diagnostic, Status, error, failed, info, warning
-from mzizi_extraction.document.table_tidy import tidy_rows
 from mzizi_extraction.document.captions import attach_captions
 from mzizi_extraction.document.columns import reading_order
 from mzizi_extraction.document.figures import Box, crop_png, render_image, render_page_png
@@ -25,6 +24,7 @@ from mzizi_extraction.document.pdf_scan import PageScan, page_lines, scan_page
 from mzizi_extraction.document.profile import DocumentProfile
 from mzizi_extraction.document.structure import Typography, build_blocks, line_height_typography, typography
 from mzizi_extraction.document.table_models import BBox, TableReviewReport
+from mzizi_extraction.document.table_tidy import tidy_rows
 from mzizi_extraction.ocr import OcrUnavailable, check
 
 PDF_MAGIC = b"%PDF"

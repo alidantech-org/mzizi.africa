@@ -8,10 +8,10 @@ export const featureDetailNamesExample: ContractExample = contractExample({
   name: "FeatureDetailNames",
   fields: [
     {
-      name: "languageTag",
+      name: "languageId",
       optional: false,
-      nullable: true,
-      spec: { kind: "string", minLength: 2, maxLength: 35 },
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "name",

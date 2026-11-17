@@ -867,14 +867,16 @@
       "x-code": "sys.tbl.geography.names",
       "x-id": "#/schemas/geography.Names",
       "x-table": "geography.names",
-      "x-primaryKey": ["id"],"x-naturalKey": ["feature_code", "name_kind_code", "language_tag", "name"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["feature_code", "name_kind_code", "language_code", "name"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["feature_id", "name_kind_id", "language_tag", "name"]
+        ["feature_id", "name_kind_id", "language_id", "name"]
       ],
       "required": [
         "feature_id"
         ,"id"
+        ,"is_default"
+        ,"language_id"
         ,"name"
         ,"name_kind_id"
       ],
@@ -888,7 +890,8 @@
         ],
         "columns": [
           "feature_code"
-          ,"language_tag"
+          ,"is_default"
+          ,"language_code"
           ,"name"
           ,"name_kind_code"
           ,"valid_from"
@@ -896,6 +899,8 @@
         ],
         "required": [
           "feature_code"
+          ,"is_default"
+          ,"language_code"
           ,"name"
           ,"name_kind_code"
         ]
@@ -929,12 +934,17 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"language_tag": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 35,
-          "minLength": 2,
-          "x-role": "key"
+        ,"is_default": {
+          "type": "boolean",
+          "x-type": "boolean",
+          "x-role": "data"
+        }
+        ,"language_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
         }
         ,"name": {
           "type": "string",

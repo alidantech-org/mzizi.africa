@@ -119,14 +119,14 @@ export class GovernanceInstitutionsRepository {
     query.leftJoin(OfficialNamesEntity, "r2", "r2.entityId = r1.id");
     query.addSelect("r2.entityId", "__hit");
     query.addSelect("r2.isPreferred", "isPreferred");
-    query.addSelect("r2.languageTag", "languageTag");
+    query.addSelect("r2.languageId", "languageId");
     query.addSelect("r2.name", "name");
     query.orderBy("r2.name", "ASC");
     query.addOrderBy("r2.id", "ASC");
     const raws = await query.getRawMany<Row>();
     const rows: Row[] = raws.map((raw) => ({
       isPreferred: raw.isPreferred,
-      languageTag: raw.languageTag,
+      languageId: raw.languageId,
       name: raw.name,
     }));
     const grouped = new Map<unknown, Row[]>();
@@ -261,14 +261,14 @@ export class GovernanceInstitutionsRepository {
     query.leftJoin(OfficialNamesEntity, "r2", "r2.entityId = r1.id");
     query.addSelect("r2.entityId", "__hit");
     query.addSelect("r2.isPreferred", "isPreferred");
-    query.addSelect("r2.languageTag", "languageTag");
+    query.addSelect("r2.languageId", "languageId");
     query.addSelect("r2.name", "name");
     query.orderBy("r2.name", "ASC");
     query.addOrderBy("r2.id", "ASC");
     const raws = await query.getRawMany<Row>();
     const rows: Row[] = raws.map((raw) => ({
       isPreferred: raw.isPreferred,
-      languageTag: raw.languageTag,
+      languageId: raw.languageId,
       name: raw.name,
     }));
     const grouped = new Map<unknown, Row[]>();

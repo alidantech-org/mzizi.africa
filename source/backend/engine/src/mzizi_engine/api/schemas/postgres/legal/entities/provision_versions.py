@@ -27,7 +27,7 @@ class ProvisionVersionsRow(BaseModel):
     id: UUID
     instrument_id: UUID
     instrument_version_id: UUID
-    language_tag: Annotated[str, Field(min_length=2, max_length=35)]
+    language_id: UUID
     locator: Annotated[str, Field(min_length=1, max_length=1000)] | None = None
     observed_at: datetime
     provision_id: UUID

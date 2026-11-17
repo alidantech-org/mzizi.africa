@@ -3,6 +3,7 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { ValueLabelKind } from "#/modules/reference/schema/enum/value-label-kind.enum.ts";
+import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { validityEntityExample } from "@test/modules/shared/schema/dto/examples/validity-entity.dto.example.ts";
 
@@ -41,10 +42,10 @@ export const valueLabelExample: ContractExample = contractExample({
       spec: { kind: "enum", values: Object.values(ValueLabelKind) },
     },
     {
-      name: "languageTag",
+      name: "languageId",
       optional: false,
       nullable: false,
-      spec: { kind: "string", minLength: 2, maxLength: 35 },
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "updatedAt",

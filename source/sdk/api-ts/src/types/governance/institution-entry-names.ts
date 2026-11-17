@@ -1,6 +1,6 @@
 /** Institution Entry Names */
 export interface GovernanceInstitutionEntryNames {
   isPreferred: boolean;
-  languageTag: string | null;
+  languageId: string;
   name: string;
 }

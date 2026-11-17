@@ -9,6 +9,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
+import * as LanguageConfig from "#/modules/reference/schema/types/language/language.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 
 // ----------------------------------
@@ -31,7 +32,10 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const VALUE_LABEL_RELATION_KEYS = ["value"] as const satisfies readonly ValueLabelKey[];
+export const VALUE_LABEL_RELATION_KEYS = [
+  "language",
+  "value",
+] as const satisfies readonly ValueLabelKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -43,7 +47,7 @@ export const VALUE_LABEL_SORTABLE_FIELDS = [
   "id",
   "label",
   "labelKind",
-  "languageTag",
+  "languageId",
   "updatedAt",
   "validFrom",
   "validUntil",
@@ -51,14 +55,12 @@ export const VALUE_LABEL_SORTABLE_FIELDS = [
   "version",
 ] as const satisfies readonly ValueLabelKey[];
 
-export const VALUE_LABEL_SEARCHABLE_FIELDS = [
-  "label",
-  "languageTag",
-] as const satisfies readonly ValueLabelKey[];
+export const VALUE_LABEL_SEARCHABLE_FIELDS = ["label"] as const satisfies readonly ValueLabelKey[];
 
 export const VALUE_LABEL_FILTERABLE_FIELDS = [
   "id",
   "labelKind",
+  "languageId",
   "valueId",
 ] as const satisfies readonly ValueLabelKey[];
 
@@ -86,7 +88,7 @@ export const VALUE_LABEL_SELECTABLE_FIELDS = [
   "id",
   "label",
   "labelKind",
-  "languageTag",
+  "languageId",
   "updatedAt",
   "validFrom",
   "validUntil",
@@ -100,7 +102,7 @@ export const VALUE_LABEL_DEFAULT_SELECT_FIELDS = [
   "id",
   "label",
   "labelKind",
-  "languageTag",
+  "languageId",
   "updatedAt",
   "validFrom",
   "validUntil",
@@ -115,7 +117,7 @@ export const VALUE_LABEL_DEFAULT_SELECT_FIELDS = [
 export const VALUE_LABEL_EDITABLE_FIELDS = [
   "label",
   "labelKind",
-  "languageTag",
+  "languageId",
   "validFrom",
   "validUntil",
   "valueId",
@@ -147,6 +149,10 @@ export const VALUE_LABEL_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const VALUE_LABEL_ONE_RELATION_QUERY_OPTIONS = [
+  Q.createRelationKeyMapper<ValueLabelRelationKey>().one(
+    () => LanguageConfig.LANGUAGE_AS_ONE_RELATION_CONFIG,
+    "language",
+  ),
   Q.createRelationKeyMapper<ValueLabelRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "value",

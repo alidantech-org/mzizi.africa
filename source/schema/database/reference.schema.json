@@ -184,6 +184,299 @@
         }
       }
     },
+    "languages": {
+      "title": "reference.languages",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.reference.languages",
+      "x-id": "#/schemas/reference.Language",
+      "x-table": "reference.languages",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+        ,["iso6391"]
+        ,["iso6393"]
+        ,["glottocode"]
+      ],
+      "required": [
+        "code"
+        ,"id"
+        ,"kind_id"
+        ,"name"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"direction_code"
+          ,"family_code"
+          ,"glottocode"
+          ,"iso6391"
+          ,"iso6392"
+          ,"iso6393"
+          ,"kind_code"
+          ,"name"
+          ,"parent_code"
+          ,"script_code"
+          ,"status_code"
+        ],
+        "required": [
+          "code"
+          ,"kind_code"
+          ,"name"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"direction_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "direction_code", "scheme": "ref.sch.ref.text.direction" }
+        }
+        ,"family_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "family_code", "scheme": "ref.sch.ref.language.family" }
+        }
+        ,"glottocode": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "minLength": 8,
+          "maxLength": 8,
+          "pattern": "^[a-z]{4}[0-9]{4}$",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"iso6391": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "minLength": 2,
+          "maxLength": 2,
+          "pattern": "^[a-z]{2}$",
+          "x-role": "data"
+        }
+        ,"iso6392": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "minLength": 3,
+          "maxLength": 3,
+          "pattern": "^[a-z]{3}$",
+          "x-role": "data"
+        }
+        ,"iso6393": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "minLength": 3,
+          "maxLength": 3,
+          "pattern": "^[a-z]{3}$",
+          "x-role": "data"
+        }
+        ,"kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.ref.language.kind" }
+        }
+        ,"name": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 300,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"parent_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "parent_code" }
+        }
+        ,"script_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "script_code", "scheme": "ref.sch.ref.script" }
+        }
+        ,"status_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.ref.language.status" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "language_names": {
+      "title": "reference.language_names",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.reference.language-names",
+      "x-id": "#/schemas/reference.LanguageName",
+      "x-table": "reference.language_names",
+      "x-primaryKey": ["id"],"x-naturalKey": ["language_code", "in_language_code", "name_kind", "name"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["language_id", "in_language_id", "name_kind", "name"]
+      ],
+      "required": [
+        "id"
+        ,"in_language_id"
+        ,"language_id"
+        ,"name"
+        ,"name_kind"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "in_language_code"
+          ,"language_code"
+          ,"name"
+          ,"name_kind"
+          ,"valid_from"
+          ,"valid_until"
+        ],
+        "required": [
+          "in_language_code"
+          ,"language_code"
+          ,"name"
+          ,"name_kind"
+        ]
+      },
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"in_language_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "in_language_code" }
+        }
+        ,"language_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
+        }
+        ,"name": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 300,
+          "minLength": 1,
+          "x-role": "key"
+        }
+        ,"name_kind": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["abbreviation", "alternative", "endonym", "exonym"],
+          "x-role": "key"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"valid_from": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"valid_until": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "patterns": {
       "title": "reference.patterns",
       "type": "object",
@@ -701,16 +994,16 @@
       "x-code": "sys.tbl.reference.value-labels",
       "x-id": "#/schemas/reference.ValueLabel",
       "x-table": "reference.value_labels",
-      "x-primaryKey": ["id"],"x-naturalKey": ["value_code", "language_tag", "label_kind", "label"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["value_code", "language_code", "label_kind", "label"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["value_id", "language_tag", "label_kind", "label"]
+        ["value_id", "language_id", "label_kind", "label"]
       ],
       "required": [
         "id"
         ,"label"
         ,"label_kind"
-        ,"language_tag"
+        ,"language_id"
         ,"value_id"
       ],
       "x-seed": {
@@ -724,7 +1017,7 @@
         "columns": [
           "label"
           ,"label_kind"
-          ,"language_tag"
+          ,"language_code"
           ,"valid_from"
           ,"valid_until"
           ,"value_code"
@@ -732,7 +1025,7 @@
         "required": [
           "label"
           ,"label_kind"
-          ,"language_tag"
+          ,"language_code"
           ,"value_code"
         ]
       },
@@ -771,12 +1064,12 @@
           "enum": ["abbreviation", "alternative", "definition", "preferred"],
           "x-role": "key"
         }
-        ,"language_tag": {
+        ,"language_id": {
           "type": "string",
-          "x-type": "text",
-          "maxLength": 35,
-          "minLength": 2,
-          "x-role": "key"
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
         }
         ,"updated_at": {
           "type": "string",

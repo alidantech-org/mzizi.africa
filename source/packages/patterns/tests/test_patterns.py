@@ -85,11 +85,11 @@ def test_the_drafted_layers_merge_and_a_swahili_alias_reaches_the_global_term() 
 
     from mzizi_patterns import load_profile, load_term_list
 
-    draft = Path("seed/drafts/orpp-sources")
-    if not draft.is_dir():
-        pytest.skip("the ORPP draft has moved into seed/")
-    lists = tuple(load_term_list(p) for p in sorted((draft / "terms").rglob("*.yml")))
-    engine_ = PatternOrchestrator(load_profile(draft / "engine/docs/profile.yaml"), lists)
+    terms, profile = Path("seed/terms"), Path(".docs/_plan/orpp-sources/engine/docs/profile.yaml")
+    if not (terms.is_dir() and profile.is_file()):
+        pytest.skip("the ORPP terms or profile have moved")
+    lists = tuple(load_term_list(p) for p in sorted(terms.rglob("*.yml")))
+    engine_ = PatternOrchestrator(load_profile(profile), lists)
     filler = tuple(DocumentText(name=f"f{i}", filename="unrelated words", body="nothing here") for i in range(8))
     scores = engine_.score_corpus(
         (DocumentText(name="a", filename="notisi ya usajili wa muda", body="notisi"), *filler)

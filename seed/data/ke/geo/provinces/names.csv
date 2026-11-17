@@ -1,9 +1,9 @@
-feature_code,name,name_kind_code,language_tag
-ke.nairobi-province,Nairobi Province,geo.name.kind.official,en
-ke.central-province,Central Province,geo.name.kind.official,en
-ke.coast-province,Coast Province,geo.name.kind.official,en
-ke.eastern-province,Eastern Province,geo.name.kind.official,en
-ke.north-eastern-province,North Eastern Province,geo.name.kind.official,en
-ke.nyanza-province,Nyanza Province,geo.name.kind.official,en
-ke.rift-valley-province,Rift Valley Province,geo.name.kind.official,en
-ke.western-province,Western Province,geo.name.kind.official,en
+feature_code,name,name_kind_code,language_code,is_default
+ke.nairobi-province,Nairobi Province,geo.name.kind.official,en,true
+ke.central-province,Central Province,geo.name.kind.official,en,true
+ke.coast-province,Coast Province,geo.name.kind.official,en,true
+ke.eastern-province,Eastern Province,geo.name.kind.official,en,true
+ke.north-eastern-province,North Eastern Province,geo.name.kind.official,en,true
+ke.nyanza-province,Nyanza Province,geo.name.kind.official,en,true
+ke.rift-valley-province,Rift Valley Province,geo.name.kind.official,en,true
+ke.western-province,Western Province,geo.name.kind.official,en,true

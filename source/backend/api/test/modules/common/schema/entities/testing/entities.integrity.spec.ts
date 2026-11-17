@@ -43,6 +43,8 @@ import { IndividualsEntity } from "#/modules/official/schema/entities/individual
 import { OfficialNamesEntity } from "#/modules/official/schema/entities/names.entity.ts";
 import { OfficialRelationshipsEntity } from "#/modules/official/schema/entities/relationships.entity.ts";
 import { CountryEntity } from "#/modules/reference/schema/entities/country.entity.ts";
+import { LanguageNameEntity } from "#/modules/reference/schema/entities/language-name.entity.ts";
+import { LanguageEntity } from "#/modules/reference/schema/entities/language.entity.ts";
 import { PatternEntity } from "#/modules/reference/schema/entities/pattern.entity.ts";
 import { SchemeEntity } from "#/modules/reference/schema/entities/scheme.entity.ts";
 import { TopicEntity } from "#/modules/reference/schema/entities/topic.entity.ts";
@@ -112,6 +114,8 @@ const entities = [
   OfficialNamesEntity,
   OfficialRelationshipsEntity,
   CountryEntity,
+  LanguageEntity,
+  LanguageNameEntity,
   PatternEntity,
   SchemeEntity,
   TopicEntity,
@@ -203,6 +207,8 @@ beforeAll(async () => {
     "official",
     "official",
     "official",
+    "reference",
+    "reference",
     "reference",
     "reference",
     "reference",
@@ -1495,7 +1501,8 @@ describe("entity schema matches the contract", () => {
             ["deleted_at", true, false],
             ["feature_id", false, false],
             ["id", false, true],
-            ["language_tag", true, false],
+            ["is_default", false, false],
+            ["language_id", false, false],
             ["name", false, false],
             ["name_kind_id", false, false],
             ["updated_at", false, false],
@@ -1512,7 +1519,11 @@ describe("entity schema matches the contract", () => {
         .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
         .sort();
       expect(keys).toEqual(
-        ["feature_id->geography.features", "name_kind_id->reference.values"].sort(),
+        [
+          "feature_id->geography.features",
+          "language_id->reference.languages",
+          "name_kind_id->reference.values",
+        ].sort(),
       );
     });
 
@@ -1525,10 +1536,10 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:feature_id,name_kind_id,language_tag,name",
+          "unique:feature_id,name_kind_id,language_id,name",
           "feature_id",
           "name_kind_id",
-          "language_tag",
+          "language_id",
         ]),
       );
     });
@@ -2221,7 +2232,7 @@ describe("entity schema matches the contract", () => {
             ["id", false, true],
             ["individual_id", true, false],
             ["is_preferred", false, false],
-            ["language_tag", true, false],
+            ["language_id", false, false],
             ["name", false, false],
             ["name_kind_id", false, false],
             ["source_citation_id", true, false],
@@ -2242,6 +2253,7 @@ describe("entity schema matches the contract", () => {
         [
           "entity_id->official.entities",
           "individual_id->official.individuals",
+          "language_id->reference.languages",
           "name_kind_id->reference.values",
           "source_citation_id->source.citations",
         ].sort(),
@@ -2257,7 +2269,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:entity_id,individual_id,name_kind_id,language_tag,name",
+          "unique:entity_id,individual_id,name_kind_id,language_id,name",
           "entity_id",
           "individual_id",
           "name_kind_id",
@@ -2410,6 +2422,136 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "reference"."countries" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Language", () => {
+    const metadata = () => dataSource.getMetadata(LanguageEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("languages");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["code", false, false],
+            ["created_at", false, false],
+            ["deleted_at", true, false],
+            ["direction_id", true, false],
+            ["family_id", true, false],
+            ["glottocode", true, false],
+            ["id", false, true],
+            ["iso6391", true, false],
+            ["iso6392", true, false],
+            ["iso6393", true, false],
+            ["kind_id", false, false],
+            ["name", false, false],
+            ["parent_id", true, false],
+            ["script_id", true, false],
+            ["status_id", true, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "direction_id->reference.values",
+          "family_id->reference.values",
+          "kind_id->reference.values",
+          "parent_id->reference.languages",
+          "script_id->reference.values",
+          "status_id->reference.values",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map(
+          (index) =>
+            `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
+        )
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:iso6391",
+          "unique:iso6393",
+          "unique:glottocode",
+          "name",
+          "kind_id",
+          "family_id",
+          "script_id",
+          "parent_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "reference"."languages" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("LanguageName", () => {
+    const metadata = () => dataSource.getMetadata(LanguageNameEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("language_names");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["created_at", false, false],
+            ["deleted_at", true, false],
+            ["id", false, true],
+            ["in_language_id", false, false],
+            ["language_id", false, false],
+            ["name", false, false],
+            ["name_kind", false, false],
+            ["updated_at", false, false],
+            ["valid_from", true, false],
+            ["valid_until", true, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        ["in_language_id->reference.languages", "language_id->reference.languages"].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map(
+          (index) =>
+            `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
+        )
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:language_id,in_language_id,name_kind,name",
+          "language_id",
+          "in_language_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "reference"."language_names" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -2648,7 +2790,7 @@ describe("entity schema matches the contract", () => {
             ["id", false, true],
             ["label", false, false],
             ["label_kind", false, false],
-            ["language_tag", false, false],
+            ["language_id", false, false],
             ["updated_at", false, false],
             ["valid_from", true, false],
             ["valid_until", true, false],
@@ -2663,7 +2805,9 @@ describe("entity schema matches the contract", () => {
       const keys = metadata()
         .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
         .sort();
-      expect(keys).toEqual(["value_id->reference.values"].sort());
+      expect(keys).toEqual(
+        ["language_id->reference.languages", "value_id->reference.values"].sort(),
+      );
     });
 
     it("declares the contract's indexes", () => {
@@ -2675,9 +2819,9 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:value_id,language_tag,label_kind,label",
+          "unique:value_id,language_id,label_kind,label",
           "value_id",
-          "language_tag",
+          "language_id",
         ]),
       );
     });

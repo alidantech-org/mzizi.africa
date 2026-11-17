@@ -27,3 +27,14 @@ ref.country.designation.united-states,ref.country.designation,United States
 ref.country.designation.united-kingdom,ref.country.designation,United Kingdom
 ref.country.designation.state,ref.country.designation,State
 ref.country.designation.other,ref.country.designation,Other
+ref.language.kind.language,ref.language.kind,Language
+ref.language.kind.macrolanguage,ref.language.kind,Macrolanguage
+ref.language.kind.variety,ref.language.kind,Variety
+ref.language.kind.special,ref.language.kind,Special code (no language)
+ref.language.family.indo-european,ref.language.family,Indo-European
+ref.language.family.niger-congo,ref.language.family,Niger-Congo
+ref.script.latn,ref.script,Latin
+ref.text.direction.ltr,ref.text.direction,Left to right
+ref.text.direction.rtl,ref.text.direction,Right to left
+ref.language.status.living,ref.language.status,Living
+ref.language.status.extinct,ref.language.status,Extinct

@@ -11,6 +11,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
 import * as IndividualsConfig from "#/modules/official/schema/types/individuals/individuals.config";
+import * as LanguageConfig from "#/modules/reference/schema/types/language/language.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
 
@@ -37,6 +38,7 @@ import type {
 export const NAMES_RELATION_KEYS = [
   "entity",
   "individual",
+  "language",
   "nameKind",
   "sourceCitation",
 ] as const satisfies readonly NamesKey[];
@@ -52,7 +54,7 @@ export const NAMES_SORTABLE_FIELDS = [
   "id",
   "individualId",
   "isPreferred",
-  "languageTag",
+  "languageId",
   "name",
   "nameKindId",
   "sourceCitationId",
@@ -62,16 +64,14 @@ export const NAMES_SORTABLE_FIELDS = [
   "version",
 ] as const satisfies readonly NamesKey[];
 
-export const NAMES_SEARCHABLE_FIELDS = [
-  "languageTag",
-  "name",
-] as const satisfies readonly NamesKey[];
+export const NAMES_SEARCHABLE_FIELDS = ["name"] as const satisfies readonly NamesKey[];
 
 export const NAMES_FILTERABLE_FIELDS = [
   "entityId",
   "id",
   "individualId",
   "isPreferred",
+  "languageId",
   "nameKindId",
   "sourceCitationId",
 ] as const satisfies readonly NamesKey[];
@@ -101,7 +101,7 @@ export const NAMES_SELECTABLE_FIELDS = [
   "id",
   "individualId",
   "isPreferred",
-  "languageTag",
+  "languageId",
   "name",
   "nameKindId",
   "sourceCitationId",
@@ -118,7 +118,7 @@ export const NAMES_DEFAULT_SELECT_FIELDS = [
   "id",
   "individualId",
   "isPreferred",
-  "languageTag",
+  "languageId",
   "name",
   "nameKindId",
   "sourceCitationId",
@@ -136,7 +136,7 @@ export const NAMES_EDITABLE_FIELDS = [
   "entityId",
   "individualId",
   "isPreferred",
-  "languageTag",
+  "languageId",
   "name",
   "nameKindId",
   "sourceCitationId",
@@ -177,6 +177,10 @@ export const NAMES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<NamesRelationKey>().one(
     () => IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
     "individual",
+  ),
+  Q.createRelationKeyMapper<NamesRelationKey>().one(
+    () => LanguageConfig.LANGUAGE_AS_ONE_RELATION_CONFIG,
+    "language",
   ),
   Q.createRelationKeyMapper<NamesRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,

@@ -57,7 +57,9 @@ def register_coverage(output: DocumentOutput) -> tuple[int, int]:
 
 
 def main() -> int:
-    totals = {name: [0, 0, 0, 0] for name in MODES}  # true table pages hit, table pages, prose pages wrongly tabled, prose pages
+    totals = {
+        name: [0, 0, 0, 0] for name in MODES
+    }  # true table pages hit, table pages, prose pages wrongly tabled, prose pages
     print(f"{'mode':16} {'pdf':26} {'recall':>9} {'false':>7} {'time':>6}")
     for label in LABELS:
         files = sorted(SOURCE.glob(f"{label.prefix}*.pdf"))

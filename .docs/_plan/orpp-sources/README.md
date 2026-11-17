@@ -1,13 +1,17 @@
-# Draft: ORPP source, terms and ranking profile
+---
+{id: PLAN-ORPP-SOURCES,name: ORPP source terms and ranking profile,type: plan,tags: [seed,terms,orpp,proposal]}
+---
 
-Status: **draft for the owner's approval**. Nothing here is loaded or seeded: this folder sits outside `seed/data/`, as `seed/drafts/constitution-patterns` does. Approving means moving the files you accept to the matching path under `seed/` (the layout is identical). `uv run mzizi-manifest refs seed/drafts/orpp-sources` passes (14 codes, 0 problems).
+# ORPP source, terms and ranking profile
+
+Status: the three term lists (`global`, `ke`, `orpp`) were approved by the owner and now live in `seed/terms/src/doc/`. The source manifest (`sources/srs/ke/orpp/manifest.yml`, with a placeholder policy assessment and licence) and the ranking profile (`engine/docs/profile.yaml`) are still proposals in this folder, awaiting approval; moving them to `seed/` means the same relative paths.
 
 ## What is drafted
 
 | File | Code | Purpose |
 |---|---|---|
 | `sources/srs/ke/orpp/manifest.yml` | `pg.src.srs.ke.orpp` | The source: host scope, rate, robots, stop rules, and which term lists it uses. The policy assessment reference and the licence are **placeholders to confirm**. |
-| `terms/src/doc/ke/*.yml` (12) | `sys.trm.src.doc.ke.<name>` | English and Swahili term lists: `law`, `register`, `funding`, `notice`, `procurement`, `audit-budget`, `court`, `report`, `people-places`, `form`, `news`, `noise`, plus `stopwords`. |
+| `seed/terms/src/doc/` (3 layered lists) | `sys.trm.src.doc.ke.<name>` | English and Swahili term lists: `law`, `register`, `funding`, `notice`, `procurement`, `audit-budget`, `court`, `report`, `people-places`, `form`, `news`, `noise`, plus `stopwords`. |
 | `engine/docs/profile.yaml` | `sys.eng.docs.profile` | How term matches become a document **kind**, **subjects** and an impact level. |
 
 No mapping is drafted yet. Mappings come after the first corpus is scored and reviewed (see "Next").

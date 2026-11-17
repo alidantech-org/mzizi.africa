@@ -25,7 +25,7 @@ const lists = [
     key: "names",
     label: "Names",
     columns: [
-      { key: "languageTag", label: "Language Tag" },
+      { key: "languageId", label: "Language Id" },
       { key: "name", label: "Name" },
     ],
   },

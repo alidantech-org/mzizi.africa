@@ -7,9 +7,9 @@ part of 'feature_entry_names.dart';
 // **************************************************************************
 
 GeographyFeatureEntryNames _$GeographyFeatureEntryNamesFromJson(Map<String, dynamic> json) =>
-    GeographyFeatureEntryNames(languageTag: json['languageTag'] as String?, name: json['name'] as String);
+    GeographyFeatureEntryNames(languageId: json['languageId'] as String, name: json['name'] as String);
 
 Map<String, dynamic> _$GeographyFeatureEntryNamesToJson(GeographyFeatureEntryNames instance) => <String, dynamic>{
-  'languageTag': ?instance.languageTag,
+  'languageId': instance.languageId,
   'name': instance.name,
 };

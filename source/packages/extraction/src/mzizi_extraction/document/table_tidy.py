@@ -24,8 +24,10 @@ def _squash(rows: list[list[str]]) -> list[list[str]]:
 def _numbering(row: list[str]) -> bool:
     """A row of column numbers such as 1, 2, 3 under or above the real headings."""
     filled = [cell for cell in row if cell]
-    return len(filled) >= 3 and all(cell.isdigit() for cell in filled) and [int(c) for c in filled] == sorted(
-        int(c) for c in filled
+    return (
+        len(filled) >= 3
+        and all(cell.isdigit() for cell in filled)
+        and [int(c) for c in filled] == sorted(int(c) for c in filled)
     )
 
 

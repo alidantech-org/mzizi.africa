@@ -5,8 +5,8 @@ part 'feature_detail_names.g.dart';
 /// Feature Detail Names
 @JsonSerializable(includeIfNull: false)
 class GeographyFeatureDetailNames {
-  const GeographyFeatureDetailNames({this.languageTag, required this.name});
-  final String? languageTag;
+  const GeographyFeatureDetailNames({required this.languageId, required this.name});
+  final String languageId;
   final String name;
 
   factory GeographyFeatureDetailNames.fromJson(Map<String, dynamic> json) => _$GeographyFeatureDetailNamesFromJson(json);

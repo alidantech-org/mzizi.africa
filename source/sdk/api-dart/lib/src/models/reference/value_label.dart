@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/reference/value_label_kind.dart';
+import 'package:mzizi_api/src/models/reference/language.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/validity_entity.dart';
 
@@ -14,7 +15,7 @@ class ReferenceValueLabel {
     required this.id,
     required this.label,
     required this.labelKind,
-    required this.languageTag,
+    required this.languageId,
     required this.updatedAt,
     this.validFrom,
     this.validUntil,
@@ -26,7 +27,7 @@ class ReferenceValueLabel {
   final String id;
   final String label;
   final ReferenceValueLabelKind labelKind;
-  final String languageTag;
+  final String languageId;
   final DateTime updatedAt;
   final DateTime? validFrom;
   final DateTime? validUntil;

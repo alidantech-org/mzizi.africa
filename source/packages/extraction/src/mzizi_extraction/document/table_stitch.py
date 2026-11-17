@@ -23,7 +23,9 @@ HEADER_MATCH_SHARE = 0.8
 
 
 def _columns(rows: tuple[tuple[str, ...], ...]) -> tuple[str, ...]:
-    return tuple(" ".join(" ".join(part for part in column if part).split()).casefold() for column in zip(*rows, strict=True))
+    return tuple(
+        " ".join(" ".join(part for part in column if part).split()).casefold() for column in zip(*rows, strict=True)
+    )
 
 
 def _repeats_header(head: TableBlock, block: TableBlock) -> bool:
@@ -57,9 +59,7 @@ def stitch_tables(pages: tuple[Page, ...]) -> list[LogicalTable]:
                 (
                     position
                     for position, chain in enumerate(chains)
-                    if position not in taken
-                    and chain[-1][0] == page.number - 1
-                    and _continues(chain[0][1], block)
+                    if position not in taken and chain[-1][0] == page.number - 1 and _continues(chain[0][1], block)
                 ),
                 None,
             )

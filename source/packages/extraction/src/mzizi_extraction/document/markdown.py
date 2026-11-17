@@ -127,7 +127,9 @@ def _block(
         case TableBlock():
             caption = f"*{block.caption}*\n\n" if block.caption else ""
             links = [f"[CSV]({table_path(block.page, block.index)})"]
-            links += [f"[{name}]({path})" for path, name in _alternate_links(alternates.get((block.page, block.index), ()))]
+            links += [
+                f"[{name}]({path})" for path, name in _alternate_links(alternates.get((block.page, block.index), ()))
+            ]
             return caption + render_table(block) + "\n\n*Table data: " + " · ".join(links) + "*"
         case FigureBlock():
             caption = f"\n\n*{block.caption}*" if block.caption else ""

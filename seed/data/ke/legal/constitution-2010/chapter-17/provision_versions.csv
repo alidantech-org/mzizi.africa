@@ -1,4 +1,4 @@
-code,instrument_code,instrument_version_code,provision_code,language_tag,locator,observed_at,text
+code,instrument_code,instrument_version_code,provision_code,language_code,locator,observed_at,text
 ke.constitution-2010.ch-17.v-2010,ke.constitution-2010,ke.constitution-2010.v-2010,ke.constitution-2010.ch-17,en,en-constitutionnet-final-constitution-2010.pdf page 158,2026-11-17T02:00:00+03:00,General Provisions
 ke.constitution-2010.art-258.v-2010,ke.constitution-2010,ke.constitution-2010.v-2010,ke.constitution-2010.art-258,en,en-constitutionnet-final-constitution-2010.pdf page 158,2026-11-17T02:00:00+03:00,Enforcement of this Constitution
 ke.constitution-2010.art-258.cl-1.v-2010,ke.constitution-2010,ke.constitution-2010.v-2010,ke.constitution-2010.art-258.cl-1,en,en-constitutionnet-final-constitution-2010.pdf page 158,2026-11-17T02:00:00+03:00,"Every person has the right to institute court proceedings, claiming that this Constitution has been contravened, or is threatened with contravention."

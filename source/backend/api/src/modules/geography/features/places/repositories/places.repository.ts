@@ -109,12 +109,12 @@ export class GeographyPlacesRepository {
     query.where("r1.featureId IN (:...owners)", { owners });
     query.addSelect("r1.featureId", "__owner");
     query.addSelect("r1.featureId", "__hit");
-    query.addSelect("r1.languageTag", "languageTag");
+    query.addSelect("r1.languageId", "languageId");
     query.addSelect("r1.name", "name");
     query.orderBy("r1.name", "ASC");
     query.addOrderBy("r1.id", "ASC");
     const raws = await query.getRawMany<Row>();
-    const rows: Row[] = raws.map((raw) => ({ languageTag: raw.languageTag, name: raw.name }));
+    const rows: Row[] = raws.map((raw) => ({ languageId: raw.languageId, name: raw.name }));
     const grouped = new Map<unknown, Row[]>();
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
@@ -180,12 +180,12 @@ export class GeographyPlacesRepository {
     query.where("r1.featureId IN (:...owners)", { owners });
     query.addSelect("r1.featureId", "__owner");
     query.addSelect("r1.featureId", "__hit");
-    query.addSelect("r1.languageTag", "languageTag");
+    query.addSelect("r1.languageId", "languageId");
     query.addSelect("r1.name", "name");
     query.orderBy("r1.name", "ASC");
     query.addOrderBy("r1.id", "ASC");
     const raws = await query.getRawMany<Row>();
-    const rows: Row[] = raws.map((raw) => ({ languageTag: raw.languageTag, name: raw.name }));
+    const rows: Row[] = raws.map((raw) => ({ languageId: raw.languageId, name: raw.name }));
     const grouped = new Map<unknown, Row[]>();
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;

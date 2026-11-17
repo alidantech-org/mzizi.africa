@@ -138,6 +138,7 @@ export async function database(
       ...selectors,
     ];
     if (action === "verify") args.push("--check");
+    if (action === "generate" && process.env.DRYV_CONFLICTS) args.push("--conflicts", process.env.DRYV_CONFLICTS);
     return await group(`Dryv database ${action}`, [
       step(action, root, args, dryvEnv()),
     ]);
@@ -173,6 +174,8 @@ export async function catalog(check = false): Promise<boolean> {
         pack,
       ];
       if (check) args.push("--check");
+      // `DRYV_CONFLICTS=overwrite` accepts the contracts' output over generated files Dryv reports as hand-edited.
+      if (process.env.DRYV_CONFLICTS) args.push("--conflicts", process.env.DRYV_CONFLICTS);
       return step(`${app} catalog`, root, args, dryvEnv());
     };
     // The Dryv API sometimes refuses back-to-back requests ("Request limit exceeded", "authentication failed"), so each

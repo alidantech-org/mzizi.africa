@@ -1,4 +1,4 @@
-entity_code,individual_code,name_kind_code,language_tag,name,is_preferred
+entity_code,individual_code,name_kind_code,language_code,name,is_preferred
 ke.national-executive,,ofc.name.kind.official,en,The National Executive,true
 ke.the-presidency,,ofc.name.kind.official,en,The President and Deputy President,true
 ke.cabinet,,ofc.name.kind.official,en,Cabinet,true

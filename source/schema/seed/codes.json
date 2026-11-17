@@ -251,6 +251,12 @@
     "reference.countries": {
       "short": "cty"
     },
+    "reference.language_names": {
+      "short": "lnm"
+    },
+    "reference.languages": {
+      "short": "lng"
+    },
     "reference.patterns": {
       "short": "pat"
     },

@@ -4,6 +4,7 @@ import 'package:mzizi_api/src/models/geography/feature_collection.dart';
 import 'package:mzizi_api/src/models/geography/feature_detail.dart';
 import 'package:mzizi_api/src/models/geography/feature_geometry_collection.dart';
 import 'package:mzizi_api/src/models/geography/feature_key.dart';
+import 'package:mzizi_api/src/models/geography/feature_kind_collection.dart';
 import 'package:mzizi_api/src/models/geography/feature_window.dart';
 import 'package:mzizi_api/src/models/geography/geometry_window.dart';
 
@@ -15,6 +16,19 @@ class GeographyFeature {
   final ApiConnection _connection;
 
   static const _routes = GeographyEndpoints();
+
+  /// The kinds a geographic feature can have, in code order, for choosing a feature type.
+  ///
+  /// GET /v1/geography/feature-kinds
+  Future<ApiResult<GeographyFeatureKindCollection>> browseFeatureKinds({ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<GeographyFeatureKindCollection>(
+        endpoint: _routes.browseFeatureKinds,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'geography.browseFeatureKinds'),
+        fromJson: (json) => GeographyFeatureKindCollection.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
 
   /// Browse geographic features with their names, optionally of one type or by code prefix.
   ///

@@ -100,7 +100,12 @@ def test_stitching_follows_each_table_when_a_page_has_several() -> None:
 
     a, b = ("Name", "Age"), ("Item", "Cost", "Note")
     pages = tuple(
-        Page(number=n, width=1.0, height=1.0, blocks=(table(n, 1, (a, (str(n), "x"))), table(n, 2, (b, (str(n), "y", "z")))))
+        Page(
+            number=n,
+            width=1.0,
+            height=1.0,
+            blocks=(table(n, 1, (a, (str(n), "x"))), table(n, 2, (b, (str(n), "y", "z")))),
+        )
         for n in (1, 2, 3)
     )
     merged = stitch_tables(pages)

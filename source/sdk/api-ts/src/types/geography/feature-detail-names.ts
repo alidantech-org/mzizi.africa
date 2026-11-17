@@ -1,5 +1,5 @@
 /** Feature Detail Names */
 export interface GeographyFeatureDetailNames {
-  languageTag: string | null;
+  languageId: string;
   name: string;
 }

@@ -5,9 +5,9 @@ part 'institution_detail_names.g.dart';
 /// Institution Detail Names
 @JsonSerializable(includeIfNull: false)
 class GovernanceInstitutionDetailNames {
-  const GovernanceInstitutionDetailNames({required this.isPreferred, this.languageTag, required this.name});
+  const GovernanceInstitutionDetailNames({required this.isPreferred, required this.languageId, required this.name});
   final bool isPreferred;
-  final String? languageTag;
+  final String languageId;
   final String name;
 
   factory GovernanceInstitutionDetailNames.fromJson(Map<String, dynamic> json) => _$GovernanceInstitutionDetailNamesFromJson(json);

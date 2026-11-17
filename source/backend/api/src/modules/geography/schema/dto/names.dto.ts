@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -11,15 +12,15 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { LanguageTag } from "#/modules/shared/schema/type/language-tag.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * An official, local, alternative, translated or historical name for a feature, with optional language, validity and provenance reference. (entity)
+ * A canonical, official, local, alternative, translated or historical name for a feature, with its language (`mul` or `und` when no single language applies), validity and provenance reference. (entity)
  */
 export class NamesDto {
   @IsISO8601({})
@@ -38,12 +39,12 @@ export class NamesDto {
   @IsUUID()
   id!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.languageTag !== null)
+  @IsBoolean()
+  isDefault!: Flag;
+
   @IsString()
-  @MinLength(2)
-  @MaxLength(35)
-  languageTag?: LanguageTag | null;
+  @IsUUID()
+  languageId!: Id;
 
   @IsString()
   @MinLength(1)

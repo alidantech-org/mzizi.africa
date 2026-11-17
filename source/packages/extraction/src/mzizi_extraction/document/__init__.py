@@ -5,7 +5,6 @@ from mzizi_extraction.document.chunks import Chunk, chunk_markdown
 from mzizi_extraction.document.html_backend import extract_html_document
 from mzizi_extraction.document.markdown import render_markdown, table_csv
 from mzizi_extraction.document.markdown_format import format_markdown
-from mzizi_extraction.document.table_tidy import tidy_rows
 from mzizi_extraction.document.models import (
     Asset,
     Block,
@@ -21,6 +20,7 @@ from mzizi_extraction.document.models import (
 from mzizi_extraction.document.pdf_backend import extract_pdf_document
 from mzizi_extraction.document.profile import DocumentProfile, OcrMode
 from mzizi_extraction.document.table_models import ColumnType, TableColumn, TableSchema
+from mzizi_extraction.document.table_tidy import tidy_rows
 from mzizi_extraction.document.wire import DocumentWire, encode_document
 
 __all__ = [
@@ -33,8 +33,6 @@ __all__ = [
     "DocumentProfile",
     "DocumentWire",
     "FigureBlock",
-    "format_markdown",
-    "tidy_rows",
     "Heading",
     "ListItem",
     "OcrMode",
@@ -48,7 +46,9 @@ __all__ = [
     "encode_document",
     "extract_html_document",
     "extract_pdf_document",
+    "format_markdown",
     "learn_boilerplate",
     "render_markdown",
     "table_csv",
+    "tidy_rows",
 ]

@@ -499,14 +499,15 @@
       "x-code": "sys.tbl.official.names",
       "x-id": "#/schemas/official.Names",
       "x-table": "official.names",
-      "x-primaryKey": ["id"],"x-naturalKey": ["entity_code", "individual_code", "name_kind_code", "language_tag", "name"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["entity_code", "individual_code", "name_kind_code", "language_code", "name"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["entity_id", "individual_id", "name_kind_id", "language_tag", "name"]
+        ["entity_id", "individual_id", "name_kind_id", "language_id", "name"]
       ],
       "required": [
         "id"
         ,"is_preferred"
+        ,"language_id"
         ,"name"
         ,"name_kind_id"
       ],
@@ -522,7 +523,7 @@
           "entity_code"
           ,"individual_code"
           ,"is_preferred"
-          ,"language_tag"
+          ,"language_code"
           ,"name"
           ,"name_kind_code"
           ,"source_citation_code"
@@ -531,6 +532,7 @@
         ],
         "required": [
           "is_preferred"
+          ,"language_code"
           ,"name"
           ,"name_kind_code"
         ]
@@ -576,12 +578,12 @@
           "x-type": "boolean",
           "x-role": "data"
         }
-        ,"language_tag": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 35,
-          "minLength": 2,
-          "x-role": "key"
+        ,"language_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
         }
         ,"name": {
           "type": "string",

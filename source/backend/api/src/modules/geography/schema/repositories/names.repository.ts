@@ -47,6 +47,14 @@ export class NamesRepository
     return await this.findByQuery(query, { featureId, deletedAt: IsNull() });
   }
 
+  /** Find names by language id, paged by the shared query. */
+  async findByLanguage(
+    query: BaseQueryDto<GeographyNamesEntity>,
+    languageId: NonNullable<GeographyNamesEntity["languageId"]>,
+  ): Promise<IFindAllResponse<GeographyNamesEntity>> {
+    return await this.findByQuery(query, { languageId, deletedAt: IsNull() });
+  }
+
   /** Find names by name kind id, paged by the shared query. */
   async findByNameKind(
     query: BaseQueryDto<GeographyNamesEntity>,

@@ -113,7 +113,7 @@ const { ScanFeatures, FindFeature } = places.queries({
       validFrom: row.fields.validFrom,
       validUntil: row.fields.validUntil,
       names: row.reverse(name.fields.featureId, name).select(
-        (n) => ({ name: n.fields.name, languageTag: n.fields.languageTag }),
+        (n) => ({ name: n.fields.name, languageId: n.fields.languageId }),
         (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
       ),
     }))
@@ -131,7 +131,7 @@ const { ScanFeatures, FindFeature } = places.queries({
       validFrom: row.fields.validFrom,
       validUntil: row.fields.validUntil,
       names: row.reverse(name.fields.featureId, name).select(
-        (n) => ({ name: n.fields.name, languageTag: n.fields.languageTag }),
+        (n) => ({ name: n.fields.name, languageId: n.fields.languageId }),
         (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
       ),
     }))

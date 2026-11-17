@@ -9,6 +9,7 @@ import * as B from "#/modules/common/schema/types/base";
 // RELATED ENTITY TYPES
 // ----------------------------------
 import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
+import type * as LanguageTypes from "#/modules/reference/schema/types/language/language.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
@@ -30,15 +31,17 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** An official, local, alternative, translated or historical name for a feature, with optional language, validity and provenance reference. */
+/** A canonical, official, local, alternative, translated or historical name for a feature, with its language (`mul` or `und` when no single language applies), validity and provenance reference. */
 export interface INames extends B.IBase {
   featureId: string;
-  languageTag: string | null;
+  isDefault: boolean;
+  languageId: string;
   name: string;
   nameKindId: string;
   validFrom: Date | null;
   validUntil: Date | null;
   readonly feature?: FeaturesTypes.IFeatures;
+  readonly language?: LanguageTypes.ILanguage;
   readonly nameKind?: ValueTypes.IValue;
 }
 
@@ -125,6 +128,7 @@ export type INamesAsManyRelationQuery = Q.IAsManyRelationQuery<
 
 export interface INamesRelationMap extends Record<NamesRelationKey, unknown> {
   feature: FeaturesTypes.IFeaturesAsOneRelationQuery;
+  language: LanguageTypes.ILanguageAsOneRelationQuery;
   nameKind: ValueTypes.IValueAsOneRelationQuery;
 }
 

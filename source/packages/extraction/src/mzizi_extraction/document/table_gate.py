@@ -22,7 +22,9 @@ def sentence_share(rows: TableRows) -> float:
     cells = [cell for row in rows for cell in row if cell]
     if not cells:
         return 0.0
-    sentences = sum(len(cell.split()) >= SENTENCE_WORDS or (cell.endswith(".") and len(cell.split()) >= 5) for cell in cells)
+    sentences = sum(
+        len(cell.split()) >= SENTENCE_WORDS or (cell.endswith(".") and len(cell.split()) >= 5) for cell in cells
+    )
     return sentences / len(cells)
 
 

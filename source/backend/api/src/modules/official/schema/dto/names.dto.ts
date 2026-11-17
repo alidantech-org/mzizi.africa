@@ -14,14 +14,13 @@ import {
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { LanguageTag } from "#/modules/shared/schema/type/language-tag.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One attested name form for exactly one entity or individual, with optional language and validity. (entity)
+ * One attested name form for exactly one entity or individual, with its language (`mul` or `und` when none applies) and validity. (entity)
  *
  * Invariant "HasExactlyOneIdentityOwner" has no simple form, so it isn't validated here.
  */
@@ -53,12 +52,9 @@ export class NamesDto {
   @IsBoolean()
   isPreferred!: Flag;
 
-  @IsOptional()
-  @ValidateIf((object) => object.languageTag !== null)
   @IsString()
-  @MinLength(2)
-  @MaxLength(35)
-  languageTag?: LanguageTag | null;
+  @IsUUID()
+  languageId!: Id;
 
   @IsString()
   @MinLength(1)

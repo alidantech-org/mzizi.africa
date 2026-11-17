@@ -26,7 +26,7 @@ class _FeatureDetailScreenState extends State<FeatureDetailScreen> {
     'names': (
       label: 'Names',
       columns: <ColumnSpec>[
-        ColumnSpec(key: 'languageTag', label: 'Language Tag'),
+        ColumnSpec(key: 'languageId', label: 'Language Id'),
         ColumnSpec(key: 'name', label: 'Name'),
       ],
     ),

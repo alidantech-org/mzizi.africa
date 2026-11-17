@@ -756,7 +756,8 @@ CREATE TABLE "geography"."names" (
     "deleted_at" timestamptz,
     "feature_id" uuid NOT NULL,
     "id" uuid NOT NULL,
-    "language_tag" varchar(35),
+    "is_default" boolean NOT NULL,
+    "language_id" uuid NOT NULL,
     "name" varchar(300) NOT NULL,
     "name_kind_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
@@ -1058,7 +1059,7 @@ CREATE TABLE "legal"."provision_translations" (
     "document_id" uuid,
     "id" uuid NOT NULL,
     "kind" text NOT NULL,
-    "language_tag" varchar(35) NOT NULL,
+    "language_id" uuid NOT NULL,
     "produced_by" text,
     "provision_version_id" uuid NOT NULL,
     "review_status" text NOT NULL,
@@ -1080,7 +1081,7 @@ CREATE TABLE "legal"."provision_versions" (
     "id" uuid NOT NULL,
     "instrument_id" uuid NOT NULL,
     "instrument_version_id" uuid NOT NULL,
-    "language_tag" varchar(35) NOT NULL,
+    "language_id" uuid NOT NULL,
     "locator" varchar(1000),
     "observed_at" timestamptz NOT NULL,
     "provision_id" uuid NOT NULL,
@@ -1229,7 +1230,7 @@ CREATE TABLE "official"."names" (
     "id" uuid NOT NULL,
     "individual_id" uuid,
     "is_preferred" boolean NOT NULL,
-    "language_tag" varchar(35),
+    "language_id" uuid NOT NULL,
     "name" varchar(300) NOT NULL,
     "name_kind_id" uuid NOT NULL,
     "source_citation_id" uuid,
@@ -1556,6 +1557,50 @@ CREATE TABLE "reference"."countries" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "reference"."languages" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "direction_id" uuid,
+    "family_id" uuid,
+    "glottocode" char(8),
+    "id" uuid NOT NULL,
+    "iso6391" char(2),
+    "iso6392" char(3),
+    "iso6393" char(3),
+    "kind_id" uuid NOT NULL,
+    "name" varchar(300) NOT NULL,
+    "parent_id" uuid,
+    "script_id" uuid,
+    "status_id" uuid,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_languages_language_is_not_its_own_parent" CHECK (("id" <> "parent_id")),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "reference"."language_names" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "in_language_id" uuid NOT NULL,
+    "language_id" uuid NOT NULL,
+    "name" varchar(300) NOT NULL,
+    "name_kind" text NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "valid_from" date,
+    "valid_until" date,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_language_names_validity_window_is_ordered" CHECK (
+        (
+            ("valid_from" IS NULL)
+            OR ("valid_until" IS NULL)
+            OR ("valid_from" < "valid_until")
+        )
+    ),
+    PRIMARY KEY ("id")
+);
+
 CREATE TABLE "reference"."patterns" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
@@ -1630,7 +1675,7 @@ CREATE TABLE "reference"."value_labels" (
     "id" uuid NOT NULL,
     "label" varchar(300) NOT NULL,
     "label_kind" text NOT NULL,
-    "language_tag" varchar(35) NOT NULL,
+    "language_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "valid_from" date,
     "valid_until" date,
@@ -2675,20 +2720,27 @@ ALTER TABLE "geography"."names"
 ADD CONSTRAINT "fk_names_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."names"
+ADD CONSTRAINT "fk_names_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."names"
 ADD CONSTRAINT "fk_names_name_kind_id" FOREIGN KEY ("name_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_names__feature_id_name_kind_id_language_tag_name" ON "geography"."names" USING btree (
+CREATE UNIQUE INDEX "uq_names__feature_id_name_kind_id_language_id_name" ON "geography"."names" USING btree (
     "feature_id",
     "name_kind_id",
-    "language_tag",
+    "language_id",
     "name"
 );
+
+CREATE UNIQUE INDEX "uq_names__feature_id_language_id_partial_2" ON "geography"."names" USING btree ("feature_id", "language_id")
+WHERE
+    ("is_default" = TRUE);
 
 CREATE INDEX "ix_names__feature_id" ON "geography"."names" USING btree ("feature_id");
 
 CREATE INDEX "ix_names__name_kind_id" ON "geography"."names" USING btree ("name_kind_id");
 
-CREATE INDEX "ix_names__language_tag" ON "geography"."names" USING btree ("language_tag");
+CREATE INDEX "ix_names__language_id" ON "geography"."names" USING btree ("language_id");
 
 ALTER TABLE "geography"."relationships"
 ADD CONSTRAINT "fk_relationships_object_feature_id" FOREIGN KEY ("object_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -2984,17 +3036,20 @@ ALTER TABLE "legal"."provision_translations"
 ADD CONSTRAINT "fk_provision_translations_document_id" FOREIGN KEY ("document_id") REFERENCES "source"."documents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "legal"."provision_translations"
+ADD CONSTRAINT "fk_provision_translations_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."provision_translations"
 ADD CONSTRAINT "fk_provision_translations_provision_version_id" FOREIGN KEY ("provision_version_id") REFERENCES "legal"."provision_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_provision_translations__code_partial_1" ON "legal"."provision_translations" USING btree ("code")
 WHERE
     ("deleted_at" IS NULL);
 
-CREATE UNIQUE INDEX "uq_provision_translations__provision_version_id_language_tag_ki" ON "legal"."provision_translations" USING btree ("provision_version_id", "language_tag", "kind");
+CREATE UNIQUE INDEX "uq_provision_translations__provision_version_id_language_id_kin" ON "legal"."provision_translations" USING btree ("provision_version_id", "language_id", "kind");
 
 CREATE INDEX "ix_provision_translations__provision_version_id" ON "legal"."provision_translations" USING btree ("provision_version_id");
 
-CREATE INDEX "ix_provision_translations__language_tag" ON "legal"."provision_translations" USING btree ("language_tag");
+CREATE INDEX "ix_provision_translations__language_id" ON "legal"."provision_translations" USING btree ("language_id");
 
 CREATE INDEX "ix_provision_translations__document_id" ON "legal"."provision_translations" USING btree ("document_id");
 
@@ -3006,6 +3061,9 @@ ADD CONSTRAINT "fk_provision_versions_instrument_id" FOREIGN KEY ("instrument_id
 
 ALTER TABLE "legal"."provision_versions"
 ADD CONSTRAINT "fk_provision_versions_instrument_version_id" FOREIGN KEY ("instrument_version_id") REFERENCES "legal"."instrument_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "legal"."provision_versions"
+ADD CONSTRAINT "fk_provision_versions_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "legal"."provision_versions"
 ADD CONSTRAINT "fk_provision_versions_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3197,24 +3255,27 @@ ALTER TABLE "official"."names"
 ADD CONSTRAINT "fk_names_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "official"."names"
+ADD CONSTRAINT "fk_names_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."names"
 ADD CONSTRAINT "fk_names_name_kind_id" FOREIGN KEY ("name_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "official"."names"
 ADD CONSTRAINT "fk_names_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_names__entity_id_individual_id_name_kind_id_language_tag_nam" ON "official"."names" USING btree (
+CREATE UNIQUE INDEX "uq_names__entity_id_individual_id_name_kind_id_language_id_name" ON "official"."names" USING btree (
     "entity_id",
     "individual_id",
     "name_kind_id",
-    "language_tag",
+    "language_id",
     "name"
 );
 
-CREATE UNIQUE INDEX "uq_names__entity_id_language_tag_partial_2" ON "official"."names" USING btree ("entity_id", "language_tag")
+CREATE UNIQUE INDEX "uq_names__entity_id_language_id_partial_2" ON "official"."names" USING btree ("entity_id", "language_id")
 WHERE
     ("is_preferred" = TRUE);
 
-CREATE UNIQUE INDEX "uq_names__individual_id_language_tag_partial_3" ON "official"."names" USING btree ("individual_id", "language_tag")
+CREATE UNIQUE INDEX "uq_names__individual_id_language_id_partial_3" ON "official"."names" USING btree ("individual_id", "language_id")
 WHERE
     ("is_preferred" = TRUE);
 
@@ -3514,6 +3575,80 @@ CREATE INDEX "ix_countries__recognition_status_id" ON "reference"."countries" US
 
 CREATE INDEX "ix_countries__designation_id" ON "reference"."countries" USING btree ("designation_id");
 
+ALTER TABLE "reference"."languages"
+ADD CONSTRAINT "fk_languages_direction_id" FOREIGN KEY ("direction_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."languages"
+ADD CONSTRAINT "fk_languages_family_id" FOREIGN KEY ("family_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."languages"
+ADD CONSTRAINT "fk_languages_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."languages"
+ADD CONSTRAINT "fk_languages_parent_id" FOREIGN KEY ("parent_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."languages"
+ADD CONSTRAINT "fk_languages_script_id" FOREIGN KEY ("script_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."languages"
+ADD CONSTRAINT "fk_languages_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_languages__code_partial_1" ON "reference"."languages" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_languages__iso6391" ON "reference"."languages" USING btree ("iso6391");
+
+CREATE UNIQUE INDEX "uq_languages__iso6393" ON "reference"."languages" USING btree ("iso6393");
+
+CREATE UNIQUE INDEX "uq_languages__glottocode" ON "reference"."languages" USING btree ("glottocode");
+
+CREATE INDEX "ix_languages__name" ON "reference"."languages" USING btree ("name");
+
+CREATE INDEX "ix_languages__kind_id" ON "reference"."languages" USING btree ("kind_id");
+
+CREATE INDEX "ix_languages__family_id" ON "reference"."languages" USING btree ("family_id");
+
+CREATE INDEX "ix_languages__script_id" ON "reference"."languages" USING btree ("script_id");
+
+CREATE INDEX "ix_languages__parent_id" ON "reference"."languages" USING btree ("parent_id");
+
+CREATE FUNCTION "reference"."languages__language_parent_acyclic" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."parent_id" IS NOT NULL AND EXISTS (
+    WITH RECURSIVE chain(id) AS (
+      SELECT NEW."parent_id"
+      UNION
+      SELECT t."parent_id" FROM "reference"."languages" t JOIN chain ON t."id" = chain.id WHERE t."parent_id" IS NOT NULL
+    ) SELECT 1 FROM chain WHERE id = NEW."id"
+  ) THEN
+    RAISE EXCEPTION 'languages.parent_id would create a cycle' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_languages__language_parent_acyclic"
+BEFORE INSERT OR UPDATE OF "parent_id" ON "reference"."languages" FOR EACH ROW
+EXECUTE FUNCTION "reference"."languages__language_parent_acyclic" ();
+
+ALTER TABLE "reference"."language_names"
+ADD CONSTRAINT "fk_language_names_in_language_id" FOREIGN KEY ("in_language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."language_names"
+ADD CONSTRAINT "fk_language_names_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_language_names__language_id_in_language_id_name_kind_name" ON "reference"."language_names" USING btree (
+    "language_id",
+    "in_language_id",
+    "name_kind",
+    "name"
+);
+
+CREATE INDEX "ix_language_names__language_id" ON "reference"."language_names" USING btree ("language_id");
+
+CREATE INDEX "ix_language_names__in_language_id" ON "reference"."language_names" USING btree ("in_language_id");
+
 CREATE UNIQUE INDEX "uq_patterns__code_partial_1" ON "reference"."patterns" USING btree ("code")
 WHERE
     ("deleted_at" IS NULL);
@@ -3648,13 +3783,16 @@ BEFORE INSERT OR UPDATE OF "parent_id" ON "reference"."values" FOR EACH ROW
 EXECUTE FUNCTION "reference"."values__parent_acyclic" ();
 
 ALTER TABLE "reference"."value_labels"
+ADD CONSTRAINT "fk_value_labels_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "reference"."value_labels"
 ADD CONSTRAINT "fk_value_labels_value_id" FOREIGN KEY ("value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_value_labels__value_id_language_tag_label_kind_label" ON "reference"."value_labels" USING btree ("value_id", "language_tag", "label_kind", "label");
+CREATE UNIQUE INDEX "uq_value_labels__value_id_language_id_label_kind_label" ON "reference"."value_labels" USING btree ("value_id", "language_id", "label_kind", "label");
 
 CREATE INDEX "ix_value_labels__value_id" ON "reference"."value_labels" USING btree ("value_id");
 
-CREATE INDEX "ix_value_labels__language_tag" ON "reference"."value_labels" USING btree ("language_tag");
+CREATE INDEX "ix_value_labels__language_id" ON "reference"."value_labels" USING btree ("language_id");
 
 ALTER TABLE "reference"."value_relations"
 ADD CONSTRAINT "fk_value_relations_source_value_id" FOREIGN KEY ("source_value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -4579,3 +4717,258 @@ $scheme$;
 CREATE TRIGGER "reference_scheme_countries_subregion_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "reference"."scheme_countries_subregion_id_code" ();
+
+CREATE FUNCTION "reference"."scheme_languages_direction_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."direction_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."direction_id" AND s."code" = 'ref.sch.ref.text.direction'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_languages_direction_id"
+BEFORE INSERT OR UPDATE OF "direction_id" ON "reference"."languages" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_direction_id" ();
+
+CREATE FUNCTION "reference"."scheme_languages_direction_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t WHERE t."direction_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_direction_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_direction_id_membership" ();
+
+CREATE FUNCTION "reference"."scheme_languages_direction_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.ref.text.direction' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t
+    JOIN "reference"."values" v ON v."id" = t."direction_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_direction_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_direction_id_code" ();
+
+CREATE FUNCTION "reference"."scheme_languages_family_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."family_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."family_id" AND s."code" = 'ref.sch.ref.language.family'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_languages_family_id"
+BEFORE INSERT OR UPDATE OF "family_id" ON "reference"."languages" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_family_id" ();
+
+CREATE FUNCTION "reference"."scheme_languages_family_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t WHERE t."family_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_family_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_family_id_membership" ();
+
+CREATE FUNCTION "reference"."scheme_languages_family_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.ref.language.family' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t
+    JOIN "reference"."values" v ON v."id" = t."family_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_family_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_family_id_code" ();
+
+CREATE FUNCTION "reference"."scheme_languages_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."kind_id" AND s."code" = 'ref.sch.ref.language.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_languages_kind_id"
+BEFORE INSERT OR UPDATE OF "kind_id" ON "reference"."languages" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_kind_id" ();
+
+CREATE FUNCTION "reference"."scheme_languages_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t WHERE t."kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_kind_id_membership" ();
+
+CREATE FUNCTION "reference"."scheme_languages_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.ref.language.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t
+    JOIN "reference"."values" v ON v."id" = t."kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_kind_id_code" ();
+
+CREATE FUNCTION "reference"."scheme_languages_script_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."script_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."script_id" AND s."code" = 'ref.sch.ref.script'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_languages_script_id"
+BEFORE INSERT OR UPDATE OF "script_id" ON "reference"."languages" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_script_id" ();
+
+CREATE FUNCTION "reference"."scheme_languages_script_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t WHERE t."script_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_script_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_script_id_membership" ();
+
+CREATE FUNCTION "reference"."scheme_languages_script_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.ref.script' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t
+    JOIN "reference"."values" v ON v."id" = t."script_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_script_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_script_id_code" ();
+
+CREATE FUNCTION "reference"."scheme_languages_status_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."status_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."status_id" AND s."code" = 'ref.sch.ref.language.status'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_languages_status_id"
+BEFORE INSERT OR UPDATE OF "status_id" ON "reference"."languages" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_status_id" ();
+
+CREATE FUNCTION "reference"."scheme_languages_status_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t WHERE t."status_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_status_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_status_id_membership" ();
+
+CREATE FUNCTION "reference"."scheme_languages_status_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.ref.language.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "reference"."languages" t
+    JOIN "reference"."values" v ON v."id" = t."status_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "reference_scheme_languages_status_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "reference"."scheme_languages_status_id_code" ();

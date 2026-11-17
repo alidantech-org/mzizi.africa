@@ -4,6 +4,7 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
 import { individualsExample } from "@test/modules/official/schema/dto/examples/individuals.dto.example.ts";
+import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { validityEntityExample } from "@test/modules/shared/schema/dto/examples/validity-entity.dto.example.ts";
 import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
@@ -49,10 +50,10 @@ export const namesExample: ContractExample = contractExample({
       spec: { kind: "boolean" },
     },
     {
-      name: "languageTag",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", minLength: 2, maxLength: 35 },
+      name: "languageId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "name",

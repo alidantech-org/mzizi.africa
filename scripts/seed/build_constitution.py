@@ -672,7 +672,7 @@ def main() -> None:
                 "instrument_code",
                 "instrument_version_code",
                 "provision_code",
-                "language_tag",
+                "language_code",
                 "locator",
                 "observed_at",
                 "text",
@@ -684,7 +684,7 @@ def main() -> None:
             [
                 "code",
                 "provision_version_code",
-                "language_tag",
+                "language_code",
                 "text",
                 "kind",
                 "review_status",
