@@ -72,6 +72,9 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 | `www`       | `source/apps/www`          | 3200 | `WWW_PORT`       |
 | `web`       | `source/apps/web`          | 3300 | `WEB_PORT`       |
 | `dev`       | `source/apps/dev`          | 3400 | `DEV_PORT`       |
+| `app`       | `source/apps/app`          | 3500 | `APP_PORT`       |
+
+The `app` service runs the Flutter app in a web server for testing (`flutter run -d web-server`, with `API_URL` set to the API) and is skipped when `flutter` is not installed; the runner gives the API a `CORS_ORIGINS` allow-list of the browser apps it starts (override it by setting `CORS_ORIGINS`). Until `flutter_api_bridge` ships web-safe cookies, the app needs the git-ignored `source/apps/app/pubspec_overrides.yaml` pointing at the sibling checkout.
 
 `dev` and `start` give every service the values of the git-ignored root `.env` and its own port, prefix each output line with the service name and stop every service when the runner stops or when one service exits. `PORT` from `.env` is deliberately not passed through, because it would put two services on one port.
 

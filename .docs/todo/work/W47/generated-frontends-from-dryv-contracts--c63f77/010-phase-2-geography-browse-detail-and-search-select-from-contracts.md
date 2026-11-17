@@ -20,7 +20,7 @@ The plan is `.docs/_plan/guides/frontend-assembly-from-contracts.md`; decisions 
 - [x] Pattern binding lives in the project pack only: selections by view role pick a pattern template that imports the hand-written components (no separate manifest, by owner decision).
 - [x] A project pack assembles the views into routes and typed glue; the web app builds and the geography browse and detail pages render from the live API.
 - [x] The Flutter side exists: the app contract's geography views, `source/ui/flutter` components and the Flutter pattern templates, verified with `flutter analyze`.
-- [ ] The Flutter app is run on a device, emulator or Linux (needs `libsecret-devel`) against the live API and the browse and detail screens are checked.
+- [x] The Flutter app is run against the live API and the browse and detail screens are checked (on the web, through the root runner).
 - [x] Every Dryv gap found is recorded with a failing example, and `task validate` passes.
 
 ## Progress
@@ -91,3 +91,11 @@ The planner already references field-source operations from schemas; the page on
 ## Update: Dryv proposal 1 implemented
 
 Dryv commit `dfb0dd79` lets a present part bind its operation's input from view context. The web and app contracts now declare `part.present(GetFeature.out).context({ featureId: "featureId" })` (the tagged invoke part is gone) and the web and Flutter detail templates read `view.part.present.context`. Verified: both contracts compile, the web app typechecks and builds, `flutter analyze` is clean, and `/web/feature-detail?featureId=...` shows Kenya and its names against the live API. Dryv checks: engine generation and semantic tests (518) plus the new tests, TypeScript author tests, Python typechecks and the import check pass.
+
+## Flutter on the web, through the root runner
+
+`bun run dev api app` now starts the API and the Flutter app in a web server (`flutter run -d web-server`, port 3500, `API_URL` set to the API; the `app` service is skipped when `flutter` is not installed). The runner gives the API a `CORS_ORIGINS` allow-list of the browser apps it starts and the API enables CORS only for those origins. Verified in the browser: the browse screen listed real features in the generated theme, and tapping a row opened the detail screen for Kenya with its three names.
+
+Web needed two fixes in `flutter_api_bridge` (uncommitted in `opensource/flutter_api_bridge`): its cookie manager used `getApplicationSupportDirectory` and a file-backed jar, and dio's cookie interceptor refuses to run on the web. On the web it now uses an in-memory jar and skips the interceptor (the browser handles cookies itself). Until the bridge releases that, the app uses the git-ignored `source/apps/app/pubspec_overrides.yaml` pointing at the sibling checkout. The app gained a `web/` platform folder.
+
+Also: everything was regenerated with the new Dryv engine (the old engine on 8750 was stopped); the `dev` list view now selects its list path; unplanned operations export a typed `<operation>Page` and the pattern pages import the fallback client when no client is bound.

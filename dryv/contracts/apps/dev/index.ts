@@ -17,7 +17,9 @@ const capabilities = dev.feature("Capabilities");
 const views = capabilities.views({
   CapabilityList: view()
     .role("list")
-    .parts({ capabilities: part.present(outputFrom(engineApi.ListCapabilities.out)) })
+    .parts({
+      capabilities: part.present(outputFrom(engineApi.ListCapabilities.out, ["capabilities"])).collection("table"),
+    })
     .presentation("web", surfaces.Main),
 });
 

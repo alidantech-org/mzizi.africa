@@ -2,6 +2,7 @@ import {
   type ClientInput,
   type ClientResponse,
   type FieldMeta,
+  type PageNames,
   send,
 } from "#/lib/dryv/transport.ts";
 import {
@@ -15,6 +16,8 @@ export const browseFeatureKindsInputFields: Readonly<Record<string, readonly Fie
 /** Field metadata of the output, when it is a schema. */
 export const browseFeatureKindsOutputFields: readonly FieldMeta[] | undefined =
   FeatureKindCollectionFields;
+/** This operation has no query plan, so no paging is known. */
+export const browseFeatureKindsPage: PageNames | undefined = undefined;
 
 /** Values for each input port of Browse Feature Kinds. */
 export type BrowseFeatureKindsPorts = {};

@@ -11,13 +11,39 @@ import { portOf, type Service, services } from "../lib/projects.ts";
 
 export type Mode = "dev" | "start";
 
-/** Resolve service names; no names means every service. Unknown names throw. */
+/** Whether the program a service needs is installed; a service without a requirement is always available. */
+export function available(service: Service): boolean {
+  return service.requires === undefined || Bun.which(service.requires) !== null;
+}
+
+/** Resolve service names; no names means every available service. Unknown or unavailable names throw. */
 export function pick(names: readonly string[]): Service[] {
-  if (names.length === 0) return [...services];
+  if (names.length === 0) {
+    for (const service of services.filter((item) => !available(item))) {
+      console.log(`▷ ${service.name} skipped: ${service.requires} is not installed`);
+    }
+    return services.filter(available);
+  }
   const unknown = names.filter((name) => !services.some((service) => service.name === name));
   if (unknown.length)
     throw new Error(`unknown service: ${unknown.join(", ")} (known: ${services.map((service) => service.name).join(", ")})`);
+  const missing = services.filter((service) => names.includes(service.name) && !available(service));
+  if (missing.length) throw new Error(`${missing.map((service) => `${service.name} needs ${service.requires}`).join(", ")}`);
   return services.filter((service) => names.includes(service.name));
+}
+
+/** The base URL a service reaches the API on, for `{api}` in a command. */
+function apiUrl(base: Record<string, string | undefined>): string {
+  const api = services.find((service) => service.name === "api");
+  return `http://127.0.0.1:${api === undefined ? 8700 : portOf(api, base)}`;
+}
+
+/** The origins of the browser apps among the chosen services, as the API's CORS allow-list. */
+function browserOrigins(chosen: readonly Service[], base: Record<string, string | undefined>): string {
+  return chosen
+    .filter((service) => service.callsApiFromBrowser)
+    .flatMap((service) => [`http://127.0.0.1:${portOf(service, base)}`, `http://localhost:${portOf(service, base)}`])
+    .join(",");
 }
 
 const PALETTE = ["\x1b[36m", "\x1b[35m", "\x1b[33m", "\x1b[34m", "\x1b[32m", "\x1b[96m"] as const;
@@ -49,11 +75,19 @@ export async function serve(mode: Mode, names: readonly string[]): Promise<numbe
   const children = new Map<string, Subprocess<"ignore", "pipe", "pipe">>();
   for (const [index, service] of chosen.entries()) {
     const port = String(portOf(service, base));
-    const command = service[mode].map((part) => part.replace("{port}", port));
+    const command = service[mode].map((part) => part.replace("{port}", port).replace("{api}", apiUrl(base)));
     console.log(`▶ ${service.name.padEnd(7)} http://127.0.0.1:${port}  (${service.dir}: ${command.join(" ")})`);
     const child = Bun.spawn(command, {
       cwd: at(service.dir),
-      env: { ...base, [service.portEnv]: port, FORCE_COLOR: "1" },
+      env: {
+        ...base,
+        [service.portEnv]: port,
+        FORCE_COLOR: "1",
+        // The API accepts browser calls only from the browser apps running alongside it.
+        ...(service.name === "api" && base.CORS_ORIGINS === undefined
+          ? { CORS_ORIGINS: browserOrigins(chosen, base) }
+          : {}),
+      },
       stdin: "ignore",
       stdout: "pipe",
       stderr: "pipe",

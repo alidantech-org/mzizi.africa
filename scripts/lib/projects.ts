@@ -36,6 +36,10 @@ export type Service = {
   readonly port: number;
   /** Environment variable that carries the port to the process. */
   readonly portEnv: string;
+  /** A program that must be on PATH; without it the service is skipped by default and refused when named. */
+  readonly requires?: string;
+  /** True for a browser app that calls the API directly, so the API allows its origin (CORS). */
+  readonly callsApiFromBrowser?: boolean;
 };
 
 /** Python sources checked by ruff; mypy reads its own file list from the root pyproject.toml. */
@@ -113,7 +117,7 @@ export const projects: readonly Project[] = [
 
 /**
  * Each service has its own default port so processes never collide. `PORT` from `.env` is not passed
- * through; override one service with `API_PORT`, `ENGINE_PORT`, `ADMIN_PORT` or `WWW_PORT`. `{port}` in a command
+ * through; override one service with `API_PORT`, `ENGINE_PORT`, `ADMIN_PORT`, `WWW_PORT` or `APP_PORT`. `{port}` in a command
  * is replaced with the resolved port.
  */
 export const services: readonly Service[] = [
@@ -156,6 +160,38 @@ export const services: readonly Service[] = [
     start: ["bun", "--bun", "next", "start", "-p", "{port}"],
     port: 3400,
     portEnv: "PORT",
+  },
+  {
+    name: "app",
+    dir: "source/apps/app",
+    // The Flutter app on the web for testing; `{api}` is the API's base URL. The web server needs no browser window.
+    dev: [
+      "flutter",
+      "run",
+      "-d",
+      "web-server",
+      "--web-hostname",
+      "127.0.0.1",
+      "--web-port",
+      "{port}",
+      "--dart-define=API_URL={api}",
+    ],
+    start: [
+      "flutter",
+      "run",
+      "-d",
+      "web-server",
+      "--release",
+      "--web-hostname",
+      "127.0.0.1",
+      "--web-port",
+      "{port}",
+      "--dart-define=API_URL={api}",
+    ],
+    port: 3500,
+    portEnv: "PORT",
+    requires: "flutter",
+    callsApiFromBrowser: true,
   },
   {
     name: "www",

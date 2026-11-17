@@ -2,6 +2,7 @@ import {
   type ClientInput,
   type ClientResponse,
   type FieldMeta,
+  type PageNames,
   send,
 } from "#/lib/dryv/transport.ts";
 import { type CapabilityList, CapabilityListFields } from "#/lib/types/capability-list.ts";
@@ -11,6 +12,8 @@ import { type CapabilityList, CapabilityListFields } from "#/lib/types/capabilit
 export const listCapabilitiesInputFields: Readonly<Record<string, readonly FieldMeta[]>> = {};
 /** Field metadata of the output, when it is a schema. */
 export const listCapabilitiesOutputFields: readonly FieldMeta[] | undefined = CapabilityListFields;
+/** This operation has no query plan, so no paging is known. */
+export const listCapabilitiesPage: PageNames | undefined = undefined;
 
 /** Values for each input port of List Capabilities. */
 export type ListCapabilitiesPorts = {};

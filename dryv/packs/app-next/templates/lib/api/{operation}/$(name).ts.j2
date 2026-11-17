@@ -14,7 +14,7 @@
 {%- endif -%}
 {%- endmacro -%}
 {%- set http = operation.facets.http -%}
-import { type ClientInput, type ClientResponse, type FieldMeta, send } from "#/lib/dryv/transport.ts";
+import { type ClientInput, type ClientResponse, type FieldMeta, type PageNames, send } from "#/lib/dryv/transport.ts";
 {%- for dependency in file.dependencies %}{% if dependency.symbol %}
 {%- if dependency.template == 'model' %}
 import { type {{ dependency.symbol }}, {{ dependency.symbol }}Fields } from "{{ dependency.path.prefixed }}";
@@ -41,11 +41,14 @@ export const {{ file.symbol }}OutputFields: readonly FieldMeta[] | undefined =
 {%- if operation.persistence %}{% set plan = operation.persistence.document | fromjson %}
 {%- if plan.read is not none and plan.read.page is not none %}
 /** Paging of this list operation: the names of its window inputs and the largest page it serves. */
-export const {{ file.symbol }}Page = { limit: "{{ plan.read.page.limit }}", offset: "{{ plan.read.page.offset }}", maxLimit: {{ plan.read.page.max_limit }} } as const;
+export const {{ file.symbol }}Page: PageNames | undefined = { limit: "{{ plan.read.page.limit }}", offset: "{{ plan.read.page.offset }}", maxLimit: {{ plan.read.page.max_limit }} } as const;
 {%- else %}
 /** This operation is not paged. */
-export const {{ file.symbol }}Page = undefined;
+export const {{ file.symbol }}Page: PageNames | undefined = undefined;
 {%- endif %}
+{%- else %}
+/** This operation has no query plan, so no paging is known. */
+export const {{ file.symbol }}Page: PageNames | undefined = undefined;
 {%- endif %}
 
 /** Values for each input port of {{ operation.name.title }}. */

@@ -161,10 +161,9 @@ packages:
   flutter_api_bridge:
     dependency: "direct main"
     description:
-      name: flutter_api_bridge
-      sha256: "2922b115ccb9060d69b92c2b7691e3ad6b08d254bb8e5fada03d1af77c4689ef"
-      url: "https://pub.dev"
-    source: hosted
+      path: "/home/alidante/Projects/personal/alidantech-org/opensource/flutter_api_bridge"
+      relative: false
+    source: path
     version: "0.2.0"
   flutter_localizations:
     dependency: transitive

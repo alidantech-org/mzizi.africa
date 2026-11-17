@@ -9,6 +9,9 @@ export type ClientResponse<T> = {
   status: number;
 };
 
+/** The names of a paged operation's window inputs and the largest page it serves. */
+export type PageNames = { limit: string; offset: string; maxLimit: number };
+
 export type ClientInput = {
   params?: Record<string, string>;
   query?: Record<string, unknown>;

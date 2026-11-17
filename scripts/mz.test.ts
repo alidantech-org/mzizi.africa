@@ -8,7 +8,7 @@ import { parseEnv } from "./lib/paths.ts";
 import { portOf, projects, select, services } from "./lib/projects.ts";
 import { commands, parse } from "./mz.ts";
 import { qualitySteps } from "./tasks/quality.ts";
-import { pick } from "./tasks/serve.ts";
+import { available, pick } from "./tasks/serve.ts";
 import { documentationProblems, fileProblems, hasHeader, type Limit, lineCount } from "./tasks/structure.ts";
 import packageJson from "../package.json" with { type: "json" };
 
@@ -59,7 +59,7 @@ describe("steps", () => {
   });
   test("services have distinct ports and unknown services are an error", () => {
     expect(new Set(services.map((service) => service.port)).size).toBe(services.length);
-    expect(pick([]).length).toBe(services.length);
+    expect(pick([]).length).toBe(services.filter(available).length);
     const api = pick(["api"])[0];
     if (!api) throw new Error("api service missing");
     expect(portOf(api, { API_PORT: "3900" })).toBe(3900);
@@ -68,10 +68,19 @@ describe("steps", () => {
     expect(() => pick(["nope"])).toThrow("unknown service");
   });
   test("TypeScript services use Bun for development and production entrypoints", () => {
-    for (const service of services.filter(({ name }) => name !== "engine")) {
+    for (const service of services.filter(({ name }) => name !== "engine" && name !== "app")) {
       expect(service.dev[0]).toBe("bun");
       expect(service.start[0]).toBe("bun");
     }
+  });
+  test("the Flutter app runs on the web only where flutter exists and is told the API's URL", () => {
+    const app = services.find(({ name }) => name === "app");
+    if (!app) throw new Error("app service missing");
+    expect(app.requires).toBe("flutter");
+    expect(app.callsApiFromBrowser).toBe(true);
+    expect(app.dev).toContain("web-server");
+    expect(app.dev).toContain("--dart-define=API_URL={api}");
+    expect(available({ ...app, requires: "no-such-program-for-mzizi" })).toBe(false);
   });
 });
 

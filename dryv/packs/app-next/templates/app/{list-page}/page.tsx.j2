@@ -33,7 +33,7 @@ import type { FieldSpec, FieldValues, PageWindow } from "{{ pack.inputs.ui_packa
 {%- if dependency.slot == 'operation.client' %}
 import { {{ dependency.symbol }} } from "{{ pack.inputs.sdk_package }}/{{ dependency.path.prefixed | replace('#sdk/', '') }}";
 {%- elif dependency.template == 'operation' %}
-import { {{ dependency.symbol }}Page, {{ dependency.symbol }}Request } from "{{ dependency.path.prefixed | replace('.ts', '') }}.ts";
+import { {% if bound_client(dependency.target) == '' %}{{ dependency.symbol }}, {% endif %}{{ dependency.symbol }}Page, {{ dependency.symbol }}Request } from "{{ dependency.path.prefixed | replace('.ts', '') }}.ts";
 {%- endif %}
 {%- endif %}{% endfor %}
 

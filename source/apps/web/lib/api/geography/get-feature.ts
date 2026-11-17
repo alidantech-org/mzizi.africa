@@ -2,6 +2,7 @@ import {
   type ClientInput,
   type ClientResponse,
   type FieldMeta,
+  type PageNames,
   send,
 } from "#/lib/dryv/transport.ts";
 import { type FeatureDetail, FeatureDetailFields } from "#/lib/types/feature-detail.ts";
@@ -15,7 +16,7 @@ export const getFeatureInputFields: Readonly<Record<string, readonly FieldMeta[]
 /** Field metadata of the output, when it is a schema. */
 export const getFeatureOutputFields: readonly FieldMeta[] | undefined = FeatureDetailFields;
 /** This operation is not paged. */
-export const getFeaturePage = undefined;
+export const getFeaturePage: PageNames | undefined = undefined;
 
 /** Values for each input port of Get Feature. */
 export type GetFeaturePorts = {
