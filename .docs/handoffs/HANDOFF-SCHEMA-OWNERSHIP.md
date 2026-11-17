@@ -31,7 +31,8 @@ These directions are requirements. Table names and structural alternatives below
 | Responsibility | Owner | How other schemas use it |
 |---|---|---|
 | Logical files, folders, exact versions, hashes, object keys, size and media type | Filesystem | Reference a file/version; do not recreate storage fields or lifecycle |
-| File access, retention, tags and exact input/output processing history | Filesystem | Caller supplies placement and policy; domain meaning remains outside Filesystem |
+| File access, retention and tags | Filesystem | Caller supplies placement and policy; domain meaning remains outside Filesystem |
+| Exact input/output derivation and processing history | Source | Reference immutable Filesystem versions; record transformation and contributors centrally |
 | Publishers, source identities and contextual source authority | Source | Reference the source and its recorded assessment |
 | External URLs, domains, paths, endpoints, redirects and discovery observations | Source | Reference the Source address/discovery record |
 | Retrievals, captures and acquired content identity | Source | Reference a capture or content document |
@@ -212,3 +213,37 @@ Investigate the exact association owner and typed targets. The concept needs a t
 Present a smaller, justified concept-to-table proposal with every retained, merged, relocated, added or removed table explained. For each changed column show its meaning, destination, data preservation/migration, references, constraints, consumer impact and approval boundary. Include multi-source Constitution and feature-to-artifact examples. New table names and exact cardinalities remain open until that proposal is reviewed.
 
 The previous promise to retain nearly every Source and Legal table is withdrawn. The owner has chosen the ownership direction, not approved a final replacement schema. Continue investigation and discussion; no contracts, runtime code, seed files or migrations are authorized by this goal.
+
+## Source and Filesystem boundary: removal of file relationships
+
+The owner now directs removal of `filesystem.file_relations` in the target model. Source owns all input/output lineage, including file transformations; Filesystem owns stored identities and versions. This is a design direction, not permission to drop the current table immediately.
+
+Current implementation still uses `file_relations`: the filesystem package has relation/ancestry/derivative behavior, the engine PostgreSQL adapter reads and writes the table, and runtime operations expose lineage. Current Source `dataset_lineage` only targets datasets with dataset/document/capture inputs, and `provenance` requires a dataset; neither currently replaces arbitrary exact file-to-file derivation. Do not claim relocation is already supported.
+
+The Source redesign must represent input/output derivation relationships, including exact file versions where applicable, classified by their meaning: extracted from, prepared from, built from and similar relations. The owner explicitly rejected requiring engine processing events, processor parameters or execution time/actor as the Source model. An external execution identifier may be retained optionally as a loose reference; it must not be required for lineage or import engine lifecycle semantics. Several inputs may contribute to the same output, and an input may support several outputs. Preserve existing useful processing evidence during migration without making its execution structure a prerequisite for a relationship. Preserve cycle protection and ancestry/derivative queries. File revision membership remains in Filesystem and must not be confused with derivation.
+
+Inventory and move current callers and package/runtime responsibilities when implementing this boundary. Filesystem packages must remain reusable without knowing a database exists or importing Source storage. Source persistence and engine composition will wire provenance separately from byte registration.
+
+A fresh contract inspection also found `filesystem.media`, containing `source_url` as well as an optional `file_version_id`, kind/title/caption/alt text. This is an additional source-address ownership leak. Its acquisition URL must become Source-owned with an explicit association, including before bytes are stored. The owner subsequently approved moving media descriptions into Source’s information-product model; Filesystem retains the exact stored files. Detailed target tables and consumer migration still require design review. Update the earlier seven-table inventory: current Filesystem has eight tables including media, and the target removes file_relations.
+
+Keep Filesystem creation/verification audit distinct from sourcing metadata. Inspect `file_versions.provenance` for acquisition or transformation fields that must move to Source rather than maintaining a hidden parallel lineage registry.
+
+## Owner decisions from the Source/Filesystem questions
+
+The owner answered the first three design questions as follows:
+
+1. The immediate design phase covers Source and Filesystem only. Legal redesign is deferred; identify affected interfaces without implementing Legal changes in this phase.
+2. Distinguish all three conceptual identities: logical document/dataset, meaningful edition or release, and exact file representation. This approves the distinction, not table names or new generic version fields.
+3. Source models input/output connections rather than mandatory processing/execution events. Inputs can be sources or files; outputs identify what was prepared. Relationship classifications express extracted from, prepared from, built from and similar meanings. Many contributing inputs must be supported. Optional external execution references are loose identifiers; Source does not own an engine run/event model. Whether classifications use Reference scheme values or a technical enum remains for the detailed proposal; the owner allowed either.
+
+Illustration: two captured source files can each be linked as inputs to one prepared output with an extracted-from/prepared-from relationship. The links explain origin even if preparation happened manually, outside Mzizi, or without a retained engine run. Exact file representations and source observations must remain distinguishable so later downloads cannot silently alter the recorded inputs.
+
+The owner subsequently replied “Approve all recommendations” to the remaining five questions. The approved directions are:
+
+4. Source authority assessments are contextual: official/unofficial status applies to a stated subject and time period. A source can be official for some material while unassessed for other material; unassessed is distinct from unofficial.
+5. Source retains discovered URLs before retrieval. Discovery observations and subsequent captures are separate concepts; repeated retrievals preserve their own evidence.
+6. Media kind, title, caption and alternative text move from `filesystem.media` into Source’s information-product model. Filesystem retains the exact files. Propose target tables and migration of existing media references before implementation.
+7. Dataset classifies an information product, not an acquisition channel. Website, API, manual submission and other origins describe channels separately. Revise the existing dataset source-kind usage through an explicit migration proposal.
+8. Review manifests, releases, bindings and publication receipts separately from research-source design. Inspect consumers and identify the appropriate existing owner before proposing relocation. This approval does not choose a destination or require automatic relocation.
+
+All eight answers approve design direction. Exact tables, columns, constraints and migration plans still require the resulting schema proposal to be reviewed. No code, seed changes, generation or database migration is authorized by these answers. The next work is the concrete Source/Filesystem design, incorporating input/output relationships rather than mandatory engine events.
