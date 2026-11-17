@@ -5,8 +5,8 @@ src.publisher.kind.international-organisation,src.publisher.kind,International o
 src.publisher.kind.research-institution,src.publisher.kind,Research institution
 src.publisher.kind.non-profit,src.publisher.kind,Non profit
 src.product.kind.dataset-file,src.product.kind,Dataset file
-src.product.kind.legal-text,src.product.kind,Legal text
 src.product.kind.dataset,src.product.kind,Dataset
+src.product.kind.legal-text,src.product.kind,Legal text
 src.relationship.kind.prepared-from,src.relationship.kind,Prepared from
 src.relationship.kind.built-from,src.relationship.kind,Built from
 src.relationship.kind.supports,src.relationship.kind,Supports

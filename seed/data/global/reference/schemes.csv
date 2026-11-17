@@ -14,8 +14,6 @@ geo.geometry.basis,How a geometry was established,mzizi curated
 geo.name.kind,Kinds of geographic name,mzizi curated
 geo.identifier.scheme,Registries that identify geographic features,mzizi curated
 src.publisher.kind,Kinds of publisher,mzizi curated
-src.product.kind,Kinds of product,mzizi curated
-leg.instrument.kind,Kinds of legal instrument,mzizi curated
 ref.language.kind,Language kinds,mzizi curated; language classification for the language registry
 ref.language.family,Language families,mzizi curated; language classification for the language registry
 ref.script,Writing systems,mzizi curated; language classification for the language registry
@@ -38,7 +36,9 @@ gov.institution.kind,Kinds of government institution,mzizi curated; approved by 
 gov.office.kind,Kinds of public office,mzizi curated; approved by the owner on 17 November 2026
 ofc.branding.kind,Kinds of branding of an entity or person,mzizi curated; approved by the owner on 17 November 2026
 fil.media.kind,Kinds of media,mzizi curated; approved by the owner on 17 November 2026
-src.relationship.kind,Kinds of source relationship,mzizi curated
-src.locator.kind,Kinds of citation locator,mzizi curated
+leg.instrument.kind,Kinds of legal instrument,mzizi curated
 leg.name.kind,Kinds of legal instrument name,mzizi curated
 leg.effect.kind,Kinds of legal effect,mzizi curated
+src.product.kind,Kinds of product,mzizi curated
+src.relationship.kind,Kinds of source relationship,mzizi curated
+src.locator.kind,Kinds of citation locator,mzizi curated
