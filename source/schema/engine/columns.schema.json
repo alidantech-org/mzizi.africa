@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://res.alidantech.org/mzizi/public/schemas/engine/columns.schema.json",
   "title": "Column dictionary",
-  "description": "Which term groups, patterns and heading rules define each database column, by term list code and key. A dictionary is `sys.col.<scope>.<domain>` at `seed/columns/<scope>/<domain>.yml`. Terms stay neutral and never name a table; the dictionary is where words meet columns. A mapping can add or override links for one source.",
+  "description": "Which term groups, patterns and heading rules define each database column, how a table's code is built, and where the known names of a table's rows come from. A dictionary is `sys.col.<scope>.<domain>` at `seed/columns/<scope>/<domain>.yml`. Columns are seed columns: a link is its `_code` column, never an id. Terms stay neutral and never name a table; the dictionary is where words meet columns. A mapping can add or override links for one source.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -88,6 +88,156 @@
                 },
                 "says": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tables": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+      },
+      "description": "Per table: how its code is proposed. A generated code is a proposal: it is checked for uniqueness against known codes and a person approves new ones.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "describe": {
+            "type": "string"
+          },
+          "code": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "parts"
+            ],
+            "properties": {
+              "parts": {
+                "type": "array",
+                "minItems": 1,
+                "description": "Segments joined by a dot, in order.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "scope": {
+                      "type": "boolean",
+                      "description": "The country scope of the source (ke), or global."
+                    },
+                    "const": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                    },
+                    "slug": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                      "description": "The mapped value of this seed column, as a lowercase dashed slug (Kiambu County becomes kiambu-county)."
+                    },
+                    "name_slug": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                      "description": "Like slug, but words that only say what kind of thing it is (county, town, limited) are dropped, and the kind is added when `kind` is set."
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                      "description": "The code already built or found for this link column, in full."
+                    },
+                    "last": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                      "description": "The last segment of the code for this link column."
+                    },
+                    "value": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                      "description": "The raw mapped value of this column, slugged (a bid number, a year)."
+                    },
+                    "kind": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                      "description": "A kind link whose last segment qualifies the code (county, town) when two things share a name."
+                    },
+                    "optional": {
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                }
+              },
+              "unique_within": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                  "description": "A seed column as <schema>.<table>.<column>."
+                },
+                "description": "Seed columns that, with the parts, make the code unique when two rows would otherwise collide."
+              }
+            }
+          },
+          "lookup": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sources"
+            ],
+            "properties": {
+              "sources": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "table",
+                    "text",
+                    "code"
+                  ],
+                  "properties": {
+                    "table": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+                      "description": "The table whose rows hold names for this table's records."
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "The seed column holding the name text."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "The seed column holding the code of the record the name belongs to."
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "The seed column holding the language code, if any."
+                    },
+                    "kind": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "table",
+                        "key",
+                        "column"
+                      ],
+                      "properties": {
+                        "table": {
+                          "type": "string"
+                        },
+                        "key": {
+                          "type": "string"
+                        },
+                        "column": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Where the record's kind comes from: the row of `table` whose `key` column equals the code, and its `column` value."
+                    }
+                  }
                 }
               }
             }

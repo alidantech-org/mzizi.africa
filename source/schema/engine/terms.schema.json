@@ -149,6 +149,11 @@
             "phone"
           ],
           "description": "What the cells under a heading matching this group look like; evidence for the column matcher."
+        },
+        "kind_words": {
+          "type": "boolean",
+          "default": false,
+          "description": "The words only say what kind of thing a name is (county, town, limited). The lookup drops them from a name key and reads them as evidence of the record's kind."
         }
       },
       "description": "A named, labelled set of terms. In a column list it is one database column (target), or one value of a controlled scheme (member); in a document list it is a kind or subject."

@@ -42,3 +42,13 @@ def test_a_dictionary_must_use_code_columns_never_ids(tmp_path: Path) -> None:
     assert any("use the _code column, never an id" in p for p in scan(root).problems)
     ok = tree(tmp_path / "ok", dictionary("amount-bid", "civic.bids.bidder_entity_code"))
     assert scan(ok).problems == []
+
+
+def test_a_code_recipe_and_a_lookup_must_use_real_seed_columns(tmp_path: Path) -> None:
+    bad = (
+        "code: sys.col.global.entities\ntables:\n  official.entities:\n    code:\n      parts:\n        - {scope: true}\n"
+        "        - {name_slug: official.names.no_such_column}\n  official.names:\n    code:\n      parts: [{scope: true}]\n"
+    )
+    problems = scan(tree(tmp_path, bad)).problems
+    assert any("not a seed column" in p for p in problems)
+    assert any("has no `code` natural key" in p for p in problems)

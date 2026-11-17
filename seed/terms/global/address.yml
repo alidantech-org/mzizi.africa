@@ -31,6 +31,7 @@ groups:
     kind: pattern-word
 - group: admin-levels
   label: Levels of administrative area
+  kind_words: true
   terms:
   - value: country
     aliases:

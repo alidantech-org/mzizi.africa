@@ -30,12 +30,39 @@ def main(argv: list[str] | None = None) -> int:
     propose.add_argument(
         "--seed", type=Path, default=Path("seed"), help="seed folder holding terms/ and columns/ (default: seed)"
     )
-    propose.add_argument("--scopes", default="global,ke", help="comma-separated scopes whose terms apply (default: global,ke)")
+    propose.add_argument(
+        "--scopes", default="global,ke", help="comma-separated scopes whose terms apply (default: global,ke)"
+    )
     propose.add_argument(
         "--prefer",
         default="",
         help="comma-separated schemas the document is about (finance,civic): their targets win ties",
     )
+    lookup = sub.add_parser(
+        "lookup", help="find the known records a piece of text names (exact, key, trigram, edit distance)"
+    )
+    lookup.add_argument("text")
+    lookup.add_argument("--seed", type=Path, default=Path("seed"))
+    lookup.add_argument("--scopes", default="global,ke")
+    lookup.add_argument("--table", default="")
+    lookup.add_argument("--vector", default="", help="also search this vector collection prefix (for example names)")
+    index_sync = sub.add_parser(
+        "index-sync", help="make the Qdrant collection match the names in the seed (only changes are embedded)"
+    )
+    index_sync.add_argument("--seed", type=Path, default=Path("seed"))
+    index_sync.add_argument("--scopes", default="global,ke")
+    index_sync.add_argument("--prefix", default="names")
+    index_sync.add_argument("--url", default="http://127.0.0.1:6333")
+    index_sync.add_argument("--keep", action="store_true", help="do not remove points whose rows are gone")
+    draft = sub.add_parser(
+        "draft-rows", help="draft seed rows for the tables a CSV feeds (a review draft; nothing is written to seed)"
+    )
+    draft.add_argument("csv", type=Path)
+    draft.add_argument("--out", type=Path, required=True)
+    draft.add_argument("--seed", type=Path, default=Path("seed"))
+    draft.add_argument("--scopes", default="global,ke")
+    draft.add_argument("--scope", default="ke", help="the country scope the codes are built under")
+    draft.add_argument("--prefer", default="")
     submit = sub.add_parser("submit-run", help="queue a run from a job spec")
     submit.add_argument("spec", type=Path)
     sub.add_parser("supervise", help="admit and supervise queued runs")
@@ -109,15 +136,63 @@ def main(argv: list[str] | None = None) -> int:
                 approval = ReleaseApproval.model_validate_json(args.approval.read_bytes())
                 print(release_run(args.run_id, placements, approval, config).model_dump_json())
         return 0
+    if args.command == "draft-rows":
+        from mzizi_engine.runtime.assembly.draft_rows import draft_rows
+
+        result = draft_rows(
+            args.csv,
+            args.seed,
+            args.out,
+            tuple(args.scopes.split(",")),
+            args.scope,
+            frozenset(filter(None, args.prefer.split(","))),
+        )
+        print(f"drafted into {result.out_dir}: {result.rows}")
+        print("still needs a person (rows lacking the column):", result.needs_approval)
+        return 0
+    if args.command == "lookup":
+        from mzizi_engine.runtime.assembly.knowledge import build_name_index
+
+        index = build_name_index(args.seed, tuple(args.scopes.split(",")))
+        found = index.resolve(args.text, args.table)
+        for match in found:
+            print(f"{match.score:.3f}  {match.tier:8} {match.table}  {match.code}  ({match.text})  {match.evidence}")
+        if index.is_ambiguous(found):
+            print("ambiguous: the best two matches are close; context or review decides")
+        if args.vector:
+            from mzizi_engine.persistence.vector.qdrant import QdrantVectorStore
+            from mzizi_engine.persistence.vector.sync import collection_name
+            from mzizi_patterns import HashingEmbedder
+
+            embedder = HashingEmbedder()
+            for hit in QdrantVectorStore().search(collection_name(args.vector, embedder), embedder.embed(args.text), 5):
+                print(
+                    f"{hit.score:.3f}  vector   {hit.payload['table']}  {hit.payload['code']}  ({hit.payload['text']})"
+                )
+        return 0
+    if args.command == "index-sync":
+        from mzizi_engine.persistence.vector.qdrant import QdrantVectorStore
+        from mzizi_engine.persistence.vector.sync import collection_name, sync
+        from mzizi_engine.runtime.assembly.knowledge import index_rows
+        from mzizi_patterns import HashingEmbedder
+
+        embedder = HashingEmbedder()
+        report = sync(
+            QdrantVectorStore(args.url),
+            collection_name(args.prefix, embedder),
+            index_rows(args.seed, tuple(args.scopes.split(","))),
+            embedder,
+            prune=not args.keep,
+        )
+        print(report.model_dump_json(indent=1))
+        return 0
     if args.command == "propose-mapping":
         from mzizi_engine.runtime.assembly.mapping_proposal import propose_mapping
 
         print(
             propose_mapping(
                 args.csv, args.seed, tuple(args.scopes.split(",")), frozenset(filter(None, args.prefer.split(",")))
-            ).model_dump_json(
-                indent=1
-            )
+            ).model_dump_json(indent=1)
         )
         return 0
     if args.command == "run-job":

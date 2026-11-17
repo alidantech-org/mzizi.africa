@@ -26,7 +26,7 @@ def log_config() -> LogConfig:
             },
             "access": {
                 "()": "uvicorn.logging.AccessFormatter",
-                "fmt": '%(asctime)s %(levelprefix)s %(client_addr)s  %(request_line)s  %(status_code)s',
+                "fmt": "%(asctime)s %(levelprefix)s %(client_addr)s  %(request_line)s  %(status_code)s",
                 "datefmt": "%H:%M:%S",
                 "use_colors": colour,
             },

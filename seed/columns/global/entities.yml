@@ -46,6 +46,11 @@ columns:
       role: value
       says: organisation
     - list: sys.trm.global.organisations
+      key: org-name-words
+      role: value
+      says: organisation
+      weight: 0.6
+    - list: sys.trm.global.organisations
       key: org-types
       role: value
       says: organisation
@@ -140,3 +145,34 @@ columns:
     - list: sys.trm.global.dates
       key: date-death
       role: heading
+tables:
+  official.entities:
+    describe: An organisation or body. Its code is the country scope and the name without kind words.
+    code:
+      parts:
+      - scope: true
+      - name_slug: official.names.name
+      unique_within:
+      - official.entities.kind_code
+    lookup:
+      sources:
+      - table: official.names
+        text: name
+        code: entity_code
+        language: language_code
+  official.individuals:
+    describe: A person. Its code is the country scope and the name.
+    code:
+      parts:
+      - scope: true
+      - slug: official.names.name
+  official.contacts:
+    describe: A contact channel. Its code is the owner's code, the kind of channel and the value.
+    code:
+      parts:
+      - code: official.contacts.entity_code
+        optional: true
+      - code: official.contacts.individual_code
+        optional: true
+      - last: official.contacts.kind_code
+      - value: official.contacts.value

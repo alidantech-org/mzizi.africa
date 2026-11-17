@@ -29,3 +29,10 @@ columns:
     - list: sys.trm.global.dates
       key: date-ended
       role: heading
+tables:
+  politics.parties:
+    describe: A political party; its code follows its entity's name.
+    code:
+      parts:
+      - scope: true
+      - name_slug: official.names.name

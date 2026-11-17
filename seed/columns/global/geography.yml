@@ -16,3 +16,16 @@ columns:
       key: admin-unit
       role: value
       says: place
+tables:
+  geography.features:
+    describe: A place. Known names come from its names, with the kind the feature has.
+    lookup:
+      sources:
+      - table: geography.names
+        text: name
+        code: feature_code
+        language: language_code
+        kind:
+          table: geography.features
+          key: code
+          column: feature_type_code

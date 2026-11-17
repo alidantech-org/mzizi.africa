@@ -174,6 +174,7 @@ class Split(Frozen):
 
 class TermGroup(Frozen):
     group: str
+    kind_words: bool = False
     shape: Shape | None = None
     label: str = ""
     describe: str = ""
@@ -308,12 +309,54 @@ class DictColumn(Frozen):
     terms: tuple[DictLink, ...] = ()
 
 
+class CodePart(Frozen):
+    scope: bool = False
+    const: str = ""
+    slug: str = ""
+    name_slug: str = ""
+    code: str = ""
+    last: str = ""
+    value: str = ""
+    kind: str = ""
+    optional: bool = False
+
+
+class CodeRecipe(Frozen):
+    parts: tuple[CodePart, ...] = Field(min_length=1)
+    unique_within: tuple[str, ...] = ()
+
+
+class LookupKind(Frozen):
+    table: str
+    key: str
+    column: str
+
+
+class LookupSource(Frozen):
+    table: str
+    text: str
+    code: str
+    language: str = ""
+    kind: LookupKind | None = None
+
+
+class TableLookup(Frozen):
+    sources: tuple[LookupSource, ...] = Field(min_length=1)
+
+
+class TableSpec(Frozen):
+    describe: str = ""
+    code: CodeRecipe | None = None
+    lookup: TableLookup | None = None
+
+
 class Dictionary(Frozen):
     """A column dictionary (`sys.col.<scope>.<domain>`): the terms that define each database column."""
 
     code: str
     describe: str = ""
-    columns: dict[str, DictColumn]
+    columns: dict[str, DictColumn] = Field(default_factory=dict)
+    tables: dict[str, TableSpec] = Field(default_factory=dict)
 
 
 class HeadingParts(Frozen):

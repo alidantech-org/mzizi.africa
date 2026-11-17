@@ -153,3 +153,23 @@ columns:
     - list: sys.trm.global.dates
       key: date-awarded
       role: heading
+tables:
+  civic.procurements:
+    describe: One procurement; its code is the buyer and the date.
+    code:
+      parts:
+      - scope: true
+      - last: civic.procurements.buyer_entity_code
+      - value: civic.procurements.published_on
+  civic.bids:
+    describe: One bid; its code is the procurement and the bidder.
+    code:
+      parts:
+      - code: civic.bids.procurement_code
+      - last: civic.bids.bidder_entity_code
+  civic.contracts:
+    describe: One contract; its code is the procurement and the contractor.
+    code:
+      parts:
+      - code: civic.contracts.procurement_code
+      - last: civic.contracts.contractor_entity_code

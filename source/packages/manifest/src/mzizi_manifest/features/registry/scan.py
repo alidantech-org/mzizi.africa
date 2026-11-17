@@ -65,7 +65,7 @@ def _kind(document: dict) -> Kind | None:
         return Kind.SOURCE
     if "yields" in document:
         return Kind.MAPPING
-    if document["code"].startswith("sys.col.") and "columns" in document:
+    if document["code"].startswith("sys.col.") and ("columns" in document or "tables" in document):
         return Kind.COLUMNS
     if "terms" in document or "groups" in document:
         return Kind.TERMS

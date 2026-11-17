@@ -38,15 +38,64 @@ def _available(code: str, lists: dict[str, dict]) -> set[str]:
     return keys
 
 
+PART_COLUMNS = ("slug", "name_slug", "code", "last", "value", "kind")
+
+
+def _seed_column(ref: str, tables: dict[str, Table]) -> bool:
+    schema_table, _, name = ref.rpartition(".")
+    table = tables.get(schema_table)
+    return table is not None and name in table.seed.columns
+
+
+def _table_problems(where: str, name: str, spec: dict, tables: dict[str, Table]) -> list[str]:
+    problems: list[str] = []
+    table = tables.get(name)
+    if table is None:
+        return [f"{where}: tables.{name}: not a database table"]
+    recipe = spec.get("code")
+    if recipe is not None:
+        if table.natural_key != ("code",):
+            problems.append(f"{where}: tables.{name}: has no `code` natural key, so no code recipe applies")
+        for index, part in enumerate(recipe.get("parts") or []):
+            for field in PART_COLUMNS:
+                ref = part.get(field)
+                if ref is not None and not _seed_column(ref, tables):
+                    problems.append(f"{where}: tables.{name}.code.parts[{index}].{field}: {ref!r} is not a seed column")
+        for ref in recipe.get("unique_within") or []:
+            if not _seed_column(ref, tables):
+                problems.append(f"{where}: tables.{name}.code.unique_within: {ref!r} is not a seed column")
+    for index, source in enumerate((spec.get("lookup") or {}).get("sources") or []):
+        source_table = tables.get(source.get("table", ""))
+        if source_table is None:
+            problems.append(f"{where}: tables.{name}.lookup.sources[{index}]: unknown table {source.get('table')!r}")
+            continue
+        for field in ("text", "code", "language"):
+            column = source.get(field)
+            if column and column not in source_table.seed.columns:
+                problems.append(
+                    f"{where}: tables.{name}.lookup.sources[{index}].{field}: {column!r} is not a seed column of {source['table']}"
+                )
+        kind = source.get("kind")
+        if kind:
+            kind_table = tables.get(kind.get("table", ""))
+            if kind_table is None or not {kind.get("key"), kind.get("column")} <= set(kind_table.seed.columns):
+                problems.append(
+                    f"{where}: tables.{name}.lookup.sources[{index}].kind: not columns of {kind.get('table')!r}"
+                )
+    return problems
+
+
 def column_problems(root: Path, tables: dict[str, Table] | None = None) -> list[str]:
     tables = tables if tables is not None else load_tables()
     documents = _documents(root)
     lists = {d["code"]: d for _, d in documents if str(d.get("code", "")).startswith("sys.trm.")}
     problems: list[str] = []
     for path, document in documents:
-        if not str(document.get("code", "")).startswith("sys.col.") or not isinstance(document.get("columns"), dict):
+        if not str(document.get("code", "")).startswith("sys.col."):
             continue
-        for column, entry in sorted(document["columns"].items()):
+        for name, spec in sorted((document.get("tables") or {}).items()):
+            problems += _table_problems(str(path), name, spec or {}, tables)
+        for column, entry in sorted((document.get("columns") or {}).items()):
             where = f"{path}: {column}"
             schema_table, _, name = column.rpartition(".")
             table = tables.get(schema_table)

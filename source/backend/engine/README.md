@@ -96,6 +96,9 @@ Choose `ENGINE_HOST_REQUESTS_PER_SECOND`, `ENGINE_HOST_CONCURRENCY`, and `ENGINE
 uv run mzizi-engine supervise            # run in one terminal
 uv run mzizi-engine run-job spec.json     # run a spec now, in this terminal
 uv run mzizi-engine propose-mapping table.csv --scopes global,ke --prefer official,politics   # which database columns each column of a CSV maps to
+uv run mzizi-engine draft-rows table.csv --out .dev/draft --prefer official,politics   # draft seed rows for the tables a CSV feeds (review only)
+uv run mzizi-engine lookup "Kiambu County" --table geography.features --vector names   # find known records by text
+uv run mzizi-engine index-sync   # make the Qdrant collection match the seed names (only changes are embedded)
 uv run mzizi-engine submit-run spec.json  # use the returned run ID
 uv run mzizi-engine show-run <run-id>
 uv run mzizi-engine cancel-run <run-id>

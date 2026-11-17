@@ -32,13 +32,18 @@ class MergedGroup:
         self.label = ""
         self.role: Role | None = None
         self.surfaces: dict[str, set[str]] = {}
+        self.represents: dict[str, str] = {}
+        self.kind_words = False
 
     def add(self, group: TermGroup) -> None:
         self.label = self.label or group.label
         self.role = self.role or group.role
+        self.kind_words = self.kind_words or group.kind_words
         for entry in group.terms:
             forms = self.surfaces.setdefault(entry.value, {entry.value})
             forms.update(alias.value for alias in entry.aliases)
+            if entry.represents:
+                self.represents[entry.value] = entry.represents
 
     @property
     def axis(self) -> Axis:

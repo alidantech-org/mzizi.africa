@@ -6,14 +6,14 @@ languages:
 - sw
 groups:
 - group: org-suffixes
-  label: Legal-form words at the end of an organisation name
-  describe: Words that end the name of a company or body; a cell ending in one is an organisation.
+  label: Legal-form words that end an organisation name
+  kind_words: true
+  describe: Legal forms. They say what kind of body a name is, not which one, so a code leaves them out.
   terms:
   - value: limited
     aliases:
     - ltd
     - ltd.
-    - ltd
     - l.t.d.
     - kampuni ndogo
     kind: pattern-word
@@ -46,6 +46,26 @@ groups:
     - corp
     - corp.
     kind: pattern-word
+  - value: sacco
+    aliases:
+    - s.a.c.c.o.
+    kind: pattern-word
+  - value: cooperative
+    aliases:
+    - co-operative
+    - coop
+    - ushirika
+    kind: pattern-word
+  - value: (k)
+    aliases:
+    - (e.a.)
+    - (ea)
+    - (u)
+    kind: pattern-word
+- group: org-name-words
+  label: Words that often end or fill an organisation name
+  describe: Words in an organisation's own name. They are part of the identity, so they stay in a code.
+  terms:
   - value: enterprises
     aliases:
     - enterprise
@@ -133,16 +153,6 @@ groups:
     kind: pattern-word
   - value: kenya
     kind: pattern-word
-  - value: sacco
-    aliases:
-    - s.a.c.c.o.
-    kind: pattern-word
-  - value: cooperative
-    aliases:
-    - co-operative
-    - coop
-    - ushirika
-    kind: pattern-word
   - value: foundation
     aliases:
     - msingi
@@ -161,14 +171,6 @@ groups:
     aliases:
     - center
     - kituo
-    kind: pattern-word
-  - value: (k)
-    aliases:
-    - (e.a.)
-    - (ea)
-    - (u)
-    kind: pattern-word
-  - value: a.k.a
     kind: pattern-word
 - group: org-types
   label: Kinds of organisation
@@ -520,6 +522,13 @@ patterns:
         min: 1
         max: 6
     - group: org-suffixes
+      as: suffix
+  - - words: capitalised
+      as: name
+      repeat:
+        min: 1
+        max: 6
+    - group: org-name-words
       as: suffix
   - - group: org-types
       as: type

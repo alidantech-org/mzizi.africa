@@ -107,3 +107,15 @@ columns:
       key: org-types
       role: value
       says: organisation
+tables:
+  finance.flows:
+    describe: One movement of money; its code is the fund, the period and the counterparty.
+    code:
+      parts:
+      - code: finance.flows.fund_code
+        optional: true
+      - last: finance.flows.fiscal_period_code
+        optional: true
+      - last: finance.flows.counterparty_entity_code
+      unique_within:
+      - finance.flows.occurred_on

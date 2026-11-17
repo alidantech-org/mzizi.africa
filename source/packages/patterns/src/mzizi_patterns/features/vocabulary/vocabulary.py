@@ -7,6 +7,8 @@ serves any scope."""
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 from mzizi_patterns.features.cells.matcher import Phrases, match_sequences
 from mzizi_patterns.features.terms.terms import MergedGroup
 from mzizi_patterns.features.tokenise.tokenise import words
@@ -41,6 +43,31 @@ class Vocabulary:
                 self.rules[(domain, rule.rule)] = rule
             for split in term_list.splits:
                 self.splits[(domain, split.split)] = (split, domain)
+
+    def add_value_aliases(self, aliases: Mapping[str, tuple[str, ...]]) -> int:
+        """Give every term that `represents` a reference value the labels that value carries (any language)."""
+        added = 0
+        for group in self.groups.values():
+            for canonical, code in group.represents.items():
+                for label in aliases.get(code, ()):
+                    if label not in group.surfaces[canonical]:
+                        group.surfaces[canonical].add(label)
+                        added += 1
+        return added
+
+    def kind_filler(self) -> dict[str, str]:
+        """Single words that only name a kind, with the kind code they point at ('' when they point at none)."""
+        filler: dict[str, str] = {}
+        for group in self.groups.values():
+            if not group.kind_words:
+                continue
+            for canonical, forms in group.surfaces.items():
+                kind = group.represents.get(canonical, "")
+                for form in forms:
+                    tokens = words(form)
+                    if len(tokens) == 1:
+                        filler.setdefault(tokens[0], kind)
+        return filler
 
     def key(self, ref: str, domain: str) -> Key:
         owner, _, key = ref.rpartition("#")
